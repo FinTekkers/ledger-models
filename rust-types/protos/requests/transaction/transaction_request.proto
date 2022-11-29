@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package transaction;
+
+import "protos/models/transaction/transaction.proto";
+import "protos/models/util/uuid.proto";
+import "protos/requests/util/operation.proto";
+import "protos/models/position/position_filter.proto";
+
+option java_multiple_files = true;
+option java_package = "common.request.protos";
+option java_outer_classname = "TransactionRequestProtos";
+
+message TransactionRequestProto {
+  string object_class = 1;
+  string version = 2;
+
+  util.RequestOperationTypeProto operation_type = 10;
+
+  transaction.TransactionProto create_transaction_input = 20;
+  repeated util.UUIDProto uuids = 21;
+
+  position.PositionFilterProto search_transaction_input = 22;
+}
+
+

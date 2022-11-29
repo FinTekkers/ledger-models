@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package security;
+
+option java_multiple_files = true;
+option java_package = "common.model.protos";
+option java_outer_classname = "CouponTypeProtos";
+
+enum CouponTypeProto {
+  UNKNOWN_COUPON_TYPE = 0; //Maps to Security
+  FIXED = 1;
+  FLOAT = 2;
+  ZERO = 3;
+}

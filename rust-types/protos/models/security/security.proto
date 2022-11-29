@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package security;
+
+import "protos/models/util/decimal_value.proto";
+import "protos/models/util/local_date.proto";
+import "protos/models/util/local_timestamp.proto";
+import "protos/models/util/uuid.proto";
+
+import "protos/models/security/identifier.proto";
+import "protos/models/security/security_type.proto";
+import "protos/models/security/security_quantity_type.proto";
+import "protos/models/security/coupon_frequency.proto";
+import "protos/models/security/coupon_type.proto";
+
+option java_multiple_files = true;
+option java_package = "common.model.protos";
+option java_outer_classname = "SecurityProtos";
+
+message SecurityProto {
+  string object_class = 1;
+  string version = 2;
+
+  //Primary Key
+  util.UUIDProto uuid = 5;
+  util.LocalTimestampProto as_of = 6;
+  bool is_link = 7;
+  SecurityTypeProto security_type = 10;
+
+  //Biz fields
+  string asset_class = 11;
+  string issuer_name = 12;
+  SecurityProto settlement_currency = 13;
+  SecurityQuantityTypeProto quantity_type = 14;
+
+  security.IdentifierProto identifier = 40;
+  string description = 41;
+
+  //Cash Security fields
+  string cash_id = 50;
+
+  //Equity Security fields
+
+  //Bond Security fields
+  util.DecimalValueProto coupon_rate = 60;
+  CouponTypeProto coupon_type = 61;
+  CouponFrequencyProto coupon_frequency = 62;
+  util.LocalDateProto dated_date = 63;
+  util.DecimalValueProto face_value = 64;
+  util.LocalDateProto issue_date = 65;
+  util.LocalDateProto maturity_date = 66;
+}

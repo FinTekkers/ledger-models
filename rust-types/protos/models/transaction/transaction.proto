@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package transaction;
+
+import "protos/models/util/decimal_value.proto";
+import "protos/models/util/local_date.proto";
+import "protos/models/util/local_timestamp.proto";
+import "protos/models/util/uuid.proto";
+
+import "protos/models/portfolio/portfolio.proto";
+import "protos/models/strategy/strategy_allocation.proto";
+import "protos/models/security/security.proto";
+import "protos/models/price/price.proto";
+import "protos/models/position/position_status.proto";
+import "protos/models/transaction/transaction_type.proto";
+
+option java_multiple_files = true;
+option java_package = "common.model.protos";
+option java_outer_classname = "TransactionProtos";
+
+message TransactionProto {
+  string object_class = 1;
+  string version = 2;
+
+  //Primary Key
+  util.UUIDProto uuid = 5;
+  util.LocalTimestampProto as_of = 6;
+  bool is_link = 7;
+
+  //Transaction details
+  portfolio.PortfolioProto portfolio = 10;
+  security.SecurityProto security = 11;
+  TransactionTypeProto transaction_type=12;
+  util.DecimalValueProto quantity = 13;
+  price.PriceProto price = 14;
+
+  //NOTE: We're using timestamps for dates. The time portion will be ignored when parsing
+  util.LocalDateProto trade_date = 15;
+  util.LocalDateProto settlement_date = 16;
+
+  //Lineage
+//  TransactionProto cashTransaction = 20;
+//  TransactionProto parentTransaction = 21;
+  repeated TransactionProto childTransactions = 20;
+
+  //Business metadata
+  position.PositionStatusProto position_status=25;
+  string trade_name = 26;
+  strategy.StrategyAllocationProto strategy_allocation=27;
+
+  //System-based fields
+  bool is_cancelled=30;
+}

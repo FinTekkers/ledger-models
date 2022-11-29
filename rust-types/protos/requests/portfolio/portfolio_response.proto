@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package portfolio;
+
+import "protos/models/portfolio/portfolio.proto";
+import "protos/requests/portfolio/portfolio_request.proto";
+
+option java_multiple_files = true;
+option java_package = "common.request.protos";
+option java_outer_classname = "PortfolioResponseProtos";
+
+message PortfolioResponseProto {
+  string object_class = 1;
+  string version = 2;
+
+  portfolio.PortfolioRequestProto create_portfolio_request = 20;
+
+  repeated portfolio.PortfolioProto portfolio_response = 30;
+}
+
+

@@ -1,0 +1,94 @@
+cargo:rerun-if-changed=protos/models/transaction/transaction.proto
+cargo:rerun-if-changed=protos/models/transaction/transaction_type.proto
+cargo:rerun-if-changed=protos/models/util/decimal_value.proto
+cargo:rerun-if-changed=protos/models/util/local_date.proto
+cargo:rerun-if-changed=protos/models/util/local_timestamp.proto
+cargo:rerun-if-changed=protos/models/util/uuid.proto
+cargo:rerun-if-changed=protos/models/security/coupon_type.proto
+cargo:rerun-if-changed=protos/models/security/security_type.proto
+cargo:rerun-if-changed=protos/models/security/identifier.proto
+cargo:rerun-if-changed=protos/models/security/security_quantity_type.proto
+cargo:rerun-if-changed=protos/models/security/tenor.proto
+cargo:rerun-if-changed=protos/models/security/security.proto
+cargo:rerun-if-changed=protos/models/security/coupon_frequency.proto
+cargo:rerun-if-changed=protos/models/security/tenor_type.proto
+cargo:rerun-if-changed=protos/models/security/identifier_type.proto
+cargo:rerun-if-changed=protos/models/position/measure.proto
+cargo:rerun-if-changed=protos/models/position/position.proto
+cargo:rerun-if-changed=protos/models/position/position_util.proto
+cargo:rerun-if-changed=protos/models/position/position_filter.proto
+cargo:rerun-if-changed=protos/models/position/position_status.proto
+cargo:rerun-if-changed=protos/models/position/field.proto
+cargo:rerun-if-changed=protos/models/price/price.proto
+cargo:rerun-if-changed=protos/models/portfolio/portfolio.proto
+cargo:rerun-if-changed=protos/models/strategy/strategy.proto
+cargo:rerun-if-changed=protos/models/strategy/strategy_allocation.proto
+cargo:rerun-if-changed=protos/requests/transaction/transaction_response.proto
+cargo:rerun-if-changed=protos/requests/transaction/transaction_request.proto
+cargo:rerun-if-changed=protos/requests/util/operation.proto
+cargo:rerun-if-changed=protos/requests/security/security_response.proto
+cargo:rerun-if-changed=protos/requests/security/security_request.proto
+cargo:rerun-if-changed=protos/requests/position/position_response.proto
+cargo:rerun-if-changed=protos/requests/position/position_request.proto
+cargo:rerun-if-changed=protos/requests/portfolio/portfolio_response.proto
+cargo:rerun-if-changed=protos/requests/portfolio/portfolio_request.proto
+cargo:rerun-if-changed=protos/services/valuation/valuation_service.proto
+cargo:rerun-if-changed=.
+Running: "/opt/homebrew/bin/protoc" "--include_imports" "--include_source_info" "-o" "/var/folders/sx/xzcxpqw91jvd895ml70xl4740000gn/T/prost-buildsJDSI5/prost-descriptor-set" "-I" "." "protos/models/transaction/transaction.proto" "protos/models/transaction/transaction_type.proto" "protos/models/util/decimal_value.proto" "protos/models/util/local_date.proto" "protos/models/util/local_timestamp.proto" "protos/models/util/uuid.proto" "protos/models/security/coupon_type.proto" "protos/models/security/security_type.proto" "protos/models/security/identifier.proto" "protos/models/security/security_quantity_type.proto" "protos/models/security/tenor.proto" "protos/models/security/security.proto" "protos/models/security/coupon_frequency.proto" "protos/models/security/tenor_type.proto" "protos/models/security/identifier_type.proto" "protos/models/position/measure.proto" "protos/models/position/position.proto" "protos/models/position/position_util.proto" "protos/models/position/position_filter.proto" "protos/models/position/position_status.proto" "protos/models/position/field.proto" "protos/models/price/price.proto" "protos/models/portfolio/portfolio.proto" "protos/models/strategy/strategy.proto" "protos/models/strategy/strategy_allocation.proto" "protos/requests/transaction/transaction_response.proto" "protos/requests/transaction/transaction_request.proto" "protos/requests/util/operation.proto" "protos/requests/security/security_response.proto" "protos/requests/security/security_request.proto" "protos/requests/position/position_response.proto" "protos/requests/position/position_request.proto" "protos/requests/portfolio/portfolio_response.proto" "protos/requests/portfolio/portfolio_request.proto" "protos/services/valuation/valuation_service.proto"
+prost: "TODO: Need to decide how to model this: https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations"
+prost: "https://docs.oracle.com/javase/8/docs/api/java/time/ZoneId.html"
+prost: "1-4 reserved"
+prost: "Primary Key"
+prost: "Primary Key"
+prost: "Transaction details"
+prost: "Primary Key"
+prost: "Map"
+prost: "Primary Key"
+prost: "Maps to Security"
+prost: "Maps to Security"
+prost: "Maps to Security"
+prost: "Maps to Security"
+prost: "Primary Key"
+prost: "Biz fields"
+prost: "Cash Security fields"
+prost: "Equity Security fields"
+prost: "Bond Security fields"
+prost: "Primary Key"
+prost: "This trade may never happen"
+prost: "This trade is expected to happen, but hasn't been executed yet"
+prost: "Beneficial ownership changes related to this transaction are now legally binding"
+prost: "Primary Key"
+prost: "Transaction details"
+prost: "NOTE: We're using timestamps for dates. The time portion will be ignored when parsing"
+prost: "Lineage"
+prost: "  TransactionProto cashTransaction = 20;"
+prost: "  TransactionProto parentTransaction = 21;"
+prost: "Business metadata"
+prost: "System-based fields"
+prost: "(UUID.class)"
+prost: " Attribute fields. Likely to be fields that one would pivot on."
+prost: "LocalDate.class"
+prost: "common.model.strategy.Strategy.class"
+prost: "common.model.security.Security.class"
+prost: "common.model.security.Security.class"
+prost: "Security Fields"
+prost: "  AssetClass(String.class), //FixedIncome, Equity, etc"
+prost: " ProductClass(String.class), //Bond, CashEquity, etc"
+prost: " ProductType (String.class), //TBILL, BOND, etc"
+prost: " 1M"
+prost: "Portfolio fields"
+prost: "common.model.portfolio.Portfolio.class"
+prost: "UUID"
+prost: "common.model.price.Price.class"
+prost: "UUID"
+prost: "Boolean.class"
+prost: "PositionStatus.class"
+prost: "Transaction only"
+prost: " TradeDate(LocalDate.class),"
+prost: "  SettlementDate(LocalDate.class),"
+prost: " BUY, SELL, MATURATION, etc (TransactionType.class)"
+prost: "Tax Lot only"
+prost: "  TaxLotOpenDate(LocalDate.class),"
+prost: "  TaxLotCloseDate(LocalDate.class),"
+prost: "Used for position filters, but not for responses"
+prost: "TODO - Think about how to model this long term; ISO code vs. UUID vs. full security object"

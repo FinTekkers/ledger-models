@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package position;
+
+import "google/protobuf/any.proto";
+import "protos/models/position/field.proto";
+import "protos/models/security/identifier.proto";
+
+option java_multiple_files = true;
+option java_package = "common.model.protos";
+option java_outer_classname = "PositionUtilProtos";
+
+message FieldMapEntry {
+  FieldProto field = 1;
+
+  oneof FieldMapValueOneOf {
+    google.protobuf.Any field_value_packed = 4;
+    string enum_value = 5;
+    security.IdentifierProto identifier = 6;
+  }
+
+  PositionFilterOperator operator = 20; //Used for position filters, but not for responses
+}
+
+enum PositionFilterOperator {
+    UNKNOWN_OPERATOR=0;EQUALS=1; NOT_EQUALS=2; LESS_THAN=3; LESS_THAN_OR_EQUALS=4; MORE_THAN=5 ; MORE_THAN_OR_EQUALS=6;
+}

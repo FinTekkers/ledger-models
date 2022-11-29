@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package position;
+
+option java_multiple_files = true;
+option java_package = "common.model.protos";
+option java_outer_classname = "MeasureProtos";
+
+enum MeasureProto {
+  UNKNOWN_MEASURE = 0;
+  DIRECTED_QUANTITY = 1;
+  MARKET_VALUE = 2;
+  UNADJUSTED_COST_BASIS = 3;
+  ADJUSTED_COST_BASIS = 4;
+}

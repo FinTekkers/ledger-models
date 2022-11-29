@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package position;
+
+import "protos/models/position/position_util.proto";
+
+option java_multiple_files = true;
+option java_package = "common.model.protos";
+option java_outer_classname = "PositionFilterProtos";
+
+message PositionFilterProto {
+  string object_class = 1;
+  string version = 2;
+
+  repeated FieldMapEntry filters = 21;
+}

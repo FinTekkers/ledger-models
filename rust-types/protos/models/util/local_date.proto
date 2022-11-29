@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package util;
+
+option java_package = "common.model.protoUtils";
+
+message LocalDateProto {
+  uint32 year = 1;
+  uint32 month = 2;
+  uint32 day = 3;
+}

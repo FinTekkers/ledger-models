@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package position;
+
+import "protos/models/position/field.proto";
+import "protos/models/position/measure.proto";
+import "protos/models/position/position.proto";
+import "protos/models/position/position_filter.proto";
+
+import "protos/models/util/local_timestamp.proto";
+import "protos/requests/util/operation.proto";
+
+option java_multiple_files = true;
+option java_package = "common.request.protos";
+option java_outer_classname = "PositionRequestProtos";
+
+message PositionRequestProto {
+  string object_class = 1;
+  string version = 2;
+
+  util.RequestOperationTypeProto operation_type = 10;
+
+  PositionTypeProto position_type = 20;
+  PositionViewProto position_view = 21;
+
+  repeated FieldProto fields = 30;
+  repeated MeasureProto measures = 31;
+
+  PositionFilterProto filter_fields = 32;
+  util.LocalTimestampProto as_of = 33;
+}
+
+

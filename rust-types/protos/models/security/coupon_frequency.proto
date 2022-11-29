@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package security;
+
+option java_multiple_files = true;
+option java_package = "common.model.protos";
+option java_outer_classname = "CouponFrequencyProtos";
+
+enum CouponFrequencyProto {
+  UNKNOWN_COUPON_FREQUENCY = 0; //Maps to Security
+  ANNUALLY = 1;
+  SEMIANNUALLY = 2;
+  QUARTERLY = 3;
+  MONTHLY = 4;
+  NO_COUPON = 5;
+}

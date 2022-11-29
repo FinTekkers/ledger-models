@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package position;
+
+option java_multiple_files = true;
+option java_package = "common.model.protos";
+option java_outer_classname = "FieldProtos";
+
+enum FieldProto {
+  UNKNOWN_FIELD = 0;
+  ID=1; //(UUID.class)
+
+  // Attribute fields. Likely to be fields that one would pivot on.
+  EFFECTIVE_DATE = 10; //LocalDate.class
+  STRATEGY = 11; //common.model.strategy.Strategy.class
+  SECURITY = 12; //common.model.security.Security.class
+  SECURITY_DESCRIPTION=61;
+  CASH_IMPACT_SECURITY = 13; //common.model.security.Security.class
+
+  //Security Fields
+  ASSET_CLASS = 50; //  AssetClass(String.class), //FixedIncome, Equity, etc
+  PRODUCT_CLASS = 51; // ProductClass(String.class), //Bond, CashEquity, etc
+  PRODUCT_TYPE = 52; // ProductType (String.class), //TBILL, BOND, etc
+  SECURITY_ID = 53;
+  IDENTIFIER = 54;
+  TENOR = 55; // 1M
+  MATURITY_DATE = 56;
+  ADJUSTED_TENOR = 57;
+
+  //Portfolio fields
+  PORTFOLIO = 14; //common.model.portfolio.Portfolio.class
+  PORTFOLIO_ID=15; //UUID
+  PORTFOLIO_NAME=60;
+
+  PRICE = 16; //common.model.price.Price.class
+  PRICE_ID = 17; //UUID
+  IS_CANCELLED = 18; //Boolean.class
+  POSITION_STATUS = 19; //PositionStatus.class
+
+  //Transaction only
+  TRADE_DATE = 30; // TradeDate(LocalDate.class),
+  SETTLEMENT_DATE = 31; //  SettlementDate(LocalDate.class),
+  TRANSACTION_TYPE = 32; // BUY, SELL, MATURATION, etc (TransactionType.class)
+
+  //Tax Lot only
+  TAX_LOT_OPEN_DATE = 40; //  TaxLotOpenDate(LocalDate.class),
+  TAX_LOT_CLOSE_DATE = 41; //  TaxLotCloseDate(LocalDate.class),
+
+}

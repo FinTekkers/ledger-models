@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package security;
+
+import "protos/models/security/security.proto";
+import "protos/models/util/uuid.proto";
+import "protos/models/position/position_filter.proto";
+import "protos/requests/util/operation.proto";
+
+option java_multiple_files = true;
+option java_package = "common.request.protos";
+option java_outer_classname = "SecurityRequestProtos";
+
+message SecurityRequestProto {
+  string object_class = 1;
+  string version = 2;
+
+  util.RequestOperationTypeProto operation_type = 10;
+
+  security.SecurityProto create_security_input = 20;
+  repeated util.UUIDProto uuids = 21;
+
+  position.PositionFilterProto search_security_input = 22;
+}
+
+

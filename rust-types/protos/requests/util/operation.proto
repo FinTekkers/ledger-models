@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package util;
+
+enum RequestOperationTypeProto {
+  UNKNOWN_OPERATION=0;
+  VALIDATE=1;
+  CREATE=2;
+  GET=3;
+  SEARCH=4;
+}

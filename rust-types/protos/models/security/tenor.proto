@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package security;
+
+import "protos/models/security/tenor_type.proto";
+
+option java_multiple_files = true;
+option java_package = "common.model.protos";
+option java_outer_classname = "TenorProtos";
+
+message TenorProto {
+  string object_class = 1;
+  string version = 2;
+
+  string term_value = 5;
+  security.TenorTypeProto tenor_type = 6;
+}
