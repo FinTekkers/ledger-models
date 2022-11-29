@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package valuation;
-import "protos/requests/security/security_request.proto";
-import "protos/requests/security/security_response.proto";
-
-service Valuation {
-    rpc EchoSecurity (security.SecurityRequestProto) returns (security.SecurityResponseProto);
-}
