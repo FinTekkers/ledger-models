@@ -1,25 +1,24 @@
+use std::net::{SocketAddr, IpAddr, Ipv6Addr};
+
 use rust_types::ledger_models::{
     security::{SecurityRequestProto, SecurityResponseProto},
     valuation::valuation_server::{Valuation, ValuationServer},
 };
 use tonic::{transport::Server, Request, Response, Status};
+use tracing_subscriber;
+use tracing::{info};
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct ValuationServiceServer {}
-
 #[tonic::async_trait]
 impl Valuation for ValuationServiceServer {
+    #[tracing::instrument]
     async fn echo_security(
         &self,
         request: Request<SecurityRequestProto>,
     ) -> Result<Response<SecurityResponseProto>, Status> {
         let security_request = request.into_inner();
-        println!("Recieved Object Class: {}", security_request.object_class);
-        println!(
-            "Recieved Operation Type: {}",
-            security_request.operation_type
-        );
-        println!("Recieved Request UUID: {:?}", security_request.uuids);
+        info!("Handling Request");
 
         let reply = SecurityResponseProto {
             object_class: security_request.object_class,
@@ -28,14 +27,22 @@ impl Valuation for ValuationServiceServer {
             security_response: Vec::new(),
         };
 
+        info!("Returning {:?}", reply);
+
         return Ok(Response::new(reply));
     }
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let addr = "[::1]:50051".parse()?;
+    tracing_subscriber::fmt::init();
+
+    let port = std::env::var("PORT").unwrap_or("50051".into()).parse()?;
+    let addr =SocketAddr::new(IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1)), port);
+
     let valuation_service = ValuationServiceServer::default();
+
+    info!("Starging server on {:?}", addr);
 
     Server::builder()
         .add_service(ValuationServer::new(valuation_service))

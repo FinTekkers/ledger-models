@@ -8,7 +8,6 @@ edition = "2021"
 [dependencies]
 tonic = "0.8.2"
 prost = "0.11.2"
-automod = "1.0.4"
 prost-types = "0.11.2"
 
 [build-dependencies]
