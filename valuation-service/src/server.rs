@@ -1,4 +1,4 @@
-use std::net::{SocketAddr, IpAddr, Ipv6Addr};
+use std::net::{SocketAddr, IpAddr, Ipv6Addr, Ipv4Addr};
 
 use rust_types::ledger_models::{
     security::{SecurityRequestProto, SecurityResponseProto},
@@ -37,12 +37,12 @@ impl Valuation for ValuationServiceServer {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
 
-    let port = std::env::var("PORT").unwrap_or("50051".into()).parse()?;
-    let addr =SocketAddr::new(IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 1)), port);
+    //let port = std::env::var("PORT").unwrap_or("8080".into()).parse()?;
+    let addr =SocketAddr::new(IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)), 8080);
 
     let valuation_service = ValuationServiceServer::default();
 
-    info!("Starging server on {:?}", addr);
+    info!("Starting server on {:?}", addr);
 
     Server::builder()
         .add_service(ValuationServer::new(valuation_service))
