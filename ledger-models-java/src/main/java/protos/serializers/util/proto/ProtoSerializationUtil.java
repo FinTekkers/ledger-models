@@ -1,7 +1,6 @@
 package protos.serializers.util.proto;
 
 import com.google.protobuf.*;
-import common.models.IFintekkersEnum;
 import common.models.portfolio.Portfolio;
 import common.models.price.Price;
 import common.models.security.Security;
@@ -11,21 +10,17 @@ import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.IdentifierProto;
 import fintekkers.models.security.SecurityProto;
-import fintekkers.models.security.SecurityTypeProto;
 import fintekkers.models.strategy.StrategyProto;
 import fintekkers.models.util.DecimalValue;
 import fintekkers.models.util.LocalTimestamp;
 import fintekkers.models.util.Uuid;
-import org.apache.commons.lang3.ArrayUtils;
 import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
 import protos.serializers.security.IdentifierSerializer;
 import protos.serializers.security.SecuritySerializer;
 import protos.serializers.strategy.StrategySerializer;
 
-import java.lang.Enum;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.time.*;
 import java.util.UUID;

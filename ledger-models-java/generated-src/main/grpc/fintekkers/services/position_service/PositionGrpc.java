@@ -22,7 +22,7 @@ public final class PositionGrpc {
       fullMethodName = SERVICE_NAME + '/' + "Search",
       requestType = fintekkers.requests.position.QueryPositionRequestProto.class,
       responseType = fintekkers.requests.position.QueryPositionResponseProto.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
   public static io.grpc.MethodDescriptor<fintekkers.requests.position.QueryPositionRequestProto,
       fintekkers.requests.position.QueryPositionResponseProto> getSearchMethod() {
     io.grpc.MethodDescriptor<fintekkers.requests.position.QueryPositionRequestProto, fintekkers.requests.position.QueryPositionResponseProto> getSearchMethod;
@@ -31,7 +31,7 @@ public final class PositionGrpc {
         if ((getSearchMethod = PositionGrpc.getSearchMethod) == null) {
           PositionGrpc.getSearchMethod = getSearchMethod =
               io.grpc.MethodDescriptor.<fintekkers.requests.position.QueryPositionRequestProto, fintekkers.requests.position.QueryPositionResponseProto>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "Search"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
@@ -149,7 +149,7 @@ public final class PositionGrpc {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
             getSearchMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
               new MethodHandlers<
                 fintekkers.requests.position.QueryPositionRequestProto,
                 fintekkers.requests.position.QueryPositionResponseProto>(
@@ -186,7 +186,7 @@ public final class PositionGrpc {
      */
     public void search(fintekkers.requests.position.QueryPositionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.position.QueryPositionResponseProto> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
           getChannel().newCall(getSearchMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -221,8 +221,9 @@ public final class PositionGrpc {
      *    rpc GetByIDs (position.QueryPositionRequestProto) returns (position.QueryPositionResponseProto);
      * </pre>
      */
-    public fintekkers.requests.position.QueryPositionResponseProto search(fintekkers.requests.position.QueryPositionRequestProto request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public java.util.Iterator<fintekkers.requests.position.QueryPositionResponseProto> search(
+        fintekkers.requests.position.QueryPositionRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
           getChannel(), getSearchMethod(), getCallOptions(), request);
     }
 
@@ -249,17 +250,6 @@ public final class PositionGrpc {
     protected PositionFutureStub build(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       return new PositionFutureStub(channel, callOptions);
-    }
-
-    /**
-     * <pre>
-     *    rpc GetByIDs (position.QueryPositionRequestProto) returns (position.QueryPositionResponseProto);
-     * </pre>
-     */
-    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.position.QueryPositionResponseProto> search(
-        fintekkers.requests.position.QueryPositionRequestProto request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getSearchMethod(), getCallOptions()), request);
     }
 
     /**

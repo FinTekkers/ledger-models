@@ -75,7 +75,9 @@ pub mod position_client {
             >,
         ) -> Result<
             tonic::Response<
-                super::super::super::requests::position::QueryPositionResponseProto,
+                tonic::codec::Streaming<
+                    super::super::super::requests::position::QueryPositionResponseProto,
+                >,
             >,
             tonic::Status,
         > {
@@ -92,7 +94,7 @@ pub mod position_client {
             let path = http::uri::PathAndQuery::from_static(
                 "/fintekkers.services.position_service.Position/Search",
             );
-            self.inner.unary(request.into_request(), path, codec).await
+            self.inner.server_streaming(request.into_request(), path, codec).await
         }
         ///    rpc ValidateCreateOrUpdate (transaction.CreateTransactionRequestProto) returns (util.errors.SummaryProto);
         pub async fn validate_query_request(
@@ -128,18 +130,22 @@ pub mod position_server {
     /// Generated trait containing gRPC methods that should be implemented for use with PositionServer.
     #[async_trait]
     pub trait Position: Send + Sync + 'static {
+        /// Server streaming response type for the Search method.
+        type SearchStream: futures_core::Stream<
+                Item = Result<
+                    super::super::super::requests::position::QueryPositionResponseProto,
+                    tonic::Status,
+                >,
+            >
+            + Send
+            + 'static;
         ///    rpc GetByIDs (position.QueryPositionRequestProto) returns (position.QueryPositionResponseProto);
         async fn search(
             &self,
             request: tonic::Request<
                 super::super::super::requests::position::QueryPositionRequestProto,
             >,
-        ) -> Result<
-            tonic::Response<
-                super::super::super::requests::position::QueryPositionResponseProto,
-            >,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<Self::SearchStream>, tonic::Status>;
         ///    rpc ValidateCreateOrUpdate (transaction.CreateTransactionRequestProto) returns (util.errors.SummaryProto);
         async fn validate_query_request(
             &self,
@@ -215,12 +221,13 @@ pub mod position_server {
                     struct SearchSvc<T: Position>(pub Arc<T>);
                     impl<
                         T: Position,
-                    > tonic::server::UnaryService<
+                    > tonic::server::ServerStreamingService<
                         super::super::super::requests::position::QueryPositionRequestProto,
                     > for SearchSvc<T> {
                         type Response = super::super::super::requests::position::QueryPositionResponseProto;
+                        type ResponseStream = T::SearchStream;
                         type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
+                            tonic::Response<Self::ResponseStream>,
                             tonic::Status,
                         >;
                         fn call(
@@ -246,7 +253,7 @@ pub mod position_server {
                                 accept_compression_encodings,
                                 send_compression_encodings,
                             );
-                        let res = grpc.unary(method, req).await;
+                        let res = grpc.server_streaming(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)

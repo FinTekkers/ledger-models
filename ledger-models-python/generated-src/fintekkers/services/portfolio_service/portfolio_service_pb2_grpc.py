@@ -28,7 +28,7 @@ class PortfolioStub(object):
                 request_serializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2.QueryPortfolioRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__response__pb2.QueryPortfolioResponseProto.FromString,
                 )
-        self.Search = channel.unary_unary(
+        self.Search = channel.unary_stream(
                 '/fintekkers.services.security_service.Portfolio/Search',
                 request_serializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2.QueryPortfolioRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__response__pb2.QueryPortfolioResponseProto.FromString,
@@ -102,7 +102,7 @@ def add_PortfolioServicer_to_server(servicer, server):
                     request_deserializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2.QueryPortfolioRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__response__pb2.QueryPortfolioResponseProto.SerializeToString,
             ),
-            'Search': grpc.unary_unary_rpc_method_handler(
+            'Search': grpc.unary_stream_rpc_method_handler(
                     servicer.Search,
                     request_deserializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2.QueryPortfolioRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__response__pb2.QueryPortfolioResponseProto.SerializeToString,
@@ -177,7 +177,7 @@ class Portfolio(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/fintekkers.services.security_service.Portfolio/Search',
+        return grpc.experimental.unary_stream(request, target, '/fintekkers.services.security_service.Portfolio/Search',
             fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2.QueryPortfolioRequestProto.SerializeToString,
             fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__response__pb2.QueryPortfolioResponseProto.FromString,
             options, channel_credentials,

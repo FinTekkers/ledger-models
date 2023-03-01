@@ -11,7 +11,7 @@ option py_generic_services = true;
 
 service Position {
 //    rpc GetByIDs (position.QueryPositionRequestProto) returns (position.QueryPositionResponseProto);
-    rpc Search (fintekkers.requests.position.QueryPositionRequestProto) returns (fintekkers.requests.position.QueryPositionResponseProto);
+    rpc Search (fintekkers.requests.position.QueryPositionRequestProto) returns (stream fintekkers.requests.position.QueryPositionResponseProto);
 //    rpc ListIDs (transaction.QueryTransactionRequestProto) returns (transaction.QueryTransactionResponseProto);
 
 //    rpc ValidateCreateOrUpdate (transaction.CreateTransactionRequestProto) returns (util.errors.SummaryProto);

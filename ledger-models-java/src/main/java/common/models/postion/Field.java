@@ -7,7 +7,9 @@ import common.models.security.Security;
 import common.models.security.Tenor;
 import common.models.security.identifier.Identifier;
 import common.models.strategy.Strategy;
+import common.models.transaction.TransactionType;
 import fintekkers.models.position.PositionStatusProto;
+import fintekkers.models.transaction.TransactionTypeProto;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -72,7 +74,7 @@ public enum Field {
             "from spot date when we get to edge cases such as JGBs"),
     SETTLEMENT_DATE(LocalDate.class, "The date that the settlement of a security occurs, i.e. the date " +
             "that the buyer of a security is officially registered as the owner"),
-    TRANSACTION_TYPE(String.class, "The type of transaction, such as Buy, Sell, Deposit, Withdrawal, " +
+    TRANSACTION_TYPE(TransactionType.class, "The type of transaction, such as Buy, Sell, Deposit, Withdrawal, " +
             "and so on"),
 
     //Tax Lot only

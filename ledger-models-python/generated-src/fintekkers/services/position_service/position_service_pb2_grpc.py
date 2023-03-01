@@ -16,7 +16,7 @@ class PositionStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Search = channel.unary_unary(
+        self.Search = channel.unary_stream(
                 '/fintekkers.services.position_service.Position/Search',
                 request_serializer=fintekkers_dot_requests_dot_position_dot_query__position__request__pb2.QueryPositionRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_position_dot_query__position__response__pb2.QueryPositionResponseProto.FromString,
@@ -49,7 +49,7 @@ class PositionServicer(object):
 
 def add_PositionServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Search': grpc.unary_unary_rpc_method_handler(
+            'Search': grpc.unary_stream_rpc_method_handler(
                     servicer.Search,
                     request_deserializer=fintekkers_dot_requests_dot_position_dot_query__position__request__pb2.QueryPositionRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_position_dot_query__position__response__pb2.QueryPositionResponseProto.SerializeToString,
@@ -80,7 +80,7 @@ class Position(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/fintekkers.services.position_service.Position/Search',
+        return grpc.experimental.unary_stream(request, target, '/fintekkers.services.position_service.Position/Search',
             fintekkers_dot_requests_dot_position_dot_query__position__request__pb2.QueryPositionRequestProto.SerializeToString,
             fintekkers_dot_requests_dot_position_dot_query__position__response__pb2.QueryPositionResponseProto.FromString,
             options, channel_credentials,

@@ -15,10 +15,10 @@ import fintekkers.models.position.PositionStatusProto;
 import fintekkers.models.security.SecurityTypeProto;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static common.models.postion.Field.PRODUCT_CLASS;
 
@@ -42,7 +42,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
      * @param security the fully formed security object
      * @param transactionType the transaction type
      * @param strategy strategy allocation if there is one
-     * @param asOf the zoned asof date
+     * @param asOf the zoned as of date
      */
     public Transaction(UUID id, Portfolio portfolio, Price price, LocalDate tradeDate, LocalDate settlementDate,
                        BigDecimal quantity, Security security, TransactionType transactionType, StrategyAllocation strategy,
@@ -106,8 +106,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     private Price price;
     private BigDecimal quantity;
     private Transaction parentTransaction;
-    private List<Transaction> childrenTransactions = new ArrayList<>();
-//    private Transaction cashTxn;
+    private final List<Transaction> childrenTransactions = new ArrayList<>();
 
     //Overridden methods
     @Override
@@ -217,7 +216,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return switch (field) {
             //Transaction Fields
             case ID -> getID();
-            case TRANSACTION_TYPE -> getTransactionType().name();
+            case TRANSACTION_TYPE -> getTransactionType();
             case TRADE_DATE -> getTradeDate();
             case SETTLEMENT_DATE -> getSettlementDate();
             case POSITION_STATUS -> getPositionStatus();
@@ -225,7 +224,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             case IS_CANCELLED -> isCancelled();
             //Security Fields
             case SECURITY -> getSecurity();
-            case PRODUCT_TYPE -> getSecurity().getProductType();
+            case PRODUCT_TYPE -> getSecurity().getProductType().name();
             case IDENTIFIER -> getSecurity().getSecurityId();
             case ASSET_CLASS -> getSecurity().getAssetClass();
             case PRODUCT_CLASS -> getSecurity().getField(PRODUCT_CLASS);
@@ -288,9 +287,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     @Override
     public Transaction getCashTransaction() {
         List<Transaction> cashTransactions =
-                getChildTransactions().stream().filter(t -> t.getSecurity().isCash()).collect(Collectors.toList());
-
-//        cashTransactions.stream().filter(t -> t.getParentTransaction().equals(this));
+                getChildTransactions().stream().filter(t -> t.getSecurity().isCash()).toList();
 
         if(cashTransactions.size() == 1)
             return cashTransactions.get(0);
@@ -321,11 +318,11 @@ public class Transaction extends RawDataModelObject implements ITransaction {
      * Tests equivalency of two transactions based on as of and ID. Note, there are additional timestamps for system
      * timestamps. The current thinking is those timestamps shouldn't be propagated up to this level as this check is
      * for business equivalency. Theoretically, 2 objects with the same 'as of' timestamp could exist with different
-     * timestaps. The guidance in this case would be to create objects with different as ofs, so that business users can
-     * see the change without needing to understand the system timstamps.
+     * timestamps. The guidance in this case would be to create objects with different as ofs, so that business users can
+     * see the change without needing to understand the system timestamps.
      *
      * E.g. if you're implementing an end of day concept. You may select a 'special' timestamp. My suggestion would be
-     * to have an end of day timestamp like 23:59:00.000, rather than 23:59:59.999. This way if you reclose the end of
+     * to have an end of day timestamp like 23:59:00.000, rather than 23:59:59.999. This way if you re-close the end of
      * day you could use 23:59:01.000 as a re-close. Then when listing objects to the user, it would make more sense
      * to them than, seeing 2 records with the same as of time, but have to understand and inspect the validFrom/validTo
      *
@@ -408,7 +405,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                 throw new RuntimeException("SHOULDN'T GET HERE");
         }
 
-        BigDecimal bookAmount = null;
+        BigDecimal bookAmount;
 
         switch(parentTransaction.getSecurity().getSecurityType()) {
             case BOND_SECURITY:
@@ -422,7 +419,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                     BigDecimal priceScaleFactor = ((BondSecurity) parentTransaction.getSecurity()).getPriceScaleFactor();
                     BigDecimal faceValue = ((BondSecurity) parentTransaction.getSecurity()).getFaceValue();
                     BigDecimal scaledPrice = parentTransaction.getPrice().getPrice().multiply(priceScaleFactor);
-                    BigDecimal numberBondUnits = parentTransaction.getQuantity().divide(faceValue);
+                    BigDecimal numberBondUnits = parentTransaction.getQuantity().divide(faceValue, RoundingMode.HALF_UP);
 
                     bookAmount = numberBondUnits.multiply(scaledPrice);
                 }
@@ -458,7 +455,6 @@ public class Transaction extends RawDataModelObject implements ITransaction {
      * @param transaction The parent transaction
      */
     public static void addDerivedTransactions(Transaction transaction) {
-        //TODO: Best to co-locate this with the transaction instantiator where we calculate the cash impacts, right?!
         boolean isBond = SecurityTypeProto.BOND_SECURITY.equals(transaction.getSecurity().getSecurityType())
                 || SecurityTypeProto.FRN.equals(transaction.getSecurity().getSecurityType())
                 || SecurityTypeProto.TIPS.equals(transaction.getSecurity().getSecurityType());
@@ -493,7 +489,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             Sell 20 bond ($100), face value -$2k, mature 2032
                 Mature bond of -80, trade-date of 2032 needs to be created
 
-            Do that via modifiers? I.e. there will be a mature of -100, and a mature of 20. Makese, sense right?
+            Do that via modifiers? I.e. there will be a mature of -100, and a mature of 20. Makes, sense right?
 
             When un-doing a transaction, we'll need to traverse the parent/child transactions and remove the associated
             tax lots.

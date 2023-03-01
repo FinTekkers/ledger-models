@@ -28,7 +28,7 @@ class SecurityStub(object):
                 request_serializer=fintekkers_dot_requests_dot_security_dot_query__security__request__pb2.QuerySecurityRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_security_dot_query__security__response__pb2.QuerySecurityResponseProto.FromString,
                 )
-        self.Search = channel.unary_unary(
+        self.Search = channel.unary_stream(
                 '/fintekkers.services.security_service.Security/Search',
                 request_serializer=fintekkers_dot_requests_dot_security_dot_query__security__request__pb2.QuerySecurityRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_security_dot_query__security__response__pb2.QuerySecurityResponseProto.FromString,
@@ -102,7 +102,7 @@ def add_SecurityServicer_to_server(servicer, server):
                     request_deserializer=fintekkers_dot_requests_dot_security_dot_query__security__request__pb2.QuerySecurityRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_security_dot_query__security__response__pb2.QuerySecurityResponseProto.SerializeToString,
             ),
-            'Search': grpc.unary_unary_rpc_method_handler(
+            'Search': grpc.unary_stream_rpc_method_handler(
                     servicer.Search,
                     request_deserializer=fintekkers_dot_requests_dot_security_dot_query__security__request__pb2.QuerySecurityRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_security_dot_query__security__response__pb2.QuerySecurityResponseProto.SerializeToString,
@@ -177,7 +177,7 @@ class Security(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/fintekkers.services.security_service.Security/Search',
+        return grpc.experimental.unary_stream(request, target, '/fintekkers.services.security_service.Security/Search',
             fintekkers_dot_requests_dot_security_dot_query__security__request__pb2.QuerySecurityRequestProto.SerializeToString,
             fintekkers_dot_requests_dot_security_dot_query__security__response__pb2.QuerySecurityResponseProto.FromString,
             options, channel_credentials,

@@ -77,7 +77,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
             case PRODUCT_CLASS:
                 return getProductClass();
             case PRODUCT_TYPE:
-                return getProductType();
+                return getProductType().name();
             case IDENTIFIER:
                 return getSecurityId();
             case TENOR:

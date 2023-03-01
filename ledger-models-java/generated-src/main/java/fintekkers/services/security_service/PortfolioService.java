@@ -39,7 +39,7 @@ public final class PortfolioService {
           com.google.protobuf.RpcCallback<fintekkers.requests.portfolio.QueryPortfolioResponseProto> done);
 
       /**
-       * <code>rpc Search(.fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (.fintekkers.requests.portfolio.QueryPortfolioResponseProto);</code>
+       * <code>rpc Search(.fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (stream .fintekkers.requests.portfolio.QueryPortfolioResponseProto);</code>
        */
       public abstract void search(
           com.google.protobuf.RpcController controller,
@@ -234,7 +234,7 @@ public final class PortfolioService {
         com.google.protobuf.RpcCallback<fintekkers.requests.portfolio.QueryPortfolioResponseProto> done);
 
     /**
-     * <code>rpc Search(.fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (.fintekkers.requests.portfolio.QueryPortfolioResponseProto);</code>
+     * <code>rpc Search(.fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (stream .fintekkers.requests.portfolio.QueryPortfolioResponseProto);</code>
      */
     public abstract void search(
         com.google.protobuf.RpcController controller,
@@ -619,7 +619,7 @@ public final class PortfolioService {
       "equests/portfolio/query_portfolio_reques" +
       "t.proto\032<fintekkers/requests/portfolio/q" +
       "uery_portfolio_response.proto\032-fintekker" +
-      "s/requests/util/errors/summary.proto2\250\006\n" +
+      "s/requests/util/errors/summary.proto2\253\006\n" +
       "\tPortfolio\022\211\001\n\016CreateOrUpdate\022:.fintekke" +
       "rs.requests.portfolio.CreatePortfolioReq" +
       "uestProto\032;.fintekkers.requests.portfoli" +
@@ -627,20 +627,20 @@ public final class PortfolioService {
       "IDs\0229.fintekkers.requests.portfolio.Quer" +
       "yPortfolioRequestProto\032:.fintekkers.requ" +
       "ests.portfolio.QueryPortfolioResponsePro" +
-      "to\022\177\n\006Search\0229.fintekkers.requests.portf" +
-      "olio.QueryPortfolioRequestProto\032:.fintek" +
-      "kers.requests.portfolio.QueryPortfolioRe" +
-      "sponseProto\022\200\001\n\007ListIDs\0229.fintekkers.req" +
-      "uests.portfolio.QueryPortfolioRequestPro" +
-      "to\032:.fintekkers.requests.portfolio.Query" +
-      "PortfolioResponseProto\022\203\001\n\026ValidateCreat" +
-      "eOrUpdate\022:.fintekkers.requests.portfoli" +
-      "o.CreatePortfolioRequestProto\032-.fintekke" +
-      "rs.requests.util.errors.SummaryProto\022\200\001\n" +
-      "\024ValidateQueryRequest\0229.fintekkers.reque" +
-      "sts.portfolio.QueryPortfolioRequestProto" +
-      "\032-.fintekkers.requests.util.errors.Summa" +
-      "ryProtoB\006\210\001\001\220\001\001b\006proto3"
+      "to\022\201\001\n\006Search\0229.fintekkers.requests.port" +
+      "folio.QueryPortfolioRequestProto\032:.finte" +
+      "kkers.requests.portfolio.QueryPortfolioR" +
+      "esponseProto0\001\022\200\001\n\007ListIDs\0229.fintekkers." +
+      "requests.portfolio.QueryPortfolioRequest" +
+      "Proto\032:.fintekkers.requests.portfolio.Qu" +
+      "eryPortfolioResponseProto\022\203\001\n\026ValidateCr" +
+      "eateOrUpdate\022:.fintekkers.requests.portf" +
+      "olio.CreatePortfolioRequestProto\032-.finte" +
+      "kkers.requests.util.errors.SummaryProto\022" +
+      "\200\001\n\024ValidateQueryRequest\0229.fintekkers.re" +
+      "quests.portfolio.QueryPortfolioRequestPr" +
+      "oto\032-.fintekkers.requests.util.errors.Su" +
+      "mmaryProtoB\006\210\001\001\220\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

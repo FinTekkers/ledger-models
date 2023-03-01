@@ -16,7 +16,7 @@ from fintekkers.requests.position import query_position_response_pb2 as fintekke
 from fintekkers.requests.util.errors import summary_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n;fintekkers/services/position-service/position_service.proto\x12$fintekkers.services.position_service\x1a\x39\x66intekkers/requests/position/query_position_request.proto\x1a:fintekkers/requests/position/query_position_response.proto\x1a-fintekkers/requests/util/errors/summary.proto2\x87\x02\n\x08Position\x12{\n\x06Search\x12\x37.fintekkers.requests.position.QueryPositionRequestProto\x1a\x38.fintekkers.requests.position.QueryPositionResponseProto\x12~\n\x14ValidateQueryRequest\x12\x37.fintekkers.requests.position.QueryPositionRequestProto\x1a-.fintekkers.requests.util.errors.SummaryProtoB\x06\x88\x01\x01\x90\x01\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n;fintekkers/services/position-service/position_service.proto\x12$fintekkers.services.position_service\x1a\x39\x66intekkers/requests/position/query_position_request.proto\x1a:fintekkers/requests/position/query_position_response.proto\x1a-fintekkers/requests/util/errors/summary.proto2\x89\x02\n\x08Position\x12}\n\x06Search\x12\x37.fintekkers.requests.position.QueryPositionRequestProto\x1a\x38.fintekkers.requests.position.QueryPositionResponseProto0\x01\x12~\n\x14ValidateQueryRequest\x12\x37.fintekkers.requests.position.QueryPositionRequestProto\x1a-.fintekkers.requests.util.errors.SummaryProtoB\x06\x88\x01\x01\x90\x01\x01\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.services.position_service.position_service_pb2', globals())
@@ -25,6 +25,6 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\210\001\001\220\001\001'
   _POSITION._serialized_start=268
-  _POSITION._serialized_end=531
+  _POSITION._serialized_end=533
 _builder.BuildServices(DESCRIPTOR, 'fintekkers.services.position_service.position_service_pb2', globals())
 # @@protoc_insertion_point(module_scope)

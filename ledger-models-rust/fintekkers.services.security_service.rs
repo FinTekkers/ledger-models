@@ -126,7 +126,9 @@ pub mod portfolio_client {
             >,
         ) -> Result<
             tonic::Response<
-                super::super::super::requests::portfolio::QueryPortfolioResponseProto,
+                tonic::codec::Streaming<
+                    super::super::super::requests::portfolio::QueryPortfolioResponseProto,
+                >,
             >,
             tonic::Status,
         > {
@@ -143,7 +145,7 @@ pub mod portfolio_client {
             let path = http::uri::PathAndQuery::from_static(
                 "/fintekkers.services.security_service.Portfolio/Search",
             );
-            self.inner.unary(request.into_request(), path, codec).await
+            self.inner.server_streaming(request.into_request(), path, codec).await
         }
         pub async fn list_i_ds(
             &mut self,
@@ -250,17 +252,21 @@ pub mod portfolio_server {
             >,
             tonic::Status,
         >;
+        /// Server streaming response type for the Search method.
+        type SearchStream: futures_core::Stream<
+                Item = Result<
+                    super::super::super::requests::portfolio::QueryPortfolioResponseProto,
+                    tonic::Status,
+                >,
+            >
+            + Send
+            + 'static;
         async fn search(
             &self,
             request: tonic::Request<
                 super::super::super::requests::portfolio::QueryPortfolioRequestProto,
             >,
-        ) -> Result<
-            tonic::Response<
-                super::super::super::requests::portfolio::QueryPortfolioResponseProto,
-            >,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<Self::SearchStream>, tonic::Status>;
         async fn list_i_ds(
             &self,
             request: tonic::Request<
@@ -439,12 +445,13 @@ pub mod portfolio_server {
                     struct SearchSvc<T: Portfolio>(pub Arc<T>);
                     impl<
                         T: Portfolio,
-                    > tonic::server::UnaryService<
+                    > tonic::server::ServerStreamingService<
                         super::super::super::requests::portfolio::QueryPortfolioRequestProto,
                     > for SearchSvc<T> {
                         type Response = super::super::super::requests::portfolio::QueryPortfolioResponseProto;
+                        type ResponseStream = T::SearchStream;
                         type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
+                            tonic::Response<Self::ResponseStream>,
                             tonic::Status,
                         >;
                         fn call(
@@ -470,7 +477,7 @@ pub mod portfolio_server {
                                 accept_compression_encodings,
                                 send_compression_encodings,
                             );
-                        let res = grpc.unary(method, req).await;
+                        let res = grpc.server_streaming(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
@@ -769,7 +776,9 @@ pub mod transaction_client {
             >,
         ) -> Result<
             tonic::Response<
-                super::super::super::requests::transaction::QueryTransactionResponseProto,
+                tonic::codec::Streaming<
+                    super::super::super::requests::transaction::QueryTransactionResponseProto,
+                >,
             >,
             tonic::Status,
         > {
@@ -786,7 +795,7 @@ pub mod transaction_client {
             let path = http::uri::PathAndQuery::from_static(
                 "/fintekkers.services.security_service.Transaction/Search",
             );
-            self.inner.unary(request.into_request(), path, codec).await
+            self.inner.server_streaming(request.into_request(), path, codec).await
         }
         pub async fn list_i_ds(
             &mut self,
@@ -893,17 +902,21 @@ pub mod transaction_server {
             >,
             tonic::Status,
         >;
+        /// Server streaming response type for the Search method.
+        type SearchStream: futures_core::Stream<
+                Item = Result<
+                    super::super::super::requests::transaction::QueryTransactionResponseProto,
+                    tonic::Status,
+                >,
+            >
+            + Send
+            + 'static;
         async fn search(
             &self,
             request: tonic::Request<
                 super::super::super::requests::transaction::QueryTransactionRequestProto,
             >,
-        ) -> Result<
-            tonic::Response<
-                super::super::super::requests::transaction::QueryTransactionResponseProto,
-            >,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<Self::SearchStream>, tonic::Status>;
         async fn list_i_ds(
             &self,
             request: tonic::Request<
@@ -1082,12 +1095,13 @@ pub mod transaction_server {
                     struct SearchSvc<T: Transaction>(pub Arc<T>);
                     impl<
                         T: Transaction,
-                    > tonic::server::UnaryService<
+                    > tonic::server::ServerStreamingService<
                         super::super::super::requests::transaction::QueryTransactionRequestProto,
                     > for SearchSvc<T> {
                         type Response = super::super::super::requests::transaction::QueryTransactionResponseProto;
+                        type ResponseStream = T::SearchStream;
                         type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
+                            tonic::Response<Self::ResponseStream>,
                             tonic::Status,
                         >;
                         fn call(
@@ -1113,7 +1127,7 @@ pub mod transaction_server {
                                 accept_compression_encodings,
                                 send_compression_encodings,
                             );
-                        let res = grpc.unary(method, req).await;
+                        let res = grpc.server_streaming(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
@@ -1412,7 +1426,9 @@ pub mod security_client {
             >,
         ) -> Result<
             tonic::Response<
-                super::super::super::requests::security::QuerySecurityResponseProto,
+                tonic::codec::Streaming<
+                    super::super::super::requests::security::QuerySecurityResponseProto,
+                >,
             >,
             tonic::Status,
         > {
@@ -1429,7 +1445,7 @@ pub mod security_client {
             let path = http::uri::PathAndQuery::from_static(
                 "/fintekkers.services.security_service.Security/Search",
             );
-            self.inner.unary(request.into_request(), path, codec).await
+            self.inner.server_streaming(request.into_request(), path, codec).await
         }
         pub async fn list_i_ds(
             &mut self,
@@ -1536,17 +1552,21 @@ pub mod security_server {
             >,
             tonic::Status,
         >;
+        /// Server streaming response type for the Search method.
+        type SearchStream: futures_core::Stream<
+                Item = Result<
+                    super::super::super::requests::security::QuerySecurityResponseProto,
+                    tonic::Status,
+                >,
+            >
+            + Send
+            + 'static;
         async fn search(
             &self,
             request: tonic::Request<
                 super::super::super::requests::security::QuerySecurityRequestProto,
             >,
-        ) -> Result<
-            tonic::Response<
-                super::super::super::requests::security::QuerySecurityResponseProto,
-            >,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<Self::SearchStream>, tonic::Status>;
         async fn list_i_ds(
             &self,
             request: tonic::Request<
@@ -1725,12 +1745,13 @@ pub mod security_server {
                     struct SearchSvc<T: Security>(pub Arc<T>);
                     impl<
                         T: Security,
-                    > tonic::server::UnaryService<
+                    > tonic::server::ServerStreamingService<
                         super::super::super::requests::security::QuerySecurityRequestProto,
                     > for SearchSvc<T> {
                         type Response = super::super::super::requests::security::QuerySecurityResponseProto;
+                        type ResponseStream = T::SearchStream;
                         type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
+                            tonic::Response<Self::ResponseStream>,
                             tonic::Status,
                         >;
                         fn call(
@@ -1756,7 +1777,7 @@ pub mod security_server {
                                 accept_compression_encodings,
                                 send_compression_encodings,
                             );
-                        let res = grpc.unary(method, req).await;
+                        let res = grpc.server_streaming(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)

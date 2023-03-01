@@ -15,7 +15,7 @@ service Portfolio {
     rpc CreateOrUpdate (fintekkers.requests.portfolio.CreatePortfolioRequestProto) returns (fintekkers.requests.portfolio.CreatePortfolioResponseProto);
 
     rpc GetByIDs (fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (fintekkers.requests.portfolio.QueryPortfolioResponseProto);
-    rpc Search (fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (fintekkers.requests.portfolio.QueryPortfolioResponseProto);
+    rpc Search (fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (stream fintekkers.requests.portfolio.QueryPortfolioResponseProto);
     rpc ListIDs (fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (fintekkers.requests.portfolio.QueryPortfolioResponseProto);
 
     rpc ValidateCreateOrUpdate (fintekkers.requests.portfolio.CreatePortfolioRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);

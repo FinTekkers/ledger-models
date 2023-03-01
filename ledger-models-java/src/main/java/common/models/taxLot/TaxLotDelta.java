@@ -92,7 +92,7 @@ public class TaxLotDelta extends RawDataModelObject implements IFinancialModelOb
             case POSITION_STATUS -> getPositionStatus();
             //Security fields
             case SECURITY -> getSecurity();
-            case PRODUCT_TYPE -> getSecurity().getProductType();
+            case PRODUCT_TYPE -> getSecurity().getProductType().name();
             case IDENTIFIER -> getSecurity().getSecurityId();
             case ASSET_CLASS -> getSecurity().getAssetClass();
             case PRODUCT_CLASS -> getSecurity().getField(PRODUCT_CLASS);

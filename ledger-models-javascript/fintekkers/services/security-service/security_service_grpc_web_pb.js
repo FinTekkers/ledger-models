@@ -216,7 +216,7 @@ proto.fintekkers.services.security_service.SecurityPromiseClient.prototype.getBy
  */
 const methodDescriptor_Security_Search = new grpc.web.MethodDescriptor(
   '/fintekkers.services.security_service.Security/Search',
-  grpc.web.MethodType.UNARY,
+  grpc.web.MethodType.SERVER_STREAMING,
   fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto,
   fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto,
   /**
@@ -231,37 +231,32 @@ const methodDescriptor_Security_Search = new grpc.web.MethodDescriptor(
 
 
 /**
- * @param {!proto.fintekkers.requests.security.QuerySecurityRequestProto} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!proto.fintekkers.requests.security.QuerySecurityRequestProto} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.fintekkers.requests.security.QuerySecurityResponseProto)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.security.QuerySecurityResponseProto>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.security.QuerySecurityResponseProto>}
  *     The XHR Node Readable Stream
  */
 proto.fintekkers.services.security_service.SecurityClient.prototype.search =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
       '/fintekkers.services.security_service.Security/Search',
       request,
       metadata || {},
-      methodDescriptor_Security_Search,
-      callback);
+      methodDescriptor_Security_Search);
 };
 
 
 /**
- * @param {!proto.fintekkers.requests.security.QuerySecurityRequestProto} request The
- *     request proto
+ * @param {!proto.fintekkers.requests.security.QuerySecurityRequestProto} request The request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.fintekkers.requests.security.QuerySecurityResponseProto>}
- *     Promise that resolves to the response
+ * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.security.QuerySecurityResponseProto>}
+ *     The XHR Node Readable Stream
  */
 proto.fintekkers.services.security_service.SecurityPromiseClient.prototype.search =
     function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
+  return this.client_.serverStreaming(this.hostname_ +
       '/fintekkers.services.security_service.Security/Search',
       request,
       metadata || {},

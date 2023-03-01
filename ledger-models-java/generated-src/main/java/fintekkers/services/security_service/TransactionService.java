@@ -39,7 +39,7 @@ public final class TransactionService {
           com.google.protobuf.RpcCallback<fintekkers.requests.transaction.QueryTransactionResponseProto> done);
 
       /**
-       * <code>rpc Search(.fintekkers.requests.transaction.QueryTransactionRequestProto) returns (.fintekkers.requests.transaction.QueryTransactionResponseProto);</code>
+       * <code>rpc Search(.fintekkers.requests.transaction.QueryTransactionRequestProto) returns (stream .fintekkers.requests.transaction.QueryTransactionResponseProto);</code>
        */
       public abstract void search(
           com.google.protobuf.RpcController controller,
@@ -234,7 +234,7 @@ public final class TransactionService {
         com.google.protobuf.RpcCallback<fintekkers.requests.transaction.QueryTransactionResponseProto> done);
 
     /**
-     * <code>rpc Search(.fintekkers.requests.transaction.QueryTransactionRequestProto) returns (.fintekkers.requests.transaction.QueryTransactionResponseProto);</code>
+     * <code>rpc Search(.fintekkers.requests.transaction.QueryTransactionRequestProto) returns (stream .fintekkers.requests.transaction.QueryTransactionResponseProto);</code>
      */
     public abstract void search(
         com.google.protobuf.RpcController controller,
@@ -620,7 +620,7 @@ public final class TransactionService {
       "ansaction_request.proto\032@fintekkers/requ" +
       "ests/transaction/query_transaction_respo" +
       "nse.proto\032-fintekkers/requests/util/erro" +
-      "rs/summary.proto2\323\006\n\013Transaction\022\221\001\n\016Cre" +
+      "rs/summary.proto2\325\006\n\013Transaction\022\221\001\n\016Cre" +
       "ateOrUpdate\022>.fintekkers.requests.transa" +
       "ction.CreateTransactionRequestProto\032?.fi" +
       "ntekkers.requests.transaction.CreateTran" +
@@ -628,21 +628,21 @@ public final class TransactionService {
       "ekkers.requests.transaction.QueryTransac" +
       "tionRequestProto\032>.fintekkers.requests.t" +
       "ransaction.QueryTransactionResponseProto" +
-      "\022\207\001\n\006Search\022=.fintekkers.requests.transa" +
+      "\022\211\001\n\006Search\022=.fintekkers.requests.transa" +
       "ction.QueryTransactionRequestProto\032>.fin" +
       "tekkers.requests.transaction.QueryTransa" +
-      "ctionResponseProto\022\210\001\n\007ListIDs\022=.fintekk" +
-      "ers.requests.transaction.QueryTransactio" +
-      "nRequestProto\032>.fintekkers.requests.tran" +
-      "saction.QueryTransactionResponseProto\022\207\001" +
-      "\n\026ValidateCreateOrUpdate\022>.fintekkers.re" +
-      "quests.transaction.CreateTransactionRequ" +
-      "estProto\032-.fintekkers.requests.util.erro" +
-      "rs.SummaryProto\022\204\001\n\024ValidateQueryRequest" +
-      "\022=.fintekkers.requests.transaction.Query" +
-      "TransactionRequestProto\032-.fintekkers.req" +
-      "uests.util.errors.SummaryProtoB\006\210\001\001\220\001\001b\006" +
-      "proto3"
+      "ctionResponseProto0\001\022\210\001\n\007ListIDs\022=.finte" +
+      "kkers.requests.transaction.QueryTransact" +
+      "ionRequestProto\032>.fintekkers.requests.tr" +
+      "ansaction.QueryTransactionResponseProto\022" +
+      "\207\001\n\026ValidateCreateOrUpdate\022>.fintekkers." +
+      "requests.transaction.CreateTransactionRe" +
+      "questProto\032-.fintekkers.requests.util.er" +
+      "rors.SummaryProto\022\204\001\n\024ValidateQueryReque" +
+      "st\022=.fintekkers.requests.transaction.Que" +
+      "ryTransactionRequestProto\032-.fintekkers.r" +
+      "equests.util.errors.SummaryProtoB\006\210\001\001\220\001\001" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

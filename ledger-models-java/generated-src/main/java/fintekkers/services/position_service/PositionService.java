@@ -27,7 +27,7 @@ public final class PositionService {
        *    rpc GetByIDs (position.QueryPositionRequestProto) returns (position.QueryPositionResponseProto);
        * </pre>
        *
-       * <code>rpc Search(.fintekkers.requests.position.QueryPositionRequestProto) returns (.fintekkers.requests.position.QueryPositionResponseProto);</code>
+       * <code>rpc Search(.fintekkers.requests.position.QueryPositionRequestProto) returns (stream .fintekkers.requests.position.QueryPositionResponseProto);</code>
        */
       public abstract void search(
           com.google.protobuf.RpcController controller,
@@ -142,7 +142,7 @@ public final class PositionService {
      *    rpc GetByIDs (position.QueryPositionRequestProto) returns (position.QueryPositionResponseProto);
      * </pre>
      *
-     * <code>rpc Search(.fintekkers.requests.position.QueryPositionRequestProto) returns (.fintekkers.requests.position.QueryPositionResponseProto);</code>
+     * <code>rpc Search(.fintekkers.requests.position.QueryPositionRequestProto) returns (stream .fintekkers.requests.position.QueryPositionResponseProto);</code>
      */
     public abstract void search(
         com.google.protobuf.RpcController controller,
@@ -348,14 +348,14 @@ public final class PositionService {
       "/position/query_position_request.proto\032:" +
       "fintekkers/requests/position/query_posit" +
       "ion_response.proto\032-fintekkers/requests/" +
-      "util/errors/summary.proto2\207\002\n\010Position\022{" +
+      "util/errors/summary.proto2\211\002\n\010Position\022}" +
       "\n\006Search\0227.fintekkers.requests.position." +
       "QueryPositionRequestProto\0328.fintekkers.r" +
       "equests.position.QueryPositionResponsePr" +
-      "oto\022~\n\024ValidateQueryRequest\0227.fintekkers" +
-      ".requests.position.QueryPositionRequestP" +
-      "roto\032-.fintekkers.requests.util.errors.S" +
-      "ummaryProtoB\006\210\001\001\220\001\001b\006proto3"
+      "oto0\001\022~\n\024ValidateQueryRequest\0227.fintekke" +
+      "rs.requests.position.QueryPositionReques" +
+      "tProto\032-.fintekkers.requests.util.errors" +
+      ".SummaryProtoB\006\210\001\001\220\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

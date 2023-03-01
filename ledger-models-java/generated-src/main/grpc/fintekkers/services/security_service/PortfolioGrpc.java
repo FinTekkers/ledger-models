@@ -84,7 +84,7 @@ public final class PortfolioGrpc {
       fullMethodName = SERVICE_NAME + '/' + "Search",
       requestType = fintekkers.requests.portfolio.QueryPortfolioRequestProto.class,
       responseType = fintekkers.requests.portfolio.QueryPortfolioResponseProto.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
   public static io.grpc.MethodDescriptor<fintekkers.requests.portfolio.QueryPortfolioRequestProto,
       fintekkers.requests.portfolio.QueryPortfolioResponseProto> getSearchMethod() {
     io.grpc.MethodDescriptor<fintekkers.requests.portfolio.QueryPortfolioRequestProto, fintekkers.requests.portfolio.QueryPortfolioResponseProto> getSearchMethod;
@@ -93,7 +93,7 @@ public final class PortfolioGrpc {
         if ((getSearchMethod = PortfolioGrpc.getSearchMethod) == null) {
           PortfolioGrpc.getSearchMethod = getSearchMethod =
               io.grpc.MethodDescriptor.<fintekkers.requests.portfolio.QueryPortfolioRequestProto, fintekkers.requests.portfolio.QueryPortfolioResponseProto>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "Search"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
@@ -309,7 +309,7 @@ public final class PortfolioGrpc {
                   this, METHODID_GET_BY_IDS)))
           .addMethod(
             getSearchMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
               new MethodHandlers<
                 fintekkers.requests.portfolio.QueryPortfolioRequestProto,
                 fintekkers.requests.portfolio.QueryPortfolioResponseProto>(
@@ -373,7 +373,7 @@ public final class PortfolioGrpc {
      */
     public void search(fintekkers.requests.portfolio.QueryPortfolioRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.portfolio.QueryPortfolioResponseProto> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
           getChannel().newCall(getSearchMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -432,8 +432,9 @@ public final class PortfolioGrpc {
 
     /**
      */
-    public fintekkers.requests.portfolio.QueryPortfolioResponseProto search(fintekkers.requests.portfolio.QueryPortfolioRequestProto request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public java.util.Iterator<fintekkers.requests.portfolio.QueryPortfolioResponseProto> search(
+        fintekkers.requests.portfolio.QueryPortfolioRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
           getChannel(), getSearchMethod(), getCallOptions(), request);
     }
 
@@ -487,14 +488,6 @@ public final class PortfolioGrpc {
         fintekkers.requests.portfolio.QueryPortfolioRequestProto request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetByIDsMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.portfolio.QueryPortfolioResponseProto> search(
-        fintekkers.requests.portfolio.QueryPortfolioRequestProto request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getSearchMethod(), getCallOptions()), request);
     }
 
     /**

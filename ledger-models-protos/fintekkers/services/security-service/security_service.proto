@@ -14,7 +14,7 @@ service Security {
     rpc CreateOrUpdate   (fintekkers.requests.security.CreateSecurityRequestProto) returns   (fintekkers.requests.security.CreateSecurityResponseProto);
 
     rpc GetByIDs   (fintekkers.requests.security.QuerySecurityRequestProto) returns   (fintekkers.requests.security.QuerySecurityResponseProto);
-    rpc Search   (fintekkers.requests.security.QuerySecurityRequestProto) returns   (fintekkers.requests.security.QuerySecurityResponseProto);
+    rpc Search   (fintekkers.requests.security.QuerySecurityRequestProto) returns   (stream fintekkers.requests.security.QuerySecurityResponseProto);
     rpc ListIDs   (fintekkers.requests.security.QuerySecurityRequestProto) returns   (fintekkers.requests.security.QuerySecurityResponseProto);
 
     rpc ValidateCreateOrUpdate   (fintekkers.requests.security.CreateSecurityRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);

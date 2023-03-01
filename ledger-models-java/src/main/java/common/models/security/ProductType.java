@@ -29,27 +29,4 @@ public enum ProductType {
     public String getLongName() {
         return longName;
     }
-
-    //    public static ProductType from(SecurityTypeProto proto) {
-//        switch (proto) {
-//            case CASH_SECURITY:
-//                return ProductType.CASH_SECURITY;
-//            case BOND_SECURITY:
-//                return ProductType.BOND_SECURITY;
-//            case FLOATING_RATE_BOND_SECURITY:
-//                return ProductType.FLOATING_RATE_BOND_SECURITY;
-//            case TIPS_BOND_SECURITY:
-//                return ProductType.TIPS_BOND_SECURITY;
-//            case EQUITY_SECURITY:
-//                return ProductType.EQUITY_SECURITY;
-//            case UNKNOWN_SECURITY_TYPE:
-//                return ProductType.SECURITY;
-//            default:
-//                throw new RuntimeException("No SecurityType found for "+ proto.name());
-//        }
-//    }
-//
-//    public static ProductType from(String securityType) {
-//        return ProductType.valueOf(securityType);
-//    }
 }

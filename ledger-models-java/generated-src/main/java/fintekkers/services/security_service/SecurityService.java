@@ -39,7 +39,7 @@ public final class SecurityService {
           com.google.protobuf.RpcCallback<fintekkers.requests.security.QuerySecurityResponseProto> done);
 
       /**
-       * <code>rpc Search(.fintekkers.requests.security.QuerySecurityRequestProto) returns (.fintekkers.requests.security.QuerySecurityResponseProto);</code>
+       * <code>rpc Search(.fintekkers.requests.security.QuerySecurityRequestProto) returns (stream .fintekkers.requests.security.QuerySecurityResponseProto);</code>
        */
       public abstract void search(
           com.google.protobuf.RpcController controller,
@@ -234,7 +234,7 @@ public final class SecurityService {
         com.google.protobuf.RpcCallback<fintekkers.requests.security.QuerySecurityResponseProto> done);
 
     /**
-     * <code>rpc Search(.fintekkers.requests.security.QuerySecurityRequestProto) returns (.fintekkers.requests.security.QuerySecurityResponseProto);</code>
+     * <code>rpc Search(.fintekkers.requests.security.QuerySecurityRequestProto) returns (stream .fintekkers.requests.security.QuerySecurityResponseProto);</code>
      */
     public abstract void search(
         com.google.protobuf.RpcController controller,
@@ -619,27 +619,27 @@ public final class SecurityService {
       "security/create_security_request.proto\032;" +
       "fintekkers/requests/security/create_secu" +
       "rity_response.proto\032-fintekkers/requests" +
-      "/util/errors/summary.proto2\220\006\n\010Security\022" +
+      "/util/errors/summary.proto2\222\006\n\010Security\022" +
       "\205\001\n\016CreateOrUpdate\0228.fintekkers.requests" +
       ".security.CreateSecurityRequestProto\0329.f" +
       "intekkers.requests.security.CreateSecuri" +
       "tyResponseProto\022}\n\010GetByIDs\0227.fintekkers" +
       ".requests.security.QuerySecurityRequestP" +
       "roto\0328.fintekkers.requests.security.Quer" +
-      "ySecurityResponseProto\022{\n\006Search\0227.finte" +
+      "ySecurityResponseProto\022}\n\006Search\0227.finte" +
       "kkers.requests.security.QuerySecurityReq" +
       "uestProto\0328.fintekkers.requests.security" +
-      ".QuerySecurityResponseProto\022|\n\007ListIDs\0227" +
-      ".fintekkers.requests.security.QuerySecur" +
-      "ityRequestProto\0328.fintekkers.requests.se" +
-      "curity.QuerySecurityResponseProto\022\201\001\n\026Va" +
-      "lidateCreateOrUpdate\0228.fintekkers.reques" +
-      "ts.security.CreateSecurityRequestProto\032-" +
-      ".fintekkers.requests.util.errors.Summary" +
-      "Proto\022~\n\024ValidateQueryRequest\0227.fintekke" +
-      "rs.requests.security.QuerySecurityReques" +
-      "tProto\032-.fintekkers.requests.util.errors" +
-      ".SummaryProtoB\006\210\001\001\220\001\001b\006proto3"
+      ".QuerySecurityResponseProto0\001\022|\n\007ListIDs" +
+      "\0227.fintekkers.requests.security.QuerySec" +
+      "urityRequestProto\0328.fintekkers.requests." +
+      "security.QuerySecurityResponseProto\022\201\001\n\026" +
+      "ValidateCreateOrUpdate\0228.fintekkers.requ" +
+      "ests.security.CreateSecurityRequestProto" +
+      "\032-.fintekkers.requests.util.errors.Summa" +
+      "ryProto\022~\n\024ValidateQueryRequest\0227.fintek" +
+      "kers.requests.security.QuerySecurityRequ" +
+      "estProto\032-.fintekkers.requests.util.erro" +
+      "rs.SummaryProtoB\006\210\001\001\220\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

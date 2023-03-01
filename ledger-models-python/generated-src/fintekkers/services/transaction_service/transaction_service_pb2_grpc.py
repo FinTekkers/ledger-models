@@ -28,7 +28,7 @@ class TransactionStub(object):
                 request_serializer=fintekkers_dot_requests_dot_transaction_dot_query__transaction__request__pb2.QueryTransactionRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_transaction_dot_query__transaction__response__pb2.QueryTransactionResponseProto.FromString,
                 )
-        self.Search = channel.unary_unary(
+        self.Search = channel.unary_stream(
                 '/fintekkers.services.security_service.Transaction/Search',
                 request_serializer=fintekkers_dot_requests_dot_transaction_dot_query__transaction__request__pb2.QueryTransactionRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_transaction_dot_query__transaction__response__pb2.QueryTransactionResponseProto.FromString,
@@ -102,7 +102,7 @@ def add_TransactionServicer_to_server(servicer, server):
                     request_deserializer=fintekkers_dot_requests_dot_transaction_dot_query__transaction__request__pb2.QueryTransactionRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_transaction_dot_query__transaction__response__pb2.QueryTransactionResponseProto.SerializeToString,
             ),
-            'Search': grpc.unary_unary_rpc_method_handler(
+            'Search': grpc.unary_stream_rpc_method_handler(
                     servicer.Search,
                     request_deserializer=fintekkers_dot_requests_dot_transaction_dot_query__transaction__request__pb2.QueryTransactionRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_transaction_dot_query__transaction__response__pb2.QueryTransactionResponseProto.SerializeToString,
@@ -177,7 +177,7 @@ class Transaction(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/fintekkers.services.security_service.Transaction/Search',
+        return grpc.experimental.unary_stream(request, target, '/fintekkers.services.security_service.Transaction/Search',
             fintekkers_dot_requests_dot_transaction_dot_query__transaction__request__pb2.QueryTransactionRequestProto.SerializeToString,
             fintekkers_dot_requests_dot_transaction_dot_query__transaction__response__pb2.QueryTransactionResponseProto.FromString,
             options, channel_credentials,

@@ -90,7 +90,7 @@ proto.fintekkers.services.position_service.PositionPromiseClient =
  */
 const methodDescriptor_Position_Search = new grpc.web.MethodDescriptor(
   '/fintekkers.services.position_service.Position/Search',
-  grpc.web.MethodType.UNARY,
+  grpc.web.MethodType.SERVER_STREAMING,
   fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto,
   fintekkers_requests_position_query_position_response_pb.QueryPositionResponseProto,
   /**
@@ -105,37 +105,32 @@ const methodDescriptor_Position_Search = new grpc.web.MethodDescriptor(
 
 
 /**
- * @param {!proto.fintekkers.requests.position.QueryPositionRequestProto} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!proto.fintekkers.requests.position.QueryPositionRequestProto} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.fintekkers.requests.position.QueryPositionResponseProto)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.position.QueryPositionResponseProto>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.position.QueryPositionResponseProto>}
  *     The XHR Node Readable Stream
  */
 proto.fintekkers.services.position_service.PositionClient.prototype.search =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
       '/fintekkers.services.position_service.Position/Search',
       request,
       metadata || {},
-      methodDescriptor_Position_Search,
-      callback);
+      methodDescriptor_Position_Search);
 };
 
 
 /**
- * @param {!proto.fintekkers.requests.position.QueryPositionRequestProto} request The
- *     request proto
+ * @param {!proto.fintekkers.requests.position.QueryPositionRequestProto} request The request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.fintekkers.requests.position.QueryPositionResponseProto>}
- *     Promise that resolves to the response
+ * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.position.QueryPositionResponseProto>}
+ *     The XHR Node Readable Stream
  */
 proto.fintekkers.services.position_service.PositionPromiseClient.prototype.search =
     function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
+  return this.client_.serverStreaming(this.hostname_ +
       '/fintekkers.services.position_service.Position/Search',
       request,
       metadata || {},

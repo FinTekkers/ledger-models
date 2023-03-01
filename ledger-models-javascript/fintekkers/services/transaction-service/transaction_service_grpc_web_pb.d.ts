@@ -28,9 +28,7 @@ export class TransactionClient {
 
   search(
     request: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto,
-    metadata: grpcWeb.Metadata | undefined,
-    callback: (err: grpcWeb.RpcError,
-               response: fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto) => void
+    metadata?: grpcWeb.Metadata
   ): grpcWeb.ClientReadableStream<fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto>;
 
   listIDs(
@@ -74,7 +72,7 @@ export class TransactionPromiseClient {
   search(
     request: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto,
     metadata?: grpcWeb.Metadata
-  ): Promise<fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto>;
+  ): grpcWeb.ClientReadableStream<fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto>;
 
   listIDs(
     request: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto,

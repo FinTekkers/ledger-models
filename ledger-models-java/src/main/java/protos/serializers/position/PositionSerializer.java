@@ -8,9 +8,9 @@ import common.models.JSONFieldNames;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.postion.Position;
+import common.models.transaction.TransactionType;
 import fintekkers.models.position.*;
-import fintekkers.models.security.SecurityTypeProto;
-import org.apache.commons.lang3.StringUtils;
+import fintekkers.models.transaction.TransactionTypeProto;
 import org.apache.commons.text.WordUtils;
 import protos.serializers.IRawDataModelObjectSerializer;
 import protos.serializers.util.json.JsonSerializationUtil;
@@ -45,7 +45,7 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
     }
 
     @Override
-    public PositionProto serialize( Position position) {
+    public PositionProto serialize(Position position) {
         PositionProto.Builder builder = PositionProto.newBuilder()
             .setObjectClass(Position.class.getSimpleName())
             .setVersion("0.0.1")
@@ -74,27 +74,18 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
 
     }
 
-    
     public static FieldMapEntry getFieldMapEntry(Field field, PositionFilterOperator operator, Object fieldValue) {
         FieldMapEntry.Builder fieldBuilder =
                 FieldMapEntry.newBuilder().setField(FieldProto.valueOf(field.name()));
 
-        /*if(field.getType().isEnum()) {
-            //If enum then we serialize as a string
-            fieldBuilder.setEnumValue(fieldValue.toString());
-        }*/ /*else if (Field.IDENTIFIER.equals(field)){
-            assert Identifier.class.equals(fieldValue.getClass());
-            Identifier identifier = (Identifier) fieldValue;
-            IdentifierProto identifierProto = IdentifierProto.newBuilder()
-                            .setIdentifierType(IdentifierTypeProto.valueOf(identifier.getIdentifierType().name()))
-                                    .setIdentifierValue(identifier.getIdentifier()).build();
-            fieldBuilder.setIdentifier(identifierProto);
-        } */
-//        else
-        if(fieldValue instanceof ProtocolMessageEnum)
-            fieldBuilder.setEnumValue(((ProtocolMessageEnum)fieldValue).getNumber());
+        Object processedFieldValue = fieldValue;
+        if (fieldValue instanceof TransactionType)
+            processedFieldValue = TransactionTypeProto.valueOf(((TransactionType)fieldValue).name());
+
+        if(processedFieldValue instanceof ProtocolMessageEnum)
+            fieldBuilder.setEnumValue(((ProtocolMessageEnum)processedFieldValue).getNumber());
         else if (fieldValue != null){
-            Any valuePacked = ProtoSerializationUtil.serializeToAny(fieldValue);
+            Any valuePacked = ProtoSerializationUtil.serializeToAny(processedFieldValue);
             fieldBuilder.setFieldValuePacked(valuePacked);
         }
 
@@ -283,13 +274,6 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
         //Quotes are getting added by JsonWriter.java. Removing them here. Ideally we'd remove this!
         if("UUIDProto".equals(msgProto.getDescriptorForType().getName())) {
             string = string.replaceAll("\"", "");
-        }
-
-        JsonElement jsonObject;
-        try {
-            jsonObject = gson.fromJson(string, JsonObject.class);
-        } catch (JsonSyntaxException e2) {
-            jsonObject = new JsonPrimitive(string);
         }
 
         fieldMap.add(FIELD_DISPLAY_VALUE, new JsonPrimitive(deserialized.toString()));

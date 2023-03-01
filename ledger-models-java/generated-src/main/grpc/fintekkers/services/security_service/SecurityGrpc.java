@@ -84,7 +84,7 @@ public final class SecurityGrpc {
       fullMethodName = SERVICE_NAME + '/' + "Search",
       requestType = fintekkers.requests.security.QuerySecurityRequestProto.class,
       responseType = fintekkers.requests.security.QuerySecurityResponseProto.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
   public static io.grpc.MethodDescriptor<fintekkers.requests.security.QuerySecurityRequestProto,
       fintekkers.requests.security.QuerySecurityResponseProto> getSearchMethod() {
     io.grpc.MethodDescriptor<fintekkers.requests.security.QuerySecurityRequestProto, fintekkers.requests.security.QuerySecurityResponseProto> getSearchMethod;
@@ -93,7 +93,7 @@ public final class SecurityGrpc {
         if ((getSearchMethod = SecurityGrpc.getSearchMethod) == null) {
           SecurityGrpc.getSearchMethod = getSearchMethod =
               io.grpc.MethodDescriptor.<fintekkers.requests.security.QuerySecurityRequestProto, fintekkers.requests.security.QuerySecurityResponseProto>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "Search"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
@@ -309,7 +309,7 @@ public final class SecurityGrpc {
                   this, METHODID_GET_BY_IDS)))
           .addMethod(
             getSearchMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
               new MethodHandlers<
                 fintekkers.requests.security.QuerySecurityRequestProto,
                 fintekkers.requests.security.QuerySecurityResponseProto>(
@@ -373,7 +373,7 @@ public final class SecurityGrpc {
      */
     public void search(fintekkers.requests.security.QuerySecurityRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.security.QuerySecurityResponseProto> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
           getChannel().newCall(getSearchMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -432,8 +432,9 @@ public final class SecurityGrpc {
 
     /**
      */
-    public fintekkers.requests.security.QuerySecurityResponseProto search(fintekkers.requests.security.QuerySecurityRequestProto request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public java.util.Iterator<fintekkers.requests.security.QuerySecurityResponseProto> search(
+        fintekkers.requests.security.QuerySecurityRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
           getChannel(), getSearchMethod(), getCallOptions(), request);
     }
 
@@ -487,14 +488,6 @@ public final class SecurityGrpc {
         fintekkers.requests.security.QuerySecurityRequestProto request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetByIDsMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.security.QuerySecurityResponseProto> search(
-        fintekkers.requests.security.QuerySecurityRequestProto request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getSearchMethod(), getCallOptions()), request);
     }
 
     /**

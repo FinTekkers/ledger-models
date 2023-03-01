@@ -12,9 +12,7 @@ export class PositionClient {
 
   search(
     request: fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto,
-    metadata: grpcWeb.Metadata | undefined,
-    callback: (err: grpcWeb.RpcError,
-               response: fintekkers_requests_position_query_position_response_pb.QueryPositionResponseProto) => void
+    metadata?: grpcWeb.Metadata
   ): grpcWeb.ClientReadableStream<fintekkers_requests_position_query_position_response_pb.QueryPositionResponseProto>;
 
   validateQueryRequest(
@@ -34,7 +32,7 @@ export class PositionPromiseClient {
   search(
     request: fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto,
     metadata?: grpcWeb.Metadata
-  ): Promise<fintekkers_requests_position_query_position_response_pb.QueryPositionResponseProto>;
+  ): grpcWeb.ClientReadableStream<fintekkers_requests_position_query_position_response_pb.QueryPositionResponseProto>;
 
   validateQueryRequest(
     request: fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto,

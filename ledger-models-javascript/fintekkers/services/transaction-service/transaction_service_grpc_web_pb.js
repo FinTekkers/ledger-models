@@ -216,7 +216,7 @@ proto.fintekkers.services.security_service.TransactionPromiseClient.prototype.ge
  */
 const methodDescriptor_Transaction_Search = new grpc.web.MethodDescriptor(
   '/fintekkers.services.security_service.Transaction/Search',
-  grpc.web.MethodType.UNARY,
+  grpc.web.MethodType.SERVER_STREAMING,
   fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto,
   fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto,
   /**
@@ -231,37 +231,32 @@ const methodDescriptor_Transaction_Search = new grpc.web.MethodDescriptor(
 
 
 /**
- * @param {!proto.fintekkers.requests.transaction.QueryTransactionRequestProto} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!proto.fintekkers.requests.transaction.QueryTransactionRequestProto} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.fintekkers.requests.transaction.QueryTransactionResponseProto)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.transaction.QueryTransactionResponseProto>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.transaction.QueryTransactionResponseProto>}
  *     The XHR Node Readable Stream
  */
 proto.fintekkers.services.security_service.TransactionClient.prototype.search =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
       '/fintekkers.services.security_service.Transaction/Search',
       request,
       metadata || {},
-      methodDescriptor_Transaction_Search,
-      callback);
+      methodDescriptor_Transaction_Search);
 };
 
 
 /**
- * @param {!proto.fintekkers.requests.transaction.QueryTransactionRequestProto} request The
- *     request proto
+ * @param {!proto.fintekkers.requests.transaction.QueryTransactionRequestProto} request The request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.fintekkers.requests.transaction.QueryTransactionResponseProto>}
- *     Promise that resolves to the response
+ * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.transaction.QueryTransactionResponseProto>}
+ *     The XHR Node Readable Stream
  */
 proto.fintekkers.services.security_service.TransactionPromiseClient.prototype.search =
     function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
+  return this.client_.serverStreaming(this.hostname_ +
       '/fintekkers.services.security_service.Transaction/Search',
       request,
       metadata || {},

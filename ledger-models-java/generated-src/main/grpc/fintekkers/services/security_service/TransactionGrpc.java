@@ -84,7 +84,7 @@ public final class TransactionGrpc {
       fullMethodName = SERVICE_NAME + '/' + "Search",
       requestType = fintekkers.requests.transaction.QueryTransactionRequestProto.class,
       responseType = fintekkers.requests.transaction.QueryTransactionResponseProto.class,
-      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+      methodType = io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
   public static io.grpc.MethodDescriptor<fintekkers.requests.transaction.QueryTransactionRequestProto,
       fintekkers.requests.transaction.QueryTransactionResponseProto> getSearchMethod() {
     io.grpc.MethodDescriptor<fintekkers.requests.transaction.QueryTransactionRequestProto, fintekkers.requests.transaction.QueryTransactionResponseProto> getSearchMethod;
@@ -93,7 +93,7 @@ public final class TransactionGrpc {
         if ((getSearchMethod = TransactionGrpc.getSearchMethod) == null) {
           TransactionGrpc.getSearchMethod = getSearchMethod =
               io.grpc.MethodDescriptor.<fintekkers.requests.transaction.QueryTransactionRequestProto, fintekkers.requests.transaction.QueryTransactionResponseProto>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "Search"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
@@ -309,7 +309,7 @@ public final class TransactionGrpc {
                   this, METHODID_GET_BY_IDS)))
           .addMethod(
             getSearchMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
+            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
               new MethodHandlers<
                 fintekkers.requests.transaction.QueryTransactionRequestProto,
                 fintekkers.requests.transaction.QueryTransactionResponseProto>(
@@ -373,7 +373,7 @@ public final class TransactionGrpc {
      */
     public void search(fintekkers.requests.transaction.QueryTransactionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.transaction.QueryTransactionResponseProto> responseObserver) {
-      io.grpc.stub.ClientCalls.asyncUnaryCall(
+      io.grpc.stub.ClientCalls.asyncServerStreamingCall(
           getChannel().newCall(getSearchMethod(), getCallOptions()), request, responseObserver);
     }
 
@@ -432,8 +432,9 @@ public final class TransactionGrpc {
 
     /**
      */
-    public fintekkers.requests.transaction.QueryTransactionResponseProto search(fintekkers.requests.transaction.QueryTransactionRequestProto request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public java.util.Iterator<fintekkers.requests.transaction.QueryTransactionResponseProto> search(
+        fintekkers.requests.transaction.QueryTransactionRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingServerStreamingCall(
           getChannel(), getSearchMethod(), getCallOptions(), request);
     }
 
@@ -487,14 +488,6 @@ public final class TransactionGrpc {
         fintekkers.requests.transaction.QueryTransactionRequestProto request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetByIDsMethod(), getCallOptions()), request);
-    }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.transaction.QueryTransactionResponseProto> search(
-        fintekkers.requests.transaction.QueryTransactionRequestProto request) {
-      return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getSearchMethod(), getCallOptions()), request);
     }
 
     /**

@@ -28,9 +28,7 @@ export class PortfolioClient {
 
   search(
     request: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto,
-    metadata: grpcWeb.Metadata | undefined,
-    callback: (err: grpcWeb.RpcError,
-               response: fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto) => void
+    metadata?: grpcWeb.Metadata
   ): grpcWeb.ClientReadableStream<fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto>;
 
   listIDs(
@@ -74,7 +72,7 @@ export class PortfolioPromiseClient {
   search(
     request: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto,
     metadata?: grpcWeb.Metadata
-  ): Promise<fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto>;
+  ): grpcWeb.ClientReadableStream<fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto>;
 
   listIDs(
     request: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto,

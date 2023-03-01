@@ -216,7 +216,7 @@ proto.fintekkers.services.security_service.PortfolioPromiseClient.prototype.getB
  */
 const methodDescriptor_Portfolio_Search = new grpc.web.MethodDescriptor(
   '/fintekkers.services.security_service.Portfolio/Search',
-  grpc.web.MethodType.UNARY,
+  grpc.web.MethodType.SERVER_STREAMING,
   fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto,
   fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto,
   /**
@@ -231,37 +231,32 @@ const methodDescriptor_Portfolio_Search = new grpc.web.MethodDescriptor(
 
 
 /**
- * @param {!proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {!proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto>}
  *     The XHR Node Readable Stream
  */
 proto.fintekkers.services.security_service.PortfolioClient.prototype.search =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
       '/fintekkers.services.security_service.Portfolio/Search',
       request,
       metadata || {},
-      methodDescriptor_Portfolio_Search,
-      callback);
+      methodDescriptor_Portfolio_Search);
 };
 
 
 /**
- * @param {!proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto} request The
- *     request proto
+ * @param {!proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto} request The request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto>}
- *     Promise that resolves to the response
+ * @return {!grpc.web.ClientReadableStream<!proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto>}
+ *     The XHR Node Readable Stream
  */
 proto.fintekkers.services.security_service.PortfolioPromiseClient.prototype.search =
     function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
+  return this.client_.serverStreaming(this.hostname_ +
       '/fintekkers.services.security_service.Portfolio/Search',
       request,
       metadata || {},
