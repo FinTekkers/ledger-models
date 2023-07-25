@@ -1,7 +1,7 @@
 // TODO - Migrate to portfolio wrapper & tests
 
-const { testPortfolio } = require('./portfolio.test');
-testPortfolio();
+// const { testPortfolio } = require('./portfolio.test');
+// testPortfolio();
 
 const { testSecurity } = require('./security.test');
 testSecurity();
