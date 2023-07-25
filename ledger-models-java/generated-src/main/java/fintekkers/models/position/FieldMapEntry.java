@@ -75,6 +75,12 @@ private static final long serialVersionUID = 0L;
             fieldMapValueOneOf_ = input.readInt32();
             break;
           }
+          case 50: {
+            java.lang.String s = input.readStringRequireUtf8();
+            fieldMapValueOneOfCase_ = 6;
+            fieldMapValueOneOf_ = s;
+            break;
+          }
           case 160: {
             int rawValue = input.readEnum();
 
@@ -120,6 +126,7 @@ private static final long serialVersionUID = 0L;
           com.google.protobuf.AbstractMessage.InternalOneOfEnum {
     FIELD_VALUE_PACKED(4),
     ENUM_VALUE(5),
+    STRING_VALUE(6),
     FIELDMAPVALUEONEOF_NOT_SET(0);
     private final int value;
     private FieldMapValueOneOfCase(int value) {
@@ -139,6 +146,7 @@ private static final long serialVersionUID = 0L;
       switch (value) {
         case 4: return FIELD_VALUE_PACKED;
         case 5: return ENUM_VALUE;
+        case 6: return STRING_VALUE;
         case 0: return FIELDMAPVALUEONEOF_NOT_SET;
         default: return null;
       }
@@ -175,6 +183,10 @@ private static final long serialVersionUID = 0L;
 
   public static final int FIELD_VALUE_PACKED_FIELD_NUMBER = 4;
   /**
+   * <pre>
+   *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+   * </pre>
+   *
    * <code>.google.protobuf.Any field_value_packed = 4;</code>
    * @return Whether the fieldValuePacked field is set.
    */
@@ -183,6 +195,10 @@ private static final long serialVersionUID = 0L;
     return fieldMapValueOneOfCase_ == 4;
   }
   /**
+   * <pre>
+   *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+   * </pre>
+   *
    * <code>.google.protobuf.Any field_value_packed = 4;</code>
    * @return The fieldValuePacked.
    */
@@ -194,6 +210,10 @@ private static final long serialVersionUID = 0L;
     return com.google.protobuf.Any.getDefaultInstance();
   }
   /**
+   * <pre>
+   *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+   * </pre>
+   *
    * <code>.google.protobuf.Any field_value_packed = 4;</code>
    */
   @java.lang.Override
@@ -206,6 +226,10 @@ private static final long serialVersionUID = 0L;
 
   public static final int ENUM_VALUE_FIELD_NUMBER = 5;
   /**
+   * <pre>
+   *If the field is an enum type, then we use the number to denote which value it is
+   * </pre>
+   *
    * <code>int32 enum_value = 5;</code>
    * @return The enumValue.
    */
@@ -215,6 +239,59 @@ private static final long serialVersionUID = 0L;
       return (java.lang.Integer) fieldMapValueOneOf_;
     }
     return 0;
+  }
+
+  public static final int STRING_VALUE_FIELD_NUMBER = 6;
+  /**
+   * <pre>
+   *If the field is a string type, we just serialize the string (packing has an overhead)
+   * </pre>
+   *
+   * <code>string string_value = 6;</code>
+   * @return The stringValue.
+   */
+  public java.lang.String getStringValue() {
+    java.lang.Object ref = "";
+    if (fieldMapValueOneOfCase_ == 6) {
+      ref = fieldMapValueOneOf_;
+    }
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      if (fieldMapValueOneOfCase_ == 6) {
+        fieldMapValueOneOf_ = s;
+      }
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   *If the field is a string type, we just serialize the string (packing has an overhead)
+   * </pre>
+   *
+   * <code>string string_value = 6;</code>
+   * @return The bytes for stringValue.
+   */
+  public com.google.protobuf.ByteString
+      getStringValueBytes() {
+    java.lang.Object ref = "";
+    if (fieldMapValueOneOfCase_ == 6) {
+      ref = fieldMapValueOneOf_;
+    }
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      if (fieldMapValueOneOfCase_ == 6) {
+        fieldMapValueOneOf_ = b;
+      }
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   public static final int OPERATOR_FIELD_NUMBER = 20;
@@ -268,6 +345,9 @@ private static final long serialVersionUID = 0L;
       output.writeInt32(
           5, (int)((java.lang.Integer) fieldMapValueOneOf_));
     }
+    if (fieldMapValueOneOfCase_ == 6) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 6, fieldMapValueOneOf_);
+    }
     if (operator_ != fintekkers.models.position.PositionFilterOperator.UNKNOWN_OPERATOR.getNumber()) {
       output.writeEnum(20, operator_);
     }
@@ -292,6 +372,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(
             5, (int)((java.lang.Integer) fieldMapValueOneOf_));
+    }
+    if (fieldMapValueOneOfCase_ == 6) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(6, fieldMapValueOneOf_);
     }
     if (operator_ != fintekkers.models.position.PositionFilterOperator.UNKNOWN_OPERATOR.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
@@ -324,6 +407,10 @@ private static final long serialVersionUID = 0L;
         if (getEnumValue()
             != other.getEnumValue()) return false;
         break;
+      case 6:
+        if (!getStringValue()
+            .equals(other.getStringValue())) return false;
+        break;
       case 0:
       default:
     }
@@ -350,6 +437,10 @@ private static final long serialVersionUID = 0L;
       case 5:
         hash = (37 * hash) + ENUM_VALUE_FIELD_NUMBER;
         hash = (53 * hash) + getEnumValue();
+        break;
+      case 6:
+        hash = (37 * hash) + STRING_VALUE_FIELD_NUMBER;
+        hash = (53 * hash) + getStringValue().hashCode();
         break;
       case 0:
       default:
@@ -530,6 +621,9 @@ private static final long serialVersionUID = 0L;
       if (fieldMapValueOneOfCase_ == 5) {
         result.fieldMapValueOneOf_ = fieldMapValueOneOf_;
       }
+      if (fieldMapValueOneOfCase_ == 6) {
+        result.fieldMapValueOneOf_ = fieldMapValueOneOf_;
+      }
       result.operator_ = operator_;
       result.fieldMapValueOneOfCase_ = fieldMapValueOneOfCase_;
       onBuilt();
@@ -593,6 +687,12 @@ private static final long serialVersionUID = 0L;
         }
         case ENUM_VALUE: {
           setEnumValue(other.getEnumValue());
+          break;
+        }
+        case STRING_VALUE: {
+          fieldMapValueOneOfCase_ = 6;
+          fieldMapValueOneOf_ = other.fieldMapValueOneOf_;
+          onChanged();
           break;
         }
         case FIELDMAPVALUEONEOF_NOT_SET: {
@@ -700,6 +800,10 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         com.google.protobuf.Any, com.google.protobuf.Any.Builder, com.google.protobuf.AnyOrBuilder> fieldValuePackedBuilder_;
     /**
+     * <pre>
+     *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+     * </pre>
+     *
      * <code>.google.protobuf.Any field_value_packed = 4;</code>
      * @return Whether the fieldValuePacked field is set.
      */
@@ -708,6 +812,10 @@ private static final long serialVersionUID = 0L;
       return fieldMapValueOneOfCase_ == 4;
     }
     /**
+     * <pre>
+     *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+     * </pre>
+     *
      * <code>.google.protobuf.Any field_value_packed = 4;</code>
      * @return The fieldValuePacked.
      */
@@ -726,6 +834,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+     * </pre>
+     *
      * <code>.google.protobuf.Any field_value_packed = 4;</code>
      */
     public Builder setFieldValuePacked(com.google.protobuf.Any value) {
@@ -742,6 +854,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+     * </pre>
+     *
      * <code>.google.protobuf.Any field_value_packed = 4;</code>
      */
     public Builder setFieldValuePacked(
@@ -756,6 +872,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+     * </pre>
+     *
      * <code>.google.protobuf.Any field_value_packed = 4;</code>
      */
     public Builder mergeFieldValuePacked(com.google.protobuf.Any value) {
@@ -778,6 +898,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+     * </pre>
+     *
      * <code>.google.protobuf.Any field_value_packed = 4;</code>
      */
     public Builder clearFieldValuePacked() {
@@ -797,12 +921,20 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+     * </pre>
+     *
      * <code>.google.protobuf.Any field_value_packed = 4;</code>
      */
     public com.google.protobuf.Any.Builder getFieldValuePackedBuilder() {
       return getFieldValuePackedFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+     * </pre>
+     *
      * <code>.google.protobuf.Any field_value_packed = 4;</code>
      */
     @java.lang.Override
@@ -817,6 +949,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     *If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+     * </pre>
+     *
      * <code>.google.protobuf.Any field_value_packed = 4;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -839,6 +975,10 @@ private static final long serialVersionUID = 0L;
     }
 
     /**
+     * <pre>
+     *If the field is an enum type, then we use the number to denote which value it is
+     * </pre>
+     *
      * <code>int32 enum_value = 5;</code>
      * @return The enumValue.
      */
@@ -849,6 +989,10 @@ private static final long serialVersionUID = 0L;
       return 0;
     }
     /**
+     * <pre>
+     *If the field is an enum type, then we use the number to denote which value it is
+     * </pre>
+     *
      * <code>int32 enum_value = 5;</code>
      * @param value The enumValue to set.
      * @return This builder for chaining.
@@ -860,6 +1004,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *If the field is an enum type, then we use the number to denote which value it is
+     * </pre>
+     *
      * <code>int32 enum_value = 5;</code>
      * @return This builder for chaining.
      */
@@ -869,6 +1017,115 @@ private static final long serialVersionUID = 0L;
         fieldMapValueOneOf_ = null;
         onChanged();
       }
+      return this;
+    }
+
+    /**
+     * <pre>
+     *If the field is a string type, we just serialize the string (packing has an overhead)
+     * </pre>
+     *
+     * <code>string string_value = 6;</code>
+     * @return The stringValue.
+     */
+    @java.lang.Override
+    public java.lang.String getStringValue() {
+      java.lang.Object ref = "";
+      if (fieldMapValueOneOfCase_ == 6) {
+        ref = fieldMapValueOneOf_;
+      }
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (fieldMapValueOneOfCase_ == 6) {
+          fieldMapValueOneOf_ = s;
+        }
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     *If the field is a string type, we just serialize the string (packing has an overhead)
+     * </pre>
+     *
+     * <code>string string_value = 6;</code>
+     * @return The bytes for stringValue.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getStringValueBytes() {
+      java.lang.Object ref = "";
+      if (fieldMapValueOneOfCase_ == 6) {
+        ref = fieldMapValueOneOf_;
+      }
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        if (fieldMapValueOneOfCase_ == 6) {
+          fieldMapValueOneOf_ = b;
+        }
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     *If the field is a string type, we just serialize the string (packing has an overhead)
+     * </pre>
+     *
+     * <code>string string_value = 6;</code>
+     * @param value The stringValue to set.
+     * @return This builder for chaining.
+     */
+    public Builder setStringValue(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  fieldMapValueOneOfCase_ = 6;
+      fieldMapValueOneOf_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *If the field is a string type, we just serialize the string (packing has an overhead)
+     * </pre>
+     *
+     * <code>string string_value = 6;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearStringValue() {
+      if (fieldMapValueOneOfCase_ == 6) {
+        fieldMapValueOneOfCase_ = 0;
+        fieldMapValueOneOf_ = null;
+        onChanged();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     *If the field is a string type, we just serialize the string (packing has an overhead)
+     * </pre>
+     *
+     * <code>string string_value = 6;</code>
+     * @param value The bytes for stringValue to set.
+     * @return This builder for chaining.
+     */
+    public Builder setStringValueBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      fieldMapValueOneOfCase_ = 6;
+      fieldMapValueOneOf_ = value;
+      onChanged();
       return this;
     }
 

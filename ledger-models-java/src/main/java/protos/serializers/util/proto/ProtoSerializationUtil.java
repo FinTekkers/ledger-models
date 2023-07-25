@@ -1,32 +1,26 @@
 package protos.serializers.util.proto;
 
 import com.google.protobuf.*;
-import common.models.IFintekkersEnum;
 import common.models.portfolio.Portfolio;
 import common.models.price.Price;
 import common.models.security.Security;
 import common.models.security.identifier.Identifier;
 import common.models.strategy.Strategy;
-import common.models.transaction.TransactionType;
 import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.IdentifierProto;
 import fintekkers.models.security.SecurityProto;
-import fintekkers.models.security.SecurityTypeProto;
 import fintekkers.models.strategy.StrategyProto;
 import fintekkers.models.util.DecimalValue;
 import fintekkers.models.util.LocalTimestamp;
 import fintekkers.models.util.Uuid;
-import org.apache.commons.lang3.ArrayUtils;
 import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
 import protos.serializers.security.IdentifierSerializer;
 import protos.serializers.security.SecuritySerializer;
 import protos.serializers.strategy.StrategySerializer;
 
-import java.lang.Enum;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.time.*;
 import java.util.UUID;
@@ -63,6 +57,7 @@ public class ProtoSerializationUtil {
         }  else if(object instanceof Strategy) {
             unpacked = StrategySerializer.getInstance().serialize((Strategy)object);
         } else if(object instanceof String) {
+            //TODO: Remove this and serialize the string rather than packing it
             unpacked = StringValue.of(object.toString());
         } else if(object instanceof Identifier) {
             unpacked = IdentifierSerializer.getInstance().serialize((Identifier) object);
@@ -82,9 +77,6 @@ public class ProtoSerializationUtil {
 
     public static Object deserialize(Any any) {
         try {
-//            if (any.is(Int32Value.class)) {
-//                return SecurityTypeProto.forNumber(any.unpack(Int32Value.class).getValue());
-//            }
             if (any.is(DecimalValue.DecimalValueProto.class)) {
                 DecimalValue.DecimalValueProto decimalValueProto = any.unpack(DecimalValue.DecimalValueProto.class);
                 return deserializeBigDecimal(decimalValueProto);
@@ -106,6 +98,7 @@ public class ProtoSerializationUtil {
             } else if(any.is(StrategyProto.class)) {
                 return StrategySerializer.getInstance().deserialize(any.unpack(StrategyProto.class));
             } else if(any.is(StringValue.class)) {
+                //TODO: Remove this and serialize the string rather than packing it
                 return any.unpack(StringValue.class).getValue();
             } else if(any.is(IdentifierProto.class)) {
                 IdentifierProto identifierProto = any.unpack(IdentifierProto.class);

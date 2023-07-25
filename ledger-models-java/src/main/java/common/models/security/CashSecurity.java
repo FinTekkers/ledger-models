@@ -38,7 +38,7 @@ public class CashSecurity extends Security {
     }
 
     public String getCashId() {
-        return "CASH"+cashId;
+        return cashId;
     }
 
     @Override

@@ -41,7 +41,7 @@ function uuidStringToBytes(uuid) {
     return bytes;
 }
 
-// Static function to create a new Person object
+// Static function to create a new UUID objects
 UUID.random = randomUUID;
 UUID.uuidStringToBytes = uuidStringToBytes;
 

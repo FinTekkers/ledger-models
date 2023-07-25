@@ -42,18 +42,18 @@ public final class PositionUtilProtos {
       "eMapEntry\0229\n\007measure\030\001 \001(\0162(.fintekkers." +
       "models.position.MeasureProto\022H\n\025measure_" +
       "decimal_value\030\002 \001(\0132).fintekkers.models." +
-      "util.DecimalValueProto\"\354\001\n\rFieldMapEntry" +
+      "util.DecimalValueProto\"\204\002\n\rFieldMapEntry" +
       "\0225\n\005field\030\001 \001(\0162&.fintekkers.models.posi" +
       "tion.FieldProto\0222\n\022field_value_packed\030\004 " +
       "\001(\0132\024.google.protobuf.AnyH\000\022\024\n\nenum_valu" +
-      "e\030\005 \001(\005H\000\022D\n\010operator\030\024 \001(\01622.fintekkers" +
-      ".models.position.PositionFilterOperatorB" +
-      "\024\n\022FieldMapValueOneOf*\232\001\n\026PositionFilter" +
-      "Operator\022\024\n\020UNKNOWN_OPERATOR\020\000\022\n\n\006EQUALS" +
-      "\020\001\022\016\n\nNOT_EQUALS\020\002\022\r\n\tLESS_THAN\020\003\022\027\n\023LES" +
-      "S_THAN_OR_EQUALS\020\004\022\r\n\tMORE_THAN\020\005\022\027\n\023MOR" +
-      "E_THAN_OR_EQUALS\020\006B\026B\022PositionUtilProtos" +
-      "P\001b\006proto3"
+      "e\030\005 \001(\005H\000\022\026\n\014string_value\030\006 \001(\tH\000\022D\n\010ope" +
+      "rator\030\024 \001(\01622.fintekkers.models.position" +
+      ".PositionFilterOperatorB\024\n\022FieldMapValue" +
+      "OneOf*\232\001\n\026PositionFilterOperator\022\024\n\020UNKN" +
+      "OWN_OPERATOR\020\000\022\n\n\006EQUALS\020\001\022\016\n\nNOT_EQUALS" +
+      "\020\002\022\r\n\tLESS_THAN\020\003\022\027\n\023LESS_THAN_OR_EQUALS" +
+      "\020\004\022\r\n\tMORE_THAN\020\005\022\027\n\023MORE_THAN_OR_EQUALS" +
+      "\020\006B\026B\022PositionUtilProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -74,7 +74,7 @@ public final class PositionUtilProtos {
     internal_static_fintekkers_models_position_FieldMapEntry_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_position_FieldMapEntry_descriptor,
-        new java.lang.String[] { "Field", "FieldValuePacked", "EnumValue", "Operator", "FieldMapValueOneOf", });
+        new java.lang.String[] { "Field", "FieldValuePacked", "EnumValue", "StringValue", "Operator", "FieldMapValueOneOf", });
     com.google.protobuf.AnyProto.getDescriptor();
     fintekkers.models.position.FieldProtos.getDescriptor();
     fintekkers.models.position.MeasureProtos.getDescriptor();
