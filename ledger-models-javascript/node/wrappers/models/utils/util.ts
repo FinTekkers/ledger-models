@@ -1,4 +1,4 @@
-import { FieldMapEntry } from '../fintekkers/models/position/position_util_pb';
+import { FieldMapEntry } from '../../../fintekkers/models/position/position_util_pb';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 

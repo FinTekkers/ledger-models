@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createFieldMapEntry = exports.packStringIntoAny = void 0;
-var position_util_pb_1 = require("../fintekkers/models/position/position_util_pb");
+var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 var wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 function packStringIntoAny(inputString) {
@@ -25,4 +25,4 @@ function createFieldMapEntry(field, fieldValue) {
     return fieldMapEntry;
 }
 exports.createFieldMapEntry = createFieldMapEntry;
-//# sourceMappingURL=proto_utils_util.js.map
+//# sourceMappingURL=util.js.map

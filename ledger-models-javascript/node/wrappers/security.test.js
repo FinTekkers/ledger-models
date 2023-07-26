@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testSecurity = void 0;
-var grpc = require("@grpc/grpc-js");
 // Models
 var security_pb_1 = require("../fintekkers/models/security/security_pb");
 var coupon_frequency_pb_1 = require("../fintekkers/models/security/coupon_frequency_pb");
@@ -46,113 +45,10 @@ var coupon_type_pb_1 = require("../fintekkers/models/security/coupon_type_pb");
 var security_type_pb_1 = require("../fintekkers/models/security/security_type_pb");
 var local_date_pb_1 = require("../fintekkers/models/util/local_date_pb");
 // Model Utils
-var position_filter_pb_1 = require("../fintekkers/models/position/position_filter_pb");
 var field_pb_1 = require("../fintekkers/models/position/field_pb");
-// Requests & Services
-var create_security_request_pb_1 = require("../fintekkers/requests/security/create_security_request_pb");
-var query_security_request_pb_1 = require("../fintekkers/requests/security/query_security_request_pb");
-var security_service_grpc_pb_1 = require("../fintekkers/services/security-service/security_service_grpc_pb");
-var uuid = require("./proto_utils_uuid");
-var dt = require("./proto_utils_datetime");
-var proto_utils_util_1 = require("./proto_utils_util");
-var util_1 = require("util");
-var SecurityService = /** @class */ (function () {
-    function SecurityService() {
-        this.client = new security_service_grpc_pb_1.SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        // this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
-    }
-    SecurityService.prototype.validateCreateSecurity = function (security) {
-        return __awaiter(this, void 0, void 0, function () {
-            var createRequest, validateCreateOrUpdateAsync, response;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        createRequest = new create_security_request_pb_1.CreateSecurityRequestProto();
-                        createRequest.setObjectClass('SecurityRequest');
-                        createRequest.setVersion('0.0.1');
-                        createRequest.setSecurityInput(security);
-                        validateCreateOrUpdateAsync = (0, util_1.promisify)(this.client.validateCreateOrUpdate.bind(this.client));
-                        return [4 /*yield*/, validateCreateOrUpdateAsync(createRequest)];
-                    case 1:
-                        response = _a.sent();
-                        return [2 /*return*/, response];
-                }
-            });
-        });
-    };
-    SecurityService.prototype.createSecurity = function (security) {
-        return __awaiter(this, void 0, void 0, function () {
-            var createRequest, createSecurityAsync, response;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        createRequest = new create_security_request_pb_1.CreateSecurityRequestProto();
-                        createRequest.setObjectClass('SecurityRequest');
-                        createRequest.setVersion('0.0.1');
-                        createRequest.setSecurityInput(security);
-                        createSecurityAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
-                        return [4 /*yield*/, createSecurityAsync(createRequest)];
-                    case 1:
-                        response = _a.sent();
-                        return [2 /*return*/, response];
-                }
-            });
-        });
-    };
-    SecurityService.prototype.searchSecurity = function (asOf, fieldProto, fieldValue) {
-        return __awaiter(this, void 0, void 0, function () {
-            function processStreamSynchronously() {
-                return __awaiter(this, void 0, void 0, function () {
-                    var stream2;
-                    return __generator(this, function (_a) {
-                        stream2 = tmpClient.search(searchRequest);
-                        return [2 /*return*/, new Promise(function (resolve, reject) {
-                                // Handle the stream of responses
-                                stream2.on('data', function (response) {
-                                    console.log('Result of the security search call');
-                                    console.log('Response:', response);
-                                    response.getSecurityResponseList().forEach(function (security) {
-                                        listSecurities.push(security);
-                                    });
-                                });
-                                stream2.on('end', function () {
-                                    // Stream is done, handle any cleanup or finalization here
-                                    console.log('Stream ended.');
-                                    resolve(listSecurities); // Resolve the promise when the stream ends
-                                });
-                                stream2.on('error', function (err) {
-                                    // Handle any errors that occur during the stream
-                                    console.error('Error in the stream:', err);
-                                    reject(err); // Reject the promise if there's an error
-                                });
-                            })];
-                    });
-                });
-            }
-            var searchRequest, positionFilter, fieldMapEntry, tmpClient, listSecurities;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        searchRequest = new query_security_request_pb_1.QuerySecurityRequestProto();
-                        searchRequest.setObjectClass('SecurityRequest');
-                        searchRequest.setVersion('0.0.1');
-                        searchRequest.setAsOf(asOf);
-                        positionFilter = new position_filter_pb_1.PositionFilterProto();
-                        positionFilter.setObjectClass('PositionFilter');
-                        positionFilter.setVersion('0.0.1');
-                        fieldMapEntry = (0, proto_utils_util_1.createFieldMapEntry)(fieldProto, fieldValue);
-                        positionFilter.setFiltersList([fieldMapEntry]);
-                        searchRequest.setSearchSecurityInput(positionFilter);
-                        tmpClient = this.client;
-                        listSecurities = [];
-                        return [4 /*yield*/, processStreamSynchronously()];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
-        });
-    };
-    return SecurityService;
-}());
+var uuid = require("./models/utils/uuid");
+var dt = require("./models/utils/datetime");
+var SecurityService_1 = require("./services/security-service/SecurityService");
 function testSecurity() {
     return __awaiter(this, void 0, void 0, function () {
         var id_proto, now, securityService, usd_security, security, faceValue, couponRate, issueDate, maturityDate, validationSummary, createSecurityResponse, searchResults;
@@ -161,7 +57,7 @@ function testSecurity() {
                 case 0:
                     id_proto = uuid.UUID.random().to_uuid_proto();
                     now = dt.ZonedDateTime.now();
-                    securityService = new SecurityService();
+                    securityService = new SecurityService_1.SecurityService();
                     return [4 /*yield*/, securityService
                             .searchSecurity(now.to_date_proto(), field_pb_1.FieldProto.ASSET_CLASS, 'Cash')
                             .then(function (securities) {

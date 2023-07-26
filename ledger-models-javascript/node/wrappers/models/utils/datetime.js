@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZonedDateTime = void 0;
 var console_1 = require("console");
-var local_timestamp_pb_1 = require("../fintekkers/models/util/local_timestamp_pb");
+var local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
 var timestamp_pb_1 = require("google-protobuf/google/protobuf/timestamp_pb");
 var luxon_1 = require("luxon");
 var ZonedDateTime = /** @class */ (function () {
@@ -60,4 +60,4 @@ exports.ZonedDateTime = ZonedDateTime;
 // ZonedDateTime.now = createTimestampWithCurrentTime;
 var now = ZonedDateTime.now();
 (0, console_1.assert)(now.to_datetime().toString() === now.toString());
-//# sourceMappingURL=proto_utils_datetime.js.map
+//# sourceMappingURL=datetime.js.map

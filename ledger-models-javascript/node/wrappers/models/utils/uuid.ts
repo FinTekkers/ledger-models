@@ -1,5 +1,5 @@
 import { assert } from 'console';
-import { UUIDProto } from '../fintekkers/models/util/uuid_pb';
+import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
 import * as uuid from 'uuid';
 
 class UUID {

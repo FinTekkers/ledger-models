@@ -1,5 +1,5 @@
 import { assert } from 'console';
-import { LocalTimestampProto } from '../fintekkers/models/util/local_timestamp_pb';
+import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import { DateTime } from 'luxon';
 

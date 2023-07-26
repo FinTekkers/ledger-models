@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UUID = void 0;
 var console_1 = require("console");
-var uuid_pb_1 = require("../fintekkers/models/util/uuid_pb");
+var uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
 var uuid = require("uuid");
 var UUID = /** @class */ (function () {
     function UUID(bytes) {
@@ -43,4 +43,4 @@ var test_uuid_bytes_copy = UUID.uuidStringToBytes(test_uuid.to_string());
 (0, console_1.assert)(test_uuid_bytes.length === test_uuid_bytes_copy.length &&
     test_uuid_bytes.every(function (value, index) { return value === test_uuid_bytes_copy[index]; }));
 (0, console_1.assert)(UUID.random().to_string().length == 36);
-//# sourceMappingURL=proto_utils_uuid.js.map
+//# sourceMappingURL=uuid.js.map
