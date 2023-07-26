@@ -2,6 +2,12 @@ const grpc = require('@grpc/grpc-js');
 
 //Models
 const { SecurityProto } = require('./node/fintekkers/models/security/security_pb');
+const { CouponFrequencyProto } = require('./node/fintekkers/models/security/coupon_frequency_pb');
+const { DecimalValueProto } = require('./node/fintekkers/models/util/decimal_value_pb');
+const { CouponTypeProto } = require('./node/fintekkers/models/security/coupon_type_pb');
+const { SecurityTypeProto } = require('./node/fintekkers/models/security/security_type_pb');
+const { LocalDateProto } = require('./node/fintekkers/models/util/local_date_pb');
+
 //Model Utils
 const { PositionFilterProto } = require('./node/fintekkers/models/position/position_filter_pb');
 const { FieldProto } = require('./node/fintekkers/models/position/field_pb');
@@ -17,128 +23,136 @@ const { createFieldMapEntry } = require('./proto_utils_util');
 const { promisify } = require('util');
 
 class SecurityService {
-    constructor() {
-        // this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
+  constructor() {
+    // this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+    this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
+  }
+
+  async validateCreateSecurity(security) {
+    const createRequest = new CreateSecurityRequestProto();
+    createRequest.setObjectClass('SecurityRequest');
+    createRequest.setVersion('0.0.1');
+    createRequest.setSecurityInput(security);
+
+    const validateCreateOrUpdateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
+    const response = await validateCreateOrUpdateAsync(createRequest);
+    return response;
+  }
+
+  async createSecurity(security) {
+    const createRequest = new CreateSecurityRequestProto();
+    createRequest.setObjectClass('SecurityRequest');
+    createRequest.setVersion('0.0.1');
+    createRequest.setSecurityInput(security);
+
+    const createSecurityAsync = promisify(this.client.createOrUpdate.bind(this.client));
+    const response = await createSecurityAsync(createRequest);
+    return response;
+  }
+
+  async searchSecurity(asOf, fieldProto, fieldValue) {
+    const searchRequest = new QuerySecurityRequestProto();
+    searchRequest.setObjectClass('SecurityRequest');
+    searchRequest.setVersion('0.0.1');
+    searchRequest.setAsOf(asOf);
+
+    const positionFilter = new PositionFilterProto();
+    positionFilter.setObjectClass('PositionFilter');
+    positionFilter.setVersion('0.0.1');
+
+    const fieldMapEntry = createFieldMapEntry(fieldProto, fieldValue);
+    positionFilter.setFiltersList([fieldMapEntry]);
+
+    searchRequest.setSearchSecurityInput(positionFilter);
+
+    const tmpClient = this.client;
+
+    const listSecurities = [];
+
+    async function processStreamSynchronously() {
+      const stream2 = tmpClient.search(searchRequest);
+
+      return new Promise((resolve, reject) => {
+        // Handle the stream of responses
+        stream2.on('data', (response) => {
+          console.log('Result of the security search call');
+          console.log('Response:', response);
+          response.getSecurityResponseList().forEach((security) => {
+            listSecurities.push(security);
+          });
+        });
+
+        stream2.on('end', () => {
+          // Stream is done, handle any cleanup or finalization here
+          console.log('Stream ended.');
+          resolve(listSecurities); // Resolve the promise when the stream ends
+        });
+
+        stream2.on('error', (err) => {
+          // Handle any errors that occur during the stream
+          console.error('Error in the stream:', err);
+          reject(err); // Reject the promise if there's an error
+        });
+      });
     }
 
-    async createSecurity(security) {
-        var createRequest = new CreateSecurityRequestProto();
-        createRequest.setObjectClass('SecurityRequest');
-        createRequest.setVersion('0.0.1');
-        createRequest.setSecurityInput(security);
-
-        const createSecurityAsync = promisify(this.client.createOrUpdate.bind(this.client));
-        const response = await createSecurityAsync(createRequest);
-        return response;
-    }
-
-    async searchSecurity(
-        asOf, //LocalTimestamp
-        fieldProto, //FieldProto
-        fieldValue //String
-    ) {
-        var searchRequest = new QuerySecurityRequestProto();
-        searchRequest.setObjectClass('SecurityRequest');
-        searchRequest.setVersion('0.0.1');
-        searchRequest.setAsOf(asOf);
-
-        // searchRequest.addUuids(security.getUuid());
-
-        var positionFilter = new PositionFilterProto();
-        positionFilter.setObjectClass('PositionFilter');
-        positionFilter.setVersion('0.0.1');
-
-        var fieldMapEntry = createFieldMapEntry(fieldProto, fieldValue);
-        positionFilter.setFiltersList([fieldMapEntry]);
-        
-        searchRequest.setSearchSecurityInput(positionFilter);
-
-        const tmpClient = this.client;
-
-        var listSecurities = [];
-
-        async function processStreamSynchronously() {
-            const stream2 = tmpClient.search(searchRequest);
-
-            return new Promise((resolve, reject) => {
-                // Handle the stream of responses
-                stream2.on('data', response => {
-                    console.log('Result of the security search call');
-                    console.log('Response:', response);
-                    response.getSecurityResponseList().forEach(security => {
-                        listSecurities.push(security);
-                    })
-                });
-            
-                stream2.on('end', () => {
-                    // Stream is done, handle any cleanup or finalization here
-                    console.log('Stream ended.');
-                    resolve(listSecurities); // Resolve the promise when the stream ends
-                });
-            
-                stream2.on('error', err => {
-                    // Handle any errors that occur during the stream
-                    console.error('Error in the stream:', err);
-                    reject(err); // Reject the promise if there's an error
-                });
-            });
-        }
-        
-        return await processStreamSynchronously();
-    }
+    return await processStreamSynchronously();
+  }
 }
+
 async function testSecurity() {
-    const receivedBytes = [-39, 98, -3, -16, 51, -31, 77, -99, -103, -101, 126, -61, 80, -16, -53, 119];
-    const id_proto = new UUID(receivedBytes).to_uuid_proto();
-    const now = ZonedDateTime.now();
+  const id_proto = new UUID.random().to_uuid_proto();
+  const now = ZonedDateTime.now();
+
+  const securityService = new SecurityService();
+
+  let usd_security = await securityService
+    .searchSecurity(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Cash').then((securities) => {
+        return securities[0];
+    });
 
     const security = new SecurityProto();
     security.setObjectClass('Security');
     security.setVersion('0.0.1');
     security.setUuid(id_proto);
-    security.setCashId('USD');
-    security.setSettlementCurrency()
+    security.setSettlementCurrency(usd_security);
     security.setAsOf(now.to_date_proto());
+    security.setAssetClass('FixedIncome');
+    security.setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY);
+    security.setCouponType(CouponTypeProto.FIXED);
+    security.setSecurityType(SecurityTypeProto.BOND_SECURITY);
+  
+    const faceValue = new DecimalValueProto();
+    faceValue.setArbitraryPrecisionValue('1000.00');
+    security.setFaceValue(faceValue);
+  
+    const couponRate = new DecimalValueProto();
+    couponRate.setArbitraryPrecisionValue('0.05');
+    security.setFaceValue(couponRate);
+  
+    const issueDate = new LocalDateProto();
+    issueDate.setYear(2023);
+    issueDate.setMonth(1);
+    issueDate.setDay(1);
+    security.setIssueDate(issueDate);
+    security.setDatedDate(issueDate);
+  
+    const maturityDate = new LocalDateProto();
+    maturityDate.setYear(2033); //10Y
+    maturityDate.setMonth(1);
+    maturityDate.setDay(1);
+    security.setMaturityDate(maturityDate);
+  
+    security.setIssuerName('US Treasury');
+    security.setDescription('Dummy US Treasury 10Y Bond');
 
-    var createRequest = new CreateSecurityRequestProto();
-    createRequest.setObjectClass('SecurityRequest');
-    createRequest.setVersion('0.0.1');
-    createRequest.setSecurityInput(security);
-    
-    
-    let usd_security;
-    await new SecurityService().searchSecurity(
-        now.to_date_proto(),
-        FieldProto.ASSET_CLASS,
-        "Cash"
-    ).then(response => {
-        console.log('Result of the security search call');
-        console.log('Response:', response);
-        usd_security = response[0];
-    });
+  var response = await securityService.validateCreateSecurity(security);
+  console.log(response);
 
-    console.log(usd_security.getAssetClass());
+  response = await securityService.createSecurity(security);
 
-    // //Search for "USD"
-    // client.validateCreateOrUpdate(createRequest, function (error, response) {
-    //     console.log('Result of the security validation request:');
-    //     if (error) {
-    //         console.error('Error:', error.message);
-    //     } else {
-    //         console.log('Response:', response);
-    //     }
-    // });
-
-    // client.createOrUpdate(createRequest, function (error, response) {
-    //     console.log('Result of the security create/update call');
-    //     if (error) {
-    //         console.error('Error:', error.message);
-    //     } else {
-    //         console.log('Response:', response);
-    //     }
-    // });
-
+  response = await securityService.searchSecurity(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Fixed Income');
+  console.log('There are %d securities in this response', response.length);
 }
 
 exports.testSecurity = testSecurity;
