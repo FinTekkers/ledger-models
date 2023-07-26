@@ -24,8 +24,8 @@ const { promisify } = require('util');
 
 class SecurityService {
   constructor() {
-    // this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-    this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
+    this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+    // this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
   }
 
   async validateCreateSecurity(security) {
