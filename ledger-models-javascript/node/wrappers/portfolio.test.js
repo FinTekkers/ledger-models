@@ -1,8 +1,8 @@
-const { PortfolioProto } = require('./node/fintekkers/models/portfolio/portfolio_pb');
-const { CreatePortfolioRequestProto } = require('./node/fintekkers/requests/portfolio/create_portfolio_request_pb');
-const { QueryPortfolioRequestProto } = require('./node/fintekkers/requests/portfolio/query_portfolio_request_pb');
+const { PortfolioProto } = require('../fintekkers/models/portfolio/portfolio_pb');
+const { CreatePortfolioRequestProto } = require('../fintekkers/requests/portfolio/create_portfolio_request_pb');
+const { QueryPortfolioRequestProto } = require('../fintekkers/requests/portfolio/query_portfolio_request_pb');
 
-const { PortfolioClient  } = require('./node/fintekkers/services/portfolio-service/portfolio_service_grpc_pb');
+const { PortfolioClient  } = require('../fintekkers/services/portfolio-service/portfolio_service_grpc_pb');
   
 const { UUID } = require('./proto_utils_uuid');
 const { ZonedDateTime } =  require('./proto_utils_datetime');

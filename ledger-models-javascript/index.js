@@ -1,14 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // TODO - Migrate to portfolio wrapper & tests
-const { testPortfolio } = require('./portfolio.test');
-testPortfolio();
-
+var portfolio_test_1 = require("./node/wrappers/portfolio.test");
+(0, portfolio_test_1.testPortfolio)();
 //TODO - Migrate security service code to somewhere central
-const { testSecurity } = require('./security.test');
-testSecurity();
-
-
+var security_test_1 = require("./node/wrappers/security.test");
+(0, security_test_1.testSecurity)();
 // TODO - Transactions
-
-
 // TODO - Positions
-
+//# sourceMappingURL=index.js.map
