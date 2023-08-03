@@ -16,7 +16,7 @@ import { CreateSecurityResponseProto } from '../fintekkers/requests/security/cre
 import { SecurityService } from './services/security-service/SecurityService';
 
 async function testSecurity(): Promise<void> {
-  const id_proto = uuid.UUID.random().to_uuid_proto();
+  const id_proto = uuid.UUID.random().toUUIDProto();
   const now = dt.ZonedDateTime.now();
 
   const securityService = new SecurityService();
@@ -31,7 +31,7 @@ async function testSecurity(): Promise<void> {
   security.setObjectClass('Security');
   security.setVersion('0.0.1');
   security.setUuid(id_proto);
-  security.setSettlementCurrency(usd_security);
+  security.setSettlementCurrency(usd_security.proto);
   security.setAsOf(now.to_date_proto());
   security.setAssetClass('FixedIncome');
   security.setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY);

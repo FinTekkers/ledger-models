@@ -60,14 +60,14 @@ public class PositionFilter {
         return this.filters;
     }
 
-    public static <Type extends IFinancialModelObject> List<Type> filter(List<Type> positions, PositionFilter filter) {
+    public static <Type extends IFinancialModelObject> List<Type> filter(List<Type> dataObjects, PositionFilter filter) {
         final HashMap<Field, PositionComparator> filters = filter.getFilters();
         final List<Type> output = new ArrayList<>();
 
-        for(Type position : positions) {
+        for(Type dataObject : dataObjects) {
             boolean include = true;
             for(Field field : filters.keySet()) {
-                Object value = position.getField(field);
+                Object value = dataObject.getField(field);
 
                 PositionComparator comparator = filters.get(field);
 
@@ -83,10 +83,10 @@ public class PositionFilter {
 
             //Check the asOf
             include = include &&
-                    (position.getAsOf().isBefore(filter.getAsOf()) || position.getAsOf().isEqual(filter.getAsOf()));
+                    (dataObject.getAsOf().isBefore(filter.getAsOf()) || dataObject.getAsOf().isEqual(filter.getAsOf()));
 
             if(include)
-                output.add(position);
+                output.add(dataObject);
         }
 
         return output;

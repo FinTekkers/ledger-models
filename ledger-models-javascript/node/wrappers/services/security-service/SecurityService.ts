@@ -17,13 +17,14 @@ import { QuerySecurityRequestProto } from '../../../fintekkers/requests/security
 import { QuerySecurityResponseProto } from '../../../fintekkers/requests/security/query_security_response_pb';
 import { CreateSecurityRequestProto } from '../../../fintekkers/requests/security/create_security_request_pb';
 import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
+import Security from '../../models/security/security';
 
 class SecurityService {
   private client: SecurityClient;
 
   constructor() {
-    this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-    // this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
+    // this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+    this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
   }
 
   async validateCreateSecurity(security: SecurityProto): Promise<SummaryProto> {
@@ -48,7 +49,7 @@ class SecurityService {
     return response;
   }
 
-  async searchSecurity(asOf: LocalTimestampProto, fieldProto: FieldProto, fieldValue: string): Promise<SecurityProto[]> {
+  async searchSecurity(asOf: LocalTimestampProto, fieldProto: FieldProto, fieldValue: string): Promise<Security[]> {
     const searchRequest = new QuerySecurityRequestProto();
     searchRequest.setObjectClass('SecurityRequest');
     searchRequest.setVersion('0.0.1');
@@ -65,17 +66,17 @@ class SecurityService {
 
     const tmpClient = this.client;
 
-    const listSecurities: SecurityProto[] = [];
+    const listSecurities: Security[] = [];
 
-    async function processStreamSynchronously(): Promise<SecurityProto[]> {
+    async function processStreamSynchronously(): Promise<Security[]> {
       const stream2 = tmpClient.search(searchRequest);
 
-      return new Promise<SecurityProto[]>((resolve, reject) => {
+      return new Promise<Security[]>((resolve, reject) => {
         stream2.on('data', (response:QuerySecurityResponseProto) => {
           console.log('Result of the security search call');
           console.log('Response:', response);
           response.getSecurityResponseList().forEach((security) => {
-            listSecurities.push(security);
+            listSecurities.push(new Security(security));
           });
         });
 

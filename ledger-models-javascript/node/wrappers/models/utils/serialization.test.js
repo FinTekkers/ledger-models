@@ -1,4 +1,3 @@
-// Models
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,44 +34,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-// Model Utils
-import { FieldProto } from '../fintekkers/models/position/field_pb';
-import * as uuid from './models/utils/uuid';
-import * as dt from './models/utils/datetime';
-//Requests & Services
-import { PortfolioService } from './services/portfolio-service/PortfolioService';
-import { PortfolioProto } from '../fintekkers/models/portfolio/portfolio_pb';
-function testPortfolio() {
+import { ProtoSerializationUtil } from './serialization';
+import { UUID } from './uuid';
+function testSerialization() {
     return __awaiter(this, void 0, void 0, function () {
-        var id_proto, now, portfolioService, portfolio, validationSummary, createPortfolioResponse, searchResults;
+        var serializedDate, deserializedDate, obj, serializedTimestamp, deserializedTimestamp;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    id_proto = uuid.UUID.random().toUUIDProto();
-                    now = dt.ZonedDateTime.now();
-                    portfolioService = new PortfolioService();
-                    portfolio = new PortfolioProto();
-                    portfolio.setObjectClass('Portfolio');
-                    portfolio.setVersion('0.0.1');
-                    portfolio.setUuid(id_proto);
-                    portfolio.setPortfolioName('TEST PORTFOLIO');
-                    portfolio.setAsOf(now.to_date_proto());
-                    return [4 /*yield*/, portfolioService.validateCreatePortfolio(portfolio)];
-                case 1:
-                    validationSummary = _a.sent();
-                    console.log(validationSummary);
-                    return [4 /*yield*/, portfolioService.createPortfolio(portfolio)];
-                case 2:
-                    createPortfolioResponse = _a.sent();
-                    console.log(createPortfolioResponse);
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.to_date_proto(), FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings')];
-                case 3:
-                    searchResults = _a.sent();
-                    console.log('There are %d securities in this response', searchResults.length);
-                    return [2 /*return*/];
-            }
+            checkUUID();
+            serializedDate = ProtoSerializationUtil.serialize(new Date());
+            console.log(serializedDate);
+            deserializedDate = ProtoSerializationUtil.deserialize(serializedDate);
+            console.log(deserializedDate);
+            obj = new Date();
+            serializedTimestamp = ProtoSerializationUtil.serialize(obj);
+            console.log(serializedTimestamp);
+            deserializedTimestamp = ProtoSerializationUtil.deserialize(serializedTimestamp);
+            console.log(deserializedTimestamp);
+            return [2 /*return*/];
         });
     });
 }
-export { testPortfolio };
-//# sourceMappingURL=portfolio.test.js.map
+export { testSerialization };
+function checkUUID() {
+    var uuid = UUID.random();
+    var serializedUUID = ProtoSerializationUtil.serialize(uuid);
+    var uuidCopy = ProtoSerializationUtil.deserialize(serializedUUID);
+    var uuidString = uuid.toString();
+    var uuidCopyString = uuidCopy.toString();
+    assert.equal(uuidString, uuidCopyString);
+    assert.deepEqual(uuid.toBytes(), uuidCopy.toBytes());
+}
+//# sourceMappingURL=serialization.test.js.map

@@ -1,4 +1,3 @@
-// Models
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,44 +34,54 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-// Model Utils
-import { FieldProto } from '../fintekkers/models/position/field_pb';
-import * as uuid from './models/utils/uuid';
-import * as dt from './models/utils/datetime';
-//Requests & Services
-import { PortfolioService } from './services/portfolio-service/PortfolioService';
-import { PortfolioProto } from '../fintekkers/models/portfolio/portfolio_pb';
-function testPortfolio() {
-    return __awaiter(this, void 0, void 0, function () {
-        var id_proto, now, portfolioService, portfolio, validationSummary, createPortfolioResponse, searchResults;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    id_proto = uuid.UUID.random().toUUIDProto();
-                    now = dt.ZonedDateTime.now();
-                    portfolioService = new PortfolioService();
-                    portfolio = new PortfolioProto();
-                    portfolio.setObjectClass('Portfolio');
-                    portfolio.setVersion('0.0.1');
-                    portfolio.setUuid(id_proto);
-                    portfolio.setPortfolioName('TEST PORTFOLIO');
-                    portfolio.setAsOf(now.to_date_proto());
-                    return [4 /*yield*/, portfolioService.validateCreatePortfolio(portfolio)];
-                case 1:
-                    validationSummary = _a.sent();
-                    console.log(validationSummary);
-                    return [4 /*yield*/, portfolioService.createPortfolio(portfolio)];
-                case 2:
-                    createPortfolioResponse = _a.sent();
-                    console.log(createPortfolioResponse);
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.to_date_proto(), FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings')];
-                case 3:
-                    searchResults = _a.sent();
-                    console.log('There are %d securities in this response', searchResults.length);
-                    return [2 /*return*/];
+import * as grpc from '@grpc/grpc-js';
+// Requests & Services
+import { PositionClient } from '../../../fintekkers/services/position-service/position_service_grpc_pb';
+var PositionService = /** @class */ (function () {
+    function PositionService() {
+        // this.client = new PositionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+        this.client = new PositionClient('localhost:8082', grpc.credentials.createInsecure());
+    }
+    PositionService.prototype.search = function (request) {
+        return __awaiter(this, void 0, void 0, function () {
+            function processStreamSynchronously() {
+                return __awaiter(this, void 0, void 0, function () {
+                    var stream2;
+                    return __generator(this, function (_a) {
+                        stream2 = tmpClient.search(request);
+                        return [2 /*return*/, new Promise(function (resolve, reject) {
+                                stream2.on('data', function (response) {
+                                    console.log('Result of the position search call');
+                                    console.log('Response:', response);
+                                    response.getPositionsList().forEach(function (position) {
+                                        listPositions.push(position);
+                                    });
+                                });
+                                stream2.on('end', function () {
+                                    console.log('Stream ended.');
+                                    resolve(listPositions);
+                                });
+                                stream2.on('error', function (err) {
+                                    console.error('Error in the stream:', err);
+                                    reject(err);
+                                });
+                            })];
+                    });
+                });
             }
+            var tmpClient, listPositions;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        tmpClient = this.client;
+                        listPositions = [];
+                        return [4 /*yield*/, processStreamSynchronously()];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
         });
-    });
-}
-export { testPortfolio };
-//# sourceMappingURL=portfolio.test.js.map
+    };
+    return PositionService;
+}());
+export { PositionService };
+//# sourceMappingURL=PositionService.js.map

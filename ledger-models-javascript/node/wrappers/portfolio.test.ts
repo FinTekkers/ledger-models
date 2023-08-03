@@ -11,7 +11,7 @@ import { PortfolioProto } from '../fintekkers/models/portfolio/portfolio_pb';
 import { CreatePortfolioResponseProto } from '../fintekkers/requests/portfolio/create_portfolio_response_pb';
 
 async function testPortfolio(): Promise<void> {
-  const id_proto = uuid.UUID.random().to_uuid_proto();
+  const id_proto = uuid.UUID.random().toUUIDProto();
   const now = dt.ZonedDateTime.now();
 
   const portfolioService = new PortfolioService();
@@ -29,7 +29,7 @@ async function testPortfolio(): Promise<void> {
   var createPortfolioResponse:CreatePortfolioResponseProto = await portfolioService.createPortfolio(portfolio);
   console.log(createPortfolioResponse);
 
-  var searchResults = await portfolioService.searchPortfolio(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Fixed Income');
+  var searchResults = await portfolioService.searchPortfolio(now.to_date_proto(), FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings');
   console.log('There are %d securities in this response', searchResults.length);
 }
 

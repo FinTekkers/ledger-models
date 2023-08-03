@@ -22,8 +22,8 @@ class PortfolioService {
   private client: PortfolioClient;
 
   constructor() {
-    this.client = new PortfolioClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-    // this.client = new PortfolioClient('localhost:8082', grpc.credentials.createInsecure());
+    // this.client = new PortfolioClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+    this.client = new PortfolioClient('localhost:8082', grpc.credentials.createInsecure());
   }
 
   async validateCreatePortfolio(portfolio: PortfolioProto): Promise<SummaryProto> {
@@ -55,14 +55,14 @@ class PortfolioService {
     searchRequest.setAsOf(asOf);
 
     // Need to improve validation logic, uncommenting this code will cause an error of 2:UNKNOWN
-    // const positionFilter = new PositionFilterProto();
-    // positionFilter.setObjectClass('PositionFilter');
-    // positionFilter.setVersion('0.0.1');
+    const positionFilter = new PositionFilterProto();
+    positionFilter.setObjectClass('PositionFilter');
+    positionFilter.setVersion('0.0.1');
 
-    // const fieldMapEntry = createFieldMapEntry(fieldProto, fieldValue);
-    // positionFilter.setFiltersList([fieldMapEntry]);
+    const fieldMapEntry = createFieldMapEntry(fieldProto, fieldValue);
+    positionFilter.setFiltersList([fieldMapEntry]);
 
-    // searchRequest.setSearchPortfolioInput(positionFilter);
+    searchRequest.setSearchPortfolioInput(positionFilter);
 
     const tmpClient = this.client;
 

@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,59 +34,57 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.testSecurity = void 0;
 // Models
-var security_pb_1 = require("../fintekkers/models/security/security_pb");
-var coupon_frequency_pb_1 = require("../fintekkers/models/security/coupon_frequency_pb");
-var decimal_value_pb_1 = require("../fintekkers/models/util/decimal_value_pb");
-var coupon_type_pb_1 = require("../fintekkers/models/security/coupon_type_pb");
-var security_type_pb_1 = require("../fintekkers/models/security/security_type_pb");
-var local_date_pb_1 = require("../fintekkers/models/util/local_date_pb");
+import { SecurityProto } from '../fintekkers/models/security/security_pb';
+import { CouponFrequencyProto } from '../fintekkers/models/security/coupon_frequency_pb';
+import { DecimalValueProto } from '../fintekkers/models/util/decimal_value_pb';
+import { CouponTypeProto } from '../fintekkers/models/security/coupon_type_pb';
+import { SecurityTypeProto } from '../fintekkers/models/security/security_type_pb';
+import { LocalDateProto } from '../fintekkers/models/util/local_date_pb';
 // Model Utils
-var field_pb_1 = require("../fintekkers/models/position/field_pb");
-var uuid = require("./models/utils/uuid");
-var dt = require("./models/utils/datetime");
-var SecurityService_1 = require("./services/security-service/SecurityService");
+import { FieldProto } from '../fintekkers/models/position/field_pb';
+import * as uuid from './models/utils/uuid';
+import * as dt from './models/utils/datetime';
+import { SecurityService } from './services/security-service/SecurityService';
 function testSecurity() {
     return __awaiter(this, void 0, void 0, function () {
         var id_proto, now, securityService, usd_security, security, faceValue, couponRate, issueDate, maturityDate, validationSummary, createSecurityResponse, searchResults;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    id_proto = uuid.UUID.random().to_uuid_proto();
+                    id_proto = uuid.UUID.random().toUUIDProto();
                     now = dt.ZonedDateTime.now();
-                    securityService = new SecurityService_1.SecurityService();
+                    securityService = new SecurityService();
                     return [4 /*yield*/, securityService
-                            .searchSecurity(now.to_date_proto(), field_pb_1.FieldProto.ASSET_CLASS, 'Cash')
+                            .searchSecurity(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Cash')
                             .then(function (securities) {
                             return securities[0];
                         })];
                 case 1:
                     usd_security = _a.sent();
-                    security = new security_pb_1.SecurityProto();
+                    security = new SecurityProto();
                     security.setObjectClass('Security');
                     security.setVersion('0.0.1');
                     security.setUuid(id_proto);
-                    security.setSettlementCurrency(usd_security);
+                    security.setSettlementCurrency(usd_security.proto);
                     security.setAsOf(now.to_date_proto());
                     security.setAssetClass('FixedIncome');
-                    security.setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
-                    security.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
-                    security.setSecurityType(security_type_pb_1.SecurityTypeProto.BOND_SECURITY);
-                    faceValue = new decimal_value_pb_1.DecimalValueProto();
+                    security.setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY);
+                    security.setCouponType(CouponTypeProto.FIXED);
+                    security.setSecurityType(SecurityTypeProto.BOND_SECURITY);
+                    faceValue = new DecimalValueProto();
                     faceValue.setArbitraryPrecisionValue('1000.00');
                     security.setFaceValue(faceValue);
-                    couponRate = new decimal_value_pb_1.DecimalValueProto();
+                    couponRate = new DecimalValueProto();
                     couponRate.setArbitraryPrecisionValue('0.05');
                     security.setCouponRate(couponRate); // Fixed a typo here. It was security.setFaceValue(couponRate);
-                    issueDate = new local_date_pb_1.LocalDateProto();
+                    issueDate = new LocalDateProto();
                     issueDate.setYear(2023);
                     issueDate.setMonth(1);
                     issueDate.setDay(1);
                     security.setIssueDate(issueDate);
                     security.setDatedDate(issueDate);
-                    maturityDate = new local_date_pb_1.LocalDateProto();
+                    maturityDate = new LocalDateProto();
                     maturityDate.setYear(2033); //10Y
                     maturityDate.setMonth(1);
                     maturityDate.setDay(1);
@@ -102,7 +99,7 @@ function testSecurity() {
                 case 3:
                     createSecurityResponse = _a.sent();
                     console.log(createSecurityResponse);
-                    return [4 /*yield*/, securityService.searchSecurity(now.to_date_proto(), field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income')];
+                    return [4 /*yield*/, securityService.searchSecurity(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Fixed Income')];
                 case 4:
                     searchResults = _a.sent();
                     console.log('There are %d securities in this response', searchResults.length);
@@ -111,5 +108,5 @@ function testSecurity() {
         });
     });
 }
-exports.testSecurity = testSecurity;
+export { testSecurity };
 //# sourceMappingURL=security.test.js.map
