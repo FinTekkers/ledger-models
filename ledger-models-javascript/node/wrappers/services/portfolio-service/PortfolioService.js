@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,19 +35,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import * as grpc from '@grpc/grpc-js';
-import { promisify } from 'util';
-import { createFieldMapEntry } from '../../models/utils/util';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PortfolioService = void 0;
+var grpc = require("@grpc/grpc-js");
+var util_1 = require("util");
+var util_2 = require("../../models/utils/util");
 // Model Utils
-import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
+var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
 // Requests & Services
-import { PortfolioClient } from '../../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
-import { QueryPortfolioRequestProto } from '../../../fintekkers/requests/portfolio/query_portfolio_request_pb';
-import { CreatePortfolioRequestProto } from '../../../fintekkers/requests/portfolio/create_portfolio_request_pb';
+var portfolio_service_grpc_pb_1 = require("../../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb");
+var query_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfolio/query_portfolio_request_pb");
+var create_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfolio/create_portfolio_request_pb");
 var PortfolioService = /** @class */ (function () {
     function PortfolioService() {
         // this.client = new PortfolioClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        this.client = new PortfolioClient('localhost:8082', grpc.credentials.createInsecure());
+        this.client = new portfolio_service_grpc_pb_1.PortfolioClient('localhost:8082', grpc.credentials.createInsecure());
     }
     PortfolioService.prototype.validateCreatePortfolio = function (portfolio) {
         return __awaiter(this, void 0, void 0, function () {
@@ -54,11 +57,11 @@ var PortfolioService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        createRequest = new CreatePortfolioRequestProto();
+                        createRequest = new create_portfolio_request_pb_1.CreatePortfolioRequestProto();
                         createRequest.setObjectClass('PortfolioRequest');
                         createRequest.setVersion('0.0.1');
                         createRequest.setCreatePortfolioInput(portfolio);
-                        validateCreateOrUpdateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
+                        validateCreateOrUpdateAsync = (0, util_1.promisify)(this.client.validateCreateOrUpdate.bind(this.client));
                         return [4 /*yield*/, validateCreateOrUpdateAsync(createRequest)];
                     case 1:
                         response = _a.sent();
@@ -73,11 +76,11 @@ var PortfolioService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        createRequest = new CreatePortfolioRequestProto();
+                        createRequest = new create_portfolio_request_pb_1.CreatePortfolioRequestProto();
                         createRequest.setObjectClass('PortfolioRequest');
                         createRequest.setVersion('0.0.1');
                         createRequest.setCreatePortfolioInput(portfolio);
-                        createPortfolioAsync = promisify(this.client.createOrUpdate.bind(this.client));
+                        createPortfolioAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
                         return [4 /*yield*/, createPortfolioAsync(createRequest)];
                     case 1:
                         response = _a.sent();
@@ -117,14 +120,14 @@ var PortfolioService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        searchRequest = new QueryPortfolioRequestProto();
+                        searchRequest = new query_portfolio_request_pb_1.QueryPortfolioRequestProto();
                         searchRequest.setObjectClass('PortfolioRequest');
                         searchRequest.setVersion('0.0.1');
                         searchRequest.setAsOf(asOf);
-                        positionFilter = new PositionFilterProto();
+                        positionFilter = new position_filter_pb_1.PositionFilterProto();
                         positionFilter.setObjectClass('PositionFilter');
                         positionFilter.setVersion('0.0.1');
-                        fieldMapEntry = createFieldMapEntry(fieldProto, fieldValue);
+                        fieldMapEntry = (0, util_2.createFieldMapEntry)(fieldProto, fieldValue);
                         positionFilter.setFiltersList([fieldMapEntry]);
                         searchRequest.setSearchPortfolioInput(positionFilter);
                         tmpClient = this.client;
@@ -137,5 +140,5 @@ var PortfolioService = /** @class */ (function () {
     };
     return PortfolioService;
 }());
-export { PortfolioService };
+exports.PortfolioService = PortfolioService;
 //# sourceMappingURL=PortfolioService.js.map

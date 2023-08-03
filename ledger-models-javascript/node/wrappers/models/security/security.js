@@ -1,6 +1,8 @@
-import { FieldProto } from "../../../fintekkers/models/position/field_pb";
-import { ZonedDateTime } from "../utils/datetime";
-import { UUID } from "../utils/uuid";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
+var datetime_1 = require("../utils/datetime");
+var uuid_1 = require("../utils/uuid");
 var Security = /** @class */ (function () {
     function Security(proto) {
         this.proto = proto;
@@ -9,37 +11,37 @@ var Security = /** @class */ (function () {
         return "ID[".concat(this.get_id().toString(), "], ").concat(this.get_security_id(), "[").concat(this.proto.getIssuerName(), "]");
     };
     Security.prototype.get_fields = function () {
-        return [FieldProto.ID, FieldProto.SECURITY_ID, FieldProto.AS_OF, FieldProto.ASSET_CLASS, FieldProto.IDENTIFIER];
+        return [field_pb_1.FieldProto.ID, field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.AS_OF, field_pb_1.FieldProto.ASSET_CLASS, field_pb_1.FieldProto.IDENTIFIER];
     };
     Security.prototype.get_field = function (field) {
         switch (field) {
-            case FieldProto.ID:
-            case FieldProto.SECURITY_ID:
+            case field_pb_1.FieldProto.ID:
+            case field_pb_1.FieldProto.SECURITY_ID:
                 return this.get_id();
-            case FieldProto.AS_OF:
+            case field_pb_1.FieldProto.AS_OF:
                 return this.get_as_of();
-            case FieldProto.ASSET_CLASS:
+            case field_pb_1.FieldProto.ASSET_CLASS:
                 return this.get_asset_class();
-            case FieldProto.PRODUCT_CLASS:
+            case field_pb_1.FieldProto.PRODUCT_CLASS:
                 return this.get_product_class();
-            case FieldProto.PRODUCT_TYPE:
+            case field_pb_1.FieldProto.PRODUCT_TYPE:
                 return this.get_product_type();
-            case FieldProto.IDENTIFIER:
+            case field_pb_1.FieldProto.IDENTIFIER:
                 return this.get_security_id();
-            case FieldProto.TENOR:
-            case FieldProto.ADJUSTED_TENOR:
+            case field_pb_1.FieldProto.TENOR:
+            case field_pb_1.FieldProto.ADJUSTED_TENOR:
                 throw new Error('Not implemented yet');
-            case FieldProto.MATURITY_DATE:
+            case field_pb_1.FieldProto.MATURITY_DATE:
                 throw new Error('Not implemented yet');
             default:
                 throw new Error("Field not mapped in Security wrapper: ".concat(field));
         }
     };
     Security.prototype.get_id = function () {
-        return UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
+        return uuid_1.UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
     };
     Security.prototype.get_as_of = function () {
-        return new ZonedDateTime(this.proto.getAsOf());
+        return new datetime_1.ZonedDateTime(this.proto.getAsOf());
     };
     Security.prototype.get_asset_class = function () {
         return this.proto.getAssetClass();
@@ -72,5 +74,5 @@ var Security = /** @class */ (function () {
     };
     return Security;
 }());
-export default Security;
+exports.default = Security;
 //# sourceMappingURL=security.js.map

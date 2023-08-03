@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,13 +35,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import * as grpc from '@grpc/grpc-js';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PositionService = void 0;
+var grpc = require("@grpc/grpc-js");
 // Requests & Services
-import { PositionClient } from '../../../fintekkers/services/position-service/position_service_grpc_pb';
+var position_service_grpc_pb_1 = require("../../../fintekkers/services/position-service/position_service_grpc_pb");
 var PositionService = /** @class */ (function () {
     function PositionService() {
         // this.client = new PositionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        this.client = new PositionClient('localhost:8082', grpc.credentials.createInsecure());
+        this.client = new position_service_grpc_pb_1.PositionClient('localhost:8082', grpc.credentials.createInsecure());
     }
     PositionService.prototype.search = function (request) {
         return __awaiter(this, void 0, void 0, function () {
@@ -83,5 +86,5 @@ var PositionService = /** @class */ (function () {
     };
     return PositionService;
 }());
-export { PositionService };
+exports.PositionService = PositionService;
 //# sourceMappingURL=PositionService.js.map

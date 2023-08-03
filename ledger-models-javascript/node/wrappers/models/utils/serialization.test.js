@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,31 +35,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { ProtoSerializationUtil } from './serialization';
-import { UUID } from './uuid';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.testSerialization = void 0;
+var serialization_1 = require("./serialization");
+var uuid_1 = require("./uuid");
+var assert = require("assert");
 function testSerialization() {
     return __awaiter(this, void 0, void 0, function () {
         var serializedDate, deserializedDate, obj, serializedTimestamp, deserializedTimestamp;
         return __generator(this, function (_a) {
             checkUUID();
-            serializedDate = ProtoSerializationUtil.serialize(new Date());
+            serializedDate = serialization_1.ProtoSerializationUtil.serialize(new Date());
             console.log(serializedDate);
-            deserializedDate = ProtoSerializationUtil.deserialize(serializedDate);
+            deserializedDate = serialization_1.ProtoSerializationUtil.deserialize(serializedDate);
             console.log(deserializedDate);
             obj = new Date();
-            serializedTimestamp = ProtoSerializationUtil.serialize(obj);
+            serializedTimestamp = serialization_1.ProtoSerializationUtil.serialize(obj);
             console.log(serializedTimestamp);
-            deserializedTimestamp = ProtoSerializationUtil.deserialize(serializedTimestamp);
+            deserializedTimestamp = serialization_1.ProtoSerializationUtil.deserialize(serializedTimestamp);
             console.log(deserializedTimestamp);
             return [2 /*return*/];
         });
     });
 }
-export { testSerialization };
+exports.testSerialization = testSerialization;
 function checkUUID() {
-    var uuid = UUID.random();
-    var serializedUUID = ProtoSerializationUtil.serialize(uuid);
-    var uuidCopy = ProtoSerializationUtil.deserialize(serializedUUID);
+    var uuid = uuid_1.UUID.random();
+    var serializedUUID = serialization_1.ProtoSerializationUtil.serialize(uuid);
+    var uuidCopy = serialization_1.ProtoSerializationUtil.deserialize(serializedUUID);
     var uuidString = uuid.toString();
     var uuidCopyString = uuidCopy.toString();
     assert.equal(uuidString, uuidCopyString);

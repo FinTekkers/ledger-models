@@ -1,3 +1,4 @@
+"use strict";
 // Models
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -35,26 +36,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.testPosition = void 0;
 // Model Utils
-import { FieldProto } from '../fintekkers/models/position/field_pb';
+var field_pb_1 = require("../fintekkers/models/position/field_pb");
 //Requests & Services
-import { PortfolioService } from './services/portfolio-service/PortfolioService';
-import { packStringIntoAny } from '../wrappers/models/utils/util';
-import { PositionService } from './services/position-service/PositionService';
-import { PositionTypeProto, PositionViewProto } from '../fintekkers/models/position/position_pb';
-import { QueryPositionRequestProto } from '../fintekkers/requests/position/query_position_request_pb';
-import { IdentifierProto } from '../fintekkers/models/security/identifier/identifier_pb';
-import { Any } from 'google-protobuf/google/protobuf/any_pb';
-import { FieldMapEntry } from '../fintekkers/models/position/position_util_pb';
-import { PositionFilterProto } from '../fintekkers/models/position/position_filter_pb';
-import { ZonedDateTime } from './models/utils/datetime';
-import { MeasureProto } from '../fintekkers/models/position/measure_pb';
+var PortfolioService_1 = require("./services/portfolio-service/PortfolioService");
+var util_1 = require("../wrappers/models/utils/util");
+var PositionService_1 = require("./services/position-service/PositionService");
+var position_pb_1 = require("../fintekkers/models/position/position_pb");
+var query_position_request_pb_1 = require("../fintekkers/requests/position/query_position_request_pb");
+var identifier_pb_1 = require("../fintekkers/models/security/identifier/identifier_pb");
+var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
+var position_util_pb_1 = require("../fintekkers/models/position/position_util_pb");
+var position_filter_pb_1 = require("../fintekkers/models/position/position_filter_pb");
+var datetime_1 = require("./models/utils/datetime");
+var measure_pb_1 = require("../fintekkers/models/position/measure_pb");
 // const { Any } = require("google-protobuf/google/protobuf/any_pb");
 // const { ProtoSerializationUtil } = require("your_protobuf_util_package"); // Replace "your_protobuf_util_package" with the actual package name for your Protobuf utility functions
 function get_position(security, portfolio, measures, position_type, fields, additional_filters, as_of) {
-    if (fields === void 0) { fields = [FieldProto.PORTFOLIO, FieldProto.SECURITY]; }
+    if (fields === void 0) { fields = [field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.SECURITY]; }
     if (additional_filters === void 0) { additional_filters = []; }
-    if (as_of === void 0) { as_of = ZonedDateTime.now(); }
+    if (as_of === void 0) { as_of = datetime_1.ZonedDateTime.now(); }
     return __awaiter(this, void 0, void 0, function () {
         var filters, id_proto, security_id_packed, fieldMapEntry, fieldMapEntry, filter_fields, as_of_proto, request, position_service, positions;
         return __generator(this, function (_a) {
@@ -62,36 +65,36 @@ function get_position(security, portfolio, measures, position_type, fields, addi
                 case 0:
                     filters = [];
                     if (security !== null && security !== undefined) {
-                        id_proto = new IdentifierProto();
+                        id_proto = new identifier_pb_1.IdentifierProto();
                         id_proto.setIdentifierValue(security.getIdentifier().getIdentifierValue());
                         id_proto.setIdentifierType(security.getIdentifier().getIdentifierType());
-                        security_id_packed = new Any();
+                        security_id_packed = new any_pb_1.Any();
                         security_id_packed.pack(id_proto);
-                        fieldMapEntry = new FieldMapEntry();
-                        fieldMapEntry.setField(FieldProto.IDENTIFIER);
+                        fieldMapEntry = new position_util_pb_1.FieldMapEntry();
+                        fieldMapEntry.setField(field_pb_1.FieldProto.IDENTIFIER);
                         fieldMapEntry.setFieldValuePacked(security_id_packed);
                         filters.push(fieldMapEntry);
                     }
                     if (portfolio !== null && portfolio !== undefined) {
-                        fieldMapEntry = new FieldMapEntry();
-                        fieldMapEntry.setField(FieldProto.PORTFOLIO_NAME);
-                        fieldMapEntry.setFieldValuePacked(packStringIntoAny(portfolio.getPortfolioName()));
+                        fieldMapEntry = new position_util_pb_1.FieldMapEntry();
+                        fieldMapEntry.setField(field_pb_1.FieldProto.PORTFOLIO_NAME);
+                        fieldMapEntry.setFieldValuePacked((0, util_1.packStringIntoAny)(portfolio.getPortfolioName()));
                         filters.push(fieldMapEntry);
                     }
                     if (additional_filters !== null && additional_filters.length > 0) {
                         filters.push.apply(filters, additional_filters);
                     }
-                    filter_fields = new PositionFilterProto();
+                    filter_fields = new position_filter_pb_1.PositionFilterProto();
                     filter_fields.setFiltersList(filters);
                     as_of_proto = as_of.to_date_proto();
-                    request = new QueryPositionRequestProto();
+                    request = new query_position_request_pb_1.QueryPositionRequestProto();
                     request.setPositionType(position_type);
-                    request.setPositionView(PositionViewProto.DEFAULT_VIEW);
+                    request.setPositionView(position_pb_1.PositionViewProto.DEFAULT_VIEW);
                     request.setFieldsList(fields);
                     request.setMeasuresList(measures);
                     request.setFilterFields(filter_fields);
                     request.setAsOf(as_of_proto);
-                    position_service = new PositionService();
+                    position_service = new PositionService_1.PositionService();
                     return [4 /*yield*/, position_service.search(request)];
                 case 1:
                     positions = _a.sent();
@@ -106,13 +109,13 @@ function testPosition() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    now = ZonedDateTime.now();
-                    portfolioService = new PortfolioService();
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.to_date_proto(), FieldProto.PORTFOLIO_NAME, "Federal Reserve SOMA Holdings")];
+                    now = datetime_1.ZonedDateTime.now();
+                    portfolioService = new PortfolioService_1.PortfolioService();
+                    return [4 /*yield*/, portfolioService.searchPortfolio(now.to_date_proto(), field_pb_1.FieldProto.PORTFOLIO_NAME, "Federal Reserve SOMA Holdings")];
                 case 1:
                     portfolios = _a.sent();
                     fedReservePortfolio = portfolios[0];
-                    return [4 /*yield*/, get_position(null, fedReservePortfolio, [MeasureProto.DIRECTED_QUANTITY], PositionTypeProto.TRANSACTION, [FieldProto.PORTFOLIO_NAME, FieldProto.SECURITY_ID], [], now)];
+                    return [4 /*yield*/, get_position(null, fedReservePortfolio, [measure_pb_1.MeasureProto.DIRECTED_QUANTITY], position_pb_1.PositionTypeProto.TRANSACTION, [field_pb_1.FieldProto.PORTFOLIO_NAME, field_pb_1.FieldProto.SECURITY_ID], [], now)];
                 case 2:
                     positions = _a.sent();
                     positions[0].getFieldsList().forEach(function (field) { console.log(field); });
@@ -123,5 +126,5 @@ function testPosition() {
         });
     });
 }
-export { testPosition };
+exports.testPosition = testPosition;
 //# sourceMappingURL=position.test.js.map

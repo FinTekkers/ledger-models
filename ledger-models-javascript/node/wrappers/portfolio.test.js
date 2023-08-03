@@ -1,3 +1,4 @@
+"use strict";
 // Models
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -35,13 +36,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.testPortfolio = void 0;
 // Model Utils
-import { FieldProto } from '../fintekkers/models/position/field_pb';
-import * as uuid from './models/utils/uuid';
-import * as dt from './models/utils/datetime';
+var field_pb_1 = require("../fintekkers/models/position/field_pb");
+var uuid = require("./models/utils/uuid");
+var dt = require("./models/utils/datetime");
 //Requests & Services
-import { PortfolioService } from './services/portfolio-service/PortfolioService';
-import { PortfolioProto } from '../fintekkers/models/portfolio/portfolio_pb';
+var PortfolioService_1 = require("./services/portfolio-service/PortfolioService");
+var portfolio_pb_1 = require("../fintekkers/models/portfolio/portfolio_pb");
 function testPortfolio() {
     return __awaiter(this, void 0, void 0, function () {
         var id_proto, now, portfolioService, portfolio, validationSummary, createPortfolioResponse, searchResults;
@@ -50,8 +53,8 @@ function testPortfolio() {
                 case 0:
                     id_proto = uuid.UUID.random().toUUIDProto();
                     now = dt.ZonedDateTime.now();
-                    portfolioService = new PortfolioService();
-                    portfolio = new PortfolioProto();
+                    portfolioService = new PortfolioService_1.PortfolioService();
+                    portfolio = new portfolio_pb_1.PortfolioProto();
                     portfolio.setObjectClass('Portfolio');
                     portfolio.setVersion('0.0.1');
                     portfolio.setUuid(id_proto);
@@ -65,7 +68,7 @@ function testPortfolio() {
                 case 2:
                     createPortfolioResponse = _a.sent();
                     console.log(createPortfolioResponse);
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.to_date_proto(), FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings')];
+                    return [4 /*yield*/, portfolioService.searchPortfolio(now.to_date_proto(), field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings')];
                 case 3:
                     searchResults = _a.sent();
                     console.log('There are %d securities in this response', searchResults.length);
@@ -74,5 +77,5 @@ function testPortfolio() {
         });
     });
 }
-export { testPortfolio };
+exports.testPortfolio = testPortfolio;
 //# sourceMappingURL=portfolio.test.js.map

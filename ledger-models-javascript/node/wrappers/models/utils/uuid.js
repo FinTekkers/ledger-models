@@ -1,6 +1,9 @@
-import { assert } from 'console';
-import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
-import * as uuid from 'uuid';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UUID = void 0;
+var console_1 = require("console");
+var uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
+var uuid = require("uuid");
 var UUID = /** @class */ (function () {
     function UUID(bytes) {
         this.bytes = bytes;
@@ -13,7 +16,7 @@ var UUID = /** @class */ (function () {
         return this.bytes;
     };
     UUID.prototype.toUUIDProto = function () {
-        var id_proto = new UUIDProto();
+        var id_proto = new uuid_pb_1.UUIDProto();
         id_proto.setRawUuid(new Uint8Array(this.toBytes()));
         return id_proto;
     };
@@ -39,12 +42,12 @@ var UUID = /** @class */ (function () {
     };
     return UUID;
 }());
+exports.UUID = UUID;
 var test_uuid_bytes = [217, 98, 253, 240, 51, 225, 77, 157, 153, 155, 126, 195, 80, 240, 203, 119];
 var test_uuid = new UUID(test_uuid_bytes);
-assert(test_uuid.toString() == 'd962fdf0-33e1-4d9d-999b-7ec350f0cb77');
+(0, console_1.assert)(test_uuid.toString() == 'd962fdf0-33e1-4d9d-999b-7ec350f0cb77');
 var test_uuid_bytes_copy = UUID.fromString(test_uuid.toString());
-assert(test_uuid_bytes.length === test_uuid_bytes_copy.length &&
+(0, console_1.assert)(test_uuid_bytes.length === test_uuid_bytes_copy.length &&
     test_uuid_bytes.every(function (value, index) { return value === test_uuid_bytes_copy[index]; }));
-assert(UUID.random().toString().length == 36);
-export { UUID };
+(0, console_1.assert)(UUID.random().toString().length == 36);
 //# sourceMappingURL=uuid.js.map
