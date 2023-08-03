@@ -91,7 +91,7 @@ class SecuritySerializerTest {
         final SecurityProto proto = serializer.serialize(security);
 
         String serialized = serializer.serializeToJson(proto);
-        String expectedJson = "{\"object_class\":\"Security\",\"version\":\"0.0.1\",\"uuid\":\"00000000-0000-0001-0000-000000000001\",\"as_of\":{\"timestamp\":\"1000-Jan-01 00:00:00.000000\",\"time_zone\":\"America/New_York\"},\"is_link\":false,\"security_type\":\"CASH_SECURITY\",\"asset_class\":\"Cash\",\"issuer_name\":\"USD\",\"quantity_type\":\"UNITS\",\"identifier\":{\"object_class\":\"Identifier\",\"version\":\"0.0.1\",\"identifier_value\":\"USD\",\"identifier_type\":\"CASH\"},\"description\":\"USD\",\"cash_id\":\"CASHUSD\"}";
+        String expectedJson = "{\"object_class\":\"Security\",\"version\":\"0.0.1\",\"uuid\":\"00000000-0000-0001-0000-000000000001\",\"as_of\":{\"timestamp\":\"1000-Jan-01 00:00:00.000000\",\"time_zone\":\"America/New_York\"},\"is_link\":false,\"security_type\":\"CASH_SECURITY\",\"asset_class\":\"Cash\",\"issuer_name\":\"USD\",\"quantity_type\":\"UNITS\",\"identifier\":{\"object_class\":\"Identifier\",\"version\":\"0.0.1\",\"identifier_value\":\"USD\",\"identifier_type\":\"CASH\"},\"description\":\"USD\",\"cash_id\":\"USD\"}";
         assertEquals( 0 /*same*/, StringUtils.compare(expectedJson, serialized),
                 "Json didn't match! Got:\n"+ serialized+ "\nExpected\n"+ expectedJson);
 

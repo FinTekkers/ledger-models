@@ -237,7 +237,7 @@ pub struct FieldMapEntry {
     /// Used for position filters, but not for responses
     #[prost(enumeration = "PositionFilterOperator", tag = "20")]
     pub operator: i32,
-    #[prost(oneof = "field_map_entry::FieldMapValueOneOf", tags = "4, 5")]
+    #[prost(oneof = "field_map_entry::FieldMapValueOneOf", tags = "4, 5, 6")]
     pub field_map_value_one_of: ::core::option::Option<
         field_map_entry::FieldMapValueOneOf,
     >,
@@ -247,10 +247,15 @@ pub mod field_map_entry {
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum FieldMapValueOneOf {
+        /// If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
         #[prost(message, tag = "4")]
         FieldValuePacked(::prost_types::Any),
+        /// If the field is an enum type, then we use the number to denote which value it is
         #[prost(int32, tag = "5")]
         EnumValue(i32),
+        /// If the field is a string type, we just serialize the string (packing has an overhead)
+        #[prost(string, tag = "6")]
+        StringValue(::prost::alloc::string::String),
     }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]

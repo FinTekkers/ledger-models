@@ -42,6 +42,9 @@ export class FieldMapEntry extends jspb.Message {
   getEnumValue(): number;
   setEnumValue(value: number): FieldMapEntry;
 
+  getStringValue(): string;
+  setStringValue(value: string): FieldMapEntry;
+
   getOperator(): PositionFilterOperator;
   setOperator(value: PositionFilterOperator): FieldMapEntry;
 
@@ -60,6 +63,7 @@ export namespace FieldMapEntry {
     field: fintekkers_models_position_field_pb.FieldProto,
     fieldValuePacked?: google_protobuf_any_pb.Any.AsObject,
     enumValue: number,
+    stringValue: string,
     operator: PositionFilterOperator,
   }
 
@@ -67,6 +71,7 @@ export namespace FieldMapEntry {
     FIELDMAPVALUEONEOF_NOT_SET = 0,
     FIELD_VALUE_PACKED = 4,
     ENUM_VALUE = 5,
+    STRING_VALUE = 6,
   }
 }
 

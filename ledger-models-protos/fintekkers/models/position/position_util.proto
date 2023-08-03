@@ -21,8 +21,9 @@ message FieldMapEntry {
   FieldProto field = 1;
 
   oneof FieldMapValueOneOf {
-    google.protobuf.Any field_value_packed = 4;
-    int32 enum_value = 5;
+    google.protobuf.Any field_value_packed = 4; //If the field is a 'complex' proto type (e.g. a full enum) we serialize the enum and wrap it in an Any. You can think of the Any as a string describing the type, and a binary of the proto itself
+    int32 enum_value = 5; //If the field is an enum type, then we use the number to denote which value it is
+    string string_value = 6; //If the field is a string type, we just serialize the string (packing has an overhead)
   }
 
   PositionFilterOperator operator = 20; //Used for position filters, but not for responses

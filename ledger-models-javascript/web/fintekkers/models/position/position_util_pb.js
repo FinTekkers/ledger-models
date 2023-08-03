@@ -259,7 +259,7 @@ proto.fintekkers.models.position.MeasureMapEntry.prototype.hasMeasureDecimalValu
  * @private {!Array<!Array<number>>}
  * @const
  */
-proto.fintekkers.models.position.FieldMapEntry.oneofGroups_ = [[4,5]];
+proto.fintekkers.models.position.FieldMapEntry.oneofGroups_ = [[4,5,6]];
 
 /**
  * @enum {number}
@@ -267,7 +267,8 @@ proto.fintekkers.models.position.FieldMapEntry.oneofGroups_ = [[4,5]];
 proto.fintekkers.models.position.FieldMapEntry.FieldmapvalueoneofCase = {
   FIELDMAPVALUEONEOF_NOT_SET: 0,
   FIELD_VALUE_PACKED: 4,
-  ENUM_VALUE: 5
+  ENUM_VALUE: 5,
+  STRING_VALUE: 6
 };
 
 /**
@@ -311,6 +312,7 @@ proto.fintekkers.models.position.FieldMapEntry.toObject = function(includeInstan
     field: jspb.Message.getFieldWithDefault(msg, 1, 0),
     fieldValuePacked: (f = msg.getFieldValuePacked()) && google_protobuf_any_pb.Any.toObject(includeInstance, f),
     enumValue: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    stringValue: jspb.Message.getFieldWithDefault(msg, 6, ""),
     operator: jspb.Message.getFieldWithDefault(msg, 20, 0)
   };
 
@@ -360,6 +362,10 @@ proto.fintekkers.models.position.FieldMapEntry.deserializeBinaryFromReader = fun
     case 5:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setEnumValue(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setStringValue(value);
       break;
     case 20:
       var value = /** @type {!proto.fintekkers.models.position.PositionFilterOperator} */ (reader.readEnum());
@@ -413,6 +419,13 @@ proto.fintekkers.models.position.FieldMapEntry.serializeBinaryToWriter = functio
   if (f != null) {
     writer.writeInt32(
       5,
+      f
+    );
+  }
+  f = /** @type {string} */ (jspb.Message.getField(message, 6));
+  if (f != null) {
+    writer.writeString(
+      6,
       f
     );
   }
@@ -514,6 +527,42 @@ proto.fintekkers.models.position.FieldMapEntry.prototype.clearEnumValue = functi
  */
 proto.fintekkers.models.position.FieldMapEntry.prototype.hasEnumValue = function() {
   return jspb.Message.getField(this, 5) != null;
+};
+
+
+/**
+ * optional string string_value = 6;
+ * @return {string}
+ */
+proto.fintekkers.models.position.FieldMapEntry.prototype.getStringValue = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.fintekkers.models.position.FieldMapEntry} returns this
+ */
+proto.fintekkers.models.position.FieldMapEntry.prototype.setStringValue = function(value) {
+  return jspb.Message.setOneofField(this, 6, proto.fintekkers.models.position.FieldMapEntry.oneofGroups_[0], value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.fintekkers.models.position.FieldMapEntry} returns this
+ */
+proto.fintekkers.models.position.FieldMapEntry.prototype.clearStringValue = function() {
+  return jspb.Message.setOneofField(this, 6, proto.fintekkers.models.position.FieldMapEntry.oneofGroups_[0], undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.position.FieldMapEntry.prototype.hasStringValue = function() {
+  return jspb.Message.getField(this, 6) != null;
 };
 
 

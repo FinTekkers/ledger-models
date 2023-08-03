@@ -20,6 +20,7 @@ import java.util.List;
 
 import static common.models.JSONFieldNames.*;
 import static fintekkers.models.position.FieldMapEntry.FieldMapValueOneOfCase.ENUM_VALUE;
+import static fintekkers.models.position.FieldMapEntry.FieldMapValueOneOfCase.STRING_VALUE;
 
 /**
  * Serializes/deserializes between position protos and position objects. Note that positions are a derived form of
@@ -108,7 +109,11 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
                 //Dynamically sources the appropriate enum, and gets it based on the number serialized in the proto.
                 Object enumConstant = field.getType().getEnumConstants()[fieldProto.getEnumValue()];
                 fieldValue = enumConstant;
-            } else {
+            }
+            //TODO: Uncomment this and test it
+            /* else if(STRING_VALUE.equals(fieldProto.getFieldMapValueOneOfCase())) {
+                fieldValue = fieldProto.getStringValue();
+            }*/ else {
                 fieldValue = ProtoSerializationUtil.deserialize(fieldProto.getFieldValuePacked());
             }
             position.setFieldValue(field, fieldValue);
