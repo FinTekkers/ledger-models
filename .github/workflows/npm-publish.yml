@@ -44,5 +44,5 @@ jobs:
           npm ci
           echo ${{ env.release_version }} 
           npm version ${{ env.release_version }} 
-          npm publish
+          npm publish  --access public
  
