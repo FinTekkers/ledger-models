@@ -45,12 +45,3 @@ jobs:
           echo ${{ env.release_version }} will be published to GitHub Packages
           npm version ${{ env.release_version }} 
           npm publish  --access public
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-        node-version: 12
-        registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPMJS_PUBLISH_TOKEN}}

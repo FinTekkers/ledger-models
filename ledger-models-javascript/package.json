@@ -1,6 +1,7 @@
 {
   "name": "@fintekkers/ledger-models",
-  "version": "1.0.7",
+  "todo" : "Replace the version with build script version number",
+  "version": "0.0.100", 
   "description": "ledger model protos ",
   "author": "Sam Sheridan",
   "license": "ISC",
