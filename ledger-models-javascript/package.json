@@ -3,7 +3,10 @@
   "todo" : "Replace the version with build script version number",
   "version": "0.0.103", 
   "description": "ledger model protos ",
-  "author": "Sam Sheridan",
+  "authors": [
+    "David Doherty",
+    "Sam Sheridan"
+  ],
   "license": "ISC",
   "main": "index.js",
   "type": "commonjs",

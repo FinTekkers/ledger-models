@@ -1,4 +1,4 @@
-name: Publish JS package to GitHub Packages
+name: Publish JS package to NPMJS Packages
 on:
   push:
     tags:  #only trigger action when tagged with release number, i.e v0.0.1     
@@ -37,7 +37,7 @@ jobs:
       - name: Print Environment Variables
         run: env
       - run: |
-          npm config set _authToken=${{ secrets.NPMJS_PUBLISH_TOKEN }}
+          npm config set _authToken ${{ secrets.NPMJS_PUBLISH_TOKEN }}
           npm config fix
           npm ci
           echo ${{ env.release_version }} will be published to NPMJS Packages
