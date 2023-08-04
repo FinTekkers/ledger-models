@@ -22,9 +22,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16.x'
-          registry-url: 'https://npm.pkg.github.com'
-          # Defaults to the user or organization that owns the workflow file
-          scope: '@octocat'
+          registry-url: https://registry.npmjs.org/
       - name: Get git tag extension
         id: tag
         uses: dawidd6/action-get-tag@v1
@@ -40,7 +38,7 @@ jobs:
         run: env
       - run: |
           echo "@username:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPMJS_PUBLISH_TOKEN }}" >> .npmrc
           npm ci
           echo ${{ env.release_version }} will be published to GitHub Packages
           npm version ${{ env.release_version }} 
