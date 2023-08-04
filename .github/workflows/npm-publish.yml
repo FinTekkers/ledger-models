@@ -37,8 +37,7 @@ jobs:
       - name: Print Environment Variables
         run: env
       - run: |
-          npm config set _authToken ${{ secrets.NPM_TOKEN }}
-          npm config fix
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
           npm ci
           echo ${{ env.release_version }} will be published to GitHub Packages
           npm version ${{ env.release_version }} 
