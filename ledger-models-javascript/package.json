@@ -1,7 +1,7 @@
 {
   "name": "@fintekkers/ledger-models",
   "todo" : "Replace the version with build script version number",
-  "version": "0.0.100", 
+  "version": "0.0.103", 
   "description": "ledger model protos ",
   "author": "Sam Sheridan",
   "license": "ISC",
@@ -15,9 +15,7 @@
     "google-protobuf": "^3.21.2",
     "grpc-web": "^1.4.2"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
+  "publishConfigNotes": "This package.json does not have a publish config defining the registry because we currently publish to both Github packages & npmjs, so the registry is in the ../.github/workflows/publish.yml files at runtime",
   "scripts": {
     "test": "jest",
     "start": "node index.js"

@@ -23,8 +23,6 @@ jobs:
         with:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
-          # Defaults to the user or organization that owns the workflow file
-          scope: '@octocat'
       - name: Get git tag extension
         id: tag
         uses: dawidd6/action-get-tag@v1
@@ -39,8 +37,8 @@ jobs:
       - name: Print Environment Variables
         run: env
       - run: |
-          echo "@username:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+          npm config set _authToken=${{ secrets.NPM_TOKEN }}
+          npm config fix
           npm ci
           echo ${{ env.release_version }} will be published to GitHub Packages
           npm version ${{ env.release_version }} 
