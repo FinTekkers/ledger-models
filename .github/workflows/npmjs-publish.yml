@@ -37,8 +37,8 @@ jobs:
       - name: Print Environment Variables
         run: env
       - run: |
-          echo "@username:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPMJS_PUBLISH_TOKEN }}" >> .npmrc
+          echo "@username:registry=https://registry.npmjs.org/" >> .npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPMJS_PUBLISH_TOKEN }}" >> .npmrc
           npm ci
           echo ${{ env.release_version }} will be published to GitHub Packages
           npm version ${{ env.release_version }} 
