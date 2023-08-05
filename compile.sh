@@ -1,12 +1,27 @@
-# echo "generating rust protos"
-# cd ledger-models-rust
-# cargo run --bin gen
+#NOTE: Compilation will fail if any of the test suites fail to run.
+# This is because we don't want to publish a version of the library 
+# that doesn't pass all tests.
 
-# echo "generating java protos"
-# cd ../ledger-models-java
-# gradle clean
-# gradle build
 
+#########################################
+######### RUST PROTO GENERATION #########
+#########################################
+echo "generating rust protos"
+cd ledger-models-rust
+cargo run --bin gen
+
+#########################################
+######### JAVA PROTO GENERATION #########
+#########################################
+
+echo "generating java protos"
+cd ../ledger-models-java
+gradle clean
+gradle build
+
+###########################################
+######### JAVASCRIPT PROTO GENERATION ######
+###########################################
 
 echo "generating javascript protos"
 cd ledger-models-protos
@@ -25,9 +40,11 @@ protoc \
 -I . \
 $(find . -iname "*.proto")
 
+###########################################
+######### PYTHON PROTO GENERATION #########
+###########################################
 
-
-# echo "generating python protos"
-# #pip3 install grpcio
-# #pip3 install grpcio-tools
-# python3 -m grpc_tools.protoc -I=. --python_out=../ledger-models-python --pyi_out=../ledger-models-python --grpc_python_out=../ledger-models-python $(find . -iname "*.proto")
+echo "generating python protos"
+#pip3 install grpcio
+#pip3 install grpcio-tools
+python3 -m grpc_tools.protoc -I=. --python_out=../ledger-models-python --pyi_out=../ledger-models-python --grpc_python_out=../ledger-models-python $(find . -iname "*.proto")
