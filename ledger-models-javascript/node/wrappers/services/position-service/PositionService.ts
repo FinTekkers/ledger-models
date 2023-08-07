@@ -7,8 +7,8 @@ import { createFieldMapEntry } from '../../models/utils/util';
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
-import { ZonedDateTime } from '../../../wrappers/models/utils/datetime';
-import { packStringIntoAny } from '../../../wrappers/models/utils/util';
+import { ZonedDateTime } from '../../models/utils/datetime';
+import { packStringIntoAny } from '../../models/utils/util';
 
 // Model Utils
 import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';

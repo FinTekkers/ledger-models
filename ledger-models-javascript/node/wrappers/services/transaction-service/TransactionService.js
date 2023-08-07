@@ -36,31 +36,33 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PortfolioService = void 0;
+exports.TransactionService = void 0;
 var grpc = require("@grpc/grpc-js");
 var util_1 = require("util");
+// Models
+var transaction_1 = require("../../models/transaction/transaction");
 var util_2 = require("../../models/utils/util");
 // Model Utils
 var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
 // Requests & Services
-var portfolio_service_grpc_pb_1 = require("../../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb");
-var query_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfolio/query_portfolio_request_pb");
-var create_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfolio/create_portfolio_request_pb");
-var PortfolioService = /** @class */ (function () {
-    function PortfolioService() {
-        // this.client = new PortfolioClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        this.client = new portfolio_service_grpc_pb_1.PortfolioClient('localhost:8082', grpc.credentials.createInsecure());
+var transaction_service_grpc_pb_1 = require("../../../fintekkers/services/transaction-service/transaction_service_grpc_pb");
+var create_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/create_transaction_request_pb");
+var query_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/query_transaction_request_pb");
+var TransactionService = /** @class */ (function () {
+    function TransactionService() {
+        // this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+        this.client = new transaction_service_grpc_pb_1.TransactionClient('localhost:8082', grpc.credentials.createInsecure());
     }
-    PortfolioService.prototype.validateCreatePortfolio = function (portfolio) {
+    TransactionService.prototype.validateCreateTransaction = function (transaction) {
         return __awaiter(this, void 0, void 0, function () {
             var createRequest, validateCreateOrUpdateAsync, response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        createRequest = new create_portfolio_request_pb_1.CreatePortfolioRequestProto();
-                        createRequest.setObjectClass('PortfolioRequest');
+                        createRequest = new create_transaction_request_pb_1.CreateTransactionRequestProto();
+                        createRequest.setObjectClass('TransactionRequest');
                         createRequest.setVersion('0.0.1');
-                        createRequest.setCreatePortfolioInput(portfolio);
+                        createRequest.setCreateTransactionInput(transaction.proto);
                         validateCreateOrUpdateAsync = (0, util_1.promisify)(this.client.validateCreateOrUpdate.bind(this.client));
                         return [4 /*yield*/, validateCreateOrUpdateAsync(createRequest)];
                     case 1:
@@ -70,18 +72,18 @@ var PortfolioService = /** @class */ (function () {
             });
         });
     };
-    PortfolioService.prototype.createPortfolio = function (portfolio) {
+    TransactionService.prototype.createTransaction = function (transaction) {
         return __awaiter(this, void 0, void 0, function () {
-            var createRequest, createPortfolioAsync, response;
+            var createRequest, createSecurityAsync, response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        createRequest = new create_portfolio_request_pb_1.CreatePortfolioRequestProto();
-                        createRequest.setObjectClass('PortfolioRequest');
+                        createRequest = new create_transaction_request_pb_1.CreateTransactionRequestProto();
+                        createRequest.setObjectClass('TransactionRequest');
                         createRequest.setVersion('0.0.1');
-                        createRequest.setCreatePortfolioInput(portfolio);
-                        createPortfolioAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
-                        return [4 /*yield*/, createPortfolioAsync(createRequest)];
+                        createRequest.setCreateTransactionInput(transaction.proto);
+                        createSecurityAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
+                        return [4 /*yield*/, createSecurityAsync(createRequest)];
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, response];
@@ -89,7 +91,7 @@ var PortfolioService = /** @class */ (function () {
             });
         });
     };
-    PortfolioService.prototype.searchPortfolio = function (asOf, fieldProto, fieldValue) {
+    TransactionService.prototype.searchTransaction = function (asOf, fieldProto, fieldValue) {
         return __awaiter(this, void 0, void 0, function () {
             function processStreamSynchronously() {
                 return __awaiter(this, void 0, void 0, function () {
@@ -98,15 +100,16 @@ var PortfolioService = /** @class */ (function () {
                         stream2 = tmpClient.search(searchRequest);
                         return [2 /*return*/, new Promise(function (resolve, reject) {
                                 stream2.on('data', function (response) {
-                                    console.log('Result of the portfolio search call');
+                                    console.log('Result of the transaction search call');
                                     console.log('Response:', response);
-                                    response.getPortfolioResponseList().forEach(function (portfolio) {
-                                        listPortfolios.push(portfolio);
+                                    response.getTransactionResponseList().forEach(function (transaction) {
+                                        listTransactions.push(new transaction_1.default(transaction));
                                     });
+                                    console.log('Size of transactions:', listTransactions.length);
                                 });
                                 stream2.on('end', function () {
                                     console.log('Stream ended.');
-                                    resolve(listPortfolios);
+                                    resolve(listTransactions);
                                 });
                                 stream2.on('error', function (err) {
                                     console.error('Error in the stream:', err);
@@ -116,31 +119,29 @@ var PortfolioService = /** @class */ (function () {
                     });
                 });
             }
-            var searchRequest, positionFilter, fieldMapEntry, tmpClient, listPortfolios;
+            var searchRequest, positionFilter, fieldMapEntry, tmpClient, listTransactions;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        searchRequest = new query_portfolio_request_pb_1.QueryPortfolioRequestProto();
-                        searchRequest.setObjectClass('PortfolioRequest');
+                        searchRequest = new query_transaction_request_pb_1.QueryTransactionRequestProto();
+                        searchRequest.setObjectClass('SecurityRequest');
                         searchRequest.setVersion('0.0.1');
                         searchRequest.setAsOf(asOf);
                         positionFilter = new position_filter_pb_1.PositionFilterProto();
                         positionFilter.setObjectClass('PositionFilter');
                         positionFilter.setVersion('0.0.1');
-                        if (fieldProto && fieldValue) {
-                            fieldMapEntry = (0, util_2.createFieldMapEntry)(fieldProto, fieldValue);
-                            positionFilter.setFiltersList([fieldMapEntry]);
-                        }
-                        searchRequest.setSearchPortfolioInput(positionFilter);
+                        fieldMapEntry = (0, util_2.createFieldMapEntry)(fieldProto, fieldValue);
+                        positionFilter.setFiltersList([fieldMapEntry]);
+                        searchRequest.setSearchTransactionInput(positionFilter);
                         tmpClient = this.client;
-                        listPortfolios = [];
+                        listTransactions = [];
                         return [4 /*yield*/, processStreamSynchronously()];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    return PortfolioService;
+    return TransactionService;
 }());
-exports.PortfolioService = PortfolioService;
-//# sourceMappingURL=PortfolioService.js.map
+exports.TransactionService = TransactionService;
+//# sourceMappingURL=TransactionService.js.map

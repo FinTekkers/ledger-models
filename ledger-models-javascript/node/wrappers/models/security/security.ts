@@ -12,28 +12,28 @@ class Security {
   }
 
   toString(): string {
-    return `ID[${this.get_id().toString()}], ${this.get_security_id()}[${this.proto.getIssuerName()}]`;
+    return `ID[${this.getID().toString()}], ${this.getSecurityID()}[${this.getIssuerName()}]`;
   }
 
-  get_fields(): FieldProto[] {
+  getFields(): FieldProto[] {
     return [FieldProto.ID, FieldProto.SECURITY_ID, FieldProto.AS_OF, FieldProto.ASSET_CLASS, FieldProto.IDENTIFIER];
   }
 
-  get_field(field: FieldProto): any {
+  getField(field: FieldProto): any {
     switch (field) {
       case FieldProto.ID:
       case FieldProto.SECURITY_ID:
-        return this.get_id();
+        return this.getID();
       case FieldProto.AS_OF:
-        return this.get_as_of();
+        return this.getAsOf();
       case FieldProto.ASSET_CLASS:
-        return this.get_asset_class();
+        return this.getAssetClass();
       case FieldProto.PRODUCT_CLASS:
-        return this.get_product_class();
+        return this.getProductClass();
       case FieldProto.PRODUCT_TYPE:
-        return this.get_product_type();
+        return this.getProductType();
       case FieldProto.IDENTIFIER:
-        return this.get_security_id();
+        return this.getSecurityID();
       case FieldProto.TENOR:
       case FieldProto.ADJUSTED_TENOR:
         throw new Error('Not implemented yet');
@@ -44,39 +44,43 @@ class Security {
     }
   }
 
-  get_id(): UUID {
+  getID(): UUID {
     return UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
   }
 
-  get_as_of(): ZonedDateTime {
+  getAsOf(): ZonedDateTime {
     return new ZonedDateTime(this.proto.getAsOf());
   }
 
-  get_asset_class(): string {
+  getAssetClass(): string {
     return this.proto.getAssetClass();
   }
 
-  get_product_class(): string {
+  getProductClass(): string {
     throw new Error('Not implemented yet. See Java implementation for reference');
   }
 
-  get_product_type(): any {
+  getProductType(): any {
     throw new Error('Not implemented yet. See Java implementation for reference');
   }
 
-  get_security_id(): IdentifierProto {
+  getSecurityID(): IdentifierProto {
     // const id: IdentifierProto = this.proto.identifier;
     return this.proto.getIdentifier(); // Assuming you've implemented the Identifier class
   }
 
-  get_issue_date(): Date {
+  getIssueDate(): Date {
     const date = this.proto.getIssueDate();
     return new Date(date.getYear(), date.getMonth(), date.getDay());
   }
 
-  get_maturity_date(): Date {
+  getMaturityDate(): Date {
     const date = this.proto.getMaturityDate();
     return new Date(date.getYear(), date.getMonth(), date.getDay());
+  }
+
+  getIssuerName(): string {
+    return this.proto.getIssuerName();
   }
 
   equals(other: Security): boolean {

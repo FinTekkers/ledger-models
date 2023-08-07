@@ -8,26 +8,26 @@ var Security = /** @class */ (function () {
         this.proto = proto;
     }
     Security.prototype.toString = function () {
-        return "ID[".concat(this.get_id().toString(), "], ").concat(this.get_security_id(), "[").concat(this.proto.getIssuerName(), "]");
+        return "ID[".concat(this.getID().toString(), "], ").concat(this.getSecurityID(), "[").concat(this.getIssuerName(), "]");
     };
-    Security.prototype.get_fields = function () {
+    Security.prototype.getFields = function () {
         return [field_pb_1.FieldProto.ID, field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.AS_OF, field_pb_1.FieldProto.ASSET_CLASS, field_pb_1.FieldProto.IDENTIFIER];
     };
-    Security.prototype.get_field = function (field) {
+    Security.prototype.getField = function (field) {
         switch (field) {
             case field_pb_1.FieldProto.ID:
             case field_pb_1.FieldProto.SECURITY_ID:
-                return this.get_id();
+                return this.getID();
             case field_pb_1.FieldProto.AS_OF:
-                return this.get_as_of();
+                return this.getAsOf();
             case field_pb_1.FieldProto.ASSET_CLASS:
-                return this.get_asset_class();
+                return this.getAssetClass();
             case field_pb_1.FieldProto.PRODUCT_CLASS:
-                return this.get_product_class();
+                return this.getProductClass();
             case field_pb_1.FieldProto.PRODUCT_TYPE:
-                return this.get_product_type();
+                return this.getProductType();
             case field_pb_1.FieldProto.IDENTIFIER:
-                return this.get_security_id();
+                return this.getSecurityID();
             case field_pb_1.FieldProto.TENOR:
             case field_pb_1.FieldProto.ADJUSTED_TENOR:
                 throw new Error('Not implemented yet');
@@ -37,32 +37,35 @@ var Security = /** @class */ (function () {
                 throw new Error("Field not mapped in Security wrapper: ".concat(field));
         }
     };
-    Security.prototype.get_id = function () {
+    Security.prototype.getID = function () {
         return uuid_1.UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
     };
-    Security.prototype.get_as_of = function () {
+    Security.prototype.getAsOf = function () {
         return new datetime_1.ZonedDateTime(this.proto.getAsOf());
     };
-    Security.prototype.get_asset_class = function () {
+    Security.prototype.getAssetClass = function () {
         return this.proto.getAssetClass();
     };
-    Security.prototype.get_product_class = function () {
+    Security.prototype.getProductClass = function () {
         throw new Error('Not implemented yet. See Java implementation for reference');
     };
-    Security.prototype.get_product_type = function () {
+    Security.prototype.getProductType = function () {
         throw new Error('Not implemented yet. See Java implementation for reference');
     };
-    Security.prototype.get_security_id = function () {
+    Security.prototype.getSecurityID = function () {
         // const id: IdentifierProto = this.proto.identifier;
         return this.proto.getIdentifier(); // Assuming you've implemented the Identifier class
     };
-    Security.prototype.get_issue_date = function () {
+    Security.prototype.getIssueDate = function () {
         var date = this.proto.getIssueDate();
         return new Date(date.getYear(), date.getMonth(), date.getDay());
     };
-    Security.prototype.get_maturity_date = function () {
+    Security.prototype.getMaturityDate = function () {
         var date = this.proto.getMaturityDate();
         return new Date(date.getYear(), date.getMonth(), date.getDay());
+    };
+    Security.prototype.getIssuerName = function () {
+        return this.proto.getIssuerName();
     };
     Security.prototype.equals = function (other) {
         if (other instanceof Security) {

@@ -1,7 +1,7 @@
 {
   "name": "@fintekkers/ledger-models",
-  "todo" : "Replace the version with build script version number",
-  "version": "0.0.103", 
+  "todo": "Replace the version with build script version number",
+  "version": "0.0.103",
   "description": "ledger model protos ",
   "authors": [
     "David Doherty",
@@ -33,6 +33,7 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.8.18",
     "bytebuffer": "^5.0.1",
+    "decimal.js": "^10.4.3",
     "luxon": "^3.3.0",
     "uuid": "^9.0.0"
   }

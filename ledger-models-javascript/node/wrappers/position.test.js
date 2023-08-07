@@ -42,7 +42,7 @@ exports.testPosition = void 0;
 var field_pb_1 = require("../fintekkers/models/position/field_pb");
 //Requests & Services
 var PortfolioService_1 = require("./services/portfolio-service/PortfolioService");
-var util_1 = require("../wrappers/models/utils/util");
+var util_1 = require("./models/utils/util");
 var PositionService_1 = require("./services/position-service/PositionService");
 var position_pb_1 = require("../fintekkers/models/position/position_pb");
 var query_position_request_pb_1 = require("../fintekkers/requests/position/query_position_request_pb");

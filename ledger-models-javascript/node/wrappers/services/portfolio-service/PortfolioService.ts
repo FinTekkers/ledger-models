@@ -48,7 +48,8 @@ class PortfolioService {
     return response;
   }
 
-  async searchPortfolio(asOf: LocalTimestampProto, fieldProto: FieldProto, fieldValue: string): Promise<PortfolioProto[]> {
+  async searchPortfolio(asOf: LocalTimestampProto, 
+      fieldProto?: FieldProto, fieldValue?: string): Promise<PortfolioProto[]> {
     const searchRequest = new QueryPortfolioRequestProto();
     searchRequest.setObjectClass('PortfolioRequest');
     searchRequest.setVersion('0.0.1');
@@ -59,8 +60,10 @@ class PortfolioService {
     positionFilter.setObjectClass('PositionFilter');
     positionFilter.setVersion('0.0.1');
 
-    const fieldMapEntry = createFieldMapEntry(fieldProto, fieldValue);
-    positionFilter.setFiltersList([fieldMapEntry]);
+    if (fieldProto && fieldValue) {
+      const fieldMapEntry = createFieldMapEntry(fieldProto, fieldValue);
+      positionFilter.setFiltersList([fieldMapEntry]);
+    }
 
     searchRequest.setSearchPortfolioInput(positionFilter);
 

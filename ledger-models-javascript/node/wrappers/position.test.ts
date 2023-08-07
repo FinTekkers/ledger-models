@@ -10,7 +10,7 @@ import { PortfolioService } from './services/portfolio-service/PortfolioService'
 import { PortfolioProto } from '../fintekkers/models/portfolio/portfolio_pb';
 import { QueryPortfolioRequestProto } from '../fintekkers/requests/portfolio/query_portfolio_request_pb';
 
-import { packStringIntoAny } from '../wrappers/models/utils/util';
+import { packStringIntoAny } from './models/utils/util';
 import { PositionService } from './services/position-service/PositionService';
 import { PositionProto, PositionTypeProto, PositionViewProto } from '../fintekkers/models/position/position_pb';
 import { QueryPositionRequestProto } from '../fintekkers/requests/position/query_position_request_pb';

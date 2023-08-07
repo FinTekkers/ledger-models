@@ -1,18 +1,19 @@
-import { testPortfolio } from './node/wrappers/portfolio.test';
-testPortfolio();
+// import { testPortfolio } from './node/wrappers/portfolio.test';
+// testPortfolio();
 
-import { testSecurity } from './node/wrappers/security.test';
-testSecurity();
+// import { testSecurity } from './node/wrappers/security.test';
+// testSecurity();
 
-//TODO: Add position convenience wrapper
-import { testPosition } from './node/wrappers/position.test';
-testPosition();
+// //TODO: Add position convenience wrapper
+// import { testPosition } from './node/wrappers/position.test';
+// testPosition();
 
-import { testSerialization } from './node/wrappers/models/utils/serialization.test';
-testSerialization();
+// import { testSerialization } from './node/wrappers/models/utils/serialization.test';
+// testSerialization();
 
 // TODO - Transactions
 
-
+import { testTransaction } from './node/wrappers/transaction.test';
+testTransaction();
 // TODO - Positions
 
