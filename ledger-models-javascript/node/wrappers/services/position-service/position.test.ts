@@ -1,32 +1,29 @@
 // Models
 
+import { IdentifierProto } from '../../../fintekkers/models/security/identifier/identifier_pb';
+import { PositionTypeProto, PositionViewProto } from '../../../fintekkers/models/position/position_pb';
+import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
+import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
+
 // Model Utils
-import { FieldProto } from '../fintekkers/models/position/field_pb';
-import * as uuid from './models/utils/uuid';
-import * as dt from './models/utils/datetime';
+import { FieldProto } from '../../../fintekkers/models/position/field_pb';
+import { FieldMapEntry } from '../../../fintekkers/models/position/position_util_pb';
+import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
+import { ZonedDateTime } from '../../models/utils/datetime';
+
+import { packStringIntoAny } from '../../models/utils/util';
+import { Any } from 'google-protobuf/google/protobuf/any_pb';
 
 //Requests & Services
-import { PortfolioService } from './services/portfolio-service/PortfolioService';
-import { PortfolioProto } from '../fintekkers/models/portfolio/portfolio_pb';
-import { QueryPortfolioRequestProto } from '../fintekkers/requests/portfolio/query_portfolio_request_pb';
+import { PortfolioService } from '../../services/portfolio-service/PortfolioService';
+import { PositionService } from '../../services/position-service/PositionService';
+import { QueryPositionRequestProto } from '../../../fintekkers/requests/position/query_position_request_pb';
 
-import { packStringIntoAny } from './models/utils/util';
-import { PositionService } from './services/position-service/PositionService';
-import { PositionProto, PositionTypeProto, PositionViewProto } from '../fintekkers/models/position/position_pb';
-import { QueryPositionRequestProto } from '../fintekkers/requests/position/query_position_request_pb';
-import { CreatePortfolioResponseProto } from '../fintekkers/requests/portfolio/create_portfolio_response_pb';
-import { IdentifierProto } from '../fintekkers/models/security/identifier/identifier_pb';
-import { Any } from 'google-protobuf/google/protobuf/any_pb';
-import { FieldMapEntry } from '../fintekkers/models/position/position_util_pb';
-import { PositionFilterProto } from '../fintekkers/models/position/position_filter_pb';
-import { ZonedDateTime } from './models/utils/datetime';
-import { SecurityProto } from '../fintekkers/models/security/security_pb';
-import { MeasureProto } from '../fintekkers/models/position/measure_pb';
-import { SecurityService } from './services/security-service/SecurityService';
-
-// const { Any } = require("google-protobuf/google/protobuf/any_pb");
-
-// const { ProtoSerializationUtil } = require("your_protobuf_util_package"); // Replace "your_protobuf_util_package" with the actual package name for your Protobuf utility functions
+test('test getting a position against the api.fintekkers.org position service', () => {
+  const isTrue = testPosition();
+  expect(isTrue).resolves.toBe(true);
+}, 30000);
 
 async function get_position(security:SecurityProto, 
             portfolio:PortfolioProto, 
@@ -83,7 +80,7 @@ async function get_position(security:SecurityProto,
     return positions;
 }
 
-async function testPosition(): Promise<void> {
+async function testPosition(): Promise<boolean> {
   //Get the Federal Reserve portfolio
   const now = ZonedDateTime.now();
 
@@ -100,10 +97,6 @@ async function testPosition(): Promise<void> {
     PositionTypeProto.TRANSACTION,
     [FieldProto.PORTFOLIO_NAME, FieldProto.SECURITY_ID], [], now);
 
-
-    positions[0].getFieldsList().forEach((field) => { console.log(field); });
-    positions[0].getMeasuresList().forEach((measure) => { console.log(measure); });
-  console.log(positions);
+  return true;
 }
 
-export { testPosition };

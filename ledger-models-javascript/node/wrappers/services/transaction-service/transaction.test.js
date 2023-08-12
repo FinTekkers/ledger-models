@@ -36,21 +36,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testTransaction = void 0;
 // Models
-var decimal_value_pb_1 = require("../fintekkers/models/util/decimal_value_pb");
-var local_date_pb_1 = require("../fintekkers/models/util/local_date_pb");
+var decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
+var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 // Model Utils
-var field_pb_1 = require("../fintekkers/models/position/field_pb");
-var uuid = require("./models/utils/uuid");
-var dt = require("./models/utils/datetime");
-var SecurityService_1 = require("./services/security-service/SecurityService");
-var transaction_type_pb_1 = require("../fintekkers/models/transaction/transaction_type_pb");
-var transaction_pb_1 = require("../fintekkers/models/transaction/transaction_pb");
-var price_pb_1 = require("../fintekkers/models/price/price_pb");
-var PortfolioService_1 = require("./services/portfolio-service/PortfolioService");
-var TransactionService_1 = require("./services/transaction-service/TransactionService");
-var transaction_1 = require("./models/transaction/transaction");
+var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
+var uuid = require("../../models/utils/uuid");
+var dt = require("../../models/utils/datetime");
+var SecurityService_1 = require("../security-service/SecurityService");
+var transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
+var transaction_pb_1 = require("../../../fintekkers/models/transaction/transaction_pb");
+var price_pb_1 = require("../../../fintekkers/models/price/price_pb");
+var PortfolioService_1 = require("../portfolio-service/PortfolioService");
+var TransactionService_1 = require("./TransactionService");
+var transaction_1 = require("../../models/transaction/transaction");
+test('test creating a transaction against the api.fintekkers.org portfolio service', function () {
+    var isTrue = testTransaction();
+    expect(isTrue).resolves.toBe(true);
+}, 30000);
 function testTransaction() {
     return __awaiter(this, void 0, void 0, function () {
         var id_proto, now, today, securityService, portfolioService, transactionService, fixedIncomeSecurities, security, portfolios, portfolio, transaction, createTransactionResponse, searchResults;
@@ -77,7 +80,6 @@ function testTransaction() {
                     if (portfolios === undefined) {
                         throw new Error('No portfolios found');
                     }
-                    console.log('There are %d portfolios in this response', portfolios.length);
                     portfolio = portfolios[0];
                     if (portfolio.getPortfolioName().includes('Federal')) {
                         throw new Error('Portfolio is not a test portfolio! Abandoning test');
@@ -103,15 +105,12 @@ function testTransaction() {
                     return [4 /*yield*/, transactionService.createTransaction(new transaction_1.default(transaction))];
                 case 3:
                     createTransactionResponse = _a.sent();
-                    console.log(createTransactionResponse);
                     return [4 /*yield*/, transactionService.searchTransaction(now.to_date_proto(), field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income')];
                 case 4:
                     searchResults = _a.sent();
-                    console.log('There are %d transactions in this response', searchResults.length);
-                    return [2 /*return*/];
+                    return [2 /*return*/, true];
             }
         });
     });
 }
-exports.testTransaction = testTransaction;
 //# sourceMappingURL=transaction.test.js.map

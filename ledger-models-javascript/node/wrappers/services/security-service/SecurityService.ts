@@ -23,8 +23,8 @@ class SecurityService {
   private client: SecurityClient;
 
   constructor() {
-    // this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-    this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
+    this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+    // this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
   }
 
   async validateCreateSecurity(security: SecurityProto): Promise<SummaryProto> {
@@ -73,15 +73,12 @@ class SecurityService {
 
       return new Promise<Security[]>((resolve, reject) => {
         stream2.on('data', (response:QuerySecurityResponseProto) => {
-          console.log('Result of the security search call');
-          console.log('Response:', response);
           response.getSecurityResponseList().forEach((security) => {
             listSecurities.push(new Security(security));
           });
         });
 
         stream2.on('end', () => {
-          console.log('Stream ended.');
           resolve(listSecurities);
         });
 

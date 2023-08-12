@@ -29,8 +29,8 @@ class PositionService {
   private client: PositionClient;
 
   constructor() {
-    // this.client = new PositionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-    this.client = new PositionClient('localhost:8082', grpc.credentials.createInsecure());
+    this.client = new PositionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+    // this.client = new PositionClient('localhost:8082', grpc.credentials.createInsecure());
   }
 
   async search(request:QueryPositionRequestProto) {
@@ -42,15 +42,12 @@ class PositionService {
 
       return new Promise<PositionProto[]>((resolve, reject) => {
         stream2.on('data', (response:QueryPositionResponseProto) => {
-          console.log('Result of the position search call');
-          console.log('Response:', response);
           response.getPositionsList().forEach((position) => {
             listPositions.push(position);
           });
         });
 
         stream2.on('end', () => {
-          console.log('Stream ended.');
           resolve(listPositions);
         });
 

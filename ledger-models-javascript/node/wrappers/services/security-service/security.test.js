@@ -36,19 +36,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testSecurity = void 0;
 // Models
-var security_pb_1 = require("../fintekkers/models/security/security_pb");
-var coupon_frequency_pb_1 = require("../fintekkers/models/security/coupon_frequency_pb");
-var decimal_value_pb_1 = require("../fintekkers/models/util/decimal_value_pb");
-var coupon_type_pb_1 = require("../fintekkers/models/security/coupon_type_pb");
-var security_type_pb_1 = require("../fintekkers/models/security/security_type_pb");
-var local_date_pb_1 = require("../fintekkers/models/util/local_date_pb");
+var security_pb_1 = require("../../../fintekkers/models/security/security_pb");
+var coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
+var decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
+var coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
+var security_type_pb_1 = require("../../../fintekkers/models/security/security_type_pb");
+var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 // Model Utils
-var field_pb_1 = require("../fintekkers/models/position/field_pb");
-var uuid = require("./models/utils/uuid");
-var dt = require("./models/utils/datetime");
-var SecurityService_1 = require("./services/security-service/SecurityService");
+var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
+var uuid = require("../../models/utils/uuid");
+var dt = require("../../models/utils/datetime");
+var SecurityService_1 = require("./SecurityService");
+test('test creating a security against the api.fintekkers.org portfolio service', function () {
+    var isTrue = testSecurity();
+    expect(isTrue).resolves.toBe(true);
+}, 30000);
 function testSecurity() {
     return __awaiter(this, void 0, void 0, function () {
         var id_proto, now, securityService, usd_security, security, faceValue, couponRate, issueDate, maturityDate, validationSummary, createSecurityResponse, searchResults;
@@ -97,19 +100,15 @@ function testSecurity() {
                     return [4 /*yield*/, securityService.validateCreateSecurity(security)];
                 case 2:
                     validationSummary = _a.sent();
-                    console.log(validationSummary);
                     return [4 /*yield*/, securityService.createSecurity(security)];
                 case 3:
                     createSecurityResponse = _a.sent();
-                    console.log(createSecurityResponse);
                     return [4 /*yield*/, securityService.searchSecurity(now.to_date_proto(), field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income')];
                 case 4:
                     searchResults = _a.sent();
-                    console.log('There are %d securities in this response', searchResults.length);
-                    return [2 /*return*/];
+                    return [2 /*return*/, true];
             }
         });
     });
 }
-exports.testSecurity = testSecurity;
 //# sourceMappingURL=security.test.js.map

@@ -23,8 +23,8 @@ class TransactionService {
   private client: TransactionClient;
 
   constructor() {
-    // this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-    this.client = new TransactionClient('localhost:8082', grpc.credentials.createInsecure());
+    this.client = new TransactionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+    // this.client = new TransactionClient('localhost:8082', grpc.credentials.createInsecure());
   }
 
   async validateCreateTransaction(transaction: Transaction): Promise<SummaryProto> {
@@ -73,17 +73,12 @@ class TransactionService {
 
       return new Promise<Transaction[]>((resolve, reject) => {
         stream2.on('data', (response:QueryTransactionResponseProto) => {
-          console.log('Result of the transaction search call');
-          console.log('Response:', response);
           response.getTransactionResponseList().forEach((transaction) => {
             listTransactions.push(new Transaction(transaction));
           });
-
-          console.log('Size of transactions:', listTransactions.length );
         });
 
         stream2.on('end', () => {
-          console.log('Stream ended.');
           resolve(listTransactions);
         });
 

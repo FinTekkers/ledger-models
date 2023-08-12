@@ -1,16 +1,17 @@
 "use strict";
-// import { testPortfolio } from './node/wrappers/portfolio.test';
-// testPortfolio();
 Object.defineProperty(exports, "__esModule", { value: true });
-// import { testSecurity } from './node/wrappers/security.test';
+var portfolio_test_1 = require("./node/wrappers/services/portfolio-service/portfolio.test");
+(0, portfolio_test_1.testPortfolio)();
+// import { testSecurity } from './node/wrappers/services/security-service/security.test';
 // testSecurity();
 // //TODO: Add position convenience wrapper
-// import { testPosition } from './node/wrappers/position.test';
+// import { testPosition } from './node/wrappers/services/security-service/security.test';
 // testPosition();
 // import { testSerialization } from './node/wrappers/models/utils/serialization.test';
 // testSerialization();
-// TODO - Transactions
-var transaction_test_1 = require("./node/wrappers/transaction.test");
-(0, transaction_test_1.testTransaction)();
+// // TODO - Transactions
+// import { testTransaction } from './node/wrappers/services/transaction-service/transaction.test';
+// testTransaction();
 // TODO - Positions
+console.log('Done');
 //# sourceMappingURL=index.js.map

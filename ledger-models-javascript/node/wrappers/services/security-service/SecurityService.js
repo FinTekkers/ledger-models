@@ -49,8 +49,8 @@ var create_security_request_pb_1 = require("../../../fintekkers/requests/securit
 var security_1 = require("../../models/security/security");
 var SecurityService = /** @class */ (function () {
     function SecurityService() {
-        // this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        this.client = new security_service_grpc_pb_1.SecurityClient('localhost:8082', grpc.credentials.createInsecure());
+        this.client = new security_service_grpc_pb_1.SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+        // this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
     }
     SecurityService.prototype.validateCreateSecurity = function (security) {
         return __awaiter(this, void 0, void 0, function () {
@@ -99,14 +99,11 @@ var SecurityService = /** @class */ (function () {
                         stream2 = tmpClient.search(searchRequest);
                         return [2 /*return*/, new Promise(function (resolve, reject) {
                                 stream2.on('data', function (response) {
-                                    console.log('Result of the security search call');
-                                    console.log('Response:', response);
                                     response.getSecurityResponseList().forEach(function (security) {
                                         listSecurities.push(new security_1.default(security));
                                     });
                                 });
                                 stream2.on('end', function () {
-                                    console.log('Stream ended.');
                                     resolve(listSecurities);
                                 });
                                 stream2.on('error', function (err) {

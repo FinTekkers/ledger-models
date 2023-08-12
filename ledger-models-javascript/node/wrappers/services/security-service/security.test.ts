@@ -1,21 +1,26 @@
 // Models
-import { SecurityProto } from '../fintekkers/models/security/security_pb';
-import { CouponFrequencyProto } from '../fintekkers/models/security/coupon_frequency_pb';
-import { DecimalValueProto } from '../fintekkers/models/util/decimal_value_pb';
-import { CouponTypeProto } from '../fintekkers/models/security/coupon_type_pb';
-import { SecurityTypeProto } from '../fintekkers/models/security/security_type_pb';
-import { LocalDateProto } from '../fintekkers/models/util/local_date_pb';
+import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
+import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
+import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
+import { SecurityTypeProto } from '../../../fintekkers/models/security/security_type_pb';
+import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 
 // Model Utils
-import { FieldProto } from '../fintekkers/models/position/field_pb';
+import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 
-import * as uuid from './models/utils/uuid';
-import * as dt from './models/utils/datetime';
+import * as uuid from '../../models/utils/uuid';
+import * as dt from '../../models/utils/datetime';
 
-import { CreateSecurityResponseProto } from '../fintekkers/requests/security/create_security_response_pb';
-import { SecurityService } from './services/security-service/SecurityService';
+import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
+import { SecurityService } from './SecurityService';
 
-async function testSecurity(): Promise<void> {
+test('test creating a security against the api.fintekkers.org portfolio service', () => {
+  const isTrue = testSecurity();
+  expect(isTrue).resolves.toBe(true);
+}, 30000);
+
+async function testSecurity(): Promise<boolean> {
   const id_proto = uuid.UUID.random().toUUIDProto();
   const now = dt.ZonedDateTime.now();
 
@@ -63,13 +68,10 @@ async function testSecurity(): Promise<void> {
   security.setDescription('Dummy US Treasury 10Y Bond');
 
   var validationSummary = await securityService.validateCreateSecurity(security);
-  console.log(validationSummary);
 
   var createSecurityResponse:CreateSecurityResponseProto = await securityService.createSecurity(security);
-  console.log(createSecurityResponse);
 
   var searchResults = await securityService.searchSecurity(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Fixed Income');
-  console.log('There are %d securities in this response', searchResults.length);
-}
 
-export { testSecurity };
+  return true;
+}

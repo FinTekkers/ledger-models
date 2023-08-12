@@ -42,8 +42,8 @@ var grpc = require("@grpc/grpc-js");
 var position_service_grpc_pb_1 = require("../../../fintekkers/services/position-service/position_service_grpc_pb");
 var PositionService = /** @class */ (function () {
     function PositionService() {
-        // this.client = new PositionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        this.client = new position_service_grpc_pb_1.PositionClient('localhost:8082', grpc.credentials.createInsecure());
+        this.client = new position_service_grpc_pb_1.PositionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+        // this.client = new PositionClient('localhost:8082', grpc.credentials.createInsecure());
     }
     PositionService.prototype.search = function (request) {
         return __awaiter(this, void 0, void 0, function () {
@@ -54,14 +54,11 @@ var PositionService = /** @class */ (function () {
                         stream2 = tmpClient.search(request);
                         return [2 /*return*/, new Promise(function (resolve, reject) {
                                 stream2.on('data', function (response) {
-                                    console.log('Result of the position search call');
-                                    console.log('Response:', response);
                                     response.getPositionsList().forEach(function (position) {
                                         listPositions.push(position);
                                     });
                                 });
                                 stream2.on('end', function () {
-                                    console.log('Stream ended.');
                                     resolve(listPositions);
                                 });
                                 stream2.on('error', function (err) {

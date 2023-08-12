@@ -85,7 +85,7 @@ class Security {
 
   equals(other: Security): boolean {
     if (other instanceof Security) {
-      return this.get_id().equals(other.get_id());
+      return this.getID().equals(other.getID());
     } else {
       return false;
     }

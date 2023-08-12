@@ -22,8 +22,8 @@ class PortfolioService {
   private client: PortfolioClient;
 
   constructor() {
-    // this.client = new PortfolioClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-    this.client = new PortfolioClient('localhost:8082', grpc.credentials.createInsecure());
+    this.client = new PortfolioClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+    // this.client = new PortfolioClient('localhost:8082', grpc.credentials.createInsecure());
   }
 
   async validateCreatePortfolio(portfolio: PortfolioProto): Promise<SummaryProto> {
@@ -76,15 +76,12 @@ class PortfolioService {
 
       return new Promise<PortfolioProto[]>((resolve, reject) => {
         stream2.on('data', (response:QueryPortfolioResponseProto) => {
-          console.log('Result of the portfolio search call');
-          console.log('Response:', response);
           response.getPortfolioResponseList().forEach((portfolio) => {
             listPortfolios.push(portfolio);
           });
         });
 
         stream2.on('end', () => {
-          console.log('Stream ended.');
           resolve(listPortfolios);
         });
 

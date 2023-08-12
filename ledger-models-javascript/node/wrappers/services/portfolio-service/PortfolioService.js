@@ -48,8 +48,8 @@ var query_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfol
 var create_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfolio/create_portfolio_request_pb");
 var PortfolioService = /** @class */ (function () {
     function PortfolioService() {
-        // this.client = new PortfolioClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        this.client = new portfolio_service_grpc_pb_1.PortfolioClient('localhost:8082', grpc.credentials.createInsecure());
+        this.client = new portfolio_service_grpc_pb_1.PortfolioClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+        // this.client = new PortfolioClient('localhost:8082', grpc.credentials.createInsecure());
     }
     PortfolioService.prototype.validateCreatePortfolio = function (portfolio) {
         return __awaiter(this, void 0, void 0, function () {
@@ -98,14 +98,11 @@ var PortfolioService = /** @class */ (function () {
                         stream2 = tmpClient.search(searchRequest);
                         return [2 /*return*/, new Promise(function (resolve, reject) {
                                 stream2.on('data', function (response) {
-                                    console.log('Result of the portfolio search call');
-                                    console.log('Response:', response);
                                     response.getPortfolioResponseList().forEach(function (portfolio) {
                                         listPortfolios.push(portfolio);
                                     });
                                 });
                                 stream2.on('end', function () {
-                                    console.log('Stream ended.');
                                     resolve(listPortfolios);
                                 });
                                 stream2.on('error', function (err) {

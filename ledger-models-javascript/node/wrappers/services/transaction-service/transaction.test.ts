@@ -1,23 +1,29 @@
 // Models
-import { DecimalValueProto } from '../fintekkers/models/util/decimal_value_pb';
-import { LocalDateProto } from '../fintekkers/models/util/local_date_pb';
+import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
+import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 
 // Model Utils
-import { FieldProto } from '../fintekkers/models/position/field_pb';
+import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 
-import * as uuid from './models/utils/uuid';
-import * as dt from './models/utils/datetime';
+import * as uuid from '../../models/utils/uuid';
+import * as dt from '../../models/utils/datetime';
 
-import { SecurityService } from './services/security-service/SecurityService';
-import { TransactionTypeProto } from '../fintekkers/models/transaction/transaction_type_pb';
-import { TransactionProto } from '../fintekkers/models/transaction/transaction_pb';
-import { PriceProto } from '../fintekkers/models/price/price_pb';
-import { PortfolioService } from './services/portfolio-service/PortfolioService';
-import { TransactionService } from './services/transaction-service/TransactionService';
-import Transaction from './models/transaction/transaction';
-import { CreateTransactionResponseProto } from '../fintekkers/requests/transaction/create_transaction_response_pb';
+import { SecurityService } from '../security-service/SecurityService';
+import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
+import { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
+import { PriceProto } from '../../../fintekkers/models/price/price_pb';
+import { PortfolioService } from '../portfolio-service/PortfolioService';
+import { TransactionService } from './TransactionService';
+import Transaction from '../../models/transaction/transaction';
+import { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
 
-async function testTransaction(): Promise<void> {
+test('test creating a transaction against the api.fintekkers.org portfolio service', () => {
+  const isTrue = testTransaction();
+  expect(isTrue).resolves.toBe(true);
+}, 30000);
+
+
+async function testTransaction(): Promise<boolean> {
   const id_proto = uuid.UUID.random().toUUIDProto();
   const now = dt.ZonedDateTime.now();
   const today = new LocalDateProto().setDay(1).setMonth(1).setYear(2021);
@@ -25,12 +31,6 @@ async function testTransaction(): Promise<void> {
   const securityService = new SecurityService();
   const portfolioService = new PortfolioService();
   const transactionService = new TransactionService();
-
-  // let usd_security = await securityService
-  //   .searchSecurity(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Cash')
-  //   .then((securities) => {
-  //     return securities[0];
-  //   });
 
   let fixedIncomeSecurities = await securityService
   .searchSecurity(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Fixed Income')
@@ -49,7 +49,6 @@ async function testTransaction(): Promise<void> {
     throw new Error('No portfolios found');
   }
 
-  console.log('There are %d portfolios in this response', portfolios.length);
   const portfolio = portfolios[0];
 
   if(portfolio.getPortfolioName().includes('Federal')){
@@ -81,10 +80,8 @@ async function testTransaction(): Promise<void> {
   // console.log(validationSummary);
 
   var createTransactionResponse:CreateTransactionResponseProto = await transactionService.createTransaction(new Transaction(transaction));
-  console.log(createTransactionResponse);
 
   var searchResults = await transactionService.searchTransaction(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Fixed Income');
-  console.log('There are %d transactions in this response', searchResults.length);
-}
 
-export { testTransaction };
+  return true;
+}

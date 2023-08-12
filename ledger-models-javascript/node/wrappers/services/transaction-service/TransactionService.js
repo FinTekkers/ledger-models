@@ -50,8 +50,8 @@ var create_transaction_request_pb_1 = require("../../../fintekkers/requests/tran
 var query_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/query_transaction_request_pb");
 var TransactionService = /** @class */ (function () {
     function TransactionService() {
-        // this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        this.client = new transaction_service_grpc_pb_1.TransactionClient('localhost:8082', grpc.credentials.createInsecure());
+        this.client = new transaction_service_grpc_pb_1.TransactionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
+        // this.client = new TransactionClient('localhost:8082', grpc.credentials.createInsecure());
     }
     TransactionService.prototype.validateCreateTransaction = function (transaction) {
         return __awaiter(this, void 0, void 0, function () {
@@ -100,15 +100,11 @@ var TransactionService = /** @class */ (function () {
                         stream2 = tmpClient.search(searchRequest);
                         return [2 /*return*/, new Promise(function (resolve, reject) {
                                 stream2.on('data', function (response) {
-                                    console.log('Result of the transaction search call');
-                                    console.log('Response:', response);
                                     response.getTransactionResponseList().forEach(function (transaction) {
                                         listTransactions.push(new transaction_1.default(transaction));
                                     });
-                                    console.log('Size of transactions:', listTransactions.length);
                                 });
                                 stream2.on('end', function () {
-                                    console.log('Stream ended.');
                                     resolve(listTransactions);
                                 });
                                 stream2.on('error', function (err) {

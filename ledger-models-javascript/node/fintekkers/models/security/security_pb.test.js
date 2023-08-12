@@ -28,5 +28,4 @@ test('create a security proto (from sue) object and test it can be read', () => 
   // Deserialize the binary data back to a SecurityProto object
   const deserializedSecurity = SecurityProto.deserializeBinary(binaryData);
 
-  console.log(deserializedSecurity.toObject());
 });

@@ -39,12 +39,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testPortfolio = void 0;
 // Model Utils
-var field_pb_1 = require("../fintekkers/models/position/field_pb");
-var uuid = require("./models/utils/uuid");
-var dt = require("./models/utils/datetime");
+var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
+var uuid = require("../../models/utils/uuid");
+var dt = require("../../models/utils/datetime");
 //Requests & Services
-var PortfolioService_1 = require("./services/portfolio-service/PortfolioService");
-var portfolio_pb_1 = require("../fintekkers/models/portfolio/portfolio_pb");
+var PortfolioService_1 = require("./PortfolioService");
+var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
+test('test creating a portfolio against the api.fintekkers.org portfolio service', function () {
+    var isTrue = testPortfolio();
+    expect(isTrue).resolves.toBe(true);
+}, 30000);
 function testPortfolio() {
     return __awaiter(this, void 0, void 0, function () {
         var id_proto, now, portfolioService, portfolio, validationSummary, createPortfolioResponse, searchResults;
@@ -63,16 +67,13 @@ function testPortfolio() {
                     return [4 /*yield*/, portfolioService.validateCreatePortfolio(portfolio)];
                 case 1:
                     validationSummary = _a.sent();
-                    console.log(validationSummary);
                     return [4 /*yield*/, portfolioService.createPortfolio(portfolio)];
                 case 2:
                     createPortfolioResponse = _a.sent();
-                    console.log(createPortfolioResponse);
                     return [4 /*yield*/, portfolioService.searchPortfolio(now.to_date_proto(), field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings')];
                 case 3:
                     searchResults = _a.sent();
-                    console.log('There are %d securities in this response', searchResults.length);
-                    return [2 /*return*/];
+                    return [2 /*return*/, true];
             }
         });
     });

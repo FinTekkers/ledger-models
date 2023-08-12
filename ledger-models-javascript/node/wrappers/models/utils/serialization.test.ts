@@ -1,27 +1,31 @@
+import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
 import { ProtoSerializationUtil } from './serialization';
 import { UUID } from './uuid';
 
 import assert = require('assert');
+test('test creating a security against the api.fintekkers.org portfolio service', () => {
+    testSerialization();
+  });
 
-async function testSerialization(): Promise<void> {
+function testSerialization(): void {
     checkUUID();
 
+    //TODO: Make these tests more robust
+
     const serializedDate: any = ProtoSerializationUtil.serialize(new Date());
-    console.log(serializedDate);
+    assert(serializedDate.toString().indexOf('2023') > -1);
 
     const deserializedDate: any = ProtoSerializationUtil.deserialize(serializedDate);
-    console.log(deserializedDate);
+    assert(deserializedDate.toString().indexOf('2023') > -1);
 
     const obj = new Date();
     const serializedTimestamp: any = ProtoSerializationUtil.serialize(obj);
-    console.log(serializedTimestamp);
+    assert(serializedTimestamp.toString().indexOf('2023') > -1);
 
     const deserializedTimestamp: any = ProtoSerializationUtil.deserialize(serializedTimestamp);
-    console.log(deserializedTimestamp);
+    assert(deserializedTimestamp.toString().indexOf('2023') > -1);
 }
-
-export { testSerialization };
 
 function checkUUID() {
     const uuid: UUID = UUID.random();

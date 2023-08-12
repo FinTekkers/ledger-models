@@ -37,23 +37,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testPosition = void 0;
+var identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
+var position_pb_1 = require("../../../fintekkers/models/position/position_pb");
+var measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 // Model Utils
-var field_pb_1 = require("../fintekkers/models/position/field_pb");
-//Requests & Services
-var PortfolioService_1 = require("./services/portfolio-service/PortfolioService");
-var util_1 = require("./models/utils/util");
-var PositionService_1 = require("./services/position-service/PositionService");
-var position_pb_1 = require("../fintekkers/models/position/position_pb");
-var query_position_request_pb_1 = require("../fintekkers/requests/position/query_position_request_pb");
-var identifier_pb_1 = require("../fintekkers/models/security/identifier/identifier_pb");
+var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
+var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
+var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
+var datetime_1 = require("../../models/utils/datetime");
+var util_1 = require("../../models/utils/util");
 var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
-var position_util_pb_1 = require("../fintekkers/models/position/position_util_pb");
-var position_filter_pb_1 = require("../fintekkers/models/position/position_filter_pb");
-var datetime_1 = require("./models/utils/datetime");
-var measure_pb_1 = require("../fintekkers/models/position/measure_pb");
-// const { Any } = require("google-protobuf/google/protobuf/any_pb");
-// const { ProtoSerializationUtil } = require("your_protobuf_util_package"); // Replace "your_protobuf_util_package" with the actual package name for your Protobuf utility functions
+//Requests & Services
+var PortfolioService_1 = require("../../services/portfolio-service/PortfolioService");
+var PositionService_1 = require("../../services/position-service/PositionService");
+var query_position_request_pb_1 = require("../../../fintekkers/requests/position/query_position_request_pb");
+test('test getting a position against the api.fintekkers.org position service', function () {
+    var isTrue = testPosition();
+    expect(isTrue).resolves.toBe(true);
+}, 30000);
 function get_position(security, portfolio, measures, position_type, fields, additional_filters, as_of) {
     if (fields === void 0) { fields = [field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.SECURITY]; }
     if (additional_filters === void 0) { additional_filters = []; }
@@ -118,13 +119,9 @@ function testPosition() {
                     return [4 /*yield*/, get_position(null, fedReservePortfolio, [measure_pb_1.MeasureProto.DIRECTED_QUANTITY], position_pb_1.PositionTypeProto.TRANSACTION, [field_pb_1.FieldProto.PORTFOLIO_NAME, field_pb_1.FieldProto.SECURITY_ID], [], now)];
                 case 2:
                     positions = _a.sent();
-                    positions[0].getFieldsList().forEach(function (field) { console.log(field); });
-                    positions[0].getMeasuresList().forEach(function (measure) { console.log(measure); });
-                    console.log(positions);
-                    return [2 /*return*/];
+                    return [2 /*return*/, true];
             }
         });
     });
 }
-exports.testPosition = testPosition;
 //# sourceMappingURL=position.test.js.map
