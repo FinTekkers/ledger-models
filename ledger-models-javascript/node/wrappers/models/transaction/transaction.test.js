@@ -13,6 +13,7 @@ test('test the transaction wrapper', function () {
 function testSerialization() {
     var transaction = dummyTransaction();
     assert(transaction.getTransactionType().toString() === 'BUY');
+    assert(transaction.getDirectedQuantity().toNumber() > 0);
 }
 function dummyTransaction() {
     return new transaction_1.default(new transaction_pb_1.TransactionProto()

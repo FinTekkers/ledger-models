@@ -17,6 +17,21 @@ export class TransactionType {
         });
     }
 
+    getDirectionMultiplier(): number {
+        switch (this.proto) {
+            case TransactionTypeProto.BUY:
+            case TransactionTypeProto.DEPOSIT:
+            case TransactionTypeProto.MATURATION_OFFSET:
+                return 1;
+            case TransactionTypeProto.SELL:
+            case TransactionTypeProto.WITHDRAWAL:
+            case TransactionTypeProto.MATURATION:
+                return -1;
+            case TransactionTypeProto.UNKNOWN:
+                throw new Error('Unknown transaction type: '+this.toString()); );
+        }
+    }
+
     /**
      * NOTE that this method is not performant and should only be used for debugging purposes,
      * or infrequently. If this is required for a high performance use case, please create a 

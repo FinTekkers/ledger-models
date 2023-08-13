@@ -5,6 +5,7 @@ var transaction_type_1 = require("./transaction_type");
 var security_1 = require("../security/security");
 var datetime_1 = require("../utils/datetime");
 var uuid_1 = require("../utils/uuid");
+var date_1 = require("../utils/date");
 var decimal_js_1 = require("decimal.js");
 var Transaction = /** @class */ (function () {
     function Transaction(proto) {
@@ -69,20 +70,20 @@ var Transaction = /** @class */ (function () {
     Transaction.prototype.getPrice = function () {
         return this.proto.getPrice();
     };
-    Transaction.prototype.getSettlementDate = function () {
-        return this.proto.getSettlementDate();
-    };
     Transaction.prototype.getQuantity = function () {
         return new decimal_js_1.Decimal(this.proto.getQuantity().getArbitraryPrecisionValue());
     };
     Transaction.prototype.getIssuerName = function () {
         return this.getSecurity().getIssuerName();
     };
-    //   public BigDecimal getDirectedQuantity() {
-    //     return quantity.multiply(transactionType.getDirectionMultiplier());
-    // }
+    Transaction.prototype.getDirectedQuantity = function () {
+        return this.getQuantity().mul(this.getTransactionType().getDirectionMultiplier());
+    };
     Transaction.prototype.getTradeDate = function () {
-        return this.proto.getTradeDate();
+        return new date_1.LocalDate(this.proto.getTradeDate());
+    };
+    Transaction.prototype.getSettlementDate = function () {
+        return new date_1.LocalDate(this.proto.getSettlementDate());
     };
     Transaction.prototype.getTransactionType = function () {
         return new transaction_type_1.TransactionType(this.proto.getTransactionType());

@@ -6,6 +6,21 @@ var TransactionType = /** @class */ (function () {
     function TransactionType(proto) {
         this.proto = proto;
     }
+    TransactionType.prototype.getDirectionMultiplier = function () {
+        switch (this.proto) {
+            case transaction_type_pb_1.TransactionTypeProto.BUY:
+            case transaction_type_pb_1.TransactionTypeProto.DEPOSIT:
+            case transaction_type_pb_1.TransactionTypeProto.MATURATION_OFFSET:
+                return 1;
+            case transaction_type_pb_1.TransactionTypeProto.SELL:
+            case transaction_type_pb_1.TransactionTypeProto.WITHDRAWAL:
+            case transaction_type_pb_1.TransactionTypeProto.MATURATION:
+                return -1;
+            case transaction_type_pb_1.TransactionTypeProto.UNKNOWN:
+                throw new Error('Unknown transaction type: ' + this.toString());
+                ;
+        }
+    };
     /**
      * NOTE that this method is not performant and should only be used for debugging purposes,
      * or infrequently. If this is required for a high performance use case, please create a

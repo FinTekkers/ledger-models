@@ -9,7 +9,7 @@ var ZonedDateTime = /** @class */ (function () {
     function ZonedDateTime(proto) {
         this.proto = proto;
     }
-    ZonedDateTime.prototype.to_datetime = function () {
+    ZonedDateTime.prototype.toDateTime = function () {
         // Creating a DateTime object with the current date and time in a specific time zone (e.g., 'America/New_York')
         var unixTimestampSeconds = this.proto.getTimestamp().getSeconds();
         var nanoseconds = this.proto.getTimestamp().getNanos();
@@ -19,9 +19,9 @@ var ZonedDateTime = /** @class */ (function () {
         return dateTime;
     };
     ZonedDateTime.prototype.toString = function () {
-        return this.to_datetime().toString();
+        return this.toDateTime().toString();
     };
-    ZonedDateTime.prototype.to_date_proto = function () {
+    ZonedDateTime.prototype.toProto = function () {
         return this.proto;
     };
     ZonedDateTime.now = function () {
@@ -59,5 +59,5 @@ exports.ZonedDateTime = ZonedDateTime;
 // }
 // ZonedDateTime.now = createTimestampWithCurrentTime;
 var now = ZonedDateTime.now();
-(0, console_1.assert)(now.to_datetime().toString() === now.toString());
+(0, console_1.assert)(now.toDateTime().toString() === now.toString());
 //# sourceMappingURL=datetime.js.map

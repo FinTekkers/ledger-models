@@ -10,7 +10,7 @@ class ZonedDateTime {
     this.proto = proto;
   }
 
-  to_datetime(): DateTime {
+  toDateTime(): DateTime {
     // Creating a DateTime object with the current date and time in a specific time zone (e.g., 'America/New_York')
     const unixTimestampSeconds = this.proto.getTimestamp().getSeconds();
     const nanoseconds = this.proto.getTimestamp().getNanos();
@@ -23,10 +23,10 @@ class ZonedDateTime {
   }
 
   toString(): string {
-    return this.to_datetime().toString();
+    return this.toDateTime().toString();
   }
 
-  to_date_proto(): LocalTimestampProto {
+  toProto(): LocalTimestampProto {
     return this.proto;
   }
 
@@ -73,6 +73,6 @@ class ZonedDateTime {
 
 // ZonedDateTime.now = createTimestampWithCurrentTime;
 const now = ZonedDateTime.now();
-assert(now.to_datetime().toString() === now.toString());
+assert(now.toDateTime().toString() === now.toString());
 
 export { ZonedDateTime };

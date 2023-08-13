@@ -21,6 +21,8 @@ function testSerialization(): void {
     const transaction = dummyTransaction();
 
     assert(transaction.getTransactionType().toString() === 'BUY');
+
+    assert(transaction.getDirectedQuantity().toNumber() > 0);
 }
 
 function dummyTransaction() {

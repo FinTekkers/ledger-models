@@ -11,6 +11,7 @@ import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";
 import Security from "../security/security";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
+import { LocalDate } from "../utils/date";
 import { Decimal } from "decimal.js";
 
 class Transaction {
@@ -89,10 +90,6 @@ class Transaction {
     return this.proto.getPrice();
   }
 
-  getSettlementDate(): LocalDateProto {
-    return this.proto.getSettlementDate();
-  }
-
   getQuantity(): Decimal {
     return new Decimal(this.proto.getQuantity().getArbitraryPrecisionValue());
   }
@@ -101,12 +98,16 @@ class Transaction {
     return this.getSecurity().getIssuerName();
   }
 
-//   public BigDecimal getDirectedQuantity() {
-//     return quantity.multiply(transactionType.getDirectionMultiplier());
-// }
+  getDirectedQuantity(): Decimal {
+    return this.getQuantity().mul(this.getTransactionType().getDirectionMultiplier());
+}
 
-  getTradeDate(): LocalDateProto {
-    return this.proto.getTradeDate();
+  getTradeDate(): LocalDate {
+    return new LocalDate(this.proto.getTradeDate());
+  }
+
+  getSettlementDate() : LocalDate {
+    return new LocalDate(this.proto.getSettlementDate());
   }
 
     getTransactionType() : TransactionType {
