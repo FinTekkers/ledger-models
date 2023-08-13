@@ -3,6 +3,7 @@ import { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { PositionStatusProto } from "../../../fintekkers/models/position/position_status_pb";
 import { PriceProto } from "../../../fintekkers/models/price/price_pb";
 import { IdentifierProto } from "../../../fintekkers/models/security/identifier/identifier_pb";
+import { TransactionType } from "./transaction_type";
 import { StrategyAllocationProto } from "../../../fintekkers/models/strategy/strategy_allocation_pb";
 import { TransactionProto } from "../../../fintekkers/models/transaction/transaction_pb";
 import { TransactionTypeProto } from "../../../fintekkers/models/transaction/transaction_type_pb";
@@ -108,8 +109,8 @@ class Transaction {
     return this.proto.getTradeDate();
   }
 
-    getTransactionType() : TransactionTypeProto {
-        return this.getTransactionType();
+    getTransactionType() : TransactionType {
+        return new TransactionType(this.proto.getTransactionType());
     }
 
     getTradeName(): string {

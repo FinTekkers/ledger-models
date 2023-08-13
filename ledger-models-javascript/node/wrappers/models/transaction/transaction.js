@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
+var transaction_type_1 = require("./transaction_type");
 var security_1 = require("../security/security");
 var datetime_1 = require("../utils/datetime");
 var uuid_1 = require("../utils/uuid");
@@ -84,7 +85,7 @@ var Transaction = /** @class */ (function () {
         return this.proto.getTradeDate();
     };
     Transaction.prototype.getTransactionType = function () {
-        return this.getTransactionType();
+        return new transaction_type_1.TransactionType(this.proto.getTransactionType());
     };
     Transaction.prototype.getTradeName = function () {
         return this.proto.getTradeName();
