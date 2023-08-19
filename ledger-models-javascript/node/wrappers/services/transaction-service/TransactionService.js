@@ -37,21 +37,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionService = void 0;
-var grpc = require("@grpc/grpc-js");
 var util_1 = require("util");
 // Models
 var transaction_1 = require("../../models/transaction/transaction");
-var util_2 = require("../../models/utils/util");
+var serialization_util_1 = require("../../models/utils/serialization.util");
 // Model Utils
 var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
 // Requests & Services
 var transaction_service_grpc_pb_1 = require("../../../fintekkers/services/transaction-service/transaction_service_grpc_pb");
 var create_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/create_transaction_request_pb");
 var query_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/query_transaction_request_pb");
+var requestcontext_1 = require("../../models/utils/requestcontext");
 var TransactionService = /** @class */ (function () {
     function TransactionService() {
-        this.client = new transaction_service_grpc_pb_1.TransactionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        // this.client = new TransactionClient('localhost:8082', grpc.credentials.createInsecure());
+        this.client = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
     }
     TransactionService.prototype.validateCreateTransaction = function (transaction) {
         return __awaiter(this, void 0, void 0, function () {
@@ -91,51 +90,46 @@ var TransactionService = /** @class */ (function () {
             });
         });
     };
-    TransactionService.prototype.searchTransaction = function (asOf, fieldProto, fieldValue) {
-        return __awaiter(this, void 0, void 0, function () {
-            function processStreamSynchronously() {
-                return __awaiter(this, void 0, void 0, function () {
-                    var stream2;
-                    return __generator(this, function (_a) {
-                        stream2 = tmpClient.search(searchRequest);
-                        return [2 /*return*/, new Promise(function (resolve, reject) {
-                                stream2.on('data', function (response) {
-                                    response.getTransactionResponseList().forEach(function (transaction) {
-                                        listTransactions.push(new transaction_1.default(transaction));
-                                    });
+    TransactionService.prototype.searchTransaction = function (asOf, fieldProto, fieldValue, maxResults) {
+        if (maxResults === void 0) { maxResults = 100; }
+        var searchRequest = new query_transaction_request_pb_1.QueryTransactionRequestProto();
+        searchRequest.setObjectClass('SecurityRequest');
+        searchRequest.setVersion('0.0.1');
+        searchRequest.setAsOf(asOf);
+        var positionFilter = new position_filter_pb_1.PositionFilterProto();
+        positionFilter.setObjectClass('PositionFilter');
+        positionFilter.setVersion('0.0.1');
+        var fieldMapEntry = (0, serialization_util_1.createFieldMapEntry)(fieldProto, fieldValue);
+        positionFilter.setFiltersList([fieldMapEntry]);
+        searchRequest.setSearchTransactionInput(positionFilter);
+        searchRequest.setLimit(maxResults);
+        var tmpClient = this.client;
+        function processStreamSynchronously() {
+            return __awaiter(this, void 0, void 0, function () {
+                var stream2, results;
+                return __generator(this, function (_a) {
+                    stream2 = tmpClient.search(searchRequest);
+                    results = [];
+                    return [2 /*return*/, new Promise(function (resolve, reject) {
+                            stream2.on('data', function (response) {
+                                response.getTransactionResponseList().forEach(function (transaction) {
+                                    var txn = new transaction_1.default(transaction);
+                                    results.push(txn);
                                 });
-                                stream2.on('end', function () {
-                                    resolve(listTransactions);
-                                });
-                                stream2.on('error', function (err) {
-                                    console.error('Error in the stream:', err);
-                                    reject(err);
-                                });
-                            })];
-                    });
+                            });
+                            stream2.on('end', function () {
+                                console.log("Stream ended with ", results.length);
+                                resolve(results);
+                            });
+                            stream2.on('error', function (err) {
+                                console.error('Error in the stream:', err);
+                                reject(err);
+                            });
+                        })];
                 });
-            }
-            var searchRequest, positionFilter, fieldMapEntry, tmpClient, listTransactions;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        searchRequest = new query_transaction_request_pb_1.QueryTransactionRequestProto();
-                        searchRequest.setObjectClass('SecurityRequest');
-                        searchRequest.setVersion('0.0.1');
-                        searchRequest.setAsOf(asOf);
-                        positionFilter = new position_filter_pb_1.PositionFilterProto();
-                        positionFilter.setObjectClass('PositionFilter');
-                        positionFilter.setVersion('0.0.1');
-                        fieldMapEntry = (0, util_2.createFieldMapEntry)(fieldProto, fieldValue);
-                        positionFilter.setFiltersList([fieldMapEntry]);
-                        searchRequest.setSearchTransactionInput(positionFilter);
-                        tmpClient = this.client;
-                        listTransactions = [];
-                        return [4 /*yield*/, processStreamSynchronously()];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
             });
-        });
+        }
+        return processStreamSynchronously();
     };
     return TransactionService;
 }());

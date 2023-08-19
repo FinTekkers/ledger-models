@@ -63,14 +63,14 @@ function testPortfolio() {
                     portfolio.setVersion('0.0.1');
                     portfolio.setUuid(id_proto);
                     portfolio.setPortfolioName('TEST PORTFOLIO');
-                    portfolio.setAsOf(now.to_date_proto());
+                    portfolio.setAsOf(now.toProto());
                     return [4 /*yield*/, portfolioService.validateCreatePortfolio(portfolio)];
                 case 1:
                     validationSummary = _a.sent();
                     return [4 /*yield*/, portfolioService.createPortfolio(portfolio)];
                 case 2:
                     createPortfolioResponse = _a.sent();
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.to_date_proto(), field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings')];
+                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings')];
                 case 3:
                     searchResults = _a.sent();
                     return [2 /*return*/, true];

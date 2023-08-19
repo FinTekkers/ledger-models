@@ -19,7 +19,15 @@ message QueryTransactionRequestProto {
 
   //A list of position filters that will filter securities that match.
   fintekkers.models.position.PositionFilterProto search_transaction_input = 22;
+
+  //The as of date to query the data set
   fintekkers.models.util.LocalTimestampProto as_of = 23;
+
+  //Max number of records to return
+  int32 limit = 24;
+
+  //How to order the results. TODO: Need to think through guidance of this
+  // repeated fintekkers.models.position.FieldProto order_by = 25;
 }
 
 

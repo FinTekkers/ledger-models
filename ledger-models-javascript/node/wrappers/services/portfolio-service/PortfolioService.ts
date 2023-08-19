@@ -3,7 +3,7 @@ import { promisify } from 'util';
 
 // Models
 import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
-import { createFieldMapEntry } from '../../models/utils/util';
+import { createFieldMapEntry } from '../../models/utils/serialization.util';
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
@@ -17,13 +17,15 @@ import { QueryPortfolioRequestProto } from '../../../fintekkers/requests/portfol
 import { QueryPortfolioResponseProto } from '../../../fintekkers/requests/portfolio/query_portfolio_response_pb';
 import { CreatePortfolioRequestProto } from '../../../fintekkers/requests/portfolio/create_portfolio_request_pb';
 import { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portfolio/create_portfolio_response_pb';
+import EnvConfig from '../../models/utils/requestcontext';
 
 class PortfolioService {
   private client: PortfolioClient;
 
+  static url:string = EnvConfig.apiURL;
+
   constructor() {
-    this.client = new PortfolioClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-    // this.client = new PortfolioClient('localhost:8082', grpc.credentials.createInsecure());
+    this.client = new PortfolioClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
   }
 
   async validateCreatePortfolio(portfolio: PortfolioProto): Promise<SummaryProto> {

@@ -48,10 +48,18 @@ var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var uuid = require("../../models/utils/uuid");
 var dt = require("../../models/utils/datetime");
 var SecurityService_1 = require("./SecurityService");
-test('test creating a security against the api.fintekkers.org portfolio service', function () {
-    var isTrue = testSecurity();
-    expect(isTrue).resolves.toBe(true);
-}, 30000);
+test('test creating a security against the api.fintekkers.org security service', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var isTrue;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, testSecurity()];
+            case 1:
+                isTrue = _a.sent();
+                expect(isTrue).toBe(true);
+                return [2 /*return*/];
+        }
+    });
+}); }, 30000);
 function testSecurity() {
     return __awaiter(this, void 0, void 0, function () {
         var id_proto, now, securityService, usd_security, security, faceValue, couponRate, issueDate, maturityDate, validationSummary, createSecurityResponse, searchResults;
@@ -62,7 +70,7 @@ function testSecurity() {
                     now = dt.ZonedDateTime.now();
                     securityService = new SecurityService_1.SecurityService();
                     return [4 /*yield*/, securityService
-                            .searchSecurity(now.to_date_proto(), field_pb_1.FieldProto.ASSET_CLASS, 'Cash')
+                            .searchSecurity(now.toProto(), field_pb_1.FieldProto.ASSET_CLASS, 'Cash')
                             .then(function (securities) {
                             return securities[0];
                         })];
@@ -73,7 +81,7 @@ function testSecurity() {
                     security.setVersion('0.0.1');
                     security.setUuid(id_proto);
                     security.setSettlementCurrency(usd_security.proto);
-                    security.setAsOf(now.to_date_proto());
+                    security.setAsOf(now.toProto());
                     security.setAssetClass('FixedIncome');
                     security.setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
                     security.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
@@ -103,7 +111,7 @@ function testSecurity() {
                     return [4 /*yield*/, securityService.createSecurity(security)];
                 case 3:
                     createSecurityResponse = _a.sent();
-                    return [4 /*yield*/, securityService.searchSecurity(now.to_date_proto(), field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income')];
+                    return [4 /*yield*/, securityService.searchSecurity(now.toProto(), field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income')];
                 case 4:
                     searchResults = _a.sent();
                     return [2 /*return*/, true];

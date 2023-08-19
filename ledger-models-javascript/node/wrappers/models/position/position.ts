@@ -1,17 +1,24 @@
-// // Note: Some classes and functions have been omitted or simplified due to lack of context.
+// Note: Some classes and functions have been omitted or simplified due to lack of context.
 
-// import { FieldProto } from "../../../fintekkers/models/position/field_pb";
-// import { PositionProto } from "../../../fintekkers/models/position/position_pb";
-// import { FieldMapEntry } from "../../../fintekkers/models/position/position_util_pb";
+import { FieldProto } from "../../../fintekkers/models/position/field_pb";
+import { PositionProto } from "../../../fintekkers/models/position/position_pb";
+import { FieldMapEntry } from "../../../fintekkers/models/position/position_util_pb";
 
-// class Position {
-//     positionProto: PositionProto;
+class Position {
+    positionProto: PositionProto;
   
-//     constructor(positionProto: PositionProto) {
-//       this.positionProto = positionProto;
-//     }
-  
+    constructor(positionProto: PositionProto) {
+      this.positionProto = positionProto;
+
+      //For each field, put into a map
+      this.positionProto.getFieldsList().forEach(field => {
+        console.log(field);
+      });
+
+    }
+}
 //     get_field_value(field: FieldProto): any {
+//         this.positionProto.getFieldsList()
 //       return this.get_field(new FieldMapEntry({ field }));
 //     }
   

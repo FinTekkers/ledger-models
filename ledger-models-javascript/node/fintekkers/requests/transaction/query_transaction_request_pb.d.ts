@@ -28,6 +28,8 @@ export class QueryTransactionRequestProto extends jspb.Message {
     clearAsOf(): void;
     getAsOf(): fintekkers_models_util_local_timestamp_pb.LocalTimestampProto | undefined;
     setAsOf(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): QueryTransactionRequestProto;
+    getLimit(): number;
+    setLimit(value: number): QueryTransactionRequestProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QueryTransactionRequestProto.AsObject;
@@ -46,5 +48,6 @@ export namespace QueryTransactionRequestProto {
         uuidsList: Array<fintekkers_models_util_uuid_pb.UUIDProto.AsObject>,
         searchTransactionInput?: fintekkers_models_position_position_filter_pb.PositionFilterProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
+        limit: number,
     }
 }

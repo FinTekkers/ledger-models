@@ -36,11 +36,11 @@ class Transaction {
     }      
   }
 
-  get_fields(): FieldProto[] {
+  getFields(): FieldProto[] {
     return [FieldProto.ID, FieldProto.SECURITY_ID, FieldProto.AS_OF, FieldProto.ASSET_CLASS, FieldProto.IDENTIFIER];
   }
 
-  get_field(field: FieldProto): any {
+  getField(field: FieldProto): any {
     switch (field) {
       case FieldProto.ID:
       case FieldProto.SECURITY_ID:

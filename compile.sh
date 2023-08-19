@@ -24,7 +24,7 @@ gradle build
 ###########################################
 
 echo "generating javascript protos"
-cd ledger-models-protos
+cd ../ledger-models-protos
 # generate web js
 protoc \
     --js_out=import_style=commonjs:../ledger-models-javascript/web/ \

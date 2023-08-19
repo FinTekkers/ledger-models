@@ -1,5 +1,6 @@
 package protos.serializers.util.proto;
 
+import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import fintekkers.models.util.LocalTimestamp;
 import fintekkers.models.util.Uuid;
@@ -7,6 +8,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -28,6 +30,15 @@ class ProtoSerializationUtilTest {
 
         zonedDateTime = ProtoSerializationUtil.deserializeTimestamp(proto);
         assertEquals(now, zonedDateTime);
+    }
+
+    @Test
+    public void testDateSerialization() {
+        LocalDate today = LocalDate.now();
+        Any packedDate = ProtoSerializationUtil.serializeToAny(today);
+
+        LocalDate unpacked = (LocalDate) ProtoSerializationUtil.deserialize(packedDate);
+        assertEquals(today, unpacked);
     }
 
     @Test

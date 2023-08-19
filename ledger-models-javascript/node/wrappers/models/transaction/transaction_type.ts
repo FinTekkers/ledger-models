@@ -28,7 +28,7 @@ export class TransactionType {
             case TransactionTypeProto.MATURATION:
                 return -1;
             case TransactionTypeProto.UNKNOWN:
-                throw new Error('Unknown transaction type: '+this.toString()); );
+                throw new Error('Unknown transaction type: '+this.toString());
         }
     }
 

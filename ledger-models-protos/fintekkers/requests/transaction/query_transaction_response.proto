@@ -5,6 +5,8 @@ package fintekkers.requests.transaction;
 import "fintekkers/models/transaction/transaction.proto";
 import "fintekkers/requests/transaction/query_transaction_request.proto";
 
+import "fintekkers/requests/util/errors/summary.proto";
+
 option java_multiple_files = true;
 
 option java_outer_classname = "QueryTransactionResponseProtos";
@@ -16,6 +18,10 @@ message QueryTransactionResponseProto {
   transaction.QueryTransactionRequestProto create_transaction_request = 20;
 
   repeated fintekkers.models.transaction.TransactionProto transaction_response = 30;
+
+  //If no errors or warnings in the response then the request was processed successfully without any
+  //contingencies.
+  util.errors.SummaryProto errors_or_warnings = 40;
 }
 
 

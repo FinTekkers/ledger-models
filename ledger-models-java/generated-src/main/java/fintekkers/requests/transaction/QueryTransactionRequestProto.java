@@ -99,6 +99,11 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
+          case 192: {
+
+            limit_ = input.readInt32();
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -311,6 +316,10 @@ private static final long serialVersionUID = 0L;
   public static final int AS_OF_FIELD_NUMBER = 23;
   private fintekkers.models.util.LocalTimestamp.LocalTimestampProto asOf_;
   /**
+   * <pre>
+   *The as of date to query the data set
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
    * @return Whether the asOf field is set.
    */
@@ -319,6 +328,10 @@ private static final long serialVersionUID = 0L;
     return asOf_ != null;
   }
   /**
+   * <pre>
+   *The as of date to query the data set
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
    * @return The asOf.
    */
@@ -327,11 +340,30 @@ private static final long serialVersionUID = 0L;
     return asOf_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : asOf_;
   }
   /**
+   * <pre>
+   *The as of date to query the data set
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
    */
   @java.lang.Override
   public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsOfOrBuilder() {
     return getAsOf();
+  }
+
+  public static final int LIMIT_FIELD_NUMBER = 24;
+  private int limit_;
+  /**
+   * <pre>
+   *Max number of records to return
+   * </pre>
+   *
+   * <code>int32 limit = 24;</code>
+   * @return The limit.
+   */
+  @java.lang.Override
+  public int getLimit() {
+    return limit_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -363,6 +395,9 @@ private static final long serialVersionUID = 0L;
     if (asOf_ != null) {
       output.writeMessage(23, getAsOf());
     }
+    if (limit_ != 0) {
+      output.writeInt32(24, limit_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -389,6 +424,10 @@ private static final long serialVersionUID = 0L;
     if (asOf_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(23, getAsOf());
+    }
+    if (limit_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(24, limit_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -421,6 +460,8 @@ private static final long serialVersionUID = 0L;
       if (!getAsOf()
           .equals(other.getAsOf())) return false;
     }
+    if (getLimit()
+        != other.getLimit()) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -448,6 +489,8 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + AS_OF_FIELD_NUMBER;
       hash = (53 * hash) + getAsOf().hashCode();
     }
+    hash = (37 * hash) + LIMIT_FIELD_NUMBER;
+    hash = (53 * hash) + getLimit();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -604,6 +647,8 @@ private static final long serialVersionUID = 0L;
         asOf_ = null;
         asOfBuilder_ = null;
       }
+      limit_ = 0;
+
       return this;
     }
 
@@ -652,6 +697,7 @@ private static final long serialVersionUID = 0L;
       } else {
         result.asOf_ = asOfBuilder_.build();
       }
+      result.limit_ = limit_;
       onBuilt();
       return result;
     }
@@ -739,6 +785,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasAsOf()) {
         mergeAsOf(other.getAsOf());
+      }
+      if (other.getLimit() != 0) {
+        setLimit(other.getLimit());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1393,6 +1442,10 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto, fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder, fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder> asOfBuilder_;
     /**
+     * <pre>
+     *The as of date to query the data set
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      * @return Whether the asOf field is set.
      */
@@ -1400,6 +1453,10 @@ private static final long serialVersionUID = 0L;
       return asOfBuilder_ != null || asOf_ != null;
     }
     /**
+     * <pre>
+     *The as of date to query the data set
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      * @return The asOf.
      */
@@ -1411,6 +1468,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     *The as of date to query the data set
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      */
     public Builder setAsOf(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
@@ -1427,6 +1488,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *The as of date to query the data set
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      */
     public Builder setAsOf(
@@ -1441,6 +1506,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *The as of date to query the data set
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      */
     public Builder mergeAsOf(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
@@ -1459,6 +1528,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *The as of date to query the data set
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      */
     public Builder clearAsOf() {
@@ -1473,6 +1546,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *The as of date to query the data set
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getAsOfBuilder() {
@@ -1481,6 +1558,10 @@ private static final long serialVersionUID = 0L;
       return getAsOfFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     *The as of date to query the data set
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsOfOrBuilder() {
@@ -1492,6 +1573,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     *The as of date to query the data set
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -1506,6 +1591,49 @@ private static final long serialVersionUID = 0L;
         asOf_ = null;
       }
       return asOfBuilder_;
+    }
+
+    private int limit_ ;
+    /**
+     * <pre>
+     *Max number of records to return
+     * </pre>
+     *
+     * <code>int32 limit = 24;</code>
+     * @return The limit.
+     */
+    @java.lang.Override
+    public int getLimit() {
+      return limit_;
+    }
+    /**
+     * <pre>
+     *Max number of records to return
+     * </pre>
+     *
+     * <code>int32 limit = 24;</code>
+     * @param value The limit to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLimit(int value) {
+      
+      limit_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *Max number of records to return
+     * </pre>
+     *
+     * <code>int32 limit = 24;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearLimit() {
+      
+      limit_ = 0;
+      onChanged();
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

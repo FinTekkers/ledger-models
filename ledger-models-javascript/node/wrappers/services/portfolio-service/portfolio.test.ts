@@ -27,13 +27,13 @@ export async function testPortfolio(): Promise<boolean> {
   portfolio.setVersion('0.0.1');
   portfolio.setUuid(id_proto);
   portfolio.setPortfolioName('TEST PORTFOLIO');
-  portfolio.setAsOf(now.to_date_proto());
+  portfolio.setAsOf(now.toProto());
 
   var validationSummary = await portfolioService.validateCreatePortfolio(portfolio);
 
   var createPortfolioResponse:CreatePortfolioResponseProto = await portfolioService.createPortfolio(portfolio);
 
-  var searchResults = await portfolioService.searchPortfolio(now.to_date_proto(), FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings');
+  var searchResults = await portfolioService.searchPortfolio(now.toProto(), FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings');
 
   return true;
 }

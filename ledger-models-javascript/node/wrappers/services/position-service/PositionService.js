@@ -1,4 +1,5 @@
 "use strict";
+// Models
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,13 +38,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PositionService = void 0;
-var grpc = require("@grpc/grpc-js");
+// Model Utils
 // Requests & Services
 var position_service_grpc_pb_1 = require("../../../fintekkers/services/position-service/position_service_grpc_pb");
+var requestcontext_1 = require("../../models/utils/requestcontext");
 var PositionService = /** @class */ (function () {
     function PositionService() {
-        this.client = new position_service_grpc_pb_1.PositionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-        // this.client = new PositionClient('localhost:8082', grpc.credentials.createInsecure());
+        this.client = new position_service_grpc_pb_1.PositionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
     }
     PositionService.prototype.search = function (request) {
         return __awaiter(this, void 0, void 0, function () {

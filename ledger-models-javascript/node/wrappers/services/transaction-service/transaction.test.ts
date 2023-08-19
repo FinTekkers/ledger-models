@@ -17,11 +17,12 @@ import { TransactionService } from './TransactionService';
 import Transaction from '../../models/transaction/transaction';
 import { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
 
-test('test creating a transaction against the api.fintekkers.org portfolio service', () => {
-  const isTrue = testTransaction();
-  expect(isTrue).resolves.toBe(true);
-}, 30000);
+import assert = require("assert");
 
+test('test creating a transaction against the portfolio service', async () => {
+  const isTrue =  await testTransaction();
+  expect(isTrue).toBe(true);
+}, 30000);
 
 async function testTransaction(): Promise<boolean> {
   const id_proto = uuid.UUID.random().toUUIDProto();
@@ -33,15 +34,15 @@ async function testTransaction(): Promise<boolean> {
   const transactionService = new TransactionService();
 
   let fixedIncomeSecurities = await securityService
-  .searchSecurity(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Fixed Income')
-  .then((fixedIncomeSecurities) => {
-    return fixedIncomeSecurities;
-  });
+    .searchSecurity(now.toProto(), FieldProto.ASSET_CLASS, 'Fixed Income')
+    .then((fixedIncomeSecurities) => {
+      return fixedIncomeSecurities;
+    });
 
   let security = fixedIncomeSecurities[0];
 
   let portfolios = await portfolioService.searchPortfolio(
-      now.to_date_proto(),
+      now.toProto(),
       FieldProto.PORTFOLIO_NAME,
       'TEST PORTFOLIO');
   
@@ -59,14 +60,14 @@ async function testTransaction(): Promise<boolean> {
   transaction.setObjectClass('Transaction');
   transaction.setVersion('0.0.1');
   transaction.setUuid(uuid.UUID.random().toUUIDProto());
-  transaction.setAsOf(now.to_date_proto());
+  transaction.setAsOf(now.toProto());
   transaction.setTradeDate(today);
   transaction.setSettlementDate(today); //Same day settlement
   transaction.setTransactionType(TransactionTypeProto.BUY);
   transaction.setPrice(
     new PriceProto()
       .setObjectClass('Price')
-      .setAsOf(now.to_date_proto())
+      .setAsOf(now.toProto())
       .setVersion('0.0.1')
       .setSecurity(security.proto)
       .setUuid(uuid.UUID.random().toUUIDProto())
@@ -77,11 +78,20 @@ async function testTransaction(): Promise<boolean> {
   transaction.setSecurity(security.proto);
 
   // var validationSummary = await transactionService.validateCreateTransaction(new Transaction(transaction));
-  // console.log(validationSummary);
+  // assert(validationSummary.getErrorsList().length == 0, "Validation errors found");
 
   var createTransactionResponse:CreateTransactionResponseProto = await transactionService.createTransaction(new Transaction(transaction));
+  const transactionResponse = createTransactionResponse.getTransactionResponse();
+  assert(transactionResponse, "No transaction response found");
 
-  var searchResults = await transactionService.searchTransaction(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Fixed Income');
+  // transactionService.addListener(transactionListener);
+  const transactions = await transactionService.searchTransaction(now.toProto(), FieldProto.ASSET_CLASS, 'Fixed Income');
+  
+  if(transactions === undefined) {
+    console.log('No transactions found');
+  } else {
+    console.log(transactions.length);
+  }
 
   return true;
 }

@@ -12,7 +12,7 @@ import { FieldMapEntry } from '../../../fintekkers/models/position/position_util
 import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
 import { ZonedDateTime } from '../../models/utils/datetime';
 
-import { packStringIntoAny } from '../../models/utils/util';
+import { pack } from '../../models/utils/serialization.util';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
 
 //Requests & Services
@@ -20,9 +20,9 @@ import { PortfolioService } from '../../services/portfolio-service/PortfolioServ
 import { PositionService } from '../../services/position-service/PositionService';
 import { QueryPositionRequestProto } from '../../../fintekkers/requests/position/query_position_request_pb';
 
-test('test getting a position against the api.fintekkers.org position service', () => {
-  const isTrue = testPosition();
-  expect(isTrue).resolves.toBe(true);
+test('test getting a position against the api.fintekkers.org position service', async () => {
+  const isTrue = await testPosition();
+  expect(isTrue).toBe(true);
 }, 30000);
 
 async function get_position(security:SecurityProto, 
@@ -51,7 +51,7 @@ async function get_position(security:SecurityProto,
     if (portfolio !== null && portfolio !== undefined) {
         const fieldMapEntry = new FieldMapEntry();
         fieldMapEntry.setField(FieldProto.PORTFOLIO_NAME);
-        fieldMapEntry.setFieldValuePacked(packStringIntoAny(portfolio.getPortfolioName()));
+        fieldMapEntry.setFieldValuePacked(pack(portfolio.getPortfolioName()));
 
         filters.push(fieldMapEntry);
     }
@@ -63,7 +63,7 @@ async function get_position(security:SecurityProto,
     const filter_fields = new PositionFilterProto();
     filter_fields.setFiltersList(filters);
 
-    const as_of_proto = as_of.to_date_proto();
+    const as_of_proto = as_of.toProto();
 
     const request = new QueryPositionRequestProto();
     request.setPositionType(position_type);
@@ -87,7 +87,7 @@ async function testPosition(): Promise<boolean> {
   const portfolioService = new PortfolioService();
   
   let portfolios = await portfolioService.searchPortfolio(
-        now.to_date_proto(), 
+        now.toProto(), 
         FieldProto.PORTFOLIO_NAME, 
         "Federal Reserve SOMA Holdings");
   const fedReservePortfolio = portfolios[0];
@@ -96,6 +96,9 @@ async function testPosition(): Promise<boolean> {
     [MeasureProto.DIRECTED_QUANTITY], 
     PositionTypeProto.TRANSACTION,
     [FieldProto.PORTFOLIO_NAME, FieldProto.SECURITY_ID], [], now);
+
+
+  console.log(positions);
 
   return true;
 }

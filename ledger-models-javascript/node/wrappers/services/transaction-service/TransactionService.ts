@@ -3,7 +3,7 @@ import { promisify } from 'util';
 
 // Models
 import Transaction from '../../models/transaction/transaction';
-import { createFieldMapEntry } from '../../models/utils/util';
+import { createFieldMapEntry } from '../../models/utils/serialization.util';
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
@@ -17,14 +17,14 @@ import { CreateTransactionRequestProto } from '../../../fintekkers/requests/tran
 import { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
 import { QueryTransactionRequestProto } from '../../../fintekkers/requests/transaction/query_transaction_request_pb';
 import { QueryTransactionResponseProto } from '../../../fintekkers/requests/transaction/query_transaction_response_pb';
+import EnvConfig from '../../models/utils/requestcontext';
 
 
 class TransactionService {
   private client: TransactionClient;
 
   constructor() {
-    this.client = new TransactionClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-    // this.client = new TransactionClient('localhost:8082', grpc.credentials.createInsecure());
+    this.client = new TransactionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
   }
 
   async validateCreateTransaction(transaction: Transaction): Promise<SummaryProto> {
@@ -49,7 +49,8 @@ class TransactionService {
     return response;
   }
 
-  async searchTransaction(asOf: LocalTimestampProto, fieldProto: FieldProto, fieldValue: string): Promise<Transaction[]> {
+   searchTransaction(asOf: LocalTimestampProto, fieldProto: FieldProto, fieldValue: string, maxResults: number=100): 
+      Promise<Transaction[]> {
     const searchRequest = new QueryTransactionRequestProto();
     searchRequest.setObjectClass('SecurityRequest');
     searchRequest.setVersion('0.0.1');
@@ -63,23 +64,25 @@ class TransactionService {
     positionFilter.setFiltersList([fieldMapEntry]);
 
     searchRequest.setSearchTransactionInput(positionFilter);
+    searchRequest.setLimit(maxResults);
 
     const tmpClient = this.client;
 
-    const listTransactions: Transaction[] = [];
-
     async function processStreamSynchronously(): Promise<Transaction[]> {
       const stream2 = tmpClient.search(searchRequest);
+      var results:Transaction[] = [];
 
       return new Promise<Transaction[]>((resolve, reject) => {
         stream2.on('data', (response:QueryTransactionResponseProto) => {
           response.getTransactionResponseList().forEach((transaction) => {
-            listTransactions.push(new Transaction(transaction));
-          });
+            const txn:Transaction = new Transaction(transaction);
+            results.push(txn);
+          })
         });
 
         stream2.on('end', () => {
-          resolve(listTransactions);
+          console.log("Stream ended with ", results.length);
+          resolve(results);
         });
 
         stream2.on('error', (err) => {
@@ -89,7 +92,7 @@ class TransactionService {
       });
     }
 
-    return await processStreamSynchronously();
+    return processStreamSynchronously();
   }
 }
 

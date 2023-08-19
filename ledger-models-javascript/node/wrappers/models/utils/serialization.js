@@ -14,9 +14,9 @@ var ProtoSerializationUtil = /** @class */ (function () {
         }
         if (obj instanceof Date) {
             return new local_date_pb_1.LocalDateProto()
-                .setYear(obj.getUTCFullYear())
-                .setMonth(obj.getUTCMonth() + 1)
-                .setDay(obj.getUTCDate());
+                .setYear(obj.getFullYear())
+                .setMonth(obj.getMonth() + 1)
+                .setDay(obj.getDate());
         }
         if (typeof obj === "number") {
             return new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue(obj.toString());
@@ -28,7 +28,9 @@ var ProtoSerializationUtil = /** @class */ (function () {
             return uuid_1.UUID.fromU8Array(obj.getRawUuid_asU8());
         }
         if (obj instanceof local_date_pb_1.LocalDateProto) {
-            return new Date(Date.UTC(obj.getYear(), obj.getMonth() - 1, obj.getDay()));
+            var date = new Date(obj.getYear(), obj.getMonth() - 1, obj.getDay());
+            date.setHours(0, 0, 0, 0);
+            return date;
         }
         if (obj.enum_name && obj.enum_name === "TRANSACTION_TYPE") {
             return null; // new TransactionType(obj.enum_value);

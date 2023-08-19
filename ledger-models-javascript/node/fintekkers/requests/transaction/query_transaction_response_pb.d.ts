@@ -7,6 +7,7 @@
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_transaction_transaction_pb from "../../../fintekkers/models/transaction/transaction_pb";
 import * as fintekkers_requests_transaction_query_transaction_request_pb from "../../../fintekkers/requests/transaction/query_transaction_request_pb";
+import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
 
 export class QueryTransactionResponseProto extends jspb.Message { 
     getObjectClass(): string;
@@ -22,6 +23,11 @@ export class QueryTransactionResponseProto extends jspb.Message {
     getTransactionResponseList(): Array<fintekkers_models_transaction_transaction_pb.TransactionProto>;
     setTransactionResponseList(value: Array<fintekkers_models_transaction_transaction_pb.TransactionProto>): QueryTransactionResponseProto;
     addTransactionResponse(value?: fintekkers_models_transaction_transaction_pb.TransactionProto, index?: number): fintekkers_models_transaction_transaction_pb.TransactionProto;
+
+    hasErrorsOrWarnings(): boolean;
+    clearErrorsOrWarnings(): void;
+    getErrorsOrWarnings(): fintekkers_requests_util_errors_summary_pb.SummaryProto | undefined;
+    setErrorsOrWarnings(value?: fintekkers_requests_util_errors_summary_pb.SummaryProto): QueryTransactionResponseProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QueryTransactionResponseProto.AsObject;
@@ -39,5 +45,6 @@ export namespace QueryTransactionResponseProto {
         version: string,
         createTransactionRequest?: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto.AsObject,
         transactionResponseList: Array<fintekkers_models_transaction_transaction_pb.TransactionProto.AsObject>,
+        errorsOrWarnings?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,
     }
 }

@@ -3,7 +3,7 @@ import { promisify } from 'util';
 
 // Models
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { createFieldMapEntry } from '../../models/utils/util';
+import { createFieldMapEntry } from '../../models/utils/serialization.util';
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
@@ -18,13 +18,13 @@ import { QuerySecurityResponseProto } from '../../../fintekkers/requests/securit
 import { CreateSecurityRequestProto } from '../../../fintekkers/requests/security/create_security_request_pb';
 import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
 import Security from '../../models/security/security';
+import EnvConfig from '../../models/utils/requestcontext';
 
 class SecurityService {
   private client: SecurityClient;
 
   constructor() {
-    this.client = new SecurityClient('api.fintekkers.org:8082', grpc.credentials.createSsl());
-    // this.client = new SecurityClient('localhost:8082', grpc.credentials.createInsecure());
+    this.client = new SecurityClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
   }
 
   async validateCreateSecurity(security: SecurityProto): Promise<SummaryProto> {

@@ -33,29 +33,34 @@ public final class QueryTransactionResponseProtos {
       "equests.transaction\032/fintekkers/models/t" +
       "ransaction/transaction.proto\032?fintekkers" +
       "/requests/transaction/query_transaction_" +
-      "request.proto\"\370\001\n\035QueryTransactionRespon" +
-      "seProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007version" +
-      "\030\002 \001(\t\022a\n\032create_transaction_request\030\024 \001" +
-      "(\0132=.fintekkers.requests.transaction.Que" +
-      "ryTransactionRequestProto\022M\n\024transaction" +
-      "_response\030\036 \003(\0132/.fintekkers.models.tran" +
-      "saction.TransactionProtoB\"B\036QueryTransac" +
-      "tionResponseProtosP\001b\006proto3"
+      "request.proto\032-fintekkers/requests/util/" +
+      "errors/summary.proto\"\303\002\n\035QueryTransactio" +
+      "nResponseProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007" +
+      "version\030\002 \001(\t\022a\n\032create_transaction_requ" +
+      "est\030\024 \001(\0132=.fintekkers.requests.transact" +
+      "ion.QueryTransactionRequestProto\022M\n\024tran" +
+      "saction_response\030\036 \003(\0132/.fintekkers.mode" +
+      "ls.transaction.TransactionProto\022I\n\022error" +
+      "s_or_warnings\030( \001(\0132-.fintekkers.request" +
+      "s.util.errors.SummaryProtoB\"B\036QueryTrans" +
+      "actionResponseProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.transaction.TransactionProtos.getDescriptor(),
           fintekkers.requests.transaction.QueryTransactionRequestProtos.getDescriptor(),
+          fintekkers.requests.util.errors.Summary.getDescriptor(),
         });
     internal_static_fintekkers_requests_transaction_QueryTransactionResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_transaction_QueryTransactionResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_transaction_QueryTransactionResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "CreateTransactionRequest", "TransactionResponse", });
+        new java.lang.String[] { "ObjectClass", "Version", "CreateTransactionRequest", "TransactionResponse", "ErrorsOrWarnings", });
     fintekkers.models.transaction.TransactionProtos.getDescriptor();
     fintekkers.requests.transaction.QueryTransactionRequestProtos.getDescriptor();
+    fintekkers.requests.util.errors.Summary.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -15,9 +15,9 @@ import * as dt from '../../models/utils/datetime';
 import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
 import { SecurityService } from './SecurityService';
 
-test('test creating a security against the api.fintekkers.org portfolio service', () => {
-  const isTrue = testSecurity();
-  expect(isTrue).resolves.toBe(true);
+test('test creating a security against the api.fintekkers.org security service', async () => {
+  const isTrue = await testSecurity();
+  expect(isTrue).toBe(true);
 }, 30000);
 
 async function testSecurity(): Promise<boolean> {
@@ -27,7 +27,7 @@ async function testSecurity(): Promise<boolean> {
   const securityService = new SecurityService();
 
   let usd_security = await securityService
-    .searchSecurity(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Cash')
+    .searchSecurity(now.toProto(), FieldProto.ASSET_CLASS, 'Cash')
     .then((securities) => {
       return securities[0];
     });
@@ -37,7 +37,7 @@ async function testSecurity(): Promise<boolean> {
   security.setVersion('0.0.1');
   security.setUuid(id_proto);
   security.setSettlementCurrency(usd_security.proto);
-  security.setAsOf(now.to_date_proto());
+  security.setAsOf(now.toProto());
   security.setAssetClass('FixedIncome');
   security.setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY);
   security.setCouponType(CouponTypeProto.FIXED);
@@ -71,7 +71,7 @@ async function testSecurity(): Promise<boolean> {
 
   var createSecurityResponse:CreateSecurityResponseProto = await securityService.createSecurity(security);
 
-  var searchResults = await securityService.searchSecurity(now.to_date_proto(), FieldProto.ASSET_CLASS, 'Fixed Income');
+  var searchResults = await securityService.searchSecurity(now.toProto(), FieldProto.ASSET_CLASS, 'Fixed Income');
 
   return true;
 }

@@ -103,17 +103,39 @@ public interface QueryTransactionRequestProtoOrBuilder extends
   fintekkers.models.position.PositionFilterProtoOrBuilder getSearchTransactionInputOrBuilder();
 
   /**
+   * <pre>
+   *The as of date to query the data set
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
    * @return Whether the asOf field is set.
    */
   boolean hasAsOf();
   /**
+   * <pre>
+   *The as of date to query the data set
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
    * @return The asOf.
    */
   fintekkers.models.util.LocalTimestamp.LocalTimestampProto getAsOf();
   /**
+   * <pre>
+   *The as of date to query the data set
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
    */
   fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsOfOrBuilder();
+
+  /**
+   * <pre>
+   *Max number of records to return
+   * </pre>
+   *
+   * <code>int32 limit = 24;</code>
+   * @return The limit.
+   */
+  int getLimit();
 }

@@ -1,9 +1,7 @@
 import { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value_pb";
 import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";
-import { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
 import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
 import { UUID } from "./uuid";
-
   
   interface EnumValueDescriptor {
     name: string;
@@ -11,15 +9,15 @@ import { UUID } from "./uuid";
   }
   
   export class ProtoSerializationUtil {
-    static serialize(obj: any) {
+    static serialize(obj: any): any {
       if (obj instanceof UUID) {
         return obj.toUUIDProto();
       }
       if (obj instanceof Date) {
         return new LocalDateProto()
-            .setYear(obj.getUTCFullYear())
-            .setMonth(obj.getUTCMonth() + 1)
-            .setDay(obj.getUTCDate());
+            .setYear(obj.getFullYear())
+            .setMonth(obj.getMonth() + 1)
+            .setDay(obj.getDate());
       }
       if (typeof obj === "number") {
         return new DecimalValueProto().setArbitraryPrecisionValue(obj.toString());
@@ -28,12 +26,14 @@ import { UUID } from "./uuid";
       throw new Error(`Could not serialize object of type ${typeof obj}. Value: ${obj}`);
     }
   
-    static deserialize(obj: any) {
+    static deserialize(obj: any): any {
       if (obj instanceof UUIDProto) {
         return UUID.fromU8Array(obj.getRawUuid_asU8());
       }
       if (obj instanceof LocalDateProto) {
-        return new Date(Date.UTC(obj.getYear(), obj.getMonth() - 1, obj.getDay()));
+        const date = new Date(obj.getYear(), obj.getMonth() - 1, obj.getDay());
+        date.setHours(0,0,0,0);
+        return date;
       }
       if (obj.enum_name && obj.enum_name === "TRANSACTION_TYPE") {
         return null;// new TransactionType(obj.enum_value);

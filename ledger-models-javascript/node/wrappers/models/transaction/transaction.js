@@ -24,10 +24,10 @@ var Transaction = /** @class */ (function () {
             return "WHOOPS";
         }
     };
-    Transaction.prototype.get_fields = function () {
+    Transaction.prototype.getFields = function () {
         return [field_pb_1.FieldProto.ID, field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.AS_OF, field_pb_1.FieldProto.ASSET_CLASS, field_pb_1.FieldProto.IDENTIFIER];
     };
-    Transaction.prototype.get_field = function (field) {
+    Transaction.prototype.getField = function (field) {
         switch (field) {
             case field_pb_1.FieldProto.ID:
             case field_pb_1.FieldProto.SECURITY_ID:

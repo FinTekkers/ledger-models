@@ -45,16 +45,24 @@ var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
 var datetime_1 = require("../../models/utils/datetime");
-var util_1 = require("../../models/utils/util");
+var serialization_util_1 = require("../../models/utils/serialization.util");
 var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 //Requests & Services
 var PortfolioService_1 = require("../../services/portfolio-service/PortfolioService");
 var PositionService_1 = require("../../services/position-service/PositionService");
 var query_position_request_pb_1 = require("../../../fintekkers/requests/position/query_position_request_pb");
-test('test getting a position against the api.fintekkers.org position service', function () {
-    var isTrue = testPosition();
-    expect(isTrue).resolves.toBe(true);
-}, 30000);
+test('test getting a position against the api.fintekkers.org position service', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var isTrue;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, testPosition()];
+            case 1:
+                isTrue = _a.sent();
+                expect(isTrue).toBe(true);
+                return [2 /*return*/];
+        }
+    });
+}); }, 30000);
 function get_position(security, portfolio, measures, position_type, fields, additional_filters, as_of) {
     if (fields === void 0) { fields = [field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.SECURITY]; }
     if (additional_filters === void 0) { additional_filters = []; }
@@ -79,7 +87,7 @@ function get_position(security, portfolio, measures, position_type, fields, addi
                     if (portfolio !== null && portfolio !== undefined) {
                         fieldMapEntry = new position_util_pb_1.FieldMapEntry();
                         fieldMapEntry.setField(field_pb_1.FieldProto.PORTFOLIO_NAME);
-                        fieldMapEntry.setFieldValuePacked((0, util_1.packStringIntoAny)(portfolio.getPortfolioName()));
+                        fieldMapEntry.setFieldValuePacked((0, serialization_util_1.pack)(portfolio.getPortfolioName()));
                         filters.push(fieldMapEntry);
                     }
                     if (additional_filters !== null && additional_filters.length > 0) {
@@ -87,7 +95,7 @@ function get_position(security, portfolio, measures, position_type, fields, addi
                     }
                     filter_fields = new position_filter_pb_1.PositionFilterProto();
                     filter_fields.setFiltersList(filters);
-                    as_of_proto = as_of.to_date_proto();
+                    as_of_proto = as_of.toProto();
                     request = new query_position_request_pb_1.QueryPositionRequestProto();
                     request.setPositionType(position_type);
                     request.setPositionView(position_pb_1.PositionViewProto.DEFAULT_VIEW);
@@ -112,13 +120,14 @@ function testPosition() {
                 case 0:
                     now = datetime_1.ZonedDateTime.now();
                     portfolioService = new PortfolioService_1.PortfolioService();
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.to_date_proto(), field_pb_1.FieldProto.PORTFOLIO_NAME, "Federal Reserve SOMA Holdings")];
+                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), field_pb_1.FieldProto.PORTFOLIO_NAME, "Federal Reserve SOMA Holdings")];
                 case 1:
                     portfolios = _a.sent();
                     fedReservePortfolio = portfolios[0];
                     return [4 /*yield*/, get_position(null, fedReservePortfolio, [measure_pb_1.MeasureProto.DIRECTED_QUANTITY], position_pb_1.PositionTypeProto.TRANSACTION, [field_pb_1.FieldProto.PORTFOLIO_NAME, field_pb_1.FieldProto.SECURITY_ID], [], now)];
                 case 2:
                     positions = _a.sent();
+                    console.log(positions);
                     return [2 /*return*/, true];
             }
         });

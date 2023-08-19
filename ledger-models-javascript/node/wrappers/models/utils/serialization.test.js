@@ -8,16 +8,15 @@ test('test creating a security against the api.fintekkers.org portfolio service'
 });
 function testSerialization() {
     checkUUID();
-    //TODO: Make these tests more robust
-    var serializedDate = serialization_1.ProtoSerializationUtil.serialize(new Date());
-    assert(serializedDate.toString().indexOf('2023') > -1);
+    var march2023 = new Date(2023, 2, 5);
+    var serializedDate = serialization_1.ProtoSerializationUtil.serialize(march2023);
+    assert(serializedDate.toString().indexOf('2023,3,5') > -1);
     var deserializedDate = serialization_1.ProtoSerializationUtil.deserialize(serializedDate);
-    assert(deserializedDate.toString().indexOf('2023') > -1);
-    var obj = new Date();
-    var serializedTimestamp = serialization_1.ProtoSerializationUtil.serialize(obj);
-    assert(serializedTimestamp.toString().indexOf('2023') > -1);
+    assert(deserializedDate.toString().indexOf('Mar 04 2023') > -1);
+    var serializedTimestamp = serialization_1.ProtoSerializationUtil.serialize(march2023);
+    assert(serializedTimestamp.toString().indexOf('2023,3,5') > -1);
     var deserializedTimestamp = serialization_1.ProtoSerializationUtil.deserialize(serializedTimestamp);
-    assert(deserializedTimestamp.toString().indexOf('2023') > -1);
+    assert(deserializedTimestamp.toString().indexOf('Mar 04 2023') > -1);
 }
 function checkUUID() {
     var uuid = uuid_1.UUID.random();

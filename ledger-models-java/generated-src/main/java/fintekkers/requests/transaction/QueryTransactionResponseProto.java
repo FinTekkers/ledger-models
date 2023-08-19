@@ -86,6 +86,19 @@ private static final long serialVersionUID = 0L;
                 input.readMessage(fintekkers.models.transaction.TransactionProto.parser(), extensionRegistry));
             break;
           }
+          case 322: {
+            fintekkers.requests.util.errors.Summary.SummaryProto.Builder subBuilder = null;
+            if (errorsOrWarnings_ != null) {
+              subBuilder = errorsOrWarnings_.toBuilder();
+            }
+            errorsOrWarnings_ = input.readMessage(fintekkers.requests.util.errors.Summary.SummaryProto.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(errorsOrWarnings_);
+              errorsOrWarnings_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -263,6 +276,47 @@ private static final long serialVersionUID = 0L;
     return transactionResponse_.get(index);
   }
 
+  public static final int ERRORS_OR_WARNINGS_FIELD_NUMBER = 40;
+  private fintekkers.requests.util.errors.Summary.SummaryProto errorsOrWarnings_;
+  /**
+   * <pre>
+   *If no errors or warnings in the response then the request was processed successfully without any
+   *contingencies.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   * @return Whether the errorsOrWarnings field is set.
+   */
+  @java.lang.Override
+  public boolean hasErrorsOrWarnings() {
+    return errorsOrWarnings_ != null;
+  }
+  /**
+   * <pre>
+   *If no errors or warnings in the response then the request was processed successfully without any
+   *contingencies.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   * @return The errorsOrWarnings.
+   */
+  @java.lang.Override
+  public fintekkers.requests.util.errors.Summary.SummaryProto getErrorsOrWarnings() {
+    return errorsOrWarnings_ == null ? fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : errorsOrWarnings_;
+  }
+  /**
+   * <pre>
+   *If no errors or warnings in the response then the request was processed successfully without any
+   *contingencies.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getErrorsOrWarningsOrBuilder() {
+    return getErrorsOrWarnings();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -289,6 +343,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < transactionResponse_.size(); i++) {
       output.writeMessage(30, transactionResponse_.get(i));
     }
+    if (errorsOrWarnings_ != null) {
+      output.writeMessage(40, getErrorsOrWarnings());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -311,6 +368,10 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < transactionResponse_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(30, transactionResponse_.get(i));
+    }
+    if (errorsOrWarnings_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(40, getErrorsOrWarnings());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -338,6 +399,11 @@ private static final long serialVersionUID = 0L;
     }
     if (!getTransactionResponseList()
         .equals(other.getTransactionResponseList())) return false;
+    if (hasErrorsOrWarnings() != other.hasErrorsOrWarnings()) return false;
+    if (hasErrorsOrWarnings()) {
+      if (!getErrorsOrWarnings()
+          .equals(other.getErrorsOrWarnings())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -360,6 +426,10 @@ private static final long serialVersionUID = 0L;
     if (getTransactionResponseCount() > 0) {
       hash = (37 * hash) + TRANSACTION_RESPONSE_FIELD_NUMBER;
       hash = (53 * hash) + getTransactionResponseList().hashCode();
+    }
+    if (hasErrorsOrWarnings()) {
+      hash = (37 * hash) + ERRORS_OR_WARNINGS_FIELD_NUMBER;
+      hash = (53 * hash) + getErrorsOrWarnings().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -511,6 +581,12 @@ private static final long serialVersionUID = 0L;
       } else {
         transactionResponseBuilder_.clear();
       }
+      if (errorsOrWarningsBuilder_ == null) {
+        errorsOrWarnings_ = null;
+      } else {
+        errorsOrWarnings_ = null;
+        errorsOrWarningsBuilder_ = null;
+      }
       return this;
     }
 
@@ -553,6 +629,11 @@ private static final long serialVersionUID = 0L;
         result.transactionResponse_ = transactionResponse_;
       } else {
         result.transactionResponse_ = transactionResponseBuilder_.build();
+      }
+      if (errorsOrWarningsBuilder_ == null) {
+        result.errorsOrWarnings_ = errorsOrWarnings_;
+      } else {
+        result.errorsOrWarnings_ = errorsOrWarningsBuilder_.build();
       }
       onBuilt();
       return result;
@@ -638,6 +719,9 @@ private static final long serialVersionUID = 0L;
             transactionResponseBuilder_.addAllMessages(other.transactionResponse_);
           }
         }
+      }
+      if (other.hasErrorsOrWarnings()) {
+        mergeErrorsOrWarnings(other.getErrorsOrWarnings());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1178,6 +1262,170 @@ private static final long serialVersionUID = 0L;
         transactionResponse_ = null;
       }
       return transactionResponseBuilder_;
+    }
+
+    private fintekkers.requests.util.errors.Summary.SummaryProto errorsOrWarnings_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.util.errors.Summary.SummaryProto, fintekkers.requests.util.errors.Summary.SummaryProto.Builder, fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder> errorsOrWarningsBuilder_;
+    /**
+     * <pre>
+     *If no errors or warnings in the response then the request was processed successfully without any
+     *contingencies.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     * @return Whether the errorsOrWarnings field is set.
+     */
+    public boolean hasErrorsOrWarnings() {
+      return errorsOrWarningsBuilder_ != null || errorsOrWarnings_ != null;
+    }
+    /**
+     * <pre>
+     *If no errors or warnings in the response then the request was processed successfully without any
+     *contingencies.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     * @return The errorsOrWarnings.
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto getErrorsOrWarnings() {
+      if (errorsOrWarningsBuilder_ == null) {
+        return errorsOrWarnings_ == null ? fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : errorsOrWarnings_;
+      } else {
+        return errorsOrWarningsBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     *If no errors or warnings in the response then the request was processed successfully without any
+     *contingencies.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public Builder setErrorsOrWarnings(fintekkers.requests.util.errors.Summary.SummaryProto value) {
+      if (errorsOrWarningsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        errorsOrWarnings_ = value;
+        onChanged();
+      } else {
+        errorsOrWarningsBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *If no errors or warnings in the response then the request was processed successfully without any
+     *contingencies.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public Builder setErrorsOrWarnings(
+        fintekkers.requests.util.errors.Summary.SummaryProto.Builder builderForValue) {
+      if (errorsOrWarningsBuilder_ == null) {
+        errorsOrWarnings_ = builderForValue.build();
+        onChanged();
+      } else {
+        errorsOrWarningsBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *If no errors or warnings in the response then the request was processed successfully without any
+     *contingencies.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public Builder mergeErrorsOrWarnings(fintekkers.requests.util.errors.Summary.SummaryProto value) {
+      if (errorsOrWarningsBuilder_ == null) {
+        if (errorsOrWarnings_ != null) {
+          errorsOrWarnings_ =
+            fintekkers.requests.util.errors.Summary.SummaryProto.newBuilder(errorsOrWarnings_).mergeFrom(value).buildPartial();
+        } else {
+          errorsOrWarnings_ = value;
+        }
+        onChanged();
+      } else {
+        errorsOrWarningsBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *If no errors or warnings in the response then the request was processed successfully without any
+     *contingencies.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public Builder clearErrorsOrWarnings() {
+      if (errorsOrWarningsBuilder_ == null) {
+        errorsOrWarnings_ = null;
+        onChanged();
+      } else {
+        errorsOrWarnings_ = null;
+        errorsOrWarningsBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *If no errors or warnings in the response then the request was processed successfully without any
+     *contingencies.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto.Builder getErrorsOrWarningsBuilder() {
+      
+      onChanged();
+      return getErrorsOrWarningsFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     *If no errors or warnings in the response then the request was processed successfully without any
+     *contingencies.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getErrorsOrWarningsOrBuilder() {
+      if (errorsOrWarningsBuilder_ != null) {
+        return errorsOrWarningsBuilder_.getMessageOrBuilder();
+      } else {
+        return errorsOrWarnings_ == null ?
+            fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : errorsOrWarnings_;
+      }
+    }
+    /**
+     * <pre>
+     *If no errors or warnings in the response then the request was processed successfully without any
+     *contingencies.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.util.errors.Summary.SummaryProto, fintekkers.requests.util.errors.Summary.SummaryProto.Builder, fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder> 
+        getErrorsOrWarningsFieldBuilder() {
+      if (errorsOrWarningsBuilder_ == null) {
+        errorsOrWarningsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.requests.util.errors.Summary.SummaryProto, fintekkers.requests.util.errors.Summary.SummaryProto.Builder, fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder>(
+                getErrorsOrWarnings(),
+                getParentForChildren(),
+                isClean());
+        errorsOrWarnings_ = null;
+      }
+      return errorsOrWarningsBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

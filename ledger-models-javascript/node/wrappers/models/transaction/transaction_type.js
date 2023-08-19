@@ -18,7 +18,6 @@ var TransactionType = /** @class */ (function () {
                 return -1;
             case transaction_type_pb_1.TransactionTypeProto.UNKNOWN:
                 throw new Error('Unknown transaction type: ' + this.toString());
-                ;
         }
     };
     /**

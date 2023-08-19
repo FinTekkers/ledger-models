@@ -13,8 +13,12 @@ pub struct QueryTransactionRequestProto {
     pub search_transaction_input: ::core::option::Option<
         super::super::models::position::PositionFilterProto,
     >,
+    /// The as of date to query the data set
     #[prost(message, optional, tag = "23")]
     pub as_of: ::core::option::Option<super::super::models::util::LocalTimestampProto>,
+    /// Max number of records to return
+    #[prost(int32, tag = "24")]
+    pub limit: i32,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -29,6 +33,10 @@ pub struct QueryTransactionResponseProto {
     pub transaction_response: ::prost::alloc::vec::Vec<
         super::super::models::transaction::TransactionProto,
     >,
+    /// If no errors or warnings in the response then the request was processed successfully without any
+    /// contingencies.
+    #[prost(message, optional, tag = "40")]
+    pub errors_or_warnings: ::core::option::Option<super::util::errors::SummaryProto>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
