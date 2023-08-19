@@ -3,20 +3,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var serialization_1 = require("./serialization");
 var uuid_1 = require("./uuid");
 var assert = require("assert");
-test('test creating a security against the api.fintekkers.org portfolio service', function () {
+test('test serialization of key types', function () {
     testSerialization();
 });
 function testSerialization() {
     checkUUID();
-    var march2023 = new Date(2023, 2, 5);
+    var march2023 = new Date(2023, 2, 5); //Month is zero-indexed, so 2 == March.
     var serializedDate = serialization_1.ProtoSerializationUtil.serialize(march2023);
     assert(serializedDate.toString().indexOf('2023,3,5') > -1);
     var deserializedDate = serialization_1.ProtoSerializationUtil.deserialize(serializedDate);
-    assert(deserializedDate.toString().indexOf('Mar 04 2023') > -1);
+    assert(deserializedDate.toString().indexOf('Mar 05 2023') > -1);
     var serializedTimestamp = serialization_1.ProtoSerializationUtil.serialize(march2023);
     assert(serializedTimestamp.toString().indexOf('2023,3,5') > -1);
     var deserializedTimestamp = serialization_1.ProtoSerializationUtil.deserialize(serializedTimestamp);
-    assert(deserializedTimestamp.toString().indexOf('Mar 04 2023') > -1);
+    assert(deserializedTimestamp.toString().indexOf('Mar 05 2023') > -1);
 }
 function checkUUID() {
     var uuid = uuid_1.UUID.random();

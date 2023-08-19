@@ -4,25 +4,25 @@ import { ProtoSerializationUtil } from './serialization';
 import { UUID } from './uuid';
 
 import assert = require('assert');
-test('test creating a security against the api.fintekkers.org portfolio service', () => {
+test('test serialization of key types', () => {
     testSerialization();
   });
 
 function testSerialization(): void {
     checkUUID();
 
-    const march2023 = new Date(2023, 2, 5);
+    const march2023 = new Date(2023, 2, 5); //Month is zero-indexed, so 2 == March.
     const serializedDate: any = ProtoSerializationUtil.serialize(march2023);
     assert(serializedDate.toString().indexOf('2023,3,5') > -1);
 
     const deserializedDate: any = ProtoSerializationUtil.deserialize(serializedDate);
-    assert(deserializedDate.toString().indexOf('Mar 04 2023') > -1);
+    assert(deserializedDate.toString().indexOf('Mar 05 2023') > -1);
 
     const serializedTimestamp: any = ProtoSerializationUtil.serialize(march2023);
     assert(serializedTimestamp.toString().indexOf('2023,3,5') > -1);
 
     const deserializedTimestamp: any = ProtoSerializationUtil.deserialize(serializedTimestamp);
-    assert(deserializedTimestamp.toString().indexOf('Mar 04 2023') > -1);
+    assert(deserializedTimestamp.toString().indexOf('Mar 05 2023') > -1);
 }
 
 function checkUUID() {
