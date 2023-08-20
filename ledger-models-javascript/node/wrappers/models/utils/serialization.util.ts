@@ -5,22 +5,23 @@ import { ProtoSerializationUtil } from './serialization';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { ZonedDateTime } from './datetime';
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
+import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 
-function pack(value:any) {
+function pack(value: any) {
   if (typeof value === 'string') {
     return packStringIntoAny(value);
-  } else if(value instanceof Date) {
-    const localDateProto:LocalDateProto = ProtoSerializationUtil.serialize(value);
+  } else if (value instanceof Date) {
+    const localDateProto: LocalDateProto = ProtoSerializationUtil.serialize(value);
     return packDateIntoAny(localDateProto);
-  } else if(value instanceof ZonedDateTime) {
-    const localDateProto:LocalTimestampProto = ProtoSerializationUtil.serialize(value);
+  } else if (value instanceof ZonedDateTime) {
+    const localDateProto: LocalTimestampProto = ProtoSerializationUtil.serialize(value);
     return packTimestampIntoAny(localDateProto);
-  }else {
-    throw new Error("Unrecognized type cannot be unpacked: "+ typeof value);
+  } else {
+    throw new Error("Unrecognized type cannot be unpacked: " + typeof value);
   }
 }
 
-function unpack(value:Any) : any {
+function unpack(value: Any): any {
   const typeUrl = value.getTypeUrl();
   if (typeUrl === 'type.googleapis.com/google.protobuf.StringValue') {
     return unpackStringFromAny(value);
@@ -29,7 +30,7 @@ function unpack(value:Any) : any {
   } if (typeUrl === 'type.googleapis.com/fintekkers.models.util.LocalTimestampProto') {
     return unpackTimestampFromAny(value);
   } else {
-    throw new Error("Unrecognized Any type: "+ typeUrl);
+    throw new Error("Unrecognized Any type: " + typeUrl);
   }
 }
 
@@ -44,7 +45,7 @@ function unpackTimestampFromAny(anyMessage: Any): LocalTimestampProto {
   const typeUrl = anyMessage.getTypeUrl();
 
   if (typeUrl !== 'type.googleapis.com/fintekkers.models.util.LocalTimestampProto') {
-    throw new Error('Unexpected type URL for a timestamp: '+ typeUrl);
+    throw new Error('Unexpected type URL for a timestamp: ' + typeUrl);
   }
 
   const dateProto: LocalTimestampProto = LocalTimestampProto.deserializeBinary(anyMessage.getValue_asU8());
@@ -62,7 +63,7 @@ function unpackDateFromAny(anyMessage: Any): LocalDateProto {
   const typeUrl = anyMessage.getTypeUrl();
 
   if (typeUrl !== 'type.googleapis.com/fintekkers.models.util.LocalDateProto') {
-    throw new Error('Unexpected type URL for a date: '+ typeUrl);
+    throw new Error('Unexpected type URL for a date: ' + typeUrl);
   }
 
   const dateProto: LocalDateProto = LocalDateProto.deserializeBinary(anyMessage.getValue_asU8());
@@ -83,7 +84,7 @@ function unpackStringFromAny(anyMessage: Any): string | null {
   const typeUrl = anyMessage.getTypeUrl();
 
   if (typeUrl !== 'type.googleapis.com/google.protobuf.StringValue') {
-    throw new Error('Unexpected type URL: '+ typeUrl);
+    throw new Error('Unexpected type URL: ' + typeUrl);
   }
 
   const packedData = StringValue.deserializeBinary(anyMessage.getValue_asU8());
@@ -97,13 +98,13 @@ function unpackStringFromAny(anyMessage: Any): string | null {
  * @param {*} field FieldProto.ASSET_CLASS, as an example
  * @param {*} fieldValue The appropriate value for the FieldProto, e.g. FieldProto.ASSET_CLASS would have a string fieldValue
  */
-function createFieldMapEntry(field: number, fieldValue: any): FieldMapEntry {
+function createFieldMapEntry(field: FieldProto, fieldValue: any): FieldMapEntry {
   const fieldMapEntry = new FieldMapEntry();
   fieldMapEntry.setField(field); //FieldProto.ASSET_CLASS);
 
-  if(typeof fieldValue === "string" )
-    fieldMapEntry.setFieldValuePacked(packStringIntoAny(fieldValue)); //"Cash"));
-  
+  if (typeof fieldValue === "string")
+    fieldMapEntry.setFieldValuePacked(pack(fieldValue));
+
   return fieldMapEntry;
 }
 

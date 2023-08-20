@@ -98,8 +98,11 @@ async function testPosition(): Promise<boolean> {
     [FieldProto.PORTFOLIO_NAME, FieldProto.SECURITY_ID], [], now);
 
 
-  console.log(positions);
-
+  if(positions) {
+    console.log(positions.length + " positions returned")
+  } else {
+    console.log("No positions found");
+  }
   return true;
 }
 

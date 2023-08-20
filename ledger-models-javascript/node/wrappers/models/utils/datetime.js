@@ -9,6 +9,15 @@ var ZonedDateTime = /** @class */ (function () {
     function ZonedDateTime(proto) {
         this.proto = proto;
     }
+    ZonedDateTime.prototype.getTimezone = function () {
+        return this.proto.getTimeZone();
+    };
+    ZonedDateTime.prototype.getSeconds = function () {
+        return this.proto.getTimestamp().getSeconds();
+    };
+    ZonedDateTime.prototype.getNanoSeconds = function () {
+        return this.proto.getTimestamp().getNanos();
+    };
     ZonedDateTime.prototype.toDateTime = function () {
         // Creating a DateTime object with the current date and time in a specific time zone (e.g., 'America/New_York')
         var unixTimestampSeconds = this.proto.getTimestamp().getSeconds();

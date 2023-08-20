@@ -10,6 +10,18 @@ class ZonedDateTime {
     this.proto = proto;
   }
 
+  getTimezone(): string {
+    return this.proto.getTimeZone();
+  }
+
+  getSeconds(): number {
+    return this.proto.getTimestamp().getSeconds();
+  }
+
+  getNanoSeconds(): number {
+    return this.proto.getTimestamp().getNanos();
+  }
+
   toDateTime(): DateTime {
     // Creating a DateTime object with the current date and time in a specific time zone (e.g., 'America/New_York')
     const unixTimestampSeconds = this.proto.getTimestamp().getSeconds();
@@ -33,20 +45,20 @@ class ZonedDateTime {
   static now(): ZonedDateTime {
     // Get the current time in milliseconds since January 1, 1970 (Unix timestamp)
     const currentTimeMillis = Date.now();
-  
+
     // Convert milliseconds to seconds and nanoseconds
     const seconds = Math.floor(currentTimeMillis / 1000);
     const nanos = (currentTimeMillis % 1000) * 1e6; // 1 millisecond = 1e6 nanoseconds
-  
+
     // Create a new Timestamp object with the current time
     const timestamp = new Timestamp();
     timestamp.setSeconds(seconds);
     timestamp.setNanos(nanos);
-  
+
     const localTimestamp = new LocalTimestampProto();
     localTimestamp.setTimeZone('America/New_York');
     localTimestamp.setTimestamp(timestamp);
-  
+
     return new ZonedDateTime(localTimestamp);
   }
 }

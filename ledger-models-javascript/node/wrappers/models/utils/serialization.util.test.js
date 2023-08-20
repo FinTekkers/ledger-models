@@ -16,8 +16,9 @@ function testTimestamp() {
     var now = datetime_1.ZonedDateTime.now();
     var packedNow = (0, serialization_util_1.pack)(now);
     var unpackedNow = (0, serialization_util_1.unpack)(packedNow);
-    assert.equal("", "");
-    // assert.equal(unpackedNow.getTime(), testDate.getTime(), "Date packing/unpacking failed");
+    assert.equal(now.getTimezone(), unpackedNow.getTimezone(), "Timezone doesn't match");
+    assert.equal(now.getSeconds(), unpackedNow.getSeconds(), "Seconds do not match");
+    assert.equal(now.getNanoSeconds(), unpackedNow.getNanoSeconds(), "Nanoseconds do not match");
 }
 function testDate() {
     var testDate = new Date();

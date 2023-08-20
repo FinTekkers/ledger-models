@@ -91,7 +91,7 @@ function createFieldMapEntry(field, fieldValue) {
     var fieldMapEntry = new position_util_pb_1.FieldMapEntry();
     fieldMapEntry.setField(field); //FieldProto.ASSET_CLASS);
     if (typeof fieldValue === "string")
-        fieldMapEntry.setFieldValuePacked(packStringIntoAny(fieldValue)); //"Cash"));
+        fieldMapEntry.setFieldValuePacked(pack(fieldValue));
     return fieldMapEntry;
 }
 exports.createFieldMapEntry = createFieldMapEntry;

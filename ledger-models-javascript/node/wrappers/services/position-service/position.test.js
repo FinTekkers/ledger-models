@@ -127,7 +127,12 @@ function testPosition() {
                     return [4 /*yield*/, get_position(null, fedReservePortfolio, [measure_pb_1.MeasureProto.DIRECTED_QUANTITY], position_pb_1.PositionTypeProto.TRANSACTION, [field_pb_1.FieldProto.PORTFOLIO_NAME, field_pb_1.FieldProto.SECURITY_ID], [], now)];
                 case 2:
                     positions = _a.sent();
-                    console.log(positions);
+                    if (positions) {
+                        console.log(positions.length + " positions returned");
+                    }
+                    else {
+                        console.log("No positions found");
+                    }
                     return [2 /*return*/, true];
             }
         });
