@@ -9,7 +9,7 @@ import { TransactionProto } from '../../../fintekkers/models/transaction/transac
 import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 
-import { Timestamp } from '@grpc/grpc-js/build/src/generated/google/protobuf/Timestamp';
+import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { PositionProto } from '../../../fintekkers/models/position/position_pb';

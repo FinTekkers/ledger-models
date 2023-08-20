@@ -6,6 +6,8 @@ var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 var wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 var serialization_1 = require("./serialization");
 var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
+var datetime_1 = require("./datetime");
+var local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
 function pack(value) {
     if (typeof value === 'string') {
         return packStringIntoAny(value);
@@ -13,6 +15,10 @@ function pack(value) {
     else if (value instanceof Date) {
         var localDateProto = serialization_1.ProtoSerializationUtil.serialize(value);
         return packDateIntoAny(localDateProto);
+    }
+    else if (value instanceof datetime_1.ZonedDateTime) {
+        var localDateProto = serialization_1.ProtoSerializationUtil.serialize(value);
+        return packTimestampIntoAny(localDateProto);
     }
     else {
         throw new Error("Unrecognized type cannot be unpacked: " + typeof value);
@@ -27,11 +33,27 @@ function unpack(value) {
     if (typeUrl === 'type.googleapis.com/fintekkers.models.util.LocalDateProto') {
         return unpackDateFromAny(value);
     }
+    if (typeUrl === 'type.googleapis.com/fintekkers.models.util.LocalTimestampProto') {
+        return unpackTimestampFromAny(value);
+    }
     else {
         throw new Error("Unrecognized Any type: " + typeUrl);
     }
 }
 exports.unpack = unpack;
+function packTimestampIntoAny(inputDate) {
+    var anyMessage = new any_pb_1.Any();
+    anyMessage.pack(inputDate.serializeBinary(), 'fintekkers.models.util.LocalTimestampProto');
+    return anyMessage;
+}
+function unpackTimestampFromAny(anyMessage) {
+    var typeUrl = anyMessage.getTypeUrl();
+    if (typeUrl !== 'type.googleapis.com/fintekkers.models.util.LocalTimestampProto') {
+        throw new Error('Unexpected type URL for a timestamp: ' + typeUrl);
+    }
+    var dateProto = local_timestamp_pb_1.LocalTimestampProto.deserializeBinary(anyMessage.getValue_asU8());
+    return serialization_1.ProtoSerializationUtil.deserialize(dateProto);
+}
 function packDateIntoAny(inputDate) {
     var anyMessage = new any_pb_1.Any();
     anyMessage.pack(inputDate.serializeBinary(), 'fintekkers.models.util.LocalDateProto');

@@ -3,7 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProtoSerializationUtil = void 0;
 var decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
+var local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
 var uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
+var datetime_1 = require("./datetime");
 var uuid_1 = require("./uuid");
 var ProtoSerializationUtil = /** @class */ (function () {
     function ProtoSerializationUtil() {
@@ -18,6 +20,9 @@ var ProtoSerializationUtil = /** @class */ (function () {
                 .setMonth(obj.getMonth() + 1)
                 .setDay(obj.getDate());
         }
+        if (obj instanceof datetime_1.ZonedDateTime) {
+            return obj.toProto();
+        }
         if (typeof obj === "number") {
             return new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue(obj.toString());
         }
@@ -31,6 +36,9 @@ var ProtoSerializationUtil = /** @class */ (function () {
             var date = new Date(obj.getYear(), obj.getMonth() - 1, obj.getDay());
             date.setHours(0, 0, 0, 0);
             return date;
+        }
+        if (obj instanceof local_timestamp_pb_1.LocalTimestampProto) {
+            return new datetime_1.ZonedDateTime(obj);
         }
         if (obj.enum_name && obj.enum_name === "TRANSACTION_TYPE") {
             return null; // new TransactionType(obj.enum_value);

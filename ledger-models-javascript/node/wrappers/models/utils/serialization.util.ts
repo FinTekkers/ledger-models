@@ -3,6 +3,8 @@ import { Any } from 'google-protobuf/google/protobuf/any_pb';
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 import { ProtoSerializationUtil } from './serialization';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
+import { ZonedDateTime } from './datetime';
+import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 
 function pack(value:any) {
   if (typeof value === 'string') {
@@ -10,7 +12,10 @@ function pack(value:any) {
   } else if(value instanceof Date) {
     const localDateProto:LocalDateProto = ProtoSerializationUtil.serialize(value);
     return packDateIntoAny(localDateProto);
-  } else {
+  } else if(value instanceof ZonedDateTime) {
+    const localDateProto:LocalTimestampProto = ProtoSerializationUtil.serialize(value);
+    return packTimestampIntoAny(localDateProto);
+  }else {
     throw new Error("Unrecognized type cannot be unpacked: "+ typeof value);
   }
 }
@@ -21,9 +26,29 @@ function unpack(value:Any) : any {
     return unpackStringFromAny(value);
   } if (typeUrl === 'type.googleapis.com/fintekkers.models.util.LocalDateProto') {
     return unpackDateFromAny(value);
+  } if (typeUrl === 'type.googleapis.com/fintekkers.models.util.LocalTimestampProto') {
+    return unpackTimestampFromAny(value);
   } else {
     throw new Error("Unrecognized Any type: "+ typeUrl);
   }
+}
+
+function packTimestampIntoAny(inputDate: LocalTimestampProto): Any {
+  const anyMessage = new Any();
+
+  anyMessage.pack(inputDate.serializeBinary(), 'fintekkers.models.util.LocalTimestampProto');
+  return anyMessage;
+}
+
+function unpackTimestampFromAny(anyMessage: Any): LocalTimestampProto {
+  const typeUrl = anyMessage.getTypeUrl();
+
+  if (typeUrl !== 'type.googleapis.com/fintekkers.models.util.LocalTimestampProto') {
+    throw new Error('Unexpected type URL for a timestamp: '+ typeUrl);
+  }
+
+  const dateProto: LocalTimestampProto = LocalTimestampProto.deserializeBinary(anyMessage.getValue_asU8());
+  return ProtoSerializationUtil.deserialize(dateProto);
 }
 
 function packDateIntoAny(inputDate: LocalDateProto): Any {
