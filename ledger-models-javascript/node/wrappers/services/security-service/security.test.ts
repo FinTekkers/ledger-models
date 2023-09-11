@@ -69,10 +69,13 @@ async function testSecurity(): Promise<boolean> {
   security.setDescription('Dummy US Treasury 10Y Bond');
 
   var validationSummary = await securityService.validateCreateSecurity(security);
+  expect(validationSummary.getErrorsList().length).toBe(0);
 
   var createSecurityResponse: CreateSecurityResponseProto = await securityService.createSecurity(security);
+  expect(createSecurityResponse.getSecurityResponse()).toBeTruthy();
 
-  var searchResults = await securityService.searchSecurity(now.toProto(), new PositionFilter().addFilter(FieldProto.ASSET_CLASS, 'FixedIncome'));
+  var searchResults = await securityService.searchSecurity(now.toProto(), new PositionFilter().addFilter(FieldProto.ASSET_CLASS, 'Fixed Income'));
+  expect(searchResults.length).toBeGreaterThan(0);
 
   return true;
 }
