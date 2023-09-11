@@ -89,7 +89,7 @@ function testTransaction() {
                     console.timeEnd("searchSecurity");
                     security = fixedIncomeSecurities[0];
                     console.time("searchPortfolio");
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'Test Portfolio'))];
+                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO'))];
                 case 2:
                     portfolios = _a.sent();
                     console.timeEnd("searchPortfolio");
@@ -116,7 +116,7 @@ function testTransaction() {
                         .setUuid(uuid.UUID.random().toUUIDProto())
                         .setPrice(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('100.00')));
                     transaction.setQuantity(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('10000.00'));
-                    transaction.setPortfolio(portfolio);
+                    transaction.setPortfolio(portfolio.proto);
                     transaction.setSecurity(security.proto);
                     // var validationSummary = await transactionService.validateCreateTransaction(new Transaction(transaction));
                     // assert(validationSummary.getErrorsList().length == 0, "Validation errors found");

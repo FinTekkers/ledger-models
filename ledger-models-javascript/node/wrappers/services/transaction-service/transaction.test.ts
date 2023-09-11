@@ -81,7 +81,7 @@ async function testTransaction(): Promise<boolean> {
       .setPrice(new DecimalValueProto().setArbitraryPrecisionValue('100.00'))
   );
   transaction.setQuantity(new DecimalValueProto().setArbitraryPrecisionValue('10000.00'));
-  transaction.setPortfolio(portfolio);
+  transaction.setPortfolio(portfolio.proto);
   transaction.setSecurity(security.proto);
 
   // var validationSummary = await transactionService.validateCreateTransaction(new Transaction(transaction));

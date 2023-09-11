@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testPortfolio = void 0;
 // Model Utils
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var uuid = require("../../models/utils/uuid");
@@ -46,38 +45,34 @@ var dt = require("../../models/utils/datetime");
 var PortfolioService_1 = require("./PortfolioService");
 var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
 var positionfilter_1 = require("../../models/position/positionfilter");
-test('test creating a portfolio against the api.fintekkers.org portfolio service', function () {
-    var isTrue = testPortfolio();
-    expect(isTrue).resolves.toBe(true);
-}, 30000);
-function testPortfolio() {
-    return __awaiter(this, void 0, void 0, function () {
-        var id_proto, now, portfolioService, portfolio, validationSummary, createPortfolioResponse, searchResults;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    id_proto = uuid.UUID.random().toUUIDProto();
-                    now = dt.ZonedDateTime.now();
-                    portfolioService = new PortfolioService_1.PortfolioService();
-                    portfolio = new portfolio_pb_1.PortfolioProto();
-                    portfolio.setObjectClass('Portfolio');
-                    portfolio.setVersion('0.0.1');
-                    portfolio.setUuid(id_proto);
-                    portfolio.setPortfolioName('TEST PORTFOLIO');
-                    portfolio.setAsOf(now.toProto());
-                    return [4 /*yield*/, portfolioService.validateCreatePortfolio(portfolio)];
-                case 1:
-                    validationSummary = _a.sent();
-                    return [4 /*yield*/, portfolioService.createPortfolio(portfolio)];
-                case 2:
-                    createPortfolioResponse = _a.sent();
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings'))];
-                case 3:
-                    searchResults = _a.sent();
-                    return [2 /*return*/, true];
-            }
-        });
+test('test creating a portfolio against the api.fintekkers.org portfolio service', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var id_proto, now, portfolioService, portfolio, validationSummary, createPortfolioResponse, searchResults;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id_proto = uuid.UUID.random().toUUIDProto();
+                now = dt.ZonedDateTime.now();
+                portfolioService = new PortfolioService_1.PortfolioService();
+                portfolio = new portfolio_pb_1.PortfolioProto();
+                portfolio.setObjectClass('Portfolio');
+                portfolio.setVersion('0.0.1');
+                portfolio.setUuid(id_proto);
+                portfolio.setPortfolioName('TEST PORTFOLIO');
+                portfolio.setAsOf(now.toProto());
+                return [4 /*yield*/, portfolioService.validateCreatePortfolio(portfolio)];
+            case 1:
+                validationSummary = _a.sent();
+                expect(validationSummary.getErrorsList().length).toBe(0);
+                return [4 /*yield*/, portfolioService.createPortfolio(portfolio)];
+            case 2:
+                createPortfolioResponse = _a.sent();
+                expect(createPortfolioResponse.getPortfolioResponseList().length).toBe(1);
+                return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings'))];
+            case 3:
+                searchResults = _a.sent();
+                expect(searchResults.length > 0).toBe(true);
+                return [2 /*return*/];
+        }
     });
-}
-exports.testPortfolio = testPortfolio;
+}); }, 30000);
 //# sourceMappingURL=portfolio.test.js.map

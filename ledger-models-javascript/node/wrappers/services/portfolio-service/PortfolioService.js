@@ -38,11 +38,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PortfolioService = void 0;
 var util_1 = require("util");
+// Model Utils
 // Requests & Services
 var portfolio_service_grpc_pb_1 = require("../../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb");
 var query_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfolio/query_portfolio_request_pb");
 var create_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfolio/create_portfolio_request_pb");
 var requestcontext_1 = require("../../models/utils/requestcontext");
+var portfolio_1 = require("../../models/portfolio/portfolio");
 var PortfolioService = /** @class */ (function () {
     function PortfolioService() {
         this.client = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
@@ -95,7 +97,7 @@ var PortfolioService = /** @class */ (function () {
                         return [2 /*return*/, new Promise(function (resolve, reject) {
                                 stream2.on('data', function (response) {
                                     response.getPortfolioResponseList().forEach(function (portfolio) {
-                                        listPortfolios.push(portfolio);
+                                        listPortfolios.push(new portfolio_1.default(portfolio));
                                     });
                                 });
                                 stream2.on('end', function () {

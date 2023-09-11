@@ -121,11 +121,11 @@ function testPosition() {
                 case 0:
                     now = datetime_1.ZonedDateTime.now();
                     portfolioService = new PortfolioService_1.PortfolioService();
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve'))];
+                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings'))];
                 case 1:
                     portfolios = _a.sent();
                     fedReservePortfolio = portfolios[0];
-                    return [4 /*yield*/, get_position(null, fedReservePortfolio, [measure_pb_1.MeasureProto.DIRECTED_QUANTITY], position_pb_1.PositionTypeProto.TRANSACTION, [field_pb_1.FieldProto.PORTFOLIO_NAME, field_pb_1.FieldProto.SECURITY_ID], [], now)];
+                    return [4 /*yield*/, get_position(null, fedReservePortfolio.proto, [measure_pb_1.MeasureProto.DIRECTED_QUANTITY], position_pb_1.PositionTypeProto.TRANSACTION, [field_pb_1.FieldProto.PORTFOLIO_NAME, field_pb_1.FieldProto.SECURITY_ID], [], now)];
                 case 2:
                     positions = _a.sent();
                     if (positions) {

@@ -12,12 +12,7 @@ import { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portf
 import { PositionFilter } from '../../models/position/positionfilter';
 
 
-test('test creating a portfolio against the api.fintekkers.org portfolio service', () => {
-  const isTrue = testPortfolio();
-  expect(isTrue).resolves.toBe(true);
-}, 30000);
-
-export async function testPortfolio(): Promise<boolean> {
+test('test creating a portfolio against the api.fintekkers.org portfolio service', async () => {
   const id_proto = uuid.UUID.random().toUUIDProto();
   const now = dt.ZonedDateTime.now();
 
@@ -31,11 +26,11 @@ export async function testPortfolio(): Promise<boolean> {
   portfolio.setAsOf(now.toProto());
 
   var validationSummary = await portfolioService.validateCreatePortfolio(portfolio);
+  expect(validationSummary.getErrorsList().length).toBe(0);
 
   var createPortfolioResponse: CreatePortfolioResponseProto = await portfolioService.createPortfolio(portfolio);
+  expect(createPortfolioResponse.getPortfolioResponseList().length).toBe(1);
 
   var searchResults = await portfolioService.searchPortfolio(now.toProto(), new PositionFilter().addFilter(FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings'));
-
-  return true;
-}
-
+  expect(searchResults.length > 0).toBe(true);
+}, 30000);

@@ -1,4 +1,3 @@
-import * as grpc from '@grpc/grpc-js';
 import { promisify } from 'util';
 
 // Models
@@ -7,8 +6,6 @@ import { LocalTimestampProto } from '../../../fintekkers/models/util/local_times
 import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
 // Model Utils
-import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
-import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 
 // Requests & Services
 import { PortfolioClient } from '../../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
@@ -18,6 +15,7 @@ import { CreatePortfolioRequestProto } from '../../../fintekkers/requests/portfo
 import { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portfolio/create_portfolio_response_pb';
 import EnvConfig from '../../models/utils/requestcontext';
 import { PositionFilter } from '../../models/position/positionfilter';
+import Portfolio from '../../models/portfolio/portfolio';
 
 class PortfolioService {
   private client: PortfolioClient;
@@ -51,7 +49,7 @@ class PortfolioService {
   }
 
   async searchPortfolio(asOf: LocalTimestampProto,
-    positionFilter: PositionFilter): Promise<PortfolioProto[]> {
+    positionFilter: PositionFilter): Promise<Portfolio[]> {
     const searchRequest = new QueryPortfolioRequestProto();
     searchRequest.setObjectClass('PortfolioRequest');
     searchRequest.setVersion('0.0.1');
@@ -61,15 +59,15 @@ class PortfolioService {
 
     const tmpClient = this.client;
 
-    const listPortfolios: PortfolioProto[] = [];
+    const listPortfolios: Portfolio[] = [];
 
-    async function processStreamSynchronously(): Promise<PortfolioProto[]> {
+    async function processStreamSynchronously(): Promise<Portfolio[]> {
       const stream2 = tmpClient.search(searchRequest);
 
-      return new Promise<PortfolioProto[]>((resolve, reject) => {
+      return new Promise<Portfolio[]>((resolve, reject) => {
         stream2.on('data', (response: QueryPortfolioResponseProto) => {
           response.getPortfolioResponseList().forEach((portfolio) => {
-            listPortfolios.push(portfolio);
+            listPortfolios.push(new Portfolio(portfolio));
           });
         });
 

@@ -89,10 +89,10 @@ async function testPosition(): Promise<boolean> {
 
   let portfolios = await portfolioService.searchPortfolio(
     now.toProto(),
-    new PositionFilter().addFilter(FieldProto.PORTFOLIO_NAME, 'Federal Reserve'));
+    new PositionFilter().addFilter(FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings'));
   const fedReservePortfolio = portfolios[0];
 
-  let positions = await get_position(null, fedReservePortfolio,
+  let positions = await get_position(null, fedReservePortfolio.proto,
     [MeasureProto.DIRECTED_QUANTITY],
     PositionTypeProto.TRANSACTION,
     [FieldProto.PORTFOLIO_NAME, FieldProto.SECURITY_ID], [], now);
