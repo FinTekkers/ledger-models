@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var transaction_type_1 = require("./transaction_type");
+var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var security_1 = require("../security/security");
+var portfolio_1 = require("../portfolio/portfolio");
+//Model Utils
 var datetime_1 = require("../utils/datetime");
 var uuid_1 = require("../utils/uuid");
 var date_1 = require("../utils/date");
@@ -57,9 +59,8 @@ var Transaction = /** @class */ (function () {
     Transaction.prototype.getAsOf = function () {
         return new datetime_1.ZonedDateTime(this.proto.getAsOf());
     };
-    //TODO: Create Portfolio wrapper
     Transaction.prototype.getPortfolio = function () {
-        return this.proto.getPortfolio();
+        return new portfolio_1.default(this.proto.getPortfolio());
     };
     Transaction.prototype.getSecurity = function () {
         return new security_1.default(this.proto.getSecurity());

@@ -1,14 +1,15 @@
-import { PortfolioProto } from "../../../fintekkers/models/portfolio/portfolio_pb";
-import { FieldProto } from "../../../fintekkers/models/position/field_pb";
-import { PositionStatusProto } from "../../../fintekkers/models/position/position_status_pb";
+//Models
 import { PriceProto } from "../../../fintekkers/models/price/price_pb";
-import { IdentifierProto } from "../../../fintekkers/models/security/identifier/identifier_pb";
 import { TransactionType } from "./transaction_type";
 import { StrategyAllocationProto } from "../../../fintekkers/models/strategy/strategy_allocation_pb";
 import { TransactionProto } from "../../../fintekkers/models/transaction/transaction_pb";
-import { TransactionTypeProto } from "../../../fintekkers/models/transaction/transaction_type_pb";
-import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";
+import { FieldProto } from "../../../fintekkers/models/position/field_pb";
+import { PositionStatusProto } from "../../../fintekkers/models/position/position_status_pb";
+
 import Security from "../security/security";
+import Portfolio from "../portfolio/portfolio";
+
+//Model Utils
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { LocalDate } from "../utils/date";
@@ -23,17 +24,17 @@ class Transaction {
 
   toString(): string {
     try {
-        const validTo: string =
+      const validTo: string =
         this.proto.getValidFrom() !== null ? this.proto.getValidTo().toString() : "NULL";
-    
-        return `${/*this.proto.isCancelled()*/ false ? "INVALIDATED: " : ""}TXN[${this.getID().toString()}], ` +
+
+      return `${/*this.proto.isCancelled()*/ false ? "INVALIDATED: " : ""}TXN[${this.getID().toString()}], ` +
         `TradeDate[${this.getTradeDate().toString()}], TxnType[${this.getTransactionType()}], Price[${this.getPrice()}], Quantity[${this.getQuantity()}], ` +
         `AsOf[${this.getAsOf().toString()}], Portfolio[${this.getPortfolio().getPortfolioName()}], Issuer[${this.getSecurity().getIssuerName()}], ` +
         `ValidFrom[${this.proto.getValidFrom().toString()}], ValidTo[${validTo}], Strategy[${this.getStrategyAllocation().toString()}]`;
     } catch (e) {
-        console.error(e);
-        return "WHOOPS";
-    }      
+      console.error(e);
+      return "WHOOPS";
+    }
   }
 
   getFields(): FieldProto[] {
@@ -73,9 +74,8 @@ class Transaction {
     return new ZonedDateTime(this.proto.getAsOf());
   }
 
-  //TODO: Create Portfolio wrapper
-  getPortfolio(): PortfolioProto {
-    return this.proto.getPortfolio();
+  getPortfolio(): Portfolio {
+    return new Portfolio(this.proto.getPortfolio());
   }
 
   getSecurity(): Security {
@@ -100,31 +100,31 @@ class Transaction {
 
   getDirectedQuantity(): Decimal {
     return this.getQuantity().mul(this.getTransactionType().getDirectionMultiplier());
-}
+  }
 
   getTradeDate(): LocalDate {
     return new LocalDate(this.proto.getTradeDate());
   }
 
-  getSettlementDate() : LocalDate {
+  getSettlementDate(): LocalDate {
     return new LocalDate(this.proto.getSettlementDate());
   }
 
-    getTransactionType() : TransactionType {
-        return new TransactionType(this.proto.getTransactionType());
-    }
+  getTransactionType(): TransactionType {
+    return new TransactionType(this.proto.getTransactionType());
+  }
 
-    getTradeName(): string {
-        return this.proto.getTradeName();
-    }
+  getTradeName(): string {
+    return this.proto.getTradeName();
+  }
 
-    getPositionStatus(): PositionStatusProto {
-        return this.proto.getPositionStatus();
-    }
+  getPositionStatus(): PositionStatusProto {
+    return this.proto.getPositionStatus();
+  }
 
-    getChildrenTransactions(): TransactionProto[] {
-        return this.proto.getChildtransactionsList();
-    }
+  getChildrenTransactions(): TransactionProto[] {
+    return this.proto.getChildtransactionsList();
+  }
 
 
   equals(other: Transaction): boolean {
