@@ -18,9 +18,10 @@ import Transaction from '../../models/transaction/transaction';
 import { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
 
 import assert = require("assert");
+import { PositionFilter } from '../../models/position/positionfilter';
 
 test('test creating a transaction against the portfolio service', async () => {
-  const isTrue =  await testTransaction();
+  const isTrue = await testTransaction();
   expect(isTrue).toBe(true);
 }, 30000);
 
@@ -33,26 +34,32 @@ async function testTransaction(): Promise<boolean> {
   const portfolioService = new PortfolioService();
   const transactionService = new TransactionService();
 
+  const positionFilter = new PositionFilter();
+  positionFilter.addFilter(FieldProto.ASSET_CLASS, 'Fixed Income');
+
+  console.time("searchSecurity");
   let fixedIncomeSecurities = await securityService
-    .searchSecurity(now.toProto(), FieldProto.ASSET_CLASS, 'Fixed Income')
+    .searchSecurity(now.toProto(), positionFilter)
     .then((fixedIncomeSecurities) => {
       return fixedIncomeSecurities;
     });
+  console.timeEnd("searchSecurity");
 
   let security = fixedIncomeSecurities[0];
 
+  console.time("searchPortfolio");
   let portfolios = await portfolioService.searchPortfolio(
-      now.toProto(),
-      FieldProto.PORTFOLIO_NAME,
-      'TEST PORTFOLIO');
-  
-  if(portfolios === undefined) {
+    now.toProto(),
+    new PositionFilter().addFilter(FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO'));
+  console.timeEnd("searchPortfolio");
+
+  if (portfolios === undefined) {
     throw new Error('No portfolios found');
   }
 
   const portfolio = portfolios[0];
 
-  if(portfolio.getPortfolioName().includes('Federal')){
+  if (portfolio.getPortfolioName().includes('Federal')) {
     throw new Error('Portfolio is not a test portfolio! Abandoning test');
   }
 
@@ -73,21 +80,31 @@ async function testTransaction(): Promise<boolean> {
       .setUuid(uuid.UUID.random().toUUIDProto())
       .setPrice(new DecimalValueProto().setArbitraryPrecisionValue('100.00'))
   );
-  transaction.setQuantity(new DecimalValueProto().setArbitraryPrecisionValue('10000.00')); 
-  transaction.setPortfolio(portfolio); 
+  transaction.setQuantity(new DecimalValueProto().setArbitraryPrecisionValue('10000.00'));
+  transaction.setPortfolio(portfolio);
   transaction.setSecurity(security.proto);
 
   // var validationSummary = await transactionService.validateCreateTransaction(new Transaction(transaction));
   // assert(validationSummary.getErrorsList().length == 0, "Validation errors found");
 
-  var createTransactionResponse:CreateTransactionResponseProto = await transactionService.createTransaction(new Transaction(transaction));
+
+  console.time("createTransaction");
+  var createTransactionResponse: CreateTransactionResponseProto = await transactionService.createTransaction(new Transaction(transaction));
   const transactionResponse = createTransactionResponse.getTransactionResponse();
   assert(transactionResponse, "No transaction response found");
 
-  // transactionService.addListener(transactionListener);
-  const transactions = await transactionService.searchTransaction(now.toProto(), FieldProto.ASSET_CLASS, 'Fixed Income');
-  
-  if(transactions === undefined) {
+  console.timeEnd("createTransaction");
+
+  console.log("Searching transaction");
+
+  console.time("searchTransaction");
+
+  const transactionID = uuid.UUID.fromU8Array(transactionResponse.getUuid().getRawUuid_asU8());
+  positionFilter.addFilter(FieldProto.ID, transactionID);
+  const transactions = await transactionService.searchTransaction(now.toProto(), positionFilter);
+  console.timeEnd("searchTransaction");
+
+  if (transactions === undefined) {
     console.log('No transactions found');
   } else {
     console.log(transactions.length);

@@ -1,15 +1,12 @@
-import * as grpc from '@grpc/grpc-js';
 import { promisify } from 'util';
 
 // Models
 import Transaction from '../../models/transaction/transaction';
-import { createFieldMapEntry } from '../../models/utils/serialization.util';
+import { PositionFilter } from '../../models/position/positionfilter';
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
 // Model Utils
-import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
-import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 
 // Requests & Services
 import { TransactionClient } from '../../../fintekkers/services/transaction-service/transaction_service_grpc_pb';
@@ -49,33 +46,26 @@ class TransactionService {
     return response;
   }
 
-   searchTransaction(asOf: LocalTimestampProto, fieldProto: FieldProto, fieldValue: string, maxResults: number=100): 
-      Promise<Transaction[]> {
+  searchTransaction(asOf: LocalTimestampProto, positionFilter: PositionFilter, maxResults: number = 100):
+    Promise<Transaction[]> {
     const searchRequest = new QueryTransactionRequestProto();
     searchRequest.setObjectClass('SecurityRequest');
     searchRequest.setVersion('0.0.1');
     searchRequest.setAsOf(asOf);
 
-    const positionFilter = new PositionFilterProto();
-    positionFilter.setObjectClass('PositionFilter');
-    positionFilter.setVersion('0.0.1');
-
-    const fieldMapEntry = createFieldMapEntry(fieldProto, fieldValue);
-    positionFilter.setFiltersList([fieldMapEntry]);
-
-    searchRequest.setSearchTransactionInput(positionFilter);
+    searchRequest.setSearchTransactionInput(positionFilter.toProto());
     searchRequest.setLimit(maxResults);
 
     const tmpClient = this.client;
 
     async function processStreamSynchronously(): Promise<Transaction[]> {
       const stream2 = tmpClient.search(searchRequest);
-      var results:Transaction[] = [];
+      var results: Transaction[] = [];
 
       return new Promise<Transaction[]>((resolve, reject) => {
-        stream2.on('data', (response:QueryTransactionResponseProto) => {
+        stream2.on('data', (response: QueryTransactionResponseProto) => {
           response.getTransactionResponseList().forEach((transaction) => {
-            const txn:Transaction = new Transaction(transaction);
+            const txn: Transaction = new Transaction(transaction);
             results.push(txn);
           })
         });
@@ -87,7 +77,7 @@ class TransactionService {
 
         stream2.on('error', (err) => {
           console.error('Error in the stream:', err);
-          reject(err); 
+          reject(err);
         });
       });
     }

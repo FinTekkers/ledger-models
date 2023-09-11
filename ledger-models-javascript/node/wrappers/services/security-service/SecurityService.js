@@ -38,14 +38,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityService = void 0;
 var util_1 = require("util");
-var serialization_util_1 = require("../../models/utils/serialization.util");
-// Model Utils
-var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
+var security_1 = require("../../models/security/security");
 // Requests & Services
 var security_service_grpc_pb_1 = require("../../../fintekkers/services/security-service/security_service_grpc_pb");
 var query_security_request_pb_1 = require("../../../fintekkers/requests/security/query_security_request_pb");
 var create_security_request_pb_1 = require("../../../fintekkers/requests/security/create_security_request_pb");
-var security_1 = require("../../models/security/security");
 var requestcontext_1 = require("../../models/utils/requestcontext");
 var SecurityService = /** @class */ (function () {
     function SecurityService() {
@@ -89,7 +86,7 @@ var SecurityService = /** @class */ (function () {
             });
         });
     };
-    SecurityService.prototype.searchSecurity = function (asOf, fieldProto, fieldValue) {
+    SecurityService.prototype.searchSecurity = function (asOf, positionFilter) {
         return __awaiter(this, void 0, void 0, function () {
             function processStreamSynchronously() {
                 return __awaiter(this, void 0, void 0, function () {
@@ -113,7 +110,7 @@ var SecurityService = /** @class */ (function () {
                     });
                 });
             }
-            var searchRequest, positionFilter, fieldMapEntry, tmpClient, listSecurities;
+            var searchRequest, tmpClient, listSecurities;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -121,12 +118,7 @@ var SecurityService = /** @class */ (function () {
                         searchRequest.setObjectClass('SecurityRequest');
                         searchRequest.setVersion('0.0.1');
                         searchRequest.setAsOf(asOf);
-                        positionFilter = new position_filter_pb_1.PositionFilterProto();
-                        positionFilter.setObjectClass('PositionFilter');
-                        positionFilter.setVersion('0.0.1');
-                        fieldMapEntry = (0, serialization_util_1.createFieldMapEntry)(fieldProto, fieldValue);
-                        positionFilter.setFiltersList([fieldMapEntry]);
-                        searchRequest.setSearchSecurityInput(positionFilter);
+                        searchRequest.setSearchSecurityInput(positionFilter.toProto());
                         tmpClient = this.client;
                         listSecurities = [];
                         return [4 /*yield*/, processStreamSynchronously()];

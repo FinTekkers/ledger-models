@@ -40,9 +40,7 @@ exports.TransactionService = void 0;
 var util_1 = require("util");
 // Models
 var transaction_1 = require("../../models/transaction/transaction");
-var serialization_util_1 = require("../../models/utils/serialization.util");
 // Model Utils
-var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
 // Requests & Services
 var transaction_service_grpc_pb_1 = require("../../../fintekkers/services/transaction-service/transaction_service_grpc_pb");
 var create_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/create_transaction_request_pb");
@@ -90,18 +88,13 @@ var TransactionService = /** @class */ (function () {
             });
         });
     };
-    TransactionService.prototype.searchTransaction = function (asOf, fieldProto, fieldValue, maxResults) {
+    TransactionService.prototype.searchTransaction = function (asOf, positionFilter, maxResults) {
         if (maxResults === void 0) { maxResults = 100; }
         var searchRequest = new query_transaction_request_pb_1.QueryTransactionRequestProto();
         searchRequest.setObjectClass('SecurityRequest');
         searchRequest.setVersion('0.0.1');
         searchRequest.setAsOf(asOf);
-        var positionFilter = new position_filter_pb_1.PositionFilterProto();
-        positionFilter.setObjectClass('PositionFilter');
-        positionFilter.setVersion('0.0.1');
-        var fieldMapEntry = (0, serialization_util_1.createFieldMapEntry)(fieldProto, fieldValue);
-        positionFilter.setFiltersList([fieldMapEntry]);
-        searchRequest.setSearchTransactionInput(positionFilter);
+        searchRequest.setSearchTransactionInput(positionFilter.toProto());
         searchRequest.setLimit(maxResults);
         var tmpClient = this.client;
         function processStreamSynchronously() {

@@ -14,6 +14,7 @@ import * as dt from '../../models/utils/datetime';
 
 import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
 import { SecurityService } from './SecurityService';
+import { PositionFilter } from '../../models/position/positionfilter';
 
 test('test creating a security against the api.fintekkers.org security service', async () => {
   const isTrue = await testSecurity();
@@ -27,7 +28,7 @@ async function testSecurity(): Promise<boolean> {
   const securityService = new SecurityService();
 
   let usd_security = await securityService
-    .searchSecurity(now.toProto(), FieldProto.ASSET_CLASS, 'Cash')
+    .searchSecurity(now.toProto(), new PositionFilter().addFilter(FieldProto.ASSET_CLASS, 'Cash'))
     .then((securities) => {
       return securities[0];
     });
@@ -69,9 +70,9 @@ async function testSecurity(): Promise<boolean> {
 
   var validationSummary = await securityService.validateCreateSecurity(security);
 
-  var createSecurityResponse:CreateSecurityResponseProto = await securityService.createSecurity(security);
+  var createSecurityResponse: CreateSecurityResponseProto = await securityService.createSecurity(security);
 
-  var searchResults = await securityService.searchSecurity(now.toProto(), FieldProto.ASSET_CLASS, 'Fixed Income');
+  var searchResults = await securityService.searchSecurity(now.toProto(), new PositionFilter().addFilter(FieldProto.ASSET_CLASS, 'FixedIncome'));
 
   return true;
 }

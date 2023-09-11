@@ -45,6 +45,7 @@ var dt = require("../../models/utils/datetime");
 //Requests & Services
 var PortfolioService_1 = require("./PortfolioService");
 var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
+var positionfilter_1 = require("../../models/position/positionfilter");
 test('test creating a portfolio against the api.fintekkers.org portfolio service', function () {
     var isTrue = testPortfolio();
     expect(isTrue).resolves.toBe(true);
@@ -70,7 +71,7 @@ function testPortfolio() {
                     return [4 /*yield*/, portfolioService.createPortfolio(portfolio)];
                 case 2:
                     createPortfolioResponse = _a.sent();
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings')];
+                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings'))];
                 case 3:
                     searchResults = _a.sent();
                     return [2 /*return*/, true];

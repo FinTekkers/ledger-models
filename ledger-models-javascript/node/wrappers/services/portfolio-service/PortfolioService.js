@@ -38,9 +38,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PortfolioService = void 0;
 var util_1 = require("util");
-var serialization_util_1 = require("../../models/utils/serialization.util");
-// Model Utils
-var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
 // Requests & Services
 var portfolio_service_grpc_pb_1 = require("../../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb");
 var query_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfolio/query_portfolio_request_pb");
@@ -88,7 +85,7 @@ var PortfolioService = /** @class */ (function () {
             });
         });
     };
-    PortfolioService.prototype.searchPortfolio = function (asOf, fieldProto, fieldValue) {
+    PortfolioService.prototype.searchPortfolio = function (asOf, positionFilter) {
         return __awaiter(this, void 0, void 0, function () {
             function processStreamSynchronously() {
                 return __awaiter(this, void 0, void 0, function () {
@@ -112,7 +109,7 @@ var PortfolioService = /** @class */ (function () {
                     });
                 });
             }
-            var searchRequest, positionFilter, fieldMapEntry, tmpClient, listPortfolios;
+            var searchRequest, tmpClient, listPortfolios;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -120,14 +117,7 @@ var PortfolioService = /** @class */ (function () {
                         searchRequest.setObjectClass('PortfolioRequest');
                         searchRequest.setVersion('0.0.1');
                         searchRequest.setAsOf(asOf);
-                        positionFilter = new position_filter_pb_1.PositionFilterProto();
-                        positionFilter.setObjectClass('PositionFilter');
-                        positionFilter.setVersion('0.0.1');
-                        if (fieldProto && fieldValue) {
-                            fieldMapEntry = (0, serialization_util_1.createFieldMapEntry)(fieldProto, fieldValue);
-                            positionFilter.setFiltersList([fieldMapEntry]);
-                        }
-                        searchRequest.setSearchPortfolioInput(positionFilter);
+                        searchRequest.setSearchPortfolioInput(positionFilter.toProto());
                         tmpClient = this.client;
                         listPortfolios = [];
                         return [4 /*yield*/, processStreamSynchronously()];

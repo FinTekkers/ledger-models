@@ -48,6 +48,7 @@ var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var uuid = require("../../models/utils/uuid");
 var dt = require("../../models/utils/datetime");
 var SecurityService_1 = require("./SecurityService");
+var positionfilter_1 = require("../../models/position/positionfilter");
 test('test creating a security against the api.fintekkers.org security service', function () { return __awaiter(void 0, void 0, void 0, function () {
     var isTrue;
     return __generator(this, function (_a) {
@@ -70,7 +71,7 @@ function testSecurity() {
                     now = dt.ZonedDateTime.now();
                     securityService = new SecurityService_1.SecurityService();
                     return [4 /*yield*/, securityService
-                            .searchSecurity(now.toProto(), field_pb_1.FieldProto.ASSET_CLASS, 'Cash')
+                            .searchSecurity(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Cash'))
                             .then(function (securities) {
                             return securities[0];
                         })];
@@ -111,7 +112,7 @@ function testSecurity() {
                     return [4 /*yield*/, securityService.createSecurity(security)];
                 case 3:
                     createSecurityResponse = _a.sent();
-                    return [4 /*yield*/, securityService.searchSecurity(now.toProto(), field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income')];
+                    return [4 /*yield*/, securityService.searchSecurity(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.ASSET_CLASS, 'FixedIncome'))];
                 case 4:
                     searchResults = _a.sent();
                     return [2 /*return*/, true];

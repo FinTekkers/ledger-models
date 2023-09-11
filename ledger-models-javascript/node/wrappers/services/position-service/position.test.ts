@@ -19,65 +19,66 @@ import { Any } from 'google-protobuf/google/protobuf/any_pb';
 import { PortfolioService } from '../../services/portfolio-service/PortfolioService';
 import { PositionService } from '../../services/position-service/PositionService';
 import { QueryPositionRequestProto } from '../../../fintekkers/requests/position/query_position_request_pb';
+import { PositionFilter } from '../../models/position/positionfilter';
 
 test('test getting a position against the api.fintekkers.org position service', async () => {
   const isTrue = await testPosition();
   expect(isTrue).toBe(true);
 }, 30000);
 
-async function get_position(security:SecurityProto, 
-            portfolio:PortfolioProto, 
-            measures:MeasureProto[], 
-            position_type:PositionTypeProto, 
-            fields = [FieldProto.PORTFOLIO, FieldProto.SECURITY], 
-            additional_filters = [], as_of = ZonedDateTime.now()) {
-    const filters = [];
+async function get_position(security: SecurityProto,
+  portfolio: PortfolioProto,
+  measures: MeasureProto[],
+  position_type: PositionTypeProto,
+  fields = [FieldProto.PORTFOLIO, FieldProto.SECURITY],
+  additional_filters = [], as_of = ZonedDateTime.now()) {
+  const filters = [];
 
-    if (security !== null && security !== undefined) {
-        const id_proto = new IdentifierProto();
-        id_proto.setIdentifierValue(security.getIdentifier().getIdentifierValue());
-        id_proto.setIdentifierType(security.getIdentifier().getIdentifierType());
+  if (security !== null && security !== undefined) {
+    const id_proto = new IdentifierProto();
+    id_proto.setIdentifierValue(security.getIdentifier().getIdentifierValue());
+    id_proto.setIdentifierType(security.getIdentifier().getIdentifierType());
 
-        const security_id_packed = new Any();
-        security_id_packed.pack(id_proto);
+    const security_id_packed = new Any();
+    security_id_packed.pack(id_proto);
 
-        const fieldMapEntry = new FieldMapEntry();
-        fieldMapEntry.setField(FieldProto.IDENTIFIER);
-        fieldMapEntry.setFieldValuePacked(security_id_packed);
+    const fieldMapEntry = new FieldMapEntry();
+    fieldMapEntry.setField(FieldProto.IDENTIFIER);
+    fieldMapEntry.setFieldValuePacked(security_id_packed);
 
-        filters.push(fieldMapEntry);
-    }
+    filters.push(fieldMapEntry);
+  }
 
-    if (portfolio !== null && portfolio !== undefined) {
-        const fieldMapEntry = new FieldMapEntry();
-        fieldMapEntry.setField(FieldProto.PORTFOLIO_NAME);
-        fieldMapEntry.setFieldValuePacked(pack(portfolio.getPortfolioName()));
+  if (portfolio !== null && portfolio !== undefined) {
+    const fieldMapEntry = new FieldMapEntry();
+    fieldMapEntry.setField(FieldProto.PORTFOLIO_NAME);
+    fieldMapEntry.setFieldValuePacked(pack(portfolio.getPortfolioName()));
 
-        filters.push(fieldMapEntry);
-    }
+    filters.push(fieldMapEntry);
+  }
 
-    if (additional_filters !== null && additional_filters.length > 0) {
-        filters.push(...additional_filters);
-    }
+  if (additional_filters !== null && additional_filters.length > 0) {
+    filters.push(...additional_filters);
+  }
 
-    const filter_fields = new PositionFilterProto();
-    filter_fields.setFiltersList(filters);
+  const filter_fields = new PositionFilterProto();
+  filter_fields.setFiltersList(filters);
 
-    const as_of_proto = as_of.toProto();
+  const as_of_proto = as_of.toProto();
 
-    const request = new QueryPositionRequestProto();
-    request.setPositionType(position_type);
-    request.setPositionView(PositionViewProto.DEFAULT_VIEW);
-    request.setFieldsList(fields);
-    request.setMeasuresList(measures);
-    request.setFilterFields(filter_fields);
-    request.setAsOf(as_of_proto);
+  const request = new QueryPositionRequestProto();
+  request.setPositionType(position_type);
+  request.setPositionView(PositionViewProto.DEFAULT_VIEW);
+  request.setFieldsList(fields);
+  request.setMeasuresList(measures);
+  request.setFilterFields(filter_fields);
+  request.setAsOf(as_of_proto);
 
-    let position_service = new PositionService();
+  let position_service = new PositionService();
 
-    const positions = await position_service.search(request);
-    
-    return positions;
+  const positions = await position_service.search(request);
+
+  return positions;
 }
 
 async function testPosition(): Promise<boolean> {
@@ -85,20 +86,19 @@ async function testPosition(): Promise<boolean> {
   const now = ZonedDateTime.now();
 
   const portfolioService = new PortfolioService();
-  
+
   let portfolios = await portfolioService.searchPortfolio(
-        now.toProto(), 
-        FieldProto.PORTFOLIO_NAME, 
-        "Federal Reserve SOMA Holdings");
+    now.toProto(),
+    new PositionFilter().addFilter(FieldProto.PORTFOLIO_NAME, 'Federal Reserve'));
   const fedReservePortfolio = portfolios[0];
 
-  let positions = await get_position(null, fedReservePortfolio, 
-    [MeasureProto.DIRECTED_QUANTITY], 
+  let positions = await get_position(null, fedReservePortfolio,
+    [MeasureProto.DIRECTED_QUANTITY],
     PositionTypeProto.TRANSACTION,
     [FieldProto.PORTFOLIO_NAME, FieldProto.SECURITY_ID], [], now);
 
 
-  if(positions) {
+  if (positions) {
     console.log(positions.length + " positions returned")
   } else {
     console.log("No positions found");

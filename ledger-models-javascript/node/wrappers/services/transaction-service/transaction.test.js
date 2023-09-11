@@ -51,6 +51,7 @@ var PortfolioService_1 = require("../portfolio-service/PortfolioService");
 var TransactionService_1 = require("./TransactionService");
 var transaction_1 = require("../../models/transaction/transaction");
 var assert = require("assert");
+var positionfilter_1 = require("../../models/position/positionfilter");
 test('test creating a transaction against the portfolio service', function () { return __awaiter(void 0, void 0, void 0, function () {
     var isTrue;
     return __generator(this, function (_a) {
@@ -65,7 +66,7 @@ test('test creating a transaction against the portfolio service', function () { 
 }); }, 30000);
 function testTransaction() {
     return __awaiter(this, void 0, void 0, function () {
-        var id_proto, now, today, securityService, portfolioService, transactionService, fixedIncomeSecurities, security, portfolios, portfolio, transaction, createTransactionResponse, transactionResponse, transactions;
+        var id_proto, now, today, securityService, portfolioService, transactionService, positionFilter, fixedIncomeSecurities, security, portfolios, portfolio, transaction, createTransactionResponse, transactionResponse, transactionID, transactions;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -75,17 +76,23 @@ function testTransaction() {
                     securityService = new SecurityService_1.SecurityService();
                     portfolioService = new PortfolioService_1.PortfolioService();
                     transactionService = new TransactionService_1.TransactionService();
+                    positionFilter = new positionfilter_1.PositionFilter();
+                    positionFilter.addFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income');
+                    console.time("searchSecurity");
                     return [4 /*yield*/, securityService
-                            .searchSecurity(now.toProto(), field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income')
+                            .searchSecurity(now.toProto(), positionFilter)
                             .then(function (fixedIncomeSecurities) {
                             return fixedIncomeSecurities;
                         })];
                 case 1:
                     fixedIncomeSecurities = _a.sent();
+                    console.timeEnd("searchSecurity");
                     security = fixedIncomeSecurities[0];
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), field_pb_1.FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO')];
+                    console.time("searchPortfolio");
+                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'Test Portfolio'))];
                 case 2:
                     portfolios = _a.sent();
+                    console.timeEnd("searchPortfolio");
                     if (portfolios === undefined) {
                         throw new Error('No portfolios found');
                     }
@@ -111,14 +118,23 @@ function testTransaction() {
                     transaction.setQuantity(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('10000.00'));
                     transaction.setPortfolio(portfolio);
                     transaction.setSecurity(security.proto);
+                    // var validationSummary = await transactionService.validateCreateTransaction(new Transaction(transaction));
+                    // assert(validationSummary.getErrorsList().length == 0, "Validation errors found");
+                    console.time("createTransaction");
                     return [4 /*yield*/, transactionService.createTransaction(new transaction_1.default(transaction))];
                 case 3:
                     createTransactionResponse = _a.sent();
                     transactionResponse = createTransactionResponse.getTransactionResponse();
                     assert(transactionResponse, "No transaction response found");
-                    return [4 /*yield*/, transactionService.searchTransaction(now.toProto(), field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income')];
+                    console.timeEnd("createTransaction");
+                    console.log("Searching transaction");
+                    console.time("searchTransaction");
+                    transactionID = uuid.UUID.fromU8Array(transactionResponse.getUuid().getRawUuid_asU8());
+                    positionFilter.addFilter(field_pb_1.FieldProto.ID, transactionID);
+                    return [4 /*yield*/, transactionService.searchTransaction(now.toProto(), positionFilter)];
                 case 4:
                     transactions = _a.sent();
+                    console.timeEnd("searchTransaction");
                     if (transactions === undefined) {
                         console.log('No transactions found');
                     }

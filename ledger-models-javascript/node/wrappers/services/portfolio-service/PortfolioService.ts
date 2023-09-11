@@ -3,7 +3,6 @@ import { promisify } from 'util';
 
 // Models
 import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
-import { createFieldMapEntry } from '../../models/utils/serialization.util';
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
@@ -18,11 +17,12 @@ import { QueryPortfolioResponseProto } from '../../../fintekkers/requests/portfo
 import { CreatePortfolioRequestProto } from '../../../fintekkers/requests/portfolio/create_portfolio_request_pb';
 import { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portfolio/create_portfolio_response_pb';
 import EnvConfig from '../../models/utils/requestcontext';
+import { PositionFilter } from '../../models/position/positionfilter';
 
 class PortfolioService {
   private client: PortfolioClient;
 
-  static url:string = EnvConfig.apiURL;
+  static url: string = EnvConfig.apiURL;
 
   constructor() {
     this.client = new PortfolioClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
@@ -50,24 +50,14 @@ class PortfolioService {
     return response;
   }
 
-  async searchPortfolio(asOf: LocalTimestampProto, 
-      fieldProto?: FieldProto, fieldValue?: string): Promise<PortfolioProto[]> {
+  async searchPortfolio(asOf: LocalTimestampProto,
+    positionFilter: PositionFilter): Promise<PortfolioProto[]> {
     const searchRequest = new QueryPortfolioRequestProto();
     searchRequest.setObjectClass('PortfolioRequest');
     searchRequest.setVersion('0.0.1');
     searchRequest.setAsOf(asOf);
 
-    // Need to improve validation logic, uncommenting this code will cause an error of 2:UNKNOWN
-    const positionFilter = new PositionFilterProto();
-    positionFilter.setObjectClass('PositionFilter');
-    positionFilter.setVersion('0.0.1');
-
-    if (fieldProto && fieldValue) {
-      const fieldMapEntry = createFieldMapEntry(fieldProto, fieldValue);
-      positionFilter.setFiltersList([fieldMapEntry]);
-    }
-
-    searchRequest.setSearchPortfolioInput(positionFilter);
+    searchRequest.setSearchPortfolioInput(positionFilter.toProto());
 
     const tmpClient = this.client;
 
@@ -77,7 +67,7 @@ class PortfolioService {
       const stream2 = tmpClient.search(searchRequest);
 
       return new Promise<PortfolioProto[]>((resolve, reject) => {
-        stream2.on('data', (response:QueryPortfolioResponseProto) => {
+        stream2.on('data', (response: QueryPortfolioResponseProto) => {
           response.getPortfolioResponseList().forEach((portfolio) => {
             listPortfolios.push(portfolio);
           });

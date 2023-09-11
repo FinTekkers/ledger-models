@@ -9,6 +9,7 @@ import * as dt from '../../models/utils/datetime';
 import { PortfolioService } from './PortfolioService';
 import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
 import { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portfolio/create_portfolio_response_pb';
+import { PositionFilter } from '../../models/position/positionfilter';
 
 
 test('test creating a portfolio against the api.fintekkers.org portfolio service', () => {
@@ -31,9 +32,9 @@ export async function testPortfolio(): Promise<boolean> {
 
   var validationSummary = await portfolioService.validateCreatePortfolio(portfolio);
 
-  var createPortfolioResponse:CreatePortfolioResponseProto = await portfolioService.createPortfolio(portfolio);
+  var createPortfolioResponse: CreatePortfolioResponseProto = await portfolioService.createPortfolio(portfolio);
 
-  var searchResults = await portfolioService.searchPortfolio(now.toProto(), FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings');
+  var searchResults = await portfolioService.searchPortfolio(now.toProto(), new PositionFilter().addFilter(FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings'));
 
   return true;
 }
