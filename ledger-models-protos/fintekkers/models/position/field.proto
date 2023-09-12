@@ -5,6 +5,10 @@ package fintekkers.models.position;
 option java_multiple_files = true;
 
 option java_outer_classname = "FieldProtos";
+/* 
+FieldProto. You can look at the Java implementation of Field.java to understand the meaning
+of each field.
+*/
 
 enum FieldProto {
   UNKNOWN_FIELD = 0;
@@ -16,6 +20,7 @@ enum FieldProto {
   STRATEGY = 11; //common.model.strategy.Strategy.class
   SECURITY = 12; //common.model.security.Security.class
   SECURITY_DESCRIPTION=61;
+  SECURITY_ISSUER_NAME = 62;
   CASH_IMPACT_SECURITY = 13; //common.model.security.Security.class
 
   //Security Fields
@@ -35,6 +40,7 @@ enum FieldProto {
   PORTFOLIO_ID=15; //UUID
   PORTFOLIO_NAME=60;
 
+  //Miscellaneous
   PRICE = 16; //common.model.price.Price.class
   PRICE_ID = 17; //UUID
   IS_CANCELLED = 18; //Boolean.class

@@ -16,7 +16,7 @@ public class CashSecurity extends Security {
             new UUID(1, 1),
             "USD",
             ZonedDateTime.of(1000, 1, 1, 0, 0, 0, 0, ZoneId.of("America/New_York"))
-    );
+    ) {{ setIssuerName("US Government"); }};
 
     public final static String ASSET_CLASS = "Cash";
     private final String cashId;

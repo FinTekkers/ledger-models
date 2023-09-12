@@ -36,7 +36,6 @@ function dummySecurity() {
         .setMaturityDate(new LocalDateProto().setYear(2026).setMonth(1).setDay(1))
         .setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1))
         .setDescription("Dummy security")
-
     );
 }
 

@@ -49,6 +49,14 @@ public enum Field {
     //Security fields
     SECURITY(Security.class, "A fully fledged security object"),
     SECURITY_ID(UUID.class, "A UUID specific to securities"),
+    SECURITY_ISSUER_NAME(String.class, "A text representation of the issuing entity of the security. " +
+            "Roughly, when an entity buys a security the value of this field would be the entity we have credit/counterparty " +
+            "exposure to. This is meant to make data easy to digest, not to drive complex exposure risk models. For " +
+            "securities like bonds this would be the corporation/government/etc that is borrowing the debt. For " +
+            "exchange traded derivatives this would be the primary market place (e.g. CME, LSE, etc). For products like " +
+            "interest-rate swaps the value would be contextual (E.g. the counterparty if OTC, or the clearing organization " +
+            "if centrally cleared. "),
+
     IDENTIFIER(Identifier.class, "The market identifier for a security instrument"),
     SECURITY_DESCRIPTION(String.class, "A human readable description of a security. This is meant for " +
             "display purposes only. This is not meant for interpretation by code. The system may introduce small " +

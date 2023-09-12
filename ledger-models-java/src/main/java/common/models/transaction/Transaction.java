@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static common.models.postion.Field.PRODUCT_CLASS;
+import static common.models.postion.Field.SECURITY_ISSUER_NAME;
 
 /***
  * A transaction represents an operation that changes the position of a portfolio. The most obvious of which
@@ -225,6 +226,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             case IS_CANCELLED -> isCancelled();
             //Security Fields
             case SECURITY -> getSecurity();
+            case SECURITY_ISSUER_NAME -> getSecurity().getField(SECURITY_ISSUER_NAME);
             case PRODUCT_TYPE -> getSecurity().getProductType().name();
             case IDENTIFIER -> getSecurity().getSecurityId();
             case ASSET_CLASS -> getSecurity().getAssetClass();

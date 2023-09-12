@@ -57,6 +57,10 @@ public enum FieldProto
    */
   SECURITY_DESCRIPTION(61),
   /**
+   * <code>SECURITY_ISSUER_NAME = 62;</code>
+   */
+  SECURITY_ISSUER_NAME(62),
+  /**
    * <pre>
    *common.model.security.Security.class
    * </pre>
@@ -138,7 +142,7 @@ public enum FieldProto
   PORTFOLIO_NAME(60),
   /**
    * <pre>
-   *common.model.price.Price.class
+   *Miscellaneous
    * </pre>
    *
    * <code>PRICE = 16;</code>
@@ -260,6 +264,10 @@ public enum FieldProto
    */
   public static final int SECURITY_DESCRIPTION_VALUE = 61;
   /**
+   * <code>SECURITY_ISSUER_NAME = 62;</code>
+   */
+  public static final int SECURITY_ISSUER_NAME_VALUE = 62;
+  /**
    * <pre>
    *common.model.security.Security.class
    * </pre>
@@ -341,7 +349,7 @@ public enum FieldProto
   public static final int PORTFOLIO_NAME_VALUE = 60;
   /**
    * <pre>
-   *common.model.price.Price.class
+   *Miscellaneous
    * </pre>
    *
    * <code>PRICE = 16;</code>
@@ -444,6 +452,7 @@ public enum FieldProto
       case 11: return STRATEGY;
       case 12: return SECURITY;
       case 61: return SECURITY_DESCRIPTION;
+      case 62: return SECURITY_ISSUER_NAME;
       case 13: return CASH_IMPACT_SECURITY;
       case 50: return ASSET_CLASS;
       case 51: return PRODUCT_CLASS;

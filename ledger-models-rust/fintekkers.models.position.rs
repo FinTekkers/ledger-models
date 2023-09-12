@@ -100,6 +100,7 @@ pub enum FieldProto {
     /// common.model.security.Security.class
     Security = 12,
     SecurityDescription = 61,
+    SecurityIssuerName = 62,
     /// common.model.security.Security.class
     CashImpactSecurity = 13,
     /// Security Fields
@@ -124,6 +125,8 @@ pub enum FieldProto {
     /// UUID
     PortfolioId = 15,
     PortfolioName = 60,
+    /// Miscellaneous
+    ///
     /// common.model.price.Price.class
     Price = 16,
     /// UUID
@@ -161,6 +164,7 @@ impl FieldProto {
             FieldProto::Strategy => "STRATEGY",
             FieldProto::Security => "SECURITY",
             FieldProto::SecurityDescription => "SECURITY_DESCRIPTION",
+            FieldProto::SecurityIssuerName => "SECURITY_ISSUER_NAME",
             FieldProto::CashImpactSecurity => "CASH_IMPACT_SECURITY",
             FieldProto::AssetClass => "ASSET_CLASS",
             FieldProto::ProductClass => "PRODUCT_CLASS",
@@ -195,6 +199,7 @@ impl FieldProto {
             "STRATEGY" => Some(Self::Strategy),
             "SECURITY" => Some(Self::Security),
             "SECURITY_DESCRIPTION" => Some(Self::SecurityDescription),
+            "SECURITY_ISSUER_NAME" => Some(Self::SecurityIssuerName),
             "CASH_IMPACT_SECURITY" => Some(Self::CashImpactSecurity),
             "ASSET_CLASS" => Some(Self::AssetClass),
             "PRODUCT_CLASS" => Some(Self::ProductClass),

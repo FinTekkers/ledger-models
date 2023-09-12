@@ -8,6 +8,7 @@ import Security from '../../models/security/security';
 
 // Model Utils
 import { PositionFilter } from '../../models/position/positionfilter';
+import * as dt from '../../models/utils/datetime';
 
 // Requests & Services
 import { SecurityClient } from '../../../fintekkers/services/security-service/security_service_grpc_pb';
@@ -45,6 +46,11 @@ class SecurityService {
     const createSecurityAsync = promisify(this.client.createOrUpdate.bind(this.client));
     const response = await createSecurityAsync(createRequest);
     return response;
+  }
+
+  async searchSecurityAsOfNow(positionFilter: PositionFilter): Promise<Security[]> {
+    const now = dt.ZonedDateTime.now().toProto();
+    return this.searchSecurity(now, positionFilter);
   }
 
   async searchSecurity(asOf: LocalTimestampProto, positionFilter: PositionFilter): Promise<Security[]> {

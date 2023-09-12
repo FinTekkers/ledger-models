@@ -13,7 +13,7 @@ import * as uuid from '../../models/utils/uuid';
 import * as dt from '../../models/utils/datetime';
 
 import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
-import { SecurityService } from './SecurityService';
+import { SecurityService } from './SecurityService.1';
 import { PositionFilter } from '../../models/position/positionfilter';
 
 test('test creating a security against the api.fintekkers.org security service', async () => {
