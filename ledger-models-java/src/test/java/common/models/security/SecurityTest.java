@@ -13,14 +13,12 @@ class SecurityTest {
     public void testDescription() {
         CashSecurity settlementCurrency = DummyEquityObjects.getDummySecurity().getSettlementCurrency();
         Assertions.assertTrue(settlementCurrency.getDisplayDescription().contains("USD"));
-        Assertions.assertTrue(settlementCurrency.getIssuerName().contains("US Government"));
+        Assertions.assertTrue(settlementCurrency.getIssuer().contains("USD"));
 
         Security equitySecurity = DummyEquityObjects.getDummySecurity();
-        String issuerName = "Tesla";
-        equitySecurity.setIssuerName(issuerName);
         Assertions.assertTrue(equitySecurity.getDisplayDescription().contains(equitySecurity.getSecurityId().getIdentifier()));
-        Assertions.assertTrue(equitySecurity.getIssuerName().contains(issuerName));
-        Assertions.assertTrue(equitySecurity.getField(Field.SECURITY_ISSUER_NAME).toString().contains(issuerName));
+        Assertions.assertTrue(equitySecurity.getIssuer().contains("dummy"));
+        Assertions.assertTrue(equitySecurity.getField(Field.SECURITY_ISSUER_NAME).toString().contains("dummy"));
 
         equitySecurity.setSecurityId(null);
         Assertions.assertTrue(equitySecurity.getDisplayDescription().contains("EquitySecurity[dummy issuer]"));

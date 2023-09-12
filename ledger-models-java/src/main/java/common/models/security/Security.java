@@ -21,7 +21,6 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     protected Identifier identifier;
 
     private String description;
-    private String issuerName;
 
     public Security(UUID id, String issuer, ZonedDateTime asOf, CashSecurity settlementCurrency) {
         super(id, asOf);
@@ -68,7 +67,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     public Object getField(Field field) {
         return switch (field) {
             case ID, SECURITY_ID -> getID();
-            case SECURITY_ISSUER_NAME -> getIssuerName();
+            case SECURITY_ISSUER_NAME -> getIssuer();
             case AS_OF -> getAsOf();
             case ASSET_CLASS -> getAssetClass();
             case PRODUCT_CLASS -> getProductClass();
@@ -172,13 +171,5 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
      */
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getIssuerName() {
-        return issuerName;
-    }
-
-    public void setIssuerName(String issuerName) {
-        this.issuerName = issuerName;
     }
 }
