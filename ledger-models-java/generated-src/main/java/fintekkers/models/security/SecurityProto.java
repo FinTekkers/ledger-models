@@ -26,6 +26,7 @@ private static final long serialVersionUID = 0L;
     cashId_ = "";
     couponType_ = 0;
     couponFrequency_ = 0;
+    issuanceInfo_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -48,6 +49,7 @@ private static final long serialVersionUID = 0L;
     if (extensionRegistry == null) {
       throw new java.lang.NullPointerException();
     }
+    int mutable_bitField0_ = 0;
     com.google.protobuf.UnknownFieldSet.Builder unknownFields =
         com.google.protobuf.UnknownFieldSet.newBuilder();
     try {
@@ -266,6 +268,15 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
+          case 538: {
+            if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+              issuanceInfo_ = new java.util.ArrayList<fintekkers.models.security.bond.IssuanceProto>();
+              mutable_bitField0_ |= 0x00000001;
+            }
+            issuanceInfo_.add(
+                input.readMessage(fintekkers.models.security.bond.IssuanceProto.parser(), extensionRegistry));
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -281,6 +292,9 @@ private static final long serialVersionUID = 0L;
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
+      if (((mutable_bitField0_ & 0x00000001) != 0)) {
+        issuanceInfo_ = java.util.Collections.unmodifiableList(issuanceInfo_);
+      }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
     }
@@ -939,6 +953,66 @@ private static final long serialVersionUID = 0L;
     return getMaturityDate();
   }
 
+  public static final int ISSUANCE_INFO_FIELD_NUMBER = 67;
+  private java.util.List<fintekkers.models.security.bond.IssuanceProto> issuanceInfo_;
+  /**
+   * <pre>
+   *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+   */
+  @java.lang.Override
+  public java.util.List<fintekkers.models.security.bond.IssuanceProto> getIssuanceInfoList() {
+    return issuanceInfo_;
+  }
+  /**
+   * <pre>
+   *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends fintekkers.models.security.bond.IssuanceProtoOrBuilder> 
+      getIssuanceInfoOrBuilderList() {
+    return issuanceInfo_;
+  }
+  /**
+   * <pre>
+   *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+   */
+  @java.lang.Override
+  public int getIssuanceInfoCount() {
+    return issuanceInfo_.size();
+  }
+  /**
+   * <pre>
+   *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.bond.IssuanceProto getIssuanceInfo(int index) {
+    return issuanceInfo_.get(index);
+  }
+  /**
+   * <pre>
+   *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.bond.IssuanceProtoOrBuilder getIssuanceInfoOrBuilder(
+      int index) {
+    return issuanceInfo_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -1018,6 +1092,9 @@ private static final long serialVersionUID = 0L;
     }
     if (maturityDate_ != null) {
       output.writeMessage(66, getMaturityDate());
+    }
+    for (int i = 0; i < issuanceInfo_.size(); i++) {
+      output.writeMessage(67, issuanceInfo_.get(i));
     }
     unknownFields.writeTo(output);
   }
@@ -1110,6 +1187,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(66, getMaturityDate());
     }
+    for (int i = 0; i < issuanceInfo_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(67, issuanceInfo_.get(i));
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -1198,6 +1279,8 @@ private static final long serialVersionUID = 0L;
       if (!getMaturityDate()
           .equals(other.getMaturityDate())) return false;
     }
+    if (!getIssuanceInfoList()
+        .equals(other.getIssuanceInfoList())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -1275,6 +1358,10 @@ private static final long serialVersionUID = 0L;
     if (hasMaturityDate()) {
       hash = (37 * hash) + MATURITY_DATE_FIELD_NUMBER;
       hash = (53 * hash) + getMaturityDate().hashCode();
+    }
+    if (getIssuanceInfoCount() > 0) {
+      hash = (37 * hash) + ISSUANCE_INFO_FIELD_NUMBER;
+      hash = (53 * hash) + getIssuanceInfoList().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -1404,6 +1491,7 @@ private static final long serialVersionUID = 0L;
     private void maybeForceBuilderInitialization() {
       if (com.google.protobuf.GeneratedMessageV3
               .alwaysUseFieldBuilders) {
+        getIssuanceInfoFieldBuilder();
       }
     }
     @java.lang.Override
@@ -1497,6 +1585,12 @@ private static final long serialVersionUID = 0L;
         maturityDate_ = null;
         maturityDateBuilder_ = null;
       }
+      if (issuanceInfoBuilder_ == null) {
+        issuanceInfo_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+      } else {
+        issuanceInfoBuilder_.clear();
+      }
       return this;
     }
 
@@ -1523,6 +1617,7 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.models.security.SecurityProto buildPartial() {
       fintekkers.models.security.SecurityProto result = new fintekkers.models.security.SecurityProto(this);
+      int from_bitField0_ = bitField0_;
       result.objectClass_ = objectClass_;
       result.version_ = version_;
       if (uuidBuilder_ == null) {
@@ -1588,6 +1683,15 @@ private static final long serialVersionUID = 0L;
         result.maturityDate_ = maturityDate_;
       } else {
         result.maturityDate_ = maturityDateBuilder_.build();
+      }
+      if (issuanceInfoBuilder_ == null) {
+        if (((bitField0_ & 0x00000001) != 0)) {
+          issuanceInfo_ = java.util.Collections.unmodifiableList(issuanceInfo_);
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.issuanceInfo_ = issuanceInfo_;
+      } else {
+        result.issuanceInfo_ = issuanceInfoBuilder_.build();
       }
       onBuilt();
       return result;
@@ -1709,6 +1813,32 @@ private static final long serialVersionUID = 0L;
       if (other.hasMaturityDate()) {
         mergeMaturityDate(other.getMaturityDate());
       }
+      if (issuanceInfoBuilder_ == null) {
+        if (!other.issuanceInfo_.isEmpty()) {
+          if (issuanceInfo_.isEmpty()) {
+            issuanceInfo_ = other.issuanceInfo_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureIssuanceInfoIsMutable();
+            issuanceInfo_.addAll(other.issuanceInfo_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.issuanceInfo_.isEmpty()) {
+          if (issuanceInfoBuilder_.isEmpty()) {
+            issuanceInfoBuilder_.dispose();
+            issuanceInfoBuilder_ = null;
+            issuanceInfo_ = other.issuanceInfo_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+            issuanceInfoBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getIssuanceInfoFieldBuilder() : null;
+          } else {
+            issuanceInfoBuilder_.addAllMessages(other.issuanceInfo_);
+          }
+        }
+      }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -1737,6 +1867,7 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int bitField0_;
 
     private java.lang.Object objectClass_ = "";
     /**
@@ -3860,6 +3991,318 @@ private static final long serialVersionUID = 0L;
         maturityDate_ = null;
       }
       return maturityDateBuilder_;
+    }
+
+    private java.util.List<fintekkers.models.security.bond.IssuanceProto> issuanceInfo_ =
+      java.util.Collections.emptyList();
+    private void ensureIssuanceInfoIsMutable() {
+      if (!((bitField0_ & 0x00000001) != 0)) {
+        issuanceInfo_ = new java.util.ArrayList<fintekkers.models.security.bond.IssuanceProto>(issuanceInfo_);
+        bitField0_ |= 0x00000001;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        fintekkers.models.security.bond.IssuanceProto, fintekkers.models.security.bond.IssuanceProto.Builder, fintekkers.models.security.bond.IssuanceProtoOrBuilder> issuanceInfoBuilder_;
+
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public java.util.List<fintekkers.models.security.bond.IssuanceProto> getIssuanceInfoList() {
+      if (issuanceInfoBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(issuanceInfo_);
+      } else {
+        return issuanceInfoBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public int getIssuanceInfoCount() {
+      if (issuanceInfoBuilder_ == null) {
+        return issuanceInfo_.size();
+      } else {
+        return issuanceInfoBuilder_.getCount();
+      }
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public fintekkers.models.security.bond.IssuanceProto getIssuanceInfo(int index) {
+      if (issuanceInfoBuilder_ == null) {
+        return issuanceInfo_.get(index);
+      } else {
+        return issuanceInfoBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public Builder setIssuanceInfo(
+        int index, fintekkers.models.security.bond.IssuanceProto value) {
+      if (issuanceInfoBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureIssuanceInfoIsMutable();
+        issuanceInfo_.set(index, value);
+        onChanged();
+      } else {
+        issuanceInfoBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public Builder setIssuanceInfo(
+        int index, fintekkers.models.security.bond.IssuanceProto.Builder builderForValue) {
+      if (issuanceInfoBuilder_ == null) {
+        ensureIssuanceInfoIsMutable();
+        issuanceInfo_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        issuanceInfoBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public Builder addIssuanceInfo(fintekkers.models.security.bond.IssuanceProto value) {
+      if (issuanceInfoBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureIssuanceInfoIsMutable();
+        issuanceInfo_.add(value);
+        onChanged();
+      } else {
+        issuanceInfoBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public Builder addIssuanceInfo(
+        int index, fintekkers.models.security.bond.IssuanceProto value) {
+      if (issuanceInfoBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureIssuanceInfoIsMutable();
+        issuanceInfo_.add(index, value);
+        onChanged();
+      } else {
+        issuanceInfoBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public Builder addIssuanceInfo(
+        fintekkers.models.security.bond.IssuanceProto.Builder builderForValue) {
+      if (issuanceInfoBuilder_ == null) {
+        ensureIssuanceInfoIsMutable();
+        issuanceInfo_.add(builderForValue.build());
+        onChanged();
+      } else {
+        issuanceInfoBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public Builder addIssuanceInfo(
+        int index, fintekkers.models.security.bond.IssuanceProto.Builder builderForValue) {
+      if (issuanceInfoBuilder_ == null) {
+        ensureIssuanceInfoIsMutable();
+        issuanceInfo_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        issuanceInfoBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public Builder addAllIssuanceInfo(
+        java.lang.Iterable<? extends fintekkers.models.security.bond.IssuanceProto> values) {
+      if (issuanceInfoBuilder_ == null) {
+        ensureIssuanceInfoIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, issuanceInfo_);
+        onChanged();
+      } else {
+        issuanceInfoBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public Builder clearIssuanceInfo() {
+      if (issuanceInfoBuilder_ == null) {
+        issuanceInfo_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+      } else {
+        issuanceInfoBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public Builder removeIssuanceInfo(int index) {
+      if (issuanceInfoBuilder_ == null) {
+        ensureIssuanceInfoIsMutable();
+        issuanceInfo_.remove(index);
+        onChanged();
+      } else {
+        issuanceInfoBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public fintekkers.models.security.bond.IssuanceProto.Builder getIssuanceInfoBuilder(
+        int index) {
+      return getIssuanceInfoFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public fintekkers.models.security.bond.IssuanceProtoOrBuilder getIssuanceInfoOrBuilder(
+        int index) {
+      if (issuanceInfoBuilder_ == null) {
+        return issuanceInfo_.get(index);  } else {
+        return issuanceInfoBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public java.util.List<? extends fintekkers.models.security.bond.IssuanceProtoOrBuilder> 
+         getIssuanceInfoOrBuilderList() {
+      if (issuanceInfoBuilder_ != null) {
+        return issuanceInfoBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(issuanceInfo_);
+      }
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public fintekkers.models.security.bond.IssuanceProto.Builder addIssuanceInfoBuilder() {
+      return getIssuanceInfoFieldBuilder().addBuilder(
+          fintekkers.models.security.bond.IssuanceProto.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public fintekkers.models.security.bond.IssuanceProto.Builder addIssuanceInfoBuilder(
+        int index) {
+      return getIssuanceInfoFieldBuilder().addBuilder(
+          index, fintekkers.models.security.bond.IssuanceProto.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+     */
+    public java.util.List<fintekkers.models.security.bond.IssuanceProto.Builder> 
+         getIssuanceInfoBuilderList() {
+      return getIssuanceInfoFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        fintekkers.models.security.bond.IssuanceProto, fintekkers.models.security.bond.IssuanceProto.Builder, fintekkers.models.security.bond.IssuanceProtoOrBuilder> 
+        getIssuanceInfoFieldBuilder() {
+      if (issuanceInfoBuilder_ == null) {
+        issuanceInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            fintekkers.models.security.bond.IssuanceProto, fintekkers.models.security.bond.IssuanceProto.Builder, fintekkers.models.security.bond.IssuanceProtoOrBuilder>(
+                issuanceInfo_,
+                ((bitField0_ & 0x00000001) != 0),
+                getParentForChildren(),
+                isClean());
+        issuanceInfo_ = null;
+      }
+      return issuanceInfoBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

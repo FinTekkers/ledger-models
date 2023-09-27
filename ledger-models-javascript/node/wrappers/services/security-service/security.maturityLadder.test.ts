@@ -13,7 +13,7 @@ import * as uuid from '../../models/utils/uuid';
 import * as dt from '../../models/utils/datetime';
 
 import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
-import { SecurityService } from './SecurityService.1';
+import { SecurityService } from './SecurityService';
 import { PositionFilter } from '../../models/position/positionfilter';
 
 test('test the api.fintekkers.org security service by creating a maturity ladder for the US government', async () => {
@@ -21,9 +21,12 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
 
     const securityService = new SecurityService();
 
+    const positionFilter = new PositionFilter();
+    positionFilter.addFilter(FieldProto.SECURITY_ISSUER_NAME, "US Government");
+    const securities = await securityService.searchSecurityAsOfNow(positionFilter);
 
-    securityService.searchSecurity()
 
+    console.log(securities.length);
     //TODO: Get oustanding amount of bond 
 
 

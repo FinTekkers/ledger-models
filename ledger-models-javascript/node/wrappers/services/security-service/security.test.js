@@ -109,12 +109,15 @@ function testSecurity() {
                     return [4 /*yield*/, securityService.validateCreateSecurity(security)];
                 case 2:
                     validationSummary = _a.sent();
+                    expect(validationSummary.getErrorsList().length).toBe(0);
                     return [4 /*yield*/, securityService.createSecurity(security)];
                 case 3:
                     createSecurityResponse = _a.sent();
-                    return [4 /*yield*/, securityService.searchSecurity(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.ASSET_CLASS, 'FixedIncome'))];
+                    expect(createSecurityResponse.getSecurityResponse()).toBeTruthy();
+                    return [4 /*yield*/, securityService.searchSecurity(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income'))];
                 case 4:
                     searchResults = _a.sent();
+                    expect(searchResults.length).toBeGreaterThan(0);
                     return [2 /*return*/, true];
             }
         });

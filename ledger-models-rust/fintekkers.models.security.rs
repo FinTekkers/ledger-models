@@ -249,6 +249,9 @@ pub struct SecurityProto {
     pub issue_date: ::core::option::Option<super::util::LocalDateProto>,
     #[prost(message, optional, tag = "66")]
     pub maturity_date: ::core::option::Option<super::util::LocalDateProto>,
+    /// Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+    #[prost(message, repeated, tag = "67")]
+    pub issuance_info: ::prost::alloc::vec::Vec<bond::IssuanceProto>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

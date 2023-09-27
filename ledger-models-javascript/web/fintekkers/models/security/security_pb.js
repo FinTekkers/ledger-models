@@ -25,6 +25,8 @@ var fintekkers_models_util_uuid_pb = require('../../../fintekkers/models/util/uu
 goog.object.extend(proto, fintekkers_models_util_uuid_pb);
 var fintekkers_models_security_identifier_identifier_pb = require('../../../fintekkers/models/security/identifier/identifier_pb.js');
 goog.object.extend(proto, fintekkers_models_security_identifier_identifier_pb);
+var fintekkers_models_security_bond_issuance_pb = require('../../../fintekkers/models/security/bond/issuance_pb.js');
+goog.object.extend(proto, fintekkers_models_security_bond_issuance_pb);
 var fintekkers_models_security_security_type_pb = require('../../../fintekkers/models/security/security_type_pb.js');
 goog.object.extend(proto, fintekkers_models_security_security_type_pb);
 var fintekkers_models_security_security_quantity_type_pb = require('../../../fintekkers/models/security/security_quantity_type_pb.js');
@@ -45,7 +47,7 @@ goog.exportSymbol('proto.fintekkers.models.security.SecurityProto', null, global
  * @constructor
  */
 proto.fintekkers.models.security.SecurityProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.fintekkers.models.security.SecurityProto.repeatedFields_, null);
 };
 goog.inherits(proto.fintekkers.models.security.SecurityProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -55,6 +57,13 @@ if (goog.DEBUG && !COMPILED) {
    */
   proto.fintekkers.models.security.SecurityProto.displayName = 'proto.fintekkers.models.security.SecurityProto';
 }
+
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.fintekkers.models.security.SecurityProto.repeatedFields_ = [67];
 
 
 
@@ -108,7 +117,9 @@ proto.fintekkers.models.security.SecurityProto.toObject = function(includeInstan
     datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
     faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-    maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
+    maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
+    fintekkers_models_security_bond_issuance_pb.IssuanceProto.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -243,6 +254,11 @@ proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader = fun
       var value = new fintekkers_models_util_local_date_pb.LocalDateProto;
       reader.readMessage(value,fintekkers_models_util_local_date_pb.LocalDateProto.deserializeBinaryFromReader);
       msg.setMaturityDate(value);
+      break;
+    case 67:
+      var value = new fintekkers_models_security_bond_issuance_pb.IssuanceProto;
+      reader.readMessage(value,fintekkers_models_security_bond_issuance_pb.IssuanceProto.deserializeBinaryFromReader);
+      msg.addIssuanceInfo(value);
       break;
     default:
       reader.skipField();
@@ -436,6 +452,14 @@ proto.fintekkers.models.security.SecurityProto.serializeBinaryToWriter = functio
       66,
       f,
       fintekkers_models_util_local_date_pb.LocalDateProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getIssuanceInfoList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      67,
+      f,
+      fintekkers_models_security_bond_issuance_pb.IssuanceProto.serializeBinaryToWriter
     );
   }
 };
@@ -1043,6 +1067,44 @@ proto.fintekkers.models.security.SecurityProto.prototype.clearMaturityDate = fun
  */
 proto.fintekkers.models.security.SecurityProto.prototype.hasMaturityDate = function() {
   return jspb.Message.getField(this, 66) != null;
+};
+
+
+/**
+ * repeated bond.IssuanceProto issuance_info = 67;
+ * @return {!Array<!proto.fintekkers.models.security.bond.IssuanceProto>}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.getIssuanceInfoList = function() {
+  return /** @type{!Array<!proto.fintekkers.models.security.bond.IssuanceProto>} */ (
+    jspb.Message.getRepeatedWrapperField(this, fintekkers_models_security_bond_issuance_pb.IssuanceProto, 67));
+};
+
+
+/**
+ * @param {!Array<!proto.fintekkers.models.security.bond.IssuanceProto>} value
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+*/
+proto.fintekkers.models.security.SecurityProto.prototype.setIssuanceInfoList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 67, value);
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.security.bond.IssuanceProto=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.fintekkers.models.security.bond.IssuanceProto}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.addIssuanceInfo = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 67, opt_value, proto.fintekkers.models.security.bond.IssuanceProto, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.clearIssuanceInfoList = function() {
+  return this.setIssuanceInfoList([]);
 };
 
 

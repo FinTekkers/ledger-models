@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityService = void 0;
 var util_1 = require("util");
 var security_1 = require("../../models/security/security");
+var dt = require("../../models/utils/datetime");
 // Requests & Services
 var security_service_grpc_pb_1 = require("../../../fintekkers/services/security-service/security_service_grpc_pb");
 var query_security_request_pb_1 = require("../../../fintekkers/requests/security/query_security_request_pb");
@@ -83,6 +84,15 @@ var SecurityService = /** @class */ (function () {
                         response = _a.sent();
                         return [2 /*return*/, response];
                 }
+            });
+        });
+    };
+    SecurityService.prototype.searchSecurityAsOfNow = function (positionFilter) {
+        return __awaiter(this, void 0, void 0, function () {
+            var now;
+            return __generator(this, function (_a) {
+                now = dt.ZonedDateTime.now().toProto();
+                return [2 /*return*/, this.searchSecurity(now, positionFilter)];
             });
         });
     };

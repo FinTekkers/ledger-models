@@ -8,6 +8,7 @@ import "fintekkers/models/util/local_timestamp.proto";
 import "fintekkers/models/util/uuid.proto";
 
 import "fintekkers/models/security/identifier/identifier.proto";
+import "fintekkers/models/security/bond/issuance.proto";
 import "fintekkers/models/security/security_type.proto";
 import "fintekkers/models/security/security_quantity_type.proto";
 import "fintekkers/models/security/coupon_frequency.proto";
@@ -53,4 +54,19 @@ message SecurityProto {
   fintekkers.models.util.DecimalValueProto face_value = 64;
   fintekkers.models.util.LocalDateProto issue_date = 65;
   fintekkers.models.util.LocalDateProto maturity_date = 66;
+  repeated fintekkers.models.security.bond.IssuanceProto issuance_info = 67; //Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+  
+  //Option 1: Each time there is an update to the outstanding face value create a new version of the security
+    //PROs: Simple?
+    //CONs: Will create a lot of duplicative records, which would create diff load to understand what changed
+    //fintekkers.models.util.DecimalValueProto outstanding_face_value = 67; //Oustanding face value for the given as_of date
+  //Option 2: Have a date/decimal map which gets amended
+    //PROs: Simple
+    //CONS: Map could get big where we have daily date
+  //Option 3: Have another object, e.g. 'auction' info that can be independently stored
+    //PROS: Can extend the model; can choose the persistence strategy
+    //CONS: More upfront work
+  //Option 3 makes most sense. Need to consider naming, as not all +ve/-ve impacts to oustanding issuance will relate to auctions.
+  
+  
 }

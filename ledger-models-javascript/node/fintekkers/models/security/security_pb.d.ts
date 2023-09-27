@@ -10,6 +10,7 @@ import * as fintekkers_models_util_local_date_pb from "../../../fintekkers/model
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_security_identifier_identifier_pb from "../../../fintekkers/models/security/identifier/identifier_pb";
+import * as fintekkers_models_security_bond_issuance_pb from "../../../fintekkers/models/security/bond/issuance_pb";
 import * as fintekkers_models_security_security_type_pb from "../../../fintekkers/models/security/security_type_pb";
 import * as fintekkers_models_security_security_quantity_type_pb from "../../../fintekkers/models/security/security_quantity_type_pb";
 import * as fintekkers_models_security_coupon_frequency_pb from "../../../fintekkers/models/security/coupon_frequency_pb";
@@ -93,6 +94,10 @@ export class SecurityProto extends jspb.Message {
     clearMaturityDate(): void;
     getMaturityDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
     setMaturityDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): SecurityProto;
+    clearIssuanceInfoList(): void;
+    getIssuanceInfoList(): Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>;
+    setIssuanceInfoList(value: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>): SecurityProto;
+    addIssuanceInfo(value?: fintekkers_models_security_bond_issuance_pb.IssuanceProto, index?: number): fintekkers_models_security_bond_issuance_pb.IssuanceProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): SecurityProto.AsObject;
@@ -128,5 +133,6 @@ export namespace SecurityProto {
         faceValue?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         issueDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
         maturityDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
+        issuanceInfoList: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto.AsObject>,
     }
 }

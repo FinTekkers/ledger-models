@@ -333,4 +333,48 @@ public interface SecurityProtoOrBuilder extends
    * <code>.fintekkers.models.util.LocalDateProto maturity_date = 66;</code>
    */
   fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getMaturityDateOrBuilder();
+
+  /**
+   * <pre>
+   *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+   */
+  java.util.List<fintekkers.models.security.bond.IssuanceProto> 
+      getIssuanceInfoList();
+  /**
+   * <pre>
+   *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+   */
+  fintekkers.models.security.bond.IssuanceProto getIssuanceInfo(int index);
+  /**
+   * <pre>
+   *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+   */
+  int getIssuanceInfoCount();
+  /**
+   * <pre>
+   *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+   */
+  java.util.List<? extends fintekkers.models.security.bond.IssuanceProtoOrBuilder> 
+      getIssuanceInfoOrBuilderList();
+  /**
+   * <pre>
+   *Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.bond.IssuanceProto issuance_info = 67;</code>
+   */
+  fintekkers.models.security.bond.IssuanceProtoOrBuilder getIssuanceInfoOrBuilder(
+      int index);
 }

@@ -5,9 +5,9 @@ use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 
 //Imports below are for RawDataModelObject related macro. IDE might not complain if you remove
 //them but will fail at compile time
-use prost::Message;
 use crate::fintekkers::wrappers::models::raw_datamodel_object::RawDataModelObject;
 use crate::raw_data_model_object_trait;
+use prost::Message;
 
 pub struct SecurityWrapper {
     pub proto: SecurityProto,
@@ -15,15 +15,12 @@ pub struct SecurityWrapper {
 
 impl SecurityWrapper {
     pub fn new(proto: SecurityProto) -> Self {
-        SecurityWrapper {
-            proto
-        }
+        SecurityWrapper { proto }
     }
 
     pub fn uuid_wrapper(&self) -> UUIDWrapper {
         UUIDWrapper::new(self.proto.uuid.as_ref().unwrap().clone())
     }
-
 }
 
 raw_data_model_object_trait!(SecurityWrapper);
@@ -128,7 +125,7 @@ impl SecurityProtoBuilder {
     pub fn build(self) -> Result<SecurityProto, Error> {
         let valid_to = match self.valid_to {
             Some(..) => Some(self.valid_to.unwrap().proto),
-            None => None
+            None => None,
         };
 
         Ok(SecurityProto {
@@ -159,6 +156,7 @@ impl SecurityProtoBuilder {
             maturity_date: None,
             dated_date: None,
             issue_date: None,
+            issuance_info: vec![],
         })
     }
 }
@@ -172,7 +170,8 @@ mod test {
         let result = SecurityProtoBuilder::new()
             .settlement_currency("CAD".to_string())
             .asset_class("Asset Class".to_string())
-            .build().unwrap();//.expect("Could not build security");
+            .build()
+            .unwrap(); //.expect("Could not build security");
 
         assert!(result.asset_class.contains("Asset"));
         // assert_eq!(result.settlement_currency.unwrap(), "CAD".to_string());

@@ -15,21 +15,22 @@ pub mod fintekkers {
         }
         pub mod position {
             include!("fintekkers.models.position.rs");
-
         }
         pub mod price {
             include!("fintekkers.models.price.rs");
         }
         pub mod security {
             include!("fintekkers.models.security.rs");
+
+            pub mod bond {
+                include!("fintekkers.models.security.bond.rs");
+            }
         }
         pub mod strategy {
             include!("fintekkers.models.strategy.rs");
-
         }
         pub mod transaction {
             include!("fintekkers.models.transaction.rs");
-
         }
         pub mod util {
             include!("fintekkers.models.util.rs");
@@ -49,22 +50,17 @@ pub mod fintekkers {
         }
         pub mod price {
             include!("fintekkers.requests.price.rs");
-
         }
         pub mod security {
             include!("fintekkers.requests.security.rs");
         }
-        pub mod strategy {
-
-        }
+        pub mod strategy {}
         pub mod transaction {
             include!("fintekkers.requests.transaction.rs");
-
         }
         pub mod util {
             pub mod lock {
                 include!("fintekkers.requests.util.lock.rs");
-
             }
             pub mod errors {
                 include!("fintekkers.requests.util.errors.rs");
@@ -109,25 +105,23 @@ mod tests {
 
     #[test]
     fn it_works() {
-
         let now_timestamp = Timestamp::default();
         let now_wrapped_timestap = Some(now_timestamp);
 
         let as_of_timestamp = fintekkers::models::util::LocalTimestampProto {
             time_zone: String::from("America/New_York"),
-            timestamp: now_wrapped_timestap
+            timestamp: now_wrapped_timestap,
         };
 
         let portfolio = fintekkers::models::portfolio::PortfolioProto {
-            as_of:  Some(as_of_timestamp.clone()),
-            valid_from:  Some(as_of_timestamp.clone()),
-            valid_to:  None,
+            as_of: Some(as_of_timestamp.clone()),
+            valid_from: Some(as_of_timestamp.clone()),
+            valid_to: None,
             object_class: String::from("Portfolio"),
             version: String::from("0.0.1"),
             portfolio_name: String::from("PortfolioName"),
             is_link: false,
-            uuid: None
-
+            uuid: None,
         };
 
         assert_eq!(portfolio.portfolio_name, String::from("PortfolioName"))
