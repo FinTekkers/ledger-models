@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package fintekkers.models.security.bond;
+
+import "fintekkers/models/security/bond/auction_type.proto";
+
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/util/local_timestamp.proto";
+// import "fintekkers/models/util/uuid.proto";
+
+// import "fintekkers/models/security/identifier/identifier.proto";
+// import "fintekkers/models/security/security_type.proto";
+// import "fintekkers/models/security/security_quantity_type.proto";
+// import "fintekkers/models/security/coupon_frequency.proto";
+// import "fintekkers/models/security/coupon_type.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "IssuanceProtos";
+
+/*
+    Issuance proto contains the following:
+        - changes in outstanding quantities.
+            - auction
+                - auction date
+                - issue date (note: original issue date is found on the base security)
+                - announcement date
+                - pre-auction outstanding quantity
+                - offering amount
+                - auction type (e.g. single price)
+                - price (if single price auction)
+                - award details, i.e. below. The above should apply to corproate issuance also
+<PrimaryDealerTendered>136650000000</PrimaryDealerTendered>
+<PrimaryDealerAccepted>32879650000</PrimaryDealerAccepted>
+<DirectBidderTendered>9525000000</DirectBidderTendered>
+<DirectBidderAccepted>3548785000</DirectBidderAccepted>
+<IndirectBidderTendered>9055736500</IndirectBidderTendered>
+<IndirectBidderAccepted>8145454000</IndirectBidderAccepted>
+<CompetitiveTendered>155230736500</CompetitiveTendered>
+<CompetitiveAccepted>44573889000</CompetitiveAccepted>
+<NonCompetitiveAccepted>326458500</NonCompetitiveAccepted>
+<SOMATendered>0</SOMATendered>
+<SOMAAccepted>0</SOMAAccepted>
+<FIMATendered>100000000</FIMATendered>
+<FIMAAccepted>100000000</FIMAAccepted>
+<TotalTendered>155657195000</TotalTendered>
+<TotalAccepted>45000347500</TotalAccepted>
+            - tender offer
+            - ?
+
+    
+*/
+message IssuanceProto {
+  string object_class = 1;
+  string version = 2;
+
+  //Primary Key not needed currently as these will be stored on the security object
+//   fintekkers.models.util.UUIDProto uuid = 5;
+  fintekkers.models.util.LocalTimestampProto as_of = 6;
+//   bool is_link = 7;
+
+  fintekkers.models.util.LocalTimestampProto valid_from = 8;
+  fintekkers.models.util.LocalTimestampProto valid_to = 9;
+
+
+  fintekkers.models.util.LocalDateProto auction_announcement_date = 20;
+  fintekkers.models.util.LocalDateProto auction_issue_date = 21;
+  fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;
+  fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;
+  fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;
+  fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;
+
+//   SecurityTypeProto security_type = 10;
+
+//   //Biz fields
+//   string asset_class = 11;
+//   string issuer_name = 12;
+//   SecurityProto settlement_currency = 13;
+//   SecurityQuantityTypeProto quantity_type = 14;
+
+//   security.IdentifierProto identifier = 40;
+//   string description = 41;
+
+//   //Cash Security fields
+//   string cash_id = 50;
+
+//   //Equity Security fields
+
+//   //Bond Security fields
+//   fintekkers.models.util.DecimalValueProto coupon_rate = 60;
+//   CouponTypeProto coupon_type = 61;
+//   CouponFrequencyProto coupon_frequency = 62;
+//   fintekkers.models.util.LocalDateProto dated_date = 63;
+//   fintekkers.models.util.DecimalValueProto face_value = 64;
+//   fintekkers.models.util.LocalDateProto issue_date = 65;
+//   fintekkers.models.util.LocalDateProto maturity_date = 66;
+  
+  
+  //Option 1: Each time there is an update to the outstanding face value create a new version of the security
+    //PROs: Simple?
+    //CONs: Will create a lot of duplicative records, which would create diff load to understand what changed
+    //fintekkers.models.util.DecimalValueProto outstanding_face_value = 67; //Oustanding face value for the given as_of date
+  //Option 2: Have a date/decimal map which gets amended
+    //PROs: Simple
+    //CONS: Map could get big where we have daily date
+  //Option 3: Have another object, e.g. 'auction' info that can be independently stored
+    //PROS: Can extend the model; can choose the persistence strategy
+    //CONS: More upfront work
+  //Option 3 makes most sense. Need to consider naming, as not all +ve/-ve impacts to oustanding issuance will relate to auctions.
+  
+  
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package fintekkers.models.security.bond;
+
+option java_multiple_files = true;
+
+option java_outer_classname = "AuctionTypeProtos";
+
+enum AuctionTypeProto {
+    UNKNOWN_AUCTION_TYPE=0;
+    SINGLE_PRICE=1;
+}
