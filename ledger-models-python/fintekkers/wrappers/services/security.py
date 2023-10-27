@@ -1,37 +1,26 @@
 from typing import Generator
 
-from grpc import Channel
-
 from fintekkers.models.security.security_pb2 import SecurityProto
-from fintekkers.services.security_service.security_service_pb2 import Security_Stub
-from fintekkers.services.security_service import  security_service_pb2_grpc
-
 from fintekkers.requests.security.query_security_response_pb2 import QuerySecurityResponseProto
-from fintekkers.wrappers.requests.security import QuerySecurityRequest, CreateSecurityRequest
+from fintekkers.services.security_service.security_service_pb2_grpc import SecurityStub
 
-from fintekkers.wrappers.models.util.environment import Environment, SECURITY_SERVICE
+from fintekkers.wrappers.models.security import Security
+from fintekkers.wrappers.requests.security import QuerySecurityRequest
+from fintekkers.wrappers.services.util.Environment import get_channel
 
-class SecurityService(Security_Stub):
-    def __init__(self, stub:Security_Stub):
-        self.stub = stub
+class SecurityService():
+    def __init__(self):
+        self.stub = SecurityStub(get_channel())
 
-    def Search(self, request:QuerySecurityRequest) -> Generator[SecurityProto, None, None]:
-        # print(Environment().IS_RUNNING_LOCALLY)
-
-        # stub:Channel = Environment().get_service_insecure_channel(SECURITY_SERVICE)
-        
-        # LOCAL_CHANNEL = Environment().get_service_insecure_channel(SECURITY_SERVICE)
-        # service = security_service_pb2_grpc.SecurityStub(LOCAL_CHANNEL)
-        # results = service.Search(request.proto)
-
-        responses = self.stub.Search(request.proto)
+    def search(self, request:QuerySecurityRequest) -> Generator[Security, None, None]:
+        responses = self.stub.Search(request=request.proto)
 
         try:
             while not responses._is_complete():
                 response:QuerySecurityResponseProto = responses.next()
                 
                 for security_proto in response.security_response:
-                    yield security_proto
+                    yield Security(security_proto)
         except StopIteration:
             pass
         except Exception as e:

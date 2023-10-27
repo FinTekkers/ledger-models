@@ -22,11 +22,10 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
     const securityService = new SecurityService();
 
     const positionFilter = new PositionFilter();
-    positionFilter.addFilter(FieldProto.SECURITY_ISSUER_NAME, "US Government");
-    const securities = await securityService.searchSecurityAsOfNow(positionFilter);
+    positionFilter.addFilter(FieldProto.IS)
 
+    securityService.searchSecurityAsOfNow()
 
-    console.log(securities.length);
     //TODO: Get oustanding amount of bond 
 
 

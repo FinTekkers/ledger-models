@@ -6,6 +6,7 @@ from fintekkers.models.position.measure_pb2 import MeasureProto
 
 from uuid import UUID
 from datetime import datetime
+from fintekkers.models.security.security_type_pb2 import SecurityTypeProto
 from fintekkers.wrappers.models.security_identifier import Identifier
 
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
@@ -90,6 +91,12 @@ class Security():
 
     def get_maturity_date(self) -> datetime:
         return ProtoSerializationUtil.deserialize(self.proto.maturity_date)
+
+    def get_security_type(self) -> SecurityTypeProto:
+        return self.proto.security_type
+
+    def get_description(self) -> str:
+        return self.proto.description
 
     def __str__(self):
         return f'ID[{str(self.get_security_id())}], {type(self).__name__}[{self.proto.issuer_name}]'

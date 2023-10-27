@@ -15,6 +15,9 @@ class Portfolio():
     def __str__(self):
         return f"ID[{self.proto.uuid}], Portfolio[{self.proto.portfolio_name}]"
     
+    def get_name(self):
+        return self.proto.portfolio_name
+    
     # def uuid(self) -> UUID:
     #     uuid:FintekkersUuid = ProtoSerializationUtil.deserialize(self.proto.uuid)
     #     return uuid.uuid
