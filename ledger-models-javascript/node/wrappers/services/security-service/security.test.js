@@ -49,6 +49,8 @@ var uuid = require("../../models/utils/uuid");
 var dt = require("../../models/utils/datetime");
 var SecurityService_1 = require("./SecurityService");
 var positionfilter_1 = require("../../models/position/positionfilter");
+var issuance_pb_1 = require("../../../fintekkers/models/security/bond/issuance_pb");
+var serialization_1 = require("../../models/utils/serialization");
 test('test creating a security against the api.fintekkers.org security service', function () { return __awaiter(void 0, void 0, void 0, function () {
     var isTrue;
     return __generator(this, function (_a) {
@@ -63,7 +65,7 @@ test('test creating a security against the api.fintekkers.org security service',
 }); }, 30000);
 function testSecurity() {
     return __awaiter(this, void 0, void 0, function () {
-        var id_proto, now, securityService, usd_security, security, faceValue, couponRate, issueDate, maturityDate, validationSummary, createSecurityResponse, searchResults;
+        var id_proto, now, securityService, usd_security, security, faceValue, couponRate, issueDate, maturityDate, issuance, validationSummary, createSecurityResponse, searchResults;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -106,6 +108,10 @@ function testSecurity() {
                     security.setMaturityDate(maturityDate);
                     security.setIssuerName('US Treasury');
                     security.setDescription('Dummy US Treasury 10Y Bond');
+                    issuance = new issuance_pb_1.IssuanceProto();
+                    issuance.setPostAuctionOutstandingQuantity(serialization_1.ProtoSerializationUtil.serialize(1000000.00));
+                    issuance.setTotalAccepted(serialization_1.ProtoSerializationUtil.serialize(100000000.00));
+                    security.addIssuanceInfo(issuance);
                     return [4 /*yield*/, securityService.validateCreateSecurity(security)];
                 case 2:
                     validationSummary = _a.sent();

@@ -42,33 +42,36 @@ var assert = require("assert");
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var SecurityService_1 = require("./SecurityService");
 var positionfilter_1 = require("../../models/position/positionfilter");
-var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 var serialization_1 = require("../../models/utils/serialization");
 test('test the api.fintekkers.org security service by creating a maturity ladder for the US government', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var securityService, positionFilter, securities, results, index, security, issuanceList, issuance, preAuctionQuantity, offeringAmount, result;
+    var securityService, positionFilter, securities, results, index, security, issuanceList, issuance, postAuctionQuantity, id, result;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 securityService = new SecurityService_1.SecurityService();
                 positionFilter = new positionfilter_1.PositionFilter();
-                positionFilter.addFilter(field_pb_1.FieldProto.MATURITY_DATE, new Date(), position_util_pb_1.PositionFilterOperator.MORE_THAN);
+                positionFilter.addEqualsFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income');
                 return [4 /*yield*/, securityService.searchSecurityAsOfNow(positionFilter)];
             case 1:
                 securities = _a.sent();
                 assert(securities.length > 0);
                 results = [];
+                //Map results into list of maps -> Date, Amount
                 for (index in securities) {
                     security = securities[index];
                     issuanceList = security.proto.getIssuanceInfoList();
-                    issuance = issuanceList ? issuanceList[0] : null;
-                    preAuctionQuantity = serialization_1.ProtoSerializationUtil.deserialize(issuance.getPreauctionOutstandingQuantity());
-                    offeringAmount = serialization_1.ProtoSerializationUtil.deserialize(issuance.getAuctionOfferingAmount());
-                    result = {
-                        'cusip': security.getSecurityID().getIdentifierValue(),
-                        'issueDate': security.getIssueDate(),
-                        'outstandingAmount': preAuctionQuantity + offeringAmount
-                    };
-                    results.push(result);
+                    issuance = issuanceList && issuanceList.length > 0 ? issuanceList[0] : null;
+                    if (issuance) {
+                        postAuctionQuantity = serialization_1.ProtoSerializationUtil.deserialize(issuance.getPostAuctionOutstandingQuantity());
+                        id = security.getSecurityID() ? security.getSecurityID().getIdentifierValue() : security.getID().toString();
+                        result = {
+                            'cusip': id,
+                            'issueDate': security.getIssueDate(),
+                            'outstandingAmount': postAuctionQuantity,
+                            'maturityDate': security.getMaturityDate()
+                        };
+                        results.push(result);
+                    }
                 }
                 console.log(results);
                 console.log("Done");

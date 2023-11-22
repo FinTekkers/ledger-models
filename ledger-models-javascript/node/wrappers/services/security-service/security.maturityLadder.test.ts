@@ -31,15 +31,13 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
         let issuance = issuanceList && issuanceList.length > 0 ? issuanceList[0] : null;
 
         if (issuance) {
-            let preAuctionQuantity: number = ProtoSerializationUtil.deserialize(issuance.getPreauctionOutstandingQuantity());
-            let totalAccepted: number = ProtoSerializationUtil.deserialize(issuance.getTotalAccepted());
-
+            let postAuctionQuantity: number = ProtoSerializationUtil.deserialize(issuance.getPostAuctionOutstandingQuantity());
             let id: string = security.getSecurityID() ? security.getSecurityID().getIdentifierValue() : security.getID().toString();
 
             let result = {
                 'cusip': id,
                 'issueDate': security.getIssueDate(),
-                'outstandingAmount': preAuctionQuantity + totalAccepted,
+                'outstandingAmount': postAuctionQuantity,
                 'maturityDate': security.getMaturityDate()
             };
             results.push(result);
