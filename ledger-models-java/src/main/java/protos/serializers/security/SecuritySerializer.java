@@ -62,6 +62,11 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             builder.setIdentifier(proto);
         }
 
+        //Preserving the auction data on the issuance proto.
+        if(security.getSecurityProto() != null && security.getSecurityProto().getIssuanceInfoCount() > 0) {
+            builder.addAllIssuanceInfo(security.getSecurityProto().getIssuanceInfoList());
+        }
+
         return builder.build();
     }
 
@@ -103,6 +108,9 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             Identifier identifier = IdentifierSerializer.getInstance().deserialize(proto.getIdentifier());
             security.setSecurityId(identifier);
         }
+
+        //Adding the security proto so we move other fields around too like the issuance info.
+        security.setSecurityProto(proto);
 
         return security;
     }

@@ -1,3 +1,4 @@
+import time
 from datetime import date, datetime
 from uuid import uuid4
 from google.protobuf.any_pb2 import Any
@@ -20,6 +21,8 @@ from fintekkers.models.security.security_type_pb2 import (
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 
+from fintekkers.models.security.bond.issuance_pb2 import IssuanceProto
+
 from fintekkers.requests.security.create_security_request_pb2 import (
     CreateSecurityRequestProto,
 )
@@ -27,11 +30,13 @@ from fintekkers.requests.security.query_security_request_pb2 import (
     QuerySecurityRequestProto,
 )
 
+from fintekkers.wrappers.models.security import Security
 from fintekkers.wrappers.models.util.date_utils import get_date_proto
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
 
 class CreateSecurityRequest:
+        
     @staticmethod
     def create_ust_security_request(
         cusip: str,
@@ -43,12 +48,17 @@ class CreateSecurityRequest:
         issue_date: date = date.today(),
         dated_date: date = date.today(),
         maturity_date: date = date.today(),
+        preauction_quantity:float = 0.0,
+        auction_total_accepted:float = 0.0,
+        auction_announcement_date: date = date.today(),
     ):
         """
         Creates a request to create a security representing a US treasury (bills, notes and bonds)
 
             Parameters:
-                    Parameters are already in protos, see type hints
+                    Parameters are already in protos, see type hints. Preauction quantity refers to the 
+                    amount of the security that existed before the auction of this security (for re-issues).
+                    Total accepted refers to the amount of bond that was sold at the auction.
 
             Returns:
                     request (CreateSecurityRequest): A request wrapper, with the fields attached
@@ -73,9 +83,11 @@ class CreateSecurityRequest:
         dated_date_proto = get_date_proto(dated_date) if dated_date != None else None
         maturity_date_proto = get_date_proto(maturity_date)
 
+        timstamp_seconds = int(time.mktime(issue_date.timetuple()))
+        
         security_proto: SecurityProto = SecurityProto(
             as_of=LocalTimestampProto(
-                time_zone="America/New_York", timestamp=Timestamp(seconds=1, nanos=0)
+                time_zone="America/New_York", timestamp=Timestamp(seconds=timstamp_seconds, nanos=0)
             ),
             uuid=UUIDProto(raw_uuid=uuid4().bytes),
             issuer_name="US Government",
@@ -91,11 +103,25 @@ class CreateSecurityRequest:
             coupon_rate=ProtoSerializationUtil.serialize(coupon_rate),
             asset_class="Fixed Income",
             face_value=ProtoSerializationUtil.serialize(face_value),
-            issuance_info=None,
+            issuance_info=[IssuanceProto(
+                as_of=LocalTimestampProto(
+                    time_zone="America/New_York", timestamp=Timestamp(seconds=timstamp_seconds, nanos=0)
+                ),
+                version="0.0.1",
+                auction_announcement_date=ProtoSerializationUtil.serialize(auction_announcement_date),
+                total_accepted=ProtoSerializationUtil.serialize(auction_total_accepted),
+                preauction_outstanding_quantity=ProtoSerializationUtil.serialize(preauction_quantity),
+            )],
         )
 
+        security = Security(security_proto)
+
+        return CreateSecurityRequest.create_or_update_request(security)
+
+    @staticmethod
+    def create_or_update_request(security:Security):
         proto: CreateSecurityRequestProto = CreateSecurityRequestProto(
-            security_input=security_proto
+            security_input=security.proto
         )
 
         return CreateSecurityRequest(proto=proto)

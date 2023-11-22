@@ -72,24 +72,50 @@ pub struct IssuanceProto {
     pub valid_from: ::core::option::Option<super::super::util::LocalTimestampProto>,
     #[prost(message, optional, tag = "9")]
     pub valid_to: ::core::option::Option<super::super::util::LocalTimestampProto>,
+    /// *
+    /// The date the auction was announced, has no bearing on the economics of the bond
     #[prost(message, optional, tag = "20")]
     pub auction_announcement_date: ::core::option::Option<
         super::super::util::LocalDateProto,
     >,
+    /// *
+    /// The date of the issue relating to this auction, i.e. when the securities will be issued to
+    /// buyers
     #[prost(message, optional, tag = "21")]
     pub auction_issue_date: ::core::option::Option<super::super::util::LocalDateProto>,
+    /// *
+    /// The amount of this security that is outstanding in the market before this auction
     #[prost(message, optional, tag = "22")]
-    pub preauction_outstanding_quantity: ::core::option::Option<
+    pub post_auction_outstanding_quantity: ::core::option::Option<
         super::super::util::DecimalValueProto,
     >,
+    /// *
+    /// The amount of bond issuance expected during this auction. This is an indicative amount and
+    /// may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+    /// bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+    /// Federal programs such as SOMA/FIMA.
     #[prost(message, optional, tag = "23")]
     pub auction_offering_amount: ::core::option::Option<
         super::super::util::DecimalValueProto,
     >,
+    /// **
+    /// The type of auction, see the enum for details on types.
     #[prost(enumeration = "AuctionTypeProto", tag = "24")]
     pub auction_type: i32,
+    /// *
+    /// If the auction was a single price auction, this is the price paid by bidders
     #[prost(message, optional, tag = "25")]
     pub price_for_single_price_auction: ::core::option::Option<
+        super::super::util::DecimalValueProto,
+    >,
+    /// *
+    /// The total amount of the security sold by this auction.
+    #[prost(message, optional, tag = "26")]
+    pub total_accepted: ::core::option::Option<super::super::util::DecimalValueProto>,
+    /// *
+    /// The amount of this security that will mature on the security's maturity date
+    #[prost(message, optional, tag = "27")]
+    pub mature_security_amount: ::core::option::Option<
         super::super::util::DecimalValueProto,
     >,
 }

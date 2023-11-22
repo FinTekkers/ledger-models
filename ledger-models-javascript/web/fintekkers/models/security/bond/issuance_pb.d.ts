@@ -38,10 +38,10 @@ export class IssuanceProto extends jspb.Message {
   hasAuctionIssueDate(): boolean;
   clearAuctionIssueDate(): IssuanceProto;
 
-  getPreauctionOutstandingQuantity(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-  setPreauctionOutstandingQuantity(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): IssuanceProto;
-  hasPreauctionOutstandingQuantity(): boolean;
-  clearPreauctionOutstandingQuantity(): IssuanceProto;
+  getPostAuctionOutstandingQuantity(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+  setPostAuctionOutstandingQuantity(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): IssuanceProto;
+  hasPostAuctionOutstandingQuantity(): boolean;
+  clearPostAuctionOutstandingQuantity(): IssuanceProto;
 
   getAuctionOfferingAmount(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
   setAuctionOfferingAmount(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): IssuanceProto;
@@ -55,6 +55,16 @@ export class IssuanceProto extends jspb.Message {
   setPriceForSinglePriceAuction(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): IssuanceProto;
   hasPriceForSinglePriceAuction(): boolean;
   clearPriceForSinglePriceAuction(): IssuanceProto;
+
+  getTotalAccepted(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+  setTotalAccepted(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): IssuanceProto;
+  hasTotalAccepted(): boolean;
+  clearTotalAccepted(): IssuanceProto;
+
+  getMatureSecurityAmount(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+  setMatureSecurityAmount(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): IssuanceProto;
+  hasMatureSecurityAmount(): boolean;
+  clearMatureSecurityAmount(): IssuanceProto;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): IssuanceProto.AsObject;
@@ -73,10 +83,12 @@ export namespace IssuanceProto {
     validTo?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
     auctionAnnouncementDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
     auctionIssueDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-    preauctionOutstandingQuantity?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+    postAuctionOutstandingQuantity?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     auctionOfferingAmount?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     auctionType: fintekkers_models_security_bond_auction_type_pb.AuctionTypeProto,
     priceForSinglePriceAuction?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+    totalAccepted?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+    matureSecurityAmount?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
   }
 }
 

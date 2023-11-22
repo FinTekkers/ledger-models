@@ -15,6 +15,8 @@ import * as dt from '../../models/utils/datetime';
 import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
 import { SecurityService } from './SecurityService';
 import { PositionFilter } from '../../models/position/positionfilter';
+import { IssuanceProto } from '../../../fintekkers/models/security/bond/issuance_pb';
+import { ProtoSerializationUtil } from '../../models/utils/serialization';
 
 test('test creating a security against the api.fintekkers.org security service', async () => {
   const isTrue = await testSecurity();
@@ -28,7 +30,7 @@ async function testSecurity(): Promise<boolean> {
   const securityService = new SecurityService();
 
   let usd_security = await securityService
-    .searchSecurity(now.toProto(), new PositionFilter().addFilter(FieldProto.ASSET_CLASS, 'Cash'))
+    .searchSecurity(now.toProto(), new PositionFilter().addEqualsFilter(FieldProto.ASSET_CLASS, 'Cash'))
     .then((securities) => {
       return securities[0];
     });
@@ -68,13 +70,18 @@ async function testSecurity(): Promise<boolean> {
   security.setIssuerName('US Treasury');
   security.setDescription('Dummy US Treasury 10Y Bond');
 
+  const issuance = new IssuanceProto();
+  issuance.setPreauctionOutstandingQuantity(ProtoSerializationUtil.serialize(1000000.00));
+  issuance.setTotalAccepted(ProtoSerializationUtil.serialize(100000000.00));
+  security.addIssuanceInfo(issuance);
+
   var validationSummary = await securityService.validateCreateSecurity(security);
   expect(validationSummary.getErrorsList().length).toBe(0);
 
   var createSecurityResponse: CreateSecurityResponseProto = await securityService.createSecurity(security);
   expect(createSecurityResponse.getSecurityResponse()).toBeTruthy();
 
-  var searchResults = await securityService.searchSecurity(now.toProto(), new PositionFilter().addFilter(FieldProto.ASSET_CLASS, 'Fixed Income'));
+  var searchResults = await securityService.searchSecurity(now.toProto(), new PositionFilter().addEqualsFilter(FieldProto.ASSET_CLASS, 'Fixed Income'));
   expect(searchResults.length).toBeGreaterThan(0);
 
   return true;

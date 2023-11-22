@@ -5,6 +5,7 @@ import common.models.RawDataModelObject;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.security.identifier.Identifier;
+import fintekkers.models.security.SecurityProto;
 import fintekkers.models.security.SecurityTypeProto;
 
 import java.math.BigDecimal;
@@ -22,10 +23,36 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
 
     private String description;
 
+    private SecurityProto _sourceProto;
+
     public Security(UUID id, String issuer, ZonedDateTime asOf, CashSecurity settlementCurrency) {
         super(id, asOf);
         this.issuer = issuer;
         this.settlementCurrency = settlementCurrency;
+    }
+
+    /**
+     * Experimental. DO NOT USE.
+     *
+     * @return the security proto
+     * */
+    public SecurityProto getSecurityProto() {
+        return this._sourceProto;
+    }
+
+    /**
+     * Experimental. DO NOT USE. Rather than serializing/deserializing protos, we're going to
+     * migrate the security to store the proto. This will be more extensible as it
+     * means you can add fields to the security object without any code changes
+     * to this codebase. However it may mean we create more Java-specific objects
+     * like ZonedDateTime etc if we do it on-demand without caching.
+     *
+     * This should be called only when initializing the security object.
+     *
+     * @param proto
+     */
+    public void setSecurityProto(SecurityProto proto) {
+        this._sourceProto = proto;
     }
 
     public CashSecurity getSettlementCurrency() {

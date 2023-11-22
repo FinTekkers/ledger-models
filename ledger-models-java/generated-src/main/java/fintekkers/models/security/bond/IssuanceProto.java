@@ -161,13 +161,13 @@ private static final long serialVersionUID = 0L;
           }
           case 178: {
             fintekkers.models.util.DecimalValue.DecimalValueProto.Builder subBuilder = null;
-            if (preauctionOutstandingQuantity_ != null) {
-              subBuilder = preauctionOutstandingQuantity_.toBuilder();
+            if (postAuctionOutstandingQuantity_ != null) {
+              subBuilder = postAuctionOutstandingQuantity_.toBuilder();
             }
-            preauctionOutstandingQuantity_ = input.readMessage(fintekkers.models.util.DecimalValue.DecimalValueProto.parser(), extensionRegistry);
+            postAuctionOutstandingQuantity_ = input.readMessage(fintekkers.models.util.DecimalValue.DecimalValueProto.parser(), extensionRegistry);
             if (subBuilder != null) {
-              subBuilder.mergeFrom(preauctionOutstandingQuantity_);
-              preauctionOutstandingQuantity_ = subBuilder.buildPartial();
+              subBuilder.mergeFrom(postAuctionOutstandingQuantity_);
+              postAuctionOutstandingQuantity_ = subBuilder.buildPartial();
             }
 
             break;
@@ -200,6 +200,32 @@ private static final long serialVersionUID = 0L;
             if (subBuilder != null) {
               subBuilder.mergeFrom(priceForSinglePriceAuction_);
               priceForSinglePriceAuction_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
+          case 210: {
+            fintekkers.models.util.DecimalValue.DecimalValueProto.Builder subBuilder = null;
+            if (totalAccepted_ != null) {
+              subBuilder = totalAccepted_.toBuilder();
+            }
+            totalAccepted_ = input.readMessage(fintekkers.models.util.DecimalValue.DecimalValueProto.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(totalAccepted_);
+              totalAccepted_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
+          case 218: {
+            fintekkers.models.util.DecimalValue.DecimalValueProto.Builder subBuilder = null;
+            if (matureSecurityAmount_ != null) {
+              subBuilder = matureSecurityAmount_.toBuilder();
+            }
+            matureSecurityAmount_ = input.readMessage(fintekkers.models.util.DecimalValue.DecimalValueProto.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(matureSecurityAmount_);
+              matureSecurityAmount_ = subBuilder.buildPartial();
             }
 
             break;
@@ -408,6 +434,11 @@ private static final long serialVersionUID = 0L;
   public static final int AUCTION_ANNOUNCEMENT_DATE_FIELD_NUMBER = 20;
   private fintekkers.models.util.LocalDate.LocalDateProto auctionAnnouncementDate_;
   /**
+   * <pre>
+   **
+   *The date the auction was announced, has no bearing on the economics of the bond
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
    * @return Whether the auctionAnnouncementDate field is set.
    */
@@ -416,6 +447,11 @@ private static final long serialVersionUID = 0L;
     return auctionAnnouncementDate_ != null;
   }
   /**
+   * <pre>
+   **
+   *The date the auction was announced, has no bearing on the economics of the bond
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
    * @return The auctionAnnouncementDate.
    */
@@ -424,6 +460,11 @@ private static final long serialVersionUID = 0L;
     return auctionAnnouncementDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : auctionAnnouncementDate_;
   }
   /**
+   * <pre>
+   **
+   *The date the auction was announced, has no bearing on the economics of the bond
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
    */
   @java.lang.Override
@@ -434,6 +475,12 @@ private static final long serialVersionUID = 0L;
   public static final int AUCTION_ISSUE_DATE_FIELD_NUMBER = 21;
   private fintekkers.models.util.LocalDate.LocalDateProto auctionIssueDate_;
   /**
+   * <pre>
+   **
+   *The date of the issue relating to this auction, i.e. when the securities will be issued to
+   *buyers
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
    * @return Whether the auctionIssueDate field is set.
    */
@@ -442,6 +489,12 @@ private static final long serialVersionUID = 0L;
     return auctionIssueDate_ != null;
   }
   /**
+   * <pre>
+   **
+   *The date of the issue relating to this auction, i.e. when the securities will be issued to
+   *buyers
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
    * @return The auctionIssueDate.
    */
@@ -450,6 +503,12 @@ private static final long serialVersionUID = 0L;
     return auctionIssueDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : auctionIssueDate_;
   }
   /**
+   * <pre>
+   **
+   *The date of the issue relating to this auction, i.e. when the securities will be issued to
+   *buyers
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
    */
   @java.lang.Override
@@ -457,35 +516,58 @@ private static final long serialVersionUID = 0L;
     return getAuctionIssueDate();
   }
 
-  public static final int PREAUCTION_OUTSTANDING_QUANTITY_FIELD_NUMBER = 22;
-  private fintekkers.models.util.DecimalValue.DecimalValueProto preauctionOutstandingQuantity_;
+  public static final int POST_AUCTION_OUTSTANDING_QUANTITY_FIELD_NUMBER = 22;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto postAuctionOutstandingQuantity_;
   /**
-   * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
-   * @return Whether the preauctionOutstandingQuantity field is set.
+   * <pre>
+   **
+   *The amount of this security that is outstanding in the market before this auction
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
+   * @return Whether the postAuctionOutstandingQuantity field is set.
    */
   @java.lang.Override
-  public boolean hasPreauctionOutstandingQuantity() {
-    return preauctionOutstandingQuantity_ != null;
+  public boolean hasPostAuctionOutstandingQuantity() {
+    return postAuctionOutstandingQuantity_ != null;
   }
   /**
-   * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
-   * @return The preauctionOutstandingQuantity.
+   * <pre>
+   **
+   *The amount of this security that is outstanding in the market before this auction
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
+   * @return The postAuctionOutstandingQuantity.
    */
   @java.lang.Override
-  public fintekkers.models.util.DecimalValue.DecimalValueProto getPreauctionOutstandingQuantity() {
-    return preauctionOutstandingQuantity_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : preauctionOutstandingQuantity_;
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getPostAuctionOutstandingQuantity() {
+    return postAuctionOutstandingQuantity_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : postAuctionOutstandingQuantity_;
   }
   /**
-   * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
+   * <pre>
+   **
+   *The amount of this security that is outstanding in the market before this auction
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
    */
   @java.lang.Override
-  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPreauctionOutstandingQuantityOrBuilder() {
-    return getPreauctionOutstandingQuantity();
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPostAuctionOutstandingQuantityOrBuilder() {
+    return getPostAuctionOutstandingQuantity();
   }
 
   public static final int AUCTION_OFFERING_AMOUNT_FIELD_NUMBER = 23;
   private fintekkers.models.util.DecimalValue.DecimalValueProto auctionOfferingAmount_;
   /**
+   * <pre>
+   **
+   *The amount of bond issuance expected during this auction. This is an indicative amount and
+   *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+   *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+   *Federal programs such as SOMA/FIMA.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
    * @return Whether the auctionOfferingAmount field is set.
    */
@@ -494,6 +576,14 @@ private static final long serialVersionUID = 0L;
     return auctionOfferingAmount_ != null;
   }
   /**
+   * <pre>
+   **
+   *The amount of bond issuance expected during this auction. This is an indicative amount and
+   *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+   *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+   *Federal programs such as SOMA/FIMA.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
    * @return The auctionOfferingAmount.
    */
@@ -502,6 +592,14 @@ private static final long serialVersionUID = 0L;
     return auctionOfferingAmount_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : auctionOfferingAmount_;
   }
   /**
+   * <pre>
+   **
+   *The amount of bond issuance expected during this auction. This is an indicative amount and
+   *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+   *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+   *Federal programs such as SOMA/FIMA.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
    */
   @java.lang.Override
@@ -512,6 +610,11 @@ private static final long serialVersionUID = 0L;
   public static final int AUCTION_TYPE_FIELD_NUMBER = 24;
   private int auctionType_;
   /**
+   * <pre>
+   ***
+   *The type of auction, see the enum for details on types.
+   * </pre>
+   *
    * <code>.fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;</code>
    * @return The enum numeric value on the wire for auctionType.
    */
@@ -519,6 +622,11 @@ private static final long serialVersionUID = 0L;
     return auctionType_;
   }
   /**
+   * <pre>
+   ***
+   *The type of auction, see the enum for details on types.
+   * </pre>
+   *
    * <code>.fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;</code>
    * @return The auctionType.
    */
@@ -531,6 +639,11 @@ private static final long serialVersionUID = 0L;
   public static final int PRICE_FOR_SINGLE_PRICE_AUCTION_FIELD_NUMBER = 25;
   private fintekkers.models.util.DecimalValue.DecimalValueProto priceForSinglePriceAuction_;
   /**
+   * <pre>
+   **
+   *If the auction was a single price auction, this is the price paid by bidders
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
    * @return Whether the priceForSinglePriceAuction field is set.
    */
@@ -539,6 +652,11 @@ private static final long serialVersionUID = 0L;
     return priceForSinglePriceAuction_ != null;
   }
   /**
+   * <pre>
+   **
+   *If the auction was a single price auction, this is the price paid by bidders
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
    * @return The priceForSinglePriceAuction.
    */
@@ -547,11 +665,98 @@ private static final long serialVersionUID = 0L;
     return priceForSinglePriceAuction_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : priceForSinglePriceAuction_;
   }
   /**
+   * <pre>
+   **
+   *If the auction was a single price auction, this is the price paid by bidders
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
    */
   @java.lang.Override
   public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPriceForSinglePriceAuctionOrBuilder() {
     return getPriceForSinglePriceAuction();
+  }
+
+  public static final int TOTAL_ACCEPTED_FIELD_NUMBER = 26;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto totalAccepted_;
+  /**
+   * <pre>
+   **
+   *The total amount of the security sold by this auction.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+   * @return Whether the totalAccepted field is set.
+   */
+  @java.lang.Override
+  public boolean hasTotalAccepted() {
+    return totalAccepted_ != null;
+  }
+  /**
+   * <pre>
+   **
+   *The total amount of the security sold by this auction.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+   * @return The totalAccepted.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getTotalAccepted() {
+    return totalAccepted_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : totalAccepted_;
+  }
+  /**
+   * <pre>
+   **
+   *The total amount of the security sold by this auction.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getTotalAcceptedOrBuilder() {
+    return getTotalAccepted();
+  }
+
+  public static final int MATURE_SECURITY_AMOUNT_FIELD_NUMBER = 27;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto matureSecurityAmount_;
+  /**
+   * <pre>
+   **
+   *The amount of this security that will mature on the security's maturity date
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+   * @return Whether the matureSecurityAmount field is set.
+   */
+  @java.lang.Override
+  public boolean hasMatureSecurityAmount() {
+    return matureSecurityAmount_ != null;
+  }
+  /**
+   * <pre>
+   **
+   *The amount of this security that will mature on the security's maturity date
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+   * @return The matureSecurityAmount.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getMatureSecurityAmount() {
+    return matureSecurityAmount_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : matureSecurityAmount_;
+  }
+  /**
+   * <pre>
+   **
+   *The amount of this security that will mature on the security's maturity date
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getMatureSecurityAmountOrBuilder() {
+    return getMatureSecurityAmount();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -589,8 +794,8 @@ private static final long serialVersionUID = 0L;
     if (auctionIssueDate_ != null) {
       output.writeMessage(21, getAuctionIssueDate());
     }
-    if (preauctionOutstandingQuantity_ != null) {
-      output.writeMessage(22, getPreauctionOutstandingQuantity());
+    if (postAuctionOutstandingQuantity_ != null) {
+      output.writeMessage(22, getPostAuctionOutstandingQuantity());
     }
     if (auctionOfferingAmount_ != null) {
       output.writeMessage(23, getAuctionOfferingAmount());
@@ -600,6 +805,12 @@ private static final long serialVersionUID = 0L;
     }
     if (priceForSinglePriceAuction_ != null) {
       output.writeMessage(25, getPriceForSinglePriceAuction());
+    }
+    if (totalAccepted_ != null) {
+      output.writeMessage(26, getTotalAccepted());
+    }
+    if (matureSecurityAmount_ != null) {
+      output.writeMessage(27, getMatureSecurityAmount());
     }
     unknownFields.writeTo(output);
   }
@@ -636,9 +847,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(21, getAuctionIssueDate());
     }
-    if (preauctionOutstandingQuantity_ != null) {
+    if (postAuctionOutstandingQuantity_ != null) {
       size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(22, getPreauctionOutstandingQuantity());
+        .computeMessageSize(22, getPostAuctionOutstandingQuantity());
     }
     if (auctionOfferingAmount_ != null) {
       size += com.google.protobuf.CodedOutputStream
@@ -651,6 +862,14 @@ private static final long serialVersionUID = 0L;
     if (priceForSinglePriceAuction_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(25, getPriceForSinglePriceAuction());
+    }
+    if (totalAccepted_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(26, getTotalAccepted());
+    }
+    if (matureSecurityAmount_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(27, getMatureSecurityAmount());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -696,10 +915,10 @@ private static final long serialVersionUID = 0L;
       if (!getAuctionIssueDate()
           .equals(other.getAuctionIssueDate())) return false;
     }
-    if (hasPreauctionOutstandingQuantity() != other.hasPreauctionOutstandingQuantity()) return false;
-    if (hasPreauctionOutstandingQuantity()) {
-      if (!getPreauctionOutstandingQuantity()
-          .equals(other.getPreauctionOutstandingQuantity())) return false;
+    if (hasPostAuctionOutstandingQuantity() != other.hasPostAuctionOutstandingQuantity()) return false;
+    if (hasPostAuctionOutstandingQuantity()) {
+      if (!getPostAuctionOutstandingQuantity()
+          .equals(other.getPostAuctionOutstandingQuantity())) return false;
     }
     if (hasAuctionOfferingAmount() != other.hasAuctionOfferingAmount()) return false;
     if (hasAuctionOfferingAmount()) {
@@ -711,6 +930,16 @@ private static final long serialVersionUID = 0L;
     if (hasPriceForSinglePriceAuction()) {
       if (!getPriceForSinglePriceAuction()
           .equals(other.getPriceForSinglePriceAuction())) return false;
+    }
+    if (hasTotalAccepted() != other.hasTotalAccepted()) return false;
+    if (hasTotalAccepted()) {
+      if (!getTotalAccepted()
+          .equals(other.getTotalAccepted())) return false;
+    }
+    if (hasMatureSecurityAmount() != other.hasMatureSecurityAmount()) return false;
+    if (hasMatureSecurityAmount()) {
+      if (!getMatureSecurityAmount()
+          .equals(other.getMatureSecurityAmount())) return false;
     }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
@@ -747,9 +976,9 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + AUCTION_ISSUE_DATE_FIELD_NUMBER;
       hash = (53 * hash) + getAuctionIssueDate().hashCode();
     }
-    if (hasPreauctionOutstandingQuantity()) {
-      hash = (37 * hash) + PREAUCTION_OUTSTANDING_QUANTITY_FIELD_NUMBER;
-      hash = (53 * hash) + getPreauctionOutstandingQuantity().hashCode();
+    if (hasPostAuctionOutstandingQuantity()) {
+      hash = (37 * hash) + POST_AUCTION_OUTSTANDING_QUANTITY_FIELD_NUMBER;
+      hash = (53 * hash) + getPostAuctionOutstandingQuantity().hashCode();
     }
     if (hasAuctionOfferingAmount()) {
       hash = (37 * hash) + AUCTION_OFFERING_AMOUNT_FIELD_NUMBER;
@@ -760,6 +989,14 @@ private static final long serialVersionUID = 0L;
     if (hasPriceForSinglePriceAuction()) {
       hash = (37 * hash) + PRICE_FOR_SINGLE_PRICE_AUCTION_FIELD_NUMBER;
       hash = (53 * hash) + getPriceForSinglePriceAuction().hashCode();
+    }
+    if (hasTotalAccepted()) {
+      hash = (37 * hash) + TOTAL_ACCEPTED_FIELD_NUMBER;
+      hash = (53 * hash) + getTotalAccepted().hashCode();
+    }
+    if (hasMatureSecurityAmount()) {
+      hash = (37 * hash) + MATURE_SECURITY_AMOUNT_FIELD_NUMBER;
+      hash = (53 * hash) + getMatureSecurityAmount().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -959,11 +1196,11 @@ private static final long serialVersionUID = 0L;
         auctionIssueDate_ = null;
         auctionIssueDateBuilder_ = null;
       }
-      if (preauctionOutstandingQuantityBuilder_ == null) {
-        preauctionOutstandingQuantity_ = null;
+      if (postAuctionOutstandingQuantityBuilder_ == null) {
+        postAuctionOutstandingQuantity_ = null;
       } else {
-        preauctionOutstandingQuantity_ = null;
-        preauctionOutstandingQuantityBuilder_ = null;
+        postAuctionOutstandingQuantity_ = null;
+        postAuctionOutstandingQuantityBuilder_ = null;
       }
       if (auctionOfferingAmountBuilder_ == null) {
         auctionOfferingAmount_ = null;
@@ -978,6 +1215,18 @@ private static final long serialVersionUID = 0L;
       } else {
         priceForSinglePriceAuction_ = null;
         priceForSinglePriceAuctionBuilder_ = null;
+      }
+      if (totalAcceptedBuilder_ == null) {
+        totalAccepted_ = null;
+      } else {
+        totalAccepted_ = null;
+        totalAcceptedBuilder_ = null;
+      }
+      if (matureSecurityAmountBuilder_ == null) {
+        matureSecurityAmount_ = null;
+      } else {
+        matureSecurityAmount_ = null;
+        matureSecurityAmountBuilder_ = null;
       }
       return this;
     }
@@ -1032,10 +1281,10 @@ private static final long serialVersionUID = 0L;
       } else {
         result.auctionIssueDate_ = auctionIssueDateBuilder_.build();
       }
-      if (preauctionOutstandingQuantityBuilder_ == null) {
-        result.preauctionOutstandingQuantity_ = preauctionOutstandingQuantity_;
+      if (postAuctionOutstandingQuantityBuilder_ == null) {
+        result.postAuctionOutstandingQuantity_ = postAuctionOutstandingQuantity_;
       } else {
-        result.preauctionOutstandingQuantity_ = preauctionOutstandingQuantityBuilder_.build();
+        result.postAuctionOutstandingQuantity_ = postAuctionOutstandingQuantityBuilder_.build();
       }
       if (auctionOfferingAmountBuilder_ == null) {
         result.auctionOfferingAmount_ = auctionOfferingAmount_;
@@ -1047,6 +1296,16 @@ private static final long serialVersionUID = 0L;
         result.priceForSinglePriceAuction_ = priceForSinglePriceAuction_;
       } else {
         result.priceForSinglePriceAuction_ = priceForSinglePriceAuctionBuilder_.build();
+      }
+      if (totalAcceptedBuilder_ == null) {
+        result.totalAccepted_ = totalAccepted_;
+      } else {
+        result.totalAccepted_ = totalAcceptedBuilder_.build();
+      }
+      if (matureSecurityAmountBuilder_ == null) {
+        result.matureSecurityAmount_ = matureSecurityAmount_;
+      } else {
+        result.matureSecurityAmount_ = matureSecurityAmountBuilder_.build();
       }
       onBuilt();
       return result;
@@ -1119,8 +1378,8 @@ private static final long serialVersionUID = 0L;
       if (other.hasAuctionIssueDate()) {
         mergeAuctionIssueDate(other.getAuctionIssueDate());
       }
-      if (other.hasPreauctionOutstandingQuantity()) {
-        mergePreauctionOutstandingQuantity(other.getPreauctionOutstandingQuantity());
+      if (other.hasPostAuctionOutstandingQuantity()) {
+        mergePostAuctionOutstandingQuantity(other.getPostAuctionOutstandingQuantity());
       }
       if (other.hasAuctionOfferingAmount()) {
         mergeAuctionOfferingAmount(other.getAuctionOfferingAmount());
@@ -1130,6 +1389,12 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasPriceForSinglePriceAuction()) {
         mergePriceForSinglePriceAuction(other.getPriceForSinglePriceAuction());
+      }
+      if (other.hasTotalAccepted()) {
+        mergeTotalAccepted(other.getTotalAccepted());
+      }
+      if (other.hasMatureSecurityAmount()) {
+        mergeMatureSecurityAmount(other.getMatureSecurityAmount());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1718,6 +1983,11 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> auctionAnnouncementDateBuilder_;
     /**
+     * <pre>
+     **
+     *The date the auction was announced, has no bearing on the economics of the bond
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
      * @return Whether the auctionAnnouncementDate field is set.
      */
@@ -1725,6 +1995,11 @@ private static final long serialVersionUID = 0L;
       return auctionAnnouncementDateBuilder_ != null || auctionAnnouncementDate_ != null;
     }
     /**
+     * <pre>
+     **
+     *The date the auction was announced, has no bearing on the economics of the bond
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
      * @return The auctionAnnouncementDate.
      */
@@ -1736,6 +2011,11 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     **
+     *The date the auction was announced, has no bearing on the economics of the bond
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
      */
     public Builder setAuctionAnnouncementDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
@@ -1752,6 +2032,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The date the auction was announced, has no bearing on the economics of the bond
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
      */
     public Builder setAuctionAnnouncementDate(
@@ -1766,6 +2051,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The date the auction was announced, has no bearing on the economics of the bond
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
      */
     public Builder mergeAuctionAnnouncementDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
@@ -1784,6 +2074,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The date the auction was announced, has no bearing on the economics of the bond
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
      */
     public Builder clearAuctionAnnouncementDate() {
@@ -1798,6 +2093,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The date the auction was announced, has no bearing on the economics of the bond
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
      */
     public fintekkers.models.util.LocalDate.LocalDateProto.Builder getAuctionAnnouncementDateBuilder() {
@@ -1806,6 +2106,11 @@ private static final long serialVersionUID = 0L;
       return getAuctionAnnouncementDateFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     **
+     *The date the auction was announced, has no bearing on the economics of the bond
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
      */
     public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getAuctionAnnouncementDateOrBuilder() {
@@ -1817,6 +2122,11 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     **
+     *The date the auction was announced, has no bearing on the economics of the bond
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -1837,6 +2147,12 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> auctionIssueDateBuilder_;
     /**
+     * <pre>
+     **
+     *The date of the issue relating to this auction, i.e. when the securities will be issued to
+     *buyers
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
      * @return Whether the auctionIssueDate field is set.
      */
@@ -1844,6 +2160,12 @@ private static final long serialVersionUID = 0L;
       return auctionIssueDateBuilder_ != null || auctionIssueDate_ != null;
     }
     /**
+     * <pre>
+     **
+     *The date of the issue relating to this auction, i.e. when the securities will be issued to
+     *buyers
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
      * @return The auctionIssueDate.
      */
@@ -1855,6 +2177,12 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     **
+     *The date of the issue relating to this auction, i.e. when the securities will be issued to
+     *buyers
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
      */
     public Builder setAuctionIssueDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
@@ -1871,6 +2199,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The date of the issue relating to this auction, i.e. when the securities will be issued to
+     *buyers
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
      */
     public Builder setAuctionIssueDate(
@@ -1885,6 +2219,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The date of the issue relating to this auction, i.e. when the securities will be issued to
+     *buyers
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
      */
     public Builder mergeAuctionIssueDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
@@ -1903,6 +2243,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The date of the issue relating to this auction, i.e. when the securities will be issued to
+     *buyers
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
      */
     public Builder clearAuctionIssueDate() {
@@ -1917,6 +2263,12 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The date of the issue relating to this auction, i.e. when the securities will be issued to
+     *buyers
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
      */
     public fintekkers.models.util.LocalDate.LocalDateProto.Builder getAuctionIssueDateBuilder() {
@@ -1925,6 +2277,12 @@ private static final long serialVersionUID = 0L;
       return getAuctionIssueDateFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     **
+     *The date of the issue relating to this auction, i.e. when the securities will be issued to
+     *buyers
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
      */
     public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getAuctionIssueDateOrBuilder() {
@@ -1936,6 +2294,12 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     **
+     *The date of the issue relating to this auction, i.e. when the securities will be issued to
+     *buyers
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -1952,129 +2316,182 @@ private static final long serialVersionUID = 0L;
       return auctionIssueDateBuilder_;
     }
 
-    private fintekkers.models.util.DecimalValue.DecimalValueProto preauctionOutstandingQuantity_;
+    private fintekkers.models.util.DecimalValue.DecimalValueProto postAuctionOutstandingQuantity_;
     private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> preauctionOutstandingQuantityBuilder_;
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> postAuctionOutstandingQuantityBuilder_;
     /**
-     * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
-     * @return Whether the preauctionOutstandingQuantity field is set.
+     * <pre>
+     **
+     *The amount of this security that is outstanding in the market before this auction
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
+     * @return Whether the postAuctionOutstandingQuantity field is set.
      */
-    public boolean hasPreauctionOutstandingQuantity() {
-      return preauctionOutstandingQuantityBuilder_ != null || preauctionOutstandingQuantity_ != null;
+    public boolean hasPostAuctionOutstandingQuantity() {
+      return postAuctionOutstandingQuantityBuilder_ != null || postAuctionOutstandingQuantity_ != null;
     }
     /**
-     * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
-     * @return The preauctionOutstandingQuantity.
+     * <pre>
+     **
+     *The amount of this security that is outstanding in the market before this auction
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
+     * @return The postAuctionOutstandingQuantity.
      */
-    public fintekkers.models.util.DecimalValue.DecimalValueProto getPreauctionOutstandingQuantity() {
-      if (preauctionOutstandingQuantityBuilder_ == null) {
-        return preauctionOutstandingQuantity_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : preauctionOutstandingQuantity_;
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getPostAuctionOutstandingQuantity() {
+      if (postAuctionOutstandingQuantityBuilder_ == null) {
+        return postAuctionOutstandingQuantity_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : postAuctionOutstandingQuantity_;
       } else {
-        return preauctionOutstandingQuantityBuilder_.getMessage();
+        return postAuctionOutstandingQuantityBuilder_.getMessage();
       }
     }
     /**
-     * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
+     * <pre>
+     **
+     *The amount of this security that is outstanding in the market before this auction
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
      */
-    public Builder setPreauctionOutstandingQuantity(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
-      if (preauctionOutstandingQuantityBuilder_ == null) {
+    public Builder setPostAuctionOutstandingQuantity(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (postAuctionOutstandingQuantityBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        preauctionOutstandingQuantity_ = value;
+        postAuctionOutstandingQuantity_ = value;
         onChanged();
       } else {
-        preauctionOutstandingQuantityBuilder_.setMessage(value);
+        postAuctionOutstandingQuantityBuilder_.setMessage(value);
       }
 
       return this;
     }
     /**
-     * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
+     * <pre>
+     **
+     *The amount of this security that is outstanding in the market before this auction
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
      */
-    public Builder setPreauctionOutstandingQuantity(
+    public Builder setPostAuctionOutstandingQuantity(
         fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
-      if (preauctionOutstandingQuantityBuilder_ == null) {
-        preauctionOutstandingQuantity_ = builderForValue.build();
+      if (postAuctionOutstandingQuantityBuilder_ == null) {
+        postAuctionOutstandingQuantity_ = builderForValue.build();
         onChanged();
       } else {
-        preauctionOutstandingQuantityBuilder_.setMessage(builderForValue.build());
+        postAuctionOutstandingQuantityBuilder_.setMessage(builderForValue.build());
       }
 
       return this;
     }
     /**
-     * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
+     * <pre>
+     **
+     *The amount of this security that is outstanding in the market before this auction
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
      */
-    public Builder mergePreauctionOutstandingQuantity(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
-      if (preauctionOutstandingQuantityBuilder_ == null) {
-        if (preauctionOutstandingQuantity_ != null) {
-          preauctionOutstandingQuantity_ =
-            fintekkers.models.util.DecimalValue.DecimalValueProto.newBuilder(preauctionOutstandingQuantity_).mergeFrom(value).buildPartial();
+    public Builder mergePostAuctionOutstandingQuantity(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (postAuctionOutstandingQuantityBuilder_ == null) {
+        if (postAuctionOutstandingQuantity_ != null) {
+          postAuctionOutstandingQuantity_ =
+            fintekkers.models.util.DecimalValue.DecimalValueProto.newBuilder(postAuctionOutstandingQuantity_).mergeFrom(value).buildPartial();
         } else {
-          preauctionOutstandingQuantity_ = value;
+          postAuctionOutstandingQuantity_ = value;
         }
         onChanged();
       } else {
-        preauctionOutstandingQuantityBuilder_.mergeFrom(value);
+        postAuctionOutstandingQuantityBuilder_.mergeFrom(value);
       }
 
       return this;
     }
     /**
-     * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
+     * <pre>
+     **
+     *The amount of this security that is outstanding in the market before this auction
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
      */
-    public Builder clearPreauctionOutstandingQuantity() {
-      if (preauctionOutstandingQuantityBuilder_ == null) {
-        preauctionOutstandingQuantity_ = null;
+    public Builder clearPostAuctionOutstandingQuantity() {
+      if (postAuctionOutstandingQuantityBuilder_ == null) {
+        postAuctionOutstandingQuantity_ = null;
         onChanged();
       } else {
-        preauctionOutstandingQuantity_ = null;
-        preauctionOutstandingQuantityBuilder_ = null;
+        postAuctionOutstandingQuantity_ = null;
+        postAuctionOutstandingQuantityBuilder_ = null;
       }
 
       return this;
     }
     /**
-     * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
+     * <pre>
+     **
+     *The amount of this security that is outstanding in the market before this auction
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
      */
-    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getPreauctionOutstandingQuantityBuilder() {
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getPostAuctionOutstandingQuantityBuilder() {
       
       onChanged();
-      return getPreauctionOutstandingQuantityFieldBuilder().getBuilder();
+      return getPostAuctionOutstandingQuantityFieldBuilder().getBuilder();
     }
     /**
-     * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
+     * <pre>
+     **
+     *The amount of this security that is outstanding in the market before this auction
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
      */
-    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPreauctionOutstandingQuantityOrBuilder() {
-      if (preauctionOutstandingQuantityBuilder_ != null) {
-        return preauctionOutstandingQuantityBuilder_.getMessageOrBuilder();
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPostAuctionOutstandingQuantityOrBuilder() {
+      if (postAuctionOutstandingQuantityBuilder_ != null) {
+        return postAuctionOutstandingQuantityBuilder_.getMessageOrBuilder();
       } else {
-        return preauctionOutstandingQuantity_ == null ?
-            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : preauctionOutstandingQuantity_;
+        return postAuctionOutstandingQuantity_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : postAuctionOutstandingQuantity_;
       }
     }
     /**
-     * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
+     * <pre>
+     **
+     *The amount of this security that is outstanding in the market before this auction
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
-        getPreauctionOutstandingQuantityFieldBuilder() {
-      if (preauctionOutstandingQuantityBuilder_ == null) {
-        preauctionOutstandingQuantityBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+        getPostAuctionOutstandingQuantityFieldBuilder() {
+      if (postAuctionOutstandingQuantityBuilder_ == null) {
+        postAuctionOutstandingQuantityBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
             fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
-                getPreauctionOutstandingQuantity(),
+                getPostAuctionOutstandingQuantity(),
                 getParentForChildren(),
                 isClean());
-        preauctionOutstandingQuantity_ = null;
+        postAuctionOutstandingQuantity_ = null;
       }
-      return preauctionOutstandingQuantityBuilder_;
+      return postAuctionOutstandingQuantityBuilder_;
     }
 
     private fintekkers.models.util.DecimalValue.DecimalValueProto auctionOfferingAmount_;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> auctionOfferingAmountBuilder_;
     /**
+     * <pre>
+     **
+     *The amount of bond issuance expected during this auction. This is an indicative amount and
+     *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+     *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+     *Federal programs such as SOMA/FIMA.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
      * @return Whether the auctionOfferingAmount field is set.
      */
@@ -2082,6 +2499,14 @@ private static final long serialVersionUID = 0L;
       return auctionOfferingAmountBuilder_ != null || auctionOfferingAmount_ != null;
     }
     /**
+     * <pre>
+     **
+     *The amount of bond issuance expected during this auction. This is an indicative amount and
+     *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+     *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+     *Federal programs such as SOMA/FIMA.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
      * @return The auctionOfferingAmount.
      */
@@ -2093,6 +2518,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     **
+     *The amount of bond issuance expected during this auction. This is an indicative amount and
+     *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+     *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+     *Federal programs such as SOMA/FIMA.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
      */
     public Builder setAuctionOfferingAmount(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
@@ -2109,6 +2542,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The amount of bond issuance expected during this auction. This is an indicative amount and
+     *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+     *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+     *Federal programs such as SOMA/FIMA.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
      */
     public Builder setAuctionOfferingAmount(
@@ -2123,6 +2564,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The amount of bond issuance expected during this auction. This is an indicative amount and
+     *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+     *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+     *Federal programs such as SOMA/FIMA.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
      */
     public Builder mergeAuctionOfferingAmount(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
@@ -2141,6 +2590,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The amount of bond issuance expected during this auction. This is an indicative amount and
+     *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+     *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+     *Federal programs such as SOMA/FIMA.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
      */
     public Builder clearAuctionOfferingAmount() {
@@ -2155,6 +2612,14 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *The amount of bond issuance expected during this auction. This is an indicative amount and
+     *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+     *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+     *Federal programs such as SOMA/FIMA.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
      */
     public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getAuctionOfferingAmountBuilder() {
@@ -2163,6 +2628,14 @@ private static final long serialVersionUID = 0L;
       return getAuctionOfferingAmountFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     **
+     *The amount of bond issuance expected during this auction. This is an indicative amount and
+     *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+     *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+     *Federal programs such as SOMA/FIMA.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
      */
     public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getAuctionOfferingAmountOrBuilder() {
@@ -2174,6 +2647,14 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     **
+     *The amount of bond issuance expected during this auction. This is an indicative amount and
+     *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+     *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+     *Federal programs such as SOMA/FIMA.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -2192,6 +2673,11 @@ private static final long serialVersionUID = 0L;
 
     private int auctionType_ = 0;
     /**
+     * <pre>
+     ***
+     *The type of auction, see the enum for details on types.
+     * </pre>
+     *
      * <code>.fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;</code>
      * @return The enum numeric value on the wire for auctionType.
      */
@@ -2199,6 +2685,11 @@ private static final long serialVersionUID = 0L;
       return auctionType_;
     }
     /**
+     * <pre>
+     ***
+     *The type of auction, see the enum for details on types.
+     * </pre>
+     *
      * <code>.fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;</code>
      * @param value The enum numeric value on the wire for auctionType to set.
      * @return This builder for chaining.
@@ -2210,6 +2701,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     ***
+     *The type of auction, see the enum for details on types.
+     * </pre>
+     *
      * <code>.fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;</code>
      * @return The auctionType.
      */
@@ -2220,6 +2716,11 @@ private static final long serialVersionUID = 0L;
       return result == null ? fintekkers.models.security.bond.AuctionTypeProto.UNRECOGNIZED : result;
     }
     /**
+     * <pre>
+     ***
+     *The type of auction, see the enum for details on types.
+     * </pre>
+     *
      * <code>.fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;</code>
      * @param value The auctionType to set.
      * @return This builder for chaining.
@@ -2234,6 +2735,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     ***
+     *The type of auction, see the enum for details on types.
+     * </pre>
+     *
      * <code>.fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;</code>
      * @return This builder for chaining.
      */
@@ -2248,6 +2754,11 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> priceForSinglePriceAuctionBuilder_;
     /**
+     * <pre>
+     **
+     *If the auction was a single price auction, this is the price paid by bidders
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
      * @return Whether the priceForSinglePriceAuction field is set.
      */
@@ -2255,6 +2766,11 @@ private static final long serialVersionUID = 0L;
       return priceForSinglePriceAuctionBuilder_ != null || priceForSinglePriceAuction_ != null;
     }
     /**
+     * <pre>
+     **
+     *If the auction was a single price auction, this is the price paid by bidders
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
      * @return The priceForSinglePriceAuction.
      */
@@ -2266,6 +2782,11 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     **
+     *If the auction was a single price auction, this is the price paid by bidders
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
      */
     public Builder setPriceForSinglePriceAuction(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
@@ -2282,6 +2803,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *If the auction was a single price auction, this is the price paid by bidders
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
      */
     public Builder setPriceForSinglePriceAuction(
@@ -2296,6 +2822,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *If the auction was a single price auction, this is the price paid by bidders
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
      */
     public Builder mergePriceForSinglePriceAuction(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
@@ -2314,6 +2845,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *If the auction was a single price auction, this is the price paid by bidders
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
      */
     public Builder clearPriceForSinglePriceAuction() {
@@ -2328,6 +2864,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     **
+     *If the auction was a single price auction, this is the price paid by bidders
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
      */
     public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getPriceForSinglePriceAuctionBuilder() {
@@ -2336,6 +2877,11 @@ private static final long serialVersionUID = 0L;
       return getPriceForSinglePriceAuctionFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     **
+     *If the auction was a single price auction, this is the price paid by bidders
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
      */
     public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPriceForSinglePriceAuctionOrBuilder() {
@@ -2347,6 +2893,11 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     **
+     *If the auction was a single price auction, this is the price paid by bidders
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -2361,6 +2912,334 @@ private static final long serialVersionUID = 0L;
         priceForSinglePriceAuction_ = null;
       }
       return priceForSinglePriceAuctionBuilder_;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto totalAccepted_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> totalAcceptedBuilder_;
+    /**
+     * <pre>
+     **
+     *The total amount of the security sold by this auction.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+     * @return Whether the totalAccepted field is set.
+     */
+    public boolean hasTotalAccepted() {
+      return totalAcceptedBuilder_ != null || totalAccepted_ != null;
+    }
+    /**
+     * <pre>
+     **
+     *The total amount of the security sold by this auction.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+     * @return The totalAccepted.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getTotalAccepted() {
+      if (totalAcceptedBuilder_ == null) {
+        return totalAccepted_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : totalAccepted_;
+      } else {
+        return totalAcceptedBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     **
+     *The total amount of the security sold by this auction.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+     */
+    public Builder setTotalAccepted(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (totalAcceptedBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        totalAccepted_ = value;
+        onChanged();
+      } else {
+        totalAcceptedBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The total amount of the security sold by this auction.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+     */
+    public Builder setTotalAccepted(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (totalAcceptedBuilder_ == null) {
+        totalAccepted_ = builderForValue.build();
+        onChanged();
+      } else {
+        totalAcceptedBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The total amount of the security sold by this auction.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+     */
+    public Builder mergeTotalAccepted(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (totalAcceptedBuilder_ == null) {
+        if (totalAccepted_ != null) {
+          totalAccepted_ =
+            fintekkers.models.util.DecimalValue.DecimalValueProto.newBuilder(totalAccepted_).mergeFrom(value).buildPartial();
+        } else {
+          totalAccepted_ = value;
+        }
+        onChanged();
+      } else {
+        totalAcceptedBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The total amount of the security sold by this auction.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+     */
+    public Builder clearTotalAccepted() {
+      if (totalAcceptedBuilder_ == null) {
+        totalAccepted_ = null;
+        onChanged();
+      } else {
+        totalAccepted_ = null;
+        totalAcceptedBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The total amount of the security sold by this auction.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getTotalAcceptedBuilder() {
+      
+      onChanged();
+      return getTotalAcceptedFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     **
+     *The total amount of the security sold by this auction.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getTotalAcceptedOrBuilder() {
+      if (totalAcceptedBuilder_ != null) {
+        return totalAcceptedBuilder_.getMessageOrBuilder();
+      } else {
+        return totalAccepted_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : totalAccepted_;
+      }
+    }
+    /**
+     * <pre>
+     **
+     *The total amount of the security sold by this auction.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getTotalAcceptedFieldBuilder() {
+      if (totalAcceptedBuilder_ == null) {
+        totalAcceptedBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getTotalAccepted(),
+                getParentForChildren(),
+                isClean());
+        totalAccepted_ = null;
+      }
+      return totalAcceptedBuilder_;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto matureSecurityAmount_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> matureSecurityAmountBuilder_;
+    /**
+     * <pre>
+     **
+     *The amount of this security that will mature on the security's maturity date
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+     * @return Whether the matureSecurityAmount field is set.
+     */
+    public boolean hasMatureSecurityAmount() {
+      return matureSecurityAmountBuilder_ != null || matureSecurityAmount_ != null;
+    }
+    /**
+     * <pre>
+     **
+     *The amount of this security that will mature on the security's maturity date
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+     * @return The matureSecurityAmount.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getMatureSecurityAmount() {
+      if (matureSecurityAmountBuilder_ == null) {
+        return matureSecurityAmount_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : matureSecurityAmount_;
+      } else {
+        return matureSecurityAmountBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     **
+     *The amount of this security that will mature on the security's maturity date
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+     */
+    public Builder setMatureSecurityAmount(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (matureSecurityAmountBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        matureSecurityAmount_ = value;
+        onChanged();
+      } else {
+        matureSecurityAmountBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The amount of this security that will mature on the security's maturity date
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+     */
+    public Builder setMatureSecurityAmount(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (matureSecurityAmountBuilder_ == null) {
+        matureSecurityAmount_ = builderForValue.build();
+        onChanged();
+      } else {
+        matureSecurityAmountBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The amount of this security that will mature on the security's maturity date
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+     */
+    public Builder mergeMatureSecurityAmount(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (matureSecurityAmountBuilder_ == null) {
+        if (matureSecurityAmount_ != null) {
+          matureSecurityAmount_ =
+            fintekkers.models.util.DecimalValue.DecimalValueProto.newBuilder(matureSecurityAmount_).mergeFrom(value).buildPartial();
+        } else {
+          matureSecurityAmount_ = value;
+        }
+        onChanged();
+      } else {
+        matureSecurityAmountBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The amount of this security that will mature on the security's maturity date
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+     */
+    public Builder clearMatureSecurityAmount() {
+      if (matureSecurityAmountBuilder_ == null) {
+        matureSecurityAmount_ = null;
+        onChanged();
+      } else {
+        matureSecurityAmount_ = null;
+        matureSecurityAmountBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The amount of this security that will mature on the security's maturity date
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getMatureSecurityAmountBuilder() {
+      
+      onChanged();
+      return getMatureSecurityAmountFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     **
+     *The amount of this security that will mature on the security's maturity date
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getMatureSecurityAmountOrBuilder() {
+      if (matureSecurityAmountBuilder_ != null) {
+        return matureSecurityAmountBuilder_.getMessageOrBuilder();
+      } else {
+        return matureSecurityAmount_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : matureSecurityAmount_;
+      }
+    }
+    /**
+     * <pre>
+     **
+     *The amount of this security that will mature on the security's maturity date
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getMatureSecurityAmountFieldBuilder() {
+      if (matureSecurityAmountBuilder_ == null) {
+        matureSecurityAmountBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getMatureSecurityAmount(),
+                getParentForChildren(),
+                isClean());
+        matureSecurityAmount_ = null;
+      }
+      return matureSecurityAmountBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

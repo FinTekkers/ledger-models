@@ -92,88 +92,245 @@ public interface IssuanceProtoOrBuilder extends
   fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getValidToOrBuilder();
 
   /**
+   * <pre>
+   **
+   *The date the auction was announced, has no bearing on the economics of the bond
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
    * @return Whether the auctionAnnouncementDate field is set.
    */
   boolean hasAuctionAnnouncementDate();
   /**
+   * <pre>
+   **
+   *The date the auction was announced, has no bearing on the economics of the bond
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
    * @return The auctionAnnouncementDate.
    */
   fintekkers.models.util.LocalDate.LocalDateProto getAuctionAnnouncementDate();
   /**
+   * <pre>
+   **
+   *The date the auction was announced, has no bearing on the economics of the bond
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_announcement_date = 20;</code>
    */
   fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getAuctionAnnouncementDateOrBuilder();
 
   /**
+   * <pre>
+   **
+   *The date of the issue relating to this auction, i.e. when the securities will be issued to
+   *buyers
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
    * @return Whether the auctionIssueDate field is set.
    */
   boolean hasAuctionIssueDate();
   /**
+   * <pre>
+   **
+   *The date of the issue relating to this auction, i.e. when the securities will be issued to
+   *buyers
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
    * @return The auctionIssueDate.
    */
   fintekkers.models.util.LocalDate.LocalDateProto getAuctionIssueDate();
   /**
+   * <pre>
+   **
+   *The date of the issue relating to this auction, i.e. when the securities will be issued to
+   *buyers
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto auction_issue_date = 21;</code>
    */
   fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getAuctionIssueDateOrBuilder();
 
   /**
-   * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
-   * @return Whether the preauctionOutstandingQuantity field is set.
+   * <pre>
+   **
+   *The amount of this security that is outstanding in the market before this auction
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
+   * @return Whether the postAuctionOutstandingQuantity field is set.
    */
-  boolean hasPreauctionOutstandingQuantity();
+  boolean hasPostAuctionOutstandingQuantity();
   /**
-   * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
-   * @return The preauctionOutstandingQuantity.
+   * <pre>
+   **
+   *The amount of this security that is outstanding in the market before this auction
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
+   * @return The postAuctionOutstandingQuantity.
    */
-  fintekkers.models.util.DecimalValue.DecimalValueProto getPreauctionOutstandingQuantity();
+  fintekkers.models.util.DecimalValue.DecimalValueProto getPostAuctionOutstandingQuantity();
   /**
-   * <code>.fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;</code>
+   * <pre>
+   **
+   *The amount of this security that is outstanding in the market before this auction
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;</code>
    */
-  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPreauctionOutstandingQuantityOrBuilder();
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPostAuctionOutstandingQuantityOrBuilder();
 
   /**
+   * <pre>
+   **
+   *The amount of bond issuance expected during this auction. This is an indicative amount and
+   *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+   *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+   *Federal programs such as SOMA/FIMA.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
    * @return Whether the auctionOfferingAmount field is set.
    */
   boolean hasAuctionOfferingAmount();
   /**
+   * <pre>
+   **
+   *The amount of bond issuance expected during this auction. This is an indicative amount and
+   *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+   *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+   *Federal programs such as SOMA/FIMA.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
    * @return The auctionOfferingAmount.
    */
   fintekkers.models.util.DecimalValue.DecimalValueProto getAuctionOfferingAmount();
   /**
+   * <pre>
+   **
+   *The amount of bond issuance expected during this auction. This is an indicative amount and
+   *may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+   *bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+   *Federal programs such as SOMA/FIMA.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;</code>
    */
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getAuctionOfferingAmountOrBuilder();
 
   /**
+   * <pre>
+   ***
+   *The type of auction, see the enum for details on types.
+   * </pre>
+   *
    * <code>.fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;</code>
    * @return The enum numeric value on the wire for auctionType.
    */
   int getAuctionTypeValue();
   /**
+   * <pre>
+   ***
+   *The type of auction, see the enum for details on types.
+   * </pre>
+   *
    * <code>.fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;</code>
    * @return The auctionType.
    */
   fintekkers.models.security.bond.AuctionTypeProto getAuctionType();
 
   /**
+   * <pre>
+   **
+   *If the auction was a single price auction, this is the price paid by bidders
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
    * @return Whether the priceForSinglePriceAuction field is set.
    */
   boolean hasPriceForSinglePriceAuction();
   /**
+   * <pre>
+   **
+   *If the auction was a single price auction, this is the price paid by bidders
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
    * @return The priceForSinglePriceAuction.
    */
   fintekkers.models.util.DecimalValue.DecimalValueProto getPriceForSinglePriceAuction();
   /**
+   * <pre>
+   **
+   *If the auction was a single price auction, this is the price paid by bidders
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
    */
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPriceForSinglePriceAuctionOrBuilder();
+
+  /**
+   * <pre>
+   **
+   *The total amount of the security sold by this auction.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+   * @return Whether the totalAccepted field is set.
+   */
+  boolean hasTotalAccepted();
+  /**
+   * <pre>
+   **
+   *The total amount of the security sold by this auction.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+   * @return The totalAccepted.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getTotalAccepted();
+  /**
+   * <pre>
+   **
+   *The total amount of the security sold by this auction.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto total_accepted = 26;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getTotalAcceptedOrBuilder();
+
+  /**
+   * <pre>
+   **
+   *The amount of this security that will mature on the security's maturity date
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+   * @return Whether the matureSecurityAmount field is set.
+   */
+  boolean hasMatureSecurityAmount();
+  /**
+   * <pre>
+   **
+   *The amount of this security that will mature on the security's maturity date
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+   * @return The matureSecurityAmount.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getMatureSecurityAmount();
+  /**
+   * <pre>
+   **
+   *The amount of this security that will mature on the security's maturity date
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getMatureSecurityAmountOrBuilder();
 }

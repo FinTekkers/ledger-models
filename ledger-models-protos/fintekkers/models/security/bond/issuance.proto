@@ -63,50 +63,48 @@ message IssuanceProto {
   fintekkers.models.util.LocalTimestampProto valid_to = 9;
 
 
+  /**
+  The date the auction was announced, has no bearing on the economics of the bond
+   */
   fintekkers.models.util.LocalDateProto auction_announcement_date = 20;
+
+  /**
+  The date of the issue relating to this auction, i.e. when the securities will be issued to
+  buyers
+   */
   fintekkers.models.util.LocalDateProto auction_issue_date = 21;
-  fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;
+
+  /**
+  The amount of this security that is outstanding in the market before this auction
+   */
+  fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;
+
+  /**
+  The amount of bond issuance expected during this auction. This is an indicative amount and
+  may not be the exact amount issued. For example in US Treasuries the amount issued to competitive
+  bidders (e.g. primary dealers) might √ary from this number. Additional bonds may be bought by
+  Federal programs such as SOMA/FIMA.
+   */
   fintekkers.models.util.DecimalValueProto auction_offering_amount = 23;
+
+  /***
+  The type of auction, see the enum for details on types.
+   */
   fintekkers.models.security.bond.AuctionTypeProto auction_type = 24;
+
+  /**
+  If the auction was a single price auction, this is the price paid by bidders
+   */
   fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;
 
-//   SecurityTypeProto security_type = 10;
+  /**
+  The total amount of the security sold by this auction.
+   */
+  fintekkers.models.util.DecimalValueProto total_accepted = 26;
 
-//   //Biz fields
-//   string asset_class = 11;
-//   string issuer_name = 12;
-//   SecurityProto settlement_currency = 13;
-//   SecurityQuantityTypeProto quantity_type = 14;
+  /**
+  The amount of this security that will mature on the security's maturity date
+   */
+  fintekkers.models.util.DecimalValueProto mature_security_amount = 27;
 
-//   security.IdentifierProto identifier = 40;
-//   string description = 41;
-
-//   //Cash Security fields
-//   string cash_id = 50;
-
-//   //Equity Security fields
-
-//   //Bond Security fields
-//   fintekkers.models.util.DecimalValueProto coupon_rate = 60;
-//   CouponTypeProto coupon_type = 61;
-//   CouponFrequencyProto coupon_frequency = 62;
-//   fintekkers.models.util.LocalDateProto dated_date = 63;
-//   fintekkers.models.util.DecimalValueProto face_value = 64;
-//   fintekkers.models.util.LocalDateProto issue_date = 65;
-//   fintekkers.models.util.LocalDateProto maturity_date = 66;
-  
-  
-  //Option 1: Each time there is an update to the outstanding face value create a new version of the security
-    //PROs: Simple?
-    //CONs: Will create a lot of duplicative records, which would create diff load to understand what changed
-    //fintekkers.models.util.DecimalValueProto outstanding_face_value = 67; //Oustanding face value for the given as_of date
-  //Option 2: Have a date/decimal map which gets amended
-    //PROs: Simple
-    //CONS: Map could get big where we have daily date
-  //Option 3: Have another object, e.g. 'auction' info that can be independently stored
-    //PROS: Can extend the model; can choose the persistence strategy
-    //CONS: More upfront work
-  //Option 3 makes most sense. Need to consider naming, as not all +ve/-ve impacts to oustanding issuance will relate to auctions.
-  
-  
 }

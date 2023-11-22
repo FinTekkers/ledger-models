@@ -12,10 +12,18 @@ var PositionFilter = /** @class */ (function () {
      * @param {*} field FieldProto.ASSET_CLASS, as an example
      * @param {*} fieldValue The appropriate value for the FieldProto, e.g. FieldProto.ASSET_CLASS would have a string fieldValue
      */
-    PositionFilter.prototype.addFilter = function (field, fieldValue) {
+    PositionFilter.prototype.addEqualsFilter = function (field, fieldValue) {
+        return this.addFilter(field, fieldValue, position_util_pb_1.PositionFilterOperator.EQUALS);
+    };
+    /**
+     * @param {*} field FieldProto.ASSET_CLASS, as an example
+     * @param {*} fieldValue The appropriate value for the FieldProto, e.g. FieldProto.ASSET_CLASS would have a string fieldValue
+     */
+    PositionFilter.prototype.addFilter = function (field, fieldValue, operator) {
         var fieldMapEntry = new position_util_pb_1.FieldMapEntry();
         fieldMapEntry.setField(field); //FieldProto.ASSET_CLASS);
         fieldMapEntry.setFieldValuePacked((0, serialization_util_1.pack)(fieldValue));
+        fieldMapEntry.setOperator(operator);
         this.filters.push(fieldMapEntry);
         return this;
     };

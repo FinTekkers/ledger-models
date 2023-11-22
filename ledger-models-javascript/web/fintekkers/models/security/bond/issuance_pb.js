@@ -84,10 +84,12 @@ proto.fintekkers.models.security.bond.IssuanceProto.toObject = function(includeI
     validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     auctionAnnouncementDate: (f = msg.getAuctionAnnouncementDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
     auctionIssueDate: (f = msg.getAuctionIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-    preauctionOutstandingQuantity: (f = msg.getPreauctionOutstandingQuantity()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    postAuctionOutstandingQuantity: (f = msg.getPostAuctionOutstandingQuantity()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     auctionOfferingAmount: (f = msg.getAuctionOfferingAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     auctionType: jspb.Message.getFieldWithDefault(msg, 24, 0),
-    priceForSinglePriceAuction: (f = msg.getPriceForSinglePriceAuction()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    priceForSinglePriceAuction: (f = msg.getPriceForSinglePriceAuction()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    totalAccepted: (f = msg.getTotalAccepted()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    matureSecurityAmount: (f = msg.getMatureSecurityAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -160,7 +162,7 @@ proto.fintekkers.models.security.bond.IssuanceProto.deserializeBinaryFromReader 
     case 22:
       var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
       reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
-      msg.setPreauctionOutstandingQuantity(value);
+      msg.setPostAuctionOutstandingQuantity(value);
       break;
     case 23:
       var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
@@ -175,6 +177,16 @@ proto.fintekkers.models.security.bond.IssuanceProto.deserializeBinaryFromReader 
       var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
       reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
       msg.setPriceForSinglePriceAuction(value);
+      break;
+    case 26:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setTotalAccepted(value);
+      break;
+    case 27:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setMatureSecurityAmount(value);
       break;
     default:
       reader.skipField();
@@ -259,7 +271,7 @@ proto.fintekkers.models.security.bond.IssuanceProto.serializeBinaryToWriter = fu
       fintekkers_models_util_local_date_pb.LocalDateProto.serializeBinaryToWriter
     );
   }
-  f = message.getPreauctionOutstandingQuantity();
+  f = message.getPostAuctionOutstandingQuantity();
   if (f != null) {
     writer.writeMessage(
       22,
@@ -286,6 +298,22 @@ proto.fintekkers.models.security.bond.IssuanceProto.serializeBinaryToWriter = fu
   if (f != null) {
     writer.writeMessage(
       25,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getTotalAccepted();
+  if (f != null) {
+    writer.writeMessage(
+      26,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getMatureSecurityAmount();
+  if (f != null) {
+    writer.writeMessage(
+      27,
       f,
       fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
     );
@@ -515,10 +543,10 @@ proto.fintekkers.models.security.bond.IssuanceProto.prototype.hasAuctionIssueDat
 
 
 /**
- * optional fintekkers.models.util.DecimalValueProto preauction_outstanding_quantity = 22;
+ * optional fintekkers.models.util.DecimalValueProto post_auction_outstanding_quantity = 22;
  * @return {?proto.fintekkers.models.util.DecimalValueProto}
  */
-proto.fintekkers.models.security.bond.IssuanceProto.prototype.getPreauctionOutstandingQuantity = function() {
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.getPostAuctionOutstandingQuantity = function() {
   return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
     jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 22));
 };
@@ -528,7 +556,7 @@ proto.fintekkers.models.security.bond.IssuanceProto.prototype.getPreauctionOutst
  * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
  * @return {!proto.fintekkers.models.security.bond.IssuanceProto} returns this
 */
-proto.fintekkers.models.security.bond.IssuanceProto.prototype.setPreauctionOutstandingQuantity = function(value) {
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.setPostAuctionOutstandingQuantity = function(value) {
   return jspb.Message.setWrapperField(this, 22, value);
 };
 
@@ -537,8 +565,8 @@ proto.fintekkers.models.security.bond.IssuanceProto.prototype.setPreauctionOutst
  * Clears the message field making it undefined.
  * @return {!proto.fintekkers.models.security.bond.IssuanceProto} returns this
  */
-proto.fintekkers.models.security.bond.IssuanceProto.prototype.clearPreauctionOutstandingQuantity = function() {
-  return this.setPreauctionOutstandingQuantity(undefined);
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.clearPostAuctionOutstandingQuantity = function() {
+  return this.setPostAuctionOutstandingQuantity(undefined);
 };
 
 
@@ -546,7 +574,7 @@ proto.fintekkers.models.security.bond.IssuanceProto.prototype.clearPreauctionOut
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.fintekkers.models.security.bond.IssuanceProto.prototype.hasPreauctionOutstandingQuantity = function() {
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.hasPostAuctionOutstandingQuantity = function() {
   return jspb.Message.getField(this, 22) != null;
 };
 
@@ -640,6 +668,80 @@ proto.fintekkers.models.security.bond.IssuanceProto.prototype.clearPriceForSingl
  */
 proto.fintekkers.models.security.bond.IssuanceProto.prototype.hasPriceForSinglePriceAuction = function() {
   return jspb.Message.getField(this, 25) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto total_accepted = 26;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.getTotalAccepted = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 26));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.models.security.bond.IssuanceProto} returns this
+*/
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.setTotalAccepted = function(value) {
+  return jspb.Message.setWrapperField(this, 26, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.security.bond.IssuanceProto} returns this
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.clearTotalAccepted = function() {
+  return this.setTotalAccepted(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.hasTotalAccepted = function() {
+  return jspb.Message.getField(this, 26) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto mature_security_amount = 27;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.getMatureSecurityAmount = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 27));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.models.security.bond.IssuanceProto} returns this
+*/
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.setMatureSecurityAmount = function(value) {
+  return jspb.Message.setWrapperField(this, 27, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.security.bond.IssuanceProto} returns this
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.clearMatureSecurityAmount = function() {
+  return this.setMatureSecurityAmount(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.hasMatureSecurityAmount = function() {
+  return jspb.Message.getField(this, 27) != null;
 };
 
 

@@ -2,11 +2,9 @@ package common.models.postion;
 
 import common.models.IFinancialModelObject;
 import common.models.portfolio.Portfolio;
-import common.models.security.CashSecurity;
 import common.models.security.Security;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,18 +65,33 @@ public class PositionFilter {
         for(Type dataObject : dataObjects) {
             boolean include = true;
             for(Field field : filters.keySet()) {
-                Object value = dataObject.getField(field);
+                Comparable value = (Comparable) dataObject.getField(field);
 
                 PositionComparator comparator = filters.get(field);
 
-                if(!Operator.EQUALS.equals(comparator.operator)) {
-                    throw new RuntimeException("Not supported currently");
-                }
-
-                if(value == null || !value.equals(comparator.value)) {
+                if(value == null && comparator.value != null) {
                     include = false;
                     break;
                 }
+
+                int compareResult = value.compareTo(comparator.value);
+
+                if((Operator.EQUALS.equals(comparator.operator) ||
+                        Operator.MORE_THAN_OR_EQUALS.equals(comparator.operator) ||
+                        Operator.LESS_THAN_OR_EQUALS.equals(comparator.operator)) &&
+                    compareResult == 0) {
+                    continue;
+                } else if((Operator.MORE_THAN.equals(comparator.operator) ||
+                        Operator.MORE_THAN_OR_EQUALS.equals(comparator.operator)) &&
+                        compareResult > 0) {
+                    continue;
+                } else if((Operator.LESS_THAN.equals(comparator.operator) ||
+                        Operator.LESS_THAN_OR_EQUALS.equals(comparator.operator)) &&
+                        compareResult < 0) {
+                    continue;
+                }
+
+                include = false;
             }
 
             //Check the asOf
@@ -116,6 +129,7 @@ public class PositionFilter {
             addFilter(Field.SECURITY, security);
         }};
     }
+
     /**
      * Creates a position filter with a single field/value combination which will default to equals
      *
@@ -123,9 +137,23 @@ public class PositionFilter {
      * @param value The exact value to check the field equals
      * @return A PositionFilter
      */
-    public static PositionFilter from(Field field, String value) {
+    public static PositionFilter fromString(Field field, String value) {
         return new PositionFilter() {{
             addFilter(field, value);
+        }};
+    }
+
+    /**
+     * Creates a position filter with a single field/value combination which will default to equals
+     *
+     * @param field The Field to filter on
+     * @param operator The operator to use as a comparator
+     * @param value The exact value to check the field equals
+     * @return A PositionFilter
+     */
+    public static PositionFilter from(Field field, Operator operator, Object value) {
+        return new PositionFilter() {{
+            addFilter(field, operator, value);
         }};
     }
 

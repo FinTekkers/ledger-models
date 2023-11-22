@@ -71,7 +71,7 @@ function testSecurity() {
                     now = dt.ZonedDateTime.now();
                     securityService = new SecurityService_1.SecurityService();
                     return [4 /*yield*/, securityService
-                            .searchSecurity(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Cash'))
+                            .searchSecurity(now.toProto(), new positionfilter_1.PositionFilter().addEqualsFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Cash'))
                             .then(function (securities) {
                             return securities[0];
                         })];
@@ -114,7 +114,7 @@ function testSecurity() {
                 case 3:
                     createSecurityResponse = _a.sent();
                     expect(createSecurityResponse.getSecurityResponse()).toBeTruthy();
-                    return [4 /*yield*/, securityService.searchSecurity(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income'))];
+                    return [4 /*yield*/, securityService.searchSecurity(now.toProto(), new positionfilter_1.PositionFilter().addEqualsFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income'))];
                 case 4:
                     searchResults = _a.sent();
                     expect(searchResults.length).toBeGreaterThan(0);

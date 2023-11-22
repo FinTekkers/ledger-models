@@ -40,7 +40,7 @@ public class DummyEquityObjects {
     public static Portfolio getDummyPortfolio() {
         return new Portfolio(UUID.randomUUID(),
                 "dummy portfolio: "+ ThreadLocalRandom.current().nextInt(0, 100),
-                ZonedDateTime.now().plusYears(1));
+                ZonedDateTime.now().minusYears(1)); //Portfolio was created one year ago
     }
     public static Price getDummyPrice() {
         return new Price(UUID.randomUUID(), BigDecimal.valueOf(100), getDummySecurity(),

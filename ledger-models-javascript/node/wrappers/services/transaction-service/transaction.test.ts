@@ -35,7 +35,7 @@ async function testTransaction(): Promise<boolean> {
   const transactionService = new TransactionService();
 
   const positionFilter = new PositionFilter();
-  positionFilter.addFilter(FieldProto.ASSET_CLASS, 'Fixed Income');
+  positionFilter.addEqualsFilter(FieldProto.ASSET_CLASS, 'Fixed Income');
 
   console.time("searchSecurity");
   let fixedIncomeSecurities = await securityService
@@ -50,7 +50,7 @@ async function testTransaction(): Promise<boolean> {
   console.time("searchPortfolio");
   let portfolios = await portfolioService.searchPortfolio(
     now.toProto(),
-    new PositionFilter().addFilter(FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO'));
+    new PositionFilter().addEqualsFilter(FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO'));
   console.timeEnd("searchPortfolio");
 
   if (portfolios === undefined) {
@@ -100,7 +100,7 @@ async function testTransaction(): Promise<boolean> {
   console.time("searchTransaction");
 
   const transactionID = uuid.UUID.fromU8Array(transactionResponse.getUuid().getRawUuid_asU8());
-  positionFilter.addFilter(FieldProto.ID, transactionID);
+  positionFilter.addEqualsFilter(FieldProto.ID, transactionID);
   const transactions = await transactionService.searchTransaction(now.toProto(), positionFilter);
   console.timeEnd("searchTransaction");
 

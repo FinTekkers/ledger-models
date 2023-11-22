@@ -77,7 +77,7 @@ function testTransaction() {
                     portfolioService = new PortfolioService_1.PortfolioService();
                     transactionService = new TransactionService_1.TransactionService();
                     positionFilter = new positionfilter_1.PositionFilter();
-                    positionFilter.addFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income');
+                    positionFilter.addEqualsFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income');
                     console.time("searchSecurity");
                     return [4 /*yield*/, securityService
                             .searchSecurity(now.toProto(), positionFilter)
@@ -89,7 +89,7 @@ function testTransaction() {
                     console.timeEnd("searchSecurity");
                     security = fixedIncomeSecurities[0];
                     console.time("searchPortfolio");
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO'))];
+                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addEqualsFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO'))];
                 case 2:
                     portfolios = _a.sent();
                     console.timeEnd("searchPortfolio");
@@ -130,7 +130,7 @@ function testTransaction() {
                     console.log("Searching transaction");
                     console.time("searchTransaction");
                     transactionID = uuid.UUID.fromU8Array(transactionResponse.getUuid().getRawUuid_asU8());
-                    positionFilter.addFilter(field_pb_1.FieldProto.ID, transactionID);
+                    positionFilter.addEqualsFilter(field_pb_1.FieldProto.ID, transactionID);
                     return [4 /*yield*/, transactionService.searchTransaction(now.toProto(), positionFilter)];
                 case 4:
                     transactions = _a.sent();
