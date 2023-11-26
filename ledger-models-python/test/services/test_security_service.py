@@ -9,7 +9,7 @@ import os
 
 print(os.getcwd())
 
-from requests.test_security_request import CASH_USD_REQUEST
+from ..requests.test_security_request import CASH_USD_REQUEST
 
 
 def test_get_usd_cash_security():

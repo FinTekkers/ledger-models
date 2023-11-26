@@ -1,6 +1,6 @@
 from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.security.security_pb2 import SecurityProto
-from fintekkers.wrappers.models.issues import Security
+from fintekkers.wrappers.models.security import Security
 
 
 def test_security_wrapper():
