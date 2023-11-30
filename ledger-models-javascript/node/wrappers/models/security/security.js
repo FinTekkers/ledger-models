@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var datetime_1 = require("../utils/datetime");
 var uuid_1 = require("../utils/uuid");
+var serialization_1 = require("../utils/serialization");
 var Security = /** @class */ (function () {
     function Security(proto) {
         this.proto = proto;
@@ -58,11 +59,11 @@ var Security = /** @class */ (function () {
     };
     Security.prototype.getIssueDate = function () {
         var date = this.proto.getIssueDate();
-        return new Date(date.getYear(), date.getMonth(), date.getDay());
+        return serialization_1.ProtoSerializationUtil.deserialize(this.proto.getIssueDate());
     };
     Security.prototype.getMaturityDate = function () {
         var date = this.proto.getMaturityDate();
-        return new Date(date.getYear(), date.getMonth(), date.getDay());
+        return serialization_1.ProtoSerializationUtil.deserialize(this.proto.getMaturityDate());
     };
     Security.prototype.getIssuerName = function () {
         return this.proto.getIssuerName();

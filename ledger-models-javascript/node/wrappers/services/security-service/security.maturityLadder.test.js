@@ -51,6 +51,7 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
                 securityService = new SecurityService_1.SecurityService();
                 positionFilter = new positionfilter_1.PositionFilter();
                 positionFilter.addEqualsFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income');
+                positionFilter.addEqualsFilter(field_pb_1.FieldProto.SECURITY_ISSUER_NAME, 'US Government');
                 return [4 /*yield*/, securityService.searchSecurityAsOfNow(positionFilter)];
             case 1:
                 securities = _a.sent();

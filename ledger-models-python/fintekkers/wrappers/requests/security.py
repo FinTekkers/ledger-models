@@ -49,7 +49,7 @@ class CreateSecurityRequest:
         maturity_date: date = date.today(),
         post_auction_outstanding_quantity: float = 0.0,
         auction_total_accepted: float = 0.0,
-        auction_announcement_date: date = date.today(),
+        auction_announcement_date: date = None,
     ):
         """
         Creates a request to create a security representing a US treasury (bills, notes and bonds)
@@ -84,6 +84,25 @@ class CreateSecurityRequest:
 
         timstamp_seconds = int(time.mktime(issue_date.timetuple()))
 
+        issuance_list = []
+
+        if auction_announcement_date is not None:
+            issuance = IssuanceProto(
+                as_of=LocalTimestampProto(
+                    time_zone="America/New_York",
+                    timestamp=Timestamp(seconds=timstamp_seconds, nanos=0),
+                ),
+                version="0.0.1",
+                auction_announcement_date=ProtoSerializationUtil.serialize(
+                    auction_announcement_date
+                ),
+                total_accepted=ProtoSerializationUtil.serialize(auction_total_accepted),
+                post_auction_outstanding_quantity=ProtoSerializationUtil.serialize(
+                    post_auction_outstanding_quantity
+                ),
+            )
+            issuance_list.append(issuance)
+
         security_proto: SecurityProto = SecurityProto(
             as_of=LocalTimestampProto(
                 time_zone="America/New_York",
@@ -103,24 +122,7 @@ class CreateSecurityRequest:
             coupon_rate=ProtoSerializationUtil.serialize(coupon_rate),
             asset_class="Fixed Income",
             face_value=ProtoSerializationUtil.serialize(face_value),
-            issuance_info=[
-                IssuanceProto(
-                    as_of=LocalTimestampProto(
-                        time_zone="America/New_York",
-                        timestamp=Timestamp(seconds=timstamp_seconds, nanos=0),
-                    ),
-                    version="0.0.1",
-                    auction_announcement_date=ProtoSerializationUtil.serialize(
-                        auction_announcement_date
-                    ),
-                    total_accepted=ProtoSerializationUtil.serialize(
-                        auction_total_accepted
-                    ),
-                    post_auction_outstanding_quantity=ProtoSerializationUtil.serialize(
-                        post_auction_outstanding_quantity
-                    ),
-                )
-            ],
+            issuance_info=issuance_list,
         )
 
         security = Security(security_proto)

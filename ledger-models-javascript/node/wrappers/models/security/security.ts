@@ -3,6 +3,7 @@ import { IdentifierProto } from "../../../fintekkers/models/security/identifier/
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
+import { ProtoSerializationUtil } from '../utils/serialization';
 
 class Security {
   proto: SecurityProto;
@@ -71,12 +72,12 @@ class Security {
 
   getIssueDate(): Date {
     const date = this.proto.getIssueDate();
-    return new Date(date.getYear(), date.getMonth(), date.getDay());
+    return ProtoSerializationUtil.deserialize(this.proto.getIssueDate());
   }
 
   getMaturityDate(): Date {
     const date = this.proto.getMaturityDate();
-    return new Date(date.getYear(), date.getMonth(), date.getDay());
+    return ProtoSerializationUtil.deserialize(this.proto.getMaturityDate());
   }
 
   getIssuerName(): string {

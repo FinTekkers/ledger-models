@@ -6,7 +6,7 @@ import { UUID } from './uuid';
 import assert = require('assert');
 test('test serialization of key types', () => {
     testSerialization();
-  });
+});
 
 function testSerialization(): void {
     checkUUID();

@@ -1,5 +1,6 @@
 import { assert } from 'console';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
+import { ProtoSerializationUtil } from './serialization';
 
 class LocalDate {
   private proto: LocalDateProto;
@@ -9,7 +10,10 @@ class LocalDate {
   }
 
   toDate(): Date {
-    return new Date(this.proto.getYear(), this.proto.getMonth(), this.proto.getDay());
+    //Use the deserialization class which correctly handles month indexing
+    //mismatch between Javascript date and other languages, and the proto definition
+    //In the Proto 2 means Februrary, but in Javascript it will be read as March
+    return ProtoSerializationUtil.deserialize(this.proto);
   }
 
   toString(): string {

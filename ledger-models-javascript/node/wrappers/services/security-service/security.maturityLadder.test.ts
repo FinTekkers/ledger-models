@@ -16,7 +16,7 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
 
     const positionFilter = new PositionFilter();
     positionFilter.addEqualsFilter(FieldProto.ASSET_CLASS, 'Fixed Income');
-    // positionFilter.addFilter(FieldProto.MATURITY_DATE, new Date(), PositionFilterOperator.MORE_THAN);
+    positionFilter.addEqualsFilter(FieldProto.SECURITY_ISSUER_NAME, 'US Government');
 
     var securities = await securityService.searchSecurityAsOfNow(positionFilter);
 
