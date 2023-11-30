@@ -44,14 +44,6 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
         }
     }
 
-    console.log(results);
-    console.log("Done");
-    //TODO: Get oustanding amount of bond 
-
-
-
-
-    //TODO: Loose end. Asset Class is a string. Maybe should be an 'extendible' enum
-    //TODO: Loose end. Security coupon rate, need to add validation logic so that coupon rate is a sensible number
+    expect(results[0]['outstandingAmount']).toBeGreaterThan(0);
 }, 90000);
 
