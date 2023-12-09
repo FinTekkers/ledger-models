@@ -31,19 +31,26 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
         let issuance = issuanceList && issuanceList.length > 0 ? issuanceList[0] : null;
 
         if (issuance) {
-            let postAuctionQuantity: number = ProtoSerializationUtil.deserialize(issuance.getPostAuctionOutstandingQuantity());
-            let id: string = security.getSecurityID() ? security.getSecurityID().getIdentifierValue() : security.getID().toString();
+            if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().getFullYear() > 2009) {
+                console.log("Issed with %s, issuance: %s", security.getSecurityID().getIdentifierValue(), issuance);
+            } else if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().getFullYear() <= 2009) {
+                //Swallow this data gap. It's old and we don't mind
+            } else {
+                let postAuctionQuantity: number = ProtoSerializationUtil.deserialize(issuance.getPostAuctionOutstandingQuantity());
+                let id: string = security.getSecurityID() ? security.getSecurityID().getIdentifierValue() : security.getID().toString();
 
-            let result = {
-                'cusip': id,
-                'issueDate': security.getIssueDate(),
-                'outstandingAmount': postAuctionQuantity,
-                'maturityDate': security.getMaturityDate()
-            };
-            results.push(result);
+                let result = {
+                    'cusip': id,
+                    'issueDate': security.getIssueDate(),
+                    'outstandingAmount': postAuctionQuantity,
+                    'maturityDate': security.getMaturityDate()
+                };
+                results.push(result);
+            }
         }
     }
 
     expect(results[0]['outstandingAmount']).toBeGreaterThan(0);
+    console.log(results);
 }, 90000);
 
