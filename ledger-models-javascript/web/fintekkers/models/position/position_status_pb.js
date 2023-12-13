@@ -11,10 +11,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
-
 goog.exportSymbol('proto.fintekkers.models.position.PositionStatusProto', null, global);
 /**
  * @enum {number}
@@ -26,4 +22,3 @@ proto.fintekkers.models.position.PositionStatusProto = {
   EXECUTED: 3
 };
 
-goog.object.extend(exports, proto.fintekkers.models.position);

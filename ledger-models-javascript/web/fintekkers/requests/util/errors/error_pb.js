@@ -11,12 +11,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
-
-var fintekkers_requests_util_errors_message_pb = require('../../../../fintekkers/requests/util/errors/message_pb.js');
-goog.object.extend(proto, fintekkers_requests_util_errors_message_pb);
 goog.exportSymbol('proto.fintekkers.requests.util.errors.ErrorCode', null, global);
 goog.exportSymbol('proto.fintekkers.requests.util.errors.ErrorProto', null, global);
 goog.exportSymbol('proto.fintekkers.requests.util.errors.WarningProto', null, global);
@@ -95,7 +89,7 @@ proto.fintekkers.requests.util.errors.ErrorProto.prototype.toObject = function(o
 proto.fintekkers.requests.util.errors.ErrorProto.toObject = function(includeInstance, msg) {
   var f, obj = {
     code: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    detail: (f = msg.getDetail()) && fintekkers_requests_util_errors_message_pb.Message.toObject(includeInstance, f)
+    detail: (f = msg.getDetail()) && proto.fintekkers.requests.util.errors.Message.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -137,8 +131,8 @@ proto.fintekkers.requests.util.errors.ErrorProto.deserializeBinaryFromReader = f
       msg.setCode(value);
       break;
     case 2:
-      var value = new fintekkers_requests_util_errors_message_pb.Message;
-      reader.readMessage(value,fintekkers_requests_util_errors_message_pb.Message.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.requests.util.errors.Message;
+      reader.readMessage(value,proto.fintekkers.requests.util.errors.Message.deserializeBinaryFromReader);
       msg.setDetail(value);
       break;
     default:
@@ -182,7 +176,7 @@ proto.fintekkers.requests.util.errors.ErrorProto.serializeBinaryToWriter = funct
     writer.writeMessage(
       2,
       f,
-      fintekkers_requests_util_errors_message_pb.Message.serializeBinaryToWriter
+      proto.fintekkers.requests.util.errors.Message.serializeBinaryToWriter
     );
   }
 };
@@ -212,7 +206,7 @@ proto.fintekkers.requests.util.errors.ErrorProto.prototype.setCode = function(va
  */
 proto.fintekkers.requests.util.errors.ErrorProto.prototype.getDetail = function() {
   return /** @type{?proto.fintekkers.requests.util.errors.Message} */ (
-    jspb.Message.getWrapperField(this, fintekkers_requests_util_errors_message_pb.Message, 2));
+    jspb.Message.getWrapperField(this, proto.fintekkers.requests.util.errors.Message, 2));
 };
 
 
@@ -276,7 +270,7 @@ proto.fintekkers.requests.util.errors.WarningProto.prototype.toObject = function
 proto.fintekkers.requests.util.errors.WarningProto.toObject = function(includeInstance, msg) {
   var f, obj = {
     code: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    detail: (f = msg.getDetail()) && fintekkers_requests_util_errors_message_pb.Message.toObject(includeInstance, f)
+    detail: (f = msg.getDetail()) && proto.fintekkers.requests.util.errors.Message.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -318,8 +312,8 @@ proto.fintekkers.requests.util.errors.WarningProto.deserializeBinaryFromReader =
       msg.setCode(value);
       break;
     case 2:
-      var value = new fintekkers_requests_util_errors_message_pb.Message;
-      reader.readMessage(value,fintekkers_requests_util_errors_message_pb.Message.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.requests.util.errors.Message;
+      reader.readMessage(value,proto.fintekkers.requests.util.errors.Message.deserializeBinaryFromReader);
       msg.setDetail(value);
       break;
     default:
@@ -363,7 +357,7 @@ proto.fintekkers.requests.util.errors.WarningProto.serializeBinaryToWriter = fun
     writer.writeMessage(
       2,
       f,
-      fintekkers_requests_util_errors_message_pb.Message.serializeBinaryToWriter
+      proto.fintekkers.requests.util.errors.Message.serializeBinaryToWriter
     );
   }
 };
@@ -393,7 +387,7 @@ proto.fintekkers.requests.util.errors.WarningProto.prototype.setCode = function(
  */
 proto.fintekkers.requests.util.errors.WarningProto.prototype.getDetail = function() {
   return /** @type{?proto.fintekkers.requests.util.errors.Message} */ (
-    jspb.Message.getWrapperField(this, fintekkers_requests_util_errors_message_pb.Message, 2));
+    jspb.Message.getWrapperField(this, proto.fintekkers.requests.util.errors.Message, 2));
 };
 
 
@@ -432,4 +426,3 @@ proto.fintekkers.requests.util.errors.ErrorCode = {
   WARNING: 1
 };
 
-goog.object.extend(exports, proto.fintekkers.requests.util.errors);

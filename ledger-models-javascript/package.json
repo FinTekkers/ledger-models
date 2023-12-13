@@ -2,7 +2,7 @@
   "name": "@fintekkers/ledger-models",
   "todo": "Replace the version with build script version number",
   "version": "0.0.103",
-  "description": "ledger model protos ",
+  "description": "Fintekkers Ledger Models (Javascript implementation). A set of libraries to help you build your FinTech product more quickly",
   "authors": [
     "David Doherty",
     "Sam Sheridan"
@@ -37,6 +37,7 @@
     "decimal.js": "^10.4.3",
     "dotenv": "^16.3.1",
     "luxon": "^3.3.0",
+    "plotly.js-dist": "^2.27.1",
     "uuid": "^9.0.0"
   }
 }

@@ -11,18 +11,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
-
-var fintekkers_models_strategy_strategy_pb = require('../../../fintekkers/models/strategy/strategy_pb.js');
-goog.object.extend(proto, fintekkers_models_strategy_strategy_pb);
-var fintekkers_models_util_local_timestamp_pb = require('../../../fintekkers/models/util/local_timestamp_pb.js');
-goog.object.extend(proto, fintekkers_models_util_local_timestamp_pb);
-var fintekkers_models_util_decimal_value_pb = require('../../../fintekkers/models/util/decimal_value_pb.js');
-goog.object.extend(proto, fintekkers_models_util_decimal_value_pb);
-var fintekkers_models_util_uuid_pb = require('../../../fintekkers/models/util/uuid_pb.js');
-goog.object.extend(proto, fintekkers_models_util_uuid_pb);
 goog.exportSymbol('proto.fintekkers.models.strategy.MapFieldEntry', null, global);
 goog.exportSymbol('proto.fintekkers.models.strategy.StrategyAllocationProto', null, global);
 /**
@@ -99,8 +87,8 @@ proto.fintekkers.models.strategy.MapFieldEntry.prototype.toObject = function(opt
  */
 proto.fintekkers.models.strategy.MapFieldEntry.toObject = function(includeInstance, msg) {
   var f, obj = {
-    key: (f = msg.getKey()) && fintekkers_models_strategy_strategy_pb.StrategyProto.toObject(includeInstance, f),
-    value: (f = msg.getValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    key: (f = msg.getKey()) && proto.fintekkers.models.strategy.StrategyProto.toObject(includeInstance, f),
+    value: (f = msg.getValue()) && proto.fintekkers.models.util.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -138,13 +126,13 @@ proto.fintekkers.models.strategy.MapFieldEntry.deserializeBinaryFromReader = fun
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new fintekkers_models_strategy_strategy_pb.StrategyProto;
-      reader.readMessage(value,fintekkers_models_strategy_strategy_pb.StrategyProto.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.models.strategy.StrategyProto;
+      reader.readMessage(value,proto.fintekkers.models.strategy.StrategyProto.deserializeBinaryFromReader);
       msg.setKey(value);
       break;
     case 2:
-      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
-      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.models.util.DecimalValueProto;
+      reader.readMessage(value,proto.fintekkers.models.util.DecimalValueProto.deserializeBinaryFromReader);
       msg.setValue(value);
       break;
     default:
@@ -181,7 +169,7 @@ proto.fintekkers.models.strategy.MapFieldEntry.serializeBinaryToWriter = functio
     writer.writeMessage(
       1,
       f,
-      fintekkers_models_strategy_strategy_pb.StrategyProto.serializeBinaryToWriter
+      proto.fintekkers.models.strategy.StrategyProto.serializeBinaryToWriter
     );
   }
   f = message.getValue();
@@ -189,7 +177,7 @@ proto.fintekkers.models.strategy.MapFieldEntry.serializeBinaryToWriter = functio
     writer.writeMessage(
       2,
       f,
-      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+      proto.fintekkers.models.util.DecimalValueProto.serializeBinaryToWriter
     );
   }
 };
@@ -201,7 +189,7 @@ proto.fintekkers.models.strategy.MapFieldEntry.serializeBinaryToWriter = functio
  */
 proto.fintekkers.models.strategy.MapFieldEntry.prototype.getKey = function() {
   return /** @type{?proto.fintekkers.models.strategy.StrategyProto} */ (
-    jspb.Message.getWrapperField(this, fintekkers_models_strategy_strategy_pb.StrategyProto, 1));
+    jspb.Message.getWrapperField(this, proto.fintekkers.models.strategy.StrategyProto, 1));
 };
 
 
@@ -238,7 +226,7 @@ proto.fintekkers.models.strategy.MapFieldEntry.prototype.hasKey = function() {
  */
 proto.fintekkers.models.strategy.MapFieldEntry.prototype.getValue = function() {
   return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
-    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 2));
+    jspb.Message.getWrapperField(this, proto.fintekkers.models.util.DecimalValueProto, 2));
 };
 
 
@@ -310,8 +298,8 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.toObject = function(inc
   var f, obj = {
     objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
     version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
-    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    uuid: (f = msg.getUuid()) && proto.fintekkers.models.util.UUIDProto.toObject(includeInstance, f),
+    asOf: (f = msg.getAsOf()) && proto.fintekkers.models.util.LocalTimestampProto.toObject(includeInstance, f),
     isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
     allocationsList: jspb.Message.toObjectList(msg.getAllocationsList(),
     proto.fintekkers.models.strategy.MapFieldEntry.toObject, includeInstance)
@@ -360,13 +348,13 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.deserializeBinaryFromRe
       msg.setVersion(value);
       break;
     case 5:
-      var value = new fintekkers_models_util_uuid_pb.UUIDProto;
-      reader.readMessage(value,fintekkers_models_util_uuid_pb.UUIDProto.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.models.util.UUIDProto;
+      reader.readMessage(value,proto.fintekkers.models.util.UUIDProto.deserializeBinaryFromReader);
       msg.setUuid(value);
       break;
     case 6:
-      var value = new fintekkers_models_util_local_timestamp_pb.LocalTimestampProto;
-      reader.readMessage(value,fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.models.util.LocalTimestampProto;
+      reader.readMessage(value,proto.fintekkers.models.util.LocalTimestampProto.deserializeBinaryFromReader);
       msg.setAsOf(value);
       break;
     case 7:
@@ -426,7 +414,7 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.serializeBinaryToWriter
     writer.writeMessage(
       5,
       f,
-      fintekkers_models_util_uuid_pb.UUIDProto.serializeBinaryToWriter
+      proto.fintekkers.models.util.UUIDProto.serializeBinaryToWriter
     );
   }
   f = message.getAsOf();
@@ -434,7 +422,7 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.serializeBinaryToWriter
     writer.writeMessage(
       6,
       f,
-      fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.serializeBinaryToWriter
+      proto.fintekkers.models.util.LocalTimestampProto.serializeBinaryToWriter
     );
   }
   f = message.getIsLink();
@@ -497,7 +485,7 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.setVersion = 
  */
 proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.getUuid = function() {
   return /** @type{?proto.fintekkers.models.util.UUIDProto} */ (
-    jspb.Message.getWrapperField(this, fintekkers_models_util_uuid_pb.UUIDProto, 5));
+    jspb.Message.getWrapperField(this, proto.fintekkers.models.util.UUIDProto, 5));
 };
 
 
@@ -534,7 +522,7 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.hasUuid = fun
  */
 proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.getAsOf = function() {
   return /** @type{?proto.fintekkers.models.util.LocalTimestampProto} */ (
-    jspb.Message.getWrapperField(this, fintekkers_models_util_local_timestamp_pb.LocalTimestampProto, 6));
+    jspb.Message.getWrapperField(this, proto.fintekkers.models.util.LocalTimestampProto, 6));
 };
 
 
@@ -621,4 +609,3 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.clearAllocati
 };
 
 
-goog.object.extend(exports, proto.fintekkers.models.strategy);

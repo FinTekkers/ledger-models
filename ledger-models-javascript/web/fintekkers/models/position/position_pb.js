@@ -11,12 +11,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
-
-var fintekkers_models_position_position_util_pb = require('../../../fintekkers/models/position/position_util_pb.js');
-goog.object.extend(proto, fintekkers_models_position_position_util_pb);
 goog.exportSymbol('proto.fintekkers.models.position.PositionProto', null, global);
 goog.exportSymbol('proto.fintekkers.models.position.PositionTypeProto', null, global);
 goog.exportSymbol('proto.fintekkers.models.position.PositionViewProto', null, global);
@@ -85,9 +79,9 @@ proto.fintekkers.models.position.PositionProto.toObject = function(includeInstan
     positionView: jspb.Message.getFieldWithDefault(msg, 10, 0),
     positionType: jspb.Message.getFieldWithDefault(msg, 11, 0),
     measuresList: jspb.Message.toObjectList(msg.getMeasuresList(),
-    fintekkers_models_position_position_util_pb.MeasureMapEntry.toObject, includeInstance),
+    proto.fintekkers.models.position.MeasureMapEntry.toObject, includeInstance),
     fieldsList: jspb.Message.toObjectList(msg.getFieldsList(),
-    fintekkers_models_position_position_util_pb.FieldMapEntry.toObject, includeInstance)
+    proto.fintekkers.models.position.FieldMapEntry.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -141,13 +135,13 @@ proto.fintekkers.models.position.PositionProto.deserializeBinaryFromReader = fun
       msg.setPositionType(value);
       break;
     case 20:
-      var value = new fintekkers_models_position_position_util_pb.MeasureMapEntry;
-      reader.readMessage(value,fintekkers_models_position_position_util_pb.MeasureMapEntry.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.models.position.MeasureMapEntry;
+      reader.readMessage(value,proto.fintekkers.models.position.MeasureMapEntry.deserializeBinaryFromReader);
       msg.addMeasures(value);
       break;
     case 21:
-      var value = new fintekkers_models_position_position_util_pb.FieldMapEntry;
-      reader.readMessage(value,fintekkers_models_position_position_util_pb.FieldMapEntry.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.models.position.FieldMapEntry;
+      reader.readMessage(value,proto.fintekkers.models.position.FieldMapEntry.deserializeBinaryFromReader);
       msg.addFields(value);
       break;
     default:
@@ -212,7 +206,7 @@ proto.fintekkers.models.position.PositionProto.serializeBinaryToWriter = functio
     writer.writeRepeatedMessage(
       20,
       f,
-      fintekkers_models_position_position_util_pb.MeasureMapEntry.serializeBinaryToWriter
+      proto.fintekkers.models.position.MeasureMapEntry.serializeBinaryToWriter
     );
   }
   f = message.getFieldsList();
@@ -220,7 +214,7 @@ proto.fintekkers.models.position.PositionProto.serializeBinaryToWriter = functio
     writer.writeRepeatedMessage(
       21,
       f,
-      fintekkers_models_position_position_util_pb.FieldMapEntry.serializeBinaryToWriter
+      proto.fintekkers.models.position.FieldMapEntry.serializeBinaryToWriter
     );
   }
 };
@@ -304,7 +298,7 @@ proto.fintekkers.models.position.PositionProto.prototype.setPositionType = funct
  */
 proto.fintekkers.models.position.PositionProto.prototype.getMeasuresList = function() {
   return /** @type{!Array<!proto.fintekkers.models.position.MeasureMapEntry>} */ (
-    jspb.Message.getRepeatedWrapperField(this, fintekkers_models_position_position_util_pb.MeasureMapEntry, 20));
+    jspb.Message.getRepeatedWrapperField(this, proto.fintekkers.models.position.MeasureMapEntry, 20));
 };
 
 
@@ -342,7 +336,7 @@ proto.fintekkers.models.position.PositionProto.prototype.clearMeasuresList = fun
  */
 proto.fintekkers.models.position.PositionProto.prototype.getFieldsList = function() {
   return /** @type{!Array<!proto.fintekkers.models.position.FieldMapEntry>} */ (
-    jspb.Message.getRepeatedWrapperField(this, fintekkers_models_position_position_util_pb.FieldMapEntry, 21));
+    jspb.Message.getRepeatedWrapperField(this, proto.fintekkers.models.position.FieldMapEntry, 21));
 };
 
 
@@ -392,4 +386,3 @@ proto.fintekkers.models.position.PositionTypeProto = {
   TAX_LOT: 2
 };
 
-goog.object.extend(exports, proto.fintekkers.models.position);

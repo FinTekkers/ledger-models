@@ -11,17 +11,3 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
-
-var fintekkers_requests_price_query_price_request_pb = require('../../../fintekkers/requests/price/query_price_request_pb.js');
-goog.object.extend(proto, fintekkers_requests_price_query_price_request_pb);
-var fintekkers_requests_price_query_price_response_pb = require('../../../fintekkers/requests/price/query_price_response_pb.js');
-goog.object.extend(proto, fintekkers_requests_price_query_price_response_pb);
-var fintekkers_requests_price_create_price_request_pb = require('../../../fintekkers/requests/price/create_price_request_pb.js');
-goog.object.extend(proto, fintekkers_requests_price_create_price_request_pb);
-var fintekkers_requests_price_create_price_response_pb = require('../../../fintekkers/requests/price/create_price_response_pb.js');
-goog.object.extend(proto, fintekkers_requests_price_create_price_response_pb);
-var fintekkers_requests_util_errors_summary_pb = require('../../../fintekkers/requests/util/errors/summary_pb.js');
-goog.object.extend(proto, fintekkers_requests_util_errors_summary_pb);

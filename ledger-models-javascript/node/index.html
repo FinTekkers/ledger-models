@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<body>
+
+    <div id="myPlot" style="width:100%;max-width:700px"></div>
+    <div id="yourPlotDiv" style="width:100%;max-width:700px"></div>
+
+
+    <script src="../web/fintekkers/models/portfolio/portfolio_pb.js"></script>
+
+    <script>
+        const xArray = ["Italy", "France", "Spain", "USA", "Argentina"];
+        const yArray = [55, 49, 44, 24, 15];
+
+        const data = [{
+            x: xArray,
+            y: yArray,
+            type: "bar",
+            orientation: "v",
+            marker: { color: "rgba(0,0,255,0.6)" }
+        }];
+
+        const layout = { title: "World Wide Wine Production" };
+
+        Plotly.newPlot("myPlot", data, layout);
+
+        // Your data
+        const bonds = [
+            {
+                cusip: '912796QV4',
+                issueDate: '2018-08-16T04:00:00.000Z',
+                outstandingAmount: 103994725400,
+                maturityDate: '2019-08-15T04:00:00.000Z'
+            },
+            {
+                cusip: '9127955D9',
+                issueDate: '2011-09-15T04:00:00.000Z',
+                outstandingAmount: 27000517600,
+                maturityDate: '2012-03-15T04:00:00.000Z'
+            },
+            {
+                cusip: '91282CDU2',
+                issueDate: '2022-01-31T05:00:00.000Z',
+                outstandingAmount: 51887223000,
+                maturityDate: '2024-01-31T05:00:00.000Z'
+            }
+        ];
+
+        // Processing the data
+        const amountByDate = {};
+
+        bonds.forEach(bond => {
+            const issueDate = bond.issueDate.split('T')[0];
+            const maturityDate = bond.maturityDate.split('T')[0];
+            amountByDate[issueDate] = (amountByDate[issueDate] || 0) + bond.outstandingAmount;
+            amountByDate[maturityDate] = (amountByDate[maturityDate] || 0) + bond.outstandingAmount;
+        });
+
+        // Preparing data for plotting
+        const dates = Object.keys(amountByDate).sort();
+        const amounts = dates.map(date => amountByDate[date]);
+
+        // Plotting with Plotly
+        const trace = {
+            x: dates,
+            y: amounts,
+            type: 'scatter'
+        };
+
+        const layout2 = {
+            title: 'Sum of Outstanding Amounts Over Time',
+            xaxis: {
+                title: 'Date'
+            },
+            yaxis: {
+                title: 'Sum of Outstanding Amount'
+            }
+        };
+
+        Plotly.newPlot('yourPlotDiv', [trace], layout2);
+    </script>
+
+</body>
+
+</html>

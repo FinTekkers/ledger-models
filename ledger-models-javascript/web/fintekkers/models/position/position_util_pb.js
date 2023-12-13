@@ -11,18 +11,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
-
-var google_protobuf_any_pb = require('google-protobuf/google/protobuf/any_pb.js');
-goog.object.extend(proto, google_protobuf_any_pb);
-var fintekkers_models_position_field_pb = require('../../../fintekkers/models/position/field_pb.js');
-goog.object.extend(proto, fintekkers_models_position_field_pb);
-var fintekkers_models_position_measure_pb = require('../../../fintekkers/models/position/measure_pb.js');
-goog.object.extend(proto, fintekkers_models_position_measure_pb);
-var fintekkers_models_util_decimal_value_pb = require('../../../fintekkers/models/util/decimal_value_pb.js');
-goog.object.extend(proto, fintekkers_models_util_decimal_value_pb);
 goog.exportSymbol('proto.fintekkers.models.position.FieldMapEntry', null, global);
 goog.exportSymbol('proto.fintekkers.models.position.FieldMapEntry.FieldmapvalueoneofCase', null, global);
 goog.exportSymbol('proto.fintekkers.models.position.MeasureMapEntry', null, global);
@@ -102,7 +90,7 @@ proto.fintekkers.models.position.MeasureMapEntry.prototype.toObject = function(o
 proto.fintekkers.models.position.MeasureMapEntry.toObject = function(includeInstance, msg) {
   var f, obj = {
     measure: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    measureDecimalValue: (f = msg.getMeasureDecimalValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    measureDecimalValue: (f = msg.getMeasureDecimalValue()) && proto.fintekkers.models.util.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -144,8 +132,8 @@ proto.fintekkers.models.position.MeasureMapEntry.deserializeBinaryFromReader = f
       msg.setMeasure(value);
       break;
     case 2:
-      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
-      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.models.util.DecimalValueProto;
+      reader.readMessage(value,proto.fintekkers.models.util.DecimalValueProto.deserializeBinaryFromReader);
       msg.setMeasureDecimalValue(value);
       break;
     default:
@@ -189,7 +177,7 @@ proto.fintekkers.models.position.MeasureMapEntry.serializeBinaryToWriter = funct
     writer.writeMessage(
       2,
       f,
-      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+      proto.fintekkers.models.util.DecimalValueProto.serializeBinaryToWriter
     );
   }
 };
@@ -219,7 +207,7 @@ proto.fintekkers.models.position.MeasureMapEntry.prototype.setMeasure = function
  */
 proto.fintekkers.models.position.MeasureMapEntry.prototype.getMeasureDecimalValue = function() {
   return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
-    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 2));
+    jspb.Message.getWrapperField(this, proto.fintekkers.models.util.DecimalValueProto, 2));
 };
 
 
@@ -310,7 +298,7 @@ proto.fintekkers.models.position.FieldMapEntry.prototype.toObject = function(opt
 proto.fintekkers.models.position.FieldMapEntry.toObject = function(includeInstance, msg) {
   var f, obj = {
     field: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    fieldValuePacked: (f = msg.getFieldValuePacked()) && google_protobuf_any_pb.Any.toObject(includeInstance, f),
+    fieldValuePacked: (f = msg.getFieldValuePacked()) && proto.google.protobuf.Any.toObject(includeInstance, f),
     enumValue: jspb.Message.getFieldWithDefault(msg, 5, 0),
     stringValue: jspb.Message.getFieldWithDefault(msg, 6, ""),
     operator: jspb.Message.getFieldWithDefault(msg, 20, 0)
@@ -355,8 +343,8 @@ proto.fintekkers.models.position.FieldMapEntry.deserializeBinaryFromReader = fun
       msg.setField(value);
       break;
     case 4:
-      var value = new google_protobuf_any_pb.Any;
-      reader.readMessage(value,google_protobuf_any_pb.Any.deserializeBinaryFromReader);
+      var value = new proto.google.protobuf.Any;
+      reader.readMessage(value,proto.google.protobuf.Any.deserializeBinaryFromReader);
       msg.setFieldValuePacked(value);
       break;
     case 5:
@@ -412,7 +400,7 @@ proto.fintekkers.models.position.FieldMapEntry.serializeBinaryToWriter = functio
     writer.writeMessage(
       4,
       f,
-      google_protobuf_any_pb.Any.serializeBinaryToWriter
+      proto.google.protobuf.Any.serializeBinaryToWriter
     );
   }
   f = /** @type {number} */ (jspb.Message.getField(message, 5));
@@ -463,7 +451,7 @@ proto.fintekkers.models.position.FieldMapEntry.prototype.setField = function(val
  */
 proto.fintekkers.models.position.FieldMapEntry.prototype.getFieldValuePacked = function() {
   return /** @type{?proto.google.protobuf.Any} */ (
-    jspb.Message.getWrapperField(this, google_protobuf_any_pb.Any, 4));
+    jspb.Message.getWrapperField(this, proto.google.protobuf.Any, 4));
 };
 
 
@@ -597,4 +585,3 @@ proto.fintekkers.models.position.PositionFilterOperator = {
   MORE_THAN_OR_EQUALS: 6
 };
 
-goog.object.extend(exports, proto.fintekkers.models.position);

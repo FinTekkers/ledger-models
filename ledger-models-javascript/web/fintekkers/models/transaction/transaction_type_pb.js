@@ -11,10 +11,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
-
 goog.exportSymbol('proto.fintekkers.models.transaction.TransactionTypeProto', null, global);
 /**
  * @enum {number}
@@ -29,4 +25,3 @@ proto.fintekkers.models.transaction.TransactionTypeProto = {
   MATURATION_OFFSET: 6
 };
 
-goog.object.extend(exports, proto.fintekkers.models.transaction);

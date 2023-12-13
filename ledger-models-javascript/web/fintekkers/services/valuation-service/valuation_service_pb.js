@@ -11,11 +11,3 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
-
-var fintekkers_requests_valuation_valuation_request_pb = require('../../../fintekkers/requests/valuation/valuation_request_pb.js');
-goog.object.extend(proto, fintekkers_requests_valuation_valuation_request_pb);
-var fintekkers_requests_valuation_valuation_response_pb = require('../../../fintekkers/requests/valuation/valuation_response_pb.js');
-goog.object.extend(proto, fintekkers_requests_valuation_valuation_response_pb);

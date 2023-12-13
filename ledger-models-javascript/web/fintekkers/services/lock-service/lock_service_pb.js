@@ -11,20 +11,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
-
-var google_protobuf_empty_pb = require('google-protobuf/google/protobuf/empty_pb.js');
-goog.object.extend(proto, google_protobuf_empty_pb);
-var fintekkers_requests_util_lock_lock_request_pb = require('../../../fintekkers/requests/util/lock/lock_request_pb.js');
-goog.object.extend(proto, fintekkers_requests_util_lock_lock_request_pb);
-var fintekkers_requests_util_lock_lock_response_pb = require('../../../fintekkers/requests/util/lock/lock_response_pb.js');
-goog.object.extend(proto, fintekkers_requests_util_lock_lock_response_pb);
-var fintekkers_models_util_lock_node_partition_pb = require('../../../fintekkers/models/util/lock/node_partition_pb.js');
-goog.object.extend(proto, fintekkers_models_util_lock_node_partition_pb);
-var fintekkers_models_util_lock_node_state_pb = require('../../../fintekkers/models/util/lock/node_state_pb.js');
-goog.object.extend(proto, fintekkers_models_util_lock_node_state_pb);
 goog.exportSymbol('proto.fintekkers.services.lock_service.NamespaceList', null, global);
 goog.exportSymbol('proto.fintekkers.services.lock_service.NodeStateList', null, global);
 goog.exportSymbol('proto.fintekkers.services.lock_service.PartitionsList', null, global);
@@ -287,7 +273,7 @@ proto.fintekkers.services.lock_service.PartitionsList.prototype.toObject = funct
 proto.fintekkers.services.lock_service.PartitionsList.toObject = function(includeInstance, msg) {
   var f, obj = {
     partitionsList: jspb.Message.toObjectList(msg.getPartitionsList(),
-    fintekkers_models_util_lock_node_partition_pb.NodePartition.toObject, includeInstance)
+    proto.fintekkers.models.util.lock.NodePartition.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -325,8 +311,8 @@ proto.fintekkers.services.lock_service.PartitionsList.deserializeBinaryFromReade
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new fintekkers_models_util_lock_node_partition_pb.NodePartition;
-      reader.readMessage(value,fintekkers_models_util_lock_node_partition_pb.NodePartition.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.models.util.lock.NodePartition;
+      reader.readMessage(value,proto.fintekkers.models.util.lock.NodePartition.deserializeBinaryFromReader);
       msg.addPartitions(value);
       break;
     default:
@@ -363,7 +349,7 @@ proto.fintekkers.services.lock_service.PartitionsList.serializeBinaryToWriter = 
     writer.writeRepeatedMessage(
       1,
       f,
-      fintekkers_models_util_lock_node_partition_pb.NodePartition.serializeBinaryToWriter
+      proto.fintekkers.models.util.lock.NodePartition.serializeBinaryToWriter
     );
   }
 };
@@ -375,7 +361,7 @@ proto.fintekkers.services.lock_service.PartitionsList.serializeBinaryToWriter = 
  */
 proto.fintekkers.services.lock_service.PartitionsList.prototype.getPartitionsList = function() {
   return /** @type{!Array<!proto.fintekkers.models.util.lock.NodePartition>} */ (
-    jspb.Message.getRepeatedWrapperField(this, fintekkers_models_util_lock_node_partition_pb.NodePartition, 1));
+    jspb.Message.getRepeatedWrapperField(this, proto.fintekkers.models.util.lock.NodePartition, 1));
 };
 
 
@@ -447,7 +433,7 @@ proto.fintekkers.services.lock_service.NodeStateList.prototype.toObject = functi
 proto.fintekkers.services.lock_service.NodeStateList.toObject = function(includeInstance, msg) {
   var f, obj = {
     nodesList: jspb.Message.toObjectList(msg.getNodesList(),
-    fintekkers_models_util_lock_node_state_pb.NodeState.toObject, includeInstance)
+    proto.fintekkers.models.util.lock.NodeState.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -485,8 +471,8 @@ proto.fintekkers.services.lock_service.NodeStateList.deserializeBinaryFromReader
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new fintekkers_models_util_lock_node_state_pb.NodeState;
-      reader.readMessage(value,fintekkers_models_util_lock_node_state_pb.NodeState.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.models.util.lock.NodeState;
+      reader.readMessage(value,proto.fintekkers.models.util.lock.NodeState.deserializeBinaryFromReader);
       msg.addNodes(value);
       break;
     default:
@@ -523,7 +509,7 @@ proto.fintekkers.services.lock_service.NodeStateList.serializeBinaryToWriter = f
     writer.writeRepeatedMessage(
       1,
       f,
-      fintekkers_models_util_lock_node_state_pb.NodeState.serializeBinaryToWriter
+      proto.fintekkers.models.util.lock.NodeState.serializeBinaryToWriter
     );
   }
 };
@@ -535,7 +521,7 @@ proto.fintekkers.services.lock_service.NodeStateList.serializeBinaryToWriter = f
  */
 proto.fintekkers.services.lock_service.NodeStateList.prototype.getNodesList = function() {
   return /** @type{!Array<!proto.fintekkers.models.util.lock.NodeState>} */ (
-    jspb.Message.getRepeatedWrapperField(this, fintekkers_models_util_lock_node_state_pb.NodeState, 1));
+    jspb.Message.getRepeatedWrapperField(this, proto.fintekkers.models.util.lock.NodeState, 1));
 };
 
 
@@ -567,4 +553,3 @@ proto.fintekkers.services.lock_service.NodeStateList.prototype.clearNodesList = 
 };
 
 
-goog.object.extend(exports, proto.fintekkers.services.lock_service);

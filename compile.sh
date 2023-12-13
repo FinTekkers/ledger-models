@@ -27,8 +27,8 @@ echo "generating javascript protos"
 cd ../ledger-models-protos
 # generate web js
 protoc \
-    --js_out=import_style=commonjs:../ledger-models-javascript/web/ \
-    --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:../ledger-models-javascript/web/ $(find . -iname "*.proto")
+    --js_out=import_style=es6:../ledger-models-javascript/web/ \
+    --grpc-web_out=import_style=common+dts,mode=grpcwebtext:../ledger-models-javascript/web/ $(find . -iname "*.proto")
 
 # generate node js
 grpc_tools_node_protoc --js_out=import_style=commonjs,binary:../ledger-models-javascript/node/ --grpc_out=grpc_js:../ledger-models-javascript/node/ $(find . -iname "*.proto")

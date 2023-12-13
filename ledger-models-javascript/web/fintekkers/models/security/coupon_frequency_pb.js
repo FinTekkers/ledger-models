@@ -11,10 +11,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-var jspb = require('google-protobuf');
-var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
-
 goog.exportSymbol('proto.fintekkers.models.security.CouponFrequencyProto', null, global);
 /**
  * @enum {number}
@@ -28,4 +24,3 @@ proto.fintekkers.models.security.CouponFrequencyProto = {
   NO_COUPON: 5
 };
 
-goog.object.extend(exports, proto.fintekkers.models.security);
