@@ -20,6 +20,10 @@ module.exports = {
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
+        library: {
+            name: 'MyLibrary',
+            type: 'window',
+        },
     }, plugins: [
         new HtmlWebpackPlugin({
             template: 'index.html' // Adjust the path as necessary

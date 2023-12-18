@@ -8,7 +8,12 @@
     <div id="yourPlotDiv" style="width:100%;max-width:700px"></div>
 
 
-    <script type="module" src="./bundle.js"></script>
+    <script type="module" src="./bundle.js">
+        for (var i = 0; i < 10; i++) {
+            console.log(i);
+        }
+
+    </script>
 
     <script>
         const xArray = ["Italy", "France", "Spain", "USA", "Argentina"];
@@ -80,7 +85,17 @@
         };
 
         Plotly.newPlot('yourPlotDiv', [trace], layout2);
+
+
     </script>
+    <script type="module">
+        for (var i = 0; i < 10; i++) {
+            //Not a fan of this approach for importing objects. It's messy
+            console.log(i); let person = new window.MyLibrary.Person({
+                name: "John Doe", id: i,
+                years: 45
+            }); console.log(person)
+        } </script>
 
 </body>
 
