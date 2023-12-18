@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "start": "webpack serve --open",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "@bufbuild/buf": "^1.28.1",
+    "@bufbuild/protobuf": "^1.6.0",
+    "@bufbuild/protoc-gen-es": "^1.6.0"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^5.5.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}

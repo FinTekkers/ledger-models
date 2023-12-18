@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist", // Directory for compiled JS files
+    "module": "ESNext", // Specify module code generation
+    "target": "ESNext", // Specify ECMAScript target version
+    "strict": true, // Enable all strict type-checking options
+    "esModuleInterop": true, // Enables compatibility with Babel
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+  },
+  "include": [
+    "src/gen/**/*.ts",
+    "protos/**/*.ts"
+  ] // Include your .ts files
+}
