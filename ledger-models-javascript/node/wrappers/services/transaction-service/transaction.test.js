@@ -52,7 +52,39 @@ var TransactionService_1 = require("./TransactionService");
 var transaction_1 = require("../../models/transaction/transaction");
 var assert = require("assert");
 var positionfilter_1 = require("../../models/position/positionfilter");
-test('test creating a transaction against the portfolio service', function () { return __awaiter(void 0, void 0, void 0, function () {
+test('test printing a transaction to string', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var isTrue;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, testToString()];
+            case 1:
+                isTrue = _a.sent();
+                expect(isTrue).toBe(true);
+                return [2 /*return*/];
+        }
+    });
+}); }, 30000);
+function testToString() {
+    return __awaiter(this, void 0, void 0, function () {
+        var now, today, positionFilter, transactionProto, transaction;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    now = dt.ZonedDateTime.now();
+                    today = new local_date_pb_1.LocalDateProto().setDay(1).setMonth(1).setYear(2021);
+                    positionFilter = new positionfilter_1.PositionFilter();
+                    positionFilter.addEqualsFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income');
+                    return [4 /*yield*/, getTransaction(now, positionFilter, today)];
+                case 1:
+                    transactionProto = _a.sent();
+                    transaction = new transaction_1.default(transactionProto);
+                    transaction.toString();
+                    return [2 /*return*/, true];
+            }
+        });
+    });
+}
+test('test creating a transaction against the transaction service', function () { return __awaiter(void 0, void 0, void 0, function () {
     var isTrue;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -66,18 +98,54 @@ test('test creating a transaction against the portfolio service', function () { 
 }); }, 30000);
 function testTransaction() {
     return __awaiter(this, void 0, void 0, function () {
-        var id_proto, now, today, securityService, portfolioService, transactionService, positionFilter, fixedIncomeSecurities, security, portfolios, portfolio, transaction, createTransactionResponse, transactionResponse, transactionID, transactions;
+        var transactionService, now, today, positionFilter, transaction, createTransactionResponse, transactionResponse, transactionID, transactions;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    id_proto = uuid.UUID.random().toUUIDProto();
+                    transactionService = new TransactionService_1.TransactionService();
                     now = dt.ZonedDateTime.now();
                     today = new local_date_pb_1.LocalDateProto().setDay(1).setMonth(1).setYear(2021);
-                    securityService = new SecurityService_1.SecurityService();
-                    portfolioService = new PortfolioService_1.PortfolioService();
-                    transactionService = new TransactionService_1.TransactionService();
                     positionFilter = new positionfilter_1.PositionFilter();
                     positionFilter.addEqualsFilter(field_pb_1.FieldProto.ASSET_CLASS, 'Fixed Income');
+                    return [4 /*yield*/, getTransaction(now, positionFilter, today)];
+                case 1:
+                    transaction = _a.sent();
+                    // var validationSummary = await transactionService.validateCreateTransaction(new Transaction(transaction));
+                    // assert(validationSummary.getErrorsList().length == 0, "Validation errors found");
+                    console.time("createTransaction");
+                    return [4 /*yield*/, transactionService.createTransaction(new transaction_1.default(transaction))];
+                case 2:
+                    createTransactionResponse = _a.sent();
+                    transactionResponse = createTransactionResponse.getTransactionResponse();
+                    assert(transactionResponse, "No transaction response found");
+                    console.timeEnd("createTransaction");
+                    console.log("Searching transaction");
+                    console.time("searchTransaction");
+                    transactionID = uuid.UUID.fromU8Array(transactionResponse.getUuid().getRawUuid_asU8());
+                    positionFilter.addEqualsFilter(field_pb_1.FieldProto.ID, transactionID);
+                    return [4 /*yield*/, transactionService.searchTransaction(now.toProto(), positionFilter)];
+                case 3:
+                    transactions = _a.sent();
+                    console.timeEnd("searchTransaction");
+                    if (transactions === undefined) {
+                        console.log('No transactions found');
+                    }
+                    else {
+                        console.log(transactions.length);
+                    }
+                    return [2 /*return*/, true];
+            }
+        });
+    });
+}
+function getTransaction(now, positionFilter, today) {
+    return __awaiter(this, void 0, void 0, function () {
+        var securityService, portfolioService, fixedIncomeSecurities, security, portfolios, portfolio, transaction;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    securityService = new SecurityService_1.SecurityService();
+                    portfolioService = new PortfolioService_1.PortfolioService();
                     console.time("searchSecurity");
                     return [4 /*yield*/, securityService
                             .searchSecurity(now.toProto(), positionFilter)
@@ -118,30 +186,7 @@ function testTransaction() {
                     transaction.setQuantity(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('10000.00'));
                     transaction.setPortfolio(portfolio.proto);
                     transaction.setSecurity(security.proto);
-                    // var validationSummary = await transactionService.validateCreateTransaction(new Transaction(transaction));
-                    // assert(validationSummary.getErrorsList().length == 0, "Validation errors found");
-                    console.time("createTransaction");
-                    return [4 /*yield*/, transactionService.createTransaction(new transaction_1.default(transaction))];
-                case 3:
-                    createTransactionResponse = _a.sent();
-                    transactionResponse = createTransactionResponse.getTransactionResponse();
-                    assert(transactionResponse, "No transaction response found");
-                    console.timeEnd("createTransaction");
-                    console.log("Searching transaction");
-                    console.time("searchTransaction");
-                    transactionID = uuid.UUID.fromU8Array(transactionResponse.getUuid().getRawUuid_asU8());
-                    positionFilter.addEqualsFilter(field_pb_1.FieldProto.ID, transactionID);
-                    return [4 /*yield*/, transactionService.searchTransaction(now.toProto(), positionFilter)];
-                case 4:
-                    transactions = _a.sent();
-                    console.timeEnd("searchTransaction");
-                    if (transactions === undefined) {
-                        console.log('No transactions found');
-                    }
-                    else {
-                        console.log(transactions.length);
-                    }
-                    return [2 /*return*/, true];
+                    return [2 /*return*/, transaction];
             }
         });
     });

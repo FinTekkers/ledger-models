@@ -25,15 +25,21 @@ class Transaction {
   toString(): string {
     try {
       const validTo: string =
-        this.proto.getValidFrom() !== null ? this.proto.getValidTo().toString() : "NULL";
+        this.proto.getValidTo() ? this.proto.getValidTo().toString() : "NULL";
+
+      const validFrom: string =
+        this.proto.getValidFrom() ? this.proto.getValidFrom().toString() : "NULL";
+
+      const strategyAllocation =
+        this.proto.getStrategyAllocation() ? this.getStrategyAllocation().toString() : "NULL";
 
       return `${/*this.proto.isCancelled()*/ false ? "INVALIDATED: " : ""}TXN[${this.getID().toString()}], ` +
         `TradeDate[${this.getTradeDate().toString()}], TxnType[${this.getTransactionType()}], Price[${this.getPrice()}], Quantity[${this.getQuantity()}], ` +
         `AsOf[${this.getAsOf().toString()}], Portfolio[${this.getPortfolio().getPortfolioName()}], Issuer[${this.getSecurity().getIssuerName()}], ` +
-        `ValidFrom[${this.proto.getValidFrom().toString()}], ValidTo[${validTo}], Strategy[${this.getStrategyAllocation().toString()}]`;
+        `ValidFrom[${validFrom}], ValidTo[${validTo}], Strategy[${strategyAllocation}]`;
     } catch (e) {
       console.error(e);
-      return "WHOOPS";
+      return `Transaction toString() serialization failed: ${e}`;
     }
   }
 

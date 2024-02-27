@@ -15,15 +15,17 @@ var Transaction = /** @class */ (function () {
     }
     Transaction.prototype.toString = function () {
         try {
-            var validTo = this.proto.getValidFrom() !== null ? this.proto.getValidTo().toString() : "NULL";
+            var validTo = this.proto.getValidTo() ? this.proto.getValidTo().toString() : "NULL";
+            var validFrom = this.proto.getValidFrom() ? this.proto.getValidFrom().toString() : "NULL";
+            var strategyAllocation = this.proto.getStrategyAllocation() ? this.getStrategyAllocation().toString() : "NULL";
             return "".concat(/*this.proto.isCancelled()*/ false ? "INVALIDATED: " : "", "TXN[").concat(this.getID().toString(), "], ") +
                 "TradeDate[".concat(this.getTradeDate().toString(), "], TxnType[").concat(this.getTransactionType(), "], Price[").concat(this.getPrice(), "], Quantity[").concat(this.getQuantity(), "], ") +
                 "AsOf[".concat(this.getAsOf().toString(), "], Portfolio[").concat(this.getPortfolio().getPortfolioName(), "], Issuer[").concat(this.getSecurity().getIssuerName(), "], ") +
-                "ValidFrom[".concat(this.proto.getValidFrom().toString(), "], ValidTo[").concat(validTo, "], Strategy[").concat(this.getStrategyAllocation().toString(), "]");
+                "ValidFrom[".concat(validFrom, "], ValidTo[").concat(validTo, "], Strategy[").concat(strategyAllocation, "]");
         }
         catch (e) {
             console.error(e);
-            return "WHOOPS";
+            return "Transaction toString() serialization failed: ".concat(e);
         }
     };
     Transaction.prototype.getFields = function () {

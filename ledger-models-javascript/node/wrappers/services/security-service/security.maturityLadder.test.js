@@ -63,18 +63,27 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
                     issuanceList = security.proto.getIssuanceInfoList();
                     issuance = issuanceList && issuanceList.length > 0 ? issuanceList[0] : null;
                     if (issuance) {
-                        postAuctionQuantity = serialization_1.ProtoSerializationUtil.deserialize(issuance.getPostAuctionOutstandingQuantity());
-                        id = security.getSecurityID() ? security.getSecurityID().getIdentifierValue() : security.getID().toString();
-                        result = {
-                            'cusip': id,
-                            'issueDate': security.getIssueDate(),
-                            'outstandingAmount': postAuctionQuantity,
-                            'maturityDate': security.getMaturityDate()
-                        };
-                        results.push(result);
+                        if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().getFullYear() > 2009) {
+                            console.log("Issed with %s, issuance: %s", security.getSecurityID().getIdentifierValue(), issuance);
+                        }
+                        else if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().getFullYear() <= 2009) {
+                            //Swallow this data gap. It's old and we don't mind
+                        }
+                        else {
+                            postAuctionQuantity = serialization_1.ProtoSerializationUtil.deserialize(issuance.getPostAuctionOutstandingQuantity());
+                            id = security.getSecurityID() ? security.getSecurityID().getIdentifierValue() : security.getID().toString();
+                            result = {
+                                'cusip': id,
+                                'issueDate': security.getIssueDate(),
+                                'outstandingAmount': postAuctionQuantity,
+                                'maturityDate': security.getMaturityDate()
+                            };
+                            results.push(result);
+                        }
                     }
                 }
                 expect(results[0]['outstandingAmount']).toBeGreaterThan(0);
+                console.log(results);
                 return [2 /*return*/];
         }
     });

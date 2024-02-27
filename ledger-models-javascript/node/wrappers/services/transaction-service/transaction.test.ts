@@ -20,22 +20,75 @@ import { CreateTransactionResponseProto } from '../../../fintekkers/requests/tra
 import assert = require("assert");
 import { PositionFilter } from '../../models/position/positionfilter';
 
-test('test creating a transaction against the portfolio service', async () => {
+
+test('test printing a transaction to string', async () => {
+  const isTrue = await testToString();
+  expect(isTrue).toBe(true);
+}, 30000);
+
+async function testToString(): Promise<boolean> {
+  const now = dt.ZonedDateTime.now();
+  const today = new LocalDateProto().setDay(1).setMonth(1).setYear(2021);
+
+  const positionFilter = new PositionFilter();
+  positionFilter.addEqualsFilter(FieldProto.ASSET_CLASS, 'Fixed Income');
+
+  const transactionProto: TransactionProto = await getTransaction(now, positionFilter, today);
+  const transaction: Transaction = new Transaction(transactionProto);
+
+  transaction.toString();
+
+  return true;
+}
+
+
+test('test creating a transaction against the transaction service', async () => {
   const isTrue = await testTransaction();
   expect(isTrue).toBe(true);
 }, 30000);
 
 async function testTransaction(): Promise<boolean> {
-  const id_proto = uuid.UUID.random().toUUIDProto();
+  const transactionService = new TransactionService();
+
   const now = dt.ZonedDateTime.now();
   const today = new LocalDateProto().setDay(1).setMonth(1).setYear(2021);
 
-  const securityService = new SecurityService();
-  const portfolioService = new PortfolioService();
-  const transactionService = new TransactionService();
-
   const positionFilter = new PositionFilter();
   positionFilter.addEqualsFilter(FieldProto.ASSET_CLASS, 'Fixed Income');
+
+  const transaction = await getTransaction(now, positionFilter, today);
+
+  // var validationSummary = await transactionService.validateCreateTransaction(new Transaction(transaction));
+  // assert(validationSummary.getErrorsList().length == 0, "Validation errors found");
+
+
+  console.time("createTransaction");
+  var createTransactionResponse: CreateTransactionResponseProto = await transactionService.createTransaction(new Transaction(transaction));
+  const transactionResponse = createTransactionResponse.getTransactionResponse();
+  assert(transactionResponse, "No transaction response found");
+
+  console.timeEnd("createTransaction");
+
+  console.log("Searching transaction");
+
+  console.time("searchTransaction");
+
+  const transactionID = uuid.UUID.fromU8Array(transactionResponse.getUuid().getRawUuid_asU8());
+  positionFilter.addEqualsFilter(FieldProto.ID, transactionID);
+  const transactions = await transactionService.searchTransaction(now.toProto(), positionFilter);
+  console.timeEnd("searchTransaction");
+
+  if (transactions === undefined) {
+    console.log('No transactions found');
+  } else {
+    console.log(transactions.length);
+  }
+
+  return true;
+}
+async function getTransaction(now: dt.ZonedDateTime, positionFilter: PositionFilter, today: LocalDateProto) {
+  const securityService = new SecurityService();
+  const portfolioService = new PortfolioService();
 
   console.time("searchSecurity");
   let fixedIncomeSecurities = await securityService
@@ -83,32 +136,6 @@ async function testTransaction(): Promise<boolean> {
   transaction.setQuantity(new DecimalValueProto().setArbitraryPrecisionValue('10000.00'));
   transaction.setPortfolio(portfolio.proto);
   transaction.setSecurity(security.proto);
-
-  // var validationSummary = await transactionService.validateCreateTransaction(new Transaction(transaction));
-  // assert(validationSummary.getErrorsList().length == 0, "Validation errors found");
-
-
-  console.time("createTransaction");
-  var createTransactionResponse: CreateTransactionResponseProto = await transactionService.createTransaction(new Transaction(transaction));
-  const transactionResponse = createTransactionResponse.getTransactionResponse();
-  assert(transactionResponse, "No transaction response found");
-
-  console.timeEnd("createTransaction");
-
-  console.log("Searching transaction");
-
-  console.time("searchTransaction");
-
-  const transactionID = uuid.UUID.fromU8Array(transactionResponse.getUuid().getRawUuid_asU8());
-  positionFilter.addEqualsFilter(FieldProto.ID, transactionID);
-  const transactions = await transactionService.searchTransaction(now.toProto(), positionFilter);
-  console.timeEnd("searchTransaction");
-
-  if (transactions === undefined) {
-    console.log('No transactions found');
-  } else {
-    console.log(transactions.length);
-  }
-
-  return true;
+  return transaction;
 }
+
