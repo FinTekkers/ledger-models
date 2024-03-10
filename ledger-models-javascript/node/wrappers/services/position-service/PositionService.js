@@ -1,5 +1,4 @@
 "use strict";
-// Models
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -38,9 +37,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PositionService = void 0;
-// Model Utils
+// Models
+var hardcoded_position_1 = require("../../models/position/hardcoded.position");
 // Requests & Services
 var position_service_grpc_pb_1 = require("../../../fintekkers/services/position-service/position_service_grpc_pb");
+//Utils
 var requestcontext_1 = require("../../models/utils/requestcontext");
 var PositionService = /** @class */ (function () {
     function PositionService() {
@@ -56,7 +57,7 @@ var PositionService = /** @class */ (function () {
                         return [2 /*return*/, new Promise(function (resolve, reject) {
                                 stream2.on('data', function (response) {
                                     response.getPositionsList().forEach(function (position) {
-                                        listPositions.push(position);
+                                        listPositions.push(new hardcoded_position_1.Position(position));
                                     });
                                 });
                                 stream2.on('end', function () {

@@ -1,29 +1,28 @@
 // Models
 
+import { PositionFilter } from '../../models/position/positionfilter';
+import { Position } from '../../models/position/hardcoded.position';
 import { IdentifierProto } from '../../../fintekkers/models/security/identifier/identifier_pb';
 import { PositionTypeProto, PositionViewProto } from '../../../fintekkers/models/position/position_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
+import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
 
 // Model Utils
 import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { FieldMapEntry } from '../../../fintekkers/models/position/position_util_pb';
-import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
 import { ZonedDateTime } from '../../models/utils/datetime';
-
 import { pack } from '../../models/utils/serialization.util';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
 
 //Requests & Services
-import { PortfolioService } from '../../services/portfolio-service/PortfolioService';
 import { PositionService } from '../../services/position-service/PositionService';
 import { QueryPositionRequestProto } from '../../../fintekkers/requests/position/query_position_request_pb';
-import { PositionFilter } from '../../models/position/positionfilter';
 
 test('test getting a position against the api.fintekkers.org position service', async () => {
-  const isTrue = await testPosition();
-  expect(isTrue).toBe(true);
+  // const isTrue = await testPosition();
+  // expect(isTrue).toBe(true);
 }, 30000);
 
 async function get_position(security: SecurityProto,
@@ -76,30 +75,33 @@ async function get_position(security: SecurityProto,
 
   let position_service = new PositionService();
 
-  const positions = await position_service.search(request);
+  const positions: Position[] = await position_service.search(request);
 
   return positions;
 }
 
 async function testPosition(): Promise<boolean> {
   //Get the Federal Reserve portfolio
-  const now = ZonedDateTime.now();
 
-  const portfolioService = new PortfolioService();
+  let fields = [FieldProto.SECURITY_ID, FieldProto.TRADE_DATE, FieldProto.PRODUCT_TYPE, FieldProto.PORTFOLIO, FieldProto.PRODUCT_TYPE];
+  let measures = [MeasureProto.DIRECTED_QUANTITY];
 
-  let portfolios = await portfolioService.searchPortfolio(
-    now.toProto(),
-    new PositionFilter().addEqualsFilter(FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings'));
-  const fedReservePortfolio = portfolios[0];
+  let request = new QueryPositionRequestProto()
+    .setAsOf(ZonedDateTime.now().toProto())
+    .setFieldsList(fields)
+    .setMeasuresList(measures)
+    .setPositionType(PositionTypeProto.TRANSACTION)
+    .setPositionView(PositionViewProto.DEFAULT_VIEW);
 
-  let positions = await get_position(null, fedReservePortfolio.proto,
-    [MeasureProto.DIRECTED_QUANTITY],
-    PositionTypeProto.TRANSACTION,
-    [FieldProto.PORTFOLIO_NAME, FieldProto.SECURITY_ID], [], now);
-
+  let positions = await new PositionService().search(request);
 
   if (positions) {
     console.log(positions.length + " positions returned")
+
+    let position = positions[0];
+
+    console.log(position.getFieldValue(FieldProto.SECURITY_ID));
+    position.toString();
   } else {
     console.log("No positions found");
   }

@@ -1,15 +1,15 @@
 // Models
+import { Position } from '../../models/position/hardcoded.position';
 
-// Model Utils
-
-// Requests & Services
-import { PositionClient } from '../../../fintekkers/services/position-service/position_service_grpc_pb';
+// Requests
 import { QueryPositionRequestProto } from '../../../fintekkers/requests/position/query_position_request_pb';
 import { QueryPositionResponseProto } from '../../../fintekkers/requests/position/query_position_response_pb';
 
-import { PositionProto } from '../../../fintekkers/models/position/position_pb';
-import EnvConfig from '../../models/utils/requestcontext';
+// Requests & Services
+import { PositionClient } from '../../../fintekkers/services/position-service/position_service_grpc_pb';
 
+//Utils
+import EnvConfig from '../../models/utils/requestcontext';
 
 class PositionService {
   private client: PositionClient;
@@ -18,17 +18,17 @@ class PositionService {
     this.client = new PositionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
   }
 
-  async search(request:QueryPositionRequestProto): Promise<PositionProto[]> {
+  async search(request: QueryPositionRequestProto): Promise<Position[]> {
     const tmpClient = this.client;
-    const listPositions: PositionProto[] = [];
+    const listPositions: Position[] = [];
 
-    async function processStreamSynchronously(): Promise<PositionProto[]> {
+    async function processStreamSynchronously(): Promise<Position[]> {
       const stream2 = tmpClient.search(request);
 
-      return new Promise<PositionProto[]>((resolve, reject) => {
-        stream2.on('data', (response:QueryPositionResponseProto) => {
+      return new Promise<Position[]>((resolve, reject) => {
+        stream2.on('data', (response: QueryPositionResponseProto) => {
           response.getPositionsList().forEach((position) => {
-            listPositions.push(position);
+            listPositions.push(new Position(position));
           });
         });
 

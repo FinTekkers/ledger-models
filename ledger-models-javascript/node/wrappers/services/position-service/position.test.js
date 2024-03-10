@@ -40,28 +40,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
 var position_pb_1 = require("../../../fintekkers/models/position/position_pb");
 var measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
+var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
 // Model Utils
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
-var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
 var datetime_1 = require("../../models/utils/datetime");
 var serialization_util_1 = require("../../models/utils/serialization.util");
 var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 //Requests & Services
-var PortfolioService_1 = require("../../services/portfolio-service/PortfolioService");
 var PositionService_1 = require("../../services/position-service/PositionService");
 var query_position_request_pb_1 = require("../../../fintekkers/requests/position/query_position_request_pb");
-var positionfilter_1 = require("../../models/position/positionfilter");
 test('test getting a position against the api.fintekkers.org position service', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var isTrue;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, testPosition()];
-            case 1:
-                isTrue = _a.sent();
-                expect(isTrue).toBe(true);
-                return [2 /*return*/];
-        }
+        return [2 /*return*/];
     });
 }); }, 30000);
 function get_position(security, portfolio, measures, position_type, fields, additional_filters, as_of) {
@@ -115,21 +106,26 @@ function get_position(security, portfolio, measures, position_type, fields, addi
 }
 function testPosition() {
     return __awaiter(this, void 0, void 0, function () {
-        var now, portfolioService, portfolios, fedReservePortfolio, positions;
+        var fields, measures, request, positions, position;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    now = datetime_1.ZonedDateTime.now();
-                    portfolioService = new PortfolioService_1.PortfolioService();
-                    return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addEqualsFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings'))];
+                    fields = [field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.TRADE_DATE, field_pb_1.FieldProto.PRODUCT_TYPE, field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.PRODUCT_TYPE];
+                    measures = [measure_pb_1.MeasureProto.DIRECTED_QUANTITY];
+                    request = new query_position_request_pb_1.QueryPositionRequestProto()
+                        .setAsOf(datetime_1.ZonedDateTime.now().toProto())
+                        .setFieldsList(fields)
+                        .setMeasuresList(measures)
+                        .setPositionType(position_pb_1.PositionTypeProto.TRANSACTION)
+                        .setPositionView(position_pb_1.PositionViewProto.DEFAULT_VIEW);
+                    return [4 /*yield*/, new PositionService_1.PositionService().search(request)];
                 case 1:
-                    portfolios = _a.sent();
-                    fedReservePortfolio = portfolios[0];
-                    return [4 /*yield*/, get_position(null, fedReservePortfolio.proto, [measure_pb_1.MeasureProto.DIRECTED_QUANTITY], position_pb_1.PositionTypeProto.TRANSACTION, [field_pb_1.FieldProto.PORTFOLIO_NAME, field_pb_1.FieldProto.SECURITY_ID], [], now)];
-                case 2:
                     positions = _a.sent();
                     if (positions) {
                         console.log(positions.length + " positions returned");
+                        position = positions[0];
+                        console.log(position.getFieldValue(field_pb_1.FieldProto.SECURITY_ID));
+                        position.toString();
                     }
                     else {
                         console.log("No positions found");

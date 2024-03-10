@@ -139,27 +139,6 @@ class Position:
             my_any.Pack(field_to_pack)
             return my_any
 
-        # if field_to_unpack.field == FieldProto.PORTFOLIO_ID:
-        #     return UUIDProto.FromString(field_to_unpack.field_value_packed.value)
-        # if field_to_unpack.field == FieldProto.TRADE_DATE or field_to_unpack.field == FieldProto.SETTLEMENT_DATE \
-        #     or field_to_unpack.field == FieldProto.TAX_LOT_OPEN_DATE\
-        #         or field_to_unpack.field == FieldProto.TAX_LOT_CLOSE_DATE:
-        #     return LocalDateProto.FromString(field_to_unpack.field_value_packed.value)
-        # if field_to_unpack.field == FieldProto.IDENTIFIER:
-        #     return IdentifierProto.FromString(field_to_unpack.field_value_packed.value)
-        # if field_to_unpack.field == FieldProto.TRANSACTION_TYPE:
-        #     name:str = FieldProto.DESCRIPTOR.values_by_number[field_to_unpack.field].name
-        #     return ProtoEnum(name, field_to_unpack.enum_value)
-        # if field_to_unpack.field == FieldProto.PORTFOLIO_NAME or field_to_unpack.field == FieldProto.SECURITY_DESCRIPTION \
-        #     or field_to_unpack.field == FieldProto.PRODUCT_TYPE:
-        #     return wrappers.StringValue.FromString(field_to_unpack.field_value_packed.value).value
-        # if field_to_unpack.field == FieldProto.PORTFOLIO:
-        #     return PortfolioProto.FromString(field_to_unpack.field_value_packed.value)
-        # if field_to_unpack.field == FieldProto.SECURITY:
-        #     return SecurityProto.FromString(field_to_unpack.field_value_packed.value)
-
-        # raise ValueError(f"Field not found. Could not unpack {field_to_unpack.field}")
-
     @staticmethod
     def unpack_field(field_to_unpack: FieldMapEntry):
         if (
