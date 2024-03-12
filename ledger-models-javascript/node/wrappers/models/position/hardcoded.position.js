@@ -6,12 +6,14 @@ var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 var decimal_js_1 = require("decimal.js");
 var transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
+var uuid_1 = require("uuid");
 var Position = /** @class */ (function () {
     function Position(positionProto) {
         this.proto = positionProto;
     }
     Position.prototype.getFieldValue = function (field) {
         switch (field) {
+            case field_pb_1.FieldProto.TRADE_DATE:
             case field_pb_1.FieldProto.TRADE_DATE:
             case field_pb_1.FieldProto.EFFECTIVE_DATE:
             case field_pb_1.FieldProto.MATURITY_DATE:
@@ -29,10 +31,14 @@ var Position = /** @class */ (function () {
                 var items2 = ['Equity', 'Fixed Income'];
                 var randomIndex2 = Math.floor(Math.random() * items2.length);
                 return items2[randomIndex2];
-            case field_pb_1.FieldProto.ASSET_CLASS:
+            case field_pb_1.FieldProto.TRANSACTION_TYPE:
                 var items3 = [transaction_type_pb_1.TransactionTypeProto.BUY, transaction_type_pb_1.TransactionTypeProto.SELL, transaction_type_pb_1.TransactionTypeProto.DEPOSIT, transaction_type_pb_1.TransactionTypeProto.WITHDRAWAL, transaction_type_pb_1.TransactionTypeProto.MATURATION];
                 var randomIndex3 = Math.floor(Math.random() * items3.length);
                 return items3[randomIndex3];
+            case field_pb_1.FieldProto.ID:
+            case field_pb_1.FieldProto.SECURITY_ID:
+            case field_pb_1.FieldProto.PORTFOLIO_ID:
+                return (0, uuid_1.v4)();
             default:
                 throw new Error("No dummy data setup for this Field");
         }
@@ -43,11 +49,11 @@ var Position = /** @class */ (function () {
     Position.prototype.getMeasureValue = function (measure) {
         switch (measure) {
             case measure_pb_1.MeasureProto.DIRECTED_QUANTITY:
-                return new decimal_js_1.default(Math.random() * 100000);
+                return new decimal_js_1.default(Math.random() * 100000).toString();
             case measure_pb_1.MeasureProto.UNADJUSTED_COST_BASIS:
-                return new decimal_js_1.default(Math.random() * 100);
+                return new decimal_js_1.default(Math.random() * 100).toString();
             case measure_pb_1.MeasureProto.MARKET_VALUE:
-                return new decimal_js_1.default(Math.random() * 10000000);
+                return new decimal_js_1.default(Math.random() * 10000000).toString();
         }
     };
     Position.prototype.getMeasure = function (measureToGet) {

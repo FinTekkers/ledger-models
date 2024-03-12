@@ -38,16 +38,25 @@ export class Position {
   public getField(fieldToGet: FieldMapEntry): any {
     for (const tmpField of this.proto.getFieldsList()) {
       if (tmpField.getField() === fieldToGet.getField()) {
-        const unpackedValue = Position.unpackField(tmpField);
 
-        if (unpackedValue.type === "enum") {
+        if (tmpField.getStringValue()) {
+          return tmpField.getStringValue();
+        }
+
+        if (tmpField.getEnumValue() > 0) {
           throw new Error("Doh");
           // const descriptor = FieldProto.DESCRIPTOR.valuesByNumber[fieldToGet.field];
           // return new ProtoEnum(descriptor, unpackedValue.enumValue);
         }
 
-        if (typeof unpackedValue === "string" || typeof unpackedValue === "number") {
-          return unpackedValue;
+        const unpackedValue = Position.unpackField(tmpField);
+
+        if (FieldProto.SECURITY == fieldToGet.getField()) {
+          return new Security(unpackedValue);
+        }
+
+        if (FieldProto.PORTFOLIO == fieldToGet.getField()) {
+          return new Portfolio(unpackedValue);
         }
 
         return ProtoSerializationUtil.deserialize(unpackedValue);
@@ -141,9 +150,9 @@ export class Position {
       case FieldProto.ASSET_CLASS:
         return StringValue.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
       case FieldProto.PORTFOLIO:
-        return PortfolioProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return fieldToUnpack.getFieldValuePacked();
       case FieldProto.SECURITY:
-        return SecurityProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return fieldToUnpack.getFieldValuePacked();
       default:
         throw new Error(`Field not found. Could not unpack ${FieldProto[fieldToUnpack.getField()]}`);
     }

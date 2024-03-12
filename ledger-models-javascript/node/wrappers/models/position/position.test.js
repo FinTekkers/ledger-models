@@ -36,8 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
-var serialization_1 = require("../utils/serialization");
 var uuid_1 = require("../utils/uuid");
 var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 var decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
@@ -47,65 +45,63 @@ var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 var security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
-var hardcoded_position_1 = require("./hardcoded.position");
+var position_1 = require("./position");
+var date_1 = require("../utils/date");
+var position_status_pb_1 = require("../../../fintekkers/models/position/position_status_pb");
 test('test the position wrapper', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var isTrue;
     return __generator(this, function (_a) {
-        return [2 /*return*/];
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, testSerialization()];
+            case 1:
+                isTrue = _a.sent();
+                expect(isTrue).toBe(true);
+                return [2 /*return*/];
+        }
     });
 }); });
 function testSerialization() {
     return __awaiter(this, void 0, void 0, function () {
-        var fields, security, portfolio, tradeDate, productType, id, measure, measureValue, anyMessage, typeUrl, binaryMessage, positionProto, position;
+        var fields, security, portfolio, tradeDate, productType, id, measure, measureValue, tradeDatePacked, idPacked, positionProto, position, tradeDatePosition, securityPosition, portfolioPosition, positionID;
         return __generator(this, function (_a) {
             fields = [field_pb_1.FieldProto.ID, field_pb_1.FieldProto.TRADE_DATE, field_pb_1.FieldProto.PRODUCT_TYPE, field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.SECURITY];
             security = new security_pb_1.SecurityProto().setAssetClass("Test");
             portfolio = new portfolio_pb_1.PortfolioProto().setPortfolioName("Test portfolio");
-            tradeDate = new local_date_pb_1.LocalDateProto().setDay(3).setMonth(1).setYear(2024);
+            tradeDate = date_1.LocalDate.today().toDate();
             productType = "Test product type";
             id = new uuid_1.UUID(uuid_1.UUID.random().toBytes());
             measure = measure_pb_1.MeasureProto.DIRECTED_QUANTITY;
             measureValue = new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue("1.0");
-            serialization_1.ProtoSerializationUtil.serialize;
-            anyMessage = new any_pb_1.Any();
-            typeUrl = "Doesn't matter?";
-            binaryMessage = security.serializeBinary();
-            anyMessage.setTypeUrl(typeUrl);
-            anyMessage.setValue(binaryMessage);
+            tradeDatePacked = new any_pb_1.Any();
+            tradeDatePacked.setTypeUrl("Doesn't matter");
+            tradeDatePacked.setValue(date_1.LocalDate.from(tradeDate).toProto().serializeBinary());
+            idPacked = new any_pb_1.Any();
+            idPacked.setTypeUrl("Doesn't matter");
+            idPacked.setValue(id.toUUIDProto().serializeBinary());
             positionProto = new position_pb_1.PositionProto();
-            positionProto.addFields(new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY).setFieldValuePacked(anyMessage));
-            position = new hardcoded_position_1.Position(positionProto);
-            position.getFieldValue(field_pb_1.FieldProto.SECURITY);
+            positionProto.setFieldsList([
+                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
+                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY).setFieldValuePacked(security),
+                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
+                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.EXECUTED),
+                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PRODUCT_TYPE).setStringValue(productType),
+                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.ID).setFieldValuePacked(idPacked),
+            ]);
+            position = new position_1.Position(positionProto);
+            tradeDatePosition = position.getFieldValue(field_pb_1.FieldProto.TRADE_DATE);
+            expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
+            expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
+            expect(tradeDate.getDay()).toBe(tradeDatePosition.getDay());
+            securityPosition = position.getFieldValue(field_pb_1.FieldProto.SECURITY);
+            expect(securityPosition.getAssetClass()).toBe(security.getAssetClass());
+            portfolioPosition = position.getFieldValue(field_pb_1.FieldProto.PORTFOLIO);
+            expect(portfolioPosition.getPortfolioName()).toBe(portfolio.getPortfolioName());
+            expect(position.getFieldValue(field_pb_1.FieldProto.PRODUCT_TYPE)).toBe(productType);
+            positionID = position.getFieldValue(field_pb_1.FieldProto.ID);
+            expect(positionID.toString()).toBe(id.toString());
+            expect(position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS)).toBe(position_status_pb_1.PositionStatusProto.EXECUTED);
             return [2 /*return*/, true];
         });
     });
-}
-function pack() {
-    var message = new position_pb_1.PositionProto();
-    // Create a value of any type (in this case, a string)
-    // const stringValue = "Hello, Any!";
-    // const anyValue = new Any();
-    // anyValue.pack(stringValue, "type.googleapis.com/google.protobuf.StringValue");
-    // message.setValue(anyValue);
-    // // Serialize the message to a binary buffer
-    // const serialized = message.serializeBinary();
-    // // Deserialize the binary buffer
-    // const deserializedMessage = PositionProto.deserializeBinary(serialized);
-    // const deserializedValue = deserializedMessage.getFieldsList()[0];
-    // if (deserializedValue.is(string)) {
-    // const unpackedValue = deserializedValue.unpack(StringValue.deserializeBinary);
-    // console.log(unpackedValue.getValue()); // Output: Hello, Any!
-    // }
-}
-function dummyPosition() {
-    var field = new position_util_pb_1.FieldMapEntry()
-        .setField(field_pb_1.FieldProto.TRANSACTION_TYPE);
-    // .setFieldValuePacked
-    return new position_pb_1.PositionProto();
-    // new TransactionProto()
-    // .setObjectClass('Transaction').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
-    // .setTradeDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1))
-    // .setTransactionType(TransactionTypeProto.BUY)
-    // .setQuantity(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-    // .setSettlementDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1)));
 }
 //# sourceMappingURL=position.test.js.map

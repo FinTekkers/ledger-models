@@ -17,7 +17,7 @@ var ProtoSerializationUtil = /** @class */ (function () {
         if (obj instanceof Date) {
             return new local_date_pb_1.LocalDateProto()
                 .setYear(obj.getFullYear())
-                .setMonth(obj.getMonth() + 1)
+                .setMonth(obj.getMonth())
                 .setDay(obj.getDate());
         }
         if (obj instanceof datetime_1.ZonedDateTime) {
@@ -33,7 +33,7 @@ var ProtoSerializationUtil = /** @class */ (function () {
             return uuid_1.UUID.fromU8Array(obj.getRawUuid_asU8());
         }
         if (obj instanceof local_date_pb_1.LocalDateProto) {
-            var date = new Date(obj.getYear(), obj.getMonth() - 1, obj.getDay());
+            var date = new Date(obj.getYear(), obj.getMonth(), obj.getDay());
             date.setHours(0, 0, 0, 0);
             return date;
         }

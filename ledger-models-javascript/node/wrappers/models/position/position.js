@@ -4,14 +4,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Position = void 0;
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
+var portfolio_1 = require("../portfolio/portfolio");
+var security_1 = require("../security/security");
 var uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
 var local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
 var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 var identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
 var measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 var serialization_1 = require("../utils/serialization");
-var security_pb_1 = require("../../../fintekkers/models/security/security_pb");
-var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
 var wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 var Position = /** @class */ (function () {
     function Position(positionProto) {
@@ -28,14 +28,20 @@ var Position = /** @class */ (function () {
         for (var _i = 0, _a = this.proto.getFieldsList(); _i < _a.length; _i++) {
             var tmpField = _a[_i];
             if (tmpField.getField() === fieldToGet.getField()) {
-                var unpackedValue = Position.unpackField(tmpField);
-                if (unpackedValue.type === "enum") {
+                if (tmpField.getStringValue()) {
+                    return tmpField.getStringValue();
+                }
+                if (tmpField.getEnumValue() > 0) {
                     throw new Error("Doh");
                     // const descriptor = FieldProto.DESCRIPTOR.valuesByNumber[fieldToGet.field];
                     // return new ProtoEnum(descriptor, unpackedValue.enumValue);
                 }
-                if (typeof unpackedValue === "string" || typeof unpackedValue === "number") {
-                    return unpackedValue;
+                var unpackedValue = Position.unpackField(tmpField);
+                if (field_pb_1.FieldProto.SECURITY == fieldToGet.getField()) {
+                    return new security_1.default(unpackedValue);
+                }
+                if (field_pb_1.FieldProto.PORTFOLIO == fieldToGet.getField()) {
+                    return new portfolio_1.default(unpackedValue);
                 }
                 return serialization_1.ProtoSerializationUtil.deserialize(unpackedValue);
             }
@@ -117,9 +123,9 @@ var Position = /** @class */ (function () {
             case field_pb_1.FieldProto.ASSET_CLASS:
                 return wrappers_pb_1.StringValue.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
             case field_pb_1.FieldProto.PORTFOLIO:
-                return portfolio_pb_1.PortfolioProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+                return fieldToUnpack.getFieldValuePacked();
             case field_pb_1.FieldProto.SECURITY:
-                return security_pb_1.SecurityProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+                return fieldToUnpack.getFieldValuePacked();
             default:
                 throw new Error("Field not found. Could not unpack ".concat(field_pb_1.FieldProto[fieldToUnpack.getField()]));
         }

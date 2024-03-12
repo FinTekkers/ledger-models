@@ -18,7 +18,7 @@ export class ProtoSerializationUtil {
     if (obj instanceof Date) {
       return new LocalDateProto()
         .setYear(obj.getFullYear())
-        .setMonth(obj.getMonth() + 1)
+        .setMonth(obj.getMonth())
         .setDay(obj.getDate());
     }
     if (obj instanceof ZonedDateTime) {
@@ -36,7 +36,7 @@ export class ProtoSerializationUtil {
       return UUID.fromU8Array(obj.getRawUuid_asU8());
     }
     if (obj instanceof LocalDateProto) {
-      const date = new Date(obj.getYear(), obj.getMonth() - 1, obj.getDay());
+      const date = new Date(obj.getYear(), obj.getMonth(), obj.getDay());
       date.setHours(0, 0, 0, 0);
       return date;
     }

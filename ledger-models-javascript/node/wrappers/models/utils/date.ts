@@ -30,6 +30,12 @@ class LocalDate {
       new LocalDateProto().setYear(today.getFullYear()).setMonth(today.getMonth()).setDay(today.getDate())
     );
   }
+
+  static from(date: Date): LocalDate {
+    return new LocalDate(
+      new LocalDateProto().setYear(date.getFullYear()).setMonth(date.getMonth()).setDay(date.getDate())
+    );
+  }
 }
 
 export { LocalDate };

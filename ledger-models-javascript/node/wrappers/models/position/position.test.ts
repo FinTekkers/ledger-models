@@ -23,14 +23,13 @@ import { ZonedDateTime } from '../utils/datetime';
 import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
-import { Position } from './hardcoded.position';
-
-
+import { Position } from './position';
+import { LocalDate } from '../utils/date';
+import { PositionStatusProto } from '../../../fintekkers/models/position/position_status_pb';
 
 test('test the position wrapper', async () => {
-    // const isTrue = await testSerialization();
-    // expect(isTrue).toBe(true);
-
+    const isTrue = await testSerialization();
+    expect(isTrue).toBe(true);
 });
 
 async function testSerialization(): Promise<boolean> {
@@ -38,67 +37,49 @@ async function testSerialization(): Promise<boolean> {
 
     let security = new SecurityProto().setAssetClass("Test");
     let portfolio = new PortfolioProto().setPortfolioName("Test portfolio");
-    let tradeDate = new LocalDateProto().setDay(3).setMonth(1).setYear(2024);
+    let tradeDate = LocalDate.today().toDate();
     let productType = "Test product type";
     let id = new UUID(UUID.random().toBytes());
 
     let measure = MeasureProto.DIRECTED_QUANTITY;
     let measureValue = new DecimalValueProto().setArbitraryPrecisionValue("1.0");
 
+    const tradeDatePacked = new Any();
+    tradeDatePacked.setTypeUrl(`Doesn't matter`);
+    tradeDatePacked.setValue(LocalDate.from(tradeDate).toProto().serializeBinary());
 
-    ProtoSerializationUtil.serialize
-    const anyMessage = new Any();
-    const typeUrl = `Doesn't matter?`;
-    const binaryMessage = security.serializeBinary();
-    anyMessage.setTypeUrl(typeUrl);
-    anyMessage.setValue(binaryMessage);
+    const idPacked = new Any();
+    idPacked.setTypeUrl(`Doesn't matter`);
+    idPacked.setValue(id.toUUIDProto().serializeBinary());
 
     let positionProto = new PositionProto();
-    positionProto.addFields(new FieldMapEntry().setField(FieldProto.SECURITY).setFieldValuePacked(anyMessage));
-
+    positionProto.setFieldsList([
+        new FieldMapEntry().setField(FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
+        new FieldMapEntry().setField(FieldProto.SECURITY).setFieldValuePacked(security),
+        new FieldMapEntry().setField(FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
+        new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.EXECUTED),
+        new FieldMapEntry().setField(FieldProto.PRODUCT_TYPE).setStringValue(productType),
+        new FieldMapEntry().setField(FieldProto.ID).setFieldValuePacked(idPacked),
+    ]);
     let position = new Position(positionProto);
 
-    position.getFieldValue(FieldProto.SECURITY);
+    let tradeDatePosition = position.getFieldValue(FieldProto.TRADE_DATE);
+    expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
+    expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
+    expect(tradeDate.getDay()).toBe(tradeDatePosition.getDay());
+
+    let securityPosition: SecurityProto = position.getFieldValue(FieldProto.SECURITY);
+    expect(securityPosition.getAssetClass()).toBe(security.getAssetClass());
+
+    let portfolioPosition: PortfolioProto = position.getFieldValue(FieldProto.PORTFOLIO);
+    expect(portfolioPosition.getPortfolioName()).toBe(portfolio.getPortfolioName());
+
+    expect(position.getFieldValue(FieldProto.PRODUCT_TYPE)).toBe(productType);
+
+    let positionID = position.getFieldValue(FieldProto.ID);
+    expect(positionID.toString()).toBe(id.toString());
+
+    expect(position.getFieldValue(FieldProto.POSITION_STATUS)).toBe(PositionStatusProto.EXECUTED);
 
     return true;
 }
-
-function pack() {
-    const message = new PositionProto();
-
-    // Create a value of any type (in this case, a string)
-    // const stringValue = "Hello, Any!";
-    // const anyValue = new Any();
-    // anyValue.pack(stringValue, "type.googleapis.com/google.protobuf.StringValue");
-
-    // message.setValue(anyValue);
-
-    // // Serialize the message to a binary buffer
-    // const serialized = message.serializeBinary();
-
-    // // Deserialize the binary buffer
-    // const deserializedMessage = PositionProto.deserializeBinary(serialized);
-    // const deserializedValue = deserializedMessage.getFieldsList()[0];
-
-    // if (deserializedValue.is(string)) {
-    // const unpackedValue = deserializedValue.unpack(StringValue.deserializeBinary);
-    // console.log(unpackedValue.getValue()); // Output: Hello, Any!
-    // }
-
-}
-
-function dummyPosition() {
-    let field = new FieldMapEntry()
-        .setField(FieldProto.TRANSACTION_TYPE);
-    // .setFieldValuePacked
-
-    return new PositionProto();
-
-    // new TransactionProto()
-    // .setObjectClass('Transaction').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
-    // .setTradeDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1))
-    // .setTransactionType(TransactionTypeProto.BUY)
-    // .setQuantity(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-    // .setSettlementDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1)));
-}
-
