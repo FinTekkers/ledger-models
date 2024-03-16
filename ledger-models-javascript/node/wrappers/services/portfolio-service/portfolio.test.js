@@ -71,7 +71,6 @@ test('test creating a portfolio against the api.fintekkers.org portfolio service
             case 3:
                 searchResults = _a.sent();
                 expect(searchResults.length > 0).toBe(true);
-                console.log(searchResults[0].getPortfolioName());
                 return [2 /*return*/];
         }
     });

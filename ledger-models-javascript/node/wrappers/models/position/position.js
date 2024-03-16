@@ -16,10 +16,6 @@ var wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 var Position = /** @class */ (function () {
     function Position(positionProto) {
         this.proto = positionProto;
-        // //For each field, put into a map
-        // this.proto.getFieldsList().forEach(field => {
-        //   console.log(field);
-        // });
     }
     Position.prototype.getFieldValue = function (field) {
         return this.getField(new position_util_pb_1.FieldMapEntry().setField(field));
@@ -28,13 +24,13 @@ var Position = /** @class */ (function () {
         for (var _i = 0, _a = this.proto.getFieldsList(); _i < _a.length; _i++) {
             var tmpField = _a[_i];
             if (tmpField.getField() === fieldToGet.getField()) {
-                if (tmpField.getStringValue()) {
+                if (tmpField.getStringValue() !== undefined && tmpField.getStringValue().length > 0) {
                     return tmpField.getStringValue();
                 }
                 if (tmpField.getEnumValue() > 0) {
-                    throw new Error("Doh");
-                    // const descriptor = FieldProto.DESCRIPTOR.valuesByNumber[fieldToGet.field];
-                    // return new ProtoEnum(descriptor, unpackedValue.enumValue);
+                    // let fieldName: string = new Field(fieldToGet.getField()).getName();
+                    // let proto: ProtoEnum = ProtoEnum.fromEnumName(fieldName, tmpField.getEnumValue());
+                    return tmpField.getEnumValue(); //proto.enumDescriptor['EXECUTED'];
                 }
                 var unpackedValue = Position.unpackField(tmpField);
                 if (field_pb_1.FieldProto.SECURITY == fieldToGet.getField()) {

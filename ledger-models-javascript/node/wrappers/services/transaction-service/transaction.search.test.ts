@@ -40,8 +40,6 @@ async function searchListTransactions(): Promise<boolean> {
     console.log('No transactions found');
     throw Error('No transactions found');
   } else {
-    console.log(transactions.length);
-
     let transaction: Transaction = transactions[0];
 
     //We can get data straight from the transaction

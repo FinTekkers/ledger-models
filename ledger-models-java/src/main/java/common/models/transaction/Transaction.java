@@ -240,7 +240,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             case PORTFOLIO -> getPortfolio();
             case PORTFOLIO_ID -> getPortfolio().getID();
             case PORTFOLIO_NAME -> getPortfolio().getPortfolioName();
-            default -> throw new RuntimeException(String.format("Field not found %s", field));
+            default -> throw new RuntimeException(String.format("Field not found: %s", field));
         };
     }
 

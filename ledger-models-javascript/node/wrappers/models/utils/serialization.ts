@@ -4,6 +4,7 @@ import { LocalTimestampProto } from "../../../fintekkers/models/util/local_times
 import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
 import { ZonedDateTime } from "./datetime";
 import { UUID } from "./uuid";
+import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 
 interface EnumValueDescriptor {
   name: string;
@@ -18,7 +19,7 @@ export class ProtoSerializationUtil {
     if (obj instanceof Date) {
       return new LocalDateProto()
         .setYear(obj.getFullYear())
-        .setMonth(obj.getMonth())
+        .setMonth(obj.getMonth() + 1)
         .setDay(obj.getDate());
     }
     if (obj instanceof ZonedDateTime) {
@@ -26,6 +27,9 @@ export class ProtoSerializationUtil {
     }
     if (typeof obj === "number") {
       return new DecimalValueProto().setArbitraryPrecisionValue(obj.toString());
+    }
+    if (obj instanceof String) {
+      return StringValue.of(obj);
     }
 
     throw new Error(`Could not serialize object of type ${typeof obj}. Value: ${obj}`);
@@ -36,7 +40,7 @@ export class ProtoSerializationUtil {
       return UUID.fromU8Array(obj.getRawUuid_asU8());
     }
     if (obj instanceof LocalDateProto) {
-      const date = new Date(obj.getYear(), obj.getMonth(), obj.getDay());
+      const date = new Date(obj.getYear(), obj.getMonth() - 1, obj.getDay());
       date.setHours(0, 0, 0, 0);
       return date;
     }
@@ -48,6 +52,9 @@ export class ProtoSerializationUtil {
     }
     if (obj instanceof DecimalValueProto) {
       return parseFloat(obj.getArbitraryPrecisionValue());
+    }
+    if (obj instanceof StringValue) {
+      return obj.toString();
     }
 
     throw new Error(`Could not deserialize object of type ${typeof obj}. Value: ${obj}`);

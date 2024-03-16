@@ -1,25 +1,12 @@
-import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
-import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
-import { ProtoSerializationUtil } from '../utils/serialization';
 import { UUID } from '../utils/uuid';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
 
 import assert = require('assert');
-import Transaction from '../transaction/transaction';
-import { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
-import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
-import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 
-import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
-import { PriceProto } from '../../../fintekkers/models/price/price_pb';
-import { PositionProto, PositionTypeProto, PositionViewProto } from '../../../fintekkers/models/position/position_pb';
+import { PositionProto } from '../../../fintekkers/models/position/position_pb';
 import { FieldMapEntry } from '../../../fintekkers/models/position/position_util_pb';
 import { FieldProto } from '../../../fintekkers/models/position/field_pb';
-import { PositionService } from '../../services/position-service/PositionService';
-import { PositionFilter } from './positionfilter';
-import { QueryPositionRequestProto } from '../../../fintekkers/requests/position/query_position_request_pb';
-import { ZonedDateTime } from '../utils/datetime';
 import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';

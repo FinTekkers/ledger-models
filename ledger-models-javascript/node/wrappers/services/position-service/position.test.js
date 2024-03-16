@@ -1,5 +1,4 @@
 "use strict";
-// Models
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -37,76 +36,30 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
+// Models
 var position_pb_1 = require("../../../fintekkers/models/position/position_pb");
 var measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
-var position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
 // Model Utils
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
-var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 var datetime_1 = require("../../models/utils/datetime");
-var serialization_util_1 = require("../../models/utils/serialization.util");
-var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 //Requests & Services
 var PositionService_1 = require("../../services/position-service/PositionService");
 var query_position_request_pb_1 = require("../../../fintekkers/requests/position/query_position_request_pb");
 test('test getting a position against the api.fintekkers.org position service', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var isTrue;
     return __generator(this, function (_a) {
-        return [2 /*return*/];
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, testPosition()];
+            case 1:
+                isTrue = _a.sent();
+                expect(isTrue).toBe(true);
+                return [2 /*return*/];
+        }
     });
 }); }, 30000);
-function get_position(security, portfolio, measures, position_type, fields, additional_filters, as_of) {
-    if (fields === void 0) { fields = [field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.SECURITY]; }
-    if (additional_filters === void 0) { additional_filters = []; }
-    if (as_of === void 0) { as_of = datetime_1.ZonedDateTime.now(); }
-    return __awaiter(this, void 0, void 0, function () {
-        var filters, id_proto, security_id_packed, fieldMapEntry, fieldMapEntry, filter_fields, as_of_proto, request, position_service, positions;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    filters = [];
-                    if (security !== null && security !== undefined) {
-                        id_proto = new identifier_pb_1.IdentifierProto();
-                        id_proto.setIdentifierValue(security.getIdentifier().getIdentifierValue());
-                        id_proto.setIdentifierType(security.getIdentifier().getIdentifierType());
-                        security_id_packed = new any_pb_1.Any();
-                        security_id_packed.pack(id_proto);
-                        fieldMapEntry = new position_util_pb_1.FieldMapEntry();
-                        fieldMapEntry.setField(field_pb_1.FieldProto.IDENTIFIER);
-                        fieldMapEntry.setFieldValuePacked(security_id_packed);
-                        filters.push(fieldMapEntry);
-                    }
-                    if (portfolio !== null && portfolio !== undefined) {
-                        fieldMapEntry = new position_util_pb_1.FieldMapEntry();
-                        fieldMapEntry.setField(field_pb_1.FieldProto.PORTFOLIO_NAME);
-                        fieldMapEntry.setFieldValuePacked((0, serialization_util_1.pack)(portfolio.getPortfolioName()));
-                        filters.push(fieldMapEntry);
-                    }
-                    if (additional_filters !== null && additional_filters.length > 0) {
-                        filters.push.apply(filters, additional_filters);
-                    }
-                    filter_fields = new position_filter_pb_1.PositionFilterProto();
-                    filter_fields.setFiltersList(filters);
-                    as_of_proto = as_of.toProto();
-                    request = new query_position_request_pb_1.QueryPositionRequestProto();
-                    request.setPositionType(position_type);
-                    request.setPositionView(position_pb_1.PositionViewProto.DEFAULT_VIEW);
-                    request.setFieldsList(fields);
-                    request.setMeasuresList(measures);
-                    request.setFilterFields(filter_fields);
-                    request.setAsOf(as_of_proto);
-                    position_service = new PositionService_1.PositionService();
-                    return [4 /*yield*/, position_service.search(request)];
-                case 1:
-                    positions = _a.sent();
-                    return [2 /*return*/, positions];
-            }
-        });
-    });
-}
 function testPosition() {
     return __awaiter(this, void 0, void 0, function () {
-        var fields, measures, request, positions, position;
+        var fields, measures, request, positions, position_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -121,16 +74,18 @@ function testPosition() {
                     return [4 /*yield*/, new PositionService_1.PositionService().search(request)];
                 case 1:
                     positions = _a.sent();
-                    if (positions) {
+                    if (positions && positions.length > 0) {
                         console.log(positions.length + " positions returned");
-                        position = positions[0];
-                        console.log(position.getFieldValue(field_pb_1.FieldProto.SECURITY_ID));
-                        position.toString();
+                        position_1 = positions[0];
+                        fields.forEach(function (field) {
+                            position_1.getFieldValue(field);
+                        });
+                        return [2 /*return*/, true];
                     }
                     else {
-                        console.log("No positions found");
+                        return [2 /*return*/, false];
                     }
-                    return [2 /*return*/, true];
+                    return [2 /*return*/];
             }
         });
     });

@@ -113,7 +113,7 @@ class PortfolioService:
             as_of=as_of_proto,
         )
 
-        responses = self.search(portfolio_query)
+        responses = self.search(QueryPortfolioRequest(portfolio_query))
         portfolios: list[Portfolio] = []
 
         for portfolio in responses:

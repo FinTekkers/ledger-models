@@ -1,6 +1,5 @@
 // Note: Some classes and functions have been omitted or simplified due to lack of context.
 
-import { Any } from "@grpc/grpc-js/build/src/generated/google/protobuf/Any";
 import { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { PositionProto } from "../../../fintekkers/models/position/position_pb";
 import { FieldMapEntry, MeasureMapEntry } from "../../../fintekkers/models/position/position_util_pb";
@@ -10,12 +9,9 @@ import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
 import { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
 import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";
 import { IdentifierProto } from "../../../fintekkers/models/security/identifier/identifier_pb";
-import { UUID } from "../utils/uuid";
 import { MeasureProto } from "../../../fintekkers/models/position/measure_pb";
 import Decimal from "decimal.js";
 import { ProtoSerializationUtil } from "../utils/serialization";
-import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
-import { PortfolioProto } from "../../../fintekkers/models/portfolio/portfolio_pb";
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 
 export class Position {
@@ -23,12 +19,6 @@ export class Position {
 
   constructor(positionProto: PositionProto) {
     this.proto = positionProto;
-
-    // //For each field, put into a map
-    // this.proto.getFieldsList().forEach(field => {
-    //   console.log(field);
-    // });
-
   }
 
   public getFieldValue(field: FieldProto): any {
@@ -39,14 +29,14 @@ export class Position {
     for (const tmpField of this.proto.getFieldsList()) {
       if (tmpField.getField() === fieldToGet.getField()) {
 
-        if (tmpField.getStringValue()) {
+        if (tmpField.getStringValue() !== undefined && tmpField.getStringValue().length > 0) {
           return tmpField.getStringValue();
         }
 
         if (tmpField.getEnumValue() > 0) {
-          throw new Error("Doh");
-          // const descriptor = FieldProto.DESCRIPTOR.valuesByNumber[fieldToGet.field];
-          // return new ProtoEnum(descriptor, unpackedValue.enumValue);
+          // let fieldName: string = new Field(fieldToGet.getField()).getName();
+          // let proto: ProtoEnum = ProtoEnum.fromEnumName(fieldName, tmpField.getEnumValue());
+          return tmpField.getEnumValue();//proto.enumDescriptor['EXECUTED'];
         }
 
         const unpackedValue = Position.unpackField(tmpField);

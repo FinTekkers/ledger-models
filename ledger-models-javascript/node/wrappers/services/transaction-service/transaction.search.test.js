@@ -72,7 +72,6 @@ function searchListTransactions() {
                         throw Error('No transactions found');
                     }
                     else {
-                        console.log(transactions.length);
                         transaction = transactions[0];
                         //We can get data straight from the transaction
                         transaction.getIssuerName();

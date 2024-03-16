@@ -6,7 +6,6 @@ import assert = require('assert');
 import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { SecurityService } from './SecurityService';
 import { PositionFilter } from '../../models/position/positionfilter';
-import { PositionFilterOperator } from '../../../fintekkers/models/position/position_util_pb';
 import Security from '../../models/security/security';
 import { ProtoSerializationUtil } from '../../models/utils/serialization';
 
@@ -51,6 +50,5 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
     }
 
     expect(results[0]['outstandingAmount']).toBeGreaterThan(0);
-    console.log(results);
 }, 90000);
 

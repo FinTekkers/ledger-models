@@ -26,14 +26,12 @@ class LocalDate {
 
   static today(): LocalDate {
     const today = new Date();
-    return new LocalDate(
-      new LocalDateProto().setYear(today.getFullYear()).setMonth(today.getMonth()).setDay(today.getDate())
-    );
+    return this.from(today);
   }
 
   static from(date: Date): LocalDate {
     return new LocalDate(
-      new LocalDateProto().setYear(date.getFullYear()).setMonth(date.getMonth()).setDay(date.getDate())
+      new LocalDateProto().setYear(date.getFullYear()).setMonth(date.getMonth() + 1).setDay(date.getDate())
     );
   }
 }

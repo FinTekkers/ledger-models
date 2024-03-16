@@ -21,10 +21,10 @@ var LocalDate = /** @class */ (function () {
     };
     LocalDate.today = function () {
         var today = new Date();
-        return new LocalDate(new local_date_pb_1.LocalDateProto().setYear(today.getFullYear()).setMonth(today.getMonth()).setDay(today.getDate()));
+        return this.from(today);
     };
     LocalDate.from = function (date) {
-        return new LocalDate(new local_date_pb_1.LocalDateProto().setYear(date.getFullYear()).setMonth(date.getMonth()).setDay(date.getDate()));
+        return new LocalDate(new local_date_pb_1.LocalDateProto().setYear(date.getFullYear()).setMonth(date.getMonth() + 1).setDay(date.getDate()));
     };
     return LocalDate;
 }());
