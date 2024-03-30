@@ -63,28 +63,4 @@ class ZonedDateTime {
   }
 }
 
-// function createTimestampWithCurrentTime(): ZonedDateTime {
-//   // Get the current time in milliseconds since January 1, 1970 (Unix timestamp)
-//   const currentTimeMillis = Date.now();
-
-//   // Convert milliseconds to seconds and nanoseconds
-//   const seconds = Math.floor(currentTimeMillis / 1000);
-//   const nanos = (currentTimeMillis % 1000) * 1e6; // 1 millisecond = 1e6 nanoseconds
-
-//   // Create a new Timestamp object with the current time
-//   const timestamp = new Timestamp();
-//   timestamp.setSeconds(seconds);
-//   timestamp.setNanos(nanos);
-
-//   const localTimestamp = new LocalTimestampProto();
-//   localTimestamp.setTimeZone('America/New_York');
-//   localTimestamp.setTimestamp(timestamp);
-
-//   return new ZonedDateTime(localTimestamp);
-// }
-
-// ZonedDateTime.now = createTimestampWithCurrentTime;
-const now = ZonedDateTime.now();
-assert(now.toDateTime().toString() === now.toString());
-
 export { ZonedDateTime };

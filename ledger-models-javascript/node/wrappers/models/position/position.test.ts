@@ -5,7 +5,7 @@ import assert = require('assert');
 
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { PositionProto } from '../../../fintekkers/models/position/position_pb';
-import { FieldMapEntry } from '../../../fintekkers/models/position/position_util_pb';
+import { FieldMapEntry, MeasureMapEntry } from '../../../fintekkers/models/position/position_util_pb';
 import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
@@ -13,15 +13,43 @@ import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_p
 import { Position } from './position';
 import { LocalDate } from '../utils/date';
 import { PositionStatusProto } from '../../../fintekkers/models/position/position_status_pb';
+import { ProtoEnum } from '../utils/protoEnum';
 
 test('test the position wrapper', async () => {
-    const isTrue = await testSerialization();
+    let isTrue = await testEnumSerialization();
+    expect(isTrue).toBe(true);
+
+    isTrue = await testSerialization();
     expect(isTrue).toBe(true);
 });
 
-async function testSerialization(): Promise<boolean> {
-    let fields = [FieldProto.ID, FieldProto.TRADE_DATE, FieldProto.PRODUCT_TYPE, FieldProto.PORTFOLIO, FieldProto.SECURITY];
+async function testEnumSerialization(): Promise<boolean> {
+    let positionProto = new PositionProto();
+    positionProto.setFieldsList([
+        new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.EXECUTED)
+    ]);
 
+    let measureValue = new DecimalValueProto().setArbitraryPrecisionValue("1.55");
+    positionProto.setMeasuresList([
+        new MeasureMapEntry().setMeasure(MeasureProto.DIRECTED_QUANTITY).setMeasureDecimalValue(measureValue)
+    ]);
+
+    let position = new Position(positionProto);
+
+    let status: ProtoEnum = position.getFieldValue(FieldProto.POSITION_STATUS);
+    expect(status.getEnumValueName()).toBe("EXECUTED");
+    expect(status.getEnumValue()).toBe(PositionStatusProto.EXECUTED);
+    expect(status.getEnumDescriptor()).toBe(PositionStatusProto);
+
+    position.getMeasures().forEach(measureMapEntry => {
+        measureMapEntry.getMeasure().toString();
+    });
+    expect(position.getMeasureValue(MeasureProto.DIRECTED_QUANTITY)).toBe(1.55);
+
+    return true;
+}
+
+async function testSerialization(): Promise<boolean> {
     let security = new SecurityProto().setAssetClass("Test");
     let portfolio = new PortfolioProto().setPortfolioName("Test portfolio");
     let tradeDate = LocalDate.today().toDate();
@@ -66,7 +94,7 @@ async function testSerialization(): Promise<boolean> {
     let positionID = position.getFieldValue(FieldProto.ID);
     expect(positionID.toString()).toBe(id.toString());
 
-    expect(position.getFieldValue(FieldProto.POSITION_STATUS)).toBe(PositionStatusProto.EXECUTED);
+    expect(position.getFieldValue(FieldProto.POSITION_STATUS).toString()).toBe("EXECUTED");
 
     return true;
 }

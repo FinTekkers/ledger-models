@@ -1,5 +1,4 @@
-// Note: Some classes and functions have been omitted or simplified due to lack of context.
-
+//Models
 import { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { PositionProto } from "../../../fintekkers/models/position/position_pb";
 import { FieldMapEntry, MeasureMapEntry } from "../../../fintekkers/models/position/position_util_pb";
@@ -13,6 +12,10 @@ import { MeasureProto } from "../../../fintekkers/models/position/measure_pb";
 import Decimal from "decimal.js";
 import { ProtoSerializationUtil } from "../utils/serialization";
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
+import { ProtoEnum } from "../utils/protoEnum";
+import { Field } from "./field";
+import { UUID } from "../utils/uuid";
+import { ZonedDateTime } from "../utils/datetime";
 
 export class Position {
   proto: PositionProto;
@@ -25,7 +28,7 @@ export class Position {
     return this.getField(new FieldMapEntry().setField(field));
   }
 
-  public getField(fieldToGet: FieldMapEntry): any {
+  public getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Portfolio | UUID | Date | ZonedDateTime | number {
     for (const tmpField of this.proto.getFieldsList()) {
       if (tmpField.getField() === fieldToGet.getField()) {
 
@@ -34,9 +37,9 @@ export class Position {
         }
 
         if (tmpField.getEnumValue() > 0) {
-          // let fieldName: string = new Field(fieldToGet.getField()).getName();
-          // let proto: ProtoEnum = ProtoEnum.fromEnumName(fieldName, tmpField.getEnumValue());
-          return tmpField.getEnumValue();//proto.enumDescriptor['EXECUTED'];
+          let fieldName: string = new Field(fieldToGet.getField()).getName();
+          let proto: ProtoEnum = ProtoEnum.fromEnumName(fieldName, tmpField.getEnumValue());
+          return proto;
         }
 
         const unpackedValue = Position.unpackField(tmpField);
@@ -63,7 +66,7 @@ export class Position {
   private getMeasure(measureToGet: MeasureMapEntry): Decimal {
     for (const tmpMeasure of this.proto.getMeasuresList()) {
       if (tmpMeasure.getMeasure() === measureToGet.getMeasure()) {
-        return ProtoSerializationUtil.deserialize(tmpMeasure.getMeasureDecimalValue());
+        return ProtoSerializationUtil.deserialize(tmpMeasure.getMeasureDecimalValue()) as unknown as Decimal;
       }
     }
 
@@ -100,18 +103,6 @@ export class Position {
     return output;
   }
 
-  // private static wrapStringToAny(myString: string): Any {
-  //     const myAny = new Any();
-  //     myAny.pack(wrappers.StringValue.create({ value: myString }));
-  //     return myAny;
-  // }
-
-  // private static packField(fieldToPack: any): Any {
-  //     const myAny = new Any();
-  //     myAny.pack(fieldToPack);
-  //     return myAny;
-  // }
-
   public static unpackField(fieldToUnpack: FieldMapEntry): any {
     switch (fieldToUnpack.getField()) {
       case FieldProto.PORTFOLIO_ID:
@@ -147,12 +138,4 @@ export class Position {
         throw new Error(`Field not found. Could not unpack ${FieldProto[fieldToUnpack.getField()]}`);
     }
   }
-
-  // public static unpackMeasure(measureToUnpack: MeasureProto): DecimalValueProto {
-  //   if (measureToUnpack === MeasureProto.DIRECTED_QUANTITY) {
-  //     return measureToUnpack.g;
-  //   } else {
-  //     throw new Error(`Field not found. Could not unpack ${MeasureProto.Name[measureToUnpack.measure]}`);
-  //   }
-  // }
 }

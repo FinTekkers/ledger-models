@@ -6,13 +6,8 @@ import { ZonedDateTime } from "./datetime";
 import { UUID } from "./uuid";
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 
-interface EnumValueDescriptor {
-  name: string;
-  values_by_number: { [key: number]: { name: string } };
-}
-
 export class ProtoSerializationUtil {
-  static serialize(obj: any): any {
+  static serialize(obj: any) { //}: UUIDProto | LocalDateProto | LocalTimestampProto | DecimalValueProto | StringValue {
     if (obj instanceof UUID) {
       return obj.toUUIDProto();
     }
@@ -35,7 +30,7 @@ export class ProtoSerializationUtil {
     throw new Error(`Could not serialize object of type ${typeof obj}. Value: ${obj}`);
   }
 
-  static deserialize(obj: any): any {
+  static deserialize(obj: any) { //}: UUID | Date | ZonedDateTime | number | string {
     if (obj instanceof UUIDProto) {
       return UUID.fromU8Array(obj.getRawUuid_asU8());
     }

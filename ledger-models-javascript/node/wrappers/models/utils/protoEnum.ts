@@ -29,9 +29,14 @@ export class ProtoEnum {
         throw new Error(`Enum has not been mapped: ${enumName}`);
     }
 
-    getEnumName(): string {
+    getEnumDescriptor(): string {
+        return this.enumDescriptor;
+    }
+
+    getEnumName(): Error {
         // Assuming your enumDescriptor has a name property or similar
-        return this.enumDescriptor.name;
+        throw new Error("Not supported currently");
+        //  return this.enumDescriptor.name;
     }
 
     getEnumValue(): number {

@@ -13,6 +13,10 @@ describe('ProtoEnum', function () {
         var protoEnum = new protoEnum_1.ProtoEnum(position_status_pb_1.PositionStatusProto.INTENDED, 2);
         expect(protoEnum.getEnumValue()).toEqual(2);
     });
+    it('should correctly return the enum name for PositionStatusProto', function () {
+        var protoEnum = new protoEnum_1.ProtoEnum(position_status_pb_1.PositionStatusProto.INTENDED, 2);
+        expect(function () { return protoEnum.getEnumName(); }).toThrow(Error);
+    });
     it('should throw an error for an unmapped enum name', function () {
         expect(function () { return protoEnum_1.ProtoEnum.fromEnumName('UNMAPPED_ENUM', 0); }).toThrow('Enum has not been mapped: UNMAPPED_ENUM');
     });

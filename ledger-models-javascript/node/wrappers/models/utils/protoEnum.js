@@ -24,9 +24,13 @@ var ProtoEnum = /** @class */ (function () {
         }
         throw new Error("Enum has not been mapped: ".concat(enumName));
     };
+    ProtoEnum.prototype.getEnumDescriptor = function () {
+        return this.enumDescriptor;
+    };
     ProtoEnum.prototype.getEnumName = function () {
         // Assuming your enumDescriptor has a name property or similar
-        return this.enumDescriptor.name;
+        throw new Error("Not supported currently");
+        //  return this.enumDescriptor.name;
     };
     ProtoEnum.prototype.getEnumValue = function () {
         return this.enumValue;

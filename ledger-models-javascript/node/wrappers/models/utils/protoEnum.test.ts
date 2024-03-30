@@ -15,6 +15,11 @@ describe('ProtoEnum', () => {
         expect(protoEnum.getEnumValue()).toEqual(2);
     });
 
+    it('should correctly return the enum name for PositionStatusProto', () => {
+        const protoEnum = new ProtoEnum(PositionStatusProto.INTENDED, 2);
+        expect(() => protoEnum.getEnumName()).toThrow(Error);
+    });
+
     it('should throw an error for an unmapped enum name', () => {
         expect(() => ProtoEnum.fromEnumName('UNMAPPED_ENUM', 0)).toThrow('Enum has not been mapped: UNMAPPED_ENUM');
     });

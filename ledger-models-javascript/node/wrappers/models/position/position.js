@@ -1,7 +1,7 @@
 "use strict";
-// Note: Some classes and functions have been omitted or simplified due to lack of context.
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Position = void 0;
+//Models
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 var portfolio_1 = require("../portfolio/portfolio");
@@ -13,6 +13,8 @@ var identifier_pb_1 = require("../../../fintekkers/models/security/identifier/id
 var measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 var serialization_1 = require("../utils/serialization");
 var wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
+var protoEnum_1 = require("../utils/protoEnum");
+var field_1 = require("./field");
 var Position = /** @class */ (function () {
     function Position(positionProto) {
         this.proto = positionProto;
@@ -28,9 +30,9 @@ var Position = /** @class */ (function () {
                     return tmpField.getStringValue();
                 }
                 if (tmpField.getEnumValue() > 0) {
-                    // let fieldName: string = new Field(fieldToGet.getField()).getName();
-                    // let proto: ProtoEnum = ProtoEnum.fromEnumName(fieldName, tmpField.getEnumValue());
-                    return tmpField.getEnumValue(); //proto.enumDescriptor['EXECUTED'];
+                    var fieldName = new field_1.Field(fieldToGet.getField()).getName();
+                    var proto = protoEnum_1.ProtoEnum.fromEnumName(fieldName, tmpField.getEnumValue());
+                    return proto;
                 }
                 var unpackedValue = Position.unpackField(tmpField);
                 if (field_pb_1.FieldProto.SECURITY == fieldToGet.getField()) {
@@ -81,16 +83,6 @@ var Position = /** @class */ (function () {
         }
         return output;
     };
-    // private static wrapStringToAny(myString: string): Any {
-    //     const myAny = new Any();
-    //     myAny.pack(wrappers.StringValue.create({ value: myString }));
-    //     return myAny;
-    // }
-    // private static packField(fieldToPack: any): Any {
-    //     const myAny = new Any();
-    //     myAny.pack(fieldToPack);
-    //     return myAny;
-    // }
     Position.unpackField = function (fieldToUnpack) {
         switch (fieldToUnpack.getField()) {
             case field_pb_1.FieldProto.PORTFOLIO_ID:

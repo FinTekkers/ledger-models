@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ZonedDateTime = void 0;
-var console_1 = require("console");
 var local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
 var timestamp_pb_1 = require("google-protobuf/google/protobuf/timestamp_pb");
 var luxon_1 = require("luxon");
@@ -51,22 +50,4 @@ var ZonedDateTime = /** @class */ (function () {
     return ZonedDateTime;
 }());
 exports.ZonedDateTime = ZonedDateTime;
-// function createTimestampWithCurrentTime(): ZonedDateTime {
-//   // Get the current time in milliseconds since January 1, 1970 (Unix timestamp)
-//   const currentTimeMillis = Date.now();
-//   // Convert milliseconds to seconds and nanoseconds
-//   const seconds = Math.floor(currentTimeMillis / 1000);
-//   const nanos = (currentTimeMillis % 1000) * 1e6; // 1 millisecond = 1e6 nanoseconds
-//   // Create a new Timestamp object with the current time
-//   const timestamp = new Timestamp();
-//   timestamp.setSeconds(seconds);
-//   timestamp.setNanos(nanos);
-//   const localTimestamp = new LocalTimestampProto();
-//   localTimestamp.setTimeZone('America/New_York');
-//   localTimestamp.setTimestamp(timestamp);
-//   return new ZonedDateTime(localTimestamp);
-// }
-// ZonedDateTime.now = createTimestampWithCurrentTime;
-var now = ZonedDateTime.now();
-(0, console_1.assert)(now.toDateTime().toString() === now.toString());
 //# sourceMappingURL=datetime.js.map

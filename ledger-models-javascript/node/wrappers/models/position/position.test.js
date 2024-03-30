@@ -52,19 +52,47 @@ test('test the position wrapper', function () { return __awaiter(void 0, void 0,
     var isTrue;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, testSerialization()];
+            case 0: return [4 /*yield*/, testEnumSerialization()];
             case 1:
+                isTrue = _a.sent();
+                expect(isTrue).toBe(true);
+                return [4 /*yield*/, testSerialization()];
+            case 2:
                 isTrue = _a.sent();
                 expect(isTrue).toBe(true);
                 return [2 /*return*/];
         }
     });
 }); });
+function testEnumSerialization() {
+    return __awaiter(this, void 0, void 0, function () {
+        var positionProto, measureValue, position, status;
+        return __generator(this, function (_a) {
+            positionProto = new position_pb_1.PositionProto();
+            positionProto.setFieldsList([
+                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.EXECUTED)
+            ]);
+            measureValue = new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue("1.55");
+            positionProto.setMeasuresList([
+                new position_util_pb_1.MeasureMapEntry().setMeasure(measure_pb_1.MeasureProto.DIRECTED_QUANTITY).setMeasureDecimalValue(measureValue)
+            ]);
+            position = new position_1.Position(positionProto);
+            status = position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS);
+            expect(status.getEnumValueName()).toBe("EXECUTED");
+            expect(status.getEnumValue()).toBe(position_status_pb_1.PositionStatusProto.EXECUTED);
+            expect(status.getEnumDescriptor()).toBe(position_status_pb_1.PositionStatusProto);
+            position.getMeasures().forEach(function (measureMapEntry) {
+                measureMapEntry.getMeasure().toString();
+            });
+            expect(position.getMeasureValue(measure_pb_1.MeasureProto.DIRECTED_QUANTITY)).toBe(1.55);
+            return [2 /*return*/, true];
+        });
+    });
+}
 function testSerialization() {
     return __awaiter(this, void 0, void 0, function () {
-        var fields, security, portfolio, tradeDate, productType, id, measure, measureValue, tradeDatePacked, idPacked, positionProto, position, tradeDatePosition, securityPosition, portfolioPosition, positionID;
+        var security, portfolio, tradeDate, productType, id, measure, measureValue, tradeDatePacked, idPacked, positionProto, position, tradeDatePosition, securityPosition, portfolioPosition, positionID;
         return __generator(this, function (_a) {
-            fields = [field_pb_1.FieldProto.ID, field_pb_1.FieldProto.TRADE_DATE, field_pb_1.FieldProto.PRODUCT_TYPE, field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.SECURITY];
             security = new security_pb_1.SecurityProto().setAssetClass("Test");
             portfolio = new portfolio_pb_1.PortfolioProto().setPortfolioName("Test portfolio");
             tradeDate = date_1.LocalDate.today().toDate();
@@ -99,7 +127,7 @@ function testSerialization() {
             expect(position.getFieldValue(field_pb_1.FieldProto.PRODUCT_TYPE)).toBe(productType);
             positionID = position.getFieldValue(field_pb_1.FieldProto.ID);
             expect(positionID.toString()).toBe(id.toString());
-            expect(position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS)).toBe(position_status_pb_1.PositionStatusProto.EXECUTED);
+            expect(position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS).toString()).toBe("EXECUTED");
             return [2 /*return*/, true];
         });
     });
