@@ -67,7 +67,7 @@ test('test creating a portfolio against the api.fintekkers.org portfolio service
             case 2:
                 createPortfolioResponse = _a.sent();
                 expect(createPortfolioResponse.getPortfolioResponseList().length).toBe(1);
-                return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addEqualsFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'Federal Reserve SOMA Holdings'))];
+                return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addEqualsFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO'))];
             case 3:
                 searchResults = _a.sent();
                 expect(searchResults.length > 0).toBe(true);

@@ -10,6 +10,7 @@ import { PositionClient } from '../../../fintekkers/services/position-service/po
 
 //Utils
 import EnvConfig from '../../models/utils/requestcontext';
+import { QueryPositionRequest } from '../../requests/position/QueryPositionRequest';
 
 class PositionService {
   private client: PositionClient;
@@ -18,9 +19,10 @@ class PositionService {
     this.client = new PositionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
   }
 
-  async search(request: QueryPositionRequestProto): Promise<Position[]> {
+  async search(positionRequest: QueryPositionRequest): Promise<Position[]> {
     const tmpClient = this.client;
     const listPositions: Position[] = [];
+    const request: QueryPositionRequestProto = positionRequest.toProto();
 
     async function processStreamSynchronously(): Promise<Position[]> {
       const stream2 = tmpClient.search(request);

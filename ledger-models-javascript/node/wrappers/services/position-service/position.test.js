@@ -37,14 +37,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // Models
-var position_pb_1 = require("../../../fintekkers/models/position/position_pb");
 var measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 // Model Utils
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
-var datetime_1 = require("../../models/utils/datetime");
 //Requests & Services
 var PositionService_1 = require("../../services/position-service/PositionService");
-var query_position_request_pb_1 = require("../../../fintekkers/requests/position/query_position_request_pb");
+var QueryPositionRequest_1 = require("../../requests/position/QueryPositionRequest");
 test('test getting a position against the api.fintekkers.org position service', function () { return __awaiter(void 0, void 0, void 0, function () {
     var isTrue;
     return __generator(this, function (_a) {
@@ -65,12 +63,7 @@ function testPosition() {
                 case 0:
                     fields = [field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.TRADE_DATE, field_pb_1.FieldProto.PRODUCT_TYPE, field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.PRODUCT_TYPE];
                     measures = [measure_pb_1.MeasureProto.DIRECTED_QUANTITY];
-                    request = new query_position_request_pb_1.QueryPositionRequestProto()
-                        .setAsOf(datetime_1.ZonedDateTime.now().toProto())
-                        .setFieldsList(fields)
-                        .setMeasuresList(measures)
-                        .setPositionType(position_pb_1.PositionTypeProto.TRANSACTION)
-                        .setPositionView(position_pb_1.PositionViewProto.DEFAULT_VIEW);
+                    request = QueryPositionRequest_1.QueryPositionRequest.from(fields, measures);
                     return [4 /*yield*/, new PositionService_1.PositionService().search(request)];
                 case 1:
                     positions = _a.sent();
