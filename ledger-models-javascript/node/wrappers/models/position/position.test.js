@@ -60,6 +60,10 @@ test('test the position wrapper', function () { return __awaiter(void 0, void 0,
             case 2:
                 isTrue = _a.sent();
                 expect(isTrue).toBe(true);
+                return [4 /*yield*/, testJsonSerialization()];
+            case 3:
+                isTrue = _a.sent();
+                expect(isTrue).toBe(true);
                 return [2 /*return*/];
         }
     });
@@ -89,17 +93,15 @@ function testEnumSerialization() {
         });
     });
 }
-function testSerialization() {
+function testJsonSerialization() {
     return __awaiter(this, void 0, void 0, function () {
-        var security, portfolio, tradeDate, productType, id, measure, measureValue, tradeDatePacked, idPacked, positionProto, position, tradeDatePosition, securityPosition, portfolioPosition, positionID;
+        var security, portfolio, tradeDate, productType, id, tradeDatePacked, idPacked, positionProto, position, position2, tradeDatePosition;
         return __generator(this, function (_a) {
             security = new security_pb_1.SecurityProto().setAssetClass("Test");
             portfolio = new portfolio_pb_1.PortfolioProto().setPortfolioName("Test portfolio");
             tradeDate = date_1.LocalDate.today().toDate();
             productType = "Test product type";
             id = new uuid_1.UUID(uuid_1.UUID.random().toBytes());
-            measure = measure_pb_1.MeasureProto.DIRECTED_QUANTITY;
-            measureValue = new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue("1.0");
             tradeDatePacked = new any_pb_1.Any();
             tradeDatePacked.setTypeUrl("Doesn't matter");
             tradeDatePacked.setValue(date_1.LocalDate.from(tradeDate).toProto().serializeBinary());
@@ -108,14 +110,28 @@ function testSerialization() {
             idPacked.setValue(id.toUUIDProto().serializeBinary());
             positionProto = new position_pb_1.PositionProto();
             positionProto.setFieldsList([
-                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
-                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY).setFieldValuePacked(security),
-                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
+                // new FieldMapEntry().setField(FieldProto.SECURITY).setFieldValuePacked(security),
+                // new FieldMapEntry().setField(FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
                 new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.EXECUTED),
                 new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PRODUCT_TYPE).setStringValue(productType),
                 new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.ID).setFieldValuePacked(idPacked),
             ]);
             position = new position_1.Position(positionProto);
+            position2 = position_1.Position.fromJSON(position.toJSON());
+            tradeDatePosition = position2.getFieldValue(field_pb_1.FieldProto.TRADE_DATE);
+            expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
+            expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
+            expect(tradeDate.getDay()).toBe(tradeDatePosition.getDay());
+            expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
+            return [2 /*return*/, true];
+        });
+    });
+}
+function testSerialization() {
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, position, tradeDate, security, portfolio, productType, id, tradeDatePosition, securityPosition, portfolioPosition, positionID;
+        return __generator(this, function (_b) {
+            _a = getPosition(), position = _a.position, tradeDate = _a.tradeDate, security = _a.security, portfolio = _a.portfolio, productType = _a.productType, id = _a.id;
             tradeDatePosition = position.getFieldValue(field_pb_1.FieldProto.TRADE_DATE);
             expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
             expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
@@ -131,5 +147,30 @@ function testSerialization() {
             return [2 /*return*/, true];
         });
     });
+}
+function getPosition() {
+    var security = new security_pb_1.SecurityProto().setAssetClass("Test");
+    var portfolio = new portfolio_pb_1.PortfolioProto().setPortfolioName("Test portfolio");
+    var tradeDate = date_1.LocalDate.today().toDate();
+    var productType = "Test product type";
+    var id = new uuid_1.UUID(uuid_1.UUID.random().toBytes());
+    var measure = measure_pb_1.MeasureProto.DIRECTED_QUANTITY;
+    var measureValue = new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue("1.0");
+    var tradeDatePacked = new any_pb_1.Any();
+    tradeDatePacked.setTypeUrl("Doesn't matter");
+    tradeDatePacked.setValue(date_1.LocalDate.from(tradeDate).toProto().serializeBinary());
+    var idPacked = new any_pb_1.Any();
+    idPacked.setTypeUrl("Doesn't matter");
+    idPacked.setValue(id.toUUIDProto().serializeBinary());
+    var positionProto = new position_pb_1.PositionProto();
+    positionProto.setFieldsList([
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY).setFieldValuePacked(security),
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.EXECUTED),
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PRODUCT_TYPE).setStringValue(productType),
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.ID).setFieldValuePacked(idPacked),
+    ]);
+    var position = new position_1.Position(positionProto);
+    return { position: position, tradeDate: tradeDate, security: security, portfolio: portfolio, productType: productType, id: id };
 }
 //# sourceMappingURL=position.test.js.map

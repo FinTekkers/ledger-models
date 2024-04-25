@@ -24,6 +24,22 @@ export class Position {
     this.proto = positionProto;
   }
 
+  /*** */
+  toJSON(): any {
+    return {
+      proto: this.proto.serializeBinary(), // Serialize Age object to binary buffer
+    };
+  }
+
+  /**
+   * Experimental impelementaiton
+   * @param binary An array which is the raw binary of the proto object
+   * @returns A Position object with the deserialized binary inside it
+   */
+  static fromJSON(json: any): Position {
+    return new Position(PositionProto.deserializeBinary(json['proto']));
+  }
+
   public getFieldValue(field: FieldProto): any {
     return this.getField(new FieldMapEntry().setField(field));
   }
