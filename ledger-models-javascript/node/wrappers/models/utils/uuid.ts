@@ -4,14 +4,14 @@ import * as uuid from 'uuid';
 
 class UUID {
   private bytes: number[];
-  
+
   constructor(bytes: number[]) {
     this.bytes = bytes;
   }
 
   toString(): string {
-    const buffer = Buffer.from(this.bytes);
-    return uuid.stringify(buffer);
+    const byteArray: Uint8Array = new Uint8Array(this.bytes);
+    return uuid.stringify(byteArray);
   }
 
   toBytes(): number[] {
@@ -34,7 +34,7 @@ class UUID {
   }
 
   static fromU8Array(uint8Array: Uint8Array): UUID {
-    const array:number[] = Array.from(uint8Array, byte => byte);
+    const array: number[] = Array.from(uint8Array, byte => byte);
     return new UUID(array);
   }
 
@@ -59,7 +59,7 @@ const test_uuid_bytes_copy = UUID.fromString(test_uuid.toString());
 
 assert(
   test_uuid_bytes.length === test_uuid_bytes_copy.length &&
-    test_uuid_bytes.every((value, index) => value === test_uuid_bytes_copy[index])
+  test_uuid_bytes.every((value, index) => value === test_uuid_bytes_copy[index])
 );
 
 assert(UUID.random().toString().length == 36);
