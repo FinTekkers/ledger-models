@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Position = void 0;
 //Models
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
+var position_pb_1 = require("../../../fintekkers/models/position/position_pb");
 var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 var portfolio_1 = require("../portfolio/portfolio");
 var security_1 = require("../security/security");
@@ -19,6 +20,20 @@ var Position = /** @class */ (function () {
     function Position(positionProto) {
         this.proto = positionProto;
     }
+    /*** */
+    Position.prototype.toJSON = function () {
+        return {
+            proto: this.proto.serializeBinary(), // Serialize Age object to binary buffer
+        };
+    };
+    /**
+     * Experimental impelementaiton
+     * @param binary An array which is the raw binary of the proto object
+     * @returns A Position object with the deserialized binary inside it
+     */
+    Position.fromJSON = function (json) {
+        return new Position(position_pb_1.PositionProto.deserializeBinary(json['proto']));
+    };
     Position.prototype.getFieldValue = function (field) {
         return this.getField(new position_util_pb_1.FieldMapEntry().setField(field));
     };

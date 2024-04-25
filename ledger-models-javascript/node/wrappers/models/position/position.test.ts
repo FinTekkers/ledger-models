@@ -21,6 +21,10 @@ test('test the position wrapper', async () => {
 
     isTrue = await testSerialization();
     expect(isTrue).toBe(true);
+
+    isTrue = await testJsonSerialization();
+    expect(isTrue).toBe(true);
+
 });
 
 async function testEnumSerialization(): Promise<boolean> {
@@ -49,15 +53,13 @@ async function testEnumSerialization(): Promise<boolean> {
     return true;
 }
 
-async function testSerialization(): Promise<boolean> {
+
+async function testJsonSerialization(): Promise<boolean> {
     let security = new SecurityProto().setAssetClass("Test");
     let portfolio = new PortfolioProto().setPortfolioName("Test portfolio");
     let tradeDate = LocalDate.today().toDate();
     let productType = "Test product type";
     let id = new UUID(UUID.random().toBytes());
-
-    let measure = MeasureProto.DIRECTED_QUANTITY;
-    let measureValue = new DecimalValueProto().setArbitraryPrecisionValue("1.0");
 
     const tradeDatePacked = new Any();
     tradeDatePacked.setTypeUrl(`Doesn't matter`);
@@ -69,14 +71,29 @@ async function testSerialization(): Promise<boolean> {
 
     let positionProto = new PositionProto();
     positionProto.setFieldsList([
+        // new FieldMapEntry().setField(FieldProto.SECURITY).setFieldValuePacked(security),
         new FieldMapEntry().setField(FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
-        new FieldMapEntry().setField(FieldProto.SECURITY).setFieldValuePacked(security),
-        new FieldMapEntry().setField(FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
         new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.EXECUTED),
         new FieldMapEntry().setField(FieldProto.PRODUCT_TYPE).setStringValue(productType),
         new FieldMapEntry().setField(FieldProto.ID).setFieldValuePacked(idPacked),
     ]);
     let position = new Position(positionProto);
+
+    let position2 = Position.fromJSON(position.toJSON());
+
+
+    let tradeDatePosition = position2.getFieldValue(FieldProto.TRADE_DATE);
+    expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
+    expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
+    expect(tradeDate.getDay()).toBe(tradeDatePosition.getDay());
+    expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
+
+    return true;
+}
+
+
+async function testSerialization(): Promise<boolean> {
+    let { position, tradeDate, security, portfolio, productType, id } = getPosition();
 
     let tradeDatePosition = position.getFieldValue(FieldProto.TRADE_DATE);
     expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
@@ -97,4 +114,35 @@ async function testSerialization(): Promise<boolean> {
     expect(position.getFieldValue(FieldProto.POSITION_STATUS).toString()).toBe("EXECUTED");
 
     return true;
+}
+
+function getPosition() {
+    let security = new SecurityProto().setAssetClass("Test");
+    let portfolio = new PortfolioProto().setPortfolioName("Test portfolio");
+    let tradeDate = LocalDate.today().toDate();
+    let productType = "Test product type";
+    let id = new UUID(UUID.random().toBytes());
+
+    let measure = MeasureProto.DIRECTED_QUANTITY;
+    let measureValue = new DecimalValueProto().setArbitraryPrecisionValue("1.0");
+
+    const tradeDatePacked = new Any();
+    tradeDatePacked.setTypeUrl(`Doesn't matter`);
+    tradeDatePacked.setValue(LocalDate.from(tradeDate).toProto().serializeBinary());
+
+    const idPacked = new Any();
+    idPacked.setTypeUrl(`Doesn't matter`);
+    idPacked.setValue(id.toUUIDProto().serializeBinary());
+
+    let positionProto = new PositionProto();
+    positionProto.setFieldsList([
+        new FieldMapEntry().setField(FieldProto.SECURITY).setFieldValuePacked(security),
+        new FieldMapEntry().setField(FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
+        new FieldMapEntry().setField(FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
+        new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.EXECUTED),
+        new FieldMapEntry().setField(FieldProto.PRODUCT_TYPE).setStringValue(productType),
+        new FieldMapEntry().setField(FieldProto.ID).setFieldValuePacked(idPacked),
+    ]);
+    let position = new Position(positionProto);
+    return { position, tradeDate, security, portfolio, productType, id };
 }
