@@ -9,8 +9,8 @@ var UUID = /** @class */ (function () {
         this.bytes = bytes;
     }
     UUID.prototype.toString = function () {
-        var buffer = Buffer.from(this.bytes);
-        return uuid.stringify(buffer);
+        var byteArray = new Uint8Array(this.bytes);
+        return uuid.stringify(byteArray);
     };
     UUID.prototype.toBytes = function () {
         return this.bytes;
