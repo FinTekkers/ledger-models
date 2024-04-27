@@ -49,6 +49,13 @@ var Position = /** @class */ (function () {
                     var proto = protoEnum_1.ProtoEnum.fromEnumName(fieldName, tmpField.getEnumValue());
                     return proto;
                 }
+                else if (tmpField.getEnumValue() == 0 && !tmpField.getStringValue() &&
+                    !tmpField.getFieldValuePacked()) {
+                    console.log("Warning: this position has an undefined enum value, which should be fixed in upstream data");
+                    var fieldName = new field_1.Field(fieldToGet.getField()).getName();
+                    var proto = protoEnum_1.ProtoEnum.fromEnumName(fieldName, 0);
+                    return proto;
+                }
                 var unpackedValue = Position.unpackField(tmpField);
                 if (field_pb_1.FieldProto.SECURITY == fieldToGet.getField()) {
                     return new security_1.default(unpackedValue);
@@ -119,7 +126,7 @@ var Position = /** @class */ (function () {
             case field_pb_1.FieldProto.POSITION_STATUS:
                 // Assuming ProtoEnum is properly defined elsewhere
                 // const descriptor = FieldProto.DESCRIPTOR.valuesByNumber[fieldToUnpack.field];
-                return null; //new ProtoEnum(descriptor, fieldToUnpack.enumValue);
+                return fieldToUnpack; //new ProtoEnum(descriptor, fieldToUnpack.enumValue);
             case field_pb_1.FieldProto.PORTFOLIO_NAME:
             case field_pb_1.FieldProto.SECURITY_DESCRIPTION:
             case field_pb_1.FieldProto.PRODUCT_TYPE:

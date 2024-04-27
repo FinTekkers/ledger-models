@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProtoSerializationUtil = void 0;
+var identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
 var decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 var local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
 var uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
 var datetime_1 = require("./datetime");
+var protoEnum_1 = require("./protoEnum");
 var uuid_1 = require("./uuid");
 var wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 var ProtoSerializationUtil = /** @class */ (function () {
@@ -44,14 +46,17 @@ var ProtoSerializationUtil = /** @class */ (function () {
         if (obj instanceof local_timestamp_pb_1.LocalTimestampProto) {
             return new datetime_1.ZonedDateTime(obj);
         }
-        if (obj.enum_name && obj.enum_name === "TRANSACTION_TYPE") {
-            return null; // new TransactionType(obj.enum_value);
+        if (obj instanceof identifier_pb_1.IdentifierProto) {
+            return obj.getIdentifierType() + ":" + obj.getIdentifierValue();
         }
         if (obj instanceof decimal_value_pb_1.DecimalValueProto) {
             return parseFloat(obj.getArbitraryPrecisionValue());
         }
         if (obj instanceof wrappers_pb_1.StringValue) {
             return obj.toString();
+        }
+        if (obj !== null && 'enum_name' in obj && typeof obj.enum_name !== 'undefined' && obj.enum_name !== null) {
+            return new protoEnum_1.ProtoEnum(obj.descriptor, obj.enum_value);
         }
         throw new Error("Could not deserialize object of type ".concat(typeof obj, ". Value: ").concat(obj));
     };

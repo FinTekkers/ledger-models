@@ -1,8 +1,6 @@
 import { UUID } from '../utils/uuid';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
 
-import assert = require('assert');
-
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { PositionProto } from '../../../fintekkers/models/position/position_pb';
 import { FieldMapEntry, MeasureMapEntry } from '../../../fintekkers/models/position/position_util_pb';
@@ -14,6 +12,7 @@ import { Position } from './position';
 import { LocalDate } from '../utils/date';
 import { PositionStatusProto } from '../../../fintekkers/models/position/position_status_pb';
 import { ProtoEnum } from '../utils/protoEnum';
+import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
 
 test('test the position wrapper', async () => {
     let isTrue = await testEnumSerialization();
@@ -23,6 +22,9 @@ test('test the position wrapper', async () => {
     expect(isTrue).toBe(true);
 
     isTrue = await testJsonSerialization();
+    expect(isTrue).toBe(true);
+
+    isTrue = await testDeSerializationWithUnknownProto();
     expect(isTrue).toBe(true);
 
 });
@@ -93,7 +95,7 @@ async function testJsonSerialization(): Promise<boolean> {
 
 
 async function testSerialization(): Promise<boolean> {
-    let { position, tradeDate, security, portfolio, productType, id } = getPosition();
+    let { position, tradeDate, security, portfolio, productType, id } = getPosition(false);
 
     let tradeDatePosition = position.getFieldValue(FieldProto.TRADE_DATE);
     expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
@@ -113,10 +115,19 @@ async function testSerialization(): Promise<boolean> {
 
     expect(position.getFieldValue(FieldProto.POSITION_STATUS).toString()).toBe("EXECUTED");
 
+    expect(position.getMeasureValue(MeasureProto.DIRECTED_QUANTITY)).toBe(1);
+
     return true;
 }
 
-function getPosition() {
+async function testDeSerializationWithUnknownProto(): Promise<boolean> {
+    let { position } = getPosition(true);
+
+    expect(position.getFieldValue(FieldProto.POSITION_STATUS).toString()).toBe("UNKNOWN");
+    return true;
+}
+
+function getPosition(includeUnknownEnumValue: boolean) {
     let security = new SecurityProto().setAssetClass("Test");
     let portfolio = new PortfolioProto().setPortfolioName("Test portfolio");
     let tradeDate = LocalDate.today().toDate();
@@ -134,15 +145,25 @@ function getPosition() {
     idPacked.setTypeUrl(`Doesn't matter`);
     idPacked.setValue(id.toUUIDProto().serializeBinary());
 
+    let positionStatus = includeUnknownEnumValue ?
+        new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.UNKNOWN) :
+        new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.EXECUTED);
+
     let positionProto = new PositionProto();
     positionProto.setFieldsList([
         new FieldMapEntry().setField(FieldProto.SECURITY).setFieldValuePacked(security),
         new FieldMapEntry().setField(FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
         new FieldMapEntry().setField(FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
-        new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.EXECUTED),
+        positionStatus,
+        new FieldMapEntry().setField(FieldProto.TRANSACTION_TYPE).setEnumValue(TransactionTypeProto.BUY),
         new FieldMapEntry().setField(FieldProto.PRODUCT_TYPE).setStringValue(productType),
         new FieldMapEntry().setField(FieldProto.ID).setFieldValuePacked(idPacked),
     ]);
+
+    positionProto.setMeasuresList([
+        new MeasureMapEntry().setMeasure(measure).setMeasureDecimalValue(measureValue)
+    ]);
+
     let position = new Position(positionProto);
     return { position, tradeDate, security, portfolio, productType, id };
 }

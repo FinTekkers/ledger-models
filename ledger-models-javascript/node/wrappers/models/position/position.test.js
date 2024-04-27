@@ -48,6 +48,7 @@ var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb"
 var position_1 = require("./position");
 var date_1 = require("../utils/date");
 var position_status_pb_1 = require("../../../fintekkers/models/position/position_status_pb");
+var transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
 test('test the position wrapper', function () { return __awaiter(void 0, void 0, void 0, function () {
     var isTrue;
     return __generator(this, function (_a) {
@@ -144,6 +145,7 @@ function testSerialization() {
             positionID = position.getFieldValue(field_pb_1.FieldProto.ID);
             expect(positionID.toString()).toBe(id.toString());
             expect(position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS).toString()).toBe("EXECUTED");
+            expect(position.getMeasureValue(measure_pb_1.MeasureProto.DIRECTED_QUANTITY)).toBe(1);
             return [2 /*return*/, true];
         });
     });
@@ -167,9 +169,13 @@ function getPosition() {
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY).setFieldValuePacked(security),
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
-        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.EXECUTED),
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.UNKNOWN),
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TRANSACTION_TYPE).setEnumValue(transaction_type_pb_1.TransactionTypeProto.BUY),
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PRODUCT_TYPE).setStringValue(productType),
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.ID).setFieldValuePacked(idPacked),
+    ]);
+    positionProto.setMeasuresList([
+        new position_util_pb_1.MeasureMapEntry().setMeasure(measure).setMeasureDecimalValue(measureValue)
     ]);
     var position = new position_1.Position(positionProto);
     return { position: position, tradeDate: tradeDate, security: security, portfolio: portfolio, productType: productType, id: id };
