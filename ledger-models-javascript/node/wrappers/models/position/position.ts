@@ -16,6 +16,9 @@ import { ProtoEnum } from "../utils/protoEnum";
 import { Field } from "./field";
 import { UUID } from "../utils/uuid";
 import { ZonedDateTime } from "../utils/datetime";
+import { StrategyProto } from "../../../fintekkers/models/strategy/strategy_pb";
+import { PriceProto } from "../../../fintekkers/models/price/price_pb";
+import { TenorProto } from "../../../fintekkers/models/security/tenor_pb";
 
 export class Position {
   proto: PositionProto;
@@ -44,7 +47,7 @@ export class Position {
     return this.getField(new FieldMapEntry().setField(field));
   }
 
-  public getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Portfolio | UUID | Date | ZonedDateTime | number {
+  public getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Portfolio | UUID | Date | ZonedDateTime | number | PriceProto {
     for (const tmpField of this.proto.getFieldsList()) {
       if (tmpField.getField() === fieldToGet.getField()) {
 
@@ -65,6 +68,11 @@ export class Position {
         }
 
         const unpackedValue = Position.unpackField(tmpField);
+
+        if (FieldProto.PRICE == fieldToGet.getField()
+          || FieldProto.TENOR == fieldToGet.getField()) {
+          return unpackedValue; //instanceof PriceProto || TenorProto
+        }
 
         if (FieldProto.SECURITY == fieldToGet.getField()) {
           return new Security(unpackedValue);
@@ -129,6 +137,7 @@ export class Position {
     switch (fieldToUnpack.getField()) {
       case FieldProto.PORTFOLIO_ID:
       case FieldProto.SECURITY_ID:
+      case FieldProto.PRICE_ID:
       case FieldProto.ID:
         return UUIDProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
       case FieldProto.AS_OF:
@@ -139,25 +148,36 @@ export class Position {
       case FieldProto.SETTLEMENT_DATE:
       case FieldProto.TAX_LOT_OPEN_DATE:
       case FieldProto.TAX_LOT_CLOSE_DATE:
+      case FieldProto.EFFECTIVE_DATE:
         return LocalDateProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
       case FieldProto.IDENTIFIER:
         return IdentifierProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+      case FieldProto.STRATEGY:
+        return StrategyProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+      case FieldProto.TENOR:
+        return TenorProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+      case FieldProto.PRICE:
+        return PriceProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
       case FieldProto.TRANSACTION_TYPE:
       case FieldProto.POSITION_STATUS:
-        // Assuming ProtoEnum is properly defined elsewhere
-        // const descriptor = FieldProto.DESCRIPTOR.valuesByNumber[fieldToUnpack.field];
-        return fieldToUnpack; //new ProtoEnum(descriptor, fieldToUnpack.enumValue);
+        return fieldToUnpack;
       case FieldProto.PORTFOLIO_NAME:
       case FieldProto.SECURITY_DESCRIPTION:
+      case FieldProto.SECURITY_ISSUER_NAME:
+      case FieldProto.ADJUSTED_TENOR:
       case FieldProto.PRODUCT_TYPE:
+      case FieldProto.PRODUCT_CLASS:
       case FieldProto.ASSET_CLASS:
         return StringValue.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
       case FieldProto.PORTFOLIO:
-        return fieldToUnpack.getFieldValuePacked();
       case FieldProto.SECURITY:
+      case FieldProto.CASH_IMPACT_SECURITY:
+        return fieldToUnpack.getFieldValuePacked();
+      case FieldProto.IS_CANCELLED:
+        console.log("Need to check that IS_CANCELLED IS SUPPORTED CORRECTLY");
         return fieldToUnpack.getFieldValuePacked();
       default:
-        throw new Error(`Field not found. Could not unpack ${FieldProto[fieldToUnpack.getField()]}`);
+        throw new Error(`Field not found. Could not unpack ${FieldProto[fieldToUnpack.getField()]}. Mapping missing`);
     }
   }
 }

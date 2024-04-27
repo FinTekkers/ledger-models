@@ -49,6 +49,9 @@ var position_1 = require("./position");
 var date_1 = require("../utils/date");
 var position_status_pb_1 = require("../../../fintekkers/models/position/position_status_pb");
 var transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
+var price_pb_1 = require("../../../fintekkers/models/price/price_pb");
+var tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
+var tenor_type_pb_1 = require("../../../fintekkers/models/security/tenor_type_pb");
 test('test the position wrapper', function () { return __awaiter(void 0, void 0, void 0, function () {
     var isTrue;
     return __generator(this, function (_a) {
@@ -63,6 +66,10 @@ test('test the position wrapper', function () { return __awaiter(void 0, void 0,
                 expect(isTrue).toBe(true);
                 return [4 /*yield*/, testJsonSerialization()];
             case 3:
+                isTrue = _a.sent();
+                expect(isTrue).toBe(true);
+                return [4 /*yield*/, testDeSerializationWithUnknownProto()];
+            case 4:
                 isTrue = _a.sent();
                 expect(isTrue).toBe(true);
                 return [2 /*return*/];
@@ -96,18 +103,16 @@ function testEnumSerialization() {
 }
 function testJsonSerialization() {
     return __awaiter(this, void 0, void 0, function () {
-        var security, portfolio, tradeDate, productType, id, tradeDatePacked, idPacked, positionProto, position, position2, tradeDatePosition;
+        var tradeDate, productType, id, tradeDatePacked, idPacked, positionProto, position, position2, tradeDatePosition;
         return __generator(this, function (_a) {
-            security = new security_pb_1.SecurityProto().setAssetClass("Test");
-            portfolio = new portfolio_pb_1.PortfolioProto().setPortfolioName("Test portfolio");
             tradeDate = date_1.LocalDate.today().toDate();
             productType = "Test product type";
             id = new uuid_1.UUID(uuid_1.UUID.random().toBytes());
             tradeDatePacked = new any_pb_1.Any();
-            tradeDatePacked.setTypeUrl("Doesn't matter");
+            tradeDatePacked.setTypeUrl("DUMMYTYPE_DATE");
             tradeDatePacked.setValue(date_1.LocalDate.from(tradeDate).toProto().serializeBinary());
             idPacked = new any_pb_1.Any();
-            idPacked.setTypeUrl("Doesn't matter");
+            idPacked.setTypeUrl("DUMMYTYPE_ID");
             idPacked.setValue(id.toUUIDProto().serializeBinary());
             positionProto = new position_pb_1.PositionProto();
             positionProto.setFieldsList([
@@ -115,6 +120,7 @@ function testJsonSerialization() {
                 new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
                 new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.EXECUTED),
                 new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PRODUCT_TYPE).setStringValue(productType),
+                new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY_DESCRIPTION).setStringValue("Dummy"),
                 new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.ID).setFieldValuePacked(idPacked),
             ]);
             position = new position_1.Position(positionProto);
@@ -124,15 +130,16 @@ function testJsonSerialization() {
             expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
             expect(tradeDate.getDay()).toBe(tradeDatePosition.getDay());
             expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
+            expect(position2.getFieldValue(field_pb_1.FieldProto.SECURITY_DESCRIPTION)).toBe("Dummy");
             return [2 /*return*/, true];
         });
     });
 }
 function testSerialization() {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, position, tradeDate, security, portfolio, productType, id, tradeDatePosition, securityPosition, portfolioPosition, positionID;
+        var _a, position, tradeDate, security, portfolio, productType, id, tradeDatePosition, securityPosition, portfolioPosition, positionID, price, tenor;
         return __generator(this, function (_b) {
-            _a = getPosition(), position = _a.position, tradeDate = _a.tradeDate, security = _a.security, portfolio = _a.portfolio, productType = _a.productType, id = _a.id;
+            _a = getPosition(false), position = _a.position, tradeDate = _a.tradeDate, security = _a.security, portfolio = _a.portfolio, productType = _a.productType, id = _a.id;
             tradeDatePosition = position.getFieldValue(field_pb_1.FieldProto.TRADE_DATE);
             expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
             expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
@@ -146,33 +153,66 @@ function testSerialization() {
             expect(positionID.toString()).toBe(id.toString());
             expect(position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS).toString()).toBe("EXECUTED");
             expect(position.getMeasureValue(measure_pb_1.MeasureProto.DIRECTED_QUANTITY)).toBe(1);
+            price = position.getFieldValue(field_pb_1.FieldProto.PRICE);
+            expect(price.getPrice().getArbitraryPrecisionValue()).toBe("1.0");
+            tenor = position.getFieldValue(field_pb_1.FieldProto.TENOR);
+            expect(tenor.getTermValue()).toBe("3M");
             return [2 /*return*/, true];
         });
     });
 }
-function getPosition() {
+function testDeSerializationWithUnknownProto() {
+    return __awaiter(this, void 0, void 0, function () {
+        var position;
+        return __generator(this, function (_a) {
+            position = getPosition(true).position;
+            expect(position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS).toString()).toBe("UNKNOWN");
+            return [2 /*return*/, true];
+        });
+    });
+}
+function getPosition(includeUnknownEnumValue) {
     var security = new security_pb_1.SecurityProto().setAssetClass("Test");
     var portfolio = new portfolio_pb_1.PortfolioProto().setPortfolioName("Test portfolio");
     var tradeDate = date_1.LocalDate.today().toDate();
     var productType = "Test product type";
     var id = new uuid_1.UUID(uuid_1.UUID.random().toBytes());
+    var price = new price_pb_1.PriceProto()
+        .setPrice(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue("1.0"))
+        .setUuid(id.toUUIDProto())
+        .setSecurity(security);
+    var tenor = new tenor_pb_1.TenorProto()
+        .setTenorType(tenor_type_pb_1.TenorTypeProto.TERM)
+        .setTermValue("3M");
+    ;
     var measure = measure_pb_1.MeasureProto.DIRECTED_QUANTITY;
     var measureValue = new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue("1.0");
     var tradeDatePacked = new any_pb_1.Any();
-    tradeDatePacked.setTypeUrl("Doesn't matter");
+    tradeDatePacked.setTypeUrl("DUMMYTYPE_DATE");
     tradeDatePacked.setValue(date_1.LocalDate.from(tradeDate).toProto().serializeBinary());
     var idPacked = new any_pb_1.Any();
-    idPacked.setTypeUrl("Doesn't matter");
+    idPacked.setTypeUrl("DUMMYTYPE_ID");
     idPacked.setValue(id.toUUIDProto().serializeBinary());
+    var pricePacked = new any_pb_1.Any();
+    pricePacked.setTypeUrl("DUMMYTYPE_PRICE");
+    pricePacked.setValue(price.serializeBinary());
+    var tenorPacked = new any_pb_1.Any();
+    tenorPacked.setTypeUrl("DUMMYTYPE_TENOR");
+    tenorPacked.setValue(tenor.serializeBinary());
+    var positionStatus = includeUnknownEnumValue ?
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.UNKNOWN) :
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.EXECUTED);
     var positionProto = new position_pb_1.PositionProto();
     positionProto.setFieldsList([
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY).setFieldValuePacked(security),
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
-        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.UNKNOWN),
+        positionStatus,
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TRANSACTION_TYPE).setEnumValue(transaction_type_pb_1.TransactionTypeProto.BUY),
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TENOR).setFieldValuePacked(tenorPacked),
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PRODUCT_TYPE).setStringValue(productType),
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.ID).setFieldValuePacked(idPacked),
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PRICE).setFieldValuePacked(pricePacked)
     ]);
     positionProto.setMeasuresList([
         new position_util_pb_1.MeasureMapEntry().setMeasure(measure).setMeasureDecimalValue(measureValue)

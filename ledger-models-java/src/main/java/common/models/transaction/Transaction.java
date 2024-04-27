@@ -312,7 +312,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     @Override
     public Transaction getCashTransaction() {
         List<Transaction> cashTransactions =
-                getChildTransactions().stream().filter(t -> t.getSecurity().isCash()).collect(Collectors.toList());
+                getChildTransactions().stream().filter(t -> t.getSecurity().isCash()).toList();
 
         if(cashTransactions.size() == 1)
             return cashTransactions.get(0);
@@ -465,6 +465,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                 parentTransaction,
                 parentTransaction.getTradeName(),
                 parentTransaction.getPositionStatus());
+        cashTransaction.setPositionStatus(parentTransaction.getPositionStatus());
 
         //Cash transactions will have the originating transaction ID associated with it.
         parentTransaction.addChildTransaction(cashTransaction);
