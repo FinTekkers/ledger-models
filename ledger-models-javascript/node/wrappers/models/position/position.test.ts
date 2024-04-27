@@ -13,6 +13,9 @@ import { LocalDate } from '../utils/date';
 import { PositionStatusProto } from '../../../fintekkers/models/position/position_status_pb';
 import { ProtoEnum } from '../utils/protoEnum';
 import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
+import { PriceProto } from '../../../fintekkers/models/price/price_pb';
+import { TenorProto } from '../../../fintekkers/models/security/tenor_pb';
+import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
 
 test('test the position wrapper', async () => {
     let isTrue = await testEnumSerialization();
@@ -26,7 +29,6 @@ test('test the position wrapper', async () => {
 
     isTrue = await testDeSerializationWithUnknownProto();
     expect(isTrue).toBe(true);
-
 });
 
 async function testEnumSerialization(): Promise<boolean> {
@@ -55,20 +57,17 @@ async function testEnumSerialization(): Promise<boolean> {
     return true;
 }
 
-
 async function testJsonSerialization(): Promise<boolean> {
-    let security = new SecurityProto().setAssetClass("Test");
-    let portfolio = new PortfolioProto().setPortfolioName("Test portfolio");
     let tradeDate = LocalDate.today().toDate();
     let productType = "Test product type";
     let id = new UUID(UUID.random().toBytes());
 
     const tradeDatePacked = new Any();
-    tradeDatePacked.setTypeUrl(`Doesn't matter`);
+    tradeDatePacked.setTypeUrl(`DUMMYTYPE_DATE`);
     tradeDatePacked.setValue(LocalDate.from(tradeDate).toProto().serializeBinary());
 
     const idPacked = new Any();
-    idPacked.setTypeUrl(`Doesn't matter`);
+    idPacked.setTypeUrl(`DUMMYTYPE_ID`);
     idPacked.setValue(id.toUUIDProto().serializeBinary());
 
     let positionProto = new PositionProto();
@@ -77,18 +76,20 @@ async function testJsonSerialization(): Promise<boolean> {
         new FieldMapEntry().setField(FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
         new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.EXECUTED),
         new FieldMapEntry().setField(FieldProto.PRODUCT_TYPE).setStringValue(productType),
+        new FieldMapEntry().setField(FieldProto.SECURITY_DESCRIPTION).setStringValue("Dummy"),
         new FieldMapEntry().setField(FieldProto.ID).setFieldValuePacked(idPacked),
     ]);
     let position = new Position(positionProto);
 
     let position2 = Position.fromJSON(position.toJSON());
 
-
     let tradeDatePosition = position2.getFieldValue(FieldProto.TRADE_DATE);
     expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
     expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
     expect(tradeDate.getDay()).toBe(tradeDatePosition.getDay());
     expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
+
+    expect(position2.getFieldValue(FieldProto.SECURITY_DESCRIPTION)).toBe("Dummy");
 
     return true;
 }
@@ -117,6 +118,12 @@ async function testSerialization(): Promise<boolean> {
 
     expect(position.getMeasureValue(MeasureProto.DIRECTED_QUANTITY)).toBe(1);
 
+    let price: PriceProto = position.getFieldValue(FieldProto.PRICE);
+    expect(price.getPrice().getArbitraryPrecisionValue()).toBe("1.0");
+
+    let tenor: TenorProto = position.getFieldValue(FieldProto.TENOR);
+    expect(tenor.getTermValue()).toBe("3M");
+
     return true;
 }
 
@@ -134,16 +141,33 @@ function getPosition(includeUnknownEnumValue: boolean) {
     let productType = "Test product type";
     let id = new UUID(UUID.random().toBytes());
 
+    let price = new PriceProto()
+        .setPrice(new DecimalValueProto().setArbitraryPrecisionValue("1.0"))
+        .setUuid(id.toUUIDProto())
+        .setSecurity(security);
+
+    let tenor = new TenorProto()
+        .setTenorType(TenorTypeProto.TERM)
+        .setTermValue("3M");;
+
     let measure = MeasureProto.DIRECTED_QUANTITY;
     let measureValue = new DecimalValueProto().setArbitraryPrecisionValue("1.0");
 
     const tradeDatePacked = new Any();
-    tradeDatePacked.setTypeUrl(`Doesn't matter`);
+    tradeDatePacked.setTypeUrl(`DUMMYTYPE_DATE`);
     tradeDatePacked.setValue(LocalDate.from(tradeDate).toProto().serializeBinary());
 
     const idPacked = new Any();
-    idPacked.setTypeUrl(`Doesn't matter`);
+    idPacked.setTypeUrl(`DUMMYTYPE_ID`);
     idPacked.setValue(id.toUUIDProto().serializeBinary());
+
+    const pricePacked = new Any();
+    pricePacked.setTypeUrl(`DUMMYTYPE_PRICE`);
+    pricePacked.setValue(price.serializeBinary());
+
+    const tenorPacked = new Any();
+    tenorPacked.setTypeUrl(`DUMMYTYPE_TENOR`);
+    tenorPacked.setValue(tenor.serializeBinary());
 
     let positionStatus = includeUnknownEnumValue ?
         new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.UNKNOWN) :
@@ -156,8 +180,10 @@ function getPosition(includeUnknownEnumValue: boolean) {
         new FieldMapEntry().setField(FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
         positionStatus,
         new FieldMapEntry().setField(FieldProto.TRANSACTION_TYPE).setEnumValue(TransactionTypeProto.BUY),
+        new FieldMapEntry().setField(FieldProto.TENOR).setFieldValuePacked(tenorPacked),
         new FieldMapEntry().setField(FieldProto.PRODUCT_TYPE).setStringValue(productType),
         new FieldMapEntry().setField(FieldProto.ID).setFieldValuePacked(idPacked),
+        new FieldMapEntry().setField(FieldProto.PRICE).setFieldValuePacked(pricePacked)
     ]);
 
     positionProto.setMeasuresList([

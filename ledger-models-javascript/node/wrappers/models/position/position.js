@@ -16,6 +16,9 @@ var serialization_1 = require("../utils/serialization");
 var wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 var protoEnum_1 = require("../utils/protoEnum");
 var field_1 = require("./field");
+var strategy_pb_1 = require("../../../fintekkers/models/strategy/strategy_pb");
+var price_pb_1 = require("../../../fintekkers/models/price/price_pb");
+var tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
 var Position = /** @class */ (function () {
     function Position(positionProto) {
         this.proto = positionProto;
@@ -57,6 +60,10 @@ var Position = /** @class */ (function () {
                     return proto;
                 }
                 var unpackedValue = Position.unpackField(tmpField);
+                if (field_pb_1.FieldProto.PRICE == fieldToGet.getField()
+                    || field_pb_1.FieldProto.TENOR == fieldToGet.getField()) {
+                    return unpackedValue; //instanceof PriceProto || TenorProto
+                }
                 if (field_pb_1.FieldProto.SECURITY == fieldToGet.getField()) {
                     return new security_1.default(unpackedValue);
                 }
@@ -109,6 +116,7 @@ var Position = /** @class */ (function () {
         switch (fieldToUnpack.getField()) {
             case field_pb_1.FieldProto.PORTFOLIO_ID:
             case field_pb_1.FieldProto.SECURITY_ID:
+            case field_pb_1.FieldProto.PRICE_ID:
             case field_pb_1.FieldProto.ID:
                 return uuid_pb_1.UUIDProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
             case field_pb_1.FieldProto.AS_OF:
@@ -119,25 +127,36 @@ var Position = /** @class */ (function () {
             case field_pb_1.FieldProto.SETTLEMENT_DATE:
             case field_pb_1.FieldProto.TAX_LOT_OPEN_DATE:
             case field_pb_1.FieldProto.TAX_LOT_CLOSE_DATE:
+            case field_pb_1.FieldProto.EFFECTIVE_DATE:
                 return local_date_pb_1.LocalDateProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
             case field_pb_1.FieldProto.IDENTIFIER:
                 return identifier_pb_1.IdentifierProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+            case field_pb_1.FieldProto.STRATEGY:
+                return strategy_pb_1.StrategyProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+            case field_pb_1.FieldProto.TENOR:
+                return tenor_pb_1.TenorProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+            case field_pb_1.FieldProto.PRICE:
+                return price_pb_1.PriceProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
             case field_pb_1.FieldProto.TRANSACTION_TYPE:
             case field_pb_1.FieldProto.POSITION_STATUS:
-                // Assuming ProtoEnum is properly defined elsewhere
-                // const descriptor = FieldProto.DESCRIPTOR.valuesByNumber[fieldToUnpack.field];
-                return fieldToUnpack; //new ProtoEnum(descriptor, fieldToUnpack.enumValue);
+                return fieldToUnpack;
             case field_pb_1.FieldProto.PORTFOLIO_NAME:
             case field_pb_1.FieldProto.SECURITY_DESCRIPTION:
+            case field_pb_1.FieldProto.SECURITY_ISSUER_NAME:
+            case field_pb_1.FieldProto.ADJUSTED_TENOR:
             case field_pb_1.FieldProto.PRODUCT_TYPE:
+            case field_pb_1.FieldProto.PRODUCT_CLASS:
             case field_pb_1.FieldProto.ASSET_CLASS:
                 return wrappers_pb_1.StringValue.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
             case field_pb_1.FieldProto.PORTFOLIO:
-                return fieldToUnpack.getFieldValuePacked();
             case field_pb_1.FieldProto.SECURITY:
+            case field_pb_1.FieldProto.CASH_IMPACT_SECURITY:
+                return fieldToUnpack.getFieldValuePacked();
+            case field_pb_1.FieldProto.IS_CANCELLED:
+                console.log("Need to check that IS_CANCELLED IS SUPPORTED CORRECTLY");
                 return fieldToUnpack.getFieldValuePacked();
             default:
-                throw new Error("Field not found. Could not unpack ".concat(field_pb_1.FieldProto[fieldToUnpack.getField()]));
+                throw new Error("Field not found. Could not unpack ".concat(field_pb_1.FieldProto[fieldToUnpack.getField()], ". Mapping missing"));
         }
     };
     return Position;
