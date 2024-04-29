@@ -31,6 +31,7 @@ test('test creating a portfolio against the api.fintekkers.org portfolio service
   var createPortfolioResponse: CreatePortfolioResponseProto = await portfolioService.createPortfolio(portfolio);
   expect(createPortfolioResponse.getPortfolioResponseList().length).toBe(1);
 
-  var searchResults = await portfolioService.searchPortfolio(now.toProto(), new PositionFilter().addEqualsFilter(FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO'));
+  let portfolioFilter = new PositionFilter().addEqualsStringFilter(FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO');
+  var searchResults = await portfolioService.searchPortfolio(now.toProto(), portfolioFilter);
   expect(searchResults.length > 0).toBe(true);
 }, 30000);

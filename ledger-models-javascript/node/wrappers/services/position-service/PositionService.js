@@ -47,6 +47,25 @@ var PositionService = /** @class */ (function () {
     function PositionService() {
         this.client = new position_service_grpc_pb_1.PositionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
     }
+    PositionService.prototype.validateRequest = function (positionRequest) {
+        return __awaiter(this, void 0, void 0, function () {
+            var tmpClient, request;
+            return __generator(this, function (_a) {
+                tmpClient = this.client;
+                request = positionRequest.toProto();
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        tmpClient.validateQueryRequest(request, function (error, response) {
+                            if (error) {
+                                reject(error);
+                            }
+                            else {
+                                resolve(response); // Return response from the callback
+                            }
+                        });
+                    })];
+            });
+        });
+    };
     PositionService.prototype.search = function (positionRequest) {
         return __awaiter(this, void 0, void 0, function () {
             function processStreamSynchronously() {
@@ -71,13 +90,14 @@ var PositionService = /** @class */ (function () {
                     });
                 });
             }
-            var tmpClient, listPositions, request;
+            var tmpClient, listPositions, request, positionService;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         tmpClient = this.client;
                         listPositions = [];
                         request = positionRequest.toProto();
+                        positionService = this;
                         return [4 /*yield*/, processStreamSynchronously()];
                     case 1: return [2 /*return*/, _a.sent()];
                 }

@@ -44,10 +44,13 @@ var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var PositionService_1 = require("../../services/position-service/PositionService");
 var QueryPositionRequest_1 = require("../../requests/position/QueryPositionRequest");
 test('test getting a position against the api.fintekkers.org position service', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var isTrue;
+    var fields, measures, isTrue;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, testPosition()];
+            case 0:
+                fields = [field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.TRADE_DATE, field_pb_1.FieldProto.PRODUCT_TYPE, field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.PRODUCT_TYPE];
+                measures = [measure_pb_1.MeasureProto.DIRECTED_QUANTITY];
+                return [4 /*yield*/, testPosition(fields, measures)];
             case 1:
                 isTrue = _a.sent();
                 expect(isTrue).toBe(true);
@@ -55,14 +58,38 @@ test('test getting a position against the api.fintekkers.org position service', 
         }
     });
 }); }, 30000);
-function testPosition() {
+test('test invalid request against the api.fintekkers.org position service', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var fields, measures, error_1, request, summary;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                fields = [field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.TAX_LOT_CLOSE_DATE, field_pb_1.FieldProto.TRADE_DATE];
+                measures = [measure_pb_1.MeasureProto.DIRECTED_QUANTITY];
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 5]);
+                return [4 /*yield*/, testPosition(fields, measures)];
+            case 2:
+                _a.sent();
+                return [3 /*break*/, 5];
+            case 3:
+                error_1 = _a.sent();
+                request = QueryPositionRequest_1.QueryPositionRequest.from(fields, measures);
+                return [4 /*yield*/, new PositionService_1.PositionService().validateRequest(request)];
+            case 4:
+                summary = _a.sent();
+                expect(summary.getErrorsList().length).toBeGreaterThan(0);
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); }, 30000);
+function testPosition(fields, measures) {
     return __awaiter(this, void 0, void 0, function () {
-        var fields, measures, request, positions, position_1;
+        var request, positions, position_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    fields = [field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.TRADE_DATE, field_pb_1.FieldProto.PRODUCT_TYPE, field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.PRODUCT_TYPE];
-                    measures = [measure_pb_1.MeasureProto.DIRECTED_QUANTITY];
                     request = QueryPositionRequest_1.QueryPositionRequest.from(fields, measures);
                     return [4 /*yield*/, new PositionService_1.PositionService().search(request)];
                 case 1:

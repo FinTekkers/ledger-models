@@ -12,20 +12,40 @@ export class PositionFilter {
 
     /**
      * @param {*} field FieldProto.ASSET_CLASS, as an example
-     * @param {*} fieldValue The appropriate value for the FieldProto, e.g. FieldProto.ASSET_CLASS would have a string fieldValue
+     * @param {*} fieldValueString The appropriate value for the FieldProto, e.g. FieldProto.ASSET_CLASS would have a string fieldValue
      */
-    addEqualsFilter(field: FieldProto, fieldValue: any): PositionFilter {
-        return this.addFilter(field, fieldValue, PositionFilterOperator.EQUALS);
+    addEqualsStringFilter(field: FieldProto, fieldValueString: string): PositionFilter {
+        return this.addFilter(field, PositionFilterOperator.EQUALS, null, fieldValueString);
     }
+
     /**
      * @param {*} field FieldProto.ASSET_CLASS, as an example
      * @param {*} fieldValue The appropriate value for the FieldProto, e.g. FieldProto.ASSET_CLASS would have a string fieldValue
      */
-    addFilter(field: FieldProto, fieldValue: any, operator: PositionFilterOperator): PositionFilter {
+    addEqualsFilter(field: FieldProto, fieldValue: any): PositionFilter {
+        if (typeof fieldValue === 'string') {
+            return this.addEqualsStringFilter(field, fieldValue as string);
+        } else {
+            return this.addFilter(field, PositionFilterOperator.EQUALS, fieldValue, null);
+        }
+    }
+
+    /**
+     * @param {*} field FieldProto.ASSET_CLASS, as an example
+     * @param {*} fieldValue The appropriate value for the FieldProto, e.g. FieldProto.ASSET_CLASS would have a string fieldValue
+     */
+    addFilter(field: FieldProto, operator: PositionFilterOperator, fieldValue?: any, fieldValueString?: string): PositionFilter {
         const fieldMapEntry = new FieldMapEntry();
         fieldMapEntry.setField(field); //FieldProto.ASSET_CLASS);
-        fieldMapEntry.setFieldValuePacked(pack(fieldValue));
         fieldMapEntry.setOperator(operator);
+
+        if (fieldValueString)
+            fieldMapEntry.setStringValue(fieldValueString);
+        else if (fieldValue) {
+            fieldMapEntry.setFieldValuePacked(pack(fieldValue));
+        } else {
+            throw new Error("Need to provide a string, or object");
+        }
 
         this.filters.push(fieldMapEntry);
         return this;

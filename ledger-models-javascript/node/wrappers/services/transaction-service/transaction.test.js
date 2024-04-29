@@ -52,6 +52,7 @@ var TransactionService_1 = require("./TransactionService");
 var transaction_1 = require("../../models/transaction/transaction");
 var assert = require("assert");
 var positionfilter_1 = require("../../models/position/positionfilter");
+var position_status_pb_1 = require("../../../fintekkers/models/position/position_status_pb");
 test('test printing a transaction to string', function () { return __awaiter(void 0, void 0, void 0, function () {
     var isTrue;
     return __generator(this, function (_a) {
@@ -176,6 +177,7 @@ function getTransaction(now, positionFilter, today) {
                     transaction.setTradeDate(today);
                     transaction.setSettlementDate(today); //Same day settlement
                     transaction.setTransactionType(transaction_type_pb_1.TransactionTypeProto.BUY);
+                    transaction.setPositionStatus(position_status_pb_1.PositionStatusProto.EXECUTED);
                     transaction.setPrice(new price_pb_1.PriceProto()
                         .setObjectClass('Price')
                         .setAsOf(now.toProto())

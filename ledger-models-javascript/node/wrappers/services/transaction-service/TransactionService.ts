@@ -41,8 +41,8 @@ class TransactionService {
     createRequest.setVersion('0.0.1');
     createRequest.setCreateTransactionInput(transaction.proto);
 
-    const createSecurityAsync = promisify(this.client.createOrUpdate.bind(this.client));
-    const response = await createSecurityAsync(createRequest);
+    const createTransactionAsync = promisify(this.client.createOrUpdate.bind(this.client));
+    const response = await createTransactionAsync(createRequest);
     return response;
   }
 

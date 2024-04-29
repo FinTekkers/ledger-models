@@ -46,7 +46,7 @@ var PortfolioService_1 = require("./PortfolioService");
 var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
 var positionfilter_1 = require("../../models/position/positionfilter");
 test('test creating a portfolio against the api.fintekkers.org portfolio service', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var id_proto, now, portfolioService, portfolio, validationSummary, createPortfolioResponse, searchResults;
+    var id_proto, now, portfolioService, portfolio, validationSummary, createPortfolioResponse, portfolioFilter, searchResults;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -67,7 +67,8 @@ test('test creating a portfolio against the api.fintekkers.org portfolio service
             case 2:
                 createPortfolioResponse = _a.sent();
                 expect(createPortfolioResponse.getPortfolioResponseList().length).toBe(1);
-                return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), new positionfilter_1.PositionFilter().addEqualsFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO'))];
+                portfolioFilter = new positionfilter_1.PositionFilter().addEqualsStringFilter(field_pb_1.FieldProto.PORTFOLIO_NAME, 'TEST PORTFOLIO');
+                return [4 /*yield*/, portfolioService.searchPortfolio(now.toProto(), portfolioFilter)];
             case 3:
                 searchResults = _a.sent();
                 expect(searchResults.length > 0).toBe(true);
@@ -75,4 +76,4 @@ test('test creating a portfolio against the api.fintekkers.org portfolio service
         }
     });
 }); }, 30000);
-//# sourceMappingURL=portfolio.test.js.map
+//# sourceMappingURL=portfolioService.test.js.map
