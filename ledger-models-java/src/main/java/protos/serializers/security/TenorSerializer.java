@@ -27,7 +27,13 @@ public class TenorSerializer implements IRawDataModelObjectSerializer<TenorProto
 
     @Override
     public TenorProto serialize(Tenor tenor) {
-        TenorTypeProto tenorTypeProto = TenorTypeProto.valueOf(tenor.getType().name());
+        TenorTypeProto tenorTypeProto;
+
+        try {
+            tenorTypeProto = TenorTypeProto.valueOf(tenor.getType().name());
+        } catch(IllegalArgumentException e) {
+            tenorTypeProto = TenorTypeProto.UNKNOWN_TENOR_TYPE;
+        }
 
         TenorProto.Builder builder = TenorProto.newBuilder()
                 .setObjectClass(tenor.getClass().getSimpleName())

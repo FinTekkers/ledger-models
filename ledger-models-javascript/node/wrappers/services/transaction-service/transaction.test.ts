@@ -19,6 +19,7 @@ import { CreateTransactionResponseProto } from '../../../fintekkers/requests/tra
 
 import assert = require("assert");
 import { PositionFilter } from '../../models/position/positionfilter';
+import { PositionStatusProto } from '../../../fintekkers/models/position/position_status_pb';
 
 
 test('test printing a transaction to string', async () => {
@@ -124,6 +125,7 @@ async function getTransaction(now: dt.ZonedDateTime, positionFilter: PositionFil
   transaction.setTradeDate(today);
   transaction.setSettlementDate(today); //Same day settlement
   transaction.setTransactionType(TransactionTypeProto.BUY);
+  transaction.setPositionStatus(PositionStatusProto.EXECUTED);
   transaction.setPrice(
     new PriceProto()
       .setObjectClass('Price')

@@ -4,6 +4,7 @@ import com.google.protobuf.*;
 import common.models.portfolio.Portfolio;
 import common.models.price.Price;
 import common.models.security.Security;
+import common.models.security.Tenor;
 import common.models.security.identifier.Identifier;
 import common.models.strategy.Strategy;
 import fintekkers.models.portfolio.PortfolioProto;
@@ -18,6 +19,7 @@ import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
 import protos.serializers.security.IdentifierSerializer;
 import protos.serializers.security.SecuritySerializer;
+import protos.serializers.security.TenorSerializer;
 import protos.serializers.strategy.StrategySerializer;
 
 import java.math.BigDecimal;
@@ -61,6 +63,8 @@ public class ProtoSerializationUtil {
             unpacked = StringValue.of(object.toString());
         } else if(object instanceof Identifier) {
             unpacked = IdentifierSerializer.getInstance().serialize((Identifier) object);
+        } else if(object instanceof Tenor) {
+            unpacked = TenorSerializer.getInstance().serialize((Tenor) object);
         } else if(object instanceof IdentifierProto) {
             unpacked = (GeneratedMessageV3) object;
         } else {

@@ -71,7 +71,7 @@ var TransactionService = /** @class */ (function () {
     };
     TransactionService.prototype.createTransaction = function (transaction) {
         return __awaiter(this, void 0, void 0, function () {
-            var createRequest, createSecurityAsync, response;
+            var createRequest, createTransactionAsync, response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -79,8 +79,8 @@ var TransactionService = /** @class */ (function () {
                         createRequest.setObjectClass('TransactionRequest');
                         createRequest.setVersion('0.0.1');
                         createRequest.setCreateTransactionInput(transaction.proto);
-                        createSecurityAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
-                        return [4 /*yield*/, createSecurityAsync(createRequest)];
+                        createTransactionAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
+                        return [4 /*yield*/, createTransactionAsync(createRequest)];
                     case 1:
                         response = _a.sent();
                         return [2 /*return*/, response];

@@ -9,15 +9,26 @@ import { PositionService } from '../../services/position-service/PositionService
 import { QueryPositionRequest } from '../../requests/position/QueryPositionRequest';
 
 test('test getting a position against the api.fintekkers.org position service', async () => {
-  const isTrue = await testPosition();
+  let fields = [FieldProto.SECURITY_ID, FieldProto.TRADE_DATE, FieldProto.PRODUCT_TYPE, FieldProto.PORTFOLIO, FieldProto.PRODUCT_TYPE];
+  let measures = [MeasureProto.DIRECTED_QUANTITY];
+  const isTrue = await testPosition(fields, measures);
   expect(isTrue).toBe(true);
 }, 30000);
 
-async function testPosition(): Promise<boolean> {
-  //Get the Federal Reserve portfolio
-  let fields = [FieldProto.SECURITY_ID, FieldProto.TRADE_DATE, FieldProto.PRODUCT_TYPE, FieldProto.PORTFOLIO, FieldProto.PRODUCT_TYPE];
+test('test invalid request against the api.fintekkers.org position service', async () => {
+  let fields = [FieldProto.SECURITY_ID, FieldProto.TAX_LOT_CLOSE_DATE, FieldProto.TRADE_DATE];
   let measures = [MeasureProto.DIRECTED_QUANTITY];
+  try {
+    await testPosition(fields, measures);
+  } catch (error) {
+    let request: QueryPositionRequest = QueryPositionRequest.from(fields, measures);
+    let summary = await new PositionService().validateRequest(request);
+    expect(summary.getErrorsList().length).toBeGreaterThan(0);
+  }
+}, 30000);
 
+
+async function testPosition(fields: FieldProto[], measures: MeasureProto[]): Promise<boolean> {
   let request: QueryPositionRequest = QueryPositionRequest.from(fields, measures);
   let positions = await new PositionService().search(request);
 
