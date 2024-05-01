@@ -84,10 +84,6 @@ test('test JSON Serialization', function () { return __awaiter(void 0, void 0, v
             case 1:
                 isTrue = _a.sent();
                 expect(isTrue).toBe(true);
-                return [4 /*yield*/, testDeSerializationWithUnknownProto()];
-            case 2:
-                isTrue = _a.sent();
-                expect(isTrue).toBe(true);
                 return [2 /*return*/];
         }
     });

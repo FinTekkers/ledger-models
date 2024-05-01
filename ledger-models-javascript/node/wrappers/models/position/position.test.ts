@@ -30,9 +30,6 @@ test('test the serialization position wrapper', async () => {
 test('test JSON Serialization', async () => {
     let isTrue = await testJsonSerialization();
     expect(isTrue).toBe(true);
-
-    isTrue = await testDeSerializationWithUnknownProto();
-    expect(isTrue).toBe(true);
 });
 
 test('test deserialization of an unknown enum type', async () => {

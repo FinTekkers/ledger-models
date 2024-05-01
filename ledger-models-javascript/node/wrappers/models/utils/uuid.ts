@@ -1,17 +1,29 @@
-import { assert } from 'console';
 import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
 import * as uuid from 'uuid';
 
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+const byteToHex = [];
+
+for (let i = 0; i < 256; ++i) {
+  byteToHex.push((i + 0x100).toString(16).slice(1));
+}
+
 class UUID {
   private bytes: number[];
+
 
   constructor(bytes: number[]) {
     this.bytes = bytes;
   }
 
   toString(): string {
-    const byteArray: Uint8Array = new Uint8Array(this.bytes);
-    return uuid.stringify(byteArray);
+    const arr: Uint8Array = new Uint8Array(this.bytes);
+    const offset = 0;
+    const str = byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]];
+    return str; //uuid.stringify(byteArray);
   }
 
   toBytes(): number[] {
