@@ -84,6 +84,31 @@ test('test invalid request against the api.fintekkers.org position service', fun
         }
     });
 }); }, 30000);
+test('test getting a complex type from position', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var fields, measures, request, positions, position, _i, _a, field, displayValue, isTrue;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                fields = [field_pb_1.FieldProto.SECURITY, field_pb_1.FieldProto.PORTFOLIO];
+                measures = [measure_pb_1.MeasureProto.DIRECTED_QUANTITY];
+                request = QueryPositionRequest_1.QueryPositionRequest.from(fields, measures);
+                return [4 /*yield*/, new PositionService_1.PositionService().search(request)];
+            case 1:
+                positions = _b.sent();
+                position = positions[0];
+                for (_i = 0, _a = position.getFields(); _i < _a.length; _i++) {
+                    field = _a[_i];
+                    displayValue = position.getFieldDisplay(field);
+                    expect(displayValue.indexOf("[object") != 0).toBeTruthy();
+                }
+                return [4 /*yield*/, testPosition(fields, measures)];
+            case 2:
+                isTrue = _b.sent();
+                expect(isTrue).toBe(true);
+                return [2 /*return*/];
+        }
+    });
+}); }, 30000);
 function testPosition(fields, measures) {
     return __awaiter(this, void 0, void 0, function () {
         var request, positions, position_1;

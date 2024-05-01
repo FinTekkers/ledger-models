@@ -7,9 +7,9 @@ var Portfolio = /** @class */ (function () {
     function Portfolio(proto) {
         this.proto = proto;
     }
-    // getProto(): PortfolioProto {
-    //     return this.proto;
-    // }
+    Portfolio.prototype.toString = function () {
+        return this.getPortfolioName();
+    };
     Portfolio.prototype.getID = function () {
         return uuid_1.UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
     };

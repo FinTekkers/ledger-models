@@ -16,9 +16,14 @@ var serialization_1 = require("../utils/serialization");
 var wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 var protoEnum_1 = require("../utils/protoEnum");
 var field_1 = require("./field");
+var uuid_1 = require("../utils/uuid");
+var datetime_1 = require("../utils/datetime");
 var strategy_pb_1 = require("../../../fintekkers/models/strategy/strategy_pb");
 var price_pb_1 = require("../../../fintekkers/models/price/price_pb");
 var tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
+var security_pb_1 = require("../../../fintekkers/models/security/security_pb");
+var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
+var transaction_1 = require("../transaction/transaction");
 var Position = /** @class */ (function () {
     function Position(positionProto) {
         this.proto = positionProto;
@@ -88,8 +93,41 @@ var Position = /** @class */ (function () {
         throw new Error("Could not find measure in position");
     };
     Position.prototype.getFieldDisplay = function (fieldToGet) {
-        var fieldValue = this.getField(fieldToGet);
-        return fieldValue.toString();
+        var value = this.getField(fieldToGet);
+        switch (typeof value) {
+            case 'string':
+                return value;
+            case 'number':
+                return "" + value;
+            case 'object':
+                if (value instanceof security_1.default) {
+                    return value.toString();
+                }
+                else if (value instanceof portfolio_1.default) {
+                    return value.getPortfolioName();
+                }
+                else if (value instanceof price_pb_1.PriceProto) {
+                    return uuid_1.UUID.fromU8Array(value.getUuid().getRawUuid_asU8()).toString();
+                }
+                else if (value instanceof transaction_1.default) {
+                    return value.toString();
+                }
+                else if (value instanceof uuid_1.UUID) {
+                    return value.toString();
+                }
+                else if (value instanceof Date) {
+                    return value.toString();
+                }
+                else if (value instanceof datetime_1.ZonedDateTime) {
+                    return value.toString();
+                }
+                else if (value instanceof protoEnum_1.ProtoEnum) {
+                    return value.toString();
+                }
+                break;
+            default:
+                return "Can't display this field: " + fieldToGet.getField();
+        }
     };
     Position.prototype.getMeasures = function () {
         return this.proto.getMeasuresList();
@@ -149,9 +187,10 @@ var Position = /** @class */ (function () {
             case field_pb_1.FieldProto.ASSET_CLASS:
                 return wrappers_pb_1.StringValue.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
             case field_pb_1.FieldProto.PORTFOLIO:
+                return portfolio_pb_1.PortfolioProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
             case field_pb_1.FieldProto.SECURITY:
             case field_pb_1.FieldProto.CASH_IMPACT_SECURITY:
-                return fieldToUnpack.getFieldValuePacked();
+                return security_pb_1.SecurityProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
             case field_pb_1.FieldProto.IS_CANCELLED:
                 console.log("Need to check that IS_CANCELLED IS SUPPORTED CORRECTLY");
                 return fieldToUnpack.getFieldValuePacked();

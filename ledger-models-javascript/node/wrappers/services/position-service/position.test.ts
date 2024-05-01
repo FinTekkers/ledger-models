@@ -27,6 +27,25 @@ test('test invalid request against the api.fintekkers.org position service', asy
   }
 }, 30000);
 
+test('test getting a complex type from position', async () => {
+  let fields = [FieldProto.SECURITY, FieldProto.PORTFOLIO];
+  let measures = [MeasureProto.DIRECTED_QUANTITY];
+
+  let request: QueryPositionRequest = QueryPositionRequest.from(fields, measures);
+  let positions = await new PositionService().search(request);
+
+  let position = positions[0];
+
+  for (let field of position.getFields()) {
+    let displayValue = position.getFieldDisplay(field);
+
+    expect(displayValue.indexOf("[object") != 0).toBeTruthy();
+  }
+
+  const isTrue = await testPosition(fields, measures);
+  expect(isTrue).toBe(true);
+}, 30000);
+
 
 async function testPosition(fields: FieldProto[], measures: MeasureProto[]): Promise<boolean> {
   let request: QueryPositionRequest = QueryPositionRequest.from(fields, measures);

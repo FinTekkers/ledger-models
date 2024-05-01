@@ -10,9 +10,9 @@ class Portfolio {
         this.proto = proto;
     }
 
-    // getProto(): PortfolioProto {
-    //     return this.proto;
-    // }
+    toString(): string {
+        return this.getPortfolioName();
+    }
 
     getID(): UUID {
         return UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
