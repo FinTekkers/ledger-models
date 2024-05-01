@@ -19,6 +19,9 @@ import { ZonedDateTime } from "../utils/datetime";
 import { StrategyProto } from "../../../fintekkers/models/strategy/strategy_pb";
 import { PriceProto } from "../../../fintekkers/models/price/price_pb";
 import { TenorProto } from "../../../fintekkers/models/security/tenor_pb";
+import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
+import { PortfolioProto } from "../../../fintekkers/models/portfolio/portfolio_pb";
+import Transaction from "../transaction/transaction";
 
 export class Position {
   proto: PositionProto;
@@ -104,8 +107,35 @@ export class Position {
   }
 
   public getFieldDisplay(fieldToGet: FieldMapEntry): string {
-    const fieldValue = this.getField(fieldToGet);
-    return fieldValue.toString();
+    const value = this.getField(fieldToGet);
+
+    switch (typeof value) {
+      case 'string':
+        return value;
+      case 'number':
+        return "" + value;
+      case 'object':
+        if (value instanceof Security) {
+          return value.toString();
+        } else if (value instanceof Portfolio) {
+          return value.getPortfolioName();
+        } else if (value instanceof PriceProto) {
+          return UUID.fromU8Array(value.getUuid().getRawUuid_asU8()).toString();
+        } else if (value instanceof Transaction) {
+          return value.toString();
+        } else if (value instanceof UUID) {
+          return value.toString();
+        } else if (value instanceof Date) {
+          return value.toString();
+        } else if (value instanceof ZonedDateTime) {
+          return value.toString();
+        } else if (value instanceof ProtoEnum) {
+          return value.toString();
+        }
+        break;
+      default:
+        return "Can't display this field: " + fieldToGet.getField();
+    }
   }
 
   public getMeasures(): MeasureMapEntry[] {
@@ -170,9 +200,10 @@ export class Position {
       case FieldProto.ASSET_CLASS:
         return StringValue.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
       case FieldProto.PORTFOLIO:
+        return PortfolioProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
       case FieldProto.SECURITY:
       case FieldProto.CASH_IMPACT_SECURITY:
-        return fieldToUnpack.getFieldValuePacked();
+        return SecurityProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
       case FieldProto.IS_CANCELLED:
         console.log("Need to check that IS_CANCELLED IS SUPPORTED CORRECTLY");
         return fieldToUnpack.getFieldValuePacked();

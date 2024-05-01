@@ -17,19 +17,29 @@ import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { TenorProto } from '../../../fintekkers/models/security/tenor_pb';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
 
-test('test the position wrapper', async () => {
+test('test the enum Serialization', async () => {
     let isTrue = await testEnumSerialization();
     expect(isTrue).toBe(true);
+});
 
-    isTrue = await testSerialization();
+test('test the serialization position wrapper', async () => {
+    let isTrue = await testSerialization();
     expect(isTrue).toBe(true);
+});
 
-    isTrue = await testJsonSerialization();
+test('test JSON Serialization', async () => {
+    let isTrue = await testJsonSerialization();
     expect(isTrue).toBe(true);
 
     isTrue = await testDeSerializationWithUnknownProto();
     expect(isTrue).toBe(true);
 });
+
+test('test deserialization of an unknown enum type', async () => {
+    let isTrue = await testDeSerializationWithUnknownProto();
+    expect(isTrue).toBe(true);
+});
+
 
 async function testEnumSerialization(): Promise<boolean> {
     let positionProto = new PositionProto();
@@ -169,14 +179,22 @@ function getPosition(includeUnknownEnumValue: boolean) {
     tenorPacked.setTypeUrl(`DUMMYTYPE_TENOR`);
     tenorPacked.setValue(tenor.serializeBinary());
 
+    const securityPacked = new Any();
+    securityPacked.setTypeUrl(`DUMMYTYPE_SECURITY`);
+    securityPacked.setValue(security.serializeBinary());
+
+    const portfolioPacked = new Any();
+    portfolioPacked.setTypeUrl(`DUMMYTYPE_PORTFOLIO`);
+    portfolioPacked.setValue(portfolio.serializeBinary());
+
     let positionStatus = includeUnknownEnumValue ?
         new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.UNKNOWN) :
         new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.EXECUTED);
 
     let positionProto = new PositionProto();
     positionProto.setFieldsList([
-        new FieldMapEntry().setField(FieldProto.SECURITY).setFieldValuePacked(security),
-        new FieldMapEntry().setField(FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
+        new FieldMapEntry().setField(FieldProto.SECURITY).setFieldValuePacked(securityPacked),
+        new FieldMapEntry().setField(FieldProto.PORTFOLIO).setFieldValuePacked(portfolioPacked),
         new FieldMapEntry().setField(FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
         positionStatus,
         new FieldMapEntry().setField(FieldProto.TRANSACTION_TYPE).setEnumValue(TransactionTypeProto.BUY),

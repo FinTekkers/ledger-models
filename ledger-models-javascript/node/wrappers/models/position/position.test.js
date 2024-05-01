@@ -52,7 +52,7 @@ var transaction_type_pb_1 = require("../../../fintekkers/models/transaction/tran
 var price_pb_1 = require("../../../fintekkers/models/price/price_pb");
 var tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
 var tenor_type_pb_1 = require("../../../fintekkers/models/security/tenor_type_pb");
-test('test the position wrapper', function () { return __awaiter(void 0, void 0, void 0, function () {
+test('test the enum Serialization', function () { return __awaiter(void 0, void 0, void 0, function () {
     var isTrue;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -60,16 +60,44 @@ test('test the position wrapper', function () { return __awaiter(void 0, void 0,
             case 1:
                 isTrue = _a.sent();
                 expect(isTrue).toBe(true);
-                return [4 /*yield*/, testSerialization()];
-            case 2:
+                return [2 /*return*/];
+        }
+    });
+}); });
+test('test the serialization position wrapper', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var isTrue;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, testSerialization()];
+            case 1:
                 isTrue = _a.sent();
                 expect(isTrue).toBe(true);
-                return [4 /*yield*/, testJsonSerialization()];
-            case 3:
+                return [2 /*return*/];
+        }
+    });
+}); });
+test('test JSON Serialization', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var isTrue;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, testJsonSerialization()];
+            case 1:
                 isTrue = _a.sent();
                 expect(isTrue).toBe(true);
                 return [4 /*yield*/, testDeSerializationWithUnknownProto()];
-            case 4:
+            case 2:
+                isTrue = _a.sent();
+                expect(isTrue).toBe(true);
+                return [2 /*return*/];
+        }
+    });
+}); });
+test('test deserialization of an unknown enum type', function () { return __awaiter(void 0, void 0, void 0, function () {
+    var isTrue;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, testDeSerializationWithUnknownProto()];
+            case 1:
                 isTrue = _a.sent();
                 expect(isTrue).toBe(true);
                 return [2 /*return*/];
@@ -199,13 +227,19 @@ function getPosition(includeUnknownEnumValue) {
     var tenorPacked = new any_pb_1.Any();
     tenorPacked.setTypeUrl("DUMMYTYPE_TENOR");
     tenorPacked.setValue(tenor.serializeBinary());
+    var securityPacked = new any_pb_1.Any();
+    securityPacked.setTypeUrl("DUMMYTYPE_SECURITY");
+    securityPacked.setValue(security.serializeBinary());
+    var portfolioPacked = new any_pb_1.Any();
+    portfolioPacked.setTypeUrl("DUMMYTYPE_PORTFOLIO");
+    portfolioPacked.setValue(portfolio.serializeBinary());
     var positionStatus = includeUnknownEnumValue ?
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.UNKNOWN) :
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.EXECUTED);
     var positionProto = new position_pb_1.PositionProto();
     positionProto.setFieldsList([
-        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY).setFieldValuePacked(security),
-        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PORTFOLIO).setFieldValuePacked(portfolio),
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY).setFieldValuePacked(securityPacked),
+        new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.PORTFOLIO).setFieldValuePacked(portfolioPacked),
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TRADE_DATE).setFieldValuePacked(tradeDatePacked),
         positionStatus,
         new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TRANSACTION_TYPE).setEnumValue(transaction_type_pb_1.TransactionTypeProto.BUY),
