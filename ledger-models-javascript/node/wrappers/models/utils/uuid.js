@@ -3,13 +3,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UUID = void 0;
 var uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
 var uuid = require("uuid");
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+for (var i = 0; i < 256; ++i) {
+    byteToHex.push((i + 0x100).toString(16).slice(1));
+}
 var UUID = /** @class */ (function () {
     function UUID(bytes) {
         this.bytes = bytes;
     }
     UUID.prototype.toString = function () {
-        var byteArray = new Uint8Array(this.bytes);
-        return uuid.unsafeStringify(byteArray); //Using unsafe as safe doesn't like some special values we use
+        var arr = new Uint8Array(this.bytes);
+        var offset = 0;
+        var str = byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]];
+        return str; //uuid.stringify(byteArray);
     };
     UUID.prototype.toBytes = function () {
         return this.bytes;
