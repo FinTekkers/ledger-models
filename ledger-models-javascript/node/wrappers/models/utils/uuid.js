@@ -9,7 +9,7 @@ var UUID = /** @class */ (function () {
     }
     UUID.prototype.toString = function () {
         var byteArray = new Uint8Array(this.bytes);
-        return uuid.stringify(byteArray);
+        return uuid.unsafeStringify(byteArray); //Using unsafe as safe doesn't like some special values we use
     };
     UUID.prototype.toBytes = function () {
         return this.bytes;

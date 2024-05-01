@@ -1,4 +1,3 @@
-import { assert } from 'console';
 import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
 import * as uuid from 'uuid';
 
@@ -11,7 +10,7 @@ class UUID {
 
   toString(): string {
     const byteArray: Uint8Array = new Uint8Array(this.bytes);
-    return uuid.stringify(byteArray);
+    return uuid.unsafeStringify(byteArray); //Using unsafe as safe doesn't like some special values we use
   }
 
   toBytes(): number[] {
