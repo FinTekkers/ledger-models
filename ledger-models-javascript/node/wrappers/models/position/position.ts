@@ -4,25 +4,26 @@ import { PositionProto } from "../../../fintekkers/models/position/position_pb";
 import { FieldMapEntry, MeasureMapEntry } from "../../../fintekkers/models/position/position_util_pb";
 import Portfolio from "../portfolio/portfolio";
 import Security from "../security/security";
-import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
-import { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
-import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";
-import { IdentifierProto } from "../../../fintekkers/models/security/identifier/identifier_pb";
 import { MeasureProto } from "../../../fintekkers/models/position/measure_pb";
 import Decimal from "decimal.js";
 import { ProtoSerializationUtil } from "../utils/serialization";
-import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 import { ProtoEnum } from "../utils/protoEnum";
 import { Field } from "./field";
 import { UUID } from "../utils/uuid";
 import { ZonedDateTime } from "../utils/datetime";
-import { StrategyProto } from "../../../fintekkers/models/strategy/strategy_pb";
 import { PriceProto } from "../../../fintekkers/models/price/price_pb";
-import { TenorProto } from "../../../fintekkers/models/security/tenor_pb";
-import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
-import { PortfolioProto } from "../../../fintekkers/models/portfolio/portfolio_pb";
 import Transaction from "../transaction/transaction";
+import { DateTime } from 'luxon';
+import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
+import { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
+import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";
+import { IdentifierProto } from "../../../fintekkers/models/security/identifier/identifier_pb";
+import { StrategyProto } from "../../../fintekkers/models/strategy/strategy_pb";
+import { TenorProto } from "../../../fintekkers/models/security/tenor_pb";
+import { PortfolioProto } from "../../../fintekkers/models/portfolio/portfolio_pb";
+import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 
+import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 export class Position {
   proto: PositionProto;
 
@@ -126,9 +127,10 @@ export class Position {
         } else if (value instanceof UUID) {
           return value.toString();
         } else if (value instanceof Date) {
-          return value.toString();
+          return value.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
         } else if (value instanceof ZonedDateTime) {
-          return value.toString();
+          const tmpDateTime: DateTime = value.toDateTime();
+          return tmpDateTime.toFormat('yyyy/MM/dd hh:mm:ss');
         } else if (value instanceof ProtoEnum) {
           return value.toString();
         }

@@ -45,7 +45,7 @@ var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 var security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
-var position_1 = require("./position");
+var Position_1_1 = require("./Position.1");
 var date_1 = require("../utils/date");
 var position_status_pb_1 = require("../../../fintekkers/models/position/position_status_pb");
 var transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
@@ -112,7 +112,7 @@ function testEnumSerialization() {
             positionProto.setMeasuresList([
                 new position_util_pb_1.MeasureMapEntry().setMeasure(measure_pb_1.MeasureProto.DIRECTED_QUANTITY).setMeasureDecimalValue(measureValue)
             ]);
-            position = new position_1.Position(positionProto);
+            position = new Position_1_1.Position(positionProto);
             status = position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS);
             expect(status.getEnumValueName()).toBe("EXECUTED");
             expect(status.getEnumValue()).toBe(position_status_pb_1.PositionStatusProto.EXECUTED);
@@ -147,8 +147,8 @@ function testJsonSerialization() {
                 new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY_DESCRIPTION).setStringValue("Dummy"),
                 new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.ID).setFieldValuePacked(idPacked),
             ]);
-            position = new position_1.Position(positionProto);
-            position2 = position_1.Position.fromJSON(position.toJSON());
+            position = new Position_1_1.Position(positionProto);
+            position2 = Position_1_1.Position.fromJSON(position.toJSON());
             tradeDatePosition = position2.getFieldValue(field_pb_1.FieldProto.TRADE_DATE);
             expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
             expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
@@ -247,7 +247,7 @@ function getPosition(includeUnknownEnumValue) {
     positionProto.setMeasuresList([
         new position_util_pb_1.MeasureMapEntry().setMeasure(measure).setMeasureDecimalValue(measureValue)
     ]);
-    var position = new position_1.Position(positionProto);
+    var position = new Position_1_1.Position(positionProto);
     return { position: position, tradeDate: tradeDate, security: security, portfolio: portfolio, productType: productType, id: id };
 }
 //# sourceMappingURL=position.test.js.map

@@ -93,15 +93,20 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
      */
     public Object getField(Field field) {
         return switch (field) {
+            case SECURITY -> this;
             case ID, SECURITY_ID -> getID();
             case SECURITY_ISSUER_NAME -> getIssuer();
-            case AS_OF -> getAsOf();
+            case AS_OF, EFFECTIVE_DATE -> getAsOf();
             case ASSET_CLASS -> getAssetClass();
             case PRODUCT_CLASS -> getProductClass();
             case PRODUCT_TYPE -> getProductType();
             case IDENTIFIER -> getSecurityId();
             case TENOR, ADJUSTED_TENOR -> Tenor.UNKNOWN_TENOR;
+            case SECURITY_DESCRIPTION -> getDescription();
             case MATURITY_DATE -> LocalDate.of(2999, 12, 31);
+            case ISSUE_DATE -> this instanceof BondSecurity ? ((BondSecurity)this).getIssueDate() : getAsOf();
+            case CASH_IMPACT_SECURITY -> getSettlementCurrency();
+
             default -> throw new RuntimeException(String.format("Field not found %s", field));
         };
     }

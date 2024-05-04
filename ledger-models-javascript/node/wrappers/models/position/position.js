@@ -7,23 +7,23 @@ var position_pb_1 = require("../../../fintekkers/models/position/position_pb");
 var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 var portfolio_1 = require("../portfolio/portfolio");
 var security_1 = require("../security/security");
-var uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
-var local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
-var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
-var identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
 var measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 var serialization_1 = require("../utils/serialization");
-var wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 var protoEnum_1 = require("../utils/protoEnum");
 var field_1 = require("./field");
 var uuid_1 = require("../utils/uuid");
 var datetime_1 = require("../utils/datetime");
-var strategy_pb_1 = require("../../../fintekkers/models/strategy/strategy_pb");
 var price_pb_1 = require("../../../fintekkers/models/price/price_pb");
-var tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
-var security_pb_1 = require("../../../fintekkers/models/security/security_pb");
-var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
 var transaction_1 = require("../transaction/transaction");
+var uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
+var local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
+var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
+var identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
+var strategy_pb_1 = require("../../../fintekkers/models/strategy/strategy_pb");
+var tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
+var portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
+var security_pb_1 = require("../../../fintekkers/models/security/security_pb");
+var wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 var Position = /** @class */ (function () {
     function Position(positionProto) {
         this.proto = positionProto;
@@ -116,10 +116,11 @@ var Position = /** @class */ (function () {
                     return value.toString();
                 }
                 else if (value instanceof Date) {
-                    return value.toString();
+                    return value.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
                 }
                 else if (value instanceof datetime_1.ZonedDateTime) {
-                    return value.toString();
+                    var tmpDateTime = value.toDateTime();
+                    return tmpDateTime.toFormat('yyyy/MM/dd hh:mm:ss');
                 }
                 else if (value instanceof protoEnum_1.ProtoEnum) {
                     return value.toString();
