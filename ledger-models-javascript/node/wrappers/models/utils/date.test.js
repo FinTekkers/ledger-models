@@ -40,13 +40,12 @@ var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var position_pb_1 = require("../../../fintekkers/models/position/position_pb");
 var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 var position_1 = require("../position/position");
-var datetime_1 = require("./datetime");
+var date_1 = require("./date");
 var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 test('test the date time', function () { return __awaiter(void 0, void 0, void 0, function () {
     var now, nowProto, nowPacked, position, field1, pos, timestampStr;
     return __generator(this, function (_a) {
-        now = datetime_1.ZonedDateTime.now();
-        expect(now.toDateTime().toString()).toBe(now.toString());
+        now = date_1.LocalDate.today();
         nowProto = now.toProto();
         nowPacked = new any_pb_1.Any();
         nowPacked.setTypeUrl("DUMMYTYPE_DATE");
@@ -58,14 +57,14 @@ test('test the date time', function () { return __awaiter(void 0, void 0, void 0
         position.setPositionView(position_pb_1.PositionViewProto.DEFAULT_VIEW);
         position.setPositionType(position_pb_1.PositionTypeProto.TRANSACTION);
         field1 = new position_util_pb_1.FieldMapEntry();
-        field1.setField(field_pb_1.FieldProto.AS_OF);
+        field1.setField(field_pb_1.FieldProto.EFFECTIVE_DATE);
         field1.setFieldValuePacked(nowPacked);
         position.addFields(field1);
         pos = new position_1.Position(position);
         timestampStr = pos.getFieldDisplay(field1);
         //Expect timestamp match
-        expect(timestampStr).toMatch(/^[0-9]{4}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/);
+        expect(timestampStr).toMatch(/^\d{4}\/(?:\d{1,2})(?:\/\d{1,2})?$/);
         return [2 /*return*/];
     });
 }); });
-//# sourceMappingURL=datetime.test.js.map
+//# sourceMappingURL=date.test.js.map

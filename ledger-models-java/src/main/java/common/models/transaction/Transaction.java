@@ -21,8 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static common.models.postion.Field.PRODUCT_CLASS;
-import static common.models.postion.Field.SECURITY_ISSUER_NAME;
+import static common.models.postion.Field.*;
 
 /***
  * A transaction represents an operation that changes the position of a portfolio. The most obvious of which
@@ -217,7 +216,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return switch (field) {
             //Transaction Fields
             case ID -> getID();
-            case AS_OF -> getAsOf();
+            case AS_OF, EFFECTIVE_DATE -> getAsOf();
             case TRANSACTION_TYPE -> getTransactionType();
             case TRADE_DATE -> getTradeDate();
             case SETTLEMENT_DATE -> getSettlementDate();
@@ -227,6 +226,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             //Security Fields
             case SECURITY -> getSecurity();
             case SECURITY_ISSUER_NAME -> getSecurity().getField(SECURITY_ISSUER_NAME);
+            case ISSUE_DATE -> getSecurity().getField(ISSUE_DATE);
             case PRODUCT_TYPE -> getSecurity().getProductType().name();
             case IDENTIFIER -> getSecurity().getSecurityId();
             case ASSET_CLASS -> getSecurity().getAssetClass();
