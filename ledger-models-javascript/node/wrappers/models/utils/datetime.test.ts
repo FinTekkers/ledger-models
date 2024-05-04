@@ -2,7 +2,7 @@
 import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { PositionProto, PositionTypeProto, PositionViewProto } from '../../../fintekkers/models/position/position_pb';
 import { FieldMapEntry } from '../../../fintekkers/models/position/position_util_pb';
-import { Position } from "../position/Position.1";
+import { Position } from "../position/position";
 import { ZonedDateTime } from './datetime';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
 

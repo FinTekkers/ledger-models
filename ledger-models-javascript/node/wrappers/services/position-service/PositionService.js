@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PositionService = void 0;
 // Models
-var Position_1_1 = require("../../models/position/Position.1");
+var position_1 = require("../../models/position/position");
 // Requests & Services
 var position_service_grpc_pb_1 = require("../../../fintekkers/services/position-service/position_service_grpc_pb");
 //Utils
@@ -76,7 +76,7 @@ var PositionService = /** @class */ (function () {
                         return [2 /*return*/, new Promise(function (resolve, reject) {
                                 stream2.on('data', function (response) {
                                     response.getPositionsList().forEach(function (position) {
-                                        listPositions.push(new Position_1_1.Position(position));
+                                        listPositions.push(new position_1.Position(position));
                                     });
                                 });
                                 stream2.on('end', function () {

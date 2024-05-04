@@ -8,7 +8,7 @@ import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
-import { Position } from "./Position.1";
+import { Position } from "./position";
 import { LocalDate } from '../utils/date';
 import { PositionStatusProto } from '../../../fintekkers/models/position/position_status_pb';
 import { ProtoEnum } from '../utils/protoEnum';

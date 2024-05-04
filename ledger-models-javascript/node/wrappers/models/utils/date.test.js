@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 var position_pb_1 = require("../../../fintekkers/models/position/position_pb");
 var position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
-var Position_1_1 = require("../position/Position.1");
+var position_1 = require("../position/position");
 var date_1 = require("./date");
 var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 test('test the date time', function () { return __awaiter(void 0, void 0, void 0, function () {
@@ -60,7 +60,7 @@ test('test the date time', function () { return __awaiter(void 0, void 0, void 0
         field1.setField(field_pb_1.FieldProto.EFFECTIVE_DATE);
         field1.setFieldValuePacked(nowPacked);
         position.addFields(field1);
-        pos = new Position_1_1.Position(position);
+        pos = new position_1.Position(position);
         timestampStr = pos.getFieldDisplay(field1);
         //Expect timestamp match
         expect(timestampStr).toMatch(/^\d{4}\/(?:\d{1,2})(?:\/\d{1,2})?$/);

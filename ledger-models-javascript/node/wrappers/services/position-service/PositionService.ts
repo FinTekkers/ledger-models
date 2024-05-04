@@ -1,5 +1,5 @@
 // Models
-import { Position } from "../../models/position/Position.1";
+import { Position } from "../../models/position/position";
 
 // Requests
 import { QueryPositionRequestProto } from '../../../fintekkers/requests/position/query_position_request_pb';

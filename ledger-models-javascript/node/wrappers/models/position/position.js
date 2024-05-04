@@ -116,7 +116,7 @@ var Position = /** @class */ (function () {
                     return value.toString();
                 }
                 else if (value instanceof Date) {
-                    return value.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                    return "".concat(value.getFullYear(), "/").concat(value.getMonth(), "/").concat(value.getDay());
                 }
                 else if (value instanceof datetime_1.ZonedDateTime) {
                     var tmpDateTime = value.toDateTime();

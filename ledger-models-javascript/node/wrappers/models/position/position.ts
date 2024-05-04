@@ -127,7 +127,7 @@ export class Position {
         } else if (value instanceof UUID) {
           return value.toString();
         } else if (value instanceof Date) {
-          return value.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+          return `${value.getFullYear()}/${value.getMonth()}/${value.getDay()}`;
         } else if (value instanceof ZonedDateTime) {
           const tmpDateTime: DateTime = value.toDateTime();
           return tmpDateTime.toFormat('yyyy/MM/dd hh:mm:ss');
