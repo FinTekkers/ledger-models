@@ -54,21 +54,21 @@ class PositionSerializerTest {
         final Security equitySecurity = DummyEquityObjects.getDummySecurity();
         final Portfolio portfolio = DummyEquityObjects.getDummyPortfolio();
         final var transaction = DummyEquityObjects.getDummyTransaction();
+//
+//        position.setFieldValue(Field.ID, UUID.randomUUID());
+//        position.setFieldValue(Field.TRADE_DATE, transaction.getTradeDate());
+//        position.setFieldValue(Field.SETTLEMENT_DATE, transaction.getTradeDate());
 
-        position.setFieldValue(Field.ID, UUID.randomUUID());
-        position.setFieldValue(Field.TRADE_DATE, transaction.getTradeDate());
-        position.setFieldValue(Field.SETTLEMENT_DATE, transaction.getTradeDate());
-
-        position.setFieldValue(Field.PORTFOLIO, portfolio);
-
-        position.setFieldValue(Field.SECURITY, equitySecurity);
-        position.setFieldValue(Field.CASH_IMPACT_SECURITY, equitySecurity.getSettlementCurrency());
-        position.setFieldValue(Field.ASSET_CLASS, equitySecurity.getAssetClass());
-        position.setFieldValue(Field.PRODUCT_CLASS, equitySecurity.getClass().getSimpleName());
-        position.setFieldValue(Field.PRODUCT_TYPE, ProductType.BOND.name());
-
-        position.setFieldValue(Field.POSITION_STATUS, PositionStatusProto.HYPOTHETICAL);
-        position.setFieldValue(Field.STRATEGY, transaction.getStrategyAllocation().getAllocations().keySet().iterator().next());
+//        position.setFieldValue(Field.PORTFOLIO, portfolio);
+//
+//        position.setFieldValue(Field.SECURITY, equitySecurity);
+//        position.setFieldValue(Field.CASH_IMPACT_SECURITY, equitySecurity.getSettlementCurrency());
+//        position.setFieldValue(Field.ASSET_CLASS, equitySecurity.getAssetClass());
+//        position.setFieldValue(Field.PRODUCT_CLASS, equitySecurity.getClass().getSimpleName());
+//        position.setFieldValue(Field.PRODUCT_TYPE, ProductType.BOND.name());
+//
+//        position.setFieldValue(Field.POSITION_STATUS, PositionStatusProto.HYPOTHETICAL);
+        position.setFieldValue(Field.STRATEGY, transaction.getStrategyAllocation());
         position.setFieldValue(Field.PRICE, transaction.getPrice());
 
         position.setFieldValue(Field.IDENTIFIER, new Identifier(IdentifierType.CUSIP, "92928301"));

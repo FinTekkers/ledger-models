@@ -7,6 +7,7 @@ import common.models.security.Security;
 import common.models.security.Tenor;
 import common.models.security.identifier.Identifier;
 import common.models.strategy.Strategy;
+import common.models.strategy.StrategyAllocation;
 import common.models.transaction.TransactionType;
 import fintekkers.models.position.PositionStatusProto;
 
@@ -36,7 +37,7 @@ public enum Field {
     EFFECTIVE_DATE(LocalDate.class, "The date to be used to derive data that is time-sensitive. For " +
             "example when a valuation of a market value occurs, the effective date would be used to define the " +
             "market data to source for the valuation"),
-    STRATEGY(Strategy.class, "The strategy used to derive why a specific transaction " +
+    STRATEGY(StrategyAllocation.class, "The strategy used to derive why a specific transaction " +
             "has been executed. Can be leveraged for hypothetical trades also, and will carry through to tax lots"),
     IS_CANCELLED(Boolean.class, "Represents whether an object version has been cancelled, whether by the " +
             "user or for system reasons"),

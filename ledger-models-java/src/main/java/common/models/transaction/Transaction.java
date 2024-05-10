@@ -10,6 +10,7 @@ import common.models.price.Price;
 import common.models.security.BondSecurity;
 import common.models.security.CashSecurity;
 import common.models.security.Security;
+import common.models.strategy.Strategy;
 import common.models.strategy.StrategyAllocation;
 import common.models.util.persistence.IForeignKey;
 import fintekkers.models.position.PositionStatusProto;
@@ -240,6 +241,8 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             case PORTFOLIO -> getPortfolio();
             case PORTFOLIO_ID -> getPortfolio().getID();
             case PORTFOLIO_NAME -> getPortfolio().getPortfolioName();
+            //Strategy
+            case STRATEGY -> getStrategyAllocation();
             default -> throw new RuntimeException(String.format("Field not found: %s", field));
         };
     }
