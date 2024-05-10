@@ -7,10 +7,12 @@ import common.models.security.Security;
 import common.models.security.Tenor;
 import common.models.security.identifier.Identifier;
 import common.models.strategy.Strategy;
+import common.models.strategy.StrategyAllocation;
 import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.IdentifierProto;
 import fintekkers.models.security.SecurityProto;
+import fintekkers.models.strategy.StrategyAllocationProto;
 import fintekkers.models.strategy.StrategyProto;
 import fintekkers.models.util.DecimalValue;
 import fintekkers.models.util.LocalTimestamp;
@@ -56,8 +58,8 @@ public class ProtoSerializationUtil {
             unpacked = SecuritySerializer.getInstance().serialize((Security) object);
         } else if(object instanceof Portfolio) {
             unpacked = PortfolioSerializer.getInstance().serialize((Portfolio) object);
-        }  else if(object instanceof Strategy) {
-            unpacked = StrategySerializer.getInstance().serialize((Strategy)object);
+        }  else if(object instanceof StrategyAllocation) {
+            unpacked = StrategySerializer.getInstance().serialize((StrategyAllocation)object);
         } else if(object instanceof String) {
             //TODO: Remove this and serialize the string rather than packing it
             unpacked = StringValue.of(object.toString());
@@ -99,8 +101,8 @@ public class ProtoSerializationUtil {
                 return SecuritySerializer.getInstance().deserialize(any.unpack(SecurityProto.class));
             } else if(any.is(PortfolioProto.class)) {
                 return PortfolioSerializer.getInstance().deserialize(any.unpack(PortfolioProto.class));
-            } else if(any.is(StrategyProto.class)) {
-                return StrategySerializer.getInstance().deserialize(any.unpack(StrategyProto.class));
+            } else if(any.is(StrategyAllocationProto.class)) {
+                return StrategySerializer.getInstance().deserialize(any.unpack(StrategyAllocationProto.class));
             } else if(any.is(StringValue.class)) {
                 //TODO: Remove this and serialize the string rather than packing it
                 return any.unpack(StringValue.class).getValue();
