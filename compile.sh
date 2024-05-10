@@ -25,10 +25,10 @@ gradle build
 
 echo "generating javascript protos"
 cd ../ledger-models-protos
-# generate web js
-protoc \
-    --js_out=import_style=commonjs:../ledger-models-javascript/web/ \
-    --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:../ledger-models-javascript/web/ $(find . -iname "*.proto")
+# generate web js. Commented out. Not planning on any web-specific code gen
+#protoc \
+#    --js_out=import_style=commonjs:../ledger-models-javascript/web/ \
+#    --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:../ledger-models-javascript/web/ $(find . -iname "*.proto")
 
 # generate node js
 grpc_tools_node_protoc --js_out=import_style=commonjs,binary:../ledger-models-javascript/node/ --grpc_out=grpc_js:../ledger-models-javascript/node/ $(find . -iname "*.proto")
