@@ -69,4 +69,19 @@ public interface LockRequestProtoOrBuilder extends
    * <code>.fintekkers.models.util.lock.NodePartition node_partition = 11;</code>
    */
   fintekkers.models.util.lock.NodePartitionOuterClass.NodePartitionOrBuilder getNodePartitionOrBuilder();
+
+  /**
+   * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+   * @return Whether the endpoint field is set.
+   */
+  boolean hasEndpoint();
+  /**
+   * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+   * @return The endpoint.
+   */
+  fintekkers.models.util.EndpointOuterClass.Endpoint getEndpoint();
+  /**
+   * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+   */
+  fintekkers.models.util.EndpointOuterClass.EndpointOrBuilder getEndpointOrBuilder();
 }

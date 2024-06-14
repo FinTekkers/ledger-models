@@ -2,7 +2,9 @@ syntax = "proto3";
 
 package fintekkers.requests.util.lock;
 
+// import "fintekkers/models/util/endpoint.proto";
 import "fintekkers/models/util/lock/node_partition.proto";
+import "fintekkers/models/util/endpoint.proto";
 
 option java_multiple_files = true;
 
@@ -19,6 +21,7 @@ message LockRequestProto {
   //If the partition number is also specified the lock service will ONLY try
   //to get the lock on that parition and fail if it the lock is already taken
   fintekkers.models.util.lock.NodePartition node_partition = 11;
+  fintekkers.models.util.Endpoint endpoint = 12;
 }
 
 

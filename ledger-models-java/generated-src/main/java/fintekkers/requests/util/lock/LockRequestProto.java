@@ -75,6 +75,19 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
+          case 98: {
+            fintekkers.models.util.EndpointOuterClass.Endpoint.Builder subBuilder = null;
+            if (endpoint_ != null) {
+              subBuilder = endpoint_.toBuilder();
+            }
+            endpoint_ = input.readMessage(fintekkers.models.util.EndpointOuterClass.Endpoint.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(endpoint_);
+              endpoint_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -233,6 +246,32 @@ private static final long serialVersionUID = 0L;
     return getNodePartition();
   }
 
+  public static final int ENDPOINT_FIELD_NUMBER = 12;
+  private fintekkers.models.util.EndpointOuterClass.Endpoint endpoint_;
+  /**
+   * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+   * @return Whether the endpoint field is set.
+   */
+  @java.lang.Override
+  public boolean hasEndpoint() {
+    return endpoint_ != null;
+  }
+  /**
+   * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+   * @return The endpoint.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.EndpointOuterClass.Endpoint getEndpoint() {
+    return endpoint_ == null ? fintekkers.models.util.EndpointOuterClass.Endpoint.getDefaultInstance() : endpoint_;
+  }
+  /**
+   * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.EndpointOuterClass.EndpointOrBuilder getEndpointOrBuilder() {
+    return getEndpoint();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -256,6 +295,9 @@ private static final long serialVersionUID = 0L;
     if (nodePartition_ != null) {
       output.writeMessage(11, getNodePartition());
     }
+    if (endpoint_ != null) {
+      output.writeMessage(12, getEndpoint());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -274,6 +316,10 @@ private static final long serialVersionUID = 0L;
     if (nodePartition_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(11, getNodePartition());
+    }
+    if (endpoint_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(12, getEndpoint());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -299,6 +345,11 @@ private static final long serialVersionUID = 0L;
       if (!getNodePartition()
           .equals(other.getNodePartition())) return false;
     }
+    if (hasEndpoint() != other.hasEndpoint()) return false;
+    if (hasEndpoint()) {
+      if (!getEndpoint()
+          .equals(other.getEndpoint())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -317,6 +368,10 @@ private static final long serialVersionUID = 0L;
     if (hasNodePartition()) {
       hash = (37 * hash) + NODE_PARTITION_FIELD_NUMBER;
       hash = (53 * hash) + getNodePartition().hashCode();
+    }
+    if (hasEndpoint()) {
+      hash = (37 * hash) + ENDPOINT_FIELD_NUMBER;
+      hash = (53 * hash) + getEndpoint().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -461,6 +516,12 @@ private static final long serialVersionUID = 0L;
         nodePartition_ = null;
         nodePartitionBuilder_ = null;
       }
+      if (endpointBuilder_ == null) {
+        endpoint_ = null;
+      } else {
+        endpoint_ = null;
+        endpointBuilder_ = null;
+      }
       return this;
     }
 
@@ -493,6 +554,11 @@ private static final long serialVersionUID = 0L;
         result.nodePartition_ = nodePartition_;
       } else {
         result.nodePartition_ = nodePartitionBuilder_.build();
+      }
+      if (endpointBuilder_ == null) {
+        result.endpoint_ = endpoint_;
+      } else {
+        result.endpoint_ = endpointBuilder_.build();
       }
       onBuilt();
       return result;
@@ -552,6 +618,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasNodePartition()) {
         mergeNodePartition(other.getNodePartition());
+      }
+      if (other.hasEndpoint()) {
+        mergeEndpoint(other.getEndpoint());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -923,6 +992,125 @@ private static final long serialVersionUID = 0L;
         nodePartition_ = null;
       }
       return nodePartitionBuilder_;
+    }
+
+    private fintekkers.models.util.EndpointOuterClass.Endpoint endpoint_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.EndpointOuterClass.Endpoint, fintekkers.models.util.EndpointOuterClass.Endpoint.Builder, fintekkers.models.util.EndpointOuterClass.EndpointOrBuilder> endpointBuilder_;
+    /**
+     * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+     * @return Whether the endpoint field is set.
+     */
+    public boolean hasEndpoint() {
+      return endpointBuilder_ != null || endpoint_ != null;
+    }
+    /**
+     * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+     * @return The endpoint.
+     */
+    public fintekkers.models.util.EndpointOuterClass.Endpoint getEndpoint() {
+      if (endpointBuilder_ == null) {
+        return endpoint_ == null ? fintekkers.models.util.EndpointOuterClass.Endpoint.getDefaultInstance() : endpoint_;
+      } else {
+        return endpointBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+     */
+    public Builder setEndpoint(fintekkers.models.util.EndpointOuterClass.Endpoint value) {
+      if (endpointBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        endpoint_ = value;
+        onChanged();
+      } else {
+        endpointBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+     */
+    public Builder setEndpoint(
+        fintekkers.models.util.EndpointOuterClass.Endpoint.Builder builderForValue) {
+      if (endpointBuilder_ == null) {
+        endpoint_ = builderForValue.build();
+        onChanged();
+      } else {
+        endpointBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+     */
+    public Builder mergeEndpoint(fintekkers.models.util.EndpointOuterClass.Endpoint value) {
+      if (endpointBuilder_ == null) {
+        if (endpoint_ != null) {
+          endpoint_ =
+            fintekkers.models.util.EndpointOuterClass.Endpoint.newBuilder(endpoint_).mergeFrom(value).buildPartial();
+        } else {
+          endpoint_ = value;
+        }
+        onChanged();
+      } else {
+        endpointBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+     */
+    public Builder clearEndpoint() {
+      if (endpointBuilder_ == null) {
+        endpoint_ = null;
+        onChanged();
+      } else {
+        endpoint_ = null;
+        endpointBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+     */
+    public fintekkers.models.util.EndpointOuterClass.Endpoint.Builder getEndpointBuilder() {
+      
+      onChanged();
+      return getEndpointFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+     */
+    public fintekkers.models.util.EndpointOuterClass.EndpointOrBuilder getEndpointOrBuilder() {
+      if (endpointBuilder_ != null) {
+        return endpointBuilder_.getMessageOrBuilder();
+      } else {
+        return endpoint_ == null ?
+            fintekkers.models.util.EndpointOuterClass.Endpoint.getDefaultInstance() : endpoint_;
+      }
+    }
+    /**
+     * <code>.fintekkers.models.util.Endpoint endpoint = 12;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.EndpointOuterClass.Endpoint, fintekkers.models.util.EndpointOuterClass.Endpoint.Builder, fintekkers.models.util.EndpointOuterClass.EndpointOrBuilder> 
+        getEndpointFieldBuilder() {
+      if (endpointBuilder_ == null) {
+        endpointBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.EndpointOuterClass.Endpoint, fintekkers.models.util.EndpointOuterClass.Endpoint.Builder, fintekkers.models.util.EndpointOuterClass.EndpointOrBuilder>(
+                getEndpoint(),
+                getParentForChildren(),
+                isClean());
+        endpoint_ = null;
+      }
+      return endpointBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(
