@@ -15,6 +15,8 @@ pub struct LockRequestProto {
     pub node_partition: ::core::option::Option<
         super::super::super::models::util::lock::NodePartition,
     >,
+    #[prost(message, optional, tag = "12")]
+    pub endpoint: ::core::option::Option<super::super::super::models::util::Endpoint>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

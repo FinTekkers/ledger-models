@@ -12,9 +12,10 @@ _sym_db = _symbol_database.Default()
 
 
 from fintekkers.models.util.lock import node_partition_pb2 as fintekkers_dot_models_dot_util_dot_lock_dot_node__partition__pb2
+from fintekkers.models.util import endpoint_pb2 as fintekkers_dot_models_dot_util_dot_endpoint__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n0fintekkers/requests/util/lock/lock_request.proto\x12\x1d\x66intekkers.requests.util.lock\x1a\x30\x66intekkers/models/util/lock/node_partition.proto\"}\n\x10LockRequestProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x42\n\x0enode_partition\x18\x0b \x01(\x0b\x32*.fintekkers.models.util.lock.NodePartitionB\x15\x42\x11LockRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n0fintekkers/requests/util/lock/lock_request.proto\x12\x1d\x66intekkers.requests.util.lock\x1a\x30\x66intekkers/models/util/lock/node_partition.proto\x1a%fintekkers/models/util/endpoint.proto\"\xb1\x01\n\x10LockRequestProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x42\n\x0enode_partition\x18\x0b \x01(\x0b\x32*.fintekkers.models.util.lock.NodePartition\x12\x32\n\x08\x65ndpoint\x18\x0c \x01(\x0b\x32 .fintekkers.models.util.EndpointB\x15\x42\x11LockRequestProtosP\x01\x62\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.util.lock.lock_request_pb2', globals())
@@ -22,6 +23,6 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'B\021LockRequestProtosP\001'
-  _LOCKREQUESTPROTO._serialized_start=133
-  _LOCKREQUESTPROTO._serialized_end=258
+  _LOCKREQUESTPROTO._serialized_start=173
+  _LOCKREQUESTPROTO._serialized_end=350
 # @@protoc_insertion_point(module_scope)

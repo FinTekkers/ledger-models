@@ -6,6 +6,7 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_util_lock_node_partition_pb from "../../../../fintekkers/models/util/lock/node_partition_pb";
+import * as fintekkers_models_util_endpoint_pb from "../../../../fintekkers/models/util/endpoint_pb";
 
 export class LockRequestProto extends jspb.Message { 
     getObjectClass(): string;
@@ -17,6 +18,11 @@ export class LockRequestProto extends jspb.Message {
     clearNodePartition(): void;
     getNodePartition(): fintekkers_models_util_lock_node_partition_pb.NodePartition | undefined;
     setNodePartition(value?: fintekkers_models_util_lock_node_partition_pb.NodePartition): LockRequestProto;
+
+    hasEndpoint(): boolean;
+    clearEndpoint(): void;
+    getEndpoint(): fintekkers_models_util_endpoint_pb.Endpoint | undefined;
+    setEndpoint(value?: fintekkers_models_util_endpoint_pb.Endpoint): LockRequestProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): LockRequestProto.AsObject;
@@ -33,5 +39,6 @@ export namespace LockRequestProto {
         objectClass: string,
         version: string,
         nodePartition?: fintekkers_models_util_lock_node_partition_pb.NodePartition.AsObject,
+        endpoint?: fintekkers_models_util_endpoint_pb.Endpoint.AsObject,
     }
 }
