@@ -1,4 +1,3 @@
-use prost::EncodeError;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 

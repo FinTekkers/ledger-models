@@ -1,15 +1,15 @@
+use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
+use chrono_tz::Tz;
+use prost_types::Timestamp;
 use std::borrow::Borrow;
 use std::fmt;
 use std::str::FromStr;
 use std::string::ParseError;
-use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
-use chrono_tz::Tz;
-use prost_types::Timestamp;
 
 use crate::fintekkers::models::util::LocalTimestampProto;
 
 pub struct LocalTimestampWrapper {
-    pub proto: LocalTimestampProto
+    pub proto: LocalTimestampProto,
 }
 
 impl AsRef<LocalTimestampProto> for LocalTimestampWrapper {
@@ -19,19 +19,30 @@ impl AsRef<LocalTimestampProto> for LocalTimestampWrapper {
 }
 
 impl LocalTimestampWrapper {
-    pub fn new(proto:LocalTimestampProto) -> Self {
-        LocalTimestampWrapper {
-            proto
-        }
+    pub fn new(proto: LocalTimestampProto) -> Self {
+        LocalTimestampWrapper { proto }
     }
 
     pub fn now() -> Self {
-        let time_zone_str = iana_time_zone::get_timezone()
-            .unwrap_or_else(|_| { panic!("{}",
-                                         String::from("Failed to get default timezone from \
-                                         the operating system")) });
+        let time_zone_str = iana_time_zone::get_timezone().unwrap_or_else(|_| {
+            panic!(
+                "{}",
+                String::from(
+                    "Failed to get default timezone from \
+                                         the operating system"
+                )
+            )
+        });
 
         let now = Utc::now();
+        Self::from_datetime(now, time_zone_str)
+    }
+
+    pub fn from_utc_datetime(now: DateTime<Utc>) -> Self {
+        Self::from_datetime(now, "UTC".to_string())
+    }
+
+    pub fn from_datetime(now: DateTime<Utc>, time_zone_str: String) -> Self {
         let seconds = now.timestamp();
         let nanos = now.timestamp_subsec_nanos();
 
@@ -43,8 +54,8 @@ impl LocalTimestampWrapper {
         LocalTimestampWrapper {
             proto: LocalTimestampProto {
                 timestamp: Some(timestamp),
-                time_zone: time_zone_str
-            }
+                time_zone: time_zone_str,
+            },
         }
     }
 }
@@ -53,8 +64,8 @@ impl From<&LocalTimestampWrapper> for DateTime<Tz> {
     fn from(wrapper: &LocalTimestampWrapper) -> DateTime<Tz> {
         let timestamp = wrapper.proto.timestamp.as_ref().unwrap();
 
-        let naive_date_time = NaiveDateTime::from_timestamp_opt(
-            timestamp.seconds, timestamp.nanos as u32).unwrap();
+        let naive_date_time =
+            NaiveDateTime::from_timestamp_opt(timestamp.seconds, timestamp.nanos as u32).unwrap();
 
         let tz: Tz = wrapper.proto.time_zone.parse().unwrap();
         let date_timezone = tz.offset_from_utc_datetime(&naive_date_time);
@@ -72,14 +83,14 @@ impl From<&LocalTimestampWrapper> for DateTime<Utc> {
     }
 }
 impl From<LocalTimestampWrapper> for LocalTimestampProto {
-    fn from(wrapper:LocalTimestampWrapper) -> LocalTimestampProto {
+    fn from(wrapper: LocalTimestampWrapper) -> LocalTimestampProto {
         wrapper.proto
     }
 }
 
 impl fmt::Display for LocalTimestampWrapper {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        let datetime:DateTime<Tz> = self.into();
+        let datetime: DateTime<Tz> = self.into();
         fmt.write_str(datetime.to_string().borrow()).unwrap();
         Ok(())
     }
@@ -95,19 +106,25 @@ impl FromStr for LocalTimestampWrapper {
     type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let datetime:DateTime<Utc> = DateTime::parse_from_rfc3339(s).map(|dt| dt.with_timezone(&Utc))
+        let datetime: DateTime<Utc> = DateTime::parse_from_rfc3339(s)
+            .map(|dt| dt.with_timezone(&Utc))
             .expect("");
 
-        let time_zone_str = iana_time_zone::get_timezone()
-            .unwrap_or_else(|_| { panic!("{}",
-                                         String::from("Failed to get default timezone from \
-                                         the operating system")) });
+        let time_zone_str = iana_time_zone::get_timezone().unwrap_or_else(|_| {
+            panic!(
+                "{}",
+                String::from(
+                    "Failed to get default timezone from \
+                                         the operating system"
+                )
+            )
+        });
 
         Ok(LocalTimestampWrapper {
             proto: LocalTimestampProto {
                 timestamp: Some(create_timestamp_from_datetime(datetime)),
                 time_zone: time_zone_str,
-            }
+            },
         })
     }
 }
@@ -127,18 +144,46 @@ mod test {
             proto: LocalTimestampProto {
                 timestamp: Some(Timestamp {
                     seconds: 1,
-                    nanos: 0
+                    nanos: 0,
                 }),
                 time_zone: "America/New_York".to_string(),
             },
         };
 
-
-        let output:DateTime<Tz> = input.borrow().into();
+        let output: DateTime<Tz> = input.borrow().into();
 
         //Timstamp of 1 second is 1970, Jan 1st at midnight, then when converted into NY timezone
         //from UTC it will be 5 hours earlier...
         assert_eq!(output.to_string(), "1969-12-31 19:00:01 EST");
+    }
+
+    #[test]
+    fn test_date_from_naive_date() {
+        let date_time: DateTime<Utc> = Utc::now();
+        let wrapper = LocalTimestampWrapper::from_utc_datetime(date_time);
+
+        //Check no timezone specified uses UTC
+        let wrapper_seconds = wrapper.proto.timestamp.unwrap().seconds;
+        assert_eq!(date_time.timestamp(), wrapper_seconds);
+        assert_eq!(date_time.timezone().to_string(), wrapper.proto.time_zone);
+
+        //Check explicit UTC timezone specified uses UTC
+        let utc_wrapper = LocalTimestampWrapper::from_datetime(date_time, "UTC".to_string());
+
+        let utc_wrapper_seconds = utc_wrapper.proto.timestamp.unwrap().seconds;
+        assert_eq!(date_time.timestamp(), utc_wrapper_seconds);
+        assert_eq!(
+            date_time.timezone().to_string(),
+            utc_wrapper.proto.time_zone
+        );
+
+        //Check explicit NY timezone specified doesn't use UTC
+        let ny_wrapper =
+            LocalTimestampWrapper::from_datetime(date_time, "America/New_York".to_string());
+
+        let ny_wrapper_seconds = ny_wrapper.proto.timestamp.unwrap().seconds;
+        assert_eq!(date_time.timestamp(), ny_wrapper_seconds);
+        assert_eq!("America/New_York".to_string(), ny_wrapper.proto.time_zone);
     }
 
     #[test]
