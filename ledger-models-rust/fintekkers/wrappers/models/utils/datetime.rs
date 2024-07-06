@@ -1,4 +1,4 @@
-use chrono::{DateTime, NaiveDateTime, TimeZone, Utc};
+use chrono::{DateTime, Local, NaiveDateTime, TimeZone, Utc};
 use chrono_tz::Tz;
 use prost_types::Timestamp;
 use std::borrow::Borrow;
@@ -34,15 +34,15 @@ impl LocalTimestampWrapper {
             )
         });
 
-        let now = Utc::now();
+        let now = Local::now().naive_local();
         Self::from_datetime(now, time_zone_str)
     }
 
-    pub fn from_utc_datetime(now: DateTime<Utc>) -> Self {
+    pub fn from_utc_datetime(now: NaiveDateTime) -> Self {
         Self::from_datetime(now, "UTC".to_string())
     }
 
-    pub fn from_datetime(now: DateTime<Utc>, time_zone_str: String) -> Self {
+    pub fn from_datetime(now: NaiveDateTime, time_zone_str: String) -> Self {
         let seconds = now.timestamp();
         let nanos = now.timestamp_subsec_nanos();
 
@@ -192,5 +192,13 @@ mod test {
 
         let option = date.proto.timestamp.unwrap();
         assert_eq!(option.seconds, 1679056496);
+    }
+
+
+    #[test]
+    fn test_timezones() {
+        let now = LocalTimestampWrapper::now();
+        let string = now.to_string();
+        println!("{}", string);
     }
 }
