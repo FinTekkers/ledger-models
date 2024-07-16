@@ -76,3 +76,46 @@ export namespace NodeStateList {
         nodesList: Array<fintekkers_models_util_lock_node_state_pb.NodeState.AsObject>,
     }
 }
+
+export class CreateNamespaceRequest extends jspb.Message { 
+    getName(): string;
+    setName(value: string): CreateNamespaceRequest;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): CreateNamespaceRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: CreateNamespaceRequest): CreateNamespaceRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: CreateNamespaceRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CreateNamespaceRequest;
+    static deserializeBinaryFromReader(message: CreateNamespaceRequest, reader: jspb.BinaryReader): CreateNamespaceRequest;
+}
+
+export namespace CreateNamespaceRequest {
+    export type AsObject = {
+        name: string,
+    }
+}
+
+export class CreatePartitionRequest extends jspb.Message { 
+    getName(): string;
+    setName(value: string): CreatePartitionRequest;
+    getPartition(): number;
+    setPartition(value: number): CreatePartitionRequest;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): CreatePartitionRequest.AsObject;
+    static toObject(includeInstance: boolean, msg: CreatePartitionRequest): CreatePartitionRequest.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: CreatePartitionRequest, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CreatePartitionRequest;
+    static deserializeBinaryFromReader(message: CreatePartitionRequest, reader: jspb.BinaryReader): CreatePartitionRequest;
+}
+
+export namespace CreatePartitionRequest {
+    export type AsObject = {
+        name: string,
+        partition: number,
+    }
+}

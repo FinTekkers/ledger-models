@@ -2238,6 +2238,1212 @@ public final class LockService {
 
   }
 
+  public interface CreateNamespaceRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:fintekkers.services.lock_service.CreateNamespaceRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();
+  }
+  /**
+   * Protobuf type {@code fintekkers.services.lock_service.CreateNamespaceRequest}
+   */
+  public static final class CreateNamespaceRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:fintekkers.services.lock_service.CreateNamespaceRequest)
+      CreateNamespaceRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use CreateNamespaceRequest.newBuilder() to construct.
+    private CreateNamespaceRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private CreateNamespaceRequest() {
+      name_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new CreateNamespaceRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private CreateNamespaceRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return fintekkers.services.lock_service.LockService.internal_static_fintekkers_services_lock_service_CreateNamespaceRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return fintekkers.services.lock_service.LockService.internal_static_fintekkers_services_lock_service_CreateNamespaceRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              fintekkers.services.lock_service.LockService.CreateNamespaceRequest.class, fintekkers.services.lock_service.LockService.CreateNamespaceRequest.Builder.class);
+    }
+
+    public static final int NAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object name_;
+    /**
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    @java.lang.Override
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof fintekkers.services.lock_service.LockService.CreateNamespaceRequest)) {
+        return super.equals(obj);
+      }
+      fintekkers.services.lock_service.LockService.CreateNamespaceRequest other = (fintekkers.services.lock_service.LockService.CreateNamespaceRequest) obj;
+
+      if (!getName()
+          .equals(other.getName())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(fintekkers.services.lock_service.LockService.CreateNamespaceRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code fintekkers.services.lock_service.CreateNamespaceRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:fintekkers.services.lock_service.CreateNamespaceRequest)
+        fintekkers.services.lock_service.LockService.CreateNamespaceRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return fintekkers.services.lock_service.LockService.internal_static_fintekkers_services_lock_service_CreateNamespaceRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return fintekkers.services.lock_service.LockService.internal_static_fintekkers_services_lock_service_CreateNamespaceRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                fintekkers.services.lock_service.LockService.CreateNamespaceRequest.class, fintekkers.services.lock_service.LockService.CreateNamespaceRequest.Builder.class);
+      }
+
+      // Construct using fintekkers.services.lock_service.LockService.CreateNamespaceRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        name_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return fintekkers.services.lock_service.LockService.internal_static_fintekkers_services_lock_service_CreateNamespaceRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public fintekkers.services.lock_service.LockService.CreateNamespaceRequest getDefaultInstanceForType() {
+        return fintekkers.services.lock_service.LockService.CreateNamespaceRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public fintekkers.services.lock_service.LockService.CreateNamespaceRequest build() {
+        fintekkers.services.lock_service.LockService.CreateNamespaceRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public fintekkers.services.lock_service.LockService.CreateNamespaceRequest buildPartial() {
+        fintekkers.services.lock_service.LockService.CreateNamespaceRequest result = new fintekkers.services.lock_service.LockService.CreateNamespaceRequest(this);
+        result.name_ = name_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof fintekkers.services.lock_service.LockService.CreateNamespaceRequest) {
+          return mergeFrom((fintekkers.services.lock_service.LockService.CreateNamespaceRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(fintekkers.services.lock_service.LockService.CreateNamespaceRequest other) {
+        if (other == fintekkers.services.lock_service.LockService.CreateNamespaceRequest.getDefaultInstance()) return this;
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        fintekkers.services.lock_service.LockService.CreateNamespaceRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (fintekkers.services.lock_service.LockService.CreateNamespaceRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object name_ = "";
+      /**
+       * <code>string name = 1;</code>
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string name = 1;</code>
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string name = 1;</code>
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+        
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 1;</code>
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:fintekkers.services.lock_service.CreateNamespaceRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:fintekkers.services.lock_service.CreateNamespaceRequest)
+    private static final fintekkers.services.lock_service.LockService.CreateNamespaceRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new fintekkers.services.lock_service.LockService.CreateNamespaceRequest();
+    }
+
+    public static fintekkers.services.lock_service.LockService.CreateNamespaceRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CreateNamespaceRequest>
+        PARSER = new com.google.protobuf.AbstractParser<CreateNamespaceRequest>() {
+      @java.lang.Override
+      public CreateNamespaceRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new CreateNamespaceRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<CreateNamespaceRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CreateNamespaceRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public fintekkers.services.lock_service.LockService.CreateNamespaceRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface CreatePartitionRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:fintekkers.services.lock_service.CreatePartitionRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    java.lang.String getName();
+    /**
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    com.google.protobuf.ByteString
+        getNameBytes();
+
+    /**
+     * <code>int32 partition = 2;</code>
+     * @return The partition.
+     */
+    int getPartition();
+  }
+  /**
+   * Protobuf type {@code fintekkers.services.lock_service.CreatePartitionRequest}
+   */
+  public static final class CreatePartitionRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:fintekkers.services.lock_service.CreatePartitionRequest)
+      CreatePartitionRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use CreatePartitionRequest.newBuilder() to construct.
+    private CreatePartitionRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private CreatePartitionRequest() {
+      name_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new CreatePartitionRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private CreatePartitionRequest(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              name_ = s;
+              break;
+            }
+            case 16: {
+
+              partition_ = input.readInt32();
+              break;
+            }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return fintekkers.services.lock_service.LockService.internal_static_fintekkers_services_lock_service_CreatePartitionRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return fintekkers.services.lock_service.LockService.internal_static_fintekkers_services_lock_service_CreatePartitionRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              fintekkers.services.lock_service.LockService.CreatePartitionRequest.class, fintekkers.services.lock_service.LockService.CreatePartitionRequest.Builder.class);
+    }
+
+    public static final int NAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object name_;
+    /**
+     * <code>string name = 1;</code>
+     * @return The name.
+     */
+    @java.lang.Override
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        name_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string name = 1;</code>
+     * @return The bytes for name.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PARTITION_FIELD_NUMBER = 2;
+    private int partition_;
+    /**
+     * <code>int32 partition = 2;</code>
+     * @return The partition.
+     */
+    @java.lang.Override
+    public int getPartition() {
+      return partition_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getNameBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
+      }
+      if (partition_ != 0) {
+        output.writeInt32(2, partition_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getNameBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
+      }
+      if (partition_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, partition_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof fintekkers.services.lock_service.LockService.CreatePartitionRequest)) {
+        return super.equals(obj);
+      }
+      fintekkers.services.lock_service.LockService.CreatePartitionRequest other = (fintekkers.services.lock_service.LockService.CreatePartitionRequest) obj;
+
+      if (!getName()
+          .equals(other.getName())) return false;
+      if (getPartition()
+          != other.getPartition()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + PARTITION_FIELD_NUMBER;
+      hash = (53 * hash) + getPartition();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(fintekkers.services.lock_service.LockService.CreatePartitionRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code fintekkers.services.lock_service.CreatePartitionRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:fintekkers.services.lock_service.CreatePartitionRequest)
+        fintekkers.services.lock_service.LockService.CreatePartitionRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return fintekkers.services.lock_service.LockService.internal_static_fintekkers_services_lock_service_CreatePartitionRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return fintekkers.services.lock_service.LockService.internal_static_fintekkers_services_lock_service_CreatePartitionRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                fintekkers.services.lock_service.LockService.CreatePartitionRequest.class, fintekkers.services.lock_service.LockService.CreatePartitionRequest.Builder.class);
+      }
+
+      // Construct using fintekkers.services.lock_service.LockService.CreatePartitionRequest.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        name_ = "";
+
+        partition_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return fintekkers.services.lock_service.LockService.internal_static_fintekkers_services_lock_service_CreatePartitionRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public fintekkers.services.lock_service.LockService.CreatePartitionRequest getDefaultInstanceForType() {
+        return fintekkers.services.lock_service.LockService.CreatePartitionRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public fintekkers.services.lock_service.LockService.CreatePartitionRequest build() {
+        fintekkers.services.lock_service.LockService.CreatePartitionRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public fintekkers.services.lock_service.LockService.CreatePartitionRequest buildPartial() {
+        fintekkers.services.lock_service.LockService.CreatePartitionRequest result = new fintekkers.services.lock_service.LockService.CreatePartitionRequest(this);
+        result.name_ = name_;
+        result.partition_ = partition_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof fintekkers.services.lock_service.LockService.CreatePartitionRequest) {
+          return mergeFrom((fintekkers.services.lock_service.LockService.CreatePartitionRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(fintekkers.services.lock_service.LockService.CreatePartitionRequest other) {
+        if (other == fintekkers.services.lock_service.LockService.CreatePartitionRequest.getDefaultInstance()) return this;
+        if (!other.getName().isEmpty()) {
+          name_ = other.name_;
+          onChanged();
+        }
+        if (other.getPartition() != 0) {
+          setPartition(other.getPartition());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        fintekkers.services.lock_service.LockService.CreatePartitionRequest parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (fintekkers.services.lock_service.LockService.CreatePartitionRequest) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object name_ = "";
+      /**
+       * <code>string name = 1;</code>
+       * @return The name.
+       */
+      public java.lang.String getName() {
+        java.lang.Object ref = name_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          name_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string name = 1;</code>
+       * @return The bytes for name.
+       */
+      public com.google.protobuf.ByteString
+          getNameBytes() {
+        java.lang.Object ref = name_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          name_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string name = 1;</code>
+       * @param value The name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        name_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearName() {
+        
+        name_ = getDefaultInstance().getName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string name = 1;</code>
+       * @param value The bytes for name to set.
+       * @return This builder for chaining.
+       */
+      public Builder setNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        name_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int partition_ ;
+      /**
+       * <code>int32 partition = 2;</code>
+       * @return The partition.
+       */
+      @java.lang.Override
+      public int getPartition() {
+        return partition_;
+      }
+      /**
+       * <code>int32 partition = 2;</code>
+       * @param value The partition to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPartition(int value) {
+        
+        partition_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 partition = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPartition() {
+        
+        partition_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:fintekkers.services.lock_service.CreatePartitionRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:fintekkers.services.lock_service.CreatePartitionRequest)
+    private static final fintekkers.services.lock_service.LockService.CreatePartitionRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new fintekkers.services.lock_service.LockService.CreatePartitionRequest();
+    }
+
+    public static fintekkers.services.lock_service.LockService.CreatePartitionRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CreatePartitionRequest>
+        PARSER = new com.google.protobuf.AbstractParser<CreatePartitionRequest>() {
+      @java.lang.Override
+      public CreatePartitionRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new CreatePartitionRequest(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<CreatePartitionRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CreatePartitionRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public fintekkers.services.lock_service.LockService.CreatePartitionRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   /**
    * Protobuf service {@code fintekkers.services.lock_service.Lock}
    */
@@ -2272,6 +3478,30 @@ public final class LockService {
           com.google.protobuf.RpcController controller,
           com.google.protobuf.Empty request,
           com.google.protobuf.RpcCallback<fintekkers.models.util.lock.NodeStateOuterClass.NodeState> done);
+
+      /**
+       * <pre>
+       *Create a namespace
+       * </pre>
+       *
+       * <code>rpc CreateNamespace(.fintekkers.services.lock_service.CreateNamespaceRequest) returns (.google.protobuf.Empty);</code>
+       */
+      public abstract void createNamespace(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.CreateNamespaceRequest request,
+          com.google.protobuf.RpcCallback<com.google.protobuf.Empty> done);
+
+      /**
+       * <pre>
+       *Create a partition
+       * </pre>
+       *
+       * <code>rpc CreatePartition(.fintekkers.services.lock_service.CreatePartitionRequest) returns (.google.protobuf.Empty);</code>
+       */
+      public abstract void createPartition(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.CreatePartitionRequest request,
+          com.google.protobuf.RpcCallback<com.google.protobuf.Empty> done);
 
       /**
        * <pre>
@@ -2311,6 +3541,18 @@ public final class LockService {
 
       /**
        * <pre>
+       *Returns the current status of all nodes, across all namespaces and partitions.
+       * </pre>
+       *
+       * <code>rpc GetAllPartitionStatusForNamespaces(.fintekkers.services.lock_service.NamespaceList) returns (.fintekkers.services.lock_service.NodeStateList);</code>
+       */
+      public abstract void getAllPartitionStatusForNamespaces(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.NamespaceList request,
+          com.google.protobuf.RpcCallback<fintekkers.services.lock_service.LockService.NodeStateList> done);
+
+      /**
+       * <pre>
        *In namespace / parition
        * </pre>
        *
@@ -2343,6 +3585,22 @@ public final class LockService {
         }
 
         @java.lang.Override
+        public  void createNamespace(
+            com.google.protobuf.RpcController controller,
+            fintekkers.services.lock_service.LockService.CreateNamespaceRequest request,
+            com.google.protobuf.RpcCallback<com.google.protobuf.Empty> done) {
+          impl.createNamespace(controller, request, done);
+        }
+
+        @java.lang.Override
+        public  void createPartition(
+            com.google.protobuf.RpcController controller,
+            fintekkers.services.lock_service.LockService.CreatePartitionRequest request,
+            com.google.protobuf.RpcCallback<com.google.protobuf.Empty> done) {
+          impl.createPartition(controller, request, done);
+        }
+
+        @java.lang.Override
         public  void listNamespaces(
             com.google.protobuf.RpcController controller,
             com.google.protobuf.Empty request,
@@ -2364,6 +3622,14 @@ public final class LockService {
             com.google.protobuf.Empty request,
             com.google.protobuf.RpcCallback<fintekkers.services.lock_service.LockService.NodeStateList> done) {
           impl.getAllPartitionStatus(controller, request, done);
+        }
+
+        @java.lang.Override
+        public  void getAllPartitionStatusForNamespaces(
+            com.google.protobuf.RpcController controller,
+            fintekkers.services.lock_service.LockService.NamespaceList request,
+            com.google.protobuf.RpcCallback<fintekkers.services.lock_service.LockService.NodeStateList> done) {
+          impl.getAllPartitionStatusForNamespaces(controller, request, done);
         }
 
         @java.lang.Override
@@ -2401,12 +3667,18 @@ public final class LockService {
             case 1:
               return impl.subscribeToLockUpdates(controller, (com.google.protobuf.Empty)request);
             case 2:
-              return impl.listNamespaces(controller, (com.google.protobuf.Empty)request);
+              return impl.createNamespace(controller, (fintekkers.services.lock_service.LockService.CreateNamespaceRequest)request);
             case 3:
-              return impl.listPartitions(controller, (fintekkers.services.lock_service.LockService.NamespaceList)request);
+              return impl.createPartition(controller, (fintekkers.services.lock_service.LockService.CreatePartitionRequest)request);
             case 4:
-              return impl.getAllPartitionStatus(controller, (com.google.protobuf.Empty)request);
+              return impl.listNamespaces(controller, (com.google.protobuf.Empty)request);
             case 5:
+              return impl.listPartitions(controller, (fintekkers.services.lock_service.LockService.NamespaceList)request);
+            case 6:
+              return impl.getAllPartitionStatus(controller, (com.google.protobuf.Empty)request);
+            case 7:
+              return impl.getAllPartitionStatusForNamespaces(controller, (fintekkers.services.lock_service.LockService.NamespaceList)request);
+            case 8:
               return impl.getPartitionStatus(controller, (fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -2427,12 +3699,18 @@ public final class LockService {
             case 1:
               return com.google.protobuf.Empty.getDefaultInstance();
             case 2:
-              return com.google.protobuf.Empty.getDefaultInstance();
+              return fintekkers.services.lock_service.LockService.CreateNamespaceRequest.getDefaultInstance();
             case 3:
-              return fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance();
+              return fintekkers.services.lock_service.LockService.CreatePartitionRequest.getDefaultInstance();
             case 4:
               return com.google.protobuf.Empty.getDefaultInstance();
             case 5:
+              return fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance();
+            case 6:
+              return com.google.protobuf.Empty.getDefaultInstance();
+            case 7:
+              return fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance();
+            case 8:
               return fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -2453,12 +3731,18 @@ public final class LockService {
             case 1:
               return fintekkers.models.util.lock.NodeStateOuterClass.NodeState.getDefaultInstance();
             case 2:
-              return fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance();
+              return com.google.protobuf.Empty.getDefaultInstance();
             case 3:
-              return fintekkers.services.lock_service.LockService.PartitionsList.getDefaultInstance();
+              return com.google.protobuf.Empty.getDefaultInstance();
             case 4:
-              return fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance();
+              return fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance();
             case 5:
+              return fintekkers.services.lock_service.LockService.PartitionsList.getDefaultInstance();
+            case 6:
+              return fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance();
+            case 7:
+              return fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance();
+            case 8:
               return fintekkers.models.util.lock.NodeStateOuterClass.NodeState.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -2497,6 +3781,30 @@ public final class LockService {
 
     /**
      * <pre>
+     *Create a namespace
+     * </pre>
+     *
+     * <code>rpc CreateNamespace(.fintekkers.services.lock_service.CreateNamespaceRequest) returns (.google.protobuf.Empty);</code>
+     */
+    public abstract void createNamespace(
+        com.google.protobuf.RpcController controller,
+        fintekkers.services.lock_service.LockService.CreateNamespaceRequest request,
+        com.google.protobuf.RpcCallback<com.google.protobuf.Empty> done);
+
+    /**
+     * <pre>
+     *Create a partition
+     * </pre>
+     *
+     * <code>rpc CreatePartition(.fintekkers.services.lock_service.CreatePartitionRequest) returns (.google.protobuf.Empty);</code>
+     */
+    public abstract void createPartition(
+        com.google.protobuf.RpcController controller,
+        fintekkers.services.lock_service.LockService.CreatePartitionRequest request,
+        com.google.protobuf.RpcCallback<com.google.protobuf.Empty> done);
+
+    /**
+     * <pre>
      *Lists the possible namespaces
      * </pre>
      *
@@ -2529,6 +3837,18 @@ public final class LockService {
     public abstract void getAllPartitionStatus(
         com.google.protobuf.RpcController controller,
         com.google.protobuf.Empty request,
+        com.google.protobuf.RpcCallback<fintekkers.services.lock_service.LockService.NodeStateList> done);
+
+    /**
+     * <pre>
+     *Returns the current status of all nodes, across all namespaces and partitions.
+     * </pre>
+     *
+     * <code>rpc GetAllPartitionStatusForNamespaces(.fintekkers.services.lock_service.NamespaceList) returns (.fintekkers.services.lock_service.NodeStateList);</code>
+     */
+    public abstract void getAllPartitionStatusForNamespaces(
+        com.google.protobuf.RpcController controller,
+        fintekkers.services.lock_service.LockService.NamespaceList request,
         com.google.protobuf.RpcCallback<fintekkers.services.lock_service.LockService.NodeStateList> done);
 
     /**
@@ -2576,21 +3896,36 @@ public final class LockService {
               done));
           return;
         case 2:
+          this.createNamespace(controller, (fintekkers.services.lock_service.LockService.CreateNamespaceRequest)request,
+            com.google.protobuf.RpcUtil.<com.google.protobuf.Empty>specializeCallback(
+              done));
+          return;
+        case 3:
+          this.createPartition(controller, (fintekkers.services.lock_service.LockService.CreatePartitionRequest)request,
+            com.google.protobuf.RpcUtil.<com.google.protobuf.Empty>specializeCallback(
+              done));
+          return;
+        case 4:
           this.listNamespaces(controller, (com.google.protobuf.Empty)request,
             com.google.protobuf.RpcUtil.<fintekkers.services.lock_service.LockService.NamespaceList>specializeCallback(
               done));
           return;
-        case 3:
+        case 5:
           this.listPartitions(controller, (fintekkers.services.lock_service.LockService.NamespaceList)request,
             com.google.protobuf.RpcUtil.<fintekkers.services.lock_service.LockService.PartitionsList>specializeCallback(
               done));
           return;
-        case 4:
+        case 6:
           this.getAllPartitionStatus(controller, (com.google.protobuf.Empty)request,
             com.google.protobuf.RpcUtil.<fintekkers.services.lock_service.LockService.NodeStateList>specializeCallback(
               done));
           return;
-        case 5:
+        case 7:
+          this.getAllPartitionStatusForNamespaces(controller, (fintekkers.services.lock_service.LockService.NamespaceList)request,
+            com.google.protobuf.RpcUtil.<fintekkers.services.lock_service.LockService.NodeStateList>specializeCallback(
+              done));
+          return;
+        case 8:
           this.getPartitionStatus(controller, (fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition)request,
             com.google.protobuf.RpcUtil.<fintekkers.models.util.lock.NodeStateOuterClass.NodeState>specializeCallback(
               done));
@@ -2614,12 +3949,18 @@ public final class LockService {
         case 1:
           return com.google.protobuf.Empty.getDefaultInstance();
         case 2:
-          return com.google.protobuf.Empty.getDefaultInstance();
+          return fintekkers.services.lock_service.LockService.CreateNamespaceRequest.getDefaultInstance();
         case 3:
-          return fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance();
+          return fintekkers.services.lock_service.LockService.CreatePartitionRequest.getDefaultInstance();
         case 4:
           return com.google.protobuf.Empty.getDefaultInstance();
         case 5:
+          return fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance();
+        case 6:
+          return com.google.protobuf.Empty.getDefaultInstance();
+        case 7:
+          return fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance();
+        case 8:
           return fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -2640,12 +3981,18 @@ public final class LockService {
         case 1:
           return fintekkers.models.util.lock.NodeStateOuterClass.NodeState.getDefaultInstance();
         case 2:
-          return fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance();
+          return com.google.protobuf.Empty.getDefaultInstance();
         case 3:
-          return fintekkers.services.lock_service.LockService.PartitionsList.getDefaultInstance();
+          return com.google.protobuf.Empty.getDefaultInstance();
         case 4:
-          return fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance();
+          return fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance();
         case 5:
+          return fintekkers.services.lock_service.LockService.PartitionsList.getDefaultInstance();
+        case 6:
+          return fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance();
+        case 7:
+          return fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance();
+        case 8:
           return fintekkers.models.util.lock.NodeStateOuterClass.NodeState.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -2698,12 +4045,42 @@ public final class LockService {
             fintekkers.models.util.lock.NodeStateOuterClass.NodeState.getDefaultInstance()));
       }
 
+      public  void createNamespace(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.CreateNamespaceRequest request,
+          com.google.protobuf.RpcCallback<com.google.protobuf.Empty> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(2),
+          controller,
+          request,
+          com.google.protobuf.Empty.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            com.google.protobuf.Empty.class,
+            com.google.protobuf.Empty.getDefaultInstance()));
+      }
+
+      public  void createPartition(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.CreatePartitionRequest request,
+          com.google.protobuf.RpcCallback<com.google.protobuf.Empty> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          com.google.protobuf.Empty.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            com.google.protobuf.Empty.class,
+            com.google.protobuf.Empty.getDefaultInstance()));
+      }
+
       public  void listNamespaces(
           com.google.protobuf.RpcController controller,
           com.google.protobuf.Empty request,
           com.google.protobuf.RpcCallback<fintekkers.services.lock_service.LockService.NamespaceList> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(2),
+          getDescriptor().getMethods().get(4),
           controller,
           request,
           fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance(),
@@ -2718,7 +4095,7 @@ public final class LockService {
           fintekkers.services.lock_service.LockService.NamespaceList request,
           com.google.protobuf.RpcCallback<fintekkers.services.lock_service.LockService.PartitionsList> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(3),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           fintekkers.services.lock_service.LockService.PartitionsList.getDefaultInstance(),
@@ -2733,7 +4110,22 @@ public final class LockService {
           com.google.protobuf.Empty request,
           com.google.protobuf.RpcCallback<fintekkers.services.lock_service.LockService.NodeStateList> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(6),
+          controller,
+          request,
+          fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            fintekkers.services.lock_service.LockService.NodeStateList.class,
+            fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance()));
+      }
+
+      public  void getAllPartitionStatusForNamespaces(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.NamespaceList request,
+          com.google.protobuf.RpcCallback<fintekkers.services.lock_service.LockService.NodeStateList> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(7),
           controller,
           request,
           fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance(),
@@ -2748,7 +4140,7 @@ public final class LockService {
           fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition request,
           com.google.protobuf.RpcCallback<fintekkers.models.util.lock.NodeStateOuterClass.NodeState> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(5),
+          getDescriptor().getMethods().get(8),
           controller,
           request,
           fintekkers.models.util.lock.NodeStateOuterClass.NodeState.getDefaultInstance(),
@@ -2775,6 +4167,16 @@ public final class LockService {
           com.google.protobuf.Empty request)
           throws com.google.protobuf.ServiceException;
 
+      public com.google.protobuf.Empty createNamespace(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.CreateNamespaceRequest request)
+          throws com.google.protobuf.ServiceException;
+
+      public com.google.protobuf.Empty createPartition(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.CreatePartitionRequest request)
+          throws com.google.protobuf.ServiceException;
+
       public fintekkers.services.lock_service.LockService.NamespaceList listNamespaces(
           com.google.protobuf.RpcController controller,
           com.google.protobuf.Empty request)
@@ -2788,6 +4190,11 @@ public final class LockService {
       public fintekkers.services.lock_service.LockService.NodeStateList getAllPartitionStatus(
           com.google.protobuf.RpcController controller,
           com.google.protobuf.Empty request)
+          throws com.google.protobuf.ServiceException;
+
+      public fintekkers.services.lock_service.LockService.NodeStateList getAllPartitionStatusForNamespaces(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.NamespaceList request)
           throws com.google.protobuf.ServiceException;
 
       public fintekkers.models.util.lock.NodeStateOuterClass.NodeState getPartitionStatus(
@@ -2827,12 +4234,36 @@ public final class LockService {
       }
 
 
+      public com.google.protobuf.Empty createNamespace(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.CreateNamespaceRequest request)
+          throws com.google.protobuf.ServiceException {
+        return (com.google.protobuf.Empty) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(2),
+          controller,
+          request,
+          com.google.protobuf.Empty.getDefaultInstance());
+      }
+
+
+      public com.google.protobuf.Empty createPartition(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.CreatePartitionRequest request)
+          throws com.google.protobuf.ServiceException {
+        return (com.google.protobuf.Empty) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          com.google.protobuf.Empty.getDefaultInstance());
+      }
+
+
       public fintekkers.services.lock_service.LockService.NamespaceList listNamespaces(
           com.google.protobuf.RpcController controller,
           com.google.protobuf.Empty request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.services.lock_service.LockService.NamespaceList) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(2),
+          getDescriptor().getMethods().get(4),
           controller,
           request,
           fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance());
@@ -2844,7 +4275,7 @@ public final class LockService {
           fintekkers.services.lock_service.LockService.NamespaceList request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.services.lock_service.LockService.PartitionsList) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(3),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           fintekkers.services.lock_service.LockService.PartitionsList.getDefaultInstance());
@@ -2856,7 +4287,19 @@ public final class LockService {
           com.google.protobuf.Empty request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.services.lock_service.LockService.NodeStateList) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(6),
+          controller,
+          request,
+          fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance());
+      }
+
+
+      public fintekkers.services.lock_service.LockService.NodeStateList getAllPartitionStatusForNamespaces(
+          com.google.protobuf.RpcController controller,
+          fintekkers.services.lock_service.LockService.NamespaceList request)
+          throws com.google.protobuf.ServiceException {
+        return (fintekkers.services.lock_service.LockService.NodeStateList) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(7),
           controller,
           request,
           fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance());
@@ -2868,7 +4311,7 @@ public final class LockService {
           fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.models.util.lock.NodeStateOuterClass.NodeState) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(5),
+          getDescriptor().getMethods().get(8),
           controller,
           request,
           fintekkers.models.util.lock.NodeStateOuterClass.NodeState.getDefaultInstance());
@@ -2894,6 +4337,16 @@ public final class LockService {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_fintekkers_services_lock_service_NodeStateList_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fintekkers_services_lock_service_CreateNamespaceRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fintekkers_services_lock_service_CreateNamespaceRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fintekkers_services_lock_service_CreatePartitionRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fintekkers_services_lock_service_CreatePartitionRequest_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2915,23 +4368,34 @@ public final class LockService {
       "ionsList\022>\n\npartitions\030\001 \003(\0132*.fintekker" +
       "s.models.util.lock.NodePartition\"F\n\rNode" +
       "StateList\0225\n\005nodes\030\001 \003(\0132&.fintekkers.mo" +
-      "dels.util.lock.NodeState2\356\004\n\004Lock\022n\n\tCla" +
-      "imLock\022/.fintekkers.requests.util.lock.L" +
-      "ockRequestProto\0320.fintekkers.requests.ut" +
-      "il.lock.LockResponseProto\022Z\n\026SubscribeTo" +
-      "LockUpdates\022\026.google.protobuf.Empty\032&.fi" +
-      "ntekkers.models.util.lock.NodeState0\001\022Y\n" +
-      "\016ListNamespaces\022\026.google.protobuf.Empty\032" +
-      "/.fintekkers.services.lock_service.Names" +
-      "paceList\022s\n\016ListPartitions\022/.fintekkers." +
-      "services.lock_service.NamespaceList\0320.fi" +
-      "ntekkers.services.lock_service.Partition" +
-      "sList\022`\n\025GetAllPartitionStatus\022\026.google." +
-      "protobuf.Empty\032/.fintekkers.services.loc" +
-      "k_service.NodeStateList\022h\n\022GetPartitionS" +
-      "tatus\022*.fintekkers.models.util.lock.Node" +
-      "Partition\032&.fintekkers.models.util.lock." +
-      "NodeStateB\003\210\001\001b\006proto3"
+      "dels.util.lock.NodeState\"&\n\026CreateNamesp" +
+      "aceRequest\022\014\n\004name\030\001 \001(\t\"9\n\026CreatePartit" +
+      "ionRequest\022\014\n\004name\030\001 \001(\t\022\021\n\tpartition\030\002 " +
+      "\001(\0052\301\007\n\004Lock\022n\n\tClaimLock\022/.fintekkers.r" +
+      "equests.util.lock.LockRequestProto\0320.fin" +
+      "tekkers.requests.util.lock.LockResponseP" +
+      "roto\022Z\n\026SubscribeToLockUpdates\022\026.google." +
+      "protobuf.Empty\032&.fintekkers.models.util." +
+      "lock.NodeState0\001\022c\n\017CreateNamespace\0228.fi" +
+      "ntekkers.services.lock_service.CreateNam" +
+      "espaceRequest\032\026.google.protobuf.Empty\022c\n" +
+      "\017CreatePartition\0228.fintekkers.services.l" +
+      "ock_service.CreatePartitionRequest\032\026.goo" +
+      "gle.protobuf.Empty\022Y\n\016ListNamespaces\022\026.g" +
+      "oogle.protobuf.Empty\032/.fintekkers.servic" +
+      "es.lock_service.NamespaceList\022s\n\016ListPar" +
+      "titions\022/.fintekkers.services.lock_servi" +
+      "ce.NamespaceList\0320.fintekkers.services.l" +
+      "ock_service.PartitionsList\022`\n\025GetAllPart" +
+      "itionStatus\022\026.google.protobuf.Empty\032/.fi" +
+      "ntekkers.services.lock_service.NodeState" +
+      "List\022\206\001\n\"GetAllPartitionStatusForNamespa" +
+      "ces\022/.fintekkers.services.lock_service.N" +
+      "amespaceList\032/.fintekkers.services.lock_" +
+      "service.NodeStateList\022h\n\022GetPartitionSta" +
+      "tus\022*.fintekkers.models.util.lock.NodePa" +
+      "rtition\032&.fintekkers.models.util.lock.No" +
+      "deStateB\003\210\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -2960,6 +4424,18 @@ public final class LockService {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_services_lock_service_NodeStateList_descriptor,
         new java.lang.String[] { "Nodes", });
+    internal_static_fintekkers_services_lock_service_CreateNamespaceRequest_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_fintekkers_services_lock_service_CreateNamespaceRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fintekkers_services_lock_service_CreateNamespaceRequest_descriptor,
+        new java.lang.String[] { "Name", });
+    internal_static_fintekkers_services_lock_service_CreatePartitionRequest_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_fintekkers_services_lock_service_CreatePartitionRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fintekkers_services_lock_service_CreatePartitionRequest_descriptor,
+        new java.lang.String[] { "Name", "Partition", });
     com.google.protobuf.EmptyProto.getDescriptor();
     fintekkers.requests.util.lock.LockRequestProtos.getDescriptor();
     fintekkers.requests.util.lock.LockResponseProtos.getDescriptor();

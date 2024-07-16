@@ -77,6 +77,68 @@ public final class LockGrpc {
     return getSubscribeToLockUpdatesMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<fintekkers.services.lock_service.LockService.CreateNamespaceRequest,
+      com.google.protobuf.Empty> getCreateNamespaceMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CreateNamespace",
+      requestType = fintekkers.services.lock_service.LockService.CreateNamespaceRequest.class,
+      responseType = com.google.protobuf.Empty.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<fintekkers.services.lock_service.LockService.CreateNamespaceRequest,
+      com.google.protobuf.Empty> getCreateNamespaceMethod() {
+    io.grpc.MethodDescriptor<fintekkers.services.lock_service.LockService.CreateNamespaceRequest, com.google.protobuf.Empty> getCreateNamespaceMethod;
+    if ((getCreateNamespaceMethod = LockGrpc.getCreateNamespaceMethod) == null) {
+      synchronized (LockGrpc.class) {
+        if ((getCreateNamespaceMethod = LockGrpc.getCreateNamespaceMethod) == null) {
+          LockGrpc.getCreateNamespaceMethod = getCreateNamespaceMethod =
+              io.grpc.MethodDescriptor.<fintekkers.services.lock_service.LockService.CreateNamespaceRequest, com.google.protobuf.Empty>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CreateNamespace"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.services.lock_service.LockService.CreateNamespaceRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.google.protobuf.Empty.getDefaultInstance()))
+              .setSchemaDescriptor(new LockMethodDescriptorSupplier("CreateNamespace"))
+              .build();
+        }
+      }
+    }
+    return getCreateNamespaceMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<fintekkers.services.lock_service.LockService.CreatePartitionRequest,
+      com.google.protobuf.Empty> getCreatePartitionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CreatePartition",
+      requestType = fintekkers.services.lock_service.LockService.CreatePartitionRequest.class,
+      responseType = com.google.protobuf.Empty.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<fintekkers.services.lock_service.LockService.CreatePartitionRequest,
+      com.google.protobuf.Empty> getCreatePartitionMethod() {
+    io.grpc.MethodDescriptor<fintekkers.services.lock_service.LockService.CreatePartitionRequest, com.google.protobuf.Empty> getCreatePartitionMethod;
+    if ((getCreatePartitionMethod = LockGrpc.getCreatePartitionMethod) == null) {
+      synchronized (LockGrpc.class) {
+        if ((getCreatePartitionMethod = LockGrpc.getCreatePartitionMethod) == null) {
+          LockGrpc.getCreatePartitionMethod = getCreatePartitionMethod =
+              io.grpc.MethodDescriptor.<fintekkers.services.lock_service.LockService.CreatePartitionRequest, com.google.protobuf.Empty>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CreatePartition"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.services.lock_service.LockService.CreatePartitionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.google.protobuf.Empty.getDefaultInstance()))
+              .setSchemaDescriptor(new LockMethodDescriptorSupplier("CreatePartition"))
+              .build();
+        }
+      }
+    }
+    return getCreatePartitionMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<com.google.protobuf.Empty,
       fintekkers.services.lock_service.LockService.NamespaceList> getListNamespacesMethod;
 
@@ -168,6 +230,37 @@ public final class LockGrpc {
       }
     }
     return getGetAllPartitionStatusMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<fintekkers.services.lock_service.LockService.NamespaceList,
+      fintekkers.services.lock_service.LockService.NodeStateList> getGetAllPartitionStatusForNamespacesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAllPartitionStatusForNamespaces",
+      requestType = fintekkers.services.lock_service.LockService.NamespaceList.class,
+      responseType = fintekkers.services.lock_service.LockService.NodeStateList.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<fintekkers.services.lock_service.LockService.NamespaceList,
+      fintekkers.services.lock_service.LockService.NodeStateList> getGetAllPartitionStatusForNamespacesMethod() {
+    io.grpc.MethodDescriptor<fintekkers.services.lock_service.LockService.NamespaceList, fintekkers.services.lock_service.LockService.NodeStateList> getGetAllPartitionStatusForNamespacesMethod;
+    if ((getGetAllPartitionStatusForNamespacesMethod = LockGrpc.getGetAllPartitionStatusForNamespacesMethod) == null) {
+      synchronized (LockGrpc.class) {
+        if ((getGetAllPartitionStatusForNamespacesMethod = LockGrpc.getGetAllPartitionStatusForNamespacesMethod) == null) {
+          LockGrpc.getGetAllPartitionStatusForNamespacesMethod = getGetAllPartitionStatusForNamespacesMethod =
+              io.grpc.MethodDescriptor.<fintekkers.services.lock_service.LockService.NamespaceList, fintekkers.services.lock_service.LockService.NodeStateList>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAllPartitionStatusForNamespaces"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.services.lock_service.LockService.NamespaceList.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.services.lock_service.LockService.NodeStateList.getDefaultInstance()))
+              .setSchemaDescriptor(new LockMethodDescriptorSupplier("GetAllPartitionStatusForNamespaces"))
+              .build();
+        }
+      }
+    }
+    return getGetAllPartitionStatusForNamespacesMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition,
@@ -274,6 +367,26 @@ public final class LockGrpc {
 
     /**
      * <pre>
+     *Create a namespace
+     * </pre>
+     */
+    public void createNamespace(fintekkers.services.lock_service.LockService.CreateNamespaceRequest request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCreateNamespaceMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     *Create a partition
+     * </pre>
+     */
+    public void createPartition(fintekkers.services.lock_service.LockService.CreatePartitionRequest request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCreatePartitionMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      *Lists the possible namespaces
      * </pre>
      */
@@ -304,6 +417,16 @@ public final class LockGrpc {
 
     /**
      * <pre>
+     *Returns the current status of all nodes, across all namespaces and partitions.
+     * </pre>
+     */
+    public void getAllPartitionStatusForNamespaces(fintekkers.services.lock_service.LockService.NamespaceList request,
+        io.grpc.stub.StreamObserver<fintekkers.services.lock_service.LockService.NodeStateList> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAllPartitionStatusForNamespacesMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
      *In namespace / parition
      * </pre>
      */
@@ -329,6 +452,20 @@ public final class LockGrpc {
                 fintekkers.models.util.lock.NodeStateOuterClass.NodeState>(
                   this, METHODID_SUBSCRIBE_TO_LOCK_UPDATES)))
           .addMethod(
+            getCreateNamespaceMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                fintekkers.services.lock_service.LockService.CreateNamespaceRequest,
+                com.google.protobuf.Empty>(
+                  this, METHODID_CREATE_NAMESPACE)))
+          .addMethod(
+            getCreatePartitionMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                fintekkers.services.lock_service.LockService.CreatePartitionRequest,
+                com.google.protobuf.Empty>(
+                  this, METHODID_CREATE_PARTITION)))
+          .addMethod(
             getListNamespacesMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
@@ -349,6 +486,13 @@ public final class LockGrpc {
                 com.google.protobuf.Empty,
                 fintekkers.services.lock_service.LockService.NodeStateList>(
                   this, METHODID_GET_ALL_PARTITION_STATUS)))
+          .addMethod(
+            getGetAllPartitionStatusForNamespacesMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                fintekkers.services.lock_service.LockService.NamespaceList,
+                fintekkers.services.lock_service.LockService.NodeStateList>(
+                  this, METHODID_GET_ALL_PARTITION_STATUS_FOR_NAMESPACES)))
           .addMethod(
             getGetPartitionStatusMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -401,6 +545,28 @@ public final class LockGrpc {
 
     /**
      * <pre>
+     *Create a namespace
+     * </pre>
+     */
+    public void createNamespace(fintekkers.services.lock_service.LockService.CreateNamespaceRequest request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCreateNamespaceMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     *Create a partition
+     * </pre>
+     */
+    public void createPartition(fintekkers.services.lock_service.LockService.CreatePartitionRequest request,
+        io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCreatePartitionMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
      *Lists the possible namespaces
      * </pre>
      */
@@ -430,6 +596,17 @@ public final class LockGrpc {
         io.grpc.stub.StreamObserver<fintekkers.services.lock_service.LockService.NodeStateList> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetAllPartitionStatusMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     *Returns the current status of all nodes, across all namespaces and partitions.
+     * </pre>
+     */
+    public void getAllPartitionStatusForNamespaces(fintekkers.services.lock_service.LockService.NamespaceList request,
+        io.grpc.stub.StreamObserver<fintekkers.services.lock_service.LockService.NodeStateList> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAllPartitionStatusForNamespacesMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -484,6 +661,26 @@ public final class LockGrpc {
 
     /**
      * <pre>
+     *Create a namespace
+     * </pre>
+     */
+    public com.google.protobuf.Empty createNamespace(fintekkers.services.lock_service.LockService.CreateNamespaceRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreateNamespaceMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     *Create a partition
+     * </pre>
+     */
+    public com.google.protobuf.Empty createPartition(fintekkers.services.lock_service.LockService.CreatePartitionRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCreatePartitionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
      *Lists the possible namespaces
      * </pre>
      */
@@ -510,6 +707,16 @@ public final class LockGrpc {
     public fintekkers.services.lock_service.LockService.NodeStateList getAllPartitionStatus(com.google.protobuf.Empty request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAllPartitionStatusMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     *Returns the current status of all nodes, across all namespaces and partitions.
+     * </pre>
+     */
+    public fintekkers.services.lock_service.LockService.NodeStateList getAllPartitionStatusForNamespaces(fintekkers.services.lock_service.LockService.NamespaceList request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAllPartitionStatusForNamespacesMethod(), getCallOptions(), request);
     }
 
     /**
@@ -551,6 +758,28 @@ public final class LockGrpc {
 
     /**
      * <pre>
+     *Create a namespace
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> createNamespace(
+        fintekkers.services.lock_service.LockService.CreateNamespaceRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCreateNamespaceMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     *Create a partition
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty> createPartition(
+        fintekkers.services.lock_service.LockService.CreatePartitionRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCreatePartitionMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      *Lists the possible namespaces
      * </pre>
      */
@@ -584,6 +813,17 @@ public final class LockGrpc {
 
     /**
      * <pre>
+     *Returns the current status of all nodes, across all namespaces and partitions.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<fintekkers.services.lock_service.LockService.NodeStateList> getAllPartitionStatusForNamespaces(
+        fintekkers.services.lock_service.LockService.NamespaceList request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAllPartitionStatusForNamespacesMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
      *In namespace / parition
      * </pre>
      */
@@ -596,10 +836,13 @@ public final class LockGrpc {
 
   private static final int METHODID_CLAIM_LOCK = 0;
   private static final int METHODID_SUBSCRIBE_TO_LOCK_UPDATES = 1;
-  private static final int METHODID_LIST_NAMESPACES = 2;
-  private static final int METHODID_LIST_PARTITIONS = 3;
-  private static final int METHODID_GET_ALL_PARTITION_STATUS = 4;
-  private static final int METHODID_GET_PARTITION_STATUS = 5;
+  private static final int METHODID_CREATE_NAMESPACE = 2;
+  private static final int METHODID_CREATE_PARTITION = 3;
+  private static final int METHODID_LIST_NAMESPACES = 4;
+  private static final int METHODID_LIST_PARTITIONS = 5;
+  private static final int METHODID_GET_ALL_PARTITION_STATUS = 6;
+  private static final int METHODID_GET_ALL_PARTITION_STATUS_FOR_NAMESPACES = 7;
+  private static final int METHODID_GET_PARTITION_STATUS = 8;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -626,6 +869,14 @@ public final class LockGrpc {
           serviceImpl.subscribeToLockUpdates((com.google.protobuf.Empty) request,
               (io.grpc.stub.StreamObserver<fintekkers.models.util.lock.NodeStateOuterClass.NodeState>) responseObserver);
           break;
+        case METHODID_CREATE_NAMESPACE:
+          serviceImpl.createNamespace((fintekkers.services.lock_service.LockService.CreateNamespaceRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
+          break;
+        case METHODID_CREATE_PARTITION:
+          serviceImpl.createPartition((fintekkers.services.lock_service.LockService.CreatePartitionRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
+          break;
         case METHODID_LIST_NAMESPACES:
           serviceImpl.listNamespaces((com.google.protobuf.Empty) request,
               (io.grpc.stub.StreamObserver<fintekkers.services.lock_service.LockService.NamespaceList>) responseObserver);
@@ -636,6 +887,10 @@ public final class LockGrpc {
           break;
         case METHODID_GET_ALL_PARTITION_STATUS:
           serviceImpl.getAllPartitionStatus((com.google.protobuf.Empty) request,
+              (io.grpc.stub.StreamObserver<fintekkers.services.lock_service.LockService.NodeStateList>) responseObserver);
+          break;
+        case METHODID_GET_ALL_PARTITION_STATUS_FOR_NAMESPACES:
+          serviceImpl.getAllPartitionStatusForNamespaces((fintekkers.services.lock_service.LockService.NamespaceList) request,
               (io.grpc.stub.StreamObserver<fintekkers.services.lock_service.LockService.NodeStateList>) responseObserver);
           break;
         case METHODID_GET_PARTITION_STATUS:
@@ -705,9 +960,12 @@ public final class LockGrpc {
               .setSchemaDescriptor(new LockFileDescriptorSupplier())
               .addMethod(getClaimLockMethod())
               .addMethod(getSubscribeToLockUpdatesMethod())
+              .addMethod(getCreateNamespaceMethod())
+              .addMethod(getCreatePartitionMethod())
               .addMethod(getListNamespacesMethod())
               .addMethod(getListPartitionsMethod())
               .addMethod(getGetAllPartitionStatusMethod())
+              .addMethod(getGetAllPartitionStatusForNamespacesMethod())
               .addMethod(getGetPartitionStatusMethod())
               .build();
         }

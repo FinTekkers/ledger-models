@@ -29,6 +29,16 @@ class LockStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=fintekkers_dot_models_dot_util_dot_lock_dot_node__state__pb2.NodeState.FromString,
                 )
+        self.CreateNamespace = channel.unary_unary(
+                '/fintekkers.services.lock_service.Lock/CreateNamespace',
+                request_serializer=fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.CreateNamespaceRequest.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+        self.CreatePartition = channel.unary_unary(
+                '/fintekkers.services.lock_service.Lock/CreatePartition',
+                request_serializer=fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.CreatePartitionRequest.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
         self.ListNamespaces = channel.unary_unary(
                 '/fintekkers.services.lock_service.Lock/ListNamespaces',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -42,6 +52,11 @@ class LockStub(object):
         self.GetAllPartitionStatus = channel.unary_unary(
                 '/fintekkers.services.lock_service.Lock/GetAllPartitionStatus',
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.NodeStateList.FromString,
+                )
+        self.GetAllPartitionStatusForNamespaces = channel.unary_unary(
+                '/fintekkers.services.lock_service.Lock/GetAllPartitionStatusForNamespaces',
+                request_serializer=fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.NamespaceList.SerializeToString,
                 response_deserializer=fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.NodeStateList.FromString,
                 )
         self.GetPartitionStatus = channel.unary_unary(
@@ -71,6 +86,20 @@ class LockServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def CreateNamespace(self, request, context):
+        """Create a namespace
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreatePartition(self, request, context):
+        """Create a partition
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def ListNamespaces(self, request, context):
         """Lists the possible namespaces
         """
@@ -86,6 +115,13 @@ class LockServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetAllPartitionStatus(self, request, context):
+        """Returns the current status of all nodes, across all namespaces and partitions.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAllPartitionStatusForNamespaces(self, request, context):
         """Returns the current status of all nodes, across all namespaces and partitions.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -112,6 +148,16 @@ def add_LockServicer_to_server(servicer, server):
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=fintekkers_dot_models_dot_util_dot_lock_dot_node__state__pb2.NodeState.SerializeToString,
             ),
+            'CreateNamespace': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateNamespace,
+                    request_deserializer=fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.CreateNamespaceRequest.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'CreatePartition': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreatePartition,
+                    request_deserializer=fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.CreatePartitionRequest.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
             'ListNamespaces': grpc.unary_unary_rpc_method_handler(
                     servicer.ListNamespaces,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
@@ -125,6 +171,11 @@ def add_LockServicer_to_server(servicer, server):
             'GetAllPartitionStatus': grpc.unary_unary_rpc_method_handler(
                     servicer.GetAllPartitionStatus,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.NodeStateList.SerializeToString,
+            ),
+            'GetAllPartitionStatusForNamespaces': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllPartitionStatusForNamespaces,
+                    request_deserializer=fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.NamespaceList.FromString,
                     response_serializer=fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.NodeStateList.SerializeToString,
             ),
             'GetPartitionStatus': grpc.unary_unary_rpc_method_handler(
@@ -177,6 +228,40 @@ class Lock(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
+    def CreateNamespace(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/fintekkers.services.lock_service.Lock/CreateNamespace',
+            fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.CreateNamespaceRequest.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def CreatePartition(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/fintekkers.services.lock_service.Lock/CreatePartition',
+            fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.CreatePartitionRequest.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def ListNamespaces(request,
             target,
             options=(),
@@ -223,6 +308,23 @@ class Lock(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/fintekkers.services.lock_service.Lock/GetAllPartitionStatus',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.NodeStateList.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetAllPartitionStatusForNamespaces(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/fintekkers.services.lock_service.Lock/GetAllPartitionStatusForNamespaces',
+            fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.NamespaceList.SerializeToString,
             fintekkers_dot_services_dot_lock__service_dot_lock__service__pb2.NodeStateList.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
