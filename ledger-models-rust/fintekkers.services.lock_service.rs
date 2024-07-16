@@ -18,6 +18,20 @@ pub struct NodeStateList {
     #[prost(message, repeated, tag = "1")]
     pub nodes: ::prost::alloc::vec::Vec<super::super::models::util::lock::NodeState>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateNamespaceRequest {
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreatePartitionRequest {
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(int32, tag = "2")]
+    pub partition: i32,
+}
 /// Generated client implementations.
 pub mod lock_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
@@ -173,6 +187,62 @@ pub mod lock_client {
                 );
             self.inner.server_streaming(req, path, codec).await
         }
+        /// Create a namespace
+        pub async fn create_namespace(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CreateNamespaceRequest>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/fintekkers.services.lock_service.Lock/CreateNamespace",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "fintekkers.services.lock_service.Lock",
+                        "CreateNamespace",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        /// Create a partition
+        pub async fn create_partition(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CreatePartitionRequest>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/fintekkers.services.lock_service.Lock/CreatePartition",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "fintekkers.services.lock_service.Lock",
+                        "CreatePartition",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
         /// Lists the possible namespaces
         pub async fn list_namespaces(
             &mut self,
@@ -257,6 +327,34 @@ pub mod lock_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /// Returns the current status of all nodes, across all namespaces and partitions.
+        pub async fn get_all_partition_status_for_namespaces(
+            &mut self,
+            request: impl tonic::IntoRequest<super::NamespaceList>,
+        ) -> std::result::Result<tonic::Response<super::NodeStateList>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/fintekkers.services.lock_service.Lock/GetAllPartitionStatusForNamespaces",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "fintekkers.services.lock_service.Lock",
+                        "GetAllPartitionStatusForNamespaces",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
         /// In namespace / parition
         pub async fn get_partition_status(
             &mut self,
@@ -331,6 +429,16 @@ pub mod lock_server {
             tonic::Response<Self::SubscribeToLockUpdatesStream>,
             tonic::Status,
         >;
+        /// Create a namespace
+        async fn create_namespace(
+            &self,
+            request: tonic::Request<super::CreateNamespaceRequest>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
+        /// Create a partition
+        async fn create_partition(
+            &self,
+            request: tonic::Request<super::CreatePartitionRequest>,
+        ) -> std::result::Result<tonic::Response<()>, tonic::Status>;
         /// Lists the possible namespaces
         async fn list_namespaces(
             &self,
@@ -345,6 +453,11 @@ pub mod lock_server {
         async fn get_all_partition_status(
             &self,
             request: tonic::Request<()>,
+        ) -> std::result::Result<tonic::Response<super::NodeStateList>, tonic::Status>;
+        /// Returns the current status of all nodes, across all namespaces and partitions.
+        async fn get_all_partition_status_for_namespaces(
+            &self,
+            request: tonic::Request<super::NamespaceList>,
         ) -> std::result::Result<tonic::Response<super::NodeStateList>, tonic::Status>;
         /// In namespace / parition
         async fn get_partition_status(
@@ -525,6 +638,98 @@ pub mod lock_server {
                     };
                     Box::pin(fut)
                 }
+                "/fintekkers.services.lock_service.Lock/CreateNamespace" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreateNamespaceSvc<T: Lock>(pub Arc<T>);
+                    impl<
+                        T: Lock,
+                    > tonic::server::UnaryService<super::CreateNamespaceRequest>
+                    for CreateNamespaceSvc<T> {
+                        type Response = ();
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CreateNamespaceRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).create_namespace(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = CreateNamespaceSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/fintekkers.services.lock_service.Lock/CreatePartition" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreatePartitionSvc<T: Lock>(pub Arc<T>);
+                    impl<
+                        T: Lock,
+                    > tonic::server::UnaryService<super::CreatePartitionRequest>
+                    for CreatePartitionSvc<T> {
+                        type Response = ();
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CreatePartitionRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).create_partition(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = CreatePartitionSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
                 "/fintekkers.services.lock_service.Lock/ListNamespaces" => {
                     #[allow(non_camel_case_types)]
                     struct ListNamespacesSvc<T: Lock>(pub Arc<T>);
@@ -636,6 +841,52 @@ pub mod lock_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetAllPartitionStatusSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/fintekkers.services.lock_service.Lock/GetAllPartitionStatusForNamespaces" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetAllPartitionStatusForNamespacesSvc<T: Lock>(pub Arc<T>);
+                    impl<T: Lock> tonic::server::UnaryService<super::NamespaceList>
+                    for GetAllPartitionStatusForNamespacesSvc<T> {
+                        type Response = super::NodeStateList;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::NamespaceList>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner)
+                                    .get_all_partition_status_for_namespaces(request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetAllPartitionStatusForNamespacesSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

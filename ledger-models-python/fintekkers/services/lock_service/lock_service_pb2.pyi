@@ -10,6 +10,20 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class CreateNamespaceRequest(_message.Message):
+    __slots__ = ["name"]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    name: str
+    def __init__(self, name: _Optional[str] = ...) -> None: ...
+
+class CreatePartitionRequest(_message.Message):
+    __slots__ = ["name", "partition"]
+    NAME_FIELD_NUMBER: _ClassVar[int]
+    PARTITION_FIELD_NUMBER: _ClassVar[int]
+    name: str
+    partition: int
+    def __init__(self, name: _Optional[str] = ..., partition: _Optional[int] = ...) -> None: ...
+
 class NamespaceList(_message.Message):
     __slots__ = ["namespaces"]
     NAMESPACES_FIELD_NUMBER: _ClassVar[int]

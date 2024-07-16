@@ -53,6 +53,28 @@ function deserialize_fintekkers_requests_util_lock_LockResponseProto(buffer_arg)
   return fintekkers_requests_util_lock_lock_response_pb.LockResponseProto.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_fintekkers_services_lock_service_CreateNamespaceRequest(arg) {
+  if (!(arg instanceof fintekkers_services_lock$service_lock_service_pb.CreateNamespaceRequest)) {
+    throw new Error('Expected argument of type fintekkers.services.lock_service.CreateNamespaceRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_fintekkers_services_lock_service_CreateNamespaceRequest(buffer_arg) {
+  return fintekkers_services_lock$service_lock_service_pb.CreateNamespaceRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_fintekkers_services_lock_service_CreatePartitionRequest(arg) {
+  if (!(arg instanceof fintekkers_services_lock$service_lock_service_pb.CreatePartitionRequest)) {
+    throw new Error('Expected argument of type fintekkers.services.lock_service.CreatePartitionRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_fintekkers_services_lock_service_CreatePartitionRequest(buffer_arg) {
+  return fintekkers_services_lock$service_lock_service_pb.CreatePartitionRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_fintekkers_services_lock_service_NamespaceList(arg) {
   if (!(arg instanceof fintekkers_services_lock$service_lock_service_pb.NamespaceList)) {
     throw new Error('Expected argument of type fintekkers.services.lock_service.NamespaceList');
@@ -126,6 +148,30 @@ subscribeToLockUpdates: {
     responseSerialize: serialize_fintekkers_models_util_lock_NodeState,
     responseDeserialize: deserialize_fintekkers_models_util_lock_NodeState,
   },
+  // Create a namespace
+createNamespace: {
+    path: '/fintekkers.services.lock_service.Lock/CreateNamespace',
+    requestStream: false,
+    responseStream: false,
+    requestType: fintekkers_services_lock$service_lock_service_pb.CreateNamespaceRequest,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_fintekkers_services_lock_service_CreateNamespaceRequest,
+    requestDeserialize: deserialize_fintekkers_services_lock_service_CreateNamespaceRequest,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
+  },
+  // Create a partition
+createPartition: {
+    path: '/fintekkers.services.lock_service.Lock/CreatePartition',
+    requestStream: false,
+    responseStream: false,
+    requestType: fintekkers_services_lock$service_lock_service_pb.CreatePartitionRequest,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_fintekkers_services_lock_service_CreatePartitionRequest,
+    requestDeserialize: deserialize_fintekkers_services_lock_service_CreatePartitionRequest,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
+  },
   // Lists the possible namespaces
 listNamespaces: {
     path: '/fintekkers.services.lock_service.Lock/ListNamespaces',
@@ -159,6 +205,18 @@ getAllPartitionStatus: {
     responseType: fintekkers_services_lock$service_lock_service_pb.NodeStateList,
     requestSerialize: serialize_google_protobuf_Empty,
     requestDeserialize: deserialize_google_protobuf_Empty,
+    responseSerialize: serialize_fintekkers_services_lock_service_NodeStateList,
+    responseDeserialize: deserialize_fintekkers_services_lock_service_NodeStateList,
+  },
+  // Returns the current status of all nodes, across all namespaces and partitions.
+getAllPartitionStatusForNamespaces: {
+    path: '/fintekkers.services.lock_service.Lock/GetAllPartitionStatusForNamespaces',
+    requestStream: false,
+    responseStream: false,
+    requestType: fintekkers_services_lock$service_lock_service_pb.NamespaceList,
+    responseType: fintekkers_services_lock$service_lock_service_pb.NodeStateList,
+    requestSerialize: serialize_fintekkers_services_lock_service_NamespaceList,
+    requestDeserialize: deserialize_fintekkers_services_lock_service_NamespaceList,
     responseSerialize: serialize_fintekkers_services_lock_service_NodeStateList,
     responseDeserialize: deserialize_fintekkers_services_lock_service_NodeStateList,
   },

@@ -25,6 +25,15 @@ message NodeStateList {
     repeated fintekkers.models.util.lock.NodeState nodes = 1;
 }
 
+message CreateNamespaceRequest {
+    string name = 1;
+}
+
+message CreatePartitionRequest {
+    string name = 1;
+    int32 partition = 2;
+}
+
 service Lock {
     // Allows a Fintekkers service to claim the lock for a partition. 
     // See {fintekkers.request.util.lock.LockRequestProto} for details
@@ -35,6 +44,12 @@ service Lock {
     //they should first subscribe to lock updates, then query the G
     rpc SubscribeToLockUpdates (google.protobuf.Empty) returns (stream fintekkers.models.util.lock.NodeState);
 
+    //Create a namespace
+    rpc CreateNamespace (CreateNamespaceRequest) returns (google.protobuf.Empty);
+
+    //Create a partition
+    rpc CreatePartition (CreatePartitionRequest) returns (google.protobuf.Empty);
+
     //Lists the possible namespaces
     rpc ListNamespaces (google.protobuf.Empty) returns (NamespaceList);
 
@@ -43,6 +58,9 @@ service Lock {
 
     //Returns the current status of all nodes, across all namespaces and partitions.
     rpc GetAllPartitionStatus (google.protobuf.Empty) returns (NodeStateList);
+
+    //Returns the current status of all nodes, across all namespaces and partitions.
+    rpc GetAllPartitionStatusForNamespaces (NamespaceList) returns (NodeStateList);
 
     //In namespace / parition
     rpc GetPartitionStatus (fintekkers.models.util.lock.NodePartition) returns (fintekkers.models.util.lock.NodeState);
