@@ -1,17 +1,13 @@
 from typing import Generator
 
-from google.protobuf.timestamp_pb2 import Timestamp
 from google.protobuf.any_pb2 import Any
 from google.protobuf import wrappers_pb2 as wrappers
 
 from datetime import datetime
-from uuid import uuid4
 
-from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
 from fintekkers.models.position.position_filter_pb2 import PositionFilterProto
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry
 from fintekkers.models.position import field_pb2
-from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.requests.portfolio.create_portfolio_request_pb2 import (
     CreatePortfolioRequestProto,
@@ -33,7 +29,10 @@ from fintekkers.services.portfolio_service.portfolio_service_pb2_grpc import (
 
 from fintekkers.wrappers.models.portfolio import Portfolio
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
-from fintekkers.wrappers.requests.portfolio import QueryPortfolioRequest
+from fintekkers.wrappers.requests.portfolio import (
+    CreatePortfolioRequest,
+    QueryPortfolioRequest,
+)
 from fintekkers.wrappers.services.util.Environment import get_channel
 
 
@@ -69,18 +68,8 @@ class PortfolioService:
         yield Portfolio(response.portfolio_response)
 
     def create_portfolio(self, portfolio_name: str):
-        uuid_value = uuid4()
-        create_portfolio_request = CreatePortfolioRequestProto(
-            create_portfolio_input=PortfolioProto(
-                as_of=LocalTimestampProto(
-                    timestamp=Timestamp(), time_zone="America/New_York"
-                ),
-                is_link=False,
-                object_class="Portfolio",
-                portfolio_name=portfolio_name,
-                uuid=UUIDProto(raw_uuid=uuid_value.bytes),
-                version="0.0.1",
-            )
+        create_portfolio_request: CreatePortfolioRequestProto = (
+            CreatePortfolioRequest.create_portfolio_request(portfolio_name)
         )
 
         responses = self.create_or_update(create_portfolio_request)
