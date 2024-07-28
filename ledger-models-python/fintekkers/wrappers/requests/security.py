@@ -161,10 +161,12 @@ class QuerySecurityRequest:
 
             field_value = fields[field]
 
-            packed_value: Any = Any()
-            packed_value.Pack(msg=field_value)
-
-            entry = FieldMapEntry(field=field, field_value_packed=packed_value)
+            if isinstance(field_value, str):
+                entry = FieldMapEntry(field=field, string_value=field_value)
+            else:
+                packed_value: Any = Any()
+                packed_value.Pack(msg=field_value)
+                entry = FieldMapEntry(field=field, field_value_packed=packed_value)
 
             filters.append(entry)
 
