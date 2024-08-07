@@ -61,11 +61,8 @@ class PortfolioService:
 
     def create_or_update(
         self, request: CreatePortfolioRequestProto
-    ) -> Generator[Portfolio, None, None]:
-        response: CreatePortfolioResponseProto = self.stub.CreateOrUpdate(
-            request=request
-        )
-        yield Portfolio(response.portfolio_response)
+    ) -> CreatePortfolioResponseProto:
+        return self.stub.CreateOrUpdate(request)
 
     def create_portfolio(self, portfolio_name: str):
         create_portfolio_request: CreatePortfolioRequestProto = (
