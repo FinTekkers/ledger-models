@@ -5,6 +5,7 @@ from google.protobuf import wrappers_pb2 as wrappers
 
 from datetime import datetime
 
+from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
 from fintekkers.models.position.position_filter_pb2 import PositionFilterProto
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry
 from fintekkers.models.position import field_pb2
@@ -33,12 +34,13 @@ from fintekkers.wrappers.requests.portfolio import (
     CreatePortfolioRequest,
     QueryPortfolioRequest,
 )
-from fintekkers.wrappers.services.util.Environment import get_channel
+from fintekkers.wrappers.services.util.Environment import EnvConfig
 
 
 class PortfolioService:
     def __init__(self):
-        self.stub = PortfolioStub(get_channel())
+        print("PortfolioService connecting to: " + EnvConfig.api_url())
+        self.stub = PortfolioStub(EnvConfig.get_channel())
 
     def search(
         self, request: QueryPortfolioRequest
@@ -56,28 +58,44 @@ class PortfolioService:
         except Exception as e:
             print(e)
 
-        # This will send the cancel message to the server to kill the connection
-        responses.cancel()
+        # This will terminate the request but leave the TCP connection open
+        # responses
+
+        self.stub = PortfolioStub(EnvConfig.get_channel())
 
     def create_or_update(
         self, request: CreatePortfolioRequestProto
-    ) -> CreatePortfolioResponseProto:
+    ) -> Generator[Portfolio, None, None]:
+        self.stub = PortfolioStub(EnvConfig.get_channel())
         return self.stub.CreateOrUpdate(request)
 
-    def create_portfolio(self, portfolio_name: str):
+    def create_portfolio_by_name(self, portfolio_name: str) -> Portfolio:
+        """
+        Creates a new portfolio with the given portfolio name. Uniqueness
+        is defined by the UUID so if you call this multiple times with
+        the same value you will have multiple portfolios with the same
+        name but different UUIDs.
+        """
         create_portfolio_request: CreatePortfolioRequestProto = (
-            CreatePortfolioRequest.create_portfolio_request(portfolio_name)
+            CreatePortfolioRequest.create_portfolio_request_from_name(portfolio_name)
         )
 
         responses = self.create_or_update(create_portfolio_request)
 
-        response = None
-        for _response in responses:
-            response = _response
+        if len(responses.portfolio_response) > 0:
+            for portfolio in responses.portfolio_response:
+                return Portfolio(portfolio)
 
-        return response
+        else:
+            print("Could not create portfolio. You should call the validate API to check its a valid request")
+            return None
 
-    def get_or_create_portfolio(self, portfolio_name: str):
+    def get_or_create_portfolio_by_name(self, portfolio_name: str) -> Portfolio:
+        """
+        Returns a single portfolio if it exists, and if it doesn't exist then it is
+        created. This does not guarantee that there is only one portfolio with that
+        name in the system, but is a helper function that assumes that is the case.
+        """
         def wrap_string_to_any(my_string: str):
             my_any = Any()
             my_any.Pack(wrappers.StringValue(value=my_string))
@@ -103,11 +121,12 @@ class PortfolioService:
         portfolios: list[Portfolio] = []
 
         for portfolio in responses:
-            portfolios.append(portfolio)
+            portfolio:PortfolioProto
+            portfolios.append(Portfolio(portfolio))
 
         number_found = len(portfolios)
 
         if number_found == 0:
-            return self.create_portfolio(portfolio_name=portfolio_name)
+            return self.create_portfolio_by_name(portfolio_name=portfolio_name)
         else:
             return portfolios[0]

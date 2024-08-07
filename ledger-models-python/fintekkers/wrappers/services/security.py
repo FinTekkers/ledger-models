@@ -13,12 +13,13 @@ from fintekkers.wrappers.requests.security import (
     QuerySecurityRequest,
     CreateSecurityRequest,
 )
-from fintekkers.wrappers.services.util.Environment import get_channel
+from fintekkers.wrappers.services.util.Environment import EnvConfig
 
 
 class SecurityService:
     def __init__(self):
-        self.stub = SecurityStub(get_channel())
+        print("SecurityService connecting to: " + EnvConfig.api_url())
+        self.stub = SecurityStub(EnvConfig.get_channel())
 
     def search(self, request: QuerySecurityRequest) -> Generator[Security, None, None]:
         responses = self.stub.Search(request=request.proto)
