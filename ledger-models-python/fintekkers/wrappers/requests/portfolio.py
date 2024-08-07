@@ -1,6 +1,7 @@
 from google.protobuf.any_pb2 import Any
 from datetime import datetime
 
+from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
 from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.position.position_filter_pb2 import PositionFilterProto
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry
@@ -19,11 +20,19 @@ from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
 class CreatePortfolioRequest:
     @staticmethod
-    def create_portfolio_request(
+    def create_portfolio_request_from_name(
         portfolio_name: str,
     ):
         return CreatePortfolioRequestProto(
-            create_portfolio_input=Portfolio.create_portfolio(portfolio_name)
+            create_portfolio_input=Portfolio.create_portfolio(portfolio_name).proto
+        )
+
+    @staticmethod
+    def create_portfolio_request_from_proto(
+        portfolio: PortfolioProto,
+    ):
+        return CreatePortfolioRequestProto(
+            create_portfolio_input=portfolio
         )
 
 
