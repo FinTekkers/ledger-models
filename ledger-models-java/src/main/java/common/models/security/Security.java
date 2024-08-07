@@ -104,7 +104,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
             case TENOR, ADJUSTED_TENOR -> Tenor.UNKNOWN_TENOR;
             case SECURITY_DESCRIPTION -> getDescription();
             case MATURITY_DATE -> LocalDate.of(2999, 12, 31);
-            case ISSUE_DATE -> this instanceof BondSecurity ? ((BondSecurity)this).getIssueDate() : getAsOf();
+            case ISSUE_DATE -> this instanceof BondSecurity ? ((BondSecurity)this).getIssueDate() : LocalDate.of(1900, 1, 1);
             case CASH_IMPACT_SECURITY -> getSettlementCurrency();
 
             default -> throw new RuntimeException(String.format("Field not found %s", field));
