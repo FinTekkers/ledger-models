@@ -27,7 +27,9 @@ var ZonedDateTime = /** @class */ (function () {
         return dateTime;
     };
     ZonedDateTime.prototype.toString = function () {
-        return this.toDateTime().toString();
+        var dateTime = this.toDateTime();
+        var date = new Date(dateTime.year, dateTime.month - 1, dateTime.day, dateTime.hour, dateTime.minute, dateTime.second);
+        return date.toISOString().slice(0, 19).replace(/-/g, '/').replace('T', ' ');
     };
     ZonedDateTime.prototype.toProto = function () {
         return this.proto;

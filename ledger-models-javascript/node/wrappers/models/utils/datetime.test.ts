@@ -5,11 +5,24 @@ import { FieldMapEntry } from '../../../fintekkers/models/position/position_util
 import { Position } from "../position/position";
 import { ZonedDateTime } from './datetime';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
+import {LocalTimestampProto} from "../../../fintekkers/models/util/local_timestamp_pb";
+import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb.js';
+// import Timestamp from "google-protobuf/google/protobuf/timestamp_pb";
 
 test('test the date time', async () => {
+    const localTimestampProto = new LocalTimestampProto();
+    const timestamp = new Timestamp();
+    timestamp.setSeconds(1643723400); // Set the seconds
+    timestamp.setNanos(0); // Set the nanoseconds
+    localTimestampProto.setTimestamp(timestamp);
 
-    const now = ZonedDateTime.now();
-    expect(now.toDateTime().toString()).toBe(now.toString());
+// Set the time zone
+    localTimestampProto.setTimeZone('America/New_York');
+    const now = new ZonedDateTime(localTimestampProto);
+
+    let nowTimestampString = now.toDateTime().toString();
+    expect(nowTimestampString).toContain("2022-02-01");
+    expect(nowTimestampString).toContain("08:50:00");
 
     const nowProto = now.toProto();
     const nowPacked = new Any();

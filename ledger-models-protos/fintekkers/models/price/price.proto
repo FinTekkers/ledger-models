@@ -27,4 +27,19 @@ message PriceProto {
   fintekkers.models.util.DecimalValueProto price = 10;
   fintekkers.models.security.SecurityProto security = 11;
 
+  /*
+  TODO: Price types:
+  1/ Absolute prices, such as equity prices; futures; fixed rate quotes; etc
+  2/ Spread prices, such as bond spreads.
+    In the case of spread prices we have to consider whether the security conveys the spread instruments, or whether
+    its embedded in the price. Using interest rate sawps as an example. In the US the short end of the USD curve is
+    3 month futures. MAR/JUN/SEP/DEC, and the 6 month rate is based on spot, so the 6 month spread is the spread
+    from the 3 month point in 6 months to the 6 month rate. TODO: Check that is correct.
+        In this case, each point on the curve should be its own security, with its own price. Concepts such as
+        curves would have to be aware of the points in the curve.
+
+  Price unit: local currency; %; bps; anyhing else?
+
+
+    */
 }
