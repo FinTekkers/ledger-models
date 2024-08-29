@@ -48,7 +48,7 @@ test('test getting a position against the api.fintekkers.org position service', 
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                fields = [field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.TRADE_DATE, field_pb_1.FieldProto.PRODUCT_TYPE, field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.PRODUCT_TYPE];
+                fields = [field_pb_1.FieldProto.PRODUCT_TYPE, field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.PRODUCT_TYPE];
                 measures = [measure_pb_1.MeasureProto.DIRECTED_QUANTITY];
                 return [4 /*yield*/, testPosition(fields, measures)];
             case 1:

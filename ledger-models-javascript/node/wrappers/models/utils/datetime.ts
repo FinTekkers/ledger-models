@@ -1,6 +1,6 @@
-import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
-import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
-import { DateTime } from 'luxon';
+import {LocalTimestampProto} from '../../../fintekkers/models/util/local_timestamp_pb';
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {DateTime} from 'luxon';
 
 class ZonedDateTime {
   private proto: LocalTimestampProto;
@@ -34,7 +34,9 @@ class ZonedDateTime {
   }
 
   toString(): string {
-    return this.toDateTime().toString();
+    const dateTime = this.toDateTime();
+    const date = new Date(dateTime.year, dateTime.month - 1, dateTime.day, dateTime.hour, dateTime.minute, dateTime.second);
+    return date.toISOString().slice(0, 19).replace(/-/g, '/').replace('T', ' ');
   }
 
   toProto(): LocalTimestampProto {

@@ -18,6 +18,7 @@ impl AsRef<LocalTimestampProto> for LocalTimestampWrapper {
     }
 }
 
+
 impl LocalTimestampWrapper {
     pub fn new(proto: LocalTimestampProto) -> Self {
         LocalTimestampWrapper { proto }
@@ -38,6 +39,7 @@ impl LocalTimestampWrapper {
         Self::from_datetime(now, time_zone_str)
     }
 
+
     pub fn from_utc_datetime(now: NaiveDateTime) -> Self {
         Self::from_datetime(now, "UTC".to_string())
     }
@@ -57,6 +59,18 @@ impl LocalTimestampWrapper {
                 time_zone: time_zone_str,
             },
         }
+    }
+}
+
+
+impl From<&LocalTimestampWrapper> for NaiveDateTime {
+    fn from(wrapper: &LocalTimestampWrapper) -> NaiveDateTime {
+        let timestamp = wrapper.proto.timestamp.as_ref().unwrap();
+
+        let naive_date_time =
+            NaiveDateTime::from_timestamp_opt(timestamp.seconds, timestamp.nanos as u32).unwrap();
+
+        naive_date_time
     }
 }
 

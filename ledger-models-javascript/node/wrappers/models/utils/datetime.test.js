@@ -42,11 +42,23 @@ var position_util_pb_1 = require("../../../fintekkers/models/position/position_u
 var position_1 = require("../position/position");
 var datetime_1 = require("./datetime");
 var any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
+var local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
+var timestamp_pb_js_1 = require("google-protobuf/google/protobuf/timestamp_pb.js");
+// import Timestamp from "google-protobuf/google/protobuf/timestamp_pb";
 test('test the date time', function () { return __awaiter(void 0, void 0, void 0, function () {
-    var now, nowProto, nowPacked, position, field1, pos, timestampStr;
+    var localTimestampProto, timestamp, now, nowTimestampString, nowProto, nowPacked, position, field1, pos, timestampStr;
     return __generator(this, function (_a) {
-        now = datetime_1.ZonedDateTime.now();
-        expect(now.toDateTime().toString()).toBe(now.toString());
+        localTimestampProto = new local_timestamp_pb_1.LocalTimestampProto();
+        timestamp = new timestamp_pb_js_1.Timestamp();
+        timestamp.setSeconds(1643723400); // Set the seconds
+        timestamp.setNanos(0); // Set the nanoseconds
+        localTimestampProto.setTimestamp(timestamp);
+        // Set the time zone
+        localTimestampProto.setTimeZone('America/New_York');
+        now = new datetime_1.ZonedDateTime(localTimestampProto);
+        nowTimestampString = now.toDateTime().toString();
+        expect(nowTimestampString).toContain("2022-02-01");
+        expect(nowTimestampString).toContain("08:50:00");
         nowProto = now.toProto();
         nowPacked = new any_pb_1.Any();
         nowPacked.setTypeUrl("DUMMYTYPE_DATE");

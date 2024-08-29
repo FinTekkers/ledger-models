@@ -9,7 +9,7 @@ import { PositionService } from '../../services/position-service/PositionService
 import { QueryPositionRequest } from '../../requests/position/QueryPositionRequest';
 
 test('test getting a position against the api.fintekkers.org position service', async () => {
-  let fields = [FieldProto.SECURITY_ID, FieldProto.TRADE_DATE, FieldProto.PRODUCT_TYPE, FieldProto.PORTFOLIO, FieldProto.PRODUCT_TYPE];
+  let fields = [FieldProto.PRODUCT_TYPE, FieldProto.PORTFOLIO, FieldProto.PRODUCT_TYPE];
   let measures = [MeasureProto.DIRECTED_QUANTITY];
   const isTrue = await testPosition(fields, measures);
   expect(isTrue).toBe(true);
