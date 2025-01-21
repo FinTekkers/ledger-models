@@ -65,7 +65,7 @@ impl LocalTimestampWrapper {
 
 impl From<&LocalTimestampWrapper> for NaiveDateTime {
     fn from(wrapper: &LocalTimestampWrapper) -> NaiveDateTime {
-        let timestamp = wrapper.proto.timestamp.as_ref().unwrap();
+        let timestamp = wrapper.proto.timestamp.as_ref().unwrap().clone();
 
         let naive_date_time =
             NaiveDateTime::from_timestamp_opt(timestamp.seconds, timestamp.nanos as u32).unwrap();
@@ -76,7 +76,7 @@ impl From<&LocalTimestampWrapper> for NaiveDateTime {
 
 impl From<&LocalTimestampWrapper> for DateTime<Tz> {
     fn from(wrapper: &LocalTimestampWrapper) -> DateTime<Tz> {
-        let timestamp = wrapper.proto.timestamp.as_ref().unwrap();
+        let timestamp = wrapper.proto.timestamp.as_ref().unwrap().clone();
 
         let naive_date_time =
             NaiveDateTime::from_timestamp_opt(timestamp.seconds, timestamp.nanos as u32).unwrap();
@@ -90,7 +90,7 @@ impl From<&LocalTimestampWrapper> for DateTime<Tz> {
 
 impl From<&LocalTimestampWrapper> for DateTime<Utc> {
     fn from(wrapper: &LocalTimestampWrapper) -> DateTime<Utc> {
-        let timestamp = wrapper.proto.timestamp.as_ref().unwrap();
+        let timestamp = wrapper.proto.timestamp.as_ref().unwrap().clone();
 
         Utc.timestamp_opt(timestamp.seconds, timestamp.nanos as u32)
             .unwrap()
@@ -174,7 +174,7 @@ mod test {
     #[test]
     fn test_date_from_naive_date() {
         let date_time: DateTime<Utc> = Utc::now();
-        let wrapper = LocalTimestampWrapper::from_utc_datetime(date_time);
+        let wrapper = LocalTimestampWrapper::from_utc_datetime(date_time.naive_utc());
 
         //Check no timezone specified uses UTC
         let wrapper_seconds = wrapper.proto.timestamp.unwrap().seconds;
@@ -182,7 +182,7 @@ mod test {
         assert_eq!(date_time.timezone().to_string(), wrapper.proto.time_zone);
 
         //Check explicit UTC timezone specified uses UTC
-        let utc_wrapper = LocalTimestampWrapper::from_datetime(date_time, "UTC".to_string());
+        let utc_wrapper = LocalTimestampWrapper::from_datetime(date_time.naive_utc(), "UTC".to_string());
 
         let utc_wrapper_seconds = utc_wrapper.proto.timestamp.unwrap().seconds;
         assert_eq!(date_time.timestamp(), utc_wrapper_seconds);
@@ -193,7 +193,7 @@ mod test {
 
         //Check explicit NY timezone specified doesn't use UTC
         let ny_wrapper =
-            LocalTimestampWrapper::from_datetime(date_time, "America/New_York".to_string());
+            LocalTimestampWrapper::from_datetime(date_time.naive_local(), "America/New_York".to_string());
 
         let ny_wrapper_seconds = ny_wrapper.proto.timestamp.unwrap().seconds;
         assert_eq!(date_time.timestamp(), ny_wrapper_seconds);
@@ -215,4 +215,5 @@ mod test {
         let string = now.to_string();
         println!("{}", string);
     }
+
 }
