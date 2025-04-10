@@ -7,13 +7,13 @@ from typing import ClassVar as _ClassVar, Mapping as _Mapping, Optional as _Opti
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class CreateTransactionResponseProto(_message.Message):
-    __slots__ = ["create_transaction_request", "object_class", "transaction_response", "version"]
-    CREATE_TRANSACTION_REQUEST_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("object_class", "version", "create_transaction_request", "transaction_response")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
-    TRANSACTION_RESPONSE_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
-    create_transaction_request: _create_transaction_request_pb2.CreateTransactionRequestProto
+    CREATE_TRANSACTION_REQUEST_FIELD_NUMBER: _ClassVar[int]
+    TRANSACTION_RESPONSE_FIELD_NUMBER: _ClassVar[int]
     object_class: str
-    transaction_response: _transaction_pb2.TransactionProto
     version: str
+    create_transaction_request: _create_transaction_request_pb2.CreateTransactionRequestProto
+    transaction_response: _transaction_pb2.TransactionProto
     def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., create_transaction_request: _Optional[_Union[_create_transaction_request_pb2.CreateTransactionRequestProto, _Mapping]] = ..., transaction_response: _Optional[_Union[_transaction_pb2.TransactionProto, _Mapping]] = ...) -> None: ...

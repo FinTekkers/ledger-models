@@ -10,7 +10,9 @@ import * as fintekkers_requests_security_query_security_request_pb from "../../.
 import * as fintekkers_requests_security_query_security_response_pb from "../../../fintekkers/requests/security/query_security_response_pb";
 import * as fintekkers_requests_security_create_security_request_pb from "../../../fintekkers/requests/security/create_security_request_pb";
 import * as fintekkers_requests_security_create_security_response_pb from "../../../fintekkers/requests/security/create_security_response_pb";
+import * as fintekkers_requests_security_get_fields_response_pb from "../../../fintekkers/requests/security/get_fields_response_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
+import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 
 interface ISecurityService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
     createOrUpdate: ISecurityService_ICreateOrUpdate;
@@ -19,6 +21,7 @@ interface ISecurityService extends grpc.ServiceDefinition<grpc.UntypedServiceImp
     listIds: ISecurityService_IListIds;
     validateCreateOrUpdate: ISecurityService_IValidateCreateOrUpdate;
     validateQueryRequest: ISecurityService_IValidateQueryRequest;
+    getFields: ISecurityService_IGetFields;
 }
 
 interface ISecurityService_ICreateOrUpdate extends grpc.MethodDefinition<fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto, fintekkers_requests_security_create_security_response_pb.CreateSecurityResponseProto> {
@@ -75,6 +78,15 @@ interface ISecurityService_IValidateQueryRequest extends grpc.MethodDefinition<f
     responseSerialize: grpc.serialize<fintekkers_requests_util_errors_summary_pb.SummaryProto>;
     responseDeserialize: grpc.deserialize<fintekkers_requests_util_errors_summary_pb.SummaryProto>;
 }
+interface ISecurityService_IGetFields extends grpc.MethodDefinition<google_protobuf_empty_pb.Empty, fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto> {
+    path: "/fintekkers.services.security_service.Security/GetFields";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<google_protobuf_empty_pb.Empty>;
+    requestDeserialize: grpc.deserialize<google_protobuf_empty_pb.Empty>;
+    responseSerialize: grpc.serialize<fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto>;
+    responseDeserialize: grpc.deserialize<fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto>;
+}
 
 export const SecurityService: ISecurityService;
 
@@ -85,6 +97,7 @@ export interface ISecurityServer extends grpc.UntypedServiceImplementation {
     listIds: grpc.handleUnaryCall<fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto>;
     validateCreateOrUpdate: grpc.handleUnaryCall<fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto>;
     validateQueryRequest: grpc.handleUnaryCall<fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto>;
+    getFields: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto>;
 }
 
 export interface ISecurityClient {
@@ -105,6 +118,9 @@ export interface ISecurityClient {
     validateQueryRequest(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     validateQueryRequest(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     validateQueryRequest(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
+    getFields(request: google_protobuf_empty_pb.Empty, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto) => void): grpc.ClientUnaryCall;
+    getFields(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto) => void): grpc.ClientUnaryCall;
+    getFields(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto) => void): grpc.ClientUnaryCall;
 }
 
 export class SecurityClient extends grpc.Client implements ISecurityClient {
@@ -126,4 +142,7 @@ export class SecurityClient extends grpc.Client implements ISecurityClient {
     public validateQueryRequest(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     public validateQueryRequest(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     public validateQueryRequest(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
+    public getFields(request: google_protobuf_empty_pb.Empty, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto) => void): grpc.ClientUnaryCall;
+    public getFields(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto) => void): grpc.ClientUnaryCall;
+    public getFields(request: google_protobuf_empty_pb.Empty, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto) => void): grpc.ClientUnaryCall;
 }

@@ -2,6 +2,25 @@
 # This is because we don't want to publish a version of the library 
 # that doesn't pass all tests.
 
+# Create and setup virtual environment if it doesn't exist
+if [ ! -d "venv" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install grpcio-tools
+else
+    source venv/bin/activate
+fi
+
+# Function to cleanup on exit
+cleanup() {
+    echo "Cleaning up..."
+    deactivate
+    exit 0
+}
+
+# Set up trap to catch script termination
+trap cleanup EXIT
 
 #########################################
 ######### RUST PROTO GENERATION #########
@@ -45,6 +64,4 @@ $(find . -iname "*.proto")
 ###########################################
 
 echo "generating python protos"
-#pip3 install grpcio
-#pip3 install grpcio-tools
 python3 -m grpc_tools.protoc -I=. --python_out=../ledger-models-python --pyi_out=../ledger-models-python --grpc_python_out=../ledger-models-python $(find . -iname "*.proto")

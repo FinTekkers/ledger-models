@@ -9,15 +9,15 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class QuerySecurityRequestProto(_message.Message):
-    __slots__ = ["as_of", "object_class", "search_security_input", "uuIds", "version"]
-    AS_OF_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("object_class", "version", "uuIds", "search_security_input", "as_of")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
-    SEARCH_SECURITY_INPUT_FIELD_NUMBER: _ClassVar[int]
-    UUIDS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
-    as_of: _local_timestamp_pb2.LocalTimestampProto
+    UUIDS_FIELD_NUMBER: _ClassVar[int]
+    SEARCH_SECURITY_INPUT_FIELD_NUMBER: _ClassVar[int]
+    AS_OF_FIELD_NUMBER: _ClassVar[int]
     object_class: str
-    search_security_input: _position_filter_pb2.PositionFilterProto
-    uuIds: _containers.RepeatedCompositeFieldContainer[_uuid_pb2.UUIDProto]
     version: str
+    uuIds: _containers.RepeatedCompositeFieldContainer[_uuid_pb2.UUIDProto]
+    search_security_input: _position_filter_pb2.PositionFilterProto
+    as_of: _local_timestamp_pb2.LocalTimestampProto
     def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuIds: _Optional[_Iterable[_Union[_uuid_pb2.UUIDProto, _Mapping]]] = ..., search_security_input: _Optional[_Union[_position_filter_pb2.PositionFilterProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ...) -> None: ...

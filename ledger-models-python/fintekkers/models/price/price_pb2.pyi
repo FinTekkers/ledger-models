@@ -9,23 +9,23 @@ from typing import ClassVar as _ClassVar, Mapping as _Mapping, Optional as _Opti
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class PriceProto(_message.Message):
-    __slots__ = ["as_of", "is_link", "object_class", "price", "security", "uuid", "valid_from", "valid_to", "version"]
+    __slots__ = ("object_class", "version", "uuid", "as_of", "is_link", "valid_from", "valid_to", "price", "security")
+    OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
+    VERSION_FIELD_NUMBER: _ClassVar[int]
+    UUID_FIELD_NUMBER: _ClassVar[int]
     AS_OF_FIELD_NUMBER: _ClassVar[int]
     IS_LINK_FIELD_NUMBER: _ClassVar[int]
-    OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
-    PRICE_FIELD_NUMBER: _ClassVar[int]
-    SECURITY_FIELD_NUMBER: _ClassVar[int]
-    UUID_FIELD_NUMBER: _ClassVar[int]
     VALID_FROM_FIELD_NUMBER: _ClassVar[int]
     VALID_TO_FIELD_NUMBER: _ClassVar[int]
-    VERSION_FIELD_NUMBER: _ClassVar[int]
+    PRICE_FIELD_NUMBER: _ClassVar[int]
+    SECURITY_FIELD_NUMBER: _ClassVar[int]
+    object_class: str
+    version: str
+    uuid: _uuid_pb2.UUIDProto
     as_of: _local_timestamp_pb2.LocalTimestampProto
     is_link: bool
-    object_class: str
-    price: _decimal_value_pb2.DecimalValueProto
-    security: _security_pb2.SecurityProto
-    uuid: _uuid_pb2.UUIDProto
     valid_from: _local_timestamp_pb2.LocalTimestampProto
     valid_to: _local_timestamp_pb2.LocalTimestampProto
-    version: str
+    price: _decimal_value_pb2.DecimalValueProto
+    security: _security_pb2.SecurityProto
     def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ...) -> None: ...

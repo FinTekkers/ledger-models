@@ -70,6 +70,14 @@ public final class SecurityService {
           fintekkers.requests.security.QuerySecurityRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done);
 
+      /**
+       * <code>rpc GetFields(.google.protobuf.Empty) returns (.fintekkers.requests.security.GetFieldsResponseProto);</code>
+       */
+      public abstract void getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldsResponseProto> done);
+
     }
 
     public static com.google.protobuf.Service newReflectiveService(
@@ -123,6 +131,14 @@ public final class SecurityService {
           impl.validateQueryRequest(controller, request, done);
         }
 
+        @java.lang.Override
+        public  void getFields(
+            com.google.protobuf.RpcController controller,
+            com.google.protobuf.Empty request,
+            com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldsResponseProto> done) {
+          impl.getFields(controller, request, done);
+        }
+
       };
     }
 
@@ -157,6 +173,8 @@ public final class SecurityService {
               return impl.validateCreateOrUpdate(controller, (fintekkers.requests.security.CreateSecurityRequestProto)request);
             case 5:
               return impl.validateQueryRequest(controller, (fintekkers.requests.security.QuerySecurityRequestProto)request);
+            case 6:
+              return impl.getFields(controller, (com.google.protobuf.Empty)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -183,6 +201,8 @@ public final class SecurityService {
               return fintekkers.requests.security.CreateSecurityRequestProto.getDefaultInstance();
             case 5:
               return fintekkers.requests.security.QuerySecurityRequestProto.getDefaultInstance();
+            case 6:
+              return com.google.protobuf.Empty.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -209,6 +229,8 @@ public final class SecurityService {
               return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
             case 5:
               return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+            case 6:
+              return fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -265,6 +287,14 @@ public final class SecurityService {
         fintekkers.requests.security.QuerySecurityRequestProto request,
         com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done);
 
+    /**
+     * <code>rpc GetFields(.google.protobuf.Empty) returns (.fintekkers.requests.security.GetFieldsResponseProto);</code>
+     */
+    public abstract void getFields(
+        com.google.protobuf.RpcController controller,
+        com.google.protobuf.Empty request,
+        com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldsResponseProto> done);
+
     public static final
         com.google.protobuf.Descriptors.ServiceDescriptor
         getDescriptor() {
@@ -317,6 +347,11 @@ public final class SecurityService {
             com.google.protobuf.RpcUtil.<fintekkers.requests.util.errors.Summary.SummaryProto>specializeCallback(
               done));
           return;
+        case 6:
+          this.getFields(controller, (com.google.protobuf.Empty)request,
+            com.google.protobuf.RpcUtil.<fintekkers.requests.security.GetFieldsResponseProto>specializeCallback(
+              done));
+          return;
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -343,6 +378,8 @@ public final class SecurityService {
           return fintekkers.requests.security.CreateSecurityRequestProto.getDefaultInstance();
         case 5:
           return fintekkers.requests.security.QuerySecurityRequestProto.getDefaultInstance();
+        case 6:
+          return com.google.protobuf.Empty.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -369,6 +406,8 @@ public final class SecurityService {
           return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
         case 5:
           return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+        case 6:
+          return fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -479,6 +518,21 @@ public final class SecurityService {
             fintekkers.requests.util.errors.Summary.SummaryProto.class,
             fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance()));
       }
+
+      public  void getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldsResponseProto> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(6),
+          controller,
+          request,
+          fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            fintekkers.requests.security.GetFieldsResponseProto.class,
+            fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance()));
+      }
     }
 
     public static BlockingInterface newBlockingStub(
@@ -515,6 +569,11 @@ public final class SecurityService {
       public fintekkers.requests.util.errors.Summary.SummaryProto validateQueryRequest(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.security.QuerySecurityRequestProto request)
+          throws com.google.protobuf.ServiceException;
+
+      public fintekkers.requests.security.GetFieldsResponseProto getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request)
           throws com.google.protobuf.ServiceException;
     }
 
@@ -596,6 +655,18 @@ public final class SecurityService {
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance());
       }
 
+
+      public fintekkers.requests.security.GetFieldsResponseProto getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request)
+          throws com.google.protobuf.ServiceException {
+        return (fintekkers.requests.security.GetFieldsResponseProto) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(6),
+          controller,
+          request,
+          fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance());
+      }
+
     }
 
     // @@protoc_insertion_point(class_scope:fintekkers.services.security_service.Security)
@@ -618,28 +689,33 @@ public final class SecurityService {
       "ity_response.proto\032:fintekkers/requests/" +
       "security/create_security_request.proto\032;" +
       "fintekkers/requests/security/create_secu" +
-      "rity_response.proto\032-fintekkers/requests" +
-      "/util/errors/summary.proto2\222\006\n\010Security\022" +
-      "\205\001\n\016CreateOrUpdate\0228.fintekkers.requests" +
-      ".security.CreateSecurityRequestProto\0329.f" +
-      "intekkers.requests.security.CreateSecuri" +
-      "tyResponseProto\022}\n\010GetByIds\0227.fintekkers" +
-      ".requests.security.QuerySecurityRequestP" +
-      "roto\0328.fintekkers.requests.security.Quer" +
-      "ySecurityResponseProto\022}\n\006Search\0227.finte" +
+      "rity_response.proto\0326fintekkers/requests" +
+      "/security/get_fields_response.proto\032-fin" +
+      "tekkers/requests/util/errors/summary.pro" +
+      "to\032\033google/protobuf/empty.proto2\355\006\n\010Secu" +
+      "rity\022\205\001\n\016CreateOrUpdate\0228.fintekkers.req" +
+      "uests.security.CreateSecurityRequestProt" +
+      "o\0329.fintekkers.requests.security.CreateS" +
+      "ecurityResponseProto\022}\n\010GetByIds\0227.finte" +
       "kkers.requests.security.QuerySecurityReq" +
       "uestProto\0328.fintekkers.requests.security" +
-      ".QuerySecurityResponseProto0\001\022|\n\007ListIds" +
-      "\0227.fintekkers.requests.security.QuerySec" +
-      "urityRequestProto\0328.fintekkers.requests." +
-      "security.QuerySecurityResponseProto\022\201\001\n\026" +
-      "ValidateCreateOrUpdate\0228.fintekkers.requ" +
-      "ests.security.CreateSecurityRequestProto" +
-      "\032-.fintekkers.requests.util.errors.Summa" +
-      "ryProto\022~\n\024ValidateQueryRequest\0227.fintek" +
-      "kers.requests.security.QuerySecurityRequ" +
-      "estProto\032-.fintekkers.requests.util.erro" +
-      "rs.SummaryProtoB\006\210\001\001\220\001\001b\006proto3"
+      ".QuerySecurityResponseProto\022}\n\006Search\0227." +
+      "fintekkers.requests.security.QuerySecuri" +
+      "tyRequestProto\0328.fintekkers.requests.sec" +
+      "urity.QuerySecurityResponseProto0\001\022|\n\007Li" +
+      "stIds\0227.fintekkers.requests.security.Que" +
+      "rySecurityRequestProto\0328.fintekkers.requ" +
+      "ests.security.QuerySecurityResponseProto" +
+      "\022\201\001\n\026ValidateCreateOrUpdate\0228.fintekkers" +
+      ".requests.security.CreateSecurityRequest" +
+      "Proto\032-.fintekkers.requests.util.errors." +
+      "SummaryProto\022~\n\024ValidateQueryRequest\0227.f" +
+      "intekkers.requests.security.QuerySecurit" +
+      "yRequestProto\032-.fintekkers.requests.util" +
+      ".errors.SummaryProto\022Y\n\tGetFields\022\026.goog" +
+      "le.protobuf.Empty\0324.fintekkers.requests." +
+      "security.GetFieldsResponseProtoB\006\210\001\001\220\001\001b" +
+      "\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -648,13 +724,17 @@ public final class SecurityService {
           fintekkers.requests.security.QuerySecurityResponseProtos.getDescriptor(),
           fintekkers.requests.security.CreateSecurityRequestProtos.getDescriptor(),
           fintekkers.requests.security.CreateSecurityResponseProtos.getDescriptor(),
+          fintekkers.requests.security.GetFieldsResponseProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
+          com.google.protobuf.EmptyProto.getDescriptor(),
         });
     fintekkers.requests.security.QuerySecurityRequestProtos.getDescriptor();
     fintekkers.requests.security.QuerySecurityResponseProtos.getDescriptor();
     fintekkers.requests.security.CreateSecurityRequestProtos.getDescriptor();
     fintekkers.requests.security.CreateSecurityResponseProtos.getDescriptor();
+    fintekkers.requests.security.GetFieldsResponseProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();
+    com.google.protobuf.EmptyProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

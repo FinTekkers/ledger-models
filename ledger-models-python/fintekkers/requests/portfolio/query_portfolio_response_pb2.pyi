@@ -8,13 +8,13 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class QueryPortfolioResponseProto(_message.Message):
-    __slots__ = ["object_class", "portfolio_response", "query_portfolio_request", "version"]
+    __slots__ = ("object_class", "version", "query_portfolio_request", "portfolio_response")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
-    PORTFOLIO_RESPONSE_FIELD_NUMBER: _ClassVar[int]
-    QUERY_PORTFOLIO_REQUEST_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
+    QUERY_PORTFOLIO_REQUEST_FIELD_NUMBER: _ClassVar[int]
+    PORTFOLIO_RESPONSE_FIELD_NUMBER: _ClassVar[int]
     object_class: str
-    portfolio_response: _containers.RepeatedCompositeFieldContainer[_portfolio_pb2.PortfolioProto]
-    query_portfolio_request: _query_portfolio_request_pb2.QueryPortfolioRequestProto
     version: str
+    query_portfolio_request: _query_portfolio_request_pb2.QueryPortfolioRequestProto
+    portfolio_response: _containers.RepeatedCompositeFieldContainer[_portfolio_pb2.PortfolioProto]
     def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., query_portfolio_request: _Optional[_Union[_query_portfolio_request_pb2.QueryPortfolioRequestProto, _Mapping]] = ..., portfolio_response: _Optional[_Iterable[_Union[_portfolio_pb2.PortfolioProto, _Mapping]]] = ...) -> None: ...

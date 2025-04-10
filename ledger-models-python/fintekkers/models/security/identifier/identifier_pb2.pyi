@@ -6,13 +6,13 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class IdentifierProto(_message.Message):
-    __slots__ = ["identifier_type", "identifier_value", "object_class", "version"]
-    IDENTIFIER_TYPE_FIELD_NUMBER: _ClassVar[int]
-    IDENTIFIER_VALUE_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("object_class", "version", "identifier_value", "identifier_type")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
-    identifier_type: _identifier_type_pb2.IdentifierTypeProto
-    identifier_value: str
+    IDENTIFIER_VALUE_FIELD_NUMBER: _ClassVar[int]
+    IDENTIFIER_TYPE_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
+    identifier_value: str
+    identifier_type: _identifier_type_pb2.IdentifierTypeProto
     def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., identifier_value: _Optional[str] = ..., identifier_type: _Optional[_Union[_identifier_type_pb2.IdentifierTypeProto, str]] = ...) -> None: ...
