@@ -201,6 +201,37 @@ public final class SecurityGrpc {
     return getValidateQueryRequestMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<com.google.protobuf.Empty,
+      fintekkers.requests.security.GetFieldsResponseProto> getGetFieldsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetFields",
+      requestType = com.google.protobuf.Empty.class,
+      responseType = fintekkers.requests.security.GetFieldsResponseProto.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.google.protobuf.Empty,
+      fintekkers.requests.security.GetFieldsResponseProto> getGetFieldsMethod() {
+    io.grpc.MethodDescriptor<com.google.protobuf.Empty, fintekkers.requests.security.GetFieldsResponseProto> getGetFieldsMethod;
+    if ((getGetFieldsMethod = SecurityGrpc.getGetFieldsMethod) == null) {
+      synchronized (SecurityGrpc.class) {
+        if ((getGetFieldsMethod = SecurityGrpc.getGetFieldsMethod) == null) {
+          SecurityGrpc.getGetFieldsMethod = getGetFieldsMethod =
+              io.grpc.MethodDescriptor.<com.google.protobuf.Empty, fintekkers.requests.security.GetFieldsResponseProto>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetFields"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.google.protobuf.Empty.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance()))
+              .setSchemaDescriptor(new SecurityMethodDescriptorSupplier("GetFields"))
+              .build();
+        }
+      }
+    }
+    return getGetFieldsMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -291,6 +322,13 @@ public final class SecurityGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getValidateQueryRequestMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void getFields(com.google.protobuf.Empty request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldsResponseProto> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetFieldsMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -335,6 +373,13 @@ public final class SecurityGrpc {
                 fintekkers.requests.security.QuerySecurityRequestProto,
                 fintekkers.requests.util.errors.Summary.SummaryProto>(
                   this, METHODID_VALIDATE_QUERY_REQUEST)))
+          .addMethod(
+            getGetFieldsMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                com.google.protobuf.Empty,
+                fintekkers.requests.security.GetFieldsResponseProto>(
+                  this, METHODID_GET_FIELDS)))
           .build();
     }
   }
@@ -400,6 +445,14 @@ public final class SecurityGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getValidateQueryRequestMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void getFields(com.google.protobuf.Empty request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldsResponseProto> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetFieldsMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -458,6 +511,13 @@ public final class SecurityGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getValidateQueryRequestMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public fintekkers.requests.security.GetFieldsResponseProto getFields(com.google.protobuf.Empty request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetFieldsMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -513,6 +573,14 @@ public final class SecurityGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getValidateQueryRequestMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.security.GetFieldsResponseProto> getFields(
+        com.google.protobuf.Empty request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetFieldsMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_OR_UPDATE = 0;
@@ -521,6 +589,7 @@ public final class SecurityGrpc {
   private static final int METHODID_LIST_IDS = 3;
   private static final int METHODID_VALIDATE_CREATE_OR_UPDATE = 4;
   private static final int METHODID_VALIDATE_QUERY_REQUEST = 5;
+  private static final int METHODID_GET_FIELDS = 6;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -562,6 +631,10 @@ public final class SecurityGrpc {
         case METHODID_VALIDATE_QUERY_REQUEST:
           serviceImpl.validateQueryRequest((fintekkers.requests.security.QuerySecurityRequestProto) request,
               (io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto>) responseObserver);
+          break;
+        case METHODID_GET_FIELDS:
+          serviceImpl.getFields((com.google.protobuf.Empty) request,
+              (io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldsResponseProto>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -630,6 +703,7 @@ public final class SecurityGrpc {
               .addMethod(getListIdsMethod())
               .addMethod(getValidateCreateOrUpdateMethod())
               .addMethod(getValidateQueryRequestMethod())
+              .addMethod(getGetFieldsMethod())
               .build();
         }
       }

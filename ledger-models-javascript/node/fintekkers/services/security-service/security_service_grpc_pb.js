@@ -6,7 +6,9 @@ var fintekkers_requests_security_query_security_request_pb = require('../../../f
 var fintekkers_requests_security_query_security_response_pb = require('../../../fintekkers/requests/security/query_security_response_pb.js');
 var fintekkers_requests_security_create_security_request_pb = require('../../../fintekkers/requests/security/create_security_request_pb.js');
 var fintekkers_requests_security_create_security_response_pb = require('../../../fintekkers/requests/security/create_security_response_pb.js');
+var fintekkers_requests_security_get_fields_response_pb = require('../../../fintekkers/requests/security/get_fields_response_pb.js');
 var fintekkers_requests_util_errors_summary_pb = require('../../../fintekkers/requests/util/errors/summary_pb.js');
+var google_protobuf_empty_pb = require('google-protobuf/google/protobuf/empty_pb.js');
 
 function serialize_fintekkers_requests_security_CreateSecurityRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto)) {
@@ -28,6 +30,17 @@ function serialize_fintekkers_requests_security_CreateSecurityResponseProto(arg)
 
 function deserialize_fintekkers_requests_security_CreateSecurityResponseProto(buffer_arg) {
   return fintekkers_requests_security_create_security_response_pb.CreateSecurityResponseProto.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_fintekkers_requests_security_GetFieldsResponseProto(arg) {
+  if (!(arg instanceof fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto)) {
+    throw new Error('Expected argument of type fintekkers.requests.security.GetFieldsResponseProto');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_fintekkers_requests_security_GetFieldsResponseProto(buffer_arg) {
+  return fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_fintekkers_requests_security_QuerySecurityRequestProto(arg) {
@@ -61,6 +74,17 @@ function serialize_fintekkers_requests_util_errors_SummaryProto(arg) {
 
 function deserialize_fintekkers_requests_util_errors_SummaryProto(buffer_arg) {
   return fintekkers_requests_util_errors_summary_pb.SummaryProto.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_google_protobuf_Empty(arg) {
+  if (!(arg instanceof google_protobuf_empty_pb.Empty)) {
+    throw new Error('Expected argument of type google.protobuf.Empty');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_google_protobuf_Empty(buffer_arg) {
+  return google_protobuf_empty_pb.Empty.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
@@ -130,6 +154,17 @@ var SecurityService = exports.SecurityService = {
     requestDeserialize: deserialize_fintekkers_requests_security_QuerySecurityRequestProto,
     responseSerialize: serialize_fintekkers_requests_util_errors_SummaryProto,
     responseDeserialize: deserialize_fintekkers_requests_util_errors_SummaryProto,
+  },
+  getFields: {
+    path: '/fintekkers.services.security_service.Security/GetFields',
+    requestStream: false,
+    responseStream: false,
+    requestType: google_protobuf_empty_pb.Empty,
+    responseType: fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto,
+    requestSerialize: serialize_google_protobuf_Empty,
+    requestDeserialize: deserialize_google_protobuf_Empty,
+    responseSerialize: serialize_fintekkers_requests_security_GetFieldsResponseProto,
+    responseDeserialize: deserialize_fintekkers_requests_security_GetFieldsResponseProto,
   },
 };
 

@@ -11,19 +11,19 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class ValuationRequestProto(_message.Message):
-    __slots__ = ["measures", "object_class", "operation_type", "position_input", "price_input", "security_input", "version"]
-    MEASURES_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("object_class", "version", "operation_type", "measures", "security_input", "position_input", "price_input")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
+    VERSION_FIELD_NUMBER: _ClassVar[int]
     OPERATION_TYPE_FIELD_NUMBER: _ClassVar[int]
+    MEASURES_FIELD_NUMBER: _ClassVar[int]
+    SECURITY_INPUT_FIELD_NUMBER: _ClassVar[int]
     POSITION_INPUT_FIELD_NUMBER: _ClassVar[int]
     PRICE_INPUT_FIELD_NUMBER: _ClassVar[int]
-    SECURITY_INPUT_FIELD_NUMBER: _ClassVar[int]
-    VERSION_FIELD_NUMBER: _ClassVar[int]
-    measures: _containers.RepeatedScalarFieldContainer[_measure_pb2.MeasureProto]
     object_class: str
+    version: str
     operation_type: _operation_pb2.RequestOperationTypeProto
+    measures: _containers.RepeatedScalarFieldContainer[_measure_pb2.MeasureProto]
+    security_input: _security_pb2.SecurityProto
     position_input: _position_pb2.PositionProto
     price_input: _price_pb2.PriceProto
-    security_input: _security_pb2.SecurityProto
-    version: str
     def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., operation_type: _Optional[_Union[_operation_pb2.RequestOperationTypeProto, str]] = ..., measures: _Optional[_Iterable[_Union[_measure_pb2.MeasureProto, str]]] = ..., security_input: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., position_input: _Optional[_Union[_position_pb2.PositionProto, _Mapping]] = ..., price_input: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ...) -> None: ...

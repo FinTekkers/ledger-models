@@ -8,17 +8,17 @@ from typing import ClassVar as _ClassVar, Mapping as _Mapping, Optional as _Opti
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class NodeState(_message.Message):
-    __slots__ = ["end_point", "is_expired", "last_seen", "object_class", "partition", "version"]
-    END_POINT_FIELD_NUMBER: _ClassVar[int]
-    IS_EXPIRED_FIELD_NUMBER: _ClassVar[int]
-    LAST_SEEN_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("object_class", "version", "partition", "end_point", "last_seen", "is_expired")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
-    PARTITION_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
-    end_point: _endpoint_pb2.Endpoint
-    is_expired: bool
-    last_seen: _local_timestamp_pb2.LocalTimestampProto
+    PARTITION_FIELD_NUMBER: _ClassVar[int]
+    END_POINT_FIELD_NUMBER: _ClassVar[int]
+    LAST_SEEN_FIELD_NUMBER: _ClassVar[int]
+    IS_EXPIRED_FIELD_NUMBER: _ClassVar[int]
     object_class: str
-    partition: _node_partition_pb2.NodePartition
     version: str
+    partition: _node_partition_pb2.NodePartition
+    end_point: _endpoint_pb2.Endpoint
+    last_seen: _local_timestamp_pb2.LocalTimestampProto
+    is_expired: bool
     def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., partition: _Optional[_Union[_node_partition_pb2.NodePartition, _Mapping]] = ..., end_point: _Optional[_Union[_endpoint_pb2.Endpoint, _Mapping]] = ..., last_seen: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_expired: bool = ...) -> None: ...

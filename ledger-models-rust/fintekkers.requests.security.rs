@@ -36,6 +36,20 @@ pub struct QuerySecurityResponseProto {
     #[prost(message, repeated, tag = "40")]
     pub errors_or_warnings: ::prost::alloc::vec::Vec<super::util::errors::SummaryProto>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetFieldsResponseProto {
+    #[prost(string, tag = "1")]
+    pub object_class: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    #[prost(
+        enumeration = "super::super::models::position::FieldProto",
+        repeated,
+        tag = "10"
+    )]
+    pub fields: ::prost::alloc::vec::Vec<i32>,
+}
 /// Use this request to create or update securities. Uniqueness is guaranteed via the UUID.
 /// Security identifiers do not guarantee uniqueness. As an example a bond ISIN or stock ticker
 /// may be re-used over time. Therefore if you send 2 requests with the same security identifier

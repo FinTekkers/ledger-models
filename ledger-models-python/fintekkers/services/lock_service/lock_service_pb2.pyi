@@ -10,34 +10,34 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class NamespaceList(_message.Message):
+    __slots__ = ("namespaces",)
+    NAMESPACES_FIELD_NUMBER: _ClassVar[int]
+    namespaces: _containers.RepeatedScalarFieldContainer[str]
+    def __init__(self, namespaces: _Optional[_Iterable[str]] = ...) -> None: ...
+
+class PartitionsList(_message.Message):
+    __slots__ = ("partitions",)
+    PARTITIONS_FIELD_NUMBER: _ClassVar[int]
+    partitions: _containers.RepeatedCompositeFieldContainer[_node_partition_pb2.NodePartition]
+    def __init__(self, partitions: _Optional[_Iterable[_Union[_node_partition_pb2.NodePartition, _Mapping]]] = ...) -> None: ...
+
+class NodeStateList(_message.Message):
+    __slots__ = ("nodes",)
+    NODES_FIELD_NUMBER: _ClassVar[int]
+    nodes: _containers.RepeatedCompositeFieldContainer[_node_state_pb2.NodeState]
+    def __init__(self, nodes: _Optional[_Iterable[_Union[_node_state_pb2.NodeState, _Mapping]]] = ...) -> None: ...
+
 class CreateNamespaceRequest(_message.Message):
-    __slots__ = ["name"]
+    __slots__ = ("name",)
     NAME_FIELD_NUMBER: _ClassVar[int]
     name: str
     def __init__(self, name: _Optional[str] = ...) -> None: ...
 
 class CreatePartitionRequest(_message.Message):
-    __slots__ = ["name", "partition"]
+    __slots__ = ("name", "partition")
     NAME_FIELD_NUMBER: _ClassVar[int]
     PARTITION_FIELD_NUMBER: _ClassVar[int]
     name: str
     partition: int
     def __init__(self, name: _Optional[str] = ..., partition: _Optional[int] = ...) -> None: ...
-
-class NamespaceList(_message.Message):
-    __slots__ = ["namespaces"]
-    NAMESPACES_FIELD_NUMBER: _ClassVar[int]
-    namespaces: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, namespaces: _Optional[_Iterable[str]] = ...) -> None: ...
-
-class NodeStateList(_message.Message):
-    __slots__ = ["nodes"]
-    NODES_FIELD_NUMBER: _ClassVar[int]
-    nodes: _containers.RepeatedCompositeFieldContainer[_node_state_pb2.NodeState]
-    def __init__(self, nodes: _Optional[_Iterable[_Union[_node_state_pb2.NodeState, _Mapping]]] = ...) -> None: ...
-
-class PartitionsList(_message.Message):
-    __slots__ = ["partitions"]
-    PARTITIONS_FIELD_NUMBER: _ClassVar[int]
-    partitions: _containers.RepeatedCompositeFieldContainer[_node_partition_pb2.NodePartition]
-    def __init__(self, partitions: _Optional[_Iterable[_Union[_node_partition_pb2.NodePartition, _Mapping]]] = ...) -> None: ...
