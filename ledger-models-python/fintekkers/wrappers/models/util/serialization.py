@@ -4,7 +4,6 @@ from fintekkers.models.util.local_date_pb2 import LocalDateProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
-from fintekkers.wrappers.models.security_identifier import Identifier
 from fintekkers.wrappers.models.transaction import TransactionType
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 
@@ -87,7 +86,7 @@ class ProtoSerializationUtil:
                 else "America/New_York"
             )
             return LocalTimestampProto(timestamp=timestamp, time_zone=time_zone)
-        if isinstance(obj, Identifier) or isinstance(obj, TransactionType):
+        if isinstance(obj, TransactionType):
             return obj.proto
         if isinstance(obj, float) or isinstance(obj, int):
             return DecimalValueProto(arbitrary_precision_value=str(obj))
@@ -107,6 +106,7 @@ class ProtoSerializationUtil:
                 obj.timestamp.seconds, timezone(obj.time_zone)
             )
         if isinstance(obj, IdentifierProto):
+            from fintekkers.wrappers.models.security.security_identifier import Identifier
             return Identifier(obj)
         if isinstance(obj, DecimalValueProto):
             obj: DecimalValueProto

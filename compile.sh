@@ -2,15 +2,6 @@
 # This is because we don't want to publish a version of the library 
 # that doesn't pass all tests.
 
-# Create and setup virtual environment if it doesn't exist
-if [ ! -d "venv" ]; then
-    echo "Creating virtual environment..."
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install grpcio-tools
-else
-    source venv/bin/activate
-fi
 
 # Function to cleanup on exit
 cleanup() {
@@ -64,4 +55,20 @@ $(find . -iname "*.proto")
 ###########################################
 
 echo "generating python protos"
+cd ../ledger-models-python
+# Ensure we have the latest protoc
+# Create and setup virtual environment if it doesn't exist
+if [ ! -d "venv" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv venv
+    source venv/bin/activate
+    pip3 install -r requirements.txt
+else
+    source venv/bin/activate
+    # Ensure we have the latest versions
+    pip3 install -r requirements.txt
+fi
+
+
+cd ../ledger-models-protos
 python3 -m grpc_tools.protoc -I=. --python_out=../ledger-models-python --pyi_out=../ledger-models-python --grpc_python_out=../ledger-models-python $(find . -iname "*.proto")

@@ -5,6 +5,7 @@ import common.models.portfolio.Portfolio;
 import common.models.price.Price;
 import common.models.security.Security;
 import common.models.security.Tenor;
+import common.models.security.ProductType;
 import common.models.security.identifier.Identifier;
 import common.models.strategy.Strategy;
 import common.models.strategy.StrategyAllocation;
@@ -69,6 +70,8 @@ public class ProtoSerializationUtil {
             unpacked = TenorSerializer.getInstance().serialize((Tenor) object);
         } else if(object instanceof IdentifierProto) {
             unpacked = (GeneratedMessageV3) object;
+        } else if(object instanceof ProductType) {
+            unpacked = StringValue.of(((ProductType) object).name());
         } else {
             throw new UnsupportedOperationException("Type is not supported: "+ object.getClass().getName());
         }

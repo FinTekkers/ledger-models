@@ -30,10 +30,10 @@ enum FieldProto {
   SECURITY_ID = 53;
   IDENTIFIER = 54;
   TENOR = 55; // 1M
-
-  ISSUE_DATE=58;
   MATURITY_DATE = 56;
   ADJUSTED_TENOR = 57;
+  ISSUE_DATE = 58;
+  SECURITY_TYPE = 59; // Type of security (e.g., Bond, Stock, etc.)
 
   //Portfolio fields
   PORTFOLIO = 14; //common.model.portfolio.Portfolio.class

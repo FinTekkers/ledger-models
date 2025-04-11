@@ -19,15 +19,24 @@ setup(
     include_package_data=True,
     url='https://github.com/fintekkers/ledger-models',
     keywords='fintekkers ledger models',
-        version=VERSION,
-        description=DESCRIPTION,
-        long_description=LONG_DESCRIPTION,
-        packages=find_packages(),
-        install_requires=[], # add any additional packages that 
-        # needs to be installed along with your package. Eg: 'caer'
-        
-        classifiers= [
-            "Programming Language :: Python :: 3",
-            "Operating System :: MacOS :: MacOS X",
-        ]
+    version=VERSION,
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    packages=find_packages(),
+    install_requires=[
+        'wheel',
+        'setuptools~=58.0.4',
+        'python-dateutil~=2.8.2',
+        'pytz~=2023.3',
+        'protobuf>=5.26.1,<6.0dev',
+        'grpcio>=1.71.0',
+        'grpcio-tools>=1.71.0',
+        'pytest',
+        'requests>=2.28.2',
+        'python-dotenv~=1.0.1'
+    ],
+    classifiers= [
+        "Programming Language :: Python :: 3",
+        "Operating System :: MacOS :: MacOS X",
+    ]
 )

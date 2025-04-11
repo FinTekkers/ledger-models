@@ -1,13 +1,16 @@
 #Package dependencies
 wheel #For packaging
+setuptools~=58.0.4
+distutils-extra
 
 python-dateutil~=2.8.2
 pytz~=2023.3
 
-protobuf #The protobuf libraries
-grpcio  #Will install grpc packages
+#TODO: Need a version of grpcio that is compatible with protobuf 6.30.2....
+protobuf>=5.26.1,<6.0dev #The protobuf libraries
+grpcio>=1.71.0  #Will install grpc packages
+grpcio-tools>=1.71.0 #Will install grpc tools
 
 pytest #For testing
-requests~=2.28.2
-setuptools~=58.0.4
+requests>=2.28.2
 python-dotenv~=1.0.1

@@ -109,10 +109,6 @@ public enum FieldProto
    */
   TENOR(55),
   /**
-   * <code>ISSUE_DATE = 58;</code>
-   */
-  ISSUE_DATE(58),
-  /**
    * <code>MATURITY_DATE = 56;</code>
    */
   MATURITY_DATE(56),
@@ -120,6 +116,18 @@ public enum FieldProto
    * <code>ADJUSTED_TENOR = 57;</code>
    */
   ADJUSTED_TENOR(57),
+  /**
+   * <code>ISSUE_DATE = 58;</code>
+   */
+  ISSUE_DATE(58),
+  /**
+   * <pre>
+   * Type of security (e.g., Bond, Stock, etc.)
+   * </pre>
+   *
+   * <code>SECURITY_TYPE = 59;</code>
+   */
+  SECURITY_TYPE(59),
   /**
    * <pre>
    *Portfolio fields
@@ -316,10 +324,6 @@ public enum FieldProto
    */
   public static final int TENOR_VALUE = 55;
   /**
-   * <code>ISSUE_DATE = 58;</code>
-   */
-  public static final int ISSUE_DATE_VALUE = 58;
-  /**
    * <code>MATURITY_DATE = 56;</code>
    */
   public static final int MATURITY_DATE_VALUE = 56;
@@ -327,6 +331,18 @@ public enum FieldProto
    * <code>ADJUSTED_TENOR = 57;</code>
    */
   public static final int ADJUSTED_TENOR_VALUE = 57;
+  /**
+   * <code>ISSUE_DATE = 58;</code>
+   */
+  public static final int ISSUE_DATE_VALUE = 58;
+  /**
+   * <pre>
+   * Type of security (e.g., Bond, Stock, etc.)
+   * </pre>
+   *
+   * <code>SECURITY_TYPE = 59;</code>
+   */
+  public static final int SECURITY_TYPE_VALUE = 59;
   /**
    * <pre>
    *Portfolio fields
@@ -460,9 +476,10 @@ public enum FieldProto
       case 53: return SECURITY_ID;
       case 54: return IDENTIFIER;
       case 55: return TENOR;
-      case 58: return ISSUE_DATE;
       case 56: return MATURITY_DATE;
       case 57: return ADJUSTED_TENOR;
+      case 58: return ISSUE_DATE;
+      case 59: return SECURITY_TYPE;
       case 14: return PORTFOLIO;
       case 15: return PORTFOLIO_ID;
       case 60: return PORTFOLIO_NAME;

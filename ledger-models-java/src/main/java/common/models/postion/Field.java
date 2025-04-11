@@ -2,11 +2,9 @@ package common.models.postion;
 
 import common.models.portfolio.Portfolio;
 import common.models.price.Price;
-import common.models.security.ProductType;
 import common.models.security.Security;
 import common.models.security.Tenor;
 import common.models.security.identifier.Identifier;
-import common.models.strategy.Strategy;
 import common.models.strategy.StrategyAllocation;
 import common.models.transaction.TransactionType;
 import fintekkers.models.position.PositionStatusProto;
@@ -105,7 +103,6 @@ public enum Field {
     PRODUCT_TYPE(String.class, "The financial product, as modelled by the financial world. Currently " +
             "this is static. <TODO> for modelling your own product hierarchy. "+ productExplanation()),
 
-    //To be implemented
     TENOR(Tenor.class, "The original tenor of the financial instrument. This will vary by product type: " +
             "equities essentially do not have a tenor per se, and therefore labelled perpetual. Bond securities generally" +
             " have a term upon initiating which will have a specific tenor value. Securities with uncertain " +

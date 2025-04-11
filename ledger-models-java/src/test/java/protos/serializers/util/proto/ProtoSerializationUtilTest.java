@@ -7,6 +7,9 @@ import fintekkers.models.util.Uuid;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import common.models.security.ProductType;
+import com.google.protobuf.StringValue;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -15,6 +18,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProtoSerializationUtilTest {
     @Test
@@ -61,5 +65,31 @@ class ProtoSerializationUtilTest {
         UUID uuidCopy = ProtoSerializationUtil.deserializeUUID(protoCopy);
 
         Assertions.assertEquals(uuid_string, uuidCopy.toString());
+    }
+
+    @Test
+    void testSerializeProductType() {
+        // Test serialization of a product type
+        ProductType productType = ProductType.BOND;
+        Any serialized = ProtoSerializationUtil.serializeToAny(productType);
+        
+        // Verify the serialized value is a StringValue with the product type's short name
+        try {
+            StringValue stringValue = serialized.unpack(StringValue.class);
+            assertEquals("BOND", stringValue.getValue());
+        } catch (InvalidProtocolBufferException e) {
+            fail("Failed to unpack StringValue: " + e.getMessage());
+        }
+    }
+
+    @Test
+    void testDeserializeProductType() {
+        // Test deserialization of a product type
+        StringValue stringValue = StringValue.of("BOND");
+        Any any = Any.pack(stringValue);
+        
+        Object deserialized = ProtoSerializationUtil.deserialize(any);
+        assertTrue(deserialized instanceof String);
+        assertEquals("BOND", deserialized);
     }
 }

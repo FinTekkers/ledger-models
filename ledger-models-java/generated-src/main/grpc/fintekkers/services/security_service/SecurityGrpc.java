@@ -232,6 +232,37 @@ public final class SecurityGrpc {
     return getGetFieldsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<fintekkers.requests.security.GetFieldValuesRequestProto,
+      fintekkers.requests.security.GetFieldValuesResponseProto> getGetFieldValuesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetFieldValues",
+      requestType = fintekkers.requests.security.GetFieldValuesRequestProto.class,
+      responseType = fintekkers.requests.security.GetFieldValuesResponseProto.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<fintekkers.requests.security.GetFieldValuesRequestProto,
+      fintekkers.requests.security.GetFieldValuesResponseProto> getGetFieldValuesMethod() {
+    io.grpc.MethodDescriptor<fintekkers.requests.security.GetFieldValuesRequestProto, fintekkers.requests.security.GetFieldValuesResponseProto> getGetFieldValuesMethod;
+    if ((getGetFieldValuesMethod = SecurityGrpc.getGetFieldValuesMethod) == null) {
+      synchronized (SecurityGrpc.class) {
+        if ((getGetFieldValuesMethod = SecurityGrpc.getGetFieldValuesMethod) == null) {
+          SecurityGrpc.getGetFieldValuesMethod = getGetFieldValuesMethod =
+              io.grpc.MethodDescriptor.<fintekkers.requests.security.GetFieldValuesRequestProto, fintekkers.requests.security.GetFieldValuesResponseProto>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetFieldValues"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.security.GetFieldValuesRequestProto.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance()))
+              .setSchemaDescriptor(new SecurityMethodDescriptorSupplier("GetFieldValues"))
+              .build();
+        }
+      }
+    }
+    return getGetFieldValuesMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -329,6 +360,13 @@ public final class SecurityGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetFieldsMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void getFieldValues(fintekkers.requests.security.GetFieldValuesRequestProto request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldValuesResponseProto> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetFieldValuesMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -380,6 +418,13 @@ public final class SecurityGrpc {
                 com.google.protobuf.Empty,
                 fintekkers.requests.security.GetFieldsResponseProto>(
                   this, METHODID_GET_FIELDS)))
+          .addMethod(
+            getGetFieldValuesMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                fintekkers.requests.security.GetFieldValuesRequestProto,
+                fintekkers.requests.security.GetFieldValuesResponseProto>(
+                  this, METHODID_GET_FIELD_VALUES)))
           .build();
     }
   }
@@ -453,6 +498,14 @@ public final class SecurityGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetFieldsMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void getFieldValues(fintekkers.requests.security.GetFieldValuesRequestProto request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldValuesResponseProto> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetFieldValuesMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -518,6 +571,13 @@ public final class SecurityGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetFieldsMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public fintekkers.requests.security.GetFieldValuesResponseProto getFieldValues(fintekkers.requests.security.GetFieldValuesRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetFieldValuesMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -581,6 +641,14 @@ public final class SecurityGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetFieldsMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.security.GetFieldValuesResponseProto> getFieldValues(
+        fintekkers.requests.security.GetFieldValuesRequestProto request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetFieldValuesMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_OR_UPDATE = 0;
@@ -590,6 +658,7 @@ public final class SecurityGrpc {
   private static final int METHODID_VALIDATE_CREATE_OR_UPDATE = 4;
   private static final int METHODID_VALIDATE_QUERY_REQUEST = 5;
   private static final int METHODID_GET_FIELDS = 6;
+  private static final int METHODID_GET_FIELD_VALUES = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -635,6 +704,10 @@ public final class SecurityGrpc {
         case METHODID_GET_FIELDS:
           serviceImpl.getFields((com.google.protobuf.Empty) request,
               (io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldsResponseProto>) responseObserver);
+          break;
+        case METHODID_GET_FIELD_VALUES:
+          serviceImpl.getFieldValues((fintekkers.requests.security.GetFieldValuesRequestProto) request,
+              (io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldValuesResponseProto>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -704,6 +777,7 @@ public final class SecurityGrpc {
               .addMethod(getValidateCreateOrUpdateMethod())
               .addMethod(getValidateQueryRequestMethod())
               .addMethod(getGetFieldsMethod())
+              .addMethod(getGetFieldValuesMethod())
               .build();
         }
       }

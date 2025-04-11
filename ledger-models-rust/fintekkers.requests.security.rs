@@ -94,3 +94,23 @@ pub struct CreateSecurityResponseProto {
     #[prost(message, optional, tag = "40")]
     pub errors_or_warnings: ::core::option::Option<super::util::errors::SummaryProto>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetFieldValuesRequestProto {
+    #[prost(string, tag = "1")]
+    pub object_class: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    #[prost(enumeration = "super::super::models::position::FieldProto", tag = "10")]
+    pub field: i32,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetFieldValuesResponseProto {
+    #[prost(string, tag = "1")]
+    pub object_class: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    #[prost(message, repeated, tag = "10")]
+    pub values: ::prost::alloc::vec::Vec<::prost_types::Any>,
+}

@@ -2,6 +2,7 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 from fintekkers.models.security.tenor_type_pb2 import TenorTypeProto
+from fintekkers.models.security.tenor_pb2 import TenorProto
 
 class Tenor:
     UNKNOWN_TENOR = None
@@ -13,6 +14,10 @@ class Tenor:
         if term != None:
             self.tenor = Tenor.from_tenor_description(term)
     
+    @classmethod
+    def from_proto(cls, proto: TenorProto) -> 'Tenor':
+        return cls(proto.tenor_type, proto.term_value)
+
     @classmethod
     def from_tenor_description(cls, tenor_description) -> relativedelta:
         if not tenor_description:

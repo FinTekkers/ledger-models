@@ -5,6 +5,8 @@ import warnings
 
 from fintekkers.requests.security import create_security_request_pb2 as fintekkers_dot_requests_dot_security_dot_create__security__request__pb2
 from fintekkers.requests.security import create_security_response_pb2 as fintekkers_dot_requests_dot_security_dot_create__security__response__pb2
+from fintekkers.requests.security import get_field_values_request_pb2 as fintekkers_dot_requests_dot_security_dot_get__field__values__request__pb2
+from fintekkers.requests.security import get_field_values_response_pb2 as fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2
 from fintekkers.requests.security import get_fields_response_pb2 as fintekkers_dot_requests_dot_security_dot_get__fields__response__pb2
 from fintekkers.requests.security import query_security_request_pb2 as fintekkers_dot_requests_dot_security_dot_query__security__request__pb2
 from fintekkers.requests.security import query_security_response_pb2 as fintekkers_dot_requests_dot_security_dot_query__security__response__pb2
@@ -75,6 +77,11 @@ class SecurityStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_security_dot_get__fields__response__pb2.GetFieldsResponseProto.FromString,
                 _registered_method=True)
+        self.GetFieldValues = channel.unary_unary(
+                '/fintekkers.services.security_service.Security/GetFieldValues',
+                request_serializer=fintekkers_dot_requests_dot_security_dot_get__field__values__request__pb2.GetFieldValuesRequestProto.SerializeToString,
+                response_deserializer=fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2.GetFieldValuesResponseProto.FromString,
+                _registered_method=True)
 
 
 class SecurityServicer(object):
@@ -122,6 +129,12 @@ class SecurityServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetFieldValues(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_SecurityServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -159,6 +172,11 @@ def add_SecurityServicer_to_server(servicer, server):
                     servicer.GetFields,
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=fintekkers_dot_requests_dot_security_dot_get__fields__response__pb2.GetFieldsResponseProto.SerializeToString,
+            ),
+            'GetFieldValues': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFieldValues,
+                    request_deserializer=fintekkers_dot_requests_dot_security_dot_get__field__values__request__pb2.GetFieldValuesRequestProto.FromString,
+                    response_serializer=fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2.GetFieldValuesResponseProto.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -350,6 +368,33 @@ class Security(object):
             '/fintekkers.services.security_service.Security/GetFields',
             google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             fintekkers_dot_requests_dot_security_dot_get__fields__response__pb2.GetFieldsResponseProto.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetFieldValues(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/fintekkers.services.security_service.Security/GetFieldValues',
+            fintekkers_dot_requests_dot_security_dot_get__field__values__request__pb2.GetFieldValuesRequestProto.SerializeToString,
+            fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2.GetFieldValuesResponseProto.FromString,
             options,
             channel_credentials,
             insecure,

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package fintekkers.requests.security;
+
+import "fintekkers/models/position/field.proto";
+
+option java_multiple_files = true;
+
+option java_outer_classname = "GetFieldValuesRequestProtos";
+
+message GetFieldValuesRequestProto {
+    string object_class = 1;
+    string version = 2;
+    
+    fintekkers.models.position.FieldProto field = 10;
+} 
