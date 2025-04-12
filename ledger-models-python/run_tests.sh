@@ -1,2 +1,6 @@
-#If this command fails you need to create a virtual env at .venv
-.venv/bin/pytest
+#!/bin/bash
+
+./activate_env.sh
+
+export API_URL=localhost
+./venv/bin/pytest
