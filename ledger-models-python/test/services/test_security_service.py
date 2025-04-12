@@ -2,7 +2,7 @@ from fintekkers.models.security.identifier.identifier_type_pb2 import (
     IdentifierTypeProto,
 )
 
-from fintekkers.wrappers.models.security import Security
+from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.services.security import SecurityService
 
 import os

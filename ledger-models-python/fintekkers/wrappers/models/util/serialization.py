@@ -1,10 +1,13 @@
 from fintekkers.models.position.position_status_pb2 import *
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
+from fintekkers.models.security.tenor_pb2 import TenorProto
 from fintekkers.models.util.local_date_pb2 import LocalDateProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
-from fintekkers.wrappers.models.security_identifier import Identifier
+from fintekkers.wrappers.models.security.security_identifier import Identifier
+from fintekkers.wrappers.models.security.tenor import Tenor
+
 from fintekkers.wrappers.models.transaction import TransactionType
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 
@@ -73,6 +76,9 @@ class ProtoSerializationUtil:
     def serialize(obj):
         if isinstance(obj, UUID):
             return UUIDProto(raw_uuid=obj.bytes)
+        if isinstance(obj, Tenor):
+            obj:Tenor
+            return obj.as_proto()
         if type(obj) is date:
             return LocalDateProto(year=obj.year, month=obj.month, day=obj.day)
         if isinstance(obj, datetime):
@@ -106,6 +112,8 @@ class ProtoSerializationUtil:
             return datetime.fromtimestamp(
                 obj.timestamp.seconds, timezone(obj.time_zone)
             )
+        if isinstance(obj, TenorProto):
+            return Tenor(obj.tenor_type, obj.term_value)
         if isinstance(obj, IdentifierProto):
             return Identifier(obj)
         if isinstance(obj, DecimalValueProto):
@@ -121,20 +129,3 @@ class ProtoSerializationUtil:
             f"Could not deserialize object of type {obj.__class__.__name__}. Value: {obj}"
         )
 
-
-if __name__ == "__main__":
-    serialized: UUIDProto = ProtoSerializationUtil.serialize(uuid4())
-    assert isinstance(serialized, UUIDProto)
-    deserialized: UUID = ProtoSerializationUtil.deserialize(serialized)
-    assert isinstance(deserialized, UUID)
-
-    serialized: LocalDateProto = ProtoSerializationUtil.serialize(date.today())
-    assert isinstance(serialized, LocalDateProto)
-    deserialized: date = ProtoSerializationUtil.deserialize(serialized)
-    assert isinstance(deserialized, date)
-
-    obj = datetime.today().replace(tzinfo=timezone("America/New_York"))
-    serialized: LocalTimestampProto = ProtoSerializationUtil.serialize(obj)
-    assert isinstance(serialized, LocalTimestampProto)
-    deserialized: datetime = ProtoSerializationUtil.deserialize(serialized)
-    assert isinstance(deserialized, datetime)

@@ -12,7 +12,7 @@ from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.wrappers.models.portfolio import Portfolio
 
-from fintekkers.wrappers.models.security import Security
+from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.util.serialization import (
     ProtoSerializationUtil,
     ProtoEnum,

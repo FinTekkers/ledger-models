@@ -2,7 +2,7 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 from fintekkers.models.security.tenor_type_pb2 import TenorTypeProto
-
+from fintekkers.models.security.tenor_pb2 import TenorProto
 class Tenor:
     UNKNOWN_TENOR = None
     type:TenorTypeProto = None
@@ -29,6 +29,12 @@ class Tenor:
     def get_tenor_description(self) -> str:
         return Tenor.period_to_string(self.tenor)
     
+    def as_proto(self) -> TenorProto:
+        return TenorProto(
+            tenor_type=self.type,
+            term_value=self.get_tenor_description()
+        )
+
     @staticmethod
     def period_to_string(period:relativedelta) -> str:
         years = period.years

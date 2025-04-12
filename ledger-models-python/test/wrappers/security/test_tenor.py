@@ -3,7 +3,7 @@ import unittest
 
 from fintekkers.models.security.tenor_type_pb2 import TenorTypeProto
 
-from fintekkers.wrappers.models.tenor import Tenor
+from fintekkers.wrappers.models.security.tenor import Tenor
 
 
 def test_tenor():

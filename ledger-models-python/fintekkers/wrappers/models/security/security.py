@@ -7,7 +7,7 @@ from fintekkers.models.position.measure_pb2 import MeasureProto
 from uuid import UUID
 from datetime import datetime
 from fintekkers.models.security.security_type_pb2 import SecurityTypeProto
-from fintekkers.wrappers.models.security_identifier import Identifier
+from fintekkers.wrappers.models.security.security_identifier import Identifier
 
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
@@ -59,9 +59,11 @@ class Security():
         elif field == IDENTIFIER:
             return self.get_security_id()
         elif field in (TENOR, ADJUSTED_TENOR):
-            raise ValueError("Not implemented yet")
+            return self.get_tenor()
         elif field == MATURITY_DATE:
-            raise ValueError("Not implemented yet")
+            return self.get_maturity_date()
+        elif field == ISSUE_DATE:
+            return self.get_issue_date()
         else:
             raise ValueError(f"Field not mapped in Security wrapper: {FieldProto.DESCRIPTOR.values_by_number[field].name}")
 
@@ -91,6 +93,9 @@ class Security():
 
     def get_maturity_date(self) -> datetime:
         return ProtoSerializationUtil.deserialize(self.proto.maturity_date)
+    
+    def get_tenor(self) -> str:
+        return ProtoSerializationUtil.deserialize(self.proto.tenor)
 
     def get_security_type(self) -> SecurityTypeProto:
         return self.proto.security_type
