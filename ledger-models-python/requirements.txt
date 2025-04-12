@@ -3,6 +3,7 @@ wheel #For packaging
 
 python-dateutil~=2.8.2
 pytz~=2023.3
+build
 
 protobuf #The protobuf libraries
 grpcio  #Will install grpc packages
