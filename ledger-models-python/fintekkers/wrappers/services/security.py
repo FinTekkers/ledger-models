@@ -8,7 +8,7 @@ from fintekkers.requests.security.query_security_response_pb2 import (
 )
 from fintekkers.services.security_service.security_service_pb2_grpc import SecurityStub
 
-from fintekkers.wrappers.models.security import Security
+from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.requests.security import (
     QuerySecurityRequest,
     CreateSecurityRequest,

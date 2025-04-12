@@ -30,7 +30,7 @@ from fintekkers.requests.security.query_security_request_pb2 import (
     QuerySecurityRequestProto,
 )
 
-from fintekkers.wrappers.models.security import Security
+from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.util.date_utils import get_date_proto
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
