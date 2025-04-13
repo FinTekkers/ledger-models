@@ -20,8 +20,8 @@ from fintekkers.models.transaction.transaction_type_pb2 import TransactionTypePr
 from uuid import UUID, uuid4
 
 from google._upb._message import EnumValueDescriptor
-
-
+from google.protobuf.wrappers_pb2 import StringValue
+from google.protobuf.any_pb2 import Any
 class ProtoEnum:
     def __init__(self, enum_descriptor: EnumValueDescriptor, enum_value: int):
         self.enum_value: int = enum_value
@@ -97,6 +97,9 @@ class ProtoSerializationUtil:
             return obj.proto
         if isinstance(obj, float) or isinstance(obj, int):
             return DecimalValueProto(arbitrary_precision_value=str(obj))
+        
+        if isinstance(obj, str):
+            return StringValue(value=obj)
 
         raise ValueError(
             f"Could not serialize object of type {obj.__class__.__name__}. Value: {obj}"
@@ -104,6 +107,9 @@ class ProtoSerializationUtil:
 
     @staticmethod
     def deserialize(obj):
+        if isinstance(obj, Any):
+            #unpack a string value
+            return StringValue.FromString(obj.value).value
         if isinstance(obj, UUIDProto):
             return FintekkersUuid.from_bytes(raw_uuid=obj.raw_uuid)
         if isinstance(obj, LocalDateProto):

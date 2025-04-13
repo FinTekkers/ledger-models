@@ -157,6 +157,10 @@ public class BondSecurity extends Security {
         return new Tenor(TenorType.TERM, Period.between(issueDate, maturityDate));
     }
 
+    public Tenor getAdjustedTenor() {
+        return new Tenor(TenorType.TERM, Period.between(LocalDate.now(), maturityDate));
+    }
+
     @Override
     public ProductType getProductType() {
         Period tenor = getTenor().getTenor();
@@ -175,7 +179,8 @@ public class BondSecurity extends Security {
      */
     public Object getField(Field field) {
         return switch (field) {
-            case TENOR, ADJUSTED_TENOR -> Tenor.UNKNOWN_TENOR;
+            case TENOR-> getTenor();
+            case ADJUSTED_TENOR -> getAdjustedTenor();
             case MATURITY_DATE -> getMaturityDate();
             case ISSUE_DATE -> getIssueDate();
             default -> super.getField(field);

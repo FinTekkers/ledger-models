@@ -6,6 +6,8 @@ import "fintekkers/requests/security/query_security_response.proto";
 import "fintekkers/requests/security/create_security_request.proto";
 import "fintekkers/requests/security/create_security_response.proto";
 import "fintekkers/requests/security/get_fields_response.proto";
+import "fintekkers/requests/security/get_field_values_request.proto";
+import "fintekkers/requests/security/get_field_values_response.proto";
 import "fintekkers/requests/util/errors/summary.proto";
 import "google/protobuf/empty.proto";
 
@@ -23,4 +25,5 @@ service Security {
     rpc ValidateQueryRequest   (fintekkers.requests.security.QuerySecurityRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);
     
     rpc GetFields   (google.protobuf.Empty) returns   (fintekkers.requests.security.GetFieldsResponseProto);
+    rpc GetFieldValues   (fintekkers.requests.security.GetFieldValuesRequestProto) returns   (fintekkers.requests.security.GetFieldValuesResponseProto);
 }

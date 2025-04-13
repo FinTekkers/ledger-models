@@ -39,6 +39,7 @@ public class TenorSerializer implements IRawDataModelObjectSerializer<TenorProto
                 .setObjectClass(tenor.getClass().getSimpleName())
                 .setVersion("0.0.1")
                 .setTenorType(tenorTypeProto);
+//                .setTermValue(tenor.getTenorDescription());
 
         if(TenorType.TERM.equals(tenor.getType())) {
             builder.setTermValue(tenor.getTenorDescription());
