@@ -8,6 +8,8 @@ load_dotenv()
 
 
 class EnvConfig:
+    default_api_url = "api.fintekkers.org"
+
     @staticmethod
     def get_env_var(key, default=None):
         value = os.environ.get(key)
@@ -24,7 +26,7 @@ class EnvConfig:
 
     @staticmethod
     def api_url():
-        url = EnvConfig.get_env_var('API_URL', "api.fintekkers.org") + ":8082"
+        url = EnvConfig.get_env_var('API_URL', EnvConfig.default_api_url) + ":8082"
         return url
 
     @staticmethod

@@ -17,4 +17,17 @@ class TenorTest {
 
         Assertions.assertEquals("1Y1M", tenor.getTenorDescription());
     }
+
+    @Test
+    public void testNegativeTenorDescriptionIsEmpty() {
+        LocalDate today = LocalDate.now();
+        LocalDate moreThanOneYear = today.minusYears(1).minusMonths(1);
+        Period period = Period.between(today, moreThanOneYear);
+
+        Tenor tenor = new Tenor(TenorType.TERM, period);
+
+        /** For future consideration: Should we provide a negative descriptor here for adjusted terms?
+         * Can't think of a valid reason for that currently **/
+        Assertions.assertEquals("", tenor.getTenorDescription());
+    }
 }

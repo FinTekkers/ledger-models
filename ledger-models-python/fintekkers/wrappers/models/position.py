@@ -24,7 +24,7 @@ from google.protobuf.any_pb2 import Any
 from decimal import Decimal
 from io import StringIO
 
-
+from fintekkers.models.security.tenor_pb2 import TenorProto
 class Position:
     positionProto: PositionProto
 
@@ -42,7 +42,6 @@ class Position:
         """
         Returns the field value for the provided FieldMapEntry
 
-        TODO: Why do we need this? The MeasureMapEntry should have the value inside it already?
         """
         tmp_field: FieldMapEntry
 
@@ -84,7 +83,6 @@ class Position:
         """
         Returns the decimal for the given MeasureMapEntry
 
-        TODO: Why do we need this? The MeasureMapEntry should have the value inside it already?
         """
         tmp_measure: MeasureMapEntry
 
@@ -183,6 +181,9 @@ class Position:
             return PortfolioProto.FromString(field_to_unpack.field_value_packed.value)
         if field_to_unpack.field == FieldProto.SECURITY:
             return SecurityProto.FromString(field_to_unpack.field_value_packed.value)
+        if (field_to_unpack.field == FieldProto.TENOR
+            or field_to_unpack.field == FieldProto.ADJUSTED_TENOR):
+            return TenorProto.FromString(field_to_unpack.field_value_packed.value)
 
         raise ValueError(
             f"Field not found. Could not unpack {FieldProto.Name(field_to_unpack.field)}"

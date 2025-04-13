@@ -15,7 +15,7 @@ class Tenor:
     
     @classmethod
     def from_tenor_description(cls, tenor_description) -> relativedelta:
-        if not tenor_description:
+        if not tenor_description and tenor_description != "":
             return None
         
         return Tenor.parse_period(tenor_description)
@@ -27,6 +27,9 @@ class Tenor:
         return self.tenor
     
     def get_tenor_description(self) -> str:
+        if self.get_type() == TenorTypeProto.UNKNOWN_TENOR_TYPE:
+            return "UNKNOWN"
+        
         return Tenor.period_to_string(self.tenor)
     
     def as_proto(self) -> TenorProto:

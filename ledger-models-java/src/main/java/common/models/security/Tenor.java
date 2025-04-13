@@ -54,6 +54,10 @@ public class Tenor implements IRawDataModelObject {
     }
 
     public static String periodToString(Period period) {
+        if(period.isNegative()) {
+            return "";
+        }
+
         int years = period.getYears();
         int months = period.getMonths();
         int weeks = period.getDays() / 7;
