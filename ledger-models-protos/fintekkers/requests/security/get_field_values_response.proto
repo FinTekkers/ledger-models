@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package fintekkers.requests.security;
+
+import "google/protobuf/any.proto";
+
+option java_multiple_files = true;
+
+option java_outer_classname = "GetFieldValuesResponseProtos";
+
+message GetFieldValuesResponseProto {
+    string object_class = 1;
+    string version = 2;
+    
+    repeated google.protobuf.Any values = 10;
+} 
