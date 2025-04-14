@@ -7,6 +7,7 @@ from fintekkers.requests.security.query_security_response_pb2 import (
     QuerySecurityResponseProto,
 )
 from fintekkers.services.security_service.security_service_pb2_grpc import SecurityStub
+from fintekkers.models.position.position_pb2 import PositionProto
 
 from fintekkers.wrappers.models.position import Position
 from fintekkers.wrappers.models.security.security import Security
@@ -82,8 +83,12 @@ class SecurityService:
             value:Any
             
             a: FieldMapEntry = FieldMapEntry(field=field, field_value_packed=value)
-            b = Position.unpack_field(a)
-            c = ProtoSerializationUtil.deserialize(b)
-            values.append(c)
+
+            ##TODO: This is a hack to get the field value. We need to find a better way to do this. 
+            # Instead we should extract the logic relating to FieldMapEntry from Position
+            # to make it reusable without having to create a Position object.
+            position = Position(positionProto=PositionProto(fields=[a]))
+            field_value = position.get_field(a)
+            values.append(field_value)
 
         return values

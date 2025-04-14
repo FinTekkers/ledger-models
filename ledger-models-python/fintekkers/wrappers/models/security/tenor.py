@@ -22,13 +22,19 @@ class Tenor:
     
     def get_type(self) -> TenorTypeProto:
         return self.type
+
+
+    def get_type_name(self) -> str:
+        return TenorTypeProto.Name(self.type)
     
     def get_tenor(self) -> relativedelta:
         return self.tenor
     
     def get_tenor_description(self) -> str:
         if self.get_type() == TenorTypeProto.UNKNOWN_TENOR_TYPE:
-            return "UNKNOWN"
+            return TenorTypeProto.Name(self.get_type())
+        if self.get_type() == TenorTypeProto.PERPETUAL:
+            return TenorTypeProto.Name(self.get_type())
         
         return Tenor.period_to_string(self.tenor)
     
