@@ -58,7 +58,7 @@ def test_get_field_values_adjusted_tenor():
     if len(values) > 0:
         first_tenor = [x for x in values if x.get_type() == TenorTypeProto.UNKNOWN_TENOR_TYPE][0]
         assert first_tenor.get_type() == TenorTypeProto.UNKNOWN_TENOR_TYPE
-        assert first_tenor.get_tenor_description() == "UNKNOWN"
+        assert first_tenor.get_tenor_description() == "UNKNOWN_TENOR_TYPE"
     
     if len(values) > 2:
         # We should check we have UNKONWN and TERM tenor types within the Tenor list

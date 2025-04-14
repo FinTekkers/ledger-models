@@ -46,6 +46,18 @@ public class Tenor implements IRawDataModelObject {
         return periodToString(tenor);
     }
 
+    public String toString() {
+        StringBuffer str = new StringBuffer();
+        str.append(getType().name());
+
+        switch(getType()) {
+            case TERM -> {
+                str.append(": ");
+                str.append(getTenorDescription());
+            }
+        }
+        return str.toString();
+    }
     public static Period fromTenorDescription(String tenorDescription) {
         if(StringUtils.isEmpty(tenorDescription))
             return null;
