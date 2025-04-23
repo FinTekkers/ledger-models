@@ -12,6 +12,7 @@ from ..requests.test_security_request import CASH_USD_REQUEST
 from fintekkers.wrappers.models.security.tenor import Tenor
 from fintekkers.models.security.tenor_type_pb2 import TenorTypeProto
 import re
+import grpc
 
 def test_get_usd_cash_security():
     svc = SecurityService()
