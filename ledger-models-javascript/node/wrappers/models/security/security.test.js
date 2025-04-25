@@ -1,19 +1,22 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
-var uuid_1 = require("../utils/uuid");
-var assert = require("assert");
-var security_1 = require("./security");
-var decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
-var security_pb_1 = require("../../../fintekkers/models/security/security_pb");
-var coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
-var coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
-var security_quantity_type_pb_1 = require("../../../fintekkers/models/security/security_quantity_type_pb");
-test('test the security wrapper', function () {
+const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
+const uuid_1 = require("../utils/uuid");
+const assert = require("assert");
+const security_1 = __importDefault(require("./security"));
+const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
+const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
+const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
+const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
+const security_quantity_type_pb_1 = require("../../../fintekkers/models/security/security_quantity_type_pb");
+test('test the security wrapper', () => {
     testSerialization();
 });
 function testSerialization() {
-    var security = dummySecurity();
+    const security = dummySecurity();
     assert(security.getMaturityDate().getFullYear() == 2026);
 }
 function dummySecurity() {

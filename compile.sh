@@ -52,6 +52,7 @@ cd ../ledger-models-protos
 # generate node js
 grpc_tools_node_protoc --js_out=import_style=commonjs,binary:../ledger-models-javascript/node/ --grpc_out=grpc_js:../ledger-models-javascript/node/ $(find . -ipath "**/services/**/*.proto")
 
+grpc_tools_node_protoc --js_out=import_style=commonjs,binary:../ledger-models-javascript/node/ --grpc_out=grpc_js:../ledger-models-javascript/node/ $(find . -ipath "**/requests/**/*.proto")
 # generate d.ts codes
 protoc \
 --plugin=protoc-gen-ts=../ledger-models-javascript/node_modules/.bin/protoc-gen-ts \

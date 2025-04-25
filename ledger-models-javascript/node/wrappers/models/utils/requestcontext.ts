@@ -4,16 +4,16 @@ dotenv.config();
 import * as grpc from '@grpc/grpc-js';
 
 class EnvConfig {
-    private static getEnvVar(key: string, defaultValue?: string): string {
-        const value = process.env[key];
-        if (value === undefined) {
-          if (defaultValue === undefined) {
-            throw new Error(`Environment variable ${key} is not set.`);
-          }
-          return defaultValue;
-        }
-        return value;
+  private static getEnvVar(key: string, defaultValue?: string): string {
+    const value = process.env[key];
+    if (value === undefined) {
+      if (defaultValue === undefined) {
+        throw new Error(`Environment variable ${key} is not set.`);
       }
+      return defaultValue;
+    }
+    return value;
+  }
 
   static get apiKey(): string {
     throw new Error("API keys not supported currently.")
@@ -26,19 +26,19 @@ class EnvConfig {
    * cann set the environment variable by adding API_URL to your .env file.
    */
   static get apiURL(): string {
-    const url:string = EnvConfig.getEnvVar('API_URL', "api.fintekkers.org") + ":8082";
+    const url: string = EnvConfig.getEnvVar('API_URL', "api.fintekkers.org") + ":8082";
     return url;
   }
 
   static get apiCredentials(): grpc.ChannelCredentials {
-    if(this.apiURL === "localhost:8082"){
-        return grpc.credentials.createInsecure();
+    if (this.apiURL === "localhost:8082") {
+      return grpc.credentials.createInsecure();
     }
-    else { 
-        return grpc.credentials.createSsl();
+    else {
+      return grpc.credentials.createSsl();
     }
   }
-  
+
 }
 
 export default EnvConfig;

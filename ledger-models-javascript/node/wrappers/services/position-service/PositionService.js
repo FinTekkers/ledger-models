@@ -8,103 +8,65 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PositionService = void 0;
 // Models
-var position_1 = require("../../models/position/position");
+const position_1 = require("../../models/position/position");
 // Requests & Services
-var position_service_grpc_pb_1 = require("../../../fintekkers/services/position-service/position_service_grpc_pb");
+const position_service_grpc_pb_1 = require("../../../fintekkers/services/position-service/position_service_grpc_pb");
 //Utils
-var requestcontext_1 = require("../../models/utils/requestcontext");
-var PositionService = /** @class */ (function () {
-    function PositionService() {
+const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
+class PositionService {
+    constructor() {
         this.client = new position_service_grpc_pb_1.PositionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
     }
-    PositionService.prototype.validateRequest = function (positionRequest) {
-        return __awaiter(this, void 0, void 0, function () {
-            var tmpClient, request;
-            return __generator(this, function (_a) {
-                tmpClient = this.client;
-                request = positionRequest.toProto();
-                return [2 /*return*/, new Promise(function (resolve, reject) {
-                        tmpClient.validateQueryRequest(request, function (error, response) {
-                            if (error) {
-                                reject(error);
-                            }
-                            else {
-                                resolve(response); // Return response from the callback
-                            }
-                        });
-                    })];
+    validateRequest(positionRequest) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const tmpClient = this.client;
+            const request = positionRequest.toProto();
+            return new Promise((resolve, reject) => {
+                tmpClient.validateQueryRequest(request, (error, response) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    else {
+                        resolve(response); // Return response from the callback
+                    }
+                });
             });
         });
-    };
-    PositionService.prototype.search = function (positionRequest) {
-        return __awaiter(this, void 0, void 0, function () {
+    }
+    search(positionRequest) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const tmpClient = this.client;
+            const listPositions = [];
+            const request = positionRequest.toProto();
+            const positionService = this;
             function processStreamSynchronously() {
-                return __awaiter(this, void 0, void 0, function () {
-                    var stream2;
-                    return __generator(this, function (_a) {
-                        stream2 = tmpClient.search(request);
-                        return [2 /*return*/, new Promise(function (resolve, reject) {
-                                stream2.on('data', function (response) {
-                                    response.getPositionsList().forEach(function (position) {
-                                        listPositions.push(new position_1.Position(position));
-                                    });
-                                });
-                                stream2.on('end', function () {
-                                    resolve(listPositions);
-                                });
-                                stream2.on('error', function (err) {
-                                    console.error('Error in the stream:', err);
-                                    reject(err);
-                                });
-                            })];
+                return __awaiter(this, void 0, void 0, function* () {
+                    const stream2 = tmpClient.search(request);
+                    return new Promise((resolve, reject) => {
+                        stream2.on('data', (response) => {
+                            response.getPositionsList().forEach((position) => {
+                                listPositions.push(new position_1.Position(position));
+                            });
+                        });
+                        stream2.on('end', () => {
+                            resolve(listPositions);
+                        });
+                        stream2.on('error', (err) => {
+                            console.error('Error in the stream:', err);
+                            reject(err);
+                        });
                     });
                 });
             }
-            var tmpClient, listPositions, request, positionService;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        tmpClient = this.client;
-                        listPositions = [];
-                        request = positionRequest.toProto();
-                        positionService = this;
-                        return [4 /*yield*/, processStreamSynchronously()];
-                    case 1: return [2 /*return*/, _a.sent()];
-                }
-            });
+            return yield processStreamSynchronously();
         });
-    };
-    return PositionService;
-}());
+    }
+}
 exports.PositionService = PositionService;
 //# sourceMappingURL=PositionService.js.map

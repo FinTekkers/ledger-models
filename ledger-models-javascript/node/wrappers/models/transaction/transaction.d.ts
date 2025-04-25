@@ -1,0 +1,36 @@
+import { PriceProto } from "../../../fintekkers/models/price/price_pb";
+import { TransactionType } from "./transaction_type";
+import { StrategyAllocationProto } from "../../../fintekkers/models/strategy/strategy_allocation_pb";
+import { TransactionProto } from "../../../fintekkers/models/transaction/transaction_pb";
+import { FieldProto } from "../../../fintekkers/models/position/field_pb";
+import { PositionStatusProto } from "../../../fintekkers/models/position/position_status_pb";
+import Security from "../security/security";
+import Portfolio from "../portfolio/portfolio";
+import { ZonedDateTime } from "../utils/datetime";
+import { UUID } from "../utils/uuid";
+import { LocalDate } from "../utils/date";
+import { Decimal } from "decimal.js";
+declare class Transaction {
+    proto: TransactionProto;
+    constructor(proto: TransactionProto);
+    toString(): string;
+    getFields(): FieldProto[];
+    getField(field: FieldProto): any;
+    getID(): UUID;
+    getAsOf(): ZonedDateTime;
+    getPortfolio(): Portfolio;
+    getSecurity(): Security;
+    getStrategyAllocation(): StrategyAllocationProto;
+    getPrice(): PriceProto;
+    getQuantity(): Decimal;
+    getIssuerName(): string;
+    getDirectedQuantity(): Decimal;
+    getTradeDate(): LocalDate;
+    getSettlementDate(): LocalDate;
+    getTransactionType(): TransactionType;
+    getTradeName(): string;
+    getPositionStatus(): PositionStatusProto;
+    getChildrenTransactions(): TransactionProto[];
+    equals(other: Transaction): boolean;
+}
+export default Transaction;

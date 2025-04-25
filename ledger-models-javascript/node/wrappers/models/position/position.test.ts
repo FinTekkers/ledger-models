@@ -126,7 +126,7 @@ async function testSerialization(): Promise<boolean> {
     expect(position.getMeasureValue(MeasureProto.DIRECTED_QUANTITY)).toBe(1);
 
     let price: PriceProto = position.getFieldValue(FieldProto.PRICE);
-    expect(price.getPrice().getArbitraryPrecisionValue()).toBe("1.0");
+    expect(price.getPrice()?.getArbitraryPrecisionValue()).toBe("1.0");
 
     let tenor: TenorProto = position.getFieldValue(FieldProto.TENOR);
     expect(tenor.getTermValue()).toBe("3M");

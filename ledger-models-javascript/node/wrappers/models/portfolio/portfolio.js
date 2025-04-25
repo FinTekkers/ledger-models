@@ -1,28 +1,34 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
-var datetime_1 = require("../utils/datetime");
-var uuid_1 = require("../utils/uuid");
-var Portfolio = /** @class */ (function () {
-    function Portfolio(proto) {
+const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
+const datetime_1 = require("../utils/datetime");
+const uuid_1 = require("../utils/uuid");
+class Portfolio {
+    constructor(proto) {
         this.proto = proto;
     }
-    Portfolio.prototype.toString = function () {
+    toString() {
         return this.getPortfolioName();
-    };
-    Portfolio.prototype.getID = function () {
+    }
+    getID() {
+        const uuid = this.proto.getUuid();
+        if (!uuid)
+            throw new Error('Portfolio UUID is undefined');
         return uuid_1.UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
-    };
-    Portfolio.prototype.getAsOf = function () {
-        return new datetime_1.ZonedDateTime(this.proto.getAsOf());
-    };
-    Portfolio.prototype.getPortfolioName = function () {
+    }
+    getAsOf() {
+        const asOf = this.proto.getAsOf();
+        if (!asOf)
+            throw new Error('Portfolio AsOf is undefined');
+        return new datetime_1.ZonedDateTime(asOf);
+    }
+    getPortfolioName() {
         return this.proto.getPortfolioName();
-    };
-    Portfolio.prototype.getFields = function () {
+    }
+    getFields() {
         return [field_pb_1.FieldProto.ID, field_pb_1.FieldProto.PORTFOLIO, field_pb_1.FieldProto.PORTFOLIO_ID, field_pb_1.FieldProto.PORTFOLIO_NAME];
-    };
-    Portfolio.prototype.getField = function (field) {
+    }
+    getField(field) {
         switch (field) {
             case field_pb_1.FieldProto.ID:
             case field_pb_1.FieldProto.PORTFOLIO_ID:
@@ -32,10 +38,9 @@ var Portfolio = /** @class */ (function () {
             case field_pb_1.FieldProto.PORTFOLIO_NAME:
                 return this.getPortfolioName();
             default:
-                throw new Error("Field not mapped in Portfolio wrapper: ".concat(field));
+                throw new Error(`Field not mapped in Portfolio wrapper: ${field}`);
         }
-    };
-    return Portfolio;
-}());
+    }
+}
 exports.default = Portfolio;
 //# sourceMappingURL=portfolio.js.map

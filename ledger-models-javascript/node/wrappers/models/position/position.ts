@@ -121,7 +121,9 @@ export class Position {
         } else if (value instanceof Portfolio) {
           return value.getPortfolioName();
         } else if (value instanceof PriceProto) {
-          return UUID.fromU8Array(value.getUuid().getRawUuid_asU8()).toString();
+          const uuid = value.getUuid();
+          if (!uuid) throw new Error("Price UUID is required");
+          return UUID.fromU8Array(uuid.getRawUuid_asU8()).toString();
         } else if (value instanceof Transaction) {
           return value.toString();
         } else if (value instanceof UUID) {
@@ -138,6 +140,7 @@ export class Position {
       default:
         return "Can't display this field: " + fieldToGet.getField();
     }
+    return "Unknown field type";
   }
 
   public getMeasures(): MeasureMapEntry[] {
@@ -166,14 +169,18 @@ export class Position {
   }
 
   public static unpackField(fieldToUnpack: FieldMapEntry): any {
+    const packedValue = fieldToUnpack.getFieldValuePacked();
+    if (!packedValue) throw new Error("Field value is required");
+    const binaryValue = packedValue.getValue() as Uint8Array;
+
     switch (fieldToUnpack.getField()) {
       case FieldProto.PORTFOLIO_ID:
       case FieldProto.SECURITY_ID:
       case FieldProto.PRICE_ID:
       case FieldProto.ID:
-        return UUIDProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return UUIDProto.deserializeBinary(binaryValue);
       case FieldProto.AS_OF:
-        return LocalTimestampProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return LocalTimestampProto.deserializeBinary(binaryValue);
       case FieldProto.TRADE_DATE:
       case FieldProto.MATURITY_DATE:
       case FieldProto.ISSUE_DATE:
@@ -181,15 +188,15 @@ export class Position {
       case FieldProto.TAX_LOT_OPEN_DATE:
       case FieldProto.TAX_LOT_CLOSE_DATE:
       case FieldProto.EFFECTIVE_DATE:
-        return LocalDateProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return LocalDateProto.deserializeBinary(binaryValue);
       case FieldProto.IDENTIFIER:
-        return IdentifierProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return IdentifierProto.deserializeBinary(binaryValue);
       case FieldProto.STRATEGY:
-        return StrategyProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return StrategyProto.deserializeBinary(binaryValue);
       case FieldProto.TENOR:
-        return TenorProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return TenorProto.deserializeBinary(binaryValue);
       case FieldProto.PRICE:
-        return PriceProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return PriceProto.deserializeBinary(binaryValue);
       case FieldProto.TRANSACTION_TYPE:
       case FieldProto.POSITION_STATUS:
         return fieldToUnpack;
@@ -200,15 +207,15 @@ export class Position {
       case FieldProto.PRODUCT_TYPE:
       case FieldProto.PRODUCT_CLASS:
       case FieldProto.ASSET_CLASS:
-        return StringValue.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return StringValue.deserializeBinary(binaryValue);
       case FieldProto.PORTFOLIO:
-        return PortfolioProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return PortfolioProto.deserializeBinary(binaryValue);
       case FieldProto.SECURITY:
       case FieldProto.CASH_IMPACT_SECURITY:
-        return SecurityProto.deserializeBinary(fieldToUnpack.getFieldValuePacked().getValue());
+        return SecurityProto.deserializeBinary(binaryValue);
       case FieldProto.IS_CANCELLED:
         console.log("Need to check that IS_CANCELLED IS SUPPORTED CORRECTLY");
-        return fieldToUnpack.getFieldValuePacked();
+        return packedValue;
       default:
         throw new Error(`Field not found. Could not unpack ${FieldProto[fieldToUnpack.getField()]}. Mapping missing`);
     }

@@ -1,37 +1,41 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var transaction_type_1 = require("./transaction_type");
-var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
-var security_1 = require("../security/security");
-var portfolio_1 = require("../portfolio/portfolio");
+const transaction_type_1 = require("./transaction_type");
+const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
+const security_1 = __importDefault(require("../security/security"));
+const portfolio_1 = __importDefault(require("../portfolio/portfolio"));
 //Model Utils
-var datetime_1 = require("../utils/datetime");
-var uuid_1 = require("../utils/uuid");
-var date_1 = require("../utils/date");
-var decimal_js_1 = require("decimal.js");
-var Transaction = /** @class */ (function () {
-    function Transaction(proto) {
+const datetime_1 = require("../utils/datetime");
+const uuid_1 = require("../utils/uuid");
+const date_1 = require("../utils/date");
+const decimal_js_1 = require("decimal.js");
+class Transaction {
+    constructor(proto) {
         this.proto = proto;
     }
-    Transaction.prototype.toString = function () {
+    toString() {
+        var _a, _b, _c, _d, _e, _f;
         try {
-            var validTo = this.proto.getValidTo() ? this.proto.getValidTo().toString() : "NULL";
-            var validFrom = this.proto.getValidFrom() ? this.proto.getValidFrom().toString() : "NULL";
-            var strategyAllocation = this.proto.getStrategyAllocation() ? this.getStrategyAllocation().toString() : "NULL";
-            return "".concat(/*this.proto.isCancelled()*/ false ? "INVALIDATED: " : "", "TXN[").concat(this.getID().toString(), "], ") +
-                "TradeDate[".concat(this.getTradeDate().toString(), "], TxnType[").concat(this.getTransactionType(), "], Price[").concat(this.getPrice(), "], Quantity[").concat(this.getQuantity(), "], ") +
-                "AsOf[".concat(this.getAsOf().toString(), "], Portfolio[").concat(this.getPortfolio().getPortfolioName(), "], Issuer[").concat(this.getSecurity().getIssuerName(), "], ") +
-                "ValidFrom[".concat(validFrom, "], ValidTo[").concat(validTo, "], Strategy[").concat(strategyAllocation, "]");
+            const validTo = (_b = (_a = this.proto.getValidTo()) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : "NULL";
+            const validFrom = (_d = (_c = this.proto.getValidFrom()) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : "NULL";
+            const strategyAllocation = (_f = (_e = this.proto.getStrategyAllocation()) === null || _e === void 0 ? void 0 : _e.toString()) !== null && _f !== void 0 ? _f : "NULL";
+            return `${ /*this.proto.isCancelled()*/false ? "INVALIDATED: " : ""}TXN[${this.getID().toString()}], ` +
+                `TradeDate[${this.getTradeDate().toString()}], TxnType[${this.getTransactionType()}], Price[${this.getPrice()}], Quantity[${this.getQuantity()}], ` +
+                `AsOf[${this.getAsOf().toString()}], Portfolio[${this.getPortfolio().getPortfolioName()}], Issuer[${this.getSecurity().getIssuerName()}], ` +
+                `ValidFrom[${validFrom}], ValidTo[${validTo}], Strategy[${strategyAllocation}]`;
         }
         catch (e) {
             console.error(e);
-            return "Transaction toString() serialization failed: ".concat(e);
+            return `Transaction toString() serialization failed: ${e}`;
         }
-    };
-    Transaction.prototype.getFields = function () {
+    }
+    getFields() {
         return [field_pb_1.FieldProto.ID, field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.AS_OF, field_pb_1.FieldProto.ASSET_CLASS, field_pb_1.FieldProto.IDENTIFIER];
-    };
-    Transaction.prototype.getField = function (field) {
+    }
+    getField(field) {
         switch (field) {
             case field_pb_1.FieldProto.ID:
             case field_pb_1.FieldProto.SECURITY_ID:
@@ -52,63 +56,89 @@ var Transaction = /** @class */ (function () {
             case field_pb_1.FieldProto.MATURITY_DATE:
                 throw new Error('Not implemented yet');
             default:
-                throw new Error("Field not mapped in Security wrapper: ".concat(field));
+                throw new Error(`Field not mapped in Security wrapper: ${field}`);
         }
-    };
-    Transaction.prototype.getID = function () {
-        return uuid_1.UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
-    };
-    Transaction.prototype.getAsOf = function () {
-        return new datetime_1.ZonedDateTime(this.proto.getAsOf());
-    };
-    Transaction.prototype.getPortfolio = function () {
-        return new portfolio_1.default(this.proto.getPortfolio());
-    };
-    Transaction.prototype.getSecurity = function () {
-        return new security_1.default(this.proto.getSecurity());
-    };
-    Transaction.prototype.getStrategyAllocation = function () {
-        return this.proto.getStrategyAllocation();
-    };
-    Transaction.prototype.getPrice = function () {
-        return this.proto.getPrice();
-    };
-    Transaction.prototype.getQuantity = function () {
-        return new decimal_js_1.Decimal(this.proto.getQuantity().getArbitraryPrecisionValue());
-    };
-    Transaction.prototype.getIssuerName = function () {
+    }
+    getID() {
+        const uuid = this.proto.getUuid();
+        if (!uuid)
+            throw new Error("UUID is required");
+        return uuid_1.UUID.fromU8Array(uuid.getRawUuid_asU8());
+    }
+    getAsOf() {
+        const asOf = this.proto.getAsOf();
+        if (!asOf)
+            throw new Error("AsOf is required");
+        return new datetime_1.ZonedDateTime(asOf);
+    }
+    getPortfolio() {
+        const portfolio = this.proto.getPortfolio();
+        if (!portfolio)
+            throw new Error("Portfolio is required");
+        return new portfolio_1.default(portfolio);
+    }
+    getSecurity() {
+        const security = this.proto.getSecurity();
+        if (!security)
+            throw new Error("Security is required");
+        return new security_1.default(security);
+    }
+    getStrategyAllocation() {
+        const allocation = this.proto.getStrategyAllocation();
+        if (!allocation)
+            throw new Error("StrategyAllocation is required");
+        return allocation;
+    }
+    getPrice() {
+        const price = this.proto.getPrice();
+        if (!price)
+            throw new Error("Price is required");
+        return price;
+    }
+    getQuantity() {
+        const quantity = this.proto.getQuantity();
+        if (!quantity)
+            throw new Error("Quantity is required");
+        return new decimal_js_1.Decimal(quantity.getArbitraryPrecisionValue());
+    }
+    getIssuerName() {
         return this.getSecurity().getIssuerName();
-    };
-    Transaction.prototype.getDirectedQuantity = function () {
+    }
+    getDirectedQuantity() {
         return this.getQuantity().mul(this.getTransactionType().getDirectionMultiplier());
-    };
-    Transaction.prototype.getTradeDate = function () {
-        return new date_1.LocalDate(this.proto.getTradeDate());
-    };
-    Transaction.prototype.getSettlementDate = function () {
-        return new date_1.LocalDate(this.proto.getSettlementDate());
-    };
-    Transaction.prototype.getTransactionType = function () {
+    }
+    getTradeDate() {
+        const tradeDate = this.proto.getTradeDate();
+        if (!tradeDate)
+            throw new Error("TradeDate is required");
+        return new date_1.LocalDate(tradeDate);
+    }
+    getSettlementDate() {
+        const settlementDate = this.proto.getSettlementDate();
+        if (!settlementDate)
+            throw new Error("SettlementDate is required");
+        return new date_1.LocalDate(settlementDate);
+    }
+    getTransactionType() {
         return new transaction_type_1.TransactionType(this.proto.getTransactionType());
-    };
-    Transaction.prototype.getTradeName = function () {
+    }
+    getTradeName() {
         return this.proto.getTradeName();
-    };
-    Transaction.prototype.getPositionStatus = function () {
+    }
+    getPositionStatus() {
         return this.proto.getPositionStatus();
-    };
-    Transaction.prototype.getChildrenTransactions = function () {
+    }
+    getChildrenTransactions() {
         return this.proto.getChildtransactionsList();
-    };
-    Transaction.prototype.equals = function (other) {
+    }
+    equals(other) {
         if (other instanceof Transaction) {
             return this.getID().equals(other.getID());
         }
         else {
             return false;
         }
-    };
-    return Transaction;
-}());
+    }
+}
 exports.default = Transaction;
 //# sourceMappingURL=transaction.js.map

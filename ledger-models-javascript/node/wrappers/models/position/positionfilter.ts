@@ -26,7 +26,7 @@ export class PositionFilter {
         if (typeof fieldValue === 'string') {
             return this.addEqualsStringFilter(field, fieldValue as string);
         } else {
-            return this.addFilter(field, PositionFilterOperator.EQUALS, fieldValue, null);
+            return this.addFilter(field, PositionFilterOperator.EQUALS, fieldValue, undefined);
         }
     }
 

@@ -71,8 +71,8 @@ async function testSecurity(): Promise<boolean> {
   security.setDescription('Dummy US Treasury 10Y Bond');
 
   const issuance = new IssuanceProto();
-  issuance.setPostAuctionOutstandingQuantity(ProtoSerializationUtil.serialize(1000000.00));
-  issuance.setTotalAccepted(ProtoSerializationUtil.serialize(100000000.00));
+  issuance.setPostAuctionOutstandingQuantity(ProtoSerializationUtil.serialize(1000000.00) as DecimalValueProto);
+  issuance.setTotalAccepted(ProtoSerializationUtil.serialize(100000000.00) as DecimalValueProto);
   security.addIssuanceInfo(issuance);
 
   var validationSummary = await securityService.validateCreateSecurity(security);

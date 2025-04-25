@@ -74,7 +74,9 @@ async function testTransaction(): Promise<boolean> {
 
   console.time("searchTransaction");
 
-  const transactionID = uuid.UUID.fromU8Array(transactionResponse.getUuid().getRawUuid_asU8());
+  const transactionUuid = transactionResponse.getUuid();
+  if (!transactionUuid) throw new Error("Transaction UUID is required");
+  const transactionID = uuid.UUID.fromU8Array(transactionUuid.getRawUuid_asU8());
   positionFilter.addEqualsFilter(FieldProto.ID, transactionID);
   const transactions = await transactionService.searchTransaction(now.toProto(), positionFilter);
   console.timeEnd("searchTransaction");

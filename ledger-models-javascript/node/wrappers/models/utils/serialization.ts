@@ -29,7 +29,7 @@ export class ProtoSerializationUtil {
       return new DecimalValueProto().setArbitraryPrecisionValue(obj.toString());
     }
     if (obj instanceof String) {
-      return StringValue.of(obj);
+      return new StringValue().setValue(obj.toString());
     }
 
     throw new Error(`Could not serialize object of type ${typeof obj}. Value: ${obj}`);

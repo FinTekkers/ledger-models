@@ -34,7 +34,7 @@ class SecurityService {
 
     const validateCreateOrUpdateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
     const response = await validateCreateOrUpdateAsync(createRequest);
-    return response;
+    return response as SummaryProto;
   }
 
   async createSecurity(security: SecurityProto): Promise<CreateSecurityResponseProto> {
@@ -45,7 +45,7 @@ class SecurityService {
 
     const createSecurityAsync = promisify(this.client.createOrUpdate.bind(this.client));
     const response = await createSecurityAsync(createRequest);
-    return response;
+    return response as CreateSecurityResponseProto;
   }
 
   async searchSecurityAsOfNow(positionFilter: PositionFilter): Promise<Security[]> {

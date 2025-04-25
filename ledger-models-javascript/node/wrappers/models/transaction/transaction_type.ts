@@ -5,7 +5,7 @@ export class TransactionType {
 
     constructor(proto: TransactionTypeProto) {
         this.proto = proto;
-      }
+    }
 
     static ttEnumMap: Map<number, string>;
 
@@ -13,7 +13,7 @@ export class TransactionType {
         TransactionType.ttEnumMap = new Map<number, string>();
 
         Object.keys(TransactionTypeProto).forEach(key => {
-            TransactionType.ttEnumMap.set(TransactionTypeProto[key], key);
+            TransactionType.ttEnumMap.set(TransactionTypeProto[key as keyof typeof TransactionTypeProto], key);
         });
     }
 
@@ -28,7 +28,7 @@ export class TransactionType {
             case TransactionTypeProto.MATURATION:
                 return -1;
             case TransactionTypeProto.UNKNOWN:
-                throw new Error('Unknown transaction type: '+this.toString());
+                throw new Error('Unknown transaction type: ' + this.toString());
         }
     }
 
@@ -41,7 +41,7 @@ export class TransactionType {
      * 
      * @returns TransactionType as a string
      */
-    toString() : string {  
-      return TransactionType.ttEnumMap.get(this.proto);
+    toString(): string {
+        return TransactionType.ttEnumMap.get(this.proto) ?? 'UNKNOWN';
     }
 }

@@ -34,7 +34,7 @@ class PortfolioService {
 
     const validateCreateOrUpdateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
     const response = await validateCreateOrUpdateAsync(createRequest);
-    return response;
+    return response as SummaryProto;
   }
 
   async createPortfolio(portfolio: PortfolioProto): Promise<CreatePortfolioResponseProto> {
@@ -45,7 +45,7 @@ class PortfolioService {
 
     const createPortfolioAsync = promisify(this.client.createOrUpdate.bind(this.client));
     const response = await createPortfolioAsync(createRequest);
-    return response;
+    return response as CreatePortfolioResponseProto;
   }
 
   async searchPortfolio(asOf: LocalTimestampProto,

@@ -15,11 +15,15 @@ class Portfolio {
     }
 
     getID(): UUID {
-        return UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
+        const uuid = this.proto.getUuid();
+        if (!uuid) throw new Error('Portfolio UUID is undefined');
+        return UUID.fromU8Array(this.proto.getUuid()!.getRawUuid_asU8());
     }
 
     getAsOf(): ZonedDateTime {
-        return new ZonedDateTime(this.proto.getAsOf());
+        const asOf = this.proto.getAsOf();
+        if (!asOf) throw new Error('Portfolio AsOf is undefined');
+        return new ZonedDateTime(asOf);
     }
 
     getPortfolioName(): string {
