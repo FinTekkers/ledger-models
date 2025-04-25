@@ -13,7 +13,7 @@ class LocalDate {
     //Use the deserialization class which correctly handles month indexing
     //mismatch between Javascript date and other languages, and the proto definition
     //In the Proto 2 means Februrary, but in Javascript it will be read as March
-    return ProtoSerializationUtil.deserialize(this.proto);
+    return ProtoSerializationUtil.deserialize(this.proto) as Date;
   }
 
   toString(): string {

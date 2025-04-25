@@ -1,14 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueryPositionRequest = void 0;
-var position_pb_1 = require("../../../fintekkers/models/position/position_pb");
-var datetime_1 = require("../../models/utils/datetime");
-var positionfilter_1 = require("../../models/position/positionfilter");
-var operation_pb_1 = require("../../../fintekkers/requests/util/operation_pb");
+const position_pb_1 = require("../../../fintekkers/models/position/position_pb");
+const datetime_1 = require("../../models/utils/datetime");
+const positionfilter_1 = require("../../models/position/positionfilter");
+const operation_pb_1 = require("../../../fintekkers/requests/util/operation_pb");
 //Requests
-var query_position_request_pb_1 = require("../../../fintekkers/requests/position/query_position_request_pb");
-var QueryPositionRequest = /** @class */ (function () {
-    function QueryPositionRequest(filter, positionType, positionView, fields, measures, asOf) {
+const query_position_request_pb_1 = require("../../../fintekkers/requests/position/query_position_request_pb");
+class QueryPositionRequest {
+    static fromAsOf(fields, measures, asOf) {
+        return new QueryPositionRequest(new positionfilter_1.PositionFilter(), position_pb_1.PositionTypeProto.TRANSACTION, position_pb_1.PositionViewProto.DEFAULT_VIEW, fields, measures, asOf);
+    }
+    static from(fields, measures) {
+        return QueryPositionRequest.fromAsOf(fields, measures, datetime_1.ZonedDateTime.now());
+    }
+    constructor(filter, positionType, positionView, fields, measures, asOf) {
         this.filter = filter;
         this.positionType = positionType;
         this.positionView = positionView;
@@ -16,14 +22,8 @@ var QueryPositionRequest = /** @class */ (function () {
         this.measures = measures;
         this.asOf = asOf;
     }
-    QueryPositionRequest.fromAsOf = function (fields, measures, asOf) {
-        return new QueryPositionRequest(new positionfilter_1.PositionFilter(), position_pb_1.PositionTypeProto.TRANSACTION, position_pb_1.PositionViewProto.DEFAULT_VIEW, fields, measures, asOf);
-    };
-    QueryPositionRequest.from = function (fields, measures) {
-        return QueryPositionRequest.fromAsOf(fields, measures, datetime_1.ZonedDateTime.now());
-    };
-    QueryPositionRequest.prototype.toProto = function () {
-        var proto = new query_position_request_pb_1.QueryPositionRequestProto()
+    toProto() {
+        const proto = new query_position_request_pb_1.QueryPositionRequestProto()
             .setAsOf(this.asOf.toProto())
             .setVersion("1.0.0")
             .setPositionType(this.positionType)
@@ -34,11 +34,10 @@ var QueryPositionRequest = /** @class */ (function () {
         if (this.filter && this.filter.getFilters().length > 0)
             proto.setFilterFields(this.filter.toProto());
         return proto;
-    };
-    QueryPositionRequest.prototype.getFilter = function () {
+    }
+    getFilter() {
         return this.filter;
-    };
-    return QueryPositionRequest;
-}());
+    }
+}
 exports.QueryPositionRequest = QueryPositionRequest;
 //# sourceMappingURL=QueryPositionRequest.js.map

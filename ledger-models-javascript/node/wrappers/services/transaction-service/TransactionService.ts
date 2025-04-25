@@ -31,7 +31,7 @@ class TransactionService {
     createRequest.setCreateTransactionInput(transaction.proto);
 
     const validateCreateOrUpdateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
-    const response = await validateCreateOrUpdateAsync(createRequest);
+    const response = await validateCreateOrUpdateAsync(createRequest) as SummaryProto;
     return response;
   }
 
@@ -42,7 +42,7 @@ class TransactionService {
     createRequest.setCreateTransactionInput(transaction.proto);
 
     const createTransactionAsync = promisify(this.client.createOrUpdate.bind(this.client));
-    const response = await createTransactionAsync(createRequest);
+    const response = await createTransactionAsync(createRequest) as CreateTransactionResponseProto;
     return response;
   }
 

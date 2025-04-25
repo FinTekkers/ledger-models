@@ -84,4 +84,51 @@ public interface QueryPriceRequestProtoOrBuilder extends
    * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
    */
   fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsOfOrBuilder();
+
+  /**
+   * <pre>
+   * Optional: Used to filter the price frequency and horizon
+   * </pre>
+   *
+   * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
+   * @return The enum numeric value on the wire for frequency.
+   */
+  int getFrequencyValue();
+  /**
+   * <pre>
+   * Optional: Used to filter the price frequency and horizon
+   * </pre>
+   *
+   * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
+   * @return The frequency.
+   */
+  fintekkers.requests.price.PriceFrequencyProto getFrequency();
+
+  /**
+   * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
+   * @return The enum numeric value on the wire for horizon.
+   */
+  int getHorizonValue();
+  /**
+   * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
+   * @return The horizon.
+   */
+  fintekkers.requests.price.PriceHorizonProto getHorizon();
+
+  /**
+   * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+   * @return Whether the dateRange field is set.
+   */
+  boolean hasDateRange();
+  /**
+   * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+   * @return The dateRange.
+   */
+  fintekkers.models.util.DateRange.DateRangeProto getDateRange();
+  /**
+   * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+   */
+  fintekkers.models.util.DateRange.DateRangeProtoOrBuilder getDateRangeOrBuilder();
+
+  public fintekkers.requests.price.QueryPriceRequestProto.TimeRangeCase getTimeRangeCase();
 }

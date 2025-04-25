@@ -1,20 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var field_pb_1 = require("../../../fintekkers/models/position/field_pb");
-var datetime_1 = require("../utils/datetime");
-var uuid_1 = require("../utils/uuid");
-var serialization_1 = require("../utils/serialization");
-var Security = /** @class */ (function () {
-    function Security(proto) {
+const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
+const datetime_1 = require("../utils/datetime");
+const uuid_1 = require("../utils/uuid");
+const serialization_1 = require("../utils/serialization");
+class Security {
+    constructor(proto) {
         this.proto = proto;
     }
-    Security.prototype.toString = function () {
-        return "ID[".concat(this.getID().toString(), "], ").concat(this.getSecurityID(), "[").concat(this.getIssuerName(), "]");
-    };
-    Security.prototype.getFields = function () {
+    toString() {
+        return `ID[${this.getID().toString()}], ${this.getSecurityID()}[${this.getIssuerName()}]`;
+    }
+    getFields() {
         return [field_pb_1.FieldProto.ID, field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.AS_OF, field_pb_1.FieldProto.ASSET_CLASS, field_pb_1.FieldProto.IDENTIFIER];
-    };
-    Security.prototype.getField = function (field) {
+    }
+    getField(field) {
         switch (field) {
             case field_pb_1.FieldProto.ID:
             case field_pb_1.FieldProto.SECURITY_ID:
@@ -35,48 +35,59 @@ var Security = /** @class */ (function () {
             case field_pb_1.FieldProto.MATURITY_DATE:
                 throw new Error('Not implemented yet');
             default:
-                throw new Error("Field not mapped in Security wrapper: ".concat(field));
+                throw new Error(`Field not mapped in Security wrapper: ${field}`);
         }
-    };
-    Security.prototype.getID = function () {
-        return uuid_1.UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
-    };
-    Security.prototype.getAsOf = function () {
-        return new datetime_1.ZonedDateTime(this.proto.getAsOf());
-    };
-    Security.prototype.getAssetClass = function () {
+    }
+    getID() {
+        const uuid = this.proto.getUuid();
+        if (!uuid)
+            throw new Error("UUID is required");
+        return uuid_1.UUID.fromU8Array(uuid.getRawUuid_asU8());
+    }
+    getAsOf() {
+        const asOf = this.proto.getAsOf();
+        if (!asOf)
+            throw new Error("AsOf is required");
+        return new datetime_1.ZonedDateTime(asOf);
+    }
+    getAssetClass() {
         return this.proto.getAssetClass();
-    };
-    Security.prototype.getProductClass = function () {
+    }
+    getProductClass() {
         throw new Error('Not implemented yet. See Java implementation for reference');
-    };
-    Security.prototype.getProductType = function () {
+    }
+    getProductType() {
         throw new Error('Not implemented yet. See Java implementation for reference');
-    };
-    Security.prototype.getSecurityID = function () {
-        // const id: IdentifierProto = this.proto.identifier;
-        return this.proto.getIdentifier(); // Assuming you've implemented the Identifier class
-    };
-    Security.prototype.getIssueDate = function () {
-        var date = this.proto.getIssueDate();
-        return serialization_1.ProtoSerializationUtil.deserialize(this.proto.getIssueDate());
-    };
-    Security.prototype.getMaturityDate = function () {
-        var date = this.proto.getMaturityDate();
-        return serialization_1.ProtoSerializationUtil.deserialize(this.proto.getMaturityDate());
-    };
-    Security.prototype.getIssuerName = function () {
+    }
+    getSecurityID() {
+        const identifier = this.proto.getIdentifier();
+        if (!identifier)
+            throw new Error("Identifier is required");
+        return identifier;
+    }
+    getIssueDate() {
+        const date = this.proto.getIssueDate();
+        if (!date)
+            throw new Error("IssueDate is required");
+        return serialization_1.ProtoSerializationUtil.deserialize(date);
+    }
+    getMaturityDate() {
+        const date = this.proto.getMaturityDate();
+        if (!date)
+            throw new Error("MaturityDate is required");
+        return serialization_1.ProtoSerializationUtil.deserialize(date);
+    }
+    getIssuerName() {
         return this.proto.getIssuerName();
-    };
-    Security.prototype.equals = function (other) {
+    }
+    equals(other) {
         if (other instanceof Security) {
             return this.getID().equals(other.getID());
         }
         else {
             return false;
         }
-    };
-    return Security;
-}());
+    }
+}
 exports.default = Security;
 //# sourceMappingURL=security.js.map

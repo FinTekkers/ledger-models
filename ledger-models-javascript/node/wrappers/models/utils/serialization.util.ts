@@ -11,10 +11,10 @@ function pack(value: any) {
   if (typeof value === 'string') {
     return packStringIntoAny(value);
   } else if (value instanceof Date) {
-    const localDateProto: LocalDateProto = ProtoSerializationUtil.serialize(value);
+    const localDateProto: LocalDateProto = ProtoSerializationUtil.serialize(value) as LocalDateProto;
     return packDateIntoAny(localDateProto);
   } else if (value instanceof ZonedDateTime) {
-    const localDateProto: LocalTimestampProto = ProtoSerializationUtil.serialize(value);
+    const localDateProto: LocalTimestampProto = ProtoSerializationUtil.serialize(value) as LocalTimestampProto;
     return packTimestampIntoAny(localDateProto);
   } else if (value instanceof UUID) {
     // const uuid: UUIDProto = ProtoSerializationUtil.serialize(value);
@@ -56,7 +56,7 @@ function unpackIDIntoAny(anyMessage: Any): UUIDProto {
   }
 
   const uuidProto: UUIDProto = UUIDProto.deserializeBinary(anyMessage.getValue_asU8());
-  return ProtoSerializationUtil.deserialize(uuidProto);
+  return ProtoSerializationUtil.deserialize(uuidProto) as unknown as UUIDProto;
 }
 
 function packTimestampIntoAny(inputDate: LocalTimestampProto): Any {
@@ -74,7 +74,7 @@ function unpackTimestampFromAny(anyMessage: Any): LocalTimestampProto {
   }
 
   const dateProto: LocalTimestampProto = LocalTimestampProto.deserializeBinary(anyMessage.getValue_asU8());
-  return ProtoSerializationUtil.deserialize(dateProto);
+  return ProtoSerializationUtil.deserialize(dateProto) as unknown as LocalTimestampProto;
 }
 
 function packDateIntoAny(inputDate: LocalDateProto): Any {
@@ -92,7 +92,7 @@ function unpackDateFromAny(anyMessage: Any): LocalDateProto {
   }
 
   const dateProto: LocalDateProto = LocalDateProto.deserializeBinary(anyMessage.getValue_asU8());
-  return ProtoSerializationUtil.deserialize(dateProto);
+  return ProtoSerializationUtil.deserialize(dateProto) as unknown as LocalDateProto;
 }
 
 function packStringIntoAny(inputString: string): Any {

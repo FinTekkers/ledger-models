@@ -19,6 +19,7 @@ private static final long serialVersionUID = 0L;
     objectClass_ = "";
     version_ = "";
     uuIds_ = java.util.Collections.emptyList();
+    frequency_ = 0;
   }
 
   @java.lang.Override
@@ -99,6 +100,32 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
+          case 192: {
+            int rawValue = input.readEnum();
+
+            frequency_ = rawValue;
+            break;
+          }
+          case 200: {
+            int rawValue = input.readEnum();
+            timeRangeCase_ = 25;
+            timeRange_ = rawValue;
+            break;
+          }
+          case 210: {
+            fintekkers.models.util.DateRange.DateRangeProto.Builder subBuilder = null;
+            if (timeRangeCase_ == 26) {
+              subBuilder = ((fintekkers.models.util.DateRange.DateRangeProto) timeRange_).toBuilder();
+            }
+            timeRange_ =
+                input.readMessage(fintekkers.models.util.DateRange.DateRangeProto.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom((fintekkers.models.util.DateRange.DateRangeProto) timeRange_);
+              timeRange_ = subBuilder.buildPartial();
+            }
+            timeRangeCase_ = 26;
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -132,6 +159,47 @@ private static final long serialVersionUID = 0L;
     return fintekkers.requests.price.QueryPriceRequestProtos.internal_static_fintekkers_requests_price_QueryPriceRequestProto_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             fintekkers.requests.price.QueryPriceRequestProto.class, fintekkers.requests.price.QueryPriceRequestProto.Builder.class);
+  }
+
+  private int timeRangeCase_ = 0;
+  private java.lang.Object timeRange_;
+  public enum TimeRangeCase
+      implements com.google.protobuf.Internal.EnumLite,
+          com.google.protobuf.AbstractMessage.InternalOneOfEnum {
+    HORIZON(25),
+    DATE_RANGE(26),
+    TIMERANGE_NOT_SET(0);
+    private final int value;
+    private TimeRangeCase(int value) {
+      this.value = value;
+    }
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static TimeRangeCase valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static TimeRangeCase forNumber(int value) {
+      switch (value) {
+        case 25: return HORIZON;
+        case 26: return DATE_RANGE;
+        case 0: return TIMERANGE_NOT_SET;
+        default: return null;
+      }
+    }
+    public int getNumber() {
+      return this.value;
+    }
+  };
+
+  public TimeRangeCase
+  getTimeRangeCase() {
+    return TimeRangeCase.forNumber(
+        timeRangeCase_);
   }
 
   public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
@@ -302,6 +370,89 @@ private static final long serialVersionUID = 0L;
     return getAsOf();
   }
 
+  public static final int FREQUENCY_FIELD_NUMBER = 24;
+  private int frequency_;
+  /**
+   * <pre>
+   * Optional: Used to filter the price frequency and horizon
+   * </pre>
+   *
+   * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
+   * @return The enum numeric value on the wire for frequency.
+   */
+  @java.lang.Override public int getFrequencyValue() {
+    return frequency_;
+  }
+  /**
+   * <pre>
+   * Optional: Used to filter the price frequency and horizon
+   * </pre>
+   *
+   * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
+   * @return The frequency.
+   */
+  @java.lang.Override public fintekkers.requests.price.PriceFrequencyProto getFrequency() {
+    @SuppressWarnings("deprecation")
+    fintekkers.requests.price.PriceFrequencyProto result = fintekkers.requests.price.PriceFrequencyProto.valueOf(frequency_);
+    return result == null ? fintekkers.requests.price.PriceFrequencyProto.UNRECOGNIZED : result;
+  }
+
+  public static final int HORIZON_FIELD_NUMBER = 25;
+  /**
+   * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
+   * @return The enum numeric value on the wire for horizon.
+   */
+  public int getHorizonValue() {
+    if (timeRangeCase_ == 25) {
+      return (java.lang.Integer) timeRange_;
+    }
+    return 0;
+  }
+  /**
+   * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
+   * @return The horizon.
+   */
+  public fintekkers.requests.price.PriceHorizonProto getHorizon() {
+    if (timeRangeCase_ == 25) {
+      @SuppressWarnings("deprecation")
+      fintekkers.requests.price.PriceHorizonProto result = fintekkers.requests.price.PriceHorizonProto.valueOf(
+          (java.lang.Integer) timeRange_);
+      return result == null ? fintekkers.requests.price.PriceHorizonProto.UNRECOGNIZED : result;
+    }
+    return fintekkers.requests.price.PriceHorizonProto.PRICE_HORIZON_UNSPECIFIED;
+  }
+
+  public static final int DATE_RANGE_FIELD_NUMBER = 26;
+  /**
+   * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+   * @return Whether the dateRange field is set.
+   */
+  @java.lang.Override
+  public boolean hasDateRange() {
+    return timeRangeCase_ == 26;
+  }
+  /**
+   * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+   * @return The dateRange.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DateRange.DateRangeProto getDateRange() {
+    if (timeRangeCase_ == 26) {
+       return (fintekkers.models.util.DateRange.DateRangeProto) timeRange_;
+    }
+    return fintekkers.models.util.DateRange.DateRangeProto.getDefaultInstance();
+  }
+  /**
+   * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DateRange.DateRangeProtoOrBuilder getDateRangeOrBuilder() {
+    if (timeRangeCase_ == 26) {
+       return (fintekkers.models.util.DateRange.DateRangeProto) timeRange_;
+    }
+    return fintekkers.models.util.DateRange.DateRangeProto.getDefaultInstance();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -331,6 +482,15 @@ private static final long serialVersionUID = 0L;
     if (asOf_ != null) {
       output.writeMessage(23, getAsOf());
     }
+    if (frequency_ != fintekkers.requests.price.PriceFrequencyProto.PRICE_FREQUENCY_UNSPECIFIED.getNumber()) {
+      output.writeEnum(24, frequency_);
+    }
+    if (timeRangeCase_ == 25) {
+      output.writeEnum(25, ((java.lang.Integer) timeRange_));
+    }
+    if (timeRangeCase_ == 26) {
+      output.writeMessage(26, (fintekkers.models.util.DateRange.DateRangeProto) timeRange_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -357,6 +517,18 @@ private static final long serialVersionUID = 0L;
     if (asOf_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(23, getAsOf());
+    }
+    if (frequency_ != fintekkers.requests.price.PriceFrequencyProto.PRICE_FREQUENCY_UNSPECIFIED.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(24, frequency_);
+    }
+    if (timeRangeCase_ == 25) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(25, ((java.lang.Integer) timeRange_));
+    }
+    if (timeRangeCase_ == 26) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(26, (fintekkers.models.util.DateRange.DateRangeProto) timeRange_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -389,6 +561,20 @@ private static final long serialVersionUID = 0L;
       if (!getAsOf()
           .equals(other.getAsOf())) return false;
     }
+    if (frequency_ != other.frequency_) return false;
+    if (!getTimeRangeCase().equals(other.getTimeRangeCase())) return false;
+    switch (timeRangeCase_) {
+      case 25:
+        if (getHorizonValue()
+            != other.getHorizonValue()) return false;
+        break;
+      case 26:
+        if (!getDateRange()
+            .equals(other.getDateRange())) return false;
+        break;
+      case 0:
+      default:
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -415,6 +601,20 @@ private static final long serialVersionUID = 0L;
     if (hasAsOf()) {
       hash = (37 * hash) + AS_OF_FIELD_NUMBER;
       hash = (53 * hash) + getAsOf().hashCode();
+    }
+    hash = (37 * hash) + FREQUENCY_FIELD_NUMBER;
+    hash = (53 * hash) + frequency_;
+    switch (timeRangeCase_) {
+      case 25:
+        hash = (37 * hash) + HORIZON_FIELD_NUMBER;
+        hash = (53 * hash) + getHorizonValue();
+        break;
+      case 26:
+        hash = (37 * hash) + DATE_RANGE_FIELD_NUMBER;
+        hash = (53 * hash) + getDateRange().hashCode();
+        break;
+      case 0:
+      default:
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -572,6 +772,10 @@ private static final long serialVersionUID = 0L;
         asOf_ = null;
         asOfBuilder_ = null;
       }
+      frequency_ = 0;
+
+      timeRangeCase_ = 0;
+      timeRange_ = null;
       return this;
     }
 
@@ -620,6 +824,18 @@ private static final long serialVersionUID = 0L;
       } else {
         result.asOf_ = asOfBuilder_.build();
       }
+      result.frequency_ = frequency_;
+      if (timeRangeCase_ == 25) {
+        result.timeRange_ = timeRange_;
+      }
+      if (timeRangeCase_ == 26) {
+        if (dateRangeBuilder_ == null) {
+          result.timeRange_ = timeRange_;
+        } else {
+          result.timeRange_ = dateRangeBuilder_.build();
+        }
+      }
+      result.timeRangeCase_ = timeRangeCase_;
       onBuilt();
       return result;
     }
@@ -708,6 +924,22 @@ private static final long serialVersionUID = 0L;
       if (other.hasAsOf()) {
         mergeAsOf(other.getAsOf());
       }
+      if (other.frequency_ != 0) {
+        setFrequencyValue(other.getFrequencyValue());
+      }
+      switch (other.getTimeRangeCase()) {
+        case HORIZON: {
+          setHorizonValue(other.getHorizonValue());
+          break;
+        }
+        case DATE_RANGE: {
+          mergeDateRange(other.getDateRange());
+          break;
+        }
+        case TIMERANGE_NOT_SET: {
+          break;
+        }
+      }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
       return this;
@@ -736,6 +968,21 @@ private static final long serialVersionUID = 0L;
       }
       return this;
     }
+    private int timeRangeCase_ = 0;
+    private java.lang.Object timeRange_;
+    public TimeRangeCase
+        getTimeRangeCase() {
+      return TimeRangeCase.forNumber(
+          timeRangeCase_);
+    }
+
+    public Builder clearTimeRange() {
+      timeRangeCase_ = 0;
+      timeRange_ = null;
+      onChanged();
+      return this;
+    }
+
     private int bitField0_;
 
     private java.lang.Object objectClass_ = "";
@@ -1366,6 +1613,284 @@ private static final long serialVersionUID = 0L;
         asOf_ = null;
       }
       return asOfBuilder_;
+    }
+
+    private int frequency_ = 0;
+    /**
+     * <pre>
+     * Optional: Used to filter the price frequency and horizon
+     * </pre>
+     *
+     * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
+     * @return The enum numeric value on the wire for frequency.
+     */
+    @java.lang.Override public int getFrequencyValue() {
+      return frequency_;
+    }
+    /**
+     * <pre>
+     * Optional: Used to filter the price frequency and horizon
+     * </pre>
+     *
+     * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
+     * @param value The enum numeric value on the wire for frequency to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFrequencyValue(int value) {
+      
+      frequency_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Optional: Used to filter the price frequency and horizon
+     * </pre>
+     *
+     * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
+     * @return The frequency.
+     */
+    @java.lang.Override
+    public fintekkers.requests.price.PriceFrequencyProto getFrequency() {
+      @SuppressWarnings("deprecation")
+      fintekkers.requests.price.PriceFrequencyProto result = fintekkers.requests.price.PriceFrequencyProto.valueOf(frequency_);
+      return result == null ? fintekkers.requests.price.PriceFrequencyProto.UNRECOGNIZED : result;
+    }
+    /**
+     * <pre>
+     * Optional: Used to filter the price frequency and horizon
+     * </pre>
+     *
+     * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
+     * @param value The frequency to set.
+     * @return This builder for chaining.
+     */
+    public Builder setFrequency(fintekkers.requests.price.PriceFrequencyProto value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      
+      frequency_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Optional: Used to filter the price frequency and horizon
+     * </pre>
+     *
+     * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearFrequency() {
+      
+      frequency_ = 0;
+      onChanged();
+      return this;
+    }
+
+    /**
+     * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
+     * @return The enum numeric value on the wire for horizon.
+     */
+    @java.lang.Override
+    public int getHorizonValue() {
+      if (timeRangeCase_ == 25) {
+        return ((java.lang.Integer) timeRange_).intValue();
+      }
+      return 0;
+    }
+    /**
+     * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
+     * @param value The enum numeric value on the wire for horizon to set.
+     * @return This builder for chaining.
+     */
+    public Builder setHorizonValue(int value) {
+      timeRangeCase_ = 25;
+      timeRange_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
+     * @return The horizon.
+     */
+    @java.lang.Override
+    public fintekkers.requests.price.PriceHorizonProto getHorizon() {
+      if (timeRangeCase_ == 25) {
+        @SuppressWarnings("deprecation")
+        fintekkers.requests.price.PriceHorizonProto result = fintekkers.requests.price.PriceHorizonProto.valueOf(
+            (java.lang.Integer) timeRange_);
+        return result == null ? fintekkers.requests.price.PriceHorizonProto.UNRECOGNIZED : result;
+      }
+      return fintekkers.requests.price.PriceHorizonProto.PRICE_HORIZON_UNSPECIFIED;
+    }
+    /**
+     * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
+     * @param value The horizon to set.
+     * @return This builder for chaining.
+     */
+    public Builder setHorizon(fintekkers.requests.price.PriceHorizonProto value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      timeRangeCase_ = 25;
+      timeRange_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearHorizon() {
+      if (timeRangeCase_ == 25) {
+        timeRangeCase_ = 0;
+        timeRange_ = null;
+        onChanged();
+      }
+      return this;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DateRange.DateRangeProto, fintekkers.models.util.DateRange.DateRangeProto.Builder, fintekkers.models.util.DateRange.DateRangeProtoOrBuilder> dateRangeBuilder_;
+    /**
+     * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+     * @return Whether the dateRange field is set.
+     */
+    @java.lang.Override
+    public boolean hasDateRange() {
+      return timeRangeCase_ == 26;
+    }
+    /**
+     * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+     * @return The dateRange.
+     */
+    @java.lang.Override
+    public fintekkers.models.util.DateRange.DateRangeProto getDateRange() {
+      if (dateRangeBuilder_ == null) {
+        if (timeRangeCase_ == 26) {
+          return (fintekkers.models.util.DateRange.DateRangeProto) timeRange_;
+        }
+        return fintekkers.models.util.DateRange.DateRangeProto.getDefaultInstance();
+      } else {
+        if (timeRangeCase_ == 26) {
+          return dateRangeBuilder_.getMessage();
+        }
+        return fintekkers.models.util.DateRange.DateRangeProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+     */
+    public Builder setDateRange(fintekkers.models.util.DateRange.DateRangeProto value) {
+      if (dateRangeBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        timeRange_ = value;
+        onChanged();
+      } else {
+        dateRangeBuilder_.setMessage(value);
+      }
+      timeRangeCase_ = 26;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+     */
+    public Builder setDateRange(
+        fintekkers.models.util.DateRange.DateRangeProto.Builder builderForValue) {
+      if (dateRangeBuilder_ == null) {
+        timeRange_ = builderForValue.build();
+        onChanged();
+      } else {
+        dateRangeBuilder_.setMessage(builderForValue.build());
+      }
+      timeRangeCase_ = 26;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+     */
+    public Builder mergeDateRange(fintekkers.models.util.DateRange.DateRangeProto value) {
+      if (dateRangeBuilder_ == null) {
+        if (timeRangeCase_ == 26 &&
+            timeRange_ != fintekkers.models.util.DateRange.DateRangeProto.getDefaultInstance()) {
+          timeRange_ = fintekkers.models.util.DateRange.DateRangeProto.newBuilder((fintekkers.models.util.DateRange.DateRangeProto) timeRange_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          timeRange_ = value;
+        }
+        onChanged();
+      } else {
+        if (timeRangeCase_ == 26) {
+          dateRangeBuilder_.mergeFrom(value);
+        }
+        dateRangeBuilder_.setMessage(value);
+      }
+      timeRangeCase_ = 26;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+     */
+    public Builder clearDateRange() {
+      if (dateRangeBuilder_ == null) {
+        if (timeRangeCase_ == 26) {
+          timeRangeCase_ = 0;
+          timeRange_ = null;
+          onChanged();
+        }
+      } else {
+        if (timeRangeCase_ == 26) {
+          timeRangeCase_ = 0;
+          timeRange_ = null;
+        }
+        dateRangeBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+     */
+    public fintekkers.models.util.DateRange.DateRangeProto.Builder getDateRangeBuilder() {
+      return getDateRangeFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+     */
+    @java.lang.Override
+    public fintekkers.models.util.DateRange.DateRangeProtoOrBuilder getDateRangeOrBuilder() {
+      if ((timeRangeCase_ == 26) && (dateRangeBuilder_ != null)) {
+        return dateRangeBuilder_.getMessageOrBuilder();
+      } else {
+        if (timeRangeCase_ == 26) {
+          return (fintekkers.models.util.DateRange.DateRangeProto) timeRange_;
+        }
+        return fintekkers.models.util.DateRange.DateRangeProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.util.DateRangeProto date_range = 26;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DateRange.DateRangeProto, fintekkers.models.util.DateRange.DateRangeProto.Builder, fintekkers.models.util.DateRange.DateRangeProtoOrBuilder> 
+        getDateRangeFieldBuilder() {
+      if (dateRangeBuilder_ == null) {
+        if (!(timeRangeCase_ == 26)) {
+          timeRange_ = fintekkers.models.util.DateRange.DateRangeProto.getDefaultInstance();
+        }
+        dateRangeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DateRange.DateRangeProto, fintekkers.models.util.DateRange.DateRangeProto.Builder, fintekkers.models.util.DateRange.DateRangeProtoOrBuilder>(
+                (fintekkers.models.util.DateRange.DateRangeProto) timeRange_,
+                getParentForChildren(),
+                isClean());
+        timeRange_ = null;
+      }
+      timeRangeCase_ = 26;
+      onChanged();;
+      return dateRangeBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

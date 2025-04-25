@@ -49,7 +49,13 @@ test('test getting a complex type from position', async () => {
 
 async function testPosition(fields: FieldProto[], measures: MeasureProto[]): Promise<boolean> {
   let request: QueryPositionRequest = QueryPositionRequest.from(fields, measures);
-  let positions = await new PositionService().search(request);
+  const positionService = new PositionService();
+  const validationSummary = await positionService.validateRequest(request);
+  if (validationSummary.getErrorsList().length > 0) {
+    throw new Error(validationSummary.getErrorsList().join("\n"));
+  }
+
+  let positions = await positionService.search(request);
 
   if (positions && positions.length > 0) {
     console.log(positions.length + " positions returned")

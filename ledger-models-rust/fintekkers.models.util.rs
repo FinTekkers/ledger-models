@@ -49,3 +49,16 @@ pub struct Endpoint {
     #[prost(string, tag = "3")]
     pub fully_qualified_url: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DateRangeProto {
+    #[prost(string, tag = "1")]
+    pub object_class: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    /// Date Ranges are inclusive of the start and end dates
+    #[prost(message, optional, tag = "10")]
+    pub start: ::core::option::Option<LocalTimestampProto>,
+    #[prost(message, optional, tag = "11")]
+    pub end: ::core::option::Option<LocalTimestampProto>,
+}

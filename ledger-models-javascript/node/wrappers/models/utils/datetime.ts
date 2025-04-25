@@ -1,6 +1,6 @@
-import {LocalTimestampProto} from '../../../fintekkers/models/util/local_timestamp_pb';
-import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
-import {DateTime} from 'luxon';
+import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
+import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
+import { DateTime } from 'luxon';
 
 class ZonedDateTime {
   private proto: LocalTimestampProto;
@@ -14,17 +14,22 @@ class ZonedDateTime {
   }
 
   getSeconds(): number {
-    return this.proto.getTimestamp().getSeconds();
+    const timestamp = this.proto.getTimestamp();
+    if (!timestamp) throw new Error("Timestamp is required");
+    return timestamp.getSeconds();
   }
 
   getNanoSeconds(): number {
-    return this.proto.getTimestamp().getNanos();
+    const timestamp = this.proto.getTimestamp();
+    if (!timestamp) throw new Error("Timestamp is required");
+    return timestamp.getNanos();
   }
 
   toDateTime(): DateTime {
-    // Creating a DateTime object with the current date and time in a specific time zone (e.g., 'America/New_York')
-    const unixTimestampSeconds = this.proto.getTimestamp().getSeconds();
-    const nanoseconds = this.proto.getTimestamp().getNanos();
+    const timestamp = this.proto.getTimestamp();
+    if (!timestamp) throw new Error("Timestamp is required");
+    const unixTimestampSeconds = timestamp.getSeconds();
+    const nanoseconds = timestamp.getNanos();
 
     let dateTime = DateTime.fromSeconds(unixTimestampSeconds, { zone: this.proto.getTimeZone() });
 

@@ -25,13 +25,13 @@ class Transaction {
   toString(): string {
     try {
       const validTo: string =
-        this.proto.getValidTo() ? this.proto.getValidTo().toString() : "NULL";
+        this.proto.getValidTo()?.toString() ?? "NULL";
 
       const validFrom: string =
-        this.proto.getValidFrom() ? this.proto.getValidFrom().toString() : "NULL";
+        this.proto.getValidFrom()?.toString() ?? "NULL";
 
       const strategyAllocation =
-        this.proto.getStrategyAllocation() ? this.getStrategyAllocation().toString() : "NULL";
+        this.proto.getStrategyAllocation()?.toString() ?? "NULL";
 
       return `${/*this.proto.isCancelled()*/ false ? "INVALIDATED: " : ""}TXN[${this.getID().toString()}], ` +
         `TradeDate[${this.getTradeDate().toString()}], TxnType[${this.getTransactionType()}], Price[${this.getPrice()}], Quantity[${this.getQuantity()}], ` +
@@ -73,31 +73,45 @@ class Transaction {
   }
 
   getID(): UUID {
-    return UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
+    const uuid = this.proto.getUuid();
+    if (!uuid) throw new Error("UUID is required");
+    return UUID.fromU8Array(uuid.getRawUuid_asU8());
   }
 
   getAsOf(): ZonedDateTime {
-    return new ZonedDateTime(this.proto.getAsOf());
+    const asOf = this.proto.getAsOf();
+    if (!asOf) throw new Error("AsOf is required");
+    return new ZonedDateTime(asOf);
   }
 
   getPortfolio(): Portfolio {
-    return new Portfolio(this.proto.getPortfolio());
+    const portfolio = this.proto.getPortfolio();
+    if (!portfolio) throw new Error("Portfolio is required");
+    return new Portfolio(portfolio);
   }
 
   getSecurity(): Security {
-    return new Security(this.proto.getSecurity());
+    const security = this.proto.getSecurity();
+    if (!security) throw new Error("Security is required");
+    return new Security(security);
   }
 
   getStrategyAllocation(): StrategyAllocationProto {
-    return this.proto.getStrategyAllocation();
+    const allocation = this.proto.getStrategyAllocation();
+    if (!allocation) throw new Error("StrategyAllocation is required");
+    return allocation;
   }
 
   getPrice(): PriceProto {
-    return this.proto.getPrice();
+    const price = this.proto.getPrice();
+    if (!price) throw new Error("Price is required");
+    return price;
   }
 
   getQuantity(): Decimal {
-    return new Decimal(this.proto.getQuantity().getArbitraryPrecisionValue());
+    const quantity = this.proto.getQuantity();
+    if (!quantity) throw new Error("Quantity is required");
+    return new Decimal(quantity.getArbitraryPrecisionValue());
   }
 
   getIssuerName(): string {
@@ -109,11 +123,15 @@ class Transaction {
   }
 
   getTradeDate(): LocalDate {
-    return new LocalDate(this.proto.getTradeDate());
+    const tradeDate = this.proto.getTradeDate();
+    if (!tradeDate) throw new Error("TradeDate is required");
+    return new LocalDate(tradeDate);
   }
 
   getSettlementDate(): LocalDate {
-    return new LocalDate(this.proto.getSettlementDate());
+    const settlementDate = this.proto.getSettlementDate();
+    if (!settlementDate) throw new Error("SettlementDate is required");
+    return new LocalDate(settlementDate);
   }
 
   getTransactionType(): TransactionType {

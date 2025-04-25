@@ -5,10 +5,37 @@ package fintekkers.requests.price;
 import "fintekkers/models/util/uuid.proto";
 import "fintekkers/models/util/local_timestamp.proto";
 import "fintekkers/models/position/position_filter.proto";
+import "fintekkers/models/util/date_range.proto";
 
 option java_multiple_files = true;
 
 option java_outer_classname = "QueryPriceRequestProtos";
+
+enum PriceFrequencyProto {
+    PRICE_FREQUENCY_UNSPECIFIED = 0;
+    PRICE_FREQUENCY_WEEKLY = 10;
+    PRICE_FREQUENCY_DAILY = 20;
+    PRICE_FREQUENCY_HOURLY = 30;
+    PRICE_FREQUENCY_MINUTE = 40;
+    // PRICE_FREQUENCY_SECOND = 50;
+    // PRICE_FREQUENCY_MILLISECOND = 60;
+    // PRICE_FREQUENCY_MICROSECOND = 70;
+    // PRICE_FREQUENCY_NANOSECOND = 80;
+    PRICE_FREQUENCY_EVERY_TICK = 90;
+}
+
+enum PriceHorizonProto {
+    PRICE_HORIZON_UNSPECIFIED = 0;
+    PRICE_HORIZON_1_DAY = 1;
+    PRICE_HORIZON_5_DAYS = 2;
+    PRICE_HORIZON_1_WEEK = 3;
+    PRICE_HORIZON_1_MONTH = 4;
+    PRICE_HORIZON_6_MONTHS = 5;
+    PRICE_HORIZON_1_YEAR = 6;
+    PRICE_HORIZON_5_YEAR = 7;
+    PRICE_HORIZON_MAX = 8;
+    PRICE_HORIZON_YEAR_TO_DATE = 9;
+}
 
 message QueryPriceRequestProto {
   string object_class = 1;
@@ -18,6 +45,15 @@ message QueryPriceRequestProto {
 
   fintekkers.models.position.PositionFilterProto search_price_input = 22;
   fintekkers.models.util.LocalTimestampProto as_of = 23;
+
+  // Optional: Used to filter the price frequency and horizon
+  PriceFrequencyProto frequency = 24;
+  
+  oneof time_range{
+     PriceHorizonProto horizon = 25;
+     fintekkers.models.util.DateRangeProto date_range = 26;
+  }
+
 }
 
 

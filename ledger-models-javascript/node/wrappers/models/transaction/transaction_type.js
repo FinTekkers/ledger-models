@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionType = void 0;
-var transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
-var TransactionType = /** @class */ (function () {
-    function TransactionType(proto) {
+const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
+class TransactionType {
+    constructor(proto) {
         this.proto = proto;
     }
-    TransactionType.prototype.getDirectionMultiplier = function () {
+    getDirectionMultiplier() {
         switch (this.proto) {
             case transaction_type_pb_1.TransactionTypeProto.BUY:
             case transaction_type_pb_1.TransactionTypeProto.DEPOSIT:
@@ -19,7 +19,7 @@ var TransactionType = /** @class */ (function () {
             case transaction_type_pb_1.TransactionTypeProto.UNKNOWN:
                 throw new Error('Unknown transaction type: ' + this.toString());
         }
-    };
+    }
     /**
      * NOTE that this method is not performant and should only be used for debugging purposes,
      * or infrequently. If this is required for a high performance use case, please create a
@@ -29,15 +29,15 @@ var TransactionType = /** @class */ (function () {
      *
      * @returns TransactionType as a string
      */
-    TransactionType.prototype.toString = function () {
-        return TransactionType.ttEnumMap.get(this.proto);
-    };
-    return TransactionType;
-}());
+    toString() {
+        var _a;
+        return (_a = TransactionType.ttEnumMap.get(this.proto)) !== null && _a !== void 0 ? _a : 'UNKNOWN';
+    }
+}
 exports.TransactionType = TransactionType;
-(function () {
+(() => {
     TransactionType.ttEnumMap = new Map();
-    Object.keys(transaction_type_pb_1.TransactionTypeProto).forEach(function (key) {
+    Object.keys(transaction_type_pb_1.TransactionTypeProto).forEach(key => {
         TransactionType.ttEnumMap.set(transaction_type_pb_1.TransactionTypeProto[key], key);
     });
 })();

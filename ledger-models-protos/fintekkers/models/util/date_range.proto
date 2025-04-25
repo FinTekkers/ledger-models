@@ -1,0 +1,13 @@
+syntax = "proto3";
+package fintekkers.models.util;
+
+import "fintekkers/models/util/local_timestamp.proto";
+
+message DateRangeProto {
+  string object_class = 1;
+  string version = 2;
+
+  //Date Ranges are inclusive of the start and end dates
+  fintekkers.models.util.LocalTimestampProto start = 10;
+  fintekkers.models.util.LocalTimestampProto end = 11;
+}

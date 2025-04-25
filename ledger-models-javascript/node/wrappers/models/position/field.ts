@@ -1,4 +1,3 @@
-
 import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 
 export class Field {
@@ -20,6 +19,6 @@ export class Field {
     }
 
     toString(): string {
-        return null;//this.getEnumValueName();
+        return "";//this.getEnumValueName();
     }
 }

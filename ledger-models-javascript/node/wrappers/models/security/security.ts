@@ -46,11 +46,15 @@ class Security {
   }
 
   getID(): UUID {
-    return UUID.fromU8Array(this.proto.getUuid().getRawUuid_asU8());
+    const uuid = this.proto.getUuid();
+    if (!uuid) throw new Error("UUID is required");
+    return UUID.fromU8Array(uuid.getRawUuid_asU8());
   }
 
   getAsOf(): ZonedDateTime {
-    return new ZonedDateTime(this.proto.getAsOf());
+    const asOf = this.proto.getAsOf();
+    if (!asOf) throw new Error("AsOf is required");
+    return new ZonedDateTime(asOf);
   }
 
   getAssetClass(): string {
@@ -66,18 +70,21 @@ class Security {
   }
 
   getSecurityID(): IdentifierProto {
-    // const id: IdentifierProto = this.proto.identifier;
-    return this.proto.getIdentifier(); // Assuming you've implemented the Identifier class
+    const identifier = this.proto.getIdentifier();
+    if (!identifier) throw new Error("Identifier is required");
+    return identifier;
   }
 
   getIssueDate(): Date {
     const date = this.proto.getIssueDate();
-    return ProtoSerializationUtil.deserialize(this.proto.getIssueDate());
+    if (!date) throw new Error("IssueDate is required");
+    return ProtoSerializationUtil.deserialize(date) as Date;
   }
 
   getMaturityDate(): Date {
     const date = this.proto.getMaturityDate();
-    return ProtoSerializationUtil.deserialize(this.proto.getMaturityDate());
+    if (!date) throw new Error("MaturityDate is required");
+    return ProtoSerializationUtil.deserialize(date) as Date;
   }
 
   getIssuerName(): string {

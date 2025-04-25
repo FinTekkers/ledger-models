@@ -1,17 +1,20 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
-var uuid_1 = require("../utils/uuid");
-var assert = require("assert");
-var transaction_1 = require("./transaction");
-var transaction_pb_1 = require("../../../fintekkers/models/transaction/transaction_pb");
-var transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
-var decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
-test('test the transaction wrapper', function () {
+const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
+const uuid_1 = require("../utils/uuid");
+const assert = require("assert");
+const transaction_1 = __importDefault(require("./transaction"));
+const transaction_pb_1 = require("../../../fintekkers/models/transaction/transaction_pb");
+const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
+const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
+test('test the transaction wrapper', () => {
     testSerialization();
 });
 function testSerialization() {
-    var transaction = dummyTransaction();
+    const transaction = dummyTransaction();
     assert(transaction.getTransactionType().toString() === 'BUY');
     assert(transaction.getDirectedQuantity().toNumber() > 0);
 }

@@ -1,13 +1,22 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2016",
     "module": "commonjs",
-    "sourceMap": true, //Required for debugging .ts files
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-  }
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "node/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+  ]
 }
 // {
 //   "compilerOptions": {
