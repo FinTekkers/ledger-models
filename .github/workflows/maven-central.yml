@@ -41,12 +41,16 @@ jobs:
         chmod 700 ~/.gnupg
         
         # Import GPG keys
-        echo "${{ secrets.GPG_PUBLIC_KEY }}" | gpg --import
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
+        echo "$JRELEASER_GPG_PUBLIC_KEY" | gpg --import
+        echo "$JRELEASER_GPG_SECRET_KEY" | gpg --import
         
         # Trust GPG key
         KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | cut -d'/' -f2 | cut -d' ' -f1)
         echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key $KEY_ID trust
+      env:
+        JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+        JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
+        JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
     - name: Print Environment Variables
       run: gpg --list-keys
     - name: Execute Gradle build
