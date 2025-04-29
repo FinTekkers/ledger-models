@@ -48,7 +48,7 @@ jobs:
         KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | cut -d'/' -f2 | cut -d' ' -f1)
         echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key $KEY_ID trust
     - name: Print Environment Variables
-      run: env
+      run: gpg --list-keys
     - name: Execute Gradle build
       run: |
         echo "GPG Public Key: ${JRELEASER_GPG_PUBLIC_KEY:0:50}..."
