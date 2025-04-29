@@ -69,7 +69,7 @@ jobs:
         # Export for JReleaser
         echo "Exporting keys for JReleaser..."
         echo "JRELEASER_GPG_PUBLIC_KEY=$(gpg --armor --export | awk '{printf "%s\\n", $0}')" >> $GITHUB_ENV
-        echo "JRELEASER_GPG_SECRET_KEY=$(gpg --armor --passphrase "${{ secrets.JRELEASER_GPG_PASSPHRASE }}" --export-secret-key | awk '{printf "%s\\n", $0}')" >> $GITHUB_EN
+        echo "JRELEASER_GPG_SECRET_KEY=$(gpg --armor --passphrase "${{ secrets.JRELEASER_GPG_PASSPHRASE }}" --export-secret-key | awk '{printf "%s\\n", $0}')" >> $GITHUB_ENV
       env:
         JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
         JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
