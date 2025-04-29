@@ -45,9 +45,9 @@ jobs:
         echo 'pinentry-mode loopback' >> ~/.gnupg/gpg.conf
         echo 'allow-loopback-pinentry' > ~/.gnupg/gpg-agent.conf
         
-        # Restart GPG agent
-        gpgconf --kill gpg-agent
-        gpg-agent --daemon --allow-preset-passphrase
+        # Kill any existing gpg-agent and wait a moment
+        gpgconf --kill gpg-agent || true
+        sleep 1
         
         # Import keys with passphrase
         echo "Importing public key..."
