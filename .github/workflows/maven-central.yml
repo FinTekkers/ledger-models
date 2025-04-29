@@ -33,6 +33,20 @@ jobs:
         VERSION=${TAG#v}
         echo version is ${VERSION}
         echo "release_version=${VERSION}" >> $GITHUB_ENV
+
+    - name: Setup GPG
+      run: |
+        # Create GPG directory
+        mkdir -p ~/.gnupg/
+        chmod 700 ~/.gnupg
+        
+        # Import GPG keys
+        echo "${{ secrets.GPG_PUBLIC_KEY }}" | gpg --import
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
+        
+        # Trust GPG key
+        KEY_ID=$(gpg --list-secret-keys --keyid-format LONG | grep sec | cut -d'/' -f2 | cut -d' ' -f1)
+        echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key $KEY_ID trust
     - name: Print Environment Variables
       run: env
     - name: Execute Gradle build
