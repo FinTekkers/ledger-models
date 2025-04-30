@@ -1,4 +1,3 @@
-
 plugins {
     id 'java-library'
     id 'maven-publish'
@@ -158,6 +157,11 @@ jreleaser {
                 }
             }
             
+            nexus2 {
+                maxRetries = 100
+                retryDelay = 10000
+                timeout = 60000
+            }
         }
     }
 }
