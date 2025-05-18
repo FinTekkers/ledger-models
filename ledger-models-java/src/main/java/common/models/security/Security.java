@@ -178,7 +178,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     public SecurityTypeProto getSecurityType() {
-        throw new RuntimeException("Not supported. Need to code this in");
+        return SecurityTypeProto.UNKNOWN_SECURITY_TYPE;
     }
 
     /**

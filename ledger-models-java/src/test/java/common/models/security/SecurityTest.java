@@ -43,5 +43,8 @@ class SecurityTest {
         Assertions.assertEquals(SecurityTypeProto.BOND_SECURITY, bondSecurity.getSecurityType());
 
         Assertions.assertEquals(SecurityTypeProto.CASH_SECURITY, CashSecurity.USD.getSecurityType());
+
+        Security security = new Security(null, null, null, null);
+        Assertions.assertEquals(SecurityTypeProto.UNKNOWN_SECURITY_TYPE, security.getSecurityType());
     }
 }
