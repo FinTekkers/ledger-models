@@ -42,8 +42,9 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
                 //Business fields
                 .setIssuerName(security.getIssuer())
                 .setAssetClass(security.getAssetClass())
-                .setQuantityType(SecurityQuantityTypeProto.valueOf(security.getQuantityType().name()))
-                .setSecurityType(security.getSecurityType());
+                .setQuantityType(SecurityQuantityTypeProto.valueOf(security.getQuantityType().name()));
+
+        builder.setSecurityType(security.getSecurityType());
 
         if(security.getDescription() != null)
             builder.setDescription(security.getDescription());

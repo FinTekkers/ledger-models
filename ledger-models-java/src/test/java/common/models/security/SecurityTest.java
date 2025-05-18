@@ -3,6 +3,7 @@ package common.models.security;
 import common.models.postion.Field;
 import common.models.security.identifier.Identifier;
 import common.models.security.identifier.IdentifierType;
+import fintekkers.models.security.SecurityTypeProto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import testutil.DummyBondObjects;
@@ -31,5 +32,16 @@ class SecurityTest {
 
         bondSecurity.setSecurityId(null);
         Assertions.assertTrue(bondSecurity.getDisplayDescription().startsWith("Bond: No Security Id"));
+    }
+
+    @Test
+    public void testSecurityType() {
+        Security equitySecurity = DummyEquityObjects.getDummySecurity();
+        Assertions.assertEquals(SecurityTypeProto.EQUITY_SECURITY, equitySecurity.getSecurityType());
+
+        BondSecurity bondSecurity = DummyBondObjects.getDummySecurity();
+        Assertions.assertEquals(SecurityTypeProto.BOND_SECURITY, bondSecurity.getSecurityType());
+
+        Assertions.assertEquals(SecurityTypeProto.CASH_SECURITY, CashSecurity.USD.getSecurityType());
     }
 }
