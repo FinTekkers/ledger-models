@@ -20,7 +20,6 @@ import java.util.List;
 
 import static common.models.JSONFieldNames.*;
 import static fintekkers.models.position.FieldMapEntry.FieldMapValueOneOfCase.ENUM_VALUE;
-import static fintekkers.models.position.FieldMapEntry.FieldMapValueOneOfCase.STRING_VALUE;
 
 /**
  * Serializes/deserializes between position protos and position objects. Note that positions are a derived form of
@@ -45,7 +44,7 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
     }
 
     @Override
-    public PositionProto serialize( Position position) {
+    public PositionProto serialize(Position position) {
         PositionProto.Builder builder = PositionProto.newBuilder()
             .setObjectClass(Position.class.getSimpleName())
             .setVersion("0.0.1")
@@ -94,6 +93,21 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
         return fieldBuilder.build();
     }
 
+    public static Object getObject(FieldMapEntry entry) {
+        Field field = Field.valueOf(entry.getField().name());
+
+        Object fieldValue;
+
+        if(ENUM_VALUE.equals(entry.getFieldMapValueOneOfCase())) {
+            //Dynamically sources the appropriate enum, and gets it based on the number serialized in the proto.
+            fieldValue = field.getType().getEnumConstants()[entry.getEnumValue()];
+        } else {
+            fieldValue = ProtoSerializationUtil.deserialize(entry.getFieldValuePacked());
+        }
+
+        return fieldValue;
+    }
+
     @Override
     public Position deserialize(PositionProto proto) {
         final Position position = new Position(
@@ -107,13 +121,8 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
 
             if(ENUM_VALUE.equals(fieldProto.getFieldMapValueOneOfCase())) {
                 //Dynamically sources the appropriate enum, and gets it based on the number serialized in the proto.
-                Object enumConstant = field.getType().getEnumConstants()[fieldProto.getEnumValue()];
-                fieldValue = enumConstant;
-            }
-            //TODO: Uncomment this and test it
-            /* else if(STRING_VALUE.equals(fieldProto.getFieldMapValueOneOfCase())) {
-                fieldValue = fieldProto.getStringValue();
-            }*/ else {
+                fieldValue = field.getType().getEnumConstants()[fieldProto.getEnumValue()];
+            } else {
                 fieldValue = ProtoSerializationUtil.deserialize(fieldProto.getFieldValuePacked());
             }
             position.setFieldValue(field, fieldValue);
