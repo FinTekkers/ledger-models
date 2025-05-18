@@ -156,12 +156,12 @@ jreleaser {
                     stagingRepository('build/staging-deploy')
                 }
             }
-            
-            nexus2 {
-                maxRetries = 100
-                retryDelay = 10000
-                timeout = 60000
-            }
+//
+//            nexus2 {
+////                maxRetries = 100 //Deprecated
+//                retryDelay = 10000
+//                timeout = 60000
+//            }
         }
     }
 }
