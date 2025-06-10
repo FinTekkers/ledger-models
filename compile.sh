@@ -70,4 +70,4 @@ tsc -p tsconfig.json
 ###########################################
 
 echo "generating python protos"
-python3 -m grpc_tools.protoc -I=. --python_out=../ledger-models-python --pyi_out=../ledger-models-python --grpc_python_out=../ledger-models-python $(find . -iname "*.proto")
+python -m grpc_tools.protoc -I=. --python_out=../ledger-models-python --pyi_out=../ledger-models-python --grpc_python_out=../ledger-models-python $(find . -iname "*.proto")
