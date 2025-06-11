@@ -5,6 +5,7 @@ valuation-service/target
 
 #Java / Gradle related folders (Java build)
 .gradle
+ledger-models-java/bin
 
 #Python related folders
 .pytest_cache

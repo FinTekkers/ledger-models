@@ -128,10 +128,10 @@ class QueryPriceRequest:
 
 
     @staticmethod
-    def create_query_request(fields: dict, 
+    def create_query_request(fields: dict,
+                             frequency:PriceFrequencyProto,
                              start_date: date,
-                             end_date: date,
-                             frequency:PriceFrequencyProto):
+                             end_date: date):
         """
         Returns a query request from a dict of field/values
 
@@ -165,12 +165,13 @@ class QueryPriceRequest:
         start_date_proto: LocalTimestampProto = ProtoSerializationUtil.serialize(start_date) if start_date else None
         end_date_proto: LocalTimestampProto = ProtoSerializationUtil.serialize(end_date) if end_date else None
 
+        date_range_proto: DateRangeProto = DateRangeProto(start_date=start_date_proto, end_date=end_date_proto) if start_date and end_date else None
 
         request: QuerySecurityRequestProto = QueryPriceRequestProto(
             search_price_input=PositionFilterProto(filters=filters),
             as_of=as_of_proto,
             frequency=frequency,
-            date_range=DateRangeProto(start_date=start_date_proto, end_date=end_date_proto)
+            date_range=date_range_proto
         )
 
         return QueryPriceRequest(proto=request)

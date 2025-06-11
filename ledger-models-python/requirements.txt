@@ -5,6 +5,14 @@ python-dateutil~=2.8.2
 pytz~=2023.3
 build
 
+
+#Generally you can pip install protobuf
+#then install grpcio and the versions should be compatible
+#However, you should check the runtime version mentioned in 
+#codegen'ed python files. Clients should be using protobuf
+#of the same or greater version otherwise they will receive
+#runtime errors. 
+
 protobuf #The protobuf libraries
 grpcio  #Will install grpc packages
 
