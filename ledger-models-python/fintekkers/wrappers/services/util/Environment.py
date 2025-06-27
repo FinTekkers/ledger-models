@@ -9,6 +9,7 @@ load_dotenv()
 
 
 class ServiceType(Enum):
+    BROKER = "80"
     SECURITY_SERVICE = "8082"
     LEDGER_SERVICE = "8082"
     TRANSACTION_SERVICE = "8082"
@@ -35,12 +36,12 @@ class EnvConfig:
         # return EnvConfig.get_env_var('API_KEY')
 
     @staticmethod
-    def api_url(service_type: ServiceType = ServiceType.LEDGER_SERVICE):
+    def api_url(service_type: ServiceType = ServiceType.BROKER):
         base_url = EnvConfig.get_env_var('API_URL', EnvConfig.default_api_url)
         return f"{base_url}:{service_type.value}"
 
     @staticmethod
-    def get_channel(service_type: ServiceType = ServiceType.LEDGER_SERVICE) -> grpc.Channel:
+    def get_channel(service_type: ServiceType = ServiceType.BROKER) -> grpc.Channel:
         url = EnvConfig.api_url(service_type)
 
         if "localhost" in url or "127.0.0.1" in url:

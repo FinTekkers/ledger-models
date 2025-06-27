@@ -1,4 +1,3 @@
-from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 from fintekkers.models.security.tenor_type_pb2 import TenorTypeProto

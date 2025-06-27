@@ -5,6 +5,7 @@ package fintekkers.requests.valuation;
 import "fintekkers/models/security/security.proto";
 import "fintekkers/models/position/position.proto";
 import "fintekkers/models/price/price.proto";
+import "fintekkers/models/util/local_timestamp.proto";
 
 import "fintekkers/requests/util/operation.proto";
 import "fintekkers/models/position/measure.proto";
@@ -32,7 +33,12 @@ message ValuationRequestProto {
 
   //The positions we are going to value.
   fintekkers.models.position.PositionProto position_input= 21;
+
+  //The price we are going to use for the valuation.
   fintekkers.models.price.PriceProto price_input = 22;
+
+  //The asof datetime for the valuation.
+  fintekkers.models.util.LocalTimestampProto asof_datetime = 23;
 }
 
 

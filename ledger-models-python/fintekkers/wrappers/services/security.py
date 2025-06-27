@@ -3,6 +3,8 @@ from uuid import UUID
 from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry
+from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
+from fintekkers.models.security.identifier.identifier_type_pb2 import IdentifierTypeProto
 from fintekkers.requests.security.query_security_response_pb2 import (
     QuerySecurityResponseProto,
 )
@@ -49,7 +51,7 @@ class SecurityService:
     def create_or_update(self, request: CreateSecurityRequest):
         return self.stub.CreateOrUpdate(request.proto)
 
-    def get_security_by_uuid(uuid: UUID) -> Security:
+    def get_security_by_uuid(self, uuid: UUID) -> Security:
         """
         Parameters:
             A UUID
@@ -65,10 +67,42 @@ class SecurityService:
             }
         )
 
-        securities = SecurityService().search(request)
+        securities = self.search(request)
 
         for security in securities:
             return security
+
+    def get_security_uuid_by_identifier(self, identifier: str, identifier_type: IdentifierTypeProto) -> UUID:
+        """
+        Gets the security UUID from an identifier and identifier type.
+        
+        Args:
+            identifier: The identifier value (e.g., "912796Y29")
+            identifier_type: The type of identifier (e.g., CUSIP)
+            
+        Returns:
+            The UUID of the security
+            
+        Raises:
+            ValueError: If no security is found with the given identifier
+        """
+        # Create identifier proto
+        identifier_proto = IdentifierProto(
+            identifier_type=identifier_type,
+            identifier_value=identifier
+        )
+        
+        # Create security query request
+        security_query_request = QuerySecurityRequest.create_query_request({
+            FieldProto.IDENTIFIER: identifier_proto
+        })
+        
+        # Search for the security
+        for security in self.search(security_query_request):
+            return security.get_id()  # Return the first security found
+        
+        # If no security found, raise an error
+        raise ValueError(f"Security not found for identifier: {identifier} of type: {identifier_type}")
 
     def get_fields(self) -> list[FieldProto]:
         response:GetFieldsResponseProto = self.stub.GetFields(Empty())

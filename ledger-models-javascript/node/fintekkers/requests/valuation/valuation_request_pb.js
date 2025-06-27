@@ -27,6 +27,8 @@ var fintekkers_models_position_position_pb = require('../../../fintekkers/models
 goog.object.extend(proto, fintekkers_models_position_position_pb);
 var fintekkers_models_price_price_pb = require('../../../fintekkers/models/price/price_pb.js');
 goog.object.extend(proto, fintekkers_models_price_price_pb);
+var fintekkers_models_util_local_timestamp_pb = require('../../../fintekkers/models/util/local_timestamp_pb.js');
+goog.object.extend(proto, fintekkers_models_util_local_timestamp_pb);
 var fintekkers_requests_util_operation_pb = require('../../../fintekkers/requests/util/operation_pb.js');
 goog.object.extend(proto, fintekkers_requests_util_operation_pb);
 var fintekkers_models_position_measure_pb = require('../../../fintekkers/models/position/measure_pb.js');
@@ -98,7 +100,8 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.toObject = function(in
     measuresList: (f = jspb.Message.getRepeatedField(msg, 30)) == null ? undefined : f,
     securityInput: (f = msg.getSecurityInput()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
     positionInput: (f = msg.getPositionInput()) && fintekkers_models_position_position_pb.PositionProto.toObject(includeInstance, f),
-    priceInput: (f = msg.getPriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f)
+    priceInput: (f = msg.getPriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
+    asofDatetime: (f = msg.getAsofDatetime()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -167,6 +170,11 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.deserializeBinaryFromR
       var value = new fintekkers_models_price_price_pb.PriceProto;
       reader.readMessage(value,fintekkers_models_price_price_pb.PriceProto.deserializeBinaryFromReader);
       msg.setPriceInput(value);
+      break;
+    case 23:
+      var value = new fintekkers_models_util_local_timestamp_pb.LocalTimestampProto;
+      reader.readMessage(value,fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.deserializeBinaryFromReader);
+      msg.setAsofDatetime(value);
       break;
     default:
       reader.skipField();
@@ -247,6 +255,14 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.serializeBinaryToWrite
       22,
       f,
       fintekkers_models_price_price_pb.PriceProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getAsofDatetime();
+  if (f != null) {
+    writer.writeMessage(
+      23,
+      f,
+      fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.serializeBinaryToWriter
     );
   }
 };
@@ -451,6 +467,43 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.clearPriceIn
  */
 proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.hasPriceInput = function() {
   return jspb.Message.getField(this, 22) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.LocalTimestampProto asof_datetime = 23;
+ * @return {?proto.fintekkers.models.util.LocalTimestampProto}
+ */
+proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.getAsofDatetime = function() {
+  return /** @type{?proto.fintekkers.models.util.LocalTimestampProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_local_timestamp_pb.LocalTimestampProto, 23));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.LocalTimestampProto|undefined} value
+ * @return {!proto.fintekkers.requests.valuation.ValuationRequestProto} returns this
+*/
+proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.setAsofDatetime = function(value) {
+  return jspb.Message.setWrapperField(this, 23, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.requests.valuation.ValuationRequestProto} returns this
+ */
+proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.clearAsofDatetime = function() {
+  return this.setAsofDatetime(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.hasAsofDatetime = function() {
+  return jspb.Message.getField(this, 23) != null;
 };
 
 

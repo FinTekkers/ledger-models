@@ -156,17 +156,56 @@ public interface ValuationRequestProtoOrBuilder extends
   fintekkers.models.position.PositionProtoOrBuilder getPositionInputOrBuilder();
 
   /**
+   * <pre>
+   *The price we are going to use for the valuation.
+   * </pre>
+   *
    * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
    * @return Whether the priceInput field is set.
    */
   boolean hasPriceInput();
   /**
+   * <pre>
+   *The price we are going to use for the valuation.
+   * </pre>
+   *
    * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
    * @return The priceInput.
    */
   fintekkers.models.price.PriceProto getPriceInput();
   /**
+   * <pre>
+   *The price we are going to use for the valuation.
+   * </pre>
+   *
    * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
    */
   fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder();
+
+  /**
+   * <pre>
+   *The asof datetime for the valuation.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+   * @return Whether the asofDatetime field is set.
+   */
+  boolean hasAsofDatetime();
+  /**
+   * <pre>
+   *The asof datetime for the valuation.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+   * @return The asofDatetime.
+   */
+  fintekkers.models.util.LocalTimestamp.LocalTimestampProto getAsofDatetime();
+  /**
+   * <pre>
+   *The asof datetime for the valuation.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+   */
+  fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsofDatetimeOrBuilder();
 }

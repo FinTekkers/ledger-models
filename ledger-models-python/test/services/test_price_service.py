@@ -20,3 +20,7 @@ def test_get_current_price():
     id2:UUID = price.get_uuid()
 
     assert id.__str__() == id2.__str__()
+
+
+if __name__ == "__main__":
+    test_get_current_price()

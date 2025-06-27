@@ -116,6 +116,19 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
+          case 186: {
+            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
+            if (asofDatetime_ != null) {
+              subBuilder = asofDatetime_.toBuilder();
+            }
+            asofDatetime_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(asofDatetime_);
+              asofDatetime_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
           case 240: {
             int rawValue = input.readEnum();
             if (!((mutable_bitField0_ & 0x00000001) != 0)) {
@@ -436,6 +449,10 @@ private static final long serialVersionUID = 0L;
   public static final int PRICE_INPUT_FIELD_NUMBER = 22;
   private fintekkers.models.price.PriceProto priceInput_;
   /**
+   * <pre>
+   *The price we are going to use for the valuation.
+   * </pre>
+   *
    * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
    * @return Whether the priceInput field is set.
    */
@@ -444,6 +461,10 @@ private static final long serialVersionUID = 0L;
     return priceInput_ != null;
   }
   /**
+   * <pre>
+   *The price we are going to use for the valuation.
+   * </pre>
+   *
    * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
    * @return The priceInput.
    */
@@ -452,11 +473,53 @@ private static final long serialVersionUID = 0L;
     return priceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : priceInput_;
   }
   /**
+   * <pre>
+   *The price we are going to use for the valuation.
+   * </pre>
+   *
    * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
    */
   @java.lang.Override
   public fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder() {
     return getPriceInput();
+  }
+
+  public static final int ASOF_DATETIME_FIELD_NUMBER = 23;
+  private fintekkers.models.util.LocalTimestamp.LocalTimestampProto asofDatetime_;
+  /**
+   * <pre>
+   *The asof datetime for the valuation.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+   * @return Whether the asofDatetime field is set.
+   */
+  @java.lang.Override
+  public boolean hasAsofDatetime() {
+    return asofDatetime_ != null;
+  }
+  /**
+   * <pre>
+   *The asof datetime for the valuation.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+   * @return The asofDatetime.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalTimestamp.LocalTimestampProto getAsofDatetime() {
+    return asofDatetime_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : asofDatetime_;
+  }
+  /**
+   * <pre>
+   *The asof datetime for the valuation.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsofDatetimeOrBuilder() {
+    return getAsofDatetime();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -491,6 +554,9 @@ private static final long serialVersionUID = 0L;
     }
     if (priceInput_ != null) {
       output.writeMessage(22, getPriceInput());
+    }
+    if (asofDatetime_ != null) {
+      output.writeMessage(23, getAsofDatetime());
     }
     if (getMeasuresList().size() > 0) {
       output.writeUInt32NoTag(242);
@@ -529,6 +595,10 @@ private static final long serialVersionUID = 0L;
     if (priceInput_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(22, getPriceInput());
+    }
+    if (asofDatetime_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(23, getAsofDatetime());
     }
     {
       int dataSize = 0;
@@ -578,6 +648,11 @@ private static final long serialVersionUID = 0L;
       if (!getPriceInput()
           .equals(other.getPriceInput())) return false;
     }
+    if (hasAsofDatetime() != other.hasAsofDatetime()) return false;
+    if (hasAsofDatetime()) {
+      if (!getAsofDatetime()
+          .equals(other.getAsofDatetime())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -610,6 +685,10 @@ private static final long serialVersionUID = 0L;
     if (hasPriceInput()) {
       hash = (37 * hash) + PRICE_INPUT_FIELD_NUMBER;
       hash = (53 * hash) + getPriceInput().hashCode();
+    }
+    if (hasAsofDatetime()) {
+      hash = (37 * hash) + ASOF_DATETIME_FIELD_NUMBER;
+      hash = (53 * hash) + getAsofDatetime().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -776,6 +855,12 @@ private static final long serialVersionUID = 0L;
         priceInput_ = null;
         priceInputBuilder_ = null;
       }
+      if (asofDatetimeBuilder_ == null) {
+        asofDatetime_ = null;
+      } else {
+        asofDatetime_ = null;
+        asofDatetimeBuilder_ = null;
+      }
       return this;
     }
 
@@ -825,6 +910,11 @@ private static final long serialVersionUID = 0L;
         result.priceInput_ = priceInput_;
       } else {
         result.priceInput_ = priceInputBuilder_.build();
+      }
+      if (asofDatetimeBuilder_ == null) {
+        result.asofDatetime_ = asofDatetime_;
+      } else {
+        result.asofDatetime_ = asofDatetimeBuilder_.build();
       }
       onBuilt();
       return result;
@@ -903,6 +993,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasPriceInput()) {
         mergePriceInput(other.getPriceInput());
+      }
+      if (other.hasAsofDatetime()) {
+        mergeAsofDatetime(other.getAsofDatetime());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1667,6 +1760,10 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> priceInputBuilder_;
     /**
+     * <pre>
+     *The price we are going to use for the valuation.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      * @return Whether the priceInput field is set.
      */
@@ -1674,6 +1771,10 @@ private static final long serialVersionUID = 0L;
       return priceInputBuilder_ != null || priceInput_ != null;
     }
     /**
+     * <pre>
+     *The price we are going to use for the valuation.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      * @return The priceInput.
      */
@@ -1685,6 +1786,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     *The price we are going to use for the valuation.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      */
     public Builder setPriceInput(fintekkers.models.price.PriceProto value) {
@@ -1701,6 +1806,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *The price we are going to use for the valuation.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      */
     public Builder setPriceInput(
@@ -1715,6 +1824,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *The price we are going to use for the valuation.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      */
     public Builder mergePriceInput(fintekkers.models.price.PriceProto value) {
@@ -1733,6 +1846,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *The price we are going to use for the valuation.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      */
     public Builder clearPriceInput() {
@@ -1747,6 +1864,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     *The price we are going to use for the valuation.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      */
     public fintekkers.models.price.PriceProto.Builder getPriceInputBuilder() {
@@ -1755,6 +1876,10 @@ private static final long serialVersionUID = 0L;
       return getPriceInputFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     *The price we are going to use for the valuation.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      */
     public fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder() {
@@ -1766,6 +1891,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     *The price we are going to use for the valuation.
+     * </pre>
+     *
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -1780,6 +1909,161 @@ private static final long serialVersionUID = 0L;
         priceInput_ = null;
       }
       return priceInputBuilder_;
+    }
+
+    private fintekkers.models.util.LocalTimestamp.LocalTimestampProto asofDatetime_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalTimestamp.LocalTimestampProto, fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder, fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder> asofDatetimeBuilder_;
+    /**
+     * <pre>
+     *The asof datetime for the valuation.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+     * @return Whether the asofDatetime field is set.
+     */
+    public boolean hasAsofDatetime() {
+      return asofDatetimeBuilder_ != null || asofDatetime_ != null;
+    }
+    /**
+     * <pre>
+     *The asof datetime for the valuation.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+     * @return The asofDatetime.
+     */
+    public fintekkers.models.util.LocalTimestamp.LocalTimestampProto getAsofDatetime() {
+      if (asofDatetimeBuilder_ == null) {
+        return asofDatetime_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : asofDatetime_;
+      } else {
+        return asofDatetimeBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     *The asof datetime for the valuation.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+     */
+    public Builder setAsofDatetime(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
+      if (asofDatetimeBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        asofDatetime_ = value;
+        onChanged();
+      } else {
+        asofDatetimeBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *The asof datetime for the valuation.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+     */
+    public Builder setAsofDatetime(
+        fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
+      if (asofDatetimeBuilder_ == null) {
+        asofDatetime_ = builderForValue.build();
+        onChanged();
+      } else {
+        asofDatetimeBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *The asof datetime for the valuation.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+     */
+    public Builder mergeAsofDatetime(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
+      if (asofDatetimeBuilder_ == null) {
+        if (asofDatetime_ != null) {
+          asofDatetime_ =
+            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(asofDatetime_).mergeFrom(value).buildPartial();
+        } else {
+          asofDatetime_ = value;
+        }
+        onChanged();
+      } else {
+        asofDatetimeBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *The asof datetime for the valuation.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+     */
+    public Builder clearAsofDatetime() {
+      if (asofDatetimeBuilder_ == null) {
+        asofDatetime_ = null;
+        onChanged();
+      } else {
+        asofDatetime_ = null;
+        asofDatetimeBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *The asof datetime for the valuation.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+     */
+    public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getAsofDatetimeBuilder() {
+      
+      onChanged();
+      return getAsofDatetimeFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     *The asof datetime for the valuation.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+     */
+    public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsofDatetimeOrBuilder() {
+      if (asofDatetimeBuilder_ != null) {
+        return asofDatetimeBuilder_.getMessageOrBuilder();
+      } else {
+        return asofDatetime_ == null ?
+            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : asofDatetime_;
+      }
+    }
+    /**
+     * <pre>
+     *The asof datetime for the valuation.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalTimestamp.LocalTimestampProto, fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder, fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder> 
+        getAsofDatetimeFieldBuilder() {
+      if (asofDatetimeBuilder_ == null) {
+        asofDatetimeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.LocalTimestamp.LocalTimestampProto, fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder, fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder>(
+                getAsofDatetime(),
+                getParentForChildren(),
+                isClean());
+        asofDatetime_ = null;
+      }
+      return asofDatetimeBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

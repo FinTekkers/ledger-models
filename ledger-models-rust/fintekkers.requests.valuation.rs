@@ -29,8 +29,14 @@ pub struct ValuationRequestProto {
     pub position_input: ::core::option::Option<
         super::super::models::position::PositionProto,
     >,
+    /// The price we are going to use for the valuation.
     #[prost(message, optional, tag = "22")]
     pub price_input: ::core::option::Option<super::super::models::price::PriceProto>,
+    /// The asof datetime for the valuation.
+    #[prost(message, optional, tag = "23")]
+    pub asof_datetime: ::core::option::Option<
+        super::super::models::util::LocalTimestampProto,
+    >,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

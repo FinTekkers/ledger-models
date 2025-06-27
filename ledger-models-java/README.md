@@ -25,6 +25,11 @@ All of the above are RawDataModelObjects meaning they are bi-temporal in nature.
 
 # Publishing
 
-The Java package is published after a release version is created via the workflow file: .github/workflows/maven-publish.yml. The gradle publish of the build publishes the package and relies on the NPM_TOKEN secret being injected leveraging GitHub secrets.
+The Java package is published after a release version is created via the workflow file: .github/workflows/maven-publish.yml (to Github) and maven-central.yml (to Maven Central). The gradle publish of the build publishes the package and relies on the NPM_TOKEN secret being injected leveraging GitHub secrets.
 
-Currently, this is published to Github's package repository. ledger-models is set-up on maven central with David's personal account (I think). Need to industrialize this to avoid needing people to setup npm package repo with permissions...
+The gradle import would be 
+implementation group: 'io.github.fintekkers', name: 'ledger-models', version: '0.1.x'. Please ignore 1.0.x versions as these were published in error. Upon public launch the major version will update.
+
+# GPG signing
+
+The packages 
