@@ -7,6 +7,10 @@ import { LocalDate } from "../utils/date";
 declare class Security {
     proto: SecurityProto;
     constructor(proto: SecurityProto);
+    /**
+     * Factory method to create the appropriate Security subclass based on security type
+     */
+    static create(proto: SecurityProto): Security;
     toString(): string;
     getFields(): FieldProto[];
     getField(field: FieldProto): any;
