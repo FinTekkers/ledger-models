@@ -22,7 +22,7 @@ function testSerialization(): void {
 }
 
 function dummySecurity() {
-    return new Security(new SecurityProto()
+    return Security.create(new SecurityProto()
         .setObjectClass('Transaction').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
         .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)

@@ -14,6 +14,20 @@ class Security {
     this.proto = proto;
   }
 
+  /**
+   * Factory method to create the appropriate Security subclass based on security type
+   */
+  static create(proto: SecurityProto): Security {
+    switch (proto.getSecurityType()) {
+      case SecurityTypeProto.BOND_SECURITY:
+        // Lazy import to avoid circular dependency
+        const BondSecurity = require('./BondSecurity').default;
+        return new BondSecurity(proto);
+      default:
+        return new Security(proto);
+    }
+  }
+
   toString(): string {
     return `ID[${this.getID().toString()}], ${this.getSecurityID()}[${this.getIssuerName()}]`;
   }

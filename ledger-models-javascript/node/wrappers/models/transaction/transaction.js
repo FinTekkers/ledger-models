@@ -81,7 +81,7 @@ class Transaction {
         const security = this.proto.getSecurity();
         if (!security)
             throw new Error("Security is required");
-        return new security_1.default(security);
+        return security_1.default.create(security);
     }
     getStrategyAllocation() {
         const allocation = this.proto.getStrategyAllocation();

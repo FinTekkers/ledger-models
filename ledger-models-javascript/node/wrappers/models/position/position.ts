@@ -79,7 +79,7 @@ export class Position {
         }
 
         if (FieldProto.SECURITY == fieldToGet.getField()) {
-          return new Security(unpackedValue);
+          return Security.create(unpackedValue);
         }
 
         if (FieldProto.PORTFOLIO == fieldToGet.getField()) {

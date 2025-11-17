@@ -72,7 +72,7 @@ class Position {
                     return unpackedValue; //instanceof PriceProto || TenorProto
                 }
                 if (field_pb_1.FieldProto.SECURITY == fieldToGet.getField()) {
-                    return new security_1.default(unpackedValue);
+                    return security_1.default.create(unpackedValue);
                 }
                 if (field_pb_1.FieldProto.PORTFOLIO == fieldToGet.getField()) {
                     return new portfolio_1.default(unpackedValue);

@@ -91,7 +91,7 @@ class SecurityService {
                     return new Promise((resolve, reject) => {
                         stream2.on('data', (response) => {
                             response.getSecurityResponseList().forEach((security) => {
-                                listSecurities.push(new security_1.default(security));
+                                listSecurities.push(security_1.default.create(security));
                             });
                         });
                         stream2.on('end', () => {

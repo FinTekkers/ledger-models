@@ -20,7 +20,7 @@ function testSerialization() {
     assert(security.getMaturityDate().toDate().getFullYear() == 2026);
 }
 function dummySecurity() {
-    return new security_1.default(new security_pb_1.SecurityProto()
+    return security_1.default.create(new security_pb_1.SecurityProto()
         .setObjectClass('Transaction').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
         .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)

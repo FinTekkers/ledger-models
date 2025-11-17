@@ -71,7 +71,7 @@ class SecurityService {
       return new Promise<Security[]>((resolve, reject) => {
         stream2.on('data', (response: QuerySecurityResponseProto) => {
           response.getSecurityResponseList().forEach((security) => {
-            listSecurities.push(new Security(security));
+            listSecurities.push(Security.create(security));
           });
         });
 
