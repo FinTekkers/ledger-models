@@ -3,6 +3,7 @@ import { IdentifierProto } from "../../../fintekkers/models/security/identifier/
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
+import { LocalDate } from "../utils/date";
 declare class Security {
     proto: SecurityProto;
     constructor(proto: SecurityProto);
@@ -13,10 +14,10 @@ declare class Security {
     getAsOf(): ZonedDateTime;
     getAssetClass(): string;
     getProductClass(): string;
-    getProductType(): any;
+    getProductType(): string;
     getSecurityID(): IdentifierProto;
-    getIssueDate(): Date;
-    getMaturityDate(): Date;
+    getIssueDate(): LocalDate;
+    getMaturityDate(): LocalDate;
     getIssuerName(): string;
     equals(other: Security): boolean;
 }

@@ -31,10 +31,10 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
         let issuanceList = security.proto.getIssuanceInfoList();
         let issuance = issuanceList && issuanceList.length > 0 ? issuanceList[0] : null;
         if (issuance) {
-            if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().getFullYear() > 2009) {
+            if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().toDate().getFullYear() > 2009) {
                 console.log("Issed with %s, issuance: %s", security.getSecurityID().getIdentifierValue(), issuance);
             }
-            else if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().getFullYear() <= 2009) {
+            else if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().toDate().getFullYear() <= 2009) {
                 //Swallow this data gap. It's old and we don't mind
             }
             else {

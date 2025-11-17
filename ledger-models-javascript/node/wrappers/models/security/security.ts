@@ -4,6 +4,8 @@ import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { ProtoSerializationUtil } from '../utils/serialization';
+import { LocalDate } from "../utils/date";
+import { SecurityTypeProto } from "../../../fintekkers/models/security/security_type_pb";
 
 class Security {
   proto: SecurityProto;
@@ -65,8 +67,10 @@ class Security {
     throw new Error('Not implemented yet. See Java implementation for reference');
   }
 
-  getProductType(): any {
-    throw new Error('Not implemented yet. See Java implementation for reference');
+  getProductType(): string {
+    let securityType = this.proto.getSecurityType();
+    let securityTypeString = SecurityTypeProto[securityType];;
+    return securityTypeString;
   }
 
   getSecurityID(): IdentifierProto {
@@ -75,16 +79,16 @@ class Security {
     return identifier;
   }
 
-  getIssueDate(): Date {
+  getIssueDate(): LocalDate {
     const date = this.proto.getIssueDate();
-    if (!date) throw new Error("IssueDate is required");
-    return ProtoSerializationUtil.deserialize(date) as Date;
+    if (!date) throw new Error("Issue date is required");
+    return new LocalDate(date);
   }
 
-  getMaturityDate(): Date {
+  getMaturityDate(): LocalDate {
     const date = this.proto.getMaturityDate();
-    if (!date) throw new Error("MaturityDate is required");
-    return ProtoSerializationUtil.deserialize(date) as Date;
+    if (!date) throw new Error("Maturity date is required");
+    return new LocalDate(date);
   }
 
   getIssuerName(): string {
