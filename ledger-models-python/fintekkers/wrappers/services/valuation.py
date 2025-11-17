@@ -1,3 +1,4 @@
+from datetime import datetime
 import grpc
 from grpc import RpcError
 from fintekkers.models.position.measure_pb2 import MeasureProto
@@ -5,6 +6,7 @@ from fintekkers.models.position.position_util_pb2 import MeasureMapEntry
 from fintekkers.models.position.position_pb2 import PositionProto
 from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.security.security_pb2 import SecurityProto
+from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.requests.valuation.valuation_request_pb2 import ValuationRequestProto
 from fintekkers.requests.valuation.valuation_response_pb2 import ValuationResponseProto
 from fintekkers.requests.util.operation_pb2 import RequestOperationTypeProto, CREATE
@@ -25,7 +27,8 @@ class ValuationService:
                      security: Security = None, 
                      position: Position = None, 
                      price: Price = None,
-                     measures: list[MeasureProto] = None) -> ValuationResponseProto:
+                     measures: list[MeasureProto] = None,
+                     asOf: datetime = datetime.now()) -> ValuationResponseProto:
         """
         Runs a valuation with the provided inputs.
         
@@ -43,12 +46,14 @@ class ValuationService:
             RpcError: If the gRPC call fails
         """
         try:
+            asOfProto:LocalTimestampProto = ProtoSerializationUtil.serialize(asOf)
             # Create the valuation request
             request = ValuationRequestProto(
                 measures=measures or [],
                 security_input=security.proto,
                 position_input=position.positionProto,
-                price_input=price.proto
+                price_input=price.proto,
+                asof_datetime=asOfProto
             )
                 
             # Run the valuation

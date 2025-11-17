@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 const datetime_1 = require("../utils/datetime");
 const uuid_1 = require("../utils/uuid");
-const serialization_1 = require("../utils/serialization");
+const date_1 = require("../utils/date");
+const security_type_pb_1 = require("../../../fintekkers/models/security/security_type_pb");
 class Security {
     constructor(proto) {
         this.proto = proto;
@@ -57,7 +58,10 @@ class Security {
         throw new Error('Not implemented yet. See Java implementation for reference');
     }
     getProductType() {
-        throw new Error('Not implemented yet. See Java implementation for reference');
+        let securityType = this.proto.getSecurityType();
+        let securityTypeString = security_type_pb_1.SecurityTypeProto[securityType];
+        ;
+        return securityTypeString;
     }
     getSecurityID() {
         const identifier = this.proto.getIdentifier();
@@ -68,14 +72,14 @@ class Security {
     getIssueDate() {
         const date = this.proto.getIssueDate();
         if (!date)
-            throw new Error("IssueDate is required");
-        return serialization_1.ProtoSerializationUtil.deserialize(date);
+            throw new Error("Issue date is required");
+        return new date_1.LocalDate(date);
     }
     getMaturityDate() {
         const date = this.proto.getMaturityDate();
         if (!date)
-            throw new Error("MaturityDate is required");
-        return serialization_1.ProtoSerializationUtil.deserialize(date);
+            throw new Error("Maturity date is required");
+        return new date_1.LocalDate(date);
     }
     getIssuerName() {
         return this.proto.getIssuerName();

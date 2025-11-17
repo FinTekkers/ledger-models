@@ -88,6 +88,10 @@ class Security():
         id:IdentifierProto = self.proto.identifier
         return Identifier(id)
     
+    ###
+    ### Bond specific functions. These should be refactored out into a Bond 
+    ### specific object at some point.
+    ###
     def get_issue_date(self) -> datetime:
         return ProtoSerializationUtil.deserialize(self.proto.issue_date)
 
@@ -96,6 +100,9 @@ class Security():
     
     def get_tenor(self) -> str:
         return ProtoSerializationUtil.deserialize(self.proto.tenor)
+    
+    def get_face_value(self) -> float:
+        return ProtoSerializationUtil.deserialize(self.proto.face_value)    
 
     def get_security_type(self) -> SecurityTypeProto:
         return self.proto.security_type

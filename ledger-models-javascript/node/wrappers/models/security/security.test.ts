@@ -18,7 +18,7 @@ test('test the security wrapper', () => {
 function testSerialization(): void {
     const security = dummySecurity();
 
-    assert(security.getMaturityDate().getFullYear() == 2026);
+    assert(security.getMaturityDate().toDate().getFullYear() == 2026);
 }
 
 function dummySecurity() {
