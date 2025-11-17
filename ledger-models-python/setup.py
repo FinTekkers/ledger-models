@@ -12,7 +12,7 @@ if 'BUILD_VERSION' in os.environ:
     VERSION = os.environ.get('BUILD_VERSION')
 
 setup(
-    name = "fintekkers-ledger-models",
+    name = "fintekkers_ledger_models",
     license='MIT',
     author="David Doherty",
     author_email='dave@fintekkers.org',
