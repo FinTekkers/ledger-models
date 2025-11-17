@@ -41,7 +41,9 @@ class Security {
       case FieldProto.ADJUSTED_TENOR:
         throw new Error('Not implemented yet');
       case FieldProto.MATURITY_DATE:
-        throw new Error('Not implemented yet');
+        return this.getMaturityDate();
+      case FieldProto.ISSUE_DATE:
+        return this.getIssueDate();
       default:
         throw new Error(`Field not mapped in Security wrapper: ${field}`);
     }
