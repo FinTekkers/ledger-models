@@ -3,7 +3,6 @@ import { IdentifierProto } from "../../../fintekkers/models/security/identifier/
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
-import { ProtoSerializationUtil } from '../utils/serialization';
 import { LocalDate } from "../utils/date";
 import { SecurityTypeProto } from "../../../fintekkers/models/security/security_type_pb";
 
@@ -84,9 +83,12 @@ class Security {
   }
 
   getProductType(): string {
-    let securityType = this.proto.getSecurityType();
-    let securityTypeString = SecurityTypeProto[securityType];;
-    return securityTypeString;
+    const securityType = this.proto.getSecurityType();
+    const securityTypeString = (Object.keys(SecurityTypeProto) as Array<keyof typeof SecurityTypeProto>).find(
+      key => SecurityTypeProto[key] === securityType
+    );
+
+    return securityTypeString || 'UNKNOWN_SECURITY_TYPE';
   }
 
   getSecurityID(): IdentifierProto {
