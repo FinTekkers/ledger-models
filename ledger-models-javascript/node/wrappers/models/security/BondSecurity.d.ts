@@ -5,10 +5,16 @@ import { LocalDate } from '../utils/date';
 import { IssuanceProto } from '../../../fintekkers/models/security/bond/issuance_pb';
 import { CouponFrequency } from './coupon_frequency';
 import { CouponType } from './coupon_type';
+import { Tenor } from './term';
 declare class BondSecurity extends Security {
     constructor(proto: SecurityProto);
-    /** Returns the term in years as a decimal (e.g., 10.5 for 10 years and 6 months) */
-    getTerm(): number;
+    /** Returns the tenor (term) of the bond as a Tenor object */
+    getTenor(): Tenor;
+    /**
+     * Calculates the period between two dates in years, months, and days.
+     * This method handles month and year boundaries correctly.
+     */
+    private calculatePeriod;
     getCouponRate(): DecimalValueProto;
     getFaceValue(): DecimalValueProto;
     getCouponType(): CouponType;
