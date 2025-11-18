@@ -73,10 +73,9 @@ class Security {
         throw new Error('Not implemented yet. See Java implementation for reference');
     }
     getProductType() {
-        let securityType = this.proto.getSecurityType();
-        let securityTypeString = security_type_pb_1.SecurityTypeProto[securityType];
-        ;
-        return securityTypeString;
+        const securityType = this.proto.getSecurityType();
+        const securityTypeString = Object.keys(security_type_pb_1.SecurityTypeProto).find(key => security_type_pb_1.SecurityTypeProto[key] === securityType);
+        return securityTypeString || 'UNKNOWN_SECURITY_TYPE';
     }
     getSecurityID() {
         const identifier = this.proto.getIdentifier();
