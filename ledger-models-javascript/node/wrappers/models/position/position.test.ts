@@ -16,6 +16,7 @@ import { TransactionTypeProto } from '../../../fintekkers/models/transaction/tra
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { TenorProto } from '../../../fintekkers/models/security/tenor_pb';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
+import { Tenor } from '../security/term';
 
 test('test the enum Serialization', async () => {
     let isTrue = await testEnumSerialization();
@@ -102,13 +103,40 @@ async function testJsonSerialization(): Promise<boolean> {
 }
 
 
+test('test testTenorSerialization', async () => {
+    let isTrue = await testTenorSerialization();
+    expect(isTrue).toBe(true);
+});
+
+async function testTenorSerialization(): Promise<boolean> {
+    let { position, tenor } = getPosition(false);
+
+    console.log("tenor", tenor);
+    let tenorPosition = position.getFieldValue(FieldProto.TENOR);
+    // tenorPosition is now a Tenor wrapper, not TenorProto
+    expect(tenorPosition.getTenorDescription()).toBe(tenor.getTermValue());
+
+    let tenorFieldDisplay = position.getFieldDisplay(new FieldMapEntry().setField(FieldProto.TENOR));
+    // The field display should be the Tenor wrapper's toString(), which returns something like "TERM: 3M"
+    expect(tenorFieldDisplay).toBe(tenorPosition.toString());
+
+    return true;
+}
+
+
 async function testSerialization(): Promise<boolean> {
     let { position, tradeDate, security, portfolio, productType, id } = getPosition(false);
 
     let tradeDatePosition = position.getFieldValue(FieldProto.TRADE_DATE);
     expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
     expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
-    expect(tradeDate.getDay()).toBe(tradeDatePosition.getDay());
+    expect(tradeDate.getDate()).toBe(tradeDatePosition.getDate());
+
+    let tradeDateFieldDisplay = position.getFieldDisplay(new FieldMapEntry().setField(FieldProto.TRADE_DATE));
+    const year = tradeDate.getFullYear();
+    const month = String(tradeDate.getMonth() + 1).padStart(2, '0');
+    const day = String(tradeDate.getDate()).padStart(2, '0');
+    expect(tradeDateFieldDisplay).toBe(`${year}-${month}-${day}`);
 
     let securityPosition: SecurityProto = position.getFieldValue(FieldProto.SECURITY);
     expect(securityPosition.getAssetClass()).toBe(security.getAssetClass());
@@ -128,8 +156,8 @@ async function testSerialization(): Promise<boolean> {
     let price: PriceProto = position.getFieldValue(FieldProto.PRICE);
     expect(price.getPrice()?.getArbitraryPrecisionValue()).toBe("1.0");
 
-    let tenor: TenorProto = position.getFieldValue(FieldProto.TENOR);
-    expect(tenor.getTermValue()).toBe("3M");
+    let tenor = position.getFieldValue(FieldProto.TENOR);
+    expect(tenor.getTenorDescription()).toBe("3M");
 
     return true;
 }
@@ -206,5 +234,5 @@ function getPosition(includeUnknownEnumValue: boolean) {
     ]);
 
     let position = new Position(positionProto);
-    return { position, tradeDate, security, portfolio, productType, id };
+    return { position, tradeDate, security, portfolio, productType, id, tenor };
 }

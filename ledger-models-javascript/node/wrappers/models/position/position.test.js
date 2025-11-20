@@ -94,6 +94,23 @@ function testJsonSerialization() {
         return true;
     });
 }
+test('test testTenorSerialization', () => __awaiter(void 0, void 0, void 0, function* () {
+    let isTrue = yield testTenorSerialization();
+    expect(isTrue).toBe(true);
+}));
+function testTenorSerialization() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let { position, tenor } = getPosition(false);
+        console.log("tenor", tenor);
+        let tenorPosition = position.getFieldValue(field_pb_1.FieldProto.TENOR);
+        // tenorPosition is now a Tenor wrapper, not TenorProto
+        expect(tenorPosition.getTenorDescription()).toBe(tenor.getTermValue());
+        let tenorFieldDisplay = position.getFieldDisplay(new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TENOR));
+        // The field display should be the Tenor wrapper's toString(), which returns something like "TERM: 3M"
+        expect(tenorFieldDisplay).toBe(tenorPosition.toString());
+        return true;
+    });
+}
 function testSerialization() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
@@ -101,7 +118,12 @@ function testSerialization() {
         let tradeDatePosition = position.getFieldValue(field_pb_1.FieldProto.TRADE_DATE);
         expect(tradeDate.getFullYear()).toBe(tradeDatePosition.getFullYear());
         expect(tradeDate.getMonth()).toBe(tradeDatePosition.getMonth());
-        expect(tradeDate.getDay()).toBe(tradeDatePosition.getDay());
+        expect(tradeDate.getDate()).toBe(tradeDatePosition.getDate());
+        let tradeDateFieldDisplay = position.getFieldDisplay(new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TRADE_DATE));
+        const year = tradeDate.getFullYear();
+        const month = String(tradeDate.getMonth() + 1).padStart(2, '0');
+        const day = String(tradeDate.getDate()).padStart(2, '0');
+        expect(tradeDateFieldDisplay).toBe(`${year}-${month}-${day}`);
         let securityPosition = position.getFieldValue(field_pb_1.FieldProto.SECURITY);
         expect(securityPosition.getAssetClass()).toBe(security.getAssetClass());
         let portfolioPosition = position.getFieldValue(field_pb_1.FieldProto.PORTFOLIO);
@@ -114,7 +136,7 @@ function testSerialization() {
         let price = position.getFieldValue(field_pb_1.FieldProto.PRICE);
         expect((_a = price.getPrice()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue()).toBe("1.0");
         let tenor = position.getFieldValue(field_pb_1.FieldProto.TENOR);
-        expect(tenor.getTermValue()).toBe("3M");
+        expect(tenor.getTenorDescription()).toBe("3M");
         return true;
     });
 }
@@ -178,6 +200,6 @@ function getPosition(includeUnknownEnumValue) {
         new position_util_pb_1.MeasureMapEntry().setMeasure(measure).setMeasureDecimalValue(measureValue)
     ]);
     let position = new position_1.Position(positionProto);
-    return { position, tradeDate, security, portfolio, productType, id };
+    return { position, tradeDate, security, portfolio, productType, id, tenor };
 }
 //# sourceMappingURL=position.test.js.map
