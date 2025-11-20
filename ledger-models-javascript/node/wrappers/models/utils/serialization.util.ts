@@ -40,7 +40,7 @@ function unpack(value: Any): Date | ZonedDateTime | UUID | Identifier | string |
     return unpackTimestampFromAny(value);
   } else if (typeUrl === 'type.googleapis.com/fintekkers.models.util.UUIDProto') {
     return unpackIDIntoAny(value) as UUID;
-  } else if (typeUrl === 'type.googleapis.com/fintekkers.models.security.identifier.IdentifierProto') {
+  } else if (typeUrl === 'type.googleapis.com/fintekkers.models.security.IdentifierProto') {
     return unpackIdentifierProtoFromAny(value) as Identifier;
   }
   else {
@@ -52,7 +52,7 @@ function unpack(value: Any): Date | ZonedDateTime | UUID | Identifier | string |
 function unpackIdentifierProtoFromAny(anyMessage: Any): Identifier {
   const typeUrl = anyMessage.getTypeUrl();
 
-  if (typeUrl !== 'type.googleapis.com/fintekkers.models.security.identifier.IdentifierProto') {
+  if (typeUrl !== 'type.googleapis.com/fintekkers.models.security.IdentifierProto') {
     throw new Error('Unexpected type URL for an identifier: ' + typeUrl);
   }
   const identifierProto: IdentifierProto = IdentifierProto.deserializeBinary(anyMessage.getValue_asU8());
@@ -62,7 +62,7 @@ function unpackIdentifierProtoFromAny(anyMessage: Any): Identifier {
 function packIdentifierProtoIntoAny(input: IdentifierProto): Any {
   const anyMessage = new Any();
 
-  anyMessage.pack(input.serializeBinary(), 'fintekkers.models.security.identifier.IdentifierProto');
+  anyMessage.pack(input.serializeBinary(), 'fintekkers.models.security.IdentifierProto');
   return anyMessage;
 }
 
