@@ -9,6 +9,8 @@ const datetime_1 = require("./datetime");
 const local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
 const uuid_1 = require("./uuid");
 const uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
+const identifier_1 = require("../security/identifier");
+const identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
 function pack(value) {
     if (typeof value === 'string') {
         return packStringIntoAny(value);
@@ -22,8 +24,13 @@ function pack(value) {
         return packTimestampIntoAny(localDateProto);
     }
     else if (value instanceof uuid_1.UUID) {
-        // const uuid: UUIDProto = ProtoSerializationUtil.serialize(value);
         return packIDIntoAny(value.toUUIDProto());
+    }
+    else if (value instanceof identifier_1.Identifier) {
+        return packIdentifierProtoIntoAny(value.proto);
+    }
+    else if (value && typeof value === 'object' && 'proto' in value && value.proto instanceof identifier_pb_1.IdentifierProto) {
+        return packIdentifierProtoIntoAny(value.proto);
     }
     else {
         throw new Error("Unrecognized type cannot be packed: " + typeof value);
@@ -44,12 +51,28 @@ function unpack(value) {
     else if (typeUrl === 'type.googleapis.com/fintekkers.models.util.UUIDProto') {
         return unpackIDIntoAny(value);
     }
+    else if (typeUrl === 'type.googleapis.com/fintekkers.models.security.identifier.IdentifierProto') {
+        return unpackIdentifierProtoFromAny(value);
+    }
     else {
         console.log(value);
         throw new Error("Unrecognized Any type cannot be unpacked: " + typeUrl);
     }
 }
 exports.unpack = unpack;
+function unpackIdentifierProtoFromAny(anyMessage) {
+    const typeUrl = anyMessage.getTypeUrl();
+    if (typeUrl !== 'type.googleapis.com/fintekkers.models.security.identifier.IdentifierProto') {
+        throw new Error('Unexpected type URL for an identifier: ' + typeUrl);
+    }
+    const identifierProto = identifier_pb_1.IdentifierProto.deserializeBinary(anyMessage.getValue_asU8());
+    return serialization_1.ProtoSerializationUtil.deserialize(identifierProto);
+}
+function packIdentifierProtoIntoAny(input) {
+    const anyMessage = new any_pb_1.Any();
+    anyMessage.pack(input.serializeBinary(), 'fintekkers.models.security.identifier.IdentifierProto');
+    return anyMessage;
+}
 function packIDIntoAny(uuid) {
     const anyMessage = new any_pb_1.Any();
     anyMessage.pack(uuid.serializeBinary(), 'fintekkers.models.util.UUIDProto');

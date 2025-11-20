@@ -21,7 +21,7 @@ function testTimestamp() {
   const now = ZonedDateTime.now();
 
   const packedNow: Any = pack(now);
-  const unpackedNow: ZonedDateTime = unpack(packedNow);
+  const unpackedNow: ZonedDateTime = unpack(packedNow) as ZonedDateTime;
 
   assert.equal(now.getTimezone(), unpackedNow.getTimezone(), "Timezone doesn't match");
   assert.equal(now.getSeconds(), unpackedNow.getSeconds(), "Seconds do not match");
@@ -33,7 +33,7 @@ function testDate() {
   testDate.setHours(0, 0, 0, 0);
 
   const packedDate: Any = pack(testDate);
-  const unpackedDate: Date = unpack(packedDate);
+  const unpackedDate: Date = unpack(packedDate) as Date;
   assert.equal(unpackedDate.getTime(), testDate.getTime(), "Date packing/unpacking failed");
 }
 
@@ -41,7 +41,7 @@ function testString() {
   const testString = "Hello";
 
   const packedString: Any = pack(testString);
-  const unpackedString: String = unpack(packedString);
+  const unpackedString: String = unpack(packedString) as string;
   assert.equal(unpackedString, testString, "String packing/unpacking failed");
 }
 

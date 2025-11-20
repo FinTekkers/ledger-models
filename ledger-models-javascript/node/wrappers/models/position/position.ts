@@ -25,6 +25,7 @@ import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 import { Tenor } from "../security/term";
+import { Identifier } from "../security/identifier";
 export class Position {
   proto: PositionProto;
 
@@ -52,7 +53,7 @@ export class Position {
     return this.getField(new FieldMapEntry().setField(field));
   }
 
-  public getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Portfolio | UUID | Date | ZonedDateTime | number | PriceProto | Tenor {
+  public getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Identifier | Portfolio | UUID | Date | ZonedDateTime | number | PriceProto | Tenor {
     for (const tmpField of this.proto.getFieldsList()) {
       if (tmpField.getField() === fieldToGet.getField()) {
 
@@ -97,7 +98,7 @@ export class Position {
           return new Portfolio(unpackedValue);
         }
 
-        return ProtoSerializationUtil.deserialize(unpackedValue);
+        return ProtoSerializationUtil.deserialize(unpackedValue) as string | number | Identifier | Date | ZonedDateTime | UUID | ProtoEnum | Security | Tenor | Portfolio | PriceProto;
       }
     }
 
