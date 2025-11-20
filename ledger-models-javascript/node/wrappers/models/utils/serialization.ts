@@ -48,7 +48,7 @@ export class ProtoSerializationUtil {
       return new ZonedDateTime(obj);
     }
     if (obj instanceof IdentifierProto) {
-      return obj.getIdentifierType() + ":" + obj.getIdentifierValue();
+      return Identifier obj.getIdentifierType() + ":" + obj.getIdentifierValue();
     }
     if (obj instanceof DecimalValueProto) {
       return parseFloat(obj.getArbitraryPrecisionValue());

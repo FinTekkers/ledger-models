@@ -8,6 +8,6 @@ test('test CouponType.FIXED returns "FIXED"', () => {
 
 function testFixedCouponType(): void {
   const couponType = new CouponType(CouponTypeProto.FIXED);
-  assert(couponType.toString() === 'FIXED');
+  assert(couponType.name() === 'FIXED');
 }
 
