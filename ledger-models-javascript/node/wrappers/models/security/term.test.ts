@@ -1,6 +1,7 @@
 import assert = require('assert');
 import { Tenor, Period } from './term';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
+import { TenorProto } from '../../../fintekkers/models/security/tenor_pb';
 
 test('test Tenor.UNKNOWN_TENOR has correct type', () => {
     testUnknownTenor();
@@ -32,6 +33,12 @@ test('test Tenor.getTenor() returns correct period', () => {
 
 test('test Tenor.getTenorDescription() returns correct string', () => {
     testGetTenorDescription();
+});
+
+test('test Tenor toString', () => {
+    let tenorProto = new TenorProto().setTenorType(TenorTypeProto.TERM).setTermValue("2Y3M");
+    let tenor2 = new Tenor(tenorProto.getTenorType(), tenorProto.getTermValue());
+    expect(tenor2.toString()).toBe("TERM: 2Y3M");
 });
 
 test('test Tenor.toString() returns correct representation', () => {

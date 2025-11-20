@@ -32,5 +32,5 @@ test('test the date time', async () => {
     const timestampStr = pos.getFieldDisplay(field1);
 
     //Expect timestamp match
-    expect(timestampStr).toMatch(/^\d{4}\/(?:\d{1,2})(?:\/\d{1,2})?$/);
+    expect(timestampStr).toMatch(/^\d{4}\-(?:\d{1,2})(?:\-\d{1,2})?$/);
 });
