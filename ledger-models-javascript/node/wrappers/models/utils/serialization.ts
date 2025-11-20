@@ -10,9 +10,10 @@ import { ProtoEnum } from "./protoEnum";
 import { UUID } from "./uuid";
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
+import { Identifier } from "../security/identifier";
 
 export class ProtoSerializationUtil {
-  static serialize(obj: any) { //}: UUIDProto | LocalDateProto | LocalTimestampProto | DecimalValueProto | StringValue {
+  static serialize(obj: any): UUIDProto | LocalDateProto | LocalTimestampProto | DecimalValueProto | StringValue | IdentifierProto { //}: UUIDProto | LocalDateProto | LocalTimestampProto | DecimalValueProto | StringValue {
     if (obj instanceof UUID) {
       return obj.toUUIDProto();
     }
@@ -31,11 +32,14 @@ export class ProtoSerializationUtil {
     if (obj instanceof String) {
       return new StringValue().setValue(obj.toString());
     }
+    if (obj instanceof Identifier) {
+      return obj.proto as IdentifierProto;
+    }
 
     throw new Error(`Could not serialize object of type ${typeof obj}. Value: ${obj}`);
   }
 
-  static deserialize(obj: any) { //}: UUID | Date | ZonedDateTime | number | string {
+  static deserialize(obj: any): UUID | Date | ZonedDateTime | Identifier | string | number | ProtoEnum { //}: UUID | Date | ZonedDateTime | number | string {
     if (obj instanceof UUIDProto) {
       return UUID.fromU8Array(obj.getRawUuid_asU8());
     }
@@ -48,7 +52,7 @@ export class ProtoSerializationUtil {
       return new ZonedDateTime(obj);
     }
     if (obj instanceof IdentifierProto) {
-      return Identifier obj.getIdentifierType() + ":" + obj.getIdentifierValue();
+      return new Identifier(obj);
     }
     if (obj instanceof DecimalValueProto) {
       return parseFloat(obj.getArbitraryPrecisionValue());

@@ -35,6 +35,6 @@ test('test the date time', () => __awaiter(void 0, void 0, void 0, function* () 
     const pos = new position_1.Position(position);
     const timestampStr = pos.getFieldDisplay(field1);
     //Expect timestamp match
-    expect(timestampStr).toMatch(/^\d{4}\/(?:\d{1,2})(?:\/\d{1,2})?$/);
+    expect(timestampStr).toMatch(/^\d{4}\-(?:\d{1,2})(?:\-\d{1,2})?$/);
 }));
 //# sourceMappingURL=date.test.js.map

@@ -10,6 +10,7 @@ const datetime_1 = require("./datetime");
 const protoEnum_1 = require("./protoEnum");
 const uuid_1 = require("./uuid");
 const wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
+const identifier_1 = require("../security/identifier");
 class ProtoSerializationUtil {
     static serialize(obj) {
         if (obj instanceof uuid_1.UUID) {
@@ -30,6 +31,9 @@ class ProtoSerializationUtil {
         if (obj instanceof String) {
             return new wrappers_pb_1.StringValue().setValue(obj.toString());
         }
+        if (obj instanceof identifier_1.Identifier) {
+            return obj.proto;
+        }
         throw new Error(`Could not serialize object of type ${typeof obj}. Value: ${obj}`);
     }
     static deserialize(obj) {
@@ -45,7 +49,7 @@ class ProtoSerializationUtil {
             return new datetime_1.ZonedDateTime(obj);
         }
         if (obj instanceof identifier_pb_1.IdentifierProto) {
-            return obj.getIdentifierType() + ":" + obj.getIdentifierValue();
+            return new identifier_1.Identifier(obj);
         }
         if (obj instanceof decimal_value_pb_1.DecimalValueProto) {
             return parseFloat(obj.getArbitraryPrecisionValue());

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("assert");
 const term_1 = require("./term");
 const tenor_type_pb_1 = require("../../../fintekkers/models/security/tenor_type_pb");
+const tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
 test('test Tenor.UNKNOWN_TENOR has correct type', () => {
     testUnknownTenor();
 });
@@ -26,6 +27,11 @@ test('test Tenor.getTenor() returns correct period', () => {
 });
 test('test Tenor.getTenorDescription() returns correct string', () => {
     testGetTenorDescription();
+});
+test('test Tenor toString', () => {
+    let tenorProto = new tenor_pb_1.TenorProto().setTenorType(tenor_type_pb_1.TenorTypeProto.TERM).setTermValue("2Y3M");
+    let tenor2 = new term_1.Tenor(tenorProto.getTenorType(), tenorProto.getTermValue());
+    expect(tenor2.toString()).toBe("TERM: 2Y3M");
 });
 test('test Tenor.toString() returns correct representation', () => {
     testToString();

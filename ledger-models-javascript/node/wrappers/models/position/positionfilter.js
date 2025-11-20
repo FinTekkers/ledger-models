@@ -46,6 +46,15 @@ class PositionFilter {
         this.filters.push(fieldMapEntry);
         return this;
     }
+    //TODO: Add support for other objects
+    addObjectFilter(field, object) {
+        const fieldMapEntry = new position_util_pb_1.FieldMapEntry();
+        fieldMapEntry.setField(field);
+        fieldMapEntry.setOperator(position_util_pb_1.PositionFilterOperator.EQUALS);
+        fieldMapEntry.setFieldValuePacked((0, serialization_util_1.pack)(object));
+        this.filters.push(fieldMapEntry);
+        return this;
+    }
     getFilters() {
         return this.filters;
     }

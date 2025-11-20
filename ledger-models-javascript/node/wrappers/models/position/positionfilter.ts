@@ -2,6 +2,7 @@ import { FieldMapEntry, PositionFilterOperator } from '../../../fintekkers/model
 import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { pack } from '../utils/serialization.util';
 import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
+import { Identifier } from '../security/identifier';
 
 export class PositionFilter {
     filters: FieldMapEntry[];
@@ -47,6 +48,16 @@ export class PositionFilter {
             throw new Error("Need to provide a string, or object");
         }
 
+        this.filters.push(fieldMapEntry);
+        return this;
+    }
+
+    //TODO: Add support for other objects
+    addObjectFilter(field: FieldProto, object: Identifier): PositionFilter {
+        const fieldMapEntry = new FieldMapEntry();
+        fieldMapEntry.setField(field);
+        fieldMapEntry.setOperator(PositionFilterOperator.EQUALS);
+        fieldMapEntry.setFieldValuePacked(pack(object));
         this.filters.push(fieldMapEntry);
         return this;
     }

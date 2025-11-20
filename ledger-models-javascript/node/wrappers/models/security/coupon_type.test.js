@@ -8,6 +8,6 @@ test('test CouponType.FIXED returns "FIXED"', () => {
 });
 function testFixedCouponType() {
     const couponType = new coupon_type_1.CouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
-    assert(couponType.toString() === 'FIXED');
+    assert(couponType.name() === 'FIXED');
 }
 //# sourceMappingURL=coupon_type.test.js.map

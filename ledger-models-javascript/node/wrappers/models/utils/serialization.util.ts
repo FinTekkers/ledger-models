@@ -6,8 +6,10 @@ import { ZonedDateTime } from './datetime';
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 import { UUID } from './uuid';
 import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
+import { Identifier } from '../security/identifier';
+import { IdentifierProto } from '../../../fintekkers/models/security/identifier/identifier_pb';
 
-function pack(value: any) {
+function pack(value: Date | ZonedDateTime | UUID | Identifier | string | number) {
   if (typeof value === 'string') {
     return packStringIntoAny(value);
   } else if (value instanceof Date) {
@@ -17,29 +19,52 @@ function pack(value: any) {
     const localDateProto: LocalTimestampProto = ProtoSerializationUtil.serialize(value) as LocalTimestampProto;
     return packTimestampIntoAny(localDateProto);
   } else if (value instanceof UUID) {
-    // const uuid: UUIDProto = ProtoSerializationUtil.serialize(value);
     return packIDIntoAny(value.toUUIDProto());
-  } else {
+  } else if (value instanceof Identifier) {
+    return packIdentifierProtoIntoAny(value.proto as IdentifierProto);
+  } else if (value && typeof value === 'object' && 'proto' in value && (value as any).proto instanceof IdentifierProto) {
+    return packIdentifierProtoIntoAny((value as any).proto as IdentifierProto);
+  }
+  else {
     throw new Error("Unrecognized type cannot be packed: " + typeof value);
   }
 }
 
-function unpack(value: Any): any {
+function unpack(value: Any): Date | ZonedDateTime | UUID | Identifier | string | number {
   const typeUrl = value.getTypeUrl();
   if (typeUrl === 'type.googleapis.com/google.protobuf.StringValue') {
-    return unpackStringFromAny(value);
+    return unpackStringFromAny(value) as string;
   } else if (typeUrl === 'type.googleapis.com/fintekkers.models.util.LocalDateProto') {
-    return unpackDateFromAny(value);
+    return unpackDateFromAny(value) as Date;
   } else if (typeUrl === 'type.googleapis.com/fintekkers.models.util.LocalTimestampProto') {
     return unpackTimestampFromAny(value);
   } else if (typeUrl === 'type.googleapis.com/fintekkers.models.util.UUIDProto') {
-    return unpackIDIntoAny(value);
-  } else {
+    return unpackIDIntoAny(value) as UUID;
+  } else if (typeUrl === 'type.googleapis.com/fintekkers.models.security.identifier.IdentifierProto') {
+    return unpackIdentifierProtoFromAny(value) as Identifier;
+  }
+  else {
     console.log(value);
     throw new Error("Unrecognized Any type cannot be unpacked: " + typeUrl);
   }
 }
 
+function unpackIdentifierProtoFromAny(anyMessage: Any): Identifier {
+  const typeUrl = anyMessage.getTypeUrl();
+
+  if (typeUrl !== 'type.googleapis.com/fintekkers.models.security.identifier.IdentifierProto') {
+    throw new Error('Unexpected type URL for an identifier: ' + typeUrl);
+  }
+  const identifierProto: IdentifierProto = IdentifierProto.deserializeBinary(anyMessage.getValue_asU8());
+  return ProtoSerializationUtil.deserialize(identifierProto) as unknown as Identifier;
+}
+
+function packIdentifierProtoIntoAny(input: IdentifierProto): Any {
+  const anyMessage = new Any();
+
+  anyMessage.pack(input.serializeBinary(), 'fintekkers.models.security.identifier.IdentifierProto');
+  return anyMessage;
+}
 
 function packIDIntoAny(uuid: UUIDProto): Any {
   const anyMessage = new Any();
@@ -48,7 +73,7 @@ function packIDIntoAny(uuid: UUIDProto): Any {
   return anyMessage;
 }
 
-function unpackIDIntoAny(anyMessage: Any): UUIDProto {
+function unpackIDIntoAny(anyMessage: Any): UUID {
   const typeUrl = anyMessage.getTypeUrl();
 
   if (typeUrl !== 'type.googleapis.com/fintekkers.models.util.UUIDProto') {
@@ -56,7 +81,7 @@ function unpackIDIntoAny(anyMessage: Any): UUIDProto {
   }
 
   const uuidProto: UUIDProto = UUIDProto.deserializeBinary(anyMessage.getValue_asU8());
-  return ProtoSerializationUtil.deserialize(uuidProto) as unknown as UUIDProto;
+  return ProtoSerializationUtil.deserialize(uuidProto) as unknown as UUID;
 }
 
 function packTimestampIntoAny(inputDate: LocalTimestampProto): Any {
@@ -66,7 +91,7 @@ function packTimestampIntoAny(inputDate: LocalTimestampProto): Any {
   return anyMessage;
 }
 
-function unpackTimestampFromAny(anyMessage: Any): LocalTimestampProto {
+function unpackTimestampFromAny(anyMessage: Any): ZonedDateTime {
   const typeUrl = anyMessage.getTypeUrl();
 
   if (typeUrl !== 'type.googleapis.com/fintekkers.models.util.LocalTimestampProto') {
@@ -74,7 +99,7 @@ function unpackTimestampFromAny(anyMessage: Any): LocalTimestampProto {
   }
 
   const dateProto: LocalTimestampProto = LocalTimestampProto.deserializeBinary(anyMessage.getValue_asU8());
-  return ProtoSerializationUtil.deserialize(dateProto) as unknown as LocalTimestampProto;
+  return ProtoSerializationUtil.deserialize(dateProto) as unknown as ZonedDateTime;
 }
 
 function packDateIntoAny(inputDate: LocalDateProto): Any {
@@ -84,7 +109,7 @@ function packDateIntoAny(inputDate: LocalDateProto): Any {
   return anyMessage;
 }
 
-function unpackDateFromAny(anyMessage: Any): LocalDateProto {
+function unpackDateFromAny(anyMessage: Any): Date {
   const typeUrl = anyMessage.getTypeUrl();
 
   if (typeUrl !== 'type.googleapis.com/fintekkers.models.util.LocalDateProto') {
@@ -92,7 +117,7 @@ function unpackDateFromAny(anyMessage: Any): LocalDateProto {
   }
 
   const dateProto: LocalDateProto = LocalDateProto.deserializeBinary(anyMessage.getValue_asU8());
-  return ProtoSerializationUtil.deserialize(dateProto) as unknown as LocalDateProto;
+  return ProtoSerializationUtil.deserialize(dateProto) as unknown as Date;
 }
 
 function packStringIntoAny(inputString: string): Any {
