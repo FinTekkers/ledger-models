@@ -27,6 +27,7 @@ const tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
 const portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
+const term_1 = require("../security/term");
 class Position {
     constructor(positionProto) {
         this.proto = positionProto;
@@ -67,9 +68,19 @@ class Position {
                     return proto;
                 }
                 const unpackedValue = Position.unpackField(tmpField);
-                if (field_pb_1.FieldProto.PRICE == fieldToGet.getField()
-                    || field_pb_1.FieldProto.TENOR == fieldToGet.getField()) {
-                    return unpackedValue; //instanceof PriceProto || TenorProto
+                if (field_pb_1.FieldProto.PRICE == fieldToGet.getField()) {
+                    return unpackedValue; //instanceof PriceProto
+                }
+                if (field_pb_1.FieldProto.TENOR == fieldToGet.getField()) {
+                    const tenorProto = unpackedValue;
+                    const tenorType = tenorProto.getTenorType();
+                    const termValue = tenorProto.getTermValue();
+                    if (termValue && termValue.length > 0) {
+                        return new term_1.Tenor(tenorType, termValue);
+                    }
+                    else {
+                        return new term_1.Tenor(tenorType);
+                    }
                 }
                 if (field_pb_1.FieldProto.SECURITY == fieldToGet.getField()) {
                     return security_1.default.create(unpackedValue);
@@ -120,13 +131,19 @@ class Position {
                     return value.toString();
                 }
                 else if (value instanceof Date) {
-                    return `${value.getFullYear()}/${value.getMonth()}/${value.getDay()}`;
+                    const year = value.getFullYear();
+                    const month = String(value.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-11, so add 1
+                    const day = String(value.getDate()).padStart(2, '0'); // getDate() returns day of month (1-31)
+                    return `${year}-${month}-${day}`;
                 }
                 else if (value instanceof datetime_1.ZonedDateTime) {
                     const tmpDateTime = value.toDateTime();
                     return tmpDateTime.toFormat('yyyy/MM/dd hh:mm:ss');
                 }
                 else if (value instanceof protoEnum_1.ProtoEnum) {
+                    return value.toString();
+                }
+                else if (value instanceof term_1.Tenor) {
                     return value.toString();
                 }
                 break;

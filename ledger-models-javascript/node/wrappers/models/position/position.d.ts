@@ -9,6 +9,7 @@ import { ProtoEnum } from "../utils/protoEnum";
 import { UUID } from "../utils/uuid";
 import { ZonedDateTime } from "../utils/datetime";
 import { PriceProto } from "../../../fintekkers/models/price/price_pb";
+import { Tenor } from "../security/term";
 export declare class Position {
     proto: PositionProto;
     constructor(positionProto: PositionProto);
@@ -21,7 +22,7 @@ export declare class Position {
      */
     static fromJSON(json: any): Position;
     getFieldValue(field: FieldProto): any;
-    getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Portfolio | UUID | Date | ZonedDateTime | number | PriceProto;
+    getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Portfolio | UUID | Date | ZonedDateTime | number | PriceProto | Tenor;
     getMeasureValue(measure: MeasureProto): Decimal;
     private getMeasure;
     getFieldDisplay(fieldToGet: FieldMapEntry): string;
