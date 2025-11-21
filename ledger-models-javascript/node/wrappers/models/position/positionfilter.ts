@@ -37,15 +37,20 @@ export class PositionFilter {
      */
     addFilter(field: FieldProto, operator: PositionFilterOperator, fieldValue?: any, fieldValueString?: string): PositionFilter {
         const fieldMapEntry = new FieldMapEntry();
-        fieldMapEntry.setField(field); //FieldProto.ASSET_CLASS);
+        fieldMapEntry.setField(field);
         fieldMapEntry.setOperator(operator);
 
         if (fieldValueString)
             fieldMapEntry.setStringValue(fieldValueString);
-        else if (fieldValue) {
-            fieldMapEntry.setFieldValuePacked(pack(fieldValue));
+        else if (fieldValue !== null && fieldValue !== undefined) {
+            // Check if it's an enum value (number)
+            if (typeof fieldValue === 'number') {
+                fieldMapEntry.setEnumValue(fieldValue);
+            } else {
+                fieldMapEntry.setFieldValuePacked(pack(fieldValue));
+            }
         } else {
-            throw new Error("Need to provide a string, or object");
+            throw new Error("Need to provide a string, enum value (number), or object");
         }
 
         this.filters.push(fieldMapEntry);

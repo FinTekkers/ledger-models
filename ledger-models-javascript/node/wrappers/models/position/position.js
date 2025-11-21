@@ -28,6 +28,7 @@ const portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_p
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 const term_1 = require("../security/term");
+const identifier_1 = require("../security/identifier");
 class Position {
     constructor(positionProto) {
         this.proto = positionProto;
@@ -144,6 +145,9 @@ class Position {
                     return value.toString();
                 }
                 else if (value instanceof term_1.Tenor) {
+                    return value.toString();
+                }
+                else if (value instanceof identifier_1.Identifier) {
                     return value.toString();
                 }
                 break;

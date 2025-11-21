@@ -152,6 +152,8 @@ export class Position {
           return value.toString();
         } else if (value instanceof Tenor) {
           return value.toString();
+        } else if (value instanceof Identifier) {
+          return value.toString();
         }
         break;
       default:

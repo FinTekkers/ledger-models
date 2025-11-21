@@ -8,6 +8,7 @@ const identifier_1 = require("../security/identifier");
 const identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
 const identifier_type_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_type_pb");
 const serialization_util_1 = require("../utils/serialization.util");
+const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
 test('test PositionFilter.addEqualsStringFilter adds string filter', () => {
     testAddEqualsStringFilter();
 });
@@ -31,6 +32,9 @@ test('test PositionFilter.toProto creates PositionFilterProto', () => {
 });
 test('test PositionFilter.addFilter throws error when no value provided', () => {
     testAddFilterThrowsError();
+});
+test('test PositionFilter.addFilter handles TransactionType enum', () => {
+    testAddFilterHandlesTransactionTypeEnum();
 });
 function testAddEqualsStringFilter() {
     const filter = new positionfilter_1.PositionFilter();
@@ -77,10 +81,8 @@ function testAddObjectFilter() {
     assert(fieldEntry.getOperator() === position_util_pb_1.PositionFilterOperator.EQUALS, 'Operator should be EQUALS');
     let a = fieldEntry.getFieldValuePacked();
     let b = (0, serialization_util_1.unpack)(a);
-    assert(b.toString() === identifier.toString(), 'Identifier should be the same');
-    // const packedValue = fieldEntry.getFieldValuePacked();
-    // assert(packedValue !== null && packedValue !== undefined, 'Should have packed value');
-    // assert(packedValue.getTypeUrl().includes('IdentifierProto'), 'Type URL should include IdentifierProto');
+    assert(b.getIdentifierValue() === 'US0378331005', 'Identifier value should be "US0378331005"');
+    assert(b.getIdentifierTypeName() === 'ISIN', 'Identifier type name should be "ISIN"');
 }
 function testMethodChaining() {
     const filter = new positionfilter_1.PositionFilter();
@@ -126,7 +128,19 @@ function testAddFilterThrowsError() {
     }
     catch (error) {
         assert(error instanceof Error, 'Should throw Error');
-        assert(error.message.includes('Need to provide a string, or object'), 'Error message should mention providing a value');
+        assert(error.message.includes('Need to provide a string, enum value (number), or object'), 'Error message should mention providing a value');
     }
+}
+function testAddFilterHandlesTransactionTypeEnum() {
+    const filter = new positionfilter_1.PositionFilter();
+    filter.addFilter(field_pb_1.FieldProto.TRANSACTION_TYPE, position_util_pb_1.PositionFilterOperator.EQUALS, transaction_type_pb_1.TransactionTypeProto.BUY);
+    const filters = filter.getFilters();
+    assert(filters.length === 1, 'Should have one filter');
+    const fieldEntry = filters[0];
+    assert(fieldEntry.getField() === field_pb_1.FieldProto.TRANSACTION_TYPE, 'Field should be TRANSACTION_TYPE');
+    assert(fieldEntry.getOperator() === position_util_pb_1.PositionFilterOperator.EQUALS, 'Operator should be EQUALS');
+    assert(fieldEntry.getEnumValue() === transaction_type_pb_1.TransactionTypeProto.BUY, 'Enum value should be BUY');
+    assert(fieldEntry.getStringValue() === '', 'String value should be empty for enum');
+    assert(fieldEntry.getFieldValuePacked() === undefined, 'Packed value should be undefined for enum');
 }
 //# sourceMappingURL=positionfilter.test.js.map

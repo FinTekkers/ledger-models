@@ -7,6 +7,7 @@ import { IdentifierProto } from '../../../fintekkers/models/security/identifier/
 import { IdentifierTypeProto } from '../../../fintekkers/models/security/identifier/identifier_type_pb';
 import { unpack } from '../utils/serialization.util';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
+import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
 
 test('test PositionFilter.addEqualsStringFilter adds string filter', () => {
     testAddEqualsStringFilter();
@@ -39,6 +40,12 @@ test('test PositionFilter.toProto creates PositionFilterProto', () => {
 test('test PositionFilter.addFilter throws error when no value provided', () => {
     testAddFilterThrowsError();
 });
+
+
+test('test PositionFilter.addFilter handles TransactionType enum', () => {
+    testAddFilterHandlesTransactionTypeEnum();
+});
+
 
 function testAddEqualsStringFilter(): void {
     const filter = new PositionFilter();
@@ -155,7 +162,22 @@ function testAddFilterThrowsError(): void {
         assert(false, 'Should have thrown an error');
     } catch (error) {
         assert(error instanceof Error, 'Should throw Error');
-        assert(error.message.includes('Need to provide a string, or object'), 'Error message should mention providing a value');
+        assert(error.message.includes('Need to provide a string, enum value (number), or object'), 'Error message should mention providing a value');
     }
+}
+
+function testAddFilterHandlesTransactionTypeEnum(): void {
+    const filter = new PositionFilter();
+    filter.addFilter(FieldProto.TRANSACTION_TYPE, PositionFilterOperator.EQUALS, TransactionTypeProto.BUY);
+
+    const filters = filter.getFilters();
+    assert(filters.length === 1, 'Should have one filter');
+
+    const fieldEntry = filters[0];
+    assert(fieldEntry.getField() === FieldProto.TRANSACTION_TYPE, 'Field should be TRANSACTION_TYPE');
+    assert(fieldEntry.getOperator() === PositionFilterOperator.EQUALS, 'Operator should be EQUALS');
+    assert(fieldEntry.getEnumValue() === TransactionTypeProto.BUY, 'Enum value should be BUY');
+    assert(fieldEntry.getStringValue() === '', 'String value should be empty for enum');
+    assert(fieldEntry.getFieldValuePacked() === undefined, 'Packed value should be undefined for enum');
 }
 
