@@ -37,11 +37,17 @@ class PositionFilter {
         fieldMapEntry.setOperator(operator);
         if (fieldValueString)
             fieldMapEntry.setStringValue(fieldValueString);
-        else if (fieldValue) {
-            fieldMapEntry.setFieldValuePacked((0, serialization_util_1.pack)(fieldValue));
+        else if (fieldValue !== null && fieldValue !== undefined) {
+            // Check if it's an enum value (number)
+            if (typeof fieldValue === 'number') {
+                fieldMapEntry.setEnumValue(fieldValue);
+            }
+            else {
+                fieldMapEntry.setFieldValuePacked((0, serialization_util_1.pack)(fieldValue));
+            }
         }
         else {
-            throw new Error("Need to provide a string, or object");
+            throw new Error("Need to provide a string, enum value (number), or object");
         }
         this.filters.push(fieldMapEntry);
         return this;

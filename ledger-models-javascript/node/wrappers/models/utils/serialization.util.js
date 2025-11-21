@@ -51,7 +51,7 @@ function unpack(value) {
     else if (typeUrl === 'type.googleapis.com/fintekkers.models.util.UUIDProto') {
         return unpackIDIntoAny(value);
     }
-    else if (typeUrl === 'type.googleapis.com/fintekkers.models.security.identifier.IdentifierProto') {
+    else if (typeUrl === 'type.googleapis.com/fintekkers.models.security.IdentifierProto') {
         return unpackIdentifierProtoFromAny(value);
     }
     else {
@@ -62,7 +62,7 @@ function unpack(value) {
 exports.unpack = unpack;
 function unpackIdentifierProtoFromAny(anyMessage) {
     const typeUrl = anyMessage.getTypeUrl();
-    if (typeUrl !== 'type.googleapis.com/fintekkers.models.security.identifier.IdentifierProto') {
+    if (typeUrl !== 'type.googleapis.com/fintekkers.models.security.IdentifierProto') {
         throw new Error('Unexpected type URL for an identifier: ' + typeUrl);
     }
     const identifierProto = identifier_pb_1.IdentifierProto.deserializeBinary(anyMessage.getValue_asU8());
@@ -70,7 +70,7 @@ function unpackIdentifierProtoFromAny(anyMessage) {
 }
 function packIdentifierProtoIntoAny(input) {
     const anyMessage = new any_pb_1.Any();
-    anyMessage.pack(input.serializeBinary(), 'fintekkers.models.security.identifier.IdentifierProto');
+    anyMessage.pack(input.serializeBinary(), 'fintekkers.models.security.IdentifierProto');
     return anyMessage;
 }
 function packIDIntoAny(uuid) {
