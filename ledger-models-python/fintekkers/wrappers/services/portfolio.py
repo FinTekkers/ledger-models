@@ -34,13 +34,13 @@ from fintekkers.wrappers.requests.portfolio import (
     CreatePortfolioRequest,
     QueryPortfolioRequest,
 )
-from fintekkers.wrappers.services.util.Environment import EnvConfig
+from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
 
 
 class PortfolioService:
     def __init__(self):
-        print("PortfolioService connecting to: " + EnvConfig.api_url())
-        self.stub = PortfolioStub(EnvConfig.get_channel())
+        print("PortfolioService connecting to: " + EnvConfig.api_url(ServiceType.PORTFOLIO_SERVICE))
+        self.stub = PortfolioStub(EnvConfig.get_channel(ServiceType.PORTFOLIO_SERVICE))
 
     def search(
         self, request: QueryPortfolioRequest
