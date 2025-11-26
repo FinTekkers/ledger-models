@@ -36,8 +36,21 @@ class EnvConfig:
         # return EnvConfig.get_env_var('API_KEY')
 
     @staticmethod
-    def api_url(service_type: ServiceType = ServiceType.BROKER):
+    def api_url(service_type: ServiceType = None):
         base_url = EnvConfig.get_env_var('API_URL', EnvConfig.default_api_url)
+        
+        # If running on localhost, service type must be explicitly provided
+        is_localhost = "localhost" in base_url or "127.0.0.1" in base_url
+        
+        if service_type is None:
+            if is_localhost:
+                raise ValueError(
+                    f"When running on localhost ({base_url}), service_type must be explicitly provided. "
+                    f"Available service types: {[st.name for st in ServiceType]}"
+                )
+            # Default to BROKER for non-localhost environments
+            service_type = ServiceType.BROKER
+        
         return f"{base_url}:{service_type.value}"
 
     @staticmethod

@@ -15,13 +15,13 @@ from fintekkers.wrappers.models.position import Position
 from fintekkers.wrappers.models.price import Price
 from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
-from fintekkers.wrappers.services.util.Environment import EnvConfig
+from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
 
 
 class ValuationService:
     def __init__(self):
-        print("ValuationService connecting to: " + EnvConfig.api_url())
-        self.stub = ValuationStub(EnvConfig.get_channel())
+        print("ValuationService connecting to: " + EnvConfig.api_url(ServiceType.VALUATION_SERVICE))
+        self.stub = ValuationStub(EnvConfig.get_channel(ServiceType.VALUATION_SERVICE))
 
     def run_valuation(self, 
                      security: Security = None, 

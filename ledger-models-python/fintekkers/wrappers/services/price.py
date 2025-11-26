@@ -31,8 +31,8 @@ from fintekkers.services.price_service.price_service_pb2_grpc import PriceStub
 class PriceService:
     def __init__(self):
         #By default will access the broker. 
-        print("PriceService connecting to: " + EnvConfig.api_url())
-        self.stub = PriceStub(EnvConfig.get_channel())
+        print("PriceService connecting to: " + EnvConfig.api_url(ServiceType.PRICE_SERVICE))
+        self.stub = PriceStub(EnvConfig.get_channel(ServiceType.PRICE_SERVICE))
 
     def get_price(identifer:str, identifier_type: IdentifierTypeProto):
         return #the latest price
