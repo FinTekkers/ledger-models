@@ -17,7 +17,7 @@ from fintekkers.wrappers.requests.security import (
     QuerySecurityRequest,
     CreateSecurityRequest,
 )
-from fintekkers.wrappers.services.util.Environment import EnvConfig
+from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
 
 from fintekkers.requests.security.get_fields_response_pb2 import GetFieldsResponseProto
 from fintekkers.requests.security.get_field_values_response_pb2 import GetFieldValuesResponseProto
@@ -28,7 +28,7 @@ from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
 class SecurityService:
     def __init__(self):
-        print("SecurityService connecting to: " + EnvConfig.api_url())
+        print("SecurityService connecting to: " + EnvConfig.api_url(ServiceType.SECURITY_SERVICE))
         self.stub = SecurityStub(EnvConfig.get_channel())
 
     def search(self, request: QuerySecurityRequest) -> Generator[Security, None, None]:
