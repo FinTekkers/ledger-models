@@ -13,6 +13,7 @@ pub enum Error {
     DecimalConversion,
     DateConversion,
     UuidError,
+    DeserializationError,
 }
 
 impl From<Error> for Status {
@@ -20,6 +21,7 @@ impl From<Error> for Status {
         match value {
             Error::DateConversion => Status::new(Code::Internal, "Failed to convert date"),
             Error::DecimalConversion => Status::new(Code::Internal, "Failed to convert decimal"),
+            Error::DeserializationError => Status::new(Code::Internal, "Failed to deserialize protobuf message"),
             Error::MissingMeasure(m) => Status::new(
                 Code::Internal,
                 format!("Missing measure {}", m.as_str_name()),

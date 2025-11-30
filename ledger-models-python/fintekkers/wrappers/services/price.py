@@ -188,5 +188,5 @@ class PriceService:
             if e.code() == grpc.StatusCode.CANCELLED:
                 print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url()} ({e.details()})")
             else:
-                print(f"Service unavailable trying to contact {EnvConfig.api_url()} ({e.details()})")
+                print(f"Service unavailable trying to contact {EnvConfig.api_url(ServiceType.PRICE_SERVICE)} ({e.details()})")
             raise e
