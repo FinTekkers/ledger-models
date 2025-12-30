@@ -19,6 +19,10 @@ test('test BondSecurity.getTenor() returns correct Tenor for 10-year bond', () =
     testBondSecurityTenor();
 });
 
+test('test BondSecurity.getTenor() returns correct Tenor for 10-year bond with as of date', () => {
+    testBondSecurityTenorWithAsOfDate();
+});
+
 function testBondSecurityCreation(): void {
     // Create a SecurityProto with BOND_SECURITY type, coupon type, and coupon frequency
     const securityProto = new SecurityProto();
@@ -127,6 +131,43 @@ function testBondSecurityTenor(): void {
         assert(period2.days === 5, `Expected 5 days, got ${period2.days}`);
     }
 
-    assert(tenor2.toString() === 'TERM: 2Y6M5D', `Expected "TERM: 2Y6M5D", got "${tenor2.toString()}"`);
+    // Days are discarded when there are no weeks (rounding logic: 6M1D -> 6M)
+    // So 2Y6M5D becomes 2Y6M
+    assert(tenor2.toString() === 'TERM: 2Y6M', `Expected "TERM: 2Y6M", got "${tenor2.toString()}"`);
 }
 
+function testBondSecurityTenorWithAsOfDate(): void {
+    // Create a SecurityProto with BOND_SECURITY type and dates for a 10-year bond
+    const securityProto = new SecurityProto();
+
+    securityProto.setSecurityType(SecurityTypeProto.BOND_SECURITY);
+    securityProto.setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    // Set maturity date: January 1, 2031 (exactly 10 years later)
+    securityProto.setMaturityDate(new LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+
+    // Create BondSecurity
+    const security = Security.create(securityProto);
+    const bondSecurity = security as BondSecurity;
+
+    // Test getTenor()
+    const asOfDate = new Date(2026, 0, 1);
+    const tenor = bondSecurity.getTenor(asOfDate);
+
+    assert(tenor !== null, 'Tenor should not be null');
+    assert(tenor.getType() === TenorTypeProto.TERM, 'Tenor type should be TERM');
+
+    const period = tenor.getTenor();
+    assert(period !== null, 'Period should not be null');
+    if (period) {
+        assert(period.years === 5, `Expected 5 years, got ${period.years}`);
+        assert(period.months === 0, `Expected 0 months, got ${period.months}`);
+        assert(period.days === 0, `Expected 0 days, got ${period.days}`);
+    }
+
+    // Test tenor description
+    const tenorDescription = tenor.getTenorDescription();
+    assert(tenorDescription === '5Y', `Expected tenor description "5Y", got "${tenorDescription}"`);
+
+    const tenorString = tenor.toString();
+    assert(tenorString === 'TERM: 5Y', `Expected "TERM: 5Y", got "${tenorString}"`);
+}

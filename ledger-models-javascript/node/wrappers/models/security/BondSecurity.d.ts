@@ -8,8 +8,14 @@ import { CouponType } from './coupon_type';
 import { Tenor } from './term';
 declare class BondSecurity extends Security {
     constructor(proto: SecurityProto);
-    /** Returns the tenor (term) of the bond as a Tenor object */
-    getTenor(): Tenor;
+    /** Returns the tenor (term) of the bond as a Tenor object.
+     *
+     * If an 'as of date' is provided the term will be based on
+     * maturity date - as of date, instead of maturity date - issue date.
+     * @param asOfDate - [Optional]The 'as of date' to use for the tenor calculation.
+     * @returns The tenor (term) of the bond as a Tenor object.
+     */
+    getTenor(asOfDate?: Date): Tenor;
     /**
      * Calculates the period between two dates in years, months, and days.
      * This method handles month and year boundaries correctly.

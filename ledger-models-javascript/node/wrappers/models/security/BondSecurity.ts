@@ -19,13 +19,19 @@ class BondSecurity extends Security {
     }
   }
 
-  /** Returns the tenor (term) of the bond as a Tenor object */
-  getTenor(): Tenor {
-    const issueDate = this.getIssueDate().toDate();
+  /** Returns the tenor (term) of the bond as a Tenor object.
+   * 
+   * If an 'as of date' is provided the term will be based on 
+   * maturity date - as of date, instead of maturity date - issue date.
+   * @param asOfDate - [Optional]The 'as of date' to use for the tenor calculation.
+   * @returns The tenor (term) of the bond as a Tenor object.
+   */
+  getTenor(asOfDate?: Date): Tenor {
+    const startDate = asOfDate ? asOfDate : this.getIssueDate().toDate();
     const maturityDate = this.getMaturityDate().toDate();
 
     // Calculate the period between issue date and maturity date
-    const period = this.calculatePeriod(issueDate, maturityDate);
+    const period = this.calculatePeriod(startDate, maturityDate);
 
     return new Tenor(TenorTypeProto.TERM, period);
   }

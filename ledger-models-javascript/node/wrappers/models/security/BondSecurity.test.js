@@ -20,6 +20,9 @@ test('test Security.create returns BondSecurity with correct coupon type and fre
 test('test BondSecurity.getTenor() returns correct Tenor for 10-year bond', () => {
     testBondSecurityTenor();
 });
+test('test BondSecurity.getTenor() returns correct Tenor for 10-year bond with as of date', () => {
+    testBondSecurityTenorWithAsOfDate();
+});
 function testBondSecurityCreation() {
     // Create a SecurityProto with BOND_SECURITY type, coupon type, and coupon frequency
     const securityProto = new security_pb_1.SecurityProto();
@@ -112,6 +115,36 @@ function testBondSecurityTenor() {
         assert(period2.months === 6, `Expected 6 months, got ${period2.months}`);
         assert(period2.days === 5, `Expected 5 days, got ${period2.days}`);
     }
-    assert(tenor2.toString() === 'TERM: 2Y6M5D', `Expected "TERM: 2Y6M5D", got "${tenor2.toString()}"`);
+    // Days are discarded when there are no weeks (rounding logic: 6M1D -> 6M)
+    // So 2Y6M5D becomes 2Y6M
+    assert(tenor2.toString() === 'TERM: 2Y6M', `Expected "TERM: 2Y6M", got "${tenor2.toString()}"`);
+}
+function testBondSecurityTenorWithAsOfDate() {
+    // Create a SecurityProto with BOND_SECURITY type and dates for a 10-year bond
+    const securityProto = new security_pb_1.SecurityProto();
+    securityProto.setSecurityType(security_type_pb_1.SecurityTypeProto.BOND_SECURITY);
+    securityProto.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    // Set maturity date: January 1, 2031 (exactly 10 years later)
+    securityProto.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+    // Create BondSecurity
+    const security = security_1.default.create(securityProto);
+    const bondSecurity = security;
+    // Test getTenor()
+    const asOfDate = new Date(2026, 0, 1);
+    const tenor = bondSecurity.getTenor(asOfDate);
+    assert(tenor !== null, 'Tenor should not be null');
+    assert(tenor.getType() === tenor_type_pb_1.TenorTypeProto.TERM, 'Tenor type should be TERM');
+    const period = tenor.getTenor();
+    assert(period !== null, 'Period should not be null');
+    if (period) {
+        assert(period.years === 5, `Expected 5 years, got ${period.years}`);
+        assert(period.months === 0, `Expected 0 months, got ${period.months}`);
+        assert(period.days === 0, `Expected 0 days, got ${period.days}`);
+    }
+    // Test tenor description
+    const tenorDescription = tenor.getTenorDescription();
+    assert(tenorDescription === '5Y', `Expected tenor description "5Y", got "${tenorDescription}"`);
+    const tenorString = tenor.toString();
+    assert(tenorString === 'TERM: 5Y', `Expected "TERM: 5Y", got "${tenorString}"`);
 }
 //# sourceMappingURL=BondSecurity.test.js.map
