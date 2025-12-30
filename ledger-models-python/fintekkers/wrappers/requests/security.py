@@ -16,6 +16,7 @@ from fintekkers.models.security.security_quantity_type_pb2 import ORIGINAL_FACE_
 from fintekkers.models.security.security_type_pb2 import (
     BOND_SECURITY,
     FRN,
+    TIPS,
     SecurityTypeProto,
 )
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
@@ -64,19 +65,31 @@ class CreateSecurityRequest:
         """
         id = IdentifierProto(identifier_type=CUSIP, identifier_value=cusip)
 
-        security_type = BOND_SECURITY
+        # Initialize default coupon settings
         coupon_frequency = SEMIANNUALLY
         coupon_type = FIXED
 
-        # if security_type == TIPS:
-        #     security_type = TIPS
-        if security_type == FRN:
-            # security_type = FRN
+        # Calculate time to maturity for zero-coupon detection
+        time_to_maturity = maturity_date - issue_date
+        days_to_maturity = time_to_maturity.days
+
+        # Configure coupon settings based on security type parameter
+        # Note: The security_type parameter is used here (not overwritten)
+        if security_type == TIPS:
+            # TIPS are inflation-indexed bonds, typically with fixed coupon
+            coupon_type = FIXED
+        elif security_type == FRN:
+            # Floating Rate Notes use floating coupon with spread
             coupon_type = FLOAT
             coupon_rate = spread
-        if security_type == ZERO:
-            coupon_type = ZERO
-            coupon_frequency = NO_COUPON
+        elif security_type == BOND_SECURITY:
+            # Check for zero-coupon conditions
+            if days_to_maturity <= 365:
+                # Treasury Bills: maturity <= 1 year are always zero-coupon
+                coupon_type = ZERO
+                coupon_frequency = NO_COUPON
+                # coupon_rate = 0.0  # Ensure rate is zero
+                # TODO: Decide how to model zero coupon bonds
 
         issue_date_proto = get_date_proto(issue_date)
         dated_date_proto = get_date_proto(dated_date) if dated_date != None else None

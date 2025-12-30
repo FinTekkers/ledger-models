@@ -57,16 +57,11 @@ class PortfolioService:
             pass
         except Exception as e:
             print(e)
-
-        # This will terminate the request but leave the TCP connection open
-        # responses
-
-        self.stub = PortfolioStub(EnvConfig.get_channel())
+            self.__init__() #Reinitialize the service to reconnect
 
     def create_or_update(
         self, request: CreatePortfolioRequestProto
     ) -> Generator[Portfolio, None, None]:
-        self.stub = PortfolioStub(EnvConfig.get_channel())
         return self.stub.CreateOrUpdate(request)
 
     def create_portfolio_by_name(self, portfolio_name: str) -> Portfolio:

@@ -25,6 +25,7 @@ const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/tr
 const price_pb_1 = require("../../../fintekkers/models/price/price_pb");
 const tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
 const tenor_type_pb_1 = require("../../../fintekkers/models/security/tenor_type_pb");
+const term_1 = require("../security/term");
 test('test the enum Serialization', () => __awaiter(void 0, void 0, void 0, function* () {
     let isTrue = yield testEnumSerialization();
     expect(isTrue).toBe(true);
@@ -98,6 +99,10 @@ test('test testTenorSerialization', () => __awaiter(void 0, void 0, void 0, func
     let isTrue = yield testTenorSerialization();
     expect(isTrue).toBe(true);
 }));
+test('test adjusted tenor serialization returns Tenor wrapper', () => __awaiter(void 0, void 0, void 0, function* () {
+    let isTrue = yield testAdjustedTenorSerialization();
+    expect(isTrue).toBe(true);
+}));
 function testTenorSerialization() {
     return __awaiter(this, void 0, void 0, function* () {
         let { position, tenor } = getPosition(false);
@@ -108,6 +113,21 @@ function testTenorSerialization() {
         let tenorFieldDisplay = position.getFieldDisplay(new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.TENOR));
         // The field display should be the Tenor wrapper's toString(), which returns something like "TERM: 3M"
         expect(tenorFieldDisplay).toBe(tenorPosition.toString());
+        return true;
+    });
+}
+function testAdjustedTenorSerialization() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const positionProto = new position_pb_1.PositionProto();
+        positionProto.setFieldsList([
+            new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.ADJUSTED_TENOR).setStringValue("3M"),
+        ]);
+        const position = new position_1.Position(positionProto);
+        const adjustedTenor = position.getFieldValue(field_pb_1.FieldProto.ADJUSTED_TENOR);
+        expect(adjustedTenor instanceof term_1.Tenor).toBe(true);
+        expect(adjustedTenor.getTenorDescription()).toBe("3M");
+        const display = position.getFieldDisplay(new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.ADJUSTED_TENOR));
+        expect(display).toBe(adjustedTenor.toString());
         return true;
     });
 }

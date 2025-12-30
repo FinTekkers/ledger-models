@@ -29,7 +29,7 @@ from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 class SecurityService:
     def __init__(self):
         print("SecurityService connecting to: " + EnvConfig.api_url(ServiceType.SECURITY_SERVICE))
-        self.stub = SecurityStub(EnvConfig.get_channel())
+        self.stub = SecurityStub(EnvConfig.get_channel(ServiceType.SECURITY_SERVICE))
 
     def search(self, request: QuerySecurityRequest) -> Generator[Security, None, None]:
         responses = self.stub.Search(request=request.proto)

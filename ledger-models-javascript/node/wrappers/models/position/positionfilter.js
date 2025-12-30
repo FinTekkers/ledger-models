@@ -33,7 +33,7 @@ class PositionFilter {
      */
     addFilter(field, operator, fieldValue, fieldValueString) {
         const fieldMapEntry = new position_util_pb_1.FieldMapEntry();
-        fieldMapEntry.setField(field); //FieldProto.ASSET_CLASS);
+        fieldMapEntry.setField(field);
         fieldMapEntry.setOperator(operator);
         if (fieldValueString)
             fieldMapEntry.setStringValue(fieldValueString);

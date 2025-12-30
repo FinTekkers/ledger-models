@@ -20,6 +20,7 @@ import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";
 import { IdentifierProto } from "../../../fintekkers/models/security/identifier/identifier_pb";
 import { StrategyProto } from "../../../fintekkers/models/strategy/strategy_pb";
 import { TenorProto } from "../../../fintekkers/models/security/tenor_pb";
+import { TenorTypeProto } from "../../../fintekkers/models/security/tenor_type_pb";
 import { PortfolioProto } from "../../../fintekkers/models/portfolio/portfolio_pb";
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 
@@ -58,6 +59,11 @@ export class Position {
       if (tmpField.getField() === fieldToGet.getField()) {
 
         if (tmpField.getStringValue() !== undefined && tmpField.getStringValue().length > 0) {
+          // Tenor-like fields should return a Tenor wrapper even when they are stored as a string (e.g. "3M")
+          // so callers get a consistent type for TENOR and ADJUSTED_TENOR.
+          if (fieldToGet.getField() === FieldProto.TENOR || fieldToGet.getField() === FieldProto.ADJUSTED_TENOR) {
+            return new Tenor(TenorTypeProto.TERM, tmpField.getStringValue());
+          }
           return tmpField.getStringValue();
         }
 
@@ -79,15 +85,24 @@ export class Position {
           return unpackedValue; //instanceof PriceProto
         }
 
-        if (FieldProto.TENOR == fieldToGet.getField()) {
-          const tenorProto = unpackedValue as TenorProto;
-          const tenorType = tenorProto.getTenorType();
-          const termValue = tenorProto.getTermValue();
-          if (termValue && termValue.length > 0) {
-            return new Tenor(tenorType, termValue);
-          } else {
-            return new Tenor(tenorType);
+        if (FieldProto.TENOR == fieldToGet.getField() || FieldProto.ADJUSTED_TENOR == fieldToGet.getField()) {
+          // TENOR is typically stored as a TenorProto; ADJUSTED_TENOR may be stored as either a TenorProto or a StringValue.
+          if (unpackedValue instanceof TenorProto) {
+            const tenorProto = unpackedValue as TenorProto;
+            const tenorType = tenorProto.getTenorType();
+            const termValue = tenorProto.getTermValue();
+            if (termValue && termValue.length > 0) {
+              return new Tenor(tenorType, termValue);
+            } else {
+              return new Tenor(tenorType);
+            }
           }
+
+          if (unpackedValue instanceof StringValue) {
+            return new Tenor(TenorTypeProto.TERM, unpackedValue.getValue());
+          }
+
+          throw new Error(`Unexpected unpacked value for ${FieldProto[fieldToGet.getField()]}`);
         }
 
         if (FieldProto.SECURITY == fieldToGet.getField()) {
@@ -141,10 +156,9 @@ export class Position {
         } else if (value instanceof UUID) {
           return value.toString();
         } else if (value instanceof Date) {
-          const year = value.getFullYear();
-          const month = String(value.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-11, so add 1
-          const day = String(value.getDate()).padStart(2, '0'); // getDate() returns day of month (1-31)
-          return `${year}-${month}-${day}`;
+          // Format as YYYY-MM-DD with leading zeros using ISO string format
+          // toISOString() returns YYYY-MM-DDTHH:mm:ss.sssZ, we just need the date part
+          return value.toISOString().split('T')[0];
         } else if (value instanceof ZonedDateTime) {
           const tmpDateTime: DateTime = value.toDateTime();
           return tmpDateTime.toFormat('yyyy/MM/dd hh:mm:ss');
@@ -213,6 +227,7 @@ export class Position {
       case FieldProto.STRATEGY:
         return StrategyProto.deserializeBinary(binaryValue);
       case FieldProto.TENOR:
+      case FieldProto.ADJUSTED_TENOR:
         return TenorProto.deserializeBinary(binaryValue);
       case FieldProto.PRICE:
         return PriceProto.deserializeBinary(binaryValue);
@@ -222,7 +237,6 @@ export class Position {
       case FieldProto.PORTFOLIO_NAME:
       case FieldProto.SECURITY_DESCRIPTION:
       case FieldProto.SECURITY_ISSUER_NAME:
-      case FieldProto.ADJUSTED_TENOR:
       case FieldProto.PRODUCT_TYPE:
       case FieldProto.PRODUCT_CLASS:
       case FieldProto.ASSET_CLASS:

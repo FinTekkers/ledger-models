@@ -108,6 +108,11 @@ test('test testTenorSerialization', async () => {
     expect(isTrue).toBe(true);
 });
 
+test('test adjusted tenor serialization returns Tenor wrapper', async () => {
+    let isTrue = await testAdjustedTenorSerialization();
+    expect(isTrue).toBe(true);
+});
+
 async function testTenorSerialization(): Promise<boolean> {
     let { position, tenor } = getPosition(false);
 
@@ -119,6 +124,24 @@ async function testTenorSerialization(): Promise<boolean> {
     let tenorFieldDisplay = position.getFieldDisplay(new FieldMapEntry().setField(FieldProto.TENOR));
     // The field display should be the Tenor wrapper's toString(), which returns something like "TERM: 3M"
     expect(tenorFieldDisplay).toBe(tenorPosition.toString());
+
+    return true;
+}
+
+async function testAdjustedTenorSerialization(): Promise<boolean> {
+    const positionProto = new PositionProto();
+    positionProto.setFieldsList([
+        new FieldMapEntry().setField(FieldProto.ADJUSTED_TENOR).setStringValue("3M"),
+    ]);
+
+    const position = new Position(positionProto);
+
+    const adjustedTenor = position.getFieldValue(FieldProto.ADJUSTED_TENOR) as Tenor;
+    expect(adjustedTenor instanceof Tenor).toBe(true);
+    expect(adjustedTenor.getTenorDescription()).toBe("3M");
+
+    const display = position.getFieldDisplay(new FieldMapEntry().setField(FieldProto.ADJUSTED_TENOR));
+    expect(display).toBe(adjustedTenor.toString());
 
     return true;
 }

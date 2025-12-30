@@ -98,11 +98,39 @@ export class Tenor {
             return '';
         }
 
-        const years = period.years;
-        const months = period.months;
-        // Extract weeks and remaining days from total days (matching Java behavior)
-        const weeks = Math.floor(period.days / 7);
-        const days = period.days % 7;
+        let years = period.years;
+        let months = period.months;
+        // Extract weeks and remaining days from total days
+        let weeks = Math.floor(period.days / 7);
+        let days = period.days % 7;
+
+        // Calculate total days from weeks and days
+        const totalDays = weeks * 7 + days;
+
+        // Round up months when total days >= 27 (approximately 4 weeks)
+        // This covers cases like 3W6D (27 days) which should round up
+        if (totalDays >= 27) {
+            months += 1;
+            weeks = 0; // Weeks are absorbed into months
+            days = 0; // Days are discarded when rounding up
+        }
+        // Also round up months when months >= 11 and there are any weeks (>= 2 weeks)
+        // This covers cases like 11M2W which should round to 12M = 1Y
+        else if (months >= 11 && weeks >= 2) {
+            months += 1;
+            weeks = 0;
+            days = 0;
+        }
+        // Discard days when there are no weeks (e.g., 6M1D -> 6M)
+        else if (weeks === 0 && days > 0) {
+            days = 0;
+        }
+
+        // Round up years when months reach 12 or more
+        if (months >= 12) {
+            years += Math.floor(months / 12);
+            months = months % 12;
+        }
 
         const parts: string[] = [];
         if (years > 0) {
@@ -118,7 +146,7 @@ export class Tenor {
             parts.push(`${days}D`);
         }
 
-        return parts.join('');
+        return parts.join('').trim();
     }
 
     /**

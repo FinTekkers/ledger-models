@@ -24,6 +24,7 @@ const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb")
 const identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
 const strategy_pb_1 = require("../../../fintekkers/models/strategy/strategy_pb");
 const tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
+const tenor_type_pb_1 = require("../../../fintekkers/models/security/tenor_type_pb");
 const portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
@@ -54,6 +55,11 @@ class Position {
         for (const tmpField of this.proto.getFieldsList()) {
             if (tmpField.getField() === fieldToGet.getField()) {
                 if (tmpField.getStringValue() !== undefined && tmpField.getStringValue().length > 0) {
+                    // Tenor-like fields should return a Tenor wrapper even when they are stored as a string (e.g. "3M")
+                    // so callers get a consistent type for TENOR and ADJUSTED_TENOR.
+                    if (fieldToGet.getField() === field_pb_1.FieldProto.TENOR || fieldToGet.getField() === field_pb_1.FieldProto.ADJUSTED_TENOR) {
+                        return new term_1.Tenor(tenor_type_pb_1.TenorTypeProto.TERM, tmpField.getStringValue());
+                    }
                     return tmpField.getStringValue();
                 }
                 if (tmpField.getEnumValue() > 0) {
@@ -72,16 +78,23 @@ class Position {
                 if (field_pb_1.FieldProto.PRICE == fieldToGet.getField()) {
                     return unpackedValue; //instanceof PriceProto
                 }
-                if (field_pb_1.FieldProto.TENOR == fieldToGet.getField()) {
-                    const tenorProto = unpackedValue;
-                    const tenorType = tenorProto.getTenorType();
-                    const termValue = tenorProto.getTermValue();
-                    if (termValue && termValue.length > 0) {
-                        return new term_1.Tenor(tenorType, termValue);
+                if (field_pb_1.FieldProto.TENOR == fieldToGet.getField() || field_pb_1.FieldProto.ADJUSTED_TENOR == fieldToGet.getField()) {
+                    // TENOR is typically stored as a TenorProto; ADJUSTED_TENOR may be stored as either a TenorProto or a StringValue.
+                    if (unpackedValue instanceof tenor_pb_1.TenorProto) {
+                        const tenorProto = unpackedValue;
+                        const tenorType = tenorProto.getTenorType();
+                        const termValue = tenorProto.getTermValue();
+                        if (termValue && termValue.length > 0) {
+                            return new term_1.Tenor(tenorType, termValue);
+                        }
+                        else {
+                            return new term_1.Tenor(tenorType);
+                        }
                     }
-                    else {
-                        return new term_1.Tenor(tenorType);
+                    if (unpackedValue instanceof wrappers_pb_1.StringValue) {
+                        return new term_1.Tenor(tenor_type_pb_1.TenorTypeProto.TERM, unpackedValue.getValue());
                     }
+                    throw new Error(`Unexpected unpacked value for ${field_pb_1.FieldProto[fieldToGet.getField()]}`);
                 }
                 if (field_pb_1.FieldProto.SECURITY == fieldToGet.getField()) {
                     return security_1.default.create(unpackedValue);
@@ -132,10 +145,9 @@ class Position {
                     return value.toString();
                 }
                 else if (value instanceof Date) {
-                    const year = value.getFullYear();
-                    const month = String(value.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-11, so add 1
-                    const day = String(value.getDate()).padStart(2, '0'); // getDate() returns day of month (1-31)
-                    return `${year}-${month}-${day}`;
+                    // Format as YYYY-MM-DD with leading zeros using ISO string format
+                    // toISOString() returns YYYY-MM-DDTHH:mm:ss.sssZ, we just need the date part
+                    return value.toISOString().split('T')[0];
                 }
                 else if (value instanceof datetime_1.ZonedDateTime) {
                     const tmpDateTime = value.toDateTime();
@@ -201,6 +213,7 @@ class Position {
             case field_pb_1.FieldProto.STRATEGY:
                 return strategy_pb_1.StrategyProto.deserializeBinary(binaryValue);
             case field_pb_1.FieldProto.TENOR:
+            case field_pb_1.FieldProto.ADJUSTED_TENOR:
                 return tenor_pb_1.TenorProto.deserializeBinary(binaryValue);
             case field_pb_1.FieldProto.PRICE:
                 return price_pb_1.PriceProto.deserializeBinary(binaryValue);
@@ -210,7 +223,6 @@ class Position {
             case field_pb_1.FieldProto.PORTFOLIO_NAME:
             case field_pb_1.FieldProto.SECURITY_DESCRIPTION:
             case field_pb_1.FieldProto.SECURITY_ISSUER_NAME:
-            case field_pb_1.FieldProto.ADJUSTED_TENOR:
             case field_pb_1.FieldProto.PRODUCT_TYPE:
             case field_pb_1.FieldProto.PRODUCT_CLASS:
             case field_pb_1.FieldProto.ASSET_CLASS:

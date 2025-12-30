@@ -62,6 +62,30 @@ class Tenor:
         weeks = period.days // 7
         days = period.days % 7
         
+        # Calculate total days from weeks and days
+        total_days = weeks * 7 + days
+        
+        # Round up months when total days >= 27 (approximately 4 weeks)
+        # This covers cases like 3W6D (27 days) which should round up
+        if total_days >= 27:
+            months += 1
+            weeks = 0  # Weeks are absorbed into months
+            days = 0  # Days are discarded when rounding up
+        # Also round up months when months >= 11 and there are any weeks (>= 2 weeks)
+        # This covers cases like 11M2W which should round to 12M = 1Y
+        elif months >= 11 and weeks >= 2:
+            months += 1
+            weeks = 0
+            days = 0
+        # Discard days when there are no weeks (e.g., 6M1D -> 6M)
+        elif weeks == 0 and days > 0:
+            days = 0
+        
+        # Round up years when months reach 12 or more
+        if months >= 12:
+            years += months // 12
+            months = months % 12
+        
         result = ""
         if years > 0:
             result += f"{years}Y"

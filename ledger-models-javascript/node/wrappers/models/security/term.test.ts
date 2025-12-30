@@ -204,13 +204,39 @@ function testPeriodToString(): void {
     assert(Tenor.periodToString(period1) === '2Y3M', 'Should return "2Y3M"');
 
     const period2: Period = { years: 0, months: 6, days: 14 };
-    assert(Tenor.periodToString(period2) === '6M2W', 'Should convert 14 days to 2W');
+    assert(Tenor.periodToString(period2) === '6M2W', 'Should convert 14 days to 2W (less than 4 weeks)');
 
     const period3: Period = { years: 1, months: 0, days: 21 };
-    assert(Tenor.periodToString(period3) === '1Y3W', 'Should convert 21 days to 3W');
+    assert(Tenor.periodToString(period3) === '1Y3W', 'Should convert 21 days to 3W (less than 4 weeks)');
 
     const period4: Period = { years: 0, months: 0, days: 10 };
     assert(Tenor.periodToString(period4) === '1W3D', 'Should convert 10 days to 1W3D');
+
+    // Test rounding: 4 or more weeks should round up to months
+    const period7: Period = { years: 0, months: 0, days: 28 };
+    assert(Tenor.periodToString(period7) === '1M', '28 days (4 weeks) should round up to 1M');
+
+    const period8: Period = { years: 0, months: 0, days: 35 };
+    assert(Tenor.periodToString(period8) === '1M', '35 days (5 weeks) should round up to 1M');
+
+    // Test rounding: 12 or more months should round up to years
+    const period9: Period = { years: 0, months: 12, days: 0 };
+    assert(Tenor.periodToString(period9) === '1Y', '12 months should round up to 1Y');
+
+    const period10: Period = { years: 0, months: 13, days: 0 };
+    assert(Tenor.periodToString(period10) === '1Y1M', '13 months should round up to 1Y1M');
+
+    // Test rounding: 3M3W6D (27 days total) should round to 4M
+    const period11: Period = { years: 0, months: 3, days: 27 }; // 3 weeks * 7 + 6 days = 27 days
+    assert(Tenor.periodToString(period11) === '4M', '3M3W6D (27 days) should round to 4M');
+
+    // Test discarding days when there are no weeks: 6M1D should be 6M
+    const period12: Period = { years: 0, months: 6, days: 1 };
+    assert(Tenor.periodToString(period12) === '6M', '6M1D should discard days and be 6M');
+
+    // Test rounding: 19Y11M2W should round to 20Y (11 months + 2 weeks rounds to 12 months = 1 year)
+    const period13: Period = { years: 19, months: 11, days: 14 }; // 2 weeks * 7 = 14 days
+    assert(Tenor.periodToString(period13) === '20Y', '19Y11M2W should round to 20Y');
 
     // Test negative period
     const period5: Period = { years: -1, months: 0, days: 0 };
