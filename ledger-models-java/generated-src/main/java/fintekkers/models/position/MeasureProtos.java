@@ -24,12 +24,13 @@ public final class MeasureProtos {
   static {
     java.lang.String[] descriptorData = {
       "\n(fintekkers/models/position/measure.pro" +
-      "to\022\032fintekkers.models.position*\252\001\n\014Measu" +
+      "to\022\032fintekkers.models.position*\301\001\n\014Measu" +
       "reProto\022\023\n\017UNKNOWN_MEASURE\020\000\022\025\n\021DIRECTED" +
       "_QUANTITY\020\001\022\020\n\014MARKET_VALUE\020\002\022\031\n\025UNADJUS" +
       "TED_COST_BASIS\020\003\022\027\n\023ADJUSTED_COST_BASIS\020" +
       "\004\022\021\n\rCURRENT_YIELD\020\005\022\025\n\021YIELD_TO_MATURIT" +
-      "Y\020\007B\021B\rMeasureProtosP\001b\006proto3"
+      "Y\020\007\022\025\n\021MACAULAY_DURATION\020\010B\021B\rMeasurePro" +
+      "tosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

@@ -13,6 +13,7 @@ class MeasureProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     ADJUSTED_COST_BASIS: _ClassVar[MeasureProto]
     CURRENT_YIELD: _ClassVar[MeasureProto]
     YIELD_TO_MATURITY: _ClassVar[MeasureProto]
+    MACAULAY_DURATION: _ClassVar[MeasureProto]
 UNKNOWN_MEASURE: MeasureProto
 DIRECTED_QUANTITY: MeasureProto
 MARKET_VALUE: MeasureProto
@@ -20,3 +21,4 @@ UNADJUSTED_COST_BASIS: MeasureProto
 ADJUSTED_COST_BASIS: MeasureProto
 CURRENT_YIELD: MeasureProto
 YIELD_TO_MATURITY: MeasureProto
+MACAULAY_DURATION: MeasureProto

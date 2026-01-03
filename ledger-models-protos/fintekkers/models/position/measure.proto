@@ -25,4 +25,6 @@ enum MeasureProto {
   // For FRNs, the assumption is the floating rate doesn't change between now and maturity.
   // In the future, context-overrides will allow customization of these assumptions
   YIELD_TO_MATURITY = 7;
+
+  MACAULAY_DURATION = 8;
 }

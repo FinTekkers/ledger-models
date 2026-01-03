@@ -14,4 +14,5 @@ export enum MeasureProto {
     ADJUSTED_COST_BASIS = 4,
     CURRENT_YIELD = 5,
     YIELD_TO_MATURITY = 7,
+    MACAULAY_DURATION = 8,
 }

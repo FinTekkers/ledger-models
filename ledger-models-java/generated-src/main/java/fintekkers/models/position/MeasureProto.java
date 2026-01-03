@@ -51,6 +51,10 @@ public enum MeasureProto
    * <code>YIELD_TO_MATURITY = 7;</code>
    */
   YIELD_TO_MATURITY(7),
+  /**
+   * <code>MACAULAY_DURATION = 8;</code>
+   */
+  MACAULAY_DURATION(8),
   UNRECOGNIZED(-1),
   ;
 
@@ -97,6 +101,10 @@ public enum MeasureProto
    * <code>YIELD_TO_MATURITY = 7;</code>
    */
   public static final int YIELD_TO_MATURITY_VALUE = 7;
+  /**
+   * <code>MACAULAY_DURATION = 8;</code>
+   */
+  public static final int MACAULAY_DURATION_VALUE = 8;
 
 
   public final int getNumber() {
@@ -130,6 +138,7 @@ public enum MeasureProto
       case 4: return ADJUSTED_COST_BASIS;
       case 5: return CURRENT_YIELD;
       case 7: return YIELD_TO_MATURITY;
+      case 8: return MACAULAY_DURATION;
       default: return null;
     }
   }

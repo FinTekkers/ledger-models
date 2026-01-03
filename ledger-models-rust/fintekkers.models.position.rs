@@ -52,6 +52,7 @@ pub enum MeasureProto {
     /// For FRNs, the assumption is the floating rate doesn't change between now and maturity.
     /// In the future, context-overrides will allow customization of these assumptions
     YieldToMaturity = 7,
+    MacaulayDuration = 8,
 }
 impl MeasureProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -67,6 +68,7 @@ impl MeasureProto {
             MeasureProto::AdjustedCostBasis => "ADJUSTED_COST_BASIS",
             MeasureProto::CurrentYield => "CURRENT_YIELD",
             MeasureProto::YieldToMaturity => "YIELD_TO_MATURITY",
+            MeasureProto::MacaulayDuration => "MACAULAY_DURATION",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -79,6 +81,7 @@ impl MeasureProto {
             "ADJUSTED_COST_BASIS" => Some(Self::AdjustedCostBasis),
             "CURRENT_YIELD" => Some(Self::CurrentYield),
             "YIELD_TO_MATURITY" => Some(Self::YieldToMaturity),
+            "MACAULAY_DURATION" => Some(Self::MacaulayDuration),
             _ => None,
         }
     }
