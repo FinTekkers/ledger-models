@@ -88,6 +88,32 @@ class BondSecurity extends security_1.default {
     getIssuanceInfo() {
         return this.proto.getIssuanceInfoList();
     }
+    getProductType() {
+        // Only BondSecurity has getTenor implemented
+        // Check if getTenor method exists (it's only in BondSecurity)
+        if (typeof this.getTenor !== 'function') {
+            throw new Error('getProductType() is only supported for BondSecurity');
+        }
+        const tenor = this.getTenor();
+        if (!tenor) {
+            throw new Error('Tenor is required to determine product type');
+        }
+        const period = tenor.getTenor();
+        if (!period) {
+            throw new Error('Period is required to determine product type');
+        }
+        const years = period.years;
+        const months = period.months;
+        if (years < 1 || (years === 1 && months === 0)) {
+            return 'BILL';
+        }
+        else if (years > 19) {
+            return 'BOND';
+        }
+        else {
+            return 'NOTE';
+        }
+    }
 }
 exports.default = BondSecurity;
 //# sourceMappingURL=BondSecurity.js.map

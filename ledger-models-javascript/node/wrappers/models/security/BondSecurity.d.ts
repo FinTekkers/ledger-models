@@ -27,5 +27,6 @@ declare class BondSecurity extends Security {
     getCouponFrequency(): CouponFrequency;
     getDatedDate(): LocalDate | undefined;
     getIssuanceInfo(): IssuanceProto[];
+    getProductType(): string;
 }
 export default BondSecurity;
