@@ -69,4 +69,19 @@ public interface ValuationResponseProtoOrBuilder extends
    */
   fintekkers.models.position.MeasureMapEntryOrBuilder getMeasureResultsOrBuilder(
       int index);
+
+  /**
+   * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+   * @return Whether the summary field is set.
+   */
+  boolean hasSummary();
+  /**
+   * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+   * @return The summary.
+   */
+  fintekkers.requests.util.errors.Summary.SummaryProto getSummary();
+  /**
+   * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+   */
+  fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getSummaryOrBuilder();
 }

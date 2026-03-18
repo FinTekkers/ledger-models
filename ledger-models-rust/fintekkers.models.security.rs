@@ -235,6 +235,8 @@ pub struct SecurityProto {
     #[prost(string, tag = "50")]
     pub cash_id: ::prost::alloc::string::String,
     /// Bond Security fields
+    ///
+    /// Expressed as a % (5=5%, 0.75=0.75%, etc)
     #[prost(message, optional, tag = "60")]
     pub coupon_rate: ::core::option::Option<super::util::DecimalValueProto>,
     #[prost(enumeration = "CouponTypeProto", tag = "61")]

@@ -55,7 +55,8 @@ pub enum MeasureProto {
     MacaulayDuration = 8,
     /// The present value of the bond — the sum of all future coupon payments and
     /// principal repayment discounted at the bond's yield to maturity.
-    /// Expressed as a quoted price (% of par).
+    /// Expressed as a quoted price (% of par), consistent with how price is expressed
+    /// throughout the service.
     PresentValue = 9,
 }
 impl MeasureProto {
@@ -73,6 +74,7 @@ impl MeasureProto {
             MeasureProto::CurrentYield => "CURRENT_YIELD",
             MeasureProto::YieldToMaturity => "YIELD_TO_MATURITY",
             MeasureProto::MacaulayDuration => "MACAULAY_DURATION",
+            MeasureProto::PresentValue => "PRESENT_VALUE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -86,6 +88,7 @@ impl MeasureProto {
             "CURRENT_YIELD" => Some(Self::CurrentYield),
             "YIELD_TO_MATURITY" => Some(Self::YieldToMaturity),
             "MACAULAY_DURATION" => Some(Self::MacaulayDuration),
+            "PRESENT_VALUE" => Some(Self::PresentValue),
             _ => None,
         }
     }

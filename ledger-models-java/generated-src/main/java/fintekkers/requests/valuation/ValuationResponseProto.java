@@ -86,6 +86,19 @@ private static final long serialVersionUID = 0L;
                 input.readMessage(fintekkers.models.position.MeasureMapEntry.parser(), extensionRegistry));
             break;
           }
+          case 322: {
+            fintekkers.requests.util.errors.Summary.SummaryProto.Builder subBuilder = null;
+            if (summary_ != null) {
+              subBuilder = summary_.toBuilder();
+            }
+            summary_ = input.readMessage(fintekkers.requests.util.errors.Summary.SummaryProto.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(summary_);
+              summary_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -263,6 +276,32 @@ private static final long serialVersionUID = 0L;
     return measureResults_.get(index);
   }
 
+  public static final int SUMMARY_FIELD_NUMBER = 40;
+  private fintekkers.requests.util.errors.Summary.SummaryProto summary_;
+  /**
+   * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+   * @return Whether the summary field is set.
+   */
+  @java.lang.Override
+  public boolean hasSummary() {
+    return summary_ != null;
+  }
+  /**
+   * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+   * @return The summary.
+   */
+  @java.lang.Override
+  public fintekkers.requests.util.errors.Summary.SummaryProto getSummary() {
+    return summary_ == null ? fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : summary_;
+  }
+  /**
+   * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getSummaryOrBuilder() {
+    return getSummary();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -289,6 +328,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < measureResults_.size(); i++) {
       output.writeMessage(30, measureResults_.get(i));
     }
+    if (summary_ != null) {
+      output.writeMessage(40, getSummary());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -311,6 +353,10 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < measureResults_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(30, measureResults_.get(i));
+    }
+    if (summary_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(40, getSummary());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -338,6 +384,11 @@ private static final long serialVersionUID = 0L;
     }
     if (!getMeasureResultsList()
         .equals(other.getMeasureResultsList())) return false;
+    if (hasSummary() != other.hasSummary()) return false;
+    if (hasSummary()) {
+      if (!getSummary()
+          .equals(other.getSummary())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -360,6 +411,10 @@ private static final long serialVersionUID = 0L;
     if (getMeasureResultsCount() > 0) {
       hash = (37 * hash) + MEASURE_RESULTS_FIELD_NUMBER;
       hash = (53 * hash) + getMeasureResultsList().hashCode();
+    }
+    if (hasSummary()) {
+      hash = (37 * hash) + SUMMARY_FIELD_NUMBER;
+      hash = (53 * hash) + getSummary().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -511,6 +566,12 @@ private static final long serialVersionUID = 0L;
       } else {
         measureResultsBuilder_.clear();
       }
+      if (summaryBuilder_ == null) {
+        summary_ = null;
+      } else {
+        summary_ = null;
+        summaryBuilder_ = null;
+      }
       return this;
     }
 
@@ -553,6 +614,11 @@ private static final long serialVersionUID = 0L;
         result.measureResults_ = measureResults_;
       } else {
         result.measureResults_ = measureResultsBuilder_.build();
+      }
+      if (summaryBuilder_ == null) {
+        result.summary_ = summary_;
+      } else {
+        result.summary_ = summaryBuilder_.build();
       }
       onBuilt();
       return result;
@@ -638,6 +704,9 @@ private static final long serialVersionUID = 0L;
             measureResultsBuilder_.addAllMessages(other.measureResults_);
           }
         }
+      }
+      if (other.hasSummary()) {
+        mergeSummary(other.getSummary());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1178,6 +1247,125 @@ private static final long serialVersionUID = 0L;
         measureResults_ = null;
       }
       return measureResultsBuilder_;
+    }
+
+    private fintekkers.requests.util.errors.Summary.SummaryProto summary_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.util.errors.Summary.SummaryProto, fintekkers.requests.util.errors.Summary.SummaryProto.Builder, fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder> summaryBuilder_;
+    /**
+     * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+     * @return Whether the summary field is set.
+     */
+    public boolean hasSummary() {
+      return summaryBuilder_ != null || summary_ != null;
+    }
+    /**
+     * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+     * @return The summary.
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto getSummary() {
+      if (summaryBuilder_ == null) {
+        return summary_ == null ? fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : summary_;
+      } else {
+        return summaryBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+     */
+    public Builder setSummary(fintekkers.requests.util.errors.Summary.SummaryProto value) {
+      if (summaryBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        summary_ = value;
+        onChanged();
+      } else {
+        summaryBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+     */
+    public Builder setSummary(
+        fintekkers.requests.util.errors.Summary.SummaryProto.Builder builderForValue) {
+      if (summaryBuilder_ == null) {
+        summary_ = builderForValue.build();
+        onChanged();
+      } else {
+        summaryBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+     */
+    public Builder mergeSummary(fintekkers.requests.util.errors.Summary.SummaryProto value) {
+      if (summaryBuilder_ == null) {
+        if (summary_ != null) {
+          summary_ =
+            fintekkers.requests.util.errors.Summary.SummaryProto.newBuilder(summary_).mergeFrom(value).buildPartial();
+        } else {
+          summary_ = value;
+        }
+        onChanged();
+      } else {
+        summaryBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+     */
+    public Builder clearSummary() {
+      if (summaryBuilder_ == null) {
+        summary_ = null;
+        onChanged();
+      } else {
+        summary_ = null;
+        summaryBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto.Builder getSummaryBuilder() {
+      
+      onChanged();
+      return getSummaryFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getSummaryOrBuilder() {
+      if (summaryBuilder_ != null) {
+        return summaryBuilder_.getMessageOrBuilder();
+      } else {
+        return summary_ == null ?
+            fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : summary_;
+      }
+    }
+    /**
+     * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.util.errors.Summary.SummaryProto, fintekkers.requests.util.errors.Summary.SummaryProto.Builder, fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder> 
+        getSummaryFieldBuilder() {
+      if (summaryBuilder_ == null) {
+        summaryBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.requests.util.errors.Summary.SummaryProto, fintekkers.requests.util.errors.Summary.SummaryProto.Builder, fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder>(
+                getSummary(),
+                getParentForChildren(),
+                isClean());
+        summary_ = null;
+      }
+      return summaryBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

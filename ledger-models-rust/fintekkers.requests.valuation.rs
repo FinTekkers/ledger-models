@@ -51,4 +51,6 @@ pub struct ValuationResponseProto {
     pub measure_results: ::prost::alloc::vec::Vec<
         super::super::models::position::MeasureMapEntry,
     >,
+    #[prost(message, optional, tag = "40")]
+    pub summary: ::core::option::Option<super::util::errors::SummaryProto>,
 }

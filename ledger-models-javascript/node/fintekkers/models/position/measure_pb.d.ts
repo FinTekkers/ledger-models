@@ -15,4 +15,5 @@ export enum MeasureProto {
     CURRENT_YIELD = 5,
     YIELD_TO_MATURITY = 7,
     MACAULAY_DURATION = 8,
+    PRESENT_VALUE = 9,
 }

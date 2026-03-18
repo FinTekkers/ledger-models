@@ -4,6 +4,7 @@ package fintekkers.requests.valuation;
 
 import "fintekkers/models/position/position_util.proto";
 import "fintekkers/requests/valuation/valuation_request.proto";
+import "fintekkers/requests/util/errors/summary.proto";
 
 option java_multiple_files = true;
 
@@ -16,6 +17,8 @@ message ValuationResponseProto {
   ValuationRequestProto valuation_request = 20;
 
   repeated fintekkers.models.position.MeasureMapEntry measure_results = 30;
+
+  fintekkers.requests.util.errors.SummaryProto summary = 40;
 }
 
 
