@@ -27,4 +27,10 @@ enum MeasureProto {
   YIELD_TO_MATURITY = 7;
 
   MACAULAY_DURATION = 8;
+
+  // The present value of the bond — the sum of all future coupon payments and
+  // principal repayment discounted at the bond's yield to maturity.
+  // Expressed as a quoted price (% of par), consistent with how price is expressed
+  // throughout the service.
+  PRESENT_VALUE = 9;
 }

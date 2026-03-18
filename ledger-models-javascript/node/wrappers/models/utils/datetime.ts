@@ -48,15 +48,20 @@ class ZonedDateTime {
     return this.proto;
   }
 
-  static now(): ZonedDateTime {
-    // Get the current time in milliseconds since January 1, 1970 (Unix timestamp)
-    const currentTimeMillis = Date.now();
+  /**
+   * Creates a ZonedDateTime from a JavaScript Date object
+   * @param date - The Date object to convert
+   * @returns A new ZonedDateTime instance with America/New_York timezone
+   */
+  static from(date: Date): ZonedDateTime {
+    // Get the time in milliseconds since January 1, 1970 (Unix timestamp)
+    const timestampMillis = date.getTime();
 
     // Convert milliseconds to seconds and nanoseconds
-    const seconds = Math.floor(currentTimeMillis / 1000);
-    const nanos = (currentTimeMillis % 1000) * 1e6; // 1 millisecond = 1e6 nanoseconds
+    const seconds = Math.floor(timestampMillis / 1000);
+    const nanos = (timestampMillis % 1000) * 1e6; // 1 millisecond = 1e6 nanoseconds
 
-    // Create a new Timestamp object with the current time
+    // Create a new Timestamp object
     const timestamp = new Timestamp();
     timestamp.setSeconds(seconds);
     timestamp.setNanos(nanos);
@@ -66,6 +71,10 @@ class ZonedDateTime {
     localTimestamp.setTimestamp(timestamp);
 
     return new ZonedDateTime(localTimestamp);
+  }
+
+  static now(): ZonedDateTime {
+    return ZonedDateTime.from(new Date());
   }
 }
 

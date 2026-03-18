@@ -9,6 +9,12 @@ declare class ZonedDateTime {
     toDateTime(): DateTime;
     toString(): string;
     toProto(): LocalTimestampProto;
+    /**
+     * Creates a ZonedDateTime from a JavaScript Date object
+     * @param date - The Date object to convert
+     * @returns A new ZonedDateTime instance with America/New_York timezone
+     */
+    static from(date: Date): ZonedDateTime;
     static now(): ZonedDateTime;
 }
 export { ZonedDateTime };

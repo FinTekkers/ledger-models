@@ -55,6 +55,17 @@ public enum MeasureProto
    * <code>MACAULAY_DURATION = 8;</code>
    */
   MACAULAY_DURATION(8),
+  /**
+   * <pre>
+   * The present value of the bond — the sum of all future coupon payments and
+   * principal repayment discounted at the bond's yield to maturity.
+   * Expressed as a quoted price (% of par), consistent with how price is expressed
+   * throughout the service.
+   * </pre>
+   *
+   * <code>PRESENT_VALUE = 9;</code>
+   */
+  PRESENT_VALUE(9),
   UNRECOGNIZED(-1),
   ;
 
@@ -105,6 +116,17 @@ public enum MeasureProto
    * <code>MACAULAY_DURATION = 8;</code>
    */
   public static final int MACAULAY_DURATION_VALUE = 8;
+  /**
+   * <pre>
+   * The present value of the bond — the sum of all future coupon payments and
+   * principal repayment discounted at the bond's yield to maturity.
+   * Expressed as a quoted price (% of par), consistent with how price is expressed
+   * throughout the service.
+   * </pre>
+   *
+   * <code>PRESENT_VALUE = 9;</code>
+   */
+  public static final int PRESENT_VALUE_VALUE = 9;
 
 
   public final int getNumber() {
@@ -139,6 +161,7 @@ public enum MeasureProto
       case 5: return CURRENT_YIELD;
       case 7: return YIELD_TO_MATURITY;
       case 8: return MACAULAY_DURATION;
+      case 9: return PRESENT_VALUE;
       default: return null;
     }
   }

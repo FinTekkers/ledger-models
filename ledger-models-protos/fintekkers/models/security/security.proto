@@ -47,7 +47,7 @@ message SecurityProto {
   //Equity Security fields
 
   //Bond Security fields
-  fintekkers.models.util.DecimalValueProto coupon_rate = 60;
+  fintekkers.models.util.DecimalValueProto coupon_rate = 60; //Expressed as a % (5=5%, 0.75=0.75%, etc)
   CouponTypeProto coupon_type = 61;
   CouponFrequencyProto coupon_frequency = 62;
   fintekkers.models.util.LocalDateProto dated_date = 63;

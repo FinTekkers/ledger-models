@@ -1,11 +1,15 @@
-import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
+import { StrategyAllocationProto } from '../../../fintekkers/models/strategy/strategy_allocation_pb';
 import { ProtoSerializationUtil } from './serialization';
 import { UUID } from './uuid';
 
 import assert = require('assert');
 test('test serialization of key types', () => {
     testSerialization();
+});
+
+test('test deserialize StrategyAllocationProto', () => {
+    checkStrategyAllocationProtoDeserialize();
 });
 
 function testSerialization(): void {
@@ -35,5 +39,19 @@ function checkUUID() {
 
     assert.equal(uuidString, uuidCopyString);
     assert.deepEqual(uuid.toBytes(), uuidCopy.toBytes());
+}
+
+function checkStrategyAllocationProtoDeserialize(): void {
+    const proto = new StrategyAllocationProto();
+    proto.setObjectClass('StrategyAllocation');
+    proto.setVersion('0.0.1');
+    proto.setIsLink(false);
+
+    const deserialized = ProtoSerializationUtil.deserialize(proto) as StrategyAllocationProto;
+
+    assert.strictEqual(deserialized, proto, 'deserialize returns same StrategyAllocationProto instance');
+    assert.equal(deserialized.getObjectClass(), 'StrategyAllocation');
+    assert.equal(deserialized.getVersion(), '0.0.1');
+    assert.equal(deserialized.getIsLink(), false);
 }
 

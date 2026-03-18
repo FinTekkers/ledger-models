@@ -15,6 +15,8 @@ class Security {
     static create(proto) {
         switch (proto.getSecurityType()) {
             case security_type_pb_1.SecurityTypeProto.BOND_SECURITY:
+            case security_type_pb_1.SecurityTypeProto.TIPS:
+            case security_type_pb_1.SecurityTypeProto.FRN:
                 // Lazy import to avoid circular dependency
                 const BondSecurity = require('./BondSecurity').default;
                 return new BondSecurity(proto);

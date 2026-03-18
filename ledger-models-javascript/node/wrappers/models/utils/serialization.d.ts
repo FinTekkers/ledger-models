@@ -3,6 +3,7 @@ import { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value
 import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";
 import { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
 import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
+import { StrategyAllocationProto } from "../../../fintekkers/models/strategy/strategy_allocation_pb";
 import { ZonedDateTime } from "./datetime";
 import { ProtoEnum } from "./protoEnum";
 import { UUID } from "./uuid";
@@ -10,5 +11,5 @@ import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 import { Identifier } from "../security/identifier";
 export declare class ProtoSerializationUtil {
     static serialize(obj: any): UUIDProto | LocalDateProto | LocalTimestampProto | DecimalValueProto | StringValue | IdentifierProto;
-    static deserialize(obj: any): UUID | Date | ZonedDateTime | Identifier | string | number | ProtoEnum;
+    static deserialize(obj: any): UUID | Date | ZonedDateTime | Identifier | string | number | ProtoEnum | StrategyAllocationProto;
 }

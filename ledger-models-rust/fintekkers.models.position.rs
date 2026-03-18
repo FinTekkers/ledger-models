@@ -53,6 +53,10 @@ pub enum MeasureProto {
     /// In the future, context-overrides will allow customization of these assumptions
     YieldToMaturity = 7,
     MacaulayDuration = 8,
+    /// The present value of the bond — the sum of all future coupon payments and
+    /// principal repayment discounted at the bond's yield to maturity.
+    /// Expressed as a quoted price (% of par).
+    PresentValue = 9,
 }
 impl MeasureProto {
     /// String value of the enum field names used in the ProtoBuf definition.

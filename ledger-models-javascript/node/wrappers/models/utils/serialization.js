@@ -6,6 +6,7 @@ const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_valu
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 const local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
 const uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
+const strategy_allocation_pb_1 = require("../../../fintekkers/models/strategy/strategy_allocation_pb");
 const datetime_1 = require("./datetime");
 const protoEnum_1 = require("./protoEnum");
 const uuid_1 = require("./uuid");
@@ -59,6 +60,9 @@ class ProtoSerializationUtil {
         }
         if (obj !== null && 'enum_name' in obj && typeof obj.enum_name !== 'undefined' && obj.enum_name !== null) {
             return new protoEnum_1.ProtoEnum(obj.descriptor, obj.enum_value);
+        }
+        if (obj instanceof strategy_allocation_pb_1.StrategyAllocationProto) {
+            return obj;
         }
         throw new Error(`Could not deserialize object of type ${typeof obj}. Value: ${obj}`);
     }

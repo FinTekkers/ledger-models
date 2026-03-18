@@ -1,6 +1,11 @@
 package common.models.postion;
 
+import fintekkers.models.position.MeasureProto;
+
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A measure is a financial unit that describes a security and/or a position's characteristic. A measure
@@ -23,7 +28,30 @@ public enum Measure {
     UNADJUSTED_COST_BASIS("The unadjusted price of a tax lot when established"),
 
     ADJUSTED_COST_BASIS("The unadjusted price of a tax lot, then adjusted for changes in cost-basis. " +
-            "For example, accretions/amortizations on bonds; return of capital on cash equities; etc");
+            "For example, accretions/amortizations on bonds; return of capital on cash equities; etc"),
+
+    CURRENT_YIELD("The current yield of the security, essentially coupon / current price. " +
+            "For equity securities, TTM dividends are used as a coupon equivalent."),
+
+    YIELD_TO_MATURITY("The yield if the security is held to maturity. For bonds this is calculated " +
+            "using the standard YTM formula. Not applicable to equity securities."),
+
+    MACAULAY_DURATION("The weighted average time to receive the bond's cash flows, measured in years.");
+
+    static {
+        Set<String> measureNames = Arrays.stream(Measure.values())
+                .map(Enum::name)
+                .collect(Collectors.toSet());
+
+        for (MeasureProto proto : MeasureProto.values()) {
+            if (proto == MeasureProto.UNKNOWN_MEASURE || proto == MeasureProto.UNRECOGNIZED) continue;
+            if (!measureNames.contains(proto.name())) {
+                System.err.println(
+                        "MeasureProto." + proto.name() + " has no corresponding Measure enum constant. " +
+                        "Add it to common.models.postion.Measure.");
+            }
+        }
+    }
 
     private final Class clazz;
     private final String description;

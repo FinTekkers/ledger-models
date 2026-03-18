@@ -19,6 +19,8 @@ class Security {
   static create(proto: SecurityProto): Security {
     switch (proto.getSecurityType()) {
       case SecurityTypeProto.BOND_SECURITY:
+      case SecurityTypeProto.TIPS:
+      case SecurityTypeProto.FRN:
         // Lazy import to avoid circular dependency
         const BondSecurity = require('./BondSecurity').default;
         return new BondSecurity(proto);
@@ -26,6 +28,7 @@ class Security {
         return new Security(proto);
     }
   }
+
 
   toString(): string {
     return `ID[${this.getID().toString()}], ${this.getSecurityID()}[${this.getIssuerName()}]`;

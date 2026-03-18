@@ -8,11 +8,12 @@ import { CouponFrequency } from './coupon_frequency';
 import { CouponType } from './coupon_type';
 import { Tenor, Period } from './term';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
+import { Decimal } from 'decimal.js';
 
 class BondSecurity extends Security {
   constructor(proto: SecurityProto) {
     super(proto);
-    if (proto.getSecurityType() !== SecurityTypeProto.BOND_SECURITY) {
+    if (proto.getSecurityType() !== SecurityTypeProto.BOND_SECURITY && proto.getSecurityType() !== SecurityTypeProto.TIPS && proto.getSecurityType() !== SecurityTypeProto.FRN) {
       throw new Error(
         `BondSecurity requires BOND_SECURITY type, got ${SecurityTypeProto[proto.getSecurityType()]}`
       );
@@ -97,6 +98,16 @@ class BondSecurity extends Security {
 
   getIssuanceInfo(): IssuanceProto[] {
     return this.proto.getIssuanceInfoList();
+  }
+
+  /**
+   * Returns the price scale factor for bonds.
+   * Bonds are typically priced as percentages (e.g., 99.5 means 99.5%),
+   * so the price scale factor converts percentage to decimal (0.01).
+   * @returns The price scale factor as a Decimal (0.01)
+   */
+  getPriceScaleFactor(): Decimal {
+    return new Decimal('0.01');
   }
 
   getProductType(): string {

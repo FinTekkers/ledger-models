@@ -1,15 +1,13 @@
-import { PriceProto } from "../../../fintekkers/models/price/price_pb";
 import { IdentifierProto } from "../../../fintekkers/models/security/identifier/identifier_pb";
 import { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value_pb";
 import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";
 import { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
 import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
-import { TransactionType } from "../transaction/transaction_type";
+import { StrategyAllocationProto } from "../../../fintekkers/models/strategy/strategy_allocation_pb";
 import { ZonedDateTime } from "./datetime";
 import { ProtoEnum } from "./protoEnum";
 import { UUID } from "./uuid";
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
-import { Any } from 'google-protobuf/google/protobuf/any_pb';
 import { Identifier } from "../security/identifier";
 
 export class ProtoSerializationUtil {
@@ -39,7 +37,7 @@ export class ProtoSerializationUtil {
     throw new Error(`Could not serialize object of type ${typeof obj}. Value: ${obj}`);
   }
 
-  static deserialize(obj: any): UUID | Date | ZonedDateTime | Identifier | string | number | ProtoEnum { //}: UUID | Date | ZonedDateTime | number | string {
+  static deserialize(obj: any): UUID | Date | ZonedDateTime | Identifier | string | number | ProtoEnum | StrategyAllocationProto { //}: UUID | Date | ZonedDateTime | number | string {
     if (obj instanceof UUIDProto) {
       return UUID.fromU8Array(obj.getRawUuid_asU8());
     }
@@ -62,6 +60,9 @@ export class ProtoSerializationUtil {
     }
     if (obj !== null && 'enum_name' in obj && typeof obj.enum_name !== 'undefined' && obj.enum_name !== null) {
       return new ProtoEnum(obj.descriptor, obj.enum_value);
+    }
+    if (obj instanceof StrategyAllocationProto) {
+      return obj;
     }
 
     throw new Error(`Could not deserialize object of type ${typeof obj}. Value: ${obj}`);

@@ -10,10 +10,11 @@ const coupon_frequency_1 = require("./coupon_frequency");
 const coupon_type_1 = require("./coupon_type");
 const term_1 = require("./term");
 const tenor_type_pb_1 = require("../../../fintekkers/models/security/tenor_type_pb");
+const decimal_js_1 = require("decimal.js");
 class BondSecurity extends security_1.default {
     constructor(proto) {
         super(proto);
-        if (proto.getSecurityType() !== security_type_pb_1.SecurityTypeProto.BOND_SECURITY) {
+        if (proto.getSecurityType() !== security_type_pb_1.SecurityTypeProto.BOND_SECURITY && proto.getSecurityType() !== security_type_pb_1.SecurityTypeProto.TIPS && proto.getSecurityType() !== security_type_pb_1.SecurityTypeProto.FRN) {
             throw new Error(`BondSecurity requires BOND_SECURITY type, got ${security_type_pb_1.SecurityTypeProto[proto.getSecurityType()]}`);
         }
     }
@@ -87,6 +88,15 @@ class BondSecurity extends security_1.default {
     }
     getIssuanceInfo() {
         return this.proto.getIssuanceInfoList();
+    }
+    /**
+     * Returns the price scale factor for bonds.
+     * Bonds are typically priced as percentages (e.g., 99.5 means 99.5%),
+     * so the price scale factor converts percentage to decimal (0.01).
+     * @returns The price scale factor as a Decimal (0.01)
+     */
+    getPriceScaleFactor() {
+        return new decimal_js_1.Decimal('0.01');
     }
     getProductType() {
         // Only BondSecurity has getTenor implemented
