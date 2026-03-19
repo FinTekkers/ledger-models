@@ -36,6 +36,10 @@ public enum SecurityTypeProto
    * <code>FRN = 5;</code>
    */
   FRN(5),
+  /**
+   * <code>INDEX_SECURITY = 6;</code>
+   */
+  INDEX_SECURITY(6),
   UNRECOGNIZED(-1),
   ;
 
@@ -67,6 +71,10 @@ public enum SecurityTypeProto
    * <code>FRN = 5;</code>
    */
   public static final int FRN_VALUE = 5;
+  /**
+   * <code>INDEX_SECURITY = 6;</code>
+   */
+  public static final int INDEX_SECURITY_VALUE = 6;
 
 
   public final int getNumber() {
@@ -99,6 +107,7 @@ public enum SecurityTypeProto
       case 3: return BOND_SECURITY;
       case 4: return TIPS;
       case 5: return FRN;
+      case 6: return INDEX_SECURITY;
       default: return null;
     }
   }

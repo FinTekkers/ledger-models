@@ -9,6 +9,8 @@ pub enum Error {
     MissingCouponRate,
     MissingMaturityDate,
     MissingSecurityInput,
+    MissingBaseCpi,
+    MissingCurrentCpi,
     MissingMeasure(MeasureProto),
     DecimalConversion,
     DateConversion,

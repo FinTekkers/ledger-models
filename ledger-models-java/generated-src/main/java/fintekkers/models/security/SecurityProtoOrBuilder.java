@@ -377,4 +377,50 @@ public interface SecurityProtoOrBuilder extends
    */
   fintekkers.models.security.bond.IssuanceProtoOrBuilder getIssuanceInfoOrBuilder(
       int index);
+
+  /**
+   * <pre>
+   *TIPS Bond fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+   * @return Whether the baseCpi field is set.
+   */
+  boolean hasBaseCpi();
+  /**
+   * <pre>
+   *TIPS Bond fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+   * @return The baseCpi.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getBaseCpi();
+  /**
+   * <pre>
+   *TIPS Bond fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getBaseCpiOrBuilder();
+
+  /**
+   * <pre>
+   *Index Security fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto index_type = 80;</code>
+   * @return The enum numeric value on the wire for indexType.
+   */
+  int getIndexTypeValue();
+  /**
+   * <pre>
+   *Index Security fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto index_type = 80;</code>
+   * @return The indexType.
+   */
+  fintekkers.models.security.index.IndexTypeProto getIndexType();
 }

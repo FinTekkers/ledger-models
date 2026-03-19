@@ -138,4 +138,15 @@ public interface PriceProtoOrBuilder extends
    * <code>.fintekkers.models.security.SecurityProto security = 11;</code>
    */
   fintekkers.models.security.SecurityProtoOrBuilder getSecurityOrBuilder();
+
+  /**
+   * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
+   * @return The enum numeric value on the wire for priceType.
+   */
+  int getPriceTypeValue();
+  /**
+   * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
+   * @return The priceType.
+   */
+  fintekkers.models.price.PriceTypeProto getPriceType();
 }

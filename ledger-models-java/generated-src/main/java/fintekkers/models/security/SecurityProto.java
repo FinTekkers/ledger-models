@@ -27,6 +27,7 @@ private static final long serialVersionUID = 0L;
     couponType_ = 0;
     couponFrequency_ = 0;
     issuanceInfo_ = java.util.Collections.emptyList();
+    indexType_ = 0;
   }
 
   @java.lang.Override
@@ -275,6 +276,25 @@ private static final long serialVersionUID = 0L;
             }
             issuanceInfo_.add(
                 input.readMessage(fintekkers.models.security.bond.IssuanceProto.parser(), extensionRegistry));
+            break;
+          }
+          case 562: {
+            fintekkers.models.util.DecimalValue.DecimalValueProto.Builder subBuilder = null;
+            if (baseCpi_ != null) {
+              subBuilder = baseCpi_.toBuilder();
+            }
+            baseCpi_ = input.readMessage(fintekkers.models.util.DecimalValue.DecimalValueProto.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(baseCpi_);
+              baseCpi_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
+          case 640: {
+            int rawValue = input.readEnum();
+
+            indexType_ = rawValue;
             break;
           }
           default: {
@@ -1013,6 +1033,71 @@ private static final long serialVersionUID = 0L;
     return issuanceInfo_.get(index);
   }
 
+  public static final int BASE_CPI_FIELD_NUMBER = 70;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto baseCpi_;
+  /**
+   * <pre>
+   *TIPS Bond fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+   * @return Whether the baseCpi field is set.
+   */
+  @java.lang.Override
+  public boolean hasBaseCpi() {
+    return baseCpi_ != null;
+  }
+  /**
+   * <pre>
+   *TIPS Bond fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+   * @return The baseCpi.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getBaseCpi() {
+    return baseCpi_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : baseCpi_;
+  }
+  /**
+   * <pre>
+   *TIPS Bond fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getBaseCpiOrBuilder() {
+    return getBaseCpi();
+  }
+
+  public static final int INDEX_TYPE_FIELD_NUMBER = 80;
+  private int indexType_;
+  /**
+   * <pre>
+   *Index Security fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto index_type = 80;</code>
+   * @return The enum numeric value on the wire for indexType.
+   */
+  @java.lang.Override public int getIndexTypeValue() {
+    return indexType_;
+  }
+  /**
+   * <pre>
+   *Index Security fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto index_type = 80;</code>
+   * @return The indexType.
+   */
+  @java.lang.Override public fintekkers.models.security.index.IndexTypeProto getIndexType() {
+    @SuppressWarnings("deprecation")
+    fintekkers.models.security.index.IndexTypeProto result = fintekkers.models.security.index.IndexTypeProto.valueOf(indexType_);
+    return result == null ? fintekkers.models.security.index.IndexTypeProto.UNRECOGNIZED : result;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -1095,6 +1180,12 @@ private static final long serialVersionUID = 0L;
     }
     for (int i = 0; i < issuanceInfo_.size(); i++) {
       output.writeMessage(67, issuanceInfo_.get(i));
+    }
+    if (baseCpi_ != null) {
+      output.writeMessage(70, getBaseCpi());
+    }
+    if (indexType_ != fintekkers.models.security.index.IndexTypeProto.UNKNOWN_INDEX_TYPE.getNumber()) {
+      output.writeEnum(80, indexType_);
     }
     unknownFields.writeTo(output);
   }
@@ -1191,6 +1282,14 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(67, issuanceInfo_.get(i));
     }
+    if (baseCpi_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(70, getBaseCpi());
+    }
+    if (indexType_ != fintekkers.models.security.index.IndexTypeProto.UNKNOWN_INDEX_TYPE.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(80, indexType_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -1281,6 +1380,12 @@ private static final long serialVersionUID = 0L;
     }
     if (!getIssuanceInfoList()
         .equals(other.getIssuanceInfoList())) return false;
+    if (hasBaseCpi() != other.hasBaseCpi()) return false;
+    if (hasBaseCpi()) {
+      if (!getBaseCpi()
+          .equals(other.getBaseCpi())) return false;
+    }
+    if (indexType_ != other.indexType_) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -1363,6 +1468,12 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + ISSUANCE_INFO_FIELD_NUMBER;
       hash = (53 * hash) + getIssuanceInfoList().hashCode();
     }
+    if (hasBaseCpi()) {
+      hash = (37 * hash) + BASE_CPI_FIELD_NUMBER;
+      hash = (53 * hash) + getBaseCpi().hashCode();
+    }
+    hash = (37 * hash) + INDEX_TYPE_FIELD_NUMBER;
+    hash = (53 * hash) + indexType_;
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -1591,6 +1702,14 @@ private static final long serialVersionUID = 0L;
       } else {
         issuanceInfoBuilder_.clear();
       }
+      if (baseCpiBuilder_ == null) {
+        baseCpi_ = null;
+      } else {
+        baseCpi_ = null;
+        baseCpiBuilder_ = null;
+      }
+      indexType_ = 0;
+
       return this;
     }
 
@@ -1693,6 +1812,12 @@ private static final long serialVersionUID = 0L;
       } else {
         result.issuanceInfo_ = issuanceInfoBuilder_.build();
       }
+      if (baseCpiBuilder_ == null) {
+        result.baseCpi_ = baseCpi_;
+      } else {
+        result.baseCpi_ = baseCpiBuilder_.build();
+      }
+      result.indexType_ = indexType_;
       onBuilt();
       return result;
     }
@@ -1838,6 +1963,12 @@ private static final long serialVersionUID = 0L;
             issuanceInfoBuilder_.addAllMessages(other.issuanceInfo_);
           }
         }
+      }
+      if (other.hasBaseCpi()) {
+        mergeBaseCpi(other.getBaseCpi());
+      }
+      if (other.indexType_ != 0) {
+        setIndexTypeValue(other.getIndexTypeValue());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -4303,6 +4434,235 @@ private static final long serialVersionUID = 0L;
         issuanceInfo_ = null;
       }
       return issuanceInfoBuilder_;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto baseCpi_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> baseCpiBuilder_;
+    /**
+     * <pre>
+     *TIPS Bond fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+     * @return Whether the baseCpi field is set.
+     */
+    public boolean hasBaseCpi() {
+      return baseCpiBuilder_ != null || baseCpi_ != null;
+    }
+    /**
+     * <pre>
+     *TIPS Bond fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+     * @return The baseCpi.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getBaseCpi() {
+      if (baseCpiBuilder_ == null) {
+        return baseCpi_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : baseCpi_;
+      } else {
+        return baseCpiBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     *TIPS Bond fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+     */
+    public Builder setBaseCpi(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (baseCpiBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        baseCpi_ = value;
+        onChanged();
+      } else {
+        baseCpiBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *TIPS Bond fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+     */
+    public Builder setBaseCpi(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (baseCpiBuilder_ == null) {
+        baseCpi_ = builderForValue.build();
+        onChanged();
+      } else {
+        baseCpiBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *TIPS Bond fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+     */
+    public Builder mergeBaseCpi(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (baseCpiBuilder_ == null) {
+        if (baseCpi_ != null) {
+          baseCpi_ =
+            fintekkers.models.util.DecimalValue.DecimalValueProto.newBuilder(baseCpi_).mergeFrom(value).buildPartial();
+        } else {
+          baseCpi_ = value;
+        }
+        onChanged();
+      } else {
+        baseCpiBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *TIPS Bond fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+     */
+    public Builder clearBaseCpi() {
+      if (baseCpiBuilder_ == null) {
+        baseCpi_ = null;
+        onChanged();
+      } else {
+        baseCpi_ = null;
+        baseCpiBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *TIPS Bond fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getBaseCpiBuilder() {
+      
+      onChanged();
+      return getBaseCpiFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     *TIPS Bond fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getBaseCpiOrBuilder() {
+      if (baseCpiBuilder_ != null) {
+        return baseCpiBuilder_.getMessageOrBuilder();
+      } else {
+        return baseCpi_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : baseCpi_;
+      }
+    }
+    /**
+     * <pre>
+     *TIPS Bond fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getBaseCpiFieldBuilder() {
+      if (baseCpiBuilder_ == null) {
+        baseCpiBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getBaseCpi(),
+                getParentForChildren(),
+                isClean());
+        baseCpi_ = null;
+      }
+      return baseCpiBuilder_;
+    }
+
+    private int indexType_ = 0;
+    /**
+     * <pre>
+     *Index Security fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto index_type = 80;</code>
+     * @return The enum numeric value on the wire for indexType.
+     */
+    @java.lang.Override public int getIndexTypeValue() {
+      return indexType_;
+    }
+    /**
+     * <pre>
+     *Index Security fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto index_type = 80;</code>
+     * @param value The enum numeric value on the wire for indexType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIndexTypeValue(int value) {
+      
+      indexType_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *Index Security fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto index_type = 80;</code>
+     * @return The indexType.
+     */
+    @java.lang.Override
+    public fintekkers.models.security.index.IndexTypeProto getIndexType() {
+      @SuppressWarnings("deprecation")
+      fintekkers.models.security.index.IndexTypeProto result = fintekkers.models.security.index.IndexTypeProto.valueOf(indexType_);
+      return result == null ? fintekkers.models.security.index.IndexTypeProto.UNRECOGNIZED : result;
+    }
+    /**
+     * <pre>
+     *Index Security fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto index_type = 80;</code>
+     * @param value The indexType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setIndexType(fintekkers.models.security.index.IndexTypeProto value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      
+      indexType_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *Index Security fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto index_type = 80;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearIndexType() {
+      
+      indexType_ = 0;
+      onChanged();
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

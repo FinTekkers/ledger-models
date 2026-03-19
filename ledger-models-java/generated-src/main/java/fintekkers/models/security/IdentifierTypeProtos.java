@@ -25,11 +25,11 @@ public final class IdentifierTypeProtos {
     java.lang.String[] descriptorData = {
       "\n;fintekkers/models/security/identifier/" +
       "identifier_type.proto\022\032fintekkers.models" +
-      ".security*u\n\023IdentifierTypeProto\022\033\n\027UNKN" +
-      "OWN_IDENTIFIER_TYPE\020\000\022\017\n\013EXCH_TICKER\020\001\022\010" +
-      "\n\004ISIN\020\002\022\t\n\005CUSIP\020\003\022\007\n\003OSI\020\004\022\010\n\004FIGI\020\005\022\010" +
-      "\n\004CASH\0202B\030B\024IdentifierTypeProtosP\001b\006prot" +
-      "o3"
+      ".security*\204\001\n\023IdentifierTypeProto\022\033\n\027UNK" +
+      "NOWN_IDENTIFIER_TYPE\020\000\022\017\n\013EXCH_TICKER\020\001\022" +
+      "\010\n\004ISIN\020\002\022\t\n\005CUSIP\020\003\022\007\n\003OSI\020\004\022\010\n\004FIGI\020\005\022" +
+      "\r\n\tSERIES_ID\020\006\022\010\n\004CASH\0202B\030B\024IdentifierTy" +
+      "peProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

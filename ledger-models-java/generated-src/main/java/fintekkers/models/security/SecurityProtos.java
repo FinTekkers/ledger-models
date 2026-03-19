@@ -41,38 +41,42 @@ public final class SecurityProtos {
       "s/models/security/security_quantity_type" +
       ".proto\0321fintekkers/models/security/coupo" +
       "n_frequency.proto\032,fintekkers/models/sec" +
-      "urity/coupon_type.proto\"\254\t\n\rSecurityProt" +
-      "o\022\024\n\014object_class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t" +
-      "\022/\n\004uuid\030\005 \001(\0132!.fintekkers.models.util." +
-      "UUIDProto\022:\n\005as_of\030\006 \001(\0132+.fintekkers.mo" +
-      "dels.util.LocalTimestampProto\022\017\n\007is_link" +
-      "\030\007 \001(\010\022?\n\nvalid_from\030\010 \001(\0132+.fintekkers." +
-      "models.util.LocalTimestampProto\022=\n\010valid" +
-      "_to\030\t \001(\0132+.fintekkers.models.util.Local" +
-      "TimestampProto\022D\n\rsecurity_type\030\n \001(\0162-." +
-      "fintekkers.models.security.SecurityTypeP" +
-      "roto\022\023\n\013asset_class\030\013 \001(\t\022\023\n\013issuer_name" +
-      "\030\014 \001(\t\022F\n\023settlement_currency\030\r \001(\0132).fi" +
-      "ntekkers.models.security.SecurityProto\022L" +
-      "\n\rquantity_type\030\016 \001(\01625.fintekkers.model" +
-      "s.security.SecurityQuantityTypeProto\022?\n\n" +
-      "identifier\030( \001(\0132+.fintekkers.models.sec" +
-      "urity.IdentifierProto\022\023\n\013description\030) \001" +
-      "(\t\022\017\n\007cash_id\0302 \001(\t\022>\n\013coupon_rate\030< \001(\013" +
-      "2).fintekkers.models.util.DecimalValuePr" +
-      "oto\022@\n\013coupon_type\030= \001(\0162+.fintekkers.mo" +
-      "dels.security.CouponTypeProto\022J\n\020coupon_" +
-      "frequency\030> \001(\01620.fintekkers.models.secu" +
-      "rity.CouponFrequencyProto\022:\n\ndated_date\030" +
-      "? \001(\0132&.fintekkers.models.util.LocalDate" +
-      "Proto\022=\n\nface_value\030@ \001(\0132).fintekkers.m" +
-      "odels.util.DecimalValueProto\022:\n\nissue_da" +
-      "te\030A \001(\0132&.fintekkers.models.util.LocalD" +
-      "ateProto\022=\n\rmaturity_date\030B \001(\0132&.fintek" +
-      "kers.models.util.LocalDateProto\022E\n\rissua" +
-      "nce_info\030C \003(\0132..fintekkers.models.secur" +
-      "ity.bond.IssuanceProtoB\022B\016SecurityProtos" +
-      "P\001b\006proto3"
+      "urity/coupon_type.proto\0321fintekkers/mode" +
+      "ls/security/index/index_type.proto\"\257\n\n\rS" +
+      "ecurityProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007ve" +
+      "rsion\030\002 \001(\t\022/\n\004uuid\030\005 \001(\0132!.fintekkers.m" +
+      "odels.util.UUIDProto\022:\n\005as_of\030\006 \001(\0132+.fi" +
+      "ntekkers.models.util.LocalTimestampProto" +
+      "\022\017\n\007is_link\030\007 \001(\010\022?\n\nvalid_from\030\010 \001(\0132+." +
+      "fintekkers.models.util.LocalTimestampPro" +
+      "to\022=\n\010valid_to\030\t \001(\0132+.fintekkers.models" +
+      ".util.LocalTimestampProto\022D\n\rsecurity_ty" +
+      "pe\030\n \001(\0162-.fintekkers.models.security.Se" +
+      "curityTypeProto\022\023\n\013asset_class\030\013 \001(\t\022\023\n\013" +
+      "issuer_name\030\014 \001(\t\022F\n\023settlement_currency" +
+      "\030\r \001(\0132).fintekkers.models.security.Secu" +
+      "rityProto\022L\n\rquantity_type\030\016 \001(\01625.finte" +
+      "kkers.models.security.SecurityQuantityTy" +
+      "peProto\022?\n\nidentifier\030( \001(\0132+.fintekkers" +
+      ".models.security.IdentifierProto\022\023\n\013desc" +
+      "ription\030) \001(\t\022\017\n\007cash_id\0302 \001(\t\022>\n\013coupon" +
+      "_rate\030< \001(\0132).fintekkers.models.util.Dec" +
+      "imalValueProto\022@\n\013coupon_type\030= \001(\0162+.fi" +
+      "ntekkers.models.security.CouponTypeProto" +
+      "\022J\n\020coupon_frequency\030> \001(\01620.fintekkers." +
+      "models.security.CouponFrequencyProto\022:\n\n" +
+      "dated_date\030? \001(\0132&.fintekkers.models.uti" +
+      "l.LocalDateProto\022=\n\nface_value\030@ \001(\0132).f" +
+      "intekkers.models.util.DecimalValueProto\022" +
+      ":\n\nissue_date\030A \001(\0132&.fintekkers.models." +
+      "util.LocalDateProto\022=\n\rmaturity_date\030B \001" +
+      "(\0132&.fintekkers.models.util.LocalDatePro" +
+      "to\022E\n\rissuance_info\030C \003(\0132..fintekkers.m" +
+      "odels.security.bond.IssuanceProto\022;\n\010bas" +
+      "e_cpi\030F \001(\0132).fintekkers.models.util.Dec" +
+      "imalValueProto\022D\n\nindex_type\030P \001(\01620.fin" +
+      "tekkers.models.security.index.IndexTypeP" +
+      "rotoB\022B\016SecurityProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -87,13 +91,14 @@ public final class SecurityProtos {
           fintekkers.models.security.SecurityQuantityTypeProtos.getDescriptor(),
           fintekkers.models.security.CouponFrequencyProtos.getDescriptor(),
           fintekkers.models.security.CouponTypeProtos.getDescriptor(),
+          fintekkers.models.security.index.IndexTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_security_SecurityProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_security_SecurityProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_security_SecurityProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "SecurityType", "AssetClass", "IssuerName", "SettlementCurrency", "QuantityType", "Identifier", "Description", "CashId", "CouponRate", "CouponType", "CouponFrequency", "DatedDate", "FaceValue", "IssueDate", "MaturityDate", "IssuanceInfo", });
+        new java.lang.String[] { "ObjectClass", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "SecurityType", "AssetClass", "IssuerName", "SettlementCurrency", "QuantityType", "Identifier", "Description", "CashId", "CouponRate", "CouponType", "CouponFrequency", "DatedDate", "FaceValue", "IssueDate", "MaturityDate", "IssuanceInfo", "BaseCpi", "IndexType", });
     fintekkers.models.util.DecimalValue.getDescriptor();
     fintekkers.models.util.LocalDate.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
@@ -104,6 +109,7 @@ public final class SecurityProtos {
     fintekkers.models.security.SecurityQuantityTypeProtos.getDescriptor();
     fintekkers.models.security.CouponFrequencyProtos.getDescriptor();
     fintekkers.models.security.CouponTypeProtos.getDescriptor();
+    fintekkers.models.security.index.IndexTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

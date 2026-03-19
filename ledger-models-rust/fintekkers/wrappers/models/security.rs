@@ -157,6 +157,7 @@ impl SecurityProtoBuilder {
             dated_date: None,
             issue_date: None,
             issuance_info: vec![],
+            base_cpi: None,
         })
     }
 }

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package fintekkers.models.security.index;
+
+option java_multiple_files = true;
+
+option java_outer_classname = "IndexTypeProtos";
+
+enum IndexTypeProto {
+  UNKNOWN_INDEX_TYPE = 0;
+  CPI_U = 1; //Consumer Price Index - All Urban Consumers
+  CPI_W = 2; //Consumer Price Index - Urban Wage Earners and Clerical Workers
+  CORE_CPI = 3; //CPI less food and energy
+  PCE = 4; //Personal Consumption Expenditures
+  HICP = 5; //Harmonised Index of Consumer Prices (EU)
+}

@@ -13,5 +13,6 @@ export enum IdentifierTypeProto {
     CUSIP = 3,
     OSI = 4,
     FIGI = 5,
+    SERIES_ID = 6,
     CASH = 50,
 }

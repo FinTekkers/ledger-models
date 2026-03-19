@@ -208,4 +208,34 @@ public interface ValuationRequestProtoOrBuilder extends
    * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
    */
   fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsofDatetimeOrBuilder();
+
+  /**
+   * <pre>
+   *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+   *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+   * </pre>
+   *
+   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+   * @return Whether the cpiPriceInput field is set.
+   */
+  boolean hasCpiPriceInput();
+  /**
+   * <pre>
+   *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+   *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+   * </pre>
+   *
+   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+   * @return The cpiPriceInput.
+   */
+  fintekkers.models.price.PriceProto getCpiPriceInput();
+  /**
+   * <pre>
+   *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+   *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+   * </pre>
+   *
+   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+   */
+  fintekkers.models.price.PriceProtoOrBuilder getCpiPriceInputOrBuilder();
 }

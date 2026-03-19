@@ -18,6 +18,7 @@ private static final long serialVersionUID = 0L;
   private PriceProto() {
     objectClass_ = "";
     version_ = "";
+    priceType_ = 0;
   }
 
   @java.lang.Override
@@ -143,6 +144,12 @@ private static final long serialVersionUID = 0L;
               security_ = subBuilder.buildPartial();
             }
 
+            break;
+          }
+          case 96: {
+            int rawValue = input.readEnum();
+
+            priceType_ = rawValue;
             break;
           }
           default: {
@@ -432,6 +439,25 @@ private static final long serialVersionUID = 0L;
     return getSecurity();
   }
 
+  public static final int PRICE_TYPE_FIELD_NUMBER = 12;
+  private int priceType_;
+  /**
+   * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
+   * @return The enum numeric value on the wire for priceType.
+   */
+  @java.lang.Override public int getPriceTypeValue() {
+    return priceType_;
+  }
+  /**
+   * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
+   * @return The priceType.
+   */
+  @java.lang.Override public fintekkers.models.price.PriceTypeProto getPriceType() {
+    @SuppressWarnings("deprecation")
+    fintekkers.models.price.PriceTypeProto result = fintekkers.models.price.PriceTypeProto.valueOf(priceType_);
+    return result == null ? fintekkers.models.price.PriceTypeProto.UNRECOGNIZED : result;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -472,6 +498,9 @@ private static final long serialVersionUID = 0L;
     }
     if (security_ != null) {
       output.writeMessage(11, getSecurity());
+    }
+    if (priceType_ != fintekkers.models.price.PriceTypeProto.UNKNOWN_PRICE_TYPE.getNumber()) {
+      output.writeEnum(12, priceType_);
     }
     unknownFields.writeTo(output);
   }
@@ -515,6 +544,10 @@ private static final long serialVersionUID = 0L;
     if (security_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(11, getSecurity());
+    }
+    if (priceType_ != fintekkers.models.price.PriceTypeProto.UNKNOWN_PRICE_TYPE.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(12, priceType_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -567,6 +600,7 @@ private static final long serialVersionUID = 0L;
       if (!getSecurity()
           .equals(other.getSecurity())) return false;
     }
+    if (priceType_ != other.priceType_) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -609,6 +643,8 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + SECURITY_FIELD_NUMBER;
       hash = (53 * hash) + getSecurity().hashCode();
     }
+    hash = (37 * hash) + PRICE_TYPE_FIELD_NUMBER;
+    hash = (53 * hash) + priceType_;
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -784,6 +820,8 @@ private static final long serialVersionUID = 0L;
         security_ = null;
         securityBuilder_ = null;
       }
+      priceType_ = 0;
+
       return this;
     }
 
@@ -843,6 +881,7 @@ private static final long serialVersionUID = 0L;
       } else {
         result.security_ = securityBuilder_.build();
       }
+      result.priceType_ = priceType_;
       onBuilt();
       return result;
     }
@@ -919,6 +958,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasSecurity()) {
         mergeSecurity(other.getSecurity());
+      }
+      if (other.priceType_ != 0) {
+        setPriceTypeValue(other.getPriceTypeValue());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1880,6 +1922,60 @@ private static final long serialVersionUID = 0L;
         security_ = null;
       }
       return securityBuilder_;
+    }
+
+    private int priceType_ = 0;
+    /**
+     * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
+     * @return The enum numeric value on the wire for priceType.
+     */
+    @java.lang.Override public int getPriceTypeValue() {
+      return priceType_;
+    }
+    /**
+     * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
+     * @param value The enum numeric value on the wire for priceType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPriceTypeValue(int value) {
+      
+      priceType_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
+     * @return The priceType.
+     */
+    @java.lang.Override
+    public fintekkers.models.price.PriceTypeProto getPriceType() {
+      @SuppressWarnings("deprecation")
+      fintekkers.models.price.PriceTypeProto result = fintekkers.models.price.PriceTypeProto.valueOf(priceType_);
+      return result == null ? fintekkers.models.price.PriceTypeProto.UNRECOGNIZED : result;
+    }
+    /**
+     * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
+     * @param value The priceType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPriceType(fintekkers.models.price.PriceTypeProto value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      
+      priceType_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPriceType() {
+      
+      priceType_ = 0;
+      onChanged();
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

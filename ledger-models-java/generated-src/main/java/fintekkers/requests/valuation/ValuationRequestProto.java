@@ -129,6 +129,19 @@ private static final long serialVersionUID = 0L;
 
             break;
           }
+          case 194: {
+            fintekkers.models.price.PriceProto.Builder subBuilder = null;
+            if (cpiPriceInput_ != null) {
+              subBuilder = cpiPriceInput_.toBuilder();
+            }
+            cpiPriceInput_ = input.readMessage(fintekkers.models.price.PriceProto.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(cpiPriceInput_);
+              cpiPriceInput_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
           case 240: {
             int rawValue = input.readEnum();
             if (!((mutable_bitField0_ & 0x00000001) != 0)) {
@@ -522,6 +535,47 @@ private static final long serialVersionUID = 0L;
     return getAsofDatetime();
   }
 
+  public static final int CPI_PRICE_INPUT_FIELD_NUMBER = 24;
+  private fintekkers.models.price.PriceProto cpiPriceInput_;
+  /**
+   * <pre>
+   *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+   *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+   * </pre>
+   *
+   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+   * @return Whether the cpiPriceInput field is set.
+   */
+  @java.lang.Override
+  public boolean hasCpiPriceInput() {
+    return cpiPriceInput_ != null;
+  }
+  /**
+   * <pre>
+   *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+   *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+   * </pre>
+   *
+   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+   * @return The cpiPriceInput.
+   */
+  @java.lang.Override
+  public fintekkers.models.price.PriceProto getCpiPriceInput() {
+    return cpiPriceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : cpiPriceInput_;
+  }
+  /**
+   * <pre>
+   *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+   *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+   * </pre>
+   *
+   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.price.PriceProtoOrBuilder getCpiPriceInputOrBuilder() {
+    return getCpiPriceInput();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -557,6 +611,9 @@ private static final long serialVersionUID = 0L;
     }
     if (asofDatetime_ != null) {
       output.writeMessage(23, getAsofDatetime());
+    }
+    if (cpiPriceInput_ != null) {
+      output.writeMessage(24, getCpiPriceInput());
     }
     if (getMeasuresList().size() > 0) {
       output.writeUInt32NoTag(242);
@@ -599,6 +656,10 @@ private static final long serialVersionUID = 0L;
     if (asofDatetime_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(23, getAsofDatetime());
+    }
+    if (cpiPriceInput_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(24, getCpiPriceInput());
     }
     {
       int dataSize = 0;
@@ -653,6 +714,11 @@ private static final long serialVersionUID = 0L;
       if (!getAsofDatetime()
           .equals(other.getAsofDatetime())) return false;
     }
+    if (hasCpiPriceInput() != other.hasCpiPriceInput()) return false;
+    if (hasCpiPriceInput()) {
+      if (!getCpiPriceInput()
+          .equals(other.getCpiPriceInput())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -689,6 +755,10 @@ private static final long serialVersionUID = 0L;
     if (hasAsofDatetime()) {
       hash = (37 * hash) + ASOF_DATETIME_FIELD_NUMBER;
       hash = (53 * hash) + getAsofDatetime().hashCode();
+    }
+    if (hasCpiPriceInput()) {
+      hash = (37 * hash) + CPI_PRICE_INPUT_FIELD_NUMBER;
+      hash = (53 * hash) + getCpiPriceInput().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -861,6 +931,12 @@ private static final long serialVersionUID = 0L;
         asofDatetime_ = null;
         asofDatetimeBuilder_ = null;
       }
+      if (cpiPriceInputBuilder_ == null) {
+        cpiPriceInput_ = null;
+      } else {
+        cpiPriceInput_ = null;
+        cpiPriceInputBuilder_ = null;
+      }
       return this;
     }
 
@@ -915,6 +991,11 @@ private static final long serialVersionUID = 0L;
         result.asofDatetime_ = asofDatetime_;
       } else {
         result.asofDatetime_ = asofDatetimeBuilder_.build();
+      }
+      if (cpiPriceInputBuilder_ == null) {
+        result.cpiPriceInput_ = cpiPriceInput_;
+      } else {
+        result.cpiPriceInput_ = cpiPriceInputBuilder_.build();
       }
       onBuilt();
       return result;
@@ -996,6 +1077,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasAsofDatetime()) {
         mergeAsofDatetime(other.getAsofDatetime());
+      }
+      if (other.hasCpiPriceInput()) {
+        mergeCpiPriceInput(other.getCpiPriceInput());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -2064,6 +2148,170 @@ private static final long serialVersionUID = 0L;
         asofDatetime_ = null;
       }
       return asofDatetimeBuilder_;
+    }
+
+    private fintekkers.models.price.PriceProto cpiPriceInput_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> cpiPriceInputBuilder_;
+    /**
+     * <pre>
+     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+     * </pre>
+     *
+     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+     * @return Whether the cpiPriceInput field is set.
+     */
+    public boolean hasCpiPriceInput() {
+      return cpiPriceInputBuilder_ != null || cpiPriceInput_ != null;
+    }
+    /**
+     * <pre>
+     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+     * </pre>
+     *
+     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+     * @return The cpiPriceInput.
+     */
+    public fintekkers.models.price.PriceProto getCpiPriceInput() {
+      if (cpiPriceInputBuilder_ == null) {
+        return cpiPriceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : cpiPriceInput_;
+      } else {
+        return cpiPriceInputBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+     * </pre>
+     *
+     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+     */
+    public Builder setCpiPriceInput(fintekkers.models.price.PriceProto value) {
+      if (cpiPriceInputBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        cpiPriceInput_ = value;
+        onChanged();
+      } else {
+        cpiPriceInputBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+     * </pre>
+     *
+     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+     */
+    public Builder setCpiPriceInput(
+        fintekkers.models.price.PriceProto.Builder builderForValue) {
+      if (cpiPriceInputBuilder_ == null) {
+        cpiPriceInput_ = builderForValue.build();
+        onChanged();
+      } else {
+        cpiPriceInputBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+     * </pre>
+     *
+     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+     */
+    public Builder mergeCpiPriceInput(fintekkers.models.price.PriceProto value) {
+      if (cpiPriceInputBuilder_ == null) {
+        if (cpiPriceInput_ != null) {
+          cpiPriceInput_ =
+            fintekkers.models.price.PriceProto.newBuilder(cpiPriceInput_).mergeFrom(value).buildPartial();
+        } else {
+          cpiPriceInput_ = value;
+        }
+        onChanged();
+      } else {
+        cpiPriceInputBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+     * </pre>
+     *
+     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+     */
+    public Builder clearCpiPriceInput() {
+      if (cpiPriceInputBuilder_ == null) {
+        cpiPriceInput_ = null;
+        onChanged();
+      } else {
+        cpiPriceInput_ = null;
+        cpiPriceInputBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <pre>
+     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+     * </pre>
+     *
+     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+     */
+    public fintekkers.models.price.PriceProto.Builder getCpiPriceInputBuilder() {
+      
+      onChanged();
+      return getCpiPriceInputFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+     * </pre>
+     *
+     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+     */
+    public fintekkers.models.price.PriceProtoOrBuilder getCpiPriceInputOrBuilder() {
+      if (cpiPriceInputBuilder_ != null) {
+        return cpiPriceInputBuilder_.getMessageOrBuilder();
+      } else {
+        return cpiPriceInput_ == null ?
+            fintekkers.models.price.PriceProto.getDefaultInstance() : cpiPriceInput_;
+      }
+    }
+    /**
+     * <pre>
+     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
+     * </pre>
+     *
+     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> 
+        getCpiPriceInputFieldBuilder() {
+      if (cpiPriceInputBuilder_ == null) {
+        cpiPriceInputBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder>(
+                getCpiPriceInput(),
+                getParentForChildren(),
+                isClean());
+        cpiPriceInput_ = null;
+      }
+      return cpiPriceInputBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

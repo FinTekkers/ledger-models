@@ -7,6 +7,7 @@ import "fintekkers/models/util/local_timestamp.proto";
 import "fintekkers/models/util/uuid.proto";
 
 import "fintekkers/models/security/security.proto";
+import "fintekkers/models/price/price_type.proto";
 
 option java_multiple_files = true;
 
@@ -26,6 +27,7 @@ message PriceProto {
 
   fintekkers.models.util.DecimalValueProto price = 10;
   fintekkers.models.security.SecurityProto security = 11;
+  PriceTypeProto price_type = 12;
 
   /*
   TODO: Price types:

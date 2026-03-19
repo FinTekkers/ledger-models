@@ -9,6 +9,7 @@ import * as fintekkers_models_util_decimal_value_pb from "../../../fintekkers/mo
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_security_security_pb from "../../../fintekkers/models/security/security_pb";
+import * as fintekkers_models_price_price_type_pb from "../../../fintekkers/models/price/price_type_pb";
 
 export class PriceProto extends jspb.Message { 
     getObjectClass(): string;
@@ -47,6 +48,8 @@ export class PriceProto extends jspb.Message {
     clearSecurity(): void;
     getSecurity(): fintekkers_models_security_security_pb.SecurityProto | undefined;
     setSecurity(value?: fintekkers_models_security_security_pb.SecurityProto): PriceProto;
+    getPriceType(): fintekkers_models_price_price_type_pb.PriceTypeProto;
+    setPriceType(value: fintekkers_models_price_price_type_pb.PriceTypeProto): PriceProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): PriceProto.AsObject;
@@ -69,5 +72,6 @@ export namespace PriceProto {
         validTo?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         price?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
+        priceType: fintekkers_models_price_price_type_pb.PriceTypeProto,
     }
 }

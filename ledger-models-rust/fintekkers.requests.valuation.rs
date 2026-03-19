@@ -37,6 +37,10 @@ pub struct ValuationRequestProto {
     pub asof_datetime: ::core::option::Option<
         super::super::models::util::LocalTimestampProto,
     >,
+    /// The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
+    /// Modeled as a PriceProto on a SecurityProto representing the CPI index.
+    #[prost(message, optional, tag = "24")]
+    pub cpi_price_input: ::core::option::Option<super::super::models::price::PriceProto>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

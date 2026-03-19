@@ -7,6 +7,7 @@ pub enum IdentifierTypeProto {
     Cusip = 3,
     Osi = 4,
     Figi = 5,
+    SeriesId = 6,
     Cash = 50,
 }
 impl IdentifierTypeProto {
@@ -22,6 +23,7 @@ impl IdentifierTypeProto {
             IdentifierTypeProto::Cusip => "CUSIP",
             IdentifierTypeProto::Osi => "OSI",
             IdentifierTypeProto::Figi => "FIGI",
+            IdentifierTypeProto::SeriesId => "SERIES_ID",
             IdentifierTypeProto::Cash => "CASH",
         }
     }
@@ -34,6 +36,7 @@ impl IdentifierTypeProto {
             "CUSIP" => Some(Self::Cusip),
             "OSI" => Some(Self::Osi),
             "FIGI" => Some(Self::Figi),
+            "SERIES_ID" => Some(Self::SeriesId),
             "CASH" => Some(Self::Cash),
             _ => None,
         }
@@ -62,6 +65,7 @@ pub enum SecurityTypeProto {
     BondSecurity = 3,
     Tips = 4,
     Frn = 5,
+    IndexSecurity = 6,
 }
 impl SecurityTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -76,6 +80,7 @@ impl SecurityTypeProto {
             SecurityTypeProto::BondSecurity => "BOND_SECURITY",
             SecurityTypeProto::Tips => "TIPS",
             SecurityTypeProto::Frn => "FRN",
+            SecurityTypeProto::IndexSecurity => "INDEX_SECURITY",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -87,6 +92,7 @@ impl SecurityTypeProto {
             "BOND_SECURITY" => Some(Self::BondSecurity),
             "TIPS" => Some(Self::Tips),
             "FRN" => Some(Self::Frn),
+            "INDEX_SECURITY" => Some(Self::IndexSecurity),
             _ => None,
         }
     }
@@ -254,6 +260,14 @@ pub struct SecurityProto {
     /// Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
     #[prost(message, repeated, tag = "67")]
     pub issuance_info: ::prost::alloc::vec::Vec<bond::IssuanceProto>,
+    /// TIPS Bond fields
+    ///
+    /// Reference CPI at bond issuance (e.g. 256.394)
+    #[prost(message, optional, tag = "70")]
+    pub base_cpi: ::core::option::Option<super::util::DecimalValueProto>,
+    /// Index Security fields
+    #[prost(enumeration = "index::IndexTypeProto", tag = "80")]
+    pub index_type: i32,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package fintekkers.models.price;
+
+option java_multiple_files = true;
+
+option java_outer_classname = "PriceTypeProtos";
+
+enum PriceTypeProto {
+  UNKNOWN_PRICE_TYPE = 0;
+  ABSOLUTE = 1; //Price in local currency (e.g. equity prices, futures)
+  PERCENTAGE = 2; //Price as a percentage (e.g. bond prices quoted as % of par)
+  BASIS_POINTS = 3; //Price in basis points (e.g. spreads)
+  INDEX_LEVEL = 4; //Index level (e.g. CPI readings)
+}

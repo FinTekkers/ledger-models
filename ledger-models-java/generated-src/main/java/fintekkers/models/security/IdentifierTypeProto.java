@@ -33,6 +33,10 @@ public enum IdentifierTypeProto
    */
   FIGI(5),
   /**
+   * <code>SERIES_ID = 6;</code>
+   */
+  SERIES_ID(6),
+  /**
    * <code>CASH = 50;</code>
    */
   CASH(50),
@@ -63,6 +67,10 @@ public enum IdentifierTypeProto
    * <code>FIGI = 5;</code>
    */
   public static final int FIGI_VALUE = 5;
+  /**
+   * <code>SERIES_ID = 6;</code>
+   */
+  public static final int SERIES_ID_VALUE = 6;
   /**
    * <code>CASH = 50;</code>
    */
@@ -99,6 +107,7 @@ public enum IdentifierTypeProto
       case 3: return CUSIP;
       case 4: return OSI;
       case 5: return FIGI;
+      case 6: return SERIES_ID;
       case 50: return CASH;
       default: return null;
     }

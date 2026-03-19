@@ -15,6 +15,7 @@ import * as fintekkers_models_security_security_type_pb from "../../../fintekker
 import * as fintekkers_models_security_security_quantity_type_pb from "../../../fintekkers/models/security/security_quantity_type_pb";
 import * as fintekkers_models_security_coupon_frequency_pb from "../../../fintekkers/models/security/coupon_frequency_pb";
 import * as fintekkers_models_security_coupon_type_pb from "../../../fintekkers/models/security/coupon_type_pb";
+import * as fintekkers_models_security_index_index_type_pb from "../../../fintekkers/models/security/index/index_type_pb";
 
 export class SecurityProto extends jspb.Message { 
     getObjectClass(): string;
@@ -99,6 +100,13 @@ export class SecurityProto extends jspb.Message {
     setIssuanceInfoList(value: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>): SecurityProto;
     addIssuanceInfo(value?: fintekkers_models_security_bond_issuance_pb.IssuanceProto, index?: number): fintekkers_models_security_bond_issuance_pb.IssuanceProto;
 
+    hasBaseCpi(): boolean;
+    clearBaseCpi(): void;
+    getBaseCpi(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setBaseCpi(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): SecurityProto;
+    getIndexType(): fintekkers_models_security_index_index_type_pb.IndexTypeProto;
+    setIndexType(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): SecurityProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): SecurityProto.AsObject;
     static toObject(includeInstance: boolean, msg: SecurityProto): SecurityProto.AsObject;
@@ -134,5 +142,7 @@ export namespace SecurityProto {
         issueDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
         maturityDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
         issuanceInfoList: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto.AsObject>,
+        baseCpi?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        indexType: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
     }
 }
