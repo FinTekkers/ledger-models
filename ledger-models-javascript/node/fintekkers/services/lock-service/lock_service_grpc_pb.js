@@ -234,4 +234,4 @@ getPartitionStatus: {
   },
 };
 
-exports.LockClient = grpc.makeGenericClientConstructor(LockService);
+exports.LockClient = grpc.makeGenericClientConstructor(LockService, 'Lock');

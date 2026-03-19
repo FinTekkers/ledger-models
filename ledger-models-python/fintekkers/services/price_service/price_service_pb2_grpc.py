@@ -9,7 +9,7 @@ from fintekkers.requests.price import query_price_request_pb2 as fintekkers_dot_
 from fintekkers.requests.price import query_price_response_pb2 as fintekkers_dot_requests_dot_price_dot_query__price__response__pb2
 from fintekkers.requests.util.errors import summary_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2
 
-GRPC_GENERATED_VERSION = '1.73.0'
+GRPC_GENERATED_VERSION = '1.78.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -22,7 +22,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in fintekkers/services/price_service/price_service_pb2_grpc.py depends on'
+        + ' but the generated code in fintekkers/services/price_service/price_service_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'

@@ -203,4 +203,4 @@ var SecurityService = exports.SecurityService = {
   },
 };
 
-exports.SecurityClient = grpc.makeGenericClientConstructor(SecurityService);
+exports.SecurityClient = grpc.makeGenericClientConstructor(SecurityService, 'Security');

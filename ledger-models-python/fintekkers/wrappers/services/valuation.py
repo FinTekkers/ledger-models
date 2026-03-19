@@ -50,11 +50,14 @@ class ValuationService:
             # Create the valuation request
             request = ValuationRequestProto(
                 measures=measures or [],
-                security_input=security.proto,
-                position_input=position.positionProto,
-                price_input=price.proto,
                 asof_datetime=asOfProto
             )
+            if security is not None:
+                request.security_input.CopyFrom(security.proto)
+            if position is not None:
+                request.position_input.CopyFrom(position.positionProto)
+            if price is not None:
+                request.price_input.CopyFrom(price.proto)
                 
             # Run the valuation
             response = self.stub.RunValuation(request)
@@ -62,9 +65,9 @@ class ValuationService:
             
         except RpcError as e:
             if e.code() == grpc.StatusCode.CANCELLED:
-                print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url()} ({e.details()})")
+                print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url(ServiceType.VALUATION_SERVICE)} ({e.details()})")
             else:
-                print(f"Service unavailable trying to contact {EnvConfig.api_url()} ({e.details()})")
+                print(f"Service unavailable trying to contact {EnvConfig.api_url(ServiceType.VALUATION_SERVICE)} ({e.details()})")
             raise e
 
     def get_measure_result(self, response: ValuationResponseProto, measure: MeasureProto) -> float:

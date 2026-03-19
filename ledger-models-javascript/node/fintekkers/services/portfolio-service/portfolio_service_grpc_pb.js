@@ -133,4 +133,4 @@ var PortfolioService = exports.PortfolioService = {
   },
 };
 
-exports.PortfolioClient = grpc.makeGenericClientConstructor(PortfolioService);
+exports.PortfolioClient = grpc.makeGenericClientConstructor(PortfolioService, 'Portfolio');

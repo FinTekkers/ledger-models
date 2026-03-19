@@ -42,4 +42,4 @@ var ValuationService = exports.ValuationService = {
   },
 };
 
-exports.ValuationClient = grpc.makeGenericClientConstructor(ValuationService);
+exports.ValuationClient = grpc.makeGenericClientConstructor(ValuationService, 'Valuation');

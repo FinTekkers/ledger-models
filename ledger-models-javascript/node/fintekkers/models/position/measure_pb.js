@@ -33,7 +33,8 @@ proto.fintekkers.models.position.MeasureProto = {
   ADJUSTED_COST_BASIS: 4,
   CURRENT_YIELD: 5,
   YIELD_TO_MATURITY: 7,
-  MACAULAY_DURATION: 8
+  MACAULAY_DURATION: 8,
+  PRESENT_VALUE: 9
 };
 
 goog.object.extend(exports, proto.fintekkers.models.position);

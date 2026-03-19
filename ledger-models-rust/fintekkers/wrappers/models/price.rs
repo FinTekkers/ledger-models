@@ -186,6 +186,7 @@ impl PriceProtoBuilder {
             security: Some(
                 self.security.unwrap()
             ),
+            price_type: 0,
         })
     }
 

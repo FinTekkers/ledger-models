@@ -27,6 +27,8 @@ var fintekkers_models_position_position_pb = require('../../../fintekkers/models
 goog.object.extend(proto, fintekkers_models_position_position_pb);
 var fintekkers_models_price_price_pb = require('../../../fintekkers/models/price/price_pb.js');
 goog.object.extend(proto, fintekkers_models_price_price_pb);
+var fintekkers_models_util_decimal_value_pb = require('../../../fintekkers/models/util/decimal_value_pb.js');
+goog.object.extend(proto, fintekkers_models_util_decimal_value_pb);
 var fintekkers_models_util_local_timestamp_pb = require('../../../fintekkers/models/util/local_timestamp_pb.js');
 goog.object.extend(proto, fintekkers_models_util_local_timestamp_pb);
 var fintekkers_requests_util_operation_pb = require('../../../fintekkers/requests/util/operation_pb.js');
@@ -101,7 +103,8 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.toObject = function(in
     securityInput: (f = msg.getSecurityInput()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
     positionInput: (f = msg.getPositionInput()) && fintekkers_models_position_position_pb.PositionProto.toObject(includeInstance, f),
     priceInput: (f = msg.getPriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
-    asofDatetime: (f = msg.getAsofDatetime()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f)
+    asofDatetime: (f = msg.getAsofDatetime()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    cpiPriceInput: (f = msg.getCpiPriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -175,6 +178,11 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.deserializeBinaryFromR
       var value = new fintekkers_models_util_local_timestamp_pb.LocalTimestampProto;
       reader.readMessage(value,fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.deserializeBinaryFromReader);
       msg.setAsofDatetime(value);
+      break;
+    case 24:
+      var value = new fintekkers_models_price_price_pb.PriceProto;
+      reader.readMessage(value,fintekkers_models_price_price_pb.PriceProto.deserializeBinaryFromReader);
+      msg.setCpiPriceInput(value);
       break;
     default:
       reader.skipField();
@@ -263,6 +271,14 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.serializeBinaryToWrite
       23,
       f,
       fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getCpiPriceInput();
+  if (f != null) {
+    writer.writeMessage(
+      24,
+      f,
+      fintekkers_models_price_price_pb.PriceProto.serializeBinaryToWriter
     );
   }
 };
@@ -504,6 +520,43 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.clearAsofDat
  */
 proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.hasAsofDatetime = function() {
   return jspb.Message.getField(this, 23) != null;
+};
+
+
+/**
+ * optional fintekkers.models.price.PriceProto cpi_price_input = 24;
+ * @return {?proto.fintekkers.models.price.PriceProto}
+ */
+proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.getCpiPriceInput = function() {
+  return /** @type{?proto.fintekkers.models.price.PriceProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_price_price_pb.PriceProto, 24));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.price.PriceProto|undefined} value
+ * @return {!proto.fintekkers.requests.valuation.ValuationRequestProto} returns this
+*/
+proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.setCpiPriceInput = function(value) {
+  return jspb.Message.setWrapperField(this, 24, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.requests.valuation.ValuationRequestProto} returns this
+ */
+proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.clearCpiPriceInput = function() {
+  return this.setCpiPriceInput(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.hasCpiPriceInput = function() {
+  return jspb.Message.getField(this, 24) != null;
 };
 
 

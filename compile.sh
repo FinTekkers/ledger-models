@@ -50,11 +50,11 @@ cd ../ledger-models-protos
 #    --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:../ledger-models-javascript/web/ $(find . -iname "*.proto")
 
 # generate node js
-grpc_tools_node_protoc --js_out=import_style=commonjs,binary:../ledger-models-javascript/node/ --grpc_out=grpc_js:../ledger-models-javascript/node/ $(find . -ipath "**/services/**/*.proto")
+../ledger-models-javascript/node_modules/.bin/grpc_tools_node_protoc --js_out=import_style=commonjs,binary:../ledger-models-javascript/node/ --grpc_out=grpc_js:../ledger-models-javascript/node/ $(find . -ipath "**/services/**/*.proto")
 
-grpc_tools_node_protoc --js_out=import_style=commonjs,binary:../ledger-models-javascript/node/ --grpc_out=grpc_js:../ledger-models-javascript/node/ $(find . -ipath "**/requests/**/*.proto")
+../ledger-models-javascript/node_modules/.bin/grpc_tools_node_protoc --js_out=import_style=commonjs,binary:../ledger-models-javascript/node/ --grpc_out=grpc_js:../ledger-models-javascript/node/ $(find . -ipath "**/requests/**/*.proto")
 
-grpc_tools_node_protoc --js_out=import_style=commonjs,binary:../ledger-models-javascript/node/ --grpc_out=grpc_js:../ledger-models-javascript/node/ $(find . -ipath "**/models/**/*.proto")
+../ledger-models-javascript/node_modules/.bin/grpc_tools_node_protoc --js_out=import_style=commonjs,binary:../ledger-models-javascript/node/ --grpc_out=grpc_js:../ledger-models-javascript/node/ $(find . -ipath "**/models/**/*.proto")
 # generate d.ts codes
 protoc \
 --plugin=protoc-gen-ts=../ledger-models-javascript/node_modules/.bin/protoc-gen-ts \
@@ -63,7 +63,7 @@ protoc \
 $(find . -iname "*.proto")
 
 # compile the typescript (if any)
-tsc -p tsconfig.json
+../ledger-models-javascript/node_modules/.bin/tsc -p ../ledger-models-javascript/tsconfig.json
 
 ###########################################
 ######### PYTHON PROTO GENERATION #########

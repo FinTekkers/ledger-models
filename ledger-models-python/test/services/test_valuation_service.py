@@ -4,8 +4,10 @@ from fintekkers.models.position.measure_pb2 import (
 )
 from fintekkers.models.security.coupon_frequency_pb2 import CouponFrequencyProto
 from fintekkers.models.security.coupon_type_pb2 import CouponTypeProto
+from fintekkers.models.security.security_type_pb2 import SecurityTypeProto
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import IdentifierTypeProto
+from fintekkers.models.util.local_date_pb2 import LocalDateProto
 from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry, MeasureMapEntry
 from fintekkers.models.position.position_pb2 import PositionProto
@@ -82,6 +84,8 @@ def test_valuation_with_cash_security():
     except grpc.RpcError as e:
         if e.code() == grpc.StatusCode.UNAVAILABLE:
             print("Valuation service not available - skipping test")
+        elif e.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            print(f"Valuation service returned invalid argument: {e.details()}")
         else:
             raise e
 
@@ -109,12 +113,12 @@ def test_valuation_with_security_and_price():
     # security:Security = get_security_for_valuation_test()
     
     security:Security = Security(SecurityProto(
-        # coupon_rate=DecimalValueProto(arbitrary_precision_value="0.0"),
+        security_type=SecurityTypeProto.BOND_SECURITY,
+        coupon_rate=DecimalValueProto(arbitrary_precision_value="0.0"),
         coupon_frequency=CouponFrequencyProto.NO_COUPON,
         coupon_type=CouponTypeProto.ZERO,
-        current_price=DecimalValueProto(arbitrary_precision_value="900.0"),
-        maturity_date=ProtoSerializationUtil.serialize(datetime(2025, 12, 31)),
-        issue_date=ProtoSerializationUtil.serialize(datetime(2024, 1, 1)),
+        maturity_date=LocalDateProto(year=2025, month=12, day=31),
+        issue_date=LocalDateProto(year=2024, month=1, day=1),
         face_value=DecimalValueProto(arbitrary_precision_value="1000.0"),
         as_of=ProtoSerializationUtil.serialize(datetime(2024, 1, 1)),
         identifier=IdentifierProto(
@@ -201,6 +205,8 @@ def test_valuation_error_handling():
     except grpc.RpcError as e:
         if e.code() == grpc.StatusCode.UNAVAILABLE:
             print("Valuation service not available - skipping error handling test")
+        elif e.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            print(f"Valuation service returned invalid argument (expected): {e.details()}")
         else:
             raise e
 

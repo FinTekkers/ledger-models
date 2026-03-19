@@ -8,6 +8,7 @@ from fintekkers.models.security import security_type_pb2 as _security_type_pb2
 from fintekkers.models.security import security_quantity_type_pb2 as _security_quantity_type_pb2
 from fintekkers.models.security import coupon_frequency_pb2 as _coupon_frequency_pb2
 from fintekkers.models.security import coupon_type_pb2 as _coupon_type_pb2
+from fintekkers.models.security.index import index_type_pb2 as _index_type_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
@@ -17,7 +18,7 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class SecurityProto(_message.Message):
-    __slots__ = ("object_class", "version", "uuid", "as_of", "is_link", "valid_from", "valid_to", "security_type", "asset_class", "issuer_name", "settlement_currency", "quantity_type", "identifier", "description", "cash_id", "coupon_rate", "coupon_type", "coupon_frequency", "dated_date", "face_value", "issue_date", "maturity_date", "issuance_info")
+    __slots__ = ("object_class", "version", "uuid", "as_of", "is_link", "valid_from", "valid_to", "security_type", "asset_class", "issuer_name", "settlement_currency", "quantity_type", "identifier", "description", "cash_id", "coupon_rate", "coupon_type", "coupon_frequency", "dated_date", "face_value", "issue_date", "maturity_date", "issuance_info", "base_cpi", "index_type")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     UUID_FIELD_NUMBER: _ClassVar[int]
@@ -41,6 +42,8 @@ class SecurityProto(_message.Message):
     ISSUE_DATE_FIELD_NUMBER: _ClassVar[int]
     MATURITY_DATE_FIELD_NUMBER: _ClassVar[int]
     ISSUANCE_INFO_FIELD_NUMBER: _ClassVar[int]
+    BASE_CPI_FIELD_NUMBER: _ClassVar[int]
+    INDEX_TYPE_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
     uuid: _uuid_pb2.UUIDProto
@@ -64,4 +67,6 @@ class SecurityProto(_message.Message):
     issue_date: _local_date_pb2.LocalDateProto
     maturity_date: _local_date_pb2.LocalDateProto
     issuance_info: _containers.RepeatedCompositeFieldContainer[_issuance_pb2.IssuanceProto]
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., security_type: _Optional[_Union[_security_type_pb2.SecurityTypeProto, str]] = ..., asset_class: _Optional[str] = ..., issuer_name: _Optional[str] = ..., settlement_currency: _Optional[_Union[SecurityProto, _Mapping]] = ..., quantity_type: _Optional[_Union[_security_quantity_type_pb2.SecurityQuantityTypeProto, str]] = ..., identifier: _Optional[_Union[_identifier_pb2.IdentifierProto, _Mapping]] = ..., description: _Optional[str] = ..., cash_id: _Optional[str] = ..., coupon_rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., coupon_type: _Optional[_Union[_coupon_type_pb2.CouponTypeProto, str]] = ..., coupon_frequency: _Optional[_Union[_coupon_frequency_pb2.CouponFrequencyProto, str]] = ..., dated_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., face_value: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., issue_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., maturity_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., issuance_info: _Optional[_Iterable[_Union[_issuance_pb2.IssuanceProto, _Mapping]]] = ...) -> None: ...
+    base_cpi: _decimal_value_pb2.DecimalValueProto
+    index_type: _index_type_pb2.IndexTypeProto
+    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., security_type: _Optional[_Union[_security_type_pb2.SecurityTypeProto, str]] = ..., asset_class: _Optional[str] = ..., issuer_name: _Optional[str] = ..., settlement_currency: _Optional[_Union[SecurityProto, _Mapping]] = ..., quantity_type: _Optional[_Union[_security_quantity_type_pb2.SecurityQuantityTypeProto, str]] = ..., identifier: _Optional[_Union[_identifier_pb2.IdentifierProto, _Mapping]] = ..., description: _Optional[str] = ..., cash_id: _Optional[str] = ..., coupon_rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., coupon_type: _Optional[_Union[_coupon_type_pb2.CouponTypeProto, str]] = ..., coupon_frequency: _Optional[_Union[_coupon_frequency_pb2.CouponFrequencyProto, str]] = ..., dated_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., face_value: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., issue_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., maturity_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., issuance_info: _Optional[_Iterable[_Union[_issuance_pb2.IssuanceProto, _Mapping]]] = ..., base_cpi: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., index_type: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ...) -> None: ...

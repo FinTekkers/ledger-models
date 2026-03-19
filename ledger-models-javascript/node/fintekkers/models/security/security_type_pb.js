@@ -31,7 +31,8 @@ proto.fintekkers.models.security.SecurityTypeProto = {
   EQUITY_SECURITY: 2,
   BOND_SECURITY: 3,
   TIPS: 4,
-  FRN: 5
+  FRN: 5,
+  INDEX_SECURITY: 6
 };
 
 goog.object.extend(exports, proto.fintekkers.models.security);

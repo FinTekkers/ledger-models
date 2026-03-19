@@ -12,6 +12,7 @@ ledger-models-java/bin
 __pycache__
 *egg-info
 .venv/
+venv/
 
 #Build related folders:
 build/

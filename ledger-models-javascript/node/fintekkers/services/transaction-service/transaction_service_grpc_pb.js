@@ -133,4 +133,4 @@ var TransactionService = exports.TransactionService = {
   },
 };
 
-exports.TransactionClient = grpc.makeGenericClientConstructor(TransactionService);
+exports.TransactionClient = grpc.makeGenericClientConstructor(TransactionService, 'Transaction');

@@ -68,4 +68,4 @@ validateQueryRequest: {
   },
 };
 
-exports.PositionClient = grpc.makeGenericClientConstructor(PositionService);
+exports.PositionClient = grpc.makeGenericClientConstructor(PositionService, 'Position');

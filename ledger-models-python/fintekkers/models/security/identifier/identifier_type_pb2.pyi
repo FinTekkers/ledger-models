@@ -12,6 +12,7 @@ class IdentifierTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     CUSIP: _ClassVar[IdentifierTypeProto]
     OSI: _ClassVar[IdentifierTypeProto]
     FIGI: _ClassVar[IdentifierTypeProto]
+    SERIES_ID: _ClassVar[IdentifierTypeProto]
     CASH: _ClassVar[IdentifierTypeProto]
 UNKNOWN_IDENTIFIER_TYPE: IdentifierTypeProto
 EXCH_TICKER: IdentifierTypeProto
@@ -19,4 +20,5 @@ ISIN: IdentifierTypeProto
 CUSIP: IdentifierTypeProto
 OSI: IdentifierTypeProto
 FIGI: IdentifierTypeProto
+SERIES_ID: IdentifierTypeProto
 CASH: IdentifierTypeProto

@@ -25,6 +25,9 @@ pub mod fintekkers {
             pub mod bond {
                 include!("fintekkers.models.security.bond.rs");
             }
+            pub mod index {
+                include!("fintekkers.models.security.index.rs");
+            }
         }
         pub mod strategy {
             include!("fintekkers.models.strategy.rs");
