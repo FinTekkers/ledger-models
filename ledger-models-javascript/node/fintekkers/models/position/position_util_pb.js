@@ -364,7 +364,7 @@ proto.fintekkers.models.position.FieldMapEntry.deserializeBinaryFromReader = fun
       msg.setEnumValue(value);
       break;
     case 6:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setStringValue(value);
       break;
     case 20:

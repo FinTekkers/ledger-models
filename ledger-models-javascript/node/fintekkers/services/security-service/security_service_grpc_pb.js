@@ -90,17 +90,6 @@ function deserialize_fintekkers_requests_security_QuerySecurityResponseProto(buf
   return fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_fintekkers_requests_util_errors_SummaryProto(arg) {
-  if (!(arg instanceof fintekkers_requests_util_errors_summary_pb.SummaryProto)) {
-    throw new Error('Expected argument of type fintekkers.requests.util.errors.SummaryProto');
-  }
-  return new Buffer(arg.serializeBinary());
-}
-
-function deserialize_fintekkers_requests_util_errors_SummaryProto(buffer_arg) {
-  return fintekkers_requests_util_errors_summary_pb.SummaryProto.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_fintekkers_requests_util_DeleteRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_util_delete_request_pb.DeleteRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.util.DeleteRequestProto');
@@ -121,6 +110,17 @@ function serialize_fintekkers_requests_util_DeleteResponseProto(arg) {
 
 function deserialize_fintekkers_requests_util_DeleteResponseProto(buffer_arg) {
   return fintekkers_requests_util_delete_request_pb.DeleteResponseProto.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_fintekkers_requests_util_errors_SummaryProto(arg) {
+  if (!(arg instanceof fintekkers_requests_util_errors_summary_pb.SummaryProto)) {
+    throw new Error('Expected argument of type fintekkers.requests.util.errors.SummaryProto');
+  }
+  return new Buffer(arg.serializeBinary());
+}
+
+function deserialize_fintekkers_requests_util_errors_SummaryProto(buffer_arg) {
+  return fintekkers_requests_util_errors_summary_pb.SummaryProto.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_google_protobuf_Empty(arg) {

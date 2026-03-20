@@ -1,3 +1,4 @@
+import pytest
 from unittest.mock import patch, Mock
 
 
@@ -7,6 +8,7 @@ from uuid import UUID
 from fintekkers.wrappers.models.price import Price
 from fintekkers.wrappers.services.price import PriceService
 
+@pytest.mark.integration
 def test_get_current_price():
     price_service = PriceService()
 

@@ -59,35 +59,41 @@ class BondSecurity extends security_1.default {
         };
     }
     getCouponRate() {
-        const rate = this.proto.getCouponRate();
+        const bond = this.getBondLikeDetails();
+        const rate = bond ? bond.getCouponRate() : this.proto.getCouponRate();
         if (!rate)
             throw new Error("Coupon rate is required for bonds");
         return rate;
     }
     getFaceValue() {
-        const faceValue = this.proto.getFaceValue();
+        const bond = this.getBondLikeDetails();
+        const faceValue = bond ? bond.getFaceValue() : this.proto.getFaceValue();
         if (!faceValue)
             throw new Error("Face value is required for bonds");
         return faceValue;
     }
     getCouponType() {
-        const couponType = this.proto.getCouponType();
+        const bond = this.getBondLikeDetails();
+        const couponType = bond ? bond.getCouponType() : this.proto.getCouponType();
         if (!couponType)
             throw new Error("Coupon Type is required for bonds");
         return new coupon_type_1.CouponType(couponType);
     }
     getCouponFrequency() {
-        const couponFrequency = this.proto.getCouponFrequency();
+        const bond = this.getBondLikeDetails();
+        const couponFrequency = bond ? bond.getCouponFrequency() : this.proto.getCouponFrequency();
         if (!couponFrequency)
             throw new Error("Coupon Frequency is required for bonds");
         return new coupon_frequency_1.CouponFrequency(couponFrequency);
     }
     getDatedDate() {
-        const datedDate = this.proto.getDatedDate();
+        const bond = this.getBondLikeDetails();
+        const datedDate = bond ? bond.getDatedDate() : this.proto.getDatedDate();
         return datedDate ? new date_1.LocalDate(datedDate) : undefined;
     }
     getIssuanceInfo() {
-        return this.proto.getIssuanceInfoList();
+        const bond = this.getBondLikeDetails();
+        return bond ? bond.getIssuanceInfoList() : this.proto.getIssuanceInfoList();
     }
     /**
      * Returns the price scale factor for bonds.

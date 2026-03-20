@@ -1,3 +1,4 @@
+import pytest
 from datetime import datetime
 from fintekkers.models.position.measure_pb2 import (
     MeasureProto, MARKET_VALUE, DIRECTED_QUANTITY, CURRENT_YIELD, YIELD_TO_MATURITY
@@ -31,6 +32,7 @@ from fintekkers.models.price.price_pb2 import PriceProto
 import grpc
 
 
+@pytest.mark.integration
 def test_valuation_with_cash_security():
     """Test valuation with just a security input"""
     # Get a test security (USD cash)
@@ -108,6 +110,7 @@ def test_valuation_with_cash_security():
         # println!("Zero coupon yield (2Y): {}", yield_result);
         # assert!((yield_result - Decimal::from_f64_retain(0.054093).unwrap()).abs() < Decimal::from_f64_retain(0.0001).unwrap());
 
+@pytest.mark.integration
 def test_valuation_with_security_and_price():
     """Test valuation with security and price inputs"""
     # security:Security = get_security_for_valuation_test()
@@ -185,6 +188,7 @@ def get_security_for_valuation_test():
     return security
 
 
+@pytest.mark.integration
 def test_valuation_error_handling():
     """Test error handling in valuation service"""
     EnvConfig.default_api_url = "localhost"

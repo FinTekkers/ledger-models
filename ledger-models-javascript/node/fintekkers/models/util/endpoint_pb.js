@@ -109,7 +109,7 @@ proto.fintekkers.models.util.Endpoint.deserializeBinaryFromReader = function(msg
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setIp(value);
       break;
     case 2:
@@ -117,7 +117,7 @@ proto.fintekkers.models.util.Endpoint.deserializeBinaryFromReader = function(msg
       msg.setPort(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setFullyQualifiedUrl(value);
       break;
     default:

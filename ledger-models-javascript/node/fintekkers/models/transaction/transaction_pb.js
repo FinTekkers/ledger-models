@@ -153,11 +153,11 @@ proto.fintekkers.models.transaction.TransactionProto.deserializeBinaryFromReader
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setVersion(value);
       break;
     case 5:
@@ -228,7 +228,7 @@ proto.fintekkers.models.transaction.TransactionProto.deserializeBinaryFromReader
       msg.setPositionStatus(value);
       break;
     case 26:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setTradeName(value);
       break;
     case 27:

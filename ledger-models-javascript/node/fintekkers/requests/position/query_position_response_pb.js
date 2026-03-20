@@ -123,11 +123,11 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.deserializeBinaryF
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setVersion(value);
       break;
     case 11:
@@ -136,7 +136,7 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.deserializeBinaryF
       msg.setPositionRequest(value);
       break;
     case 12:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setReportingCurrency(value);
       break;
     case 30:

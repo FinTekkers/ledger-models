@@ -7,6 +7,7 @@ var fintekkers_requests_transaction_create_transaction_response_pb = require('..
 var fintekkers_requests_transaction_query_transaction_request_pb = require('../../../fintekkers/requests/transaction/query_transaction_request_pb.js');
 var fintekkers_requests_transaction_query_transaction_response_pb = require('../../../fintekkers/requests/transaction/query_transaction_response_pb.js');
 var fintekkers_requests_util_errors_summary_pb = require('../../../fintekkers/requests/util/errors/summary_pb.js');
+var fintekkers_requests_util_delete_request_pb = require('../../../fintekkers/requests/util/delete_request_pb.js');
 
 function serialize_fintekkers_requests_transaction_CreateTransactionRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto)) {
@@ -50,6 +51,28 @@ function serialize_fintekkers_requests_transaction_QueryTransactionResponseProto
 
 function deserialize_fintekkers_requests_transaction_QueryTransactionResponseProto(buffer_arg) {
   return fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_fintekkers_requests_util_DeleteRequestProto(arg) {
+  if (!(arg instanceof fintekkers_requests_util_delete_request_pb.DeleteRequestProto)) {
+    throw new Error('Expected argument of type fintekkers.requests.util.DeleteRequestProto');
+  }
+  return new Buffer(arg.serializeBinary());
+}
+
+function deserialize_fintekkers_requests_util_DeleteRequestProto(buffer_arg) {
+  return fintekkers_requests_util_delete_request_pb.DeleteRequestProto.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_fintekkers_requests_util_DeleteResponseProto(arg) {
+  if (!(arg instanceof fintekkers_requests_util_delete_request_pb.DeleteResponseProto)) {
+    throw new Error('Expected argument of type fintekkers.requests.util.DeleteResponseProto');
+  }
+  return new Buffer(arg.serializeBinary());
+}
+
+function deserialize_fintekkers_requests_util_DeleteResponseProto(buffer_arg) {
+  return fintekkers_requests_util_delete_request_pb.DeleteResponseProto.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_fintekkers_requests_util_errors_SummaryProto(arg) {
@@ -108,6 +131,17 @@ var TransactionService = exports.TransactionService = {
     requestDeserialize: deserialize_fintekkers_requests_transaction_QueryTransactionRequestProto,
     responseSerialize: serialize_fintekkers_requests_transaction_QueryTransactionResponseProto,
     responseDeserialize: deserialize_fintekkers_requests_transaction_QueryTransactionResponseProto,
+  },
+  delete: {
+    path: '/fintekkers.services.transaction_service.Transaction/Delete',
+    requestStream: false,
+    responseStream: false,
+    requestType: fintekkers_requests_util_delete_request_pb.DeleteRequestProto,
+    responseType: fintekkers_requests_util_delete_request_pb.DeleteResponseProto,
+    requestSerialize: serialize_fintekkers_requests_util_DeleteRequestProto,
+    requestDeserialize: deserialize_fintekkers_requests_util_DeleteRequestProto,
+    responseSerialize: serialize_fintekkers_requests_util_DeleteResponseProto,
+    responseDeserialize: deserialize_fintekkers_requests_util_DeleteResponseProto,
   },
   validateCreateOrUpdate: {
     path: '/fintekkers.services.transaction_service.Transaction/ValidateCreateOrUpdate',

@@ -7,6 +7,7 @@ var fintekkers_requests_portfolio_create_portfolio_response_pb = require('../../
 var fintekkers_requests_portfolio_query_portfolio_request_pb = require('../../../fintekkers/requests/portfolio/query_portfolio_request_pb.js');
 var fintekkers_requests_portfolio_query_portfolio_response_pb = require('../../../fintekkers/requests/portfolio/query_portfolio_response_pb.js');
 var fintekkers_requests_util_errors_summary_pb = require('../../../fintekkers/requests/util/errors/summary_pb.js');
+var fintekkers_requests_util_delete_request_pb = require('../../../fintekkers/requests/util/delete_request_pb.js');
 
 function serialize_fintekkers_requests_portfolio_CreatePortfolioRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto)) {
@@ -50,6 +51,28 @@ function serialize_fintekkers_requests_portfolio_QueryPortfolioResponseProto(arg
 
 function deserialize_fintekkers_requests_portfolio_QueryPortfolioResponseProto(buffer_arg) {
   return fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_fintekkers_requests_util_DeleteRequestProto(arg) {
+  if (!(arg instanceof fintekkers_requests_util_delete_request_pb.DeleteRequestProto)) {
+    throw new Error('Expected argument of type fintekkers.requests.util.DeleteRequestProto');
+  }
+  return new Buffer(arg.serializeBinary());
+}
+
+function deserialize_fintekkers_requests_util_DeleteRequestProto(buffer_arg) {
+  return fintekkers_requests_util_delete_request_pb.DeleteRequestProto.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_fintekkers_requests_util_DeleteResponseProto(arg) {
+  if (!(arg instanceof fintekkers_requests_util_delete_request_pb.DeleteResponseProto)) {
+    throw new Error('Expected argument of type fintekkers.requests.util.DeleteResponseProto');
+  }
+  return new Buffer(arg.serializeBinary());
+}
+
+function deserialize_fintekkers_requests_util_DeleteResponseProto(buffer_arg) {
+  return fintekkers_requests_util_delete_request_pb.DeleteResponseProto.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_fintekkers_requests_util_errors_SummaryProto(arg) {
@@ -108,6 +131,17 @@ var PortfolioService = exports.PortfolioService = {
     requestDeserialize: deserialize_fintekkers_requests_portfolio_QueryPortfolioRequestProto,
     responseSerialize: serialize_fintekkers_requests_portfolio_QueryPortfolioResponseProto,
     responseDeserialize: deserialize_fintekkers_requests_portfolio_QueryPortfolioResponseProto,
+  },
+  delete: {
+    path: '/fintekkers.services.portfolio_service.Portfolio/Delete',
+    requestStream: false,
+    responseStream: false,
+    requestType: fintekkers_requests_util_delete_request_pb.DeleteRequestProto,
+    responseType: fintekkers_requests_util_delete_request_pb.DeleteResponseProto,
+    requestSerialize: serialize_fintekkers_requests_util_DeleteRequestProto,
+    requestDeserialize: deserialize_fintekkers_requests_util_DeleteRequestProto,
+    responseSerialize: serialize_fintekkers_requests_util_DeleteResponseProto,
+    responseDeserialize: deserialize_fintekkers_requests_util_DeleteResponseProto,
   },
   validateCreateOrUpdate: {
     path: '/fintekkers.services.portfolio_service.Portfolio/ValidateCreateOrUpdate',

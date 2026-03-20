@@ -31,5 +31,7 @@ var fintekkers_requests_security_get_field_values_response_pb = require('../../.
 goog.object.extend(proto, fintekkers_requests_security_get_field_values_response_pb);
 var fintekkers_requests_util_errors_summary_pb = require('../../../fintekkers/requests/util/errors/summary_pb.js');
 goog.object.extend(proto, fintekkers_requests_util_errors_summary_pb);
+var fintekkers_requests_util_delete_request_pb = require('../../../fintekkers/requests/util/delete_request_pb.js');
+goog.object.extend(proto, fintekkers_requests_util_delete_request_pb);
 var google_protobuf_empty_pb = require('google-protobuf/google/protobuf/empty_pb.js');
 goog.object.extend(proto, google_protobuf_empty_pb);

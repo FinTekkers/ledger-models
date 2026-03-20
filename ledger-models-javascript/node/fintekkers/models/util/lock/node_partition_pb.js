@@ -110,11 +110,11 @@ proto.fintekkers.models.util.lock.NodePartition.deserializeBinaryFromReader = fu
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setVersion(value);
       break;
     case 3:
@@ -122,7 +122,7 @@ proto.fintekkers.models.util.lock.NodePartition.deserializeBinaryFromReader = fu
       msg.setPartition(value);
       break;
     case 4:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setNamespace(value);
       break;
     default:

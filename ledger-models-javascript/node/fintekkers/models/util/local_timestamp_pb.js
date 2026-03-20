@@ -115,7 +115,7 @@ proto.fintekkers.models.util.LocalTimestampProto.deserializeBinaryFromReader = f
       msg.setTimestamp(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setTimeZone(value);
       break;
     default:

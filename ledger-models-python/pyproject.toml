@@ -1,3 +1,6 @@
 [tool.pytest.ini_options]
 pythonpath = [".", "test"]
 addopts = ["--import-mode=importlib"]
+markers = [
+    "integration: marks tests that require running services (deselect with '-m \"not integration\"')",
+]

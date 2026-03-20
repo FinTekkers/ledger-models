@@ -1,3 +1,4 @@
+import pytest
 from fintekkers.models.security.identifier.identifier_type_pb2 import (
     IdentifierTypeProto,
 )
@@ -11,6 +12,7 @@ from fintekkers.models.security.tenor_type_pb2 import TenorTypeProto
 import re
 
 
+@pytest.mark.integration
 def test_get_usd_cash_security():
     svc = SecurityService()
 
@@ -26,6 +28,7 @@ def test_get_usd_cash_security():
 
 from fintekkers.wrappers.services.util.Environment import EnvConfig
 
+@pytest.mark.integration
 def test_get_fields():
     EnvConfig.default_api_url = "localhost"
     svc = SecurityService()
@@ -35,6 +38,7 @@ def test_get_fields():
 
 from fintekkers.models.position.field_pb2 import FieldProto
 
+@pytest.mark.integration
 def test_get_field_values():
     EnvConfig.default_api_url = "localhost"
     svc = SecurityService()
@@ -44,6 +48,7 @@ def test_get_field_values():
     assert "Cash" in values
 
 
+@pytest.mark.integration
 def test_get_field_values_adjusted_tenor():
     EnvConfig.default_api_url = "localhost"
     svc = SecurityService()

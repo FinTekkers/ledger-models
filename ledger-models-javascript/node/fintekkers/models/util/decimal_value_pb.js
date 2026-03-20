@@ -107,7 +107,7 @@ proto.fintekkers.models.util.DecimalValueProto.deserializeBinaryFromReader = fun
     var field = reader.getFieldNumber();
     switch (field) {
     case 10:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setArbitraryPrecisionValue(value);
       break;
     default:
