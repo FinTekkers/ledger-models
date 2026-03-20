@@ -1,0 +1,4 @@
+# Auth token goes in ~/.npmrc, never in repo.
+# To configure locally, run:
+#   echo "//npm.pkg.github.com/:_authToken=YOUR_TOKEN" >> ~/.npmrc
+@fintekkers:registry=https://npm.pkg.github.com

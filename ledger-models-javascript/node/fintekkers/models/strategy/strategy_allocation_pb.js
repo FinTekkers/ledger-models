@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_strategy_strategy_pb = require('../../../fintekkers/models/strategy/strategy_pb.js');
 goog.object.extend(proto, fintekkers_models_strategy_strategy_pb);
@@ -105,8 +99,8 @@ proto.fintekkers.models.strategy.MapFieldEntry.prototype.toObject = function(opt
  */
 proto.fintekkers.models.strategy.MapFieldEntry.toObject = function(includeInstance, msg) {
   var f, obj = {
-    key: (f = msg.getKey()) && fintekkers_models_strategy_strategy_pb.StrategyProto.toObject(includeInstance, f),
-    value: (f = msg.getValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+key: (f = msg.getKey()) && fintekkers_models_strategy_strategy_pb.StrategyProto.toObject(includeInstance, f),
+value: (f = msg.getValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -119,7 +113,7 @@ proto.fintekkers.models.strategy.MapFieldEntry.toObject = function(includeInstan
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.strategy.MapFieldEntry}
  */
 proto.fintekkers.models.strategy.MapFieldEntry.deserializeBinary = function(bytes) {
@@ -314,12 +308,12 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.toObject = fu
  */
 proto.fintekkers.models.strategy.StrategyAllocationProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
-    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-    isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
-    allocationsList: jspb.Message.toObjectList(msg.getAllocationsList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
+asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
+allocationsList: jspb.Message.toObjectList(msg.getAllocationsList(),
     proto.fintekkers.models.strategy.MapFieldEntry.toObject, includeInstance)
   };
 
@@ -333,7 +327,7 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.toObject = function(inc
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.strategy.StrategyAllocationProto}
  */
 proto.fintekkers.models.strategy.StrategyAllocationProto.deserializeBinary = function(bytes) {

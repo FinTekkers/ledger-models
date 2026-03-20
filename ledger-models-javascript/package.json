@@ -1,7 +1,7 @@
 {
   "name": "@fintekkers/ledger-models",
   "todo": "Replace the version with build script version number",
-  "version": "0.0.103",
+  "version": "0.1.124",
   "description": "ledger model protos ",
   "authors": [
     "David Doherty",
@@ -15,7 +15,7 @@
     "url": "https://github.com/FinTekkers/ledger-models.git"
   },
   "peerDependencies": {
-    "google-protobuf": "^3.21.2",
+    "google-protobuf": "^4.0.2",
     "grpc-web": "^1.4.2"
   },
   "publishConfigNotes": "This package.json does not have a publish config defining the registry because we currently publish to both Github packages & npmjs, so the registry is in the ../.github/workflows/publish.yml files at runtime",
@@ -29,8 +29,8 @@
     "@types/jest": "^29.5.3",
     "@types/luxon": "^3.6.2",
     "@types/uuid": "^10.0.0",
-    "grpc-tools": "^1.12.4",
     "grpc_tools_node_protoc_ts": "^5.3.3",
+    "grpc-tools": "^1.13.1",
     "jest": "^29.6.1",
     "jsdom": "^22.1.0",
     "ts-jest": "^29.1.1"

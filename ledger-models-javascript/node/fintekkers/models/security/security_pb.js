@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_util_decimal_value_pb = require('../../../fintekkers/models/util/decimal_value_pb.js');
 goog.object.extend(proto, fintekkers_models_util_decimal_value_pb);
@@ -104,32 +98,36 @@ proto.fintekkers.models.security.SecurityProto.prototype.toObject = function(opt
  */
 proto.fintekkers.models.security.SecurityProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
-    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-    isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
-    validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-    validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-    securityType: jspb.Message.getFieldWithDefault(msg, 10, 0),
-    assetClass: jspb.Message.getFieldWithDefault(msg, 11, ""),
-    issuerName: jspb.Message.getFieldWithDefault(msg, 12, ""),
-    settlementCurrency: (f = msg.getSettlementCurrency()) && proto.fintekkers.models.security.SecurityProto.toObject(includeInstance, f),
-    quantityType: jspb.Message.getFieldWithDefault(msg, 14, 0),
-    identifier: (f = msg.getIdentifier()) && fintekkers_models_security_identifier_identifier_pb.IdentifierProto.toObject(includeInstance, f),
-    description: jspb.Message.getFieldWithDefault(msg, 41, ""),
-    cashId: jspb.Message.getFieldWithDefault(msg, 50, ""),
-    couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-    couponType: jspb.Message.getFieldWithDefault(msg, 61, 0),
-    couponFrequency: jspb.Message.getFieldWithDefault(msg, 62, 0),
-    datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-    faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-    issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-    maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-    issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
+asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
+validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+securityType: jspb.Message.getFieldWithDefault(msg, 10, 0),
+assetClass: jspb.Message.getFieldWithDefault(msg, 11, ""),
+issuerName: jspb.Message.getFieldWithDefault(msg, 12, ""),
+settlementCurrency: (f = msg.getSettlementCurrency()) && proto.fintekkers.models.security.SecurityProto.toObject(includeInstance, f),
+quantityType: jspb.Message.getFieldWithDefault(msg, 14, 0),
+identifier: (f = msg.getIdentifier()) && fintekkers_models_security_identifier_identifier_pb.IdentifierProto.toObject(includeInstance, f),
+description: jspb.Message.getFieldWithDefault(msg, 41, ""),
+cashId: jspb.Message.getFieldWithDefault(msg, 50, ""),
+couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+couponType: jspb.Message.getFieldWithDefault(msg, 61, 0),
+couponFrequency: jspb.Message.getFieldWithDefault(msg, 62, 0),
+datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
     fintekkers_models_security_bond_issuance_pb.IssuanceProto.toObject, includeInstance),
-    baseCpi: (f = msg.getBaseCpi()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-    indexType: jspb.Message.getFieldWithDefault(msg, 80, 0)
+baseCpi: (f = msg.getBaseCpi()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+indexDate: (f = msg.getIndexDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+inflationIndexType: jspb.Message.getFieldWithDefault(msg, 72, 0),
+indexType: jspb.Message.getFieldWithDefault(msg, 80, 0),
+spread: (f = msg.getSpread()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+referenceRateIndex: jspb.Message.getFieldWithDefault(msg, 91, 0)
   };
 
   if (includeInstance) {
@@ -142,7 +140,7 @@ proto.fintekkers.models.security.SecurityProto.toObject = function(includeInstan
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.SecurityProto}
  */
 proto.fintekkers.models.security.SecurityProto.deserializeBinary = function(bytes) {
@@ -275,9 +273,27 @@ proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader = fun
       reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
       msg.setBaseCpi(value);
       break;
+    case 71:
+      var value = new fintekkers_models_util_local_date_pb.LocalDateProto;
+      reader.readMessage(value,fintekkers_models_util_local_date_pb.LocalDateProto.deserializeBinaryFromReader);
+      msg.setIndexDate(value);
+      break;
+    case 72:
+      var value = /** @type {!proto.fintekkers.models.security.index.IndexTypeProto} */ (reader.readEnum());
+      msg.setInflationIndexType(value);
+      break;
     case 80:
       var value = /** @type {!proto.fintekkers.models.security.index.IndexTypeProto} */ (reader.readEnum());
       msg.setIndexType(value);
+      break;
+    case 90:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setSpread(value);
+      break;
+    case 91:
+      var value = /** @type {!proto.fintekkers.models.security.index.IndexTypeProto} */ (reader.readEnum());
+      msg.setReferenceRateIndex(value);
       break;
     default:
       reader.skipField();
@@ -489,10 +505,40 @@ proto.fintekkers.models.security.SecurityProto.serializeBinaryToWriter = functio
       fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
     );
   }
+  f = message.getIndexDate();
+  if (f != null) {
+    writer.writeMessage(
+      71,
+      f,
+      fintekkers_models_util_local_date_pb.LocalDateProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getInflationIndexType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      72,
+      f
+    );
+  }
   f = message.getIndexType();
   if (f !== 0.0) {
     writer.writeEnum(
       80,
+      f
+    );
+  }
+  f = message.getSpread();
+  if (f != null) {
+    writer.writeMessage(
+      90,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getReferenceRateIndex();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      91,
       f
     );
   }
@@ -1180,6 +1226,61 @@ proto.fintekkers.models.security.SecurityProto.prototype.hasBaseCpi = function()
 
 
 /**
+ * optional fintekkers.models.util.LocalDateProto index_date = 71;
+ * @return {?proto.fintekkers.models.util.LocalDateProto}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.getIndexDate = function() {
+  return /** @type{?proto.fintekkers.models.util.LocalDateProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_local_date_pb.LocalDateProto, 71));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.LocalDateProto|undefined} value
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+*/
+proto.fintekkers.models.security.SecurityProto.prototype.setIndexDate = function(value) {
+  return jspb.Message.setWrapperField(this, 71, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.clearIndexDate = function() {
+  return this.setIndexDate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.hasIndexDate = function() {
+  return jspb.Message.getField(this, 71) != null;
+};
+
+
+/**
+ * optional index.IndexTypeProto inflation_index_type = 72;
+ * @return {!proto.fintekkers.models.security.index.IndexTypeProto}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.getInflationIndexType = function() {
+  return /** @type {!proto.fintekkers.models.security.index.IndexTypeProto} */ (jspb.Message.getFieldWithDefault(this, 72, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.security.index.IndexTypeProto} value
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.setInflationIndexType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 72, value);
+};
+
+
+/**
  * optional index.IndexTypeProto index_type = 80;
  * @return {!proto.fintekkers.models.security.index.IndexTypeProto}
  */
@@ -1194,6 +1295,61 @@ proto.fintekkers.models.security.SecurityProto.prototype.getIndexType = function
  */
 proto.fintekkers.models.security.SecurityProto.prototype.setIndexType = function(value) {
   return jspb.Message.setProto3EnumField(this, 80, value);
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto spread = 90;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.getSpread = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 90));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+*/
+proto.fintekkers.models.security.SecurityProto.prototype.setSpread = function(value) {
+  return jspb.Message.setWrapperField(this, 90, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.clearSpread = function() {
+  return this.setSpread(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.hasSpread = function() {
+  return jspb.Message.getField(this, 90) != null;
+};
+
+
+/**
+ * optional index.IndexTypeProto reference_rate_index = 91;
+ * @return {!proto.fintekkers.models.security.index.IndexTypeProto}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.getReferenceRateIndex = function() {
+  return /** @type {!proto.fintekkers.models.security.index.IndexTypeProto} */ (jspb.Message.getFieldWithDefault(this, 91, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.security.index.IndexTypeProto} value
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.setReferenceRateIndex = function(value) {
+  return jspb.Message.setProto3EnumField(this, 91, value);
 };
 
 

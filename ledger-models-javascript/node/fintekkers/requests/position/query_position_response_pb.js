@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_position_position_pb = require('../../../fintekkers/models/position/position_pb.js');
 goog.object.extend(proto, fintekkers_models_position_position_pb);
@@ -86,11 +80,11 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.prototype.toObject
  */
 proto.fintekkers.requests.position.QueryPositionResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    positionRequest: (f = msg.getPositionRequest()) && fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto.toObject(includeInstance, f),
-    reportingCurrency: jspb.Message.getFieldWithDefault(msg, 12, ""),
-    positionsList: jspb.Message.toObjectList(msg.getPositionsList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+positionRequest: (f = msg.getPositionRequest()) && fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto.toObject(includeInstance, f),
+reportingCurrency: jspb.Message.getFieldWithDefault(msg, 12, ""),
+positionsList: jspb.Message.toObjectList(msg.getPositionsList(),
     fintekkers_models_position_position_pb.PositionProto.toObject, includeInstance)
   };
 
@@ -104,7 +98,7 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.toObject = functio
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.position.QueryPositionResponseProto}
  */
 proto.fintekkers.requests.position.QueryPositionResponseProto.deserializeBinary = function(bytes) {

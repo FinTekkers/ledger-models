@@ -107,55 +107,6 @@ public final class MessageOuterClass {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private Message(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              messageForUser_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              messageForDeveloper_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return fintekkers.requests.util.errors.MessageOuterClass.internal_static_fintekkers_requests_util_errors_Message_descriptor;
@@ -170,7 +121,8 @@ public final class MessageOuterClass {
     }
 
     public static final int MESSAGE_FOR_USER_FIELD_NUMBER = 1;
-    private volatile java.lang.Object messageForUser_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object messageForUser_ = "";
     /**
      * <pre>
      *This message should not have any technical knowledge requirements to be understood
@@ -228,7 +180,8 @@ public final class MessageOuterClass {
     }
 
     public static final int MESSAGE_FOR_DEVELOPER_FIELD_NUMBER = 2;
-    private volatile java.lang.Object messageForDeveloper_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object messageForDeveloper_ = "";
     /**
      * <pre>
      *This message can be used to instruct a developer operating on APIs how best to approach
@@ -295,13 +248,13 @@ public final class MessageOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getMessageForUserBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(messageForUser_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, messageForUser_);
       }
-      if (!getMessageForDeveloperBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(messageForDeveloper_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, messageForDeveloper_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -310,13 +263,13 @@ public final class MessageOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!getMessageForUserBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(messageForUser_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, messageForUser_);
       }
-      if (!getMessageForDeveloperBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(messageForDeveloper_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, messageForDeveloper_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -335,7 +288,7 @@ public final class MessageOuterClass {
           .equals(other.getMessageForUser())) return false;
       if (!getMessageForDeveloper()
           .equals(other.getMessageForDeveloper())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -350,7 +303,7 @@ public final class MessageOuterClass {
       hash = (53 * hash) + getMessageForUser().hashCode();
       hash = (37 * hash) + MESSAGE_FOR_DEVELOPER_FIELD_NUMBER;
       hash = (53 * hash) + getMessageForDeveloper().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -467,26 +420,20 @@ public final class MessageOuterClass {
 
       // Construct using fintekkers.requests.util.errors.MessageOuterClass.Message.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         messageForUser_ = "";
-
         messageForDeveloper_ = "";
-
         return this;
       }
 
@@ -513,10 +460,19 @@ public final class MessageOuterClass {
       @java.lang.Override
       public fintekkers.requests.util.errors.MessageOuterClass.Message buildPartial() {
         fintekkers.requests.util.errors.MessageOuterClass.Message result = new fintekkers.requests.util.errors.MessageOuterClass.Message(this);
-        result.messageForUser_ = messageForUser_;
-        result.messageForDeveloper_ = messageForDeveloper_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(fintekkers.requests.util.errors.MessageOuterClass.Message result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.messageForUser_ = messageForUser_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.messageForDeveloper_ = messageForDeveloper_;
+        }
       }
 
       @java.lang.Override
@@ -565,13 +521,15 @@ public final class MessageOuterClass {
         if (other == fintekkers.requests.util.errors.MessageOuterClass.Message.getDefaultInstance()) return this;
         if (!other.getMessageForUser().isEmpty()) {
           messageForUser_ = other.messageForUser_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getMessageForDeveloper().isEmpty()) {
           messageForDeveloper_ = other.messageForDeveloper_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -586,19 +544,43 @@ public final class MessageOuterClass {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        fintekkers.requests.util.errors.MessageOuterClass.Message parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                messageForUser_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                messageForDeveloper_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (fintekkers.requests.util.errors.MessageOuterClass.Message) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object messageForUser_ = "";
       /**
@@ -671,11 +653,9 @@ public final class MessageOuterClass {
        */
       public Builder setMessageForUser(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         messageForUser_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -694,8 +674,8 @@ public final class MessageOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearMessageForUser() {
-        
         messageForUser_ = getDefaultInstance().getMessageForUser();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -716,12 +696,10 @@ public final class MessageOuterClass {
        */
       public Builder setMessageForUserBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         messageForUser_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -791,11 +769,9 @@ public final class MessageOuterClass {
        */
       public Builder setMessageForDeveloper(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         messageForDeveloper_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -812,8 +788,8 @@ public final class MessageOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearMessageForDeveloper() {
-        
         messageForDeveloper_ = getDefaultInstance().getMessageForDeveloper();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -832,12 +808,10 @@ public final class MessageOuterClass {
        */
       public Builder setMessageForDeveloperBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         messageForDeveloper_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -874,7 +848,18 @@ public final class MessageOuterClass {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Message(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 

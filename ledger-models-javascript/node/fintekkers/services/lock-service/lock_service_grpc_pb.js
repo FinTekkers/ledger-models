@@ -13,7 +13,7 @@ function serialize_fintekkers_models_util_lock_NodePartition(arg) {
   if (!(arg instanceof fintekkers_models_util_lock_node_partition_pb.NodePartition)) {
     throw new Error('Expected argument of type fintekkers.models.util.lock.NodePartition');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_models_util_lock_NodePartition(buffer_arg) {
@@ -24,7 +24,7 @@ function serialize_fintekkers_models_util_lock_NodeState(arg) {
   if (!(arg instanceof fintekkers_models_util_lock_node_state_pb.NodeState)) {
     throw new Error('Expected argument of type fintekkers.models.util.lock.NodeState');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_models_util_lock_NodeState(buffer_arg) {
@@ -35,7 +35,7 @@ function serialize_fintekkers_requests_util_lock_LockRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_util_lock_lock_request_pb.LockRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.util.lock.LockRequestProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_util_lock_LockRequestProto(buffer_arg) {
@@ -46,7 +46,7 @@ function serialize_fintekkers_requests_util_lock_LockResponseProto(arg) {
   if (!(arg instanceof fintekkers_requests_util_lock_lock_response_pb.LockResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.util.lock.LockResponseProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_util_lock_LockResponseProto(buffer_arg) {
@@ -57,7 +57,7 @@ function serialize_fintekkers_services_lock_service_CreateNamespaceRequest(arg) 
   if (!(arg instanceof fintekkers_services_lock$service_lock_service_pb.CreateNamespaceRequest)) {
     throw new Error('Expected argument of type fintekkers.services.lock_service.CreateNamespaceRequest');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_services_lock_service_CreateNamespaceRequest(buffer_arg) {
@@ -68,7 +68,7 @@ function serialize_fintekkers_services_lock_service_CreatePartitionRequest(arg) 
   if (!(arg instanceof fintekkers_services_lock$service_lock_service_pb.CreatePartitionRequest)) {
     throw new Error('Expected argument of type fintekkers.services.lock_service.CreatePartitionRequest');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_services_lock_service_CreatePartitionRequest(buffer_arg) {
@@ -79,7 +79,7 @@ function serialize_fintekkers_services_lock_service_NamespaceList(arg) {
   if (!(arg instanceof fintekkers_services_lock$service_lock_service_pb.NamespaceList)) {
     throw new Error('Expected argument of type fintekkers.services.lock_service.NamespaceList');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_services_lock_service_NamespaceList(buffer_arg) {
@@ -90,7 +90,7 @@ function serialize_fintekkers_services_lock_service_NodeStateList(arg) {
   if (!(arg instanceof fintekkers_services_lock$service_lock_service_pb.NodeStateList)) {
     throw new Error('Expected argument of type fintekkers.services.lock_service.NodeStateList');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_services_lock_service_NodeStateList(buffer_arg) {
@@ -101,7 +101,7 @@ function serialize_fintekkers_services_lock_service_PartitionsList(arg) {
   if (!(arg instanceof fintekkers_services_lock$service_lock_service_pb.PartitionsList)) {
     throw new Error('Expected argument of type fintekkers.services.lock_service.PartitionsList');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_services_lock_service_PartitionsList(buffer_arg) {
@@ -112,7 +112,7 @@ function serialize_google_protobuf_Empty(arg) {
   if (!(arg instanceof google_protobuf_empty_pb.Empty)) {
     throw new Error('Expected argument of type google.protobuf.Empty');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_google_protobuf_Empty(buffer_arg) {
@@ -122,8 +122,8 @@ function deserialize_google_protobuf_Empty(buffer_arg) {
 
 var LockService = exports.LockService = {
   // Allows a Fintekkers service to claim the lock for a partition. 
-// See {fintekkers.request.util.lock.LockRequestProto} for details
-claimLock: {
+  // See {fintekkers.request.util.lock.LockRequestProto} for details
+  claimLock: {
     path: '/fintekkers.services.lock_service.Lock/ClaimLock',
     requestStream: false,
     responseStream: false,
@@ -135,9 +135,9 @@ claimLock: {
     responseDeserialize: deserialize_fintekkers_requests_util_lock_LockResponseProto,
   },
   // Streams any change in lock owner for any namespace/partition to the subscriber. 
-// Heartbeat updates are not streamed to subscribers. If a subsciber wants to build an in-memory cache of parition state
-// they should first subscribe to lock updates, then query the G
-subscribeToLockUpdates: {
+  // Heartbeat updates are not streamed to subscribers. If a subsciber wants to build an in-memory cache of parition state
+  // they should first subscribe to lock updates, then query the G
+  subscribeToLockUpdates: {
     path: '/fintekkers.services.lock_service.Lock/SubscribeToLockUpdates',
     requestStream: false,
     responseStream: true,
@@ -149,7 +149,7 @@ subscribeToLockUpdates: {
     responseDeserialize: deserialize_fintekkers_models_util_lock_NodeState,
   },
   // Create a namespace
-createNamespace: {
+  createNamespace: {
     path: '/fintekkers.services.lock_service.Lock/CreateNamespace',
     requestStream: false,
     responseStream: false,
@@ -161,7 +161,7 @@ createNamespace: {
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
   // Create a partition
-createPartition: {
+  createPartition: {
     path: '/fintekkers.services.lock_service.Lock/CreatePartition',
     requestStream: false,
     responseStream: false,
@@ -173,7 +173,7 @@ createPartition: {
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
   // Lists the possible namespaces
-listNamespaces: {
+  listNamespaces: {
     path: '/fintekkers.services.lock_service.Lock/ListNamespaces',
     requestStream: false,
     responseStream: false,
@@ -185,7 +185,7 @@ listNamespaces: {
     responseDeserialize: deserialize_fintekkers_services_lock_service_NamespaceList,
   },
   // Lists all partitions for the given list of namespaces
-listPartitions: {
+  listPartitions: {
     path: '/fintekkers.services.lock_service.Lock/ListPartitions',
     requestStream: false,
     responseStream: false,
@@ -197,7 +197,7 @@ listPartitions: {
     responseDeserialize: deserialize_fintekkers_services_lock_service_PartitionsList,
   },
   // Returns the current status of all nodes, across all namespaces and partitions.
-getAllPartitionStatus: {
+  getAllPartitionStatus: {
     path: '/fintekkers.services.lock_service.Lock/GetAllPartitionStatus',
     requestStream: false,
     responseStream: false,
@@ -209,7 +209,7 @@ getAllPartitionStatus: {
     responseDeserialize: deserialize_fintekkers_services_lock_service_NodeStateList,
   },
   // Returns the current status of all nodes, across all namespaces and partitions.
-getAllPartitionStatusForNamespaces: {
+  getAllPartitionStatusForNamespaces: {
     path: '/fintekkers.services.lock_service.Lock/GetAllPartitionStatusForNamespaces',
     requestStream: false,
     responseStream: false,
@@ -221,7 +221,7 @@ getAllPartitionStatusForNamespaces: {
     responseDeserialize: deserialize_fintekkers_services_lock_service_NodeStateList,
   },
   // In namespace / parition
-getPartitionStatus: {
+  getPartitionStatus: {
     path: '/fintekkers.services.lock_service.Lock/GetPartitionStatus',
     requestStream: false,
     responseStream: false,
@@ -234,4 +234,4 @@ getPartitionStatus: {
   },
 };
 
-exports.LockClient = grpc.makeGenericClientConstructor(LockService, 'Lock');
+exports.LockClient = grpc.makeGenericClientConstructor(LockService);

@@ -4,15 +4,12 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.51.0)",
-    comments = "Source: fintekkers/services/price-service/price_service.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class PriceGrpc {
 
   private PriceGrpc() {}
 
-  public static final String SERVICE_NAME = "fintekkers.services.price_service.Price";
+  public static final java.lang.String SERVICE_NAME = "fintekkers.services.price_service.Price";
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<fintekkers.requests.price.CreatePriceRequestProto,
@@ -216,6 +213,21 @@ public final class PriceGrpc {
   }
 
   /**
+   * Creates a new blocking-style stub that supports all types of calls on the service
+   */
+  public static PriceBlockingV2Stub newBlockingV2Stub(
+      io.grpc.Channel channel) {
+    io.grpc.stub.AbstractStub.StubFactory<PriceBlockingV2Stub> factory =
+      new io.grpc.stub.AbstractStub.StubFactory<PriceBlockingV2Stub>() {
+        @java.lang.Override
+        public PriceBlockingV2Stub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new PriceBlockingV2Stub(channel, callOptions);
+        }
+      };
+    return PriceBlockingV2Stub.newStub(factory, channel);
+  }
+
+  /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
   public static PriceBlockingStub newBlockingStub(
@@ -247,101 +259,67 @@ public final class PriceGrpc {
 
   /**
    */
-  public static abstract class PriceImplBase implements io.grpc.BindableService {
+  public interface AsyncService {
 
     /**
      */
-    public void createOrUpdate(fintekkers.requests.price.CreatePriceRequestProto request,
+    default void createOrUpdate(fintekkers.requests.price.CreatePriceRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.price.CreatePriceResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCreateOrUpdateMethod(), responseObserver);
     }
 
     /**
      */
-    public void getByIds(fintekkers.requests.price.QueryPriceRequestProto request,
+    default void getByIds(fintekkers.requests.price.QueryPriceRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.price.QueryPriceResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetByIdsMethod(), responseObserver);
     }
 
     /**
      */
-    public void search(fintekkers.requests.price.QueryPriceRequestProto request,
+    default void search(fintekkers.requests.price.QueryPriceRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.price.QueryPriceResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSearchMethod(), responseObserver);
     }
 
     /**
      */
-    public void listIds(fintekkers.requests.price.QueryPriceRequestProto request,
+    default void listIds(fintekkers.requests.price.QueryPriceRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.price.QueryPriceResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListIdsMethod(), responseObserver);
     }
 
     /**
      */
-    public void validateCreateOrUpdate(fintekkers.requests.price.CreatePriceRequestProto request,
+    default void validateCreateOrUpdate(fintekkers.requests.price.CreatePriceRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getValidateCreateOrUpdateMethod(), responseObserver);
     }
 
     /**
      */
-    public void validateQueryRequest(fintekkers.requests.price.QueryPriceRequestProto request,
+    default void validateQueryRequest(fintekkers.requests.price.QueryPriceRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getValidateQueryRequestMethod(), responseObserver);
-    }
-
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
-      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
-          .addMethod(
-            getCreateOrUpdateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.price.CreatePriceRequestProto,
-                fintekkers.requests.price.CreatePriceResponseProto>(
-                  this, METHODID_CREATE_OR_UPDATE)))
-          .addMethod(
-            getGetByIdsMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.price.QueryPriceRequestProto,
-                fintekkers.requests.price.QueryPriceResponseProto>(
-                  this, METHODID_GET_BY_IDS)))
-          .addMethod(
-            getSearchMethod(),
-            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
-              new MethodHandlers<
-                fintekkers.requests.price.QueryPriceRequestProto,
-                fintekkers.requests.price.QueryPriceResponseProto>(
-                  this, METHODID_SEARCH)))
-          .addMethod(
-            getListIdsMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.price.QueryPriceRequestProto,
-                fintekkers.requests.price.QueryPriceResponseProto>(
-                  this, METHODID_LIST_IDS)))
-          .addMethod(
-            getValidateCreateOrUpdateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.price.CreatePriceRequestProto,
-                fintekkers.requests.util.errors.Summary.SummaryProto>(
-                  this, METHODID_VALIDATE_CREATE_OR_UPDATE)))
-          .addMethod(
-            getValidateQueryRequestMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.price.QueryPriceRequestProto,
-                fintekkers.requests.util.errors.Summary.SummaryProto>(
-                  this, METHODID_VALIDATE_QUERY_REQUEST)))
-          .build();
     }
   }
 
   /**
+   * Base class for the server implementation of the service Price.
    */
-  public static final class PriceStub extends io.grpc.stub.AbstractAsyncStub<PriceStub> {
+  public static abstract class PriceImplBase
+      implements io.grpc.BindableService, AsyncService {
+
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+      return PriceGrpc.bindService(this);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do asynchronous rpc calls to service Price.
+   */
+  public static final class PriceStub
+      extends io.grpc.stub.AbstractAsyncStub<PriceStub> {
     private PriceStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -403,8 +381,71 @@ public final class PriceGrpc {
   }
 
   /**
+   * A stub to allow clients to do synchronous rpc calls to service Price.
    */
-  public static final class PriceBlockingStub extends io.grpc.stub.AbstractBlockingStub<PriceBlockingStub> {
+  public static final class PriceBlockingV2Stub
+      extends io.grpc.stub.AbstractBlockingStub<PriceBlockingV2Stub> {
+    private PriceBlockingV2Stub(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      super(channel, callOptions);
+    }
+
+    @java.lang.Override
+    protected PriceBlockingV2Stub build(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      return new PriceBlockingV2Stub(channel, callOptions);
+    }
+
+    /**
+     */
+    public fintekkers.requests.price.CreatePriceResponseProto createOrUpdate(fintekkers.requests.price.CreatePriceRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getCreateOrUpdateMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.price.QueryPriceResponseProto getByIds(fintekkers.requests.price.QueryPriceRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetByIdsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
+    public io.grpc.stub.BlockingClientCall<?, fintekkers.requests.price.QueryPriceResponseProto>
+        search(fintekkers.requests.price.QueryPriceRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingV2ServerStreamingCall(
+          getChannel(), getSearchMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.price.QueryPriceResponseProto listIds(fintekkers.requests.price.QueryPriceRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getListIdsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(fintekkers.requests.price.CreatePriceRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getValidateCreateOrUpdateMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto validateQueryRequest(fintekkers.requests.price.QueryPriceRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getValidateQueryRequestMethod(), getCallOptions(), request);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do limited synchronous rpc calls to service Price.
+   */
+  public static final class PriceBlockingStub
+      extends io.grpc.stub.AbstractBlockingStub<PriceBlockingStub> {
     private PriceBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -461,8 +502,10 @@ public final class PriceGrpc {
   }
 
   /**
+   * A stub to allow clients to do ListenableFuture-style rpc calls to service Price.
    */
-  public static final class PriceFutureStub extends io.grpc.stub.AbstractFutureStub<PriceFutureStub> {
+  public static final class PriceFutureStub
+      extends io.grpc.stub.AbstractFutureStub<PriceFutureStub> {
     private PriceFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -527,10 +570,10 @@ public final class PriceGrpc {
       io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
-    private final PriceImplBase serviceImpl;
+    private final AsyncService serviceImpl;
     private final int methodId;
 
-    MethodHandlers(PriceImplBase serviceImpl, int methodId) {
+    MethodHandlers(AsyncService serviceImpl, int methodId) {
       this.serviceImpl = serviceImpl;
       this.methodId = methodId;
     }
@@ -579,6 +622,53 @@ public final class PriceGrpc {
     }
   }
 
+  public static final io.grpc.ServerServiceDefinition bindService(AsyncService service) {
+    return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
+        .addMethod(
+          getCreateOrUpdateMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.price.CreatePriceRequestProto,
+              fintekkers.requests.price.CreatePriceResponseProto>(
+                service, METHODID_CREATE_OR_UPDATE)))
+        .addMethod(
+          getGetByIdsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.price.QueryPriceRequestProto,
+              fintekkers.requests.price.QueryPriceResponseProto>(
+                service, METHODID_GET_BY_IDS)))
+        .addMethod(
+          getSearchMethod(),
+          io.grpc.stub.ServerCalls.asyncServerStreamingCall(
+            new MethodHandlers<
+              fintekkers.requests.price.QueryPriceRequestProto,
+              fintekkers.requests.price.QueryPriceResponseProto>(
+                service, METHODID_SEARCH)))
+        .addMethod(
+          getListIdsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.price.QueryPriceRequestProto,
+              fintekkers.requests.price.QueryPriceResponseProto>(
+                service, METHODID_LIST_IDS)))
+        .addMethod(
+          getValidateCreateOrUpdateMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.price.CreatePriceRequestProto,
+              fintekkers.requests.util.errors.Summary.SummaryProto>(
+                service, METHODID_VALIDATE_CREATE_OR_UPDATE)))
+        .addMethod(
+          getValidateQueryRequestMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.price.QueryPriceRequestProto,
+              fintekkers.requests.util.errors.Summary.SummaryProto>(
+                service, METHODID_VALIDATE_QUERY_REQUEST)))
+        .build();
+  }
+
   private static abstract class PriceBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     PriceBaseDescriptorSupplier() {}
@@ -602,9 +692,9 @@ public final class PriceGrpc {
   private static final class PriceMethodDescriptorSupplier
       extends PriceBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoMethodDescriptorSupplier {
-    private final String methodName;
+    private final java.lang.String methodName;
 
-    PriceMethodDescriptorSupplier(String methodName) {
+    PriceMethodDescriptorSupplier(java.lang.String methodName) {
       this.methodName = methodName;
     }
 

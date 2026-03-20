@@ -4,15 +4,12 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.51.0)",
-    comments = "Source: fintekkers/services/position-service/position_service.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class PositionGrpc {
 
   private PositionGrpc() {}
 
-  public static final String SERVICE_NAME = "fintekkers.services.position_service.Position";
+  public static final java.lang.String SERVICE_NAME = "fintekkers.services.position_service.Position";
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<fintekkers.requests.position.QueryPositionRequestProto,
@@ -92,6 +89,21 @@ public final class PositionGrpc {
   }
 
   /**
+   * Creates a new blocking-style stub that supports all types of calls on the service
+   */
+  public static PositionBlockingV2Stub newBlockingV2Stub(
+      io.grpc.Channel channel) {
+    io.grpc.stub.AbstractStub.StubFactory<PositionBlockingV2Stub> factory =
+      new io.grpc.stub.AbstractStub.StubFactory<PositionBlockingV2Stub>() {
+        @java.lang.Override
+        public PositionBlockingV2Stub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new PositionBlockingV2Stub(channel, callOptions);
+        }
+      };
+    return PositionBlockingV2Stub.newStub(factory, channel);
+  }
+
+  /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
   public static PositionBlockingStub newBlockingStub(
@@ -123,14 +135,14 @@ public final class PositionGrpc {
 
   /**
    */
-  public static abstract class PositionImplBase implements io.grpc.BindableService {
+  public interface AsyncService {
 
     /**
      * <pre>
      *    rpc GetByIds (position.QueryPositionRequestProto) returns (position.QueryPositionResponseProto);
      * </pre>
      */
-    public void search(fintekkers.requests.position.QueryPositionRequestProto request,
+    default void search(fintekkers.requests.position.QueryPositionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.position.QueryPositionResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSearchMethod(), responseObserver);
     }
@@ -140,34 +152,28 @@ public final class PositionGrpc {
      *    rpc ValidateCreateOrUpdate (transaction.CreateTransactionRequestProto) returns (util.errors.SummaryProto);
      * </pre>
      */
-    public void validateQueryRequest(fintekkers.requests.position.QueryPositionRequestProto request,
+    default void validateQueryRequest(fintekkers.requests.position.QueryPositionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getValidateQueryRequestMethod(), responseObserver);
-    }
-
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
-      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
-          .addMethod(
-            getSearchMethod(),
-            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
-              new MethodHandlers<
-                fintekkers.requests.position.QueryPositionRequestProto,
-                fintekkers.requests.position.QueryPositionResponseProto>(
-                  this, METHODID_SEARCH)))
-          .addMethod(
-            getValidateQueryRequestMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.position.QueryPositionRequestProto,
-                fintekkers.requests.util.errors.Summary.SummaryProto>(
-                  this, METHODID_VALIDATE_QUERY_REQUEST)))
-          .build();
     }
   }
 
   /**
+   * Base class for the server implementation of the service Position.
    */
-  public static final class PositionStub extends io.grpc.stub.AbstractAsyncStub<PositionStub> {
+  public static abstract class PositionImplBase
+      implements io.grpc.BindableService, AsyncService {
+
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+      return PositionGrpc.bindService(this);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do asynchronous rpc calls to service Position.
+   */
+  public static final class PositionStub
+      extends io.grpc.stub.AbstractAsyncStub<PositionStub> {
     private PositionStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -203,8 +209,49 @@ public final class PositionGrpc {
   }
 
   /**
+   * A stub to allow clients to do synchronous rpc calls to service Position.
    */
-  public static final class PositionBlockingStub extends io.grpc.stub.AbstractBlockingStub<PositionBlockingStub> {
+  public static final class PositionBlockingV2Stub
+      extends io.grpc.stub.AbstractBlockingStub<PositionBlockingV2Stub> {
+    private PositionBlockingV2Stub(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      super(channel, callOptions);
+    }
+
+    @java.lang.Override
+    protected PositionBlockingV2Stub build(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      return new PositionBlockingV2Stub(channel, callOptions);
+    }
+
+    /**
+     * <pre>
+     *    rpc GetByIds (position.QueryPositionRequestProto) returns (position.QueryPositionResponseProto);
+     * </pre>
+     */
+    @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
+    public io.grpc.stub.BlockingClientCall<?, fintekkers.requests.position.QueryPositionResponseProto>
+        search(fintekkers.requests.position.QueryPositionRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingV2ServerStreamingCall(
+          getChannel(), getSearchMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     *    rpc ValidateCreateOrUpdate (transaction.CreateTransactionRequestProto) returns (util.errors.SummaryProto);
+     * </pre>
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto validateQueryRequest(fintekkers.requests.position.QueryPositionRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getValidateQueryRequestMethod(), getCallOptions(), request);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do limited synchronous rpc calls to service Position.
+   */
+  public static final class PositionBlockingStub
+      extends io.grpc.stub.AbstractBlockingStub<PositionBlockingStub> {
     private PositionBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -239,8 +286,10 @@ public final class PositionGrpc {
   }
 
   /**
+   * A stub to allow clients to do ListenableFuture-style rpc calls to service Position.
    */
-  public static final class PositionFutureStub extends io.grpc.stub.AbstractFutureStub<PositionFutureStub> {
+  public static final class PositionFutureStub
+      extends io.grpc.stub.AbstractFutureStub<PositionFutureStub> {
     private PositionFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -272,10 +321,10 @@ public final class PositionGrpc {
       io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
-    private final PositionImplBase serviceImpl;
+    private final AsyncService serviceImpl;
     private final int methodId;
 
-    MethodHandlers(PositionImplBase serviceImpl, int methodId) {
+    MethodHandlers(AsyncService serviceImpl, int methodId) {
       this.serviceImpl = serviceImpl;
       this.methodId = methodId;
     }
@@ -308,6 +357,25 @@ public final class PositionGrpc {
     }
   }
 
+  public static final io.grpc.ServerServiceDefinition bindService(AsyncService service) {
+    return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
+        .addMethod(
+          getSearchMethod(),
+          io.grpc.stub.ServerCalls.asyncServerStreamingCall(
+            new MethodHandlers<
+              fintekkers.requests.position.QueryPositionRequestProto,
+              fintekkers.requests.position.QueryPositionResponseProto>(
+                service, METHODID_SEARCH)))
+        .addMethod(
+          getValidateQueryRequestMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.position.QueryPositionRequestProto,
+              fintekkers.requests.util.errors.Summary.SummaryProto>(
+                service, METHODID_VALIDATE_QUERY_REQUEST)))
+        .build();
+  }
+
   private static abstract class PositionBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     PositionBaseDescriptorSupplier() {}
@@ -331,9 +399,9 @@ public final class PositionGrpc {
   private static final class PositionMethodDescriptorSupplier
       extends PositionBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoMethodDescriptorSupplier {
-    private final String methodName;
+    private final java.lang.String methodName;
 
-    PositionMethodDescriptorSupplier(String methodName) {
+    PositionMethodDescriptorSupplier(java.lang.String methodName) {
       this.methodName = methodName;
     }
 

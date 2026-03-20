@@ -4,15 +4,12 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.51.0)",
-    comments = "Source: fintekkers/services/security-service/security_service.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class SecurityGrpc {
 
   private SecurityGrpc() {}
 
-  public static final String SERVICE_NAME = "fintekkers.services.security_service.Security";
+  public static final java.lang.String SERVICE_NAME = "fintekkers.services.security_service.Security";
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<fintekkers.requests.security.CreateSecurityRequestProto,
@@ -137,6 +134,37 @@ public final class SecurityGrpc {
       }
     }
     return getListIdsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<fintekkers.requests.util.DeleteRequestProto,
+      fintekkers.requests.util.DeleteResponseProto> getDeleteMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "Delete",
+      requestType = fintekkers.requests.util.DeleteRequestProto.class,
+      responseType = fintekkers.requests.util.DeleteResponseProto.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<fintekkers.requests.util.DeleteRequestProto,
+      fintekkers.requests.util.DeleteResponseProto> getDeleteMethod() {
+    io.grpc.MethodDescriptor<fintekkers.requests.util.DeleteRequestProto, fintekkers.requests.util.DeleteResponseProto> getDeleteMethod;
+    if ((getDeleteMethod = SecurityGrpc.getDeleteMethod) == null) {
+      synchronized (SecurityGrpc.class) {
+        if ((getDeleteMethod = SecurityGrpc.getDeleteMethod) == null) {
+          SecurityGrpc.getDeleteMethod = getDeleteMethod =
+              io.grpc.MethodDescriptor.<fintekkers.requests.util.DeleteRequestProto, fintekkers.requests.util.DeleteResponseProto>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "Delete"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.util.DeleteRequestProto.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.util.DeleteResponseProto.getDefaultInstance()))
+              .setSchemaDescriptor(new SecurityMethodDescriptorSupplier("Delete"))
+              .build();
+        }
+      }
+    }
+    return getDeleteMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<fintekkers.requests.security.CreateSecurityRequestProto,
@@ -278,6 +306,21 @@ public final class SecurityGrpc {
   }
 
   /**
+   * Creates a new blocking-style stub that supports all types of calls on the service
+   */
+  public static SecurityBlockingV2Stub newBlockingV2Stub(
+      io.grpc.Channel channel) {
+    io.grpc.stub.AbstractStub.StubFactory<SecurityBlockingV2Stub> factory =
+      new io.grpc.stub.AbstractStub.StubFactory<SecurityBlockingV2Stub>() {
+        @java.lang.Override
+        public SecurityBlockingV2Stub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new SecurityBlockingV2Stub(channel, callOptions);
+        }
+      };
+    return SecurityBlockingV2Stub.newStub(factory, channel);
+  }
+
+  /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
   public static SecurityBlockingStub newBlockingStub(
@@ -309,129 +352,88 @@ public final class SecurityGrpc {
 
   /**
    */
-  public static abstract class SecurityImplBase implements io.grpc.BindableService {
+  public interface AsyncService {
 
     /**
      */
-    public void createOrUpdate(fintekkers.requests.security.CreateSecurityRequestProto request,
+    default void createOrUpdate(fintekkers.requests.security.CreateSecurityRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.security.CreateSecurityResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCreateOrUpdateMethod(), responseObserver);
     }
 
     /**
      */
-    public void getByIds(fintekkers.requests.security.QuerySecurityRequestProto request,
+    default void getByIds(fintekkers.requests.security.QuerySecurityRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.security.QuerySecurityResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetByIdsMethod(), responseObserver);
     }
 
     /**
      */
-    public void search(fintekkers.requests.security.QuerySecurityRequestProto request,
+    default void search(fintekkers.requests.security.QuerySecurityRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.security.QuerySecurityResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSearchMethod(), responseObserver);
     }
 
     /**
      */
-    public void listIds(fintekkers.requests.security.QuerySecurityRequestProto request,
+    default void listIds(fintekkers.requests.security.QuerySecurityRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.security.QuerySecurityResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListIdsMethod(), responseObserver);
     }
 
     /**
      */
-    public void validateCreateOrUpdate(fintekkers.requests.security.CreateSecurityRequestProto request,
+    default void delete(fintekkers.requests.util.DeleteRequestProto request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.util.DeleteResponseProto> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void validateCreateOrUpdate(fintekkers.requests.security.CreateSecurityRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getValidateCreateOrUpdateMethod(), responseObserver);
     }
 
     /**
      */
-    public void validateQueryRequest(fintekkers.requests.security.QuerySecurityRequestProto request,
+    default void validateQueryRequest(fintekkers.requests.security.QuerySecurityRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getValidateQueryRequestMethod(), responseObserver);
     }
 
     /**
      */
-    public void getFields(com.google.protobuf.Empty request,
+    default void getFields(com.google.protobuf.Empty request,
         io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldsResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetFieldsMethod(), responseObserver);
     }
 
     /**
      */
-    public void getFieldValues(fintekkers.requests.security.GetFieldValuesRequestProto request,
+    default void getFieldValues(fintekkers.requests.security.GetFieldValuesRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldValuesResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetFieldValuesMethod(), responseObserver);
-    }
-
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
-      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
-          .addMethod(
-            getCreateOrUpdateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.security.CreateSecurityRequestProto,
-                fintekkers.requests.security.CreateSecurityResponseProto>(
-                  this, METHODID_CREATE_OR_UPDATE)))
-          .addMethod(
-            getGetByIdsMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.security.QuerySecurityRequestProto,
-                fintekkers.requests.security.QuerySecurityResponseProto>(
-                  this, METHODID_GET_BY_IDS)))
-          .addMethod(
-            getSearchMethod(),
-            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
-              new MethodHandlers<
-                fintekkers.requests.security.QuerySecurityRequestProto,
-                fintekkers.requests.security.QuerySecurityResponseProto>(
-                  this, METHODID_SEARCH)))
-          .addMethod(
-            getListIdsMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.security.QuerySecurityRequestProto,
-                fintekkers.requests.security.QuerySecurityResponseProto>(
-                  this, METHODID_LIST_IDS)))
-          .addMethod(
-            getValidateCreateOrUpdateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.security.CreateSecurityRequestProto,
-                fintekkers.requests.util.errors.Summary.SummaryProto>(
-                  this, METHODID_VALIDATE_CREATE_OR_UPDATE)))
-          .addMethod(
-            getValidateQueryRequestMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.security.QuerySecurityRequestProto,
-                fintekkers.requests.util.errors.Summary.SummaryProto>(
-                  this, METHODID_VALIDATE_QUERY_REQUEST)))
-          .addMethod(
-            getGetFieldsMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                com.google.protobuf.Empty,
-                fintekkers.requests.security.GetFieldsResponseProto>(
-                  this, METHODID_GET_FIELDS)))
-          .addMethod(
-            getGetFieldValuesMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.security.GetFieldValuesRequestProto,
-                fintekkers.requests.security.GetFieldValuesResponseProto>(
-                  this, METHODID_GET_FIELD_VALUES)))
-          .build();
     }
   }
 
   /**
+   * Base class for the server implementation of the service Security.
    */
-  public static final class SecurityStub extends io.grpc.stub.AbstractAsyncStub<SecurityStub> {
+  public static abstract class SecurityImplBase
+      implements io.grpc.BindableService, AsyncService {
+
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+      return SecurityGrpc.bindService(this);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do asynchronous rpc calls to service Security.
+   */
+  public static final class SecurityStub
+      extends io.grpc.stub.AbstractAsyncStub<SecurityStub> {
     private SecurityStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -477,6 +479,14 @@ public final class SecurityGrpc {
 
     /**
      */
+    public void delete(fintekkers.requests.util.DeleteRequestProto request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.util.DeleteResponseProto> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDeleteMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
     public void validateCreateOrUpdate(fintekkers.requests.security.CreateSecurityRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
@@ -509,8 +519,92 @@ public final class SecurityGrpc {
   }
 
   /**
+   * A stub to allow clients to do synchronous rpc calls to service Security.
    */
-  public static final class SecurityBlockingStub extends io.grpc.stub.AbstractBlockingStub<SecurityBlockingStub> {
+  public static final class SecurityBlockingV2Stub
+      extends io.grpc.stub.AbstractBlockingStub<SecurityBlockingV2Stub> {
+    private SecurityBlockingV2Stub(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      super(channel, callOptions);
+    }
+
+    @java.lang.Override
+    protected SecurityBlockingV2Stub build(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      return new SecurityBlockingV2Stub(channel, callOptions);
+    }
+
+    /**
+     */
+    public fintekkers.requests.security.CreateSecurityResponseProto createOrUpdate(fintekkers.requests.security.CreateSecurityRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getCreateOrUpdateMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.security.QuerySecurityResponseProto getByIds(fintekkers.requests.security.QuerySecurityRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetByIdsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
+    public io.grpc.stub.BlockingClientCall<?, fintekkers.requests.security.QuerySecurityResponseProto>
+        search(fintekkers.requests.security.QuerySecurityRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingV2ServerStreamingCall(
+          getChannel(), getSearchMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.security.QuerySecurityResponseProto listIds(fintekkers.requests.security.QuerySecurityRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getListIdsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.util.DeleteResponseProto delete(fintekkers.requests.util.DeleteRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getDeleteMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(fintekkers.requests.security.CreateSecurityRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getValidateCreateOrUpdateMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto validateQueryRequest(fintekkers.requests.security.QuerySecurityRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getValidateQueryRequestMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.security.GetFieldsResponseProto getFields(com.google.protobuf.Empty request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetFieldsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.security.GetFieldValuesResponseProto getFieldValues(fintekkers.requests.security.GetFieldValuesRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetFieldValuesMethod(), getCallOptions(), request);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do limited synchronous rpc calls to service Security.
+   */
+  public static final class SecurityBlockingStub
+      extends io.grpc.stub.AbstractBlockingStub<SecurityBlockingStub> {
     private SecurityBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -553,6 +647,13 @@ public final class SecurityGrpc {
 
     /**
      */
+    public fintekkers.requests.util.DeleteResponseProto delete(fintekkers.requests.util.DeleteRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
     public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(fintekkers.requests.security.CreateSecurityRequestProto request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getValidateCreateOrUpdateMethod(), getCallOptions(), request);
@@ -581,8 +682,10 @@ public final class SecurityGrpc {
   }
 
   /**
+   * A stub to allow clients to do ListenableFuture-style rpc calls to service Security.
    */
-  public static final class SecurityFutureStub extends io.grpc.stub.AbstractFutureStub<SecurityFutureStub> {
+  public static final class SecurityFutureStub
+      extends io.grpc.stub.AbstractFutureStub<SecurityFutureStub> {
     private SecurityFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -616,6 +719,14 @@ public final class SecurityGrpc {
         fintekkers.requests.security.QuerySecurityRequestProto request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getListIdsMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.util.DeleteResponseProto> delete(
+        fintekkers.requests.util.DeleteRequestProto request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDeleteMethod(), getCallOptions()), request);
     }
 
     /**
@@ -655,20 +766,21 @@ public final class SecurityGrpc {
   private static final int METHODID_GET_BY_IDS = 1;
   private static final int METHODID_SEARCH = 2;
   private static final int METHODID_LIST_IDS = 3;
-  private static final int METHODID_VALIDATE_CREATE_OR_UPDATE = 4;
-  private static final int METHODID_VALIDATE_QUERY_REQUEST = 5;
-  private static final int METHODID_GET_FIELDS = 6;
-  private static final int METHODID_GET_FIELD_VALUES = 7;
+  private static final int METHODID_DELETE = 4;
+  private static final int METHODID_VALIDATE_CREATE_OR_UPDATE = 5;
+  private static final int METHODID_VALIDATE_QUERY_REQUEST = 6;
+  private static final int METHODID_GET_FIELDS = 7;
+  private static final int METHODID_GET_FIELD_VALUES = 8;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
-    private final SecurityImplBase serviceImpl;
+    private final AsyncService serviceImpl;
     private final int methodId;
 
-    MethodHandlers(SecurityImplBase serviceImpl, int methodId) {
+    MethodHandlers(AsyncService serviceImpl, int methodId) {
       this.serviceImpl = serviceImpl;
       this.methodId = methodId;
     }
@@ -692,6 +804,10 @@ public final class SecurityGrpc {
         case METHODID_LIST_IDS:
           serviceImpl.listIds((fintekkers.requests.security.QuerySecurityRequestProto) request,
               (io.grpc.stub.StreamObserver<fintekkers.requests.security.QuerySecurityResponseProto>) responseObserver);
+          break;
+        case METHODID_DELETE:
+          serviceImpl.delete((fintekkers.requests.util.DeleteRequestProto) request,
+              (io.grpc.stub.StreamObserver<fintekkers.requests.util.DeleteResponseProto>) responseObserver);
           break;
         case METHODID_VALIDATE_CREATE_OR_UPDATE:
           serviceImpl.validateCreateOrUpdate((fintekkers.requests.security.CreateSecurityRequestProto) request,
@@ -725,6 +841,74 @@ public final class SecurityGrpc {
     }
   }
 
+  public static final io.grpc.ServerServiceDefinition bindService(AsyncService service) {
+    return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
+        .addMethod(
+          getCreateOrUpdateMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.security.CreateSecurityRequestProto,
+              fintekkers.requests.security.CreateSecurityResponseProto>(
+                service, METHODID_CREATE_OR_UPDATE)))
+        .addMethod(
+          getGetByIdsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.security.QuerySecurityRequestProto,
+              fintekkers.requests.security.QuerySecurityResponseProto>(
+                service, METHODID_GET_BY_IDS)))
+        .addMethod(
+          getSearchMethod(),
+          io.grpc.stub.ServerCalls.asyncServerStreamingCall(
+            new MethodHandlers<
+              fintekkers.requests.security.QuerySecurityRequestProto,
+              fintekkers.requests.security.QuerySecurityResponseProto>(
+                service, METHODID_SEARCH)))
+        .addMethod(
+          getListIdsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.security.QuerySecurityRequestProto,
+              fintekkers.requests.security.QuerySecurityResponseProto>(
+                service, METHODID_LIST_IDS)))
+        .addMethod(
+          getDeleteMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.util.DeleteRequestProto,
+              fintekkers.requests.util.DeleteResponseProto>(
+                service, METHODID_DELETE)))
+        .addMethod(
+          getValidateCreateOrUpdateMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.security.CreateSecurityRequestProto,
+              fintekkers.requests.util.errors.Summary.SummaryProto>(
+                service, METHODID_VALIDATE_CREATE_OR_UPDATE)))
+        .addMethod(
+          getValidateQueryRequestMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.security.QuerySecurityRequestProto,
+              fintekkers.requests.util.errors.Summary.SummaryProto>(
+                service, METHODID_VALIDATE_QUERY_REQUEST)))
+        .addMethod(
+          getGetFieldsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              com.google.protobuf.Empty,
+              fintekkers.requests.security.GetFieldsResponseProto>(
+                service, METHODID_GET_FIELDS)))
+        .addMethod(
+          getGetFieldValuesMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.security.GetFieldValuesRequestProto,
+              fintekkers.requests.security.GetFieldValuesResponseProto>(
+                service, METHODID_GET_FIELD_VALUES)))
+        .build();
+  }
+
   private static abstract class SecurityBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     SecurityBaseDescriptorSupplier() {}
@@ -748,9 +932,9 @@ public final class SecurityGrpc {
   private static final class SecurityMethodDescriptorSupplier
       extends SecurityBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoMethodDescriptorSupplier {
-    private final String methodName;
+    private final java.lang.String methodName;
 
-    SecurityMethodDescriptorSupplier(String methodName) {
+    SecurityMethodDescriptorSupplier(java.lang.String methodName) {
       this.methodName = methodName;
     }
 
@@ -774,6 +958,7 @@ public final class SecurityGrpc {
               .addMethod(getGetByIdsMethod())
               .addMethod(getSearchMethod())
               .addMethod(getListIdsMethod())
+              .addMethod(getDeleteMethod())
               .addMethod(getValidateCreateOrUpdateMethod())
               .addMethod(getValidateQueryRequestMethod())
               .addMethod(getGetFieldsMethod())

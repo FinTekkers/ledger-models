@@ -32,80 +32,6 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private FieldMapEntry(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 8: {
-            int rawValue = input.readEnum();
-
-            field_ = rawValue;
-            break;
-          }
-          case 34: {
-            com.google.protobuf.Any.Builder subBuilder = null;
-            if (fieldMapValueOneOfCase_ == 4) {
-              subBuilder = ((com.google.protobuf.Any) fieldMapValueOneOf_).toBuilder();
-            }
-            fieldMapValueOneOf_ =
-                input.readMessage(com.google.protobuf.Any.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom((com.google.protobuf.Any) fieldMapValueOneOf_);
-              fieldMapValueOneOf_ = subBuilder.buildPartial();
-            }
-            fieldMapValueOneOfCase_ = 4;
-            break;
-          }
-          case 40: {
-            fieldMapValueOneOfCase_ = 5;
-            fieldMapValueOneOf_ = input.readInt32();
-            break;
-          }
-          case 50: {
-            java.lang.String s = input.readStringRequireUtf8();
-            fieldMapValueOneOfCase_ = 6;
-            fieldMapValueOneOf_ = s;
-            break;
-          }
-          case 160: {
-            int rawValue = input.readEnum();
-
-            operator_ = rawValue;
-            break;
-          }
-          default: {
-            if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-    } finally {
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
     return fintekkers.models.position.PositionUtilProtos.internal_static_fintekkers_models_position_FieldMapEntry_descriptor;
@@ -163,7 +89,7 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int FIELD_FIELD_NUMBER = 1;
-  private int field_;
+  private int field_ = 0;
   /**
    * <code>.fintekkers.models.position.FieldProto field = 1;</code>
    * @return The enum numeric value on the wire for field.
@@ -176,8 +102,7 @@ private static final long serialVersionUID = 0L;
    * @return The field.
    */
   @java.lang.Override public fintekkers.models.position.FieldProto getField() {
-    @SuppressWarnings("deprecation")
-    fintekkers.models.position.FieldProto result = fintekkers.models.position.FieldProto.valueOf(field_);
+    fintekkers.models.position.FieldProto result = fintekkers.models.position.FieldProto.forNumber(field_);
     return result == null ? fintekkers.models.position.FieldProto.UNRECOGNIZED : result;
   }
 
@@ -231,6 +156,18 @@ private static final long serialVersionUID = 0L;
    * </pre>
    *
    * <code>int32 enum_value = 5;</code>
+   * @return Whether the enumValue field is set.
+   */
+  @java.lang.Override
+  public boolean hasEnumValue() {
+    return fieldMapValueOneOfCase_ == 5;
+  }
+  /**
+   * <pre>
+   *If the field is an enum type, then we use the number to denote which value it is
+   * </pre>
+   *
+   * <code>int32 enum_value = 5;</code>
    * @return The enumValue.
    */
   @java.lang.Override
@@ -242,6 +179,17 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int STRING_VALUE_FIELD_NUMBER = 6;
+  /**
+   * <pre>
+   *If the field is a string type, we just serialize the string (packing has an overhead)
+   * </pre>
+   *
+   * <code>string string_value = 6;</code>
+   * @return Whether the stringValue field is set.
+   */
+  public boolean hasStringValue() {
+    return fieldMapValueOneOfCase_ == 6;
+  }
   /**
    * <pre>
    *If the field is a string type, we just serialize the string (packing has an overhead)
@@ -295,7 +243,7 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int OPERATOR_FIELD_NUMBER = 20;
-  private int operator_;
+  private int operator_ = 0;
   /**
    * <pre>
    *Used for position filters, but not for responses
@@ -316,8 +264,7 @@ private static final long serialVersionUID = 0L;
    * @return The operator.
    */
   @java.lang.Override public fintekkers.models.position.PositionFilterOperator getOperator() {
-    @SuppressWarnings("deprecation")
-    fintekkers.models.position.PositionFilterOperator result = fintekkers.models.position.PositionFilterOperator.valueOf(operator_);
+    fintekkers.models.position.PositionFilterOperator result = fintekkers.models.position.PositionFilterOperator.forNumber(operator_);
     return result == null ? fintekkers.models.position.PositionFilterOperator.UNRECOGNIZED : result;
   }
 
@@ -351,7 +298,7 @@ private static final long serialVersionUID = 0L;
     if (operator_ != fintekkers.models.position.PositionFilterOperator.UNKNOWN_OPERATOR.getNumber()) {
       output.writeEnum(20, operator_);
     }
-    unknownFields.writeTo(output);
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -380,7 +327,7 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(20, operator_);
     }
-    size += unknownFields.getSerializedSize();
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -414,7 +361,7 @@ private static final long serialVersionUID = 0L;
       case 0:
       default:
     }
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -445,7 +392,7 @@ private static final long serialVersionUID = 0L;
       case 0:
       default:
     }
-    hash = (29 * hash) + unknownFields.hashCode();
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -562,26 +509,23 @@ private static final long serialVersionUID = 0L;
 
     // Construct using fintekkers.models.position.FieldMapEntry.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
-              .alwaysUseFieldBuilders) {
-      }
+
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       field_ = 0;
-
+      if (fieldValuePackedBuilder_ != null) {
+        fieldValuePackedBuilder_.clear();
+      }
       operator_ = 0;
-
       fieldMapValueOneOfCase_ = 0;
       fieldMapValueOneOf_ = null;
       return this;
@@ -610,24 +554,29 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.models.position.FieldMapEntry buildPartial() {
       fintekkers.models.position.FieldMapEntry result = new fintekkers.models.position.FieldMapEntry(this);
-      result.field_ = field_;
-      if (fieldMapValueOneOfCase_ == 4) {
-        if (fieldValuePackedBuilder_ == null) {
-          result.fieldMapValueOneOf_ = fieldMapValueOneOf_;
-        } else {
-          result.fieldMapValueOneOf_ = fieldValuePackedBuilder_.build();
-        }
-      }
-      if (fieldMapValueOneOfCase_ == 5) {
-        result.fieldMapValueOneOf_ = fieldMapValueOneOf_;
-      }
-      if (fieldMapValueOneOfCase_ == 6) {
-        result.fieldMapValueOneOf_ = fieldMapValueOneOf_;
-      }
-      result.operator_ = operator_;
-      result.fieldMapValueOneOfCase_ = fieldMapValueOneOfCase_;
+      if (bitField0_ != 0) { buildPartial0(result); }
+      buildPartialOneofs(result);
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(fintekkers.models.position.FieldMapEntry result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.field_ = field_;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.operator_ = operator_;
+      }
+    }
+
+    private void buildPartialOneofs(fintekkers.models.position.FieldMapEntry result) {
+      result.fieldMapValueOneOfCase_ = fieldMapValueOneOfCase_;
+      result.fieldMapValueOneOf_ = this.fieldMapValueOneOf_;
+      if (fieldMapValueOneOfCase_ == 4 &&
+          fieldValuePackedBuilder_ != null) {
+        result.fieldMapValueOneOf_ = fieldValuePackedBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -699,7 +648,7 @@ private static final long serialVersionUID = 0L;
           break;
         }
       }
-      this.mergeUnknownFields(other.unknownFields);
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -714,17 +663,58 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      fintekkers.models.position.FieldMapEntry parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+              field_ = input.readEnum();
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 8
+            case 34: {
+              input.readMessage(
+                  getFieldValuePackedFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              fieldMapValueOneOfCase_ = 4;
+              break;
+            } // case 34
+            case 40: {
+              fieldMapValueOneOf_ = input.readInt32();
+              fieldMapValueOneOfCase_ = 5;
+              break;
+            } // case 40
+            case 50: {
+              java.lang.String s = input.readStringRequireUtf8();
+              fieldMapValueOneOfCase_ = 6;
+              fieldMapValueOneOf_ = s;
+              break;
+            } // case 50
+            case 160: {
+              operator_ = input.readEnum();
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 160
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (fintekkers.models.position.FieldMapEntry) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
     private int fieldMapValueOneOfCase_ = 0;
@@ -742,6 +732,7 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    private int bitField0_;
 
     private int field_ = 0;
     /**
@@ -757,8 +748,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setFieldValue(int value) {
-      
       field_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -768,8 +759,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public fintekkers.models.position.FieldProto getField() {
-      @SuppressWarnings("deprecation")
-      fintekkers.models.position.FieldProto result = fintekkers.models.position.FieldProto.valueOf(field_);
+      fintekkers.models.position.FieldProto result = fintekkers.models.position.FieldProto.forNumber(field_);
       return result == null ? fintekkers.models.position.FieldProto.UNRECOGNIZED : result;
     }
     /**
@@ -781,7 +771,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      
+      bitField0_ |= 0x00000001;
       field_ = value.getNumber();
       onChanged();
       return this;
@@ -791,7 +781,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearField() {
-      
+      bitField0_ = (bitField0_ & ~0x00000001);
       field_ = 0;
       onChanged();
       return this;
@@ -891,8 +881,9 @@ private static final long serialVersionUID = 0L;
       } else {
         if (fieldMapValueOneOfCase_ == 4) {
           fieldValuePackedBuilder_.mergeFrom(value);
+        } else {
+          fieldValuePackedBuilder_.setMessage(value);
         }
-        fieldValuePackedBuilder_.setMessage(value);
       }
       fieldMapValueOneOfCase_ = 4;
       return this;
@@ -970,10 +961,21 @@ private static final long serialVersionUID = 0L;
         fieldMapValueOneOf_ = null;
       }
       fieldMapValueOneOfCase_ = 4;
-      onChanged();;
+      onChanged();
       return fieldValuePackedBuilder_;
     }
 
+    /**
+     * <pre>
+     *If the field is an enum type, then we use the number to denote which value it is
+     * </pre>
+     *
+     * <code>int32 enum_value = 5;</code>
+     * @return Whether the enumValue field is set.
+     */
+    public boolean hasEnumValue() {
+      return fieldMapValueOneOfCase_ == 5;
+    }
     /**
      * <pre>
      *If the field is an enum type, then we use the number to denote which value it is
@@ -998,6 +1000,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setEnumValue(int value) {
+      
       fieldMapValueOneOfCase_ = 5;
       fieldMapValueOneOf_ = value;
       onChanged();
@@ -1020,6 +1023,18 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
+    /**
+     * <pre>
+     *If the field is a string type, we just serialize the string (packing has an overhead)
+     * </pre>
+     *
+     * <code>string string_value = 6;</code>
+     * @return Whether the stringValue field is set.
+     */
+    @java.lang.Override
+    public boolean hasStringValue() {
+      return fieldMapValueOneOfCase_ == 6;
+    }
     /**
      * <pre>
      *If the field is a string type, we just serialize the string (packing has an overhead)
@@ -1084,10 +1099,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setStringValue(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  fieldMapValueOneOfCase_ = 6;
+      if (value == null) { throw new NullPointerException(); }
+      fieldMapValueOneOfCase_ = 6;
       fieldMapValueOneOf_ = value;
       onChanged();
       return this;
@@ -1119,10 +1132,8 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setStringValueBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       fieldMapValueOneOfCase_ = 6;
       fieldMapValueOneOf_ = value;
       onChanged();
@@ -1151,8 +1162,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setOperatorValue(int value) {
-      
       operator_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1166,8 +1177,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public fintekkers.models.position.PositionFilterOperator getOperator() {
-      @SuppressWarnings("deprecation")
-      fintekkers.models.position.PositionFilterOperator result = fintekkers.models.position.PositionFilterOperator.valueOf(operator_);
+      fintekkers.models.position.PositionFilterOperator result = fintekkers.models.position.PositionFilterOperator.forNumber(operator_);
       return result == null ? fintekkers.models.position.PositionFilterOperator.UNRECOGNIZED : result;
     }
     /**
@@ -1183,7 +1193,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      
+      bitField0_ |= 0x00000010;
       operator_ = value.getNumber();
       onChanged();
       return this;
@@ -1197,7 +1207,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearOperator() {
-      
+      bitField0_ = (bitField0_ & ~0x00000010);
       operator_ = 0;
       onChanged();
       return this;
@@ -1235,7 +1245,18 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new FieldMapEntry(input, extensionRegistry);
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
     }
   };
 

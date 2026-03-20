@@ -25,10 +25,11 @@ public final class IndexTypeProtos {
     java.lang.String[] descriptorData = {
       "\n1fintekkers/models/security/index/index" +
       "_type.proto\022 fintekkers.models.security." +
-      "index*_\n\016IndexTypeProto\022\026\n\022UNKNOWN_INDEX" +
-      "_TYPE\020\000\022\t\n\005CPI_U\020\001\022\t\n\005CPI_W\020\002\022\014\n\010CORE_CP" +
-      "I\020\003\022\007\n\003PCE\020\004\022\010\n\004HICP\020\005B\023B\017IndexTypeProto" +
-      "sP\001b\006proto3"
+      "index*\214\001\n\016IndexTypeProto\022\026\n\022UNKNOWN_INDE" +
+      "X_TYPE\020\000\022\t\n\005CPI_U\020\001\022\t\n\005CPI_W\020\002\022\014\n\010CORE_C" +
+      "PI\020\003\022\007\n\003PCE\020\004\022\010\n\004HICP\020\005\022\010\n\004SOFR\020\n\022\022\n\016T_B" +
+      "ILL_13_WEEK\020\013\022\r\n\tFED_FUNDS\020\014B\023B\017IndexTyp" +
+      "eProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

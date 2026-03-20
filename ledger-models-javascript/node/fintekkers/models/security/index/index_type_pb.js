@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 goog.exportSymbol('proto.fintekkers.models.security.index.IndexTypeProto', null, global);
 /**
@@ -31,7 +25,10 @@ proto.fintekkers.models.security.index.IndexTypeProto = {
   CPI_W: 2,
   CORE_CPI: 3,
   PCE: 4,
-  HICP: 5
+  HICP: 5,
+  SOFR: 10,
+  T_BILL_13_WEEK: 11,
+  FED_FUNDS: 12
 };
 
 goog.object.extend(exports, proto.fintekkers.models.security.index);

@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_util_lock_node_state_pb = require('../../../../fintekkers/models/util/lock/node_state_pb.js');
 goog.object.extend(proto, fintekkers_models_util_lock_node_state_pb);
@@ -81,11 +75,11 @@ proto.fintekkers.requests.util.lock.LockResponseProto.prototype.toObject = funct
  */
 proto.fintekkers.requests.util.lock.LockResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    getLockRequest: (f = msg.getGetLockRequest()) && fintekkers_requests_util_lock_lock_request_pb.LockRequestProto.toObject(includeInstance, f),
-    lockResponse: (f = msg.getLockResponse()) && fintekkers_models_util_lock_node_state_pb.NodeState.toObject(includeInstance, f),
-    errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+getLockRequest: (f = msg.getGetLockRequest()) && fintekkers_requests_util_lock_lock_request_pb.LockRequestProto.toObject(includeInstance, f),
+lockResponse: (f = msg.getLockResponse()) && fintekkers_models_util_lock_node_state_pb.NodeState.toObject(includeInstance, f),
+errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -98,7 +92,7 @@ proto.fintekkers.requests.util.lock.LockResponseProto.toObject = function(includ
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.util.lock.LockResponseProto}
  */
 proto.fintekkers.requests.util.lock.LockResponseProto.deserializeBinary = function(bytes) {

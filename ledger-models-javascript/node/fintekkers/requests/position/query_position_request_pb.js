@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_position_field_pb = require('../../../fintekkers/models/position/field_pb.js');
 goog.object.extend(proto, fintekkers_models_position_field_pb);
@@ -94,15 +88,15 @@ proto.fintekkers.requests.position.QueryPositionRequestProto.prototype.toObject 
  */
 proto.fintekkers.requests.position.QueryPositionRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
-    positionType: jspb.Message.getFieldWithDefault(msg, 20, 0),
-    positionView: jspb.Message.getFieldWithDefault(msg, 21, 0),
-    fieldsList: (f = jspb.Message.getRepeatedField(msg, 30)) == null ? undefined : f,
-    measuresList: (f = jspb.Message.getRepeatedField(msg, 31)) == null ? undefined : f,
-    filterFields: (f = msg.getFilterFields()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
-    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f)
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
+positionType: jspb.Message.getFieldWithDefault(msg, 20, 0),
+positionView: jspb.Message.getFieldWithDefault(msg, 21, 0),
+fieldsList: (f = jspb.Message.getRepeatedField(msg, 30)) == null ? undefined : f,
+measuresList: (f = jspb.Message.getRepeatedField(msg, 31)) == null ? undefined : f,
+filterFields: (f = msg.getFilterFields()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
+asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -115,7 +109,7 @@ proto.fintekkers.requests.position.QueryPositionRequestProto.toObject = function
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.position.QueryPositionRequestProto}
  */
 proto.fintekkers.requests.position.QueryPositionRequestProto.deserializeBinary = function(bytes) {
@@ -160,16 +154,10 @@ proto.fintekkers.requests.position.QueryPositionRequestProto.deserializeBinaryFr
       msg.setPositionView(value);
       break;
     case 30:
-      var values = /** @type {!Array<!proto.fintekkers.models.position.FieldProto>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
-      for (var i = 0; i < values.length; i++) {
-        msg.addFields(values[i]);
-      }
+      reader.readPackableEnumInto(msg.getFieldsList());
       break;
     case 31:
-      var values = /** @type {!Array<!proto.fintekkers.models.position.MeasureProto>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
-      for (var i = 0; i < values.length; i++) {
-        msg.addMeasures(values[i]);
-      }
+      reader.readPackableEnumInto(msg.getMeasuresList());
       break;
     case 32:
       var value = new fintekkers_models_position_position_filter_pb.PositionFilterProto;

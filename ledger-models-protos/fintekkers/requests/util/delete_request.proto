@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package fintekkers.requests.util;
+
+import "fintekkers/models/util/uuid.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "DeleteRequestProtos";
+
+// The type of entity being deleted or affected by a cascade deletion.
+enum EntityTypeProto {
+  UNKNOWN_ENTITY = 0;
+  SECURITY = 1;
+  PORTFOLIO = 2;
+  TRANSACTION = 3;
+  PRICE = 4;
+  POSITION = 5;
+}
+
+// An entity that was deleted or would be deleted (in dry_run mode).
+// Used in the affected_entities list of DeleteResponseProto.
+message AffectedEntityProto {
+  // The type of this affected entity (may differ from the request's entity_type
+  // during cascade deletions — e.g. deleting a portfolio cascades to transactions).
+  EntityTypeProto entity_type = 1;
+
+  // The UUID of the affected entity.
+  fintekkers.models.util.UUIDProto uuid = 2;
+
+  // Human-readable description for display in confirmation dialogs and audit logs.
+  // Examples:
+  //   "US Treasury 2.5% 2028-03-15 (CUSIP: 91282CJK3)"
+  //   "Portfolio: Growth Fund (3 transactions)"
+  //   "Transaction: BUY 10000 face T 2.5 03/15/28 @ 98.50"
+  string description = 3;
+}
+
+// Request to delete an entity by UUID. Used by all entity services
+// (Security.Delete, Portfolio.Delete, Transaction.Delete, Price.Delete).
+//
+// The entity_type field is optional when calling a specific service's Delete RPC
+// (e.g. calling Security.Delete implies entity_type=SECURITY). It is included
+// for consistency in the response and for potential future use with a bulk
+// delete endpoint.
+//
+// Deletion modes:
+//   - Default (all flags false): fails if the entity is referenced by other entities.
+//   - dry_run=true: returns what WOULD be deleted without performing the delete.
+//   - cascade=true: automatically deletes dependent entities (e.g. deleting a
+//     portfolio also deletes its transactions).
+//   - force=true: allows deletion even when the entity is referenced elsewhere,
+//     without deleting the referencing entities (leaves dangling references).
+//     This is a destructive operation — use with caution.
+//
+// cascade and force are mutually exclusive. If both are set, the service
+// should return an error.
+message DeleteRequestProto {
+  string object_class = 1;
+  string version = 2;
+
+  // The UUID of the entity to delete.
+  fintekkers.models.util.UUIDProto uuid = 10;
+
+  // The type of entity being deleted.
+  EntityTypeProto entity_type = 11;
+
+  // If true, return what would be deleted without actually deleting anything.
+  bool dry_run = 20;
+
+  // If true, delete dependent entities in addition to the target entity.
+  // Mutually exclusive with force.
+  bool cascade = 21;
+
+  // If true, allow deletion even if the entity is referenced by other entities,
+  // without deleting those references. Mutually exclusive with cascade.
+  bool force = 22;
+}
+
+// Response from a Delete RPC. Contains the outcome of the deletion (or
+// dry-run preview) including all entities that were or would be affected.
+message DeleteResponseProto {
+  string object_class = 1;
+  string version = 2;
+
+  // The original request, echoed back for correlation.
+  DeleteRequestProto delete_request = 10;
+
+  // Whether the deletion was successful. For dry_run requests, this is true
+  // if the deletion WOULD succeed.
+  bool success = 20;
+
+  // Whether this response is from a dry run (echoed from the request).
+  bool was_dry_run = 21;
+
+  // The total number of entities that were deleted (or would be deleted).
+  int32 total_count = 22;
+
+  // The list of entities that were deleted or would be deleted.
+  // For a non-cascade delete, this contains only the target entity.
+  // For a cascade delete, this includes the target plus all dependents.
+  repeated AffectedEntityProto affected_entities = 30;
+
+  // Human-readable warnings about the deletion. Examples:
+  //   "Security 91282CJK3 is referenced by 3 transactions in portfolio Growth Fund"
+  //   "Cascade will delete 47 price observations for this security"
+  repeated string warnings = 40;
+}

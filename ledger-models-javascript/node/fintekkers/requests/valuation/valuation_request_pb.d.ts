@@ -8,7 +8,6 @@ import * as jspb from "google-protobuf";
 import * as fintekkers_models_security_security_pb from "../../../fintekkers/models/security/security_pb";
 import * as fintekkers_models_position_position_pb from "../../../fintekkers/models/position/position_pb";
 import * as fintekkers_models_price_price_pb from "../../../fintekkers/models/price/price_pb";
-import * as fintekkers_models_util_decimal_value_pb from "../../../fintekkers/models/util/decimal_value_pb";
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_requests_util_operation_pb from "../../../fintekkers/requests/util/operation_pb";
 import * as fintekkers_models_position_measure_pb from "../../../fintekkers/models/position/measure_pb";
@@ -50,6 +49,11 @@ export class ValuationRequestProto extends jspb.Message {
     getCpiPriceInput(): fintekkers_models_price_price_pb.PriceProto | undefined;
     setCpiPriceInput(value?: fintekkers_models_price_price_pb.PriceProto): ValuationRequestProto;
 
+    hasReferenceRateInput(): boolean;
+    clearReferenceRateInput(): void;
+    getReferenceRateInput(): fintekkers_models_price_price_pb.PriceProto | undefined;
+    setReferenceRateInput(value?: fintekkers_models_price_price_pb.PriceProto): ValuationRequestProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): ValuationRequestProto.AsObject;
     static toObject(includeInstance: boolean, msg: ValuationRequestProto): ValuationRequestProto.AsObject;
@@ -71,5 +75,6 @@ export namespace ValuationRequestProto {
         priceInput?: fintekkers_models_price_price_pb.PriceProto.AsObject,
         asofDatetime?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         cpiPriceInput?: fintekkers_models_price_price_pb.PriceProto.AsObject,
+        referenceRateInput?: fintekkers_models_price_price_pb.PriceProto.AsObject,
     }
 }

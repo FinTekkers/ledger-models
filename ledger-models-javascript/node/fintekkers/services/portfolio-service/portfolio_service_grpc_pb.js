@@ -12,7 +12,7 @@ function serialize_fintekkers_requests_portfolio_CreatePortfolioRequestProto(arg
   if (!(arg instanceof fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.portfolio.CreatePortfolioRequestProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_portfolio_CreatePortfolioRequestProto(buffer_arg) {
@@ -23,7 +23,7 @@ function serialize_fintekkers_requests_portfolio_CreatePortfolioResponseProto(ar
   if (!(arg instanceof fintekkers_requests_portfolio_create_portfolio_response_pb.CreatePortfolioResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.portfolio.CreatePortfolioResponseProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_portfolio_CreatePortfolioResponseProto(buffer_arg) {
@@ -34,7 +34,7 @@ function serialize_fintekkers_requests_portfolio_QueryPortfolioRequestProto(arg)
   if (!(arg instanceof fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.portfolio.QueryPortfolioRequestProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_portfolio_QueryPortfolioRequestProto(buffer_arg) {
@@ -45,7 +45,7 @@ function serialize_fintekkers_requests_portfolio_QueryPortfolioResponseProto(arg
   if (!(arg instanceof fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.portfolio.QueryPortfolioResponseProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_portfolio_QueryPortfolioResponseProto(buffer_arg) {
@@ -56,7 +56,7 @@ function serialize_fintekkers_requests_util_errors_SummaryProto(arg) {
   if (!(arg instanceof fintekkers_requests_util_errors_summary_pb.SummaryProto)) {
     throw new Error('Expected argument of type fintekkers.requests.util.errors.SummaryProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_util_errors_SummaryProto(buffer_arg) {
@@ -133,4 +133,4 @@ var PortfolioService = exports.PortfolioService = {
   },
 };
 
-exports.PortfolioClient = grpc.makeGenericClientConstructor(PortfolioService, 'Portfolio');
+exports.PortfolioClient = grpc.makeGenericClientConstructor(PortfolioService);

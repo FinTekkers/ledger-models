@@ -84,4 +84,53 @@ public interface ValuationResponseProtoOrBuilder extends
    * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
    */
   fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getSummaryOrBuilder();
+
+  /**
+   * <pre>
+   * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+   * Each entry represents a single coupon or principal payment with PV and FV amounts.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+   */
+  java.util.List<fintekkers.models.valuation.CashflowProto> 
+      getCashflowsList();
+  /**
+   * <pre>
+   * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+   * Each entry represents a single coupon or principal payment with PV and FV amounts.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+   */
+  fintekkers.models.valuation.CashflowProto getCashflows(int index);
+  /**
+   * <pre>
+   * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+   * Each entry represents a single coupon or principal payment with PV and FV amounts.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+   */
+  int getCashflowsCount();
+  /**
+   * <pre>
+   * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+   * Each entry represents a single coupon or principal payment with PV and FV amounts.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+   */
+  java.util.List<? extends fintekkers.models.valuation.CashflowProtoOrBuilder> 
+      getCashflowsOrBuilderList();
+  /**
+   * <pre>
+   * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+   * Each entry represents a single coupon or principal payment with PV and FV amounts.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+   */
+  fintekkers.models.valuation.CashflowProtoOrBuilder getCashflowsOrBuilder(
+      int index);
 }

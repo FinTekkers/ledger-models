@@ -6,6 +6,7 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_position_position_util_pb from "../../../fintekkers/models/position/position_util_pb";
+import * as fintekkers_models_valuation_cashflow_pb from "../../../fintekkers/models/valuation/cashflow_pb";
 import * as fintekkers_requests_valuation_valuation_request_pb from "../../../fintekkers/requests/valuation/valuation_request_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
 
@@ -28,6 +29,10 @@ export class ValuationResponseProto extends jspb.Message {
     clearSummary(): void;
     getSummary(): fintekkers_requests_util_errors_summary_pb.SummaryProto | undefined;
     setSummary(value?: fintekkers_requests_util_errors_summary_pb.SummaryProto): ValuationResponseProto;
+    clearCashflowsList(): void;
+    getCashflowsList(): Array<fintekkers_models_valuation_cashflow_pb.CashflowProto>;
+    setCashflowsList(value: Array<fintekkers_models_valuation_cashflow_pb.CashflowProto>): ValuationResponseProto;
+    addCashflows(value?: fintekkers_models_valuation_cashflow_pb.CashflowProto, index?: number): fintekkers_models_valuation_cashflow_pb.CashflowProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): ValuationResponseProto.AsObject;
@@ -46,5 +51,6 @@ export namespace ValuationResponseProto {
         valuationRequest?: fintekkers_requests_valuation_valuation_request_pb.ValuationRequestProto.AsObject,
         measureResultsList: Array<fintekkers_models_position_position_util_pb.MeasureMapEntry.AsObject>,
         summary?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,
+        cashflowsList: Array<fintekkers_models_valuation_cashflow_pb.CashflowProto.AsObject>,
     }
 }

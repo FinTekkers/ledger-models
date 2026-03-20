@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_transaction_transaction_pb = require('../../../fintekkers/models/transaction/transaction_pb.js');
 goog.object.extend(proto, fintekkers_models_transaction_transaction_pb);
@@ -88,12 +82,12 @@ proto.fintekkers.requests.transaction.QueryTransactionResponseProto.prototype.to
  */
 proto.fintekkers.requests.transaction.QueryTransactionResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    createTransactionRequest: (f = msg.getCreateTransactionRequest()) && fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto.toObject(includeInstance, f),
-    transactionResponseList: jspb.Message.toObjectList(msg.getTransactionResponseList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+createTransactionRequest: (f = msg.getCreateTransactionRequest()) && fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto.toObject(includeInstance, f),
+transactionResponseList: jspb.Message.toObjectList(msg.getTransactionResponseList(),
     fintekkers_models_transaction_transaction_pb.TransactionProto.toObject, includeInstance),
-    errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
+errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -106,7 +100,7 @@ proto.fintekkers.requests.transaction.QueryTransactionResponseProto.toObject = f
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.transaction.QueryTransactionResponseProto}
  */
 proto.fintekkers.requests.transaction.QueryTransactionResponseProto.deserializeBinary = function(bytes) {

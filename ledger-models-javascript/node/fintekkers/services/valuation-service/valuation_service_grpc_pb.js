@@ -9,7 +9,7 @@ function serialize_fintekkers_requests_valuation_ValuationRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_valuation_valuation_request_pb.ValuationRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.valuation.ValuationRequestProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_valuation_ValuationRequestProto(buffer_arg) {
@@ -20,7 +20,7 @@ function serialize_fintekkers_requests_valuation_ValuationResponseProto(arg) {
   if (!(arg instanceof fintekkers_requests_valuation_valuation_response_pb.ValuationResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.valuation.ValuationResponseProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_valuation_ValuationResponseProto(buffer_arg) {
@@ -42,4 +42,4 @@ var ValuationService = exports.ValuationService = {
   },
 };
 
-exports.ValuationClient = grpc.makeGenericClientConstructor(ValuationService, 'Valuation');
+exports.ValuationClient = grpc.makeGenericClientConstructor(ValuationService);

@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_price_price_pb = require('../../../fintekkers/models/price/price_pb.js');
 goog.object.extend(proto, fintekkers_models_price_price_pb);
@@ -77,9 +71,9 @@ proto.fintekkers.requests.price.CreatePriceRequestProto.prototype.toObject = fun
  */
 proto.fintekkers.requests.price.CreatePriceRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    createPriceInput: (f = msg.getCreatePriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f)
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+createPriceInput: (f = msg.getCreatePriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -92,7 +86,7 @@ proto.fintekkers.requests.price.CreatePriceRequestProto.toObject = function(incl
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.price.CreatePriceRequestProto}
  */
 proto.fintekkers.requests.price.CreatePriceRequestProto.deserializeBinary = function(bytes) {

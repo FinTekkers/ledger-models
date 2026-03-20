@@ -221,6 +221,38 @@ pub mod security_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        pub async fn delete(
+            &mut self,
+            request: impl tonic::IntoRequest<
+                super::super::super::requests::util::DeleteRequestProto,
+            >,
+        ) -> std::result::Result<
+            tonic::Response<super::super::super::requests::util::DeleteResponseProto>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/fintekkers.services.security_service.Security/Delete",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "fintekkers.services.security_service.Security",
+                        "Delete",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
         pub async fn validate_create_or_update(
             &mut self,
             request: impl tonic::IntoRequest<
@@ -406,6 +438,15 @@ pub mod security_server {
             tonic::Response<
                 super::super::super::requests::security::QuerySecurityResponseProto,
             >,
+            tonic::Status,
+        >;
+        async fn delete(
+            &self,
+            request: tonic::Request<
+                super::super::super::requests::util::DeleteRequestProto,
+            >,
+        ) -> std::result::Result<
+            tonic::Response<super::super::super::requests::util::DeleteResponseProto>,
             tonic::Status,
         >;
         async fn validate_create_or_update(
@@ -702,6 +743,53 @@ pub mod security_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = ListIdsSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/fintekkers.services.security_service.Security/Delete" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteSvc<T: Security>(pub Arc<T>);
+                    impl<
+                        T: Security,
+                    > tonic::server::UnaryService<
+                        super::super::super::requests::util::DeleteRequestProto,
+                    > for DeleteSvc<T> {
+                        type Response = super::super::super::requests::util::DeleteResponseProto;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::super::super::requests::util::DeleteRequestProto,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move { (*inner).delete(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = DeleteSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -10,6 +10,7 @@ from fintekkers.requests.security import get_field_values_response_pb2 as fintek
 from fintekkers.requests.security import get_fields_response_pb2 as fintekkers_dot_requests_dot_security_dot_get__fields__response__pb2
 from fintekkers.requests.security import query_security_request_pb2 as fintekkers_dot_requests_dot_security_dot_query__security__request__pb2
 from fintekkers.requests.security import query_security_response_pb2 as fintekkers_dot_requests_dot_security_dot_query__security__response__pb2
+from fintekkers.requests.util import delete_request_pb2 as fintekkers_dot_requests_dot_util_dot_delete__request__pb2
 from fintekkers.requests.util.errors import summary_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
@@ -62,6 +63,11 @@ class SecurityStub(object):
                 request_serializer=fintekkers_dot_requests_dot_security_dot_query__security__request__pb2.QuerySecurityRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_security_dot_query__security__response__pb2.QuerySecurityResponseProto.FromString,
                 _registered_method=True)
+        self.Delete = channel.unary_unary(
+                '/fintekkers.services.security_service.Security/Delete',
+                request_serializer=fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteRequestProto.SerializeToString,
+                response_deserializer=fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteResponseProto.FromString,
+                _registered_method=True)
         self.ValidateCreateOrUpdate = channel.unary_unary(
                 '/fintekkers.services.security_service.Security/ValidateCreateOrUpdate',
                 request_serializer=fintekkers_dot_requests_dot_security_dot_create__security__request__pb2.CreateSecurityRequestProto.SerializeToString,
@@ -106,6 +112,12 @@ class SecurityServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ListIds(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def Delete(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -157,6 +169,11 @@ def add_SecurityServicer_to_server(servicer, server):
                     servicer.ListIds,
                     request_deserializer=fintekkers_dot_requests_dot_security_dot_query__security__request__pb2.QuerySecurityRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_security_dot_query__security__response__pb2.QuerySecurityResponseProto.SerializeToString,
+            ),
+            'Delete': grpc.unary_unary_rpc_method_handler(
+                    servicer.Delete,
+                    request_deserializer=fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteRequestProto.FromString,
+                    response_serializer=fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteResponseProto.SerializeToString,
             ),
             'ValidateCreateOrUpdate': grpc.unary_unary_rpc_method_handler(
                     servicer.ValidateCreateOrUpdate,
@@ -287,6 +304,33 @@ class Security(object):
             '/fintekkers.services.security_service.Security/ListIds',
             fintekkers_dot_requests_dot_security_dot_query__security__request__pb2.QuerySecurityRequestProto.SerializeToString,
             fintekkers_dot_requests_dot_security_dot_query__security__response__pb2.QuerySecurityResponseProto.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Delete(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/fintekkers.services.security_service.Security/Delete',
+            fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteRequestProto.SerializeToString,
+            fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteResponseProto.FromString,
             options,
             channel_credentials,
             insecure,

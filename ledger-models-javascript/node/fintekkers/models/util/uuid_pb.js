@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 goog.exportSymbol('proto.fintekkers.models.util.UUIDProto', null, global);
 /**
@@ -75,7 +69,7 @@ proto.fintekkers.models.util.UUIDProto.prototype.toObject = function(opt_include
  */
 proto.fintekkers.models.util.UUIDProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    rawUuid: msg.getRawUuid_asB64()
+rawUuid: msg.getRawUuid_asB64()
   };
 
   if (includeInstance) {
@@ -88,7 +82,7 @@ proto.fintekkers.models.util.UUIDProto.toObject = function(includeInstance, msg)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.util.UUIDProto}
  */
 proto.fintekkers.models.util.UUIDProto.deserializeBinary = function(bytes) {

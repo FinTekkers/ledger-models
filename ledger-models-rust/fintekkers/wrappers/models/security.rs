@@ -158,7 +158,13 @@ impl SecurityProtoBuilder {
             issue_date: None,
             issuance_info: vec![],
             base_cpi: None,
+            index_date: None,
+            inflation_index_type: 0,
+            spread: None,
+            reference_rate_index: 0,
+            reset_frequency: 0,
             index_type: 0,
+            product_details: None,
         })
     }
 }
@@ -166,6 +172,30 @@ impl SecurityProtoBuilder {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::fintekkers::models::security::security_proto::ProductDetails;
+    use crate::fintekkers::models::security::{
+        BondDetailsProto, TipsDetailsProto, FrnDetailsProto,
+        IndexDetailsProto, CashDetailsProto, EquityDetailsProto,
+        CouponTypeProto, CouponFrequencyProto,
+    };
+    use crate::fintekkers::models::security::index::IndexTypeProto;
+    use crate::fintekkers::models::util::DecimalValueProto;
+    use crate::fintekkers::models::util::LocalDateProto;
+
+    fn decimal(value: &str) -> Option<DecimalValueProto> {
+        Some(DecimalValueProto {
+            arbitrary_precision_value: value.to_string(),
+        })
+    }
+
+    fn date(year: u32, month: u32, day: u32) -> Option<LocalDateProto> {
+        Some(LocalDateProto { year, month, day })
+    }
+
+    fn round_trip(proto: &SecurityProto) -> SecurityProto {
+        let bytes = proto.encode_to_vec();
+        SecurityProto::decode(bytes.as_slice()).unwrap()
+    }
 
     #[test]
     fn test_proto_to_date() {
@@ -173,9 +203,205 @@ mod test {
             .settlement_currency("CAD".to_string())
             .asset_class("Asset Class".to_string())
             .build()
-            .unwrap(); //.expect("Could not build security");
+            .unwrap();
 
         assert!(result.asset_class.contains("Asset"));
-        // assert_eq!(result.settlement_currency.unwrap(), "CAD".to_string());
+    }
+
+    #[test]
+    fn test_oneof_bond_details_round_trip() {
+        let proto = SecurityProto {
+            security_type: SecurityTypeProto::BondSecurity as i32,
+            asset_class: "Fixed Income".to_string(),
+            product_details: Some(ProductDetails::BondDetails(BondDetailsProto {
+                coupon_rate: decimal("5.0"),
+                coupon_type: CouponTypeProto::Fixed as i32,
+                coupon_frequency: CouponFrequencyProto::Semiannually as i32,
+                face_value: decimal("1000"),
+                issue_date: date(2020, 1, 15),
+                dated_date: date(2020, 1, 15),
+                maturity_date: date(2030, 1, 15),
+                issuance_info: vec![],
+            })),
+            ..Default::default()
+        };
+
+        let parsed = round_trip(&proto);
+        match &parsed.product_details {
+            Some(ProductDetails::BondDetails(bond)) => {
+                assert_eq!(bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
+                assert_eq!(bond.coupon_type, CouponTypeProto::Fixed as i32);
+                assert_eq!(bond.maturity_date.as_ref().unwrap().year, 2030);
+                assert_eq!(bond.face_value.as_ref().unwrap().arbitrary_precision_value, "1000");
+            }
+            other => panic!("Expected BondDetails, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn test_oneof_tips_details_round_trip() {
+        let proto = SecurityProto {
+            security_type: SecurityTypeProto::Tips as i32,
+            product_details: Some(ProductDetails::TipsDetails(TipsDetailsProto {
+                coupon_rate: decimal("0.625"),
+                coupon_type: CouponTypeProto::Fixed as i32,
+                coupon_frequency: CouponFrequencyProto::Semiannually as i32,
+                face_value: decimal("1000"),
+                issue_date: None,
+                dated_date: None,
+                maturity_date: date(2030, 1, 15),
+                issuance_info: vec![],
+                base_cpi: decimal("256.394"),
+                index_date: date(2020, 1, 1),
+                inflation_index_type: IndexTypeProto::CpiU as i32,
+            })),
+            ..Default::default()
+        };
+
+        let parsed = round_trip(&proto);
+        match &parsed.product_details {
+            Some(ProductDetails::TipsDetails(tips)) => {
+                assert_eq!(tips.base_cpi.as_ref().unwrap().arbitrary_precision_value, "256.394");
+                assert_eq!(tips.inflation_index_type, IndexTypeProto::CpiU as i32);
+                assert_eq!(tips.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "0.625");
+            }
+            other => panic!("Expected TipsDetails, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn test_oneof_frn_details_round_trip() {
+        let proto = SecurityProto {
+            security_type: SecurityTypeProto::Frn as i32,
+            product_details: Some(ProductDetails::FrnDetails(FrnDetailsProto {
+                coupon_rate: None,
+                coupon_type: CouponTypeProto::Float as i32,
+                coupon_frequency: CouponFrequencyProto::Quarterly as i32,
+                face_value: decimal("100"),
+                issue_date: None,
+                dated_date: None,
+                maturity_date: date(2028, 1, 15),
+                issuance_info: vec![],
+                spread: decimal("50"),
+                reference_rate_index: IndexTypeProto::TBill13Week as i32,
+                reset_frequency: CouponFrequencyProto::Quarterly as i32,
+            })),
+            ..Default::default()
+        };
+
+        let parsed = round_trip(&proto);
+        match &parsed.product_details {
+            Some(ProductDetails::FrnDetails(frn)) => {
+                assert_eq!(frn.spread.as_ref().unwrap().arbitrary_precision_value, "50");
+                assert_eq!(frn.reference_rate_index, IndexTypeProto::TBill13Week as i32);
+                assert_eq!(frn.reset_frequency, CouponFrequencyProto::Quarterly as i32);
+            }
+            other => panic!("Expected FrnDetails, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn test_oneof_index_details_round_trip() {
+        let proto = SecurityProto {
+            security_type: SecurityTypeProto::IndexSecurity as i32,
+            product_details: Some(ProductDetails::IndexDetails(IndexDetailsProto {
+                index_type: IndexTypeProto::CpiU as i32,
+            })),
+            ..Default::default()
+        };
+
+        let parsed = round_trip(&proto);
+        match &parsed.product_details {
+            Some(ProductDetails::IndexDetails(idx)) => {
+                assert_eq!(idx.index_type, IndexTypeProto::CpiU as i32);
+            }
+            other => panic!("Expected IndexDetails, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn test_oneof_cash_details_round_trip() {
+        let proto = SecurityProto {
+            security_type: SecurityTypeProto::CashSecurity as i32,
+            product_details: Some(ProductDetails::CashDetails(CashDetailsProto {
+                cash_id: "USD".to_string(),
+            })),
+            ..Default::default()
+        };
+
+        let parsed = round_trip(&proto);
+        match &parsed.product_details {
+            Some(ProductDetails::CashDetails(cash)) => {
+                assert_eq!(cash.cash_id, "USD");
+            }
+            other => panic!("Expected CashDetails, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn test_oneof_equity_details_round_trip() {
+        let proto = SecurityProto {
+            security_type: SecurityTypeProto::EquitySecurity as i32,
+            product_details: Some(ProductDetails::EquityDetails(EquityDetailsProto {})),
+            ..Default::default()
+        };
+
+        let parsed = round_trip(&proto);
+        match &parsed.product_details {
+            Some(ProductDetails::EquityDetails(_)) => {}
+            other => panic!("Expected EquityDetails, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn test_dual_write_flat_and_oneof_coexist() {
+        let proto = SecurityProto {
+            security_type: SecurityTypeProto::BondSecurity as i32,
+            // Flat fields (legacy)
+            coupon_rate: decimal("5.0"),
+            coupon_type: CouponTypeProto::Fixed as i32,
+            face_value: decimal("1000"),
+            maturity_date: date(2030, 1, 15),
+            // oneof (new)
+            product_details: Some(ProductDetails::BondDetails(BondDetailsProto {
+                coupon_rate: decimal("5.0"),
+                coupon_type: CouponTypeProto::Fixed as i32,
+                coupon_frequency: 0,
+                face_value: decimal("1000"),
+                issue_date: None,
+                dated_date: None,
+                maturity_date: date(2030, 1, 15),
+                issuance_info: vec![],
+            })),
+            ..Default::default()
+        };
+
+        let parsed = round_trip(&proto);
+
+        // Flat fields survive
+        assert_eq!(parsed.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
+        assert_eq!(parsed.maturity_date.as_ref().unwrap().year, 2030);
+
+        // oneof fields survive
+        match &parsed.product_details {
+            Some(ProductDetails::BondDetails(bond)) => {
+                assert_eq!(bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
+                assert_eq!(bond.maturity_date.as_ref().unwrap().year, 2030);
+            }
+            other => panic!("Expected BondDetails, got {:?}", other),
+        }
+    }
+
+    #[test]
+    fn test_no_oneof_set_returns_none() {
+        let proto = SecurityProto {
+            security_type: SecurityTypeProto::BondSecurity as i32,
+            coupon_rate: decimal("5.0"),
+            ..Default::default()
+        };
+
+        let parsed = round_trip(&proto);
+        assert!(parsed.product_details.is_none());
+        assert_eq!(parsed.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
     }
 }

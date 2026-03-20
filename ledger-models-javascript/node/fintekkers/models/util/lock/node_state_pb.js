@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_util_local_timestamp_pb = require('../../../../fintekkers/models/util/local_timestamp_pb.js');
 goog.object.extend(proto, fintekkers_models_util_local_timestamp_pb);
@@ -81,12 +75,12 @@ proto.fintekkers.models.util.lock.NodeState.prototype.toObject = function(opt_in
  */
 proto.fintekkers.models.util.lock.NodeState.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    partition: (f = msg.getPartition()) && fintekkers_models_util_lock_node_partition_pb.NodePartition.toObject(includeInstance, f),
-    endPoint: (f = msg.getEndPoint()) && fintekkers_models_util_endpoint_pb.Endpoint.toObject(includeInstance, f),
-    lastSeen: (f = msg.getLastSeen()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-    isExpired: jspb.Message.getBooleanFieldWithDefault(msg, 8, false)
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+partition: (f = msg.getPartition()) && fintekkers_models_util_lock_node_partition_pb.NodePartition.toObject(includeInstance, f),
+endPoint: (f = msg.getEndPoint()) && fintekkers_models_util_endpoint_pb.Endpoint.toObject(includeInstance, f),
+lastSeen: (f = msg.getLastSeen()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+isExpired: jspb.Message.getBooleanFieldWithDefault(msg, 8, false)
   };
 
   if (includeInstance) {
@@ -99,7 +93,7 @@ proto.fintekkers.models.util.lock.NodeState.toObject = function(includeInstance,
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.util.lock.NodeState}
  */
 proto.fintekkers.models.util.lock.NodeState.deserializeBinary = function(bytes) {

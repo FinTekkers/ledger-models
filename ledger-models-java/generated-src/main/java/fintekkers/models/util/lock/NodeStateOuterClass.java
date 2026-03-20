@@ -165,99 +165,6 @@ public final class NodeStateOuterClass {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private NodeState(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              objectClass_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              version_ = s;
-              break;
-            }
-            case 42: {
-              fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.Builder subBuilder = null;
-              if (partition_ != null) {
-                subBuilder = partition_.toBuilder();
-              }
-              partition_ = input.readMessage(fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(partition_);
-                partition_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            case 50: {
-              fintekkers.models.util.EndpointOuterClass.Endpoint.Builder subBuilder = null;
-              if (endPoint_ != null) {
-                subBuilder = endPoint_.toBuilder();
-              }
-              endPoint_ = input.readMessage(fintekkers.models.util.EndpointOuterClass.Endpoint.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(endPoint_);
-                endPoint_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            case 58: {
-              fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
-              if (lastSeen_ != null) {
-                subBuilder = lastSeen_.toBuilder();
-              }
-              lastSeen_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(lastSeen_);
-                lastSeen_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            case 64: {
-
-              isExpired_ = input.readBool();
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return fintekkers.models.util.lock.NodeStateOuterClass.internal_static_fintekkers_models_util_lock_NodeState_descriptor;
@@ -272,7 +179,8 @@ public final class NodeStateOuterClass {
     }
 
     public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-    private volatile java.lang.Object objectClass_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object objectClass_ = "";
     /**
      * <code>string object_class = 1;</code>
      * @return The objectClass.
@@ -310,7 +218,8 @@ public final class NodeStateOuterClass {
     }
 
     public static final int VERSION_FIELD_NUMBER = 2;
-    private volatile java.lang.Object version_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object version_ = "";
     /**
      * <code>string version = 2;</code>
      * @return The version.
@@ -382,7 +291,7 @@ public final class NodeStateOuterClass {
      */
     @java.lang.Override
     public fintekkers.models.util.lock.NodePartitionOuterClass.NodePartitionOrBuilder getPartitionOrBuilder() {
-      return getPartition();
+      return partition_ == null ? fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.getDefaultInstance() : partition_;
     }
 
     public static final int END_POINT_FIELD_NUMBER = 6;
@@ -420,7 +329,7 @@ public final class NodeStateOuterClass {
      */
     @java.lang.Override
     public fintekkers.models.util.EndpointOuterClass.EndpointOrBuilder getEndPointOrBuilder() {
-      return getEndPoint();
+      return endPoint_ == null ? fintekkers.models.util.EndpointOuterClass.Endpoint.getDefaultInstance() : endPoint_;
     }
 
     public static final int LAST_SEEN_FIELD_NUMBER = 7;
@@ -461,11 +370,11 @@ public final class NodeStateOuterClass {
      */
     @java.lang.Override
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getLastSeenOrBuilder() {
-      return getLastSeen();
+      return lastSeen_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : lastSeen_;
     }
 
     public static final int IS_EXPIRED_FIELD_NUMBER = 8;
-    private boolean isExpired_;
+    private boolean isExpired_ = false;
     /**
      * <pre>
      *Whether the lock is expired or not (owned by the lock-service)
@@ -493,10 +402,10 @@ public final class NodeStateOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getObjectClassBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
       }
-      if (!getVersionBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
       }
       if (partition_ != null) {
@@ -511,7 +420,7 @@ public final class NodeStateOuterClass {
       if (isExpired_ != false) {
         output.writeBool(8, isExpired_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -520,10 +429,10 @@ public final class NodeStateOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!getObjectClassBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
       }
-      if (!getVersionBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
       }
       if (partition_ != null) {
@@ -542,7 +451,7 @@ public final class NodeStateOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(8, isExpired_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -578,7 +487,7 @@ public final class NodeStateOuterClass {
       }
       if (getIsExpired()
           != other.getIsExpired()) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -608,7 +517,7 @@ public final class NodeStateOuterClass {
       hash = (37 * hash) + IS_EXPIRED_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
           getIsExpired());
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -725,46 +634,36 @@ public final class NodeStateOuterClass {
 
       // Construct using fintekkers.models.util.lock.NodeStateOuterClass.NodeState.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         objectClass_ = "";
-
         version_ = "";
-
-        if (partitionBuilder_ == null) {
-          partition_ = null;
-        } else {
-          partition_ = null;
+        partition_ = null;
+        if (partitionBuilder_ != null) {
+          partitionBuilder_.dispose();
           partitionBuilder_ = null;
         }
-        if (endPointBuilder_ == null) {
-          endPoint_ = null;
-        } else {
-          endPoint_ = null;
+        endPoint_ = null;
+        if (endPointBuilder_ != null) {
+          endPointBuilder_.dispose();
           endPointBuilder_ = null;
         }
-        if (lastSeenBuilder_ == null) {
-          lastSeen_ = null;
-        } else {
-          lastSeen_ = null;
+        lastSeen_ = null;
+        if (lastSeenBuilder_ != null) {
+          lastSeenBuilder_.dispose();
           lastSeenBuilder_ = null;
         }
         isExpired_ = false;
-
         return this;
       }
 
@@ -791,26 +690,37 @@ public final class NodeStateOuterClass {
       @java.lang.Override
       public fintekkers.models.util.lock.NodeStateOuterClass.NodeState buildPartial() {
         fintekkers.models.util.lock.NodeStateOuterClass.NodeState result = new fintekkers.models.util.lock.NodeStateOuterClass.NodeState(this);
-        result.objectClass_ = objectClass_;
-        result.version_ = version_;
-        if (partitionBuilder_ == null) {
-          result.partition_ = partition_;
-        } else {
-          result.partition_ = partitionBuilder_.build();
-        }
-        if (endPointBuilder_ == null) {
-          result.endPoint_ = endPoint_;
-        } else {
-          result.endPoint_ = endPointBuilder_.build();
-        }
-        if (lastSeenBuilder_ == null) {
-          result.lastSeen_ = lastSeen_;
-        } else {
-          result.lastSeen_ = lastSeenBuilder_.build();
-        }
-        result.isExpired_ = isExpired_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(fintekkers.models.util.lock.NodeStateOuterClass.NodeState result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.objectClass_ = objectClass_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.version_ = version_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.partition_ = partitionBuilder_ == null
+              ? partition_
+              : partitionBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.endPoint_ = endPointBuilder_ == null
+              ? endPoint_
+              : endPointBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.lastSeen_ = lastSeenBuilder_ == null
+              ? lastSeen_
+              : lastSeenBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.isExpired_ = isExpired_;
+        }
       }
 
       @java.lang.Override
@@ -859,10 +769,12 @@ public final class NodeStateOuterClass {
         if (other == fintekkers.models.util.lock.NodeStateOuterClass.NodeState.getDefaultInstance()) return this;
         if (!other.getObjectClass().isEmpty()) {
           objectClass_ = other.objectClass_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getVersion().isEmpty()) {
           version_ = other.version_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (other.hasPartition()) {
@@ -877,7 +789,7 @@ public final class NodeStateOuterClass {
         if (other.getIsExpired() != false) {
           setIsExpired(other.getIsExpired());
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -892,19 +804,69 @@ public final class NodeStateOuterClass {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        fintekkers.models.util.lock.NodeStateOuterClass.NodeState parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                objectClass_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                version_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 42: {
+                input.readMessage(
+                    getPartitionFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 42
+              case 50: {
+                input.readMessage(
+                    getEndPointFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 50
+              case 58: {
+                input.readMessage(
+                    getLastSeenFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 58
+              case 64: {
+                isExpired_ = input.readBool();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 64
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (fintekkers.models.util.lock.NodeStateOuterClass.NodeState) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object objectClass_ = "";
       /**
@@ -947,11 +909,9 @@ public final class NodeStateOuterClass {
        */
       public Builder setObjectClass(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         objectClass_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -960,8 +920,8 @@ public final class NodeStateOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearObjectClass() {
-        
         objectClass_ = getDefaultInstance().getObjectClass();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -972,12 +932,10 @@ public final class NodeStateOuterClass {
        */
       public Builder setObjectClassBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         objectClass_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -1023,11 +981,9 @@ public final class NodeStateOuterClass {
        */
       public Builder setVersion(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         version_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -1036,8 +992,8 @@ public final class NodeStateOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearVersion() {
-        
         version_ = getDefaultInstance().getVersion();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -1048,12 +1004,10 @@ public final class NodeStateOuterClass {
        */
       public Builder setVersionBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         version_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -1070,7 +1024,7 @@ public final class NodeStateOuterClass {
        * @return Whether the partition field is set.
        */
       public boolean hasPartition() {
-        return partitionBuilder_ != null || partition_ != null;
+        return ((bitField0_ & 0x00000004) != 0);
       }
       /**
        * <pre>
@@ -1100,11 +1054,11 @@ public final class NodeStateOuterClass {
             throw new NullPointerException();
           }
           partition_ = value;
-          onChanged();
         } else {
           partitionBuilder_.setMessage(value);
         }
-
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -1118,11 +1072,11 @@ public final class NodeStateOuterClass {
           fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.Builder builderForValue) {
         if (partitionBuilder_ == null) {
           partition_ = builderForValue.build();
-          onChanged();
         } else {
           partitionBuilder_.setMessage(builderForValue.build());
         }
-
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -1134,17 +1088,18 @@ public final class NodeStateOuterClass {
        */
       public Builder mergePartition(fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition value) {
         if (partitionBuilder_ == null) {
-          if (partition_ != null) {
-            partition_ =
-              fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.newBuilder(partition_).mergeFrom(value).buildPartial();
+          if (((bitField0_ & 0x00000004) != 0) &&
+            partition_ != null &&
+            partition_ != fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.getDefaultInstance()) {
+            getPartitionBuilder().mergeFrom(value);
           } else {
             partition_ = value;
           }
-          onChanged();
         } else {
           partitionBuilder_.mergeFrom(value);
         }
-
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -1155,14 +1110,13 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.lock.NodePartition partition = 5;</code>
        */
       public Builder clearPartition() {
-        if (partitionBuilder_ == null) {
-          partition_ = null;
-          onChanged();
-        } else {
-          partition_ = null;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        partition_ = null;
+        if (partitionBuilder_ != null) {
+          partitionBuilder_.dispose();
           partitionBuilder_ = null;
         }
-
+        onChanged();
         return this;
       }
       /**
@@ -1173,7 +1127,7 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.lock.NodePartition partition = 5;</code>
        */
       public fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.Builder getPartitionBuilder() {
-        
+        bitField0_ |= 0x00000004;
         onChanged();
         return getPartitionFieldBuilder().getBuilder();
       }
@@ -1225,7 +1179,7 @@ public final class NodeStateOuterClass {
        * @return Whether the endPoint field is set.
        */
       public boolean hasEndPoint() {
-        return endPointBuilder_ != null || endPoint_ != null;
+        return ((bitField0_ & 0x00000008) != 0);
       }
       /**
        * <pre>
@@ -1255,11 +1209,11 @@ public final class NodeStateOuterClass {
             throw new NullPointerException();
           }
           endPoint_ = value;
-          onChanged();
         } else {
           endPointBuilder_.setMessage(value);
         }
-
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
       /**
@@ -1273,11 +1227,11 @@ public final class NodeStateOuterClass {
           fintekkers.models.util.EndpointOuterClass.Endpoint.Builder builderForValue) {
         if (endPointBuilder_ == null) {
           endPoint_ = builderForValue.build();
-          onChanged();
         } else {
           endPointBuilder_.setMessage(builderForValue.build());
         }
-
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
       /**
@@ -1289,17 +1243,18 @@ public final class NodeStateOuterClass {
        */
       public Builder mergeEndPoint(fintekkers.models.util.EndpointOuterClass.Endpoint value) {
         if (endPointBuilder_ == null) {
-          if (endPoint_ != null) {
-            endPoint_ =
-              fintekkers.models.util.EndpointOuterClass.Endpoint.newBuilder(endPoint_).mergeFrom(value).buildPartial();
+          if (((bitField0_ & 0x00000008) != 0) &&
+            endPoint_ != null &&
+            endPoint_ != fintekkers.models.util.EndpointOuterClass.Endpoint.getDefaultInstance()) {
+            getEndPointBuilder().mergeFrom(value);
           } else {
             endPoint_ = value;
           }
-          onChanged();
         } else {
           endPointBuilder_.mergeFrom(value);
         }
-
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
       /**
@@ -1310,14 +1265,13 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.Endpoint end_point = 6;</code>
        */
       public Builder clearEndPoint() {
-        if (endPointBuilder_ == null) {
-          endPoint_ = null;
-          onChanged();
-        } else {
-          endPoint_ = null;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        endPoint_ = null;
+        if (endPointBuilder_ != null) {
+          endPointBuilder_.dispose();
           endPointBuilder_ = null;
         }
-
+        onChanged();
         return this;
       }
       /**
@@ -1328,7 +1282,7 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.Endpoint end_point = 6;</code>
        */
       public fintekkers.models.util.EndpointOuterClass.Endpoint.Builder getEndPointBuilder() {
-        
+        bitField0_ |= 0x00000008;
         onChanged();
         return getEndPointFieldBuilder().getBuilder();
       }
@@ -1381,7 +1335,7 @@ public final class NodeStateOuterClass {
        * @return Whether the lastSeen field is set.
        */
       public boolean hasLastSeen() {
-        return lastSeenBuilder_ != null || lastSeen_ != null;
+        return ((bitField0_ & 0x00000010) != 0);
       }
       /**
        * <pre>
@@ -1413,11 +1367,11 @@ public final class NodeStateOuterClass {
             throw new NullPointerException();
           }
           lastSeen_ = value;
-          onChanged();
         } else {
           lastSeenBuilder_.setMessage(value);
         }
-
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
       /**
@@ -1432,11 +1386,11 @@ public final class NodeStateOuterClass {
           fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
         if (lastSeenBuilder_ == null) {
           lastSeen_ = builderForValue.build();
-          onChanged();
         } else {
           lastSeenBuilder_.setMessage(builderForValue.build());
         }
-
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
       /**
@@ -1449,17 +1403,18 @@ public final class NodeStateOuterClass {
        */
       public Builder mergeLastSeen(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
         if (lastSeenBuilder_ == null) {
-          if (lastSeen_ != null) {
-            lastSeen_ =
-              fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(lastSeen_).mergeFrom(value).buildPartial();
+          if (((bitField0_ & 0x00000010) != 0) &&
+            lastSeen_ != null &&
+            lastSeen_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
+            getLastSeenBuilder().mergeFrom(value);
           } else {
             lastSeen_ = value;
           }
-          onChanged();
         } else {
           lastSeenBuilder_.mergeFrom(value);
         }
-
+        bitField0_ |= 0x00000010;
+        onChanged();
         return this;
       }
       /**
@@ -1471,14 +1426,13 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.LocalTimestampProto last_seen = 7;</code>
        */
       public Builder clearLastSeen() {
-        if (lastSeenBuilder_ == null) {
-          lastSeen_ = null;
-          onChanged();
-        } else {
-          lastSeen_ = null;
+        bitField0_ = (bitField0_ & ~0x00000010);
+        lastSeen_ = null;
+        if (lastSeenBuilder_ != null) {
+          lastSeenBuilder_.dispose();
           lastSeenBuilder_ = null;
         }
-
+        onChanged();
         return this;
       }
       /**
@@ -1490,7 +1444,7 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.LocalTimestampProto last_seen = 7;</code>
        */
       public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getLastSeenBuilder() {
-        
+        bitField0_ |= 0x00000010;
         onChanged();
         return getLastSeenFieldBuilder().getBuilder();
       }
@@ -1557,6 +1511,7 @@ public final class NodeStateOuterClass {
       public Builder setIsExpired(boolean value) {
         
         isExpired_ = value;
+        bitField0_ |= 0x00000020;
         onChanged();
         return this;
       }
@@ -1569,7 +1524,7 @@ public final class NodeStateOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearIsExpired() {
-        
+        bitField0_ = (bitField0_ & ~0x00000020);
         isExpired_ = false;
         onChanged();
         return this;
@@ -1607,7 +1562,18 @@ public final class NodeStateOuterClass {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new NodeState(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 

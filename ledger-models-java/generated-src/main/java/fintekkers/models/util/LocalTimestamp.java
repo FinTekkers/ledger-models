@@ -83,62 +83,6 @@ public final class LocalTimestamp {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private LocalTimestampProto(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              com.google.protobuf.Timestamp.Builder subBuilder = null;
-              if (timestamp_ != null) {
-                subBuilder = timestamp_.toBuilder();
-              }
-              timestamp_ = input.readMessage(com.google.protobuf.Timestamp.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(timestamp_);
-                timestamp_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              timeZone_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return fintekkers.models.util.LocalTimestamp.internal_static_fintekkers_models_util_LocalTimestampProto_descriptor;
@@ -175,11 +119,12 @@ public final class LocalTimestamp {
      */
     @java.lang.Override
     public com.google.protobuf.TimestampOrBuilder getTimestampOrBuilder() {
-      return getTimestamp();
+      return timestamp_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : timestamp_;
     }
 
     public static final int TIME_ZONE_FIELD_NUMBER = 2;
-    private volatile java.lang.Object timeZone_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object timeZone_ = "";
     /**
      * <pre>
      *TODO: Need to decide how to model this: https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations
@@ -243,10 +188,10 @@ public final class LocalTimestamp {
       if (timestamp_ != null) {
         output.writeMessage(1, getTimestamp());
       }
-      if (!getTimeZoneBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(timeZone_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, timeZone_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -259,10 +204,10 @@ public final class LocalTimestamp {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, getTimestamp());
       }
-      if (!getTimeZoneBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(timeZone_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, timeZone_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -284,7 +229,7 @@ public final class LocalTimestamp {
       }
       if (!getTimeZone()
           .equals(other.getTimeZone())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -301,7 +246,7 @@ public final class LocalTimestamp {
       }
       hash = (37 * hash) + TIME_ZONE_FIELD_NUMBER;
       hash = (53 * hash) + getTimeZone().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -418,30 +363,24 @@ public final class LocalTimestamp {
 
       // Construct using fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        if (timestampBuilder_ == null) {
-          timestamp_ = null;
-        } else {
-          timestamp_ = null;
+        bitField0_ = 0;
+        timestamp_ = null;
+        if (timestampBuilder_ != null) {
+          timestampBuilder_.dispose();
           timestampBuilder_ = null;
         }
         timeZone_ = "";
-
         return this;
       }
 
@@ -468,14 +407,21 @@ public final class LocalTimestamp {
       @java.lang.Override
       public fintekkers.models.util.LocalTimestamp.LocalTimestampProto buildPartial() {
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto result = new fintekkers.models.util.LocalTimestamp.LocalTimestampProto(this);
-        if (timestampBuilder_ == null) {
-          result.timestamp_ = timestamp_;
-        } else {
-          result.timestamp_ = timestampBuilder_.build();
-        }
-        result.timeZone_ = timeZone_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(fintekkers.models.util.LocalTimestamp.LocalTimestampProto result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.timestamp_ = timestampBuilder_ == null
+              ? timestamp_
+              : timestampBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.timeZone_ = timeZone_;
+        }
       }
 
       @java.lang.Override
@@ -527,9 +473,10 @@ public final class LocalTimestamp {
         }
         if (!other.getTimeZone().isEmpty()) {
           timeZone_ = other.timeZone_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -544,19 +491,45 @@ public final class LocalTimestamp {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        fintekkers.models.util.LocalTimestamp.LocalTimestampProto parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                input.readMessage(
+                    getTimestampFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                timeZone_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (fintekkers.models.util.LocalTimestamp.LocalTimestampProto) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private com.google.protobuf.Timestamp timestamp_;
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -566,7 +539,7 @@ public final class LocalTimestamp {
        * @return Whether the timestamp field is set.
        */
       public boolean hasTimestamp() {
-        return timestampBuilder_ != null || timestamp_ != null;
+        return ((bitField0_ & 0x00000001) != 0);
       }
       /**
        * <code>.google.protobuf.Timestamp timestamp = 1;</code>
@@ -588,11 +561,11 @@ public final class LocalTimestamp {
             throw new NullPointerException();
           }
           timestamp_ = value;
-          onChanged();
         } else {
           timestampBuilder_.setMessage(value);
         }
-
+        bitField0_ |= 0x00000001;
+        onChanged();
         return this;
       }
       /**
@@ -602,11 +575,11 @@ public final class LocalTimestamp {
           com.google.protobuf.Timestamp.Builder builderForValue) {
         if (timestampBuilder_ == null) {
           timestamp_ = builderForValue.build();
-          onChanged();
         } else {
           timestampBuilder_.setMessage(builderForValue.build());
         }
-
+        bitField0_ |= 0x00000001;
+        onChanged();
         return this;
       }
       /**
@@ -614,38 +587,38 @@ public final class LocalTimestamp {
        */
       public Builder mergeTimestamp(com.google.protobuf.Timestamp value) {
         if (timestampBuilder_ == null) {
-          if (timestamp_ != null) {
-            timestamp_ =
-              com.google.protobuf.Timestamp.newBuilder(timestamp_).mergeFrom(value).buildPartial();
+          if (((bitField0_ & 0x00000001) != 0) &&
+            timestamp_ != null &&
+            timestamp_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+            getTimestampBuilder().mergeFrom(value);
           } else {
             timestamp_ = value;
           }
-          onChanged();
         } else {
           timestampBuilder_.mergeFrom(value);
         }
-
+        bitField0_ |= 0x00000001;
+        onChanged();
         return this;
       }
       /**
        * <code>.google.protobuf.Timestamp timestamp = 1;</code>
        */
       public Builder clearTimestamp() {
-        if (timestampBuilder_ == null) {
-          timestamp_ = null;
-          onChanged();
-        } else {
-          timestamp_ = null;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        timestamp_ = null;
+        if (timestampBuilder_ != null) {
+          timestampBuilder_.dispose();
           timestampBuilder_ = null;
         }
-
+        onChanged();
         return this;
       }
       /**
        * <code>.google.protobuf.Timestamp timestamp = 1;</code>
        */
       public com.google.protobuf.Timestamp.Builder getTimestampBuilder() {
-        
+        bitField0_ |= 0x00000001;
         onChanged();
         return getTimestampFieldBuilder().getBuilder();
       }
@@ -733,11 +706,9 @@ public final class LocalTimestamp {
        */
       public Builder setTimeZone(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         timeZone_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -751,8 +722,8 @@ public final class LocalTimestamp {
        * @return This builder for chaining.
        */
       public Builder clearTimeZone() {
-        
         timeZone_ = getDefaultInstance().getTimeZone();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -768,12 +739,10 @@ public final class LocalTimestamp {
        */
       public Builder setTimeZoneBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         timeZone_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -810,7 +779,18 @@ public final class LocalTimestamp {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new LocalTimestampProto(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 

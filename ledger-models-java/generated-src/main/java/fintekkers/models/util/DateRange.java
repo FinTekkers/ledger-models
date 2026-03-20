@@ -113,81 +113,6 @@ public final class DateRange {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private DateRangeProto(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              objectClass_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              version_ = s;
-              break;
-            }
-            case 82: {
-              fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
-              if (start_ != null) {
-                subBuilder = start_.toBuilder();
-              }
-              start_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(start_);
-                start_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            case 90: {
-              fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
-              if (end_ != null) {
-                subBuilder = end_.toBuilder();
-              }
-              end_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(end_);
-                end_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return fintekkers.models.util.DateRange.internal_static_fintekkers_models_util_DateRangeProto_descriptor;
@@ -202,7 +127,8 @@ public final class DateRange {
     }
 
     public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-    private volatile java.lang.Object objectClass_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object objectClass_ = "";
     /**
      * <code>string object_class = 1;</code>
      * @return The objectClass.
@@ -240,7 +166,8 @@ public final class DateRange {
     }
 
     public static final int VERSION_FIELD_NUMBER = 2;
-    private volatile java.lang.Object version_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object version_ = "";
     /**
      * <code>string version = 2;</code>
      * @return The version.
@@ -312,7 +239,7 @@ public final class DateRange {
      */
     @java.lang.Override
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getStartOrBuilder() {
-      return getStart();
+      return start_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : start_;
     }
 
     public static final int END_FIELD_NUMBER = 11;
@@ -338,7 +265,7 @@ public final class DateRange {
      */
     @java.lang.Override
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getEndOrBuilder() {
-      return getEnd();
+      return end_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : end_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -355,10 +282,10 @@ public final class DateRange {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getObjectClassBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
       }
-      if (!getVersionBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
       }
       if (start_ != null) {
@@ -367,7 +294,7 @@ public final class DateRange {
       if (end_ != null) {
         output.writeMessage(11, getEnd());
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -376,10 +303,10 @@ public final class DateRange {
       if (size != -1) return size;
 
       size = 0;
-      if (!getObjectClassBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
       }
-      if (!getVersionBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
       }
       if (start_ != null) {
@@ -390,7 +317,7 @@ public final class DateRange {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(11, getEnd());
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -419,7 +346,7 @@ public final class DateRange {
         if (!getEnd()
             .equals(other.getEnd())) return false;
       }
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -442,7 +369,7 @@ public final class DateRange {
         hash = (37 * hash) + END_FIELD_NUMBER;
         hash = (53 * hash) + getEnd().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -559,36 +486,28 @@ public final class DateRange {
 
       // Construct using fintekkers.models.util.DateRange.DateRangeProto.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         objectClass_ = "";
-
         version_ = "";
-
-        if (startBuilder_ == null) {
-          start_ = null;
-        } else {
-          start_ = null;
+        start_ = null;
+        if (startBuilder_ != null) {
+          startBuilder_.dispose();
           startBuilder_ = null;
         }
-        if (endBuilder_ == null) {
-          end_ = null;
-        } else {
-          end_ = null;
+        end_ = null;
+        if (endBuilder_ != null) {
+          endBuilder_.dispose();
           endBuilder_ = null;
         }
         return this;
@@ -617,20 +536,29 @@ public final class DateRange {
       @java.lang.Override
       public fintekkers.models.util.DateRange.DateRangeProto buildPartial() {
         fintekkers.models.util.DateRange.DateRangeProto result = new fintekkers.models.util.DateRange.DateRangeProto(this);
-        result.objectClass_ = objectClass_;
-        result.version_ = version_;
-        if (startBuilder_ == null) {
-          result.start_ = start_;
-        } else {
-          result.start_ = startBuilder_.build();
-        }
-        if (endBuilder_ == null) {
-          result.end_ = end_;
-        } else {
-          result.end_ = endBuilder_.build();
-        }
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(fintekkers.models.util.DateRange.DateRangeProto result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.objectClass_ = objectClass_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.version_ = version_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.start_ = startBuilder_ == null
+              ? start_
+              : startBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.end_ = endBuilder_ == null
+              ? end_
+              : endBuilder_.build();
+        }
       }
 
       @java.lang.Override
@@ -679,10 +607,12 @@ public final class DateRange {
         if (other == fintekkers.models.util.DateRange.DateRangeProto.getDefaultInstance()) return this;
         if (!other.getObjectClass().isEmpty()) {
           objectClass_ = other.objectClass_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getVersion().isEmpty()) {
           version_ = other.version_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (other.hasStart()) {
@@ -691,7 +621,7 @@ public final class DateRange {
         if (other.hasEnd()) {
           mergeEnd(other.getEnd());
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -706,19 +636,57 @@ public final class DateRange {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        fintekkers.models.util.DateRange.DateRangeProto parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                objectClass_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                version_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 82: {
+                input.readMessage(
+                    getStartFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 82
+              case 90: {
+                input.readMessage(
+                    getEndFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 90
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (fintekkers.models.util.DateRange.DateRangeProto) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object objectClass_ = "";
       /**
@@ -761,11 +729,9 @@ public final class DateRange {
        */
       public Builder setObjectClass(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         objectClass_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -774,8 +740,8 @@ public final class DateRange {
        * @return This builder for chaining.
        */
       public Builder clearObjectClass() {
-        
         objectClass_ = getDefaultInstance().getObjectClass();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -786,12 +752,10 @@ public final class DateRange {
        */
       public Builder setObjectClassBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         objectClass_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -837,11 +801,9 @@ public final class DateRange {
        */
       public Builder setVersion(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         version_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -850,8 +812,8 @@ public final class DateRange {
        * @return This builder for chaining.
        */
       public Builder clearVersion() {
-        
         version_ = getDefaultInstance().getVersion();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -862,12 +824,10 @@ public final class DateRange {
        */
       public Builder setVersionBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         version_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -884,7 +844,7 @@ public final class DateRange {
        * @return Whether the start field is set.
        */
       public boolean hasStart() {
-        return startBuilder_ != null || start_ != null;
+        return ((bitField0_ & 0x00000004) != 0);
       }
       /**
        * <pre>
@@ -914,11 +874,11 @@ public final class DateRange {
             throw new NullPointerException();
           }
           start_ = value;
-          onChanged();
         } else {
           startBuilder_.setMessage(value);
         }
-
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -932,11 +892,11 @@ public final class DateRange {
           fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
         if (startBuilder_ == null) {
           start_ = builderForValue.build();
-          onChanged();
         } else {
           startBuilder_.setMessage(builderForValue.build());
         }
-
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -948,17 +908,18 @@ public final class DateRange {
        */
       public Builder mergeStart(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
         if (startBuilder_ == null) {
-          if (start_ != null) {
-            start_ =
-              fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(start_).mergeFrom(value).buildPartial();
+          if (((bitField0_ & 0x00000004) != 0) &&
+            start_ != null &&
+            start_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
+            getStartBuilder().mergeFrom(value);
           } else {
             start_ = value;
           }
-          onChanged();
         } else {
           startBuilder_.mergeFrom(value);
         }
-
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       /**
@@ -969,14 +930,13 @@ public final class DateRange {
        * <code>.fintekkers.models.util.LocalTimestampProto start = 10;</code>
        */
       public Builder clearStart() {
-        if (startBuilder_ == null) {
-          start_ = null;
-          onChanged();
-        } else {
-          start_ = null;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        start_ = null;
+        if (startBuilder_ != null) {
+          startBuilder_.dispose();
           startBuilder_ = null;
         }
-
+        onChanged();
         return this;
       }
       /**
@@ -987,7 +947,7 @@ public final class DateRange {
        * <code>.fintekkers.models.util.LocalTimestampProto start = 10;</code>
        */
       public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getStartBuilder() {
-        
+        bitField0_ |= 0x00000004;
         onChanged();
         return getStartFieldBuilder().getBuilder();
       }
@@ -1035,7 +995,7 @@ public final class DateRange {
        * @return Whether the end field is set.
        */
       public boolean hasEnd() {
-        return endBuilder_ != null || end_ != null;
+        return ((bitField0_ & 0x00000008) != 0);
       }
       /**
        * <code>.fintekkers.models.util.LocalTimestampProto end = 11;</code>
@@ -1057,11 +1017,11 @@ public final class DateRange {
             throw new NullPointerException();
           }
           end_ = value;
-          onChanged();
         } else {
           endBuilder_.setMessage(value);
         }
-
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
       /**
@@ -1071,11 +1031,11 @@ public final class DateRange {
           fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
         if (endBuilder_ == null) {
           end_ = builderForValue.build();
-          onChanged();
         } else {
           endBuilder_.setMessage(builderForValue.build());
         }
-
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
       /**
@@ -1083,38 +1043,38 @@ public final class DateRange {
        */
       public Builder mergeEnd(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
         if (endBuilder_ == null) {
-          if (end_ != null) {
-            end_ =
-              fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(end_).mergeFrom(value).buildPartial();
+          if (((bitField0_ & 0x00000008) != 0) &&
+            end_ != null &&
+            end_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
+            getEndBuilder().mergeFrom(value);
           } else {
             end_ = value;
           }
-          onChanged();
         } else {
           endBuilder_.mergeFrom(value);
         }
-
+        bitField0_ |= 0x00000008;
+        onChanged();
         return this;
       }
       /**
        * <code>.fintekkers.models.util.LocalTimestampProto end = 11;</code>
        */
       public Builder clearEnd() {
-        if (endBuilder_ == null) {
-          end_ = null;
-          onChanged();
-        } else {
-          end_ = null;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        end_ = null;
+        if (endBuilder_ != null) {
+          endBuilder_.dispose();
           endBuilder_ = null;
         }
-
+        onChanged();
         return this;
       }
       /**
        * <code>.fintekkers.models.util.LocalTimestampProto end = 11;</code>
        */
       public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getEndBuilder() {
-        
+        bitField0_ |= 0x00000008;
         onChanged();
         return getEndFieldBuilder().getBuilder();
       }
@@ -1178,7 +1138,18 @@ public final class DateRange {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new DateRangeProto(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 

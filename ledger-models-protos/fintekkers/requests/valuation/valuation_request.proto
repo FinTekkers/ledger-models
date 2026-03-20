@@ -5,7 +5,6 @@ package fintekkers.requests.valuation;
 import "fintekkers/models/security/security.proto";
 import "fintekkers/models/position/position.proto";
 import "fintekkers/models/price/price.proto";
-import "fintekkers/models/util/decimal_value.proto";
 import "fintekkers/models/util/local_timestamp.proto";
 
 import "fintekkers/requests/util/operation.proto";
@@ -44,6 +43,10 @@ message ValuationRequestProto {
   //The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
   //Modeled as a PriceProto on a SecurityProto representing the CPI index.
   fintekkers.models.price.PriceProto cpi_price_input = 24;
+
+  //The current reference rate observation for floating rate note (FRN) valuation.
+  //Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+  fintekkers.models.price.PriceProto reference_rate_input = 25;
 }
 
 

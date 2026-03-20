@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_security_security_pb = require('../../../fintekkers/models/security/security_pb.js');
 goog.object.extend(proto, fintekkers_models_security_security_pb);
@@ -77,9 +71,9 @@ proto.fintekkers.requests.security.CreateSecurityRequestProto.prototype.toObject
  */
 proto.fintekkers.requests.security.CreateSecurityRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    securityInput: (f = msg.getSecurityInput()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f)
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+securityInput: (f = msg.getSecurityInput()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -92,7 +86,7 @@ proto.fintekkers.requests.security.CreateSecurityRequestProto.toObject = functio
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.security.CreateSecurityRequestProto}
  */
 proto.fintekkers.requests.security.CreateSecurityRequestProto.deserializeBinary = function(bytes) {

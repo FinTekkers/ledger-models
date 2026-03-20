@@ -55,6 +55,14 @@ public final class SecurityService {
           com.google.protobuf.RpcCallback<fintekkers.requests.security.QuerySecurityResponseProto> done);
 
       /**
+       * <code>rpc Delete(.fintekkers.requests.util.DeleteRequestProto) returns (.fintekkers.requests.util.DeleteResponseProto);</code>
+       */
+      public abstract void delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done);
+
+      /**
        * <code>rpc ValidateCreateOrUpdate(.fintekkers.requests.security.CreateSecurityRequestProto) returns (.fintekkers.requests.util.errors.SummaryProto);</code>
        */
       public abstract void validateCreateOrUpdate(
@@ -124,6 +132,14 @@ public final class SecurityService {
         }
 
         @java.lang.Override
+        public  void delete(
+            com.google.protobuf.RpcController controller,
+            fintekkers.requests.util.DeleteRequestProto request,
+            com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done) {
+          impl.delete(controller, request, done);
+        }
+
+        @java.lang.Override
         public  void validateCreateOrUpdate(
             com.google.protobuf.RpcController controller,
             fintekkers.requests.security.CreateSecurityRequestProto request,
@@ -186,12 +202,14 @@ public final class SecurityService {
             case 3:
               return impl.listIds(controller, (fintekkers.requests.security.QuerySecurityRequestProto)request);
             case 4:
-              return impl.validateCreateOrUpdate(controller, (fintekkers.requests.security.CreateSecurityRequestProto)request);
+              return impl.delete(controller, (fintekkers.requests.util.DeleteRequestProto)request);
             case 5:
-              return impl.validateQueryRequest(controller, (fintekkers.requests.security.QuerySecurityRequestProto)request);
+              return impl.validateCreateOrUpdate(controller, (fintekkers.requests.security.CreateSecurityRequestProto)request);
             case 6:
-              return impl.getFields(controller, (com.google.protobuf.Empty)request);
+              return impl.validateQueryRequest(controller, (fintekkers.requests.security.QuerySecurityRequestProto)request);
             case 7:
+              return impl.getFields(controller, (com.google.protobuf.Empty)request);
+            case 8:
               return impl.getFieldValues(controller, (fintekkers.requests.security.GetFieldValuesRequestProto)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -216,12 +234,14 @@ public final class SecurityService {
             case 3:
               return fintekkers.requests.security.QuerySecurityRequestProto.getDefaultInstance();
             case 4:
-              return fintekkers.requests.security.CreateSecurityRequestProto.getDefaultInstance();
+              return fintekkers.requests.util.DeleteRequestProto.getDefaultInstance();
             case 5:
-              return fintekkers.requests.security.QuerySecurityRequestProto.getDefaultInstance();
+              return fintekkers.requests.security.CreateSecurityRequestProto.getDefaultInstance();
             case 6:
-              return com.google.protobuf.Empty.getDefaultInstance();
+              return fintekkers.requests.security.QuerySecurityRequestProto.getDefaultInstance();
             case 7:
+              return com.google.protobuf.Empty.getDefaultInstance();
+            case 8:
               return fintekkers.requests.security.GetFieldValuesRequestProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -246,12 +266,14 @@ public final class SecurityService {
             case 3:
               return fintekkers.requests.security.QuerySecurityResponseProto.getDefaultInstance();
             case 4:
-              return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+              return fintekkers.requests.util.DeleteResponseProto.getDefaultInstance();
             case 5:
               return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
             case 6:
-              return fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance();
+              return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
             case 7:
+              return fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance();
+            case 8:
               return fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -292,6 +314,14 @@ public final class SecurityService {
         com.google.protobuf.RpcController controller,
         fintekkers.requests.security.QuerySecurityRequestProto request,
         com.google.protobuf.RpcCallback<fintekkers.requests.security.QuerySecurityResponseProto> done);
+
+    /**
+     * <code>rpc Delete(.fintekkers.requests.util.DeleteRequestProto) returns (.fintekkers.requests.util.DeleteResponseProto);</code>
+     */
+    public abstract void delete(
+        com.google.protobuf.RpcController controller,
+        fintekkers.requests.util.DeleteRequestProto request,
+        com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done);
 
     /**
      * <code>rpc ValidateCreateOrUpdate(.fintekkers.requests.security.CreateSecurityRequestProto) returns (.fintekkers.requests.util.errors.SummaryProto);</code>
@@ -368,21 +398,26 @@ public final class SecurityService {
               done));
           return;
         case 4:
+          this.delete(controller, (fintekkers.requests.util.DeleteRequestProto)request,
+            com.google.protobuf.RpcUtil.<fintekkers.requests.util.DeleteResponseProto>specializeCallback(
+              done));
+          return;
+        case 5:
           this.validateCreateOrUpdate(controller, (fintekkers.requests.security.CreateSecurityRequestProto)request,
             com.google.protobuf.RpcUtil.<fintekkers.requests.util.errors.Summary.SummaryProto>specializeCallback(
               done));
           return;
-        case 5:
+        case 6:
           this.validateQueryRequest(controller, (fintekkers.requests.security.QuerySecurityRequestProto)request,
             com.google.protobuf.RpcUtil.<fintekkers.requests.util.errors.Summary.SummaryProto>specializeCallback(
               done));
           return;
-        case 6:
+        case 7:
           this.getFields(controller, (com.google.protobuf.Empty)request,
             com.google.protobuf.RpcUtil.<fintekkers.requests.security.GetFieldsResponseProto>specializeCallback(
               done));
           return;
-        case 7:
+        case 8:
           this.getFieldValues(controller, (fintekkers.requests.security.GetFieldValuesRequestProto)request,
             com.google.protobuf.RpcUtil.<fintekkers.requests.security.GetFieldValuesResponseProto>specializeCallback(
               done));
@@ -410,12 +445,14 @@ public final class SecurityService {
         case 3:
           return fintekkers.requests.security.QuerySecurityRequestProto.getDefaultInstance();
         case 4:
-          return fintekkers.requests.security.CreateSecurityRequestProto.getDefaultInstance();
+          return fintekkers.requests.util.DeleteRequestProto.getDefaultInstance();
         case 5:
-          return fintekkers.requests.security.QuerySecurityRequestProto.getDefaultInstance();
+          return fintekkers.requests.security.CreateSecurityRequestProto.getDefaultInstance();
         case 6:
-          return com.google.protobuf.Empty.getDefaultInstance();
+          return fintekkers.requests.security.QuerySecurityRequestProto.getDefaultInstance();
         case 7:
+          return com.google.protobuf.Empty.getDefaultInstance();
+        case 8:
           return fintekkers.requests.security.GetFieldValuesRequestProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -440,12 +477,14 @@ public final class SecurityService {
         case 3:
           return fintekkers.requests.security.QuerySecurityResponseProto.getDefaultInstance();
         case 4:
-          return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+          return fintekkers.requests.util.DeleteResponseProto.getDefaultInstance();
         case 5:
           return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
         case 6:
-          return fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance();
+          return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
         case 7:
+          return fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance();
+        case 8:
           return fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -528,12 +567,27 @@ public final class SecurityService {
             fintekkers.requests.security.QuerySecurityResponseProto.getDefaultInstance()));
       }
 
+      public  void delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(4),
+          controller,
+          request,
+          fintekkers.requests.util.DeleteResponseProto.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            fintekkers.requests.util.DeleteResponseProto.class,
+            fintekkers.requests.util.DeleteResponseProto.getDefaultInstance()));
+      }
+
       public  void validateCreateOrUpdate(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.security.CreateSecurityRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance(),
@@ -548,7 +602,7 @@ public final class SecurityService {
           fintekkers.requests.security.QuerySecurityRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(5),
+          getDescriptor().getMethods().get(6),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance(),
@@ -563,7 +617,7 @@ public final class SecurityService {
           com.google.protobuf.Empty request,
           com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldsResponseProto> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(6),
+          getDescriptor().getMethods().get(7),
           controller,
           request,
           fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance(),
@@ -578,7 +632,7 @@ public final class SecurityService {
           fintekkers.requests.security.GetFieldValuesRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(7),
+          getDescriptor().getMethods().get(8),
           controller,
           request,
           fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance(),
@@ -613,6 +667,11 @@ public final class SecurityService {
       public fintekkers.requests.security.QuerySecurityResponseProto listIds(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.security.QuerySecurityRequestProto request)
+          throws com.google.protobuf.ServiceException;
+
+      public fintekkers.requests.util.DeleteResponseProto delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request)
           throws com.google.protobuf.ServiceException;
 
       public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(
@@ -691,12 +750,24 @@ public final class SecurityService {
       }
 
 
+      public fintekkers.requests.util.DeleteResponseProto delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request)
+          throws com.google.protobuf.ServiceException {
+        return (fintekkers.requests.util.DeleteResponseProto) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(4),
+          controller,
+          request,
+          fintekkers.requests.util.DeleteResponseProto.getDefaultInstance());
+      }
+
+
       public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.security.CreateSecurityRequestProto request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.requests.util.errors.Summary.SummaryProto) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance());
@@ -708,7 +779,7 @@ public final class SecurityService {
           fintekkers.requests.security.QuerySecurityRequestProto request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.requests.util.errors.Summary.SummaryProto) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(5),
+          getDescriptor().getMethods().get(6),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance());
@@ -720,7 +791,7 @@ public final class SecurityService {
           com.google.protobuf.Empty request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.requests.security.GetFieldsResponseProto) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(6),
+          getDescriptor().getMethods().get(7),
           controller,
           request,
           fintekkers.requests.security.GetFieldsResponseProto.getDefaultInstance());
@@ -732,7 +803,7 @@ public final class SecurityService {
           fintekkers.requests.security.GetFieldValuesRequestProto request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.requests.security.GetFieldValuesResponseProto) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(7),
+          getDescriptor().getMethods().get(8),
           controller,
           request,
           fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance());
@@ -766,33 +837,37 @@ public final class SecurityService {
       "es_request.proto\032<fintekkers/requests/se" +
       "curity/get_field_values_response.proto\032-" +
       "fintekkers/requests/util/errors/summary." +
-      "proto\032\033google/protobuf/empty.proto2\365\007\n\010S" +
-      "ecurity\022\205\001\n\016CreateOrUpdate\0228.fintekkers." +
-      "requests.security.CreateSecurityRequestP" +
-      "roto\0329.fintekkers.requests.security.Crea" +
-      "teSecurityResponseProto\022}\n\010GetByIds\0227.fi" +
-      "ntekkers.requests.security.QuerySecurity" +
-      "RequestProto\0328.fintekkers.requests.secur" +
-      "ity.QuerySecurityResponseProto\022}\n\006Search" +
-      "\0227.fintekkers.requests.security.QuerySec" +
-      "urityRequestProto\0328.fintekkers.requests." +
-      "security.QuerySecurityResponseProto0\001\022|\n" +
-      "\007ListIds\0227.fintekkers.requests.security." +
-      "QuerySecurityRequestProto\0328.fintekkers.r" +
-      "equests.security.QuerySecurityResponsePr" +
-      "oto\022\201\001\n\026ValidateCreateOrUpdate\0228.fintekk" +
-      "ers.requests.security.CreateSecurityRequ" +
-      "estProto\032-.fintekkers.requests.util.erro" +
-      "rs.SummaryProto\022~\n\024ValidateQueryRequest\022" +
-      "7.fintekkers.requests.security.QuerySecu" +
-      "rityRequestProto\032-.fintekkers.requests.u" +
-      "til.errors.SummaryProto\022Y\n\tGetFields\022\026.g" +
-      "oogle.protobuf.Empty\0324.fintekkers.reques" +
-      "ts.security.GetFieldsResponseProto\022\205\001\n\016G" +
-      "etFieldValues\0228.fintekkers.requests.secu" +
-      "rity.GetFieldValuesRequestProto\0329.fintek" +
-      "kers.requests.security.GetFieldValuesRes" +
-      "ponseProtoB\006\210\001\001\220\001\001b\006proto3"
+      "proto\032-fintekkers/requests/util/delete_r" +
+      "equest.proto\032\033google/protobuf/empty.prot" +
+      "o2\334\010\n\010Security\022\205\001\n\016CreateOrUpdate\0228.fint" +
+      "ekkers.requests.security.CreateSecurityR" +
+      "equestProto\0329.fintekkers.requests.securi" +
+      "ty.CreateSecurityResponseProto\022}\n\010GetByI" +
+      "ds\0227.fintekkers.requests.security.QueryS" +
+      "ecurityRequestProto\0328.fintekkers.request" +
+      "s.security.QuerySecurityResponseProto\022}\n" +
+      "\006Search\0227.fintekkers.requests.security.Q" +
+      "uerySecurityRequestProto\0328.fintekkers.re" +
+      "quests.security.QuerySecurityResponsePro" +
+      "to0\001\022|\n\007ListIds\0227.fintekkers.requests.se" +
+      "curity.QuerySecurityRequestProto\0328.finte" +
+      "kkers.requests.security.QuerySecurityRes" +
+      "ponseProto\022e\n\006Delete\022,.fintekkers.reques" +
+      "ts.util.DeleteRequestProto\032-.fintekkers." +
+      "requests.util.DeleteResponseProto\022\201\001\n\026Va" +
+      "lidateCreateOrUpdate\0228.fintekkers.reques" +
+      "ts.security.CreateSecurityRequestProto\032-" +
+      ".fintekkers.requests.util.errors.Summary" +
+      "Proto\022~\n\024ValidateQueryRequest\0227.fintekke" +
+      "rs.requests.security.QuerySecurityReques" +
+      "tProto\032-.fintekkers.requests.util.errors" +
+      ".SummaryProto\022Y\n\tGetFields\022\026.google.prot" +
+      "obuf.Empty\0324.fintekkers.requests.securit" +
+      "y.GetFieldsResponseProto\022\205\001\n\016GetFieldVal" +
+      "ues\0228.fintekkers.requests.security.GetFi" +
+      "eldValuesRequestProto\0329.fintekkers.reque" +
+      "sts.security.GetFieldValuesResponseProto" +
+      "B\006\210\001\001\220\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -805,6 +880,7 @@ public final class SecurityService {
           fintekkers.requests.security.GetFieldValuesRequestProtos.getDescriptor(),
           fintekkers.requests.security.GetFieldValuesResponseProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
+          fintekkers.requests.util.DeleteRequestProtos.getDescriptor(),
           com.google.protobuf.EmptyProto.getDescriptor(),
         });
     fintekkers.requests.security.QuerySecurityRequestProtos.getDescriptor();
@@ -815,6 +891,7 @@ public final class SecurityService {
     fintekkers.requests.security.GetFieldValuesRequestProtos.getDescriptor();
     fintekkers.requests.security.GetFieldValuesResponseProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();
+    fintekkers.requests.util.DeleteRequestProtos.getDescriptor();
     com.google.protobuf.EmptyProto.getDescriptor();
   }
 

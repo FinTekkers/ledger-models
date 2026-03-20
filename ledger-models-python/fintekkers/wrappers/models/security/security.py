@@ -89,20 +89,37 @@ class Security():
         return Identifier(id)
     
     ###
-    ### Bond specific functions. These should be refactored out into a Bond 
-    ### specific object at some point.
+    ### Bond specific functions. These prefer the oneof product_details sub-message
+    ### if set, falling back to flat fields for backward compatibility.
     ###
+    def _get_bond_like_details(self):
+        """Returns the bond-like oneof sub-message if set, or None."""
+        oneof = self.proto.WhichOneof('product_details')
+        if oneof == 'bond_details':
+            return self.proto.bond_details
+        elif oneof == 'tips_details':
+            return self.proto.tips_details
+        elif oneof == 'frn_details':
+            return self.proto.frn_details
+        return None
+
     def get_issue_date(self) -> datetime:
-        return ProtoSerializationUtil.deserialize(self.proto.issue_date)
+        bond = self._get_bond_like_details()
+        src = bond.issue_date if bond and bond.HasField('issue_date') else self.proto.issue_date
+        return ProtoSerializationUtil.deserialize(src)
 
     def get_maturity_date(self) -> datetime:
-        return ProtoSerializationUtil.deserialize(self.proto.maturity_date)
-    
+        bond = self._get_bond_like_details()
+        src = bond.maturity_date if bond and bond.HasField('maturity_date') else self.proto.maturity_date
+        return ProtoSerializationUtil.deserialize(src)
+
     def get_tenor(self) -> str:
         return ProtoSerializationUtil.deserialize(self.proto.tenor)
-    
+
     def get_face_value(self) -> float:
-        return ProtoSerializationUtil.deserialize(self.proto.face_value)    
+        bond = self._get_bond_like_details()
+        src = bond.face_value if bond and bond.HasField('face_value') else self.proto.face_value
+        return ProtoSerializationUtil.deserialize(src)
 
     def get_security_type(self) -> SecurityTypeProto:
         return self.proto.security_type

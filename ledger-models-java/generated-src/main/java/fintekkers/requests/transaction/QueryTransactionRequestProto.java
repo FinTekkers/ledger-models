@@ -33,99 +33,6 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private QueryTransactionRequestProto(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    int mutable_bitField0_ = 0;
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            objectClass_ = s;
-            break;
-          }
-          case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            version_ = s;
-            break;
-          }
-          case 170: {
-            if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-              uuIds_ = new java.util.ArrayList<fintekkers.models.util.Uuid.UUIDProto>();
-              mutable_bitField0_ |= 0x00000001;
-            }
-            uuIds_.add(
-                input.readMessage(fintekkers.models.util.Uuid.UUIDProto.parser(), extensionRegistry));
-            break;
-          }
-          case 178: {
-            fintekkers.models.position.PositionFilterProto.Builder subBuilder = null;
-            if (searchTransactionInput_ != null) {
-              subBuilder = searchTransactionInput_.toBuilder();
-            }
-            searchTransactionInput_ = input.readMessage(fintekkers.models.position.PositionFilterProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(searchTransactionInput_);
-              searchTransactionInput_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 186: {
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
-            if (asOf_ != null) {
-              subBuilder = asOf_.toBuilder();
-            }
-            asOf_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(asOf_);
-              asOf_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 192: {
-
-            limit_ = input.readInt32();
-            break;
-          }
-          default: {
-            if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-    } finally {
-      if (((mutable_bitField0_ & 0x00000001) != 0)) {
-        uuIds_ = java.util.Collections.unmodifiableList(uuIds_);
-      }
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
     return fintekkers.requests.transaction.QueryTransactionRequestProtos.internal_static_fintekkers_requests_transaction_QueryTransactionRequestProto_descriptor;
@@ -140,7 +47,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-  private volatile java.lang.Object objectClass_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object objectClass_ = "";
   /**
    * <code>string object_class = 1;</code>
    * @return The objectClass.
@@ -178,7 +86,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int VERSION_FIELD_NUMBER = 2;
-  private volatile java.lang.Object version_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object version_ = "";
   /**
    * <code>string version = 2;</code>
    * @return The version.
@@ -216,6 +125,7 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int UUIDS_FIELD_NUMBER = 21;
+  @SuppressWarnings("serial")
   private java.util.List<fintekkers.models.util.Uuid.UUIDProto> uuIds_;
   /**
    * <pre>
@@ -310,7 +220,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.position.PositionFilterProtoOrBuilder getSearchTransactionInputOrBuilder() {
-    return getSearchTransactionInput();
+    return searchTransactionInput_ == null ? fintekkers.models.position.PositionFilterProto.getDefaultInstance() : searchTransactionInput_;
   }
 
   public static final int AS_OF_FIELD_NUMBER = 23;
@@ -348,11 +258,11 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsOfOrBuilder() {
-    return getAsOf();
+    return asOf_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : asOf_;
   }
 
   public static final int LIMIT_FIELD_NUMBER = 24;
-  private int limit_;
+  private int limit_ = 0;
   /**
    * <pre>
    *Max number of records to return
@@ -380,10 +290,10 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getObjectClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
     }
-    if (!getVersionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
     }
     for (int i = 0; i < uuIds_.size(); i++) {
@@ -398,7 +308,7 @@ private static final long serialVersionUID = 0L;
     if (limit_ != 0) {
       output.writeInt32(24, limit_);
     }
-    unknownFields.writeTo(output);
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -407,10 +317,10 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getObjectClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
     }
-    if (!getVersionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
     }
     for (int i = 0; i < uuIds_.size(); i++) {
@@ -429,7 +339,7 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeInt32Size(24, limit_);
     }
-    size += unknownFields.getSerializedSize();
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -462,7 +372,7 @@ private static final long serialVersionUID = 0L;
     }
     if (getLimit()
         != other.getLimit()) return false;
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -491,7 +401,7 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + LIMIT_FIELD_NUMBER;
     hash = (53 * hash) + getLimit();
-    hash = (29 * hash) + unknownFields.hashCode();
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -608,47 +518,38 @@ private static final long serialVersionUID = 0L;
 
     // Construct using fintekkers.requests.transaction.QueryTransactionRequestProto.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
-              .alwaysUseFieldBuilders) {
-        getUuIdsFieldBuilder();
-      }
+
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       objectClass_ = "";
-
       version_ = "";
-
       if (uuIdsBuilder_ == null) {
         uuIds_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
       } else {
+        uuIds_ = null;
         uuIdsBuilder_.clear();
       }
-      if (searchTransactionInputBuilder_ == null) {
-        searchTransactionInput_ = null;
-      } else {
-        searchTransactionInput_ = null;
+      bitField0_ = (bitField0_ & ~0x00000004);
+      searchTransactionInput_ = null;
+      if (searchTransactionInputBuilder_ != null) {
+        searchTransactionInputBuilder_.dispose();
         searchTransactionInputBuilder_ = null;
       }
-      if (asOfBuilder_ == null) {
-        asOf_ = null;
-      } else {
-        asOf_ = null;
+      asOf_ = null;
+      if (asOfBuilder_ != null) {
+        asOfBuilder_.dispose();
         asOfBuilder_ = null;
       }
       limit_ = 0;
-
       return this;
     }
 
@@ -675,31 +576,45 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.requests.transaction.QueryTransactionRequestProto buildPartial() {
       fintekkers.requests.transaction.QueryTransactionRequestProto result = new fintekkers.requests.transaction.QueryTransactionRequestProto(this);
-      int from_bitField0_ = bitField0_;
-      result.objectClass_ = objectClass_;
-      result.version_ = version_;
+      buildPartialRepeatedFields(result);
+      if (bitField0_ != 0) { buildPartial0(result); }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartialRepeatedFields(fintekkers.requests.transaction.QueryTransactionRequestProto result) {
       if (uuIdsBuilder_ == null) {
-        if (((bitField0_ & 0x00000001) != 0)) {
+        if (((bitField0_ & 0x00000004) != 0)) {
           uuIds_ = java.util.Collections.unmodifiableList(uuIds_);
-          bitField0_ = (bitField0_ & ~0x00000001);
+          bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.uuIds_ = uuIds_;
       } else {
         result.uuIds_ = uuIdsBuilder_.build();
       }
-      if (searchTransactionInputBuilder_ == null) {
-        result.searchTransactionInput_ = searchTransactionInput_;
-      } else {
-        result.searchTransactionInput_ = searchTransactionInputBuilder_.build();
+    }
+
+    private void buildPartial0(fintekkers.requests.transaction.QueryTransactionRequestProto result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.objectClass_ = objectClass_;
       }
-      if (asOfBuilder_ == null) {
-        result.asOf_ = asOf_;
-      } else {
-        result.asOf_ = asOfBuilder_.build();
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.version_ = version_;
       }
-      result.limit_ = limit_;
-      onBuilt();
-      return result;
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.searchTransactionInput_ = searchTransactionInputBuilder_ == null
+            ? searchTransactionInput_
+            : searchTransactionInputBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.asOf_ = asOfBuilder_ == null
+            ? asOf_
+            : asOfBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.limit_ = limit_;
+      }
     }
 
     @java.lang.Override
@@ -748,17 +663,19 @@ private static final long serialVersionUID = 0L;
       if (other == fintekkers.requests.transaction.QueryTransactionRequestProto.getDefaultInstance()) return this;
       if (!other.getObjectClass().isEmpty()) {
         objectClass_ = other.objectClass_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getVersion().isEmpty()) {
         version_ = other.version_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       if (uuIdsBuilder_ == null) {
         if (!other.uuIds_.isEmpty()) {
           if (uuIds_.isEmpty()) {
             uuIds_ = other.uuIds_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00000004);
           } else {
             ensureUuIdsIsMutable();
             uuIds_.addAll(other.uuIds_);
@@ -771,7 +688,7 @@ private static final long serialVersionUID = 0L;
             uuIdsBuilder_.dispose();
             uuIdsBuilder_ = null;
             uuIds_ = other.uuIds_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00000004);
             uuIdsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getUuIdsFieldBuilder() : null;
@@ -789,7 +706,7 @@ private static final long serialVersionUID = 0L;
       if (other.getLimit() != 0) {
         setLimit(other.getLimit());
       }
-      this.mergeUnknownFields(other.unknownFields);
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -804,17 +721,72 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      fintekkers.requests.transaction.QueryTransactionRequestProto parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              objectClass_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 10
+            case 18: {
+              version_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 18
+            case 170: {
+              fintekkers.models.util.Uuid.UUIDProto m =
+                  input.readMessage(
+                      fintekkers.models.util.Uuid.UUIDProto.parser(),
+                      extensionRegistry);
+              if (uuIdsBuilder_ == null) {
+                ensureUuIdsIsMutable();
+                uuIds_.add(m);
+              } else {
+                uuIdsBuilder_.addMessage(m);
+              }
+              break;
+            } // case 170
+            case 178: {
+              input.readMessage(
+                  getSearchTransactionInputFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 178
+            case 186: {
+              input.readMessage(
+                  getAsOfFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 186
+            case 192: {
+              limit_ = input.readInt32();
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 192
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (fintekkers.requests.transaction.QueryTransactionRequestProto) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
     private int bitField0_;
@@ -860,11 +832,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setObjectClass(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       objectClass_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -873,8 +843,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearObjectClass() {
-      
       objectClass_ = getDefaultInstance().getObjectClass();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -885,12 +855,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setObjectClassBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       objectClass_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -936,11 +904,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setVersion(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       version_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -949,8 +915,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearVersion() {
-      
       version_ = getDefaultInstance().getVersion();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -961,12 +927,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setVersionBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       version_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -974,9 +938,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<fintekkers.models.util.Uuid.UUIDProto> uuIds_ =
       java.util.Collections.emptyList();
     private void ensureUuIdsIsMutable() {
-      if (!((bitField0_ & 0x00000001) != 0)) {
+      if (!((bitField0_ & 0x00000004) != 0)) {
         uuIds_ = new java.util.ArrayList<fintekkers.models.util.Uuid.UUIDProto>(uuIds_);
-        bitField0_ |= 0x00000001;
+        bitField0_ |= 0x00000004;
        }
     }
 
@@ -1170,7 +1134,7 @@ private static final long serialVersionUID = 0L;
     public Builder clearUuIds() {
       if (uuIdsBuilder_ == null) {
         uuIds_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
       } else {
         uuIdsBuilder_.clear();
@@ -1275,7 +1239,7 @@ private static final long serialVersionUID = 0L;
         uuIdsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             fintekkers.models.util.Uuid.UUIDProto, fintekkers.models.util.Uuid.UUIDProto.Builder, fintekkers.models.util.Uuid.UUIDProtoOrBuilder>(
                 uuIds_,
-                ((bitField0_ & 0x00000001) != 0),
+                ((bitField0_ & 0x00000004) != 0),
                 getParentForChildren(),
                 isClean());
         uuIds_ = null;
@@ -1295,7 +1259,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the searchTransactionInput field is set.
      */
     public boolean hasSearchTransactionInput() {
-      return searchTransactionInputBuilder_ != null || searchTransactionInput_ != null;
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      * <pre>
@@ -1325,11 +1289,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         searchTransactionInput_ = value;
-        onChanged();
       } else {
         searchTransactionInputBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -1343,11 +1307,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.position.PositionFilterProto.Builder builderForValue) {
       if (searchTransactionInputBuilder_ == null) {
         searchTransactionInput_ = builderForValue.build();
-        onChanged();
       } else {
         searchTransactionInputBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -1359,17 +1323,18 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeSearchTransactionInput(fintekkers.models.position.PositionFilterProto value) {
       if (searchTransactionInputBuilder_ == null) {
-        if (searchTransactionInput_ != null) {
-          searchTransactionInput_ =
-            fintekkers.models.position.PositionFilterProto.newBuilder(searchTransactionInput_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000008) != 0) &&
+          searchTransactionInput_ != null &&
+          searchTransactionInput_ != fintekkers.models.position.PositionFilterProto.getDefaultInstance()) {
+          getSearchTransactionInputBuilder().mergeFrom(value);
         } else {
           searchTransactionInput_ = value;
         }
-        onChanged();
       } else {
         searchTransactionInputBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -1380,14 +1345,13 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.position.PositionFilterProto search_transaction_input = 22;</code>
      */
     public Builder clearSearchTransactionInput() {
-      if (searchTransactionInputBuilder_ == null) {
-        searchTransactionInput_ = null;
-        onChanged();
-      } else {
-        searchTransactionInput_ = null;
+      bitField0_ = (bitField0_ & ~0x00000008);
+      searchTransactionInput_ = null;
+      if (searchTransactionInputBuilder_ != null) {
+        searchTransactionInputBuilder_.dispose();
         searchTransactionInputBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -1398,7 +1362,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.position.PositionFilterProto search_transaction_input = 22;</code>
      */
     public fintekkers.models.position.PositionFilterProto.Builder getSearchTransactionInputBuilder() {
-      
+      bitField0_ |= 0x00000008;
       onChanged();
       return getSearchTransactionInputFieldBuilder().getBuilder();
     }
@@ -1450,7 +1414,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the asOf field is set.
      */
     public boolean hasAsOf() {
-      return asOfBuilder_ != null || asOf_ != null;
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      * <pre>
@@ -1480,11 +1444,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         asOf_ = value;
-        onChanged();
       } else {
         asOfBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1498,11 +1462,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
       if (asOfBuilder_ == null) {
         asOf_ = builderForValue.build();
-        onChanged();
       } else {
         asOfBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1514,17 +1478,18 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeAsOf(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
       if (asOfBuilder_ == null) {
-        if (asOf_ != null) {
-          asOf_ =
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(asOf_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000010) != 0) &&
+          asOf_ != null &&
+          asOf_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
+          getAsOfBuilder().mergeFrom(value);
         } else {
           asOf_ = value;
         }
-        onChanged();
       } else {
         asOfBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1535,14 +1500,13 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      */
     public Builder clearAsOf() {
-      if (asOfBuilder_ == null) {
-        asOf_ = null;
-        onChanged();
-      } else {
-        asOf_ = null;
+      bitField0_ = (bitField0_ & ~0x00000010);
+      asOf_ = null;
+      if (asOfBuilder_ != null) {
+        asOfBuilder_.dispose();
         asOfBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -1553,7 +1517,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getAsOfBuilder() {
-      
+      bitField0_ |= 0x00000010;
       onChanged();
       return getAsOfFieldBuilder().getBuilder();
     }
@@ -1618,6 +1582,7 @@ private static final long serialVersionUID = 0L;
     public Builder setLimit(int value) {
       
       limit_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1630,7 +1595,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearLimit() {
-      
+      bitField0_ = (bitField0_ & ~0x00000020);
       limit_ = 0;
       onChanged();
       return this;
@@ -1668,7 +1633,18 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new QueryTransactionRequestProto(input, extensionRegistry);
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
     }
   };
 

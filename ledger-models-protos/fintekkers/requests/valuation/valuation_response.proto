@@ -3,6 +3,7 @@ syntax = "proto3";
 package fintekkers.requests.valuation;
 
 import "fintekkers/models/position/position_util.proto";
+import "fintekkers/models/valuation/cashflow.proto";
 import "fintekkers/requests/valuation/valuation_request.proto";
 import "fintekkers/requests/util/errors/summary.proto";
 
@@ -19,6 +20,10 @@ message ValuationResponseProto {
   repeated fintekkers.models.position.MeasureMapEntry measure_results = 30;
 
   fintekkers.requests.util.errors.SummaryProto summary = 40;
+
+  // The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+  // Each entry represents a single coupon or principal payment with PV and FV amounts.
+  repeated fintekkers.models.valuation.CashflowProto cashflows = 50;
 }
 
 

@@ -4,15 +4,12 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.51.0)",
-    comments = "Source: fintekkers/services/valuation-service/valuation_service.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class ValuationGrpc {
 
   private ValuationGrpc() {}
 
-  public static final String SERVICE_NAME = "fintekkers.services.valuation_service.Valuation";
+  public static final java.lang.String SERVICE_NAME = "fintekkers.services.valuation_service.Valuation";
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<fintekkers.requests.valuation.ValuationRequestProto,
@@ -61,6 +58,21 @@ public final class ValuationGrpc {
   }
 
   /**
+   * Creates a new blocking-style stub that supports all types of calls on the service
+   */
+  public static ValuationBlockingV2Stub newBlockingV2Stub(
+      io.grpc.Channel channel) {
+    io.grpc.stub.AbstractStub.StubFactory<ValuationBlockingV2Stub> factory =
+      new io.grpc.stub.AbstractStub.StubFactory<ValuationBlockingV2Stub>() {
+        @java.lang.Override
+        public ValuationBlockingV2Stub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new ValuationBlockingV2Stub(channel, callOptions);
+        }
+      };
+    return ValuationBlockingV2Stub.newStub(factory, channel);
+  }
+
+  /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
   public static ValuationBlockingStub newBlockingStub(
@@ -92,31 +104,32 @@ public final class ValuationGrpc {
 
   /**
    */
-  public static abstract class ValuationImplBase implements io.grpc.BindableService {
+  public interface AsyncService {
 
     /**
      */
-    public void runValuation(fintekkers.requests.valuation.ValuationRequestProto request,
+    default void runValuation(fintekkers.requests.valuation.ValuationRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.valuation.ValuationResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRunValuationMethod(), responseObserver);
-    }
-
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
-      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
-          .addMethod(
-            getRunValuationMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.valuation.ValuationRequestProto,
-                fintekkers.requests.valuation.ValuationResponseProto>(
-                  this, METHODID_RUN_VALUATION)))
-          .build();
     }
   }
 
   /**
+   * Base class for the server implementation of the service Valuation.
    */
-  public static final class ValuationStub extends io.grpc.stub.AbstractAsyncStub<ValuationStub> {
+  public static abstract class ValuationImplBase
+      implements io.grpc.BindableService, AsyncService {
+
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+      return ValuationGrpc.bindService(this);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do asynchronous rpc calls to service Valuation.
+   */
+  public static final class ValuationStub
+      extends io.grpc.stub.AbstractAsyncStub<ValuationStub> {
     private ValuationStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -138,8 +151,34 @@ public final class ValuationGrpc {
   }
 
   /**
+   * A stub to allow clients to do synchronous rpc calls to service Valuation.
    */
-  public static final class ValuationBlockingStub extends io.grpc.stub.AbstractBlockingStub<ValuationBlockingStub> {
+  public static final class ValuationBlockingV2Stub
+      extends io.grpc.stub.AbstractBlockingStub<ValuationBlockingV2Stub> {
+    private ValuationBlockingV2Stub(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      super(channel, callOptions);
+    }
+
+    @java.lang.Override
+    protected ValuationBlockingV2Stub build(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      return new ValuationBlockingV2Stub(channel, callOptions);
+    }
+
+    /**
+     */
+    public fintekkers.requests.valuation.ValuationResponseProto runValuation(fintekkers.requests.valuation.ValuationRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getRunValuationMethod(), getCallOptions(), request);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do limited synchronous rpc calls to service Valuation.
+   */
+  public static final class ValuationBlockingStub
+      extends io.grpc.stub.AbstractBlockingStub<ValuationBlockingStub> {
     private ValuationBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -160,8 +199,10 @@ public final class ValuationGrpc {
   }
 
   /**
+   * A stub to allow clients to do ListenableFuture-style rpc calls to service Valuation.
    */
-  public static final class ValuationFutureStub extends io.grpc.stub.AbstractFutureStub<ValuationFutureStub> {
+  public static final class ValuationFutureStub
+      extends io.grpc.stub.AbstractFutureStub<ValuationFutureStub> {
     private ValuationFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -189,10 +230,10 @@ public final class ValuationGrpc {
       io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
-    private final ValuationImplBase serviceImpl;
+    private final AsyncService serviceImpl;
     private final int methodId;
 
-    MethodHandlers(ValuationImplBase serviceImpl, int methodId) {
+    MethodHandlers(AsyncService serviceImpl, int methodId) {
       this.serviceImpl = serviceImpl;
       this.methodId = methodId;
     }
@@ -221,6 +262,18 @@ public final class ValuationGrpc {
     }
   }
 
+  public static final io.grpc.ServerServiceDefinition bindService(AsyncService service) {
+    return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
+        .addMethod(
+          getRunValuationMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.valuation.ValuationRequestProto,
+              fintekkers.requests.valuation.ValuationResponseProto>(
+                service, METHODID_RUN_VALUATION)))
+        .build();
+  }
+
   private static abstract class ValuationBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     ValuationBaseDescriptorSupplier() {}
@@ -244,9 +297,9 @@ public final class ValuationGrpc {
   private static final class ValuationMethodDescriptorSupplier
       extends ValuationBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoMethodDescriptorSupplier {
-    private final String methodName;
+    private final java.lang.String methodName;
 
-    ValuationMethodDescriptorSupplier(String methodName) {
+    ValuationMethodDescriptorSupplier(java.lang.String methodName) {
       this.methodName = methodName;
     }
 

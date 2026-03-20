@@ -11,12 +11,14 @@ import * as fintekkers_requests_transaction_create_transaction_response_pb from 
 import * as fintekkers_requests_transaction_query_transaction_request_pb from "../../../fintekkers/requests/transaction/query_transaction_request_pb";
 import * as fintekkers_requests_transaction_query_transaction_response_pb from "../../../fintekkers/requests/transaction/query_transaction_response_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
+import * as fintekkers_requests_util_delete_request_pb from "../../../fintekkers/requests/util/delete_request_pb";
 
 interface ITransactionService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
     createOrUpdate: ITransactionService_ICreateOrUpdate;
     getByIds: ITransactionService_IGetByIds;
     search: ITransactionService_ISearch;
     listIds: ITransactionService_IListIds;
+    delete: ITransactionService_IDelete;
     validateCreateOrUpdate: ITransactionService_IValidateCreateOrUpdate;
     validateQueryRequest: ITransactionService_IValidateQueryRequest;
 }
@@ -57,6 +59,15 @@ interface ITransactionService_IListIds extends grpc.MethodDefinition<fintekkers_
     responseSerialize: grpc.serialize<fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto>;
     responseDeserialize: grpc.deserialize<fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto>;
 }
+interface ITransactionService_IDelete extends grpc.MethodDefinition<fintekkers_requests_util_delete_request_pb.DeleteRequestProto, fintekkers_requests_util_delete_request_pb.DeleteResponseProto> {
+    path: "/fintekkers.services.transaction_service.Transaction/Delete";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<fintekkers_requests_util_delete_request_pb.DeleteRequestProto>;
+    requestDeserialize: grpc.deserialize<fintekkers_requests_util_delete_request_pb.DeleteRequestProto>;
+    responseSerialize: grpc.serialize<fintekkers_requests_util_delete_request_pb.DeleteResponseProto>;
+    responseDeserialize: grpc.deserialize<fintekkers_requests_util_delete_request_pb.DeleteResponseProto>;
+}
 interface ITransactionService_IValidateCreateOrUpdate extends grpc.MethodDefinition<fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto> {
     path: "/fintekkers.services.transaction_service.Transaction/ValidateCreateOrUpdate";
     requestStream: false;
@@ -83,6 +94,7 @@ export interface ITransactionServer extends grpc.UntypedServiceImplementation {
     getByIds: grpc.handleUnaryCall<fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto, fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto>;
     search: grpc.handleServerStreamingCall<fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto, fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto>;
     listIds: grpc.handleUnaryCall<fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto, fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto>;
+    delete: grpc.handleUnaryCall<fintekkers_requests_util_delete_request_pb.DeleteRequestProto, fintekkers_requests_util_delete_request_pb.DeleteResponseProto>;
     validateCreateOrUpdate: grpc.handleUnaryCall<fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto>;
     validateQueryRequest: grpc.handleUnaryCall<fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto>;
 }
@@ -99,6 +111,9 @@ export interface ITransactionClient {
     listIds(request: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto) => void): grpc.ClientUnaryCall;
     listIds(request: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto) => void): grpc.ClientUnaryCall;
     listIds(request: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto) => void): grpc.ClientUnaryCall;
+    delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
     validateCreateOrUpdate(request: fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     validateCreateOrUpdate(request: fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     validateCreateOrUpdate(request: fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
@@ -120,6 +135,9 @@ export class TransactionClient extends grpc.Client implements ITransactionClient
     public listIds(request: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto) => void): grpc.ClientUnaryCall;
     public listIds(request: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto) => void): grpc.ClientUnaryCall;
     public listIds(request: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto) => void): grpc.ClientUnaryCall;
+    public delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    public delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    public delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
     public validateCreateOrUpdate(request: fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     public validateCreateOrUpdate(request: fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     public validateCreateOrUpdate(request: fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;

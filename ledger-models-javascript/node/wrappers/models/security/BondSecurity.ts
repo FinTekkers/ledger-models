@@ -68,36 +68,42 @@ class BondSecurity extends Security {
   }
 
   getCouponRate(): DecimalValueProto {
-    const rate = this.proto.getCouponRate();
+    const bond = this.getBondLikeDetails();
+    const rate = bond ? bond.getCouponRate() : this.proto.getCouponRate();
     if (!rate) throw new Error("Coupon rate is required for bonds");
     return rate;
   }
 
   getFaceValue(): DecimalValueProto {
-    const faceValue = this.proto.getFaceValue();
+    const bond = this.getBondLikeDetails();
+    const faceValue = bond ? bond.getFaceValue() : this.proto.getFaceValue();
     if (!faceValue) throw new Error("Face value is required for bonds");
     return faceValue;
   }
 
   getCouponType(): CouponType {
-    const couponType = this.proto.getCouponType();
+    const bond = this.getBondLikeDetails();
+    const couponType = bond ? bond.getCouponType() : this.proto.getCouponType();
     if (!couponType) throw new Error("Coupon Type is required for bonds");
     return new CouponType(couponType);
   }
 
   getCouponFrequency(): CouponFrequency {
-    const couponFrequency = this.proto.getCouponFrequency();
+    const bond = this.getBondLikeDetails();
+    const couponFrequency = bond ? bond.getCouponFrequency() : this.proto.getCouponFrequency();
     if (!couponFrequency) throw new Error("Coupon Frequency is required for bonds");
     return new CouponFrequency(couponFrequency);
   }
 
   getDatedDate(): LocalDate | undefined {
-    const datedDate = this.proto.getDatedDate();
+    const bond = this.getBondLikeDetails();
+    const datedDate = bond ? bond.getDatedDate() : this.proto.getDatedDate();
     return datedDate ? new LocalDate(datedDate) : undefined;
   }
 
   getIssuanceInfo(): IssuanceProto[] {
-    return this.proto.getIssuanceInfoList();
+    const bond = this.getBondLikeDetails();
+    return bond ? bond.getIssuanceInfoList() : this.proto.getIssuanceInfoList();
   }
 
   /**

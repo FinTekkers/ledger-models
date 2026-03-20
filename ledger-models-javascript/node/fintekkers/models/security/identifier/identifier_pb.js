@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_security_identifier_identifier_type_pb = require('../../../../fintekkers/models/security/identifier/identifier_type_pb.js');
 goog.object.extend(proto, fintekkers_models_security_identifier_identifier_type_pb);
@@ -77,10 +71,10 @@ proto.fintekkers.models.security.IdentifierProto.prototype.toObject = function(o
  */
 proto.fintekkers.models.security.IdentifierProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    identifierValue: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    identifierType: jspb.Message.getFieldWithDefault(msg, 6, 0)
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+identifierValue: jspb.Message.getFieldWithDefault(msg, 5, ""),
+identifierType: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -93,7 +87,7 @@ proto.fintekkers.models.security.IdentifierProto.toObject = function(includeInst
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.IdentifierProto}
  */
 proto.fintekkers.models.security.IdentifierProto.deserializeBinary = function(bytes) {

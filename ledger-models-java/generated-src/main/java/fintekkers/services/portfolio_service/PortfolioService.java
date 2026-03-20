@@ -55,6 +55,14 @@ public final class PortfolioService {
           com.google.protobuf.RpcCallback<fintekkers.requests.portfolio.QueryPortfolioResponseProto> done);
 
       /**
+       * <code>rpc Delete(.fintekkers.requests.util.DeleteRequestProto) returns (.fintekkers.requests.util.DeleteResponseProto);</code>
+       */
+      public abstract void delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done);
+
+      /**
        * <code>rpc ValidateCreateOrUpdate(.fintekkers.requests.portfolio.CreatePortfolioRequestProto) returns (.fintekkers.requests.util.errors.SummaryProto);</code>
        */
       public abstract void validateCreateOrUpdate(
@@ -108,6 +116,14 @@ public final class PortfolioService {
         }
 
         @java.lang.Override
+        public  void delete(
+            com.google.protobuf.RpcController controller,
+            fintekkers.requests.util.DeleteRequestProto request,
+            com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done) {
+          impl.delete(controller, request, done);
+        }
+
+        @java.lang.Override
         public  void validateCreateOrUpdate(
             com.google.protobuf.RpcController controller,
             fintekkers.requests.portfolio.CreatePortfolioRequestProto request,
@@ -154,8 +170,10 @@ public final class PortfolioService {
             case 3:
               return impl.listIds(controller, (fintekkers.requests.portfolio.QueryPortfolioRequestProto)request);
             case 4:
-              return impl.validateCreateOrUpdate(controller, (fintekkers.requests.portfolio.CreatePortfolioRequestProto)request);
+              return impl.delete(controller, (fintekkers.requests.util.DeleteRequestProto)request);
             case 5:
+              return impl.validateCreateOrUpdate(controller, (fintekkers.requests.portfolio.CreatePortfolioRequestProto)request);
+            case 6:
               return impl.validateQueryRequest(controller, (fintekkers.requests.portfolio.QueryPortfolioRequestProto)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -180,8 +198,10 @@ public final class PortfolioService {
             case 3:
               return fintekkers.requests.portfolio.QueryPortfolioRequestProto.getDefaultInstance();
             case 4:
-              return fintekkers.requests.portfolio.CreatePortfolioRequestProto.getDefaultInstance();
+              return fintekkers.requests.util.DeleteRequestProto.getDefaultInstance();
             case 5:
+              return fintekkers.requests.portfolio.CreatePortfolioRequestProto.getDefaultInstance();
+            case 6:
               return fintekkers.requests.portfolio.QueryPortfolioRequestProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -206,8 +226,10 @@ public final class PortfolioService {
             case 3:
               return fintekkers.requests.portfolio.QueryPortfolioResponseProto.getDefaultInstance();
             case 4:
-              return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+              return fintekkers.requests.util.DeleteResponseProto.getDefaultInstance();
             case 5:
+              return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+            case 6:
               return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -248,6 +270,14 @@ public final class PortfolioService {
         com.google.protobuf.RpcController controller,
         fintekkers.requests.portfolio.QueryPortfolioRequestProto request,
         com.google.protobuf.RpcCallback<fintekkers.requests.portfolio.QueryPortfolioResponseProto> done);
+
+    /**
+     * <code>rpc Delete(.fintekkers.requests.util.DeleteRequestProto) returns (.fintekkers.requests.util.DeleteResponseProto);</code>
+     */
+    public abstract void delete(
+        com.google.protobuf.RpcController controller,
+        fintekkers.requests.util.DeleteRequestProto request,
+        com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done);
 
     /**
      * <code>rpc ValidateCreateOrUpdate(.fintekkers.requests.portfolio.CreatePortfolioRequestProto) returns (.fintekkers.requests.util.errors.SummaryProto);</code>
@@ -308,11 +338,16 @@ public final class PortfolioService {
               done));
           return;
         case 4:
+          this.delete(controller, (fintekkers.requests.util.DeleteRequestProto)request,
+            com.google.protobuf.RpcUtil.<fintekkers.requests.util.DeleteResponseProto>specializeCallback(
+              done));
+          return;
+        case 5:
           this.validateCreateOrUpdate(controller, (fintekkers.requests.portfolio.CreatePortfolioRequestProto)request,
             com.google.protobuf.RpcUtil.<fintekkers.requests.util.errors.Summary.SummaryProto>specializeCallback(
               done));
           return;
-        case 5:
+        case 6:
           this.validateQueryRequest(controller, (fintekkers.requests.portfolio.QueryPortfolioRequestProto)request,
             com.google.protobuf.RpcUtil.<fintekkers.requests.util.errors.Summary.SummaryProto>specializeCallback(
               done));
@@ -340,8 +375,10 @@ public final class PortfolioService {
         case 3:
           return fintekkers.requests.portfolio.QueryPortfolioRequestProto.getDefaultInstance();
         case 4:
-          return fintekkers.requests.portfolio.CreatePortfolioRequestProto.getDefaultInstance();
+          return fintekkers.requests.util.DeleteRequestProto.getDefaultInstance();
         case 5:
+          return fintekkers.requests.portfolio.CreatePortfolioRequestProto.getDefaultInstance();
+        case 6:
           return fintekkers.requests.portfolio.QueryPortfolioRequestProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -366,8 +403,10 @@ public final class PortfolioService {
         case 3:
           return fintekkers.requests.portfolio.QueryPortfolioResponseProto.getDefaultInstance();
         case 4:
-          return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+          return fintekkers.requests.util.DeleteResponseProto.getDefaultInstance();
         case 5:
+          return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+        case 6:
           return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -450,12 +489,27 @@ public final class PortfolioService {
             fintekkers.requests.portfolio.QueryPortfolioResponseProto.getDefaultInstance()));
       }
 
+      public  void delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(4),
+          controller,
+          request,
+          fintekkers.requests.util.DeleteResponseProto.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            fintekkers.requests.util.DeleteResponseProto.class,
+            fintekkers.requests.util.DeleteResponseProto.getDefaultInstance()));
+      }
+
       public  void validateCreateOrUpdate(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.portfolio.CreatePortfolioRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance(),
@@ -470,7 +524,7 @@ public final class PortfolioService {
           fintekkers.requests.portfolio.QueryPortfolioRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(5),
+          getDescriptor().getMethods().get(6),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance(),
@@ -505,6 +559,11 @@ public final class PortfolioService {
       public fintekkers.requests.portfolio.QueryPortfolioResponseProto listIds(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.portfolio.QueryPortfolioRequestProto request)
+          throws com.google.protobuf.ServiceException;
+
+      public fintekkers.requests.util.DeleteResponseProto delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request)
           throws com.google.protobuf.ServiceException;
 
       public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(
@@ -573,12 +632,24 @@ public final class PortfolioService {
       }
 
 
+      public fintekkers.requests.util.DeleteResponseProto delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request)
+          throws com.google.protobuf.ServiceException {
+        return (fintekkers.requests.util.DeleteResponseProto) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(4),
+          controller,
+          request,
+          fintekkers.requests.util.DeleteResponseProto.getDefaultInstance());
+      }
+
+
       public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.portfolio.CreatePortfolioRequestProto request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.requests.util.errors.Summary.SummaryProto) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance());
@@ -590,7 +661,7 @@ public final class PortfolioService {
           fintekkers.requests.portfolio.QueryPortfolioRequestProto request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.requests.util.errors.Summary.SummaryProto) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(5),
+          getDescriptor().getMethods().get(6),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance());
@@ -619,28 +690,32 @@ public final class PortfolioService {
       "requests/portfolio/query_portfolio_reque" +
       "st.proto\032<fintekkers/requests/portfolio/" +
       "query_portfolio_response.proto\032-fintekke" +
-      "rs/requests/util/errors/summary.proto2\253\006" +
-      "\n\tPortfolio\022\211\001\n\016CreateOrUpdate\022:.fintekk" +
-      "ers.requests.portfolio.CreatePortfolioRe" +
-      "questProto\032;.fintekkers.requests.portfol" +
-      "io.CreatePortfolioResponseProto\022\201\001\n\010GetB" +
-      "yIds\0229.fintekkers.requests.portfolio.Que" +
-      "ryPortfolioRequestProto\032:.fintekkers.req" +
-      "uests.portfolio.QueryPortfolioResponsePr" +
-      "oto\022\201\001\n\006Search\0229.fintekkers.requests.por" +
-      "tfolio.QueryPortfolioRequestProto\032:.fint" +
-      "ekkers.requests.portfolio.QueryPortfolio" +
-      "ResponseProto0\001\022\200\001\n\007ListIds\0229.fintekkers" +
-      ".requests.portfolio.QueryPortfolioReques" +
-      "tProto\032:.fintekkers.requests.portfolio.Q" +
-      "ueryPortfolioResponseProto\022\203\001\n\026ValidateC" +
-      "reateOrUpdate\022:.fintekkers.requests.port" +
-      "folio.CreatePortfolioRequestProto\032-.fint" +
-      "ekkers.requests.util.errors.SummaryProto" +
-      "\022\200\001\n\024ValidateQueryRequest\0229.fintekkers.r" +
-      "equests.portfolio.QueryPortfolioRequestP" +
-      "roto\032-.fintekkers.requests.util.errors.S" +
-      "ummaryProtoB\006\210\001\001\220\001\001b\006proto3"
+      "rs/requests/util/errors/summary.proto\032-f" +
+      "intekkers/requests/util/delete_request.p" +
+      "roto2\222\007\n\tPortfolio\022\211\001\n\016CreateOrUpdate\022:." +
+      "fintekkers.requests.portfolio.CreatePort" +
+      "folioRequestProto\032;.fintekkers.requests." +
+      "portfolio.CreatePortfolioResponseProto\022\201" +
+      "\001\n\010GetByIds\0229.fintekkers.requests.portfo" +
+      "lio.QueryPortfolioRequestProto\032:.fintekk" +
+      "ers.requests.portfolio.QueryPortfolioRes" +
+      "ponseProto\022\201\001\n\006Search\0229.fintekkers.reque" +
+      "sts.portfolio.QueryPortfolioRequestProto" +
+      "\032:.fintekkers.requests.portfolio.QueryPo" +
+      "rtfolioResponseProto0\001\022\200\001\n\007ListIds\0229.fin" +
+      "tekkers.requests.portfolio.QueryPortfoli" +
+      "oRequestProto\032:.fintekkers.requests.port" +
+      "folio.QueryPortfolioResponseProto\022e\n\006Del" +
+      "ete\022,.fintekkers.requests.util.DeleteReq" +
+      "uestProto\032-.fintekkers.requests.util.Del" +
+      "eteResponseProto\022\203\001\n\026ValidateCreateOrUpd" +
+      "ate\022:.fintekkers.requests.portfolio.Crea" +
+      "tePortfolioRequestProto\032-.fintekkers.req" +
+      "uests.util.errors.SummaryProto\022\200\001\n\024Valid" +
+      "ateQueryRequest\0229.fintekkers.requests.po" +
+      "rtfolio.QueryPortfolioRequestProto\032-.fin" +
+      "tekkers.requests.util.errors.SummaryProt" +
+      "oB\006\210\001\001\220\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -650,12 +725,14 @@ public final class PortfolioService {
           fintekkers.requests.portfolio.QueryPortfolioRequestProtos.getDescriptor(),
           fintekkers.requests.portfolio.QueryPortfolioResponseProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
+          fintekkers.requests.util.DeleteRequestProtos.getDescriptor(),
         });
     fintekkers.requests.portfolio.CreatePortfolioRequestProtos.getDescriptor();
     fintekkers.requests.portfolio.CreatePortfolioResponseProtos.getDescriptor();
     fintekkers.requests.portfolio.QueryPortfolioRequestProtos.getDescriptor();
     fintekkers.requests.portfolio.QueryPortfolioResponseProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();
+    fintekkers.requests.util.DeleteRequestProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

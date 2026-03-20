@@ -13,16 +13,12 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_position_position_util_pb = require('../../../fintekkers/models/position/position_util_pb.js');
 goog.object.extend(proto, fintekkers_models_position_position_util_pb);
+var fintekkers_models_valuation_cashflow_pb = require('../../../fintekkers/models/valuation/cashflow_pb.js');
+goog.object.extend(proto, fintekkers_models_valuation_cashflow_pb);
 var fintekkers_requests_valuation_valuation_request_pb = require('../../../fintekkers/requests/valuation/valuation_request_pb.js');
 goog.object.extend(proto, fintekkers_requests_valuation_valuation_request_pb);
 var fintekkers_requests_util_errors_summary_pb = require('../../../fintekkers/requests/util/errors/summary_pb.js');
@@ -55,7 +51,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.fintekkers.requests.valuation.ValuationResponseProto.repeatedFields_ = [30];
+proto.fintekkers.requests.valuation.ValuationResponseProto.repeatedFields_ = [30,50];
 
 
 
@@ -88,12 +84,14 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.toObject = 
  */
 proto.fintekkers.requests.valuation.ValuationResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    valuationRequest: (f = msg.getValuationRequest()) && fintekkers_requests_valuation_valuation_request_pb.ValuationRequestProto.toObject(includeInstance, f),
-    measureResultsList: jspb.Message.toObjectList(msg.getMeasureResultsList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+valuationRequest: (f = msg.getValuationRequest()) && fintekkers_requests_valuation_valuation_request_pb.ValuationRequestProto.toObject(includeInstance, f),
+measureResultsList: jspb.Message.toObjectList(msg.getMeasureResultsList(),
     fintekkers_models_position_position_util_pb.MeasureMapEntry.toObject, includeInstance),
-    summary: (f = msg.getSummary()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
+summary: (f = msg.getSummary()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f),
+cashflowsList: jspb.Message.toObjectList(msg.getCashflowsList(),
+    fintekkers_models_valuation_cashflow_pb.CashflowProto.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -106,7 +104,7 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.toObject = function(i
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.ValuationResponseProto}
  */
 proto.fintekkers.requests.valuation.ValuationResponseProto.deserializeBinary = function(bytes) {
@@ -152,6 +150,11 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.deserializeBinaryFrom
       var value = new fintekkers_requests_util_errors_summary_pb.SummaryProto;
       reader.readMessage(value,fintekkers_requests_util_errors_summary_pb.SummaryProto.deserializeBinaryFromReader);
       msg.setSummary(value);
+      break;
+    case 50:
+      var value = new fintekkers_models_valuation_cashflow_pb.CashflowProto;
+      reader.readMessage(value,fintekkers_models_valuation_cashflow_pb.CashflowProto.deserializeBinaryFromReader);
+      msg.addCashflows(value);
       break;
     default:
       reader.skipField();
@@ -218,6 +221,14 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.serializeBinaryToWrit
       40,
       f,
       fintekkers_requests_util_errors_summary_pb.SummaryProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getCashflowsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      50,
+      f,
+      fintekkers_models_valuation_cashflow_pb.CashflowProto.serializeBinaryToWriter
     );
   }
 };
@@ -368,6 +379,44 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.clearSummar
  */
 proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.hasSummary = function() {
   return jspb.Message.getField(this, 40) != null;
+};
+
+
+/**
+ * repeated fintekkers.models.valuation.CashflowProto cashflows = 50;
+ * @return {!Array<!proto.fintekkers.models.valuation.CashflowProto>}
+ */
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.getCashflowsList = function() {
+  return /** @type{!Array<!proto.fintekkers.models.valuation.CashflowProto>} */ (
+    jspb.Message.getRepeatedWrapperField(this, fintekkers_models_valuation_cashflow_pb.CashflowProto, 50));
+};
+
+
+/**
+ * @param {!Array<!proto.fintekkers.models.valuation.CashflowProto>} value
+ * @return {!proto.fintekkers.requests.valuation.ValuationResponseProto} returns this
+*/
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.setCashflowsList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 50, value);
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.valuation.CashflowProto=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.fintekkers.models.valuation.CashflowProto}
+ */
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.addCashflows = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 50, opt_value, proto.fintekkers.models.valuation.CashflowProto, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.fintekkers.requests.valuation.ValuationResponseProto} returns this
+ */
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.clearCashflowsList = function() {
+  return this.setCashflowsList([]);
 };
 
 

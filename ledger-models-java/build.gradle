@@ -15,8 +15,17 @@ repositories {
     mavenCentral()
 }
 
-def grpcVersion = '1.51.0'
-def protocVersion = "3.14.0"
+def grpcVersion = '1.80.0'
+def protocVersion = "3.21.12"
+
+configurations.all {
+    resolutionStrategy {
+        // Force jackson 2.15.x to avoid Java 21 multi-release classes that Gradle 7.6 can't handle
+        force 'com.fasterxml.jackson.core:jackson-core:2.15.4'
+        force 'com.fasterxml.jackson.core:jackson-databind:2.15.4'
+        force 'com.fasterxml.jackson.core:jackson-annotations:2.15.4'
+    }
+}
 
 dependencies {
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
@@ -168,25 +177,14 @@ jreleaser {
 
 protobuf {
     protoc {
-        //Specifying the protoc version & executable depending on the OS.
-        if (osdetector.os == "osx") {
-            //Need to specify the specific build version as GPRC
-            //not compiled for native M1 chips
-            artifact ="com.google.protobuf:protoc:${protocVersion}:osx-x86_64"
-        } else {
-            artifact = "com.google.protobuf:protoc:${protocVersion}"
-        }
+        path = '/opt/homebrew/opt/protobuf@21/bin/protoc'
     }
 
     generatedFilesBaseDir = 'generated-src'
 
     plugins {
         grpc {
-            if (osdetector.os == "osx") {
-                artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}:osx-x86_64"
-            } else {
-                artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
-            }
+            path = '/opt/homebrew/bin/protoc-gen-grpc-java'
         }
     }
 

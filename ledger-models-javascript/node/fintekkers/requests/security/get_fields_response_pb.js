@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_position_field_pb = require('../../../fintekkers/models/position/field_pb.js');
 goog.object.extend(proto, fintekkers_models_position_field_pb);
@@ -84,9 +78,9 @@ proto.fintekkers.requests.security.GetFieldsResponseProto.prototype.toObject = f
  */
 proto.fintekkers.requests.security.GetFieldsResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    fieldsList: (f = jspb.Message.getRepeatedField(msg, 10)) == null ? undefined : f
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+fieldsList: (f = jspb.Message.getRepeatedField(msg, 10)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -99,7 +93,7 @@ proto.fintekkers.requests.security.GetFieldsResponseProto.toObject = function(in
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.security.GetFieldsResponseProto}
  */
 proto.fintekkers.requests.security.GetFieldsResponseProto.deserializeBinary = function(bytes) {
@@ -132,10 +126,7 @@ proto.fintekkers.requests.security.GetFieldsResponseProto.deserializeBinaryFromR
       msg.setVersion(value);
       break;
     case 10:
-      var values = /** @type {!Array<!proto.fintekkers.models.position.FieldProto>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
-      for (var i = 0; i < values.length; i++) {
-        msg.addFields(values[i]);
-      }
+      reader.readPackableEnumInto(msg.getFieldsList());
       break;
     default:
       reader.skipField();

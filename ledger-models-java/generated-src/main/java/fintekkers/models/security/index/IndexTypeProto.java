@@ -52,6 +52,30 @@ public enum IndexTypeProto
    * <code>HICP = 5;</code>
    */
   HICP(5),
+  /**
+   * <pre>
+   *Floating rate benchmarks
+   * </pre>
+   *
+   * <code>SOFR = 10;</code>
+   */
+  SOFR(10),
+  /**
+   * <pre>
+   *13-week Treasury bill auction high rate
+   * </pre>
+   *
+   * <code>T_BILL_13_WEEK = 11;</code>
+   */
+  T_BILL_13_WEEK(11),
+  /**
+   * <pre>
+   *Federal Funds effective rate
+   * </pre>
+   *
+   * <code>FED_FUNDS = 12;</code>
+   */
+  FED_FUNDS(12),
   UNRECOGNIZED(-1),
   ;
 
@@ -99,6 +123,30 @@ public enum IndexTypeProto
    * <code>HICP = 5;</code>
    */
   public static final int HICP_VALUE = 5;
+  /**
+   * <pre>
+   *Floating rate benchmarks
+   * </pre>
+   *
+   * <code>SOFR = 10;</code>
+   */
+  public static final int SOFR_VALUE = 10;
+  /**
+   * <pre>
+   *13-week Treasury bill auction high rate
+   * </pre>
+   *
+   * <code>T_BILL_13_WEEK = 11;</code>
+   */
+  public static final int T_BILL_13_WEEK_VALUE = 11;
+  /**
+   * <pre>
+   *Federal Funds effective rate
+   * </pre>
+   *
+   * <code>FED_FUNDS = 12;</code>
+   */
+  public static final int FED_FUNDS_VALUE = 12;
 
 
   public final int getNumber() {
@@ -131,6 +179,9 @@ public enum IndexTypeProto
       case 3: return CORE_CPI;
       case 4: return PCE;
       case 5: return HICP;
+      case 10: return SOFR;
+      case 11: return T_BILL_13_WEEK;
+      case 12: return FED_FUNDS;
       default: return null;
     }
   }

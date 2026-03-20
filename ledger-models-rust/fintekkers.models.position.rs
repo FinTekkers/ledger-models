@@ -36,28 +36,218 @@ impl PositionStatusProto {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum MeasureProto {
+    /// Placeholder for unset or unrecognized measure values.
+    /// Should never be requested in a valuation call.
     UnknownMeasure = 0,
+    /// The signed quantity of a position (e.g. number of shares, or total face value of bonds held).
+    /// This is an input measure provided on the PositionProto, not a computed output.
+    ///
+    /// Formula: N/A — user-supplied input.
+    /// Applicability: All security types (Bond, TIPS, FRN, Equity, Cash).
+    /// Units: Units of the security (shares for equity, face-value dollars for bonds).
     DirectedQuantity = 1,
+    /// The current dollar value of a position at the given market price.
+    ///
+    /// Formula:
+    ///    MarketValue = (price * face_value / 100) * (directed_quantity / face_value)
+    ///                = price / 100 * directed_quantity
+    ///    Where price is quoted as a percentage of par (e.g. 95 means 95% of face).
+    ///
+    /// Example: face=1000, price=95, qty=20000 → MV = 95/100 * 20000 = 19,000.
+    ///
+    /// Model assumptions: None — this is a direct mark-to-market calculation.
+    /// Applicability: Bond, TIPS, FRN, Equity (price=share price, face_value=1), Cash.
+    /// Units: Dollars (or settlement currency).
     MarketValue = 2,
+    /// The original purchase price of the security, before any adjustments for
+    /// amortization, accretion, or corporate actions.
+    ///
+    /// Formula: Returns the price_input as-is (quoted as % of par for bonds).
+    ///    Over time this may incorporate adjustments such as stock splits.
+    ///
+    /// Model assumptions: None — pass-through of the input price.
+    /// Applicability: Bond, TIPS, FRN, Equity, Cash.
+    /// Units: Quoted price (% of par for bonds; dollar price for equities).
     UnadjustedCostBasis = 3,
+    /// Reserved for future use. The cost basis adjusted for amortization of premium,
+    /// accretion of discount, or corporate actions (e.g. stock splits, return of capital).
+    ///
+    /// Not currently implemented.
+    /// Applicability: Bond, TIPS, FRN, Equity.
+    /// Units: Quoted price (% of par for bonds; dollar price for equities).
     AdjustedCostBasis = 4,
-    /// The current yield of the security, essentially coupon / current price. The price can be
-    /// unadjusted cost basis, adjusted cost basis, market value, and so on. This is a bond-centric
-    /// calculation. For equity securities, the TTM dividends will be used as a coupon equivalent (not
-    /// currently supported).
+    /// Annual coupon income as a percentage of the current market price.
+    ///
+    /// Formula (coupon-bearing bonds):
+    ///    CurrentYield = (coupon_rate * principal) / (price * face_value / 100)
+    ///    Where principal = face_value for nominal bonds, or inflation-adjusted principal for TIPS.
+    ///
+    /// Formula (zero-coupon bonds):
+    ///    CurrentYield = (face_value / dollar_price)^(1 / years_to_maturity) - 1
+    ///    This is the annualized investment yield from discount to par.
+    ///
+    /// Model assumptions: Assumes coupon income is constant (no reinvestment assumption).
+    ///    For TIPS, uses the inflation-adjusted principal for the annual coupon calculation.
+    ///    Day count: Actual/365 for years-to-maturity calculation.
+    /// Applicability: Bond, TIPS. (Equity dividend yield not yet supported.)
+    /// Units: Decimal (0-1 scale; e.g. 0.0526 = 5.26%).
     CurrentYield = 5,
-    /// The yield if the security is held to maturity. For equities, this will be blank.
-    /// For bonds this will be calculated as: <https://www.wallstreetprep.com/knowledge/yield-to-maturity-ytm/>
-    /// For TIPS, no future inflation adjustments to principal will be included.
-    /// For FRNs, the assumption is the floating rate doesn't change between now and maturity.
-    /// In the future, context-overrides will allow customization of these assumptions
+    /// The annualized rate of return assuming the bond is held to maturity and all
+    /// coupons are reinvested at the same rate. This is the internal rate of return
+    /// that equates the present value of all future cashflows to the current price.
+    ///
+    /// Formula:
+    ///    Solve for r (annual) such that:
+    ///    price * (face / 100) = Sum_{t=1}^{N} [C / (1 + r/m)^t] + F / (1 + r/m)^N
+    ///    Where C = periodic coupon, F = principal (face or inflation-adjusted),
+    ///    m = coupon frequency, N = number of periods.
+    ///
+    /// Solver: Newton-Raphson iteration (ytm_solver.rs) with the linear approximation
+    ///    YTM ≈ (annual_coupon + (F - P) / years) / ((F + P) / 2)
+    ///    as the initial guess. Converges to the exact YTM where PV = price.
+    ///
+    /// Model assumptions:
+    ///    - Coupon reinvestment at the YTM rate (standard bond math assumption).
+    ///    - For TIPS: uses inflation-adjusted principal for cashflows, but the input
+    ///      price is real — yielding a "mixed" rate, not the true real yield. Use
+    ///      REAL_YIELD for the economically correct TIPS yield.
+    ///    - Settlement on a coupon date (no accrued interest adjustment currently).
+    ///    - Day count: Actual/365 for years-to-maturity.
+    ///
+    /// Applicability: Bond, TIPS. Not meaningful for FRN (use DISCOUNT_MARGIN) or Equity.
+    /// Units: Decimal (0-1 scale; e.g. 0.06 = 6.00% annual).
     YieldToMaturity = 7,
+    /// The weighted average time (in years) to receive all cashflows from a bond,
+    /// where each cashflow's weight is its proportion of the bond's total present value.
+    ///
+    /// Formula:
+    ///    D = Sum_{t=1}^{N} [(t / m) * PV_t / TotalPV]
+    ///    Where PV_t = cashflow_t / (1 + r/m)^t, TotalPV = Sum(PV_t),
+    ///    m = coupon frequency, r = YTM.
+    ///
+    /// Model assumptions:
+    ///    - Uses the bond's YTM (from Newton-Raphson solver) as the discount rate.
+    ///    - Flat yield curve (single rate for all maturities).
+    ///    - Settlement on a coupon date (integer period exponents).
+    ///
+    /// Applicability: Bond, TIPS. Not typically used for FRN (spread duration is the
+    ///    relevant risk measure). Not applicable to Equity or Cash.
+    /// Units: Years (e.g. 4.41 = 4.41 years).
     MacaulayDuration = 8,
-    /// The present value of the bond — the sum of all future coupon payments and
-    /// principal repayment discounted at the bond's yield to maturity.
-    /// Expressed as a quoted price (% of par), consistent with how price is expressed
-    /// throughout the service.
+    /// The theoretical price of a bond computed as the sum of all future cashflows
+    /// (coupons + principal) discounted at the bond's yield to maturity.
+    ///
+    /// Formula:
+    ///    PV = Sum_{t=1}^{N} [C / (1 + r/m)^t] + F / (1 + r/m)^N
+    ///    Returned as: PV_dollar / (face_value / 100)  (quoted price, % of par).
+    ///
+    /// The YTM used for discounting is computed via Newton-Raphson from the input price,
+    /// which guarantees the three-way invariant:
+    ///    price == present_value == sum(cashflow_pvs)
+    ///
+    /// Model assumptions:
+    ///    - Same as YIELD_TO_MATURITY (the discount rate is derived from the input price).
+    ///    - For TIPS: cashflows use inflation-adjusted principal; discount rate is the
+    ///      Newton-Raphson-solved rate equating nominal cashflows to the real price.
+    ///
+    /// Applicability: Bond, TIPS. For FRN, PV uses the discount margin framework instead.
+    /// Units: Quoted price (% of par; e.g. 95.00 = $95 per $100 face).
     PresentValue = 9,
+    /// The yield of a TIPS bond in real (inflation-adjusted) terms. This is the return
+    /// an investor earns above the rate of inflation.
+    ///
+    /// Formula: Currently delegates to the YTM calculator, which uses inflation-adjusted
+    ///    principal for cashflows. For a par TIPS (real coupon = real yield), the solver
+    ///    finds a "mixed" rate rather than the true real yield (see YIELD_TO_MATURITY notes).
+    ///
+    /// Model assumptions:
+    ///    - Same as YIELD_TO_MATURITY but applied to TIPS securities.
+    ///    - Known limitation: the current implementation mixes real price with nominal
+    ///      (inflation-adjusted) cashflows in the solver, which produces a rate that is
+    ///      not the true real yield for non-par TIPS.
+    ///
+    /// Applicability: TIPS only. For nominal bonds, returns the same value as YTM.
+    /// Units: Decimal (0-1 scale; e.g. 0.02 = 2.00% real annual yield).
+    RealYield = 10,
+    /// The inflation-adjusted principal of a TIPS bond, reflecting the cumulative
+    /// change in the Consumer Price Index (CPI) since the bond's issuance.
+    ///
+    /// Formula:
+    ///    index_ratio = current_cpi / base_cpi
+    ///    adjusted_principal = max(face_value * index_ratio, face_value)
+    ///    The max() enforces the deflation floor: at maturity, TIPS redeem at no less
+    ///    than the original face value, even if CPI has fallen.
+    ///
+    /// Model assumptions:
+    ///    - Uses the CPI values provided in the request (base_cpi on the security,
+    ///      current_cpi on the cpi_price_input).
+    ///    - Deflation floor applies only to the principal at maturity; interim coupons
+    ///      use the raw (potentially deflated) adjusted principal.
+    ///
+    /// Applicability: TIPS only.
+    /// Units: Dollars (e.g. 103.36 for face=100 with 3.36% cumulative inflation).
+    InflationAdjustedPrincipal = 11,
+    /// Requests the full schedule of future cashflows for a bond or TIPS.
+    /// When this measure is included in the request, the ValuationResponseProto will
+    /// populate the `cashflows` repeated field with one CashflowProto per payment period.
+    ///
+    /// Each CashflowProto contains:
+    ///    - cashflow_date: the payment date
+    ///    - fv_amount: the undiscounted (future) value of the cashflow
+    ///    - pv_amount: the cashflow discounted to settlement at the bond's YTM
+    ///    - coupon_rate: the annualized coupon rate for this period (constant for
+    ///      fixed-rate bonds; reference_rate + spread for FRNs)
+    ///
+    /// The sum of all pv_amounts equals the PRESENT_VALUE measure (three-way invariant).
+    ///
+    /// Model assumptions: Same as PRESENT_VALUE.
+    /// Applicability: Bond, TIPS, FRN.
+    /// Units: fv_amount and pv_amount in dollars; coupon_rate as percentage.
+    PresentValueCashflows = 12,
+    /// The discount margin of a Floating Rate Note (FRN) — the spread over the
+    /// reference rate at which the market discounts the FRN's projected cashflows
+    /// to arrive at its current price. This is the FRN analogue of YTM.
+    ///
+    /// Formula:
+    ///    Solve for DM such that:
+    ///    price = Sum_{t=1}^{N} [(R + QM)/m * FV / (1 + (R + DM)/m)^t]
+    ///          + FV / (1 + (R + DM)/m)^N
+    ///    Where R = reference rate, QM = quoted margin (fixed spread), FV = face value,
+    ///    m = payment frequency, N = number of remaining periods.
+    ///
+    /// Solver: Newton-Raphson — same solver as YTM (ytm_solver.rs). Solve for the
+    ///    periodic discount rate, then extract DM = (solved_rate * m) - R.
+    ///
+    /// Model assumptions:
+    ///    - Flat forward rates: all future reference rate fixings are assumed equal to
+    ///      the current observation of R. This is the standard FRN simplification.
+    ///    - When DM = QM, price = par (100) on a reset date.
+    ///    - When DM > QM, price < par (discount); when DM < QM, price > par (premium).
+    ///
+    /// Applicability: FRN only. For fixed-rate bonds, use YIELD_TO_MATURITY.
+    /// Units: Decimal (0-1 scale; e.g. 0.0075 = 75 basis points).
+    DiscountMargin = 13,
+    /// The sensitivity of an FRN's price to a 1 basis point change in the discount
+    /// margin. This is the primary risk measure for FRNs, analogous to modified
+    /// duration for fixed-rate bonds but measuring spread risk rather than rate risk.
+    ///
+    /// Formula (numerical differentiation):
+    ///    SpreadDuration = -(1/P) * dP/dDM
+    ///                   ≈ (P_down - P_up) / (2 * 0.0001 * P_base)
+    ///    Where P_down and P_up are the FRN prices when DM is bumped down and up by 1bp.
+    ///
+    /// For a 2-year quarterly FRN at par, spread duration ≈ 1.90 years.
+    /// This is approximately equal to the weighted average time to maturity.
+    ///
+    /// Model assumptions:
+    ///    - Same flat-forward assumption as DISCOUNT_MARGIN.
+    ///    - Uses a symmetric 1bp bump for numerical differentiation.
+    ///    - Interest rate duration of an FRN is near-zero (≈ time to next reset);
+    ///      spread duration captures the economically significant risk.
+    ///
+    /// Applicability: FRN only. For fixed-rate bonds, use MACAULAY_DURATION.
+    /// Units: Years (e.g. 1.90 = a 1bp spread widening causes ~1.90bp price decline).
+    SpreadDuration = 14,
 }
 impl MeasureProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -75,6 +265,11 @@ impl MeasureProto {
             MeasureProto::YieldToMaturity => "YIELD_TO_MATURITY",
             MeasureProto::MacaulayDuration => "MACAULAY_DURATION",
             MeasureProto::PresentValue => "PRESENT_VALUE",
+            MeasureProto::RealYield => "REAL_YIELD",
+            MeasureProto::InflationAdjustedPrincipal => "INFLATION_ADJUSTED_PRINCIPAL",
+            MeasureProto::PresentValueCashflows => "PRESENT_VALUE_CASHFLOWS",
+            MeasureProto::DiscountMargin => "DISCOUNT_MARGIN",
+            MeasureProto::SpreadDuration => "SPREAD_DURATION",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -89,6 +284,11 @@ impl MeasureProto {
             "YIELD_TO_MATURITY" => Some(Self::YieldToMaturity),
             "MACAULAY_DURATION" => Some(Self::MacaulayDuration),
             "PRESENT_VALUE" => Some(Self::PresentValue),
+            "REAL_YIELD" => Some(Self::RealYield),
+            "INFLATION_ADJUSTED_PRINCIPAL" => Some(Self::InflationAdjustedPrincipal),
+            "PRESENT_VALUE_CASHFLOWS" => Some(Self::PresentValueCashflows),
+            "DISCOUNT_MARGIN" => Some(Self::DiscountMargin),
+            "SPREAD_DURATION" => Some(Self::SpreadDuration),
             _ => None,
         }
     }

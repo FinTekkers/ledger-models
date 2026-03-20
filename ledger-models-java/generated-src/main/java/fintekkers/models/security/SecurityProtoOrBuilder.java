@@ -407,6 +407,117 @@ public interface SecurityProtoOrBuilder extends
 
   /**
    * <pre>
+   *The date the base CPI was observed (e.g. the reference CPI date)
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+   * @return Whether the indexDate field is set.
+   */
+  boolean hasIndexDate();
+  /**
+   * <pre>
+   *The date the base CPI was observed (e.g. the reference CPI date)
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+   * @return The indexDate.
+   */
+  fintekkers.models.util.LocalDate.LocalDateProto getIndexDate();
+  /**
+   * <pre>
+   *The date the base CPI was observed (e.g. the reference CPI date)
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+   */
+  fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getIndexDateOrBuilder();
+
+  /**
+   * <pre>
+   *Which inflation index this TIPS references (e.g. CPI_U)
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto inflation_index_type = 72;</code>
+   * @return The enum numeric value on the wire for inflationIndexType.
+   */
+  int getInflationIndexTypeValue();
+  /**
+   * <pre>
+   *Which inflation index this TIPS references (e.g. CPI_U)
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto inflation_index_type = 72;</code>
+   * @return The inflationIndexType.
+   */
+  fintekkers.models.security.index.IndexTypeProto getInflationIndexType();
+
+  /**
+   * <pre>
+   *FRN (Floating Rate Note) fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+   * @return Whether the spread field is set.
+   */
+  boolean hasSpread();
+  /**
+   * <pre>
+   *FRN (Floating Rate Note) fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+   * @return The spread.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getSpread();
+  /**
+   * <pre>
+   *FRN (Floating Rate Note) fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getSpreadOrBuilder();
+
+  /**
+   * <pre>
+   *Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91;</code>
+   * @return The enum numeric value on the wire for referenceRateIndex.
+   */
+  int getReferenceRateIndexValue();
+  /**
+   * <pre>
+   *Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91;</code>
+   * @return The referenceRateIndex.
+   */
+  fintekkers.models.security.index.IndexTypeProto getReferenceRateIndex();
+
+  /**
+   * <pre>
+   *How often the floating coupon rate resets
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.CouponFrequencyProto reset_frequency = 92;</code>
+   * @return The enum numeric value on the wire for resetFrequency.
+   */
+  int getResetFrequencyValue();
+  /**
+   * <pre>
+   *How often the floating coupon rate resets
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.CouponFrequencyProto reset_frequency = 92;</code>
+   * @return The resetFrequency.
+   */
+  fintekkers.models.security.CouponFrequencyProto getResetFrequency();
+
+  /**
+   * <pre>
    *Index Security fields
    * </pre>
    *
@@ -423,4 +534,96 @@ public interface SecurityProtoOrBuilder extends
    * @return The indexType.
    */
   fintekkers.models.security.index.IndexTypeProto getIndexType();
+
+  /**
+   * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+   * @return Whether the bondDetails field is set.
+   */
+  boolean hasBondDetails();
+  /**
+   * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+   * @return The bondDetails.
+   */
+  fintekkers.models.security.BondDetailsProto getBondDetails();
+  /**
+   * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+   */
+  fintekkers.models.security.BondDetailsProtoOrBuilder getBondDetailsOrBuilder();
+
+  /**
+   * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+   * @return Whether the tipsDetails field is set.
+   */
+  boolean hasTipsDetails();
+  /**
+   * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+   * @return The tipsDetails.
+   */
+  fintekkers.models.security.TipsDetailsProto getTipsDetails();
+  /**
+   * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+   */
+  fintekkers.models.security.TipsDetailsProtoOrBuilder getTipsDetailsOrBuilder();
+
+  /**
+   * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+   * @return Whether the frnDetails field is set.
+   */
+  boolean hasFrnDetails();
+  /**
+   * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+   * @return The frnDetails.
+   */
+  fintekkers.models.security.FrnDetailsProto getFrnDetails();
+  /**
+   * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+   */
+  fintekkers.models.security.FrnDetailsProtoOrBuilder getFrnDetailsOrBuilder();
+
+  /**
+   * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+   * @return Whether the indexDetails field is set.
+   */
+  boolean hasIndexDetails();
+  /**
+   * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+   * @return The indexDetails.
+   */
+  fintekkers.models.security.IndexDetailsProto getIndexDetails();
+  /**
+   * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+   */
+  fintekkers.models.security.IndexDetailsProtoOrBuilder getIndexDetailsOrBuilder();
+
+  /**
+   * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+   * @return Whether the equityDetails field is set.
+   */
+  boolean hasEquityDetails();
+  /**
+   * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+   * @return The equityDetails.
+   */
+  fintekkers.models.security.EquityDetailsProto getEquityDetails();
+  /**
+   * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+   */
+  fintekkers.models.security.EquityDetailsProtoOrBuilder getEquityDetailsOrBuilder();
+
+  /**
+   * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+   * @return Whether the cashDetails field is set.
+   */
+  boolean hasCashDetails();
+  /**
+   * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+   * @return The cashDetails.
+   */
+  fintekkers.models.security.CashDetailsProto getCashDetails();
+  /**
+   * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+   */
+  fintekkers.models.security.CashDetailsProtoOrBuilder getCashDetailsOrBuilder();
+
+  public fintekkers.models.security.SecurityProto.ProductDetailsCase getProductDetailsCase();
 }

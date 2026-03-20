@@ -27,6 +27,9 @@ private static final long serialVersionUID = 0L;
     couponType_ = 0;
     couponFrequency_ = 0;
     issuanceInfo_ = java.util.Collections.emptyList();
+    inflationIndexType_ = 0;
+    referenceRateIndex_ = 0;
+    resetFrequency_ = 0;
     indexType_ = 0;
   }
 
@@ -42,283 +45,6 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private SecurityProto(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    int mutable_bitField0_ = 0;
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            objectClass_ = s;
-            break;
-          }
-          case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            version_ = s;
-            break;
-          }
-          case 42: {
-            fintekkers.models.util.Uuid.UUIDProto.Builder subBuilder = null;
-            if (uuid_ != null) {
-              subBuilder = uuid_.toBuilder();
-            }
-            uuid_ = input.readMessage(fintekkers.models.util.Uuid.UUIDProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(uuid_);
-              uuid_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 50: {
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
-            if (asOf_ != null) {
-              subBuilder = asOf_.toBuilder();
-            }
-            asOf_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(asOf_);
-              asOf_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 56: {
-
-            isLink_ = input.readBool();
-            break;
-          }
-          case 66: {
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
-            if (validFrom_ != null) {
-              subBuilder = validFrom_.toBuilder();
-            }
-            validFrom_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(validFrom_);
-              validFrom_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 74: {
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
-            if (validTo_ != null) {
-              subBuilder = validTo_.toBuilder();
-            }
-            validTo_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(validTo_);
-              validTo_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 80: {
-            int rawValue = input.readEnum();
-
-            securityType_ = rawValue;
-            break;
-          }
-          case 90: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            assetClass_ = s;
-            break;
-          }
-          case 98: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            issuerName_ = s;
-            break;
-          }
-          case 106: {
-            fintekkers.models.security.SecurityProto.Builder subBuilder = null;
-            if (settlementCurrency_ != null) {
-              subBuilder = settlementCurrency_.toBuilder();
-            }
-            settlementCurrency_ = input.readMessage(fintekkers.models.security.SecurityProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(settlementCurrency_);
-              settlementCurrency_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 112: {
-            int rawValue = input.readEnum();
-
-            quantityType_ = rawValue;
-            break;
-          }
-          case 322: {
-            fintekkers.models.security.IdentifierProto.Builder subBuilder = null;
-            if (identifier_ != null) {
-              subBuilder = identifier_.toBuilder();
-            }
-            identifier_ = input.readMessage(fintekkers.models.security.IdentifierProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(identifier_);
-              identifier_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 330: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            description_ = s;
-            break;
-          }
-          case 402: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            cashId_ = s;
-            break;
-          }
-          case 482: {
-            fintekkers.models.util.DecimalValue.DecimalValueProto.Builder subBuilder = null;
-            if (couponRate_ != null) {
-              subBuilder = couponRate_.toBuilder();
-            }
-            couponRate_ = input.readMessage(fintekkers.models.util.DecimalValue.DecimalValueProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(couponRate_);
-              couponRate_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 488: {
-            int rawValue = input.readEnum();
-
-            couponType_ = rawValue;
-            break;
-          }
-          case 496: {
-            int rawValue = input.readEnum();
-
-            couponFrequency_ = rawValue;
-            break;
-          }
-          case 506: {
-            fintekkers.models.util.LocalDate.LocalDateProto.Builder subBuilder = null;
-            if (datedDate_ != null) {
-              subBuilder = datedDate_.toBuilder();
-            }
-            datedDate_ = input.readMessage(fintekkers.models.util.LocalDate.LocalDateProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(datedDate_);
-              datedDate_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 514: {
-            fintekkers.models.util.DecimalValue.DecimalValueProto.Builder subBuilder = null;
-            if (faceValue_ != null) {
-              subBuilder = faceValue_.toBuilder();
-            }
-            faceValue_ = input.readMessage(fintekkers.models.util.DecimalValue.DecimalValueProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(faceValue_);
-              faceValue_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 522: {
-            fintekkers.models.util.LocalDate.LocalDateProto.Builder subBuilder = null;
-            if (issueDate_ != null) {
-              subBuilder = issueDate_.toBuilder();
-            }
-            issueDate_ = input.readMessage(fintekkers.models.util.LocalDate.LocalDateProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(issueDate_);
-              issueDate_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 530: {
-            fintekkers.models.util.LocalDate.LocalDateProto.Builder subBuilder = null;
-            if (maturityDate_ != null) {
-              subBuilder = maturityDate_.toBuilder();
-            }
-            maturityDate_ = input.readMessage(fintekkers.models.util.LocalDate.LocalDateProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(maturityDate_);
-              maturityDate_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 538: {
-            if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-              issuanceInfo_ = new java.util.ArrayList<fintekkers.models.security.bond.IssuanceProto>();
-              mutable_bitField0_ |= 0x00000001;
-            }
-            issuanceInfo_.add(
-                input.readMessage(fintekkers.models.security.bond.IssuanceProto.parser(), extensionRegistry));
-            break;
-          }
-          case 562: {
-            fintekkers.models.util.DecimalValue.DecimalValueProto.Builder subBuilder = null;
-            if (baseCpi_ != null) {
-              subBuilder = baseCpi_.toBuilder();
-            }
-            baseCpi_ = input.readMessage(fintekkers.models.util.DecimalValue.DecimalValueProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(baseCpi_);
-              baseCpi_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 640: {
-            int rawValue = input.readEnum();
-
-            indexType_ = rawValue;
-            break;
-          }
-          default: {
-            if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-    } finally {
-      if (((mutable_bitField0_ & 0x00000001) != 0)) {
-        issuanceInfo_ = java.util.Collections.unmodifiableList(issuanceInfo_);
-      }
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
     return fintekkers.models.security.SecurityProtos.internal_static_fintekkers_models_security_SecurityProto_descriptor;
@@ -332,8 +58,58 @@ private static final long serialVersionUID = 0L;
             fintekkers.models.security.SecurityProto.class, fintekkers.models.security.SecurityProto.Builder.class);
   }
 
+  private int productDetailsCase_ = 0;
+  private java.lang.Object productDetails_;
+  public enum ProductDetailsCase
+      implements com.google.protobuf.Internal.EnumLite,
+          com.google.protobuf.AbstractMessage.InternalOneOfEnum {
+    BOND_DETAILS(200),
+    TIPS_DETAILS(201),
+    FRN_DETAILS(202),
+    INDEX_DETAILS(203),
+    EQUITY_DETAILS(204),
+    CASH_DETAILS(205),
+    PRODUCTDETAILS_NOT_SET(0);
+    private final int value;
+    private ProductDetailsCase(int value) {
+      this.value = value;
+    }
+    /**
+     * @param value The number of the enum to look for.
+     * @return The enum associated with the given number.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static ProductDetailsCase valueOf(int value) {
+      return forNumber(value);
+    }
+
+    public static ProductDetailsCase forNumber(int value) {
+      switch (value) {
+        case 200: return BOND_DETAILS;
+        case 201: return TIPS_DETAILS;
+        case 202: return FRN_DETAILS;
+        case 203: return INDEX_DETAILS;
+        case 204: return EQUITY_DETAILS;
+        case 205: return CASH_DETAILS;
+        case 0: return PRODUCTDETAILS_NOT_SET;
+        default: return null;
+      }
+    }
+    public int getNumber() {
+      return this.value;
+    }
+  };
+
+  public ProductDetailsCase
+  getProductDetailsCase() {
+    return ProductDetailsCase.forNumber(
+        productDetailsCase_);
+  }
+
   public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-  private volatile java.lang.Object objectClass_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object objectClass_ = "";
   /**
    * <code>string object_class = 1;</code>
    * @return The objectClass.
@@ -371,7 +147,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int VERSION_FIELD_NUMBER = 2;
-  private volatile java.lang.Object version_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object version_ = "";
   /**
    * <code>string version = 2;</code>
    * @return The version.
@@ -443,7 +220,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.Uuid.UUIDProtoOrBuilder getUuidOrBuilder() {
-    return getUuid();
+    return uuid_ == null ? fintekkers.models.util.Uuid.UUIDProto.getDefaultInstance() : uuid_;
   }
 
   public static final int AS_OF_FIELD_NUMBER = 6;
@@ -469,11 +246,11 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsOfOrBuilder() {
-    return getAsOf();
+    return asOf_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : asOf_;
   }
 
   public static final int IS_LINK_FIELD_NUMBER = 7;
-  private boolean isLink_;
+  private boolean isLink_ = false;
   /**
    * <code>bool is_link = 7;</code>
    * @return The isLink.
@@ -506,7 +283,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getValidFromOrBuilder() {
-    return getValidFrom();
+    return validFrom_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : validFrom_;
   }
 
   public static final int VALID_TO_FIELD_NUMBER = 9;
@@ -532,11 +309,11 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getValidToOrBuilder() {
-    return getValidTo();
+    return validTo_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : validTo_;
   }
 
   public static final int SECURITY_TYPE_FIELD_NUMBER = 10;
-  private int securityType_;
+  private int securityType_ = 0;
   /**
    * <code>.fintekkers.models.security.SecurityTypeProto security_type = 10;</code>
    * @return The enum numeric value on the wire for securityType.
@@ -549,13 +326,13 @@ private static final long serialVersionUID = 0L;
    * @return The securityType.
    */
   @java.lang.Override public fintekkers.models.security.SecurityTypeProto getSecurityType() {
-    @SuppressWarnings("deprecation")
-    fintekkers.models.security.SecurityTypeProto result = fintekkers.models.security.SecurityTypeProto.valueOf(securityType_);
+    fintekkers.models.security.SecurityTypeProto result = fintekkers.models.security.SecurityTypeProto.forNumber(securityType_);
     return result == null ? fintekkers.models.security.SecurityTypeProto.UNRECOGNIZED : result;
   }
 
   public static final int ASSET_CLASS_FIELD_NUMBER = 11;
-  private volatile java.lang.Object assetClass_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object assetClass_ = "";
   /**
    * <pre>
    *Biz fields
@@ -601,7 +378,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int ISSUER_NAME_FIELD_NUMBER = 12;
-  private volatile java.lang.Object issuerName_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object issuerName_ = "";
   /**
    * <code>string issuer_name = 12;</code>
    * @return The issuerName.
@@ -661,11 +439,11 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.security.SecurityProtoOrBuilder getSettlementCurrencyOrBuilder() {
-    return getSettlementCurrency();
+    return settlementCurrency_ == null ? fintekkers.models.security.SecurityProto.getDefaultInstance() : settlementCurrency_;
   }
 
   public static final int QUANTITY_TYPE_FIELD_NUMBER = 14;
-  private int quantityType_;
+  private int quantityType_ = 0;
   /**
    * <code>.fintekkers.models.security.SecurityQuantityTypeProto quantity_type = 14;</code>
    * @return The enum numeric value on the wire for quantityType.
@@ -678,8 +456,7 @@ private static final long serialVersionUID = 0L;
    * @return The quantityType.
    */
   @java.lang.Override public fintekkers.models.security.SecurityQuantityTypeProto getQuantityType() {
-    @SuppressWarnings("deprecation")
-    fintekkers.models.security.SecurityQuantityTypeProto result = fintekkers.models.security.SecurityQuantityTypeProto.valueOf(quantityType_);
+    fintekkers.models.security.SecurityQuantityTypeProto result = fintekkers.models.security.SecurityQuantityTypeProto.forNumber(quantityType_);
     return result == null ? fintekkers.models.security.SecurityQuantityTypeProto.UNRECOGNIZED : result;
   }
 
@@ -706,11 +483,12 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.security.IdentifierProtoOrBuilder getIdentifierOrBuilder() {
-    return getIdentifier();
+    return identifier_ == null ? fintekkers.models.security.IdentifierProto.getDefaultInstance() : identifier_;
   }
 
   public static final int DESCRIPTION_FIELD_NUMBER = 41;
-  private volatile java.lang.Object description_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object description_ = "";
   /**
    * <code>string description = 41;</code>
    * @return The description.
@@ -748,7 +526,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int CASH_ID_FIELD_NUMBER = 50;
-  private volatile java.lang.Object cashId_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object cashId_ = "";
   /**
    * <pre>
    *Cash Security fields
@@ -828,11 +607,11 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCouponRateOrBuilder() {
-    return getCouponRate();
+    return couponRate_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : couponRate_;
   }
 
   public static final int COUPON_TYPE_FIELD_NUMBER = 61;
-  private int couponType_;
+  private int couponType_ = 0;
   /**
    * <code>.fintekkers.models.security.CouponTypeProto coupon_type = 61;</code>
    * @return The enum numeric value on the wire for couponType.
@@ -845,13 +624,12 @@ private static final long serialVersionUID = 0L;
    * @return The couponType.
    */
   @java.lang.Override public fintekkers.models.security.CouponTypeProto getCouponType() {
-    @SuppressWarnings("deprecation")
-    fintekkers.models.security.CouponTypeProto result = fintekkers.models.security.CouponTypeProto.valueOf(couponType_);
+    fintekkers.models.security.CouponTypeProto result = fintekkers.models.security.CouponTypeProto.forNumber(couponType_);
     return result == null ? fintekkers.models.security.CouponTypeProto.UNRECOGNIZED : result;
   }
 
   public static final int COUPON_FREQUENCY_FIELD_NUMBER = 62;
-  private int couponFrequency_;
+  private int couponFrequency_ = 0;
   /**
    * <code>.fintekkers.models.security.CouponFrequencyProto coupon_frequency = 62;</code>
    * @return The enum numeric value on the wire for couponFrequency.
@@ -864,8 +642,7 @@ private static final long serialVersionUID = 0L;
    * @return The couponFrequency.
    */
   @java.lang.Override public fintekkers.models.security.CouponFrequencyProto getCouponFrequency() {
-    @SuppressWarnings("deprecation")
-    fintekkers.models.security.CouponFrequencyProto result = fintekkers.models.security.CouponFrequencyProto.valueOf(couponFrequency_);
+    fintekkers.models.security.CouponFrequencyProto result = fintekkers.models.security.CouponFrequencyProto.forNumber(couponFrequency_);
     return result == null ? fintekkers.models.security.CouponFrequencyProto.UNRECOGNIZED : result;
   }
 
@@ -892,7 +669,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getDatedDateOrBuilder() {
-    return getDatedDate();
+    return datedDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : datedDate_;
   }
 
   public static final int FACE_VALUE_FIELD_NUMBER = 64;
@@ -918,7 +695,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getFaceValueOrBuilder() {
-    return getFaceValue();
+    return faceValue_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : faceValue_;
   }
 
   public static final int ISSUE_DATE_FIELD_NUMBER = 65;
@@ -944,7 +721,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getIssueDateOrBuilder() {
-    return getIssueDate();
+    return issueDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : issueDate_;
   }
 
   public static final int MATURITY_DATE_FIELD_NUMBER = 66;
@@ -970,10 +747,11 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getMaturityDateOrBuilder() {
-    return getMaturityDate();
+    return maturityDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : maturityDate_;
   }
 
   public static final int ISSUANCE_INFO_FIELD_NUMBER = 67;
+  @SuppressWarnings("serial")
   private java.util.List<fintekkers.models.security.bond.IssuanceProto> issuanceInfo_;
   /**
    * <pre>
@@ -1068,11 +846,165 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getBaseCpiOrBuilder() {
-    return getBaseCpi();
+    return baseCpi_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : baseCpi_;
+  }
+
+  public static final int INDEX_DATE_FIELD_NUMBER = 71;
+  private fintekkers.models.util.LocalDate.LocalDateProto indexDate_;
+  /**
+   * <pre>
+   *The date the base CPI was observed (e.g. the reference CPI date)
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+   * @return Whether the indexDate field is set.
+   */
+  @java.lang.Override
+  public boolean hasIndexDate() {
+    return indexDate_ != null;
+  }
+  /**
+   * <pre>
+   *The date the base CPI was observed (e.g. the reference CPI date)
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+   * @return The indexDate.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProto getIndexDate() {
+    return indexDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : indexDate_;
+  }
+  /**
+   * <pre>
+   *The date the base CPI was observed (e.g. the reference CPI date)
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getIndexDateOrBuilder() {
+    return indexDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : indexDate_;
+  }
+
+  public static final int INFLATION_INDEX_TYPE_FIELD_NUMBER = 72;
+  private int inflationIndexType_ = 0;
+  /**
+   * <pre>
+   *Which inflation index this TIPS references (e.g. CPI_U)
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto inflation_index_type = 72;</code>
+   * @return The enum numeric value on the wire for inflationIndexType.
+   */
+  @java.lang.Override public int getInflationIndexTypeValue() {
+    return inflationIndexType_;
+  }
+  /**
+   * <pre>
+   *Which inflation index this TIPS references (e.g. CPI_U)
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto inflation_index_type = 72;</code>
+   * @return The inflationIndexType.
+   */
+  @java.lang.Override public fintekkers.models.security.index.IndexTypeProto getInflationIndexType() {
+    fintekkers.models.security.index.IndexTypeProto result = fintekkers.models.security.index.IndexTypeProto.forNumber(inflationIndexType_);
+    return result == null ? fintekkers.models.security.index.IndexTypeProto.UNRECOGNIZED : result;
+  }
+
+  public static final int SPREAD_FIELD_NUMBER = 90;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto spread_;
+  /**
+   * <pre>
+   *FRN (Floating Rate Note) fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+   * @return Whether the spread field is set.
+   */
+  @java.lang.Override
+  public boolean hasSpread() {
+    return spread_ != null;
+  }
+  /**
+   * <pre>
+   *FRN (Floating Rate Note) fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+   * @return The spread.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getSpread() {
+    return spread_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : spread_;
+  }
+  /**
+   * <pre>
+   *FRN (Floating Rate Note) fields
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getSpreadOrBuilder() {
+    return spread_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : spread_;
+  }
+
+  public static final int REFERENCE_RATE_INDEX_FIELD_NUMBER = 91;
+  private int referenceRateIndex_ = 0;
+  /**
+   * <pre>
+   *Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91;</code>
+   * @return The enum numeric value on the wire for referenceRateIndex.
+   */
+  @java.lang.Override public int getReferenceRateIndexValue() {
+    return referenceRateIndex_;
+  }
+  /**
+   * <pre>
+   *Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91;</code>
+   * @return The referenceRateIndex.
+   */
+  @java.lang.Override public fintekkers.models.security.index.IndexTypeProto getReferenceRateIndex() {
+    fintekkers.models.security.index.IndexTypeProto result = fintekkers.models.security.index.IndexTypeProto.forNumber(referenceRateIndex_);
+    return result == null ? fintekkers.models.security.index.IndexTypeProto.UNRECOGNIZED : result;
+  }
+
+  public static final int RESET_FREQUENCY_FIELD_NUMBER = 92;
+  private int resetFrequency_ = 0;
+  /**
+   * <pre>
+   *How often the floating coupon rate resets
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.CouponFrequencyProto reset_frequency = 92;</code>
+   * @return The enum numeric value on the wire for resetFrequency.
+   */
+  @java.lang.Override public int getResetFrequencyValue() {
+    return resetFrequency_;
+  }
+  /**
+   * <pre>
+   *How often the floating coupon rate resets
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.CouponFrequencyProto reset_frequency = 92;</code>
+   * @return The resetFrequency.
+   */
+  @java.lang.Override public fintekkers.models.security.CouponFrequencyProto getResetFrequency() {
+    fintekkers.models.security.CouponFrequencyProto result = fintekkers.models.security.CouponFrequencyProto.forNumber(resetFrequency_);
+    return result == null ? fintekkers.models.security.CouponFrequencyProto.UNRECOGNIZED : result;
   }
 
   public static final int INDEX_TYPE_FIELD_NUMBER = 80;
-  private int indexType_;
+  private int indexType_ = 0;
   /**
    * <pre>
    *Index Security fields
@@ -1093,9 +1025,194 @@ private static final long serialVersionUID = 0L;
    * @return The indexType.
    */
   @java.lang.Override public fintekkers.models.security.index.IndexTypeProto getIndexType() {
-    @SuppressWarnings("deprecation")
-    fintekkers.models.security.index.IndexTypeProto result = fintekkers.models.security.index.IndexTypeProto.valueOf(indexType_);
+    fintekkers.models.security.index.IndexTypeProto result = fintekkers.models.security.index.IndexTypeProto.forNumber(indexType_);
     return result == null ? fintekkers.models.security.index.IndexTypeProto.UNRECOGNIZED : result;
+  }
+
+  public static final int BOND_DETAILS_FIELD_NUMBER = 200;
+  /**
+   * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+   * @return Whether the bondDetails field is set.
+   */
+  @java.lang.Override
+  public boolean hasBondDetails() {
+    return productDetailsCase_ == 200;
+  }
+  /**
+   * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+   * @return The bondDetails.
+   */
+  @java.lang.Override
+  public fintekkers.models.security.BondDetailsProto getBondDetails() {
+    if (productDetailsCase_ == 200) {
+       return (fintekkers.models.security.BondDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.BondDetailsProto.getDefaultInstance();
+  }
+  /**
+   * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.BondDetailsProtoOrBuilder getBondDetailsOrBuilder() {
+    if (productDetailsCase_ == 200) {
+       return (fintekkers.models.security.BondDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.BondDetailsProto.getDefaultInstance();
+  }
+
+  public static final int TIPS_DETAILS_FIELD_NUMBER = 201;
+  /**
+   * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+   * @return Whether the tipsDetails field is set.
+   */
+  @java.lang.Override
+  public boolean hasTipsDetails() {
+    return productDetailsCase_ == 201;
+  }
+  /**
+   * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+   * @return The tipsDetails.
+   */
+  @java.lang.Override
+  public fintekkers.models.security.TipsDetailsProto getTipsDetails() {
+    if (productDetailsCase_ == 201) {
+       return (fintekkers.models.security.TipsDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.TipsDetailsProto.getDefaultInstance();
+  }
+  /**
+   * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.TipsDetailsProtoOrBuilder getTipsDetailsOrBuilder() {
+    if (productDetailsCase_ == 201) {
+       return (fintekkers.models.security.TipsDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.TipsDetailsProto.getDefaultInstance();
+  }
+
+  public static final int FRN_DETAILS_FIELD_NUMBER = 202;
+  /**
+   * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+   * @return Whether the frnDetails field is set.
+   */
+  @java.lang.Override
+  public boolean hasFrnDetails() {
+    return productDetailsCase_ == 202;
+  }
+  /**
+   * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+   * @return The frnDetails.
+   */
+  @java.lang.Override
+  public fintekkers.models.security.FrnDetailsProto getFrnDetails() {
+    if (productDetailsCase_ == 202) {
+       return (fintekkers.models.security.FrnDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.FrnDetailsProto.getDefaultInstance();
+  }
+  /**
+   * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.FrnDetailsProtoOrBuilder getFrnDetailsOrBuilder() {
+    if (productDetailsCase_ == 202) {
+       return (fintekkers.models.security.FrnDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.FrnDetailsProto.getDefaultInstance();
+  }
+
+  public static final int INDEX_DETAILS_FIELD_NUMBER = 203;
+  /**
+   * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+   * @return Whether the indexDetails field is set.
+   */
+  @java.lang.Override
+  public boolean hasIndexDetails() {
+    return productDetailsCase_ == 203;
+  }
+  /**
+   * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+   * @return The indexDetails.
+   */
+  @java.lang.Override
+  public fintekkers.models.security.IndexDetailsProto getIndexDetails() {
+    if (productDetailsCase_ == 203) {
+       return (fintekkers.models.security.IndexDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.IndexDetailsProto.getDefaultInstance();
+  }
+  /**
+   * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.IndexDetailsProtoOrBuilder getIndexDetailsOrBuilder() {
+    if (productDetailsCase_ == 203) {
+       return (fintekkers.models.security.IndexDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.IndexDetailsProto.getDefaultInstance();
+  }
+
+  public static final int EQUITY_DETAILS_FIELD_NUMBER = 204;
+  /**
+   * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+   * @return Whether the equityDetails field is set.
+   */
+  @java.lang.Override
+  public boolean hasEquityDetails() {
+    return productDetailsCase_ == 204;
+  }
+  /**
+   * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+   * @return The equityDetails.
+   */
+  @java.lang.Override
+  public fintekkers.models.security.EquityDetailsProto getEquityDetails() {
+    if (productDetailsCase_ == 204) {
+       return (fintekkers.models.security.EquityDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.EquityDetailsProto.getDefaultInstance();
+  }
+  /**
+   * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.EquityDetailsProtoOrBuilder getEquityDetailsOrBuilder() {
+    if (productDetailsCase_ == 204) {
+       return (fintekkers.models.security.EquityDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.EquityDetailsProto.getDefaultInstance();
+  }
+
+  public static final int CASH_DETAILS_FIELD_NUMBER = 205;
+  /**
+   * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+   * @return Whether the cashDetails field is set.
+   */
+  @java.lang.Override
+  public boolean hasCashDetails() {
+    return productDetailsCase_ == 205;
+  }
+  /**
+   * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+   * @return The cashDetails.
+   */
+  @java.lang.Override
+  public fintekkers.models.security.CashDetailsProto getCashDetails() {
+    if (productDetailsCase_ == 205) {
+       return (fintekkers.models.security.CashDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.CashDetailsProto.getDefaultInstance();
+  }
+  /**
+   * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.CashDetailsProtoOrBuilder getCashDetailsOrBuilder() {
+    if (productDetailsCase_ == 205) {
+       return (fintekkers.models.security.CashDetailsProto) productDetails_;
+    }
+    return fintekkers.models.security.CashDetailsProto.getDefaultInstance();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -1112,10 +1229,10 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getObjectClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
     }
-    if (!getVersionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
     }
     if (uuid_ != null) {
@@ -1136,10 +1253,10 @@ private static final long serialVersionUID = 0L;
     if (securityType_ != fintekkers.models.security.SecurityTypeProto.UNKNOWN_SECURITY_TYPE.getNumber()) {
       output.writeEnum(10, securityType_);
     }
-    if (!getAssetClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(assetClass_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 11, assetClass_);
     }
-    if (!getIssuerNameBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(issuerName_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 12, issuerName_);
     }
     if (settlementCurrency_ != null) {
@@ -1151,10 +1268,10 @@ private static final long serialVersionUID = 0L;
     if (identifier_ != null) {
       output.writeMessage(40, getIdentifier());
     }
-    if (!getDescriptionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(description_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 41, description_);
     }
-    if (!getCashIdBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(cashId_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 50, cashId_);
     }
     if (couponRate_ != null) {
@@ -1184,10 +1301,43 @@ private static final long serialVersionUID = 0L;
     if (baseCpi_ != null) {
       output.writeMessage(70, getBaseCpi());
     }
+    if (indexDate_ != null) {
+      output.writeMessage(71, getIndexDate());
+    }
+    if (inflationIndexType_ != fintekkers.models.security.index.IndexTypeProto.UNKNOWN_INDEX_TYPE.getNumber()) {
+      output.writeEnum(72, inflationIndexType_);
+    }
     if (indexType_ != fintekkers.models.security.index.IndexTypeProto.UNKNOWN_INDEX_TYPE.getNumber()) {
       output.writeEnum(80, indexType_);
     }
-    unknownFields.writeTo(output);
+    if (spread_ != null) {
+      output.writeMessage(90, getSpread());
+    }
+    if (referenceRateIndex_ != fintekkers.models.security.index.IndexTypeProto.UNKNOWN_INDEX_TYPE.getNumber()) {
+      output.writeEnum(91, referenceRateIndex_);
+    }
+    if (resetFrequency_ != fintekkers.models.security.CouponFrequencyProto.UNKNOWN_COUPON_FREQUENCY.getNumber()) {
+      output.writeEnum(92, resetFrequency_);
+    }
+    if (productDetailsCase_ == 200) {
+      output.writeMessage(200, (fintekkers.models.security.BondDetailsProto) productDetails_);
+    }
+    if (productDetailsCase_ == 201) {
+      output.writeMessage(201, (fintekkers.models.security.TipsDetailsProto) productDetails_);
+    }
+    if (productDetailsCase_ == 202) {
+      output.writeMessage(202, (fintekkers.models.security.FrnDetailsProto) productDetails_);
+    }
+    if (productDetailsCase_ == 203) {
+      output.writeMessage(203, (fintekkers.models.security.IndexDetailsProto) productDetails_);
+    }
+    if (productDetailsCase_ == 204) {
+      output.writeMessage(204, (fintekkers.models.security.EquityDetailsProto) productDetails_);
+    }
+    if (productDetailsCase_ == 205) {
+      output.writeMessage(205, (fintekkers.models.security.CashDetailsProto) productDetails_);
+    }
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -1196,10 +1346,10 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getObjectClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
     }
-    if (!getVersionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
     }
     if (uuid_ != null) {
@@ -1226,10 +1376,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(10, securityType_);
     }
-    if (!getAssetClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(assetClass_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, assetClass_);
     }
-    if (!getIssuerNameBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(issuerName_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(12, issuerName_);
     }
     if (settlementCurrency_ != null) {
@@ -1244,10 +1394,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(40, getIdentifier());
     }
-    if (!getDescriptionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(description_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(41, description_);
     }
-    if (!getCashIdBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(cashId_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(50, cashId_);
     }
     if (couponRate_ != null) {
@@ -1286,11 +1436,55 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(70, getBaseCpi());
     }
+    if (indexDate_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(71, getIndexDate());
+    }
+    if (inflationIndexType_ != fintekkers.models.security.index.IndexTypeProto.UNKNOWN_INDEX_TYPE.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(72, inflationIndexType_);
+    }
     if (indexType_ != fintekkers.models.security.index.IndexTypeProto.UNKNOWN_INDEX_TYPE.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(80, indexType_);
     }
-    size += unknownFields.getSerializedSize();
+    if (spread_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(90, getSpread());
+    }
+    if (referenceRateIndex_ != fintekkers.models.security.index.IndexTypeProto.UNKNOWN_INDEX_TYPE.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(91, referenceRateIndex_);
+    }
+    if (resetFrequency_ != fintekkers.models.security.CouponFrequencyProto.UNKNOWN_COUPON_FREQUENCY.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(92, resetFrequency_);
+    }
+    if (productDetailsCase_ == 200) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(200, (fintekkers.models.security.BondDetailsProto) productDetails_);
+    }
+    if (productDetailsCase_ == 201) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(201, (fintekkers.models.security.TipsDetailsProto) productDetails_);
+    }
+    if (productDetailsCase_ == 202) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(202, (fintekkers.models.security.FrnDetailsProto) productDetails_);
+    }
+    if (productDetailsCase_ == 203) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(203, (fintekkers.models.security.IndexDetailsProto) productDetails_);
+    }
+    if (productDetailsCase_ == 204) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(204, (fintekkers.models.security.EquityDetailsProto) productDetails_);
+    }
+    if (productDetailsCase_ == 205) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(205, (fintekkers.models.security.CashDetailsProto) productDetails_);
+    }
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -1385,8 +1579,50 @@ private static final long serialVersionUID = 0L;
       if (!getBaseCpi()
           .equals(other.getBaseCpi())) return false;
     }
+    if (hasIndexDate() != other.hasIndexDate()) return false;
+    if (hasIndexDate()) {
+      if (!getIndexDate()
+          .equals(other.getIndexDate())) return false;
+    }
+    if (inflationIndexType_ != other.inflationIndexType_) return false;
+    if (hasSpread() != other.hasSpread()) return false;
+    if (hasSpread()) {
+      if (!getSpread()
+          .equals(other.getSpread())) return false;
+    }
+    if (referenceRateIndex_ != other.referenceRateIndex_) return false;
+    if (resetFrequency_ != other.resetFrequency_) return false;
     if (indexType_ != other.indexType_) return false;
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getProductDetailsCase().equals(other.getProductDetailsCase())) return false;
+    switch (productDetailsCase_) {
+      case 200:
+        if (!getBondDetails()
+            .equals(other.getBondDetails())) return false;
+        break;
+      case 201:
+        if (!getTipsDetails()
+            .equals(other.getTipsDetails())) return false;
+        break;
+      case 202:
+        if (!getFrnDetails()
+            .equals(other.getFrnDetails())) return false;
+        break;
+      case 203:
+        if (!getIndexDetails()
+            .equals(other.getIndexDetails())) return false;
+        break;
+      case 204:
+        if (!getEquityDetails()
+            .equals(other.getEquityDetails())) return false;
+        break;
+      case 205:
+        if (!getCashDetails()
+            .equals(other.getCashDetails())) return false;
+        break;
+      case 0:
+      default:
+    }
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -1472,9 +1708,51 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + BASE_CPI_FIELD_NUMBER;
       hash = (53 * hash) + getBaseCpi().hashCode();
     }
+    if (hasIndexDate()) {
+      hash = (37 * hash) + INDEX_DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getIndexDate().hashCode();
+    }
+    hash = (37 * hash) + INFLATION_INDEX_TYPE_FIELD_NUMBER;
+    hash = (53 * hash) + inflationIndexType_;
+    if (hasSpread()) {
+      hash = (37 * hash) + SPREAD_FIELD_NUMBER;
+      hash = (53 * hash) + getSpread().hashCode();
+    }
+    hash = (37 * hash) + REFERENCE_RATE_INDEX_FIELD_NUMBER;
+    hash = (53 * hash) + referenceRateIndex_;
+    hash = (37 * hash) + RESET_FREQUENCY_FIELD_NUMBER;
+    hash = (53 * hash) + resetFrequency_;
     hash = (37 * hash) + INDEX_TYPE_FIELD_NUMBER;
     hash = (53 * hash) + indexType_;
-    hash = (29 * hash) + unknownFields.hashCode();
+    switch (productDetailsCase_) {
+      case 200:
+        hash = (37 * hash) + BOND_DETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getBondDetails().hashCode();
+        break;
+      case 201:
+        hash = (37 * hash) + TIPS_DETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getTipsDetails().hashCode();
+        break;
+      case 202:
+        hash = (37 * hash) + FRN_DETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getFrnDetails().hashCode();
+        break;
+      case 203:
+        hash = (37 * hash) + INDEX_DETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getIndexDetails().hashCode();
+        break;
+      case 204:
+        hash = (37 * hash) + EQUITY_DETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getEquityDetails().hashCode();
+        break;
+      case 205:
+        hash = (37 * hash) + CASH_DETAILS_FIELD_NUMBER;
+        hash = (53 * hash) + getCashDetails().hashCode();
+        break;
+      case 0:
+      default:
+    }
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -1591,125 +1869,131 @@ private static final long serialVersionUID = 0L;
 
     // Construct using fintekkers.models.security.SecurityProto.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
-              .alwaysUseFieldBuilders) {
-        getIssuanceInfoFieldBuilder();
-      }
+
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
+      bitField1_ = 0;
       objectClass_ = "";
-
       version_ = "";
-
-      if (uuidBuilder_ == null) {
-        uuid_ = null;
-      } else {
-        uuid_ = null;
+      uuid_ = null;
+      if (uuidBuilder_ != null) {
+        uuidBuilder_.dispose();
         uuidBuilder_ = null;
       }
-      if (asOfBuilder_ == null) {
-        asOf_ = null;
-      } else {
-        asOf_ = null;
+      asOf_ = null;
+      if (asOfBuilder_ != null) {
+        asOfBuilder_.dispose();
         asOfBuilder_ = null;
       }
       isLink_ = false;
-
-      if (validFromBuilder_ == null) {
-        validFrom_ = null;
-      } else {
-        validFrom_ = null;
+      validFrom_ = null;
+      if (validFromBuilder_ != null) {
+        validFromBuilder_.dispose();
         validFromBuilder_ = null;
       }
-      if (validToBuilder_ == null) {
-        validTo_ = null;
-      } else {
-        validTo_ = null;
+      validTo_ = null;
+      if (validToBuilder_ != null) {
+        validToBuilder_.dispose();
         validToBuilder_ = null;
       }
       securityType_ = 0;
-
       assetClass_ = "";
-
       issuerName_ = "";
-
-      if (settlementCurrencyBuilder_ == null) {
-        settlementCurrency_ = null;
-      } else {
-        settlementCurrency_ = null;
+      settlementCurrency_ = null;
+      if (settlementCurrencyBuilder_ != null) {
+        settlementCurrencyBuilder_.dispose();
         settlementCurrencyBuilder_ = null;
       }
       quantityType_ = 0;
-
-      if (identifierBuilder_ == null) {
-        identifier_ = null;
-      } else {
-        identifier_ = null;
+      identifier_ = null;
+      if (identifierBuilder_ != null) {
+        identifierBuilder_.dispose();
         identifierBuilder_ = null;
       }
       description_ = "";
-
       cashId_ = "";
-
-      if (couponRateBuilder_ == null) {
-        couponRate_ = null;
-      } else {
-        couponRate_ = null;
+      couponRate_ = null;
+      if (couponRateBuilder_ != null) {
+        couponRateBuilder_.dispose();
         couponRateBuilder_ = null;
       }
       couponType_ = 0;
-
       couponFrequency_ = 0;
-
-      if (datedDateBuilder_ == null) {
-        datedDate_ = null;
-      } else {
-        datedDate_ = null;
+      datedDate_ = null;
+      if (datedDateBuilder_ != null) {
+        datedDateBuilder_.dispose();
         datedDateBuilder_ = null;
       }
-      if (faceValueBuilder_ == null) {
-        faceValue_ = null;
-      } else {
-        faceValue_ = null;
+      faceValue_ = null;
+      if (faceValueBuilder_ != null) {
+        faceValueBuilder_.dispose();
         faceValueBuilder_ = null;
       }
-      if (issueDateBuilder_ == null) {
-        issueDate_ = null;
-      } else {
-        issueDate_ = null;
+      issueDate_ = null;
+      if (issueDateBuilder_ != null) {
+        issueDateBuilder_.dispose();
         issueDateBuilder_ = null;
       }
-      if (maturityDateBuilder_ == null) {
-        maturityDate_ = null;
-      } else {
-        maturityDate_ = null;
+      maturityDate_ = null;
+      if (maturityDateBuilder_ != null) {
+        maturityDateBuilder_.dispose();
         maturityDateBuilder_ = null;
       }
       if (issuanceInfoBuilder_ == null) {
         issuanceInfo_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
       } else {
+        issuanceInfo_ = null;
         issuanceInfoBuilder_.clear();
       }
-      if (baseCpiBuilder_ == null) {
-        baseCpi_ = null;
-      } else {
-        baseCpi_ = null;
+      bitField0_ = (bitField0_ & ~0x00400000);
+      baseCpi_ = null;
+      if (baseCpiBuilder_ != null) {
+        baseCpiBuilder_.dispose();
         baseCpiBuilder_ = null;
       }
+      indexDate_ = null;
+      if (indexDateBuilder_ != null) {
+        indexDateBuilder_.dispose();
+        indexDateBuilder_ = null;
+      }
+      inflationIndexType_ = 0;
+      spread_ = null;
+      if (spreadBuilder_ != null) {
+        spreadBuilder_.dispose();
+        spreadBuilder_ = null;
+      }
+      referenceRateIndex_ = 0;
+      resetFrequency_ = 0;
       indexType_ = 0;
-
+      if (bondDetailsBuilder_ != null) {
+        bondDetailsBuilder_.clear();
+      }
+      if (tipsDetailsBuilder_ != null) {
+        tipsDetailsBuilder_.clear();
+      }
+      if (frnDetailsBuilder_ != null) {
+        frnDetailsBuilder_.clear();
+      }
+      if (indexDetailsBuilder_ != null) {
+        indexDetailsBuilder_.clear();
+      }
+      if (equityDetailsBuilder_ != null) {
+        equityDetailsBuilder_.clear();
+      }
+      if (cashDetailsBuilder_ != null) {
+        cashDetailsBuilder_.clear();
+      }
+      productDetailsCase_ = 0;
+      productDetails_ = null;
       return this;
     }
 
@@ -1736,90 +2020,176 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.models.security.SecurityProto buildPartial() {
       fintekkers.models.security.SecurityProto result = new fintekkers.models.security.SecurityProto(this);
-      int from_bitField0_ = bitField0_;
-      result.objectClass_ = objectClass_;
-      result.version_ = version_;
-      if (uuidBuilder_ == null) {
-        result.uuid_ = uuid_;
-      } else {
-        result.uuid_ = uuidBuilder_.build();
-      }
-      if (asOfBuilder_ == null) {
-        result.asOf_ = asOf_;
-      } else {
-        result.asOf_ = asOfBuilder_.build();
-      }
-      result.isLink_ = isLink_;
-      if (validFromBuilder_ == null) {
-        result.validFrom_ = validFrom_;
-      } else {
-        result.validFrom_ = validFromBuilder_.build();
-      }
-      if (validToBuilder_ == null) {
-        result.validTo_ = validTo_;
-      } else {
-        result.validTo_ = validToBuilder_.build();
-      }
-      result.securityType_ = securityType_;
-      result.assetClass_ = assetClass_;
-      result.issuerName_ = issuerName_;
-      if (settlementCurrencyBuilder_ == null) {
-        result.settlementCurrency_ = settlementCurrency_;
-      } else {
-        result.settlementCurrency_ = settlementCurrencyBuilder_.build();
-      }
-      result.quantityType_ = quantityType_;
-      if (identifierBuilder_ == null) {
-        result.identifier_ = identifier_;
-      } else {
-        result.identifier_ = identifierBuilder_.build();
-      }
-      result.description_ = description_;
-      result.cashId_ = cashId_;
-      if (couponRateBuilder_ == null) {
-        result.couponRate_ = couponRate_;
-      } else {
-        result.couponRate_ = couponRateBuilder_.build();
-      }
-      result.couponType_ = couponType_;
-      result.couponFrequency_ = couponFrequency_;
-      if (datedDateBuilder_ == null) {
-        result.datedDate_ = datedDate_;
-      } else {
-        result.datedDate_ = datedDateBuilder_.build();
-      }
-      if (faceValueBuilder_ == null) {
-        result.faceValue_ = faceValue_;
-      } else {
-        result.faceValue_ = faceValueBuilder_.build();
-      }
-      if (issueDateBuilder_ == null) {
-        result.issueDate_ = issueDate_;
-      } else {
-        result.issueDate_ = issueDateBuilder_.build();
-      }
-      if (maturityDateBuilder_ == null) {
-        result.maturityDate_ = maturityDate_;
-      } else {
-        result.maturityDate_ = maturityDateBuilder_.build();
-      }
+      buildPartialRepeatedFields(result);
+      if (bitField0_ != 0) { buildPartial0(result); }
+      if (bitField1_ != 0) { buildPartial1(result); }
+      buildPartialOneofs(result);
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartialRepeatedFields(fintekkers.models.security.SecurityProto result) {
       if (issuanceInfoBuilder_ == null) {
-        if (((bitField0_ & 0x00000001) != 0)) {
+        if (((bitField0_ & 0x00400000) != 0)) {
           issuanceInfo_ = java.util.Collections.unmodifiableList(issuanceInfo_);
-          bitField0_ = (bitField0_ & ~0x00000001);
+          bitField0_ = (bitField0_ & ~0x00400000);
         }
         result.issuanceInfo_ = issuanceInfo_;
       } else {
         result.issuanceInfo_ = issuanceInfoBuilder_.build();
       }
-      if (baseCpiBuilder_ == null) {
-        result.baseCpi_ = baseCpi_;
-      } else {
-        result.baseCpi_ = baseCpiBuilder_.build();
+    }
+
+    private void buildPartial0(fintekkers.models.security.SecurityProto result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.objectClass_ = objectClass_;
       }
-      result.indexType_ = indexType_;
-      onBuilt();
-      return result;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.version_ = version_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.uuid_ = uuidBuilder_ == null
+            ? uuid_
+            : uuidBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.asOf_ = asOfBuilder_ == null
+            ? asOf_
+            : asOfBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.isLink_ = isLink_;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.validFrom_ = validFromBuilder_ == null
+            ? validFrom_
+            : validFromBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.validTo_ = validToBuilder_ == null
+            ? validTo_
+            : validToBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.securityType_ = securityType_;
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.assetClass_ = assetClass_;
+      }
+      if (((from_bitField0_ & 0x00000200) != 0)) {
+        result.issuerName_ = issuerName_;
+      }
+      if (((from_bitField0_ & 0x00000400) != 0)) {
+        result.settlementCurrency_ = settlementCurrencyBuilder_ == null
+            ? settlementCurrency_
+            : settlementCurrencyBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000800) != 0)) {
+        result.quantityType_ = quantityType_;
+      }
+      if (((from_bitField0_ & 0x00001000) != 0)) {
+        result.identifier_ = identifierBuilder_ == null
+            ? identifier_
+            : identifierBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00002000) != 0)) {
+        result.description_ = description_;
+      }
+      if (((from_bitField0_ & 0x00004000) != 0)) {
+        result.cashId_ = cashId_;
+      }
+      if (((from_bitField0_ & 0x00008000) != 0)) {
+        result.couponRate_ = couponRateBuilder_ == null
+            ? couponRate_
+            : couponRateBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00010000) != 0)) {
+        result.couponType_ = couponType_;
+      }
+      if (((from_bitField0_ & 0x00020000) != 0)) {
+        result.couponFrequency_ = couponFrequency_;
+      }
+      if (((from_bitField0_ & 0x00040000) != 0)) {
+        result.datedDate_ = datedDateBuilder_ == null
+            ? datedDate_
+            : datedDateBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00080000) != 0)) {
+        result.faceValue_ = faceValueBuilder_ == null
+            ? faceValue_
+            : faceValueBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00100000) != 0)) {
+        result.issueDate_ = issueDateBuilder_ == null
+            ? issueDate_
+            : issueDateBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00200000) != 0)) {
+        result.maturityDate_ = maturityDateBuilder_ == null
+            ? maturityDate_
+            : maturityDateBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00800000) != 0)) {
+        result.baseCpi_ = baseCpiBuilder_ == null
+            ? baseCpi_
+            : baseCpiBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x01000000) != 0)) {
+        result.indexDate_ = indexDateBuilder_ == null
+            ? indexDate_
+            : indexDateBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x02000000) != 0)) {
+        result.inflationIndexType_ = inflationIndexType_;
+      }
+      if (((from_bitField0_ & 0x04000000) != 0)) {
+        result.spread_ = spreadBuilder_ == null
+            ? spread_
+            : spreadBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x08000000) != 0)) {
+        result.referenceRateIndex_ = referenceRateIndex_;
+      }
+      if (((from_bitField0_ & 0x10000000) != 0)) {
+        result.resetFrequency_ = resetFrequency_;
+      }
+      if (((from_bitField0_ & 0x20000000) != 0)) {
+        result.indexType_ = indexType_;
+      }
+    }
+
+    private void buildPartial1(fintekkers.models.security.SecurityProto result) {
+      int from_bitField1_ = bitField1_;
+    }
+
+    private void buildPartialOneofs(fintekkers.models.security.SecurityProto result) {
+      result.productDetailsCase_ = productDetailsCase_;
+      result.productDetails_ = this.productDetails_;
+      if (productDetailsCase_ == 200 &&
+          bondDetailsBuilder_ != null) {
+        result.productDetails_ = bondDetailsBuilder_.build();
+      }
+      if (productDetailsCase_ == 201 &&
+          tipsDetailsBuilder_ != null) {
+        result.productDetails_ = tipsDetailsBuilder_.build();
+      }
+      if (productDetailsCase_ == 202 &&
+          frnDetailsBuilder_ != null) {
+        result.productDetails_ = frnDetailsBuilder_.build();
+      }
+      if (productDetailsCase_ == 203 &&
+          indexDetailsBuilder_ != null) {
+        result.productDetails_ = indexDetailsBuilder_.build();
+      }
+      if (productDetailsCase_ == 204 &&
+          equityDetailsBuilder_ != null) {
+        result.productDetails_ = equityDetailsBuilder_.build();
+      }
+      if (productDetailsCase_ == 205 &&
+          cashDetailsBuilder_ != null) {
+        result.productDetails_ = cashDetailsBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -1868,10 +2238,12 @@ private static final long serialVersionUID = 0L;
       if (other == fintekkers.models.security.SecurityProto.getDefaultInstance()) return this;
       if (!other.getObjectClass().isEmpty()) {
         objectClass_ = other.objectClass_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getVersion().isEmpty()) {
         version_ = other.version_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       if (other.hasUuid()) {
@@ -1894,10 +2266,12 @@ private static final long serialVersionUID = 0L;
       }
       if (!other.getAssetClass().isEmpty()) {
         assetClass_ = other.assetClass_;
+        bitField0_ |= 0x00000100;
         onChanged();
       }
       if (!other.getIssuerName().isEmpty()) {
         issuerName_ = other.issuerName_;
+        bitField0_ |= 0x00000200;
         onChanged();
       }
       if (other.hasSettlementCurrency()) {
@@ -1911,10 +2285,12 @@ private static final long serialVersionUID = 0L;
       }
       if (!other.getDescription().isEmpty()) {
         description_ = other.description_;
+        bitField0_ |= 0x00002000;
         onChanged();
       }
       if (!other.getCashId().isEmpty()) {
         cashId_ = other.cashId_;
+        bitField0_ |= 0x00004000;
         onChanged();
       }
       if (other.hasCouponRate()) {
@@ -1942,7 +2318,7 @@ private static final long serialVersionUID = 0L;
         if (!other.issuanceInfo_.isEmpty()) {
           if (issuanceInfo_.isEmpty()) {
             issuanceInfo_ = other.issuanceInfo_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00400000);
           } else {
             ensureIssuanceInfoIsMutable();
             issuanceInfo_.addAll(other.issuanceInfo_);
@@ -1955,7 +2331,7 @@ private static final long serialVersionUID = 0L;
             issuanceInfoBuilder_.dispose();
             issuanceInfoBuilder_ = null;
             issuanceInfo_ = other.issuanceInfo_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00400000);
             issuanceInfoBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getIssuanceInfoFieldBuilder() : null;
@@ -1967,10 +2343,54 @@ private static final long serialVersionUID = 0L;
       if (other.hasBaseCpi()) {
         mergeBaseCpi(other.getBaseCpi());
       }
+      if (other.hasIndexDate()) {
+        mergeIndexDate(other.getIndexDate());
+      }
+      if (other.inflationIndexType_ != 0) {
+        setInflationIndexTypeValue(other.getInflationIndexTypeValue());
+      }
+      if (other.hasSpread()) {
+        mergeSpread(other.getSpread());
+      }
+      if (other.referenceRateIndex_ != 0) {
+        setReferenceRateIndexValue(other.getReferenceRateIndexValue());
+      }
+      if (other.resetFrequency_ != 0) {
+        setResetFrequencyValue(other.getResetFrequencyValue());
+      }
       if (other.indexType_ != 0) {
         setIndexTypeValue(other.getIndexTypeValue());
       }
-      this.mergeUnknownFields(other.unknownFields);
+      switch (other.getProductDetailsCase()) {
+        case BOND_DETAILS: {
+          mergeBondDetails(other.getBondDetails());
+          break;
+        }
+        case TIPS_DETAILS: {
+          mergeTipsDetails(other.getTipsDetails());
+          break;
+        }
+        case FRN_DETAILS: {
+          mergeFrnDetails(other.getFrnDetails());
+          break;
+        }
+        case INDEX_DETAILS: {
+          mergeIndexDetails(other.getIndexDetails());
+          break;
+        }
+        case EQUITY_DETAILS: {
+          mergeEquityDetails(other.getEquityDetails());
+          break;
+        }
+        case CASH_DETAILS: {
+          mergeCashDetails(other.getCashDetails());
+          break;
+        }
+        case PRODUCTDETAILS_NOT_SET: {
+          break;
+        }
+      }
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -1985,20 +2405,277 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      fintekkers.models.security.SecurityProto parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              objectClass_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 10
+            case 18: {
+              version_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 18
+            case 42: {
+              input.readMessage(
+                  getUuidFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 42
+            case 50: {
+              input.readMessage(
+                  getAsOfFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 50
+            case 56: {
+              isLink_ = input.readBool();
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 56
+            case 66: {
+              input.readMessage(
+                  getValidFromFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 66
+            case 74: {
+              input.readMessage(
+                  getValidToFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 74
+            case 80: {
+              securityType_ = input.readEnum();
+              bitField0_ |= 0x00000080;
+              break;
+            } // case 80
+            case 90: {
+              assetClass_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000100;
+              break;
+            } // case 90
+            case 98: {
+              issuerName_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000200;
+              break;
+            } // case 98
+            case 106: {
+              input.readMessage(
+                  getSettlementCurrencyFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000400;
+              break;
+            } // case 106
+            case 112: {
+              quantityType_ = input.readEnum();
+              bitField0_ |= 0x00000800;
+              break;
+            } // case 112
+            case 322: {
+              input.readMessage(
+                  getIdentifierFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00001000;
+              break;
+            } // case 322
+            case 330: {
+              description_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00002000;
+              break;
+            } // case 330
+            case 402: {
+              cashId_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00004000;
+              break;
+            } // case 402
+            case 482: {
+              input.readMessage(
+                  getCouponRateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00008000;
+              break;
+            } // case 482
+            case 488: {
+              couponType_ = input.readEnum();
+              bitField0_ |= 0x00010000;
+              break;
+            } // case 488
+            case 496: {
+              couponFrequency_ = input.readEnum();
+              bitField0_ |= 0x00020000;
+              break;
+            } // case 496
+            case 506: {
+              input.readMessage(
+                  getDatedDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00040000;
+              break;
+            } // case 506
+            case 514: {
+              input.readMessage(
+                  getFaceValueFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00080000;
+              break;
+            } // case 514
+            case 522: {
+              input.readMessage(
+                  getIssueDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00100000;
+              break;
+            } // case 522
+            case 530: {
+              input.readMessage(
+                  getMaturityDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00200000;
+              break;
+            } // case 530
+            case 538: {
+              fintekkers.models.security.bond.IssuanceProto m =
+                  input.readMessage(
+                      fintekkers.models.security.bond.IssuanceProto.parser(),
+                      extensionRegistry);
+              if (issuanceInfoBuilder_ == null) {
+                ensureIssuanceInfoIsMutable();
+                issuanceInfo_.add(m);
+              } else {
+                issuanceInfoBuilder_.addMessage(m);
+              }
+              break;
+            } // case 538
+            case 562: {
+              input.readMessage(
+                  getBaseCpiFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00800000;
+              break;
+            } // case 562
+            case 570: {
+              input.readMessage(
+                  getIndexDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x01000000;
+              break;
+            } // case 570
+            case 576: {
+              inflationIndexType_ = input.readEnum();
+              bitField0_ |= 0x02000000;
+              break;
+            } // case 576
+            case 640: {
+              indexType_ = input.readEnum();
+              bitField0_ |= 0x20000000;
+              break;
+            } // case 640
+            case 722: {
+              input.readMessage(
+                  getSpreadFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x04000000;
+              break;
+            } // case 722
+            case 728: {
+              referenceRateIndex_ = input.readEnum();
+              bitField0_ |= 0x08000000;
+              break;
+            } // case 728
+            case 736: {
+              resetFrequency_ = input.readEnum();
+              bitField0_ |= 0x10000000;
+              break;
+            } // case 736
+            case 1602: {
+              input.readMessage(
+                  getBondDetailsFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              productDetailsCase_ = 200;
+              break;
+            } // case 1602
+            case 1610: {
+              input.readMessage(
+                  getTipsDetailsFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              productDetailsCase_ = 201;
+              break;
+            } // case 1610
+            case 1618: {
+              input.readMessage(
+                  getFrnDetailsFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              productDetailsCase_ = 202;
+              break;
+            } // case 1618
+            case 1626: {
+              input.readMessage(
+                  getIndexDetailsFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              productDetailsCase_ = 203;
+              break;
+            } // case 1626
+            case 1634: {
+              input.readMessage(
+                  getEquityDetailsFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              productDetailsCase_ = 204;
+              break;
+            } // case 1634
+            case 1642: {
+              input.readMessage(
+                  getCashDetailsFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              productDetailsCase_ = 205;
+              break;
+            } // case 1642
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (fintekkers.models.security.SecurityProto) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
+    private int productDetailsCase_ = 0;
+    private java.lang.Object productDetails_;
+    public ProductDetailsCase
+        getProductDetailsCase() {
+      return ProductDetailsCase.forNumber(
+          productDetailsCase_);
+    }
+
+    public Builder clearProductDetails() {
+      productDetailsCase_ = 0;
+      productDetails_ = null;
+      onChanged();
+      return this;
+    }
+
     private int bitField0_;
+    private int bitField1_;
 
     private java.lang.Object objectClass_ = "";
     /**
@@ -2041,11 +2718,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setObjectClass(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       objectClass_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -2054,8 +2729,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearObjectClass() {
-      
       objectClass_ = getDefaultInstance().getObjectClass();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -2066,12 +2741,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setObjectClassBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       objectClass_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -2117,11 +2790,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setVersion(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       version_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -2130,8 +2801,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearVersion() {
-      
       version_ = getDefaultInstance().getVersion();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -2142,12 +2813,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setVersionBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       version_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -2164,7 +2833,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the uuid field is set.
      */
     public boolean hasUuid() {
-      return uuidBuilder_ != null || uuid_ != null;
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <pre>
@@ -2194,11 +2863,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         uuid_ = value;
-        onChanged();
       } else {
         uuidBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -2212,11 +2881,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.Uuid.UUIDProto.Builder builderForValue) {
       if (uuidBuilder_ == null) {
         uuid_ = builderForValue.build();
-        onChanged();
       } else {
         uuidBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -2228,17 +2897,18 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeUuid(fintekkers.models.util.Uuid.UUIDProto value) {
       if (uuidBuilder_ == null) {
-        if (uuid_ != null) {
-          uuid_ =
-            fintekkers.models.util.Uuid.UUIDProto.newBuilder(uuid_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000004) != 0) &&
+          uuid_ != null &&
+          uuid_ != fintekkers.models.util.Uuid.UUIDProto.getDefaultInstance()) {
+          getUuidBuilder().mergeFrom(value);
         } else {
           uuid_ = value;
         }
-        onChanged();
       } else {
         uuidBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -2249,14 +2919,13 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.UUIDProto uuid = 5;</code>
      */
     public Builder clearUuid() {
-      if (uuidBuilder_ == null) {
-        uuid_ = null;
-        onChanged();
-      } else {
-        uuid_ = null;
+      bitField0_ = (bitField0_ & ~0x00000004);
+      uuid_ = null;
+      if (uuidBuilder_ != null) {
+        uuidBuilder_.dispose();
         uuidBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -2267,7 +2936,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.UUIDProto uuid = 5;</code>
      */
     public fintekkers.models.util.Uuid.UUIDProto.Builder getUuidBuilder() {
-      
+      bitField0_ |= 0x00000004;
       onChanged();
       return getUuidFieldBuilder().getBuilder();
     }
@@ -2315,7 +2984,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the asOf field is set.
      */
     public boolean hasAsOf() {
-      return asOfBuilder_ != null || asOf_ != null;
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 6;</code>
@@ -2337,11 +3006,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         asOf_ = value;
-        onChanged();
       } else {
         asOfBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -2351,11 +3020,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
       if (asOfBuilder_ == null) {
         asOf_ = builderForValue.build();
-        onChanged();
       } else {
         asOfBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -2363,38 +3032,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeAsOf(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
       if (asOfBuilder_ == null) {
-        if (asOf_ != null) {
-          asOf_ =
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(asOf_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000008) != 0) &&
+          asOf_ != null &&
+          asOf_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
+          getAsOfBuilder().mergeFrom(value);
         } else {
           asOf_ = value;
         }
-        onChanged();
       } else {
         asOfBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 6;</code>
      */
     public Builder clearAsOf() {
-      if (asOfBuilder_ == null) {
-        asOf_ = null;
-        onChanged();
-      } else {
-        asOf_ = null;
+      bitField0_ = (bitField0_ & ~0x00000008);
+      asOf_ = null;
+      if (asOfBuilder_ != null) {
+        asOfBuilder_.dispose();
         asOfBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 6;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getAsOfBuilder() {
-      
+      bitField0_ |= 0x00000008;
       onChanged();
       return getAsOfFieldBuilder().getBuilder();
     }
@@ -2443,6 +3112,7 @@ private static final long serialVersionUID = 0L;
     public Builder setIsLink(boolean value) {
       
       isLink_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -2451,7 +3121,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearIsLink() {
-      
+      bitField0_ = (bitField0_ & ~0x00000010);
       isLink_ = false;
       onChanged();
       return this;
@@ -2465,7 +3135,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the validFrom field is set.
      */
     public boolean hasValidFrom() {
-      return validFromBuilder_ != null || validFrom_ != null;
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_from = 8;</code>
@@ -2487,11 +3157,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         validFrom_ = value;
-        onChanged();
       } else {
         validFromBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000020;
+      onChanged();
       return this;
     }
     /**
@@ -2501,11 +3171,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
       if (validFromBuilder_ == null) {
         validFrom_ = builderForValue.build();
-        onChanged();
       } else {
         validFromBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000020;
+      onChanged();
       return this;
     }
     /**
@@ -2513,38 +3183,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeValidFrom(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
       if (validFromBuilder_ == null) {
-        if (validFrom_ != null) {
-          validFrom_ =
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(validFrom_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000020) != 0) &&
+          validFrom_ != null &&
+          validFrom_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
+          getValidFromBuilder().mergeFrom(value);
         } else {
           validFrom_ = value;
         }
-        onChanged();
       } else {
         validFromBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000020;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_from = 8;</code>
      */
     public Builder clearValidFrom() {
-      if (validFromBuilder_ == null) {
-        validFrom_ = null;
-        onChanged();
-      } else {
-        validFrom_ = null;
+      bitField0_ = (bitField0_ & ~0x00000020);
+      validFrom_ = null;
+      if (validFromBuilder_ != null) {
+        validFromBuilder_.dispose();
         validFromBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_from = 8;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getValidFromBuilder() {
-      
+      bitField0_ |= 0x00000020;
       onChanged();
       return getValidFromFieldBuilder().getBuilder();
     }
@@ -2584,7 +3254,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the validTo field is set.
      */
     public boolean hasValidTo() {
-      return validToBuilder_ != null || validTo_ != null;
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_to = 9;</code>
@@ -2606,11 +3276,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         validTo_ = value;
-        onChanged();
       } else {
         validToBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
@@ -2620,11 +3290,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
       if (validToBuilder_ == null) {
         validTo_ = builderForValue.build();
-        onChanged();
       } else {
         validToBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
@@ -2632,38 +3302,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeValidTo(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
       if (validToBuilder_ == null) {
-        if (validTo_ != null) {
-          validTo_ =
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(validTo_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000040) != 0) &&
+          validTo_ != null &&
+          validTo_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
+          getValidToBuilder().mergeFrom(value);
         } else {
           validTo_ = value;
         }
-        onChanged();
       } else {
         validToBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_to = 9;</code>
      */
     public Builder clearValidTo() {
-      if (validToBuilder_ == null) {
-        validTo_ = null;
-        onChanged();
-      } else {
-        validTo_ = null;
+      bitField0_ = (bitField0_ & ~0x00000040);
+      validTo_ = null;
+      if (validToBuilder_ != null) {
+        validToBuilder_.dispose();
         validToBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_to = 9;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getValidToBuilder() {
-      
+      bitField0_ |= 0x00000040;
       onChanged();
       return getValidToFieldBuilder().getBuilder();
     }
@@ -2709,8 +3379,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setSecurityTypeValue(int value) {
-      
       securityType_ = value;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -2720,8 +3390,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public fintekkers.models.security.SecurityTypeProto getSecurityType() {
-      @SuppressWarnings("deprecation")
-      fintekkers.models.security.SecurityTypeProto result = fintekkers.models.security.SecurityTypeProto.valueOf(securityType_);
+      fintekkers.models.security.SecurityTypeProto result = fintekkers.models.security.SecurityTypeProto.forNumber(securityType_);
       return result == null ? fintekkers.models.security.SecurityTypeProto.UNRECOGNIZED : result;
     }
     /**
@@ -2733,7 +3402,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      
+      bitField0_ |= 0x00000080;
       securityType_ = value.getNumber();
       onChanged();
       return this;
@@ -2743,7 +3412,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearSecurityType() {
-      
+      bitField0_ = (bitField0_ & ~0x00000080);
       securityType_ = 0;
       onChanged();
       return this;
@@ -2802,11 +3471,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setAssetClass(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       assetClass_ = value;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2819,8 +3486,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearAssetClass() {
-      
       assetClass_ = getDefaultInstance().getAssetClass();
+      bitField0_ = (bitField0_ & ~0x00000100);
       onChanged();
       return this;
     }
@@ -2835,12 +3502,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setAssetClassBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       assetClass_ = value;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2886,11 +3551,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setIssuerName(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       issuerName_ = value;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -2899,8 +3562,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearIssuerName() {
-      
       issuerName_ = getDefaultInstance().getIssuerName();
+      bitField0_ = (bitField0_ & ~0x00000200);
       onChanged();
       return this;
     }
@@ -2911,12 +3574,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setIssuerNameBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       issuerName_ = value;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -2929,7 +3590,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the settlementCurrency field is set.
      */
     public boolean hasSettlementCurrency() {
-      return settlementCurrencyBuilder_ != null || settlementCurrency_ != null;
+      return ((bitField0_ & 0x00000400) != 0);
     }
     /**
      * <code>.fintekkers.models.security.SecurityProto settlement_currency = 13;</code>
@@ -2951,11 +3612,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         settlementCurrency_ = value;
-        onChanged();
       } else {
         settlementCurrencyBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000400;
+      onChanged();
       return this;
     }
     /**
@@ -2965,11 +3626,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.security.SecurityProto.Builder builderForValue) {
       if (settlementCurrencyBuilder_ == null) {
         settlementCurrency_ = builderForValue.build();
-        onChanged();
       } else {
         settlementCurrencyBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000400;
+      onChanged();
       return this;
     }
     /**
@@ -2977,38 +3638,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeSettlementCurrency(fintekkers.models.security.SecurityProto value) {
       if (settlementCurrencyBuilder_ == null) {
-        if (settlementCurrency_ != null) {
-          settlementCurrency_ =
-            fintekkers.models.security.SecurityProto.newBuilder(settlementCurrency_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000400) != 0) &&
+          settlementCurrency_ != null &&
+          settlementCurrency_ != fintekkers.models.security.SecurityProto.getDefaultInstance()) {
+          getSettlementCurrencyBuilder().mergeFrom(value);
         } else {
           settlementCurrency_ = value;
         }
-        onChanged();
       } else {
         settlementCurrencyBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000400;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.security.SecurityProto settlement_currency = 13;</code>
      */
     public Builder clearSettlementCurrency() {
-      if (settlementCurrencyBuilder_ == null) {
-        settlementCurrency_ = null;
-        onChanged();
-      } else {
-        settlementCurrency_ = null;
+      bitField0_ = (bitField0_ & ~0x00000400);
+      settlementCurrency_ = null;
+      if (settlementCurrencyBuilder_ != null) {
+        settlementCurrencyBuilder_.dispose();
         settlementCurrencyBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.security.SecurityProto settlement_currency = 13;</code>
      */
     public fintekkers.models.security.SecurityProto.Builder getSettlementCurrencyBuilder() {
-      
+      bitField0_ |= 0x00000400;
       onChanged();
       return getSettlementCurrencyFieldBuilder().getBuilder();
     }
@@ -3054,8 +3715,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setQuantityTypeValue(int value) {
-      
       quantityType_ = value;
+      bitField0_ |= 0x00000800;
       onChanged();
       return this;
     }
@@ -3065,8 +3726,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public fintekkers.models.security.SecurityQuantityTypeProto getQuantityType() {
-      @SuppressWarnings("deprecation")
-      fintekkers.models.security.SecurityQuantityTypeProto result = fintekkers.models.security.SecurityQuantityTypeProto.valueOf(quantityType_);
+      fintekkers.models.security.SecurityQuantityTypeProto result = fintekkers.models.security.SecurityQuantityTypeProto.forNumber(quantityType_);
       return result == null ? fintekkers.models.security.SecurityQuantityTypeProto.UNRECOGNIZED : result;
     }
     /**
@@ -3078,7 +3738,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      
+      bitField0_ |= 0x00000800;
       quantityType_ = value.getNumber();
       onChanged();
       return this;
@@ -3088,7 +3748,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearQuantityType() {
-      
+      bitField0_ = (bitField0_ & ~0x00000800);
       quantityType_ = 0;
       onChanged();
       return this;
@@ -3102,7 +3762,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the identifier field is set.
      */
     public boolean hasIdentifier() {
-      return identifierBuilder_ != null || identifier_ != null;
+      return ((bitField0_ & 0x00001000) != 0);
     }
     /**
      * <code>.fintekkers.models.security.IdentifierProto identifier = 40;</code>
@@ -3124,11 +3784,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         identifier_ = value;
-        onChanged();
       } else {
         identifierBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00001000;
+      onChanged();
       return this;
     }
     /**
@@ -3138,11 +3798,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.security.IdentifierProto.Builder builderForValue) {
       if (identifierBuilder_ == null) {
         identifier_ = builderForValue.build();
-        onChanged();
       } else {
         identifierBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00001000;
+      onChanged();
       return this;
     }
     /**
@@ -3150,38 +3810,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeIdentifier(fintekkers.models.security.IdentifierProto value) {
       if (identifierBuilder_ == null) {
-        if (identifier_ != null) {
-          identifier_ =
-            fintekkers.models.security.IdentifierProto.newBuilder(identifier_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00001000) != 0) &&
+          identifier_ != null &&
+          identifier_ != fintekkers.models.security.IdentifierProto.getDefaultInstance()) {
+          getIdentifierBuilder().mergeFrom(value);
         } else {
           identifier_ = value;
         }
-        onChanged();
       } else {
         identifierBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00001000;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.security.IdentifierProto identifier = 40;</code>
      */
     public Builder clearIdentifier() {
-      if (identifierBuilder_ == null) {
-        identifier_ = null;
-        onChanged();
-      } else {
-        identifier_ = null;
+      bitField0_ = (bitField0_ & ~0x00001000);
+      identifier_ = null;
+      if (identifierBuilder_ != null) {
+        identifierBuilder_.dispose();
         identifierBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.security.IdentifierProto identifier = 40;</code>
      */
     public fintekkers.models.security.IdentifierProto.Builder getIdentifierBuilder() {
-      
+      bitField0_ |= 0x00001000;
       onChanged();
       return getIdentifierFieldBuilder().getBuilder();
     }
@@ -3254,11 +3914,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setDescription(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       description_ = value;
+      bitField0_ |= 0x00002000;
       onChanged();
       return this;
     }
@@ -3267,8 +3925,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearDescription() {
-      
       description_ = getDefaultInstance().getDescription();
+      bitField0_ = (bitField0_ & ~0x00002000);
       onChanged();
       return this;
     }
@@ -3279,12 +3937,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setDescriptionBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       description_ = value;
+      bitField0_ |= 0x00002000;
       onChanged();
       return this;
     }
@@ -3342,11 +3998,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setCashId(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       cashId_ = value;
+      bitField0_ |= 0x00004000;
       onChanged();
       return this;
     }
@@ -3359,8 +4013,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearCashId() {
-      
       cashId_ = getDefaultInstance().getCashId();
+      bitField0_ = (bitField0_ & ~0x00004000);
       onChanged();
       return this;
     }
@@ -3375,12 +4029,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setCashIdBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       cashId_ = value;
+      bitField0_ |= 0x00004000;
       onChanged();
       return this;
     }
@@ -3397,7 +4049,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the couponRate field is set.
      */
     public boolean hasCouponRate() {
-      return couponRateBuilder_ != null || couponRate_ != null;
+      return ((bitField0_ & 0x00008000) != 0);
     }
     /**
      * <pre>
@@ -3427,11 +4079,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         couponRate_ = value;
-        onChanged();
       } else {
         couponRateBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00008000;
+      onChanged();
       return this;
     }
     /**
@@ -3445,11 +4097,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
       if (couponRateBuilder_ == null) {
         couponRate_ = builderForValue.build();
-        onChanged();
       } else {
         couponRateBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00008000;
+      onChanged();
       return this;
     }
     /**
@@ -3461,17 +4113,18 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeCouponRate(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
       if (couponRateBuilder_ == null) {
-        if (couponRate_ != null) {
-          couponRate_ =
-            fintekkers.models.util.DecimalValue.DecimalValueProto.newBuilder(couponRate_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00008000) != 0) &&
+          couponRate_ != null &&
+          couponRate_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getCouponRateBuilder().mergeFrom(value);
         } else {
           couponRate_ = value;
         }
-        onChanged();
       } else {
         couponRateBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00008000;
+      onChanged();
       return this;
     }
     /**
@@ -3482,14 +4135,13 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 60;</code>
      */
     public Builder clearCouponRate() {
-      if (couponRateBuilder_ == null) {
-        couponRate_ = null;
-        onChanged();
-      } else {
-        couponRate_ = null;
+      bitField0_ = (bitField0_ & ~0x00008000);
+      couponRate_ = null;
+      if (couponRateBuilder_ != null) {
+        couponRateBuilder_.dispose();
         couponRateBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -3500,7 +4152,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 60;</code>
      */
     public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getCouponRateBuilder() {
-      
+      bitField0_ |= 0x00008000;
       onChanged();
       return getCouponRateFieldBuilder().getBuilder();
     }
@@ -3554,8 +4206,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setCouponTypeValue(int value) {
-      
       couponType_ = value;
+      bitField0_ |= 0x00010000;
       onChanged();
       return this;
     }
@@ -3565,8 +4217,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public fintekkers.models.security.CouponTypeProto getCouponType() {
-      @SuppressWarnings("deprecation")
-      fintekkers.models.security.CouponTypeProto result = fintekkers.models.security.CouponTypeProto.valueOf(couponType_);
+      fintekkers.models.security.CouponTypeProto result = fintekkers.models.security.CouponTypeProto.forNumber(couponType_);
       return result == null ? fintekkers.models.security.CouponTypeProto.UNRECOGNIZED : result;
     }
     /**
@@ -3578,7 +4229,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      
+      bitField0_ |= 0x00010000;
       couponType_ = value.getNumber();
       onChanged();
       return this;
@@ -3588,7 +4239,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearCouponType() {
-      
+      bitField0_ = (bitField0_ & ~0x00010000);
       couponType_ = 0;
       onChanged();
       return this;
@@ -3608,8 +4259,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setCouponFrequencyValue(int value) {
-      
       couponFrequency_ = value;
+      bitField0_ |= 0x00020000;
       onChanged();
       return this;
     }
@@ -3619,8 +4270,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public fintekkers.models.security.CouponFrequencyProto getCouponFrequency() {
-      @SuppressWarnings("deprecation")
-      fintekkers.models.security.CouponFrequencyProto result = fintekkers.models.security.CouponFrequencyProto.valueOf(couponFrequency_);
+      fintekkers.models.security.CouponFrequencyProto result = fintekkers.models.security.CouponFrequencyProto.forNumber(couponFrequency_);
       return result == null ? fintekkers.models.security.CouponFrequencyProto.UNRECOGNIZED : result;
     }
     /**
@@ -3632,7 +4282,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      
+      bitField0_ |= 0x00020000;
       couponFrequency_ = value.getNumber();
       onChanged();
       return this;
@@ -3642,7 +4292,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearCouponFrequency() {
-      
+      bitField0_ = (bitField0_ & ~0x00020000);
       couponFrequency_ = 0;
       onChanged();
       return this;
@@ -3656,7 +4306,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the datedDate field is set.
      */
     public boolean hasDatedDate() {
-      return datedDateBuilder_ != null || datedDate_ != null;
+      return ((bitField0_ & 0x00040000) != 0);
     }
     /**
      * <code>.fintekkers.models.util.LocalDateProto dated_date = 63;</code>
@@ -3678,11 +4328,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         datedDate_ = value;
-        onChanged();
       } else {
         datedDateBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00040000;
+      onChanged();
       return this;
     }
     /**
@@ -3692,11 +4342,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
       if (datedDateBuilder_ == null) {
         datedDate_ = builderForValue.build();
-        onChanged();
       } else {
         datedDateBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00040000;
+      onChanged();
       return this;
     }
     /**
@@ -3704,38 +4354,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeDatedDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
       if (datedDateBuilder_ == null) {
-        if (datedDate_ != null) {
-          datedDate_ =
-            fintekkers.models.util.LocalDate.LocalDateProto.newBuilder(datedDate_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00040000) != 0) &&
+          datedDate_ != null &&
+          datedDate_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
+          getDatedDateBuilder().mergeFrom(value);
         } else {
           datedDate_ = value;
         }
-        onChanged();
       } else {
         datedDateBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00040000;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalDateProto dated_date = 63;</code>
      */
     public Builder clearDatedDate() {
-      if (datedDateBuilder_ == null) {
-        datedDate_ = null;
-        onChanged();
-      } else {
-        datedDate_ = null;
+      bitField0_ = (bitField0_ & ~0x00040000);
+      datedDate_ = null;
+      if (datedDateBuilder_ != null) {
+        datedDateBuilder_.dispose();
         datedDateBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalDateProto dated_date = 63;</code>
      */
     public fintekkers.models.util.LocalDate.LocalDateProto.Builder getDatedDateBuilder() {
-      
+      bitField0_ |= 0x00040000;
       onChanged();
       return getDatedDateFieldBuilder().getBuilder();
     }
@@ -3775,7 +4425,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the faceValue field is set.
      */
     public boolean hasFaceValue() {
-      return faceValueBuilder_ != null || faceValue_ != null;
+      return ((bitField0_ & 0x00080000) != 0);
     }
     /**
      * <code>.fintekkers.models.util.DecimalValueProto face_value = 64;</code>
@@ -3797,11 +4447,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         faceValue_ = value;
-        onChanged();
       } else {
         faceValueBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00080000;
+      onChanged();
       return this;
     }
     /**
@@ -3811,11 +4461,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
       if (faceValueBuilder_ == null) {
         faceValue_ = builderForValue.build();
-        onChanged();
       } else {
         faceValueBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00080000;
+      onChanged();
       return this;
     }
     /**
@@ -3823,38 +4473,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeFaceValue(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
       if (faceValueBuilder_ == null) {
-        if (faceValue_ != null) {
-          faceValue_ =
-            fintekkers.models.util.DecimalValue.DecimalValueProto.newBuilder(faceValue_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00080000) != 0) &&
+          faceValue_ != null &&
+          faceValue_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getFaceValueBuilder().mergeFrom(value);
         } else {
           faceValue_ = value;
         }
-        onChanged();
       } else {
         faceValueBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00080000;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.DecimalValueProto face_value = 64;</code>
      */
     public Builder clearFaceValue() {
-      if (faceValueBuilder_ == null) {
-        faceValue_ = null;
-        onChanged();
-      } else {
-        faceValue_ = null;
+      bitField0_ = (bitField0_ & ~0x00080000);
+      faceValue_ = null;
+      if (faceValueBuilder_ != null) {
+        faceValueBuilder_.dispose();
         faceValueBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.DecimalValueProto face_value = 64;</code>
      */
     public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getFaceValueBuilder() {
-      
+      bitField0_ |= 0x00080000;
       onChanged();
       return getFaceValueFieldBuilder().getBuilder();
     }
@@ -3894,7 +4544,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the issueDate field is set.
      */
     public boolean hasIssueDate() {
-      return issueDateBuilder_ != null || issueDate_ != null;
+      return ((bitField0_ & 0x00100000) != 0);
     }
     /**
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 65;</code>
@@ -3916,11 +4566,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         issueDate_ = value;
-        onChanged();
       } else {
         issueDateBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00100000;
+      onChanged();
       return this;
     }
     /**
@@ -3930,11 +4580,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
       if (issueDateBuilder_ == null) {
         issueDate_ = builderForValue.build();
-        onChanged();
       } else {
         issueDateBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00100000;
+      onChanged();
       return this;
     }
     /**
@@ -3942,38 +4592,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeIssueDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
       if (issueDateBuilder_ == null) {
-        if (issueDate_ != null) {
-          issueDate_ =
-            fintekkers.models.util.LocalDate.LocalDateProto.newBuilder(issueDate_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00100000) != 0) &&
+          issueDate_ != null &&
+          issueDate_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
+          getIssueDateBuilder().mergeFrom(value);
         } else {
           issueDate_ = value;
         }
-        onChanged();
       } else {
         issueDateBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00100000;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 65;</code>
      */
     public Builder clearIssueDate() {
-      if (issueDateBuilder_ == null) {
-        issueDate_ = null;
-        onChanged();
-      } else {
-        issueDate_ = null;
+      bitField0_ = (bitField0_ & ~0x00100000);
+      issueDate_ = null;
+      if (issueDateBuilder_ != null) {
+        issueDateBuilder_.dispose();
         issueDateBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 65;</code>
      */
     public fintekkers.models.util.LocalDate.LocalDateProto.Builder getIssueDateBuilder() {
-      
+      bitField0_ |= 0x00100000;
       onChanged();
       return getIssueDateFieldBuilder().getBuilder();
     }
@@ -4013,7 +4663,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the maturityDate field is set.
      */
     public boolean hasMaturityDate() {
-      return maturityDateBuilder_ != null || maturityDate_ != null;
+      return ((bitField0_ & 0x00200000) != 0);
     }
     /**
      * <code>.fintekkers.models.util.LocalDateProto maturity_date = 66;</code>
@@ -4035,11 +4685,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         maturityDate_ = value;
-        onChanged();
       } else {
         maturityDateBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00200000;
+      onChanged();
       return this;
     }
     /**
@@ -4049,11 +4699,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
       if (maturityDateBuilder_ == null) {
         maturityDate_ = builderForValue.build();
-        onChanged();
       } else {
         maturityDateBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00200000;
+      onChanged();
       return this;
     }
     /**
@@ -4061,38 +4711,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeMaturityDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
       if (maturityDateBuilder_ == null) {
-        if (maturityDate_ != null) {
-          maturityDate_ =
-            fintekkers.models.util.LocalDate.LocalDateProto.newBuilder(maturityDate_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00200000) != 0) &&
+          maturityDate_ != null &&
+          maturityDate_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
+          getMaturityDateBuilder().mergeFrom(value);
         } else {
           maturityDate_ = value;
         }
-        onChanged();
       } else {
         maturityDateBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00200000;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalDateProto maturity_date = 66;</code>
      */
     public Builder clearMaturityDate() {
-      if (maturityDateBuilder_ == null) {
-        maturityDate_ = null;
-        onChanged();
-      } else {
-        maturityDate_ = null;
+      bitField0_ = (bitField0_ & ~0x00200000);
+      maturityDate_ = null;
+      if (maturityDateBuilder_ != null) {
+        maturityDateBuilder_.dispose();
         maturityDateBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalDateProto maturity_date = 66;</code>
      */
     public fintekkers.models.util.LocalDate.LocalDateProto.Builder getMaturityDateBuilder() {
-      
+      bitField0_ |= 0x00200000;
       onChanged();
       return getMaturityDateFieldBuilder().getBuilder();
     }
@@ -4127,9 +4777,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<fintekkers.models.security.bond.IssuanceProto> issuanceInfo_ =
       java.util.Collections.emptyList();
     private void ensureIssuanceInfoIsMutable() {
-      if (!((bitField0_ & 0x00000001) != 0)) {
+      if (!((bitField0_ & 0x00400000) != 0)) {
         issuanceInfo_ = new java.util.ArrayList<fintekkers.models.security.bond.IssuanceProto>(issuanceInfo_);
-        bitField0_ |= 0x00000001;
+        bitField0_ |= 0x00400000;
        }
     }
 
@@ -4323,7 +4973,7 @@ private static final long serialVersionUID = 0L;
     public Builder clearIssuanceInfo() {
       if (issuanceInfoBuilder_ == null) {
         issuanceInfo_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
+        bitField0_ = (bitField0_ & ~0x00400000);
         onChanged();
       } else {
         issuanceInfoBuilder_.clear();
@@ -4428,7 +5078,7 @@ private static final long serialVersionUID = 0L;
         issuanceInfoBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             fintekkers.models.security.bond.IssuanceProto, fintekkers.models.security.bond.IssuanceProto.Builder, fintekkers.models.security.bond.IssuanceProtoOrBuilder>(
                 issuanceInfo_,
-                ((bitField0_ & 0x00000001) != 0),
+                ((bitField0_ & 0x00400000) != 0),
                 getParentForChildren(),
                 isClean());
         issuanceInfo_ = null;
@@ -4448,7 +5098,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the baseCpi field is set.
      */
     public boolean hasBaseCpi() {
-      return baseCpiBuilder_ != null || baseCpi_ != null;
+      return ((bitField0_ & 0x00800000) != 0);
     }
     /**
      * <pre>
@@ -4478,11 +5128,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         baseCpi_ = value;
-        onChanged();
       } else {
         baseCpiBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00800000;
+      onChanged();
       return this;
     }
     /**
@@ -4496,11 +5146,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
       if (baseCpiBuilder_ == null) {
         baseCpi_ = builderForValue.build();
-        onChanged();
       } else {
         baseCpiBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00800000;
+      onChanged();
       return this;
     }
     /**
@@ -4512,17 +5162,18 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeBaseCpi(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
       if (baseCpiBuilder_ == null) {
-        if (baseCpi_ != null) {
-          baseCpi_ =
-            fintekkers.models.util.DecimalValue.DecimalValueProto.newBuilder(baseCpi_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00800000) != 0) &&
+          baseCpi_ != null &&
+          baseCpi_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getBaseCpiBuilder().mergeFrom(value);
         } else {
           baseCpi_ = value;
         }
-        onChanged();
       } else {
         baseCpiBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00800000;
+      onChanged();
       return this;
     }
     /**
@@ -4533,14 +5184,13 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
      */
     public Builder clearBaseCpi() {
-      if (baseCpiBuilder_ == null) {
-        baseCpi_ = null;
-        onChanged();
-      } else {
-        baseCpi_ = null;
+      bitField0_ = (bitField0_ & ~0x00800000);
+      baseCpi_ = null;
+      if (baseCpiBuilder_ != null) {
+        baseCpiBuilder_.dispose();
         baseCpiBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -4551,7 +5201,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.DecimalValueProto base_cpi = 70;</code>
      */
     public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getBaseCpiBuilder() {
-      
+      bitField0_ |= 0x00800000;
       onChanged();
       return getBaseCpiFieldBuilder().getBuilder();
     }
@@ -4591,6 +5241,535 @@ private static final long serialVersionUID = 0L;
       return baseCpiBuilder_;
     }
 
+    private fintekkers.models.util.LocalDate.LocalDateProto indexDate_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> indexDateBuilder_;
+    /**
+     * <pre>
+     *The date the base CPI was observed (e.g. the reference CPI date)
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+     * @return Whether the indexDate field is set.
+     */
+    public boolean hasIndexDate() {
+      return ((bitField0_ & 0x01000000) != 0);
+    }
+    /**
+     * <pre>
+     *The date the base CPI was observed (e.g. the reference CPI date)
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+     * @return The indexDate.
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto getIndexDate() {
+      if (indexDateBuilder_ == null) {
+        return indexDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : indexDate_;
+      } else {
+        return indexDateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     *The date the base CPI was observed (e.g. the reference CPI date)
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+     */
+    public Builder setIndexDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (indexDateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        indexDate_ = value;
+      } else {
+        indexDateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x01000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *The date the base CPI was observed (e.g. the reference CPI date)
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+     */
+    public Builder setIndexDate(
+        fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
+      if (indexDateBuilder_ == null) {
+        indexDate_ = builderForValue.build();
+      } else {
+        indexDateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x01000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *The date the base CPI was observed (e.g. the reference CPI date)
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+     */
+    public Builder mergeIndexDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (indexDateBuilder_ == null) {
+        if (((bitField0_ & 0x01000000) != 0) &&
+          indexDate_ != null &&
+          indexDate_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
+          getIndexDateBuilder().mergeFrom(value);
+        } else {
+          indexDate_ = value;
+        }
+      } else {
+        indexDateBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x01000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *The date the base CPI was observed (e.g. the reference CPI date)
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+     */
+    public Builder clearIndexDate() {
+      bitField0_ = (bitField0_ & ~0x01000000);
+      indexDate_ = null;
+      if (indexDateBuilder_ != null) {
+        indexDateBuilder_.dispose();
+        indexDateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *The date the base CPI was observed (e.g. the reference CPI date)
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto.Builder getIndexDateBuilder() {
+      bitField0_ |= 0x01000000;
+      onChanged();
+      return getIndexDateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     *The date the base CPI was observed (e.g. the reference CPI date)
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getIndexDateOrBuilder() {
+      if (indexDateBuilder_ != null) {
+        return indexDateBuilder_.getMessageOrBuilder();
+      } else {
+        return indexDate_ == null ?
+            fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : indexDate_;
+      }
+    }
+    /**
+     * <pre>
+     *The date the base CPI was observed (e.g. the reference CPI date)
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto index_date = 71;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> 
+        getIndexDateFieldBuilder() {
+      if (indexDateBuilder_ == null) {
+        indexDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder>(
+                getIndexDate(),
+                getParentForChildren(),
+                isClean());
+        indexDate_ = null;
+      }
+      return indexDateBuilder_;
+    }
+
+    private int inflationIndexType_ = 0;
+    /**
+     * <pre>
+     *Which inflation index this TIPS references (e.g. CPI_U)
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto inflation_index_type = 72;</code>
+     * @return The enum numeric value on the wire for inflationIndexType.
+     */
+    @java.lang.Override public int getInflationIndexTypeValue() {
+      return inflationIndexType_;
+    }
+    /**
+     * <pre>
+     *Which inflation index this TIPS references (e.g. CPI_U)
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto inflation_index_type = 72;</code>
+     * @param value The enum numeric value on the wire for inflationIndexType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setInflationIndexTypeValue(int value) {
+      inflationIndexType_ = value;
+      bitField0_ |= 0x02000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *Which inflation index this TIPS references (e.g. CPI_U)
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto inflation_index_type = 72;</code>
+     * @return The inflationIndexType.
+     */
+    @java.lang.Override
+    public fintekkers.models.security.index.IndexTypeProto getInflationIndexType() {
+      fintekkers.models.security.index.IndexTypeProto result = fintekkers.models.security.index.IndexTypeProto.forNumber(inflationIndexType_);
+      return result == null ? fintekkers.models.security.index.IndexTypeProto.UNRECOGNIZED : result;
+    }
+    /**
+     * <pre>
+     *Which inflation index this TIPS references (e.g. CPI_U)
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto inflation_index_type = 72;</code>
+     * @param value The inflationIndexType to set.
+     * @return This builder for chaining.
+     */
+    public Builder setInflationIndexType(fintekkers.models.security.index.IndexTypeProto value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      bitField0_ |= 0x02000000;
+      inflationIndexType_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *Which inflation index this TIPS references (e.g. CPI_U)
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto inflation_index_type = 72;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearInflationIndexType() {
+      bitField0_ = (bitField0_ & ~0x02000000);
+      inflationIndexType_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto spread_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> spreadBuilder_;
+    /**
+     * <pre>
+     *FRN (Floating Rate Note) fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+     * @return Whether the spread field is set.
+     */
+    public boolean hasSpread() {
+      return ((bitField0_ & 0x04000000) != 0);
+    }
+    /**
+     * <pre>
+     *FRN (Floating Rate Note) fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+     * @return The spread.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getSpread() {
+      if (spreadBuilder_ == null) {
+        return spread_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : spread_;
+      } else {
+        return spreadBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     *FRN (Floating Rate Note) fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+     */
+    public Builder setSpread(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (spreadBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        spread_ = value;
+      } else {
+        spreadBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x04000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *FRN (Floating Rate Note) fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+     */
+    public Builder setSpread(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (spreadBuilder_ == null) {
+        spread_ = builderForValue.build();
+      } else {
+        spreadBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x04000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *FRN (Floating Rate Note) fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+     */
+    public Builder mergeSpread(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (spreadBuilder_ == null) {
+        if (((bitField0_ & 0x04000000) != 0) &&
+          spread_ != null &&
+          spread_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getSpreadBuilder().mergeFrom(value);
+        } else {
+          spread_ = value;
+        }
+      } else {
+        spreadBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x04000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *FRN (Floating Rate Note) fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+     */
+    public Builder clearSpread() {
+      bitField0_ = (bitField0_ & ~0x04000000);
+      spread_ = null;
+      if (spreadBuilder_ != null) {
+        spreadBuilder_.dispose();
+        spreadBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *FRN (Floating Rate Note) fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getSpreadBuilder() {
+      bitField0_ |= 0x04000000;
+      onChanged();
+      return getSpreadFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     *FRN (Floating Rate Note) fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getSpreadOrBuilder() {
+      if (spreadBuilder_ != null) {
+        return spreadBuilder_.getMessageOrBuilder();
+      } else {
+        return spread_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : spread_;
+      }
+    }
+    /**
+     * <pre>
+     *FRN (Floating Rate Note) fields
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto spread = 90;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getSpreadFieldBuilder() {
+      if (spreadBuilder_ == null) {
+        spreadBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getSpread(),
+                getParentForChildren(),
+                isClean());
+        spread_ = null;
+      }
+      return spreadBuilder_;
+    }
+
+    private int referenceRateIndex_ = 0;
+    /**
+     * <pre>
+     *Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91;</code>
+     * @return The enum numeric value on the wire for referenceRateIndex.
+     */
+    @java.lang.Override public int getReferenceRateIndexValue() {
+      return referenceRateIndex_;
+    }
+    /**
+     * <pre>
+     *Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91;</code>
+     * @param value The enum numeric value on the wire for referenceRateIndex to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReferenceRateIndexValue(int value) {
+      referenceRateIndex_ = value;
+      bitField0_ |= 0x08000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91;</code>
+     * @return The referenceRateIndex.
+     */
+    @java.lang.Override
+    public fintekkers.models.security.index.IndexTypeProto getReferenceRateIndex() {
+      fintekkers.models.security.index.IndexTypeProto result = fintekkers.models.security.index.IndexTypeProto.forNumber(referenceRateIndex_);
+      return result == null ? fintekkers.models.security.index.IndexTypeProto.UNRECOGNIZED : result;
+    }
+    /**
+     * <pre>
+     *Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91;</code>
+     * @param value The referenceRateIndex to set.
+     * @return This builder for chaining.
+     */
+    public Builder setReferenceRateIndex(fintekkers.models.security.index.IndexTypeProto value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      bitField0_ |= 0x08000000;
+      referenceRateIndex_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearReferenceRateIndex() {
+      bitField0_ = (bitField0_ & ~0x08000000);
+      referenceRateIndex_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private int resetFrequency_ = 0;
+    /**
+     * <pre>
+     *How often the floating coupon rate resets
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.CouponFrequencyProto reset_frequency = 92;</code>
+     * @return The enum numeric value on the wire for resetFrequency.
+     */
+    @java.lang.Override public int getResetFrequencyValue() {
+      return resetFrequency_;
+    }
+    /**
+     * <pre>
+     *How often the floating coupon rate resets
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.CouponFrequencyProto reset_frequency = 92;</code>
+     * @param value The enum numeric value on the wire for resetFrequency to set.
+     * @return This builder for chaining.
+     */
+    public Builder setResetFrequencyValue(int value) {
+      resetFrequency_ = value;
+      bitField0_ |= 0x10000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *How often the floating coupon rate resets
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.CouponFrequencyProto reset_frequency = 92;</code>
+     * @return The resetFrequency.
+     */
+    @java.lang.Override
+    public fintekkers.models.security.CouponFrequencyProto getResetFrequency() {
+      fintekkers.models.security.CouponFrequencyProto result = fintekkers.models.security.CouponFrequencyProto.forNumber(resetFrequency_);
+      return result == null ? fintekkers.models.security.CouponFrequencyProto.UNRECOGNIZED : result;
+    }
+    /**
+     * <pre>
+     *How often the floating coupon rate resets
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.CouponFrequencyProto reset_frequency = 92;</code>
+     * @param value The resetFrequency to set.
+     * @return This builder for chaining.
+     */
+    public Builder setResetFrequency(fintekkers.models.security.CouponFrequencyProto value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      bitField0_ |= 0x10000000;
+      resetFrequency_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     *How often the floating coupon rate resets
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.CouponFrequencyProto reset_frequency = 92;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearResetFrequency() {
+      bitField0_ = (bitField0_ & ~0x10000000);
+      resetFrequency_ = 0;
+      onChanged();
+      return this;
+    }
+
     private int indexType_ = 0;
     /**
      * <pre>
@@ -4613,8 +5792,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setIndexTypeValue(int value) {
-      
       indexType_ = value;
+      bitField0_ |= 0x20000000;
       onChanged();
       return this;
     }
@@ -4628,8 +5807,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public fintekkers.models.security.index.IndexTypeProto getIndexType() {
-      @SuppressWarnings("deprecation")
-      fintekkers.models.security.index.IndexTypeProto result = fintekkers.models.security.index.IndexTypeProto.valueOf(indexType_);
+      fintekkers.models.security.index.IndexTypeProto result = fintekkers.models.security.index.IndexTypeProto.forNumber(indexType_);
       return result == null ? fintekkers.models.security.index.IndexTypeProto.UNRECOGNIZED : result;
     }
     /**
@@ -4645,7 +5823,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      
+      bitField0_ |= 0x20000000;
       indexType_ = value.getNumber();
       onChanged();
       return this;
@@ -4659,10 +5837,862 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearIndexType() {
-      
+      bitField0_ = (bitField0_ & ~0x20000000);
       indexType_ = 0;
       onChanged();
       return this;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.BondDetailsProto, fintekkers.models.security.BondDetailsProto.Builder, fintekkers.models.security.BondDetailsProtoOrBuilder> bondDetailsBuilder_;
+    /**
+     * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+     * @return Whether the bondDetails field is set.
+     */
+    @java.lang.Override
+    public boolean hasBondDetails() {
+      return productDetailsCase_ == 200;
+    }
+    /**
+     * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+     * @return The bondDetails.
+     */
+    @java.lang.Override
+    public fintekkers.models.security.BondDetailsProto getBondDetails() {
+      if (bondDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 200) {
+          return (fintekkers.models.security.BondDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.BondDetailsProto.getDefaultInstance();
+      } else {
+        if (productDetailsCase_ == 200) {
+          return bondDetailsBuilder_.getMessage();
+        }
+        return fintekkers.models.security.BondDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+     */
+    public Builder setBondDetails(fintekkers.models.security.BondDetailsProto value) {
+      if (bondDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        productDetails_ = value;
+        onChanged();
+      } else {
+        bondDetailsBuilder_.setMessage(value);
+      }
+      productDetailsCase_ = 200;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+     */
+    public Builder setBondDetails(
+        fintekkers.models.security.BondDetailsProto.Builder builderForValue) {
+      if (bondDetailsBuilder_ == null) {
+        productDetails_ = builderForValue.build();
+        onChanged();
+      } else {
+        bondDetailsBuilder_.setMessage(builderForValue.build());
+      }
+      productDetailsCase_ = 200;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+     */
+    public Builder mergeBondDetails(fintekkers.models.security.BondDetailsProto value) {
+      if (bondDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 200 &&
+            productDetails_ != fintekkers.models.security.BondDetailsProto.getDefaultInstance()) {
+          productDetails_ = fintekkers.models.security.BondDetailsProto.newBuilder((fintekkers.models.security.BondDetailsProto) productDetails_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          productDetails_ = value;
+        }
+        onChanged();
+      } else {
+        if (productDetailsCase_ == 200) {
+          bondDetailsBuilder_.mergeFrom(value);
+        } else {
+          bondDetailsBuilder_.setMessage(value);
+        }
+      }
+      productDetailsCase_ = 200;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+     */
+    public Builder clearBondDetails() {
+      if (bondDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 200) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+          onChanged();
+        }
+      } else {
+        if (productDetailsCase_ == 200) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+        }
+        bondDetailsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+     */
+    public fintekkers.models.security.BondDetailsProto.Builder getBondDetailsBuilder() {
+      return getBondDetailsFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+     */
+    @java.lang.Override
+    public fintekkers.models.security.BondDetailsProtoOrBuilder getBondDetailsOrBuilder() {
+      if ((productDetailsCase_ == 200) && (bondDetailsBuilder_ != null)) {
+        return bondDetailsBuilder_.getMessageOrBuilder();
+      } else {
+        if (productDetailsCase_ == 200) {
+          return (fintekkers.models.security.BondDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.BondDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.BondDetailsProto, fintekkers.models.security.BondDetailsProto.Builder, fintekkers.models.security.BondDetailsProtoOrBuilder> 
+        getBondDetailsFieldBuilder() {
+      if (bondDetailsBuilder_ == null) {
+        if (!(productDetailsCase_ == 200)) {
+          productDetails_ = fintekkers.models.security.BondDetailsProto.getDefaultInstance();
+        }
+        bondDetailsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.security.BondDetailsProto, fintekkers.models.security.BondDetailsProto.Builder, fintekkers.models.security.BondDetailsProtoOrBuilder>(
+                (fintekkers.models.security.BondDetailsProto) productDetails_,
+                getParentForChildren(),
+                isClean());
+        productDetails_ = null;
+      }
+      productDetailsCase_ = 200;
+      onChanged();
+      return bondDetailsBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.TipsDetailsProto, fintekkers.models.security.TipsDetailsProto.Builder, fintekkers.models.security.TipsDetailsProtoOrBuilder> tipsDetailsBuilder_;
+    /**
+     * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+     * @return Whether the tipsDetails field is set.
+     */
+    @java.lang.Override
+    public boolean hasTipsDetails() {
+      return productDetailsCase_ == 201;
+    }
+    /**
+     * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+     * @return The tipsDetails.
+     */
+    @java.lang.Override
+    public fintekkers.models.security.TipsDetailsProto getTipsDetails() {
+      if (tipsDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 201) {
+          return (fintekkers.models.security.TipsDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.TipsDetailsProto.getDefaultInstance();
+      } else {
+        if (productDetailsCase_ == 201) {
+          return tipsDetailsBuilder_.getMessage();
+        }
+        return fintekkers.models.security.TipsDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+     */
+    public Builder setTipsDetails(fintekkers.models.security.TipsDetailsProto value) {
+      if (tipsDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        productDetails_ = value;
+        onChanged();
+      } else {
+        tipsDetailsBuilder_.setMessage(value);
+      }
+      productDetailsCase_ = 201;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+     */
+    public Builder setTipsDetails(
+        fintekkers.models.security.TipsDetailsProto.Builder builderForValue) {
+      if (tipsDetailsBuilder_ == null) {
+        productDetails_ = builderForValue.build();
+        onChanged();
+      } else {
+        tipsDetailsBuilder_.setMessage(builderForValue.build());
+      }
+      productDetailsCase_ = 201;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+     */
+    public Builder mergeTipsDetails(fintekkers.models.security.TipsDetailsProto value) {
+      if (tipsDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 201 &&
+            productDetails_ != fintekkers.models.security.TipsDetailsProto.getDefaultInstance()) {
+          productDetails_ = fintekkers.models.security.TipsDetailsProto.newBuilder((fintekkers.models.security.TipsDetailsProto) productDetails_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          productDetails_ = value;
+        }
+        onChanged();
+      } else {
+        if (productDetailsCase_ == 201) {
+          tipsDetailsBuilder_.mergeFrom(value);
+        } else {
+          tipsDetailsBuilder_.setMessage(value);
+        }
+      }
+      productDetailsCase_ = 201;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+     */
+    public Builder clearTipsDetails() {
+      if (tipsDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 201) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+          onChanged();
+        }
+      } else {
+        if (productDetailsCase_ == 201) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+        }
+        tipsDetailsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+     */
+    public fintekkers.models.security.TipsDetailsProto.Builder getTipsDetailsBuilder() {
+      return getTipsDetailsFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+     */
+    @java.lang.Override
+    public fintekkers.models.security.TipsDetailsProtoOrBuilder getTipsDetailsOrBuilder() {
+      if ((productDetailsCase_ == 201) && (tipsDetailsBuilder_ != null)) {
+        return tipsDetailsBuilder_.getMessageOrBuilder();
+      } else {
+        if (productDetailsCase_ == 201) {
+          return (fintekkers.models.security.TipsDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.TipsDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.TipsDetailsProto, fintekkers.models.security.TipsDetailsProto.Builder, fintekkers.models.security.TipsDetailsProtoOrBuilder> 
+        getTipsDetailsFieldBuilder() {
+      if (tipsDetailsBuilder_ == null) {
+        if (!(productDetailsCase_ == 201)) {
+          productDetails_ = fintekkers.models.security.TipsDetailsProto.getDefaultInstance();
+        }
+        tipsDetailsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.security.TipsDetailsProto, fintekkers.models.security.TipsDetailsProto.Builder, fintekkers.models.security.TipsDetailsProtoOrBuilder>(
+                (fintekkers.models.security.TipsDetailsProto) productDetails_,
+                getParentForChildren(),
+                isClean());
+        productDetails_ = null;
+      }
+      productDetailsCase_ = 201;
+      onChanged();
+      return tipsDetailsBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.FrnDetailsProto, fintekkers.models.security.FrnDetailsProto.Builder, fintekkers.models.security.FrnDetailsProtoOrBuilder> frnDetailsBuilder_;
+    /**
+     * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+     * @return Whether the frnDetails field is set.
+     */
+    @java.lang.Override
+    public boolean hasFrnDetails() {
+      return productDetailsCase_ == 202;
+    }
+    /**
+     * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+     * @return The frnDetails.
+     */
+    @java.lang.Override
+    public fintekkers.models.security.FrnDetailsProto getFrnDetails() {
+      if (frnDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 202) {
+          return (fintekkers.models.security.FrnDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.FrnDetailsProto.getDefaultInstance();
+      } else {
+        if (productDetailsCase_ == 202) {
+          return frnDetailsBuilder_.getMessage();
+        }
+        return fintekkers.models.security.FrnDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+     */
+    public Builder setFrnDetails(fintekkers.models.security.FrnDetailsProto value) {
+      if (frnDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        productDetails_ = value;
+        onChanged();
+      } else {
+        frnDetailsBuilder_.setMessage(value);
+      }
+      productDetailsCase_ = 202;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+     */
+    public Builder setFrnDetails(
+        fintekkers.models.security.FrnDetailsProto.Builder builderForValue) {
+      if (frnDetailsBuilder_ == null) {
+        productDetails_ = builderForValue.build();
+        onChanged();
+      } else {
+        frnDetailsBuilder_.setMessage(builderForValue.build());
+      }
+      productDetailsCase_ = 202;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+     */
+    public Builder mergeFrnDetails(fintekkers.models.security.FrnDetailsProto value) {
+      if (frnDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 202 &&
+            productDetails_ != fintekkers.models.security.FrnDetailsProto.getDefaultInstance()) {
+          productDetails_ = fintekkers.models.security.FrnDetailsProto.newBuilder((fintekkers.models.security.FrnDetailsProto) productDetails_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          productDetails_ = value;
+        }
+        onChanged();
+      } else {
+        if (productDetailsCase_ == 202) {
+          frnDetailsBuilder_.mergeFrom(value);
+        } else {
+          frnDetailsBuilder_.setMessage(value);
+        }
+      }
+      productDetailsCase_ = 202;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+     */
+    public Builder clearFrnDetails() {
+      if (frnDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 202) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+          onChanged();
+        }
+      } else {
+        if (productDetailsCase_ == 202) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+        }
+        frnDetailsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+     */
+    public fintekkers.models.security.FrnDetailsProto.Builder getFrnDetailsBuilder() {
+      return getFrnDetailsFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+     */
+    @java.lang.Override
+    public fintekkers.models.security.FrnDetailsProtoOrBuilder getFrnDetailsOrBuilder() {
+      if ((productDetailsCase_ == 202) && (frnDetailsBuilder_ != null)) {
+        return frnDetailsBuilder_.getMessageOrBuilder();
+      } else {
+        if (productDetailsCase_ == 202) {
+          return (fintekkers.models.security.FrnDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.FrnDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.FrnDetailsProto, fintekkers.models.security.FrnDetailsProto.Builder, fintekkers.models.security.FrnDetailsProtoOrBuilder> 
+        getFrnDetailsFieldBuilder() {
+      if (frnDetailsBuilder_ == null) {
+        if (!(productDetailsCase_ == 202)) {
+          productDetails_ = fintekkers.models.security.FrnDetailsProto.getDefaultInstance();
+        }
+        frnDetailsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.security.FrnDetailsProto, fintekkers.models.security.FrnDetailsProto.Builder, fintekkers.models.security.FrnDetailsProtoOrBuilder>(
+                (fintekkers.models.security.FrnDetailsProto) productDetails_,
+                getParentForChildren(),
+                isClean());
+        productDetails_ = null;
+      }
+      productDetailsCase_ = 202;
+      onChanged();
+      return frnDetailsBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.IndexDetailsProto, fintekkers.models.security.IndexDetailsProto.Builder, fintekkers.models.security.IndexDetailsProtoOrBuilder> indexDetailsBuilder_;
+    /**
+     * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+     * @return Whether the indexDetails field is set.
+     */
+    @java.lang.Override
+    public boolean hasIndexDetails() {
+      return productDetailsCase_ == 203;
+    }
+    /**
+     * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+     * @return The indexDetails.
+     */
+    @java.lang.Override
+    public fintekkers.models.security.IndexDetailsProto getIndexDetails() {
+      if (indexDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 203) {
+          return (fintekkers.models.security.IndexDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.IndexDetailsProto.getDefaultInstance();
+      } else {
+        if (productDetailsCase_ == 203) {
+          return indexDetailsBuilder_.getMessage();
+        }
+        return fintekkers.models.security.IndexDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+     */
+    public Builder setIndexDetails(fintekkers.models.security.IndexDetailsProto value) {
+      if (indexDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        productDetails_ = value;
+        onChanged();
+      } else {
+        indexDetailsBuilder_.setMessage(value);
+      }
+      productDetailsCase_ = 203;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+     */
+    public Builder setIndexDetails(
+        fintekkers.models.security.IndexDetailsProto.Builder builderForValue) {
+      if (indexDetailsBuilder_ == null) {
+        productDetails_ = builderForValue.build();
+        onChanged();
+      } else {
+        indexDetailsBuilder_.setMessage(builderForValue.build());
+      }
+      productDetailsCase_ = 203;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+     */
+    public Builder mergeIndexDetails(fintekkers.models.security.IndexDetailsProto value) {
+      if (indexDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 203 &&
+            productDetails_ != fintekkers.models.security.IndexDetailsProto.getDefaultInstance()) {
+          productDetails_ = fintekkers.models.security.IndexDetailsProto.newBuilder((fintekkers.models.security.IndexDetailsProto) productDetails_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          productDetails_ = value;
+        }
+        onChanged();
+      } else {
+        if (productDetailsCase_ == 203) {
+          indexDetailsBuilder_.mergeFrom(value);
+        } else {
+          indexDetailsBuilder_.setMessage(value);
+        }
+      }
+      productDetailsCase_ = 203;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+     */
+    public Builder clearIndexDetails() {
+      if (indexDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 203) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+          onChanged();
+        }
+      } else {
+        if (productDetailsCase_ == 203) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+        }
+        indexDetailsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+     */
+    public fintekkers.models.security.IndexDetailsProto.Builder getIndexDetailsBuilder() {
+      return getIndexDetailsFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+     */
+    @java.lang.Override
+    public fintekkers.models.security.IndexDetailsProtoOrBuilder getIndexDetailsOrBuilder() {
+      if ((productDetailsCase_ == 203) && (indexDetailsBuilder_ != null)) {
+        return indexDetailsBuilder_.getMessageOrBuilder();
+      } else {
+        if (productDetailsCase_ == 203) {
+          return (fintekkers.models.security.IndexDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.IndexDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.IndexDetailsProto, fintekkers.models.security.IndexDetailsProto.Builder, fintekkers.models.security.IndexDetailsProtoOrBuilder> 
+        getIndexDetailsFieldBuilder() {
+      if (indexDetailsBuilder_ == null) {
+        if (!(productDetailsCase_ == 203)) {
+          productDetails_ = fintekkers.models.security.IndexDetailsProto.getDefaultInstance();
+        }
+        indexDetailsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.security.IndexDetailsProto, fintekkers.models.security.IndexDetailsProto.Builder, fintekkers.models.security.IndexDetailsProtoOrBuilder>(
+                (fintekkers.models.security.IndexDetailsProto) productDetails_,
+                getParentForChildren(),
+                isClean());
+        productDetails_ = null;
+      }
+      productDetailsCase_ = 203;
+      onChanged();
+      return indexDetailsBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.EquityDetailsProto, fintekkers.models.security.EquityDetailsProto.Builder, fintekkers.models.security.EquityDetailsProtoOrBuilder> equityDetailsBuilder_;
+    /**
+     * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+     * @return Whether the equityDetails field is set.
+     */
+    @java.lang.Override
+    public boolean hasEquityDetails() {
+      return productDetailsCase_ == 204;
+    }
+    /**
+     * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+     * @return The equityDetails.
+     */
+    @java.lang.Override
+    public fintekkers.models.security.EquityDetailsProto getEquityDetails() {
+      if (equityDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 204) {
+          return (fintekkers.models.security.EquityDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.EquityDetailsProto.getDefaultInstance();
+      } else {
+        if (productDetailsCase_ == 204) {
+          return equityDetailsBuilder_.getMessage();
+        }
+        return fintekkers.models.security.EquityDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+     */
+    public Builder setEquityDetails(fintekkers.models.security.EquityDetailsProto value) {
+      if (equityDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        productDetails_ = value;
+        onChanged();
+      } else {
+        equityDetailsBuilder_.setMessage(value);
+      }
+      productDetailsCase_ = 204;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+     */
+    public Builder setEquityDetails(
+        fintekkers.models.security.EquityDetailsProto.Builder builderForValue) {
+      if (equityDetailsBuilder_ == null) {
+        productDetails_ = builderForValue.build();
+        onChanged();
+      } else {
+        equityDetailsBuilder_.setMessage(builderForValue.build());
+      }
+      productDetailsCase_ = 204;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+     */
+    public Builder mergeEquityDetails(fintekkers.models.security.EquityDetailsProto value) {
+      if (equityDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 204 &&
+            productDetails_ != fintekkers.models.security.EquityDetailsProto.getDefaultInstance()) {
+          productDetails_ = fintekkers.models.security.EquityDetailsProto.newBuilder((fintekkers.models.security.EquityDetailsProto) productDetails_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          productDetails_ = value;
+        }
+        onChanged();
+      } else {
+        if (productDetailsCase_ == 204) {
+          equityDetailsBuilder_.mergeFrom(value);
+        } else {
+          equityDetailsBuilder_.setMessage(value);
+        }
+      }
+      productDetailsCase_ = 204;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+     */
+    public Builder clearEquityDetails() {
+      if (equityDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 204) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+          onChanged();
+        }
+      } else {
+        if (productDetailsCase_ == 204) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+        }
+        equityDetailsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+     */
+    public fintekkers.models.security.EquityDetailsProto.Builder getEquityDetailsBuilder() {
+      return getEquityDetailsFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+     */
+    @java.lang.Override
+    public fintekkers.models.security.EquityDetailsProtoOrBuilder getEquityDetailsOrBuilder() {
+      if ((productDetailsCase_ == 204) && (equityDetailsBuilder_ != null)) {
+        return equityDetailsBuilder_.getMessageOrBuilder();
+      } else {
+        if (productDetailsCase_ == 204) {
+          return (fintekkers.models.security.EquityDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.EquityDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.EquityDetailsProto equity_details = 204;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.EquityDetailsProto, fintekkers.models.security.EquityDetailsProto.Builder, fintekkers.models.security.EquityDetailsProtoOrBuilder> 
+        getEquityDetailsFieldBuilder() {
+      if (equityDetailsBuilder_ == null) {
+        if (!(productDetailsCase_ == 204)) {
+          productDetails_ = fintekkers.models.security.EquityDetailsProto.getDefaultInstance();
+        }
+        equityDetailsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.security.EquityDetailsProto, fintekkers.models.security.EquityDetailsProto.Builder, fintekkers.models.security.EquityDetailsProtoOrBuilder>(
+                (fintekkers.models.security.EquityDetailsProto) productDetails_,
+                getParentForChildren(),
+                isClean());
+        productDetails_ = null;
+      }
+      productDetailsCase_ = 204;
+      onChanged();
+      return equityDetailsBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.CashDetailsProto, fintekkers.models.security.CashDetailsProto.Builder, fintekkers.models.security.CashDetailsProtoOrBuilder> cashDetailsBuilder_;
+    /**
+     * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+     * @return Whether the cashDetails field is set.
+     */
+    @java.lang.Override
+    public boolean hasCashDetails() {
+      return productDetailsCase_ == 205;
+    }
+    /**
+     * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+     * @return The cashDetails.
+     */
+    @java.lang.Override
+    public fintekkers.models.security.CashDetailsProto getCashDetails() {
+      if (cashDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 205) {
+          return (fintekkers.models.security.CashDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.CashDetailsProto.getDefaultInstance();
+      } else {
+        if (productDetailsCase_ == 205) {
+          return cashDetailsBuilder_.getMessage();
+        }
+        return fintekkers.models.security.CashDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+     */
+    public Builder setCashDetails(fintekkers.models.security.CashDetailsProto value) {
+      if (cashDetailsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        productDetails_ = value;
+        onChanged();
+      } else {
+        cashDetailsBuilder_.setMessage(value);
+      }
+      productDetailsCase_ = 205;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+     */
+    public Builder setCashDetails(
+        fintekkers.models.security.CashDetailsProto.Builder builderForValue) {
+      if (cashDetailsBuilder_ == null) {
+        productDetails_ = builderForValue.build();
+        onChanged();
+      } else {
+        cashDetailsBuilder_.setMessage(builderForValue.build());
+      }
+      productDetailsCase_ = 205;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+     */
+    public Builder mergeCashDetails(fintekkers.models.security.CashDetailsProto value) {
+      if (cashDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 205 &&
+            productDetails_ != fintekkers.models.security.CashDetailsProto.getDefaultInstance()) {
+          productDetails_ = fintekkers.models.security.CashDetailsProto.newBuilder((fintekkers.models.security.CashDetailsProto) productDetails_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          productDetails_ = value;
+        }
+        onChanged();
+      } else {
+        if (productDetailsCase_ == 205) {
+          cashDetailsBuilder_.mergeFrom(value);
+        } else {
+          cashDetailsBuilder_.setMessage(value);
+        }
+      }
+      productDetailsCase_ = 205;
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+     */
+    public Builder clearCashDetails() {
+      if (cashDetailsBuilder_ == null) {
+        if (productDetailsCase_ == 205) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+          onChanged();
+        }
+      } else {
+        if (productDetailsCase_ == 205) {
+          productDetailsCase_ = 0;
+          productDetails_ = null;
+        }
+        cashDetailsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+     */
+    public fintekkers.models.security.CashDetailsProto.Builder getCashDetailsBuilder() {
+      return getCashDetailsFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+     */
+    @java.lang.Override
+    public fintekkers.models.security.CashDetailsProtoOrBuilder getCashDetailsOrBuilder() {
+      if ((productDetailsCase_ == 205) && (cashDetailsBuilder_ != null)) {
+        return cashDetailsBuilder_.getMessageOrBuilder();
+      } else {
+        if (productDetailsCase_ == 205) {
+          return (fintekkers.models.security.CashDetailsProto) productDetails_;
+        }
+        return fintekkers.models.security.CashDetailsProto.getDefaultInstance();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.CashDetailsProto, fintekkers.models.security.CashDetailsProto.Builder, fintekkers.models.security.CashDetailsProtoOrBuilder> 
+        getCashDetailsFieldBuilder() {
+      if (cashDetailsBuilder_ == null) {
+        if (!(productDetailsCase_ == 205)) {
+          productDetails_ = fintekkers.models.security.CashDetailsProto.getDefaultInstance();
+        }
+        cashDetailsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.security.CashDetailsProto, fintekkers.models.security.CashDetailsProto.Builder, fintekkers.models.security.CashDetailsProtoOrBuilder>(
+                (fintekkers.models.security.CashDetailsProto) productDetails_,
+                getParentForChildren(),
+                isClean());
+        productDetails_ = null;
+      }
+      productDetailsCase_ = 205;
+      onChanged();
+      return cashDetailsBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(
@@ -4697,7 +6727,18 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new SecurityProto(input, extensionRegistry);
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
     }
   };
 

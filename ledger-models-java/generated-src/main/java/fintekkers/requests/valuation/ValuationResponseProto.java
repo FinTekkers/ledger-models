@@ -19,6 +19,7 @@ private static final long serialVersionUID = 0L;
     objectClass_ = "";
     version_ = "";
     measureResults_ = java.util.Collections.emptyList();
+    cashflows_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -32,94 +33,6 @@ private static final long serialVersionUID = 0L;
   public final com.google.protobuf.UnknownFieldSet
   getUnknownFields() {
     return this.unknownFields;
-  }
-  private ValuationResponseProto(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    int mutable_bitField0_ = 0;
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            objectClass_ = s;
-            break;
-          }
-          case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            version_ = s;
-            break;
-          }
-          case 162: {
-            fintekkers.requests.valuation.ValuationRequestProto.Builder subBuilder = null;
-            if (valuationRequest_ != null) {
-              subBuilder = valuationRequest_.toBuilder();
-            }
-            valuationRequest_ = input.readMessage(fintekkers.requests.valuation.ValuationRequestProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(valuationRequest_);
-              valuationRequest_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 242: {
-            if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-              measureResults_ = new java.util.ArrayList<fintekkers.models.position.MeasureMapEntry>();
-              mutable_bitField0_ |= 0x00000001;
-            }
-            measureResults_.add(
-                input.readMessage(fintekkers.models.position.MeasureMapEntry.parser(), extensionRegistry));
-            break;
-          }
-          case 322: {
-            fintekkers.requests.util.errors.Summary.SummaryProto.Builder subBuilder = null;
-            if (summary_ != null) {
-              subBuilder = summary_.toBuilder();
-            }
-            summary_ = input.readMessage(fintekkers.requests.util.errors.Summary.SummaryProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(summary_);
-              summary_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          default: {
-            if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-    } finally {
-      if (((mutable_bitField0_ & 0x00000001) != 0)) {
-        measureResults_ = java.util.Collections.unmodifiableList(measureResults_);
-      }
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
@@ -135,7 +48,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-  private volatile java.lang.Object objectClass_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object objectClass_ = "";
   /**
    * <code>string object_class = 1;</code>
    * @return The objectClass.
@@ -173,7 +87,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int VERSION_FIELD_NUMBER = 2;
-  private volatile java.lang.Object version_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object version_ = "";
   /**
    * <code>string version = 2;</code>
    * @return The version.
@@ -233,10 +148,11 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.requests.valuation.ValuationRequestProtoOrBuilder getValuationRequestOrBuilder() {
-    return getValuationRequest();
+    return valuationRequest_ == null ? fintekkers.requests.valuation.ValuationRequestProto.getDefaultInstance() : valuationRequest_;
   }
 
   public static final int MEASURE_RESULTS_FIELD_NUMBER = 30;
+  @SuppressWarnings("serial")
   private java.util.List<fintekkers.models.position.MeasureMapEntry> measureResults_;
   /**
    * <code>repeated .fintekkers.models.position.MeasureMapEntry measure_results = 30;</code>
@@ -299,7 +215,73 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getSummaryOrBuilder() {
-    return getSummary();
+    return summary_ == null ? fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : summary_;
+  }
+
+  public static final int CASHFLOWS_FIELD_NUMBER = 50;
+  @SuppressWarnings("serial")
+  private java.util.List<fintekkers.models.valuation.CashflowProto> cashflows_;
+  /**
+   * <pre>
+   * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+   * Each entry represents a single coupon or principal payment with PV and FV amounts.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+   */
+  @java.lang.Override
+  public java.util.List<fintekkers.models.valuation.CashflowProto> getCashflowsList() {
+    return cashflows_;
+  }
+  /**
+   * <pre>
+   * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+   * Each entry represents a single coupon or principal payment with PV and FV amounts.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends fintekkers.models.valuation.CashflowProtoOrBuilder> 
+      getCashflowsOrBuilderList() {
+    return cashflows_;
+  }
+  /**
+   * <pre>
+   * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+   * Each entry represents a single coupon or principal payment with PV and FV amounts.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+   */
+  @java.lang.Override
+  public int getCashflowsCount() {
+    return cashflows_.size();
+  }
+  /**
+   * <pre>
+   * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+   * Each entry represents a single coupon or principal payment with PV and FV amounts.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.valuation.CashflowProto getCashflows(int index) {
+    return cashflows_.get(index);
+  }
+  /**
+   * <pre>
+   * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+   * Each entry represents a single coupon or principal payment with PV and FV amounts.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.valuation.CashflowProtoOrBuilder getCashflowsOrBuilder(
+      int index) {
+    return cashflows_.get(index);
   }
 
   private byte memoizedIsInitialized = -1;
@@ -316,10 +298,10 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getObjectClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
     }
-    if (!getVersionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
     }
     if (valuationRequest_ != null) {
@@ -331,7 +313,10 @@ private static final long serialVersionUID = 0L;
     if (summary_ != null) {
       output.writeMessage(40, getSummary());
     }
-    unknownFields.writeTo(output);
+    for (int i = 0; i < cashflows_.size(); i++) {
+      output.writeMessage(50, cashflows_.get(i));
+    }
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -340,10 +325,10 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getObjectClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
     }
-    if (!getVersionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
     }
     if (valuationRequest_ != null) {
@@ -358,7 +343,11 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(40, getSummary());
     }
-    size += unknownFields.getSerializedSize();
+    for (int i = 0; i < cashflows_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(50, cashflows_.get(i));
+    }
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -389,7 +378,9 @@ private static final long serialVersionUID = 0L;
       if (!getSummary()
           .equals(other.getSummary())) return false;
     }
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getCashflowsList()
+        .equals(other.getCashflowsList())) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -416,7 +407,11 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + SUMMARY_FIELD_NUMBER;
       hash = (53 * hash) + getSummary().hashCode();
     }
-    hash = (29 * hash) + unknownFields.hashCode();
+    if (getCashflowsCount() > 0) {
+      hash = (37 * hash) + CASHFLOWS_FIELD_NUMBER;
+      hash = (53 * hash) + getCashflowsList().hashCode();
+    }
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -533,45 +528,44 @@ private static final long serialVersionUID = 0L;
 
     // Construct using fintekkers.requests.valuation.ValuationResponseProto.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
-              .alwaysUseFieldBuilders) {
-        getMeasureResultsFieldBuilder();
-      }
+
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       objectClass_ = "";
-
       version_ = "";
-
-      if (valuationRequestBuilder_ == null) {
-        valuationRequest_ = null;
-      } else {
-        valuationRequest_ = null;
+      valuationRequest_ = null;
+      if (valuationRequestBuilder_ != null) {
+        valuationRequestBuilder_.dispose();
         valuationRequestBuilder_ = null;
       }
       if (measureResultsBuilder_ == null) {
         measureResults_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
       } else {
+        measureResults_ = null;
         measureResultsBuilder_.clear();
       }
-      if (summaryBuilder_ == null) {
-        summary_ = null;
-      } else {
-        summary_ = null;
+      bitField0_ = (bitField0_ & ~0x00000008);
+      summary_ = null;
+      if (summaryBuilder_ != null) {
+        summaryBuilder_.dispose();
         summaryBuilder_ = null;
       }
+      if (cashflowsBuilder_ == null) {
+        cashflows_ = java.util.Collections.emptyList();
+      } else {
+        cashflows_ = null;
+        cashflowsBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
 
@@ -598,30 +592,51 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.requests.valuation.ValuationResponseProto buildPartial() {
       fintekkers.requests.valuation.ValuationResponseProto result = new fintekkers.requests.valuation.ValuationResponseProto(this);
-      int from_bitField0_ = bitField0_;
-      result.objectClass_ = objectClass_;
-      result.version_ = version_;
-      if (valuationRequestBuilder_ == null) {
-        result.valuationRequest_ = valuationRequest_;
-      } else {
-        result.valuationRequest_ = valuationRequestBuilder_.build();
-      }
+      buildPartialRepeatedFields(result);
+      if (bitField0_ != 0) { buildPartial0(result); }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartialRepeatedFields(fintekkers.requests.valuation.ValuationResponseProto result) {
       if (measureResultsBuilder_ == null) {
-        if (((bitField0_ & 0x00000001) != 0)) {
+        if (((bitField0_ & 0x00000008) != 0)) {
           measureResults_ = java.util.Collections.unmodifiableList(measureResults_);
-          bitField0_ = (bitField0_ & ~0x00000001);
+          bitField0_ = (bitField0_ & ~0x00000008);
         }
         result.measureResults_ = measureResults_;
       } else {
         result.measureResults_ = measureResultsBuilder_.build();
       }
-      if (summaryBuilder_ == null) {
-        result.summary_ = summary_;
+      if (cashflowsBuilder_ == null) {
+        if (((bitField0_ & 0x00000020) != 0)) {
+          cashflows_ = java.util.Collections.unmodifiableList(cashflows_);
+          bitField0_ = (bitField0_ & ~0x00000020);
+        }
+        result.cashflows_ = cashflows_;
       } else {
-        result.summary_ = summaryBuilder_.build();
+        result.cashflows_ = cashflowsBuilder_.build();
       }
-      onBuilt();
-      return result;
+    }
+
+    private void buildPartial0(fintekkers.requests.valuation.ValuationResponseProto result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.objectClass_ = objectClass_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.version_ = version_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.valuationRequest_ = valuationRequestBuilder_ == null
+            ? valuationRequest_
+            : valuationRequestBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.summary_ = summaryBuilder_ == null
+            ? summary_
+            : summaryBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -670,10 +685,12 @@ private static final long serialVersionUID = 0L;
       if (other == fintekkers.requests.valuation.ValuationResponseProto.getDefaultInstance()) return this;
       if (!other.getObjectClass().isEmpty()) {
         objectClass_ = other.objectClass_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getVersion().isEmpty()) {
         version_ = other.version_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       if (other.hasValuationRequest()) {
@@ -683,7 +700,7 @@ private static final long serialVersionUID = 0L;
         if (!other.measureResults_.isEmpty()) {
           if (measureResults_.isEmpty()) {
             measureResults_ = other.measureResults_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00000008);
           } else {
             ensureMeasureResultsIsMutable();
             measureResults_.addAll(other.measureResults_);
@@ -696,7 +713,7 @@ private static final long serialVersionUID = 0L;
             measureResultsBuilder_.dispose();
             measureResultsBuilder_ = null;
             measureResults_ = other.measureResults_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00000008);
             measureResultsBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getMeasureResultsFieldBuilder() : null;
@@ -708,7 +725,33 @@ private static final long serialVersionUID = 0L;
       if (other.hasSummary()) {
         mergeSummary(other.getSummary());
       }
-      this.mergeUnknownFields(other.unknownFields);
+      if (cashflowsBuilder_ == null) {
+        if (!other.cashflows_.isEmpty()) {
+          if (cashflows_.isEmpty()) {
+            cashflows_ = other.cashflows_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+          } else {
+            ensureCashflowsIsMutable();
+            cashflows_.addAll(other.cashflows_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.cashflows_.isEmpty()) {
+          if (cashflowsBuilder_.isEmpty()) {
+            cashflowsBuilder_.dispose();
+            cashflowsBuilder_ = null;
+            cashflows_ = other.cashflows_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+            cashflowsBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getCashflowsFieldBuilder() : null;
+          } else {
+            cashflowsBuilder_.addAllMessages(other.cashflows_);
+          }
+        }
+      }
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -723,17 +766,80 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      fintekkers.requests.valuation.ValuationResponseProto parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              objectClass_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 10
+            case 18: {
+              version_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 18
+            case 162: {
+              input.readMessage(
+                  getValuationRequestFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 162
+            case 242: {
+              fintekkers.models.position.MeasureMapEntry m =
+                  input.readMessage(
+                      fintekkers.models.position.MeasureMapEntry.parser(),
+                      extensionRegistry);
+              if (measureResultsBuilder_ == null) {
+                ensureMeasureResultsIsMutable();
+                measureResults_.add(m);
+              } else {
+                measureResultsBuilder_.addMessage(m);
+              }
+              break;
+            } // case 242
+            case 322: {
+              input.readMessage(
+                  getSummaryFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 322
+            case 402: {
+              fintekkers.models.valuation.CashflowProto m =
+                  input.readMessage(
+                      fintekkers.models.valuation.CashflowProto.parser(),
+                      extensionRegistry);
+              if (cashflowsBuilder_ == null) {
+                ensureCashflowsIsMutable();
+                cashflows_.add(m);
+              } else {
+                cashflowsBuilder_.addMessage(m);
+              }
+              break;
+            } // case 402
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (fintekkers.requests.valuation.ValuationResponseProto) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
     private int bitField0_;
@@ -779,11 +885,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setObjectClass(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       objectClass_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -792,8 +896,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearObjectClass() {
-      
       objectClass_ = getDefaultInstance().getObjectClass();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -804,12 +908,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setObjectClassBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       objectClass_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -855,11 +957,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setVersion(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       version_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -868,8 +968,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearVersion() {
-      
       version_ = getDefaultInstance().getVersion();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -880,12 +980,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setVersionBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       version_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -898,7 +996,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the valuationRequest field is set.
      */
     public boolean hasValuationRequest() {
-      return valuationRequestBuilder_ != null || valuationRequest_ != null;
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <code>.fintekkers.requests.valuation.ValuationRequestProto valuation_request = 20;</code>
@@ -920,11 +1018,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         valuationRequest_ = value;
-        onChanged();
       } else {
         valuationRequestBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -934,11 +1032,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.requests.valuation.ValuationRequestProto.Builder builderForValue) {
       if (valuationRequestBuilder_ == null) {
         valuationRequest_ = builderForValue.build();
-        onChanged();
       } else {
         valuationRequestBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -946,38 +1044,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeValuationRequest(fintekkers.requests.valuation.ValuationRequestProto value) {
       if (valuationRequestBuilder_ == null) {
-        if (valuationRequest_ != null) {
-          valuationRequest_ =
-            fintekkers.requests.valuation.ValuationRequestProto.newBuilder(valuationRequest_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000004) != 0) &&
+          valuationRequest_ != null &&
+          valuationRequest_ != fintekkers.requests.valuation.ValuationRequestProto.getDefaultInstance()) {
+          getValuationRequestBuilder().mergeFrom(value);
         } else {
           valuationRequest_ = value;
         }
-        onChanged();
       } else {
         valuationRequestBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.requests.valuation.ValuationRequestProto valuation_request = 20;</code>
      */
     public Builder clearValuationRequest() {
-      if (valuationRequestBuilder_ == null) {
-        valuationRequest_ = null;
-        onChanged();
-      } else {
-        valuationRequest_ = null;
+      bitField0_ = (bitField0_ & ~0x00000004);
+      valuationRequest_ = null;
+      if (valuationRequestBuilder_ != null) {
+        valuationRequestBuilder_.dispose();
         valuationRequestBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.requests.valuation.ValuationRequestProto valuation_request = 20;</code>
      */
     public fintekkers.requests.valuation.ValuationRequestProto.Builder getValuationRequestBuilder() {
-      
+      bitField0_ |= 0x00000004;
       onChanged();
       return getValuationRequestFieldBuilder().getBuilder();
     }
@@ -1012,9 +1110,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<fintekkers.models.position.MeasureMapEntry> measureResults_ =
       java.util.Collections.emptyList();
     private void ensureMeasureResultsIsMutable() {
-      if (!((bitField0_ & 0x00000001) != 0)) {
+      if (!((bitField0_ & 0x00000008) != 0)) {
         measureResults_ = new java.util.ArrayList<fintekkers.models.position.MeasureMapEntry>(measureResults_);
-        bitField0_ |= 0x00000001;
+        bitField0_ |= 0x00000008;
        }
     }
 
@@ -1164,7 +1262,7 @@ private static final long serialVersionUID = 0L;
     public Builder clearMeasureResults() {
       if (measureResultsBuilder_ == null) {
         measureResults_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
+        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
       } else {
         measureResultsBuilder_.clear();
@@ -1241,7 +1339,7 @@ private static final long serialVersionUID = 0L;
         measureResultsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             fintekkers.models.position.MeasureMapEntry, fintekkers.models.position.MeasureMapEntry.Builder, fintekkers.models.position.MeasureMapEntryOrBuilder>(
                 measureResults_,
-                ((bitField0_ & 0x00000001) != 0),
+                ((bitField0_ & 0x00000008) != 0),
                 getParentForChildren(),
                 isClean());
         measureResults_ = null;
@@ -1257,7 +1355,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the summary field is set.
      */
     public boolean hasSummary() {
-      return summaryBuilder_ != null || summary_ != null;
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
@@ -1279,11 +1377,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         summary_ = value;
-        onChanged();
       } else {
         summaryBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1293,11 +1391,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.requests.util.errors.Summary.SummaryProto.Builder builderForValue) {
       if (summaryBuilder_ == null) {
         summary_ = builderForValue.build();
-        onChanged();
       } else {
         summaryBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1305,38 +1403,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeSummary(fintekkers.requests.util.errors.Summary.SummaryProto value) {
       if (summaryBuilder_ == null) {
-        if (summary_ != null) {
-          summary_ =
-            fintekkers.requests.util.errors.Summary.SummaryProto.newBuilder(summary_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000010) != 0) &&
+          summary_ != null &&
+          summary_ != fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance()) {
+          getSummaryBuilder().mergeFrom(value);
         } else {
           summary_ = value;
         }
-        onChanged();
       } else {
         summaryBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
      */
     public Builder clearSummary() {
-      if (summaryBuilder_ == null) {
-        summary_ = null;
-        onChanged();
-      } else {
-        summary_ = null;
+      bitField0_ = (bitField0_ & ~0x00000010);
+      summary_ = null;
+      if (summaryBuilder_ != null) {
+        summaryBuilder_.dispose();
         summaryBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.requests.util.errors.SummaryProto summary = 40;</code>
      */
     public fintekkers.requests.util.errors.Summary.SummaryProto.Builder getSummaryBuilder() {
-      
+      bitField0_ |= 0x00000010;
       onChanged();
       return getSummaryFieldBuilder().getBuilder();
     }
@@ -1366,6 +1464,336 @@ private static final long serialVersionUID = 0L;
         summary_ = null;
       }
       return summaryBuilder_;
+    }
+
+    private java.util.List<fintekkers.models.valuation.CashflowProto> cashflows_ =
+      java.util.Collections.emptyList();
+    private void ensureCashflowsIsMutable() {
+      if (!((bitField0_ & 0x00000020) != 0)) {
+        cashflows_ = new java.util.ArrayList<fintekkers.models.valuation.CashflowProto>(cashflows_);
+        bitField0_ |= 0x00000020;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        fintekkers.models.valuation.CashflowProto, fintekkers.models.valuation.CashflowProto.Builder, fintekkers.models.valuation.CashflowProtoOrBuilder> cashflowsBuilder_;
+
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public java.util.List<fintekkers.models.valuation.CashflowProto> getCashflowsList() {
+      if (cashflowsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(cashflows_);
+      } else {
+        return cashflowsBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public int getCashflowsCount() {
+      if (cashflowsBuilder_ == null) {
+        return cashflows_.size();
+      } else {
+        return cashflowsBuilder_.getCount();
+      }
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public fintekkers.models.valuation.CashflowProto getCashflows(int index) {
+      if (cashflowsBuilder_ == null) {
+        return cashflows_.get(index);
+      } else {
+        return cashflowsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public Builder setCashflows(
+        int index, fintekkers.models.valuation.CashflowProto value) {
+      if (cashflowsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCashflowsIsMutable();
+        cashflows_.set(index, value);
+        onChanged();
+      } else {
+        cashflowsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public Builder setCashflows(
+        int index, fintekkers.models.valuation.CashflowProto.Builder builderForValue) {
+      if (cashflowsBuilder_ == null) {
+        ensureCashflowsIsMutable();
+        cashflows_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        cashflowsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public Builder addCashflows(fintekkers.models.valuation.CashflowProto value) {
+      if (cashflowsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCashflowsIsMutable();
+        cashflows_.add(value);
+        onChanged();
+      } else {
+        cashflowsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public Builder addCashflows(
+        int index, fintekkers.models.valuation.CashflowProto value) {
+      if (cashflowsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureCashflowsIsMutable();
+        cashflows_.add(index, value);
+        onChanged();
+      } else {
+        cashflowsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public Builder addCashflows(
+        fintekkers.models.valuation.CashflowProto.Builder builderForValue) {
+      if (cashflowsBuilder_ == null) {
+        ensureCashflowsIsMutable();
+        cashflows_.add(builderForValue.build());
+        onChanged();
+      } else {
+        cashflowsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public Builder addCashflows(
+        int index, fintekkers.models.valuation.CashflowProto.Builder builderForValue) {
+      if (cashflowsBuilder_ == null) {
+        ensureCashflowsIsMutable();
+        cashflows_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        cashflowsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public Builder addAllCashflows(
+        java.lang.Iterable<? extends fintekkers.models.valuation.CashflowProto> values) {
+      if (cashflowsBuilder_ == null) {
+        ensureCashflowsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, cashflows_);
+        onChanged();
+      } else {
+        cashflowsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public Builder clearCashflows() {
+      if (cashflowsBuilder_ == null) {
+        cashflows_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        onChanged();
+      } else {
+        cashflowsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public Builder removeCashflows(int index) {
+      if (cashflowsBuilder_ == null) {
+        ensureCashflowsIsMutable();
+        cashflows_.remove(index);
+        onChanged();
+      } else {
+        cashflowsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public fintekkers.models.valuation.CashflowProto.Builder getCashflowsBuilder(
+        int index) {
+      return getCashflowsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public fintekkers.models.valuation.CashflowProtoOrBuilder getCashflowsOrBuilder(
+        int index) {
+      if (cashflowsBuilder_ == null) {
+        return cashflows_.get(index);  } else {
+        return cashflowsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public java.util.List<? extends fintekkers.models.valuation.CashflowProtoOrBuilder> 
+         getCashflowsOrBuilderList() {
+      if (cashflowsBuilder_ != null) {
+        return cashflowsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(cashflows_);
+      }
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public fintekkers.models.valuation.CashflowProto.Builder addCashflowsBuilder() {
+      return getCashflowsFieldBuilder().addBuilder(
+          fintekkers.models.valuation.CashflowProto.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public fintekkers.models.valuation.CashflowProto.Builder addCashflowsBuilder(
+        int index) {
+      return getCashflowsFieldBuilder().addBuilder(
+          index, fintekkers.models.valuation.CashflowProto.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     * The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+     * Each entry represents a single coupon or principal payment with PV and FV amounts.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.valuation.CashflowProto cashflows = 50;</code>
+     */
+    public java.util.List<fintekkers.models.valuation.CashflowProto.Builder> 
+         getCashflowsBuilderList() {
+      return getCashflowsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        fintekkers.models.valuation.CashflowProto, fintekkers.models.valuation.CashflowProto.Builder, fintekkers.models.valuation.CashflowProtoOrBuilder> 
+        getCashflowsFieldBuilder() {
+      if (cashflowsBuilder_ == null) {
+        cashflowsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            fintekkers.models.valuation.CashflowProto, fintekkers.models.valuation.CashflowProto.Builder, fintekkers.models.valuation.CashflowProtoOrBuilder>(
+                cashflows_,
+                ((bitField0_ & 0x00000020) != 0),
+                getParentForChildren(),
+                isClean());
+        cashflows_ = null;
+      }
+      return cashflowsBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(
@@ -1400,7 +1828,18 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new ValuationResponseProto(input, extensionRegistry);
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
     }
   };
 

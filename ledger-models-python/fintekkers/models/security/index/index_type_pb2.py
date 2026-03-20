@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n1fintekkers/models/security/index/index_type.proto\x12 fintekkers.models.security.index*_\n\x0eIndexTypeProto\x12\x16\n\x12UNKNOWN_INDEX_TYPE\x10\x00\x12\t\n\x05\x43PI_U\x10\x01\x12\t\n\x05\x43PI_W\x10\x02\x12\x0c\n\x08\x43ORE_CPI\x10\x03\x12\x07\n\x03PCE\x10\x04\x12\x08\n\x04HICP\x10\x05\x42\x13\x42\x0fIndexTypeProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n1fintekkers/models/security/index/index_type.proto\x12 fintekkers.models.security.index*\x8c\x01\n\x0eIndexTypeProto\x12\x16\n\x12UNKNOWN_INDEX_TYPE\x10\x00\x12\t\n\x05\x43PI_U\x10\x01\x12\t\n\x05\x43PI_W\x10\x02\x12\x0c\n\x08\x43ORE_CPI\x10\x03\x12\x07\n\x03PCE\x10\x04\x12\x08\n\x04HICP\x10\x05\x12\x08\n\x04SOFR\x10\n\x12\x12\n\x0eT_BILL_13_WEEK\x10\x0b\x12\r\n\tFED_FUNDS\x10\x0c\x42\x13\x42\x0fIndexTypeProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,6 +32,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.security.
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\017IndexTypeProtosP\001'
-  _globals['_INDEXTYPEPROTO']._serialized_start=87
-  _globals['_INDEXTYPEPROTO']._serialized_end=182
+  _globals['_INDEXTYPEPROTO']._serialized_start=88
+  _globals['_INDEXTYPEPROTO']._serialized_end=228
 # @@protoc_insertion_point(module_scope)

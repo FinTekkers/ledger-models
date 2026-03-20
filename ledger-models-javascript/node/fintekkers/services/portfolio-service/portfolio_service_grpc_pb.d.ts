@@ -11,12 +11,14 @@ import * as fintekkers_requests_portfolio_create_portfolio_response_pb from "../
 import * as fintekkers_requests_portfolio_query_portfolio_request_pb from "../../../fintekkers/requests/portfolio/query_portfolio_request_pb";
 import * as fintekkers_requests_portfolio_query_portfolio_response_pb from "../../../fintekkers/requests/portfolio/query_portfolio_response_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
+import * as fintekkers_requests_util_delete_request_pb from "../../../fintekkers/requests/util/delete_request_pb";
 
 interface IPortfolioService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
     createOrUpdate: IPortfolioService_ICreateOrUpdate;
     getByIds: IPortfolioService_IGetByIds;
     search: IPortfolioService_ISearch;
     listIds: IPortfolioService_IListIds;
+    delete: IPortfolioService_IDelete;
     validateCreateOrUpdate: IPortfolioService_IValidateCreateOrUpdate;
     validateQueryRequest: IPortfolioService_IValidateQueryRequest;
 }
@@ -57,6 +59,15 @@ interface IPortfolioService_IListIds extends grpc.MethodDefinition<fintekkers_re
     responseSerialize: grpc.serialize<fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto>;
     responseDeserialize: grpc.deserialize<fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto>;
 }
+interface IPortfolioService_IDelete extends grpc.MethodDefinition<fintekkers_requests_util_delete_request_pb.DeleteRequestProto, fintekkers_requests_util_delete_request_pb.DeleteResponseProto> {
+    path: "/fintekkers.services.portfolio_service.Portfolio/Delete";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<fintekkers_requests_util_delete_request_pb.DeleteRequestProto>;
+    requestDeserialize: grpc.deserialize<fintekkers_requests_util_delete_request_pb.DeleteRequestProto>;
+    responseSerialize: grpc.serialize<fintekkers_requests_util_delete_request_pb.DeleteResponseProto>;
+    responseDeserialize: grpc.deserialize<fintekkers_requests_util_delete_request_pb.DeleteResponseProto>;
+}
 interface IPortfolioService_IValidateCreateOrUpdate extends grpc.MethodDefinition<fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto> {
     path: "/fintekkers.services.portfolio_service.Portfolio/ValidateCreateOrUpdate";
     requestStream: false;
@@ -83,6 +94,7 @@ export interface IPortfolioServer extends grpc.UntypedServiceImplementation {
     getByIds: grpc.handleUnaryCall<fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto, fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto>;
     search: grpc.handleServerStreamingCall<fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto, fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto>;
     listIds: grpc.handleUnaryCall<fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto, fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto>;
+    delete: grpc.handleUnaryCall<fintekkers_requests_util_delete_request_pb.DeleteRequestProto, fintekkers_requests_util_delete_request_pb.DeleteResponseProto>;
     validateCreateOrUpdate: grpc.handleUnaryCall<fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto>;
     validateQueryRequest: grpc.handleUnaryCall<fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto>;
 }
@@ -99,6 +111,9 @@ export interface IPortfolioClient {
     listIds(request: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto) => void): grpc.ClientUnaryCall;
     listIds(request: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto) => void): grpc.ClientUnaryCall;
     listIds(request: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto) => void): grpc.ClientUnaryCall;
+    delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
     validateCreateOrUpdate(request: fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     validateCreateOrUpdate(request: fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     validateCreateOrUpdate(request: fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
@@ -120,6 +135,9 @@ export class PortfolioClient extends grpc.Client implements IPortfolioClient {
     public listIds(request: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto) => void): grpc.ClientUnaryCall;
     public listIds(request: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto) => void): grpc.ClientUnaryCall;
     public listIds(request: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_portfolio_query_portfolio_response_pb.QueryPortfolioResponseProto) => void): grpc.ClientUnaryCall;
+    public delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    public delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    public delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
     public validateCreateOrUpdate(request: fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     public validateCreateOrUpdate(request: fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     public validateCreateOrUpdate(request: fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;

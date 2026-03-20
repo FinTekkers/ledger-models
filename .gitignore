@@ -31,3 +31,10 @@ target/**
 
 #npm
 node_modules/
+.npmrc
+
+#Secrets / credentials
+.env
+*.pem
+*.key
+credentials.json

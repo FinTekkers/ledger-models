@@ -7,6 +7,7 @@ import "fintekkers/requests/transaction/query_transaction_request.proto";
 import "fintekkers/requests/transaction/query_transaction_response.proto";
 
 import "fintekkers/requests/util/errors/summary.proto";
+import "fintekkers/requests/util/delete_request.proto";
 
 option java_generic_services = true;
 option py_generic_services = true;
@@ -17,6 +18,8 @@ service Transaction {
     rpc GetByIds  (fintekkers.requests.transaction.QueryTransactionRequestProto) returns  (fintekkers.requests.transaction.QueryTransactionResponseProto);
     rpc Search  (fintekkers.requests.transaction.QueryTransactionRequestProto) returns  (stream fintekkers.requests.transaction.QueryTransactionResponseProto);
     rpc ListIds  (fintekkers.requests.transaction.QueryTransactionRequestProto) returns  (fintekkers.requests.transaction.QueryTransactionResponseProto);
+
+    rpc Delete  (fintekkers.requests.util.DeleteRequestProto) returns  (fintekkers.requests.util.DeleteResponseProto);
 
     rpc ValidateCreateOrUpdate  (fintekkers.requests.transaction.CreateTransactionRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);
     rpc ValidateQueryRequest  (fintekkers.requests.transaction.QueryTransactionRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);

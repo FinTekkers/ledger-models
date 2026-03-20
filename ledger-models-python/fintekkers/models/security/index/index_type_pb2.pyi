@@ -12,9 +12,15 @@ class IndexTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     CORE_CPI: _ClassVar[IndexTypeProto]
     PCE: _ClassVar[IndexTypeProto]
     HICP: _ClassVar[IndexTypeProto]
+    SOFR: _ClassVar[IndexTypeProto]
+    T_BILL_13_WEEK: _ClassVar[IndexTypeProto]
+    FED_FUNDS: _ClassVar[IndexTypeProto]
 UNKNOWN_INDEX_TYPE: IndexTypeProto
 CPI_U: IndexTypeProto
 CPI_W: IndexTypeProto
 CORE_CPI: IndexTypeProto
 PCE: IndexTypeProto
 HICP: IndexTypeProto
+SOFR: IndexTypeProto
+T_BILL_13_WEEK: IndexTypeProto
+FED_FUNDS: IndexTypeProto

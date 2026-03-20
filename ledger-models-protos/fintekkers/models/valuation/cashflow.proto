@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package fintekkers.models.valuation;
+
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/util/decimal_value.proto";
+
+option java_multiple_files = true;
+
+option java_outer_classname = "CashflowProtos";
+
+// Represents a single cashflow in a bond's payment schedule.
+// Each cashflow has a date, a present value (discounted to settlement),
+// and a future value (the nominal/undiscounted amount).
+message CashflowProto {
+  // The date this cashflow occurs (coupon payment date or maturity date)
+  fintekkers.models.util.LocalDateProto cashflow_date = 1;
+
+  // Present value of this cashflow, discounted to the settlement date
+  fintekkers.models.util.DecimalValueProto pv_amount = 2;
+
+  // Future value of this cashflow (undiscounted, nominal amount)
+  fintekkers.models.util.DecimalValueProto fv_amount = 3;
+
+  // The annualized coupon rate applied for this period (as a percentage, e.g. 5.25 = 5.25%).
+  // For fixed-rate bonds this is constant; for FRNs it is reference_rate + spread for the period.
+  fintekkers.models.util.DecimalValueProto coupon_rate = 4;
+}

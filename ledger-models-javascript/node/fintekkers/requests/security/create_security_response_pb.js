@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_security_security_pb = require('../../../fintekkers/models/security/security_pb.js');
 goog.object.extend(proto, fintekkers_models_security_security_pb);
@@ -81,11 +75,11 @@ proto.fintekkers.requests.security.CreateSecurityResponseProto.prototype.toObjec
  */
 proto.fintekkers.requests.security.CreateSecurityResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    securityRequest: (f = msg.getSecurityRequest()) && fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto.toObject(includeInstance, f),
-    securityResponse: (f = msg.getSecurityResponse()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-    errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+securityRequest: (f = msg.getSecurityRequest()) && fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto.toObject(includeInstance, f),
+securityResponse: (f = msg.getSecurityResponse()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
+errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -98,7 +92,7 @@ proto.fintekkers.requests.security.CreateSecurityResponseProto.toObject = functi
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.security.CreateSecurityResponseProto}
  */
 proto.fintekkers.requests.security.CreateSecurityResponseProto.deserializeBinary = function(bytes) {

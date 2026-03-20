@@ -1,0 +1,213 @@
+{
+  "schema_version": "1.0",
+  "measures": [
+    {
+      "name": "UNKNOWN_MEASURE",
+      "enum_value": 0,
+      "display_name": "Unknown Measure",
+      "description": "Placeholder for unset or unrecognized measure values. Should never be requested in a valuation call.",
+      "formula": null,
+      "units": null,
+      "category": "sentinel",
+      "applies_to": [],
+      "model_assumptions": [],
+      "implemented": false
+    },
+    {
+      "name": "DIRECTED_QUANTITY",
+      "enum_value": 1,
+      "display_name": "Directed Quantity",
+      "description": "The signed quantity of a position (e.g. number of shares, or total face value of bonds held). This is an input measure provided on the PositionProto, not a computed output.",
+      "formula": null,
+      "units": "Units of the security (shares for equity, face-value dollars for bonds)",
+      "category": "input",
+      "applies_to": ["BOND_SECURITY", "TIPS", "FRN", "EQUITY_SECURITY", "CASH_SECURITY"],
+      "model_assumptions": [],
+      "implemented": true
+    },
+    {
+      "name": "MARKET_VALUE",
+      "enum_value": 2,
+      "display_name": "Market Value",
+      "description": "The current dollar value of a position at the given market price.",
+      "formula": "MarketValue = price / 100 * directed_quantity",
+      "units": "Dollars (or settlement currency)",
+      "category": "valuation",
+      "applies_to": ["BOND_SECURITY", "TIPS", "FRN", "EQUITY_SECURITY", "CASH_SECURITY"],
+      "model_assumptions": [
+        "None — direct mark-to-market calculation"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "UNADJUSTED_COST_BASIS",
+      "enum_value": 3,
+      "display_name": "Unadjusted Cost Basis",
+      "description": "The original purchase price of the security, before any adjustments for amortization, accretion, or corporate actions.",
+      "formula": "Returns the price_input as-is (quoted as % of par for bonds)",
+      "units": "Quoted price (% of par for bonds; dollar price for equities)",
+      "category": "cost",
+      "applies_to": ["BOND_SECURITY", "TIPS", "FRN", "EQUITY_SECURITY", "CASH_SECURITY"],
+      "model_assumptions": [
+        "None — pass-through of the input price"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "ADJUSTED_COST_BASIS",
+      "enum_value": 4,
+      "display_name": "Adjusted Cost Basis",
+      "description": "The cost basis adjusted for amortization of premium, accretion of discount, or corporate actions (e.g. stock splits, return of capital). Reserved for future use.",
+      "formula": null,
+      "units": "Quoted price (% of par for bonds; dollar price for equities)",
+      "category": "cost",
+      "applies_to": ["BOND_SECURITY", "TIPS", "FRN", "EQUITY_SECURITY"],
+      "model_assumptions": [],
+      "implemented": false
+    },
+    {
+      "name": "CURRENT_YIELD",
+      "enum_value": 5,
+      "display_name": "Current Yield",
+      "description": "Annual coupon income as a percentage of the current market price.",
+      "formula": "CurrentYield = (coupon_rate * principal) / (price * face_value / 100). For zero-coupon: (face_value / dollar_price)^(1 / years_to_maturity) - 1",
+      "units": "Decimal (0-1 scale; e.g. 0.0526 = 5.26%)",
+      "category": "yield",
+      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "model_assumptions": [
+        "Assumes coupon income is constant (no reinvestment assumption)",
+        "For TIPS, uses the inflation-adjusted principal for the annual coupon calculation",
+        "Day count: Actual/365 for years-to-maturity calculation"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "YIELD_TO_MATURITY",
+      "enum_value": 7,
+      "display_name": "Yield to Maturity",
+      "description": "The annualized rate of return assuming the bond is held to maturity and all coupons are reinvested at the same rate. This is the internal rate of return that equates the present value of all future cashflows to the current price.",
+      "formula": "Solve for r: price * (face / 100) = Sum[C / (1 + r/m)^t] + F / (1 + r/m)^N",
+      "units": "Decimal (0-1 scale; e.g. 0.06 = 6.00% annual)",
+      "category": "yield",
+      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "model_assumptions": [
+        "Coupon reinvestment at the YTM rate (standard bond math assumption)",
+        "For TIPS: uses inflation-adjusted principal for cashflows, yielding a mixed rate — use REAL_YIELD instead",
+        "Settlement on a coupon date (no accrued interest adjustment currently)",
+        "Day count: Actual/365 for years-to-maturity",
+        "Solver: Newton-Raphson iteration with linear approximation initial guess"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "MACAULAY_DURATION",
+      "enum_value": 8,
+      "display_name": "Macaulay Duration",
+      "description": "The weighted average time (in years) to receive all cashflows from a bond, where each cashflow's weight is its proportion of the bond's total present value.",
+      "formula": "D = Sum[(t / m) * PV_t / TotalPV]",
+      "units": "Years (e.g. 4.41 = 4.41 years)",
+      "category": "risk",
+      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "model_assumptions": [
+        "Uses the bond's YTM (from Newton-Raphson solver) as the discount rate",
+        "Flat yield curve (single rate for all maturities)",
+        "Settlement on a coupon date (integer period exponents)"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "PRESENT_VALUE",
+      "enum_value": 9,
+      "display_name": "Present Value",
+      "description": "The theoretical price of a bond computed as the sum of all future cashflows (coupons + principal) discounted at the bond's yield to maturity.",
+      "formula": "PV = Sum[C / (1 + r/m)^t] + F / (1 + r/m)^N, returned as quoted price (% of par)",
+      "units": "Quoted price (% of par; e.g. 95.00 = $95 per $100 face)",
+      "category": "valuation",
+      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "model_assumptions": [
+        "Same as YIELD_TO_MATURITY (the discount rate is derived from the input price)",
+        "For TIPS: cashflows use inflation-adjusted principal",
+        "Three-way invariant: price == present_value == sum(cashflow_pvs)"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "REAL_YIELD",
+      "enum_value": 10,
+      "display_name": "Real Yield",
+      "description": "The yield of a TIPS bond in real (inflation-adjusted) terms. This is the return an investor earns above the rate of inflation.",
+      "formula": "Delegates to YTM calculator with inflation-adjusted principal cashflows",
+      "units": "Decimal (0-1 scale; e.g. 0.02 = 2.00% real annual yield)",
+      "category": "yield",
+      "applies_to": ["TIPS"],
+      "model_assumptions": [
+        "Same as YIELD_TO_MATURITY but applied to TIPS securities",
+        "Known limitation: mixes real price with nominal (inflation-adjusted) cashflows, producing a rate that is not the true real yield for non-par TIPS"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "INFLATION_ADJUSTED_PRINCIPAL",
+      "enum_value": 11,
+      "display_name": "Inflation-Adjusted Principal",
+      "description": "The inflation-adjusted principal of a TIPS bond, reflecting the cumulative change in the Consumer Price Index (CPI) since the bond's issuance.",
+      "formula": "adjusted_principal = max(face_value * (current_cpi / base_cpi), face_value)",
+      "units": "Dollars (e.g. 103.36 for face=100 with 3.36% cumulative inflation)",
+      "category": "valuation",
+      "applies_to": ["TIPS"],
+      "model_assumptions": [
+        "Uses the CPI values provided in the request (base_cpi on the security, current_cpi on the cpi_price_input)",
+        "Deflation floor applies only to the principal at maturity; interim coupons use the raw adjusted principal"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "PRESENT_VALUE_CASHFLOWS",
+      "enum_value": 12,
+      "display_name": "Present Value Cashflows",
+      "description": "Requests the full schedule of future cashflows for a bond. The ValuationResponseProto will populate the cashflows repeated field with one CashflowProto per payment period.",
+      "formula": "Each CashflowProto contains: cashflow_date, fv_amount, pv_amount, coupon_rate. Sum of pv_amounts equals PRESENT_VALUE.",
+      "units": "fv_amount and pv_amount in dollars; coupon_rate as percentage",
+      "category": "valuation",
+      "applies_to": ["BOND_SECURITY", "TIPS", "FRN"],
+      "model_assumptions": [
+        "Same as PRESENT_VALUE",
+        "Three-way invariant: sum(pv_amounts) == present_value == price"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "DISCOUNT_MARGIN",
+      "enum_value": 13,
+      "display_name": "Discount Margin",
+      "description": "The discount margin of a Floating Rate Note (FRN) — the spread over the reference rate at which the market discounts the FRN's projected cashflows to arrive at its current price. This is the FRN analogue of YTM.",
+      "formula": "Solve for DM: price = Sum[(R + QM)/m * FV / (1 + (R + DM)/m)^t] + FV / (1 + (R + DM)/m)^N",
+      "units": "Decimal (0-1 scale; e.g. 0.0075 = 75 basis points)",
+      "category": "yield",
+      "applies_to": ["FRN"],
+      "model_assumptions": [
+        "Flat forward rates: all future reference rate fixings assumed equal to current observation",
+        "When DM = QM, price = par (100) on a reset date",
+        "When DM > QM, price < par; when DM < QM, price > par",
+        "Solver: Newton-Raphson, same as YTM"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "SPREAD_DURATION",
+      "enum_value": 14,
+      "display_name": "Spread Duration",
+      "description": "The sensitivity of an FRN's price to a 1 basis point change in the discount margin. This is the primary risk measure for FRNs, analogous to modified duration for fixed-rate bonds but measuring spread risk rather than rate risk.",
+      "formula": "SpreadDuration = (P_down - P_up) / (2 * 0.0001 * P_base)",
+      "units": "Years (e.g. 1.90 = a 1bp spread widening causes ~1.90bp price decline)",
+      "category": "risk",
+      "applies_to": ["FRN"],
+      "model_assumptions": [
+        "Same flat-forward assumption as DISCOUNT_MARGIN",
+        "Uses a symmetric 1bp bump for numerical differentiation",
+        "Interest rate duration of an FRN is near-zero; spread duration captures the economically significant risk"
+      ],
+      "implemented": true
+    }
+  ]
+}

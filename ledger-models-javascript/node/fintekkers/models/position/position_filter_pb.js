@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_position_position_util_pb = require('../../../fintekkers/models/position/position_util_pb.js');
 goog.object.extend(proto, fintekkers_models_position_position_util_pb);
@@ -84,9 +78,9 @@ proto.fintekkers.models.position.PositionFilterProto.prototype.toObject = functi
  */
 proto.fintekkers.models.position.PositionFilterProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    filtersList: jspb.Message.toObjectList(msg.getFiltersList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+filtersList: jspb.Message.toObjectList(msg.getFiltersList(),
     fintekkers_models_position_position_util_pb.FieldMapEntry.toObject, includeInstance)
   };
 
@@ -100,7 +94,7 @@ proto.fintekkers.models.position.PositionFilterProto.toObject = function(include
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.position.PositionFilterProto}
  */
 proto.fintekkers.models.position.PositionFilterProto.deserializeBinary = function(bytes) {

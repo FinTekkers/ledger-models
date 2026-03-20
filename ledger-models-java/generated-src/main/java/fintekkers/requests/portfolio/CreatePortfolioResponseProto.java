@@ -33,81 +33,6 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private CreatePortfolioResponseProto(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    int mutable_bitField0_ = 0;
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            objectClass_ = s;
-            break;
-          }
-          case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            version_ = s;
-            break;
-          }
-          case 162: {
-            fintekkers.requests.portfolio.CreatePortfolioRequestProto.Builder subBuilder = null;
-            if (createPortfolioRequest_ != null) {
-              subBuilder = createPortfolioRequest_.toBuilder();
-            }
-            createPortfolioRequest_ = input.readMessage(fintekkers.requests.portfolio.CreatePortfolioRequestProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(createPortfolioRequest_);
-              createPortfolioRequest_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 242: {
-            if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-              portfolioResponse_ = new java.util.ArrayList<fintekkers.models.portfolio.PortfolioProto>();
-              mutable_bitField0_ |= 0x00000001;
-            }
-            portfolioResponse_.add(
-                input.readMessage(fintekkers.models.portfolio.PortfolioProto.parser(), extensionRegistry));
-            break;
-          }
-          default: {
-            if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-    } finally {
-      if (((mutable_bitField0_ & 0x00000001) != 0)) {
-        portfolioResponse_ = java.util.Collections.unmodifiableList(portfolioResponse_);
-      }
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
     return fintekkers.requests.portfolio.CreatePortfolioResponseProtos.internal_static_fintekkers_requests_portfolio_CreatePortfolioResponseProto_descriptor;
@@ -122,7 +47,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-  private volatile java.lang.Object objectClass_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object objectClass_ = "";
   /**
    * <code>string object_class = 1;</code>
    * @return The objectClass.
@@ -160,7 +86,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int VERSION_FIELD_NUMBER = 2;
-  private volatile java.lang.Object version_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object version_ = "";
   /**
    * <code>string version = 2;</code>
    * @return The version.
@@ -220,10 +147,11 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.requests.portfolio.CreatePortfolioRequestProtoOrBuilder getCreatePortfolioRequestOrBuilder() {
-    return getCreatePortfolioRequest();
+    return createPortfolioRequest_ == null ? fintekkers.requests.portfolio.CreatePortfolioRequestProto.getDefaultInstance() : createPortfolioRequest_;
   }
 
   public static final int PORTFOLIO_RESPONSE_FIELD_NUMBER = 30;
+  @SuppressWarnings("serial")
   private java.util.List<fintekkers.models.portfolio.PortfolioProto> portfolioResponse_;
   /**
    * <code>repeated .fintekkers.models.portfolio.PortfolioProto portfolio_response = 30;</code>
@@ -277,10 +205,10 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getObjectClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
     }
-    if (!getVersionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
     }
     if (createPortfolioRequest_ != null) {
@@ -289,7 +217,7 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < portfolioResponse_.size(); i++) {
       output.writeMessage(30, portfolioResponse_.get(i));
     }
-    unknownFields.writeTo(output);
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -298,10 +226,10 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getObjectClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
     }
-    if (!getVersionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
     }
     if (createPortfolioRequest_ != null) {
@@ -312,7 +240,7 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(30, portfolioResponse_.get(i));
     }
-    size += unknownFields.getSerializedSize();
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -338,7 +266,7 @@ private static final long serialVersionUID = 0L;
     }
     if (!getPortfolioResponseList()
         .equals(other.getPortfolioResponseList())) return false;
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -361,7 +289,7 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + PORTFOLIO_RESPONSE_FIELD_NUMBER;
       hash = (53 * hash) + getPortfolioResponseList().hashCode();
     }
-    hash = (29 * hash) + unknownFields.hashCode();
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -478,39 +406,32 @@ private static final long serialVersionUID = 0L;
 
     // Construct using fintekkers.requests.portfolio.CreatePortfolioResponseProto.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
-              .alwaysUseFieldBuilders) {
-        getPortfolioResponseFieldBuilder();
-      }
+
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       objectClass_ = "";
-
       version_ = "";
-
-      if (createPortfolioRequestBuilder_ == null) {
-        createPortfolioRequest_ = null;
-      } else {
-        createPortfolioRequest_ = null;
+      createPortfolioRequest_ = null;
+      if (createPortfolioRequestBuilder_ != null) {
+        createPortfolioRequestBuilder_.dispose();
         createPortfolioRequestBuilder_ = null;
       }
       if (portfolioResponseBuilder_ == null) {
         portfolioResponse_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
       } else {
+        portfolioResponse_ = null;
         portfolioResponseBuilder_.clear();
       }
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
@@ -537,25 +458,37 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.requests.portfolio.CreatePortfolioResponseProto buildPartial() {
       fintekkers.requests.portfolio.CreatePortfolioResponseProto result = new fintekkers.requests.portfolio.CreatePortfolioResponseProto(this);
-      int from_bitField0_ = bitField0_;
-      result.objectClass_ = objectClass_;
-      result.version_ = version_;
-      if (createPortfolioRequestBuilder_ == null) {
-        result.createPortfolioRequest_ = createPortfolioRequest_;
-      } else {
-        result.createPortfolioRequest_ = createPortfolioRequestBuilder_.build();
-      }
+      buildPartialRepeatedFields(result);
+      if (bitField0_ != 0) { buildPartial0(result); }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartialRepeatedFields(fintekkers.requests.portfolio.CreatePortfolioResponseProto result) {
       if (portfolioResponseBuilder_ == null) {
-        if (((bitField0_ & 0x00000001) != 0)) {
+        if (((bitField0_ & 0x00000008) != 0)) {
           portfolioResponse_ = java.util.Collections.unmodifiableList(portfolioResponse_);
-          bitField0_ = (bitField0_ & ~0x00000001);
+          bitField0_ = (bitField0_ & ~0x00000008);
         }
         result.portfolioResponse_ = portfolioResponse_;
       } else {
         result.portfolioResponse_ = portfolioResponseBuilder_.build();
       }
-      onBuilt();
-      return result;
+    }
+
+    private void buildPartial0(fintekkers.requests.portfolio.CreatePortfolioResponseProto result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.objectClass_ = objectClass_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.version_ = version_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.createPortfolioRequest_ = createPortfolioRequestBuilder_ == null
+            ? createPortfolioRequest_
+            : createPortfolioRequestBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -604,10 +537,12 @@ private static final long serialVersionUID = 0L;
       if (other == fintekkers.requests.portfolio.CreatePortfolioResponseProto.getDefaultInstance()) return this;
       if (!other.getObjectClass().isEmpty()) {
         objectClass_ = other.objectClass_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getVersion().isEmpty()) {
         version_ = other.version_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       if (other.hasCreatePortfolioRequest()) {
@@ -617,7 +552,7 @@ private static final long serialVersionUID = 0L;
         if (!other.portfolioResponse_.isEmpty()) {
           if (portfolioResponse_.isEmpty()) {
             portfolioResponse_ = other.portfolioResponse_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00000008);
           } else {
             ensurePortfolioResponseIsMutable();
             portfolioResponse_.addAll(other.portfolioResponse_);
@@ -630,7 +565,7 @@ private static final long serialVersionUID = 0L;
             portfolioResponseBuilder_.dispose();
             portfolioResponseBuilder_ = null;
             portfolioResponse_ = other.portfolioResponse_;
-            bitField0_ = (bitField0_ & ~0x00000001);
+            bitField0_ = (bitField0_ & ~0x00000008);
             portfolioResponseBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getPortfolioResponseFieldBuilder() : null;
@@ -639,7 +574,7 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
-      this.mergeUnknownFields(other.unknownFields);
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -654,17 +589,60 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      fintekkers.requests.portfolio.CreatePortfolioResponseProto parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              objectClass_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 10
+            case 18: {
+              version_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 18
+            case 162: {
+              input.readMessage(
+                  getCreatePortfolioRequestFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 162
+            case 242: {
+              fintekkers.models.portfolio.PortfolioProto m =
+                  input.readMessage(
+                      fintekkers.models.portfolio.PortfolioProto.parser(),
+                      extensionRegistry);
+              if (portfolioResponseBuilder_ == null) {
+                ensurePortfolioResponseIsMutable();
+                portfolioResponse_.add(m);
+              } else {
+                portfolioResponseBuilder_.addMessage(m);
+              }
+              break;
+            } // case 242
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (fintekkers.requests.portfolio.CreatePortfolioResponseProto) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
     private int bitField0_;
@@ -710,11 +688,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setObjectClass(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       objectClass_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -723,8 +699,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearObjectClass() {
-      
       objectClass_ = getDefaultInstance().getObjectClass();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -735,12 +711,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setObjectClassBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       objectClass_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -786,11 +760,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setVersion(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       version_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -799,8 +771,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearVersion() {
-      
       version_ = getDefaultInstance().getVersion();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -811,12 +783,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setVersionBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       version_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -829,7 +799,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the createPortfolioRequest field is set.
      */
     public boolean hasCreatePortfolioRequest() {
-      return createPortfolioRequestBuilder_ != null || createPortfolioRequest_ != null;
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <code>.fintekkers.requests.portfolio.CreatePortfolioRequestProto create_portfolio_request = 20;</code>
@@ -851,11 +821,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         createPortfolioRequest_ = value;
-        onChanged();
       } else {
         createPortfolioRequestBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -865,11 +835,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.requests.portfolio.CreatePortfolioRequestProto.Builder builderForValue) {
       if (createPortfolioRequestBuilder_ == null) {
         createPortfolioRequest_ = builderForValue.build();
-        onChanged();
       } else {
         createPortfolioRequestBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -877,38 +847,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeCreatePortfolioRequest(fintekkers.requests.portfolio.CreatePortfolioRequestProto value) {
       if (createPortfolioRequestBuilder_ == null) {
-        if (createPortfolioRequest_ != null) {
-          createPortfolioRequest_ =
-            fintekkers.requests.portfolio.CreatePortfolioRequestProto.newBuilder(createPortfolioRequest_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000004) != 0) &&
+          createPortfolioRequest_ != null &&
+          createPortfolioRequest_ != fintekkers.requests.portfolio.CreatePortfolioRequestProto.getDefaultInstance()) {
+          getCreatePortfolioRequestBuilder().mergeFrom(value);
         } else {
           createPortfolioRequest_ = value;
         }
-        onChanged();
       } else {
         createPortfolioRequestBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.requests.portfolio.CreatePortfolioRequestProto create_portfolio_request = 20;</code>
      */
     public Builder clearCreatePortfolioRequest() {
-      if (createPortfolioRequestBuilder_ == null) {
-        createPortfolioRequest_ = null;
-        onChanged();
-      } else {
-        createPortfolioRequest_ = null;
+      bitField0_ = (bitField0_ & ~0x00000004);
+      createPortfolioRequest_ = null;
+      if (createPortfolioRequestBuilder_ != null) {
+        createPortfolioRequestBuilder_.dispose();
         createPortfolioRequestBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.requests.portfolio.CreatePortfolioRequestProto create_portfolio_request = 20;</code>
      */
     public fintekkers.requests.portfolio.CreatePortfolioRequestProto.Builder getCreatePortfolioRequestBuilder() {
-      
+      bitField0_ |= 0x00000004;
       onChanged();
       return getCreatePortfolioRequestFieldBuilder().getBuilder();
     }
@@ -943,9 +913,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<fintekkers.models.portfolio.PortfolioProto> portfolioResponse_ =
       java.util.Collections.emptyList();
     private void ensurePortfolioResponseIsMutable() {
-      if (!((bitField0_ & 0x00000001) != 0)) {
+      if (!((bitField0_ & 0x00000008) != 0)) {
         portfolioResponse_ = new java.util.ArrayList<fintekkers.models.portfolio.PortfolioProto>(portfolioResponse_);
-        bitField0_ |= 0x00000001;
+        bitField0_ |= 0x00000008;
        }
     }
 
@@ -1095,7 +1065,7 @@ private static final long serialVersionUID = 0L;
     public Builder clearPortfolioResponse() {
       if (portfolioResponseBuilder_ == null) {
         portfolioResponse_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
+        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
       } else {
         portfolioResponseBuilder_.clear();
@@ -1172,7 +1142,7 @@ private static final long serialVersionUID = 0L;
         portfolioResponseBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             fintekkers.models.portfolio.PortfolioProto, fintekkers.models.portfolio.PortfolioProto.Builder, fintekkers.models.portfolio.PortfolioProtoOrBuilder>(
                 portfolioResponse_,
-                ((bitField0_ & 0x00000001) != 0),
+                ((bitField0_ & 0x00000008) != 0),
                 getParentForChildren(),
                 isClean());
         portfolioResponse_ = null;
@@ -1212,7 +1182,18 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new CreatePortfolioResponseProto(input, extensionRegistry);
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
     }
   };
 

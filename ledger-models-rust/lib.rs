@@ -42,6 +42,9 @@ pub mod fintekkers {
                 include!("fintekkers.models.util.lock.rs");
             }
         }
+        pub mod valuation {
+            include!("fintekkers.models.valuation.rs");
+        }
     }
 
     pub mod requests {

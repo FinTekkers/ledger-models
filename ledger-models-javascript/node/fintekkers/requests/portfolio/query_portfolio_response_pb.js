@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_portfolio_portfolio_pb = require('../../../fintekkers/models/portfolio/portfolio_pb.js');
 goog.object.extend(proto, fintekkers_models_portfolio_portfolio_pb);
@@ -86,10 +80,10 @@ proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.prototype.toObje
  */
 proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    queryPortfolioRequest: (f = msg.getQueryPortfolioRequest()) && fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto.toObject(includeInstance, f),
-    portfolioResponseList: jspb.Message.toObjectList(msg.getPortfolioResponseList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+queryPortfolioRequest: (f = msg.getQueryPortfolioRequest()) && fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto.toObject(includeInstance, f),
+portfolioResponseList: jspb.Message.toObjectList(msg.getPortfolioResponseList(),
     fintekkers_models_portfolio_portfolio_pb.PortfolioProto.toObject, includeInstance)
   };
 
@@ -103,7 +97,7 @@ proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.toObject = funct
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto}
  */
 proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.deserializeBinary = function(bytes) {

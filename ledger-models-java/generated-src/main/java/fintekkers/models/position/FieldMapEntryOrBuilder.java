@@ -51,10 +51,28 @@ public interface FieldMapEntryOrBuilder extends
    * </pre>
    *
    * <code>int32 enum_value = 5;</code>
+   * @return Whether the enumValue field is set.
+   */
+  boolean hasEnumValue();
+  /**
+   * <pre>
+   *If the field is an enum type, then we use the number to denote which value it is
+   * </pre>
+   *
+   * <code>int32 enum_value = 5;</code>
    * @return The enumValue.
    */
   int getEnumValue();
 
+  /**
+   * <pre>
+   *If the field is a string type, we just serialize the string (packing has an overhead)
+   * </pre>
+   *
+   * <code>string string_value = 6;</code>
+   * @return Whether the stringValue field is set.
+   */
+  boolean hasStringValue();
   /**
    * <pre>
    *If the field is a string type, we just serialize the string (packing has an overhead)

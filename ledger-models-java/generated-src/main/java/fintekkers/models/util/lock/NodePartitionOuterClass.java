@@ -115,66 +115,6 @@ public final class NodePartitionOuterClass {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private NodePartition(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              objectClass_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              version_ = s;
-              break;
-            }
-            case 24: {
-
-              partition_ = input.readInt32();
-              break;
-            }
-            case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              namespace_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return fintekkers.models.util.lock.NodePartitionOuterClass.internal_static_fintekkers_models_util_lock_NodePartition_descriptor;
@@ -189,7 +129,8 @@ public final class NodePartitionOuterClass {
     }
 
     public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-    private volatile java.lang.Object objectClass_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object objectClass_ = "";
     /**
      * <code>string object_class = 1;</code>
      * @return The objectClass.
@@ -227,7 +168,8 @@ public final class NodePartitionOuterClass {
     }
 
     public static final int VERSION_FIELD_NUMBER = 2;
-    private volatile java.lang.Object version_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object version_ = "";
     /**
      * <code>string version = 2;</code>
      * @return The version.
@@ -265,7 +207,7 @@ public final class NodePartitionOuterClass {
     }
 
     public static final int PARTITION_FIELD_NUMBER = 3;
-    private int partition_;
+    private int partition_ = 0;
     /**
      * <pre>
      *The unique id that identifies a partition. For example a namespace with two
@@ -285,7 +227,8 @@ public final class NodePartitionOuterClass {
     }
 
     public static final int NAMESPACE_FIELD_NUMBER = 4;
-    private volatile java.lang.Object namespace_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object namespace_ = "";
     /**
      * <pre>
      *A generic concept to allow partitions of different data types. For example,
@@ -348,19 +291,19 @@ public final class NodePartitionOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getObjectClassBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
       }
-      if (!getVersionBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
       }
       if (partition_ != 0) {
         output.writeInt32(3, partition_);
       }
-      if (!getNamespaceBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(namespace_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, namespace_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -369,20 +312,20 @@ public final class NodePartitionOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!getObjectClassBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
       }
-      if (!getVersionBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
       }
       if (partition_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(3, partition_);
       }
-      if (!getNamespaceBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(namespace_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, namespace_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -405,7 +348,7 @@ public final class NodePartitionOuterClass {
           != other.getPartition()) return false;
       if (!getNamespace()
           .equals(other.getNamespace())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -424,7 +367,7 @@ public final class NodePartitionOuterClass {
       hash = (53 * hash) + getPartition();
       hash = (37 * hash) + NAMESPACE_FIELD_NUMBER;
       hash = (53 * hash) + getNamespace().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -545,30 +488,22 @@ public final class NodePartitionOuterClass {
 
       // Construct using fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         objectClass_ = "";
-
         version_ = "";
-
         partition_ = 0;
-
         namespace_ = "";
-
         return this;
       }
 
@@ -595,12 +530,25 @@ public final class NodePartitionOuterClass {
       @java.lang.Override
       public fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition buildPartial() {
         fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition result = new fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition(this);
-        result.objectClass_ = objectClass_;
-        result.version_ = version_;
-        result.partition_ = partition_;
-        result.namespace_ = namespace_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.objectClass_ = objectClass_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.version_ = version_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.partition_ = partition_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.namespace_ = namespace_;
+        }
       }
 
       @java.lang.Override
@@ -649,10 +597,12 @@ public final class NodePartitionOuterClass {
         if (other == fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.getDefaultInstance()) return this;
         if (!other.getObjectClass().isEmpty()) {
           objectClass_ = other.objectClass_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getVersion().isEmpty()) {
           version_ = other.version_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (other.getPartition() != 0) {
@@ -660,9 +610,10 @@ public final class NodePartitionOuterClass {
         }
         if (!other.getNamespace().isEmpty()) {
           namespace_ = other.namespace_;
+          bitField0_ |= 0x00000008;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -677,19 +628,53 @@ public final class NodePartitionOuterClass {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                objectClass_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                version_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 24: {
+                partition_ = input.readInt32();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 24
+              case 34: {
+                namespace_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object objectClass_ = "";
       /**
@@ -732,11 +717,9 @@ public final class NodePartitionOuterClass {
        */
       public Builder setObjectClass(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         objectClass_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -745,8 +728,8 @@ public final class NodePartitionOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearObjectClass() {
-        
         objectClass_ = getDefaultInstance().getObjectClass();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -757,12 +740,10 @@ public final class NodePartitionOuterClass {
        */
       public Builder setObjectClassBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         objectClass_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -808,11 +789,9 @@ public final class NodePartitionOuterClass {
        */
       public Builder setVersion(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         version_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -821,8 +800,8 @@ public final class NodePartitionOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearVersion() {
-        
         version_ = getDefaultInstance().getVersion();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -833,12 +812,10 @@ public final class NodePartitionOuterClass {
        */
       public Builder setVersionBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         version_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -878,6 +855,7 @@ public final class NodePartitionOuterClass {
       public Builder setPartition(int value) {
         
         partition_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -895,7 +873,7 @@ public final class NodePartitionOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearPartition() {
-        
+        bitField0_ = (bitField0_ & ~0x00000004);
         partition_ = 0;
         onChanged();
         return this;
@@ -960,11 +938,9 @@ public final class NodePartitionOuterClass {
        */
       public Builder setNamespace(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         namespace_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -979,8 +955,8 @@ public final class NodePartitionOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearNamespace() {
-        
         namespace_ = getDefaultInstance().getNamespace();
+        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
         return this;
       }
@@ -997,12 +973,10 @@ public final class NodePartitionOuterClass {
        */
       public Builder setNamespaceBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         namespace_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -1039,7 +1013,18 @@ public final class NodePartitionOuterClass {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new NodePartition(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 

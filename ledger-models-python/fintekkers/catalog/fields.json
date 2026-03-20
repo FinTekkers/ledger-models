@@ -1,0 +1,275 @@
+{
+  "schema_version": "1.0",
+  "fields": [
+    {
+      "name": "UNKNOWN_FIELD",
+      "enum_value": 0,
+      "display_name": "Unknown Field",
+      "description": "Placeholder for unset or unrecognized field values.",
+      "data_type": null,
+      "category": "sentinel",
+      "applies_to": []
+    },
+    {
+      "name": "ID",
+      "enum_value": 1,
+      "display_name": "ID",
+      "description": "The unique identifier (UUID) of the entity.",
+      "data_type": "UUID",
+      "category": "identity",
+      "applies_to": ["security", "portfolio", "transaction", "position", "price"]
+    },
+    {
+      "name": "AS_OF",
+      "enum_value": 2,
+      "display_name": "As Of",
+      "description": "The timestamp at which this entity's state is observed.",
+      "data_type": "ZonedDateTime",
+      "category": "identity",
+      "applies_to": ["security", "portfolio", "transaction", "position", "price"]
+    },
+    {
+      "name": "EFFECTIVE_DATE",
+      "enum_value": 10,
+      "display_name": "Effective Date",
+      "description": "The date on which an event takes effect. Used as a pivot field for position aggregation.",
+      "data_type": "LocalDate",
+      "category": "attribute",
+      "applies_to": ["position"]
+    },
+    {
+      "name": "STRATEGY",
+      "enum_value": 11,
+      "display_name": "Strategy",
+      "description": "The investment strategy associated with this position or transaction.",
+      "data_type": "Strategy",
+      "category": "attribute",
+      "applies_to": ["transaction", "position"]
+    },
+    {
+      "name": "SECURITY",
+      "enum_value": 12,
+      "display_name": "Security",
+      "description": "The full security object associated with this position or transaction.",
+      "data_type": "Security",
+      "category": "attribute",
+      "applies_to": ["transaction", "position"]
+    },
+    {
+      "name": "CASH_IMPACT_SECURITY",
+      "enum_value": 13,
+      "display_name": "Cash Impact Security",
+      "description": "The cash security representing the monetary impact of a transaction (e.g. USD for a bond purchase).",
+      "data_type": "Security",
+      "category": "attribute",
+      "applies_to": ["transaction", "position"]
+    },
+    {
+      "name": "PORTFOLIO",
+      "enum_value": 14,
+      "display_name": "Portfolio",
+      "description": "The full portfolio object associated with this position or transaction.",
+      "data_type": "Portfolio",
+      "category": "portfolio",
+      "applies_to": ["transaction", "position"]
+    },
+    {
+      "name": "PORTFOLIO_ID",
+      "enum_value": 15,
+      "display_name": "Portfolio ID",
+      "description": "The UUID of the portfolio.",
+      "data_type": "UUID",
+      "category": "portfolio",
+      "applies_to": ["transaction", "position"]
+    },
+    {
+      "name": "PRICE",
+      "enum_value": 16,
+      "display_name": "Price",
+      "description": "The price object associated with this position or transaction.",
+      "data_type": "Price",
+      "category": "miscellaneous",
+      "applies_to": ["transaction", "position"]
+    },
+    {
+      "name": "PRICE_ID",
+      "enum_value": 17,
+      "display_name": "Price ID",
+      "description": "The UUID of the price.",
+      "data_type": "UUID",
+      "category": "miscellaneous",
+      "applies_to": ["transaction", "position"]
+    },
+    {
+      "name": "IS_CANCELLED",
+      "enum_value": 18,
+      "display_name": "Is Cancelled",
+      "description": "Whether the transaction has been cancelled.",
+      "data_type": "Boolean",
+      "category": "miscellaneous",
+      "applies_to": ["transaction"]
+    },
+    {
+      "name": "POSITION_STATUS",
+      "enum_value": 19,
+      "display_name": "Position Status",
+      "description": "The status of the position (e.g. INTENDED, EXECUTED, SETTLED).",
+      "data_type": "PositionStatus",
+      "category": "miscellaneous",
+      "applies_to": ["transaction", "position"]
+    },
+    {
+      "name": "TRADE_DATE",
+      "enum_value": 30,
+      "display_name": "Trade Date",
+      "description": "The date on which a trade was executed (spot date).",
+      "data_type": "LocalDate",
+      "category": "transaction",
+      "applies_to": ["transaction"]
+    },
+    {
+      "name": "SETTLEMENT_DATE",
+      "enum_value": 31,
+      "display_name": "Settlement Date",
+      "description": "The date on which a trade settles (exchange of cash and securities).",
+      "data_type": "LocalDate",
+      "category": "transaction",
+      "applies_to": ["transaction"]
+    },
+    {
+      "name": "TRANSACTION_TYPE",
+      "enum_value": 32,
+      "display_name": "Transaction Type",
+      "description": "The type of transaction (BUY, SELL, DEPOSIT, WITHDRAWAL, MATURATION, etc.).",
+      "data_type": "TransactionType",
+      "category": "transaction",
+      "applies_to": ["transaction"]
+    },
+    {
+      "name": "TAX_LOT_OPEN_DATE",
+      "enum_value": 40,
+      "display_name": "Tax Lot Open Date",
+      "description": "The date a tax lot was opened (position acquired).",
+      "data_type": "LocalDate",
+      "category": "tax_lot",
+      "applies_to": ["position"]
+    },
+    {
+      "name": "TAX_LOT_CLOSE_DATE",
+      "enum_value": 41,
+      "display_name": "Tax Lot Close Date",
+      "description": "The date a tax lot was closed (position disposed).",
+      "data_type": "LocalDate",
+      "category": "tax_lot",
+      "applies_to": ["position"]
+    },
+    {
+      "name": "ASSET_CLASS",
+      "enum_value": 50,
+      "display_name": "Asset Class",
+      "description": "The asset class of the security (e.g. Fixed Income, Equity, Cash).",
+      "data_type": "String",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    },
+    {
+      "name": "PRODUCT_CLASS",
+      "enum_value": 51,
+      "display_name": "Product Class",
+      "description": "The product class of the security (e.g. Bond, CashEquity).",
+      "data_type": "String",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    },
+    {
+      "name": "PRODUCT_TYPE",
+      "enum_value": 52,
+      "display_name": "Product Type",
+      "description": "The specific product type (e.g. BILL, NOTE, BOND). Derived from the security's tenor.",
+      "data_type": "String",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    },
+    {
+      "name": "SECURITY_ID",
+      "enum_value": 53,
+      "display_name": "Security ID",
+      "description": "The UUID of the security.",
+      "data_type": "UUID",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    },
+    {
+      "name": "IDENTIFIER",
+      "enum_value": 54,
+      "display_name": "Identifier",
+      "description": "The security's market identifier (e.g. CUSIP, ISIN, ticker).",
+      "data_type": "Identifier",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    },
+    {
+      "name": "TENOR",
+      "enum_value": 55,
+      "display_name": "Tenor",
+      "description": "The original tenor (term) of the security, calculated as maturity date minus issue date.",
+      "data_type": "Tenor",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    },
+    {
+      "name": "MATURITY_DATE",
+      "enum_value": 56,
+      "display_name": "Maturity Date",
+      "description": "The date on which the principal of a bond is repaid.",
+      "data_type": "LocalDate",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    },
+    {
+      "name": "ADJUSTED_TENOR",
+      "enum_value": 57,
+      "display_name": "Adjusted Tenor",
+      "description": "The remaining tenor of the security, calculated as maturity date minus today.",
+      "data_type": "Tenor",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    },
+    {
+      "name": "ISSUE_DATE",
+      "enum_value": 58,
+      "display_name": "Issue Date",
+      "description": "The date on which the security was originally issued.",
+      "data_type": "LocalDate",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    },
+    {
+      "name": "PORTFOLIO_NAME",
+      "enum_value": 60,
+      "display_name": "Portfolio Name",
+      "description": "The human-readable name of the portfolio.",
+      "data_type": "String",
+      "category": "portfolio",
+      "applies_to": ["portfolio", "position"]
+    },
+    {
+      "name": "SECURITY_DESCRIPTION",
+      "enum_value": 61,
+      "display_name": "Security Description",
+      "description": "The human-readable description of the security.",
+      "data_type": "String",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    },
+    {
+      "name": "SECURITY_ISSUER_NAME",
+      "enum_value": 62,
+      "display_name": "Security Issuer Name",
+      "description": "The name of the entity that issued the security (e.g. US Government, Apple Inc.).",
+      "data_type": "String",
+      "category": "security",
+      "applies_to": ["security", "position"]
+    }
+  ]
+}

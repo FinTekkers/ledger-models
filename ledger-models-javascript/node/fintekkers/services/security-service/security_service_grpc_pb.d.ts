@@ -14,6 +14,7 @@ import * as fintekkers_requests_security_get_fields_response_pb from "../../../f
 import * as fintekkers_requests_security_get_field_values_request_pb from "../../../fintekkers/requests/security/get_field_values_request_pb";
 import * as fintekkers_requests_security_get_field_values_response_pb from "../../../fintekkers/requests/security/get_field_values_response_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
+import * as fintekkers_requests_util_delete_request_pb from "../../../fintekkers/requests/util/delete_request_pb";
 import * as google_protobuf_empty_pb from "google-protobuf/google/protobuf/empty_pb";
 
 interface ISecurityService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
@@ -21,6 +22,7 @@ interface ISecurityService extends grpc.ServiceDefinition<grpc.UntypedServiceImp
     getByIds: ISecurityService_IGetByIds;
     search: ISecurityService_ISearch;
     listIds: ISecurityService_IListIds;
+    delete: ISecurityService_IDelete;
     validateCreateOrUpdate: ISecurityService_IValidateCreateOrUpdate;
     validateQueryRequest: ISecurityService_IValidateQueryRequest;
     getFields: ISecurityService_IGetFields;
@@ -62,6 +64,15 @@ interface ISecurityService_IListIds extends grpc.MethodDefinition<fintekkers_req
     requestDeserialize: grpc.deserialize<fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto>;
     responseSerialize: grpc.serialize<fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto>;
     responseDeserialize: grpc.deserialize<fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto>;
+}
+interface ISecurityService_IDelete extends grpc.MethodDefinition<fintekkers_requests_util_delete_request_pb.DeleteRequestProto, fintekkers_requests_util_delete_request_pb.DeleteResponseProto> {
+    path: "/fintekkers.services.security_service.Security/Delete";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<fintekkers_requests_util_delete_request_pb.DeleteRequestProto>;
+    requestDeserialize: grpc.deserialize<fintekkers_requests_util_delete_request_pb.DeleteRequestProto>;
+    responseSerialize: grpc.serialize<fintekkers_requests_util_delete_request_pb.DeleteResponseProto>;
+    responseDeserialize: grpc.deserialize<fintekkers_requests_util_delete_request_pb.DeleteResponseProto>;
 }
 interface ISecurityService_IValidateCreateOrUpdate extends grpc.MethodDefinition<fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto> {
     path: "/fintekkers.services.security_service.Security/ValidateCreateOrUpdate";
@@ -107,6 +118,7 @@ export interface ISecurityServer extends grpc.UntypedServiceImplementation {
     getByIds: grpc.handleUnaryCall<fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto>;
     search: grpc.handleServerStreamingCall<fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto>;
     listIds: grpc.handleUnaryCall<fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto>;
+    delete: grpc.handleUnaryCall<fintekkers_requests_util_delete_request_pb.DeleteRequestProto, fintekkers_requests_util_delete_request_pb.DeleteResponseProto>;
     validateCreateOrUpdate: grpc.handleUnaryCall<fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto>;
     validateQueryRequest: grpc.handleUnaryCall<fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, fintekkers_requests_util_errors_summary_pb.SummaryProto>;
     getFields: grpc.handleUnaryCall<google_protobuf_empty_pb.Empty, fintekkers_requests_security_get_fields_response_pb.GetFieldsResponseProto>;
@@ -125,6 +137,9 @@ export interface ISecurityClient {
     listIds(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto) => void): grpc.ClientUnaryCall;
     listIds(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto) => void): grpc.ClientUnaryCall;
     listIds(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto) => void): grpc.ClientUnaryCall;
+    delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
     validateCreateOrUpdate(request: fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     validateCreateOrUpdate(request: fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     validateCreateOrUpdate(request: fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
@@ -152,6 +167,9 @@ export class SecurityClient extends grpc.Client implements ISecurityClient {
     public listIds(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto) => void): grpc.ClientUnaryCall;
     public listIds(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto) => void): grpc.ClientUnaryCall;
     public listIds(request: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_security_query_security_response_pb.QuerySecurityResponseProto) => void): grpc.ClientUnaryCall;
+    public delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    public delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
+    public delete(request: fintekkers_requests_util_delete_request_pb.DeleteRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_delete_request_pb.DeleteResponseProto) => void): grpc.ClientUnaryCall;
     public validateCreateOrUpdate(request: fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     public validateCreateOrUpdate(request: fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;
     public validateCreateOrUpdate(request: fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: fintekkers_requests_util_errors_summary_pb.SummaryProto) => void): grpc.ClientUnaryCall;

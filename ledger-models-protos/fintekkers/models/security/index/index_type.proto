@@ -13,4 +13,9 @@ enum IndexTypeProto {
   CORE_CPI = 3; //CPI less food and energy
   PCE = 4; //Personal Consumption Expenditures
   HICP = 5; //Harmonised Index of Consumer Prices (EU)
+
+  //Floating rate benchmarks
+  SOFR = 10; //Secured Overnight Financing Rate (primary USD benchmark post-LIBOR)
+  T_BILL_13_WEEK = 11; //13-week Treasury bill auction high rate
+  FED_FUNDS = 12; //Federal Funds effective rate
 }

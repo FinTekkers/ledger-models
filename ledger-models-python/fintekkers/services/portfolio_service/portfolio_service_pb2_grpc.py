@@ -7,6 +7,7 @@ from fintekkers.requests.portfolio import create_portfolio_request_pb2 as fintek
 from fintekkers.requests.portfolio import create_portfolio_response_pb2 as fintekkers_dot_requests_dot_portfolio_dot_create__portfolio__response__pb2
 from fintekkers.requests.portfolio import query_portfolio_request_pb2 as fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2
 from fintekkers.requests.portfolio import query_portfolio_response_pb2 as fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__response__pb2
+from fintekkers.requests.util import delete_request_pb2 as fintekkers_dot_requests_dot_util_dot_delete__request__pb2
 from fintekkers.requests.util.errors import summary_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2
 
 GRPC_GENERATED_VERSION = '1.78.0'
@@ -58,6 +59,11 @@ class PortfolioStub(object):
                 request_serializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2.QueryPortfolioRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__response__pb2.QueryPortfolioResponseProto.FromString,
                 _registered_method=True)
+        self.Delete = channel.unary_unary(
+                '/fintekkers.services.portfolio_service.Portfolio/Delete',
+                request_serializer=fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteRequestProto.SerializeToString,
+                response_deserializer=fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteResponseProto.FromString,
+                _registered_method=True)
         self.ValidateCreateOrUpdate = channel.unary_unary(
                 '/fintekkers.services.portfolio_service.Portfolio/ValidateCreateOrUpdate',
                 request_serializer=fintekkers_dot_requests_dot_portfolio_dot_create__portfolio__request__pb2.CreatePortfolioRequestProto.SerializeToString,
@@ -97,6 +103,12 @@ class PortfolioServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Delete(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def ValidateCreateOrUpdate(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -131,6 +143,11 @@ def add_PortfolioServicer_to_server(servicer, server):
                     servicer.ListIds,
                     request_deserializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2.QueryPortfolioRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__response__pb2.QueryPortfolioResponseProto.SerializeToString,
+            ),
+            'Delete': grpc.unary_unary_rpc_method_handler(
+                    servicer.Delete,
+                    request_deserializer=fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteRequestProto.FromString,
+                    response_serializer=fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteResponseProto.SerializeToString,
             ),
             'ValidateCreateOrUpdate': grpc.unary_unary_rpc_method_handler(
                     servicer.ValidateCreateOrUpdate,
@@ -251,6 +268,33 @@ class Portfolio(object):
             '/fintekkers.services.portfolio_service.Portfolio/ListIds',
             fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2.QueryPortfolioRequestProto.SerializeToString,
             fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__response__pb2.QueryPortfolioResponseProto.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Delete(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/fintekkers.services.portfolio_service.Portfolio/Delete',
+            fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteRequestProto.SerializeToString,
+            fintekkers_dot_requests_dot_util_dot_delete__request__pb2.DeleteResponseProto.FromString,
             options,
             channel_credentials,
             insecure,

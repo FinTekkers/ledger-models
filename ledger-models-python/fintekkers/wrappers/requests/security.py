@@ -11,7 +11,12 @@ from fintekkers.models.security.coupon_frequency_pb2 import NO_COUPON, SEMIANNUA
 from fintekkers.models.security.coupon_type_pb2 import FIXED, FLOAT, ZERO
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import CUSIP
-from fintekkers.models.security.security_pb2 import SecurityProto
+from fintekkers.models.security.security_pb2 import (
+    SecurityProto,
+    BondDetailsProto,
+    TipsDetailsProto,
+    FrnDetailsProto,
+)
 from fintekkers.models.security.security_quantity_type_pb2 import ORIGINAL_FACE_VALUE
 from fintekkers.models.security.security_type_pb2 import (
     BOND_SECURITY,
@@ -116,6 +121,9 @@ class CreateSecurityRequest:
             )
             issuance_list.append(issuance)
 
+        coupon_rate_proto = ProtoSerializationUtil.serialize(coupon_rate)
+        face_value_proto = ProtoSerializationUtil.serialize(face_value)
+
         security_proto: SecurityProto = SecurityProto(
             as_of=LocalTimestampProto(
                 time_zone="America/New_York",
@@ -124,6 +132,7 @@ class CreateSecurityRequest:
             uuid=UUIDProto(raw_uuid=uuid4().bytes),
             issuer_name="US Government",
             identifier=id,
+            # Flat fields (legacy — consumed by old clients)
             issue_date=issue_date_proto,
             dated_date=dated_date_proto,
             maturity_date=maturity_date_proto,
@@ -132,11 +141,34 @@ class CreateSecurityRequest:
             settlement_currency=cash_security,
             coupon_frequency=coupon_frequency,
             coupon_type=coupon_type,
-            coupon_rate=ProtoSerializationUtil.serialize(coupon_rate),
+            coupon_rate=coupon_rate_proto,
             asset_class="Fixed Income",
-            face_value=ProtoSerializationUtil.serialize(face_value),
+            face_value=face_value_proto,
             issuance_info=issuance_list,
         )
+
+        # DUAL-WRITE: also populate the oneof product_details sub-message
+        bond_base_kwargs = dict(
+            coupon_rate=coupon_rate_proto,
+            coupon_type=coupon_type,
+            coupon_frequency=coupon_frequency,
+            face_value=face_value_proto,
+            issue_date=issue_date_proto,
+            dated_date=dated_date_proto,
+            maturity_date=maturity_date_proto,
+            issuance_info=issuance_list,
+        )
+
+        if security_type == BOND_SECURITY:
+            security_proto.bond_details.CopyFrom(BondDetailsProto(**bond_base_kwargs))
+        elif security_type == TIPS:
+            security_proto.tips_details.CopyFrom(TipsDetailsProto(**bond_base_kwargs))
+        elif security_type == FRN:
+            frn_kwargs = dict(
+                **bond_base_kwargs,
+                spread=ProtoSerializationUtil.serialize(spread),
+            )
+            security_proto.frn_details.CopyFrom(FrnDetailsProto(**frn_kwargs))
 
         security = Security(security_proto)
 

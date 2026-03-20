@@ -52,48 +52,6 @@ public final class Uuid {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private UUIDProto(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-
-              rawUuid_ = input.readBytes();
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return fintekkers.models.util.Uuid.internal_static_fintekkers_models_util_UUIDProto_descriptor;
@@ -108,7 +66,7 @@ public final class Uuid {
     }
 
     public static final int RAW_UUID_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString rawUuid_;
+    private com.google.protobuf.ByteString rawUuid_ = com.google.protobuf.ByteString.EMPTY;
     /**
      * <code>bytes raw_uuid = 1;</code>
      * @return The rawUuid.
@@ -135,7 +93,7 @@ public final class Uuid {
       if (!rawUuid_.isEmpty()) {
         output.writeBytes(1, rawUuid_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -148,7 +106,7 @@ public final class Uuid {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(1, rawUuid_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -165,7 +123,7 @@ public final class Uuid {
 
       if (!getRawUuid()
           .equals(other.getRawUuid())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -178,7 +136,7 @@ public final class Uuid {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + RAW_UUID_FIELD_NUMBER;
       hash = (53 * hash) + getRawUuid().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -295,24 +253,19 @@ public final class Uuid {
 
       // Construct using fintekkers.models.util.Uuid.UUIDProto.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         rawUuid_ = com.google.protobuf.ByteString.EMPTY;
-
         return this;
       }
 
@@ -339,9 +292,16 @@ public final class Uuid {
       @java.lang.Override
       public fintekkers.models.util.Uuid.UUIDProto buildPartial() {
         fintekkers.models.util.Uuid.UUIDProto result = new fintekkers.models.util.Uuid.UUIDProto(this);
-        result.rawUuid_ = rawUuid_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(fintekkers.models.util.Uuid.UUIDProto result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.rawUuid_ = rawUuid_;
+        }
       }
 
       @java.lang.Override
@@ -391,7 +351,7 @@ public final class Uuid {
         if (other.getRawUuid() != com.google.protobuf.ByteString.EMPTY) {
           setRawUuid(other.getRawUuid());
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -406,19 +366,38 @@ public final class Uuid {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        fintekkers.models.util.Uuid.UUIDProto parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                rawUuid_ = input.readBytes();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (fintekkers.models.util.Uuid.UUIDProto) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private com.google.protobuf.ByteString rawUuid_ = com.google.protobuf.ByteString.EMPTY;
       /**
@@ -435,11 +414,9 @@ public final class Uuid {
        * @return This builder for chaining.
        */
       public Builder setRawUuid(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         rawUuid_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -448,7 +425,7 @@ public final class Uuid {
        * @return This builder for chaining.
        */
       public Builder clearRawUuid() {
-        
+        bitField0_ = (bitField0_ & ~0x00000001);
         rawUuid_ = getDefaultInstance().getRawUuid();
         onChanged();
         return this;
@@ -486,7 +463,18 @@ public final class Uuid {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new UUIDProto(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 

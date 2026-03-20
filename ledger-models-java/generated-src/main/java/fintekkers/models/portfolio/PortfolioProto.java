@@ -33,118 +33,6 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private PortfolioProto(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 10: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            objectClass_ = s;
-            break;
-          }
-          case 18: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            version_ = s;
-            break;
-          }
-          case 42: {
-            fintekkers.models.util.Uuid.UUIDProto.Builder subBuilder = null;
-            if (uuid_ != null) {
-              subBuilder = uuid_.toBuilder();
-            }
-            uuid_ = input.readMessage(fintekkers.models.util.Uuid.UUIDProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(uuid_);
-              uuid_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 50: {
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
-            if (asOf_ != null) {
-              subBuilder = asOf_.toBuilder();
-            }
-            asOf_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(asOf_);
-              asOf_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 56: {
-
-            isLink_ = input.readBool();
-            break;
-          }
-          case 66: {
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
-            if (validFrom_ != null) {
-              subBuilder = validFrom_.toBuilder();
-            }
-            validFrom_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(validFrom_);
-              validFrom_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 74: {
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder subBuilder = null;
-            if (validTo_ != null) {
-              subBuilder = validTo_.toBuilder();
-            }
-            validTo_ = input.readMessage(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(validTo_);
-              validTo_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          case 82: {
-            java.lang.String s = input.readStringRequireUtf8();
-
-            portfolioName_ = s;
-            break;
-          }
-          default: {
-            if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-    } finally {
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
     return fintekkers.models.portfolio.PortfolioProtos.internal_static_fintekkers_models_portfolio_PortfolioProto_descriptor;
@@ -159,7 +47,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-  private volatile java.lang.Object objectClass_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object objectClass_ = "";
   /**
    * <pre>
    *1-4 reserved
@@ -205,7 +94,8 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int VERSION_FIELD_NUMBER = 2;
-  private volatile java.lang.Object version_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object version_ = "";
   /**
    * <code>string version = 2;</code>
    * @return The version.
@@ -277,7 +167,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.Uuid.UUIDProtoOrBuilder getUuidOrBuilder() {
-    return getUuid();
+    return uuid_ == null ? fintekkers.models.util.Uuid.UUIDProto.getDefaultInstance() : uuid_;
   }
 
   public static final int AS_OF_FIELD_NUMBER = 6;
@@ -303,11 +193,11 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsOfOrBuilder() {
-    return getAsOf();
+    return asOf_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : asOf_;
   }
 
   public static final int IS_LINK_FIELD_NUMBER = 7;
-  private boolean isLink_;
+  private boolean isLink_ = false;
   /**
    * <code>bool is_link = 7;</code>
    * @return The isLink.
@@ -340,7 +230,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getValidFromOrBuilder() {
-    return getValidFrom();
+    return validFrom_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : validFrom_;
   }
 
   public static final int VALID_TO_FIELD_NUMBER = 9;
@@ -366,11 +256,12 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getValidToOrBuilder() {
-    return getValidTo();
+    return validTo_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : validTo_;
   }
 
   public static final int PORTFOLIO_NAME_FIELD_NUMBER = 10;
-  private volatile java.lang.Object portfolioName_;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object portfolioName_ = "";
   /**
    * <code>string portfolio_name = 10;</code>
    * @return The portfolioName.
@@ -421,10 +312,10 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getObjectClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
     }
-    if (!getVersionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
     }
     if (uuid_ != null) {
@@ -442,10 +333,10 @@ private static final long serialVersionUID = 0L;
     if (validTo_ != null) {
       output.writeMessage(9, getValidTo());
     }
-    if (!getPortfolioNameBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(portfolioName_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 10, portfolioName_);
     }
-    unknownFields.writeTo(output);
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -454,10 +345,10 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!getObjectClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
     }
-    if (!getVersionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
     }
     if (uuid_ != null) {
@@ -480,10 +371,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(9, getValidTo());
     }
-    if (!getPortfolioNameBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(portfolioName_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, portfolioName_);
     }
-    size += unknownFields.getSerializedSize();
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -526,7 +417,7 @@ private static final long serialVersionUID = 0L;
     }
     if (!getPortfolioName()
         .equals(other.getPortfolioName())) return false;
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -562,7 +453,7 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + PORTFOLIO_NAME_FIELD_NUMBER;
     hash = (53 * hash) + getPortfolioName().hashCode();
-    hash = (29 * hash) + unknownFields.hashCode();
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -679,54 +570,42 @@ private static final long serialVersionUID = 0L;
 
     // Construct using fintekkers.models.portfolio.PortfolioProto.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
-              .alwaysUseFieldBuilders) {
-      }
+
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       objectClass_ = "";
-
       version_ = "";
-
-      if (uuidBuilder_ == null) {
-        uuid_ = null;
-      } else {
-        uuid_ = null;
+      uuid_ = null;
+      if (uuidBuilder_ != null) {
+        uuidBuilder_.dispose();
         uuidBuilder_ = null;
       }
-      if (asOfBuilder_ == null) {
-        asOf_ = null;
-      } else {
-        asOf_ = null;
+      asOf_ = null;
+      if (asOfBuilder_ != null) {
+        asOfBuilder_.dispose();
         asOfBuilder_ = null;
       }
       isLink_ = false;
-
-      if (validFromBuilder_ == null) {
-        validFrom_ = null;
-      } else {
-        validFrom_ = null;
+      validFrom_ = null;
+      if (validFromBuilder_ != null) {
+        validFromBuilder_.dispose();
         validFromBuilder_ = null;
       }
-      if (validToBuilder_ == null) {
-        validTo_ = null;
-      } else {
-        validTo_ = null;
+      validTo_ = null;
+      if (validToBuilder_ != null) {
+        validToBuilder_.dispose();
         validToBuilder_ = null;
       }
       portfolioName_ = "";
-
       return this;
     }
 
@@ -753,32 +632,45 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.models.portfolio.PortfolioProto buildPartial() {
       fintekkers.models.portfolio.PortfolioProto result = new fintekkers.models.portfolio.PortfolioProto(this);
-      result.objectClass_ = objectClass_;
-      result.version_ = version_;
-      if (uuidBuilder_ == null) {
-        result.uuid_ = uuid_;
-      } else {
-        result.uuid_ = uuidBuilder_.build();
-      }
-      if (asOfBuilder_ == null) {
-        result.asOf_ = asOf_;
-      } else {
-        result.asOf_ = asOfBuilder_.build();
-      }
-      result.isLink_ = isLink_;
-      if (validFromBuilder_ == null) {
-        result.validFrom_ = validFrom_;
-      } else {
-        result.validFrom_ = validFromBuilder_.build();
-      }
-      if (validToBuilder_ == null) {
-        result.validTo_ = validTo_;
-      } else {
-        result.validTo_ = validToBuilder_.build();
-      }
-      result.portfolioName_ = portfolioName_;
+      if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(fintekkers.models.portfolio.PortfolioProto result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.objectClass_ = objectClass_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.version_ = version_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.uuid_ = uuidBuilder_ == null
+            ? uuid_
+            : uuidBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.asOf_ = asOfBuilder_ == null
+            ? asOf_
+            : asOfBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.isLink_ = isLink_;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.validFrom_ = validFromBuilder_ == null
+            ? validFrom_
+            : validFromBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.validTo_ = validToBuilder_ == null
+            ? validTo_
+            : validToBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.portfolioName_ = portfolioName_;
+      }
     }
 
     @java.lang.Override
@@ -827,10 +719,12 @@ private static final long serialVersionUID = 0L;
       if (other == fintekkers.models.portfolio.PortfolioProto.getDefaultInstance()) return this;
       if (!other.getObjectClass().isEmpty()) {
         objectClass_ = other.objectClass_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getVersion().isEmpty()) {
         version_ = other.version_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       if (other.hasUuid()) {
@@ -850,9 +744,10 @@ private static final long serialVersionUID = 0L;
       }
       if (!other.getPortfolioName().isEmpty()) {
         portfolioName_ = other.portfolioName_;
+        bitField0_ |= 0x00000080;
         onChanged();
       }
-      this.mergeUnknownFields(other.unknownFields);
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -867,19 +762,81 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      fintekkers.models.portfolio.PortfolioProto parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              objectClass_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 10
+            case 18: {
+              version_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 18
+            case 42: {
+              input.readMessage(
+                  getUuidFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 42
+            case 50: {
+              input.readMessage(
+                  getAsOfFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 50
+            case 56: {
+              isLink_ = input.readBool();
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 56
+            case 66: {
+              input.readMessage(
+                  getValidFromFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 66
+            case 74: {
+              input.readMessage(
+                  getValidToFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 74
+            case 82: {
+              portfolioName_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000080;
+              break;
+            } // case 82
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (fintekkers.models.portfolio.PortfolioProto) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
+    private int bitField0_;
 
     private java.lang.Object objectClass_ = "";
     /**
@@ -934,11 +891,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setObjectClass(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       objectClass_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -951,8 +906,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearObjectClass() {
-      
       objectClass_ = getDefaultInstance().getObjectClass();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -967,12 +922,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setObjectClassBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       objectClass_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -1018,11 +971,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setVersion(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       version_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1031,8 +982,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearVersion() {
-      
       version_ = getDefaultInstance().getVersion();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -1043,12 +994,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setVersionBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       version_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1065,7 +1014,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the uuid field is set.
      */
     public boolean hasUuid() {
-      return uuidBuilder_ != null || uuid_ != null;
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <pre>
@@ -1095,11 +1044,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         uuid_ = value;
-        onChanged();
       } else {
         uuidBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -1113,11 +1062,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.Uuid.UUIDProto.Builder builderForValue) {
       if (uuidBuilder_ == null) {
         uuid_ = builderForValue.build();
-        onChanged();
       } else {
         uuidBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -1129,17 +1078,18 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeUuid(fintekkers.models.util.Uuid.UUIDProto value) {
       if (uuidBuilder_ == null) {
-        if (uuid_ != null) {
-          uuid_ =
-            fintekkers.models.util.Uuid.UUIDProto.newBuilder(uuid_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000004) != 0) &&
+          uuid_ != null &&
+          uuid_ != fintekkers.models.util.Uuid.UUIDProto.getDefaultInstance()) {
+          getUuidBuilder().mergeFrom(value);
         } else {
           uuid_ = value;
         }
-        onChanged();
       } else {
         uuidBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -1150,14 +1100,13 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.UUIDProto uuid = 5;</code>
      */
     public Builder clearUuid() {
-      if (uuidBuilder_ == null) {
-        uuid_ = null;
-        onChanged();
-      } else {
-        uuid_ = null;
+      bitField0_ = (bitField0_ & ~0x00000004);
+      uuid_ = null;
+      if (uuidBuilder_ != null) {
+        uuidBuilder_.dispose();
         uuidBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -1168,7 +1117,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.UUIDProto uuid = 5;</code>
      */
     public fintekkers.models.util.Uuid.UUIDProto.Builder getUuidBuilder() {
-      
+      bitField0_ |= 0x00000004;
       onChanged();
       return getUuidFieldBuilder().getBuilder();
     }
@@ -1216,7 +1165,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the asOf field is set.
      */
     public boolean hasAsOf() {
-      return asOfBuilder_ != null || asOf_ != null;
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 6;</code>
@@ -1238,11 +1187,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         asOf_ = value;
-        onChanged();
       } else {
         asOfBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -1252,11 +1201,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
       if (asOfBuilder_ == null) {
         asOf_ = builderForValue.build();
-        onChanged();
       } else {
         asOfBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -1264,38 +1213,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeAsOf(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
       if (asOfBuilder_ == null) {
-        if (asOf_ != null) {
-          asOf_ =
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(asOf_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000008) != 0) &&
+          asOf_ != null &&
+          asOf_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
+          getAsOfBuilder().mergeFrom(value);
         } else {
           asOf_ = value;
         }
-        onChanged();
       } else {
         asOfBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 6;</code>
      */
     public Builder clearAsOf() {
-      if (asOfBuilder_ == null) {
-        asOf_ = null;
-        onChanged();
-      } else {
-        asOf_ = null;
+      bitField0_ = (bitField0_ & ~0x00000008);
+      asOf_ = null;
+      if (asOfBuilder_ != null) {
+        asOfBuilder_.dispose();
         asOfBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto as_of = 6;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getAsOfBuilder() {
-      
+      bitField0_ |= 0x00000008;
       onChanged();
       return getAsOfFieldBuilder().getBuilder();
     }
@@ -1344,6 +1293,7 @@ private static final long serialVersionUID = 0L;
     public Builder setIsLink(boolean value) {
       
       isLink_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1352,7 +1302,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearIsLink() {
-      
+      bitField0_ = (bitField0_ & ~0x00000010);
       isLink_ = false;
       onChanged();
       return this;
@@ -1366,7 +1316,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the validFrom field is set.
      */
     public boolean hasValidFrom() {
-      return validFromBuilder_ != null || validFrom_ != null;
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_from = 8;</code>
@@ -1388,11 +1338,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         validFrom_ = value;
-        onChanged();
       } else {
         validFromBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000020;
+      onChanged();
       return this;
     }
     /**
@@ -1402,11 +1352,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
       if (validFromBuilder_ == null) {
         validFrom_ = builderForValue.build();
-        onChanged();
       } else {
         validFromBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000020;
+      onChanged();
       return this;
     }
     /**
@@ -1414,38 +1364,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeValidFrom(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
       if (validFromBuilder_ == null) {
-        if (validFrom_ != null) {
-          validFrom_ =
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(validFrom_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000020) != 0) &&
+          validFrom_ != null &&
+          validFrom_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
+          getValidFromBuilder().mergeFrom(value);
         } else {
           validFrom_ = value;
         }
-        onChanged();
       } else {
         validFromBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000020;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_from = 8;</code>
      */
     public Builder clearValidFrom() {
-      if (validFromBuilder_ == null) {
-        validFrom_ = null;
-        onChanged();
-      } else {
-        validFrom_ = null;
+      bitField0_ = (bitField0_ & ~0x00000020);
+      validFrom_ = null;
+      if (validFromBuilder_ != null) {
+        validFromBuilder_.dispose();
         validFromBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_from = 8;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getValidFromBuilder() {
-      
+      bitField0_ |= 0x00000020;
       onChanged();
       return getValidFromFieldBuilder().getBuilder();
     }
@@ -1485,7 +1435,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the validTo field is set.
      */
     public boolean hasValidTo() {
-      return validToBuilder_ != null || validTo_ != null;
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_to = 9;</code>
@@ -1507,11 +1457,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         validTo_ = value;
-        onChanged();
       } else {
         validToBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
@@ -1521,11 +1471,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
       if (validToBuilder_ == null) {
         validTo_ = builderForValue.build();
-        onChanged();
       } else {
         validToBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
@@ -1533,38 +1483,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeValidTo(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
       if (validToBuilder_ == null) {
-        if (validTo_ != null) {
-          validTo_ =
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder(validTo_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000040) != 0) &&
+          validTo_ != null &&
+          validTo_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
+          getValidToBuilder().mergeFrom(value);
         } else {
           validTo_ = value;
         }
-        onChanged();
       } else {
         validToBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_to = 9;</code>
      */
     public Builder clearValidTo() {
-      if (validToBuilder_ == null) {
-        validTo_ = null;
-        onChanged();
-      } else {
-        validTo_ = null;
+      bitField0_ = (bitField0_ & ~0x00000040);
+      validTo_ = null;
+      if (validToBuilder_ != null) {
+        validToBuilder_.dispose();
         validToBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.LocalTimestampProto valid_to = 9;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getValidToBuilder() {
-      
+      bitField0_ |= 0x00000040;
       onChanged();
       return getValidToFieldBuilder().getBuilder();
     }
@@ -1637,11 +1587,9 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setPortfolioName(
         java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      if (value == null) { throw new NullPointerException(); }
       portfolioName_ = value;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -1650,8 +1598,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearPortfolioName() {
-      
       portfolioName_ = getDefaultInstance().getPortfolioName();
+      bitField0_ = (bitField0_ & ~0x00000080);
       onChanged();
       return this;
     }
@@ -1662,12 +1610,10 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setPortfolioNameBytes(
         com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-      
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
       portfolioName_ = value;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -1704,7 +1650,18 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new PortfolioProto(input, extensionRegistry);
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
     }
   };
 

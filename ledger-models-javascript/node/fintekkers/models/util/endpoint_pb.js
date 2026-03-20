@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 goog.exportSymbol('proto.fintekkers.models.util.Endpoint', null, global);
 /**
@@ -75,9 +69,9 @@ proto.fintekkers.models.util.Endpoint.prototype.toObject = function(opt_includeI
  */
 proto.fintekkers.models.util.Endpoint.toObject = function(includeInstance, msg) {
   var f, obj = {
-    ip: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    port: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    fullyQualifiedUrl: jspb.Message.getFieldWithDefault(msg, 3, "")
+ip: jspb.Message.getFieldWithDefault(msg, 1, ""),
+port: jspb.Message.getFieldWithDefault(msg, 2, 0),
+fullyQualifiedUrl: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -90,7 +84,7 @@ proto.fintekkers.models.util.Endpoint.toObject = function(includeInstance, msg) 
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.util.Endpoint}
  */
 proto.fintekkers.models.util.Endpoint.deserializeBinary = function(bytes) {

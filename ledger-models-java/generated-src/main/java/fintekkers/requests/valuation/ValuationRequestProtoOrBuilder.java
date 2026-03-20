@@ -238,4 +238,34 @@ public interface ValuationRequestProtoOrBuilder extends
    * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
    */
   fintekkers.models.price.PriceProtoOrBuilder getCpiPriceInputOrBuilder();
+
+  /**
+   * <pre>
+   *The current reference rate observation for floating rate note (FRN) valuation.
+   *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+   * </pre>
+   *
+   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
+   * @return Whether the referenceRateInput field is set.
+   */
+  boolean hasReferenceRateInput();
+  /**
+   * <pre>
+   *The current reference rate observation for floating rate note (FRN) valuation.
+   *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+   * </pre>
+   *
+   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
+   * @return The referenceRateInput.
+   */
+  fintekkers.models.price.PriceProto getReferenceRateInput();
+  /**
+   * <pre>
+   *The current reference rate observation for floating rate note (FRN) valuation.
+   *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+   * </pre>
+   *
+   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
+   */
+  fintekkers.models.price.PriceProtoOrBuilder getReferenceRateInputOrBuilder();
 }

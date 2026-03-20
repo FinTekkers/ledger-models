@@ -7,6 +7,7 @@ import "fintekkers/requests/portfolio/query_portfolio_request.proto";
 import "fintekkers/requests/portfolio/query_portfolio_response.proto";
 
 import "fintekkers/requests/util/errors/summary.proto";
+import "fintekkers/requests/util/delete_request.proto";
 
 option java_generic_services = true;
 option py_generic_services = true;
@@ -17,6 +18,8 @@ service Portfolio {
     rpc GetByIds (fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (fintekkers.requests.portfolio.QueryPortfolioResponseProto);
     rpc Search (fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (stream fintekkers.requests.portfolio.QueryPortfolioResponseProto);
     rpc ListIds (fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (fintekkers.requests.portfolio.QueryPortfolioResponseProto);
+
+    rpc Delete (fintekkers.requests.util.DeleteRequestProto) returns (fintekkers.requests.util.DeleteResponseProto);
 
     rpc ValidateCreateOrUpdate (fintekkers.requests.portfolio.CreatePortfolioRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);
     rpc ValidateQueryRequest (fintekkers.requests.portfolio.QueryPortfolioRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);

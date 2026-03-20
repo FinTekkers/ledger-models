@@ -101,15 +101,36 @@ class Security {
   }
 
   getIssueDate(): LocalDate {
-    const date = this.proto.getIssueDate();
+    // Prefer oneof bond sub-message if available, fall back to flat fields
+    const bond = this.getBondLikeDetails();
+    const date = bond ? bond.getIssueDate() : this.proto.getIssueDate();
     if (!date) throw new Error("Issue date is required");
     return new LocalDate(date);
   }
 
   getMaturityDate(): LocalDate {
-    const date = this.proto.getMaturityDate();
+    // Prefer oneof bond sub-message if available, fall back to flat fields
+    const bond = this.getBondLikeDetails();
+    const date = bond ? bond.getMaturityDate() : this.proto.getMaturityDate();
     if (!date) throw new Error("Maturity date is required");
     return new LocalDate(date);
+  }
+
+  /**
+   * Returns the bond-like details sub-message from the oneof, if set.
+   * Works for BondDetails, TipsDetails, and FrnDetails (all share the same
+   * base bond fields: coupon_rate, maturity_date, etc.).
+   * Returns undefined if the oneof is not set or the proto doesn't support it
+   * (e.g. when JS codegen hasn't been updated).
+   */
+  protected getBondLikeDetails(): any | undefined {
+    // Guard: check if the oneof accessor exists (JS codegen may be stale)
+    if (typeof this.proto.getBondDetails !== 'function') return undefined;
+
+    return this.proto.getBondDetails() ||
+           this.proto.getTipsDetails() ||
+           this.proto.getFrnDetails() ||
+           undefined;
   }
 
   getIssuerName(): string {

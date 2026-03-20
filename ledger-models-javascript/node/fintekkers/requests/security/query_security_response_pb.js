@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_security_security_pb = require('../../../fintekkers/models/security/security_pb.js');
 goog.object.extend(proto, fintekkers_models_security_security_pb);
@@ -88,12 +82,12 @@ proto.fintekkers.requests.security.QuerySecurityResponseProto.prototype.toObject
  */
 proto.fintekkers.requests.security.QuerySecurityResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    querySecurityInput: (f = msg.getQuerySecurityInput()) && fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto.toObject(includeInstance, f),
-    securityResponseList: jspb.Message.toObjectList(msg.getSecurityResponseList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+querySecurityInput: (f = msg.getQuerySecurityInput()) && fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto.toObject(includeInstance, f),
+securityResponseList: jspb.Message.toObjectList(msg.getSecurityResponseList(),
     fintekkers_models_security_security_pb.SecurityProto.toObject, includeInstance),
-    errorsOrWarningsList: jspb.Message.toObjectList(msg.getErrorsOrWarningsList(),
+errorsOrWarningsList: jspb.Message.toObjectList(msg.getErrorsOrWarningsList(),
     fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject, includeInstance)
   };
 
@@ -107,7 +101,7 @@ proto.fintekkers.requests.security.QuerySecurityResponseProto.toObject = functio
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.security.QuerySecurityResponseProto}
  */
 proto.fintekkers.requests.security.QuerySecurityResponseProto.deserializeBinary = function(bytes) {

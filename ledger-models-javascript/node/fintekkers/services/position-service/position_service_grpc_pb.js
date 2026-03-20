@@ -10,7 +10,7 @@ function serialize_fintekkers_requests_position_QueryPositionRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.position.QueryPositionRequestProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_position_QueryPositionRequestProto(buffer_arg) {
@@ -21,7 +21,7 @@ function serialize_fintekkers_requests_position_QueryPositionResponseProto(arg) 
   if (!(arg instanceof fintekkers_requests_position_query_position_response_pb.QueryPositionResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.position.QueryPositionResponseProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_position_QueryPositionResponseProto(buffer_arg) {
@@ -32,7 +32,7 @@ function serialize_fintekkers_requests_util_errors_SummaryProto(arg) {
   if (!(arg instanceof fintekkers_requests_util_errors_summary_pb.SummaryProto)) {
     throw new Error('Expected argument of type fintekkers.requests.util.errors.SummaryProto');
   }
-  return Buffer.from(arg.serializeBinary());
+  return new Buffer(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_util_errors_SummaryProto(buffer_arg) {
@@ -42,7 +42,7 @@ function deserialize_fintekkers_requests_util_errors_SummaryProto(buffer_arg) {
 
 var PositionService = exports.PositionService = {
   //    rpc GetByIds (position.QueryPositionRequestProto) returns (position.QueryPositionResponseProto);
-search: {
+  search: {
     path: '/fintekkers.services.position_service.Position/Search',
     requestStream: false,
     responseStream: true,
@@ -54,8 +54,8 @@ search: {
     responseDeserialize: deserialize_fintekkers_requests_position_QueryPositionResponseProto,
   },
   //    rpc ListIds (transaction.QueryTransactionRequestProto) returns (transaction.QueryTransactionResponseProto);
-//    rpc ValidateCreateOrUpdate (transaction.CreateTransactionRequestProto) returns (util.errors.SummaryProto);
-validateQueryRequest: {
+  //    rpc ValidateCreateOrUpdate (transaction.CreateTransactionRequestProto) returns (util.errors.SummaryProto);
+  validateQueryRequest: {
     path: '/fintekkers.services.position_service.Position/ValidateQueryRequest',
     requestStream: false,
     responseStream: false,
@@ -68,4 +68,4 @@ validateQueryRequest: {
   },
 };
 
-exports.PositionClient = grpc.makeGenericClientConstructor(PositionService, 'Position');
+exports.PositionClient = grpc.makeGenericClientConstructor(PositionService);

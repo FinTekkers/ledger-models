@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 goog.exportSymbol('proto.fintekkers.models.position.MeasureProto', null, global);
 /**
@@ -34,7 +28,12 @@ proto.fintekkers.models.position.MeasureProto = {
   CURRENT_YIELD: 5,
   YIELD_TO_MATURITY: 7,
   MACAULAY_DURATION: 8,
-  PRESENT_VALUE: 9
+  PRESENT_VALUE: 9,
+  REAL_YIELD: 10,
+  INFLATION_ADJUSTED_PRINCIPAL: 11,
+  PRESENT_VALUE_CASHFLOWS: 12,
+  DISCOUNT_MARGIN: 13,
+  SPREAD_DURATION: 14
 };
 
 goog.object.extend(exports, proto.fintekkers.models.position);

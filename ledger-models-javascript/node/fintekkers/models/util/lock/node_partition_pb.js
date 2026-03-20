@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 goog.exportSymbol('proto.fintekkers.models.util.lock.NodePartition', null, global);
 /**
@@ -75,10 +69,10 @@ proto.fintekkers.models.util.lock.NodePartition.prototype.toObject = function(op
  */
 proto.fintekkers.models.util.lock.NodePartition.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    partition: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    namespace: jspb.Message.getFieldWithDefault(msg, 4, "")
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+partition: jspb.Message.getFieldWithDefault(msg, 3, 0),
+namespace: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -91,7 +85,7 @@ proto.fintekkers.models.util.lock.NodePartition.toObject = function(includeInsta
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.util.lock.NodePartition}
  */
 proto.fintekkers.models.util.lock.NodePartition.deserializeBinary = function(bytes) {

@@ -41,6 +41,12 @@ pub struct ValuationRequestProto {
     /// Modeled as a PriceProto on a SecurityProto representing the CPI index.
     #[prost(message, optional, tag = "24")]
     pub cpi_price_input: ::core::option::Option<super::super::models::price::PriceProto>,
+    /// The current reference rate observation for floating rate note (FRN) valuation.
+    /// Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+    #[prost(message, optional, tag = "25")]
+    pub reference_rate_input: ::core::option::Option<
+        super::super::models::price::PriceProto,
+    >,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -57,4 +63,10 @@ pub struct ValuationResponseProto {
     >,
     #[prost(message, optional, tag = "40")]
     pub summary: ::core::option::Option<super::util::errors::SummaryProto>,
+    /// The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
+    /// Each entry represents a single coupon or principal payment with PV and FV amounts.
+    #[prost(message, repeated, tag = "50")]
+    pub cashflows: ::prost::alloc::vec::Vec<
+        super::super::models::valuation::CashflowProto,
+    >,
 }

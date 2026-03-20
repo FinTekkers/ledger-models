@@ -73,6 +73,9 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
      * @return Returns unclassified for basic securities, and a suitable value for other security values.
      */
     public String getAssetClass() {
+        if (_sourceProto != null && !_sourceProto.getAssetClass().isEmpty()) {
+            return _sourceProto.getAssetClass();
+        }
         return "Unclassified";
     }
 
@@ -178,6 +181,9 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     public SecurityTypeProto getSecurityType() {
+        if (_sourceProto != null && _sourceProto.getSecurityType() != SecurityTypeProto.UNKNOWN_SECURITY_TYPE) {
+            return _sourceProto.getSecurityType();
+        }
         return SecurityTypeProto.UNKNOWN_SECURITY_TYPE;
     }
 

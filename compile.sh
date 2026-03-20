@@ -1,6 +1,33 @@
 #NOTE: Compilation will fail if any of the test suites fail to run.
-# This is because we don't want to publish a version of the library 
+# This is because we don't want to publish a version of the library
 # that doesn't pass all tests.
+
+###########################################
+######### CATALOG FILE DISTRIBUTION #######
+###########################################
+
+# Copy catalog files (measures.json, fields.json) from the golden source
+# in ledger-models-protos/catalog/ into each language package so they are
+# included in published artifacts (npm, Maven, crates.io, PyPI).
+
+CATALOG_SRC="ledger-models-protos/catalog"
+
+# JavaScript: catalog/ alongside node/ so npm pack includes it
+mkdir -p ledger-models-javascript/catalog
+cp "$CATALOG_SRC"/*.json ledger-models-javascript/catalog/
+
+# Java: src/main/resources/catalog/ so it ends up on the JAR classpath
+mkdir -p ledger-models-java/src/main/resources/catalog
+cp "$CATALOG_SRC"/*.json ledger-models-java/src/main/resources/catalog/
+
+# Rust: catalog/ at crate root (Cargo.toml include list must reference it)
+mkdir -p ledger-models-rust/catalog
+cp "$CATALOG_SRC"/*.json ledger-models-rust/catalog/
+
+# Python: fintekkers/catalog/ so find_packages() includes it
+mkdir -p ledger-models-python/fintekkers/catalog
+cp "$CATALOG_SRC"/*.json ledger-models-python/fintekkers/catalog/
+touch ledger-models-python/fintekkers/catalog/__init__.py
 
 # Create and setup virtual environment if it doesn't exist
 if [ ! -d "venv" ]; then

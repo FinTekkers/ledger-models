@@ -31,62 +31,6 @@ private static final long serialVersionUID = 0L;
   getUnknownFields() {
     return this.unknownFields;
   }
-  private MeasureMapEntry(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 8: {
-            int rawValue = input.readEnum();
-
-            measure_ = rawValue;
-            break;
-          }
-          case 18: {
-            fintekkers.models.util.DecimalValue.DecimalValueProto.Builder subBuilder = null;
-            if (measureDecimalValue_ != null) {
-              subBuilder = measureDecimalValue_.toBuilder();
-            }
-            measureDecimalValue_ = input.readMessage(fintekkers.models.util.DecimalValue.DecimalValueProto.parser(), extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(measureDecimalValue_);
-              measureDecimalValue_ = subBuilder.buildPartial();
-            }
-
-            break;
-          }
-          default: {
-            if (!parseUnknownField(
-                input, unknownFields, extensionRegistry, tag)) {
-              done = true;
-            }
-            break;
-          }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(
-          e).setUnfinishedMessage(this);
-    } finally {
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
     return fintekkers.models.position.PositionUtilProtos.internal_static_fintekkers_models_position_MeasureMapEntry_descriptor;
@@ -101,7 +45,7 @@ private static final long serialVersionUID = 0L;
   }
 
   public static final int MEASURE_FIELD_NUMBER = 1;
-  private int measure_;
+  private int measure_ = 0;
   /**
    * <code>.fintekkers.models.position.MeasureProto measure = 1;</code>
    * @return The enum numeric value on the wire for measure.
@@ -114,8 +58,7 @@ private static final long serialVersionUID = 0L;
    * @return The measure.
    */
   @java.lang.Override public fintekkers.models.position.MeasureProto getMeasure() {
-    @SuppressWarnings("deprecation")
-    fintekkers.models.position.MeasureProto result = fintekkers.models.position.MeasureProto.valueOf(measure_);
+    fintekkers.models.position.MeasureProto result = fintekkers.models.position.MeasureProto.forNumber(measure_);
     return result == null ? fintekkers.models.position.MeasureProto.UNRECOGNIZED : result;
   }
 
@@ -142,7 +85,7 @@ private static final long serialVersionUID = 0L;
    */
   @java.lang.Override
   public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getMeasureDecimalValueOrBuilder() {
-    return getMeasureDecimalValue();
+    return measureDecimalValue_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : measureDecimalValue_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -165,7 +108,7 @@ private static final long serialVersionUID = 0L;
     if (measureDecimalValue_ != null) {
       output.writeMessage(2, getMeasureDecimalValue());
     }
-    unknownFields.writeTo(output);
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -182,7 +125,7 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(2, getMeasureDecimalValue());
     }
-    size += unknownFields.getSerializedSize();
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -203,7 +146,7 @@ private static final long serialVersionUID = 0L;
       if (!getMeasureDecimalValue()
           .equals(other.getMeasureDecimalValue())) return false;
     }
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -220,7 +163,7 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + MEASURE_DECIMAL_VALUE_FIELD_NUMBER;
       hash = (53 * hash) + getMeasureDecimalValue().hashCode();
     }
-    hash = (29 * hash) + unknownFields.hashCode();
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -337,28 +280,22 @@ private static final long serialVersionUID = 0L;
 
     // Construct using fintekkers.models.position.MeasureMapEntry.newBuilder()
     private Builder() {
-      maybeForceBuilderInitialization();
+
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3
-              .alwaysUseFieldBuilders) {
-      }
+
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       measure_ = 0;
-
-      if (measureDecimalValueBuilder_ == null) {
-        measureDecimalValue_ = null;
-      } else {
-        measureDecimalValue_ = null;
+      measureDecimalValue_ = null;
+      if (measureDecimalValueBuilder_ != null) {
+        measureDecimalValueBuilder_.dispose();
         measureDecimalValueBuilder_ = null;
       }
       return this;
@@ -387,14 +324,21 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.models.position.MeasureMapEntry buildPartial() {
       fintekkers.models.position.MeasureMapEntry result = new fintekkers.models.position.MeasureMapEntry(this);
-      result.measure_ = measure_;
-      if (measureDecimalValueBuilder_ == null) {
-        result.measureDecimalValue_ = measureDecimalValue_;
-      } else {
-        result.measureDecimalValue_ = measureDecimalValueBuilder_.build();
-      }
+      if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(fintekkers.models.position.MeasureMapEntry result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.measure_ = measure_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.measureDecimalValue_ = measureDecimalValueBuilder_ == null
+            ? measureDecimalValue_
+            : measureDecimalValueBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -447,7 +391,7 @@ private static final long serialVersionUID = 0L;
       if (other.hasMeasureDecimalValue()) {
         mergeMeasureDecimalValue(other.getMeasureDecimalValue());
       }
-      this.mergeUnknownFields(other.unknownFields);
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -462,19 +406,45 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      fintekkers.models.position.MeasureMapEntry parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 8: {
+              measure_ = input.readEnum();
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 8
+            case 18: {
+              input.readMessage(
+                  getMeasureDecimalValueFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000002;
+              break;
+            } // case 18
+            default: {
+              if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                done = true; // was an endgroup tag
+              }
+              break;
+            } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (fintekkers.models.position.MeasureMapEntry) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
+    private int bitField0_;
 
     private int measure_ = 0;
     /**
@@ -490,8 +460,8 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder setMeasureValue(int value) {
-      
       measure_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -501,8 +471,7 @@ private static final long serialVersionUID = 0L;
      */
     @java.lang.Override
     public fintekkers.models.position.MeasureProto getMeasure() {
-      @SuppressWarnings("deprecation")
-      fintekkers.models.position.MeasureProto result = fintekkers.models.position.MeasureProto.valueOf(measure_);
+      fintekkers.models.position.MeasureProto result = fintekkers.models.position.MeasureProto.forNumber(measure_);
       return result == null ? fintekkers.models.position.MeasureProto.UNRECOGNIZED : result;
     }
     /**
@@ -514,7 +483,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      
+      bitField0_ |= 0x00000001;
       measure_ = value.getNumber();
       onChanged();
       return this;
@@ -524,7 +493,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearMeasure() {
-      
+      bitField0_ = (bitField0_ & ~0x00000001);
       measure_ = 0;
       onChanged();
       return this;
@@ -538,7 +507,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the measureDecimalValue field is set.
      */
     public boolean hasMeasureDecimalValue() {
-      return measureDecimalValueBuilder_ != null || measureDecimalValue_ != null;
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      * <code>.fintekkers.models.util.DecimalValueProto measure_decimal_value = 2;</code>
@@ -560,11 +529,11 @@ private static final long serialVersionUID = 0L;
           throw new NullPointerException();
         }
         measureDecimalValue_ = value;
-        onChanged();
       } else {
         measureDecimalValueBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -574,11 +543,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
       if (measureDecimalValueBuilder_ == null) {
         measureDecimalValue_ = builderForValue.build();
-        onChanged();
       } else {
         measureDecimalValueBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -586,38 +555,38 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeMeasureDecimalValue(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
       if (measureDecimalValueBuilder_ == null) {
-        if (measureDecimalValue_ != null) {
-          measureDecimalValue_ =
-            fintekkers.models.util.DecimalValue.DecimalValueProto.newBuilder(measureDecimalValue_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000002) != 0) &&
+          measureDecimalValue_ != null &&
+          measureDecimalValue_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getMeasureDecimalValueBuilder().mergeFrom(value);
         } else {
           measureDecimalValue_ = value;
         }
-        onChanged();
       } else {
         measureDecimalValueBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.DecimalValueProto measure_decimal_value = 2;</code>
      */
     public Builder clearMeasureDecimalValue() {
-      if (measureDecimalValueBuilder_ == null) {
-        measureDecimalValue_ = null;
-        onChanged();
-      } else {
-        measureDecimalValue_ = null;
+      bitField0_ = (bitField0_ & ~0x00000002);
+      measureDecimalValue_ = null;
+      if (measureDecimalValueBuilder_ != null) {
+        measureDecimalValueBuilder_.dispose();
         measureDecimalValueBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
      * <code>.fintekkers.models.util.DecimalValueProto measure_decimal_value = 2;</code>
      */
     public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getMeasureDecimalValueBuilder() {
-      
+      bitField0_ |= 0x00000002;
       onChanged();
       return getMeasureDecimalValueFieldBuilder().getBuilder();
     }
@@ -681,7 +650,18 @@ private static final long serialVersionUID = 0L;
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return new MeasureMapEntry(input, extensionRegistry);
+      Builder builder = newBuilder();
+      try {
+        builder.mergeFrom(input, extensionRegistry);
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(builder.buildPartial());
+      } catch (com.google.protobuf.UninitializedMessageException e) {
+        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e)
+            .setUnfinishedMessage(builder.buildPartial());
+      }
+      return builder.buildPartial();
     }
   };
 

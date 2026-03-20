@@ -106,6 +106,11 @@ public interface QueryPriceRequestProtoOrBuilder extends
 
   /**
    * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
+   * @return Whether the horizon field is set.
+   */
+  boolean hasHorizon();
+  /**
+   * <code>.fintekkers.requests.price.PriceHorizonProto horizon = 25;</code>
    * @return The enum numeric value on the wire for horizon.
    */
   int getHorizonValue();

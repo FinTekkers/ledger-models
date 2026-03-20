@@ -13,4 +13,7 @@ export enum IndexTypeProto {
     CORE_CPI = 3,
     PCE = 4,
     HICP = 5,
+    SOFR = 10,
+    T_BILL_13_WEEK = 11,
+    FED_FUNDS = 12,
 }

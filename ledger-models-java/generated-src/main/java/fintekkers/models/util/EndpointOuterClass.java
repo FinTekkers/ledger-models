@@ -103,60 +103,6 @@ public final class EndpointOuterClass {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private Endpoint(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              ip_ = s;
-              break;
-            }
-            case 16: {
-
-              port_ = input.readUInt32();
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              fullyQualifiedUrl_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return fintekkers.models.util.EndpointOuterClass.internal_static_fintekkers_models_util_Endpoint_descriptor;
@@ -171,7 +117,8 @@ public final class EndpointOuterClass {
     }
 
     public static final int IP_FIELD_NUMBER = 1;
-    private volatile java.lang.Object ip_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object ip_ = "";
     /**
      * <pre>
      *The IP address that an endpoint is exposed through. The assumption is the IP 
@@ -221,7 +168,7 @@ public final class EndpointOuterClass {
     }
 
     public static final int PORT_FIELD_NUMBER = 2;
-    private int port_;
+    private int port_ = 0;
     /**
      * <pre>
      *The port that the service is listening to on the specified IP address.
@@ -236,7 +183,8 @@ public final class EndpointOuterClass {
     }
 
     public static final int FULLY_QUALIFIED_URL_FIELD_NUMBER = 3;
-    private volatile java.lang.Object fullyQualifiedUrl_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object fullyQualifiedUrl_ = "";
     /**
      * <pre>
      *Placeholder for the future. For public-facing traffic a URL will be used, and
@@ -297,16 +245,16 @@ public final class EndpointOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getIpBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(ip_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, ip_);
       }
       if (port_ != 0) {
         output.writeUInt32(2, port_);
       }
-      if (!getFullyQualifiedUrlBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(fullyQualifiedUrl_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, fullyQualifiedUrl_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -315,17 +263,17 @@ public final class EndpointOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!getIpBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(ip_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, ip_);
       }
       if (port_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(2, port_);
       }
-      if (!getFullyQualifiedUrlBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(fullyQualifiedUrl_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, fullyQualifiedUrl_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -346,7 +294,7 @@ public final class EndpointOuterClass {
           != other.getPort()) return false;
       if (!getFullyQualifiedUrl()
           .equals(other.getFullyQualifiedUrl())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -363,7 +311,7 @@ public final class EndpointOuterClass {
       hash = (53 * hash) + getPort();
       hash = (37 * hash) + FULLY_QUALIFIED_URL_FIELD_NUMBER;
       hash = (53 * hash) + getFullyQualifiedUrl().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -480,28 +428,21 @@ public final class EndpointOuterClass {
 
       // Construct using fintekkers.models.util.EndpointOuterClass.Endpoint.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         ip_ = "";
-
         port_ = 0;
-
         fullyQualifiedUrl_ = "";
-
         return this;
       }
 
@@ -528,11 +469,22 @@ public final class EndpointOuterClass {
       @java.lang.Override
       public fintekkers.models.util.EndpointOuterClass.Endpoint buildPartial() {
         fintekkers.models.util.EndpointOuterClass.Endpoint result = new fintekkers.models.util.EndpointOuterClass.Endpoint(this);
-        result.ip_ = ip_;
-        result.port_ = port_;
-        result.fullyQualifiedUrl_ = fullyQualifiedUrl_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(fintekkers.models.util.EndpointOuterClass.Endpoint result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.ip_ = ip_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.port_ = port_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.fullyQualifiedUrl_ = fullyQualifiedUrl_;
+        }
       }
 
       @java.lang.Override
@@ -581,6 +533,7 @@ public final class EndpointOuterClass {
         if (other == fintekkers.models.util.EndpointOuterClass.Endpoint.getDefaultInstance()) return this;
         if (!other.getIp().isEmpty()) {
           ip_ = other.ip_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (other.getPort() != 0) {
@@ -588,9 +541,10 @@ public final class EndpointOuterClass {
         }
         if (!other.getFullyQualifiedUrl().isEmpty()) {
           fullyQualifiedUrl_ = other.fullyQualifiedUrl_;
+          bitField0_ |= 0x00000004;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -605,19 +559,48 @@ public final class EndpointOuterClass {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        fintekkers.models.util.EndpointOuterClass.Endpoint parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                ip_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 16: {
+                port_ = input.readUInt32();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
+              case 26: {
+                fullyQualifiedUrl_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (fintekkers.models.util.EndpointOuterClass.Endpoint) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object ip_ = "";
       /**
@@ -678,11 +661,9 @@ public final class EndpointOuterClass {
        */
       public Builder setIp(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         ip_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -697,8 +678,8 @@ public final class EndpointOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearIp() {
-        
         ip_ = getDefaultInstance().getIp();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -715,12 +696,10 @@ public final class EndpointOuterClass {
        */
       public Builder setIpBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         ip_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -750,6 +729,7 @@ public final class EndpointOuterClass {
       public Builder setPort(int value) {
         
         port_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -762,7 +742,7 @@ public final class EndpointOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearPort() {
-        
+        bitField0_ = (bitField0_ & ~0x00000002);
         port_ = 0;
         onChanged();
         return this;
@@ -824,11 +804,9 @@ public final class EndpointOuterClass {
        */
       public Builder setFullyQualifiedUrl(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         fullyQualifiedUrl_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -842,8 +820,8 @@ public final class EndpointOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearFullyQualifiedUrl() {
-        
         fullyQualifiedUrl_ = getDefaultInstance().getFullyQualifiedUrl();
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -859,12 +837,10 @@ public final class EndpointOuterClass {
        */
       public Builder setFullyQualifiedUrlBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         fullyQualifiedUrl_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -901,7 +877,18 @@ public final class EndpointOuterClass {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Endpoint(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 

@@ -55,6 +55,14 @@ public final class TransactionService {
           com.google.protobuf.RpcCallback<fintekkers.requests.transaction.QueryTransactionResponseProto> done);
 
       /**
+       * <code>rpc Delete(.fintekkers.requests.util.DeleteRequestProto) returns (.fintekkers.requests.util.DeleteResponseProto);</code>
+       */
+      public abstract void delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done);
+
+      /**
        * <code>rpc ValidateCreateOrUpdate(.fintekkers.requests.transaction.CreateTransactionRequestProto) returns (.fintekkers.requests.util.errors.SummaryProto);</code>
        */
       public abstract void validateCreateOrUpdate(
@@ -108,6 +116,14 @@ public final class TransactionService {
         }
 
         @java.lang.Override
+        public  void delete(
+            com.google.protobuf.RpcController controller,
+            fintekkers.requests.util.DeleteRequestProto request,
+            com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done) {
+          impl.delete(controller, request, done);
+        }
+
+        @java.lang.Override
         public  void validateCreateOrUpdate(
             com.google.protobuf.RpcController controller,
             fintekkers.requests.transaction.CreateTransactionRequestProto request,
@@ -154,8 +170,10 @@ public final class TransactionService {
             case 3:
               return impl.listIds(controller, (fintekkers.requests.transaction.QueryTransactionRequestProto)request);
             case 4:
-              return impl.validateCreateOrUpdate(controller, (fintekkers.requests.transaction.CreateTransactionRequestProto)request);
+              return impl.delete(controller, (fintekkers.requests.util.DeleteRequestProto)request);
             case 5:
+              return impl.validateCreateOrUpdate(controller, (fintekkers.requests.transaction.CreateTransactionRequestProto)request);
+            case 6:
               return impl.validateQueryRequest(controller, (fintekkers.requests.transaction.QueryTransactionRequestProto)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -180,8 +198,10 @@ public final class TransactionService {
             case 3:
               return fintekkers.requests.transaction.QueryTransactionRequestProto.getDefaultInstance();
             case 4:
-              return fintekkers.requests.transaction.CreateTransactionRequestProto.getDefaultInstance();
+              return fintekkers.requests.util.DeleteRequestProto.getDefaultInstance();
             case 5:
+              return fintekkers.requests.transaction.CreateTransactionRequestProto.getDefaultInstance();
+            case 6:
               return fintekkers.requests.transaction.QueryTransactionRequestProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -206,8 +226,10 @@ public final class TransactionService {
             case 3:
               return fintekkers.requests.transaction.QueryTransactionResponseProto.getDefaultInstance();
             case 4:
-              return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+              return fintekkers.requests.util.DeleteResponseProto.getDefaultInstance();
             case 5:
+              return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+            case 6:
               return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
@@ -248,6 +270,14 @@ public final class TransactionService {
         com.google.protobuf.RpcController controller,
         fintekkers.requests.transaction.QueryTransactionRequestProto request,
         com.google.protobuf.RpcCallback<fintekkers.requests.transaction.QueryTransactionResponseProto> done);
+
+    /**
+     * <code>rpc Delete(.fintekkers.requests.util.DeleteRequestProto) returns (.fintekkers.requests.util.DeleteResponseProto);</code>
+     */
+    public abstract void delete(
+        com.google.protobuf.RpcController controller,
+        fintekkers.requests.util.DeleteRequestProto request,
+        com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done);
 
     /**
      * <code>rpc ValidateCreateOrUpdate(.fintekkers.requests.transaction.CreateTransactionRequestProto) returns (.fintekkers.requests.util.errors.SummaryProto);</code>
@@ -308,11 +338,16 @@ public final class TransactionService {
               done));
           return;
         case 4:
+          this.delete(controller, (fintekkers.requests.util.DeleteRequestProto)request,
+            com.google.protobuf.RpcUtil.<fintekkers.requests.util.DeleteResponseProto>specializeCallback(
+              done));
+          return;
+        case 5:
           this.validateCreateOrUpdate(controller, (fintekkers.requests.transaction.CreateTransactionRequestProto)request,
             com.google.protobuf.RpcUtil.<fintekkers.requests.util.errors.Summary.SummaryProto>specializeCallback(
               done));
           return;
-        case 5:
+        case 6:
           this.validateQueryRequest(controller, (fintekkers.requests.transaction.QueryTransactionRequestProto)request,
             com.google.protobuf.RpcUtil.<fintekkers.requests.util.errors.Summary.SummaryProto>specializeCallback(
               done));
@@ -340,8 +375,10 @@ public final class TransactionService {
         case 3:
           return fintekkers.requests.transaction.QueryTransactionRequestProto.getDefaultInstance();
         case 4:
-          return fintekkers.requests.transaction.CreateTransactionRequestProto.getDefaultInstance();
+          return fintekkers.requests.util.DeleteRequestProto.getDefaultInstance();
         case 5:
+          return fintekkers.requests.transaction.CreateTransactionRequestProto.getDefaultInstance();
+        case 6:
           return fintekkers.requests.transaction.QueryTransactionRequestProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -366,8 +403,10 @@ public final class TransactionService {
         case 3:
           return fintekkers.requests.transaction.QueryTransactionResponseProto.getDefaultInstance();
         case 4:
-          return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+          return fintekkers.requests.util.DeleteResponseProto.getDefaultInstance();
         case 5:
+          return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+        case 6:
           return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
@@ -450,12 +489,27 @@ public final class TransactionService {
             fintekkers.requests.transaction.QueryTransactionResponseProto.getDefaultInstance()));
       }
 
+      public  void delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.util.DeleteResponseProto> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(4),
+          controller,
+          request,
+          fintekkers.requests.util.DeleteResponseProto.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            fintekkers.requests.util.DeleteResponseProto.class,
+            fintekkers.requests.util.DeleteResponseProto.getDefaultInstance()));
+      }
+
       public  void validateCreateOrUpdate(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.transaction.CreateTransactionRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance(),
@@ -470,7 +524,7 @@ public final class TransactionService {
           fintekkers.requests.transaction.QueryTransactionRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done) {
         channel.callMethod(
-          getDescriptor().getMethods().get(5),
+          getDescriptor().getMethods().get(6),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance(),
@@ -505,6 +559,11 @@ public final class TransactionService {
       public fintekkers.requests.transaction.QueryTransactionResponseProto listIds(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.transaction.QueryTransactionRequestProto request)
+          throws com.google.protobuf.ServiceException;
+
+      public fintekkers.requests.util.DeleteResponseProto delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request)
           throws com.google.protobuf.ServiceException;
 
       public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(
@@ -573,12 +632,24 @@ public final class TransactionService {
       }
 
 
+      public fintekkers.requests.util.DeleteResponseProto delete(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.util.DeleteRequestProto request)
+          throws com.google.protobuf.ServiceException {
+        return (fintekkers.requests.util.DeleteResponseProto) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(4),
+          controller,
+          request,
+          fintekkers.requests.util.DeleteResponseProto.getDefaultInstance());
+      }
+
+
       public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.transaction.CreateTransactionRequestProto request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.requests.util.errors.Summary.SummaryProto) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(4),
+          getDescriptor().getMethods().get(5),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance());
@@ -590,7 +661,7 @@ public final class TransactionService {
           fintekkers.requests.transaction.QueryTransactionRequestProto request)
           throws com.google.protobuf.ServiceException {
         return (fintekkers.requests.util.errors.Summary.SummaryProto) channel.callBlockingMethod(
-          getDescriptor().getMethods().get(5),
+          getDescriptor().getMethods().get(6),
           controller,
           request,
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance());
@@ -620,29 +691,33 @@ public final class TransactionService {
       "_transaction_request.proto\032@fintekkers/r" +
       "equests/transaction/query_transaction_re" +
       "sponse.proto\032-fintekkers/requests/util/e" +
-      "rrors/summary.proto2\325\006\n\013Transaction\022\221\001\n\016" +
-      "CreateOrUpdate\022>.fintekkers.requests.tra" +
-      "nsaction.CreateTransactionRequestProto\032?" +
-      ".fintekkers.requests.transaction.CreateT" +
-      "ransactionResponseProto\022\211\001\n\010GetByIds\022=.f" +
-      "intekkers.requests.transaction.QueryTran" +
-      "sactionRequestProto\032>.fintekkers.request" +
-      "s.transaction.QueryTransactionResponsePr" +
-      "oto\022\211\001\n\006Search\022=.fintekkers.requests.tra" +
-      "nsaction.QueryTransactionRequestProto\032>." +
-      "fintekkers.requests.transaction.QueryTra" +
-      "nsactionResponseProto0\001\022\210\001\n\007ListIds\022=.fi" +
+      "rrors/summary.proto\032-fintekkers/requests" +
+      "/util/delete_request.proto2\274\007\n\013Transacti" +
+      "on\022\221\001\n\016CreateOrUpdate\022>.fintekkers.reque" +
+      "sts.transaction.CreateTransactionRequest" +
+      "Proto\032?.fintekkers.requests.transaction." +
+      "CreateTransactionResponseProto\022\211\001\n\010GetBy" +
+      "Ids\022=.fintekkers.requests.transaction.Qu" +
+      "eryTransactionRequestProto\032>.fintekkers." +
+      "requests.transaction.QueryTransactionRes" +
+      "ponseProto\022\211\001\n\006Search\022=.fintekkers.reque" +
+      "sts.transaction.QueryTransactionRequestP" +
+      "roto\032>.fintekkers.requests.transaction.Q" +
+      "ueryTransactionResponseProto0\001\022\210\001\n\007ListI" +
+      "ds\022=.fintekkers.requests.transaction.Que" +
+      "ryTransactionRequestProto\032>.fintekkers.r" +
+      "equests.transaction.QueryTransactionResp" +
+      "onseProto\022e\n\006Delete\022,.fintekkers.request" +
+      "s.util.DeleteRequestProto\032-.fintekkers.r" +
+      "equests.util.DeleteResponseProto\022\207\001\n\026Val" +
+      "idateCreateOrUpdate\022>.fintekkers.request" +
+      "s.transaction.CreateTransactionRequestPr" +
+      "oto\032-.fintekkers.requests.util.errors.Su" +
+      "mmaryProto\022\204\001\n\024ValidateQueryRequest\022=.fi" +
       "ntekkers.requests.transaction.QueryTrans" +
-      "actionRequestProto\032>.fintekkers.requests" +
-      ".transaction.QueryTransactionResponsePro" +
-      "to\022\207\001\n\026ValidateCreateOrUpdate\022>.fintekke" +
-      "rs.requests.transaction.CreateTransactio" +
-      "nRequestProto\032-.fintekkers.requests.util" +
-      ".errors.SummaryProto\022\204\001\n\024ValidateQueryRe" +
-      "quest\022=.fintekkers.requests.transaction." +
-      "QueryTransactionRequestProto\032-.fintekker" +
-      "s.requests.util.errors.SummaryProtoB\006\210\001\001" +
-      "\220\001\001b\006proto3"
+      "actionRequestProto\032-.fintekkers.requests" +
+      ".util.errors.SummaryProtoB\006\210\001\001\220\001\001b\006proto" +
+      "3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -652,12 +727,14 @@ public final class TransactionService {
           fintekkers.requests.transaction.QueryTransactionRequestProtos.getDescriptor(),
           fintekkers.requests.transaction.QueryTransactionResponseProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
+          fintekkers.requests.util.DeleteRequestProtos.getDescriptor(),
         });
     fintekkers.requests.transaction.CreateTransactionRequestProtos.getDescriptor();
     fintekkers.requests.transaction.CreateTransactionResponseProtos.getDescriptor();
     fintekkers.requests.transaction.QueryTransactionRequestProtos.getDescriptor();
     fintekkers.requests.transaction.QueryTransactionResponseProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();
+    fintekkers.requests.util.DeleteRequestProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

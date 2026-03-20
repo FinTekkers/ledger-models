@@ -59,21 +59,101 @@ message SecurityProto {
 
   //TIPS Bond fields
   fintekkers.models.util.DecimalValueProto base_cpi = 70; //Reference CPI at bond issuance (e.g. 256.394)
+  fintekkers.models.util.LocalDateProto index_date = 71; //The date the base CPI was observed (e.g. the reference CPI date)
+  fintekkers.models.security.index.IndexTypeProto inflation_index_type = 72; //Which inflation index this TIPS references (e.g. CPI_U)
+
+  //FRN (Floating Rate Note) fields
+  fintekkers.models.util.DecimalValueProto spread = 90; //Fixed spread over the reference rate, in basis points (e.g. 15 = +15bps)
+  fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91; //Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
+  CouponFrequencyProto reset_frequency = 92; //How often the floating coupon rate resets
 
   //Index Security fields
   fintekkers.models.security.index.IndexTypeProto index_type = 80;
 
-  //Option 1: Each time there is an update to the outstanding face value create a new version of the security
-    //PROs: Simple?
-    //CONs: Will create a lot of duplicative records, which would create diff load to understand what changed
-    //fintekkers.models.util.DecimalValueProto outstanding_face_value = 67; //Oustanding face value for the given as_of date
-  //Option 2: Have a date/decimal map which gets amended
-    //PROs: Simple
-    //CONS: Map could get big where we have daily date
-  //Option 3: Have another object, e.g. 'auction' info that can be independently stored
-    //PROS: Can extend the model; can choose the persistence strategy
-    //CONS: More upfront work
-  //Option 3 makes most sense. Need to consider naming, as not all +ve/-ve impacts to oustanding issuance will relate to auctions.
-  
-  
+  // ============================================================================
+  // oneof product_details — structured alternative to the flat fields above.
+  //
+  // During migration, BOTH the flat fields (tags 50-92) and the oneof (tags 200+)
+  // may be populated. Consumers should prefer the oneof if set, falling back to
+  // flat fields for backward compatibility. Writers should populate BOTH during
+  // the dual-write period.
+  //
+  // Once all consumers have migrated to the oneof, the flat fields will be
+  // deprecated and eventually removed in a major version bump.
+  // ============================================================================
+  oneof product_details {
+    BondDetailsProto bond_details = 200;
+    TipsDetailsProto tips_details = 201;
+    FrnDetailsProto frn_details = 202;
+    IndexDetailsProto index_details = 203;
+    EquityDetailsProto equity_details = 204;
+    CashDetailsProto cash_details = 205;
+  }
+}
+
+// Bond security details: fixed-rate coupon bonds (US Treasuries, corporates, etc.)
+message BondDetailsProto {
+  fintekkers.models.util.DecimalValueProto coupon_rate = 1; //Expressed as a % (5=5%, 0.75=0.75%, etc)
+  CouponTypeProto coupon_type = 2;
+  CouponFrequencyProto coupon_frequency = 3;
+  fintekkers.models.util.LocalDateProto dated_date = 4;
+  fintekkers.models.util.DecimalValueProto face_value = 5;
+  fintekkers.models.util.LocalDateProto issue_date = 6;
+  fintekkers.models.util.LocalDateProto maturity_date = 7;
+  repeated fintekkers.models.security.bond.IssuanceProto issuance_info = 8;
+}
+
+// TIPS (Treasury Inflation-Protected Securities) details.
+// Extends bond fields with inflation-indexing information.
+message TipsDetailsProto {
+  // Shared bond fields
+  fintekkers.models.util.DecimalValueProto coupon_rate = 1;
+  CouponTypeProto coupon_type = 2;
+  CouponFrequencyProto coupon_frequency = 3;
+  fintekkers.models.util.LocalDateProto dated_date = 4;
+  fintekkers.models.util.DecimalValueProto face_value = 5;
+  fintekkers.models.util.LocalDateProto issue_date = 6;
+  fintekkers.models.util.LocalDateProto maturity_date = 7;
+  repeated fintekkers.models.security.bond.IssuanceProto issuance_info = 8;
+
+  // TIPS-specific fields
+  fintekkers.models.util.DecimalValueProto base_cpi = 10; //Reference CPI at bond issuance (e.g. 256.394)
+  fintekkers.models.util.LocalDateProto index_date = 11; //The date the base CPI was observed
+  fintekkers.models.security.index.IndexTypeProto inflation_index_type = 12; //Which inflation index (e.g. CPI_U)
+}
+
+// Floating Rate Note (FRN) details.
+// Extends bond fields with floating-rate-specific information.
+message FrnDetailsProto {
+  // Shared bond fields
+  fintekkers.models.util.DecimalValueProto coupon_rate = 1; //Unused for FRN (rate is computed from reference_rate + spread)
+  CouponTypeProto coupon_type = 2;
+  CouponFrequencyProto coupon_frequency = 3;
+  fintekkers.models.util.LocalDateProto dated_date = 4;
+  fintekkers.models.util.DecimalValueProto face_value = 5;
+  fintekkers.models.util.LocalDateProto issue_date = 6;
+  fintekkers.models.util.LocalDateProto maturity_date = 7;
+  repeated fintekkers.models.security.bond.IssuanceProto issuance_info = 8;
+
+  // FRN-specific fields
+  fintekkers.models.util.DecimalValueProto spread = 10; //Fixed spread over the reference rate, in basis points
+  fintekkers.models.security.index.IndexTypeProto reference_rate_index = 11; //Which floating rate benchmark (e.g. SOFR)
+  CouponFrequencyProto reset_frequency = 12; //How often the floating coupon rate resets
+}
+
+// Index security details (e.g. CPI-U, SOFR index).
+message IndexDetailsProto {
+  fintekkers.models.security.index.IndexTypeProto index_type = 1;
+}
+
+// Equity security details. Minimal for now — placeholder for future fields
+// (e.g. shares_outstanding, dividend_yield, sector).
+message EquityDetailsProto {
+  // No equity-specific fields exist yet. This message serves as a type marker
+  // in the oneof and a home for future equity-specific fields.
+}
+
+// Cash security details.
+message CashDetailsProto {
+  string cash_id = 1; //e.g. "USD", "EUR", "GBP"
 }

@@ -153,67 +153,6 @@ public final class ApiKey {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private API_Key(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              objectClass_ = s;
-              break;
-            }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              version_ = s;
-              break;
-            }
-            case 26: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              identity_ = s;
-              break;
-            }
-            case 34: {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              key_ = s;
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return fintekkers.models.util.api.ApiKey.internal_static_fintekkers_models_util_api_API_Key_descriptor;
@@ -228,7 +167,8 @@ public final class ApiKey {
     }
 
     public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-    private volatile java.lang.Object objectClass_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object objectClass_ = "";
     /**
      * <pre>
      *Will be "API_Key"
@@ -274,7 +214,8 @@ public final class ApiKey {
     }
 
     public static final int VERSION_FIELD_NUMBER = 2;
-    private volatile java.lang.Object version_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object version_ = "";
     /**
      * <pre>
      *In format 1.0.0
@@ -320,7 +261,8 @@ public final class ApiKey {
     }
 
     public static final int IDENTITY_FIELD_NUMBER = 3;
-    private volatile java.lang.Object identity_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object identity_ = "";
     /**
      * <pre>
      *Identify is a unique identifier for the user. Initially this can be email.
@@ -368,7 +310,8 @@ public final class ApiKey {
     }
 
     public static final int KEY_FIELD_NUMBER = 4;
-    private volatile java.lang.Object key_;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object key_ = "";
     /**
      * <pre>
      *The key. This could be a string representation of a certificate, token or credential provided by, say Google's
@@ -429,19 +372,19 @@ public final class ApiKey {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getObjectClassBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
       }
-      if (!getVersionBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
       }
-      if (!getIdentityBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(identity_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, identity_);
       }
-      if (!getKeyBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, key_);
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -450,19 +393,19 @@ public final class ApiKey {
       if (size != -1) return size;
 
       size = 0;
-      if (!getObjectClassBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
       }
-      if (!getVersionBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
       }
-      if (!getIdentityBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(identity_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, identity_);
       }
-      if (!getKeyBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, key_);
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -485,7 +428,7 @@ public final class ApiKey {
           .equals(other.getIdentity())) return false;
       if (!getKey()
           .equals(other.getKey())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -504,7 +447,7 @@ public final class ApiKey {
       hash = (53 * hash) + getIdentity().hashCode();
       hash = (37 * hash) + KEY_FIELD_NUMBER;
       hash = (53 * hash) + getKey().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -641,30 +584,22 @@ public final class ApiKey {
 
       // Construct using fintekkers.models.util.api.ApiKey.API_Key.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         objectClass_ = "";
-
         version_ = "";
-
         identity_ = "";
-
         key_ = "";
-
         return this;
       }
 
@@ -691,12 +626,25 @@ public final class ApiKey {
       @java.lang.Override
       public fintekkers.models.util.api.ApiKey.API_Key buildPartial() {
         fintekkers.models.util.api.ApiKey.API_Key result = new fintekkers.models.util.api.ApiKey.API_Key(this);
-        result.objectClass_ = objectClass_;
-        result.version_ = version_;
-        result.identity_ = identity_;
-        result.key_ = key_;
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(fintekkers.models.util.api.ApiKey.API_Key result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.objectClass_ = objectClass_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.version_ = version_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.identity_ = identity_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.key_ = key_;
+        }
       }
 
       @java.lang.Override
@@ -745,21 +693,25 @@ public final class ApiKey {
         if (other == fintekkers.models.util.api.ApiKey.API_Key.getDefaultInstance()) return this;
         if (!other.getObjectClass().isEmpty()) {
           objectClass_ = other.objectClass_;
+          bitField0_ |= 0x00000001;
           onChanged();
         }
         if (!other.getVersion().isEmpty()) {
           version_ = other.version_;
+          bitField0_ |= 0x00000002;
           onChanged();
         }
         if (!other.getIdentity().isEmpty()) {
           identity_ = other.identity_;
+          bitField0_ |= 0x00000004;
           onChanged();
         }
         if (!other.getKey().isEmpty()) {
           key_ = other.key_;
+          bitField0_ |= 0x00000008;
           onChanged();
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -774,19 +726,53 @@ public final class ApiKey {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        fintekkers.models.util.api.ApiKey.API_Key parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                objectClass_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                version_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                identity_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              case 34: {
+                key_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 34
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (fintekkers.models.util.api.ApiKey.API_Key) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
+      private int bitField0_;
 
       private java.lang.Object objectClass_ = "";
       /**
@@ -841,11 +827,9 @@ public final class ApiKey {
        */
       public Builder setObjectClass(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         objectClass_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -858,8 +842,8 @@ public final class ApiKey {
        * @return This builder for chaining.
        */
       public Builder clearObjectClass() {
-        
         objectClass_ = getDefaultInstance().getObjectClass();
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -874,12 +858,10 @@ public final class ApiKey {
        */
       public Builder setObjectClassBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         objectClass_ = value;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
@@ -937,11 +919,9 @@ public final class ApiKey {
        */
       public Builder setVersion(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         version_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -954,8 +934,8 @@ public final class ApiKey {
        * @return This builder for chaining.
        */
       public Builder clearVersion() {
-        
         version_ = getDefaultInstance().getVersion();
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -970,12 +950,10 @@ public final class ApiKey {
        */
       public Builder setVersionBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         version_ = value;
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
@@ -1036,11 +1014,9 @@ public final class ApiKey {
        */
       public Builder setIdentity(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         identity_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -1054,8 +1030,8 @@ public final class ApiKey {
        * @return This builder for chaining.
        */
       public Builder clearIdentity() {
-        
         identity_ = getDefaultInstance().getIdentity();
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -1071,12 +1047,10 @@ public final class ApiKey {
        */
       public Builder setIdentityBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         identity_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -1137,11 +1111,9 @@ public final class ApiKey {
        */
       public Builder setKey(
           java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+        if (value == null) { throw new NullPointerException(); }
         key_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -1155,8 +1127,8 @@ public final class ApiKey {
        * @return This builder for chaining.
        */
       public Builder clearKey() {
-        
         key_ = getDefaultInstance().getKey();
+        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
         return this;
       }
@@ -1172,12 +1144,10 @@ public final class ApiKey {
        */
       public Builder setKeyBytes(
           com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
         key_ = value;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -1214,7 +1184,18 @@ public final class ApiKey {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new API_Key(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 

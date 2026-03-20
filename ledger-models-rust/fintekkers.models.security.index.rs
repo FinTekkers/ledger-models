@@ -12,6 +12,14 @@ pub enum IndexTypeProto {
     Pce = 4,
     /// Harmonised Index of Consumer Prices (EU)
     Hicp = 5,
+    /// Floating rate benchmarks
+    ///
+    /// Secured Overnight Financing Rate (primary USD benchmark post-LIBOR)
+    Sofr = 10,
+    /// 13-week Treasury bill auction high rate
+    TBill13Week = 11,
+    /// Federal Funds effective rate
+    FedFunds = 12,
 }
 impl IndexTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -26,6 +34,9 @@ impl IndexTypeProto {
             IndexTypeProto::CoreCpi => "CORE_CPI",
             IndexTypeProto::Pce => "PCE",
             IndexTypeProto::Hicp => "HICP",
+            IndexTypeProto::Sofr => "SOFR",
+            IndexTypeProto::TBill13Week => "T_BILL_13_WEEK",
+            IndexTypeProto::FedFunds => "FED_FUNDS",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -37,6 +48,9 @@ impl IndexTypeProto {
             "CORE_CPI" => Some(Self::CoreCpi),
             "PCE" => Some(Self::Pce),
             "HICP" => Some(Self::Hicp),
+            "SOFR" => Some(Self::Sofr),
+            "T_BILL_13_WEEK" => Some(Self::TBill13Week),
+            "FED_FUNDS" => Some(Self::FedFunds),
             _ => None,
         }
     }

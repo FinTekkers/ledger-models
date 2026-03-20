@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_util_uuid_pb = require('../../../fintekkers/models/util/uuid_pb.js');
 goog.object.extend(proto, fintekkers_models_util_uuid_pb);
@@ -119,15 +113,15 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.toObject = func
  */
 proto.fintekkers.requests.price.QueryPriceRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    uuidsList: jspb.Message.toObjectList(msg.getUuidsList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+uuidsList: jspb.Message.toObjectList(msg.getUuidsList(),
     fintekkers_models_util_uuid_pb.UUIDProto.toObject, includeInstance),
-    searchPriceInput: (f = msg.getSearchPriceInput()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
-    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-    frequency: jspb.Message.getFieldWithDefault(msg, 24, 0),
-    horizon: jspb.Message.getFieldWithDefault(msg, 25, 0),
-    dateRange: (f = msg.getDateRange()) && fintekkers_models_util_date_range_pb.DateRangeProto.toObject(includeInstance, f)
+searchPriceInput: (f = msg.getSearchPriceInput()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
+asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+frequency: jspb.Message.getFieldWithDefault(msg, 24, 0),
+horizon: (f = jspb.Message.getField(msg, 25)) == null ? undefined : f,
+dateRange: (f = msg.getDateRange()) && fintekkers_models_util_date_range_pb.DateRangeProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -140,7 +134,7 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.toObject = function(inclu
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.price.QueryPriceRequestProto}
  */
 proto.fintekkers.requests.price.QueryPriceRequestProto.deserializeBinary = function(bytes) {

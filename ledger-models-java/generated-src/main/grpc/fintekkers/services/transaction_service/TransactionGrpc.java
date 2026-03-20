@@ -4,15 +4,12 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.51.0)",
-    comments = "Source: fintekkers/services/transaction-service/transaction_service.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class TransactionGrpc {
 
   private TransactionGrpc() {}
 
-  public static final String SERVICE_NAME = "fintekkers.services.transaction_service.Transaction";
+  public static final java.lang.String SERVICE_NAME = "fintekkers.services.transaction_service.Transaction";
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<fintekkers.requests.transaction.CreateTransactionRequestProto,
@@ -139,6 +136,37 @@ public final class TransactionGrpc {
     return getListIdsMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<fintekkers.requests.util.DeleteRequestProto,
+      fintekkers.requests.util.DeleteResponseProto> getDeleteMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "Delete",
+      requestType = fintekkers.requests.util.DeleteRequestProto.class,
+      responseType = fintekkers.requests.util.DeleteResponseProto.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<fintekkers.requests.util.DeleteRequestProto,
+      fintekkers.requests.util.DeleteResponseProto> getDeleteMethod() {
+    io.grpc.MethodDescriptor<fintekkers.requests.util.DeleteRequestProto, fintekkers.requests.util.DeleteResponseProto> getDeleteMethod;
+    if ((getDeleteMethod = TransactionGrpc.getDeleteMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getDeleteMethod = TransactionGrpc.getDeleteMethod) == null) {
+          TransactionGrpc.getDeleteMethod = getDeleteMethod =
+              io.grpc.MethodDescriptor.<fintekkers.requests.util.DeleteRequestProto, fintekkers.requests.util.DeleteResponseProto>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "Delete"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.util.DeleteRequestProto.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.util.DeleteResponseProto.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("Delete"))
+              .build();
+        }
+      }
+    }
+    return getDeleteMethod;
+  }
+
   private static volatile io.grpc.MethodDescriptor<fintekkers.requests.transaction.CreateTransactionRequestProto,
       fintekkers.requests.util.errors.Summary.SummaryProto> getValidateCreateOrUpdateMethod;
 
@@ -216,6 +244,21 @@ public final class TransactionGrpc {
   }
 
   /**
+   * Creates a new blocking-style stub that supports all types of calls on the service
+   */
+  public static TransactionBlockingV2Stub newBlockingV2Stub(
+      io.grpc.Channel channel) {
+    io.grpc.stub.AbstractStub.StubFactory<TransactionBlockingV2Stub> factory =
+      new io.grpc.stub.AbstractStub.StubFactory<TransactionBlockingV2Stub>() {
+        @java.lang.Override
+        public TransactionBlockingV2Stub newStub(io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+          return new TransactionBlockingV2Stub(channel, callOptions);
+        }
+      };
+    return TransactionBlockingV2Stub.newStub(factory, channel);
+  }
+
+  /**
    * Creates a new blocking-style stub that supports unary and streaming output calls on the service
    */
   public static TransactionBlockingStub newBlockingStub(
@@ -247,101 +290,74 @@ public final class TransactionGrpc {
 
   /**
    */
-  public static abstract class TransactionImplBase implements io.grpc.BindableService {
+  public interface AsyncService {
 
     /**
      */
-    public void createOrUpdate(fintekkers.requests.transaction.CreateTransactionRequestProto request,
+    default void createOrUpdate(fintekkers.requests.transaction.CreateTransactionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.transaction.CreateTransactionResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getCreateOrUpdateMethod(), responseObserver);
     }
 
     /**
      */
-    public void getByIds(fintekkers.requests.transaction.QueryTransactionRequestProto request,
+    default void getByIds(fintekkers.requests.transaction.QueryTransactionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.transaction.QueryTransactionResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetByIdsMethod(), responseObserver);
     }
 
     /**
      */
-    public void search(fintekkers.requests.transaction.QueryTransactionRequestProto request,
+    default void search(fintekkers.requests.transaction.QueryTransactionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.transaction.QueryTransactionResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSearchMethod(), responseObserver);
     }
 
     /**
      */
-    public void listIds(fintekkers.requests.transaction.QueryTransactionRequestProto request,
+    default void listIds(fintekkers.requests.transaction.QueryTransactionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.transaction.QueryTransactionResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListIdsMethod(), responseObserver);
     }
 
     /**
      */
-    public void validateCreateOrUpdate(fintekkers.requests.transaction.CreateTransactionRequestProto request,
+    default void delete(fintekkers.requests.util.DeleteRequestProto request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.util.DeleteResponseProto> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void validateCreateOrUpdate(fintekkers.requests.transaction.CreateTransactionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getValidateCreateOrUpdateMethod(), responseObserver);
     }
 
     /**
      */
-    public void validateQueryRequest(fintekkers.requests.transaction.QueryTransactionRequestProto request,
+    default void validateQueryRequest(fintekkers.requests.transaction.QueryTransactionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getValidateQueryRequestMethod(), responseObserver);
-    }
-
-    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
-      return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
-          .addMethod(
-            getCreateOrUpdateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.transaction.CreateTransactionRequestProto,
-                fintekkers.requests.transaction.CreateTransactionResponseProto>(
-                  this, METHODID_CREATE_OR_UPDATE)))
-          .addMethod(
-            getGetByIdsMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.transaction.QueryTransactionRequestProto,
-                fintekkers.requests.transaction.QueryTransactionResponseProto>(
-                  this, METHODID_GET_BY_IDS)))
-          .addMethod(
-            getSearchMethod(),
-            io.grpc.stub.ServerCalls.asyncServerStreamingCall(
-              new MethodHandlers<
-                fintekkers.requests.transaction.QueryTransactionRequestProto,
-                fintekkers.requests.transaction.QueryTransactionResponseProto>(
-                  this, METHODID_SEARCH)))
-          .addMethod(
-            getListIdsMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.transaction.QueryTransactionRequestProto,
-                fintekkers.requests.transaction.QueryTransactionResponseProto>(
-                  this, METHODID_LIST_IDS)))
-          .addMethod(
-            getValidateCreateOrUpdateMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.transaction.CreateTransactionRequestProto,
-                fintekkers.requests.util.errors.Summary.SummaryProto>(
-                  this, METHODID_VALIDATE_CREATE_OR_UPDATE)))
-          .addMethod(
-            getValidateQueryRequestMethod(),
-            io.grpc.stub.ServerCalls.asyncUnaryCall(
-              new MethodHandlers<
-                fintekkers.requests.transaction.QueryTransactionRequestProto,
-                fintekkers.requests.util.errors.Summary.SummaryProto>(
-                  this, METHODID_VALIDATE_QUERY_REQUEST)))
-          .build();
     }
   }
 
   /**
+   * Base class for the server implementation of the service Transaction.
    */
-  public static final class TransactionStub extends io.grpc.stub.AbstractAsyncStub<TransactionStub> {
+  public static abstract class TransactionImplBase
+      implements io.grpc.BindableService, AsyncService {
+
+    @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
+      return TransactionGrpc.bindService(this);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do asynchronous rpc calls to service Transaction.
+   */
+  public static final class TransactionStub
+      extends io.grpc.stub.AbstractAsyncStub<TransactionStub> {
     private TransactionStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -387,6 +403,14 @@ public final class TransactionGrpc {
 
     /**
      */
+    public void delete(fintekkers.requests.util.DeleteRequestProto request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.util.DeleteResponseProto> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDeleteMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
     public void validateCreateOrUpdate(fintekkers.requests.transaction.CreateTransactionRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
@@ -403,8 +427,78 @@ public final class TransactionGrpc {
   }
 
   /**
+   * A stub to allow clients to do synchronous rpc calls to service Transaction.
    */
-  public static final class TransactionBlockingStub extends io.grpc.stub.AbstractBlockingStub<TransactionBlockingStub> {
+  public static final class TransactionBlockingV2Stub
+      extends io.grpc.stub.AbstractBlockingStub<TransactionBlockingV2Stub> {
+    private TransactionBlockingV2Stub(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      super(channel, callOptions);
+    }
+
+    @java.lang.Override
+    protected TransactionBlockingV2Stub build(
+        io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
+      return new TransactionBlockingV2Stub(channel, callOptions);
+    }
+
+    /**
+     */
+    public fintekkers.requests.transaction.CreateTransactionResponseProto createOrUpdate(fintekkers.requests.transaction.CreateTransactionRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getCreateOrUpdateMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.transaction.QueryTransactionResponseProto getByIds(fintekkers.requests.transaction.QueryTransactionRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetByIdsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
+    public io.grpc.stub.BlockingClientCall<?, fintekkers.requests.transaction.QueryTransactionResponseProto>
+        search(fintekkers.requests.transaction.QueryTransactionRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingV2ServerStreamingCall(
+          getChannel(), getSearchMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.transaction.QueryTransactionResponseProto listIds(fintekkers.requests.transaction.QueryTransactionRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getListIdsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.util.DeleteResponseProto delete(fintekkers.requests.util.DeleteRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getDeleteMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(fintekkers.requests.transaction.CreateTransactionRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getValidateCreateOrUpdateMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto validateQueryRequest(fintekkers.requests.transaction.QueryTransactionRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getValidateQueryRequestMethod(), getCallOptions(), request);
+    }
+  }
+
+  /**
+   * A stub to allow clients to do limited synchronous rpc calls to service Transaction.
+   */
+  public static final class TransactionBlockingStub
+      extends io.grpc.stub.AbstractBlockingStub<TransactionBlockingStub> {
     private TransactionBlockingStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -447,6 +541,13 @@ public final class TransactionGrpc {
 
     /**
      */
+    public fintekkers.requests.util.DeleteResponseProto delete(fintekkers.requests.util.DeleteRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDeleteMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
     public fintekkers.requests.util.errors.Summary.SummaryProto validateCreateOrUpdate(fintekkers.requests.transaction.CreateTransactionRequestProto request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getValidateCreateOrUpdateMethod(), getCallOptions(), request);
@@ -461,8 +562,10 @@ public final class TransactionGrpc {
   }
 
   /**
+   * A stub to allow clients to do ListenableFuture-style rpc calls to service Transaction.
    */
-  public static final class TransactionFutureStub extends io.grpc.stub.AbstractFutureStub<TransactionFutureStub> {
+  public static final class TransactionFutureStub
+      extends io.grpc.stub.AbstractFutureStub<TransactionFutureStub> {
     private TransactionFutureStub(
         io.grpc.Channel channel, io.grpc.CallOptions callOptions) {
       super(channel, callOptions);
@@ -500,6 +603,14 @@ public final class TransactionGrpc {
 
     /**
      */
+    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.util.DeleteResponseProto> delete(
+        fintekkers.requests.util.DeleteRequestProto request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDeleteMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
     public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.util.errors.Summary.SummaryProto> validateCreateOrUpdate(
         fintekkers.requests.transaction.CreateTransactionRequestProto request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
@@ -519,18 +630,19 @@ public final class TransactionGrpc {
   private static final int METHODID_GET_BY_IDS = 1;
   private static final int METHODID_SEARCH = 2;
   private static final int METHODID_LIST_IDS = 3;
-  private static final int METHODID_VALIDATE_CREATE_OR_UPDATE = 4;
-  private static final int METHODID_VALIDATE_QUERY_REQUEST = 5;
+  private static final int METHODID_DELETE = 4;
+  private static final int METHODID_VALIDATE_CREATE_OR_UPDATE = 5;
+  private static final int METHODID_VALIDATE_QUERY_REQUEST = 6;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.ServerStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.ClientStreamingMethod<Req, Resp>,
       io.grpc.stub.ServerCalls.BidiStreamingMethod<Req, Resp> {
-    private final TransactionImplBase serviceImpl;
+    private final AsyncService serviceImpl;
     private final int methodId;
 
-    MethodHandlers(TransactionImplBase serviceImpl, int methodId) {
+    MethodHandlers(AsyncService serviceImpl, int methodId) {
       this.serviceImpl = serviceImpl;
       this.methodId = methodId;
     }
@@ -554,6 +666,10 @@ public final class TransactionGrpc {
         case METHODID_LIST_IDS:
           serviceImpl.listIds((fintekkers.requests.transaction.QueryTransactionRequestProto) request,
               (io.grpc.stub.StreamObserver<fintekkers.requests.transaction.QueryTransactionResponseProto>) responseObserver);
+          break;
+        case METHODID_DELETE:
+          serviceImpl.delete((fintekkers.requests.util.DeleteRequestProto) request,
+              (io.grpc.stub.StreamObserver<fintekkers.requests.util.DeleteResponseProto>) responseObserver);
           break;
         case METHODID_VALIDATE_CREATE_OR_UPDATE:
           serviceImpl.validateCreateOrUpdate((fintekkers.requests.transaction.CreateTransactionRequestProto) request,
@@ -579,6 +695,60 @@ public final class TransactionGrpc {
     }
   }
 
+  public static final io.grpc.ServerServiceDefinition bindService(AsyncService service) {
+    return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
+        .addMethod(
+          getCreateOrUpdateMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.transaction.CreateTransactionRequestProto,
+              fintekkers.requests.transaction.CreateTransactionResponseProto>(
+                service, METHODID_CREATE_OR_UPDATE)))
+        .addMethod(
+          getGetByIdsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.transaction.QueryTransactionRequestProto,
+              fintekkers.requests.transaction.QueryTransactionResponseProto>(
+                service, METHODID_GET_BY_IDS)))
+        .addMethod(
+          getSearchMethod(),
+          io.grpc.stub.ServerCalls.asyncServerStreamingCall(
+            new MethodHandlers<
+              fintekkers.requests.transaction.QueryTransactionRequestProto,
+              fintekkers.requests.transaction.QueryTransactionResponseProto>(
+                service, METHODID_SEARCH)))
+        .addMethod(
+          getListIdsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.transaction.QueryTransactionRequestProto,
+              fintekkers.requests.transaction.QueryTransactionResponseProto>(
+                service, METHODID_LIST_IDS)))
+        .addMethod(
+          getDeleteMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.util.DeleteRequestProto,
+              fintekkers.requests.util.DeleteResponseProto>(
+                service, METHODID_DELETE)))
+        .addMethod(
+          getValidateCreateOrUpdateMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.transaction.CreateTransactionRequestProto,
+              fintekkers.requests.util.errors.Summary.SummaryProto>(
+                service, METHODID_VALIDATE_CREATE_OR_UPDATE)))
+        .addMethod(
+          getValidateQueryRequestMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.transaction.QueryTransactionRequestProto,
+              fintekkers.requests.util.errors.Summary.SummaryProto>(
+                service, METHODID_VALIDATE_QUERY_REQUEST)))
+        .build();
+  }
+
   private static abstract class TransactionBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoFileDescriptorSupplier, io.grpc.protobuf.ProtoServiceDescriptorSupplier {
     TransactionBaseDescriptorSupplier() {}
@@ -602,9 +772,9 @@ public final class TransactionGrpc {
   private static final class TransactionMethodDescriptorSupplier
       extends TransactionBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoMethodDescriptorSupplier {
-    private final String methodName;
+    private final java.lang.String methodName;
 
-    TransactionMethodDescriptorSupplier(String methodName) {
+    TransactionMethodDescriptorSupplier(java.lang.String methodName) {
       this.methodName = methodName;
     }
 
@@ -628,6 +798,7 @@ public final class TransactionGrpc {
               .addMethod(getGetByIdsMethod())
               .addMethod(getSearchMethod())
               .addMethod(getListIdsMethod())
+              .addMethod(getDeleteMethod())
               .addMethod(getValidateCreateOrUpdateMethod())
               .addMethod(getValidateQueryRequestMethod())
               .build();

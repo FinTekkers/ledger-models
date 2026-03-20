@@ -104,68 +104,6 @@ public final class Summary {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private SummaryProto(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      int mutable_bitField0_ = 0;
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10: {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                errors_ = new java.util.ArrayList<fintekkers.requests.util.errors.Error.ErrorProto>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              errors_.add(
-                  input.readMessage(fintekkers.requests.util.errors.Error.ErrorProto.parser(), extensionRegistry));
-              break;
-            }
-            case 18: {
-              if (!((mutable_bitField0_ & 0x00000002) != 0)) {
-                warnings_ = new java.util.ArrayList<fintekkers.requests.util.errors.Error.WarningProto>();
-                mutable_bitField0_ |= 0x00000002;
-              }
-              warnings_.add(
-                  input.readMessage(fintekkers.requests.util.errors.Error.WarningProto.parser(), extensionRegistry));
-              break;
-            }
-            default: {
-              if (!parseUnknownField(
-                  input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          errors_ = java.util.Collections.unmodifiableList(errors_);
-        }
-        if (((mutable_bitField0_ & 0x00000002) != 0)) {
-          warnings_ = java.util.Collections.unmodifiableList(warnings_);
-        }
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return fintekkers.requests.util.errors.Summary.internal_static_fintekkers_requests_util_errors_SummaryProto_descriptor;
@@ -180,6 +118,7 @@ public final class Summary {
     }
 
     public static final int ERRORS_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
     private java.util.List<fintekkers.requests.util.errors.Error.ErrorProto> errors_;
     /**
      * <code>repeated .fintekkers.requests.util.errors.ErrorProto errors = 1;</code>
@@ -220,6 +159,7 @@ public final class Summary {
     }
 
     public static final int WARNINGS_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
     private java.util.List<fintekkers.requests.util.errors.Error.WarningProto> warnings_;
     /**
      * <code>repeated .fintekkers.requests.util.errors.WarningProto warnings = 2;</code>
@@ -279,7 +219,7 @@ public final class Summary {
       for (int i = 0; i < warnings_.size(); i++) {
         output.writeMessage(2, warnings_.get(i));
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -296,7 +236,7 @@ public final class Summary {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, warnings_.get(i));
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -315,7 +255,7 @@ public final class Summary {
           .equals(other.getErrorsList())) return false;
       if (!getWarningsList()
           .equals(other.getWarningsList())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -334,7 +274,7 @@ public final class Summary {
         hash = (37 * hash) + WARNINGS_FIELD_NUMBER;
         hash = (53 * hash) + getWarningsList().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -460,36 +400,32 @@ public final class Summary {
 
       // Construct using fintekkers.requests.util.errors.Summary.SummaryProto.newBuilder()
       private Builder() {
-        maybeForceBuilderInitialization();
+
       }
 
       private Builder(
           com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-          getErrorsFieldBuilder();
-          getWarningsFieldBuilder();
-        }
+
       }
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
         if (errorsBuilder_ == null) {
           errors_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
+          errors_ = null;
           errorsBuilder_.clear();
         }
+        bitField0_ = (bitField0_ & ~0x00000001);
         if (warningsBuilder_ == null) {
           warnings_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000002);
         } else {
+          warnings_ = null;
           warningsBuilder_.clear();
         }
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -516,7 +452,13 @@ public final class Summary {
       @java.lang.Override
       public fintekkers.requests.util.errors.Summary.SummaryProto buildPartial() {
         fintekkers.requests.util.errors.Summary.SummaryProto result = new fintekkers.requests.util.errors.Summary.SummaryProto(this);
-        int from_bitField0_ = bitField0_;
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(fintekkers.requests.util.errors.Summary.SummaryProto result) {
         if (errorsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             errors_ = java.util.Collections.unmodifiableList(errors_);
@@ -535,8 +477,10 @@ public final class Summary {
         } else {
           result.warnings_ = warningsBuilder_.build();
         }
-        onBuilt();
-        return result;
+      }
+
+      private void buildPartial0(fintekkers.requests.util.errors.Summary.SummaryProto result) {
+        int from_bitField0_ = bitField0_;
       }
 
       @java.lang.Override
@@ -635,7 +579,7 @@ public final class Summary {
             }
           }
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -650,17 +594,56 @@ public final class Summary {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        fintekkers.requests.util.errors.Summary.SummaryProto parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                fintekkers.requests.util.errors.Error.ErrorProto m =
+                    input.readMessage(
+                        fintekkers.requests.util.errors.Error.ErrorProto.parser(),
+                        extensionRegistry);
+                if (errorsBuilder_ == null) {
+                  ensureErrorsIsMutable();
+                  errors_.add(m);
+                } else {
+                  errorsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 10
+              case 18: {
+                fintekkers.requests.util.errors.Error.WarningProto m =
+                    input.readMessage(
+                        fintekkers.requests.util.errors.Error.WarningProto.parser(),
+                        extensionRegistry);
+                if (warningsBuilder_ == null) {
+                  ensureWarningsIsMutable();
+                  warnings_.add(m);
+                } else {
+                  warningsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (fintekkers.requests.util.errors.Summary.SummaryProto) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
       private int bitField0_;
@@ -1177,7 +1160,18 @@ public final class Summary {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new SummaryProto(input, extensionRegistry);
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
       }
     };
 

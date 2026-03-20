@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var fintekkers_models_position_position_util_pb = require('../../../fintekkers/models/position/position_util_pb.js');
 goog.object.extend(proto, fintekkers_models_position_position_util_pb);
@@ -86,13 +80,13 @@ proto.fintekkers.models.position.PositionProto.prototype.toObject = function(opt
  */
 proto.fintekkers.models.position.PositionProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    positionView: jspb.Message.getFieldWithDefault(msg, 10, 0),
-    positionType: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    measuresList: jspb.Message.toObjectList(msg.getMeasuresList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+positionView: jspb.Message.getFieldWithDefault(msg, 10, 0),
+positionType: jspb.Message.getFieldWithDefault(msg, 11, 0),
+measuresList: jspb.Message.toObjectList(msg.getMeasuresList(),
     fintekkers_models_position_position_util_pb.MeasureMapEntry.toObject, includeInstance),
-    fieldsList: jspb.Message.toObjectList(msg.getFieldsList(),
+fieldsList: jspb.Message.toObjectList(msg.getFieldsList(),
     fintekkers_models_position_position_util_pb.FieldMapEntry.toObject, includeInstance)
   };
 
@@ -106,7 +100,7 @@ proto.fintekkers.models.position.PositionProto.toObject = function(includeInstan
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.position.PositionProto}
  */
 proto.fintekkers.models.position.PositionProto.deserializeBinary = function(bytes) {

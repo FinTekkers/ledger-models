@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() {
-  if (this) { return this; }
-  if (typeof window !== 'undefined') { return window; }
-  if (typeof global !== 'undefined') { return global; }
-  if (typeof self !== 'undefined') { return self; }
-  return Function('return this')();
-}.call(null));
+var global = globalThis;
 
 var google_protobuf_any_pb = require('google-protobuf/google/protobuf/any_pb.js');
 goog.object.extend(proto, google_protobuf_any_pb);
@@ -84,9 +78,9 @@ proto.fintekkers.requests.security.GetFieldValuesResponseProto.prototype.toObjec
  */
 proto.fintekkers.requests.security.GetFieldValuesResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    valuesList: jspb.Message.toObjectList(msg.getValuesList(),
+objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+valuesList: jspb.Message.toObjectList(msg.getValuesList(),
     google_protobuf_any_pb.Any.toObject, includeInstance)
   };
 
@@ -100,7 +94,7 @@ proto.fintekkers.requests.security.GetFieldValuesResponseProto.toObject = functi
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.security.GetFieldValuesResponseProto}
  */
 proto.fintekkers.requests.security.GetFieldValuesResponseProto.deserializeBinary = function(bytes) {
