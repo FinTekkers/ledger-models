@@ -266,6 +266,77 @@ public enum MeasureProto
    * <code>SPREAD_DURATION = 14;</code>
    */
   SPREAD_DURATION(14),
+  /**
+   * <pre>
+   * The par yield at a given maturity point on the yield curve. The par yield is
+   * the coupon rate at which a bond would trade at par (price = 100) for a given
+   * maturity. This is the most commonly quoted yield curve.
+   * Formula:
+   *   For each maturity point, the par yield is the coupon rate c such that:
+   *   100 = Sum_{t=1}^{N} [c/m / (1 + r_t)^t] + 100 / (1 + r_N)^N
+   *   Where r_t are spot rates, m = coupon frequency, N = number of periods.
+   *   In practice, for on-the-run bonds, par yield ≈ YTM when the bond trades
+   *   near par. The par yield curve is bootstrapped from observed bond prices.
+   * Model assumptions:
+   *   - Coupon frequency matches the market convention (semiannual for US Treasuries).
+   *   - Interpolation between observed maturities uses the method specified in
+   *     the CurveRequestProto (linear by default).
+   * Applicability: Bond, TIPS (real par yield curve).
+   *   Not applicable to FRN, Equity, or Cash.
+   * Units: Decimal (0-1 scale; e.g. 0.045 = 4.50% annual).
+   * </pre>
+   *
+   * <code>PAR_YIELD = 15;</code>
+   */
+  PAR_YIELD(15),
+  /**
+   * <pre>
+   * The spot (zero-coupon) yield at a given maturity. The spot rate is the yield
+   * on a zero-coupon bond maturing at that point — it represents the pure time
+   * value of money with no reinvestment assumption.
+   * Formula:
+   *   Bootstrapped from the par yield curve:
+   *   P = 100 / (1 + s_N)^N  →  s_N = (100 / P)^(1/N) - 1
+   *   Where s_N is the N-period spot rate, P is the zero-coupon bond price
+   *   implied by stripping coupons from the par curve.
+   *   For the first period, spot rate = par yield. For subsequent periods,
+   *   the bootstrap solves:
+   *   100 = Sum_{t=1}^{N-1} [c/m / (1 + s_t)^t] + (100 + c/m) / (1 + s_N)^N
+   *   for s_N, using previously computed spot rates s_1..s_{N-1}.
+   * Model assumptions:
+   *   - Requires a complete par yield curve as input (no gaps).
+   *   - Bootstrap assumes exact coupon dates (no day-count adjustments).
+   * Applicability: Derived from Bond par curve. Used for discounting cashflows
+   *   and computing forward rates.
+   * Units: Decimal (0-1 scale; e.g. 0.046 = 4.60% annual).
+   * </pre>
+   *
+   * <code>SPOT_YIELD = 16;</code>
+   */
+  SPOT_YIELD(16),
+  /**
+   * <pre>
+   * The forward yield between two future dates, implied by the spot curve.
+   * The forward rate f(t1, t2) is the rate agreed today for borrowing/lending
+   * between future times t1 and t2.
+   * Formula:
+   *   f(t1, t2) = [(1 + s_{t2})^{t2} / (1 + s_{t1})^{t1}]^{1/(t2 - t1)} - 1
+   *   Where s_t are spot rates for maturities t1 and t2.
+   *   For example, the 1-year forward rate 1 year from now (1y1y) is:
+   *   f(1,2) = [(1 + s_2)^2 / (1 + s_1)]^1 - 1
+   * Model assumptions:
+   *   - Derived from the spot curve (which is bootstrapped from par).
+   *   - Assumes no arbitrage between spot and forward rates.
+   *   - The forward period is defined by adjacent tenor points in the
+   *     CurveRequestProto.
+   * Applicability: Derived from Bond spot curve. Used for rate expectations
+   *   and forward-starting instrument pricing.
+   * Units: Decimal (0-1 scale; e.g. 0.048 = 4.80% annual forward rate).
+   * </pre>
+   *
+   * <code>FORWARD_YIELD = 17;</code>
+   */
+  FORWARD_YIELD(17),
   UNRECOGNIZED(-1),
   ;
 
@@ -527,6 +598,77 @@ public enum MeasureProto
    * <code>SPREAD_DURATION = 14;</code>
    */
   public static final int SPREAD_DURATION_VALUE = 14;
+  /**
+   * <pre>
+   * The par yield at a given maturity point on the yield curve. The par yield is
+   * the coupon rate at which a bond would trade at par (price = 100) for a given
+   * maturity. This is the most commonly quoted yield curve.
+   * Formula:
+   *   For each maturity point, the par yield is the coupon rate c such that:
+   *   100 = Sum_{t=1}^{N} [c/m / (1 + r_t)^t] + 100 / (1 + r_N)^N
+   *   Where r_t are spot rates, m = coupon frequency, N = number of periods.
+   *   In practice, for on-the-run bonds, par yield ≈ YTM when the bond trades
+   *   near par. The par yield curve is bootstrapped from observed bond prices.
+   * Model assumptions:
+   *   - Coupon frequency matches the market convention (semiannual for US Treasuries).
+   *   - Interpolation between observed maturities uses the method specified in
+   *     the CurveRequestProto (linear by default).
+   * Applicability: Bond, TIPS (real par yield curve).
+   *   Not applicable to FRN, Equity, or Cash.
+   * Units: Decimal (0-1 scale; e.g. 0.045 = 4.50% annual).
+   * </pre>
+   *
+   * <code>PAR_YIELD = 15;</code>
+   */
+  public static final int PAR_YIELD_VALUE = 15;
+  /**
+   * <pre>
+   * The spot (zero-coupon) yield at a given maturity. The spot rate is the yield
+   * on a zero-coupon bond maturing at that point — it represents the pure time
+   * value of money with no reinvestment assumption.
+   * Formula:
+   *   Bootstrapped from the par yield curve:
+   *   P = 100 / (1 + s_N)^N  →  s_N = (100 / P)^(1/N) - 1
+   *   Where s_N is the N-period spot rate, P is the zero-coupon bond price
+   *   implied by stripping coupons from the par curve.
+   *   For the first period, spot rate = par yield. For subsequent periods,
+   *   the bootstrap solves:
+   *   100 = Sum_{t=1}^{N-1} [c/m / (1 + s_t)^t] + (100 + c/m) / (1 + s_N)^N
+   *   for s_N, using previously computed spot rates s_1..s_{N-1}.
+   * Model assumptions:
+   *   - Requires a complete par yield curve as input (no gaps).
+   *   - Bootstrap assumes exact coupon dates (no day-count adjustments).
+   * Applicability: Derived from Bond par curve. Used for discounting cashflows
+   *   and computing forward rates.
+   * Units: Decimal (0-1 scale; e.g. 0.046 = 4.60% annual).
+   * </pre>
+   *
+   * <code>SPOT_YIELD = 16;</code>
+   */
+  public static final int SPOT_YIELD_VALUE = 16;
+  /**
+   * <pre>
+   * The forward yield between two future dates, implied by the spot curve.
+   * The forward rate f(t1, t2) is the rate agreed today for borrowing/lending
+   * between future times t1 and t2.
+   * Formula:
+   *   f(t1, t2) = [(1 + s_{t2})^{t2} / (1 + s_{t1})^{t1}]^{1/(t2 - t1)} - 1
+   *   Where s_t are spot rates for maturities t1 and t2.
+   *   For example, the 1-year forward rate 1 year from now (1y1y) is:
+   *   f(1,2) = [(1 + s_2)^2 / (1 + s_1)]^1 - 1
+   * Model assumptions:
+   *   - Derived from the spot curve (which is bootstrapped from par).
+   *   - Assumes no arbitrage between spot and forward rates.
+   *   - The forward period is defined by adjacent tenor points in the
+   *     CurveRequestProto.
+   * Applicability: Derived from Bond spot curve. Used for rate expectations
+   *   and forward-starting instrument pricing.
+   * Units: Decimal (0-1 scale; e.g. 0.048 = 4.80% annual forward rate).
+   * </pre>
+   *
+   * <code>FORWARD_YIELD = 17;</code>
+   */
+  public static final int FORWARD_YIELD_VALUE = 17;
 
 
   public final int getNumber() {
@@ -567,6 +709,9 @@ public enum MeasureProto
       case 12: return PRESENT_VALUE_CASHFLOWS;
       case 13: return DISCOUNT_MARGIN;
       case 14: return SPREAD_DURATION;
+      case 15: return PAR_YIELD;
+      case 16: return SPOT_YIELD;
+      case 17: return FORWARD_YIELD;
       default: return null;
     }
   }

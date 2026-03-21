@@ -33,7 +33,10 @@ proto.fintekkers.models.position.MeasureProto = {
   INFLATION_ADJUSTED_PRINCIPAL: 11,
   PRESENT_VALUE_CASHFLOWS: 12,
   DISCOUNT_MARGIN: 13,
-  SPREAD_DURATION: 14
+  SPREAD_DURATION: 14,
+  PAR_YIELD: 15,
+  SPOT_YIELD: 16,
+  FORWARD_YIELD: 17
 };
 
 goog.object.extend(exports, proto.fintekkers.models.position);

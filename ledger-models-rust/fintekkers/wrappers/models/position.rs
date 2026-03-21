@@ -361,6 +361,96 @@ impl PositionFilter {
     pub fn to_proto(&self) -> PositionFilterProto {
         self.filter_proto.clone()
     }
+
+    /// Find the first filter entry matching the given field.
+    pub fn find_filter(&self, field: FieldProto) -> Option<&FieldMapEntry> {
+        self.filter_proto
+            .filters
+            .iter()
+            .find(|f| f.field == field as i32)
+    }
+
+    /// Extract a UUID value from a filter entry for UUID-typed fields
+    /// (SECURITY_ID, PORTFOLIO_ID, PRICE_ID, ID).
+    ///
+    /// This is the primary method the price-service and other Rust services
+    /// should use to extract a security UUID from a PositionFilter.
+    pub fn get_uuid(&self, field: FieldProto) -> Result<Uuid, &'static str> {
+        let entry = self
+            .find_filter(field)
+            .ok_or("Field not found in filter")?;
+
+        let packed_value = match &entry.field_map_value_one_of {
+            Some(field_map_entry::FieldMapValueOneOf::FieldValuePacked(any)) => any,
+            _ => return Err("Expected packed value for UUID field"),
+        };
+
+        let uuid_proto = UuidProto::decode(packed_value.value.as_slice())
+            .map_err(|_| "Failed to decode UUIDProto")?;
+        ProtoSerializationUtil::deserialize_uuid(&uuid_proto)
+            .map_err(|_| "Failed to convert UuidProto to Uuid")
+    }
+
+    /// Extract a string value from a filter entry for string-typed fields
+    /// (ASSET_CLASS, PORTFOLIO_NAME, SECURITY_DESCRIPTION, etc.).
+    pub fn get_string(&self, field: FieldProto) -> Result<String, &'static str> {
+        let entry = self
+            .find_filter(field)
+            .ok_or("Field not found in filter")?;
+
+        match &entry.field_map_value_one_of {
+            Some(field_map_entry::FieldMapValueOneOf::StringValue(s)) => Ok(s.clone()),
+            _ => Err("Expected string value for this field"),
+        }
+    }
+
+    /// Extract a date value from a filter entry for date-typed fields
+    /// (TRADE_DATE, MATURITY_DATE, ISSUE_DATE, SETTLEMENT_DATE, etc.).
+    pub fn get_date(&self, field: FieldProto) -> Result<NaiveDate, &'static str> {
+        let entry = self
+            .find_filter(field)
+            .ok_or("Field not found in filter")?;
+
+        let packed_value = match &entry.field_map_value_one_of {
+            Some(field_map_entry::FieldMapValueOneOf::FieldValuePacked(any)) => any,
+            _ => return Err("Expected packed value for date field"),
+        };
+
+        let date_proto = LocalDateProto::decode(packed_value.value.as_slice())
+            .map_err(|_| "Failed to decode LocalDateProto")?;
+        ProtoSerializationUtil::deserialize_date(&date_proto)
+            .map_err(|_| "Failed to convert LocalDateProto to NaiveDate")
+    }
+
+    /// Extract an enum value from a filter entry for enum-typed fields
+    /// (TRANSACTION_TYPE, POSITION_STATUS).
+    pub fn get_enum_value(&self, field: FieldProto) -> Result<i32, &'static str> {
+        let entry = self
+            .find_filter(field)
+            .ok_or("Field not found in filter")?;
+
+        match &entry.field_map_value_one_of {
+            Some(field_map_entry::FieldMapValueOneOf::EnumValue(val)) => Ok(*val),
+            _ => Err("Expected enum value for this field"),
+        }
+    }
+
+    /// Extract a timestamp value from a filter entry (AS_OF field).
+    pub fn get_timestamp(&self, field: FieldProto) -> Result<DateTime<Tz>, &'static str> {
+        let entry = self
+            .find_filter(field)
+            .ok_or("Field not found in filter")?;
+
+        let packed_value = match &entry.field_map_value_one_of {
+            Some(field_map_entry::FieldMapValueOneOf::FieldValuePacked(any)) => any,
+            _ => return Err("Expected packed value for timestamp field"),
+        };
+
+        let timestamp_proto = LocalTimestampProto::decode(packed_value.value.as_slice())
+            .map_err(|_| "Failed to decode LocalTimestampProto")?;
+        ProtoSerializationUtil::deserialize_timestamp(&timestamp_proto)
+            .map_err(|_| "Failed to convert LocalTimestampProto to DateTime")
+    }
 }
 
 impl TryFrom<&[u8]> for PositionFilterProto {
@@ -838,6 +928,99 @@ mod test {
         let result = position.get_measure_value(MeasureProto::DirectedQuantity);
         assert!(result.is_err());
         assert_eq!(result.unwrap_err(), "Could not find measure in position");
+    }
+
+    #[test]
+    fn test_position_filter_get_uuid() {
+        let uuid_str = "550e8400-e29b-41d4-a716-446655440000";
+        let field_entry = create_uuid_field_entry(FieldProto::SecurityId, uuid_str);
+        let filter = PositionFilter::new(PositionFilterProto {
+            object_class: "PositionFilter".to_string(),
+            version: "0.0.1".to_string(),
+            filters: vec![field_entry],
+        });
+
+        let uuid = filter.get_uuid(FieldProto::SecurityId).unwrap();
+        assert_eq!(uuid.to_string(), uuid_str);
+    }
+
+    #[test]
+    fn test_position_filter_get_uuid_not_found() {
+        let filter = PositionFilter::new(PositionFilterProto {
+            object_class: "PositionFilter".to_string(),
+            version: "0.0.1".to_string(),
+            filters: vec![],
+        });
+
+        let result = filter.get_uuid(FieldProto::SecurityId);
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), "Field not found in filter");
+    }
+
+    #[test]
+    fn test_position_filter_get_string() {
+        let field_entry = create_string_field_entry(FieldProto::AssetClass, "Fixed Income");
+        let filter = PositionFilter::new(PositionFilterProto {
+            object_class: "PositionFilter".to_string(),
+            version: "0.0.1".to_string(),
+            filters: vec![field_entry],
+        });
+
+        let value = filter.get_string(FieldProto::AssetClass).unwrap();
+        assert_eq!(value, "Fixed Income");
+    }
+
+    #[test]
+    fn test_position_filter_get_date() {
+        let field_entry = create_date_field_entry(FieldProto::MaturityDate, 2030, 6, 15);
+        let filter = PositionFilter::new(PositionFilterProto {
+            object_class: "PositionFilter".to_string(),
+            version: "0.0.1".to_string(),
+            filters: vec![field_entry],
+        });
+
+        let date = filter.get_date(FieldProto::MaturityDate).unwrap();
+        assert_eq!(date.year(), 2030);
+        assert_eq!(date.month(), 6);
+        assert_eq!(date.day(), 15);
+    }
+
+    #[test]
+    fn test_position_filter_get_enum_value() {
+        let field_entry = create_enum_field_entry(FieldProto::TransactionType, 1); // BUY
+        let filter = PositionFilter::new(PositionFilterProto {
+            object_class: "PositionFilter".to_string(),
+            version: "0.0.1".to_string(),
+            filters: vec![field_entry],
+        });
+
+        let value = filter.get_enum_value(FieldProto::TransactionType).unwrap();
+        assert_eq!(value, 1);
+    }
+
+    #[test]
+    fn test_position_filter_multiple_filters() {
+        let uuid_str = "550e8400-e29b-41d4-a716-446655440000";
+        let uuid_entry = create_uuid_field_entry(FieldProto::SecurityId, uuid_str);
+        let string_entry = create_string_field_entry(FieldProto::AssetClass, "Fixed Income");
+        let date_entry = create_date_field_entry(FieldProto::MaturityDate, 2030, 1, 15);
+
+        let filter = PositionFilter::new(PositionFilterProto {
+            object_class: "PositionFilter".to_string(),
+            version: "0.0.1".to_string(),
+            filters: vec![uuid_entry, string_entry, date_entry],
+        });
+
+        // All three should be extractable
+        assert_eq!(
+            filter.get_uuid(FieldProto::SecurityId).unwrap().to_string(),
+            uuid_str
+        );
+        assert_eq!(
+            filter.get_string(FieldProto::AssetClass).unwrap(),
+            "Fixed Income"
+        );
+        assert_eq!(filter.get_date(FieldProto::MaturityDate).unwrap().year(), 2030);
     }
 
     #[test]

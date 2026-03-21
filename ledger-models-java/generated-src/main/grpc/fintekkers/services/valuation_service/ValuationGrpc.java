@@ -43,6 +43,37 @@ public final class ValuationGrpc {
     return getRunValuationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<fintekkers.requests.valuation.CurveRequestProto,
+      fintekkers.requests.valuation.CurveResponseProto> getRunCurveMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "RunCurve",
+      requestType = fintekkers.requests.valuation.CurveRequestProto.class,
+      responseType = fintekkers.requests.valuation.CurveResponseProto.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<fintekkers.requests.valuation.CurveRequestProto,
+      fintekkers.requests.valuation.CurveResponseProto> getRunCurveMethod() {
+    io.grpc.MethodDescriptor<fintekkers.requests.valuation.CurveRequestProto, fintekkers.requests.valuation.CurveResponseProto> getRunCurveMethod;
+    if ((getRunCurveMethod = ValuationGrpc.getRunCurveMethod) == null) {
+      synchronized (ValuationGrpc.class) {
+        if ((getRunCurveMethod = ValuationGrpc.getRunCurveMethod) == null) {
+          ValuationGrpc.getRunCurveMethod = getRunCurveMethod =
+              io.grpc.MethodDescriptor.<fintekkers.requests.valuation.CurveRequestProto, fintekkers.requests.valuation.CurveResponseProto>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "RunCurve"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.valuation.CurveRequestProto.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.valuation.CurveResponseProto.getDefaultInstance()))
+              .setSchemaDescriptor(new ValuationMethodDescriptorSupplier("RunCurve"))
+              .build();
+        }
+      }
+    }
+    return getRunCurveMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -112,6 +143,13 @@ public final class ValuationGrpc {
         io.grpc.stub.StreamObserver<fintekkers.requests.valuation.ValuationResponseProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRunValuationMethod(), responseObserver);
     }
+
+    /**
+     */
+    default void runCurve(fintekkers.requests.valuation.CurveRequestProto request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.valuation.CurveResponseProto> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getRunCurveMethod(), responseObserver);
+    }
   }
 
   /**
@@ -148,6 +186,14 @@ public final class ValuationGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getRunValuationMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void runCurve(fintekkers.requests.valuation.CurveRequestProto request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.valuation.CurveResponseProto> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getRunCurveMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -172,6 +218,13 @@ public final class ValuationGrpc {
       return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getRunValuationMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public fintekkers.requests.valuation.CurveResponseProto runCurve(fintekkers.requests.valuation.CurveRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getRunCurveMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -195,6 +248,13 @@ public final class ValuationGrpc {
     public fintekkers.requests.valuation.ValuationResponseProto runValuation(fintekkers.requests.valuation.ValuationRequestProto request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getRunValuationMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.valuation.CurveResponseProto runCurve(fintekkers.requests.valuation.CurveRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getRunCurveMethod(), getCallOptions(), request);
     }
   }
 
@@ -221,9 +281,18 @@ public final class ValuationGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getRunValuationMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.valuation.CurveResponseProto> runCurve(
+        fintekkers.requests.valuation.CurveRequestProto request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getRunCurveMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_RUN_VALUATION = 0;
+  private static final int METHODID_RUN_CURVE = 1;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -245,6 +314,10 @@ public final class ValuationGrpc {
         case METHODID_RUN_VALUATION:
           serviceImpl.runValuation((fintekkers.requests.valuation.ValuationRequestProto) request,
               (io.grpc.stub.StreamObserver<fintekkers.requests.valuation.ValuationResponseProto>) responseObserver);
+          break;
+        case METHODID_RUN_CURVE:
+          serviceImpl.runCurve((fintekkers.requests.valuation.CurveRequestProto) request,
+              (io.grpc.stub.StreamObserver<fintekkers.requests.valuation.CurveResponseProto>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -271,6 +344,13 @@ public final class ValuationGrpc {
               fintekkers.requests.valuation.ValuationRequestProto,
               fintekkers.requests.valuation.ValuationResponseProto>(
                 service, METHODID_RUN_VALUATION)))
+        .addMethod(
+          getRunCurveMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.valuation.CurveRequestProto,
+              fintekkers.requests.valuation.CurveResponseProto>(
+                service, METHODID_RUN_CURVE)))
         .build();
   }
 
@@ -320,6 +400,7 @@ public final class ValuationGrpc {
           serviceDescriptor = result = io.grpc.ServiceDescriptor.newBuilder(SERVICE_NAME)
               .setSchemaDescriptor(new ValuationFileDescriptorSupplier())
               .addMethod(getRunValuationMethod())
+              .addMethod(getRunCurveMethod())
               .build();
         }
       }

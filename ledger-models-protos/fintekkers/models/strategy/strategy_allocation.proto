@@ -23,6 +23,9 @@ message StrategyAllocationProto {
   //Primary Key
   util.UUIDProto uuid = 5;
   util.LocalTimestampProto as_of = 6;
+
+  // When true, only uuid is populated — resolve full entity via the relevant service.
+  // See docs/adr/is_link_pattern.md.
   bool is_link = 7;
 
   //Map

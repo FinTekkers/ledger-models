@@ -24,9 +24,11 @@ _sym_db = _symbol_database.Default()
 
 from fintekkers.requests.valuation import valuation_request_pb2 as fintekkers_dot_requests_dot_valuation_dot_valuation__request__pb2
 from fintekkers.requests.valuation import valuation_response_pb2 as fintekkers_dot_requests_dot_valuation_dot_valuation__response__pb2
+from fintekkers.requests.valuation import curve_request_pb2 as fintekkers_dot_requests_dot_valuation_dot_curve__request__pb2
+from fintekkers.requests.valuation import curve_response_pb2 as fintekkers_dot_requests_dot_valuation_dot_curve__response__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n=fintekkers/services/valuation-service/valuation_service.proto\x12%fintekkers.services.valuation_service\x1a\x35\x66intekkers/requests/valuation/valuation_request.proto\x1a\x36\x66intekkers/requests/valuation/valuation_response.proto2\x88\x01\n\tValuation\x12{\n\x0cRunValuation\x12\x34.fintekkers.requests.valuation.ValuationRequestProto\x1a\x35.fintekkers.requests.valuation.ValuationResponseProtoB\x06\x88\x01\x01\x90\x01\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n=fintekkers/services/valuation-service/valuation_service.proto\x12%fintekkers.services.valuation_service\x1a\x35\x66intekkers/requests/valuation/valuation_request.proto\x1a\x36\x66intekkers/requests/valuation/valuation_response.proto\x1a\x31\x66intekkers/requests/valuation/curve_request.proto\x1a\x32\x66intekkers/requests/valuation/curve_response.proto2\xf9\x01\n\tValuation\x12{\n\x0cRunValuation\x12\x34.fintekkers.requests.valuation.ValuationRequestProto\x1a\x35.fintekkers.requests.valuation.ValuationResponseProto\x12o\n\x08RunCurve\x12\x30.fintekkers.requests.valuation.CurveRequestProto\x1a\x31.fintekkers.requests.valuation.CurveResponseProtoB\x06\x88\x01\x01\x90\x01\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,7 +36,7 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.services.valuati
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'\210\001\001\220\001\001'
-  _globals['_VALUATION']._serialized_start=216
-  _globals['_VALUATION']._serialized_end=352
+  _globals['_VALUATION']._serialized_start=319
+  _globals['_VALUATION']._serialized_end=568
 _builder.BuildServices(DESCRIPTOR, 'fintekkers.services.valuation_service.valuation_service_pb2', _globals)
 # @@protoc_insertion_point(module_scope)

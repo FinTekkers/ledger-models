@@ -16,6 +16,9 @@ message StrategyProto {
   //Primary Key
   fintekkers.models.util.UUIDProto uuid = 5;
   fintekkers.models.util.LocalTimestampProto as_of = 6;
+
+  // When true, only uuid is populated — resolve full entity via the relevant service.
+  // See docs/adr/is_link_pattern.md.
   bool is_link = 7;
 
   util.LocalTimestampProto valid_from = 8;

@@ -1,5 +1,7 @@
 from fintekkers.requests.valuation import valuation_request_pb2 as _valuation_request_pb2
 from fintekkers.requests.valuation import valuation_response_pb2 as _valuation_response_pb2
+from fintekkers.requests.valuation import curve_request_pb2 as _curve_request_pb2
+from fintekkers.requests.valuation import curve_response_pb2 as _curve_response_pb2
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import service as _service
 from typing import ClassVar as _ClassVar

@@ -21,4 +21,7 @@ export enum MeasureProto {
     PRESENT_VALUE_CASHFLOWS = 12,
     DISCOUNT_MARGIN = 13,
     SPREAD_DURATION = 14,
+    PAR_YIELD = 15,
+    SPOT_YIELD = 16,
+    FORWARD_YIELD = 17,
 }

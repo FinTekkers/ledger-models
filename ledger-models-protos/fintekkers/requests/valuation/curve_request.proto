@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package fintekkers.requests.valuation;
+
+import "fintekkers/models/security/security.proto";
+import "fintekkers/models/price/price.proto";
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_timestamp.proto";
+import "fintekkers/models/position/measure.proto";
+
+option java_multiple_files = true;
+
+option java_outer_classname = "CurveRequestProtos";
+
+// A single security+price pair representing one observed point on the curve.
+// For example, a 10-year US Treasury trading at 95.50.
+message CurveInputProto {
+  // The bond security at this curve point.
+  fintekkers.models.security.SecurityProto security = 1;
+
+  // The observed market price for this security (quoted as % of par).
+  fintekkers.models.price.PriceProto price = 2;
+}
+
+// Request to construct a yield curve from a set of bond prices.
+//
+// The caller provides:
+//   - A set of securities with their market prices (the curve inputs)
+//   - The type of curve to compute (par, spot, or forward)
+//   - The tenor points at which to interpolate the curve
+//
+// The valuation service bootstraps the curve from the inputs and returns
+// yields at the requested tenor points.
+message CurveRequestProto {
+  string object_class = 1;
+  string version = 2;
+
+  // The as-of datetime for the curve construction.
+  fintekkers.models.util.LocalTimestampProto asof_datetime = 10;
+
+  // The curve type to compute: PAR_YIELD, SPOT_YIELD, or FORWARD_YIELD.
+  // Multiple types can be requested in a single call — the response will
+  // contain one CurveResultProto per requested type.
+  repeated fintekkers.models.position.MeasureProto curve_types = 20;
+
+  // The input securities and their observed prices. These are the bonds
+  // from which the curve is constructed (e.g. on-the-run US Treasuries).
+  // Should be sorted by maturity for clarity, though the service will
+  // sort internally if needed.
+  repeated CurveInputProto curve_inputs = 30;
+
+  // The tenor points (in years as decimal) at which to interpolate the curve.
+  // Examples: 0.25 (3M), 0.5 (6M), 1.0 (1Y), 2.0, 3.0, 5.0, 7.0, 10.0, 20.0, 30.0.
+  // If empty, the service returns yields only at the observed maturity points.
+  repeated fintekkers.models.util.DecimalValueProto tenor_points = 40;
+}

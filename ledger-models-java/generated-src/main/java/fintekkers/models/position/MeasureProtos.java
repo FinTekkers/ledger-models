@@ -24,7 +24,7 @@ public final class MeasureProtos {
   static {
     java.lang.String[] descriptorData = {
       "\n(fintekkers/models/position/measure.pro" +
-      "to\022\032fintekkers.models.position*\315\002\n\014Measu" +
+      "to\022\032fintekkers.models.position*\377\002\n\014Measu" +
       "reProto\022\023\n\017UNKNOWN_MEASURE\020\000\022\025\n\021DIRECTED" +
       "_QUANTITY\020\001\022\020\n\014MARKET_VALUE\020\002\022\031\n\025UNADJUS" +
       "TED_COST_BASIS\020\003\022\027\n\023ADJUSTED_COST_BASIS\020" +
@@ -33,7 +33,9 @@ public final class MeasureProtos {
       "LUE\020\t\022\016\n\nREAL_YIELD\020\n\022 \n\034INFLATION_ADJUS" +
       "TED_PRINCIPAL\020\013\022\033\n\027PRESENT_VALUE_CASHFLO" +
       "WS\020\014\022\023\n\017DISCOUNT_MARGIN\020\r\022\023\n\017SPREAD_DURA" +
-      "TION\020\016B\021B\rMeasureProtosP\001b\006proto3"
+      "TION\020\016\022\r\n\tPAR_YIELD\020\017\022\016\n\nSPOT_YIELD\020\020\022\021\n" +
+      "\rFORWARD_YIELD\020\021B\021B\rMeasureProtosP\001b\006pro" +
+      "to3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

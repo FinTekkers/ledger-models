@@ -20,6 +20,9 @@ class MeasureProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     PRESENT_VALUE_CASHFLOWS: _ClassVar[MeasureProto]
     DISCOUNT_MARGIN: _ClassVar[MeasureProto]
     SPREAD_DURATION: _ClassVar[MeasureProto]
+    PAR_YIELD: _ClassVar[MeasureProto]
+    SPOT_YIELD: _ClassVar[MeasureProto]
+    FORWARD_YIELD: _ClassVar[MeasureProto]
 UNKNOWN_MEASURE: MeasureProto
 DIRECTED_QUANTITY: MeasureProto
 MARKET_VALUE: MeasureProto
@@ -34,3 +37,6 @@ INFLATION_ADJUSTED_PRINCIPAL: MeasureProto
 PRESENT_VALUE_CASHFLOWS: MeasureProto
 DISCOUNT_MARGIN: MeasureProto
 SPREAD_DURATION: MeasureProto
+PAR_YIELD: MeasureProto
+SPOT_YIELD: MeasureProto
+FORWARD_YIELD: MeasureProto

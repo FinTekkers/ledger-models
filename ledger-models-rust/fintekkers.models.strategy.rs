@@ -10,6 +10,8 @@ pub struct StrategyProto {
     pub uuid: ::core::option::Option<super::util::UuidProto>,
     #[prost(message, optional, tag = "6")]
     pub as_of: ::core::option::Option<super::util::LocalTimestampProto>,
+    /// When true, only uuid is populated — resolve full entity via the relevant service.
+    /// See docs/adr/is_link_pattern.md.
     #[prost(bool, tag = "7")]
     pub is_link: bool,
     #[prost(message, optional, tag = "8")]
@@ -42,6 +44,8 @@ pub struct StrategyAllocationProto {
     pub uuid: ::core::option::Option<super::util::UuidProto>,
     #[prost(message, optional, tag = "6")]
     pub as_of: ::core::option::Option<super::util::LocalTimestampProto>,
+    /// When true, only uuid is populated — resolve full entity via the relevant service.
+    /// See docs/adr/is_link_pattern.md.
     #[prost(bool, tag = "7")]
     pub is_link: bool,
     /// Map

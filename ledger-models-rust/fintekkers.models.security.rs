@@ -214,6 +214,11 @@ pub struct SecurityProto {
     pub uuid: ::core::option::Option<super::util::UuidProto>,
     #[prost(message, optional, tag = "6")]
     pub as_of: ::core::option::Option<super::util::LocalTimestampProto>,
+    /// When true, this message is a lightweight reference — only uuid is populated.
+    /// The caller must resolve the full entity by calling SecurityService.GetByIds
+    /// with this UUID. Used when embedding a SecurityProto inside another message
+    /// (e.g. PriceProto.security, TransactionProto.security) to avoid duplicating
+    /// the full security data. See docs/adr/is_link_pattern.md for details.
     #[prost(bool, tag = "7")]
     pub is_link: bool,
     #[prost(message, optional, tag = "8")]

@@ -208,6 +208,52 @@
         "Interest rate duration of an FRN is near-zero; spread duration captures the economically significant risk"
       ],
       "implemented": true
+    },
+    {
+      "name": "PAR_YIELD",
+      "enum_value": 15,
+      "display_name": "Par Yield",
+      "description": "The par yield at a given maturity point on the yield curve. The par yield is the coupon rate at which a bond would trade at par (price = 100) for a given maturity.",
+      "formula": "Solve for c: 100 = Sum[c/m / (1 + r_t)^t] + 100 / (1 + r_N)^N",
+      "units": "Decimal (0-1 scale; e.g. 0.045 = 4.50% annual)",
+      "category": "curve",
+      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "model_assumptions": [
+        "Coupon frequency matches market convention (semiannual for US Treasuries)",
+        "Interpolation between observed maturities uses method specified in CurveRequestProto"
+      ],
+      "implemented": false
+    },
+    {
+      "name": "SPOT_YIELD",
+      "enum_value": 16,
+      "display_name": "Spot Yield",
+      "description": "The spot (zero-coupon) yield at a given maturity. Represents the pure time value of money with no reinvestment assumption.",
+      "formula": "Bootstrapped from par curve: s_N = ((100 + c/m) / (100 - Sum[c/m / (1+s_t)^t]))^(1/N) - 1",
+      "units": "Decimal (0-1 scale; e.g. 0.046 = 4.60% annual)",
+      "category": "curve",
+      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "model_assumptions": [
+        "Requires a complete par yield curve as input",
+        "Bootstrap assumes exact coupon dates"
+      ],
+      "implemented": false
+    },
+    {
+      "name": "FORWARD_YIELD",
+      "enum_value": 17,
+      "display_name": "Forward Yield",
+      "description": "The forward yield between two future dates, implied by the spot curve. The rate agreed today for borrowing/lending between future times t1 and t2.",
+      "formula": "f(t1,t2) = [(1 + s_t2)^t2 / (1 + s_t1)^t1]^(1/(t2-t1)) - 1",
+      "units": "Decimal (0-1 scale; e.g. 0.048 = 4.80% annual forward rate)",
+      "category": "curve",
+      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "model_assumptions": [
+        "Derived from spot curve (bootstrapped from par)",
+        "No-arbitrage between spot and forward rates",
+        "Forward period defined by adjacent tenor points"
+      ],
+      "implemented": false
     }
   ]
 }

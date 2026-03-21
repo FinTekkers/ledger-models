@@ -248,6 +248,71 @@ pub enum MeasureProto {
     /// Applicability: FRN only. For fixed-rate bonds, use MACAULAY_DURATION.
     /// Units: Years (e.g. 1.90 = a 1bp spread widening causes ~1.90bp price decline).
     SpreadDuration = 14,
+    /// The par yield at a given maturity point on the yield curve. The par yield is
+    /// the coupon rate at which a bond would trade at par (price = 100) for a given
+    /// maturity. This is the most commonly quoted yield curve.
+    ///
+    /// Formula:
+    ///    For each maturity point, the par yield is the coupon rate c such that:
+    ///    100 = Sum_{t=1}^{N} [c/m / (1 + r_t)^t] + 100 / (1 + r_N)^N
+    ///    Where r_t are spot rates, m = coupon frequency, N = number of periods.
+    ///
+    ///    In practice, for on-the-run bonds, par yield ≈ YTM when the bond trades
+    ///    near par. The par yield curve is bootstrapped from observed bond prices.
+    ///
+    /// Model assumptions:
+    ///    - Coupon frequency matches the market convention (semiannual for US Treasuries).
+    ///    - Interpolation between observed maturities uses the method specified in
+    ///      the CurveRequestProto (linear by default).
+    ///
+    /// Applicability: Bond, TIPS (real par yield curve).
+    ///    Not applicable to FRN, Equity, or Cash.
+    /// Units: Decimal (0-1 scale; e.g. 0.045 = 4.50% annual).
+    ParYield = 15,
+    /// The spot (zero-coupon) yield at a given maturity. The spot rate is the yield
+    /// on a zero-coupon bond maturing at that point — it represents the pure time
+    /// value of money with no reinvestment assumption.
+    ///
+    /// Formula:
+    ///    Bootstrapped from the par yield curve:
+    ///    P = 100 / (1 + s_N)^N  →  s_N = (100 / P)^(1/N) - 1
+    ///    Where s_N is the N-period spot rate, P is the zero-coupon bond price
+    ///    implied by stripping coupons from the par curve.
+    ///
+    ///    For the first period, spot rate = par yield. For subsequent periods,
+    ///    the bootstrap solves:
+    ///    100 = Sum_{t=1}^{N-1} [c/m / (1 + s_t)^t] + (100 + c/m) / (1 + s_N)^N
+    ///    for s_N, using previously computed spot rates s_1..s_{N-1}.
+    ///
+    /// Model assumptions:
+    ///    - Requires a complete par yield curve as input (no gaps).
+    ///    - Bootstrap assumes exact coupon dates (no day-count adjustments).
+    ///
+    /// Applicability: Derived from Bond par curve. Used for discounting cashflows
+    ///    and computing forward rates.
+    /// Units: Decimal (0-1 scale; e.g. 0.046 = 4.60% annual).
+    SpotYield = 16,
+    /// The forward yield between two future dates, implied by the spot curve.
+    /// The forward rate f(t1, t2) is the rate agreed today for borrowing/lending
+    /// between future times t1 and t2.
+    ///
+    /// Formula:
+    ///    f(t1, t2) = [(1 + s_{t2})^{t2} / (1 + s_{t1})^{t1}]^{1/(t2 - t1)} - 1
+    ///    Where s_t are spot rates for maturities t1 and t2.
+    ///
+    ///    For example, the 1-year forward rate 1 year from now (1y1y) is:
+    ///    f(1,2) = [(1 + s_2)^2 / (1 + s_1)]^1 - 1
+    ///
+    /// Model assumptions:
+    ///    - Derived from the spot curve (which is bootstrapped from par).
+    ///    - Assumes no arbitrage between spot and forward rates.
+    ///    - The forward period is defined by adjacent tenor points in the
+    ///      CurveRequestProto.
+    ///
+    /// Applicability: Derived from Bond spot curve. Used for rate expectations
+    ///    and forward-starting instrument pricing.
+    /// Units: Decimal (0-1 scale; e.g. 0.048 = 4.80% annual forward rate).
+    ForwardYield = 17,
 }
 impl MeasureProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -270,6 +335,9 @@ impl MeasureProto {
             MeasureProto::PresentValueCashflows => "PRESENT_VALUE_CASHFLOWS",
             MeasureProto::DiscountMargin => "DISCOUNT_MARGIN",
             MeasureProto::SpreadDuration => "SPREAD_DURATION",
+            MeasureProto::ParYield => "PAR_YIELD",
+            MeasureProto::SpotYield => "SPOT_YIELD",
+            MeasureProto::ForwardYield => "FORWARD_YIELD",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -289,6 +357,9 @@ impl MeasureProto {
             "PRESENT_VALUE_CASHFLOWS" => Some(Self::PresentValueCashflows),
             "DISCOUNT_MARGIN" => Some(Self::DiscountMargin),
             "SPREAD_DURATION" => Some(Self::SpreadDuration),
+            "PAR_YIELD" => Some(Self::ParYield),
+            "SPOT_YIELD" => Some(Self::SpotYield),
+            "FORWARD_YIELD" => Some(Self::ForwardYield),
             _ => None,
         }
     }

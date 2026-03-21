@@ -74,6 +74,11 @@ public interface TransactionProtoOrBuilder extends
   fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsOfOrBuilder();
 
   /**
+   * <pre>
+   * When true, only uuid is populated — resolve full entity via TransactionService.GetByIds.
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
    * <code>bool is_link = 7;</code>
    * @return The isLink.
    */

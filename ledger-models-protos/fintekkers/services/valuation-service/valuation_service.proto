@@ -3,6 +3,8 @@ syntax = "proto3";
 package fintekkers.services.valuation_service;
 import "fintekkers/requests/valuation/valuation_request.proto";
 import "fintekkers/requests/valuation/valuation_response.proto";
+import "fintekkers/requests/valuation/curve_request.proto";
+import "fintekkers/requests/valuation/curve_response.proto";
 
 option java_generic_services = true;
 option py_generic_services = true;
@@ -10,4 +12,7 @@ option py_generic_services = true;
 service Valuation {
     rpc RunValuation (fintekkers.requests.valuation.ValuationRequestProto)
         returns (fintekkers.requests.valuation.ValuationResponseProto);
+
+    rpc RunCurve (fintekkers.requests.valuation.CurveRequestProto)
+        returns (fintekkers.requests.valuation.CurveResponseProto);
 }

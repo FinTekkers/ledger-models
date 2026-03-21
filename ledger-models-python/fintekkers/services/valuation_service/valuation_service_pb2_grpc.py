@@ -3,6 +3,8 @@
 import grpc
 import warnings
 
+from fintekkers.requests.valuation import curve_request_pb2 as fintekkers_dot_requests_dot_valuation_dot_curve__request__pb2
+from fintekkers.requests.valuation import curve_response_pb2 as fintekkers_dot_requests_dot_valuation_dot_curve__response__pb2
 from fintekkers.requests.valuation import valuation_request_pb2 as fintekkers_dot_requests_dot_valuation_dot_valuation__request__pb2
 from fintekkers.requests.valuation import valuation_response_pb2 as fintekkers_dot_requests_dot_valuation_dot_valuation__response__pb2
 
@@ -40,12 +42,23 @@ class ValuationStub(object):
                 request_serializer=fintekkers_dot_requests_dot_valuation_dot_valuation__request__pb2.ValuationRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_valuation_dot_valuation__response__pb2.ValuationResponseProto.FromString,
                 _registered_method=True)
+        self.RunCurve = channel.unary_unary(
+                '/fintekkers.services.valuation_service.Valuation/RunCurve',
+                request_serializer=fintekkers_dot_requests_dot_valuation_dot_curve__request__pb2.CurveRequestProto.SerializeToString,
+                response_deserializer=fintekkers_dot_requests_dot_valuation_dot_curve__response__pb2.CurveResponseProto.FromString,
+                _registered_method=True)
 
 
 class ValuationServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def RunValuation(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def RunCurve(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -58,6 +71,11 @@ def add_ValuationServicer_to_server(servicer, server):
                     servicer.RunValuation,
                     request_deserializer=fintekkers_dot_requests_dot_valuation_dot_valuation__request__pb2.ValuationRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_valuation_dot_valuation__response__pb2.ValuationResponseProto.SerializeToString,
+            ),
+            'RunCurve': grpc.unary_unary_rpc_method_handler(
+                    servicer.RunCurve,
+                    request_deserializer=fintekkers_dot_requests_dot_valuation_dot_curve__request__pb2.CurveRequestProto.FromString,
+                    response_serializer=fintekkers_dot_requests_dot_valuation_dot_curve__response__pb2.CurveResponseProto.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -87,6 +105,33 @@ class Valuation(object):
             '/fintekkers.services.valuation_service.Valuation/RunValuation',
             fintekkers_dot_requests_dot_valuation_dot_valuation__request__pb2.ValuationRequestProto.SerializeToString,
             fintekkers_dot_requests_dot_valuation_dot_valuation__response__pb2.ValuationResponseProto.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def RunCurve(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/fintekkers.services.valuation_service.Valuation/RunCurve',
+            fintekkers_dot_requests_dot_valuation_dot_curve__request__pb2.CurveRequestProto.SerializeToString,
+            fintekkers_dot_requests_dot_valuation_dot_curve__response__pb2.CurveResponseProto.FromString,
             options,
             channel_credentials,
             insecure,

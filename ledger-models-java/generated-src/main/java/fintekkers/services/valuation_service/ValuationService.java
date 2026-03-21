@@ -30,6 +30,14 @@ public final class ValuationService {
           fintekkers.requests.valuation.ValuationRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.valuation.ValuationResponseProto> done);
 
+      /**
+       * <code>rpc RunCurve(.fintekkers.requests.valuation.CurveRequestProto) returns (.fintekkers.requests.valuation.CurveResponseProto);</code>
+       */
+      public abstract void runCurve(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.valuation.CurveRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.valuation.CurveResponseProto> done);
+
     }
 
     public static com.google.protobuf.Service newReflectiveService(
@@ -41,6 +49,14 @@ public final class ValuationService {
             fintekkers.requests.valuation.ValuationRequestProto request,
             com.google.protobuf.RpcCallback<fintekkers.requests.valuation.ValuationResponseProto> done) {
           impl.runValuation(controller, request, done);
+        }
+
+        @java.lang.Override
+        public  void runCurve(
+            com.google.protobuf.RpcController controller,
+            fintekkers.requests.valuation.CurveRequestProto request,
+            com.google.protobuf.RpcCallback<fintekkers.requests.valuation.CurveResponseProto> done) {
+          impl.runCurve(controller, request, done);
         }
 
       };
@@ -67,6 +83,8 @@ public final class ValuationService {
           switch(method.getIndex()) {
             case 0:
               return impl.runValuation(controller, (fintekkers.requests.valuation.ValuationRequestProto)request);
+            case 1:
+              return impl.runCurve(controller, (fintekkers.requests.valuation.CurveRequestProto)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -83,6 +101,8 @@ public final class ValuationService {
           switch(method.getIndex()) {
             case 0:
               return fintekkers.requests.valuation.ValuationRequestProto.getDefaultInstance();
+            case 1:
+              return fintekkers.requests.valuation.CurveRequestProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -99,6 +119,8 @@ public final class ValuationService {
           switch(method.getIndex()) {
             case 0:
               return fintekkers.requests.valuation.ValuationResponseProto.getDefaultInstance();
+            case 1:
+              return fintekkers.requests.valuation.CurveResponseProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -114,6 +136,14 @@ public final class ValuationService {
         com.google.protobuf.RpcController controller,
         fintekkers.requests.valuation.ValuationRequestProto request,
         com.google.protobuf.RpcCallback<fintekkers.requests.valuation.ValuationResponseProto> done);
+
+    /**
+     * <code>rpc RunCurve(.fintekkers.requests.valuation.CurveRequestProto) returns (.fintekkers.requests.valuation.CurveResponseProto);</code>
+     */
+    public abstract void runCurve(
+        com.google.protobuf.RpcController controller,
+        fintekkers.requests.valuation.CurveRequestProto request,
+        com.google.protobuf.RpcCallback<fintekkers.requests.valuation.CurveResponseProto> done);
 
     public static final
         com.google.protobuf.Descriptors.ServiceDescriptor
@@ -142,6 +172,11 @@ public final class ValuationService {
             com.google.protobuf.RpcUtil.<fintekkers.requests.valuation.ValuationResponseProto>specializeCallback(
               done));
           return;
+        case 1:
+          this.runCurve(controller, (fintekkers.requests.valuation.CurveRequestProto)request,
+            com.google.protobuf.RpcUtil.<fintekkers.requests.valuation.CurveResponseProto>specializeCallback(
+              done));
+          return;
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -158,6 +193,8 @@ public final class ValuationService {
       switch(method.getIndex()) {
         case 0:
           return fintekkers.requests.valuation.ValuationRequestProto.getDefaultInstance();
+        case 1:
+          return fintekkers.requests.valuation.CurveRequestProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -174,6 +211,8 @@ public final class ValuationService {
       switch(method.getIndex()) {
         case 0:
           return fintekkers.requests.valuation.ValuationResponseProto.getDefaultInstance();
+        case 1:
+          return fintekkers.requests.valuation.CurveResponseProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -209,6 +248,21 @@ public final class ValuationService {
             fintekkers.requests.valuation.ValuationResponseProto.class,
             fintekkers.requests.valuation.ValuationResponseProto.getDefaultInstance()));
       }
+
+      public  void runCurve(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.valuation.CurveRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.valuation.CurveResponseProto> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(1),
+          controller,
+          request,
+          fintekkers.requests.valuation.CurveResponseProto.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            fintekkers.requests.valuation.CurveResponseProto.class,
+            fintekkers.requests.valuation.CurveResponseProto.getDefaultInstance()));
+      }
     }
 
     public static BlockingInterface newBlockingStub(
@@ -220,6 +274,11 @@ public final class ValuationService {
       public fintekkers.requests.valuation.ValuationResponseProto runValuation(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.valuation.ValuationRequestProto request)
+          throws com.google.protobuf.ServiceException;
+
+      public fintekkers.requests.valuation.CurveResponseProto runCurve(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.valuation.CurveRequestProto request)
           throws com.google.protobuf.ServiceException;
     }
 
@@ -241,6 +300,18 @@ public final class ValuationService {
           fintekkers.requests.valuation.ValuationResponseProto.getDefaultInstance());
       }
 
+
+      public fintekkers.requests.valuation.CurveResponseProto runCurve(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.valuation.CurveRequestProto request)
+          throws com.google.protobuf.ServiceException {
+        return (fintekkers.requests.valuation.CurveResponseProto) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(1),
+          controller,
+          request,
+          fintekkers.requests.valuation.CurveResponseProto.getDefaultInstance());
+      }
+
     }
 
     // @@protoc_insertion_point(class_scope:fintekkers.services.valuation_service.Valuation)
@@ -260,20 +331,29 @@ public final class ValuationService {
       "ices.valuation_service\0325fintekkers/reque" +
       "sts/valuation/valuation_request.proto\0326f" +
       "intekkers/requests/valuation/valuation_r" +
-      "esponse.proto2\210\001\n\tValuation\022{\n\014RunValuat" +
-      "ion\0224.fintekkers.requests.valuation.Valu" +
-      "ationRequestProto\0325.fintekkers.requests." +
-      "valuation.ValuationResponseProtoB\006\210\001\001\220\001\001" +
-      "b\006proto3"
+      "esponse.proto\0321fintekkers/requests/valua" +
+      "tion/curve_request.proto\0322fintekkers/req" +
+      "uests/valuation/curve_response.proto2\371\001\n" +
+      "\tValuation\022{\n\014RunValuation\0224.fintekkers." +
+      "requests.valuation.ValuationRequestProto" +
+      "\0325.fintekkers.requests.valuation.Valuati" +
+      "onResponseProto\022o\n\010RunCurve\0220.fintekkers" +
+      ".requests.valuation.CurveRequestProto\0321." +
+      "fintekkers.requests.valuation.CurveRespo" +
+      "nseProtoB\006\210\001\001\220\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.requests.valuation.ValuationRequestProtos.getDescriptor(),
           fintekkers.requests.valuation.ValuationResponseProtos.getDescriptor(),
+          fintekkers.requests.valuation.CurveRequestProtos.getDescriptor(),
+          fintekkers.requests.valuation.CurveResponseProtos.getDescriptor(),
         });
     fintekkers.requests.valuation.ValuationRequestProtos.getDescriptor();
     fintekkers.requests.valuation.ValuationResponseProtos.getDescriptor();
+    fintekkers.requests.valuation.CurveRequestProtos.getDescriptor();
+    fintekkers.requests.valuation.CurveResponseProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

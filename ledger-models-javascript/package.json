@@ -1,7 +1,7 @@
 {
   "name": "@fintekkers/ledger-models",
   "todo": "Replace the version with build script version number",
-  "version": "0.1.124",
+  "version": "0.1.125",
   "description": "ledger model protos ",
   "authors": [
     "David Doherty",

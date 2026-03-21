@@ -86,7 +86,12 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
     public Security deserialize(SecurityProto proto) {
         Security security;
 
-        UUID id = ProtoSerializationUtil.deserializeUUID(proto.getUuid());
+        UUID id = proto.hasUuid()
+                ? ProtoSerializationUtil.deserializeUUID(proto.getUuid())
+                : null;
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
         ZonedDateTime asOf = ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf());
         String issuer = proto.getIssuerName();
 

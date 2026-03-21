@@ -191,6 +191,11 @@ private static final long serialVersionUID = 0L;
   public static final int IS_LINK_FIELD_NUMBER = 7;
   private boolean isLink_ = false;
   /**
+   * <pre>
+   * When true, only uuid is populated — resolve full entity via the relevant service.
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
    * <code>bool is_link = 7;</code>
    * @return The isLink.
    */
@@ -1196,6 +1201,11 @@ private static final long serialVersionUID = 0L;
 
     private boolean isLink_ ;
     /**
+     * <pre>
+     * When true, only uuid is populated — resolve full entity via the relevant service.
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
      * <code>bool is_link = 7;</code>
      * @return The isLink.
      */
@@ -1204,6 +1214,11 @@ private static final long serialVersionUID = 0L;
       return isLink_;
     }
     /**
+     * <pre>
+     * When true, only uuid is populated — resolve full entity via the relevant service.
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
      * <code>bool is_link = 7;</code>
      * @param value The isLink to set.
      * @return This builder for chaining.
@@ -1216,6 +1231,11 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * When true, only uuid is populated — resolve full entity via the relevant service.
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
      * <code>bool is_link = 7;</code>
      * @return This builder for chaining.
      */

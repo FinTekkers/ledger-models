@@ -129,7 +129,17 @@ public class ProtoSerializationUtil {
     }
 
     public static UUID deserializeUUID(Uuid.UUIDProto rawUUID) {
-        ByteBuffer bb = ByteBuffer.wrap(rawUUID.getRawUuid().toByteArray());
+        byte[] bytes = rawUUID.getRawUuid().toByteArray();
+        if (bytes.length == 0) {
+            // Empty UUID — return null to let the caller decide
+            // (e.g., assign a new one for creates, or reject for lookups)
+            return null;
+        }
+        if (bytes.length < 16) {
+            throw new IllegalArgumentException(
+                "Invalid UUID: expected 16 bytes but got " + bytes.length);
+        }
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
         long firstLong = bb.getLong();
         long secondLong = bb.getLong();
         return new UUID(firstLong, secondLong);

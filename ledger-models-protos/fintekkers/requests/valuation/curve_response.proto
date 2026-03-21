@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package fintekkers.requests.valuation;
+
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/position/measure.proto";
+import "fintekkers/requests/valuation/curve_request.proto";
+import "fintekkers/requests/util/errors/summary.proto";
+
+option java_multiple_files = true;
+
+option java_outer_classname = "CurveResponseProtos";
+
+// A single point on the yield curve: a tenor and its corresponding yield.
+message CurvePointProto {
+  // The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+  fintekkers.models.util.DecimalValueProto tenor = 1;
+
+  // The yield at this tenor point (decimal, 0-1 scale; e.g. 0.045 = 4.50%).
+  fintekkers.models.util.DecimalValueProto yield = 2;
+}
+
+// The computed yield curve for a single curve type (par, spot, or forward).
+message CurveResultProto {
+  // Which curve type this result represents (PAR_YIELD, SPOT_YIELD, or FORWARD_YIELD).
+  fintekkers.models.position.MeasureProto curve_type = 1;
+
+  // The curve points, ordered by ascending tenor.
+  repeated CurvePointProto points = 2;
+}
+
+// Response from a curve construction request.
+message CurveResponseProto {
+  string object_class = 1;
+  string version = 2;
+
+  // The original request, echoed back for correlation.
+  CurveRequestProto curve_request = 10;
+
+  // One result per requested curve_type. For example, if the request asked for
+  // both PAR_YIELD and SPOT_YIELD, this will contain two CurveResultProto entries.
+  repeated CurveResultProto curve_results = 20;
+
+  // Errors and warnings. Examples:
+  //   Warning: "Tenor gap between 7Y and 20Y — interpolation may be unreliable"
+  //   Error: "Insufficient inputs: need at least 2 bonds to bootstrap a curve"
+  fintekkers.requests.util.errors.SummaryProto summary = 30;
+}
