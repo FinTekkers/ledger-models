@@ -84,4 +84,24 @@ public interface QueryPortfolioRequestProtoOrBuilder extends
    * <code>.fintekkers.models.util.LocalTimestampProto as_of = 23;</code>
    */
   fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getAsOfOrBuilder();
+
+  /**
+   * <pre>
+   * Case-insensitive substring match on portfolio name. Empty string means no filter (return all).
+   * </pre>
+   *
+   * <code>string name_filter = 24;</code>
+   * @return The nameFilter.
+   */
+  java.lang.String getNameFilter();
+  /**
+   * <pre>
+   * Case-insensitive substring match on portfolio name. Empty string means no filter (return all).
+   * </pre>
+   *
+   * <code>string name_filter = 24;</code>
+   * @return The bytes for nameFilter.
+   */
+  com.google.protobuf.ByteString
+      getNameFilterBytes();
 }

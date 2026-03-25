@@ -12,6 +12,9 @@ import protos.serializers.IRawDataModelObjectSerializer;
 import protos.serializers.util.json.JsonSerializationUtil;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
+import fintekkers.models.util.LocalDate.LocalDateProto;
+
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -79,6 +82,11 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
                     .build());
         }
 
+        // Preserve repeated identifiers (e.g. ISIN) from the raw proto round-trip
+        if (security.getSecurityProto() != null && security.getSecurityProto().getIdentifiersCount() > 0) {
+            builder.addAllIdentifiers(security.getSecurityProto().getIdentifiersList());
+        }
+
         return builder.build();
     }
 
@@ -95,8 +103,16 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         ZonedDateTime asOf = ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf());
         String issuer = proto.getIssuerName();
 
-        CashSecurity settlementCurrency = proto.hasSettlementCurrency() ?
-                (CashSecurity) this.deserialize(proto.getSettlementCurrency()) : null;
+        CashSecurity settlementCurrency = null;
+        if (proto.hasSettlementCurrency()) {
+            SecurityProto settlementProto = proto.getSettlementCurrency();
+            if (settlementProto.getIsLink()) {
+                // UUID-only link reference — cannot deserialize to a full CashSecurity without a
+                // store lookup. Leave null rather than throwing ClassCastException.
+            } else {
+                settlementCurrency = (CashSecurity) this.deserialize(settlementProto);
+            }
+        }
 
         // Determine type: prefer oneof if set, fall back to security_type enum
         SecurityTypeProto securityType = proto.getSecurityType();
@@ -122,6 +138,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             case BOND_SECURITY:
             case TIPS:
             case FRN:
+                validateBondDates(proto);
                 security = new BondSerializer().deserializeBondSecurity(proto, id, asOf, issuer, settlementCurrency);
                 break;
             case EQUITY_SECURITY:
@@ -139,12 +156,54 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         if(proto.hasIdentifier()) {
             Identifier identifier = IdentifierSerializer.getInstance().deserialize(proto.getIdentifier());
             security.setSecurityId(identifier);
+        } else if (proto.getIdentifiersCount() > 0) {
+            // No singular primary identifier — promote the first entry from the repeated list
+            Identifier identifier = IdentifierSerializer.getInstance().deserialize(proto.getIdentifiers(0));
+            security.setSecurityId(identifier);
         }
 
         //Adding the security proto so we move other fields around too like the issuance info.
         security.setSecurityProto(proto);
 
         return security;
+    }
+
+    /**
+     * Validates that maturity_date is strictly after issue_date for bond-type securities.
+     * Reads from the oneof sub-message if present (new path), falls back to flat fields.
+     * Throws IllegalArgumentException (maps to gRPC INVALID_ARGUMENT at the service layer).
+     */
+    public void validateBondDates(SecurityProto proto) {
+        LocalDateProto issueDate = null;
+        LocalDateProto maturityDate = null;
+
+        // Prefer oneof sub-messages (new path), fall back to flat fields (legacy path)
+        if (proto.hasBondDetails()) {
+            BondDetailsProto bond = proto.getBondDetails();
+            if (bond.hasIssueDate()) issueDate = bond.getIssueDate();
+            if (bond.hasMaturityDate()) maturityDate = bond.getMaturityDate();
+        } else if (proto.hasTipsDetails()) {
+            TipsDetailsProto tips = proto.getTipsDetails();
+            if (tips.hasIssueDate()) issueDate = tips.getIssueDate();
+            if (tips.hasMaturityDate()) maturityDate = tips.getMaturityDate();
+        } else if (proto.hasFrnDetails()) {
+            FrnDetailsProto frn = proto.getFrnDetails();
+            if (frn.hasIssueDate()) issueDate = frn.getIssueDate();
+            if (frn.hasMaturityDate()) maturityDate = frn.getMaturityDate();
+        } else {
+            // Flat fields (backward compat)
+            if (proto.hasIssueDate()) issueDate = proto.getIssueDate();
+            if (proto.hasMaturityDate()) maturityDate = proto.getMaturityDate();
+        }
+
+        if (issueDate != null && maturityDate != null) {
+            LocalDate issue = ProtoSerializationUtil.deserializeLocalDate(issueDate);
+            LocalDate maturity = ProtoSerializationUtil.deserializeLocalDate(maturityDate);
+            if (!maturity.isAfter(issue)) {
+                throw new IllegalArgumentException(
+                        "maturity_date must be after issue_date: maturity=" + maturity + ", issue=" + issue);
+            }
+        }
     }
 
     private void serializeBondSecurityAttributes(BondSecurity security, SecurityProto.Builder builder) {

@@ -23,6 +23,7 @@ private static final long serialVersionUID = 0L;
     objectClass_ = "";
     version_ = "";
     uuIds_ = java.util.Collections.emptyList();
+    nameFilter_ = "";
   }
 
   @java.lang.Override
@@ -253,6 +254,55 @@ private static final long serialVersionUID = 0L;
     return asOf_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : asOf_;
   }
 
+  public static final int NAME_FILTER_FIELD_NUMBER = 24;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object nameFilter_ = "";
+  /**
+   * <pre>
+   * Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
+   * Empty string means no filter (return all).
+   * </pre>
+   *
+   * <code>string name_filter = 24;</code>
+   * @return The nameFilter.
+   */
+  @java.lang.Override
+  public java.lang.String getNameFilter() {
+    java.lang.Object ref = nameFilter_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      nameFilter_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
+   * Empty string means no filter (return all).
+   * </pre>
+   *
+   * <code>string name_filter = 24;</code>
+   * @return The bytes for nameFilter.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getNameFilterBytes() {
+    java.lang.Object ref = nameFilter_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      nameFilter_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -282,6 +332,9 @@ private static final long serialVersionUID = 0L;
     if (asOf_ != null) {
       output.writeMessage(23, getAsOf());
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(nameFilter_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 24, nameFilter_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -308,6 +361,9 @@ private static final long serialVersionUID = 0L;
     if (asOf_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(23, getAsOf());
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(nameFilter_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(24, nameFilter_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -340,6 +396,8 @@ private static final long serialVersionUID = 0L;
       if (!getAsOf()
           .equals(other.getAsOf())) return false;
     }
+    if (!getNameFilter()
+        .equals(other.getNameFilter())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -367,6 +425,8 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + AS_OF_FIELD_NUMBER;
       hash = (53 * hash) + getAsOf().hashCode();
     }
+    hash = (37 * hash) + NAME_FILTER_FIELD_NUMBER;
+    hash = (53 * hash) + getNameFilter().hashCode();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -519,6 +579,7 @@ private static final long serialVersionUID = 0L;
         asOfBuilder_.dispose();
         asOfBuilder_ = null;
       }
+      nameFilter_ = "";
       return this;
     }
 
@@ -580,6 +641,9 @@ private static final long serialVersionUID = 0L;
         result.asOf_ = asOfBuilder_ == null
             ? asOf_
             : asOfBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.nameFilter_ = nameFilter_;
       }
     }
 
@@ -669,6 +733,11 @@ private static final long serialVersionUID = 0L;
       if (other.hasAsOf()) {
         mergeAsOf(other.getAsOf());
       }
+      if (!other.getNameFilter().isEmpty()) {
+        nameFilter_ = other.nameFilter_;
+        bitField0_ |= 0x00000020;
+        onChanged();
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -732,6 +801,11 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000010;
               break;
             } // case 186
+            case 194: {
+              nameFilter_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 194
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1477,6 +1551,103 @@ private static final long serialVersionUID = 0L;
         asOf_ = null;
       }
       return asOfBuilder_;
+    }
+
+    private java.lang.Object nameFilter_ = "";
+    /**
+     * <pre>
+     * Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
+     * Empty string means no filter (return all).
+     * </pre>
+     *
+     * <code>string name_filter = 24;</code>
+     * @return The nameFilter.
+     */
+    public java.lang.String getNameFilter() {
+      java.lang.Object ref = nameFilter_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        nameFilter_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
+     * Empty string means no filter (return all).
+     * </pre>
+     *
+     * <code>string name_filter = 24;</code>
+     * @return The bytes for nameFilter.
+     */
+    public com.google.protobuf.ByteString
+        getNameFilterBytes() {
+      java.lang.Object ref = nameFilter_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        nameFilter_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
+     * Empty string means no filter (return all).
+     * </pre>
+     *
+     * <code>string name_filter = 24;</code>
+     * @param value The nameFilter to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNameFilter(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      nameFilter_ = value;
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
+     * Empty string means no filter (return all).
+     * </pre>
+     *
+     * <code>string name_filter = 24;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNameFilter() {
+      nameFilter_ = getDefaultInstance().getNameFilter();
+      bitField0_ = (bitField0_ & ~0x00000020);
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
+     * Empty string means no filter (return all).
+     * </pre>
+     *
+     * <code>string name_filter = 24;</code>
+     * @param value The bytes for nameFilter to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNameFilterBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      nameFilter_ = value;
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

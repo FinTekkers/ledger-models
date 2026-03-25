@@ -1,0 +1,6 @@
+from fintekkers.requests.index_composition import get_index_composition_request_pb2 as _get_index_composition_request_pb2
+from fintekkers.requests.index_composition import create_index_composition_request_pb2 as _create_index_composition_request_pb2
+from google.protobuf import descriptor as _descriptor
+from typing import ClassVar as _ClassVar
+
+DESCRIPTOR: _descriptor.FileDescriptor

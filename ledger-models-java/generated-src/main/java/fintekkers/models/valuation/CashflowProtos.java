@@ -31,30 +31,34 @@ public final class CashflowProtos {
       "\n*fintekkers/models/valuation/cashflow.p" +
       "roto\022\033fintekkers.models.valuation\032\'finte" +
       "kkers/models/util/local_date.proto\032*fint" +
-      "ekkers/models/util/decimal_value.proto\"\212" +
-      "\002\n\rCashflowProto\022=\n\rcashflow_date\030\001 \001(\0132" +
-      "&.fintekkers.models.util.LocalDateProto\022" +
-      "<\n\tpv_amount\030\002 \001(\0132).fintekkers.models.u" +
-      "til.DecimalValueProto\022<\n\tfv_amount\030\003 \001(\013" +
-      "2).fintekkers.models.util.DecimalValuePr" +
-      "oto\022>\n\013coupon_rate\030\004 \001(\0132).fintekkers.mo" +
-      "dels.util.DecimalValueProtoB\022B\016CashflowP" +
-      "rotosP\001b\006proto3"
+      "ekkers/models/util/decimal_value.proto\032%" +
+      "fintekkers/models/util/currency.proto\"\303\002" +
+      "\n\rCashflowProto\022=\n\rcashflow_date\030\001 \001(\0132&" +
+      ".fintekkers.models.util.LocalDateProto\022<" +
+      "\n\tpv_amount\030\002 \001(\0132).fintekkers.models.ut" +
+      "il.DecimalValueProto\022<\n\tfv_amount\030\003 \001(\0132" +
+      ").fintekkers.models.util.DecimalValuePro" +
+      "to\022>\n\013coupon_rate\030\004 \001(\0132).fintekkers.mod" +
+      "els.util.DecimalValueProto\0227\n\010currency\030\005" +
+      " \001(\0132%.fintekkers.models.util.CurrencyPr" +
+      "otoB\022B\016CashflowProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.util.LocalDate.getDescriptor(),
           fintekkers.models.util.DecimalValue.getDescriptor(),
+          fintekkers.models.util.CurrencyProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_valuation_CashflowProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_valuation_CashflowProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_valuation_CashflowProto_descriptor,
-        new java.lang.String[] { "CashflowDate", "PvAmount", "FvAmount", "CouponRate", });
+        new java.lang.String[] { "CashflowDate", "PvAmount", "FvAmount", "CouponRate", "Currency", });
     fintekkers.models.util.LocalDate.getDescriptor();
     fintekkers.models.util.DecimalValue.getDescriptor();
+    fintekkers.models.util.CurrencyProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

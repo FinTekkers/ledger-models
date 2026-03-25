@@ -147,6 +147,7 @@ impl SecurityProtoBuilder {
             quantity_type: 0,
             identifier: None,
             description: "".to_string(),
+            identifiers: vec![],
 
             //Bond specific
             face_value: None,

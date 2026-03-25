@@ -46,6 +46,22 @@ public final class PositionService {
           fintekkers.requests.position.QueryPositionRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done);
 
+      /**
+       * <code>rpc GetFields(.google.protobuf.Empty) returns (.fintekkers.requests.security.GetFieldValuesResponseProto);</code>
+       */
+      public abstract void getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done);
+
+      /**
+       * <code>rpc GetFieldValues(.fintekkers.requests.security.GetFieldValuesRequestProto) returns (.fintekkers.requests.security.GetFieldValuesResponseProto);</code>
+       */
+      public abstract void getFieldValues(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.security.GetFieldValuesRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done);
+
     }
 
     public static com.google.protobuf.Service newReflectiveService(
@@ -65,6 +81,22 @@ public final class PositionService {
             fintekkers.requests.position.QueryPositionRequestProto request,
             com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done) {
           impl.validateQueryRequest(controller, request, done);
+        }
+
+        @java.lang.Override
+        public  void getFields(
+            com.google.protobuf.RpcController controller,
+            com.google.protobuf.Empty request,
+            com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done) {
+          impl.getFields(controller, request, done);
+        }
+
+        @java.lang.Override
+        public  void getFieldValues(
+            com.google.protobuf.RpcController controller,
+            fintekkers.requests.security.GetFieldValuesRequestProto request,
+            com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done) {
+          impl.getFieldValues(controller, request, done);
         }
 
       };
@@ -93,6 +125,10 @@ public final class PositionService {
               return impl.search(controller, (fintekkers.requests.position.QueryPositionRequestProto)request);
             case 1:
               return impl.validateQueryRequest(controller, (fintekkers.requests.position.QueryPositionRequestProto)request);
+            case 2:
+              return impl.getFields(controller, (com.google.protobuf.Empty)request);
+            case 3:
+              return impl.getFieldValues(controller, (fintekkers.requests.security.GetFieldValuesRequestProto)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -111,6 +147,10 @@ public final class PositionService {
               return fintekkers.requests.position.QueryPositionRequestProto.getDefaultInstance();
             case 1:
               return fintekkers.requests.position.QueryPositionRequestProto.getDefaultInstance();
+            case 2:
+              return com.google.protobuf.Empty.getDefaultInstance();
+            case 3:
+              return fintekkers.requests.security.GetFieldValuesRequestProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -129,6 +169,10 @@ public final class PositionService {
               return fintekkers.requests.position.QueryPositionResponseProto.getDefaultInstance();
             case 1:
               return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+            case 2:
+              return fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance();
+            case 3:
+              return fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -160,6 +204,22 @@ public final class PositionService {
         com.google.protobuf.RpcController controller,
         fintekkers.requests.position.QueryPositionRequestProto request,
         com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done);
+
+    /**
+     * <code>rpc GetFields(.google.protobuf.Empty) returns (.fintekkers.requests.security.GetFieldValuesResponseProto);</code>
+     */
+    public abstract void getFields(
+        com.google.protobuf.RpcController controller,
+        com.google.protobuf.Empty request,
+        com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done);
+
+    /**
+     * <code>rpc GetFieldValues(.fintekkers.requests.security.GetFieldValuesRequestProto) returns (.fintekkers.requests.security.GetFieldValuesResponseProto);</code>
+     */
+    public abstract void getFieldValues(
+        com.google.protobuf.RpcController controller,
+        fintekkers.requests.security.GetFieldValuesRequestProto request,
+        com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done);
 
     public static final
         com.google.protobuf.Descriptors.ServiceDescriptor
@@ -193,6 +253,16 @@ public final class PositionService {
             com.google.protobuf.RpcUtil.<fintekkers.requests.util.errors.Summary.SummaryProto>specializeCallback(
               done));
           return;
+        case 2:
+          this.getFields(controller, (com.google.protobuf.Empty)request,
+            com.google.protobuf.RpcUtil.<fintekkers.requests.security.GetFieldValuesResponseProto>specializeCallback(
+              done));
+          return;
+        case 3:
+          this.getFieldValues(controller, (fintekkers.requests.security.GetFieldValuesRequestProto)request,
+            com.google.protobuf.RpcUtil.<fintekkers.requests.security.GetFieldValuesResponseProto>specializeCallback(
+              done));
+          return;
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -211,6 +281,10 @@ public final class PositionService {
           return fintekkers.requests.position.QueryPositionRequestProto.getDefaultInstance();
         case 1:
           return fintekkers.requests.position.QueryPositionRequestProto.getDefaultInstance();
+        case 2:
+          return com.google.protobuf.Empty.getDefaultInstance();
+        case 3:
+          return fintekkers.requests.security.GetFieldValuesRequestProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -229,6 +303,10 @@ public final class PositionService {
           return fintekkers.requests.position.QueryPositionResponseProto.getDefaultInstance();
         case 1:
           return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+        case 2:
+          return fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance();
+        case 3:
+          return fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -279,6 +357,36 @@ public final class PositionService {
             fintekkers.requests.util.errors.Summary.SummaryProto.class,
             fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance()));
       }
+
+      public  void getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(2),
+          controller,
+          request,
+          fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            fintekkers.requests.security.GetFieldValuesResponseProto.class,
+            fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance()));
+      }
+
+      public  void getFieldValues(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.security.GetFieldValuesRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            fintekkers.requests.security.GetFieldValuesResponseProto.class,
+            fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance()));
+      }
     }
 
     public static BlockingInterface newBlockingStub(
@@ -295,6 +403,16 @@ public final class PositionService {
       public fintekkers.requests.util.errors.Summary.SummaryProto validateQueryRequest(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.position.QueryPositionRequestProto request)
+          throws com.google.protobuf.ServiceException;
+
+      public fintekkers.requests.security.GetFieldValuesResponseProto getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request)
+          throws com.google.protobuf.ServiceException;
+
+      public fintekkers.requests.security.GetFieldValuesResponseProto getFieldValues(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.security.GetFieldValuesRequestProto request)
           throws com.google.protobuf.ServiceException;
     }
 
@@ -328,6 +446,30 @@ public final class PositionService {
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance());
       }
 
+
+      public fintekkers.requests.security.GetFieldValuesResponseProto getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request)
+          throws com.google.protobuf.ServiceException {
+        return (fintekkers.requests.security.GetFieldValuesResponseProto) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(2),
+          controller,
+          request,
+          fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance());
+      }
+
+
+      public fintekkers.requests.security.GetFieldValuesResponseProto getFieldValues(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.security.GetFieldValuesRequestProto request)
+          throws com.google.protobuf.ServiceException {
+        return (fintekkers.requests.security.GetFieldValuesResponseProto) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(3),
+          controller,
+          request,
+          fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance());
+      }
+
     }
 
     // @@protoc_insertion_point(class_scope:fintekkers.services.position_service.Position)
@@ -348,14 +490,24 @@ public final class PositionService {
       "/position/query_position_request.proto\032:" +
       "fintekkers/requests/position/query_posit" +
       "ion_response.proto\032-fintekkers/requests/" +
-      "util/errors/summary.proto2\211\002\n\010Position\022}" +
-      "\n\006Search\0227.fintekkers.requests.position." +
-      "QueryPositionRequestProto\0328.fintekkers.r" +
-      "equests.position.QueryPositionResponsePr" +
-      "oto0\001\022~\n\024ValidateQueryRequest\0227.fintekke" +
-      "rs.requests.position.QueryPositionReques" +
-      "tProto\032-.fintekkers.requests.util.errors" +
-      ".SummaryProtoB\006\210\001\001\220\001\001b\006proto3"
+      "util/errors/summary.proto\032;fintekkers/re" +
+      "quests/security/get_field_values_request" +
+      ".proto\032<fintekkers/requests/security/get" +
+      "_field_values_response.proto\032\033google/pro" +
+      "tobuf/empty.proto2\361\003\n\010Position\022}\n\006Search" +
+      "\0227.fintekkers.requests.position.QueryPos" +
+      "itionRequestProto\0328.fintekkers.requests." +
+      "position.QueryPositionResponseProto0\001\022~\n" +
+      "\024ValidateQueryRequest\0227.fintekkers.reque" +
+      "sts.position.QueryPositionRequestProto\032-" +
+      ".fintekkers.requests.util.errors.Summary" +
+      "Proto\022^\n\tGetFields\022\026.google.protobuf.Emp" +
+      "ty\0329.fintekkers.requests.security.GetFie" +
+      "ldValuesResponseProto\022\205\001\n\016GetFieldValues" +
+      "\0228.fintekkers.requests.security.GetField" +
+      "ValuesRequestProto\0329.fintekkers.requests" +
+      ".security.GetFieldValuesResponseProtoB\006\210" +
+      "\001\001\220\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -363,10 +515,16 @@ public final class PositionService {
           fintekkers.requests.position.QueryPositionRequestProtos.getDescriptor(),
           fintekkers.requests.position.QueryPositionResponseProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
+          fintekkers.requests.security.GetFieldValuesRequestProtos.getDescriptor(),
+          fintekkers.requests.security.GetFieldValuesResponseProtos.getDescriptor(),
+          com.google.protobuf.EmptyProto.getDescriptor(),
         });
     fintekkers.requests.position.QueryPositionRequestProtos.getDescriptor();
     fintekkers.requests.position.QueryPositionResponseProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();
+    fintekkers.requests.security.GetFieldValuesRequestProtos.getDescriptor();
+    fintekkers.requests.security.GetFieldValuesResponseProtos.getDescriptor();
+    com.google.protobuf.EmptyProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

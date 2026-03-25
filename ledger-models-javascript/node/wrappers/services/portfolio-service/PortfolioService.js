@@ -22,8 +22,14 @@ const create_portfolio_request_pb_1 = require("../../../fintekkers/requests/port
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
 const portfolio_1 = __importDefault(require("../../models/portfolio/portfolio"));
 class PortfolioService {
-    constructor() {
-        this.client = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+    constructor(apiKey) {
+        if (apiKey) {
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey);
+            this.client = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+        }
+        else {
+            this.client = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+        }
     }
     validateCreatePortfolio(portfolio) {
         return __awaiter(this, void 0, void 0, function* () {

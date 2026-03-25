@@ -1,5 +1,5 @@
 from datetime import datetime
-from uuid import uuid4, UUID
+from uuid import UUID
 
 from google.protobuf.timestamp_pb2 import Timestamp
 from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
@@ -30,7 +30,7 @@ class Portfolio:
 
     @staticmethod
     def create_portfolio(portfolio_name: str):
-        uuid_value = uuid4()
+        uuid_value = FintekkersUuid.new_uuid().as_uuid()
         portfolio = PortfolioProto(
             as_of=LocalTimestampProto(
                 timestamp=Timestamp(), time_zone="America/New_York"

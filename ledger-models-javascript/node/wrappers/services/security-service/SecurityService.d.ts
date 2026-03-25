@@ -6,7 +6,7 @@ import { PositionFilter } from '../../models/position/positionfilter';
 import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
 declare class SecurityService {
     private client;
-    constructor();
+    constructor(apiKey?: string);
     validateCreateSecurity(security: SecurityProto): Promise<SummaryProto>;
     createSecurity(security: SecurityProto): Promise<CreateSecurityResponseProto>;
     searchSecurityAsOfNow(positionFilter: PositionFilter): Promise<Security[]>;

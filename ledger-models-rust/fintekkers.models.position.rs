@@ -313,6 +313,103 @@ pub enum MeasureProto {
     ///    and forward-starting instrument pricing.
     /// Units: Decimal (0-1 scale; e.g. 0.048 = 4.80% annual forward rate).
     ForwardYield = 17,
+    /// The profit or loss on a position relative to its cost basis.
+    ///
+    /// Formula:
+    ///    ProfitLoss = MarketValue - (UnadjustedCostBasis / 100 * DirectedQuantity)
+    ///
+    /// Applicability: All security types.
+    /// Units: Dollars (or settlement currency).
+    ProfitLoss = 18,
+    /// The profit or loss as a percentage of the original cost basis.
+    ///
+    /// Formula:
+    ///    ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / 100 * DirectedQuantity)
+    ///
+    /// Applicability: All security types.
+    /// Units: Decimal (0-1 scale; e.g. 0.05 = 5.00% gain).
+    ProfitLossPercent = 19,
+    /// The accrued interest on a bond position — the pro-rated coupon income earned
+    /// since the last coupon payment date but not yet received.
+    ///
+    /// Formula (coupon-bearing bonds):
+    ///    AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period)
+    ///                      * directed_quantity
+    ///    Day count: Actual/Actual (ICMA) for US Treasuries.
+    ///
+    /// Accrued interest on settlement date T is the interest accumulated from the
+    /// last coupon date up to but not including T.
+    ///
+    /// Applicability: Bond, TIPS, FRN (coupon-bearing securities).
+    ///    Returns null/zero for Equity, Cash, and zero-coupon bonds.
+    /// Units: Dollars (absolute dollar amount for the position).
+    AccruedInterest = 20,
+    /// The second derivative of a bond's price with respect to yield, normalised by price.
+    /// Convexity measures how the duration of a bond changes as yield changes — a bond
+    /// with higher convexity gains more in price when yields fall and loses less when
+    /// yields rise, compared to a bond with lower convexity of equal duration.
+    ///
+    /// Formula:
+    ///    Convexity = (1/P) × Σ_{t=1}^{N} [CF_t × t × (t+1) / (1+y/n)^(t+2)] / n²
+    ///
+    ///    Equivalently, in terms of periodic-discount PVs:
+    ///    Convexity = Σ_{t=1}^{N} [t(t+1) × PV_t] / (P_dollar × n² × (1+r)²)
+    ///    Where r = y/n (periodic yield), P_dollar = dollar price,
+    ///    PV_t = CF_t / (1+r)^t, n = coupon frequency (periods per year).
+    ///
+    /// Model assumptions:
+    ///    - Same as MACAULAY_DURATION (flat yield curve, YTM-based discounting).
+    ///    - For FRN: uses flat-forwards effective YTM (same model as PRESENT_VALUE).
+    ///    - Settlement on a coupon date (integer period exponents).
+    ///
+    /// Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
+    /// Units: Years² (e.g. 20.5 = 20.5 years²).
+    Convexity = 21,
+    /// The full (invoice) price of a bond including accrued interest, expressed as a
+    /// percentage of face value.
+    ///
+    /// Formula:
+    ///    DirtyPrice = market_value / (num_bonds * face_value) * 100
+    ///    where num_bonds = directed_quantity / face_value
+    ///    Equivalently: market_value / directed_quantity * 100
+    ///
+    /// Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
+    /// Units: Percentage of par (e.g. 99.5 = 99.5% of par).
+    DirtyPrice = 22,
+    /// The quoted price of a bond excluding accrued interest, expressed as a
+    /// percentage of face value. This is the price conventionally quoted in bond markets.
+    ///
+    /// Formula:
+    ///    CleanPrice = DirtyPrice - (accrued_interest / directed_quantity * 100)
+    ///
+    /// Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
+    /// Units: Percentage of par (e.g. 98.75 = 98.75% of par).
+    CleanPrice = 23,
+    /// Modified Duration = MacaulayDuration / (1 + ytm/coupon_frequency).
+    ///
+    /// Measures the percentage price change of a bond for a 1% (100bp) change in yield.
+    /// Unlike Macaulay Duration (which is expressed in years), Modified Duration is a
+    /// direct measure of price sensitivity: a bond with ModifiedDuration=5 will move
+    /// approximately 5% in price for a 100bp parallel shift in yield.
+    ///
+    /// Formula:
+    ///    ModifiedDuration = MacaulayDuration / (1 + ytm/n)
+    ///    where ytm = yield to maturity (annual), n = coupon periods per year.
+    ///
+    /// Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
+    /// Units: Years (dimensionally equivalent to years, interpreted as % per 100bp).
+    ModifiedDuration = 24,
+    /// DV01 (Dollar Value of 01) = the dollar P&L impact of a 1bp (0.01%) yield increase.
+    ///
+    /// Formula:
+    ///    DV01 = ModifiedDuration × MarketValue × 0.0001
+    ///
+    /// For a $1M market value position with ModifiedDuration=5:
+    ///    DV01 = 5 × 1,000,000 × 0.0001 = $500 per bp
+    ///
+    /// Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
+    /// Units: Dollars per basis point.
+    Dv01 = 25,
 }
 impl MeasureProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -338,6 +435,14 @@ impl MeasureProto {
             MeasureProto::ParYield => "PAR_YIELD",
             MeasureProto::SpotYield => "SPOT_YIELD",
             MeasureProto::ForwardYield => "FORWARD_YIELD",
+            MeasureProto::ProfitLoss => "PROFIT_LOSS",
+            MeasureProto::ProfitLossPercent => "PROFIT_LOSS_PERCENT",
+            MeasureProto::AccruedInterest => "ACCRUED_INTEREST",
+            MeasureProto::Convexity => "CONVEXITY",
+            MeasureProto::DirtyPrice => "DIRTY_PRICE",
+            MeasureProto::CleanPrice => "CLEAN_PRICE",
+            MeasureProto::ModifiedDuration => "MODIFIED_DURATION",
+            MeasureProto::Dv01 => "DV01",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -360,6 +465,14 @@ impl MeasureProto {
             "PAR_YIELD" => Some(Self::ParYield),
             "SPOT_YIELD" => Some(Self::SpotYield),
             "FORWARD_YIELD" => Some(Self::ForwardYield),
+            "PROFIT_LOSS" => Some(Self::ProfitLoss),
+            "PROFIT_LOSS_PERCENT" => Some(Self::ProfitLossPercent),
+            "ACCRUED_INTEREST" => Some(Self::AccruedInterest),
+            "CONVEXITY" => Some(Self::Convexity),
+            "DIRTY_PRICE" => Some(Self::DirtyPrice),
+            "CLEAN_PRICE" => Some(Self::CleanPrice),
+            "MODIFIED_DURATION" => Some(Self::ModifiedDuration),
+            "DV01" => Some(Self::Dv01),
             _ => None,
         }
     }
@@ -600,6 +713,11 @@ pub struct PositionProto {
     pub measures: ::prost::alloc::vec::Vec<MeasureMapEntry>,
     #[prost(message, repeated, tag = "21")]
     pub fields: ::prost::alloc::vec::Vec<FieldMapEntry>,
+    /// The base/reporting currency for monetary measures in this position.
+    /// Set to the portfolio's base currency (e.g. USD cash security).
+    /// Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+    #[prost(message, optional, tag = "22")]
+    pub reporting_currency: ::core::option::Option<super::security::SecurityProto>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

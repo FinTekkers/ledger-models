@@ -33,15 +33,15 @@ public final class QueryPortfolioRequestProtos {
       "ts.portfolio\032!fintekkers/models/util/uui" +
       "d.proto\032,fintekkers/models/util/local_ti" +
       "mestamp.proto\0320fintekkers/models/positio" +
-      "n/position_filter.proto\"\202\002\n\032QueryPortfol" +
+      "n/position_filter.proto\"\227\002\n\032QueryPortfol" +
       "ioRequestProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007" +
       "version\030\002 \001(\t\0220\n\005uuIds\030\025 \003(\0132!.fintekker" +
       "s.models.util.UUIDProto\022O\n\026search_portfo" +
       "lio_input\030\026 \001(\0132/.fintekkers.models.posi" +
       "tion.PositionFilterProto\022:\n\005as_of\030\027 \001(\0132" +
       "+.fintekkers.models.util.LocalTimestampP" +
-      "rotoB\037B\033QueryPortfolioRequestProtosP\001b\006p" +
-      "roto3"
+      "roto\022\023\n\013name_filter\030\030 \001(\tB\037B\033QueryPortfo" +
+      "lioRequestProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -55,7 +55,7 @@ public final class QueryPortfolioRequestProtos {
     internal_static_fintekkers_requests_portfolio_QueryPortfolioRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_portfolio_QueryPortfolioRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "UuIds", "SearchPortfolioInput", "AsOf", });
+        new java.lang.String[] { "ObjectClass", "Version", "UuIds", "SearchPortfolioInput", "AsOf", "NameFilter", });
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.position.PositionFilterProtos.getDescriptor();

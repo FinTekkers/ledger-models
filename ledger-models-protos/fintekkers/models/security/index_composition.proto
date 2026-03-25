@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package fintekkers.models.security;
+
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/util/local_timestamp.proto";
+import "fintekkers/models/util/uuid.proto";
+import "fintekkers/models/security/security.proto";
+
+option java_multiple_files = true;
+
+option java_outer_classname = "IndexCompositionProtos";
+
+// A point-in-time snapshot of an equity index's constituent securities and weights.
+//
+// Temporal model (identical to PriceProto):
+//   uuid        — stable identity for this composition record
+//   as_of       — the timestamp this composition was observed / recorded
+//   valid_from  — bitemporal: when this record became system-valid
+//   valid_to    — bitemporal: when this record was superseded
+//   is_link     — if true, only uuid is meaningful; resolve via GetByIds
+//
+// A new IndexCompositionProto is created whenever the index is rebalanced.
+// The effective_date field marks the business date the new composition took effect.
+// To find the composition active on a given date D, query for the most recent
+// record where effective_date <= D.
+message IndexCompositionProto {
+  string object_class = 1;
+  string version      = 2;
+
+  // Primary Key (same temporal pattern as SecurityProto and PriceProto)
+  fintekkers.models.util.UUIDProto           uuid       = 5;
+  fintekkers.models.util.LocalTimestampProto as_of      = 6;
+  bool                                       is_link    = 7;
+  fintekkers.models.util.LocalTimestampProto valid_from = 8;
+  fintekkers.models.util.LocalTimestampProto valid_to   = 9;
+
+  // The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+  // Typically is_link = true; resolve via SecurityService.GetByIds.
+  fintekkers.models.security.SecurityProto index_security = 10;
+
+  // The calendar date on which this composition became effective (the rebalance date).
+  // Temporal lookup key: given as_of_date D, return the composition where
+  // effective_date <= D, ordered by effective_date DESC, LIMIT 1.
+  fintekkers.models.util.LocalDateProto effective_date = 11;
+
+  // The full list of constituents at this rebalance point.
+  repeated IndexConstituentProto constituents = 20;
+
+  // For price-weighted indices (e.g. DJIA), the divisor at this rebalance point.
+  // Divisors change when constituents change or corporate actions occur.
+  // index_level = sum(price_i * shares_i) / index_divisor
+  fintekkers.models.util.DecimalValueProto index_divisor = 21;
+
+  // Free-form notes (e.g. "Quarterly rebalance — removed XYZ, added ABC").
+  string notes = 31;
+}
+
+// A single constituent within an index at a specific rebalance point.
+message IndexConstituentProto {
+  // The constituent equity security.
+  // Typically is_link = true; resolve via SecurityService.GetByIds.
+  fintekkers.models.security.SecurityProto security = 1;
+
+  // Weight of this constituent in the index, expressed as a decimal fraction
+  // (e.g. 0.05 = 5%). Used for market-cap-weighted and equal-weighted indices.
+  // For price-weighted indices, leave unset; use shares_in_index instead.
+  fintekkers.models.util.DecimalValueProto weight = 2;
+
+  // Number of shares used in price-weighted index calculation (e.g. DJIA).
+  // For non-price-weighted indices, leave unset; use weight instead.
+  fintekkers.models.util.DecimalValueProto shares_in_index = 3;
+
+  // The currency of the constituent's price (e.g. "USD"). Needed for multi-currency indices.
+  string currency = 5;
+}

@@ -14,4 +14,6 @@ enum SecurityTypeProto {
   TIPS = 4;
   FRN = 5;
   INDEX_SECURITY = 6;
+  FX_SPOT = 7;
+  EQUITY_INDEX_SECURITY = 8;  // Equity market indices (DJIA, S&P 500, Nasdaq-100, etc.)
 }

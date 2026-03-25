@@ -16,6 +16,10 @@ pub struct QuerySecurityRequestProto {
     >,
     #[prost(message, optional, tag = "23")]
     pub as_of: ::core::option::Option<super::super::models::util::LocalTimestampProto>,
+    /// Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
+    /// Empty string means no filter (return all).
+    #[prost(string, tag = "24")]
+    pub name_filter: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

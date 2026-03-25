@@ -87,7 +87,8 @@ version: jspb.Message.getFieldWithDefault(msg, 2, ""),
 uuidsList: jspb.Message.toObjectList(msg.getUuidsList(),
     fintekkers_models_util_uuid_pb.UUIDProto.toObject, includeInstance),
 searchPortfolioInput: (f = msg.getSearchPortfolioInput()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
-asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f)
+asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+nameFilter: jspb.Message.getFieldWithDefault(msg, 24, "")
   };
 
   if (includeInstance) {
@@ -146,6 +147,10 @@ proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.deserializeBinary
       var value = new fintekkers_models_util_local_timestamp_pb.LocalTimestampProto;
       reader.readMessage(value,fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.deserializeBinaryFromReader);
       msg.setAsOf(value);
+      break;
+    case 24:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setNameFilter(value);
       break;
     default:
       reader.skipField();
@@ -212,6 +217,13 @@ proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.serializeBinaryTo
       23,
       f,
       fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getNameFilter();
+  if (f.length > 0) {
+    writer.writeString(
+      24,
+      f
     );
   }
 };
@@ -362,6 +374,24 @@ proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.prototype.clearAs
  */
 proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.prototype.hasAsOf = function() {
   return jspb.Message.getField(this, 23) != null;
+};
+
+
+/**
+ * optional string name_filter = 24;
+ * @return {string}
+ */
+proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.prototype.getNameFilter = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 24, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto} returns this
+ */
+proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.prototype.setNameFilter = function(value) {
+  return jspb.Message.setProto3StringField(this, 24, value);
 };
 
 

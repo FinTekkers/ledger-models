@@ -17,4 +17,8 @@ pub struct CashflowProto {
     /// For fixed-rate bonds this is constant; for FRNs it is reference_rate + spread for the period.
     #[prost(message, optional, tag = "4")]
     pub coupon_rate: ::core::option::Option<super::util::DecimalValueProto>,
+    /// The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+    /// Allows cashflows to be self-describing without resolving the parent security.
+    #[prost(message, optional, tag = "5")]
+    pub currency: ::core::option::Option<super::util::CurrencyProto>,
 }

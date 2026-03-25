@@ -24,11 +24,12 @@ public final class SecurityTypeProtos {
   static {
     java.lang.String[] descriptorData = {
       "\n.fintekkers/models/security/security_ty" +
-      "pe.proto\022\032fintekkers.models.security*\220\001\n" +
+      "pe.proto\022\032fintekkers.models.security*\270\001\n" +
       "\021SecurityTypeProto\022\031\n\025UNKNOWN_SECURITY_T" +
       "YPE\020\000\022\021\n\rCASH_SECURITY\020\001\022\023\n\017EQUITY_SECUR" +
       "ITY\020\002\022\021\n\rBOND_SECURITY\020\003\022\010\n\004TIPS\020\004\022\007\n\003FR" +
-      "N\020\005\022\022\n\016INDEX_SECURITY\020\006B\026B\022SecurityTypeP" +
+      "N\020\005\022\022\n\016INDEX_SECURITY\020\006\022\013\n\007FX_SPOT\020\007\022\031\n\025" +
+      "EQUITY_INDEX_SECURITY\020\010B\026B\022SecurityTypeP" +
       "rotosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor

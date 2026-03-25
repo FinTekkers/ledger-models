@@ -25,9 +25,12 @@ _sym_db = _symbol_database.Default()
 from fintekkers.requests.position import query_position_request_pb2 as fintekkers_dot_requests_dot_position_dot_query__position__request__pb2
 from fintekkers.requests.position import query_position_response_pb2 as fintekkers_dot_requests_dot_position_dot_query__position__response__pb2
 from fintekkers.requests.util.errors import summary_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2
+from fintekkers.requests.security import get_field_values_request_pb2 as fintekkers_dot_requests_dot_security_dot_get__field__values__request__pb2
+from fintekkers.requests.security import get_field_values_response_pb2 as fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n;fintekkers/services/position-service/position_service.proto\x12$fintekkers.services.position_service\x1a\x39\x66intekkers/requests/position/query_position_request.proto\x1a:fintekkers/requests/position/query_position_response.proto\x1a-fintekkers/requests/util/errors/summary.proto2\x89\x02\n\x08Position\x12}\n\x06Search\x12\x37.fintekkers.requests.position.QueryPositionRequestProto\x1a\x38.fintekkers.requests.position.QueryPositionResponseProto0\x01\x12~\n\x14ValidateQueryRequest\x12\x37.fintekkers.requests.position.QueryPositionRequestProto\x1a-.fintekkers.requests.util.errors.SummaryProtoB\x06\x88\x01\x01\x90\x01\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n;fintekkers/services/position-service/position_service.proto\x12$fintekkers.services.position_service\x1a\x39\x66intekkers/requests/position/query_position_request.proto\x1a:fintekkers/requests/position/query_position_response.proto\x1a-fintekkers/requests/util/errors/summary.proto\x1a;fintekkers/requests/security/get_field_values_request.proto\x1a<fintekkers/requests/security/get_field_values_response.proto\x1a\x1bgoogle/protobuf/empty.proto2\xf1\x03\n\x08Position\x12}\n\x06Search\x12\x37.fintekkers.requests.position.QueryPositionRequestProto\x1a\x38.fintekkers.requests.position.QueryPositionResponseProto0\x01\x12~\n\x14ValidateQueryRequest\x12\x37.fintekkers.requests.position.QueryPositionRequestProto\x1a-.fintekkers.requests.util.errors.SummaryProto\x12^\n\tGetFields\x12\x16.google.protobuf.Empty\x1a\x39.fintekkers.requests.security.GetFieldValuesResponseProto\x12\x85\x01\n\x0eGetFieldValues\x12\x38.fintekkers.requests.security.GetFieldValuesRequestProto\x1a\x39.fintekkers.requests.security.GetFieldValuesResponseProtoB\x06\x88\x01\x01\x90\x01\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,7 +38,7 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.services.positio
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'\210\001\001\220\001\001'
-  _globals['_POSITION']._serialized_start=268
-  _globals['_POSITION']._serialized_end=533
+  _globals['_POSITION']._serialized_start=420
+  _globals['_POSITION']._serialized_end=917
 _builder.BuildServices(DESCRIPTOR, 'fintekkers.services.position_service.position_service_pb2', _globals)
 # @@protoc_insertion_point(module_scope)

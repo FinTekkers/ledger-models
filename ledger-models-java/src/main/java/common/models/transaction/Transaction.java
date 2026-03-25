@@ -69,11 +69,13 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                     "zero quantity transactions");
         }
 
-        if(security instanceof BondSecurity &&
-                quantity.doubleValue() < ((BondSecurity)security).getFaceValue().doubleValue()) {
-            throw new TransactionProcessingException("Quantity must be expressed in face value. The quantity provided " +
-                    "is below face value so you likely need to scale up the quantity. If this is a fraction " +
-                    "of a bond unit, then that is not currently supported (should be a small chance)");
+        if(security instanceof BondSecurity) {
+            BigDecimal bondFaceValue = ((BondSecurity) security).getFaceValue();
+            if (bondFaceValue != null && quantity.doubleValue() < bondFaceValue.doubleValue()) {
+                throw new TransactionProcessingException("Quantity must be expressed in face value. The quantity provided " +
+                        "is below face value so you likely need to scale up the quantity. If this is a fraction " +
+                        "of a bond unit, then that is not currently supported (should be a small chance)");
+            }
         }
 
         this.price = price;
@@ -443,8 +445,13 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                     //E.g. if you bought 50 bonds with face value of $1000 @ $99.
                     // The face amount is $50k
                     // The book amount is: $49.5k  (i.e. 50 * (99 * scaled price))
-                    BigDecimal priceScaleFactor = ((BondSecurity) parentTransaction.getSecurity()).getPriceScaleFactor();
-                    BigDecimal faceValue = ((BondSecurity) parentTransaction.getSecurity()).getFaceValue();
+                    BondSecurity bond = (BondSecurity) parentTransaction.getSecurity();
+                    BigDecimal faceValue = bond.getFaceValue();
+                    if (faceValue == null) {
+                        throw new TransactionProcessingException(
+                                "Bond face_value is required for transaction cash impact calculation");
+                    }
+                    BigDecimal priceScaleFactor = bond.getPriceScaleFactor();
                     BigDecimal scaledPrice = parentTransaction.getPrice().getPrice().multiply(priceScaleFactor);
                     BigDecimal numberBondUnits = parentTransaction.getQuantity().divide(faceValue);
 

@@ -3,7 +3,7 @@ import { QueryPositionRequest } from '../../requests/position/QueryPositionReque
 import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 declare class PositionService {
     private client;
-    constructor();
+    constructor(apiKey?: string);
     validateRequest(positionRequest: QueryPositionRequest): Promise<SummaryProto>;
     search(positionRequest: QueryPositionRequest): Promise<Position[]>;
 }

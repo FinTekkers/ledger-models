@@ -64,6 +64,10 @@ export class SecurityProto extends jspb.Message {
     setIdentifier(value?: fintekkers_models_security_identifier_identifier_pb.IdentifierProto): SecurityProto;
     getDescription(): string;
     setDescription(value: string): SecurityProto;
+    clearIdentifiersList(): void;
+    getIdentifiersList(): Array<fintekkers_models_security_identifier_identifier_pb.IdentifierProto>;
+    setIdentifiersList(value: Array<fintekkers_models_security_identifier_identifier_pb.IdentifierProto>): SecurityProto;
+    addIdentifiers(value?: fintekkers_models_security_identifier_identifier_pb.IdentifierProto, index?: number): fintekkers_models_security_identifier_identifier_pb.IdentifierProto;
     getCashId(): string;
     setCashId(value: string): SecurityProto;
 
@@ -153,6 +157,11 @@ export class SecurityProto extends jspb.Message {
     getCashDetails(): CashDetailsProto | undefined;
     setCashDetails(value?: CashDetailsProto): SecurityProto;
 
+    hasFxSpotDetails(): boolean;
+    clearFxSpotDetails(): void;
+    getFxSpotDetails(): FxSpotDetailsProto | undefined;
+    setFxSpotDetails(value?: FxSpotDetailsProto): SecurityProto;
+
     getProductDetailsCase(): SecurityProto.ProductDetailsCase;
 
     serializeBinary(): Uint8Array;
@@ -181,6 +190,7 @@ export namespace SecurityProto {
         quantityType: fintekkers_models_security_security_quantity_type_pb.SecurityQuantityTypeProto,
         identifier?: fintekkers_models_security_identifier_identifier_pb.IdentifierProto.AsObject,
         description: string,
+        identifiersList: Array<fintekkers_models_security_identifier_identifier_pb.IdentifierProto.AsObject>,
         cashId: string,
         couponRate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         couponType: fintekkers_models_security_coupon_type_pb.CouponTypeProto,
@@ -203,6 +213,7 @@ export namespace SecurityProto {
         indexDetails?: IndexDetailsProto.AsObject,
         equityDetails?: EquityDetailsProto.AsObject,
         cashDetails?: CashDetailsProto.AsObject,
+        fxSpotDetails?: FxSpotDetailsProto.AsObject,
     }
 
     export enum ProductDetailsCase {
@@ -213,6 +224,7 @@ export namespace SecurityProto {
         INDEX_DETAILS = 203,
         EQUITY_DETAILS = 204,
         CASH_DETAILS = 205,
+        FX_SPOT_DETAILS = 206,
     }
 
 }
@@ -472,5 +484,37 @@ export class CashDetailsProto extends jspb.Message {
 export namespace CashDetailsProto {
     export type AsObject = {
         cashId: string,
+    }
+}
+
+export class FxSpotDetailsProto extends jspb.Message { 
+
+    hasBaseCurrency(): boolean;
+    clearBaseCurrency(): void;
+    getBaseCurrency(): SecurityProto | undefined;
+    setBaseCurrency(value?: SecurityProto): FxSpotDetailsProto;
+
+    hasQuoteCurrency(): boolean;
+    clearQuoteCurrency(): void;
+    getQuoteCurrency(): SecurityProto | undefined;
+    setQuoteCurrency(value?: SecurityProto): FxSpotDetailsProto;
+    getConvention(): string;
+    setConvention(value: string): FxSpotDetailsProto;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): FxSpotDetailsProto.AsObject;
+    static toObject(includeInstance: boolean, msg: FxSpotDetailsProto): FxSpotDetailsProto.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: FxSpotDetailsProto, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): FxSpotDetailsProto;
+    static deserializeBinaryFromReader(message: FxSpotDetailsProto, reader: jspb.BinaryReader): FxSpotDetailsProto;
+}
+
+export namespace FxSpotDetailsProto {
+    export type AsObject = {
+        baseCurrency?: SecurityProto.AsObject,
+        quoteCurrency?: SecurityProto.AsObject,
+        convention: string,
     }
 }

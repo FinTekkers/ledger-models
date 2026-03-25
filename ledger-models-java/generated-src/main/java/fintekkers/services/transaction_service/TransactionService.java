@@ -78,6 +78,22 @@ public final class TransactionService {
           fintekkers.requests.transaction.QueryTransactionRequestProto request,
           com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done);
 
+      /**
+       * <code>rpc GetFields(.google.protobuf.Empty) returns (.fintekkers.requests.security.GetFieldValuesResponseProto);</code>
+       */
+      public abstract void getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done);
+
+      /**
+       * <code>rpc GetFieldValues(.fintekkers.requests.security.GetFieldValuesRequestProto) returns (.fintekkers.requests.security.GetFieldValuesResponseProto);</code>
+       */
+      public abstract void getFieldValues(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.security.GetFieldValuesRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done);
+
     }
 
     public static com.google.protobuf.Service newReflectiveService(
@@ -139,6 +155,22 @@ public final class TransactionService {
           impl.validateQueryRequest(controller, request, done);
         }
 
+        @java.lang.Override
+        public  void getFields(
+            com.google.protobuf.RpcController controller,
+            com.google.protobuf.Empty request,
+            com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done) {
+          impl.getFields(controller, request, done);
+        }
+
+        @java.lang.Override
+        public  void getFieldValues(
+            com.google.protobuf.RpcController controller,
+            fintekkers.requests.security.GetFieldValuesRequestProto request,
+            com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done) {
+          impl.getFieldValues(controller, request, done);
+        }
+
       };
     }
 
@@ -175,6 +207,10 @@ public final class TransactionService {
               return impl.validateCreateOrUpdate(controller, (fintekkers.requests.transaction.CreateTransactionRequestProto)request);
             case 6:
               return impl.validateQueryRequest(controller, (fintekkers.requests.transaction.QueryTransactionRequestProto)request);
+            case 7:
+              return impl.getFields(controller, (com.google.protobuf.Empty)request);
+            case 8:
+              return impl.getFieldValues(controller, (fintekkers.requests.security.GetFieldValuesRequestProto)request);
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -203,6 +239,10 @@ public final class TransactionService {
               return fintekkers.requests.transaction.CreateTransactionRequestProto.getDefaultInstance();
             case 6:
               return fintekkers.requests.transaction.QueryTransactionRequestProto.getDefaultInstance();
+            case 7:
+              return com.google.protobuf.Empty.getDefaultInstance();
+            case 8:
+              return fintekkers.requests.security.GetFieldValuesRequestProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -231,6 +271,10 @@ public final class TransactionService {
               return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
             case 6:
               return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+            case 7:
+              return fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance();
+            case 8:
+              return fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance();
             default:
               throw new java.lang.AssertionError("Can't get here.");
           }
@@ -295,6 +339,22 @@ public final class TransactionService {
         fintekkers.requests.transaction.QueryTransactionRequestProto request,
         com.google.protobuf.RpcCallback<fintekkers.requests.util.errors.Summary.SummaryProto> done);
 
+    /**
+     * <code>rpc GetFields(.google.protobuf.Empty) returns (.fintekkers.requests.security.GetFieldValuesResponseProto);</code>
+     */
+    public abstract void getFields(
+        com.google.protobuf.RpcController controller,
+        com.google.protobuf.Empty request,
+        com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done);
+
+    /**
+     * <code>rpc GetFieldValues(.fintekkers.requests.security.GetFieldValuesRequestProto) returns (.fintekkers.requests.security.GetFieldValuesResponseProto);</code>
+     */
+    public abstract void getFieldValues(
+        com.google.protobuf.RpcController controller,
+        fintekkers.requests.security.GetFieldValuesRequestProto request,
+        com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done);
+
     public static final
         com.google.protobuf.Descriptors.ServiceDescriptor
         getDescriptor() {
@@ -352,6 +412,16 @@ public final class TransactionService {
             com.google.protobuf.RpcUtil.<fintekkers.requests.util.errors.Summary.SummaryProto>specializeCallback(
               done));
           return;
+        case 7:
+          this.getFields(controller, (com.google.protobuf.Empty)request,
+            com.google.protobuf.RpcUtil.<fintekkers.requests.security.GetFieldValuesResponseProto>specializeCallback(
+              done));
+          return;
+        case 8:
+          this.getFieldValues(controller, (fintekkers.requests.security.GetFieldValuesRequestProto)request,
+            com.google.protobuf.RpcUtil.<fintekkers.requests.security.GetFieldValuesResponseProto>specializeCallback(
+              done));
+          return;
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -380,6 +450,10 @@ public final class TransactionService {
           return fintekkers.requests.transaction.CreateTransactionRequestProto.getDefaultInstance();
         case 6:
           return fintekkers.requests.transaction.QueryTransactionRequestProto.getDefaultInstance();
+        case 7:
+          return com.google.protobuf.Empty.getDefaultInstance();
+        case 8:
+          return fintekkers.requests.security.GetFieldValuesRequestProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -408,6 +482,10 @@ public final class TransactionService {
           return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
         case 6:
           return fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance();
+        case 7:
+          return fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance();
+        case 8:
+          return fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance();
         default:
           throw new java.lang.AssertionError("Can't get here.");
       }
@@ -533,6 +611,36 @@ public final class TransactionService {
             fintekkers.requests.util.errors.Summary.SummaryProto.class,
             fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance()));
       }
+
+      public  void getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(7),
+          controller,
+          request,
+          fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            fintekkers.requests.security.GetFieldValuesResponseProto.class,
+            fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance()));
+      }
+
+      public  void getFieldValues(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.security.GetFieldValuesRequestProto request,
+          com.google.protobuf.RpcCallback<fintekkers.requests.security.GetFieldValuesResponseProto> done) {
+        channel.callMethod(
+          getDescriptor().getMethods().get(8),
+          controller,
+          request,
+          fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance(),
+          com.google.protobuf.RpcUtil.generalizeCallback(
+            done,
+            fintekkers.requests.security.GetFieldValuesResponseProto.class,
+            fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance()));
+      }
     }
 
     public static BlockingInterface newBlockingStub(
@@ -574,6 +682,16 @@ public final class TransactionService {
       public fintekkers.requests.util.errors.Summary.SummaryProto validateQueryRequest(
           com.google.protobuf.RpcController controller,
           fintekkers.requests.transaction.QueryTransactionRequestProto request)
+          throws com.google.protobuf.ServiceException;
+
+      public fintekkers.requests.security.GetFieldValuesResponseProto getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request)
+          throws com.google.protobuf.ServiceException;
+
+      public fintekkers.requests.security.GetFieldValuesResponseProto getFieldValues(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.security.GetFieldValuesRequestProto request)
           throws com.google.protobuf.ServiceException;
     }
 
@@ -667,6 +785,30 @@ public final class TransactionService {
           fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance());
       }
 
+
+      public fintekkers.requests.security.GetFieldValuesResponseProto getFields(
+          com.google.protobuf.RpcController controller,
+          com.google.protobuf.Empty request)
+          throws com.google.protobuf.ServiceException {
+        return (fintekkers.requests.security.GetFieldValuesResponseProto) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(7),
+          controller,
+          request,
+          fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance());
+      }
+
+
+      public fintekkers.requests.security.GetFieldValuesResponseProto getFieldValues(
+          com.google.protobuf.RpcController controller,
+          fintekkers.requests.security.GetFieldValuesRequestProto request)
+          throws com.google.protobuf.ServiceException {
+        return (fintekkers.requests.security.GetFieldValuesResponseProto) channel.callBlockingMethod(
+          getDescriptor().getMethods().get(8),
+          controller,
+          request,
+          fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance());
+      }
+
     }
 
     // @@protoc_insertion_point(class_scope:fintekkers.services.transaction_service.Transaction)
@@ -692,32 +834,41 @@ public final class TransactionService {
       "equests/transaction/query_transaction_re" +
       "sponse.proto\032-fintekkers/requests/util/e" +
       "rrors/summary.proto\032-fintekkers/requests" +
-      "/util/delete_request.proto2\274\007\n\013Transacti" +
-      "on\022\221\001\n\016CreateOrUpdate\022>.fintekkers.reque" +
-      "sts.transaction.CreateTransactionRequest" +
-      "Proto\032?.fintekkers.requests.transaction." +
-      "CreateTransactionResponseProto\022\211\001\n\010GetBy" +
-      "Ids\022=.fintekkers.requests.transaction.Qu" +
-      "eryTransactionRequestProto\032>.fintekkers." +
-      "requests.transaction.QueryTransactionRes" +
-      "ponseProto\022\211\001\n\006Search\022=.fintekkers.reque" +
-      "sts.transaction.QueryTransactionRequestP" +
-      "roto\032>.fintekkers.requests.transaction.Q" +
-      "ueryTransactionResponseProto0\001\022\210\001\n\007ListI" +
-      "ds\022=.fintekkers.requests.transaction.Que" +
-      "ryTransactionRequestProto\032>.fintekkers.r" +
-      "equests.transaction.QueryTransactionResp" +
-      "onseProto\022e\n\006Delete\022,.fintekkers.request" +
-      "s.util.DeleteRequestProto\032-.fintekkers.r" +
-      "equests.util.DeleteResponseProto\022\207\001\n\026Val" +
-      "idateCreateOrUpdate\022>.fintekkers.request" +
-      "s.transaction.CreateTransactionRequestPr" +
-      "oto\032-.fintekkers.requests.util.errors.Su" +
-      "mmaryProto\022\204\001\n\024ValidateQueryRequest\022=.fi" +
+      "/util/delete_request.proto\032;fintekkers/r" +
+      "equests/security/get_field_values_reques" +
+      "t.proto\032<fintekkers/requests/security/ge" +
+      "t_field_values_response.proto\032\033google/pr" +
+      "otobuf/empty.proto2\244\t\n\013Transaction\022\221\001\n\016C" +
+      "reateOrUpdate\022>.fintekkers.requests.tran" +
+      "saction.CreateTransactionRequestProto\032?." +
+      "fintekkers.requests.transaction.CreateTr" +
+      "ansactionResponseProto\022\211\001\n\010GetByIds\022=.fi" +
       "ntekkers.requests.transaction.QueryTrans" +
-      "actionRequestProto\032-.fintekkers.requests" +
-      ".util.errors.SummaryProtoB\006\210\001\001\220\001\001b\006proto" +
-      "3"
+      "actionRequestProto\032>.fintekkers.requests" +
+      ".transaction.QueryTransactionResponsePro" +
+      "to\022\211\001\n\006Search\022=.fintekkers.requests.tran" +
+      "saction.QueryTransactionRequestProto\032>.f" +
+      "intekkers.requests.transaction.QueryTran" +
+      "sactionResponseProto0\001\022\210\001\n\007ListIds\022=.fin" +
+      "tekkers.requests.transaction.QueryTransa" +
+      "ctionRequestProto\032>.fintekkers.requests." +
+      "transaction.QueryTransactionResponseProt" +
+      "o\022e\n\006Delete\022,.fintekkers.requests.util.D" +
+      "eleteRequestProto\032-.fintekkers.requests." +
+      "util.DeleteResponseProto\022\207\001\n\026ValidateCre" +
+      "ateOrUpdate\022>.fintekkers.requests.transa" +
+      "ction.CreateTransactionRequestProto\032-.fi" +
+      "ntekkers.requests.util.errors.SummaryPro" +
+      "to\022\204\001\n\024ValidateQueryRequest\022=.fintekkers" +
+      ".requests.transaction.QueryTransactionRe" +
+      "questProto\032-.fintekkers.requests.util.er" +
+      "rors.SummaryProto\022^\n\tGetFields\022\026.google." +
+      "protobuf.Empty\0329.fintekkers.requests.sec" +
+      "urity.GetFieldValuesResponseProto\022\205\001\n\016Ge" +
+      "tFieldValues\0228.fintekkers.requests.secur" +
+      "ity.GetFieldValuesRequestProto\0329.fintekk" +
+      "ers.requests.security.GetFieldValuesResp" +
+      "onseProtoB\006\210\001\001\220\001\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -728,6 +879,9 @@ public final class TransactionService {
           fintekkers.requests.transaction.QueryTransactionResponseProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
           fintekkers.requests.util.DeleteRequestProtos.getDescriptor(),
+          fintekkers.requests.security.GetFieldValuesRequestProtos.getDescriptor(),
+          fintekkers.requests.security.GetFieldValuesResponseProtos.getDescriptor(),
+          com.google.protobuf.EmptyProto.getDescriptor(),
         });
     fintekkers.requests.transaction.CreateTransactionRequestProtos.getDescriptor();
     fintekkers.requests.transaction.CreateTransactionResponseProtos.getDescriptor();
@@ -735,6 +889,9 @@ public final class TransactionService {
     fintekkers.requests.transaction.QueryTransactionResponseProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();
     fintekkers.requests.util.DeleteRequestProtos.getDescriptor();
+    fintekkers.requests.security.GetFieldValuesRequestProtos.getDescriptor();
+    fintekkers.requests.security.GetFieldValuesResponseProtos.getDescriptor();
+    com.google.protobuf.EmptyProto.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

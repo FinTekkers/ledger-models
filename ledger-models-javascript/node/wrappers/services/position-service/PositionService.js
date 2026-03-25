@@ -20,8 +20,14 @@ const position_service_grpc_pb_1 = require("../../../fintekkers/services/positio
 //Utils
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
 class PositionService {
-    constructor() {
-        this.client = new position_service_grpc_pb_1.PositionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+    constructor(apiKey) {
+        if (apiKey) {
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey);
+            this.client = new position_service_grpc_pb_1.PositionClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+        }
+        else {
+            this.client = new position_service_grpc_pb_1.PositionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+        }
     }
     validateRequest(positionRequest) {
         return __awaiter(this, void 0, void 0, function* () {

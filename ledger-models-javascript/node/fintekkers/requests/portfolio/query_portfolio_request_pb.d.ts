@@ -28,6 +28,8 @@ export class QueryPortfolioRequestProto extends jspb.Message {
     clearAsOf(): void;
     getAsOf(): fintekkers_models_util_local_timestamp_pb.LocalTimestampProto | undefined;
     setAsOf(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): QueryPortfolioRequestProto;
+    getNameFilter(): string;
+    setNameFilter(value: string): QueryPortfolioRequestProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QueryPortfolioRequestProto.AsObject;
@@ -46,5 +48,6 @@ export namespace QueryPortfolioRequestProto {
         uuidsList: Array<fintekkers_models_util_uuid_pb.UUIDProto.AsObject>,
         searchPortfolioInput?: fintekkers_models_position_position_filter_pb.PositionFilterProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
+        nameFilter: string,
     }
 }

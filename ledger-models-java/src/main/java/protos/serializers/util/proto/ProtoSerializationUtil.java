@@ -69,6 +69,8 @@ public class ProtoSerializationUtil {
             unpacked = TenorSerializer.getInstance().serialize((Tenor) object);
         } else if(object instanceof IdentifierProto) {
             unpacked = (GeneratedMessageV3) object;
+        } else if(object instanceof Boolean) {
+            unpacked = BoolValue.of((Boolean) object);
         } else {
             throw new UnsupportedOperationException("Type is not supported: "+ object.getClass().getName());
         }
@@ -109,6 +111,8 @@ public class ProtoSerializationUtil {
             } else if(any.is(IdentifierProto.class)) {
                 IdentifierProto identifierProto = any.unpack(IdentifierProto.class);
                 return IdentifierSerializer.getInstance().deserialize(identifierProto);
+            } else if(any.is(BoolValue.class)) {
+                return any.unpack(BoolValue.class).getValue();
             } else {
                 throw new UnsupportedOperationException("Type is not supported: "+ any.getTypeUrl());
             }
@@ -172,7 +176,12 @@ public class ProtoSerializationUtil {
     }
 
     public static ZonedDateTime deserializeTimestamp(LocalTimestamp.LocalTimestampProto ts) {
-        ZoneId zoneId = ZoneId.of(ts.getTimeZone());
+        String timeZone = ts.getTimeZone();
+        if (timeZone == null || timeZone.isBlank()) {
+            return ZonedDateTime.now(ZoneOffset.UTC);
+        }
+
+        ZoneId zoneId = ZoneId.of(timeZone);
 
         LocalDateTime localDateTime = Instant.ofEpochSecond(
                 ts.getTimestamp().getSeconds(), ts.getTimestamp().getNanos())

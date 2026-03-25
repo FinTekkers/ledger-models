@@ -54,7 +54,7 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.util.DecimalValue.DecimalValueProto couponRate_;
   /**
    * <pre>
-   *Expressed as a % (5=5%, 0.75=0.75%, etc)
+   * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -66,7 +66,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *Expressed as a % (5=5%, 0.75=0.75%, etc)
+   * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -78,7 +78,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   *Expressed as a % (5=5%, 0.75=0.75%, etc)
+   * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -874,7 +874,7 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> couponRateBuilder_;
     /**
      * <pre>
-     *Expressed as a % (5=5%, 0.75=0.75%, etc)
+     * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -885,7 +885,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *Expressed as a % (5=5%, 0.75=0.75%, etc)
+     * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -900,7 +900,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *Expressed as a % (5=5%, 0.75=0.75%, etc)
+     * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -920,7 +920,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *Expressed as a % (5=5%, 0.75=0.75%, etc)
+     * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -938,7 +938,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *Expressed as a % (5=5%, 0.75=0.75%, etc)
+     * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -961,7 +961,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *Expressed as a % (5=5%, 0.75=0.75%, etc)
+     * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -978,7 +978,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *Expressed as a % (5=5%, 0.75=0.75%, etc)
+     * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -990,7 +990,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *Expressed as a % (5=5%, 0.75=0.75%, etc)
+     * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -1005,7 +1005,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     *Expressed as a % (5=5%, 0.75=0.75%, etc)
+     * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>

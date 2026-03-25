@@ -1,6 +1,6 @@
 import time
 from datetime import date, datetime
-from uuid import uuid4
+from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from google.protobuf.any_pb2 import Any
 from google.protobuf.timestamp_pb2 import Timestamp
 
@@ -129,7 +129,7 @@ class CreateSecurityRequest:
                 time_zone="America/New_York",
                 timestamp=Timestamp(seconds=timstamp_seconds, nanos=0),
             ),
-            uuid=UUIDProto(raw_uuid=uuid4().bytes),
+            uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
             issuer_name="US Government",
             identifier=id,
             # Flat fields (legacy — consumed by old clients)

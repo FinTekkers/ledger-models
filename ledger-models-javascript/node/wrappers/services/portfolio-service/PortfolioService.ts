@@ -22,8 +22,13 @@ class PortfolioService {
 
   static url: string = EnvConfig.apiURL;
 
-  constructor() {
-    this.client = new PortfolioClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+  constructor(apiKey?: string) {
+    if (apiKey) {
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey);
+      this.client = new PortfolioClient(EnvConfig.apiURL, credentials, { interceptors });
+    } else {
+      this.client = new PortfolioClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+    }
   }
 
   async validateCreatePortfolio(portfolio: PortfolioProto): Promise<SummaryProto> {

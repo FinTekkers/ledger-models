@@ -23,8 +23,14 @@ const create_transaction_request_pb_1 = require("../../../fintekkers/requests/tr
 const query_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/query_transaction_request_pb");
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
 class TransactionService {
-    constructor() {
-        this.client = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+    constructor(apiKey) {
+        if (apiKey) {
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey);
+            this.client = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+        }
+        else {
+            this.client = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+        }
     }
     validateCreateTransaction(transaction) {
         return __awaiter(this, void 0, void 0, function* () {

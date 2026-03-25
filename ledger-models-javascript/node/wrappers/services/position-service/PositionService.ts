@@ -16,8 +16,13 @@ import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_p
 class PositionService {
   private client: PositionClient;
 
-  constructor() {
-    this.client = new PositionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+  constructor(apiKey?: string) {
+    if (apiKey) {
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey);
+      this.client = new PositionClient(EnvConfig.apiURL, credentials, { interceptors });
+    } else {
+      this.client = new PositionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+    }
   }
 
   async validateRequest(positionRequest: QueryPositionRequest): Promise<SummaryProto> {

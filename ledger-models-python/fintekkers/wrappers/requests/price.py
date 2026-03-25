@@ -1,6 +1,7 @@
 import time
 from datetime import date, datetime
-from uuid import uuid4
+from uuid import UUID
+from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from google.protobuf.any_pb2 import Any
 from google.protobuf.timestamp_pb2 import Timestamp
 
@@ -58,19 +59,42 @@ class CreatePriceRequest:
         return CreatePriceRequest.create_or_update_request(security, price)
 
     @staticmethod
-    def create_or_update_request(security: Security, price:float):
-        """TODO: Should we look up first?"""
-        as_of_proto: LocalTimestampProto = ProtoSerializationUtil.serialize(
-            datetime.now()
-        )
+    def create_or_update_request(
+        security,
+        price: float,
+        as_of_date: datetime = None,
+        price_uuid: UUID = None,
+    ):
+        """Create a price upsert request.
+
+        Parameters:
+            security: SecurityProto (or Security wrapper) for this price.
+            price: float price value.
+            as_of_date: datetime for the price observation; defaults to now.
+            price_uuid: deterministic UUID for idempotency; defaults to uuid4().
+        """
+        if as_of_date is None:
+            as_of_date = datetime.now()
+        if price_uuid is None:
+            price_uuid = FintekkersUuid.new_uuid().as_uuid()
+
+        # Accept either a SecurityProto or a Security wrapper
+        security_proto = security.proto if hasattr(security, "proto") else security
+
+        as_of_proto: LocalTimestampProto = ProtoSerializationUtil.serialize(as_of_date)
 
         proto: CreatePriceRequestProto = CreatePriceRequestProto(
+            object_class="CreatePriceRequestProto",
+            version="0.0.1",
             create_price_input=PriceProto(
+                object_class="PriceProto",
+                version="0.0.1",
+                uuid=UUIDProto(raw_uuid=price_uuid.bytes),
                 as_of=as_of_proto,
                 valid_from=as_of_proto,
                 price=ProtoSerializationUtil.serialize(price),
-                security=security
-            )
+                security=security_proto,
+            ),
         )
 
         return CreatePriceRequest(proto=proto)

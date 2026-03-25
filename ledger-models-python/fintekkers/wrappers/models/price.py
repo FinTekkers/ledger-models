@@ -1,5 +1,5 @@
 from datetime import datetime
-from uuid import uuid4, UUID
+from uuid import UUID
 
 from google.protobuf.timestamp_pb2 import Timestamp
 from fintekkers.models.price.price_pb2 import PriceProto
@@ -32,14 +32,14 @@ class Price:
 
     @staticmethod
     def create_price(security:Security, price: float, as_of_date:Timestamp):
-        uuid_value = uuid4()
+        uuid_value = FintekkersUuid.new_uuid().as_uuid()
 
         price = PriceProto(
             as_of=LocalTimestampProto(
                 timestamp=as_of_date, time_zone="America/New_York"
             ),
             is_link=False,
-            object_class="Portfolio",
+            object_class="PriceProto",
             uuid=UUIDProto(raw_uuid=uuid_value.bytes),
             price=ProtoSerializationUtil.serialize(price),
             security=security.proto,

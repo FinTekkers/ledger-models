@@ -6,6 +6,7 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_position_position_util_pb from "../../../fintekkers/models/position/position_util_pb";
+import * as fintekkers_models_security_security_pb from "../../../fintekkers/models/security/security_pb";
 
 export class PositionProto extends jspb.Message { 
     getObjectClass(): string;
@@ -25,6 +26,11 @@ export class PositionProto extends jspb.Message {
     setFieldsList(value: Array<fintekkers_models_position_position_util_pb.FieldMapEntry>): PositionProto;
     addFields(value?: fintekkers_models_position_position_util_pb.FieldMapEntry, index?: number): fintekkers_models_position_position_util_pb.FieldMapEntry;
 
+    hasReportingCurrency(): boolean;
+    clearReportingCurrency(): void;
+    getReportingCurrency(): fintekkers_models_security_security_pb.SecurityProto | undefined;
+    setReportingCurrency(value?: fintekkers_models_security_security_pb.SecurityProto): PositionProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): PositionProto.AsObject;
     static toObject(includeInstance: boolean, msg: PositionProto): PositionProto.AsObject;
@@ -43,6 +49,7 @@ export namespace PositionProto {
         positionType: PositionTypeProto,
         measuresList: Array<fintekkers_models_position_position_util_pb.MeasureMapEntry.AsObject>,
         fieldsList: Array<fintekkers_models_position_position_util_pb.FieldMapEntry.AsObject>,
+        reportingCurrency?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
     }
 }
 

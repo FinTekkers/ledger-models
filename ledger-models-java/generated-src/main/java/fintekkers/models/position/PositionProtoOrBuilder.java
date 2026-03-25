@@ -100,4 +100,37 @@ public interface PositionProtoOrBuilder extends
    */
   fintekkers.models.position.FieldMapEntryOrBuilder getFieldsOrBuilder(
       int index);
+
+  /**
+   * <pre>
+   * The base/reporting currency for monetary measures in this position.
+   * Set to the portfolio's base currency (e.g. USD cash security).
+   * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+   * @return Whether the reportingCurrency field is set.
+   */
+  boolean hasReportingCurrency();
+  /**
+   * <pre>
+   * The base/reporting currency for monetary measures in this position.
+   * Set to the portfolio's base currency (e.g. USD cash security).
+   * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+   * @return The reportingCurrency.
+   */
+  fintekkers.models.security.SecurityProto getReportingCurrency();
+  /**
+   * <pre>
+   * The base/reporting currency for monetary measures in this position.
+   * Set to the portfolio's base currency (e.g. USD cash security).
+   * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+   */
+  fintekkers.models.security.SecurityProtoOrBuilder getReportingCurrencyOrBuilder();
 }

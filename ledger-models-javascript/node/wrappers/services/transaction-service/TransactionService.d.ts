@@ -5,7 +5,7 @@ import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_p
 import { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
 declare class TransactionService {
     private client;
-    constructor();
+    constructor(apiKey?: string);
     validateCreateTransaction(transaction: Transaction): Promise<SummaryProto>;
     createTransaction(transaction: Transaction): Promise<CreateTransactionResponseProto>;
     searchTransaction(asOf: LocalTimestampProto, positionFilter: PositionFilter, maxResults?: number): Promise<Transaction[]>;

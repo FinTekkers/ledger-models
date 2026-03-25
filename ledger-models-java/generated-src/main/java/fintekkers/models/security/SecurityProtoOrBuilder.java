@@ -187,16 +187,28 @@ public interface SecurityProtoOrBuilder extends
   fintekkers.models.security.SecurityQuantityTypeProto getQuantityType();
 
   /**
+   * <pre>
+   * DEPRECATED: use identifiers
+   * </pre>
+   *
    * <code>.fintekkers.models.security.IdentifierProto identifier = 40;</code>
    * @return Whether the identifier field is set.
    */
   boolean hasIdentifier();
   /**
+   * <pre>
+   * DEPRECATED: use identifiers
+   * </pre>
+   *
    * <code>.fintekkers.models.security.IdentifierProto identifier = 40;</code>
    * @return The identifier.
    */
   fintekkers.models.security.IdentifierProto getIdentifier();
   /**
+   * <pre>
+   * DEPRECATED: use identifiers
+   * </pre>
+   *
    * <code>.fintekkers.models.security.IdentifierProto identifier = 40;</code>
    */
   fintekkers.models.security.IdentifierProtoOrBuilder getIdentifierOrBuilder();
@@ -212,6 +224,65 @@ public interface SecurityProtoOrBuilder extends
    */
   com.google.protobuf.ByteString
       getDescriptionBytes();
+
+  /**
+   * <pre>
+   * All known identifiers for this security. The primary identifier (used as
+   * the human-readable ID) is the first entry. Secondary identifiers follow.
+   * For Gilts, entry 0 will be {type=ISIN, value="GB..."}; for US Treasuries,
+   * entry 0 will be {type=CUSIP, value="912828..."}.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.IdentifierProto identifiers = 42;</code>
+   */
+  java.util.List<fintekkers.models.security.IdentifierProto> 
+      getIdentifiersList();
+  /**
+   * <pre>
+   * All known identifiers for this security. The primary identifier (used as
+   * the human-readable ID) is the first entry. Secondary identifiers follow.
+   * For Gilts, entry 0 will be {type=ISIN, value="GB..."}; for US Treasuries,
+   * entry 0 will be {type=CUSIP, value="912828..."}.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.IdentifierProto identifiers = 42;</code>
+   */
+  fintekkers.models.security.IdentifierProto getIdentifiers(int index);
+  /**
+   * <pre>
+   * All known identifiers for this security. The primary identifier (used as
+   * the human-readable ID) is the first entry. Secondary identifiers follow.
+   * For Gilts, entry 0 will be {type=ISIN, value="GB..."}; for US Treasuries,
+   * entry 0 will be {type=CUSIP, value="912828..."}.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.IdentifierProto identifiers = 42;</code>
+   */
+  int getIdentifiersCount();
+  /**
+   * <pre>
+   * All known identifiers for this security. The primary identifier (used as
+   * the human-readable ID) is the first entry. Secondary identifiers follow.
+   * For Gilts, entry 0 will be {type=ISIN, value="GB..."}; for US Treasuries,
+   * entry 0 will be {type=CUSIP, value="912828..."}.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.IdentifierProto identifiers = 42;</code>
+   */
+  java.util.List<? extends fintekkers.models.security.IdentifierProtoOrBuilder> 
+      getIdentifiersOrBuilderList();
+  /**
+   * <pre>
+   * All known identifiers for this security. The primary identifier (used as
+   * the human-readable ID) is the first entry. Secondary identifiers follow.
+   * For Gilts, entry 0 will be {type=ISIN, value="GB..."}; for US Treasuries,
+   * entry 0 will be {type=CUSIP, value="912828..."}.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.IdentifierProto identifiers = 42;</code>
+   */
+  fintekkers.models.security.IdentifierProtoOrBuilder getIdentifiersOrBuilder(
+      int index);
 
   /**
    * <pre>
@@ -632,6 +703,21 @@ public interface SecurityProtoOrBuilder extends
    * <code>.fintekkers.models.security.CashDetailsProto cash_details = 205;</code>
    */
   fintekkers.models.security.CashDetailsProtoOrBuilder getCashDetailsOrBuilder();
+
+  /**
+   * <code>.fintekkers.models.security.FxSpotDetailsProto fx_spot_details = 206;</code>
+   * @return Whether the fxSpotDetails field is set.
+   */
+  boolean hasFxSpotDetails();
+  /**
+   * <code>.fintekkers.models.security.FxSpotDetailsProto fx_spot_details = 206;</code>
+   * @return The fxSpotDetails.
+   */
+  fintekkers.models.security.FxSpotDetailsProto getFxSpotDetails();
+  /**
+   * <code>.fintekkers.models.security.FxSpotDetailsProto fx_spot_details = 206;</code>
+   */
+  fintekkers.models.security.FxSpotDetailsProtoOrBuilder getFxSpotDetailsOrBuilder();
 
   public fintekkers.models.security.SecurityProto.ProductDetailsCase getProductDetailsCase();
 }

@@ -22,8 +22,13 @@ import EnvConfig from '../../models/utils/requestcontext';
 class SecurityService {
   private client: SecurityClient;
 
-  constructor() {
-    this.client = new SecurityClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+  constructor(apiKey?: string) {
+    if (apiKey) {
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey);
+      this.client = new SecurityClient(EnvConfig.apiURL, credentials, { interceptors });
+    } else {
+      this.client = new SecurityClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+    }
   }
 
   async validateCreateSecurity(security: SecurityProto): Promise<SummaryProto> {

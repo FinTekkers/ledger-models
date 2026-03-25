@@ -36,7 +36,16 @@ public enum Measure {
     YIELD_TO_MATURITY("The yield if the security is held to maturity. For bonds this is calculated " +
             "using the standard YTM formula. Not applicable to equity securities."),
 
-    MACAULAY_DURATION("The weighted average time to receive the bond's cash flows, measured in years.");
+    MACAULAY_DURATION("The weighted average time to receive the bond's cash flows, measured in years."),
+
+    PRESENT_VALUE("The theoretical price of a bond computed as the sum of all future cashflows " +
+            "discounted at the bond's yield to maturity. Returned as a quoted price (% of par)."),
+
+    PROFIT_LOSS("The profit or loss on a position relative to its cost basis. " +
+            "Formula: MarketValue - (UnadjustedCostBasis / 100 * DirectedQuantity). Units: Dollars."),
+
+    PROFIT_LOSS_PERCENT("The profit or loss as a percentage of the original cost basis. " +
+            "Formula: ProfitLoss / (UnadjustedCostBasis / 100 * DirectedQuantity). Units: Decimal (0-1 scale).");
 
     static {
         Set<String> measureNames = Arrays.stream(Measure.values())

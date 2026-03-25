@@ -20,8 +20,13 @@ import EnvConfig from '../../models/utils/requestcontext';
 class TransactionService {
   private client: TransactionClient;
 
-  constructor() {
-    this.client = new TransactionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+  constructor(apiKey?: string) {
+    if (apiKey) {
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey);
+      this.client = new TransactionClient(EnvConfig.apiURL, credentials, { interceptors });
+    } else {
+      this.client = new TransactionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+    }
   }
 
   async validateCreateTransaction(transaction: Transaction): Promise<SummaryProto> {

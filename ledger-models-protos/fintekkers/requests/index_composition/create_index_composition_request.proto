@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package fintekkers.requests.index_composition;
+
+import "fintekkers/models/security/index_composition.proto";
+import "fintekkers/requests/util/operation.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CreateIndexCompositionRequestProtos";
+
+// Request to create or update an IndexCompositionProto record.
+// If a record with the same (index_uuid, effective_date) already exists it is replaced
+// (last-writer-wins — same semantics as InMemoryIndexCompositionStore.upsert).
+message CreateIndexCompositionRequestProto {
+  string object_class = 1;
+  string version      = 2;
+
+  fintekkers.requests.util.RequestOperationTypeProto operation_type = 10;
+
+  // The composition to store.
+  fintekkers.models.security.IndexCompositionProto create_index_composition_input = 20;
+}
+
+message CreateIndexCompositionResponseProto {
+  string object_class = 1;
+  string version      = 2;
+
+  fintekkers.requests.util.RequestOperationTypeProto operation_type = 10;
+
+  // Echo of the request that produced this response.
+  CreateIndexCompositionRequestProto create_index_composition_request = 20;
+
+  // The stored composition (with any server-side defaults applied, e.g. auto-generated UUID).
+  fintekkers.models.security.IndexCompositionProto index_composition_response = 30;
+}

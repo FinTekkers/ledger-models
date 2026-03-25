@@ -8,6 +8,9 @@ import "fintekkers/requests/transaction/query_transaction_response.proto";
 
 import "fintekkers/requests/util/errors/summary.proto";
 import "fintekkers/requests/util/delete_request.proto";
+import "fintekkers/requests/security/get_field_values_request.proto";
+import "fintekkers/requests/security/get_field_values_response.proto";
+import "google/protobuf/empty.proto";
 
 option java_generic_services = true;
 option py_generic_services = true;
@@ -23,4 +26,7 @@ service Transaction {
 
     rpc ValidateCreateOrUpdate  (fintekkers.requests.transaction.CreateTransactionRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);
     rpc ValidateQueryRequest  (fintekkers.requests.transaction.QueryTransactionRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);
+
+    rpc GetFields   (google.protobuf.Empty) returns   (fintekkers.requests.security.GetFieldValuesResponseProto);
+    rpc GetFieldValues   (fintekkers.requests.security.GetFieldValuesRequestProto) returns   (fintekkers.requests.security.GetFieldValuesResponseProto);
 }

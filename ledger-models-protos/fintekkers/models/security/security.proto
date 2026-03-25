@@ -45,8 +45,14 @@ message SecurityProto {
   SecurityProto settlement_currency = 13;
   SecurityQuantityTypeProto quantity_type = 14;
 
-  security.IdentifierProto identifier = 40;
+  security.IdentifierProto identifier = 40;  // DEPRECATED: use identifiers
   string description = 41;
+
+  // All known identifiers for this security. The primary identifier (used as
+  // the human-readable ID) is the first entry. Secondary identifiers follow.
+  // For Gilts, entry 0 will be {type=ISIN, value="GB..."}; for US Treasuries,
+  // entry 0 will be {type=CUSIP, value="912828..."}.
+  repeated security.IdentifierProto identifiers = 42;
 
   //Cash Security fields
   string cash_id = 50;
@@ -54,7 +60,7 @@ message SecurityProto {
   //Equity Security fields
 
   //Bond Security fields
-  fintekkers.models.util.DecimalValueProto coupon_rate = 60; //Expressed as a % (5=5%, 0.75=0.75%, etc)
+  fintekkers.models.util.DecimalValueProto coupon_rate = 60; // Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
   CouponTypeProto coupon_type = 61;
   CouponFrequencyProto coupon_frequency = 62;
   fintekkers.models.util.LocalDateProto dated_date = 63;
@@ -94,12 +100,13 @@ message SecurityProto {
     IndexDetailsProto index_details = 203;
     EquityDetailsProto equity_details = 204;
     CashDetailsProto cash_details = 205;
+    FxSpotDetailsProto fx_spot_details = 206;
   }
 }
 
 // Bond security details: fixed-rate coupon bonds (US Treasuries, corporates, etc.)
 message BondDetailsProto {
-  fintekkers.models.util.DecimalValueProto coupon_rate = 1; //Expressed as a % (5=5%, 0.75=0.75%, etc)
+  fintekkers.models.util.DecimalValueProto coupon_rate = 1; // Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
   CouponTypeProto coupon_type = 2;
   CouponFrequencyProto coupon_frequency = 3;
   fintekkers.models.util.LocalDateProto dated_date = 4;
@@ -132,7 +139,7 @@ message TipsDetailsProto {
 // Extends bond fields with floating-rate-specific information.
 message FrnDetailsProto {
   // Shared bond fields
-  fintekkers.models.util.DecimalValueProto coupon_rate = 1; //Unused for FRN (rate is computed from reference_rate + spread)
+  fintekkers.models.util.DecimalValueProto coupon_rate = 1; // Unused for FRN (rate is computed from reference_rate + spread). If set, must be in decimal form (0.05=5%).
   CouponTypeProto coupon_type = 2;
   CouponFrequencyProto coupon_frequency = 3;
   fintekkers.models.util.LocalDateProto dated_date = 4;
@@ -162,4 +169,15 @@ message EquityDetailsProto {
 // Cash security details.
 message CashDetailsProto {
   string cash_id = 1; //e.g. "USD", "EUR", "GBP"
+}
+
+// FX spot pair details.
+// Represents a spot foreign exchange rate between two currencies.
+// The pair is expressed as: price = units of quote_currency per 1 unit of base_currency.
+// Example: USD/GBP with convention UNITS_OF_QUOTE_PER_BASE means the price is
+// "how many GBP you receive for 1 USD" (e.g. 0.79).
+message FxSpotDetailsProto {
+  SecurityProto base_currency = 1;  //The currency being bought/sold (e.g. USD cash security). Must be a CashDetailsProto with is_link=true.
+  SecurityProto quote_currency = 2; //The currency in which the price is expressed (e.g. GBP cash security). Must be a CashDetailsProto with is_link=true.
+  string convention = 3;            //Quoting convention — always "UNITS_OF_QUOTE_PER_BASE" for spot FX (ISO standard)
 }

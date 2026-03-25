@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package fintekkers.requests.index_composition;
+
+import "fintekkers/models/util/uuid.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/security/index_composition.proto";
+import "fintekkers/requests/util/operation.proto";
+
+option java_multiple_files = true;
+
+option java_outer_classname = "GetIndexCompositionRequestProtos";
+
+// Request to retrieve the index composition active on a given date.
+// Returns the most recent IndexCompositionProto where effective_date <= as_of_date.
+message GetIndexCompositionRequestProto {
+  string object_class = 1;
+  string version      = 2;
+
+  // UUID of the index security (EQUITY_INDEX_SECURITY).
+  fintekkers.models.util.UUIDProto index_uuid = 10;
+
+  // The business date for which to retrieve the active composition.
+  // Resolution: most recent IndexCompositionProto where effective_date <= as_of_date.
+  fintekkers.models.util.LocalDateProto as_of_date = 11;
+}
+
+message GetIndexCompositionResponseProto {
+  string object_class = 1;
+  string version      = 2;
+
+  fintekkers.requests.util.RequestOperationTypeProto operation_type = 10;
+
+  // The resolved composition. Absent if no composition exists for as_of_date.
+  fintekkers.models.security.IndexCompositionProto composition = 20;
+
+  // The effective_date of the composition returned. Useful when as_of_date
+  // falls between rebalances — tells the caller which rebalance date applies.
+  fintekkers.models.util.LocalDateProto resolved_effective_date = 21;
+}

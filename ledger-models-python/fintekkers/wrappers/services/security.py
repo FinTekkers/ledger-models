@@ -51,6 +51,9 @@ class SecurityService:
     def create_or_update(self, request: CreateSecurityRequest):
         return self.stub.CreateOrUpdate(request.proto)
 
+    def validate_create_or_update(self, request: CreateSecurityRequest):
+        return self.stub.ValidateCreateOrUpdate(request.proto)
+
     def get_security_by_uuid(self, uuid: UUID) -> Security:
         """
         Parameters:

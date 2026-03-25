@@ -18,7 +18,7 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class SecurityProto(_message.Message):
-    __slots__ = ("object_class", "version", "uuid", "as_of", "is_link", "valid_from", "valid_to", "security_type", "asset_class", "issuer_name", "settlement_currency", "quantity_type", "identifier", "description", "cash_id", "coupon_rate", "coupon_type", "coupon_frequency", "dated_date", "face_value", "issue_date", "maturity_date", "issuance_info", "base_cpi", "index_date", "inflation_index_type", "spread", "reference_rate_index", "reset_frequency", "index_type", "bond_details", "tips_details", "frn_details", "index_details", "equity_details", "cash_details")
+    __slots__ = ("object_class", "version", "uuid", "as_of", "is_link", "valid_from", "valid_to", "security_type", "asset_class", "issuer_name", "settlement_currency", "quantity_type", "identifier", "description", "identifiers", "cash_id", "coupon_rate", "coupon_type", "coupon_frequency", "dated_date", "face_value", "issue_date", "maturity_date", "issuance_info", "base_cpi", "index_date", "inflation_index_type", "spread", "reference_rate_index", "reset_frequency", "index_type", "bond_details", "tips_details", "frn_details", "index_details", "equity_details", "cash_details", "fx_spot_details")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     UUID_FIELD_NUMBER: _ClassVar[int]
@@ -33,6 +33,7 @@ class SecurityProto(_message.Message):
     QUANTITY_TYPE_FIELD_NUMBER: _ClassVar[int]
     IDENTIFIER_FIELD_NUMBER: _ClassVar[int]
     DESCRIPTION_FIELD_NUMBER: _ClassVar[int]
+    IDENTIFIERS_FIELD_NUMBER: _ClassVar[int]
     CASH_ID_FIELD_NUMBER: _ClassVar[int]
     COUPON_RATE_FIELD_NUMBER: _ClassVar[int]
     COUPON_TYPE_FIELD_NUMBER: _ClassVar[int]
@@ -55,6 +56,7 @@ class SecurityProto(_message.Message):
     INDEX_DETAILS_FIELD_NUMBER: _ClassVar[int]
     EQUITY_DETAILS_FIELD_NUMBER: _ClassVar[int]
     CASH_DETAILS_FIELD_NUMBER: _ClassVar[int]
+    FX_SPOT_DETAILS_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
     uuid: _uuid_pb2.UUIDProto
@@ -69,6 +71,7 @@ class SecurityProto(_message.Message):
     quantity_type: _security_quantity_type_pb2.SecurityQuantityTypeProto
     identifier: _identifier_pb2.IdentifierProto
     description: str
+    identifiers: _containers.RepeatedCompositeFieldContainer[_identifier_pb2.IdentifierProto]
     cash_id: str
     coupon_rate: _decimal_value_pb2.DecimalValueProto
     coupon_type: _coupon_type_pb2.CouponTypeProto
@@ -91,7 +94,8 @@ class SecurityProto(_message.Message):
     index_details: IndexDetailsProto
     equity_details: EquityDetailsProto
     cash_details: CashDetailsProto
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., security_type: _Optional[_Union[_security_type_pb2.SecurityTypeProto, str]] = ..., asset_class: _Optional[str] = ..., issuer_name: _Optional[str] = ..., settlement_currency: _Optional[_Union[SecurityProto, _Mapping]] = ..., quantity_type: _Optional[_Union[_security_quantity_type_pb2.SecurityQuantityTypeProto, str]] = ..., identifier: _Optional[_Union[_identifier_pb2.IdentifierProto, _Mapping]] = ..., description: _Optional[str] = ..., cash_id: _Optional[str] = ..., coupon_rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., coupon_type: _Optional[_Union[_coupon_type_pb2.CouponTypeProto, str]] = ..., coupon_frequency: _Optional[_Union[_coupon_frequency_pb2.CouponFrequencyProto, str]] = ..., dated_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., face_value: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., issue_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., maturity_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., issuance_info: _Optional[_Iterable[_Union[_issuance_pb2.IssuanceProto, _Mapping]]] = ..., base_cpi: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., index_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., inflation_index_type: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ..., spread: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., reference_rate_index: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ..., reset_frequency: _Optional[_Union[_coupon_frequency_pb2.CouponFrequencyProto, str]] = ..., index_type: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ..., bond_details: _Optional[_Union[BondDetailsProto, _Mapping]] = ..., tips_details: _Optional[_Union[TipsDetailsProto, _Mapping]] = ..., frn_details: _Optional[_Union[FrnDetailsProto, _Mapping]] = ..., index_details: _Optional[_Union[IndexDetailsProto, _Mapping]] = ..., equity_details: _Optional[_Union[EquityDetailsProto, _Mapping]] = ..., cash_details: _Optional[_Union[CashDetailsProto, _Mapping]] = ...) -> None: ...
+    fx_spot_details: FxSpotDetailsProto
+    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., security_type: _Optional[_Union[_security_type_pb2.SecurityTypeProto, str]] = ..., asset_class: _Optional[str] = ..., issuer_name: _Optional[str] = ..., settlement_currency: _Optional[_Union[SecurityProto, _Mapping]] = ..., quantity_type: _Optional[_Union[_security_quantity_type_pb2.SecurityQuantityTypeProto, str]] = ..., identifier: _Optional[_Union[_identifier_pb2.IdentifierProto, _Mapping]] = ..., description: _Optional[str] = ..., identifiers: _Optional[_Iterable[_Union[_identifier_pb2.IdentifierProto, _Mapping]]] = ..., cash_id: _Optional[str] = ..., coupon_rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., coupon_type: _Optional[_Union[_coupon_type_pb2.CouponTypeProto, str]] = ..., coupon_frequency: _Optional[_Union[_coupon_frequency_pb2.CouponFrequencyProto, str]] = ..., dated_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., face_value: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., issue_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., maturity_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., issuance_info: _Optional[_Iterable[_Union[_issuance_pb2.IssuanceProto, _Mapping]]] = ..., base_cpi: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., index_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., inflation_index_type: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ..., spread: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., reference_rate_index: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ..., reset_frequency: _Optional[_Union[_coupon_frequency_pb2.CouponFrequencyProto, str]] = ..., index_type: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ..., bond_details: _Optional[_Union[BondDetailsProto, _Mapping]] = ..., tips_details: _Optional[_Union[TipsDetailsProto, _Mapping]] = ..., frn_details: _Optional[_Union[FrnDetailsProto, _Mapping]] = ..., index_details: _Optional[_Union[IndexDetailsProto, _Mapping]] = ..., equity_details: _Optional[_Union[EquityDetailsProto, _Mapping]] = ..., cash_details: _Optional[_Union[CashDetailsProto, _Mapping]] = ..., fx_spot_details: _Optional[_Union[FxSpotDetailsProto, _Mapping]] = ...) -> None: ...
 
 class BondDetailsProto(_message.Message):
     __slots__ = ("coupon_rate", "coupon_type", "coupon_frequency", "dated_date", "face_value", "issue_date", "maturity_date", "issuance_info")
@@ -180,3 +184,13 @@ class CashDetailsProto(_message.Message):
     CASH_ID_FIELD_NUMBER: _ClassVar[int]
     cash_id: str
     def __init__(self, cash_id: _Optional[str] = ...) -> None: ...
+
+class FxSpotDetailsProto(_message.Message):
+    __slots__ = ("base_currency", "quote_currency", "convention")
+    BASE_CURRENCY_FIELD_NUMBER: _ClassVar[int]
+    QUOTE_CURRENCY_FIELD_NUMBER: _ClassVar[int]
+    CONVENTION_FIELD_NUMBER: _ClassVar[int]
+    base_currency: SecurityProto
+    quote_currency: SecurityProto
+    convention: str
+    def __init__(self, base_currency: _Optional[_Union[SecurityProto, _Mapping]] = ..., quote_currency: _Optional[_Union[SecurityProto, _Mapping]] = ..., convention: _Optional[str] = ...) -> None: ...

@@ -48,6 +48,9 @@ pub mod fintekkers {
     }
 
     pub mod requests {
+        pub mod index_composition {
+            include!("fintekkers.requests.index_composition.rs");
+        }
         pub mod portfolio {
             include!("fintekkers.requests.portfolio.rs");
         }
@@ -79,6 +82,9 @@ pub mod fintekkers {
     }
 
     pub mod services {
+        pub mod index_composition_service {
+            include!("fintekkers.services.index_composition_service.rs");
+        }
         pub mod lock_service {
             include!("fintekkers.services.lock_service.rs");
         }

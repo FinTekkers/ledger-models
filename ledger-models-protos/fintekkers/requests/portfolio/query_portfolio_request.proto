@@ -18,6 +18,9 @@ message QueryPortfolioRequestProto {
 
   fintekkers.models.position.PositionFilterProto search_portfolio_input = 22;
   fintekkers.models.util.LocalTimestampProto as_of = 23;
+
+  // Case-insensitive substring match on portfolio name. Empty string means no filter (return all).
+  string name_filter = 24;
 }
 
 

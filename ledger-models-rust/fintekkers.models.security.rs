@@ -66,6 +66,9 @@ pub enum SecurityTypeProto {
     Tips = 4,
     Frn = 5,
     IndexSecurity = 6,
+    FxSpot = 7,
+    /// Equity market indices (DJIA, S&P 500, Nasdaq-100, etc.)
+    EquityIndexSecurity = 8,
 }
 impl SecurityTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -81,6 +84,8 @@ impl SecurityTypeProto {
             SecurityTypeProto::Tips => "TIPS",
             SecurityTypeProto::Frn => "FRN",
             SecurityTypeProto::IndexSecurity => "INDEX_SECURITY",
+            SecurityTypeProto::FxSpot => "FX_SPOT",
+            SecurityTypeProto::EquityIndexSecurity => "EQUITY_INDEX_SECURITY",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -93,6 +98,8 @@ impl SecurityTypeProto {
             "TIPS" => Some(Self::Tips),
             "FRN" => Some(Self::Frn),
             "INDEX_SECURITY" => Some(Self::IndexSecurity),
+            "FX_SPOT" => Some(Self::FxSpot),
+            "EQUITY_INDEX_SECURITY" => Some(Self::EquityIndexSecurity),
             _ => None,
         }
     }
@@ -238,16 +245,23 @@ pub struct SecurityProto {
     >,
     #[prost(enumeration = "SecurityQuantityTypeProto", tag = "14")]
     pub quantity_type: i32,
+    /// DEPRECATED: use identifiers
     #[prost(message, optional, tag = "40")]
     pub identifier: ::core::option::Option<IdentifierProto>,
     #[prost(string, tag = "41")]
     pub description: ::prost::alloc::string::String,
+    /// All known identifiers for this security. The primary identifier (used as
+    /// the human-readable ID) is the first entry. Secondary identifiers follow.
+    /// For Gilts, entry 0 will be {type=ISIN, value="GB..."}; for US Treasuries,
+    /// entry 0 will be {type=CUSIP, value="912828..."}.
+    #[prost(message, repeated, tag = "42")]
+    pub identifiers: ::prost::alloc::vec::Vec<IdentifierProto>,
     /// Cash Security fields
     #[prost(string, tag = "50")]
     pub cash_id: ::prost::alloc::string::String,
     /// Bond Security fields
     ///
-    /// Expressed as a % (5=5%, 0.75=0.75%, etc)
+    /// Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
     #[prost(message, optional, tag = "60")]
     pub coupon_rate: ::core::option::Option<super::util::DecimalValueProto>,
     #[prost(enumeration = "CouponTypeProto", tag = "61")]
@@ -303,7 +317,7 @@ pub struct SecurityProto {
     /// ============================================================================
     #[prost(
         oneof = "security_proto::ProductDetails",
-        tags = "200, 201, 202, 203, 204, 205"
+        tags = "200, 201, 202, 203, 204, 205, 206"
     )]
     pub product_details: ::core::option::Option<security_proto::ProductDetails>,
 }
@@ -335,13 +349,15 @@ pub mod security_proto {
         EquityDetails(super::EquityDetailsProto),
         #[prost(message, tag = "205")]
         CashDetails(super::CashDetailsProto),
+        #[prost(message, tag = "206")]
+        FxSpotDetails(::prost::alloc::boxed::Box<super::FxSpotDetailsProto>),
     }
 }
 /// Bond security details: fixed-rate coupon bonds (US Treasuries, corporates, etc.)
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BondDetailsProto {
-    /// Expressed as a % (5=5%, 0.75=0.75%, etc)
+    /// Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
     #[prost(message, optional, tag = "1")]
     pub coupon_rate: ::core::option::Option<super::util::DecimalValueProto>,
     #[prost(enumeration = "CouponTypeProto", tag = "2")]
@@ -400,7 +416,7 @@ pub struct TipsDetailsProto {
 pub struct FrnDetailsProto {
     /// Shared bond fields
     ///
-    /// Unused for FRN (rate is computed from reference_rate + spread)
+    /// Unused for FRN (rate is computed from reference_rate + spread). If set, must be in decimal form (0.05=5%).
     #[prost(message, optional, tag = "1")]
     pub coupon_rate: ::core::option::Option<super::util::DecimalValueProto>,
     #[prost(enumeration = "CouponTypeProto", tag = "2")]
@@ -451,6 +467,99 @@ pub struct CashDetailsProto {
     /// e.g. "USD", "EUR", "GBP"
     #[prost(string, tag = "1")]
     pub cash_id: ::prost::alloc::string::String,
+}
+/// FX spot pair details.
+/// Represents a spot foreign exchange rate between two currencies.
+/// The pair is expressed as: price = units of quote_currency per 1 unit of base_currency.
+/// Example: USD/GBP with convention UNITS_OF_QUOTE_PER_BASE means the price is
+/// "how many GBP you receive for 1 USD" (e.g. 0.79).
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct FxSpotDetailsProto {
+    /// The currency being bought/sold (e.g. USD cash security). Must be a CashDetailsProto with is_link=true.
+    #[prost(message, optional, boxed, tag = "1")]
+    pub base_currency: ::core::option::Option<::prost::alloc::boxed::Box<SecurityProto>>,
+    /// The currency in which the price is expressed (e.g. GBP cash security). Must be a CashDetailsProto with is_link=true.
+    #[prost(message, optional, boxed, tag = "2")]
+    pub quote_currency: ::core::option::Option<
+        ::prost::alloc::boxed::Box<SecurityProto>,
+    >,
+    /// Quoting convention — always "UNITS_OF_QUOTE_PER_BASE" for spot FX (ISO standard)
+    #[prost(string, tag = "3")]
+    pub convention: ::prost::alloc::string::String,
+}
+/// A point-in-time snapshot of an equity index's constituent securities and weights.
+///
+/// Temporal model (identical to PriceProto):
+///    uuid        — stable identity for this composition record
+///    as_of       — the timestamp this composition was observed / recorded
+///    valid_from  — bitemporal: when this record became system-valid
+///    valid_to    — bitemporal: when this record was superseded
+///    is_link     — if true, only uuid is meaningful; resolve via GetByIds
+///
+/// A new IndexCompositionProto is created whenever the index is rebalanced.
+/// The effective_date field marks the business date the new composition took effect.
+/// To find the composition active on a given date D, query for the most recent
+/// record where effective_date <= D.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct IndexCompositionProto {
+    #[prost(string, tag = "1")]
+    pub object_class: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    /// Primary Key (same temporal pattern as SecurityProto and PriceProto)
+    #[prost(message, optional, tag = "5")]
+    pub uuid: ::core::option::Option<super::util::UuidProto>,
+    #[prost(message, optional, tag = "6")]
+    pub as_of: ::core::option::Option<super::util::LocalTimestampProto>,
+    #[prost(bool, tag = "7")]
+    pub is_link: bool,
+    #[prost(message, optional, tag = "8")]
+    pub valid_from: ::core::option::Option<super::util::LocalTimestampProto>,
+    #[prost(message, optional, tag = "9")]
+    pub valid_to: ::core::option::Option<super::util::LocalTimestampProto>,
+    /// The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+    /// Typically is_link = true; resolve via SecurityService.GetByIds.
+    #[prost(message, optional, tag = "10")]
+    pub index_security: ::core::option::Option<SecurityProto>,
+    /// The calendar date on which this composition became effective (the rebalance date).
+    /// Temporal lookup key: given as_of_date D, return the composition where
+    /// effective_date <= D, ordered by effective_date DESC, LIMIT 1.
+    #[prost(message, optional, tag = "11")]
+    pub effective_date: ::core::option::Option<super::util::LocalDateProto>,
+    /// The full list of constituents at this rebalance point.
+    #[prost(message, repeated, tag = "20")]
+    pub constituents: ::prost::alloc::vec::Vec<IndexConstituentProto>,
+    /// For price-weighted indices (e.g. DJIA), the divisor at this rebalance point.
+    /// Divisors change when constituents change or corporate actions occur.
+    /// index_level = sum(price_i * shares_i) / index_divisor
+    #[prost(message, optional, tag = "21")]
+    pub index_divisor: ::core::option::Option<super::util::DecimalValueProto>,
+    /// Free-form notes (e.g. "Quarterly rebalance — removed XYZ, added ABC").
+    #[prost(string, tag = "31")]
+    pub notes: ::prost::alloc::string::String,
+}
+/// A single constituent within an index at a specific rebalance point.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct IndexConstituentProto {
+    /// The constituent equity security.
+    /// Typically is_link = true; resolve via SecurityService.GetByIds.
+    #[prost(message, optional, tag = "1")]
+    pub security: ::core::option::Option<SecurityProto>,
+    /// Weight of this constituent in the index, expressed as a decimal fraction
+    /// (e.g. 0.05 = 5%). Used for market-cap-weighted and equal-weighted indices.
+    /// For price-weighted indices, leave unset; use shares_in_index instead.
+    #[prost(message, optional, tag = "2")]
+    pub weight: ::core::option::Option<super::util::DecimalValueProto>,
+    /// Number of shares used in price-weighted index calculation (e.g. DJIA).
+    /// For non-price-weighted indices, leave unset; use weight instead.
+    #[prost(message, optional, tag = "3")]
+    pub shares_in_index: ::core::option::Option<super::util::DecimalValueProto>,
+    /// The currency of the constituent's price (e.g. "USD"). Needed for multi-currency indices.
+    #[prost(string, tag = "5")]
+    pub currency: ::prost::alloc::string::String,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

@@ -649,6 +649,7 @@ mod test {
             position_view: 0,
             position_type: 0,
             measures: vec![],
+            reporting_currency: None,
             fields: vec![field_entry.clone()],
         };
 
@@ -688,6 +689,7 @@ mod test {
             position_view: 0,
             position_type: 0,
             measures: vec![],
+            reporting_currency: None,
             fields: vec![
                 id_entry.clone(),
                 security_id_entry.clone(),
@@ -726,6 +728,7 @@ mod test {
             position_view: 0,
             position_type: 0,
             measures: vec![],
+            reporting_currency: None,
             fields: vec![
                 trade_date_entry.clone(),
                 maturity_date_entry.clone(),
@@ -764,6 +767,7 @@ mod test {
             position_view: 0,
             position_type: 0,
             measures: vec![],
+            reporting_currency: None,
             fields: vec![as_of_entry.clone()],
         };
 
@@ -803,6 +807,7 @@ mod test {
             position_view: 0,
             position_type: 0,
             measures: vec![],
+            reporting_currency: None,
             fields: vec![transaction_type_entry.clone()],
         };
 
@@ -831,6 +836,7 @@ mod test {
             position_view: 0,
             position_type: 0,
             measures: vec![directed_quantity.clone(), market_value.clone()],
+            reporting_currency: None,
             fields: vec![],
         };
 
@@ -866,6 +872,7 @@ mod test {
             position_view: 0,
             position_type: 0,
             measures: vec![measure1],
+            reporting_currency: None,
             fields: vec![field1, field2],
         };
 
@@ -892,6 +899,7 @@ mod test {
             position_view: 0,
             position_type: 0,
             measures: vec![measure1],
+            reporting_currency: None,
             fields: vec![field1, field2],
         };
 
@@ -914,6 +922,7 @@ mod test {
             position_view: 0,
             position_type: 0,
             measures: vec![],
+            reporting_currency: None,
             fields: vec![],
         };
 
@@ -1044,6 +1053,7 @@ mod test {
                 create_measure_entry(MeasureProto::DirectedQuantity, "50.25"),
                 create_measure_entry(MeasureProto::MarketValue, "25000.00"),
             ],
+            reporting_currency: None,
             fields: vec![
                 string_field.clone(),
                 uuid_field.clone(),

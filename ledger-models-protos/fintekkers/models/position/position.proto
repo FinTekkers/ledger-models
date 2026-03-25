@@ -3,6 +3,7 @@ syntax = "proto3";
 package fintekkers.models.position;
 
 import "fintekkers/models/position/position_util.proto";
+import "fintekkers/models/security/security.proto";
 
 option java_multiple_files = true;
 option java_outer_classname = "PositionProtos";
@@ -28,4 +29,9 @@ message PositionProto {
 
   repeated MeasureMapEntry measures = 20;
   repeated FieldMapEntry fields = 21;
+
+  // The base/reporting currency for monetary measures in this position.
+  // Set to the portfolio's base currency (e.g. USD cash security).
+  // Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+  fintekkers.models.security.SecurityProto reporting_currency = 22;
 }

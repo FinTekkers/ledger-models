@@ -7,6 +7,7 @@
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_util_local_date_pb from "../../../fintekkers/models/util/local_date_pb";
 import * as fintekkers_models_util_decimal_value_pb from "../../../fintekkers/models/util/decimal_value_pb";
+import * as fintekkers_models_util_currency_pb from "../../../fintekkers/models/util/currency_pb";
 
 export class CashflowProto extends jspb.Message { 
 
@@ -30,6 +31,11 @@ export class CashflowProto extends jspb.Message {
     getCouponRate(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
     setCouponRate(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): CashflowProto;
 
+    hasCurrency(): boolean;
+    clearCurrency(): void;
+    getCurrency(): fintekkers_models_util_currency_pb.CurrencyProto | undefined;
+    setCurrency(value?: fintekkers_models_util_currency_pb.CurrencyProto): CashflowProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): CashflowProto.AsObject;
     static toObject(includeInstance: boolean, msg: CashflowProto): CashflowProto.AsObject;
@@ -46,5 +52,6 @@ export namespace CashflowProto {
         pvAmount?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         fvAmount?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         couponRate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        currency?: fintekkers_models_util_currency_pb.CurrencyProto.AsObject,
     }
 }

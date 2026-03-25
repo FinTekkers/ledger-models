@@ -42,6 +42,17 @@ class ProtoSerializationUtilTest {
     }
 
     @Test
+    public void testBooleanSerialization() {
+        Any packedTrue = ProtoSerializationUtil.serializeToAny(Boolean.TRUE);
+        Object unpackedTrue = ProtoSerializationUtil.deserialize(packedTrue);
+        assertEquals(Boolean.TRUE, unpackedTrue);
+
+        Any packedFalse = ProtoSerializationUtil.serializeToAny(Boolean.FALSE);
+        Object unpackedFalse = ProtoSerializationUtil.deserialize(packedFalse);
+        assertEquals(Boolean.FALSE, unpackedFalse);
+    }
+
+    @Test
     public void testUUIDSerialization() {
         String uuid_string = "d962fdf0-33e1-4d9d-999b-7ec350f0cb77";
         UUID uuid = UUID.fromString(uuid_string);

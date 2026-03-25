@@ -45,8 +45,14 @@ const query_security_request_pb_1 = require("../../../fintekkers/requests/securi
 const create_security_request_pb_1 = require("../../../fintekkers/requests/security/create_security_request_pb");
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
 class SecurityService {
-    constructor() {
-        this.client = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+    constructor(apiKey) {
+        if (apiKey) {
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey);
+            this.client = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+        }
+        else {
+            this.client = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+        }
     }
     validateCreateSecurity(security) {
         return __awaiter(this, void 0, void 0, function* () {

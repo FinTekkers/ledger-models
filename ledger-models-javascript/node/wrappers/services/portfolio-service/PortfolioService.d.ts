@@ -7,7 +7,7 @@ import Portfolio from '../../models/portfolio/portfolio';
 declare class PortfolioService {
     private client;
     static url: string;
-    constructor();
+    constructor(apiKey?: string);
     validateCreatePortfolio(portfolio: PortfolioProto): Promise<SummaryProto>;
     createPortfolio(portfolio: PortfolioProto): Promise<CreatePortfolioResponseProto>;
     searchPortfolio(asOf: LocalTimestampProto, positionFilter: PositionFilter): Promise<Portfolio[]>;

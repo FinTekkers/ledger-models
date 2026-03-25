@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from uuid import uuid4
+from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from fintekkers.models.transaction.transaction_pb2 import TransactionProto
@@ -38,7 +38,7 @@ class Transaction():
             security=security,
             position_status=position_status,
             price=PriceProto(
-                uuid=UUIDProto(raw_uuid=uuid4().bytes),
+                uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
                 as_of=as_of_proto,
                 price=DecimalValueProto(arbitrary_precision_value=f"{price}"),
                 security=security
@@ -47,7 +47,7 @@ class Transaction():
             quantity=DecimalValueProto(arbitrary_precision_value=f"{quantity}"),
             trade_date=LocalDateProto(year=trade_date.year, month=trade_date.month, day=trade_date.day),
             settlement_date=LocalDateProto(year=settlement_date.year, month=settlement_date.month, day=settlement_date.day),
-            uuid=UUIDProto(raw_uuid=uuid4().bytes),
+            uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
             trade_name="No trade name",
             strategy_allocation=None
         ))

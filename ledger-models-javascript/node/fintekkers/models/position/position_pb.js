@@ -17,6 +17,8 @@ var global = globalThis;
 
 var fintekkers_models_position_position_util_pb = require('../../../fintekkers/models/position/position_util_pb.js');
 goog.object.extend(proto, fintekkers_models_position_position_util_pb);
+var fintekkers_models_security_security_pb = require('../../../fintekkers/models/security/security_pb.js');
+goog.object.extend(proto, fintekkers_models_security_security_pb);
 goog.exportSymbol('proto.fintekkers.models.position.PositionProto', null, global);
 goog.exportSymbol('proto.fintekkers.models.position.PositionTypeProto', null, global);
 goog.exportSymbol('proto.fintekkers.models.position.PositionViewProto', null, global);
@@ -87,7 +89,8 @@ positionType: jspb.Message.getFieldWithDefault(msg, 11, 0),
 measuresList: jspb.Message.toObjectList(msg.getMeasuresList(),
     fintekkers_models_position_position_util_pb.MeasureMapEntry.toObject, includeInstance),
 fieldsList: jspb.Message.toObjectList(msg.getFieldsList(),
-    fintekkers_models_position_position_util_pb.FieldMapEntry.toObject, includeInstance)
+    fintekkers_models_position_position_util_pb.FieldMapEntry.toObject, includeInstance),
+reportingCurrency: (f = msg.getReportingCurrency()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -149,6 +152,11 @@ proto.fintekkers.models.position.PositionProto.deserializeBinaryFromReader = fun
       var value = new fintekkers_models_position_position_util_pb.FieldMapEntry;
       reader.readMessage(value,fintekkers_models_position_position_util_pb.FieldMapEntry.deserializeBinaryFromReader);
       msg.addFields(value);
+      break;
+    case 22:
+      var value = new fintekkers_models_security_security_pb.SecurityProto;
+      reader.readMessage(value,fintekkers_models_security_security_pb.SecurityProto.deserializeBinaryFromReader);
+      msg.setReportingCurrency(value);
       break;
     default:
       reader.skipField();
@@ -221,6 +229,14 @@ proto.fintekkers.models.position.PositionProto.serializeBinaryToWriter = functio
       21,
       f,
       fintekkers_models_position_position_util_pb.FieldMapEntry.serializeBinaryToWriter
+    );
+  }
+  f = message.getReportingCurrency();
+  if (f != null) {
+    writer.writeMessage(
+      22,
+      f,
+      fintekkers_models_security_security_pb.SecurityProto.serializeBinaryToWriter
     );
   }
 };
@@ -371,6 +387,43 @@ proto.fintekkers.models.position.PositionProto.prototype.addFields = function(op
  */
 proto.fintekkers.models.position.PositionProto.prototype.clearFieldsList = function() {
   return this.setFieldsList([]);
+};
+
+
+/**
+ * optional fintekkers.models.security.SecurityProto reporting_currency = 22;
+ * @return {?proto.fintekkers.models.security.SecurityProto}
+ */
+proto.fintekkers.models.position.PositionProto.prototype.getReportingCurrency = function() {
+  return /** @type{?proto.fintekkers.models.security.SecurityProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_security_security_pb.SecurityProto, 22));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.security.SecurityProto|undefined} value
+ * @return {!proto.fintekkers.models.position.PositionProto} returns this
+*/
+proto.fintekkers.models.position.PositionProto.prototype.setReportingCurrency = function(value) {
+  return jspb.Message.setWrapperField(this, 22, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.position.PositionProto} returns this
+ */
+proto.fintekkers.models.position.PositionProto.prototype.clearReportingCurrency = function() {
+  return this.setReportingCurrency(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.position.PositionProto.prototype.hasReportingCurrency = function() {
+  return jspb.Message.getField(this, 22) != null;
 };
 
 

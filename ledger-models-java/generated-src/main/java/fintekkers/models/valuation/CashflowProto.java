@@ -204,6 +204,47 @@ private static final long serialVersionUID = 0L;
     return couponRate_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : couponRate_;
   }
 
+  public static final int CURRENCY_FIELD_NUMBER = 5;
+  private fintekkers.models.util.CurrencyProto currency_;
+  /**
+   * <pre>
+   * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+   * Allows cashflows to be self-describing without resolving the parent security.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+   * @return Whether the currency field is set.
+   */
+  @java.lang.Override
+  public boolean hasCurrency() {
+    return currency_ != null;
+  }
+  /**
+   * <pre>
+   * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+   * Allows cashflows to be self-describing without resolving the parent security.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+   * @return The currency.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.CurrencyProto getCurrency() {
+    return currency_ == null ? fintekkers.models.util.CurrencyProto.getDefaultInstance() : currency_;
+  }
+  /**
+   * <pre>
+   * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+   * Allows cashflows to be self-describing without resolving the parent security.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.CurrencyProtoOrBuilder getCurrencyOrBuilder() {
+    return currency_ == null ? fintekkers.models.util.CurrencyProto.getDefaultInstance() : currency_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -230,6 +271,9 @@ private static final long serialVersionUID = 0L;
     if (couponRate_ != null) {
       output.writeMessage(4, getCouponRate());
     }
+    if (currency_ != null) {
+      output.writeMessage(5, getCurrency());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -254,6 +298,10 @@ private static final long serialVersionUID = 0L;
     if (couponRate_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(4, getCouponRate());
+    }
+    if (currency_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(5, getCurrency());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -290,6 +338,11 @@ private static final long serialVersionUID = 0L;
       if (!getCouponRate()
           .equals(other.getCouponRate())) return false;
     }
+    if (hasCurrency() != other.hasCurrency()) return false;
+    if (hasCurrency()) {
+      if (!getCurrency()
+          .equals(other.getCurrency())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -316,6 +369,10 @@ private static final long serialVersionUID = 0L;
     if (hasCouponRate()) {
       hash = (37 * hash) + COUPON_RATE_FIELD_NUMBER;
       hash = (53 * hash) + getCouponRate().hashCode();
+    }
+    if (hasCurrency()) {
+      hash = (37 * hash) + CURRENCY_FIELD_NUMBER;
+      hash = (53 * hash) + getCurrency().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -472,6 +529,11 @@ private static final long serialVersionUID = 0L;
         couponRateBuilder_.dispose();
         couponRateBuilder_ = null;
       }
+      currency_ = null;
+      if (currencyBuilder_ != null) {
+        currencyBuilder_.dispose();
+        currencyBuilder_ = null;
+      }
       return this;
     }
 
@@ -524,6 +586,11 @@ private static final long serialVersionUID = 0L;
         result.couponRate_ = couponRateBuilder_ == null
             ? couponRate_
             : couponRateBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.currency_ = currencyBuilder_ == null
+            ? currency_
+            : currencyBuilder_.build();
       }
     }
 
@@ -583,6 +650,9 @@ private static final long serialVersionUID = 0L;
       if (other.hasCouponRate()) {
         mergeCouponRate(other.getCouponRate());
       }
+      if (other.hasCurrency()) {
+        mergeCurrency(other.getCurrency());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -637,6 +707,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000008;
               break;
             } // case 34
+            case 42: {
+              input.readMessage(
+                  getCurrencyFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 42
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1281,6 +1358,170 @@ private static final long serialVersionUID = 0L;
         couponRate_ = null;
       }
       return couponRateBuilder_;
+    }
+
+    private fintekkers.models.util.CurrencyProto currency_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.CurrencyProto, fintekkers.models.util.CurrencyProto.Builder, fintekkers.models.util.CurrencyProtoOrBuilder> currencyBuilder_;
+    /**
+     * <pre>
+     * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+     * Allows cashflows to be self-describing without resolving the parent security.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+     * @return Whether the currency field is set.
+     */
+    public boolean hasCurrency() {
+      return ((bitField0_ & 0x00000010) != 0);
+    }
+    /**
+     * <pre>
+     * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+     * Allows cashflows to be self-describing without resolving the parent security.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+     * @return The currency.
+     */
+    public fintekkers.models.util.CurrencyProto getCurrency() {
+      if (currencyBuilder_ == null) {
+        return currency_ == null ? fintekkers.models.util.CurrencyProto.getDefaultInstance() : currency_;
+      } else {
+        return currencyBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+     * Allows cashflows to be self-describing without resolving the parent security.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+     */
+    public Builder setCurrency(fintekkers.models.util.CurrencyProto value) {
+      if (currencyBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        currency_ = value;
+      } else {
+        currencyBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+     * Allows cashflows to be self-describing without resolving the parent security.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+     */
+    public Builder setCurrency(
+        fintekkers.models.util.CurrencyProto.Builder builderForValue) {
+      if (currencyBuilder_ == null) {
+        currency_ = builderForValue.build();
+      } else {
+        currencyBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+     * Allows cashflows to be self-describing without resolving the parent security.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+     */
+    public Builder mergeCurrency(fintekkers.models.util.CurrencyProto value) {
+      if (currencyBuilder_ == null) {
+        if (((bitField0_ & 0x00000010) != 0) &&
+          currency_ != null &&
+          currency_ != fintekkers.models.util.CurrencyProto.getDefaultInstance()) {
+          getCurrencyBuilder().mergeFrom(value);
+        } else {
+          currency_ = value;
+        }
+      } else {
+        currencyBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+     * Allows cashflows to be self-describing without resolving the parent security.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+     */
+    public Builder clearCurrency() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      currency_ = null;
+      if (currencyBuilder_ != null) {
+        currencyBuilder_.dispose();
+        currencyBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+     * Allows cashflows to be self-describing without resolving the parent security.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+     */
+    public fintekkers.models.util.CurrencyProto.Builder getCurrencyBuilder() {
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return getCurrencyFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+     * Allows cashflows to be self-describing without resolving the parent security.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+     */
+    public fintekkers.models.util.CurrencyProtoOrBuilder getCurrencyOrBuilder() {
+      if (currencyBuilder_ != null) {
+        return currencyBuilder_.getMessageOrBuilder();
+      } else {
+        return currency_ == null ?
+            fintekkers.models.util.CurrencyProto.getDefaultInstance() : currency_;
+      }
+    }
+    /**
+     * <pre>
+     * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+     * Allows cashflows to be self-describing without resolving the parent security.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.CurrencyProto, fintekkers.models.util.CurrencyProto.Builder, fintekkers.models.util.CurrencyProtoOrBuilder> 
+        getCurrencyFieldBuilder() {
+      if (currencyBuilder_ == null) {
+        currencyBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.CurrencyProto, fintekkers.models.util.CurrencyProto.Builder, fintekkers.models.util.CurrencyProtoOrBuilder>(
+                getCurrency(),
+                getParentForChildren(),
+                isClean());
+        currency_ = null;
+      }
+      return currencyBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

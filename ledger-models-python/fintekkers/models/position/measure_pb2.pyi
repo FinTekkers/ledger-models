@@ -23,6 +23,14 @@ class MeasureProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     PAR_YIELD: _ClassVar[MeasureProto]
     SPOT_YIELD: _ClassVar[MeasureProto]
     FORWARD_YIELD: _ClassVar[MeasureProto]
+    PROFIT_LOSS: _ClassVar[MeasureProto]
+    PROFIT_LOSS_PERCENT: _ClassVar[MeasureProto]
+    ACCRUED_INTEREST: _ClassVar[MeasureProto]
+    CONVEXITY: _ClassVar[MeasureProto]
+    DIRTY_PRICE: _ClassVar[MeasureProto]
+    CLEAN_PRICE: _ClassVar[MeasureProto]
+    MODIFIED_DURATION: _ClassVar[MeasureProto]
+    DV01: _ClassVar[MeasureProto]
 UNKNOWN_MEASURE: MeasureProto
 DIRECTED_QUANTITY: MeasureProto
 MARKET_VALUE: MeasureProto
@@ -40,3 +48,11 @@ SPREAD_DURATION: MeasureProto
 PAR_YIELD: MeasureProto
 SPOT_YIELD: MeasureProto
 FORWARD_YIELD: MeasureProto
+PROFIT_LOSS: MeasureProto
+PROFIT_LOSS_PERCENT: MeasureProto
+ACCRUED_INTEREST: MeasureProto
+CONVEXITY: MeasureProto
+DIRTY_PRICE: MeasureProto
+CLEAN_PRICE: MeasureProto
+MODIFIED_DURATION: MeasureProto
+DV01: MeasureProto

@@ -1,4 +1,5 @@
 from fintekkers.models.position import position_util_pb2 as _position_util_pb2
+from fintekkers.models.security import security_pb2 as _security_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
@@ -27,17 +28,19 @@ TRANSACTION: PositionTypeProto
 TAX_LOT: PositionTypeProto
 
 class PositionProto(_message.Message):
-    __slots__ = ("object_class", "version", "position_view", "position_type", "measures", "fields")
+    __slots__ = ("object_class", "version", "position_view", "position_type", "measures", "fields", "reporting_currency")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     POSITION_VIEW_FIELD_NUMBER: _ClassVar[int]
     POSITION_TYPE_FIELD_NUMBER: _ClassVar[int]
     MEASURES_FIELD_NUMBER: _ClassVar[int]
     FIELDS_FIELD_NUMBER: _ClassVar[int]
+    REPORTING_CURRENCY_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
     position_view: PositionViewProto
     position_type: PositionTypeProto
     measures: _containers.RepeatedCompositeFieldContainer[_position_util_pb2.MeasureMapEntry]
     fields: _containers.RepeatedCompositeFieldContainer[_position_util_pb2.FieldMapEntry]
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., position_view: _Optional[_Union[PositionViewProto, str]] = ..., position_type: _Optional[_Union[PositionTypeProto, str]] = ..., measures: _Optional[_Iterable[_Union[_position_util_pb2.MeasureMapEntry, _Mapping]]] = ..., fields: _Optional[_Iterable[_Union[_position_util_pb2.FieldMapEntry, _Mapping]]] = ...) -> None: ...
+    reporting_currency: _security_pb2.SecurityProto
+    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., position_view: _Optional[_Union[PositionViewProto, str]] = ..., position_type: _Optional[_Union[PositionTypeProto, str]] = ..., measures: _Optional[_Iterable[_Union[_position_util_pb2.MeasureMapEntry, _Mapping]]] = ..., fields: _Optional[_Iterable[_Union[_position_util_pb2.FieldMapEntry, _Mapping]]] = ..., reporting_currency: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ...) -> None: ...

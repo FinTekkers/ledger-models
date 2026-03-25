@@ -229,6 +229,68 @@ public final class TransactionGrpc {
     return getValidateQueryRequestMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<com.google.protobuf.Empty,
+      fintekkers.requests.security.GetFieldValuesResponseProto> getGetFieldsMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetFields",
+      requestType = com.google.protobuf.Empty.class,
+      responseType = fintekkers.requests.security.GetFieldValuesResponseProto.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<com.google.protobuf.Empty,
+      fintekkers.requests.security.GetFieldValuesResponseProto> getGetFieldsMethod() {
+    io.grpc.MethodDescriptor<com.google.protobuf.Empty, fintekkers.requests.security.GetFieldValuesResponseProto> getGetFieldsMethod;
+    if ((getGetFieldsMethod = TransactionGrpc.getGetFieldsMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getGetFieldsMethod = TransactionGrpc.getGetFieldsMethod) == null) {
+          TransactionGrpc.getGetFieldsMethod = getGetFieldsMethod =
+              io.grpc.MethodDescriptor.<com.google.protobuf.Empty, fintekkers.requests.security.GetFieldValuesResponseProto>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetFields"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  com.google.protobuf.Empty.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("GetFields"))
+              .build();
+        }
+      }
+    }
+    return getGetFieldsMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<fintekkers.requests.security.GetFieldValuesRequestProto,
+      fintekkers.requests.security.GetFieldValuesResponseProto> getGetFieldValuesMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetFieldValues",
+      requestType = fintekkers.requests.security.GetFieldValuesRequestProto.class,
+      responseType = fintekkers.requests.security.GetFieldValuesResponseProto.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<fintekkers.requests.security.GetFieldValuesRequestProto,
+      fintekkers.requests.security.GetFieldValuesResponseProto> getGetFieldValuesMethod() {
+    io.grpc.MethodDescriptor<fintekkers.requests.security.GetFieldValuesRequestProto, fintekkers.requests.security.GetFieldValuesResponseProto> getGetFieldValuesMethod;
+    if ((getGetFieldValuesMethod = TransactionGrpc.getGetFieldValuesMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getGetFieldValuesMethod = TransactionGrpc.getGetFieldValuesMethod) == null) {
+          TransactionGrpc.getGetFieldValuesMethod = getGetFieldValuesMethod =
+              io.grpc.MethodDescriptor.<fintekkers.requests.security.GetFieldValuesRequestProto, fintekkers.requests.security.GetFieldValuesResponseProto>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetFieldValues"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.security.GetFieldValuesRequestProto.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  fintekkers.requests.security.GetFieldValuesResponseProto.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("GetFieldValues"))
+              .build();
+        }
+      }
+    }
+    return getGetFieldValuesMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -340,6 +402,20 @@ public final class TransactionGrpc {
         io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getValidateQueryRequestMethod(), responseObserver);
     }
+
+    /**
+     */
+    default void getFields(com.google.protobuf.Empty request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldValuesResponseProto> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetFieldsMethod(), responseObserver);
+    }
+
+    /**
+     */
+    default void getFieldValues(fintekkers.requests.security.GetFieldValuesRequestProto request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldValuesResponseProto> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetFieldValuesMethod(), responseObserver);
+    }
   }
 
   /**
@@ -424,6 +500,22 @@ public final class TransactionGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getValidateQueryRequestMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void getFields(com.google.protobuf.Empty request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldValuesResponseProto> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetFieldsMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void getFieldValues(fintekkers.requests.security.GetFieldValuesRequestProto request,
+        io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldValuesResponseProto> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetFieldValuesMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -492,6 +584,20 @@ public final class TransactionGrpc {
       return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getValidateQueryRequestMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public fintekkers.requests.security.GetFieldValuesResponseProto getFields(com.google.protobuf.Empty request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetFieldsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.security.GetFieldValuesResponseProto getFieldValues(fintekkers.requests.security.GetFieldValuesRequestProto request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getGetFieldValuesMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -559,6 +665,20 @@ public final class TransactionGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getValidateQueryRequestMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public fintekkers.requests.security.GetFieldValuesResponseProto getFields(com.google.protobuf.Empty request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetFieldsMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public fintekkers.requests.security.GetFieldValuesResponseProto getFieldValues(fintekkers.requests.security.GetFieldValuesRequestProto request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetFieldValuesMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -624,6 +744,22 @@ public final class TransactionGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getValidateQueryRequestMethod(), getCallOptions()), request);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.security.GetFieldValuesResponseProto> getFields(
+        com.google.protobuf.Empty request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetFieldsMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.security.GetFieldValuesResponseProto> getFieldValues(
+        fintekkers.requests.security.GetFieldValuesRequestProto request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetFieldValuesMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_OR_UPDATE = 0;
@@ -633,6 +769,8 @@ public final class TransactionGrpc {
   private static final int METHODID_DELETE = 4;
   private static final int METHODID_VALIDATE_CREATE_OR_UPDATE = 5;
   private static final int METHODID_VALIDATE_QUERY_REQUEST = 6;
+  private static final int METHODID_GET_FIELDS = 7;
+  private static final int METHODID_GET_FIELD_VALUES = 8;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -678,6 +816,14 @@ public final class TransactionGrpc {
         case METHODID_VALIDATE_QUERY_REQUEST:
           serviceImpl.validateQueryRequest((fintekkers.requests.transaction.QueryTransactionRequestProto) request,
               (io.grpc.stub.StreamObserver<fintekkers.requests.util.errors.Summary.SummaryProto>) responseObserver);
+          break;
+        case METHODID_GET_FIELDS:
+          serviceImpl.getFields((com.google.protobuf.Empty) request,
+              (io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldValuesResponseProto>) responseObserver);
+          break;
+        case METHODID_GET_FIELD_VALUES:
+          serviceImpl.getFieldValues((fintekkers.requests.security.GetFieldValuesRequestProto) request,
+              (io.grpc.stub.StreamObserver<fintekkers.requests.security.GetFieldValuesResponseProto>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -746,6 +892,20 @@ public final class TransactionGrpc {
               fintekkers.requests.transaction.QueryTransactionRequestProto,
               fintekkers.requests.util.errors.Summary.SummaryProto>(
                 service, METHODID_VALIDATE_QUERY_REQUEST)))
+        .addMethod(
+          getGetFieldsMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              com.google.protobuf.Empty,
+              fintekkers.requests.security.GetFieldValuesResponseProto>(
+                service, METHODID_GET_FIELDS)))
+        .addMethod(
+          getGetFieldValuesMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              fintekkers.requests.security.GetFieldValuesRequestProto,
+              fintekkers.requests.security.GetFieldValuesResponseProto>(
+                service, METHODID_GET_FIELD_VALUES)))
         .build();
   }
 
@@ -801,6 +961,8 @@ public final class TransactionGrpc {
               .addMethod(getDeleteMethod())
               .addMethod(getValidateCreateOrUpdateMethod())
               .addMethod(getValidateQueryRequestMethod())
+              .addMethod(getGetFieldsMethod())
+              .addMethod(getGetFieldValuesMethod())
               .build();
         }
       }

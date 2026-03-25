@@ -27,7 +27,7 @@ from fintekkers.models.util import local_timestamp_pb2 as fintekkers_dot_models_
 from fintekkers.models.position import position_filter_pb2 as fintekkers_dot_models_dot_position_dot_position__filter__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n;fintekkers/requests/portfolio/query_portfolio_request.proto\x12\x1d\x66intekkers.requests.portfolio\x1a!fintekkers/models/util/uuid.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a\x30\x66intekkers/models/position/position_filter.proto\"\x82\x02\n\x1aQueryPortfolioRequestProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x30\n\x05uuIds\x18\x15 \x03(\x0b\x32!.fintekkers.models.util.UUIDProto\x12O\n\x16search_portfolio_input\x18\x16 \x01(\x0b\x32/.fintekkers.models.position.PositionFilterProto\x12:\n\x05\x61s_of\x18\x17 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProtoB\x1f\x42\x1bQueryPortfolioRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n;fintekkers/requests/portfolio/query_portfolio_request.proto\x12\x1d\x66intekkers.requests.portfolio\x1a!fintekkers/models/util/uuid.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a\x30\x66intekkers/models/position/position_filter.proto\"\x97\x02\n\x1aQueryPortfolioRequestProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x30\n\x05uuIds\x18\x15 \x03(\x0b\x32!.fintekkers.models.util.UUIDProto\x12O\n\x16search_portfolio_input\x18\x16 \x01(\x0b\x32/.fintekkers.models.position.PositionFilterProto\x12:\n\x05\x61s_of\x18\x17 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x13\n\x0bname_filter\x18\x18 \x01(\tB\x1f\x42\x1bQueryPortfolioRequestProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,5 +36,5 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\033QueryPortfolioRequestProtosP\001'
   _globals['_QUERYPORTFOLIOREQUESTPROTO']._serialized_start=226
-  _globals['_QUERYPORTFOLIOREQUESTPROTO']._serialized_end=484
+  _globals['_QUERYPORTFOLIOREQUESTPROTO']._serialized_end=505
 # @@protoc_insertion_point(module_scope)

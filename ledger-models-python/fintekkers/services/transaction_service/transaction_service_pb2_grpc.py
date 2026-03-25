@@ -3,12 +3,15 @@
 import grpc
 import warnings
 
+from fintekkers.requests.security import get_field_values_request_pb2 as fintekkers_dot_requests_dot_security_dot_get__field__values__request__pb2
+from fintekkers.requests.security import get_field_values_response_pb2 as fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2
 from fintekkers.requests.transaction import create_transaction_request_pb2 as fintekkers_dot_requests_dot_transaction_dot_create__transaction__request__pb2
 from fintekkers.requests.transaction import create_transaction_response_pb2 as fintekkers_dot_requests_dot_transaction_dot_create__transaction__response__pb2
 from fintekkers.requests.transaction import query_transaction_request_pb2 as fintekkers_dot_requests_dot_transaction_dot_query__transaction__request__pb2
 from fintekkers.requests.transaction import query_transaction_response_pb2 as fintekkers_dot_requests_dot_transaction_dot_query__transaction__response__pb2
 from fintekkers.requests.util import delete_request_pb2 as fintekkers_dot_requests_dot_util_dot_delete__request__pb2
 from fintekkers.requests.util.errors import summary_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 GRPC_GENERATED_VERSION = '1.78.0'
 GRPC_VERSION = grpc.__version__
@@ -74,6 +77,16 @@ class TransactionStub(object):
                 request_serializer=fintekkers_dot_requests_dot_transaction_dot_query__transaction__request__pb2.QueryTransactionRequestProto.SerializeToString,
                 response_deserializer=fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2.SummaryProto.FromString,
                 _registered_method=True)
+        self.GetFields = channel.unary_unary(
+                '/fintekkers.services.transaction_service.Transaction/GetFields',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2.GetFieldValuesResponseProto.FromString,
+                _registered_method=True)
+        self.GetFieldValues = channel.unary_unary(
+                '/fintekkers.services.transaction_service.Transaction/GetFieldValues',
+                request_serializer=fintekkers_dot_requests_dot_security_dot_get__field__values__request__pb2.GetFieldValuesRequestProto.SerializeToString,
+                response_deserializer=fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2.GetFieldValuesResponseProto.FromString,
+                _registered_method=True)
 
 
 class TransactionServicer(object):
@@ -121,6 +134,18 @@ class TransactionServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetFields(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetFieldValues(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TransactionServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -158,6 +183,16 @@ def add_TransactionServicer_to_server(servicer, server):
                     servicer.ValidateQueryRequest,
                     request_deserializer=fintekkers_dot_requests_dot_transaction_dot_query__transaction__request__pb2.QueryTransactionRequestProto.FromString,
                     response_serializer=fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2.SummaryProto.SerializeToString,
+            ),
+            'GetFields': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFields,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2.GetFieldValuesResponseProto.SerializeToString,
+            ),
+            'GetFieldValues': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetFieldValues,
+                    request_deserializer=fintekkers_dot_requests_dot_security_dot_get__field__values__request__pb2.GetFieldValuesRequestProto.FromString,
+                    response_serializer=fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2.GetFieldValuesResponseProto.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -349,6 +384,60 @@ class Transaction(object):
             '/fintekkers.services.transaction_service.Transaction/ValidateQueryRequest',
             fintekkers_dot_requests_dot_transaction_dot_query__transaction__request__pb2.QueryTransactionRequestProto.SerializeToString,
             fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2.SummaryProto.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetFields(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/fintekkers.services.transaction_service.Transaction/GetFields',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2.GetFieldValuesResponseProto.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetFieldValues(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/fintekkers.services.transaction_service.Transaction/GetFieldValues',
+            fintekkers_dot_requests_dot_security_dot_get__field__values__request__pb2.GetFieldValuesRequestProto.SerializeToString,
+            fintekkers_dot_requests_dot_security_dot_get__field__values__response__pb2.GetFieldValuesResponseProto.FromString,
             options,
             channel_credentials,
             insecure,

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package fintekkers.services.index_composition_service;
+
+import "fintekkers/requests/index_composition/get_index_composition_request.proto";
+import "fintekkers/requests/index_composition/create_index_composition_request.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "IndexCompositionServiceProtos";
+
+service IndexComposition {
+  // Store (or replace) an IndexCompositionProto record.
+  // If a record with the same (index_uuid, effective_date) already exists it is
+  // replaced (last-writer-wins). A UUID is auto-generated when absent.
+  rpc CreateOrUpdate (fintekkers.requests.index_composition.CreateIndexCompositionRequestProto)
+      returns (fintekkers.requests.index_composition.CreateIndexCompositionResponseProto);
+
+  // Temporal resolution: return the composition of the given index that was
+  // active on as_of_date. Returns the most recent composition where
+  // effective_date <= as_of_date.
+  //
+  // This is the primary query for analytics and portfolio valuation.
+  // It is the equity-index analogue of PriceService.Search(security, as_of).
+  rpc GetIndexComposition (fintekkers.requests.index_composition.GetIndexCompositionRequestProto)
+      returns (fintekkers.requests.index_composition.GetIndexCompositionResponseProto);
+}

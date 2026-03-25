@@ -5,6 +5,9 @@ import "fintekkers/requests/position/query_position_request.proto";
 import "fintekkers/requests/position/query_position_response.proto";
 
 import "fintekkers/requests/util/errors/summary.proto";
+import "fintekkers/requests/security/get_field_values_request.proto";
+import "fintekkers/requests/security/get_field_values_response.proto";
+import "google/protobuf/empty.proto";
 
 option java_generic_services = true;
 option py_generic_services = true;
@@ -16,4 +19,7 @@ service Position {
 
 //    rpc ValidateCreateOrUpdate (transaction.CreateTransactionRequestProto) returns (util.errors.SummaryProto);
     rpc ValidateQueryRequest (fintekkers.requests.position.QueryPositionRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);
+
+    rpc GetFields       (google.protobuf.Empty)                                              returns (fintekkers.requests.security.GetFieldValuesResponseProto);
+    rpc GetFieldValues  (fintekkers.requests.security.GetFieldValuesRequestProto)            returns (fintekkers.requests.security.GetFieldValuesResponseProto);
 }

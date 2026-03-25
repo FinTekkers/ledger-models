@@ -83,6 +83,7 @@ public enum Field {
 
     //Price
     PRICE(Price.class, "A fully fledged price object"),
+    PRICE_ID(UUID.class, "A UUID specific to prices"),
 
     //Transaction only
     TRADE_DATE(LocalDate.class, "The date a legal agreement is made on a transaction. This may differ " +

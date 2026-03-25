@@ -23,9 +23,10 @@ _sym_db = _symbol_database.Default()
 
 
 from fintekkers.models.position import position_util_pb2 as fintekkers_dot_models_dot_position_dot_position__util__pb2
+from fintekkers.models.security import security_pb2 as fintekkers_dot_models_dot_security_dot_security__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n)fintekkers/models/position/position.proto\x12\x1a\x66intekkers.models.position\x1a.fintekkers/models/position/position_util.proto\"\xbc\x02\n\rPositionProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x44\n\rposition_view\x18\n \x01(\x0e\x32-.fintekkers.models.position.PositionViewProto\x12\x44\n\rposition_type\x18\x0b \x01(\x0e\x32-.fintekkers.models.position.PositionTypeProto\x12=\n\x08measures\x18\x14 \x03(\x0b\x32+.fintekkers.models.position.MeasureMapEntry\x12\x39\n\x06\x66ields\x18\x15 \x03(\x0b\x32).fintekkers.models.position.FieldMapEntry*S\n\x11PositionViewProto\x12\x19\n\x15UNKNOWN_POSITION_VIEW\x10\x00\x12\x10\n\x0c\x44\x45\x46\x41ULT_VIEW\x10\x01\x12\x11\n\rSTRATEGY_VIEW\x10\x02*L\n\x11PositionTypeProto\x12\x19\n\x15UNKNOWN_POSITION_TYPE\x10\x00\x12\x0f\n\x0bTRANSACTION\x10\x01\x12\x0b\n\x07TAX_LOT\x10\x02\x42\x12\x42\x0ePositionProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n)fintekkers/models/position/position.proto\x12\x1a\x66intekkers.models.position\x1a.fintekkers/models/position/position_util.proto\x1a)fintekkers/models/security/security.proto\"\x83\x03\n\rPositionProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x44\n\rposition_view\x18\n \x01(\x0e\x32-.fintekkers.models.position.PositionViewProto\x12\x44\n\rposition_type\x18\x0b \x01(\x0e\x32-.fintekkers.models.position.PositionTypeProto\x12=\n\x08measures\x18\x14 \x03(\x0b\x32+.fintekkers.models.position.MeasureMapEntry\x12\x39\n\x06\x66ields\x18\x15 \x03(\x0b\x32).fintekkers.models.position.FieldMapEntry\x12\x45\n\x12reporting_currency\x18\x16 \x01(\x0b\x32).fintekkers.models.security.SecurityProto*S\n\x11PositionViewProto\x12\x19\n\x15UNKNOWN_POSITION_VIEW\x10\x00\x12\x10\n\x0c\x44\x45\x46\x41ULT_VIEW\x10\x01\x12\x11\n\rSTRATEGY_VIEW\x10\x02*L\n\x11PositionTypeProto\x12\x19\n\x15UNKNOWN_POSITION_TYPE\x10\x00\x12\x0f\n\x0bTRANSACTION\x10\x01\x12\x0b\n\x07TAX_LOT\x10\x02\x42\x12\x42\x0ePositionProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,10 +34,10 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.position.
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\016PositionProtosP\001'
-  _globals['_POSITIONVIEWPROTO']._serialized_start=440
-  _globals['_POSITIONVIEWPROTO']._serialized_end=523
-  _globals['_POSITIONTYPEPROTO']._serialized_start=525
-  _globals['_POSITIONTYPEPROTO']._serialized_end=601
-  _globals['_POSITIONPROTO']._serialized_start=122
-  _globals['_POSITIONPROTO']._serialized_end=438
+  _globals['_POSITIONVIEWPROTO']._serialized_start=554
+  _globals['_POSITIONVIEWPROTO']._serialized_end=637
+  _globals['_POSITIONTYPEPROTO']._serialized_start=639
+  _globals['_POSITIONTYPEPROTO']._serialized_end=715
+  _globals['_POSITIONPROTO']._serialized_start=165
+  _globals['_POSITIONPROTO']._serialized_end=552
 # @@protoc_insertion_point(module_scope)

@@ -49,6 +49,16 @@ pub struct Endpoint {
     #[prost(string, tag = "3")]
     pub fully_qualified_url: ::prost::alloc::string::String,
 }
+/// A currency, identified by its ISO 4217 alpha code (e.g. "USD", "GBP", "EUR").
+/// This is a lightweight alternative to embedding a full CASH_SECURITY SecurityProto
+/// when only the currency code is needed.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CurrencyProto {
+    /// ISO 4217 alpha-3, e.g. "USD", "GBP"
+    #[prost(string, tag = "1")]
+    pub iso_code: ::prost::alloc::string::String,
+}
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DateRangeProto {

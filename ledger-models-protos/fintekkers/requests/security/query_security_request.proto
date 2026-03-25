@@ -21,6 +21,10 @@ message QuerySecurityRequestProto {
   //A list of position filters that will filter securities that match.
   fintekkers.models.position.PositionFilterProto search_security_input = 22;
   fintekkers.models.util.LocalTimestampProto as_of = 23;
+
+  // Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
+  // Empty string means no filter (return all).
+  string name_filter = 24;
 }
 
 

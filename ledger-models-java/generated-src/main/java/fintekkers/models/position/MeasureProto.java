@@ -337,6 +337,130 @@ public enum MeasureProto
    * <code>FORWARD_YIELD = 17;</code>
    */
   FORWARD_YIELD(17),
+  /**
+   * <pre>
+   * The profit or loss on a position relative to its cost basis.
+   * Formula:
+   *   ProfitLoss = MarketValue - (UnadjustedCostBasis / 100 * DirectedQuantity)
+   * Applicability: All security types.
+   * Units: Dollars (or settlement currency).
+   * </pre>
+   *
+   * <code>PROFIT_LOSS = 18;</code>
+   */
+  PROFIT_LOSS(18),
+  /**
+   * <pre>
+   * The profit or loss as a percentage of the original cost basis.
+   * Formula:
+   *   ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / 100 * DirectedQuantity)
+   * Applicability: All security types.
+   * Units: Decimal (0-1 scale; e.g. 0.05 = 5.00% gain).
+   * </pre>
+   *
+   * <code>PROFIT_LOSS_PERCENT = 19;</code>
+   */
+  PROFIT_LOSS_PERCENT(19),
+  /**
+   * <pre>
+   * The accrued interest on a bond position — the pro-rated coupon income earned
+   * since the last coupon payment date but not yet received.
+   * Formula (coupon-bearing bonds):
+   *   AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period)
+   *                     * directed_quantity
+   *   Day count: Actual/Actual (ICMA) for US Treasuries.
+   * Accrued interest on settlement date T is the interest accumulated from the
+   * last coupon date up to but not including T.
+   * Applicability: Bond, TIPS, FRN (coupon-bearing securities).
+   *   Returns null/zero for Equity, Cash, and zero-coupon bonds.
+   * Units: Dollars (absolute dollar amount for the position).
+   * </pre>
+   *
+   * <code>ACCRUED_INTEREST = 20;</code>
+   */
+  ACCRUED_INTEREST(20),
+  /**
+   * <pre>
+   * The second derivative of a bond's price with respect to yield, normalised by price.
+   * Convexity measures how the duration of a bond changes as yield changes — a bond
+   * with higher convexity gains more in price when yields fall and loses less when
+   * yields rise, compared to a bond with lower convexity of equal duration.
+   * Formula:
+   *   Convexity = (1/P) × Σ_{t=1}^{N} [CF_t × t × (t+1) / (1+y/n)^(t+2)] / n²
+   *   Equivalently, in terms of periodic-discount PVs:
+   *   Convexity = Σ_{t=1}^{N} [t(t+1) × PV_t] / (P_dollar × n² × (1+r)²)
+   *   Where r = y/n (periodic yield), P_dollar = dollar price,
+   *   PV_t = CF_t / (1+r)^t, n = coupon frequency (periods per year).
+   * Model assumptions:
+   *   - Same as MACAULAY_DURATION (flat yield curve, YTM-based discounting).
+   *   - For FRN: uses flat-forwards effective YTM (same model as PRESENT_VALUE).
+   *   - Settlement on a coupon date (integer period exponents).
+   * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
+   * Units: Years² (e.g. 20.5 = 20.5 years²).
+   * </pre>
+   *
+   * <code>CONVEXITY = 21;</code>
+   */
+  CONVEXITY(21),
+  /**
+   * <pre>
+   * The full (invoice) price of a bond including accrued interest, expressed as a
+   * percentage of face value.
+   * Formula:
+   *   DirtyPrice = market_value / (num_bonds * face_value) * 100
+   *   where num_bonds = directed_quantity / face_value
+   *   Equivalently: market_value / directed_quantity * 100
+   * Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
+   * Units: Percentage of par (e.g. 99.5 = 99.5% of par).
+   * </pre>
+   *
+   * <code>DIRTY_PRICE = 22;</code>
+   */
+  DIRTY_PRICE(22),
+  /**
+   * <pre>
+   * The quoted price of a bond excluding accrued interest, expressed as a
+   * percentage of face value. This is the price conventionally quoted in bond markets.
+   * Formula:
+   *   CleanPrice = DirtyPrice - (accrued_interest / directed_quantity * 100)
+   * Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
+   * Units: Percentage of par (e.g. 98.75 = 98.75% of par).
+   * </pre>
+   *
+   * <code>CLEAN_PRICE = 23;</code>
+   */
+  CLEAN_PRICE(23),
+  /**
+   * <pre>
+   * Modified Duration = MacaulayDuration / (1 + ytm/coupon_frequency).
+   * Measures the percentage price change of a bond for a 1% (100bp) change in yield.
+   * Unlike Macaulay Duration (which is expressed in years), Modified Duration is a
+   * direct measure of price sensitivity: a bond with ModifiedDuration=5 will move
+   * approximately 5% in price for a 100bp parallel shift in yield.
+   * Formula:
+   *   ModifiedDuration = MacaulayDuration / (1 + ytm/n)
+   *   where ytm = yield to maturity (annual), n = coupon periods per year.
+   * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
+   * Units: Years (dimensionally equivalent to years, interpreted as % per 100bp).
+   * </pre>
+   *
+   * <code>MODIFIED_DURATION = 24;</code>
+   */
+  MODIFIED_DURATION(24),
+  /**
+   * <pre>
+   * DV01 (Dollar Value of 01) = the dollar P&amp;L impact of a 1bp (0.01%) yield increase.
+   * Formula:
+   *   DV01 = ModifiedDuration × MarketValue × 0.0001
+   * For a $1M market value position with ModifiedDuration=5:
+   *   DV01 = 5 × 1,000,000 × 0.0001 = $500 per bp
+   * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
+   * Units: Dollars per basis point.
+   * </pre>
+   *
+   * <code>DV01 = 25;</code>
+   */
+  DV01(25),
   UNRECOGNIZED(-1),
   ;
 
@@ -669,6 +793,130 @@ public enum MeasureProto
    * <code>FORWARD_YIELD = 17;</code>
    */
   public static final int FORWARD_YIELD_VALUE = 17;
+  /**
+   * <pre>
+   * The profit or loss on a position relative to its cost basis.
+   * Formula:
+   *   ProfitLoss = MarketValue - (UnadjustedCostBasis / 100 * DirectedQuantity)
+   * Applicability: All security types.
+   * Units: Dollars (or settlement currency).
+   * </pre>
+   *
+   * <code>PROFIT_LOSS = 18;</code>
+   */
+  public static final int PROFIT_LOSS_VALUE = 18;
+  /**
+   * <pre>
+   * The profit or loss as a percentage of the original cost basis.
+   * Formula:
+   *   ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / 100 * DirectedQuantity)
+   * Applicability: All security types.
+   * Units: Decimal (0-1 scale; e.g. 0.05 = 5.00% gain).
+   * </pre>
+   *
+   * <code>PROFIT_LOSS_PERCENT = 19;</code>
+   */
+  public static final int PROFIT_LOSS_PERCENT_VALUE = 19;
+  /**
+   * <pre>
+   * The accrued interest on a bond position — the pro-rated coupon income earned
+   * since the last coupon payment date but not yet received.
+   * Formula (coupon-bearing bonds):
+   *   AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period)
+   *                     * directed_quantity
+   *   Day count: Actual/Actual (ICMA) for US Treasuries.
+   * Accrued interest on settlement date T is the interest accumulated from the
+   * last coupon date up to but not including T.
+   * Applicability: Bond, TIPS, FRN (coupon-bearing securities).
+   *   Returns null/zero for Equity, Cash, and zero-coupon bonds.
+   * Units: Dollars (absolute dollar amount for the position).
+   * </pre>
+   *
+   * <code>ACCRUED_INTEREST = 20;</code>
+   */
+  public static final int ACCRUED_INTEREST_VALUE = 20;
+  /**
+   * <pre>
+   * The second derivative of a bond's price with respect to yield, normalised by price.
+   * Convexity measures how the duration of a bond changes as yield changes — a bond
+   * with higher convexity gains more in price when yields fall and loses less when
+   * yields rise, compared to a bond with lower convexity of equal duration.
+   * Formula:
+   *   Convexity = (1/P) × Σ_{t=1}^{N} [CF_t × t × (t+1) / (1+y/n)^(t+2)] / n²
+   *   Equivalently, in terms of periodic-discount PVs:
+   *   Convexity = Σ_{t=1}^{N} [t(t+1) × PV_t] / (P_dollar × n² × (1+r)²)
+   *   Where r = y/n (periodic yield), P_dollar = dollar price,
+   *   PV_t = CF_t / (1+r)^t, n = coupon frequency (periods per year).
+   * Model assumptions:
+   *   - Same as MACAULAY_DURATION (flat yield curve, YTM-based discounting).
+   *   - For FRN: uses flat-forwards effective YTM (same model as PRESENT_VALUE).
+   *   - Settlement on a coupon date (integer period exponents).
+   * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
+   * Units: Years² (e.g. 20.5 = 20.5 years²).
+   * </pre>
+   *
+   * <code>CONVEXITY = 21;</code>
+   */
+  public static final int CONVEXITY_VALUE = 21;
+  /**
+   * <pre>
+   * The full (invoice) price of a bond including accrued interest, expressed as a
+   * percentage of face value.
+   * Formula:
+   *   DirtyPrice = market_value / (num_bonds * face_value) * 100
+   *   where num_bonds = directed_quantity / face_value
+   *   Equivalently: market_value / directed_quantity * 100
+   * Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
+   * Units: Percentage of par (e.g. 99.5 = 99.5% of par).
+   * </pre>
+   *
+   * <code>DIRTY_PRICE = 22;</code>
+   */
+  public static final int DIRTY_PRICE_VALUE = 22;
+  /**
+   * <pre>
+   * The quoted price of a bond excluding accrued interest, expressed as a
+   * percentage of face value. This is the price conventionally quoted in bond markets.
+   * Formula:
+   *   CleanPrice = DirtyPrice - (accrued_interest / directed_quantity * 100)
+   * Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
+   * Units: Percentage of par (e.g. 98.75 = 98.75% of par).
+   * </pre>
+   *
+   * <code>CLEAN_PRICE = 23;</code>
+   */
+  public static final int CLEAN_PRICE_VALUE = 23;
+  /**
+   * <pre>
+   * Modified Duration = MacaulayDuration / (1 + ytm/coupon_frequency).
+   * Measures the percentage price change of a bond for a 1% (100bp) change in yield.
+   * Unlike Macaulay Duration (which is expressed in years), Modified Duration is a
+   * direct measure of price sensitivity: a bond with ModifiedDuration=5 will move
+   * approximately 5% in price for a 100bp parallel shift in yield.
+   * Formula:
+   *   ModifiedDuration = MacaulayDuration / (1 + ytm/n)
+   *   where ytm = yield to maturity (annual), n = coupon periods per year.
+   * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
+   * Units: Years (dimensionally equivalent to years, interpreted as % per 100bp).
+   * </pre>
+   *
+   * <code>MODIFIED_DURATION = 24;</code>
+   */
+  public static final int MODIFIED_DURATION_VALUE = 24;
+  /**
+   * <pre>
+   * DV01 (Dollar Value of 01) = the dollar P&amp;L impact of a 1bp (0.01%) yield increase.
+   * Formula:
+   *   DV01 = ModifiedDuration × MarketValue × 0.0001
+   * For a $1M market value position with ModifiedDuration=5:
+   *   DV01 = 5 × 1,000,000 × 0.0001 = $500 per bp
+   * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
+   * Units: Dollars per basis point.
+   * </pre>
+   *
+   * <code>DV01 = 25;</code>
+   */
+  public static final int DV01_VALUE = 25;
 
 
   public final int getNumber() {
@@ -712,6 +960,14 @@ public enum MeasureProto
       case 15: return PAR_YIELD;
       case 16: return SPOT_YIELD;
       case 17: return FORWARD_YIELD;
+      case 18: return PROFIT_LOSS;
+      case 19: return PROFIT_LOSS_PERCENT;
+      case 20: return ACCRUED_INTEREST;
+      case 21: return CONVEXITY;
+      case 22: return DIRTY_PRICE;
+      case 23: return CLEAN_PRICE;
+      case 24: return MODIFIED_DURATION;
+      case 25: return DV01;
       default: return null;
     }
   }

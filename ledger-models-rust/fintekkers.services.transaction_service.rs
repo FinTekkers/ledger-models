@@ -317,6 +317,72 @@ pub mod transaction_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_fields(
+            &mut self,
+            request: impl tonic::IntoRequest<()>,
+        ) -> std::result::Result<
+            tonic::Response<
+                super::super::super::requests::security::GetFieldValuesResponseProto,
+            >,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/fintekkers.services.transaction_service.Transaction/GetFields",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "fintekkers.services.transaction_service.Transaction",
+                        "GetFields",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_field_values(
+            &mut self,
+            request: impl tonic::IntoRequest<
+                super::super::super::requests::security::GetFieldValuesRequestProto,
+            >,
+        ) -> std::result::Result<
+            tonic::Response<
+                super::super::super::requests::security::GetFieldValuesResponseProto,
+            >,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/fintekkers.services.transaction_service.Transaction/GetFieldValues",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new(
+                        "fintekkers.services.transaction_service.Transaction",
+                        "GetFieldValues",
+                    ),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -399,6 +465,26 @@ pub mod transaction_server {
             >,
         ) -> std::result::Result<
             tonic::Response<super::super::super::requests::util::errors::SummaryProto>,
+            tonic::Status,
+        >;
+        async fn get_fields(
+            &self,
+            request: tonic::Request<()>,
+        ) -> std::result::Result<
+            tonic::Response<
+                super::super::super::requests::security::GetFieldValuesResponseProto,
+            >,
+            tonic::Status,
+        >;
+        async fn get_field_values(
+            &self,
+            request: tonic::Request<
+                super::super::super::requests::security::GetFieldValuesRequestProto,
+            >,
+        ) -> std::result::Result<
+            tonic::Response<
+                super::super::super::requests::security::GetFieldValuesResponseProto,
+            >,
             tonic::Status,
         >;
     }
@@ -802,6 +888,94 @@ pub mod transaction_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = ValidateQueryRequestSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/fintekkers.services.transaction_service.Transaction/GetFields" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetFieldsSvc<T: Transaction>(pub Arc<T>);
+                    impl<T: Transaction> tonic::server::UnaryService<()>
+                    for GetFieldsSvc<T> {
+                        type Response = super::super::super::requests::security::GetFieldValuesResponseProto;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(&mut self, request: tonic::Request<()>) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move { (*inner).get_fields(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetFieldsSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/fintekkers.services.transaction_service.Transaction/GetFieldValues" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetFieldValuesSvc<T: Transaction>(pub Arc<T>);
+                    impl<
+                        T: Transaction,
+                    > tonic::server::UnaryService<
+                        super::super::super::requests::security::GetFieldValuesRequestProto,
+                    > for GetFieldValuesSvc<T> {
+                        type Response = super::super::super::requests::security::GetFieldValuesResponseProto;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::super::super::requests::security::GetFieldValuesRequestProto,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).get_field_values(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetFieldValuesSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

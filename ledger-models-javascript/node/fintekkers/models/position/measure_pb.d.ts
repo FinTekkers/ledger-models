@@ -24,4 +24,12 @@ export enum MeasureProto {
     PAR_YIELD = 15,
     SPOT_YIELD = 16,
     FORWARD_YIELD = 17,
+    PROFIT_LOSS = 18,
+    PROFIT_LOSS_PERCENT = 19,
+    ACCRUED_INTEREST = 20,
+    CONVEXITY = 21,
+    DIRTY_PRICE = 22,
+    CLEAN_PRICE = 23,
+    MODIFIED_DURATION = 24,
+    DV01 = 25,
 }

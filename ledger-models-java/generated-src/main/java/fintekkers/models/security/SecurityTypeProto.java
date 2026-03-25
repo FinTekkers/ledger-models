@@ -40,6 +40,18 @@ public enum SecurityTypeProto
    * <code>INDEX_SECURITY = 6;</code>
    */
   INDEX_SECURITY(6),
+  /**
+   * <code>FX_SPOT = 7;</code>
+   */
+  FX_SPOT(7),
+  /**
+   * <pre>
+   * Equity market indices (DJIA, S&amp;P 500, Nasdaq-100, etc.)
+   * </pre>
+   *
+   * <code>EQUITY_INDEX_SECURITY = 8;</code>
+   */
+  EQUITY_INDEX_SECURITY(8),
   UNRECOGNIZED(-1),
   ;
 
@@ -75,6 +87,18 @@ public enum SecurityTypeProto
    * <code>INDEX_SECURITY = 6;</code>
    */
   public static final int INDEX_SECURITY_VALUE = 6;
+  /**
+   * <code>FX_SPOT = 7;</code>
+   */
+  public static final int FX_SPOT_VALUE = 7;
+  /**
+   * <pre>
+   * Equity market indices (DJIA, S&amp;P 500, Nasdaq-100, etc.)
+   * </pre>
+   *
+   * <code>EQUITY_INDEX_SECURITY = 8;</code>
+   */
+  public static final int EQUITY_INDEX_SECURITY_VALUE = 8;
 
 
   public final int getNumber() {
@@ -108,6 +132,8 @@ public enum SecurityTypeProto
       case 4: return TIPS;
       case 5: return FRN;
       case 6: return INDEX_SECURITY;
+      case 7: return FX_SPOT;
+      case 8: return EQUITY_INDEX_SECURITY;
       default: return null;
     }
   }

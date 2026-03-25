@@ -117,4 +117,34 @@ public interface CashflowProtoOrBuilder extends
    * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 4;</code>
    */
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCouponRateOrBuilder();
+
+  /**
+   * <pre>
+   * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+   * Allows cashflows to be self-describing without resolving the parent security.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+   * @return Whether the currency field is set.
+   */
+  boolean hasCurrency();
+  /**
+   * <pre>
+   * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+   * Allows cashflows to be self-describing without resolving the parent security.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+   * @return The currency.
+   */
+  fintekkers.models.util.CurrencyProto getCurrency();
+  /**
+   * <pre>
+   * The currency this cashflow is denominated in (ISO 4217 alpha-3, e.g. "GBP").
+   * Allows cashflows to be self-describing without resolving the parent security.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
+   */
+  fintekkers.models.util.CurrencyProtoOrBuilder getCurrencyOrBuilder();
 }

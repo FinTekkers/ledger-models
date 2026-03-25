@@ -245,6 +245,50 @@ private static final long serialVersionUID = 0L;
     return fields_.get(index);
   }
 
+  public static final int REPORTING_CURRENCY_FIELD_NUMBER = 22;
+  private fintekkers.models.security.SecurityProto reportingCurrency_;
+  /**
+   * <pre>
+   * The base/reporting currency for monetary measures in this position.
+   * Set to the portfolio's base currency (e.g. USD cash security).
+   * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+   * @return Whether the reportingCurrency field is set.
+   */
+  @java.lang.Override
+  public boolean hasReportingCurrency() {
+    return reportingCurrency_ != null;
+  }
+  /**
+   * <pre>
+   * The base/reporting currency for monetary measures in this position.
+   * Set to the portfolio's base currency (e.g. USD cash security).
+   * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+   * @return The reportingCurrency.
+   */
+  @java.lang.Override
+  public fintekkers.models.security.SecurityProto getReportingCurrency() {
+    return reportingCurrency_ == null ? fintekkers.models.security.SecurityProto.getDefaultInstance() : reportingCurrency_;
+  }
+  /**
+   * <pre>
+   * The base/reporting currency for monetary measures in this position.
+   * Set to the portfolio's base currency (e.g. USD cash security).
+   * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.SecurityProtoOrBuilder getReportingCurrencyOrBuilder() {
+    return reportingCurrency_ == null ? fintekkers.models.security.SecurityProto.getDefaultInstance() : reportingCurrency_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -277,6 +321,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < fields_.size(); i++) {
       output.writeMessage(21, fields_.get(i));
     }
+    if (reportingCurrency_ != null) {
+      output.writeMessage(22, getReportingCurrency());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -308,6 +355,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(21, fields_.get(i));
     }
+    if (reportingCurrency_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(22, getReportingCurrency());
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -333,6 +384,11 @@ private static final long serialVersionUID = 0L;
         .equals(other.getMeasuresList())) return false;
     if (!getFieldsList()
         .equals(other.getFieldsList())) return false;
+    if (hasReportingCurrency() != other.hasReportingCurrency()) return false;
+    if (hasReportingCurrency()) {
+      if (!getReportingCurrency()
+          .equals(other.getReportingCurrency())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -359,6 +415,10 @@ private static final long serialVersionUID = 0L;
     if (getFieldsCount() > 0) {
       hash = (37 * hash) + FIELDS_FIELD_NUMBER;
       hash = (53 * hash) + getFieldsList().hashCode();
+    }
+    if (hasReportingCurrency()) {
+      hash = (37 * hash) + REPORTING_CURRENCY_FIELD_NUMBER;
+      hash = (53 * hash) + getReportingCurrency().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -507,6 +567,11 @@ private static final long serialVersionUID = 0L;
         fieldsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000020);
+      reportingCurrency_ = null;
+      if (reportingCurrencyBuilder_ != null) {
+        reportingCurrencyBuilder_.dispose();
+        reportingCurrencyBuilder_ = null;
+      }
       return this;
     }
 
@@ -573,6 +638,11 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000008) != 0)) {
         result.positionType_ = positionType_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.reportingCurrency_ = reportingCurrencyBuilder_ == null
+            ? reportingCurrency_
+            : reportingCurrencyBuilder_.build();
       }
     }
 
@@ -688,6 +758,9 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (other.hasReportingCurrency()) {
+        mergeReportingCurrency(other.getReportingCurrency());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -760,6 +833,13 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 170
+            case 178: {
+              input.readMessage(
+                  getReportingCurrencyFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 178
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1505,6 +1585,179 @@ private static final long serialVersionUID = 0L;
         fields_ = null;
       }
       return fieldsBuilder_;
+    }
+
+    private fintekkers.models.security.SecurityProto reportingCurrency_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> reportingCurrencyBuilder_;
+    /**
+     * <pre>
+     * The base/reporting currency for monetary measures in this position.
+     * Set to the portfolio's base currency (e.g. USD cash security).
+     * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+     * @return Whether the reportingCurrency field is set.
+     */
+    public boolean hasReportingCurrency() {
+      return ((bitField0_ & 0x00000040) != 0);
+    }
+    /**
+     * <pre>
+     * The base/reporting currency for monetary measures in this position.
+     * Set to the portfolio's base currency (e.g. USD cash security).
+     * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+     * @return The reportingCurrency.
+     */
+    public fintekkers.models.security.SecurityProto getReportingCurrency() {
+      if (reportingCurrencyBuilder_ == null) {
+        return reportingCurrency_ == null ? fintekkers.models.security.SecurityProto.getDefaultInstance() : reportingCurrency_;
+      } else {
+        return reportingCurrencyBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The base/reporting currency for monetary measures in this position.
+     * Set to the portfolio's base currency (e.g. USD cash security).
+     * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+     */
+    public Builder setReportingCurrency(fintekkers.models.security.SecurityProto value) {
+      if (reportingCurrencyBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        reportingCurrency_ = value;
+      } else {
+        reportingCurrencyBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The base/reporting currency for monetary measures in this position.
+     * Set to the portfolio's base currency (e.g. USD cash security).
+     * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+     */
+    public Builder setReportingCurrency(
+        fintekkers.models.security.SecurityProto.Builder builderForValue) {
+      if (reportingCurrencyBuilder_ == null) {
+        reportingCurrency_ = builderForValue.build();
+      } else {
+        reportingCurrencyBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The base/reporting currency for monetary measures in this position.
+     * Set to the portfolio's base currency (e.g. USD cash security).
+     * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+     */
+    public Builder mergeReportingCurrency(fintekkers.models.security.SecurityProto value) {
+      if (reportingCurrencyBuilder_ == null) {
+        if (((bitField0_ & 0x00000040) != 0) &&
+          reportingCurrency_ != null &&
+          reportingCurrency_ != fintekkers.models.security.SecurityProto.getDefaultInstance()) {
+          getReportingCurrencyBuilder().mergeFrom(value);
+        } else {
+          reportingCurrency_ = value;
+        }
+      } else {
+        reportingCurrencyBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The base/reporting currency for monetary measures in this position.
+     * Set to the portfolio's base currency (e.g. USD cash security).
+     * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+     */
+    public Builder clearReportingCurrency() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      reportingCurrency_ = null;
+      if (reportingCurrencyBuilder_ != null) {
+        reportingCurrencyBuilder_.dispose();
+        reportingCurrencyBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The base/reporting currency for monetary measures in this position.
+     * Set to the portfolio's base currency (e.g. USD cash security).
+     * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+     */
+    public fintekkers.models.security.SecurityProto.Builder getReportingCurrencyBuilder() {
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return getReportingCurrencyFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The base/reporting currency for monetary measures in this position.
+     * Set to the portfolio's base currency (e.g. USD cash security).
+     * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+     */
+    public fintekkers.models.security.SecurityProtoOrBuilder getReportingCurrencyOrBuilder() {
+      if (reportingCurrencyBuilder_ != null) {
+        return reportingCurrencyBuilder_.getMessageOrBuilder();
+      } else {
+        return reportingCurrency_ == null ?
+            fintekkers.models.security.SecurityProto.getDefaultInstance() : reportingCurrency_;
+      }
+    }
+    /**
+     * <pre>
+     * The base/reporting currency for monetary measures in this position.
+     * Set to the portfolio's base currency (e.g. USD cash security).
+     * Allows the UI to display the currency alongside MARKET_VALUE and other measures.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.SecurityProto reporting_currency = 22;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> 
+        getReportingCurrencyFieldBuilder() {
+      if (reportingCurrencyBuilder_ == null) {
+        reportingCurrencyBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder>(
+                getReportingCurrency(),
+                getParentForChildren(),
+                isClean());
+        reportingCurrency_ = null;
+      }
+      return reportingCurrencyBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(
