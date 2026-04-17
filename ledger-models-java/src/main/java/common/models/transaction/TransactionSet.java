@@ -17,8 +17,18 @@ public class TransactionSet extends HashMap<UUID, List<Transaction>> {
     public List<Transaction> allLatestTransactions() {
         List<Transaction> transactions = new ArrayList<>();
 
-        if(true)
-            throw new RuntimeException("Not impleented");
+        for (List<Transaction> versions : values()) {
+            if (versions.isEmpty()) continue;
+
+            Transaction latest = versions.get(0);
+            for (int i = 1; i < versions.size(); i++) {
+                Transaction candidate = versions.get(i);
+                if (candidate.getAsOf().isAfter(latest.getAsOf())) {
+                    latest = candidate;
+                }
+            }
+            transactions.add(latest);
+        }
 
         return transactions;
     }

@@ -33,7 +33,12 @@ public class BondPrice extends Price {
     }
 
     public BigDecimal getCleanPrice() {
-        throw new RuntimeException("Not supported yet");
+        if (accruedInterest == null) {
+            throw new UnsupportedOperationException(
+                    "Clean price is unavailable because this BondPrice was constructed from a dirty price only. " +
+                    "Use the constructor that accepts both cleanPrice and accruedInterest.");
+        }
+        return getDirtyPrice().subtract(accruedInterest);
     }
 
     public BigDecimal getAccruedInterest() {
