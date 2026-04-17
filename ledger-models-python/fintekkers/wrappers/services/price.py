@@ -34,14 +34,14 @@ class PriceService:
         print("PriceService connecting to: " + EnvConfig.api_url(ServiceType.PRICE_SERVICE))
         self.stub = PriceStub(EnvConfig.get_channel(ServiceType.PRICE_SERVICE))
 
-    def get_price(identifer:str, identifier_type: IdentifierTypeProto):
-        return #the latest price
+    def get_latest_price(self, identifier: str, identifier_type: IdentifierTypeProto) -> Price:
+        raise NotImplementedError("get_latest_price is not yet implemented")
 
-    def get_price(identifer:str, identifier_type: IdentifierTypeProto, asof:datetime):
-        return #the latest price for the date
+    def get_price_as_of_datetime(self, identifier: str, identifier_type: IdentifierTypeProto, asof: datetime) -> Price:
+        raise NotImplementedError("get_price_as_of_datetime is not yet implemented")
 
-    def get_price(identifer:str, identifier_type: IdentifierTypeProto, asof:date):
-        return #the latest price for the date
+    def get_price_as_of_date(self, identifier: str, identifier_type: IdentifierTypeProto, asof: date) -> Price:
+        raise NotImplementedError("get_price_as_of_date is not yet implemented")
     
 
     def _get_frequency_for_horizon(self, horizon: PriceHorizonProto) -> PriceFrequencyProto:
@@ -165,7 +165,7 @@ class PriceService:
             raise e
         
     def list_ids(self) -> list[UUID]:
-        request: QueryPriceRequest = QueryPriceRequest.create_query_request(
+        request: QueryPriceRequest = QueryPriceRequest.create_query_request_with_date_range(
             fields={},
             frequency=None,
             start_date=None,
