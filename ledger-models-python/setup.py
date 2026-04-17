@@ -23,8 +23,13 @@ setup(
         description=DESCRIPTION,
         long_description=LONG_DESCRIPTION,
         packages=find_packages(),
-        install_requires=[], # add any additional packages that 
-        # needs to be installed along with your package. Eg: 'caer'
+        install_requires=[
+            'grpcio',
+            'protobuf',
+            'python-dotenv',
+            'python-dateutil',
+            'pytz',
+        ],
         
         classifiers= [
             "Programming Language :: Python :: 3",
