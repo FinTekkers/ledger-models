@@ -405,4 +405,53 @@ mod test {
         assert!(parsed.product_details.is_none());
         assert_eq!(parsed.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
     }
+
+    #[test]
+    fn test_get_valid_from_reads_proto() {
+        use crate::fintekkers::models::util::LocalTimestampProto;
+        use prost_types::Timestamp;
+
+        let ts = LocalTimestampProto {
+            timestamp: Some(Timestamp { seconds: 1_000_000, nanos: 0 }),
+            time_zone: "UTC".to_string(),
+        };
+        let proto = SecurityProtoBuilder::new()
+            .valid_from(LocalTimestampWrapper::new(ts.clone()))
+            .build()
+            .unwrap();
+        let wrapper = SecurityWrapper::new(proto);
+
+        let valid_from = wrapper.get_valid_from();
+        let from_seconds = valid_from.proto.timestamp.as_ref().unwrap().seconds;
+        assert_eq!(from_seconds, 1_000_000);
+    }
+
+    #[test]
+    fn test_get_valid_to_returns_none_when_unset() {
+        let proto = SecurityProtoBuilder::new().build().unwrap();
+        let wrapper = SecurityWrapper::new(proto);
+
+        assert!(wrapper.get_valid_to().is_none());
+    }
+
+    #[test]
+    fn test_get_valid_to_reads_proto_when_set() {
+        use crate::fintekkers::models::util::LocalTimestampProto;
+        use prost_types::Timestamp;
+
+        let ts = LocalTimestampProto {
+            timestamp: Some(Timestamp { seconds: 2_000_000, nanos: 0 }),
+            time_zone: "America/New_York".to_string(),
+        };
+        let proto = SecurityProtoBuilder::new()
+            .valid_to(LocalTimestampWrapper::new(ts.clone()))
+            .build()
+            .unwrap();
+        let wrapper = SecurityWrapper::new(proto);
+
+        let valid_to = wrapper.get_valid_to();
+        assert!(valid_to.is_some());
+        let to_seconds = valid_to.unwrap().proto.timestamp.as_ref().unwrap().seconds;
+        assert_eq!(to_seconds, 2_000_000);
+    }
 }

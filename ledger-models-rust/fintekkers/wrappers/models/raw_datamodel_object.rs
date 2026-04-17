@@ -17,11 +17,14 @@ pub trait RawDataModelObject {
             }
 
             fn get_valid_from(&self) -> LocalTimestampWrapper{
-                LocalTimestampWrapper::now()
+                match &self.proto.valid_from {
+                    Some(ts) => LocalTimestampWrapper::new(ts.clone()),
+                    None => LocalTimestampWrapper::now(),
+                }
             }
 
             fn get_valid_to(&self) -> Option<LocalTimestampWrapper> {
-                Some(LocalTimestampWrapper::now())
+                self.proto.valid_to.as_ref().map(|ts| LocalTimestampWrapper::new(ts.clone()))
             }
 
             fn get_as_of(&self) -> LocalTimestampWrapper {
