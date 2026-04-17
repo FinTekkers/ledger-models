@@ -53,7 +53,15 @@ class UUID {
         return id_proto;
     }
     equals(other) {
-        return this.toBytes() === other.toBytes();
+        const a = this.bytes;
+        const b = other.toBytes();
+        if (a.length !== b.length)
+            return false;
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i])
+                return false;
+        }
+        return true;
     }
     static random() {
         const random = uuid.v4();
