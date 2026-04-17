@@ -108,7 +108,7 @@ impl PriceProtoBuilder {
             valid_to: None,
 
             //This is currently hardcoded, this will change in future versions
-            object_class: "Security".to_string(),
+            object_class: "Price".to_string(),
             //The version is hardcoded, this will change in future versions
             version: "0.0.1".to_string(),
             is_link: false,
@@ -225,5 +225,15 @@ mod test {
         let price_str = price.arbitrary_precision_value;
 
         assert_eq!(price_str, number.to_string());
+    }
+
+    #[test]
+    fn test_price_builder_object_class_is_price() {
+        let number = dec!(100.0);
+        let price_proto = PriceProtoBuilder::new()
+            .dummy_price_wrapper(number)
+            .proto;
+
+        assert_eq!(price_proto.object_class, "Price");
     }
 }
