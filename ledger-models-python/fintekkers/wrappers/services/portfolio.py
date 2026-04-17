@@ -113,15 +113,9 @@ class PortfolioService:
         )
 
         responses = self.search(QueryPortfolioRequest(portfolio_query))
-        portfolios: list[Portfolio] = []
+        portfolios: list[Portfolio] = list(responses)
 
-        for portfolio in responses:
-            portfolio:PortfolioProto
-            portfolios.append(Portfolio(portfolio))
-
-        number_found = len(portfolios)
-
-        if number_found == 0:
+        if len(portfolios) == 0:
             return self.create_portfolio_by_name(portfolio_name=portfolio_name)
         else:
             return portfolios[0]
