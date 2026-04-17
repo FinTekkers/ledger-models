@@ -52,7 +52,7 @@ class ProtoEnum:
         """
         The string name of the enum
         """
-        return self.enum_descriptor.name
+        return self.get_enum_descriptor.name
 
     def get_enum_value(self) -> int:
         """
