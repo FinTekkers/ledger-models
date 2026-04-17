@@ -34,8 +34,7 @@ impl FromStr for DateWrapper {
     // Parses a date from the yyyy-mm-dd format
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         let naive_date = NaiveDate::parse_from_str(value, DATE_FORMAT)
-            .unwrap_or_else(
-                |_| panic!("Date must be in the format of {}. Received {}", DATE_FORMAT, value));
+            .map_err(|_| ParseError::NotValidFormat)?;
 
         Ok(DateWrapper {
             proto: LocalDateProto {
@@ -114,5 +113,17 @@ mod test {
     fn test_date_from_string() {
         let date = DateWrapper::from_str("2023-10-28").unwrap();
         assert_eq!(date.proto.year, 2023);
+    }
+
+    #[test]
+    fn test_date_from_invalid_string_returns_err() {
+        let result = DateWrapper::from_str("not-a-date");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_date_from_empty_string_returns_err() {
+        let result = DateWrapper::from_str("");
+        assert!(result.is_err());
     }
 }
