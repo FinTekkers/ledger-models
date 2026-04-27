@@ -6,6 +6,12 @@ authors = ["FinTekkers"]
 license = "Apache-2.0"
 description = "Bond valuation calculator: pricing, yield, duration, convexity, DV01"
 
-# Zero external dependencies for now. Uses internal date type.
-# chrono and rust_decimal will be added when integrating with ledger-models.
 [dependencies]
+
+[features]
+default = []
+proto = ["ledger-models"]
+
+[dependencies.ledger-models]
+path = "../ledger-models-rust"
+optional = true
