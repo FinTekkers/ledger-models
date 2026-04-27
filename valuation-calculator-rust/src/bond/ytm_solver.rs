@@ -157,4 +157,61 @@ mod tests {
         let ytm = solve_ytm(&bond, 50.0, d(2025, 5, 15)).unwrap();
         assert!(ytm > 0.04, "Deep discount ytm={}", ytm);
     }
+
+    #[test]
+    fn high_premium() {
+        let bond = ust_bond(0.08, d(2025, 5, 15), d(2035, 5, 15));
+        let ytm = solve_ytm(&bond, 130.0, d(2025, 5, 15)).unwrap();
+        assert!(ytm < 0.06, "High premium YTM={} should be below coupon", ytm);
+    }
+
+    #[test]
+    fn very_small_coupon() {
+        let bond = ust_bond(0.00125, d(2025, 5, 15), d(2035, 5, 15));
+        let ytm = solve_ytm(&bond, 95.0, d(2025, 5, 15)).unwrap();
+        assert!(ytm > 0.005, "Tiny coupon YTM={}", ytm);
+    }
+
+    #[test]
+    fn zero_coupon_ytm() {
+        let bond = BondSpec {
+            coupon_rate: 0.0, coupon_freq: 2, coupon_type: CouponType::Zero,
+            face_value: 100.0, dated_date: d(2025, 5, 15), maturity_date: d(2035, 5, 15),
+            day_count: DayCountConvention::ActualActualICMA,
+        };
+        let price = 100.0 / 1.025_f64.powi(20);
+        let ytm = solve_ytm(&bond, price, d(2025, 5, 15)).unwrap();
+        assert!((ytm - 0.05).abs() < 1e-10, "Zero-coupon YTM={}", ytm);
+    }
+
+    #[test]
+    fn last_coupon_period() {
+        let bond = ust_bond(0.05, d(2025, 5, 15), d(2026, 5, 15));
+        let settle = d(2025, 11, 15);
+        let cfs = super::super::cashflows::generate(&bond, settle);
+        assert_eq!(cfs.len(), 1);
+
+        let ytm = solve_ytm(&bond, 100.0, settle).unwrap();
+        assert!(ytm > 0.0, "Last period YTM={}", ytm);
+    }
+
+    #[test]
+    fn round_trip_multiple_bonds() {
+        let bonds = vec![
+            ust_bond(0.02, d(2025, 5, 15), d(2027, 5, 15)),
+            ust_bond(0.04, d(2025, 5, 15), d(2030, 5, 15)),
+            ust_bond(0.05, d(2025, 5, 15), d(2035, 5, 15)),
+            ust_bond(0.06, d(2025, 5, 15), d(2055, 5, 15)),
+        ];
+        let yields = [0.03, 0.045, 0.055, 0.04];
+
+        for (bond, &target_ytm) in bonds.iter().zip(yields.iter()) {
+            let settle = bond.dated_date;
+            let dp = super::super::pricing::dirty_price_from_yield(bond, target_ytm, settle);
+            let solved = solve_ytm(bond, dp, settle).unwrap();
+            assert!((solved - target_ytm).abs() < 1e-10,
+                "Round-trip failed: coupon={}, target={}, solved={}",
+                bond.coupon_rate, target_ytm, solved);
+        }
+    }
 }

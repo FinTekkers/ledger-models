@@ -80,4 +80,33 @@ mod tests {
         let mac = macaulay_duration(&ust_bond(0.0425, d(2027, 5, 15)), 0.0425, d(2025, 5, 15));
         assert!(mac > 1.5 && mac < 2.0, "2Y duration={}", mac);
     }
+
+    #[test]
+    fn duration_convexity_price_approximation() {
+        let bond = ust_bond(0.05, d(2035, 5, 15));
+        let settle = d(2025, 5, 15);
+        let ytm = 0.05;
+        let dy = 0.01;
+
+        let p0 = super::super::pricing::dirty_price_from_yield(&bond, ytm, settle);
+        let p_actual = super::super::pricing::dirty_price_from_yield(&bond, ytm + dy, settle);
+
+        let mod_dur = modified_duration(&bond, ytm, settle);
+        let conv = super::super::convexity::convexity(&bond, ytm, settle);
+
+        let dp_approx = -mod_dur * p0 * dy + 0.5 * conv * p0 * dy * dy;
+        let p_approx = p0 + dp_approx;
+
+        let error_pct = ((p_approx - p_actual) / p_actual).abs();
+        assert!(error_pct < 0.001,
+            "Duration+convexity approx error {:.4}% (actual={}, approx={})",
+            error_pct * 100.0, p_actual, p_approx);
+    }
+
+    #[test]
+    fn ust_30y_duration_range() {
+        let bond = ust_bond(0.04625, d(2055, 5, 15));
+        let dur = macaulay_duration(&bond, 0.047, d(2025, 5, 15));
+        assert!(dur > 14.0 && dur < 20.0, "30Y duration={}", dur);
+    }
 }

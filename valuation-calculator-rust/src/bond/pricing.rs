@@ -82,4 +82,37 @@ mod tests {
         let dp = dirty_price_from_yield(&bond, 0.0, d(2025, 5, 15));
         assert!((dp - 110.0).abs() < 1e-8);
     }
+
+    #[test]
+    fn three_way_pv_invariant() {
+        let bond = ust_bond(0.05, d(2025, 5, 15), d(2035, 5, 15));
+        let settle = d(2025, 8, 20);
+        let clean = 97.5;
+
+        let ytm = super::super::ytm_solver::solve_ytm(&bond, clean, settle).unwrap();
+        let ai = super::super::accrued_interest::accrued_interest(&bond, settle);
+        let dirty = clean + ai;
+
+        let dp_from_yield = dirty_price_from_yield(&bond, ytm, settle);
+        assert!((dp_from_yield - dirty).abs() < 1e-8,
+            "dp_from_yield={} vs dirty={}", dp_from_yield, dirty);
+
+        let cfs = super::super::cashflows::generate(&bond, settle);
+        let sum_pv: f64 = cfs.iter()
+            .map(|cf| cf.amount / (1.0 + ytm / 2.0).powf(cf.period_fraction))
+            .sum();
+        assert!((sum_pv - dirty).abs() < 1e-8,
+            "sum_pv={} vs dirty={}", sum_pv, dirty);
+    }
+
+    #[test]
+    fn settlement_on_coupon_date_clean_equals_dirty() {
+        let bond = ust_bond(0.05, d(2025, 5, 15), d(2035, 5, 15));
+        let settle = d(2025, 5, 15);
+        let ai = super::super::accrued_interest::accrued_interest(&bond, settle);
+        assert!(ai.abs() < 1e-15);
+        let cp = clean_price(&bond, 0.05, settle);
+        let dp = dirty_price_from_yield(&bond, 0.05, settle);
+        assert!((cp - dp).abs() < 1e-10);
+    }
 }
