@@ -74,4 +74,44 @@ mod tests {
         let expected = 2.5 * 183.0 / 184.0;
         assert!((ai - expected).abs() < 1e-10);
     }
+
+    // ── Euro bond (annual coupon) tests ─────────────────────────────
+
+    fn euro_bond() -> BondSpec {
+        BondSpec {
+            coupon_rate: 0.025,
+            coupon_freq: 1,
+            coupon_type: CouponType::Fixed,
+            face_value: 100.0,
+            dated_date: d(2024, 7, 4),
+            maturity_date: d(2034, 7, 4),
+            day_count: DayCountConvention::ActualActualICMA,
+        }
+    }
+
+    #[test]
+    fn euro_zero_on_coupon_date() {
+        assert!((accrued_interest(&euro_bond(), d(2025, 7, 4))).abs() < 1e-15);
+    }
+
+    #[test]
+    fn euro_accrued_mid_period() {
+        // Annual coupon = 2.5% × 100 = 2.50
+        // Settle 2025-01-04, last coupon 2024-07-04, next 2025-07-04
+        // days accrued = 184, days in period = 365 or 366
+        let ai = accrued_interest(&euro_bond(), d(2025, 1, 4));
+        let last = d(2024, 7, 4);
+        let next = d(2025, 7, 4);
+        let settle = d(2025, 1, 4);
+        let expected = 2.5 * (settle.days_since(&last) as f64) / (next.days_since(&last) as f64);
+        assert!((ai - expected).abs() < 1e-10, "Euro AI={}, expected={}", ai, expected);
+    }
+
+    #[test]
+    fn euro_full_annual_coupon() {
+        // Annual coupon is larger than semiannual
+        let ai_euro = accrued_interest(&euro_bond(), d(2025, 1, 4));
+        // Semiannual with same rate would accrue half the coupon over half the period
+        assert!(ai_euro > 1.0, "Annual AI should be meaningful: {}", ai_euro);
+    }
 }

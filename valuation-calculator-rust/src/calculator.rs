@@ -367,4 +367,144 @@ mod tests {
         assert!((pv - dp).abs() < 1e-8, "PV={} vs dirty={}", pv, dp);
         assert!((sum_cf_pv - dp).abs() < 1e-8, "sum_cf_pv={} vs dirty={}", sum_cf_pv, dp);
     }
+
+    // ── Euro bond (annual coupon) tests ─────────────────────────────
+
+    fn euro_request(coupon: f64, maturity: Date, price: f64, settle: Date, measures: Vec<Measure>) -> ValuationRequest {
+        ValuationRequest {
+            security: SecurityInput {
+                coupon_rate: coupon,
+                coupon_freq: 1,
+                coupon_type: CouponType::Fixed,
+                face_value: 100.0,
+                dated_date: d(2025, 2, 15),
+                maturity_date: maturity,
+            },
+            market_price: price,
+            quantity: 1_000_000.0,
+            cost_basis: Some(98.0),
+            settlement: settle,
+            measures,
+        }
+    }
+
+    #[test]
+    fn euro_full_valuation_par_bund() {
+        let req = euro_request(0.025, d(2035, 2, 15), 100.0, d(2025, 2, 15), vec![
+            Measure::YieldToMaturity,
+            Measure::MacaulayDuration,
+            Measure::ModifiedDuration,
+            Measure::Convexity,
+            Measure::Dv01,
+            Measure::AccruedInterest,
+            Measure::CleanPrice,
+            Measure::DirtyPrice,
+            Measure::MarketValue,
+            Measure::CurrentYield,
+            Measure::PresentValue,
+        ]);
+
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let ytm = resp.get(Measure::YieldToMaturity).unwrap();
+        assert!((ytm - 0.025).abs() < 1e-10, "Bund par YTM={}", ytm);
+
+        let ai = resp.get(Measure::AccruedInterest).unwrap();
+        assert!(ai.abs() < 1e-15, "Bund AI on coupon date={}", ai);
+
+        let dur = resp.get(Measure::MacaulayDuration).unwrap();
+        assert!(dur > 8.0 && dur < 10.0, "Bund 10Y duration={}", dur);
+
+        let mv = resp.get(Measure::MarketValue).unwrap();
+        assert!((mv - 1_000_000.0).abs() < 1e-6, "Bund MV={}", mv);
+    }
+
+    #[test]
+    fn euro_cashflow_schedule_annual() {
+        let req = euro_request(0.03, d(2028, 2, 15), 100.0, d(2025, 2, 15), vec![
+            Measure::PresentValueCashflows,
+        ]);
+
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty());
+        assert_eq!(resp.cashflows.len(), 3, "3Y annual bond = 3 cashflows");
+
+        assert!((resp.cashflows[0].fv_amount - 3.0).abs() < 1e-10);
+        assert!((resp.cashflows[1].fv_amount - 3.0).abs() < 1e-10);
+        assert!((resp.cashflows[2].fv_amount - 103.0).abs() < 1e-10);
+
+        let sum_pv: f64 = resp.cashflows.iter().map(|cf| cf.pv_amount).sum();
+        assert!((sum_pv - 100.0).abs() < 1e-8, "sum_pv={}", sum_pv);
+    }
+
+    #[test]
+    fn euro_three_way_invariant() {
+        let req = euro_request(0.025, d(2035, 2, 15), 95.0, d(2025, 2, 15), vec![
+            Measure::PresentValue,
+            Measure::DirtyPrice,
+            Measure::PresentValueCashflows,
+        ]);
+
+        let resp = valuate(&req);
+        let pv = resp.get(Measure::PresentValue).unwrap();
+        let dp = resp.get(Measure::DirtyPrice).unwrap();
+        let sum_cf_pv: f64 = resp.cashflows.iter().map(|cf| cf.pv_amount).sum();
+
+        assert!((pv - dp).abs() < 1e-8);
+        assert!((sum_cf_pv - dp).abs() < 1e-8);
+    }
+
+    #[test]
+    fn euro_between_coupon_dates() {
+        let req = ValuationRequest {
+            security: SecurityInput {
+                coupon_rate: 0.025,
+                coupon_freq: 1,
+                coupon_type: CouponType::Fixed,
+                face_value: 100.0,
+                dated_date: d(2024, 7, 4),
+                maturity_date: d(2034, 7, 4),
+            },
+            market_price: 96.0,
+            quantity: 500_000.0,
+            cost_basis: None,
+            settlement: d(2025, 3, 15),
+            measures: vec![
+                Measure::YieldToMaturity,
+                Measure::AccruedInterest,
+                Measure::DirtyPrice,
+                Measure::MacaulayDuration,
+                Measure::Dv01,
+            ],
+        };
+
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let ai = resp.get(Measure::AccruedInterest).unwrap();
+        assert!(ai > 1.0 && ai < 2.5, "Euro mid-period AI={}", ai);
+
+        let ytm = resp.get(Measure::YieldToMaturity).unwrap();
+        assert!(ytm > 0.025, "Euro discount YTM={} should > coupon", ytm);
+
+        let dv = resp.get(Measure::Dv01).unwrap();
+        assert!(dv > 0.0, "Euro DV01={}", dv);
+    }
+
+    #[test]
+    fn euro_profit_loss() {
+        let req = euro_request(0.025, d(2035, 2, 15), 102.0, d(2025, 2, 15), vec![
+            Measure::MarketValue,
+            Measure::ProfitLoss,
+        ]);
+
+        let resp = valuate(&req);
+        let mv = resp.get(Measure::MarketValue).unwrap();
+        let pl = resp.get(Measure::ProfitLoss).unwrap();
+
+        // price=102, qty=1M → MV=1,020,000. cost=98, → cost_MV=980,000. PL=40,000
+        assert!((mv - 1_020_000.0).abs() < 1e-6);
+        assert!((pl - 40_000.0).abs() < 1e-6, "Euro PL={}", pl);
+    }
 }

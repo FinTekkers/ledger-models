@@ -109,4 +109,75 @@ mod tests {
         let dur = macaulay_duration(&bond, 0.047, d(2025, 5, 15));
         assert!(dur > 14.0 && dur < 20.0, "30Y duration={}", dur);
     }
+
+    // ── Euro bond (annual coupon) tests ─────────────────────────────
+
+    fn euro_bond(coupon: f64, maturity: Date) -> BondSpec {
+        BondSpec {
+            coupon_rate: coupon, coupon_freq: 1, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: d(2025, 2, 15), maturity_date: maturity,
+            day_count: DayCountConvention::ActualActualICMA,
+        }
+    }
+
+    #[test]
+    fn euro_modified_equals_macaulay_divided_by_1_plus_y() {
+        // For annual bonds: mod_dur = mac_dur / (1 + y) — not (1 + y/2)
+        let bond = euro_bond(0.025, d(2035, 2, 15));
+        let ytm = 0.03;
+        let mac = macaulay_duration(&bond, ytm, d(2025, 2, 15));
+        let modd = modified_duration(&bond, ytm, d(2025, 2, 15));
+        let expected = mac / (1.0 + ytm);
+        assert!((modd - expected).abs() < 1e-10,
+            "Euro mod_dur={}, expected mac/(1+y)={}", modd, expected);
+    }
+
+    #[test]
+    fn euro_duration_10y_bund() {
+        let bond = euro_bond(0.025, d(2035, 2, 15));
+        let dur = macaulay_duration(&bond, 0.025, d(2025, 2, 15));
+        assert!(dur > 8.0 && dur < 10.0, "10Y Bund duration={}", dur);
+    }
+
+    #[test]
+    fn euro_annual_longer_duration_than_semiannual() {
+        // Same coupon, maturity, and dated_date — annual pays less frequently so duration is higher
+        let dated = d(2025, 5, 15);
+        let maturity = d(2035, 5, 15);
+        let annual = BondSpec {
+            coupon_rate: 0.05, coupon_freq: 1, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: dated, maturity_date: maturity,
+            day_count: DayCountConvention::ActualActualICMA,
+        };
+        let semi = BondSpec {
+            coupon_rate: 0.05, coupon_freq: 2, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: dated, maturity_date: maturity,
+            day_count: DayCountConvention::ActualActualICMA,
+        };
+        let dur_annual = macaulay_duration(&annual, 0.05, dated);
+        let dur_semi = macaulay_duration(&semi, 0.05, dated);
+        assert!(dur_annual > dur_semi,
+            "Annual dur={} should > semi dur={}", dur_annual, dur_semi);
+    }
+
+    #[test]
+    fn euro_duration_convexity_approximation() {
+        let bond = euro_bond(0.025, d(2035, 2, 15));
+        let settle = d(2025, 2, 15);
+        let ytm = 0.03;
+        let dy = 0.01;
+
+        let p0 = super::super::pricing::dirty_price_from_yield(&bond, ytm, settle);
+        let p_actual = super::super::pricing::dirty_price_from_yield(&bond, ytm + dy, settle);
+
+        let mod_dur = modified_duration(&bond, ytm, settle);
+        let conv = super::super::convexity::convexity(&bond, ytm, settle);
+
+        let dp_approx = -mod_dur * p0 * dy + 0.5 * conv * p0 * dy * dy;
+        let p_approx = p0 + dp_approx;
+
+        let error_pct = ((p_approx - p_actual) / p_actual).abs();
+        assert!(error_pct < 0.001,
+            "Euro dur+conv approx error {:.4}%", error_pct * 100.0);
+    }
 }
