@@ -8,13 +8,16 @@ use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto}
 use ledger_models::fintekkers::models::valuation::CashflowProto;
 use ledger_models::fintekkers::requests::util::errors::SummaryProto;
 use ledger_models::fintekkers::requests::valuation::{
-    ValuationRequestProto, ValuationResponseProto,
+    CurveInputType, PricingModeProto, ValuationRequestProto, ValuationResponseProto,
+    YieldCurveInputProto,
 };
 
 use crate::bond::CouponType;
 use crate::calculator::{
-    CashflowResult, Measure, SecurityInput, ValuationRequest, ValuationResponse,
+    CashflowResult, Measure, PricingMode, SecurityInput, ValuationRequest, ValuationResponse,
 };
+use crate::callable::{CallDate, PutDate};
+use crate::curve::YieldCurve;
 use crate::date::Date;
 
 // ── ValuationRequestProto → ValuationRequest ─────────────────────────
@@ -48,6 +51,10 @@ pub fn request_from_proto(proto: &ValuationRequestProto) -> Result<ValuationRequ
         .filter_map(|&m| measure_from_proto(m))
         .collect();
 
+    let benchmark_curve = extract_benchmark_curve(proto)?;
+
+    let pricing_mode = extract_pricing_mode(proto, &benchmark_curve)?;
+
     Ok(ValuationRequest {
         security: security_input,
         market_price,
@@ -55,8 +62,8 @@ pub fn request_from_proto(proto: &ValuationRequestProto) -> Result<ValuationRequ
         cost_basis,
         settlement,
         measures,
-        benchmark_curve: None,
-        pricing_mode: None,
+        benchmark_curve,
+        pricing_mode,
     })
 }
 
@@ -159,6 +166,167 @@ fn extract_position_data(proto: &ValuationRequestProto) -> (f64, Option<f64>) {
     }
 
     (quantity, cost_basis)
+}
+
+// ── Benchmark curve extraction ────────────────────────────────────
+
+/// Extract a `YieldCurve` from the `benchmark_curve` field of a
+/// `ValuationRequestProto`, if present. Supports ZERO_RATES (direct)
+/// and PAR_RATES (bootstrapped). Returns `Ok(None)` when the field is
+/// absent, or `Err` on malformed data.
+fn extract_benchmark_curve(proto: &ValuationRequestProto) -> Result<Option<YieldCurve>, String> {
+    let curve_proto = match proto.benchmark_curve.as_ref() {
+        Some(c) => c,
+        None => return Ok(None),
+    };
+
+    yield_curve_from_proto(curve_proto).map(Some)
+}
+
+fn yield_curve_from_proto(proto: &YieldCurveInputProto) -> Result<YieldCurve, String> {
+    if proto.points.is_empty() {
+        return Err("benchmark_curve has no points".to_string());
+    }
+
+    let ref_date = proto
+        .reference_date
+        .as_ref()
+        .map(date_from_proto)
+        .ok_or("benchmark_curve missing reference_date")?;
+
+    let mut tenors = Vec::with_capacity(proto.points.len());
+    let mut rates = Vec::with_capacity(proto.points.len());
+
+    for pt in &proto.points {
+        let tenor = pt
+            .tenor
+            .as_ref()
+            .ok_or("curve point missing tenor")?;
+        let rate = pt
+            .rate
+            .as_ref()
+            .ok_or("curve point missing rate")?;
+        tenors.push(parse_decimal_value(tenor)?);
+        rates.push(parse_decimal_value(rate)?);
+    }
+
+    let curve_type = CurveInputType::try_from(proto.curve_type).unwrap_or(CurveInputType::ZeroRates);
+
+    match curve_type {
+        CurveInputType::ZeroRates => YieldCurve::new(ref_date, tenors, rates)
+            .map_err(|e| format!("benchmark_curve: {}", e)),
+        CurveInputType::ParRates => {
+            // Bootstrap with semiannual frequency (standard for US Treasuries)
+            YieldCurve::from_par_rates(ref_date, tenors, rates, 2)
+                .map_err(|e| format!("benchmark_curve bootstrap: {}", e))
+        }
+        CurveInputType::DiscountFactors => {
+            // Convert discount factors to zero rates: r = -ln(DF) / t
+            let zero_rates: Vec<f64> = tenors
+                .iter()
+                .zip(rates.iter())
+                .map(|(t, df)| {
+                    if *t <= 0.0 || *df <= 0.0 {
+                        0.0
+                    } else {
+                        -df.ln() / t
+                    }
+                })
+                .collect();
+            YieldCurve::new(ref_date, tenors, zero_rates)
+                .map_err(|e| format!("benchmark_curve (from DFs): {}", e))
+        }
+    }
+}
+
+// ── Call schedule extraction ──────────────────────────────────────
+
+/// Extract call and put schedules from the `call_schedule` field of a
+/// `ValuationRequestProto`. Returns `(call_dates, put_dates, volatility, tree_steps)`.
+/// Returns `None` when the field is absent.
+pub fn extract_call_schedule(
+    proto: &ValuationRequestProto,
+) -> Option<(Vec<CallDate>, Vec<PutDate>, f64, usize)> {
+    let sched = proto.call_schedule.as_ref()?;
+
+    let calls: Vec<CallDate> = sched
+        .call_dates
+        .iter()
+        .filter_map(|cd| {
+            let date = cd.date.as_ref().map(date_from_proto)?;
+            let price = cd
+                .call_price
+                .as_ref()
+                .and_then(|d| parse_decimal_value(d).ok())
+                .unwrap_or(100.0);
+            Some(CallDate {
+                date,
+                call_price: price,
+            })
+        })
+        .collect();
+
+    let puts: Vec<PutDate> = sched
+        .put_dates
+        .iter()
+        .filter_map(|pd| {
+            let date = pd.date.as_ref().map(date_from_proto)?;
+            let price = pd
+                .put_price
+                .as_ref()
+                .and_then(|d| parse_decimal_value(d).ok())
+                .unwrap_or(100.0);
+            Some(PutDate {
+                date,
+                put_price: price,
+            })
+        })
+        .collect();
+
+    let vol = sched
+        .volatility
+        .as_ref()
+        .and_then(|d| parse_decimal_value(d).ok())
+        .unwrap_or(0.0);
+
+    let steps = if sched.tree_steps == 0 {
+        100
+    } else {
+        sched.tree_steps as usize
+    };
+
+    Some((calls, puts, vol, steps))
+}
+
+// ── Pricing mode extraction ──────────────────────────────────────
+
+fn extract_pricing_mode(
+    proto: &ValuationRequestProto,
+    benchmark_curve: &Option<YieldCurve>,
+) -> Result<Option<PricingMode>, String> {
+    let mode = PricingModeProto::try_from(proto.pricing_mode)
+        .unwrap_or(PricingModeProto::PriceModeUnspecified);
+
+    match mode {
+        PricingModeProto::PriceModeUnspecified | PricingModeProto::OutrightPrice => Ok(None),
+        PricingModeProto::SpreadToBenchmark => {
+            let curve = benchmark_curve
+                .as_ref()
+                .ok_or("SPREAD_TO_BENCHMARK requires benchmark_curve")?;
+            let price_proto = proto
+                .price_input
+                .as_ref()
+                .ok_or("SPREAD_TO_BENCHMARK requires price_input as spread")?;
+            let spread = parse_decimal_value(
+                price_proto.price.as_ref().ok_or("missing price value for spread")?,
+            )?;
+            Ok(Some(PricingMode::SpreadToBenchmark {
+                spread,
+                curve: curve.clone(),
+            }))
+        }
+        _ => Ok(None),
+    }
 }
 
 // ── ValuationResponse → ValuationResponseProto ──────────────────────
@@ -352,5 +520,236 @@ fn measure_to_proto(measure: Measure) -> MeasureProto {
         Measure::ProfitLossPercent => MeasureProto::ProfitLossPercent,
         // These measures don't have proto equivalents yet; map to MarketValue as placeholder
         Measure::ZSpread | Measure::SpreadDuration | Measure::SpreadDv01 => MeasureProto::MarketValue,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ledger_models::fintekkers::requests::valuation::{
+        CallDateProto as ProtoCallDate, CallScheduleInputProto, CurvePointInputProto,
+        PutDateProto as ProtoPutDate, YieldCurveInputProto,
+    };
+
+    fn dec(val: &str) -> Option<DecimalValueProto> {
+        Some(DecimalValueProto {
+            arbitrary_precision_value: val.to_string(),
+        })
+    }
+
+    fn local_date(y: u32, m: u32, d: u32) -> Option<LocalDateProto> {
+        Some(LocalDateProto {
+            year: y,
+            month: m,
+            day: d,
+        })
+    }
+
+    fn make_curve_proto() -> YieldCurveInputProto {
+        YieldCurveInputProto {
+            reference_date: local_date(2025, 4, 15),
+            curve_type: CurveInputType::ZeroRates as i32,
+            points: vec![
+                CurvePointInputProto {
+                    tenor: dec("0.5"),
+                    rate: dec("0.035"),
+                },
+                CurvePointInputProto {
+                    tenor: dec("1.0"),
+                    rate: dec("0.038"),
+                },
+                CurvePointInputProto {
+                    tenor: dec("2.0"),
+                    rate: dec("0.040"),
+                },
+                CurvePointInputProto {
+                    tenor: dec("5.0"),
+                    rate: dec("0.042"),
+                },
+                CurvePointInputProto {
+                    tenor: dec("10.0"),
+                    rate: dec("0.043"),
+                },
+                CurvePointInputProto {
+                    tenor: dec("30.0"),
+                    rate: dec("0.044"),
+                },
+            ],
+        }
+    }
+
+    fn make_call_schedule_proto() -> CallScheduleInputProto {
+        CallScheduleInputProto {
+            call_dates: vec![
+                ProtoCallDate {
+                    date: local_date(2028, 6, 1),
+                    call_price: dec("103.0"),
+                },
+                ProtoCallDate {
+                    date: local_date(2029, 6, 1),
+                    call_price: dec("102.0"),
+                },
+                ProtoCallDate {
+                    date: local_date(2030, 6, 1),
+                    call_price: dec("100.0"),
+                },
+            ],
+            put_dates: vec![ProtoPutDate {
+                date: local_date(2029, 6, 1),
+                put_price: dec("99.0"),
+            }],
+            volatility: dec("0.20"),
+            tree_steps: 200,
+        }
+    }
+
+    fn make_valuation_request_proto(
+        with_curve: bool,
+        with_call_schedule: bool,
+    ) -> ValuationRequestProto {
+        use ledger_models::fintekkers::models::security::BondDetailsProto;
+
+        let bond_details = BondDetailsProto {
+            coupon_rate: dec("0.05"),
+            coupon_type: CouponTypeProto::Fixed as i32,
+            coupon_frequency: CouponFrequencyProto::Semiannually as i32,
+            face_value: dec("100"),
+            dated_date: local_date(2025, 6, 1),
+            maturity_date: local_date(2035, 6, 1),
+            ..Default::default()
+        };
+
+        let security = SecurityProto {
+            object_class: "Security".to_string(),
+            version: "0.0.1".to_string(),
+            security_type: SecurityTypeProto::BondSecurity as i32,
+            product_details: Some(ProductDetails::BondDetails(bond_details)),
+            ..Default::default()
+        };
+
+        let price = PriceProto {
+            price: dec("100.0"),
+            ..Default::default()
+        };
+
+        let asof = ledger_models::fintekkers::models::util::LocalTimestampProto {
+            time_zone: "UTC".to_string(),
+            timestamp: Some(prost_types::Timestamp {
+                // 2025-06-01 = day 20240 from epoch => 20240 * 86400
+                seconds: 20240 * 86400,
+                nanos: 0,
+            }),
+        };
+
+        ValuationRequestProto {
+            object_class: "ValuationRequest".to_string(),
+            version: "0.0.1".to_string(),
+            security_input: Some(security),
+            price_input: Some(price),
+            asof_datetime: Some(asof),
+            measures: vec![
+                MeasureProto::CleanPrice as i32,
+                MeasureProto::YieldToMaturity as i32,
+            ],
+            benchmark_curve: if with_curve {
+                Some(make_curve_proto())
+            } else {
+                None
+            },
+            call_schedule: if with_call_schedule {
+                Some(make_call_schedule_proto())
+            } else {
+                None
+            },
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn extract_benchmark_curve_populates_yield_curve() {
+        let proto = make_valuation_request_proto(true, false);
+        let req = request_from_proto(&proto).expect("should parse");
+
+        let curve = req
+            .benchmark_curve
+            .as_ref()
+            .expect("benchmark_curve should be populated");
+
+        // Verify the curve has the expected number of tenors
+        assert_eq!(curve.tenors().len(), 6, "expected 6 tenor points");
+
+        // Verify the 10Y zero rate matches input
+        let r_10y = curve.zero_rate(10.0);
+        assert!(
+            (r_10y - 0.043).abs() < 1e-10,
+            "10Y zero rate should be 0.043, got {}",
+            r_10y
+        );
+
+        // Discount factor at t=0 should be 1.0
+        let df0 = curve.discount_factor(0.0);
+        assert!((df0 - 1.0).abs() < 1e-12, "DF(0) should be 1.0, got {}", df0);
+    }
+
+    #[test]
+    fn extract_call_schedule_populates_dates() {
+        let proto = make_valuation_request_proto(false, true);
+
+        let (calls, puts, vol, steps) =
+            extract_call_schedule(&proto).expect("call_schedule should be present");
+
+        assert_eq!(calls.len(), 3, "expected 3 call dates");
+        assert_eq!(puts.len(), 1, "expected 1 put date");
+        assert!((vol - 0.20).abs() < 1e-10, "volatility should be 0.20, got {}", vol);
+        assert_eq!(steps, 200, "tree_steps should be 200");
+
+        // Verify first call date
+        assert_eq!(calls[0].date, Date::new(2028, 6, 1));
+        assert!((calls[0].call_price - 103.0).abs() < 1e-10);
+
+        // Verify put date
+        assert_eq!(puts[0].date, Date::new(2029, 6, 1));
+        assert!((puts[0].put_price - 99.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn request_without_curve_has_none_benchmark() {
+        let proto = make_valuation_request_proto(false, false);
+        let req = request_from_proto(&proto).expect("should parse");
+
+        assert!(
+            req.benchmark_curve.is_none(),
+            "benchmark_curve should be None when not set in proto"
+        );
+    }
+
+    #[test]
+    fn request_without_call_schedule_returns_none() {
+        let proto = make_valuation_request_proto(false, false);
+        assert!(
+            extract_call_schedule(&proto).is_none(),
+            "call_schedule should be None when not set in proto"
+        );
+    }
+
+    #[test]
+    fn full_round_trip_with_benchmark_curve() {
+        let proto = make_valuation_request_proto(true, true);
+        let req = request_from_proto(&proto).expect("should parse");
+
+        // Verify the request has all the expected fields
+        assert!(req.benchmark_curve.is_some());
+        assert!(req.pricing_mode.is_none()); // no pricing_mode set
+        assert_eq!(req.measures.len(), 2);
+
+        // Run the full valuation through valuate_proto
+        let response = valuate_proto(&proto);
+        assert_eq!(response.object_class, "ValuationResponse");
+
+        // Should have results for the requested measures
+        assert!(
+            !response.measure_results.is_empty(),
+            "should have measure results"
+        );
     }
 }

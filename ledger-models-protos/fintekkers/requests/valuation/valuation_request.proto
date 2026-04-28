@@ -10,6 +10,8 @@ import "fintekkers/models/util/local_timestamp.proto";
 import "fintekkers/requests/util/operation.proto";
 import "fintekkers/models/position/measure.proto";
 
+import "fintekkers/requests/valuation/valuation_inputs.proto";
+
 option java_multiple_files = true;
 
 option java_outer_classname = "ValuationRequestProtos";
@@ -47,6 +49,22 @@ message ValuationRequestProto {
   //The current reference rate observation for floating rate note (FRN) valuation.
   //Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
   fintekkers.models.price.PriceProto reference_rate_input = 25;
+
+  // Yield curve for curve-dependent valuations
+  YieldCurveInputProto benchmark_curve = 40;
+  YieldCurveInputProto projection_curve = 41;  // if different from discount curve
+
+  // Product-specific inputs (set based on security_type)
+  CallScheduleInputProto call_schedule = 50;
+  MbsInputProto mbs_input = 51;
+  TaxInputProto tax_input = 52;
+  RepoInputProto repo_input = 53;
+  SwapInputProto swap_input = 54;
+  FuturesInputProto futures_input = 55;
+  ScenarioInputProto scenario_input = 56;
+
+  // Pricing mode
+  PricingModeProto pricing_mode = 60;
 }
 
 
