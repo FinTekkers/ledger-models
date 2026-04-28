@@ -13,6 +13,7 @@ pub mod repo;
 pub mod xccy;
 pub mod mbs;
 pub mod risk;
+pub mod dispatch;
 
 #[cfg(feature = "proto")]
 pub mod proto_bridge;

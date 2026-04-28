@@ -1,0 +1,210 @@
+syntax = "proto3";
+package fintekkers.requests.valuation;
+
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/util/local_timestamp.proto";
+import "fintekkers/models/security/security.proto";
+import "fintekkers/models/position/measure.proto";
+import "fintekkers/models/position/position_util.proto";
+import "fintekkers/models/valuation/cashflow.proto";
+import "fintekkers/requests/util/errors/summary.proto";
+
+option java_multiple_files = true;
+
+// ═══════════════════════════════════════════════════════════════
+// Yield Curve (shared by multiple product RPCs)
+// ═══════════════════════════════════════════════════════════════
+
+message YieldCurveProto {
+  fintekkers.models.util.LocalDateProto reference_date = 1;
+  repeated CurvePointProto points = 2;
+}
+
+message CurvePointProto {
+  fintekkers.models.util.DecimalValueProto tenor = 1;
+  fintekkers.models.util.DecimalValueProto rate = 2;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Bond Valuation (fixed-rate, covers treasuries, corporates, gilts, JGBs)
+// ═══════════════════════════════════════════════════════════════
+
+message BondValuationRequest {
+  fintekkers.models.security.SecurityProto security = 1;
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+  fintekkers.models.util.LocalTimestampProto settlement = 3;
+  fintekkers.models.util.DecimalValueProto quantity = 4;
+  fintekkers.models.util.DecimalValueProto cost_basis = 5;
+  repeated fintekkers.models.position.MeasureProto measures = 10;
+
+  // Optional: benchmark curve for Z-spread, spread duration
+  YieldCurveProto benchmark_curve = 20;
+  fintekkers.models.util.DecimalValueProto z_spread = 21;  // if pricing from spread
+}
+
+message BondValuationResponse {
+  BondValuationRequest request = 1;
+  repeated fintekkers.models.position.MeasureMapEntry results = 10;
+  repeated fintekkers.models.valuation.CashflowProto cashflows = 20;
+  fintekkers.requests.util.errors.SummaryProto summary = 30;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Callable Bond Valuation
+// ═══════════════════════════════════════════════════════════════
+
+message CallDateEntry {
+  fintekkers.models.util.LocalDateProto date = 1;
+  fintekkers.models.util.DecimalValueProto price = 2;
+}
+
+message CallableBondValuationRequest {
+  fintekkers.models.security.SecurityProto security = 1;
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+  fintekkers.models.util.LocalTimestampProto settlement = 3;
+  repeated fintekkers.models.position.MeasureProto measures = 10;
+
+  repeated CallDateEntry call_schedule = 20;
+  repeated CallDateEntry put_schedule = 21;
+  fintekkers.models.util.DecimalValueProto volatility = 22;
+  uint32 tree_steps = 23;
+  YieldCurveProto benchmark_curve = 24;
+}
+
+message CallableBondValuationResponse {
+  CallableBondValuationRequest request = 1;
+  repeated fintekkers.models.position.MeasureMapEntry results = 10;
+  fintekkers.models.util.DecimalValueProto yield_to_worst = 20;
+  fintekkers.models.util.LocalDateProto worst_call_date = 21;
+  fintekkers.models.util.DecimalValueProto oas = 22;
+  fintekkers.requests.util.errors.SummaryProto summary = 30;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Swap Valuation (IRS)
+// ═══════════════════════════════════════════════════════════════
+
+message SwapValuationRequest {
+  fintekkers.models.util.DecimalValueProto notional = 1;
+  fintekkers.models.util.DecimalValueProto fixed_rate = 2;
+  uint32 fixed_freq = 3;
+  uint32 float_freq = 4;
+  fintekkers.models.util.DecimalValueProto float_spread = 5;
+  fintekkers.models.util.LocalDateProto start_date = 6;
+  fintekkers.models.util.LocalDateProto maturity_date = 7;
+  bool pay_fixed = 8;
+
+  YieldCurveProto projection_curve = 20;
+  YieldCurveProto discount_curve = 21;
+
+  repeated fintekkers.models.position.MeasureProto measures = 30;
+}
+
+message SwapValuationResponse {
+  SwapValuationRequest request = 1;
+  fintekkers.models.util.DecimalValueProto npv = 10;
+  fintekkers.models.util.DecimalValueProto par_swap_rate = 11;
+  fintekkers.models.util.DecimalValueProto dv01 = 12;
+  fintekkers.models.util.DecimalValueProto pv01 = 13;
+  fintekkers.models.util.DecimalValueProto fixed_leg_pv = 14;
+  fintekkers.models.util.DecimalValueProto float_leg_pv = 15;
+  fintekkers.requests.util.errors.SummaryProto summary = 30;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MBS Valuation
+// ═══════════════════════════════════════════════════════════════
+
+message MbsValuationRequest {
+  fintekkers.models.util.DecimalValueProto original_balance = 1;
+  fintekkers.models.util.DecimalValueProto current_balance = 2;
+  fintekkers.models.util.DecimalValueProto pass_through_rate = 3;
+  fintekkers.models.util.DecimalValueProto wac = 4;
+  uint32 wam = 5;
+  uint32 age = 6;
+  fintekkers.models.util.DecimalValueProto market_price = 7;
+  fintekkers.models.util.LocalTimestampProto settlement = 8;
+  fintekkers.models.util.DecimalValueProto psa_speed = 9;
+
+  repeated fintekkers.models.position.MeasureProto measures = 30;
+}
+
+message MbsValuationResponse {
+  MbsValuationRequest request = 1;
+  fintekkers.models.util.DecimalValueProto price = 10;
+  fintekkers.models.util.DecimalValueProto yield_rate = 11;
+  fintekkers.models.util.DecimalValueProto wal = 12;
+  fintekkers.models.util.DecimalValueProto effective_duration = 13;
+  repeated MbsCashflowProto cashflows = 20;
+  fintekkers.requests.util.errors.SummaryProto summary = 30;
+}
+
+message MbsCashflowProto {
+  uint32 month = 1;
+  fintekkers.models.util.DecimalValueProto interest = 2;
+  fintekkers.models.util.DecimalValueProto scheduled_principal = 3;
+  fintekkers.models.util.DecimalValueProto prepayment = 4;
+  fintekkers.models.util.DecimalValueProto total = 5;
+  fintekkers.models.util.DecimalValueProto ending_balance = 6;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Money Market (T-Bills, CDs, Commercial Paper)
+// ═══════════════════════════════════════════════════════════════
+
+message MoneyMarketValuationRequest {
+  fintekkers.models.util.DecimalValueProto face_value = 1;
+  fintekkers.models.util.LocalDateProto issue_date = 2;
+  fintekkers.models.util.LocalDateProto maturity_date = 3;
+  fintekkers.models.util.DecimalValueProto market_price = 4;
+  fintekkers.models.util.LocalTimestampProto settlement = 5;
+
+  // Optional: coupon for CDs
+  fintekkers.models.util.DecimalValueProto coupon_rate = 6;
+  bool is_discount = 7;  // true for T-bills/discount CDs, false for add-on CDs
+
+  repeated fintekkers.models.position.MeasureProto measures = 30;
+}
+
+message MoneyMarketValuationResponse {
+  MoneyMarketValuationRequest request = 1;
+  fintekkers.models.util.DecimalValueProto discount_rate = 10;
+  fintekkers.models.util.DecimalValueProto money_market_yield = 11;
+  fintekkers.models.util.DecimalValueProto bond_equivalent_yield = 12;
+  fintekkers.models.util.DecimalValueProto effective_annual_yield = 13;
+  fintekkers.requests.util.errors.SummaryProto summary = 30;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Scenario Analysis
+// ═══════════════════════════════════════════════════════════════
+
+message ScenarioAnalysisRequest {
+  fintekkers.models.security.SecurityProto security = 1;
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+  fintekkers.models.util.LocalTimestampProto settlement = 3;
+  YieldCurveProto benchmark_curve = 4;
+  fintekkers.models.util.DecimalValueProto z_spread = 5;
+
+  repeated ScenarioDefProto scenarios = 20;
+}
+
+message ScenarioDefProto {
+  string name = 1;
+  fintekkers.models.util.DecimalValueProto parallel_shift_bp = 2;  // basis points
+}
+
+message ScenarioAnalysisResponse {
+  ScenarioAnalysisRequest request = 1;
+  repeated ScenarioResultProto results = 10;
+  fintekkers.requests.util.errors.SummaryProto summary = 30;
+}
+
+message ScenarioResultProto {
+  string scenario_name = 1;
+  fintekkers.models.util.DecimalValueProto base_price = 2;
+  fintekkers.models.util.DecimalValueProto shocked_price = 3;
+  fintekkers.models.util.DecimalValueProto pnl = 4;
+  fintekkers.models.util.DecimalValueProto pnl_percent = 5;
+}

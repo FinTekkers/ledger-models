@@ -5,14 +5,35 @@ import "fintekkers/requests/valuation/valuation_request.proto";
 import "fintekkers/requests/valuation/valuation_response.proto";
 import "fintekkers/requests/valuation/curve_request.proto";
 import "fintekkers/requests/valuation/curve_response.proto";
+import "fintekkers/requests/valuation/bond_valuation.proto";
 
 option java_generic_services = true;
 option py_generic_services = true;
 
 service Valuation {
+    // Existing RPCs (kept for backward compat)
     rpc RunValuation (fintekkers.requests.valuation.ValuationRequestProto)
         returns (fintekkers.requests.valuation.ValuationResponseProto);
 
     rpc RunCurve (fintekkers.requests.valuation.CurveRequestProto)
         returns (fintekkers.requests.valuation.CurveResponseProto);
+
+    // ── Product-specific RPCs (Approach 2) ─────────────────────────
+    rpc RunBondValuation (fintekkers.requests.valuation.BondValuationRequest)
+        returns (fintekkers.requests.valuation.BondValuationResponse);
+
+    rpc RunCallableBondValuation (fintekkers.requests.valuation.CallableBondValuationRequest)
+        returns (fintekkers.requests.valuation.CallableBondValuationResponse);
+
+    rpc RunSwapValuation (fintekkers.requests.valuation.SwapValuationRequest)
+        returns (fintekkers.requests.valuation.SwapValuationResponse);
+
+    rpc RunMbsValuation (fintekkers.requests.valuation.MbsValuationRequest)
+        returns (fintekkers.requests.valuation.MbsValuationResponse);
+
+    rpc RunMoneyMarketValuation (fintekkers.requests.valuation.MoneyMarketValuationRequest)
+        returns (fintekkers.requests.valuation.MoneyMarketValuationResponse);
+
+    rpc RunScenarioAnalysis (fintekkers.requests.valuation.ScenarioAnalysisRequest)
+        returns (fintekkers.requests.valuation.ScenarioAnalysisResponse);
 }
