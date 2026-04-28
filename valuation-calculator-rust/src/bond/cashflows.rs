@@ -147,4 +147,64 @@ mod tests {
         assert_eq!(non_zero.len(), 1);
         assert!((non_zero[0].amount - 100.0).abs() < 1e-12);
     }
+
+    // ── Euro bond (annual coupon) tests ─────────────────────────────
+
+    fn euro_bond(coupon: f64, dated: Date, maturity: Date) -> BondSpec {
+        BondSpec {
+            coupon_rate: coupon,
+            coupon_freq: 1,
+            coupon_type: CouponType::Fixed,
+            face_value: 100.0,
+            dated_date: dated,
+            maturity_date: maturity,
+            day_count: DayCountConvention::ActualActualICMA,
+        }
+    }
+
+    #[test]
+    fn euro_coupon_dates_10y() {
+        let bond = euro_bond(0.025, d(2025, 2, 15), d(2035, 2, 15));
+        let dates = generate_coupon_dates(&bond);
+        assert_eq!(dates.first(), Some(&d(2025, 2, 15)));
+        assert_eq!(dates.last(), Some(&d(2035, 2, 15)));
+        assert_eq!(dates.len(), 11); // dated_date + 10 annual coupons
+    }
+
+    #[test]
+    fn euro_cashflows_on_coupon_date() {
+        let bond = euro_bond(0.03, d(2025, 1, 4), d(2030, 1, 4));
+        let cfs = generate(&bond, d(2025, 1, 4));
+        assert_eq!(cfs.len(), 5); // 5 annual coupons
+        assert!((cfs[0].amount - 3.0).abs() < 1e-12); // 3% × 100 / 1
+        assert!((cfs[4].amount - 103.0).abs() < 1e-12); // last = coupon + principal
+        assert!((cfs[0].period_fraction - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn euro_cashflows_between_coupon_dates() {
+        // Bund: 2.5% coupon, annual, settle between dates
+        let bond = euro_bond(0.025, d(2024, 7, 4), d(2034, 7, 4));
+        let settle = d(2025, 3, 15);
+        let cfs = generate(&bond, settle);
+        assert_eq!(cfs.len(), 10); // 10 remaining annual payments
+
+        // First cashflow should be at 2025-07-04
+        assert_eq!(cfs[0].date, d(2025, 7, 4));
+
+        // w = days(Mar15, Jul4) / days(Jul4_2024, Jul4_2025)
+        let prev = d(2024, 7, 4);
+        let next = d(2025, 7, 4);
+        let expected_w = (next.days_since(&settle) as f64) / (next.days_since(&prev) as f64);
+        assert!((cfs[0].period_fraction - expected_w).abs() < 1e-10,
+            "w={}, expected={}", cfs[0].period_fraction, expected_w);
+    }
+
+    #[test]
+    fn euro_coupon_amount_annual() {
+        // Annual coupon = coupon_rate × face_value / 1
+        let bond = euro_bond(0.0175, d(2025, 5, 15), d(2035, 5, 15));
+        let cfs = generate(&bond, d(2025, 5, 15));
+        assert!((cfs[0].amount - 1.75).abs() < 1e-12);
+    }
 }

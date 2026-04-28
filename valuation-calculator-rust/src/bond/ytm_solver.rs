@@ -214,4 +214,68 @@ mod tests {
                 bond.coupon_rate, target_ytm, solved);
         }
     }
+
+    // ── Euro bond (annual coupon) tests ─────────────────────────────
+
+    fn euro_bond(coupon: f64, dated: Date, maturity: Date) -> BondSpec {
+        BondSpec {
+            coupon_rate: coupon, coupon_freq: 1, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: dated, maturity_date: maturity,
+            day_count: DayCountConvention::ActualActualICMA,
+        }
+    }
+
+    #[test]
+    fn euro_par_bond_ytm_equals_coupon() {
+        let bond = euro_bond(0.025, d(2025, 2, 15), d(2035, 2, 15));
+        let ytm = solve_ytm(&bond, 100.0, d(2025, 2, 15)).unwrap();
+        assert!((ytm - 0.025).abs() < 1e-10, "Euro par YTM={}", ytm);
+    }
+
+    #[test]
+    fn euro_discount_bond() {
+        let bond = euro_bond(0.02, d(2025, 1, 4), d(2035, 1, 4));
+        let ytm = solve_ytm(&bond, 92.0, d(2025, 1, 4)).unwrap();
+        assert!(ytm > 0.02, "Euro discount YTM={}", ytm);
+    }
+
+    #[test]
+    fn euro_ytm_round_trip() {
+        let bond = euro_bond(0.03, d(2025, 2, 15), d(2035, 2, 15));
+        let target = 0.035;
+        let dp = super::super::pricing::dirty_price_from_yield(&bond, target, d(2025, 2, 15));
+        let solved = solve_ytm(&bond, dp, d(2025, 2, 15)).unwrap();
+        assert!((solved - target).abs() < 1e-10, "Euro round-trip: solved={}", solved);
+    }
+
+    #[test]
+    fn euro_ytm_round_trip_between_dates() {
+        let bond = euro_bond(0.025, d(2024, 7, 4), d(2034, 7, 4));
+        let settle = d(2025, 3, 15);
+        let target = 0.028;
+        let dp = super::super::pricing::dirty_price_from_yield(&bond, target, settle);
+        let ai = accrued_interest::accrued_interest(&bond, settle);
+        let cp = dp - ai;
+        let solved = solve_ytm(&bond, cp, settle).unwrap();
+        assert!((solved - target).abs() < 1e-10, "Euro between-dates: solved={}", solved);
+    }
+
+    #[test]
+    fn euro_round_trip_multiple() {
+        let bonds = vec![
+            euro_bond(0.01, d(2025, 1, 4), d(2027, 1, 4)),
+            euro_bond(0.025, d(2025, 2, 15), d(2035, 2, 15)),
+            euro_bond(0.04, d(2025, 7, 4), d(2055, 7, 4)),
+        ];
+        let yields = [0.02, 0.03, 0.035];
+
+        for (bond, &target) in bonds.iter().zip(yields.iter()) {
+            let settle = bond.dated_date;
+            let dp = super::super::pricing::dirty_price_from_yield(bond, target, settle);
+            let solved = solve_ytm(bond, dp, settle).unwrap();
+            assert!((solved - target).abs() < 1e-10,
+                "Euro round-trip failed: coupon={}, target={}, solved={}",
+                bond.coupon_rate, target, solved);
+        }
+    }
 }
