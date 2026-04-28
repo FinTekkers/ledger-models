@@ -5,6 +5,7 @@ pub mod daycount;
 pub mod error;
 pub mod date;
 pub mod calculator;
+pub mod dispatch;
 pub mod swap;
 pub mod tips;
 pub mod muni;

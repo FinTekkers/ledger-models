@@ -9,6 +9,7 @@ import "fintekkers/models/util/local_timestamp.proto";
 
 import "fintekkers/requests/util/operation.proto";
 import "fintekkers/models/position/measure.proto";
+import "fintekkers/requests/valuation/product_inputs.proto";
 
 option java_multiple_files = true;
 
@@ -47,6 +48,11 @@ message ValuationRequestProto {
   //The current reference rate observation for floating rate note (FRN) valuation.
   //Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
   fintekkers.models.price.PriceProto reference_rate_input = 25;
+
+  // Product-specific input (determines calculation path)
+  // When set, overrides the security_input/price_input/cpi_price_input fields.
+  // Dispatch is based on which oneof variant is populated.
+  ProductInput product_input = 70;
 }
 
 
