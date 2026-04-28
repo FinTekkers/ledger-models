@@ -26,6 +26,7 @@ pub struct BondSpec {
     pub dated_date: Date,
     pub maturity_date: Date,
     pub day_count: DayCountConvention,
+    pub ex_dividend_days: u32,
 }
 
 #[derive(Debug, Clone)]

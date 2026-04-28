@@ -1,4 +1,5 @@
 mod actual_actual_icma;
+mod actual_365;
 
 pub use actual_actual_icma::*;
 
@@ -7,6 +8,7 @@ use crate::date::Date;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DayCountConvention {
     ActualActualICMA,
+    Actual365Fixed,
 }
 
 impl DayCountConvention {
@@ -20,6 +22,9 @@ impl DayCountConvention {
         match self {
             DayCountConvention::ActualActualICMA => {
                 actual_actual_icma::accrual_fraction(start, end, period_start, period_end)
+            }
+            DayCountConvention::Actual365Fixed => {
+                actual_365::accrual_fraction(start, end)
             }
         }
     }

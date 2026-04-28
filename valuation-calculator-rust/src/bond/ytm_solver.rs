@@ -92,7 +92,7 @@ mod tests {
         BondSpec {
             coupon_rate: coupon, coupon_freq: 2, coupon_type: CouponType::Fixed,
             face_value: 100.0, dated_date: dated, maturity_date: maturity,
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 
@@ -177,7 +177,7 @@ mod tests {
         let bond = BondSpec {
             coupon_rate: 0.0, coupon_freq: 2, coupon_type: CouponType::Zero,
             face_value: 100.0, dated_date: d(2025, 5, 15), maturity_date: d(2035, 5, 15),
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         };
         let price = 100.0 / 1.025_f64.powi(20);
         let ytm = solve_ytm(&bond, price, d(2025, 5, 15)).unwrap();
@@ -221,7 +221,7 @@ mod tests {
         BondSpec {
             coupon_rate: coupon, coupon_freq: 1, coupon_type: CouponType::Fixed,
             face_value: 100.0, dated_date: dated, maturity_date: maturity,
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 
@@ -277,5 +277,67 @@ mod tests {
                 "Euro round-trip failed: coupon={}, target={}, solved={}",
                 bond.coupon_rate, target, solved);
         }
+    }
+
+    // ── UK Gilt (ex-dividend) tests ─────────────────────────────────
+
+    #[test]
+    fn gilt_par_ytm() {
+        let bond = BondSpec {
+            coupon_rate: 0.04, coupon_freq: 2, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: d(2025, 1, 22), maturity_date: d(2035, 1, 22),
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 7,
+        };
+        let ytm = solve_ytm(&bond, 100.0, d(2025, 1, 22)).unwrap();
+        assert!((ytm - 0.04).abs() < 1e-10, "Gilt par YTM={}", ytm);
+    }
+
+    #[test]
+    fn gilt_ytm_round_trip() {
+        let bond = BondSpec {
+            coupon_rate: 0.04, coupon_freq: 2, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: d(2025, 1, 22), maturity_date: d(2035, 1, 22),
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 7,
+        };
+        let target = 0.045;
+        let settle = d(2025, 4, 1);
+        let dp = super::super::pricing::dirty_price_from_yield(&bond, target, settle);
+        let ai = accrued_interest::accrued_interest(&bond, settle);
+        let cp = dp - ai;
+        let solved = solve_ytm(&bond, cp, settle).unwrap();
+        assert!((solved - target).abs() < 1e-10, "Gilt round-trip: solved={}", solved);
+    }
+
+    // ── JGB (Act/365) tests ─────────────────────────────────────────
+
+    fn jgb(coupon: f64, dated: Date, maturity: Date) -> BondSpec {
+        BondSpec {
+            coupon_rate: coupon, coupon_freq: 2, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: dated, maturity_date: maturity,
+            day_count: DayCountConvention::Actual365Fixed, ex_dividend_days: 0,
+        }
+    }
+
+    #[test]
+    fn jgb_par_ytm() {
+        let bond = jgb(0.005, d(2025, 3, 20), d(2035, 3, 20));
+        let ytm = solve_ytm(&bond, 100.0, d(2025, 3, 20)).unwrap();
+        assert!((ytm - 0.005).abs() < 1e-10, "JGB par YTM={}", ytm);
+    }
+
+    #[test]
+    fn jgb_ytm_round_trip() {
+        let bond = jgb(0.005, d(2025, 3, 20), d(2035, 3, 20));
+        let target = 0.008;
+        let dp = super::super::pricing::dirty_price_from_yield(&bond, target, d(2025, 3, 20));
+        let solved = solve_ytm(&bond, dp, d(2025, 3, 20)).unwrap();
+        assert!((solved - target).abs() < 1e-10, "JGB round-trip: solved={}", solved);
+    }
+
+    #[test]
+    fn jgb_discount() {
+        let bond = jgb(0.001, d(2025, 3, 20), d(2035, 3, 20));
+        let ytm = solve_ytm(&bond, 97.0, d(2025, 3, 20)).unwrap();
+        assert!(ytm > 0.001, "JGB discount YTM={}", ytm);
     }
 }

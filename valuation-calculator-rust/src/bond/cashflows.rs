@@ -41,6 +41,14 @@ pub fn prev_and_next_coupon(coupon_dates: &[Date], settlement: Date) -> (Date, D
     (second_last, last)
 }
 
+pub fn is_ex_dividend(bond: &BondSpec, settlement: Date, next_coupon: Date) -> bool {
+    if bond.ex_dividend_days == 0 {
+        return false;
+    }
+    let days_to_coupon = next_coupon.days_since(&settlement);
+    days_to_coupon > 0 && days_to_coupon <= bond.ex_dividend_days as i32
+}
+
 pub fn generate(bond: &BondSpec, settlement: Date) -> Vec<Cashflow> {
     let coupon_dates = generate_coupon_dates(bond);
     let (prev_coupon, next_coupon) = prev_and_next_coupon(&coupon_dates, settlement);
@@ -49,6 +57,8 @@ pub fn generate(bond: &BondSpec, settlement: Date) -> Vec<Cashflow> {
         CouponType::Fixed => bond.coupon_rate * bond.face_value / bond.coupon_freq as f64,
         CouponType::Zero => 0.0,
     };
+
+    let ex_div = is_ex_dividend(bond, settlement, next_coupon);
 
     let remaining: Vec<Date> = coupon_dates
         .iter()
@@ -61,16 +71,24 @@ pub fn generate(bond: &BondSpec, settlement: Date) -> Vec<Cashflow> {
     remaining
         .iter()
         .enumerate()
-        .map(|(i, &date)| {
-            let mut amount = coupon_payment;
-            if date == bond.maturity_date {
-                amount += bond.face_value;
+        .filter_map(|(i, &date)| {
+            if ex_div && date == next_coupon && date != bond.maturity_date {
+                return None;
             }
-            Cashflow {
+            let mut amount = coupon_payment;
+            if ex_div && date == next_coupon && date == bond.maturity_date {
+                amount = bond.face_value;
+            }
+            if !ex_div || date != next_coupon {
+                if date == bond.maturity_date {
+                    amount = coupon_payment + bond.face_value;
+                }
+            }
+            Some(Cashflow {
                 date,
                 amount,
                 period_fraction: w + i as f64,
-            }
+            })
         })
         .collect()
 }
@@ -90,7 +108,7 @@ mod tests {
             face_value: 100.0,
             dated_date: dated,
             maturity_date: maturity,
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 
@@ -140,7 +158,7 @@ mod tests {
             face_value: 100.0,
             dated_date: d(2025, 5, 15),
             maturity_date: d(2026, 5, 15),
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         };
         let cfs = generate(&bond, d(2025, 5, 15));
         let non_zero: Vec<_> = cfs.iter().filter(|cf| cf.amount > 0.0).collect();
@@ -158,7 +176,7 @@ mod tests {
             face_value: 100.0,
             dated_date: dated,
             maturity_date: maturity,
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 
@@ -206,5 +224,80 @@ mod tests {
         let bond = euro_bond(0.0175, d(2025, 5, 15), d(2035, 5, 15));
         let cfs = generate(&bond, d(2025, 5, 15));
         assert!((cfs[0].amount - 1.75).abs() < 1e-12);
+    }
+
+    // ── UK Gilt (ex-dividend) tests ─────────────────────────────────
+
+    fn gilt(coupon: f64, dated: Date, maturity: Date) -> BondSpec {
+        BondSpec {
+            coupon_rate: coupon, coupon_freq: 2, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: dated, maturity_date: maturity,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 7,
+        }
+    }
+
+    #[test]
+    fn gilt_no_ex_div_outside_period() {
+        let bond = gilt(0.04, d(2025, 1, 22), d(2035, 1, 22));
+        let settle = d(2025, 3, 1);
+        assert!(!is_ex_dividend(&bond, settle, d(2025, 7, 22)));
+        let cfs = generate(&bond, settle);
+        assert_eq!(cfs.len(), 20);
+    }
+
+    #[test]
+    fn gilt_ex_div_skips_next_coupon() {
+        let bond = gilt(0.04, d(2025, 1, 22), d(2035, 1, 22));
+        let next_coupon = d(2025, 7, 22);
+        let settle = d(2025, 7, 16); // 6 days before
+        assert!(is_ex_dividend(&bond, settle, next_coupon));
+        let cfs = generate(&bond, settle);
+        assert_eq!(cfs.len(), 19);
+        assert!(cfs[0].date > next_coupon);
+    }
+
+    #[test]
+    fn gilt_ex_div_boundary() {
+        let bond = gilt(0.04, d(2025, 1, 22), d(2035, 1, 22));
+        let next = d(2025, 7, 22);
+        assert!(is_ex_dividend(&bond, d(2025, 7, 15), next));  // 7 days = ex-div
+        assert!(!is_ex_dividend(&bond, d(2025, 7, 14), next)); // 8 days = not ex-div
+    }
+
+    #[test]
+    fn gilt_non_ex_div_normal_cashflows() {
+        let bond = gilt(0.04, d(2025, 1, 22), d(2027, 1, 22));
+        let settle = d(2025, 1, 22);
+        let cfs = generate(&bond, settle);
+        assert_eq!(cfs.len(), 4);
+        assert!((cfs[0].amount - 2.0).abs() < 1e-12);
+        assert!((cfs[3].amount - 102.0).abs() < 1e-12);
+    }
+
+    // ── JGB (Act/365) tests ─────────────────────────────────────────
+
+    fn jgb(coupon: f64, dated: Date, maturity: Date) -> BondSpec {
+        BondSpec {
+            coupon_rate: coupon, coupon_freq: 2, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: dated, maturity_date: maturity,
+            day_count: DayCountConvention::Actual365Fixed, ex_dividend_days: 0,
+        }
+    }
+
+    #[test]
+    fn jgb_coupon_dates() {
+        let bond = jgb(0.005, d(2025, 3, 20), d(2035, 3, 20));
+        let dates = generate_coupon_dates(&bond);
+        assert_eq!(dates.first(), Some(&d(2025, 3, 20)));
+        assert_eq!(dates.last(), Some(&d(2035, 3, 20)));
+        assert_eq!(dates.len(), 21);
+    }
+
+    #[test]
+    fn jgb_cashflows() {
+        let bond = jgb(0.005, d(2025, 3, 20), d(2027, 3, 20));
+        let cfs = generate(&bond, d(2025, 3, 20));
+        assert_eq!(cfs.len(), 4);
+        assert!((cfs[0].amount - 0.25).abs() < 1e-12);
     }
 }

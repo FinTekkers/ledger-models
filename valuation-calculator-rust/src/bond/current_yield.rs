@@ -18,7 +18,7 @@ mod tests {
             coupon_rate: coupon, coupon_freq: 2, coupon_type: CouponType::Fixed,
             face_value: 100.0, dated_date: Date::new(2025, 5, 15),
             maturity_date: Date::new(2035, 5, 15),
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 

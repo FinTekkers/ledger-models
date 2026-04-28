@@ -32,7 +32,7 @@ mod tests {
         BondSpec {
             coupon_rate: coupon, coupon_freq: 2, coupon_type: CouponType::Fixed,
             face_value: 100.0, dated_date: d(2025, 5, 15), maturity_date: maturity,
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 
@@ -51,7 +51,7 @@ mod tests {
         let bond = BondSpec {
             coupon_rate: 0.0, coupon_freq: 2, coupon_type: CouponType::Zero,
             face_value: 100.0, dated_date: d(2025, 5, 15), maturity_date: d(2035, 5, 15),
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         };
         let conv = convexity(&bond, 0.05, d(2025, 5, 15));
         let expected = 10.0 * 10.5 / (1.025 * 1.025);

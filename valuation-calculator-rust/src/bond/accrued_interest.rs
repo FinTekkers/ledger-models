@@ -15,8 +15,13 @@ pub fn accrued_interest(bond: &BondSpec, settlement: Date) -> f64 {
     }
 
     let coupon_payment = bond.coupon_rate * bond.face_value / bond.coupon_freq as f64;
-    let frac = bond.day_count.accrual_fraction(prev_coupon, settlement, prev_coupon, next_coupon);
 
+    if cashflows::is_ex_dividend(bond, settlement, next_coupon) {
+        let frac = bond.day_count.accrual_fraction(settlement, next_coupon, prev_coupon, next_coupon);
+        return -coupon_payment * frac;
+    }
+
+    let frac = bond.day_count.accrual_fraction(prev_coupon, settlement, prev_coupon, next_coupon);
     coupon_payment * frac
 }
 
@@ -35,7 +40,7 @@ mod tests {
             face_value: 100.0,
             dated_date: d(2025, 5, 15),
             maturity_date: d(2035, 5, 15),
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 
@@ -63,7 +68,7 @@ mod tests {
         let bond = BondSpec {
             coupon_rate: 0.0, coupon_freq: 2, coupon_type: CouponType::Zero,
             face_value: 100.0, dated_date: d(2025, 5, 15), maturity_date: d(2026, 5, 15),
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         };
         assert!((accrued_interest(&bond, d(2025, 8, 20))).abs() < 1e-15);
     }
@@ -85,7 +90,7 @@ mod tests {
             face_value: 100.0,
             dated_date: d(2024, 7, 4),
             maturity_date: d(2034, 7, 4),
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 
@@ -113,5 +118,62 @@ mod tests {
         let ai_euro = accrued_interest(&euro_bond(), d(2025, 1, 4));
         // Semiannual with same rate would accrue half the coupon over half the period
         assert!(ai_euro > 1.0, "Annual AI should be meaningful: {}", ai_euro);
+    }
+
+    // ── UK Gilt (ex-dividend) tests ─────────────────────────────────
+
+    fn gilt() -> BondSpec {
+        BondSpec {
+            coupon_rate: 0.04, coupon_freq: 2, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: d(2025, 1, 22), maturity_date: d(2035, 1, 22),
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 7,
+        }
+    }
+
+    #[test]
+    fn gilt_normal_accrued() {
+        let ai = accrued_interest(&gilt(), d(2025, 4, 1));
+        assert!(ai > 0.0, "Normal Gilt AI should be positive: {}", ai);
+    }
+
+    #[test]
+    fn gilt_ex_div_negative_accrued() {
+        let ai = accrued_interest(&gilt(), d(2025, 7, 17));
+        assert!(ai < 0.0, "Ex-div Gilt AI should be negative: {}", ai);
+    }
+
+    #[test]
+    fn gilt_ex_div_ai_magnitude() {
+        let settle = d(2025, 7, 17);
+        let ai = accrued_interest(&gilt(), settle);
+        let next = d(2025, 7, 22);
+        let prev = d(2025, 1, 22);
+        let days_remaining = next.days_since(&settle) as f64;
+        let days_in_period = next.days_since(&prev) as f64;
+        let expected = -(2.0 * days_remaining / days_in_period);
+        assert!((ai - expected).abs() < 1e-10, "AI={}, expected={}", ai, expected);
+    }
+
+    // ── JGB (Act/365) tests ─────────────────────────────────────────
+
+    fn jgb_bond() -> BondSpec {
+        BondSpec {
+            coupon_rate: 0.005, coupon_freq: 2, coupon_type: CouponType::Fixed,
+            face_value: 100.0, dated_date: d(2025, 3, 20), maturity_date: d(2035, 3, 20),
+            day_count: DayCountConvention::Actual365Fixed, ex_dividend_days: 0,
+        }
+    }
+
+    #[test]
+    fn jgb_accrued_uses_act365() {
+        let ai = accrued_interest(&jgb_bond(), d(2025, 6, 20));
+        let days = d(2025, 6, 20).days_since(&d(2025, 3, 20)) as f64;
+        let expected = 0.25 * days / 365.0;
+        assert!((ai - expected).abs() < 1e-10, "JGB AI={}, expected={}", ai, expected);
+    }
+
+    #[test]
+    fn jgb_zero_on_coupon_date() {
+        assert!((accrued_interest(&jgb_bond(), d(2025, 3, 20))).abs() < 1e-15);
     }
 }

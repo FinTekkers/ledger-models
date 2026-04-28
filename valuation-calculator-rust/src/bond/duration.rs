@@ -37,7 +37,7 @@ mod tests {
         BondSpec {
             coupon_rate: coupon, coupon_freq: 2, coupon_type: CouponType::Fixed,
             face_value: 100.0, dated_date: d(2025, 5, 15), maturity_date: maturity,
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 
@@ -46,7 +46,7 @@ mod tests {
         let bond = BondSpec {
             coupon_rate: 0.0, coupon_freq: 2, coupon_type: CouponType::Zero,
             face_value: 100.0, dated_date: d(2025, 5, 15), maturity_date: d(2035, 5, 15),
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         };
         let mac = macaulay_duration(&bond, 0.05, d(2025, 5, 15));
         assert!((mac - 10.0).abs() < 0.01, "zero-coupon duration={}", mac);
@@ -116,7 +116,7 @@ mod tests {
         BondSpec {
             coupon_rate: coupon, coupon_freq: 1, coupon_type: CouponType::Fixed,
             face_value: 100.0, dated_date: d(2025, 2, 15), maturity_date: maturity,
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 
@@ -147,12 +147,12 @@ mod tests {
         let annual = BondSpec {
             coupon_rate: 0.05, coupon_freq: 1, coupon_type: CouponType::Fixed,
             face_value: 100.0, dated_date: dated, maturity_date: maturity,
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         };
         let semi = BondSpec {
             coupon_rate: 0.05, coupon_freq: 2, coupon_type: CouponType::Fixed,
             face_value: 100.0, dated_date: dated, maturity_date: maturity,
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         };
         let dur_annual = macaulay_duration(&annual, 0.05, dated);
         let dur_semi = macaulay_duration(&semi, 0.05, dated);

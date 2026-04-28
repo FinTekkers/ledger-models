@@ -66,7 +66,7 @@ impl SecurityInput {
             face_value: self.face_value,
             dated_date: self.dated_date,
             maturity_date: self.maturity_date,
-            day_count: DayCountConvention::ActualActualICMA,
+            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
         }
     }
 }
