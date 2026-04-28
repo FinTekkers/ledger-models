@@ -12,6 +12,7 @@ pub mod money_market;
 pub mod repo;
 pub mod xccy;
 pub mod mbs;
+pub mod risk;
 
 #[cfg(feature = "proto")]
 pub mod proto_bridge;
