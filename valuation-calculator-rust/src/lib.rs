@@ -10,6 +10,7 @@ pub mod tips;
 pub mod muni;
 pub mod money_market;
 pub mod repo;
+pub mod xccy;
 
 #[cfg(feature = "proto")]
 pub mod proto_bridge;
