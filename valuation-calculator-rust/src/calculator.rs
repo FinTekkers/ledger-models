@@ -1,4 +1,5 @@
 use crate::bond::*;
+use crate::curve::YieldCurve;
 use crate::date::Date;
 use crate::daycount::DayCountConvention;
 
@@ -20,6 +21,7 @@ pub enum Measure {
     Dv01,
     ProfitLoss,
     ProfitLossPercent,
+    ZSpread,
 }
 
 #[derive(Debug, Clone)]
@@ -30,6 +32,7 @@ pub struct ValuationRequest {
     pub cost_basis: Option<f64>,
     pub settlement: Date,
     pub measures: Vec<Measure>,
+    pub benchmark_curve: Option<YieldCurve>,
 }
 
 #[derive(Debug, Clone)]
@@ -192,6 +195,16 @@ pub fn valuate(req: &ValuationRequest) -> ValuationResponse {
                     }
                 }
             }
+            Measure::ZSpread => {
+                if let Some(ref curve) = req.benchmark_curve {
+                    match zspread::solve_zspread(&bond, req.market_price, settle, curve) {
+                        Ok(z) => results.push((*measure, z)),
+                        Err(e) => errors.push(format!("Z-spread solver: {}", e)),
+                    }
+                } else {
+                    errors.push("Z-spread requires a benchmark curve".to_string());
+                }
+            }
         }
     }
 
@@ -231,6 +244,7 @@ mod tests {
             cost_basis: Some(99.0),
             settlement: settle,
             measures,
+            benchmark_curve: None,
         }
     }
 
@@ -385,6 +399,7 @@ mod tests {
             cost_basis: Some(98.0),
             settlement: settle,
             measures,
+            benchmark_curve: None,
         }
     }
 
@@ -477,6 +492,7 @@ mod tests {
                 Measure::MacaulayDuration,
                 Measure::Dv01,
             ],
+            benchmark_curve: None,
         };
 
         let resp = valuate(&req);

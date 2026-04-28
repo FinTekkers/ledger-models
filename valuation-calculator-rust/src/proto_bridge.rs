@@ -55,6 +55,7 @@ pub fn request_from_proto(proto: &ValuationRequestProto) -> Result<ValuationRequ
         cost_basis,
         settlement,
         measures,
+        benchmark_curve: None,
     })
 }
 
