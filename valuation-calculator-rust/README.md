@@ -92,6 +92,7 @@ src/
 ├── daycount/
 │   ├── actual_actual_icma.rs # US Treasury, Euro Govt, UK Gilt day count
 │   ├── actual_365.rs         # JGB day count convention
+│   ├── actual_360.rs         # Money market, bank loans, CDs day count
 │   └── thirty_360.rs         # 30/360 US + 30E/360 European
 ├── date.rs                   # Internal date type (Julian Day Number arithmetic)
 ├── error.rs                  # BondError enum
@@ -106,6 +107,7 @@ src/
 | Actual/365 Fixed | JGBs | ✓ Implemented |
 | 30/360 (US Bond Basis) | US Corporate, Muni, Agency bonds | ✓ Implemented |
 | 30E/360 (Eurobond Basis) | Eurobonds | ✓ Implemented |
+| Actual/360 | Money market, bank loans, CDs | ✓ Implemented |
 | Actual/Actual (ISDA) | Euro Govt (accrual) | Planned |
 
 ## Numeric Approach
@@ -168,3 +170,4 @@ cargo test --features proto   # includes proto bridge (requires build scripts)
 | 3. UK Gilts | Ex-dividend period (7 calendar days) | ✓ Complete |
 | 4. JGBs | Act/365 Fixed day count | ✓ Complete |
 | 5. IG Corporate | 30/360, Z-spread over Treasury curve | Planned |
+| 6. Bank Loans, Futures, CDs | Act/360 day count, proto infrastructure | In Progress |

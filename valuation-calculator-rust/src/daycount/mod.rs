@@ -1,5 +1,6 @@
 mod actual_actual_icma;
 mod actual_365;
+mod actual_360;
 mod thirty_360;
 
 pub use actual_actual_icma::*;
@@ -12,6 +13,7 @@ pub enum DayCountConvention {
     Actual365Fixed,
     Thirty360US,
     Thirty360European,
+    Actual360,
 }
 
 impl DayCountConvention {
@@ -34,6 +36,9 @@ impl DayCountConvention {
             }
             DayCountConvention::Thirty360European => {
                 thirty_360::thirty_360_eu(start, end)
+            }
+            DayCountConvention::Actual360 => {
+                actual_360::accrual_fraction(start, end)
             }
         }
     }
