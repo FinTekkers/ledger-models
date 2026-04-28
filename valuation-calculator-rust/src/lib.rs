@@ -1,3 +1,4 @@
+pub mod amortizing;
 pub mod bond;
 pub mod callable;
 pub mod curve;
