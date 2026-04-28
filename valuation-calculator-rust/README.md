@@ -91,7 +91,8 @@ src/
 │   └── market_value.rs       # MV, P&L
 ├── daycount/
 │   ├── actual_actual_icma.rs # US Treasury, Euro Govt, UK Gilt day count
-│   └── actual_365.rs         # JGB day count convention
+│   ├── actual_365.rs         # JGB day count convention
+│   └── thirty_360.rs         # 30/360 US + 30E/360 European
 ├── date.rs                   # Internal date type (Julian Day Number arithmetic)
 ├── error.rs                  # BondError enum
 └── proto_bridge.rs           # [feature = "proto"] ValuationRequestProto ↔ calculator
@@ -103,7 +104,8 @@ src/
 |------------|--------|--------|
 | Actual/Actual (ICMA) | US Treasuries, Euro Govt, UK Gilts | ✓ Implemented |
 | Actual/365 Fixed | JGBs | ✓ Implemented |
-| 30/360 | US Corporate bonds | Phase 5 |
+| 30/360 (US Bond Basis) | US Corporate, Muni, Agency bonds | ✓ Implemented |
+| 30E/360 (Eurobond Basis) | Eurobonds | ✓ Implemented |
 | Actual/Actual (ISDA) | Euro Govt (accrual) | Planned |
 
 ## Numeric Approach
