@@ -14,6 +14,7 @@ import "fintekkers/models/security/security_quantity_type.proto";
 import "fintekkers/models/security/coupon_frequency.proto";
 import "fintekkers/models/security/coupon_type.proto";
 import "fintekkers/models/security/index/index_type.proto";
+import "fintekkers/models/security/day_count.proto";
 
 option java_multiple_files = true;
 
@@ -79,6 +80,9 @@ message SecurityProto {
   fintekkers.models.security.index.IndexTypeProto reference_rate_index = 91; //Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
   CouponFrequencyProto reset_frequency = 92; //How often the floating coupon rate resets
 
+  // Day count convention for accrual calculations
+  DayCountConventionProto day_count = 93;
+
   //Index Security fields
   fintekkers.models.security.index.IndexTypeProto index_type = 80;
 
@@ -101,6 +105,9 @@ message SecurityProto {
     EquityDetailsProto equity_details = 204;
     CashDetailsProto cash_details = 205;
     FxSpotDetailsProto fx_spot_details = 206;
+    LoanDetailsProto loan_details = 207;
+    FuturesDetailsProto futures_details = 208;
+    CdDetailsProto cd_details = 209;
   }
 }
 
@@ -180,4 +187,44 @@ message FxSpotDetailsProto {
   SecurityProto base_currency = 1;  //The currency being bought/sold (e.g. USD cash security). Must be a CashDetailsProto with is_link=true.
   SecurityProto quote_currency = 2; //The currency in which the price is expressed (e.g. GBP cash security). Must be a CashDetailsProto with is_link=true.
   string convention = 3;            //Quoting convention — always "UNITS_OF_QUOTE_PER_BASE" for spot FX (ISO standard)
+}
+
+// Bank loan (vanilla term loan, typically floating rate SOFR + spread)
+message LoanDetailsProto {
+  fintekkers.models.util.DecimalValueProto face_value = 1;
+  fintekkers.models.util.LocalDateProto dated_date = 2;
+  fintekkers.models.util.LocalDateProto maturity_date = 3;
+  fintekkers.models.util.DecimalValueProto spread = 4;  // spread over reference rate, decimal (e.g., 0.025 = 250bps)
+  fintekkers.models.security.index.IndexTypeProto reference_rate_index = 5;  // e.g., SOFR
+  CouponFrequencyProto payment_frequency = 6;  // typically QUARTERLY
+  DayCountConventionProto day_count = 7;  // typically ACTUAL_360
+  // Amortization
+  bool is_amortizing = 10;
+  repeated AmortizationScheduleEntry amortization_schedule = 11;
+}
+
+message AmortizationScheduleEntry {
+  fintekkers.models.util.LocalDateProto date = 1;
+  fintekkers.models.util.DecimalValueProto principal_payment = 2;  // as fraction of original face (e.g., 0.01 = 1%)
+}
+
+// Bond futures contract
+message FuturesDetailsProto {
+  fintekkers.models.util.DecimalValueProto contract_size = 1;  // notional per contract (e.g., 100000 for US Treasury futures)
+  fintekkers.models.util.LocalDateProto expiry_date = 2;  // last trading date
+  fintekkers.models.util.LocalDateProto delivery_date = 3;  // first delivery date
+  fintekkers.models.util.DecimalValueProto tick_size = 4;  // minimum price increment (e.g., 0.015625 = 1/64 for T-bond futures)
+  fintekkers.models.util.DecimalValueProto tick_value = 5;  // dollar value per tick (e.g., 15.625)
+  SecurityProto underlying_security = 6;  // the deliverable bond (CTD bond reference)
+  fintekkers.models.util.DecimalValueProto conversion_factor = 7;  // CF for the CTD bond
+}
+
+// Certificate of Deposit
+message CdDetailsProto {
+  fintekkers.models.util.DecimalValueProto face_value = 1;
+  fintekkers.models.util.LocalDateProto issue_date = 2;
+  fintekkers.models.util.LocalDateProto maturity_date = 3;
+  fintekkers.models.util.DecimalValueProto coupon_rate = 4;  // annual rate, decimal
+  DayCountConventionProto day_count = 5;  // typically ACTUAL_360
+  bool is_discount = 6;  // true for discount CD (T-bill style), false for add-on CD
 }

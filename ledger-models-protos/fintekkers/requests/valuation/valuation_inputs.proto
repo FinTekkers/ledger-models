@@ -1,0 +1,136 @@
+syntax = "proto3";
+package fintekkers.requests.valuation;
+
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/security/security.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ValuationInputProtos";
+
+// Yield curve input for curve-dependent valuations (Z-spread, swaps, FRNs, etc.)
+message YieldCurveInputProto {
+  fintekkers.models.util.LocalDateProto reference_date = 1;
+  repeated CurvePointInputProto points = 2;
+  CurveInputType curve_type = 3;
+}
+
+message CurvePointInputProto {
+  fintekkers.models.util.DecimalValueProto tenor = 1;  // years
+  fintekkers.models.util.DecimalValueProto rate = 2;   // continuously compounded zero rate
+}
+
+enum CurveInputType {
+  ZERO_RATES = 0;
+  PAR_RATES = 1;
+  DISCOUNT_FACTORS = 2;
+}
+
+// Callable/puttable bond inputs
+message CallScheduleInputProto {
+  repeated CallDateProto call_dates = 1;
+  repeated PutDateProto put_dates = 2;
+  fintekkers.models.util.DecimalValueProto volatility = 3;  // for OAS calculation
+  uint32 tree_steps = 4;  // binomial tree steps (default: 100)
+}
+
+message CallDateProto {
+  fintekkers.models.util.LocalDateProto date = 1;
+  fintekkers.models.util.DecimalValueProto call_price = 2;  // % of par
+}
+
+message PutDateProto {
+  fintekkers.models.util.LocalDateProto date = 1;
+  fintekkers.models.util.DecimalValueProto put_price = 2;
+}
+
+// MBS inputs
+message MbsInputProto {
+  fintekkers.models.util.DecimalValueProto psa_speed = 1;  // e.g., 100 = 100% PSA
+  fintekkers.models.util.DecimalValueProto current_balance = 2;
+  fintekkers.models.util.DecimalValueProto original_balance = 3;
+  fintekkers.models.util.DecimalValueProto wac = 4;  // weighted average coupon
+  uint32 wam = 5;  // weighted average maturity in months
+  uint32 age = 6;  // pool age in months
+  fintekkers.models.util.DecimalValueProto pool_factor = 7;
+}
+
+// Tax inputs for municipal bonds
+message TaxInputProto {
+  fintekkers.models.util.DecimalValueProto federal_rate = 1;
+  fintekkers.models.util.DecimalValueProto state_rate = 2;
+  fintekkers.models.util.DecimalValueProto local_rate = 3;
+  fintekkers.models.util.DecimalValueProto agi_surcharge = 4;
+  bool state_deductible = 5;
+  bool is_in_state = 6;  // is investor in the same state as the muni issuer?
+}
+
+// Repo inputs
+message RepoInputProto {
+  fintekkers.models.util.DecimalValueProto haircut = 1;
+  fintekkers.models.util.DecimalValueProto repo_rate = 2;
+  fintekkers.models.util.LocalDateProto end_date = 3;
+  fintekkers.models.security.SecurityProto collateral = 4;
+}
+
+// Swap inputs (for IRS and cross-currency)
+message SwapInputProto {
+  fintekkers.models.util.DecimalValueProto notional = 1;
+  fintekkers.models.util.DecimalValueProto fixed_rate = 2;
+  uint32 fixed_freq = 3;
+  uint32 float_freq = 4;
+  fintekkers.models.util.DecimalValueProto float_spread = 5;
+  fintekkers.models.util.LocalDateProto start_date = 6;
+  fintekkers.models.util.LocalDateProto maturity_date = 7;
+  bool pay_fixed = 8;
+  // Cross-currency fields
+  fintekkers.models.util.DecimalValueProto foreign_notional = 10;
+  fintekkers.models.util.DecimalValueProto foreign_fixed_rate = 11;
+  fintekkers.models.util.DecimalValueProto spot_fx = 12;
+  fintekkers.models.util.DecimalValueProto basis_spread = 13;
+  YieldCurveInputProto foreign_curve = 14;
+}
+
+// Futures inputs
+message FuturesInputProto {
+  fintekkers.models.util.DecimalValueProto contract_size = 1;
+  fintekkers.models.util.LocalDateProto expiry_date = 2;
+  fintekkers.models.util.LocalDateProto delivery_date = 3;
+  fintekkers.models.security.SecurityProto ctd_bond = 4;  // cheapest-to-deliver
+  fintekkers.models.util.DecimalValueProto conversion_factor = 5;
+  fintekkers.models.util.DecimalValueProto volatility = 6;  // for convexity adjustment
+}
+
+// Scenario inputs
+message ScenarioInputProto {
+  repeated ScenarioProto scenarios = 1;
+}
+
+message ScenarioProto {
+  string name = 1;
+  oneof scenario_type {
+    fintekkers.models.util.DecimalValueProto parallel_shift = 2;
+    SteepenerFlatProto steepener = 3;
+    SteepenerFlatProto flattener = 4;
+    CustomShiftProto custom = 5;
+  }
+}
+
+message SteepenerFlatProto {
+  fintekkers.models.util.DecimalValueProto pivot = 1;
+  fintekkers.models.util.DecimalValueProto short_shift = 2;
+  fintekkers.models.util.DecimalValueProto long_shift = 3;
+}
+
+message CustomShiftProto {
+  repeated CurvePointInputProto shifts = 1;
+}
+
+// Pricing mode for valuation requests
+enum PricingModeProto {
+  PRICE_MODE_UNSPECIFIED = 0;
+  OUTRIGHT_PRICE = 1;       // Use price_input as clean price (default, HY bonds, treasuries)
+  SPREAD_TO_BENCHMARK = 2;  // Use price_input as Z-spread, derive price from curve
+  DISCOUNT_RATE = 3;        // Use price_input as discount rate (T-bills)
+  SWAP_RATE = 4;            // Use price_input as fixed swap rate
+}
