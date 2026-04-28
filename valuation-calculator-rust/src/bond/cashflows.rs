@@ -56,6 +56,10 @@ pub fn generate(bond: &BondSpec, settlement: Date) -> Vec<Cashflow> {
     let coupon_payment = match bond.coupon_type {
         CouponType::Fixed => bond.coupon_rate * bond.face_value / bond.coupon_freq as f64,
         CouponType::Zero => 0.0,
+        CouponType::Floating { spread } => {
+            // Fallback when no curve is available: use spread as the coupon rate
+            spread * bond.face_value / bond.coupon_freq as f64
+        }
     };
 
     let ex_div = is_ex_dividend(bond, settlement, next_coupon);

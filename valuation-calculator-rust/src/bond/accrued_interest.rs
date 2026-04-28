@@ -3,8 +3,14 @@ use super::{BondSpec, CouponType};
 use super::cashflows;
 
 pub fn accrued_interest(bond: &BondSpec, settlement: Date) -> f64 {
-    if bond.coupon_type == CouponType::Zero {
-        return 0.0;
+    match bond.coupon_type {
+        CouponType::Zero => return 0.0,
+        CouponType::Floating { .. } => {
+            // For FRNs without a projection curve, return 0.0.
+            // Use frn::frn_accrued_interest for curve-based accrued interest.
+            return 0.0;
+        }
+        CouponType::Fixed => {}
     }
 
     let coupon_dates = cashflows::generate_coupon_dates(bond);

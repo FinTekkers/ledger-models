@@ -7,14 +7,16 @@ pub mod duration;
 pub mod convexity;
 pub mod dv01;
 pub mod market_value;
+pub mod frn;
 
 use crate::date::Date;
 use crate::daycount::DayCountConvention;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum CouponType {
     Fixed,
     Zero,
+    Floating { spread: f64 },  // spread over reference rate in decimal (e.g., 0.005 = 50bps)
 }
 
 #[derive(Debug, Clone)]
