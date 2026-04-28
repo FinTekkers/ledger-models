@@ -22,6 +22,17 @@ pub enum Measure {
     ProfitLoss,
     ProfitLossPercent,
     ZSpread,
+    SpreadDuration,
+    SpreadDv01,
+}
+
+/// Pricing mode for valuation requests.
+#[derive(Debug, Clone)]
+pub enum PricingMode {
+    /// Outright clean price (Treasuries, HY corporates)
+    Price(f64),
+    /// Z-spread over a benchmark curve (IG corporates)
+    SpreadToBenchmark { spread: f64, curve: YieldCurve },
 }
 
 #[derive(Debug, Clone)]
@@ -33,6 +44,10 @@ pub struct ValuationRequest {
     pub settlement: Date,
     pub measures: Vec<Measure>,
     pub benchmark_curve: Option<YieldCurve>,
+    /// Optional pricing mode. If `Some(SpreadToBenchmark { .. })`, the clean
+    /// price is derived from the spread and the market_price field is ignored.
+    /// If `None`, `market_price` is used directly (backward compatible).
+    pub pricing_mode: Option<PricingMode>,
 }
 
 #[derive(Debug, Clone)]
@@ -43,6 +58,9 @@ pub struct SecurityInput {
     pub face_value: f64,
     pub dated_date: Date,
     pub maturity_date: Date,
+    /// Day count convention. Defaults to `ActualActualICMA` for Treasuries.
+    /// Corporate bonds typically use `Thirty360US`.
+    pub day_count: Option<DayCountConvention>,
 }
 
 #[derive(Debug, Clone)]
@@ -69,7 +87,8 @@ impl SecurityInput {
             face_value: self.face_value,
             dated_date: self.dated_date,
             maturity_date: self.maturity_date,
-            day_count: DayCountConvention::ActualActualICMA, ex_dividend_days: 0,
+            day_count: self.day_count.unwrap_or(DayCountConvention::ActualActualICMA),
+            ex_dividend_days: 0,
         }
     }
 }
@@ -89,10 +108,23 @@ pub fn valuate(req: &ValuationRequest) -> ValuationResponse {
         };
     }
 
-    let ai = accrued_interest::accrued_interest(&bond, settle);
-    let dirty = req.market_price + ai;
+    // Resolve effective clean price and benchmark info from pricing mode
+    let (market_price, benchmark_info): (f64, Option<(&YieldCurve, f64)>) = match &req.pricing_mode {
+        Some(PricingMode::SpreadToBenchmark { spread: s, curve }) => {
+            let (clean, _dirty) = spread::price_from_spread(&bond, settle, curve, *s);
+            (clean, Some((curve, *s)))
+        }
+        _ => {
+            // Use market_price directly; benchmark curve (if any) has z=0 for ZSpread solving
+            let bench = req.benchmark_curve.as_ref().map(|c| (c, 0.0_f64));
+            (req.market_price, bench)
+        }
+    };
 
-    let ytm = match ytm_solver::solve_ytm(&bond, req.market_price, settle) {
+    let ai = accrued_interest::accrued_interest(&bond, settle);
+    let dirty = market_price + ai;
+
+    let ytm = match ytm_solver::solve_ytm(&bond, market_price, settle) {
         Ok(y) => Some(y),
         Err(e) => {
             errors.push(format!("YTM solver: {}", e));
@@ -106,7 +138,7 @@ pub fn valuate(req: &ValuationRequest) -> ValuationResponse {
                 results.push((*measure, req.quantity));
             }
             Measure::MarketValue => {
-                let mv = market_value::market_value(req.market_price, req.quantity);
+                let mv = market_value::market_value(market_price, req.quantity);
                 results.push((*measure, mv));
             }
             Measure::UnadjustedCostBasis => {
@@ -118,13 +150,13 @@ pub fn valuate(req: &ValuationRequest) -> ValuationResponse {
                 results.push((*measure, ai));
             }
             Measure::CleanPrice => {
-                results.push((*measure, req.market_price));
+                results.push((*measure, market_price));
             }
             Measure::DirtyPrice => {
                 results.push((*measure, dirty));
             }
             Measure::CurrentYield => {
-                let cy = current_yield::current_yield(&bond, req.market_price);
+                let cy = current_yield::current_yield(&bond, market_price);
                 results.push((*measure, cy));
             }
             Measure::YieldToMaturity => {
@@ -164,14 +196,14 @@ pub fn valuate(req: &ValuationRequest) -> ValuationResponse {
             }
             Measure::ProfitLoss => {
                 if let Some(cb) = req.cost_basis {
-                    let mv = market_value::market_value(req.market_price, req.quantity);
+                    let mv = market_value::market_value(market_price, req.quantity);
                     let pl = market_value::profit_loss(mv, cb, req.quantity);
                     results.push((*measure, pl));
                 }
             }
             Measure::ProfitLossPercent => {
                 if let Some(cb) = req.cost_basis {
-                    let mv = market_value::market_value(req.market_price, req.quantity);
+                    let mv = market_value::market_value(market_price, req.quantity);
                     let pl = market_value::profit_loss(mv, cb, req.quantity);
                     let cost_mv = cb / 100.0 * req.quantity;
                     if cost_mv != 0.0 {
@@ -196,13 +228,42 @@ pub fn valuate(req: &ValuationRequest) -> ValuationResponse {
                 }
             }
             Measure::ZSpread => {
-                if let Some(ref curve) = req.benchmark_curve {
-                    match zspread::solve_zspread(&bond, req.market_price, settle, curve) {
+                // If we already have benchmark info from SpreadToBenchmark mode,
+                // use that spread directly. Otherwise, solve from the curve.
+                if let Some((curve, z)) = &benchmark_info {
+                    if *z != 0.0 {
+                        // Spread was provided via PricingMode::SpreadToBenchmark
+                        results.push((*measure, *z));
+                    } else {
+                        // benchmark_curve was provided but no spread — solve for it
+                        match zspread::solve_zspread(&bond, market_price, settle, curve) {
+                            Ok(z_solved) => results.push((*measure, z_solved)),
+                            Err(e) => errors.push(format!("Z-spread solver: {}", e)),
+                        }
+                    }
+                } else if let Some(ref curve) = req.benchmark_curve {
+                    match zspread::solve_zspread(&bond, market_price, settle, curve) {
                         Ok(z) => results.push((*measure, z)),
                         Err(e) => errors.push(format!("Z-spread solver: {}", e)),
                     }
                 } else {
                     errors.push("Z-spread requires a benchmark curve".to_string());
+                }
+            }
+            Measure::SpreadDuration => {
+                if let Some((curve, z)) = &benchmark_info {
+                    let sd = spread::spread_duration(&bond, settle, curve, *z);
+                    results.push((*measure, sd));
+                } else {
+                    errors.push("SpreadDuration requires a benchmark curve".to_string());
+                }
+            }
+            Measure::SpreadDv01 => {
+                if let Some((curve, z)) = &benchmark_info {
+                    let sd = spread::spread_dv01(&bond, settle, curve, *z);
+                    results.push((*measure, sd));
+                } else {
+                    errors.push("SpreadDv01 requires a benchmark curve".to_string());
                 }
             }
         }
@@ -238,6 +299,7 @@ mod tests {
                 face_value: 100.0,
                 dated_date: d(2025, 5, 15),
                 maturity_date: maturity,
+                day_count: None,
             },
             market_price: price,
             quantity: 10_000.0,
@@ -245,6 +307,7 @@ mod tests {
             settlement: settle,
             measures,
             benchmark_curve: None,
+            pricing_mode: None,
         }
     }
 
@@ -393,6 +456,7 @@ mod tests {
                 face_value: 100.0,
                 dated_date: d(2025, 2, 15),
                 maturity_date: maturity,
+                day_count: None,
             },
             market_price: price,
             quantity: 1_000_000.0,
@@ -400,6 +464,7 @@ mod tests {
             settlement: settle,
             measures,
             benchmark_curve: None,
+            pricing_mode: None,
         }
     }
 
@@ -480,6 +545,7 @@ mod tests {
                 face_value: 100.0,
                 dated_date: d(2024, 7, 4),
                 maturity_date: d(2034, 7, 4),
+                day_count: None,
             },
             market_price: 96.0,
             quantity: 500_000.0,
@@ -493,6 +559,7 @@ mod tests {
                 Measure::Dv01,
             ],
             benchmark_curve: None,
+            pricing_mode: None,
         };
 
         let resp = valuate(&req);
@@ -522,5 +589,250 @@ mod tests {
         // price=102, qty=1M → MV=1,020,000. cost=98, → cost_MV=980,000. PL=40,000
         assert!((mv - 1_020_000.0).abs() < 1e-6);
         assert!((pl - 40_000.0).abs() < 1e-6, "Euro PL={}", pl);
+    }
+
+    // ── Investment Grade corporate bond tests ───────────────────
+
+    fn treasury_curve() -> crate::curve::YieldCurve {
+        crate::curve::YieldCurve::new(
+            d(2025, 4, 15),
+            vec![0.5, 1.0, 2.0, 5.0, 10.0, 30.0],
+            vec![0.035, 0.038, 0.040, 0.042, 0.043, 0.044],
+        )
+        .unwrap()
+    }
+
+    fn ig_corporate_request() -> ValuationRequest {
+        // 5% semiannual corporate, 30/360 US, 10Y
+        ValuationRequest {
+            security: SecurityInput {
+                coupon_rate: 0.05,
+                coupon_freq: 2,
+                coupon_type: CouponType::Fixed,
+                face_value: 100.0,
+                dated_date: d(2025, 4, 15),
+                maturity_date: d(2035, 4, 15),
+                day_count: Some(DayCountConvention::Thirty360US),
+            },
+            market_price: 0.0, // will be derived from spread
+            quantity: 1_000_000.0,
+            cost_basis: Some(99.0),
+            settlement: d(2025, 4, 15),
+            pricing_mode: Some(PricingMode::SpreadToBenchmark {
+                spread: 0.015, // 150bps over Treasuries
+                curve: treasury_curve(),
+            }),
+            benchmark_curve: None,
+            measures: vec![
+                Measure::CleanPrice,
+                Measure::DirtyPrice,
+                Measure::YieldToMaturity,
+                Measure::SpreadDuration,
+                Measure::SpreadDv01,
+                Measure::MarketValue,
+                Measure::ZSpread,
+            ],
+        }
+    }
+
+    #[test]
+    fn ig_corporate_spread_duration_positive() {
+        let req = ig_corporate_request();
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let sd = resp.get(Measure::SpreadDuration).unwrap();
+        assert!(sd > 0.0, "IG spread duration should be positive, got {}", sd);
+    }
+
+    #[test]
+    fn ig_corporate_clean_price_derived() {
+        let req = ig_corporate_request();
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let cp = resp.get(Measure::CleanPrice).unwrap();
+        assert!(cp > 50.0 && cp < 150.0,
+            "IG clean price should be reasonable, got {}", cp);
+        // Price should not be 0 (the market_price field value)
+        assert!(cp.abs() > 1e-6, "IG clean price should not be zero");
+    }
+
+    #[test]
+    fn ig_corporate_zspread_equals_input_spread() {
+        let req = ig_corporate_request();
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let zs = resp.get(Measure::ZSpread).unwrap();
+        assert!((zs - 0.015).abs() < 1e-8,
+            "ZSpread should match input spread 150bps, got {}", zs);
+    }
+
+    #[test]
+    fn ig_corporate_ytm_above_treasury_yield() {
+        let req = ig_corporate_request();
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let ytm = resp.get(Measure::YieldToMaturity).unwrap();
+        // 10Y Treasury zero rate is ~4.3%, so YTM should be above that
+        assert!(ytm > 0.043, "IG YTM ({}) should be above Treasury yield", ytm);
+    }
+
+    #[test]
+    fn ig_corporate_spread_dv01_positive() {
+        let req = ig_corporate_request();
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let sdv01 = resp.get(Measure::SpreadDv01).unwrap();
+        assert!(sdv01 > 0.0, "IG spread DV01 should be positive, got {}", sdv01);
+    }
+
+    #[test]
+    fn ig_corporate_price_from_spread_round_trip() {
+        // Verify that price_from_spread -> solve_zspread gives back the original spread
+        let curve = treasury_curve();
+        let settle = d(2025, 4, 15);
+        let bond = crate::bond::BondSpec {
+            coupon_rate: 0.05,
+            coupon_freq: 2,
+            coupon_type: CouponType::Fixed,
+            face_value: 100.0,
+            dated_date: d(2025, 4, 15),
+            maturity_date: d(2035, 4, 15),
+            day_count: DayCountConvention::Thirty360US,
+            ex_dividend_days: 0,
+        };
+
+        let input_spread = 0.015;
+        let (clean, _dirty) = crate::bond::spread::price_from_spread(&bond, settle, &curve, input_spread);
+        let solved = crate::bond::zspread::solve_zspread(&bond, clean, settle, &curve).unwrap();
+
+        assert!((solved - input_spread).abs() < 1e-8,
+            "Round-trip: input={}, solved={}", input_spread, solved);
+    }
+
+    // ── High Yield corporate bond tests ────────────────────────
+
+    fn hy_corporate_request() -> ValuationRequest {
+        // 7% semiannual HY, 30/360 US, 5Y, priced at 92
+        ValuationRequest {
+            security: SecurityInput {
+                coupon_rate: 0.07,
+                coupon_freq: 2,
+                coupon_type: CouponType::Fixed,
+                face_value: 100.0,
+                dated_date: d(2025, 6, 1),
+                maturity_date: d(2030, 6, 1),
+                day_count: Some(DayCountConvention::Thirty360US),
+            },
+            market_price: 92.0,
+            quantity: 500_000.0,
+            cost_basis: Some(95.0),
+            settlement: d(2025, 6, 1),
+            pricing_mode: None, // outright price
+            benchmark_curve: None,
+            measures: vec![
+                Measure::YieldToMaturity,
+                Measure::MacaulayDuration,
+                Measure::ModifiedDuration,
+                Measure::Dv01,
+                Measure::MarketValue,
+                Measure::ProfitLoss,
+                Measure::CurrentYield,
+            ],
+        }
+    }
+
+    #[test]
+    fn hy_corporate_ytm_above_coupon_rate() {
+        let req = hy_corporate_request();
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let ytm = resp.get(Measure::YieldToMaturity).unwrap();
+        // Priced below par, so YTM should be above coupon rate
+        assert!(ytm > 0.07, "HY YTM ({}) should be above coupon rate 7%", ytm);
+    }
+
+    #[test]
+    fn hy_corporate_duration_reasonable_for_5y() {
+        let req = hy_corporate_request();
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let mac_dur = resp.get(Measure::MacaulayDuration).unwrap();
+        // 5Y bond with 7% coupon, duration should be roughly 4-5 years
+        assert!(mac_dur > 3.0 && mac_dur < 5.5,
+            "HY 5Y Macaulay duration ({}) should be 3-5.5", mac_dur);
+
+        let mod_dur = resp.get(Measure::ModifiedDuration).unwrap();
+        assert!(mod_dur > 0.0 && mod_dur < mac_dur,
+            "HY modified duration ({}) should be positive and < Macaulay ({})", mod_dur, mac_dur);
+    }
+
+    #[test]
+    fn hy_corporate_negative_pl() {
+        let req = hy_corporate_request();
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let pl = resp.get(Measure::ProfitLoss).unwrap();
+        // cost_basis = 95, market = 92, quantity = 500,000
+        // PL = (92/100 * 500000) - (95/100 * 500000) = 460000 - 475000 = -15000
+        assert!(pl < 0.0, "HY P&L should be negative (cost 95, market 92), got {}", pl);
+        assert!((pl - (-15_000.0)).abs() < 1e-6, "HY PL={}, expected=-15000", pl);
+    }
+
+    #[test]
+    fn hy_corporate_market_value() {
+        let req = hy_corporate_request();
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let mv = resp.get(Measure::MarketValue).unwrap();
+        // price=92, qty=500,000 → MV = 92/100 * 500,000 = 460,000
+        assert!((mv - 460_000.0).abs() < 1e-6, "HY MV={}, expected=460000", mv);
+    }
+
+    #[test]
+    fn hy_corporate_current_yield() {
+        let req = hy_corporate_request();
+        let resp = valuate(&req);
+        assert!(resp.errors.is_empty(), "errors: {:?}", resp.errors);
+
+        let cy = resp.get(Measure::CurrentYield).unwrap();
+        // Current yield = annual coupon / clean price = 7.0 / 92.0 ≈ 0.0761
+        assert!(cy > 0.07, "HY current yield ({}) should be above coupon rate", cy);
+    }
+
+    #[test]
+    fn spread_measures_require_benchmark_curve() {
+        // Requesting SpreadDuration without a benchmark curve should produce an error
+        let req = ValuationRequest {
+            security: SecurityInput {
+                coupon_rate: 0.05,
+                coupon_freq: 2,
+                coupon_type: CouponType::Fixed,
+                face_value: 100.0,
+                dated_date: d(2025, 5, 15),
+                maturity_date: d(2035, 5, 15),
+                day_count: None,
+            },
+            market_price: 100.0,
+            quantity: 10_000.0,
+            cost_basis: None,
+            settlement: d(2025, 5, 15),
+            measures: vec![Measure::SpreadDuration, Measure::SpreadDv01],
+            benchmark_curve: None,
+            pricing_mode: None,
+        };
+
+        let resp = valuate(&req);
+        assert_eq!(resp.errors.len(), 2, "Should have 2 errors for missing curve: {:?}", resp.errors);
+        assert!(resp.errors[0].contains("SpreadDuration"));
+        assert!(resp.errors[1].contains("SpreadDv01"));
     }
 }

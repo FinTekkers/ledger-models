@@ -9,6 +9,7 @@ pub mod dv01;
 pub mod market_value;
 pub mod frn;
 pub mod zspread;
+pub mod spread;
 
 use crate::date::Date;
 use crate::daycount::DayCountConvention;

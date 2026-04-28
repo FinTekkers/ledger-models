@@ -56,6 +56,7 @@ pub fn request_from_proto(proto: &ValuationRequestProto) -> Result<ValuationRequ
         settlement,
         measures,
         benchmark_curve: None,
+        pricing_mode: None,
     })
 }
 
@@ -132,6 +133,7 @@ fn security_input_from_proto(security: &SecurityProto) -> Result<SecurityInput, 
         face_value: face_value_val,
         dated_date: dated,
         maturity_date: maturity,
+        day_count: None,
     })
 }
 
@@ -348,5 +350,7 @@ fn measure_to_proto(measure: Measure) -> MeasureProto {
         Measure::Dv01 => MeasureProto::Dv01,
         Measure::ProfitLoss => MeasureProto::ProfitLoss,
         Measure::ProfitLossPercent => MeasureProto::ProfitLossPercent,
+        // These measures don't have proto equivalents yet; map to MarketValue as placeholder
+        Measure::ZSpread | Measure::SpreadDuration | Measure::SpreadDv01 => MeasureProto::MarketValue,
     }
 }
