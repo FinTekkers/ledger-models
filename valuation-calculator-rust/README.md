@@ -90,7 +90,8 @@ src/
 │   ├── dv01.rs               # Analytical + numerical DV01
 │   └── market_value.rs       # MV, P&L
 ├── daycount/
-│   └── actual_actual_icma.rs # US Treasury day count convention
+│   ├── actual_actual_icma.rs # US Treasury, Euro Govt, UK Gilt day count
+│   └── actual_365.rs         # JGB day count convention
 ├── date.rs                   # Internal date type (Julian Day Number arithmetic)
 ├── error.rs                  # BondError enum
 └── proto_bridge.rs           # [feature = "proto"] ValuationRequestProto ↔ calculator
@@ -100,10 +101,10 @@ src/
 
 | Convention | Market | Status |
 |------------|--------|--------|
-| Actual/Actual (ICMA) | US Treasuries, Euro Govt, UK Gilts | Implemented |
+| Actual/Actual (ICMA) | US Treasuries, Euro Govt, UK Gilts | ✓ Implemented |
+| Actual/365 Fixed | JGBs | ✓ Implemented |
 | 30/360 | US Corporate bonds | Phase 5 |
-| Actual/365 Fixed | JGBs | Phase 4 |
-| Actual/Actual (ISDA) | Euro Govt (accrual) | Phase 2 |
+| Actual/Actual (ISDA) | Euro Govt (accrual) | Planned |
 
 ## Numeric Approach
 
@@ -152,7 +153,7 @@ let response: ValuationResponseProto = valuate_proto(&request);
 ## Tests
 
 ```bash
-cargo test                    # 67 tests, all modules
+cargo test                    # 87 tests, all modules
 cargo test --features proto   # includes proto bridge (requires build scripts)
 ```
 
@@ -161,7 +162,7 @@ cargo test --features proto   # includes proto bridge (requires build scripts)
 | Phase | Scope | Status |
 |-------|-------|--------|
 | 1. US Treasuries | Semiannual, Act/Act ICMA, T+1 | ✓ Complete |
-| 2. Euro Govt | Annual coupon (n=1), Act/Act ISDA | Planned |
-| 3. UK Gilts | Ex-dividend period (7 business days) | Planned |
-| 4. JGBs | Act/365, simple yield convention | Planned |
+| 2. Euro Govt | Annual coupon (n=1), Act/Act ICMA | ✓ Complete |
+| 3. UK Gilts | Ex-dividend period (7 calendar days) | ✓ Complete |
+| 4. JGBs | Act/365 Fixed day count | ✓ Complete |
 | 5. IG Corporate | 30/360, Z-spread over Treasury curve | Planned |
