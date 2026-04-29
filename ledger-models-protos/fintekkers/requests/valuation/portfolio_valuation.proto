@@ -1,0 +1,108 @@
+syntax = "proto3";
+package fintekkers.requests.valuation;
+
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/util/local_timestamp.proto";
+import "fintekkers/models/security/security.proto";
+import "fintekkers/models/position/measure.proto";
+import "fintekkers/models/position/position_util.proto";
+import "fintekkers/requests/valuation/product_inputs.proto";
+import "fintekkers/requests/util/errors/summary.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "PortfolioValuationProtos";
+
+// ═══════════════════════════════════════════════════════════════
+// Market Data Snapshot — sent ONCE, referenced by all positions
+// ═══════════════════════════════════════════════════════════════
+
+message MarketDataSnapshot {
+  fintekkers.models.util.LocalDateProto valuation_date = 1;
+
+  // Named yield curves (e.g., "USD_TREASURY", "USD_SOFR", "EUR_BUND")
+  // Positions reference these by name
+  repeated NamedCurve curves = 10;
+
+  // FX spot rates
+  repeated FxRate fx_rates = 20;
+
+  // Inflation indices (CPI observations)
+  repeated InflationIndex inflation = 30;
+}
+
+message NamedCurve {
+  string name = 1;  // e.g., "USD_TREASURY", "USD_SOFR"
+  YieldCurveInput curve = 2;
+}
+
+message FxRate {
+  string pair = 1;  // e.g., "EUR/USD"
+  fintekkers.models.util.DecimalValueProto rate = 2;
+}
+
+message InflationIndex {
+  string index_name = 1;  // e.g., "CPI_U"
+  fintekkers.models.util.DecimalValueProto value = 2;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Position-level valuation input
+// ═══════════════════════════════════════════════════════════════
+
+message PositionValuationInput {
+  string position_id = 1;  // caller-assigned ID for correlation
+
+  // The product to value (uses existing oneof)
+  ProductInput product = 10;
+
+  // Position sizing
+  fintekkers.models.util.DecimalValueProto quantity = 20;  // face value or notional
+  fintekkers.models.util.DecimalValueProto cost_basis = 21;
+
+  // Market data references (names from MarketDataSnapshot)
+  string benchmark_curve_name = 30;
+  string discount_curve_name = 31;
+  string projection_curve_name = 32;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Portfolio Valuation Request — the batch entry point
+// ═══════════════════════════════════════════════════════════════
+
+message PortfolioValuationRequest {
+  string object_class = 1;
+  string version = 2;
+
+  MarketDataSnapshot market_data = 10;
+  repeated PositionValuationInput positions = 20;
+  repeated fintekkers.models.position.MeasureProto measures = 30;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Responses
+// ═══════════════════════════════════════════════════════════════
+
+message PositionValuationResult {
+  string position_id = 1;  // correlates to input
+  repeated fintekkers.models.position.MeasureMapEntry results = 10;
+  fintekkers.requests.util.errors.SummaryProto summary = 20;
+}
+
+message PortfolioValuationResponse {
+  string object_class = 1;
+  string version = 2;
+
+  repeated PositionValuationResult position_results = 10;
+
+  // Portfolio-level aggregates
+  repeated fintekkers.models.position.MeasureMapEntry portfolio_aggregates = 20;
+
+  fintekkers.requests.util.errors.SummaryProto summary = 30;
+
+  // Performance metadata
+  uint64 total_positions = 40;
+  uint64 succeeded = 41;
+  uint64 failed = 42;
+  uint64 elapsed_ms = 43;
+}
