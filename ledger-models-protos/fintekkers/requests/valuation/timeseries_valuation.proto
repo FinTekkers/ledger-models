@@ -1,0 +1,110 @@
+syntax = "proto3";
+package fintekkers.requests.valuation;
+
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/util/local_timestamp.proto";
+import "fintekkers/models/position/measure.proto";
+import "fintekkers/models/position/position_util.proto";
+import "fintekkers/requests/valuation/product_inputs.proto";
+import "fintekkers/requests/util/errors/summary.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "TimeSeriesValuationProtos";
+
+// ═══════════════════════════════════════════════════════════════
+// Market data at a specific date
+// ═══════════════════════════════════════════════════════════════
+
+message DatedMarketData {
+  fintekkers.models.util.LocalDateProto date = 1;
+  repeated NamedCurveEntry curves = 10;
+  repeated FxRateEntry fx_rates = 20;
+  repeated InflationEntry inflation = 30;
+}
+
+message NamedCurveEntry {
+  string name = 1;
+  YieldCurveInput curve = 2;
+}
+
+message FxRateEntry {
+  string pair = 1;
+  fintekkers.models.util.DecimalValueProto rate = 2;
+}
+
+message InflationEntry {
+  string index_name = 1;
+  fintekkers.models.util.DecimalValueProto value = 2;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Time Series Valuation Request
+// ═══════════════════════════════════════════════════════════════
+
+message TimeSeriesValuationRequest {
+  string object_class = 1;
+  string version = 2;
+
+  // The portfolio (fixed across all dates)
+  repeated TimeSeriesPositionInput positions = 10;
+
+  // Market data at each valuation date
+  repeated DatedMarketData market_data_series = 20;
+
+  // What to compute
+  repeated fintekkers.models.position.MeasureProto measures = 30;
+
+  // Whether to compute daily P&L attribution between consecutive dates
+  bool compute_daily_pnl = 40;
+}
+
+message TimeSeriesPositionInput {
+  string position_id = 1;
+  ProductInput product = 10;
+  fintekkers.models.util.DecimalValueProto quantity = 20;
+  fintekkers.models.util.DecimalValueProto cost_basis = 21;
+  string benchmark_curve_name = 30;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Time Series Response
+// ═══════════════════════════════════════════════════════════════
+
+message TimeSeriesValuationResponse {
+  string object_class = 1;
+  string version = 2;
+
+  // Results organized by date
+  repeated DatedPortfolioResult dated_results = 10;
+
+  // Daily P&L between consecutive dates (if compute_daily_pnl = true)
+  repeated DailyPnlResult daily_pnl = 20;
+
+  fintekkers.requests.util.errors.SummaryProto summary = 30;
+}
+
+message DatedPortfolioResult {
+  fintekkers.models.util.LocalDateProto date = 1;
+  repeated DatedPositionResult positions = 10;
+
+  // Portfolio aggregates for this date
+  fintekkers.models.util.DecimalValueProto total_market_value = 20;
+  fintekkers.models.util.DecimalValueProto total_dv01 = 21;
+  fintekkers.models.util.DecimalValueProto weighted_duration = 22;
+}
+
+message DatedPositionResult {
+  string position_id = 1;
+  repeated fintekkers.models.position.MeasureMapEntry results = 10;
+}
+
+message DailyPnlResult {
+  fintekkers.models.util.LocalDateProto from_date = 1;
+  fintekkers.models.util.LocalDateProto to_date = 2;
+  fintekkers.models.util.DecimalValueProto total_pnl = 10;
+  fintekkers.models.util.DecimalValueProto carry = 11;
+  fintekkers.models.util.DecimalValueProto curve_shift = 12;
+  fintekkers.models.util.DecimalValueProto spread_change = 13;
+  fintekkers.models.util.DecimalValueProto residual = 14;
+}
