@@ -7,6 +7,7 @@ pub mod error;
 pub mod date;
 pub mod calculator;
 pub mod dispatch;
+pub mod proto_dispatch;
 pub mod swap;
 pub mod tips;
 pub mod muni;

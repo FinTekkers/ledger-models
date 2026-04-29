@@ -44,6 +44,7 @@ message ProductInput {
     XccySwapInput xccy_swap = 12;
     AmortizingBondInput amortizing_bond = 13;
     ScenarioInput scenario = 14;
+    KeyRateDurationInput key_rate_duration = 15;
   }
 }
 
@@ -205,4 +206,11 @@ message ScenarioInput {
 message ScenarioDef {
   string name = 1;
   fintekkers.models.util.DecimalValueProto parallel_shift_bp = 2;
+}
+
+message KeyRateDurationInput {
+  fintekkers.models.security.SecurityProto security = 1;
+  YieldCurveInput benchmark_curve = 2;
+  fintekkers.models.util.DecimalValueProto z_spread = 3;
+  repeated fintekkers.models.util.DecimalValueProto key_tenors = 10;
 }
