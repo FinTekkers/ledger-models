@@ -5,6 +5,7 @@ import "fintekkers/requests/valuation/valuation_request.proto";
 import "fintekkers/requests/valuation/valuation_response.proto";
 import "fintekkers/requests/valuation/curve_request.proto";
 import "fintekkers/requests/valuation/curve_response.proto";
+import "fintekkers/requests/valuation/portfolio_valuation.proto";
 
 option java_generic_services = true;
 option py_generic_services = true;
@@ -15,4 +16,12 @@ service Valuation {
 
     rpc RunCurve (fintekkers.requests.valuation.CurveRequestProto)
         returns (fintekkers.requests.valuation.CurveResponseProto);
+
+    // Batch: value entire portfolio, get all results
+    rpc RunPortfolioValuation (fintekkers.requests.valuation.PortfolioValuationRequest)
+        returns (fintekkers.requests.valuation.PortfolioValuationResponse);
+
+    // Streaming: value portfolio, stream results as computed
+    rpc RunPortfolioValuationStream (fintekkers.requests.valuation.PortfolioValuationRequest)
+        returns (stream fintekkers.requests.valuation.PositionValuationResult);
 }

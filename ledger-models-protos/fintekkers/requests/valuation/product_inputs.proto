@@ -1,0 +1,208 @@
+syntax = "proto3";
+package fintekkers.requests.valuation;
+
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/util/local_timestamp.proto";
+import "fintekkers/models/security/security.proto";
+import "fintekkers/models/position/measure.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ProductInputProtos";
+
+// ═══════════════════════════════════════════════════════════════
+// Shared types
+// ═══════════════════════════════════════════════════════════════
+
+message YieldCurveInput {
+  fintekkers.models.util.LocalDateProto reference_date = 1;
+  repeated CurvePoint points = 2;
+}
+
+message CurvePoint {
+  fintekkers.models.util.DecimalValueProto tenor = 1;
+  fintekkers.models.util.DecimalValueProto rate = 2;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// The oneof: exactly one product input per valuation request
+// ═══════════════════════════════════════════════════════════════
+
+message ProductInput {
+  oneof input {
+    BondInput bond = 1;
+    CallableBondInput callable_bond = 2;
+    SwapInput swap = 3;
+    MbsInput mbs = 4;
+    MoneyMarketInput money_market = 5;
+    RepoInput repo = 6;
+    TipsInput tips = 7;
+    FrnInput frn = 8;
+    LoanInput loan = 9;
+    FuturesInput futures = 10;
+    MuniInput muni = 11;
+    XccySwapInput xccy_swap = 12;
+    AmortizingBondInput amortizing_bond = 13;
+    ScenarioInput scenario = 14;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Product-specific input messages
+// ═══════════════════════════════════════════════════════════════
+
+message BondInput {
+  fintekkers.models.security.SecurityProto security = 1;
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+  // Optional: for spread-based pricing
+  YieldCurveInput benchmark_curve = 10;
+  fintekkers.models.util.DecimalValueProto z_spread = 11;
+}
+
+message CallableBondInput {
+  fintekkers.models.security.SecurityProto security = 1;
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+  repeated CallEntry call_schedule = 10;
+  repeated CallEntry put_schedule = 11;
+  fintekkers.models.util.DecimalValueProto volatility = 12;
+  uint32 tree_steps = 13;
+  YieldCurveInput benchmark_curve = 14;
+}
+
+message CallEntry {
+  fintekkers.models.util.LocalDateProto date = 1;
+  fintekkers.models.util.DecimalValueProto price = 2;
+}
+
+message SwapInput {
+  fintekkers.models.util.DecimalValueProto notional = 1;
+  fintekkers.models.util.DecimalValueProto fixed_rate = 2;
+  uint32 fixed_freq = 3;
+  uint32 float_freq = 4;
+  fintekkers.models.util.DecimalValueProto float_spread = 5;
+  fintekkers.models.util.LocalDateProto start_date = 6;
+  fintekkers.models.util.LocalDateProto maturity_date = 7;
+  bool pay_fixed = 8;
+  YieldCurveInput projection_curve = 20;
+  YieldCurveInput discount_curve = 21;
+}
+
+message MbsInput {
+  fintekkers.models.util.DecimalValueProto original_balance = 1;
+  fintekkers.models.util.DecimalValueProto current_balance = 2;
+  fintekkers.models.util.DecimalValueProto pass_through_rate = 3;
+  fintekkers.models.util.DecimalValueProto wac = 4;
+  uint32 wam = 5;
+  uint32 age = 6;
+  fintekkers.models.util.DecimalValueProto market_price = 7;
+  fintekkers.models.util.DecimalValueProto psa_speed = 8;
+}
+
+message MoneyMarketInput {
+  fintekkers.models.util.DecimalValueProto face_value = 1;
+  fintekkers.models.util.LocalDateProto issue_date = 2;
+  fintekkers.models.util.LocalDateProto maturity_date = 3;
+  fintekkers.models.util.DecimalValueProto market_price = 4;
+  fintekkers.models.util.DecimalValueProto coupon_rate = 5;
+  bool is_discount = 6;
+}
+
+message RepoInput {
+  fintekkers.models.util.DecimalValueProto collateral_dirty_price = 1;
+  fintekkers.models.util.DecimalValueProto collateral_face = 2;
+  fintekkers.models.util.DecimalValueProto haircut = 3;
+  fintekkers.models.util.DecimalValueProto repo_rate = 4;
+  fintekkers.models.util.LocalDateProto start_date = 5;
+  fintekkers.models.util.LocalDateProto end_date = 6;
+}
+
+message TipsInput {
+  fintekkers.models.security.SecurityProto security = 1;
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+  fintekkers.models.util.DecimalValueProto base_cpi = 3;
+  fintekkers.models.util.DecimalValueProto current_cpi = 4;
+  fintekkers.models.util.DecimalValueProto nominal_yield = 5;  // for breakeven calc
+}
+
+message FrnInput {
+  fintekkers.models.security.SecurityProto security = 1;
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+  YieldCurveInput projection_curve = 10;
+  YieldCurveInput discount_curve = 11;
+}
+
+message LoanInput {
+  fintekkers.models.util.DecimalValueProto face_value = 1;
+  fintekkers.models.util.DecimalValueProto spread = 2;
+  uint32 payment_freq = 3;
+  fintekkers.models.util.LocalDateProto dated_date = 4;
+  fintekkers.models.util.LocalDateProto maturity_date = 5;
+  fintekkers.models.util.DecimalValueProto market_price = 6;
+  YieldCurveInput projection_curve = 10;
+  YieldCurveInput discount_curve = 11;
+  bool is_amortizing = 20;
+  repeated AmortEntry amortization = 21;
+}
+
+message AmortEntry {
+  fintekkers.models.util.LocalDateProto date = 1;
+  fintekkers.models.util.DecimalValueProto principal_fraction = 2;
+}
+
+message FuturesInput {
+  fintekkers.models.util.DecimalValueProto futures_price = 1;
+  fintekkers.models.util.DecimalValueProto contract_size = 2;
+  fintekkers.models.util.LocalDateProto expiry_date = 3;
+  fintekkers.models.util.LocalDateProto delivery_date = 4;
+  fintekkers.models.security.SecurityProto ctd_bond = 5;
+  fintekkers.models.util.DecimalValueProto ctd_clean_price = 6;
+  fintekkers.models.util.DecimalValueProto volatility = 7;
+}
+
+message MuniInput {
+  fintekkers.models.security.SecurityProto security = 1;
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+  fintekkers.models.util.DecimalValueProto federal_rate = 10;
+  fintekkers.models.util.DecimalValueProto state_rate = 11;
+  fintekkers.models.util.DecimalValueProto local_rate = 12;
+  fintekkers.models.util.DecimalValueProto agi_surcharge = 13;
+  bool is_in_state = 14;
+  // Call schedule (most munis are callable)
+  repeated CallEntry call_schedule = 20;
+}
+
+message XccySwapInput {
+  fintekkers.models.util.DecimalValueProto domestic_notional = 1;
+  fintekkers.models.util.DecimalValueProto foreign_notional = 2;
+  fintekkers.models.util.DecimalValueProto domestic_fixed_rate = 3;
+  fintekkers.models.util.DecimalValueProto foreign_fixed_rate = 4;
+  uint32 domestic_freq = 5;
+  uint32 foreign_freq = 6;
+  fintekkers.models.util.LocalDateProto start_date = 7;
+  fintekkers.models.util.LocalDateProto maturity_date = 8;
+  fintekkers.models.util.DecimalValueProto spot_fx = 9;
+  fintekkers.models.util.DecimalValueProto basis_spread = 10;
+  bool exchange_notional = 11;
+  YieldCurveInput domestic_curve = 20;
+  YieldCurveInput foreign_curve = 21;
+}
+
+message AmortizingBondInput {
+  fintekkers.models.security.SecurityProto security = 1;
+  fintekkers.models.util.DecimalValueProto market_price = 2;
+  string schedule_type = 10;  // "level_principal", "level_payment", "custom", "pro_rata"
+  fintekkers.models.util.DecimalValueProto pro_rata_fraction = 11;
+  repeated AmortEntry custom_schedule = 12;
+}
+
+message ScenarioInput {
+  BondInput bond = 1;
+  YieldCurveInput benchmark_curve = 2;
+  fintekkers.models.util.DecimalValueProto z_spread = 3;
+  repeated ScenarioDef scenarios = 10;
+}
+
+message ScenarioDef {
+  string name = 1;
+  fintekkers.models.util.DecimalValueProto parallel_shift_bp = 2;
+}
