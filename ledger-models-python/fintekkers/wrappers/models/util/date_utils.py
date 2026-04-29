@@ -4,7 +4,7 @@ from fintekkers.models.util.local_date_pb2 import LocalDateProto
 def today_proto():
     return get_date_proto(datetime.now())
 
-def get_date_proto(input_date):
+def get_date_proto(input_date: 'str | datetime | date | None'):
     if input_date is None:
         return None
 

@@ -163,7 +163,7 @@ class QueryPriceRequest:
         )
 
         start_ts_proto = ProtoSerializationUtil.serialize(datetime.combine(start_date, datetime.min.time())) if start_date else None
-        end_ts_proto = ProtoSerializationUtil.serialize(datetime.combine(end_date, datetime.min.time())) if end_date else None
+        end_ts_proto = ProtoSerializationUtil.serialize(datetime.combine(end_date, datetime.max.time())) if end_date else None
 
         date_range_proto = DateRangeProto(start=start_ts_proto, end=end_ts_proto) if start_date and end_date else None
 

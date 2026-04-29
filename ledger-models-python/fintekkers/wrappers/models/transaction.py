@@ -26,6 +26,7 @@ class Transaction():
         price:float=-100.00, quantity=100,
         as_of:datetime=datetime.now()):
 
+        # Inline import: serialization.py imports TransactionType from this module, so top-level import would be circular
         from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
         as_of_proto = ProtoSerializationUtil.serialize(as_of)
 

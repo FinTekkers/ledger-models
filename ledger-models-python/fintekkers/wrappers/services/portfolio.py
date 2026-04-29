@@ -113,6 +113,7 @@ class PortfolioService:
         )
 
         responses = self.search(QueryPortfolioRequest(portfolio_query))
+        # search() yields Portfolio wrappers (not raw protos), so list() is correct here
         portfolios: list[Portfolio] = list(responses)
 
         if len(portfolios) == 0:
