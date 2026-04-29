@@ -17,6 +17,7 @@ pub mod xccy;
 pub mod mbs;
 pub mod risk;
 pub mod credit;
+pub mod portfolio;
 
 #[cfg(feature = "proto")]
 pub mod proto_bridge;
