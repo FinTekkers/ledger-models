@@ -177,14 +177,14 @@ jreleaser {
 
 protobuf {
     protoc {
-        path = '/opt/homebrew/opt/protobuf@21/bin/protoc'
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
     }
 
     generatedFilesBaseDir = 'generated-src'
 
     plugins {
         grpc {
-            path = '/opt/homebrew/bin/protoc-gen-grpc-java'
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
         }
     }
 
