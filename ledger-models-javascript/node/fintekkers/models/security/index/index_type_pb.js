@@ -31,7 +31,11 @@ proto.fintekkers.models.security.index.IndexTypeProto = {
   FED_FUNDS: 12,
   SONIA: 13,
   ESTR: 14,
-  TONA: 15
+  TONA: 15,
+  US_TREASURY: 20,
+  UK_GILT: 21,
+  DE_BUND: 22,
+  JP_JGB: 23
 };
 
 goog.object.extend(exports, proto.fintekkers.models.security.index);

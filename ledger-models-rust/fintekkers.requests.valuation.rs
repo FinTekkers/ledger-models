@@ -112,7 +112,7 @@ pub struct CurveResponseProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ProductInput {
-    #[prost(oneof = "product_input::Input", tags = "8")]
+    #[prost(oneof = "product_input::Input", tags = "1, 8")]
     pub input: ::core::option::Option<product_input::Input>,
 }
 /// Nested message and enum types in `ProductInput`.
@@ -120,9 +120,37 @@ pub mod product_input {
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Input {
+        #[prost(message, tag = "1")]
+        Bond(super::BondInput),
         #[prost(message, tag = "8")]
         Frn(super::FrnInput),
     }
+}
+/// ═══════════════════════════════════════════════════════════════════════════
+/// BondInput — valuation request for a fixed-rate bond.
+///
+/// Static security details (coupon_rate, coupon_frequency, face_value,
+/// dated_date, maturity_date) are read from the SecurityProto.
+///
+/// Settlement date is read from ValuationRequestProto.asof_datetime.
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct BondInput {
+    /// The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+    /// coupon_type FIXED and all standard fixed-income fields populated.
+    #[prost(message, optional, tag = "1")]
+    pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
+    /// Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
+    #[prost(message, optional, tag = "2")]
+    pub clean_price: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
+    >,
+    /// Optional benchmark curve for Z-spread computation, expressed as a set of
+    /// benchmark securities and their market clean prices. The engine bootstraps
+    /// a zero-coupon spot curve internally. When omitted, Z-spread is not computed.
+    #[prost(message, optional, tag = "10")]
+    pub benchmark_curve: ::core::option::Option<SecurityBasedCurveInput>,
 }
 /// ═══════════════════════════════════════════════════════════════════════════
 /// FrnInput — valuation request for a Floating Rate Note.
@@ -187,6 +215,52 @@ pub struct CurvePoint {
     /// Not a percentage — 4.25 would be interpreted as 425%.
     #[prost(message, optional, tag = "2")]
     pub rate: ::core::option::Option<super::super::models::util::DecimalValueProto>,
+}
+/// ═══════════════════════════════════════════════════════════════════════════
+/// SecurityBasedCurveInput — a benchmark curve specified as a set of benchmark
+/// securities and their observed market clean prices.
+///
+/// The valuation engine bootstraps a zero-coupon spot rate curve from these
+/// inputs using a closed-form iterative bootstrap (shortest maturity first).
+/// Callers do not supply rates directly; the engine derives them internally.
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SecurityBasedCurveInput {
+    /// Which government benchmark this curve represents.
+    /// Must be one of the government curve identifiers: US_TREASURY, UK_GILT,
+    /// DE_BUND, JP_JGB.
+    #[prost(
+        enumeration = "super::super::models::security::index::IndexTypeProto",
+        tag = "1"
+    )]
+    pub index: i32,
+    /// As-of date for the curve, typically today or the most recent business day.
+    #[prost(message, optional, tag = "2")]
+    pub reference_date: ::core::option::Option<
+        super::super::models::util::LocalDateProto,
+    >,
+    /// Benchmark securities sorted by maturity ascending. Each entry pairs a
+    /// security with its observed clean price. The engine processes them in order,
+    /// bootstrapping the zero rate at each maturity from the previously solved
+    /// shorter-dated zeros.
+    #[prost(message, repeated, tag = "3")]
+    pub points: ::prost::alloc::vec::Vec<SecurityCurvePoint>,
+}
+/// A benchmark security and its market clean price, used as one input to the
+/// bootstrap algorithm in SecurityBasedCurveInput.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SecurityCurvePoint {
+    /// The benchmark bond (must have fixed coupon, maturity_date, coupon_frequency,
+    /// face_value, and coupon_rate populated).
+    #[prost(message, optional, tag = "1")]
+    pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
+    /// Market clean price as a percentage of face value (e.g. 99.50 = 99.50% of par).
+    #[prost(message, optional, tag = "2")]
+    pub clean_price: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
+    >,
 }
 /// Developer notes. This will need some re-organization once we start thinking through
 /// varied valuations (e.g. value over a time range, value multiple securities in the same

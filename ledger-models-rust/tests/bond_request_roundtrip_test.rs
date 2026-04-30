@@ -6,8 +6,10 @@ use ledger_models::fintekkers::models::security::{
     CouponFrequencyProto, CouponTypeProto, SecurityProto, SecurityTypeProto,
 };
 use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
+use ledger_models::fintekkers::models::security::index::IndexTypeProto;
 use ledger_models::fintekkers::requests::valuation::{
-    product_input, BondInput, CurvePoint, ProductInput, ValuationRequestProto, YieldCurveInput,
+    product_input, BondInput, ProductInput, SecurityBasedCurveInput, SecurityCurvePoint,
+    ValuationRequestProto,
 };
 use prost::Message;
 
@@ -30,16 +32,31 @@ fn treasury_security() -> SecurityProto {
     sec
 }
 
-fn treasury_curve() -> YieldCurveInput {
-    YieldCurveInput {
+fn make_benchmark_bond(coupon_rate: &str, maturity_year: u32, maturity_month: u32, maturity_day: u32) -> SecurityCurvePoint {
+    let mut sec = SecurityProto::default();
+    sec.security_type = SecurityTypeProto::BondSecurity.into();
+    sec.coupon_type = CouponTypeProto::Fixed.into();
+    sec.coupon_frequency = CouponFrequencyProto::Semiannually.into();
+    sec.face_value = Some(decimal("1000"));
+    sec.coupon_rate = Some(decimal(coupon_rate));
+    sec.maturity_date = Some(date(maturity_year, maturity_month, maturity_day));
+    SecurityCurvePoint {
+        security: Some(sec),
+        clean_price: Some(decimal("100.00")),
+    }
+}
+
+fn treasury_curve() -> SecurityBasedCurveInput {
+    SecurityBasedCurveInput {
+        index: IndexTypeProto::UsTreasury.into(),
+        reference_date: Some(date(2025, 4, 30)),
         points: vec![
-            CurvePoint { tenor: Some(decimal("0.5")),  rate: Some(decimal("0.0430")) },
-            CurvePoint { tenor: Some(decimal("1.0")),  rate: Some(decimal("0.0420")) },
-            CurvePoint { tenor: Some(decimal("2.0")),  rate: Some(decimal("0.0400")) },
-            CurvePoint { tenor: Some(decimal("5.0")),  rate: Some(decimal("0.0390")) },
-            CurvePoint { tenor: Some(decimal("10.0")), rate: Some(decimal("0.0410")) },
+            make_benchmark_bond("4.30", 2025, 10, 31),
+            make_benchmark_bond("4.20", 2026, 4,  30),
+            make_benchmark_bond("4.00", 2027, 4,  30),
+            make_benchmark_bond("3.90", 2030, 4,  30),
+            make_benchmark_bond("4.10", 2035, 4,  30),
         ],
-        ..Default::default()
     }
 }
 
@@ -123,11 +140,10 @@ fn bond_input_with_benchmark_curve_survives_roundtrip() {
         product_input::Input::Bond(b) => {
             assert_eq!(b.clean_price.unwrap().arbitrary_precision_value, "99.75");
             let curve = b.benchmark_curve.unwrap();
+            assert_eq!(curve.index(), IndexTypeProto::UsTreasury);
             assert_eq!(curve.points.len(), 5);
-            assert_eq!(
-                curve.points[2].tenor.as_ref().unwrap().arbitrary_precision_value,
-                "2.0"
-            );
+            let mid_sec = curve.points[2].security.as_ref().unwrap();
+            assert_eq!(mid_sec.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "4.00");
         }
         other => panic!("Expected Bond variant, got {:?}", other),
     }

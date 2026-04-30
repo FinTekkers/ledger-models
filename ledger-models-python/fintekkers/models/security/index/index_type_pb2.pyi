@@ -18,6 +18,10 @@ class IndexTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     SONIA: _ClassVar[IndexTypeProto]
     ESTR: _ClassVar[IndexTypeProto]
     TONA: _ClassVar[IndexTypeProto]
+    US_TREASURY: _ClassVar[IndexTypeProto]
+    UK_GILT: _ClassVar[IndexTypeProto]
+    DE_BUND: _ClassVar[IndexTypeProto]
+    JP_JGB: _ClassVar[IndexTypeProto]
 UNKNOWN_INDEX_TYPE: IndexTypeProto
 CPI_U: IndexTypeProto
 CPI_W: IndexTypeProto
@@ -30,3 +34,7 @@ FED_FUNDS: IndexTypeProto
 SONIA: IndexTypeProto
 ESTR: IndexTypeProto
 TONA: IndexTypeProto
+US_TREASURY: IndexTypeProto
+UK_GILT: IndexTypeProto
+DE_BUND: IndexTypeProto
+JP_JGB: IndexTypeProto

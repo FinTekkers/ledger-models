@@ -19,4 +19,8 @@ export enum IndexTypeProto {
     SONIA = 13,
     ESTR = 14,
     TONA = 15,
+    US_TREASURY = 20,
+    UK_GILT = 21,
+    DE_BUND = 22,
+    JP_JGB = 23,
 }
