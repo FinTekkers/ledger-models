@@ -33,25 +33,41 @@ warn()    { echo -e "${YELLOW}[WARN]${NC}  $*"; }
 fail()    { echo -e "${RED}[FAIL]${NC}  $*"; }
 die()     { fail "$*"; exit 1; }
 
-# Returns "label|url|jq_filter" for workflows that publish to a public registry.
-# SEMVER in the url is substituted by the caller. Returns empty for GitHub Packages
-# workflows (auth required — verified via CI conclusion only).
+# Returns "type|label|..." config for each workflow's registry check.
+#
+# type=curl  → "curl|label|url|jq_filter"  (SEMVER in url substituted by caller)
+#              jq_filter must select the published version string; we compare
+#              it to the expected version to detect drift.
+# type=ghpkg → "ghpkg|label|pkg_type|pkg_name"
+#              Uses `gh api` against GitHub Packages; pkg_name is URL-encoded.
+# type=none  → no check available
 registry_config() {
     case "$1" in
         "cargo-publish.yml")
-            echo "crates.io|https://crates.io/api/v1/crates/ledger-models|.crate.newest_version"
+            # Fetch the specific version to confirm it exists (not just "newest_version",
+            # which could lag or reflect a prior release if drift occurred).
+            echo "curl|crates.io|https://crates.io/api/v1/crates/ledger-models/SEMVER|.version.num"
             ;;
         "pypi-publish.yml")
-            echo "PyPI|https://pypi.org/pypi/fintekkers-ledger-models/json|.info.version"
+            # PyPI exposes a per-version endpoint; .info.version confirms the exact release.
+            echo "curl|PyPI|https://pypi.org/pypi/fintekkers-ledger-models/SEMVER/json|.info.version"
             ;;
         "npmjs-publish.yml")
-            echo "npmjs.org|https://registry.npmjs.org/%40fintekkers%2Fledger-models/SEMVER|.version"
+            echo "curl|npmjs.org|https://registry.npmjs.org/%40fintekkers%2Fledger-models/SEMVER|.version"
             ;;
         "maven-central.yml")
-            echo "Maven Central|https://search.maven.org/solrsearch/select?q=g:io.github.fintekkers+AND+a:ledger-models&rows=1&wt=json|.response.docs[0].latestVersion"
+            # Maven Central has no per-version REST endpoint; use the search API and
+            # filter the response for our exact version to avoid "latest" drift.
+            echo "curl|Maven Central|https://search.maven.org/solrsearch/select?q=g:io.github.fintekkers+AND+a:ledger-models+AND+v:SEMVER&rows=1&wt=json|.response.docs[0].v"
+            ;;
+        "npm-publish.yml")
+            echo "ghpkg|GitHub Packages (npm)|npm|ledger-models"
+            ;;
+        "maven-publish.yml")
+            echo "ghpkg|GitHub Packages (maven)|maven|io.github.fintekkers%3Aledger-models"
             ;;
         *)
-            echo ""  # GitHub Packages — no public endpoint
+            echo "none"
             ;;
     esac
 }
@@ -157,21 +173,13 @@ wait_for_run() {
 
 # ── Registry verification ─────────────────────────────────────────────────────
 
-# Returns 0 if the version is visible in the public registry, 1 otherwise.
-# Retries for ~90s to allow for propagation lag.
-verify_registry() {
-    local workflow="$1" version="$2"
-    local config
-    config=$(registry_config "$workflow")
-    [[ -n "$config" ]] || return 0  # GitHub Packages — skip
+# Check a public (curl-based) registry for the exact version.
+# Retries ~6× with 15s gaps (~90s total) to allow for propagation lag.
+_verify_curl_registry() {
+    local label="$1" url="$2" filter="$3" version="$4" is_maven_central="$5"
 
-    local label url filter
-    IFS='|' read -r label url filter <<< "$config"
-    url="${url//SEMVER/$version}"
-
-    local attempts=0
+    local attempts=0 result=""
     while [[ $attempts -lt 6 ]]; do
-        local result
         result=$(curl -sf --max-time 10 "$url" 2>/dev/null | jq -r "$filter" 2>/dev/null || true)
         if [[ "$result" == "$version" ]]; then
             success "${label}: v${version} confirmed"
@@ -181,16 +189,73 @@ verify_registry() {
         (( attempts++ )) || true
     done
 
-    # Maven Central indexing can lag several minutes — warn but don't block
-    if [[ "$workflow" == "maven-central.yml" ]]; then
-        warn "Maven Central: v${version} not yet indexed (normal lag — verify manually)"
+    # Maven Central indexing typically lags several minutes after workflow success.
+    if [[ "$is_maven_central" == "true" ]]; then
+        warn "Maven Central: v${version} not yet indexed (normal — check https://search.maven.org manually)"
         return 0
     fi
 
-    local label_only
-    label_only=$(echo "$config" | cut -d'|' -f1)
-    fail "${label_only}: expected v${version}, got '${result:-<no response>}'"
+    fail "${label}: drift detected — expected v${version}, got '${result:-<no response>}'"
     return 1
+}
+
+# Check GitHub Packages for the exact version using `gh api`.
+# Queries the versions list and looks for an entry matching our version string.
+_verify_ghpkg_registry() {
+    local label="$1" pkg_type="$2" pkg_name="$3" version="$4"
+
+    local attempts=0 found=""
+    while [[ $attempts -lt 4 ]]; do
+        found=$(gh api \
+            "/orgs/FinTekkers/packages/${pkg_type}/${pkg_name}/versions" \
+            --jq "[.[] | select(.name == \"${version}\")] | length" \
+            2>/dev/null || echo "0")
+        if [[ "${found:-0}" -gt 0 ]]; then
+            success "${label}: v${version} confirmed"
+            return 0
+        fi
+        sleep 20
+        (( attempts++ )) || true
+    done
+
+    fail "${label}: drift detected — v${version} not found in GitHub Packages"
+    return 1
+}
+
+# Routes to the right verifier based on registry_config type.
+verify_registry() {
+    local workflow="$1" version="$2"
+    local config check_type
+    config=$(registry_config "$workflow")
+    check_type=$(echo "$config" | cut -d'|' -f1)
+
+    case "$check_type" in
+        none) return 0 ;;
+
+        curl)
+            local label url filter
+            label=$(echo "$config"  | cut -d'|' -f2)
+            url=$(echo "$config"    | cut -d'|' -f3)
+            filter=$(echo "$config" | cut -d'|' -f4)
+            url="${url//SEMVER/$version}"
+            local is_maven_central="false"
+            [[ "$workflow" == "maven-central.yml" ]] && is_maven_central="true"
+            _verify_curl_registry "$label" "$url" "$filter" "$version" "$is_maven_central"
+            ;;
+
+        ghpkg)
+            local label pkg_type pkg_name
+            label=$(echo "$config"    | cut -d'|' -f2)
+            pkg_type=$(echo "$config" | cut -d'|' -f3)
+            pkg_name=$(echo "$config" | cut -d'|' -f4)
+            _verify_ghpkg_registry "$label" "$pkg_type" "$pkg_name" "$version"
+            ;;
+
+        *)
+            warn "Unknown registry type '${check_type}' for ${workflow} — skipping"
+            return 0
+            ;;
+    esac
 }
 
 # ── Main ──────────────────────────────────────────────────────────────────────
