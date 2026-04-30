@@ -25,7 +25,7 @@ from google.protobuf.any_pb2 import Any
 class ProtoEnum:
     def __init__(self, enum_descriptor: EnumValueDescriptor, enum_value: int):
         self.enum_value: int = enum_value
-        self.get_enum_descriptor = enum_descriptor
+        self.enum_descriptor = enum_descriptor
         # Will be the proto
         self.enum = ProtoEnum.get_field_descriptor(enum_descriptor)
 

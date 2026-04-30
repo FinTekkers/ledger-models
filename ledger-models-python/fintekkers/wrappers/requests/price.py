@@ -108,40 +108,28 @@ class QueryPriceRequest:
         self.proto = proto
 
     @staticmethod
-    def create_query_request(fields: dict, 
-                             frequency: PriceFrequencyProto, 
+    def create_query_request(fields: dict,
+                             frequency: PriceFrequencyProto,
                              horizon: PriceHorizonProto):
         """
-        Returns a query request from a dict of field/values
+        Returns a query request from a dict of field/values using a price horizon.
 
                 Parameters:
                         fields (dict): A dictionary of fields with values
+                        frequency: The price frequency (e.g. DAILY, HOURLY)
+                        horizon: The price horizon (e.g. 1_DAY, 1_MONTH)
 
                 Returns:
-                        request (QuerySecurityRequest): A request wrapper, with the fields attached. It assumes that all filters are an equals operation
+                        request (QueryPriceRequest): A request wrapper, with the fields attached
         """
 
-        filters = []
-
-        for field in fields:
-            field: FieldProto
-
-            field_value = fields[field]
-
-            if isinstance(field_value, str):
-                entry = FieldMapEntry(field=field, string_value=field_value)
-            else:
-                packed_value: Any = Any()
-                packed_value.Pack(msg=field_value)
-                entry = FieldMapEntry(field=field, field_value_packed=packed_value)
-
-            filters.append(entry)
+        filters = QueryPriceRequest._build_filters(fields)
 
         as_of_proto: LocalTimestampProto = ProtoSerializationUtil.serialize(
             datetime.now()
         )
 
-        request: QuerySecurityRequestProto = QueryPriceRequestProto(
+        request = QueryPriceRequestProto(
             search_price_input=PositionFilterProto(filters=filters),
             as_of=as_of_proto,
             frequency=frequency,
@@ -150,48 +138,36 @@ class QueryPriceRequest:
 
         return QueryPriceRequest(proto=request)
 
-
     @staticmethod
-    def create_query_request(fields: dict,
-                             frequency:PriceFrequencyProto,
+    def create_query_request_with_date_range(fields: dict,
+                             frequency: PriceFrequencyProto,
                              start_date: date,
                              end_date: date):
         """
-        Returns a query request from a dict of field/values
+        Returns a query request from a dict of field/values using a date range.
 
                 Parameters:
                         fields (dict): A dictionary of fields with values
+                        frequency: The price frequency
+                        start_date: Start of the date range
+                        end_date: End of the date range
 
                 Returns:
-                        request (QuerySecurityRequest): A request wrapper, with the fields attached. It assumes that all filters are an equals operation
+                        request (QueryPriceRequest): A request wrapper, with the fields attached
         """
 
-        filters = []
-
-        for field in fields:
-            field: FieldProto
-
-            field_value = fields[field]
-
-            if isinstance(field_value, str):
-                entry = FieldMapEntry(field=field, string_value=field_value)
-            else:
-                packed_value: Any = Any()
-                packed_value.Pack(msg=field_value)
-                entry = FieldMapEntry(field=field, field_value_packed=packed_value)
-
-            filters.append(entry)
+        filters = QueryPriceRequest._build_filters(fields)
 
         as_of_proto: LocalTimestampProto = ProtoSerializationUtil.serialize(
             datetime.now()
         )
 
-        start_date_proto: LocalTimestampProto = ProtoSerializationUtil.serialize(start_date) if start_date else None
-        end_date_proto: LocalTimestampProto = ProtoSerializationUtil.serialize(end_date) if end_date else None
+        start_ts_proto = ProtoSerializationUtil.serialize(datetime.combine(start_date, datetime.min.time())) if start_date else None
+        end_ts_proto = ProtoSerializationUtil.serialize(datetime.combine(end_date, datetime.max.time())) if end_date else None
 
-        date_range_proto: DateRangeProto = DateRangeProto(start_date=start_date_proto, end_date=end_date_proto) if start_date and end_date else None
+        date_range_proto = DateRangeProto(start=start_ts_proto, end=end_ts_proto) if start_date and end_date else None
 
-        request: QuerySecurityRequestProto = QueryPriceRequestProto(
+        request = QueryPriceRequestProto(
             search_price_input=PositionFilterProto(filters=filters),
             as_of=as_of_proto,
             frequency=frequency,
@@ -199,3 +175,17 @@ class QueryPriceRequest:
         )
 
         return QueryPriceRequest(proto=request)
+
+    @staticmethod
+    def _build_filters(fields: dict) -> list:
+        filters = []
+        for field in fields:
+            field_value = fields[field]
+            if isinstance(field_value, str):
+                entry = FieldMapEntry(field=field, string_value=field_value)
+            else:
+                packed_value: Any = Any()
+                packed_value.Pack(msg=field_value)
+                entry = FieldMapEntry(field=field, field_value_packed=packed_value)
+            filters.append(entry)
+        return filters

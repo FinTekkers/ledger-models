@@ -15,7 +15,6 @@ from fintekkers.models.util.local_date_pb2 import LocalDateProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
-from fintekkers.wrappers.models.util.date_utils import get_date_from_proto
 
 class Transaction():
     @staticmethod
@@ -24,10 +23,12 @@ class Transaction():
         trade_date:date=date.today(), settlement_date:date=date.today(), \
         position_status:PositionStatusProto=PositionStatusProto.INTENDED, \
         transaction_type:TransactionTypeProto=TransactionTypeProto.BUY, \
-        price:float=-100.00, quantity=100, 
+        price:float=-100.00, quantity=100,
         as_of:datetime=datetime.now()):
-        
-        as_of_proto = LocalTimestampProto(timestamp=Timestamp(seconds=int(get_date_from_proto(as_of).timestamp()), nanos=0), time_zone="America/New_York")
+
+        # Inline import: serialization.py imports TransactionType from this module, so top-level import would be circular
+        from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+        as_of_proto = ProtoSerializationUtil.serialize(as_of)
 
         return Transaction(proto=TransactionProto(
             as_of=as_of_proto,

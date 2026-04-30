@@ -1,18 +1,17 @@
-from datetime import datetime
+from datetime import date, datetime
 from fintekkers.models.util.local_date_pb2 import LocalDateProto
 
 def today_proto():
     return get_date_proto(datetime.now())
 
-def get_date_proto(input_date:str):
+def get_date_proto(input_date: 'str | datetime | date | None'):
     if input_date is None:
         return None
 
-    date = datetime.strptime(input_date, '%Y-%m-%d')
-    return get_date_proto(date)
+    if isinstance(input_date, str):
+        input_date = datetime.strptime(input_date, '%Y-%m-%d')
 
-def get_date_proto(date:datetime):
-    return LocalDateProto(year=date.year, month=date.month, day=date.day)
+    return LocalDateProto(year=input_date.year, month=input_date.month, day=input_date.day)
 
 def get_date_from_proto(local_date_proto:LocalDateProto) -> datetime:
     return datetime(local_date_proto.year, local_date_proto.month, local_date_proto.day, 1, 1, 1, 1)
