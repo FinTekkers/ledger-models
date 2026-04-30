@@ -145,6 +145,7 @@ impl SecurityProtoBuilder {
                 None
             } else {
                 Some(Box::new(SecurityProto {
+                    uuid: Some(UUIDWrapper::new_random().into()),
                     security_type: SecurityTypeProto::CashSecurity.into(),
                     cash_id: self.settlement_currency,
                     ..Default::default()
@@ -236,6 +237,20 @@ mod test {
             .unwrap();
 
         assert!(result.settlement_currency.is_none());
+    }
+
+    #[test]
+    fn test_settlement_currency_round_trip() {
+        let result = SecurityProtoBuilder::new()
+            .settlement_currency("BTC".to_string())
+            .build()
+            .unwrap();
+
+        let parsed = round_trip(&result);
+        let currency = parsed.settlement_currency.expect("settlement_currency should survive round-trip");
+        assert_eq!(currency.security_type, SecurityTypeProto::CashSecurity as i32);
+        assert_eq!(currency.cash_id, "BTC");
+        assert!(currency.uuid.is_some(), "uuid should survive round-trip");
     }
 
     #[test]
