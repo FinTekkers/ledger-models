@@ -28,7 +28,10 @@ proto.fintekkers.models.security.index.IndexTypeProto = {
   HICP: 5,
   SOFR: 10,
   T_BILL_13_WEEK: 11,
-  FED_FUNDS: 12
+  FED_FUNDS: 12,
+  SONIA: 13,
+  ESTR: 14,
+  TONA: 15
 };
 
 goog.object.extend(exports, proto.fintekkers.models.security.index);

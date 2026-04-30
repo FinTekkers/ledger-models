@@ -15,6 +15,9 @@ class IndexTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     SOFR: _ClassVar[IndexTypeProto]
     T_BILL_13_WEEK: _ClassVar[IndexTypeProto]
     FED_FUNDS: _ClassVar[IndexTypeProto]
+    SONIA: _ClassVar[IndexTypeProto]
+    ESTR: _ClassVar[IndexTypeProto]
+    TONA: _ClassVar[IndexTypeProto]
 UNKNOWN_INDEX_TYPE: IndexTypeProto
 CPI_U: IndexTypeProto
 CPI_W: IndexTypeProto
@@ -24,3 +27,6 @@ HICP: IndexTypeProto
 SOFR: IndexTypeProto
 T_BILL_13_WEEK: IndexTypeProto
 FED_FUNDS: IndexTypeProto
+SONIA: IndexTypeProto
+ESTR: IndexTypeProto
+TONA: IndexTypeProto

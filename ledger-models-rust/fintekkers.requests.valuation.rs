@@ -97,6 +97,97 @@ pub struct CurveResponseProto {
     #[prost(message, optional, tag = "30")]
     pub summary: ::core::option::Option<super::util::errors::SummaryProto>,
 }
+/// ═══════════════════════════════════════════════════════════════════════════
+/// ProductInput — the dispatch field on ValuationRequestProto.
+///
+/// Exactly one variant should be set per request. The service routes to the
+/// appropriate calculation engine based on which oneof field is populated.
+///
+/// Field numbers are reserved per the platform product roadmap:
+///    1–7  fixed-income (bond, callable, tips, muni, amortizing, ...)
+///    8    frn
+///    9–12 rates/credit (swap, xccy, repo, loan)
+///    13+  other (mbs, money market, futures, scenario, krd, ...)
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ProductInput {
+    #[prost(oneof = "product_input::Input", tags = "8")]
+    pub input: ::core::option::Option<product_input::Input>,
+}
+/// Nested message and enum types in `ProductInput`.
+pub mod product_input {
+    #[allow(clippy::derive_partial_eq_without_eq)]
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Input {
+        #[prost(message, tag = "8")]
+        Frn(super::FrnInput),
+    }
+}
+/// ═══════════════════════════════════════════════════════════════════════════
+/// FrnInput — valuation request for a Floating Rate Note.
+///
+/// Static security details (spread, reference_rate_index, coupon_frequency,
+/// face_value, dated_date, maturity_date) are read from security.frn_details
+/// and are not repeated here.
+///
+/// Settlement date is read from ValuationRequestProto.asof_datetime.
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct FrnInput {
+    /// The FRN security. Must have frn_details populated on the product_details oneof.
+    #[prost(message, optional, tag = "1")]
+    pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
+    /// Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
+    #[prost(message, optional, tag = "2")]
+    pub clean_price: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
+    >,
+    /// Yield curve for projecting floating coupons and discounting cashflows.
+    /// curve.index must match security.frn_details.reference_rate_index.
+    /// A single curve is used for both projection and discounting (single-curve framework).
+    /// This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
+    #[prost(message, optional, tag = "10")]
+    pub curve: ::core::option::Option<YieldCurveInput>,
+}
+/// ═══════════════════════════════════════════════════════════════════════════
+/// YieldCurveInput — a term structure of continuously compounded zero rates.
+///
+/// Used to project forward rates for floating coupons and to compute
+/// discount factors for present-valuing cashflows.
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct YieldCurveInput {
+    /// The benchmark this curve represents (e.g. SOFR, SONIA).
+    /// Must match the FRN security's reference_rate_index — validated by the service.
+    #[prost(
+        enumeration = "super::super::models::security::index::IndexTypeProto",
+        tag = "1"
+    )]
+    pub index: i32,
+    /// As-of date for the curve, typically today or the most recent business day.
+    #[prost(message, optional, tag = "2")]
+    pub reference_date: ::core::option::Option<
+        super::super::models::util::LocalDateProto,
+    >,
+    /// Term structure points, must be sorted by tenor strictly ascending.
+    #[prost(message, repeated, tag = "3")]
+    pub points: ::prost::alloc::vec::Vec<CurvePoint>,
+}
+/// A single point on a yield curve.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CurvePoint {
+    /// Time from reference_date in years (e.g. 0.25, 0.5, 1.0, 2.0, 5.0, 10.0).
+    #[prost(message, optional, tag = "1")]
+    pub tenor: ::core::option::Option<super::super::models::util::DecimalValueProto>,
+    /// Continuously compounded zero rate as a decimal (e.g. 0.0425 = 4.25%).
+    /// Not a percentage — 4.25 would be interpreted as 425%.
+    #[prost(message, optional, tag = "2")]
+    pub rate: ::core::option::Option<super::super::models::util::DecimalValueProto>,
+}
 /// Developer notes. This will need some re-organization once we start thinking through
 /// varied valuations (e.g. value over a time range, value multiple securities in the same
 /// request/etc. For now, the caller will need to make individual requests.
@@ -142,10 +233,17 @@ pub struct ValuationRequestProto {
     pub cpi_price_input: ::core::option::Option<super::super::models::price::PriceProto>,
     /// The current reference rate observation for floating rate note (FRN) valuation.
     /// Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+    /// Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
     #[prost(message, optional, tag = "25")]
     pub reference_rate_input: ::core::option::Option<
         super::super::models::price::PriceProto,
     >,
+    /// Product-specific input — determines the calculation path in the service.
+    /// When set, the service routes to the new engine dispatch; existing flat fields
+    /// (security_input, price_input, etc.) are ignored for the purposes of the
+    /// product calculation but may still be read for logging and audit.
+    #[prost(message, optional, tag = "70")]
+    pub product_input: ::core::option::Option<ProductInput>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

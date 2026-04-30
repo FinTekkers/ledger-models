@@ -4,6 +4,7 @@ from fintekkers.models.price import price_pb2 as _price_pb2
 from fintekkers.models.util import local_timestamp_pb2 as _local_timestamp_pb2
 from fintekkers.requests.util import operation_pb2 as _operation_pb2
 from fintekkers.models.position import measure_pb2 as _measure_pb2
+from fintekkers.requests.valuation import product_inputs_pb2 as _product_inputs_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
@@ -13,7 +14,7 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class ValuationRequestProto(_message.Message):
-    __slots__ = ("object_class", "version", "operation_type", "measures", "security_input", "position_input", "price_input", "asof_datetime", "cpi_price_input", "reference_rate_input")
+    __slots__ = ("object_class", "version", "operation_type", "measures", "security_input", "position_input", "price_input", "asof_datetime", "cpi_price_input", "reference_rate_input", "product_input")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     OPERATION_TYPE_FIELD_NUMBER: _ClassVar[int]
@@ -24,6 +25,7 @@ class ValuationRequestProto(_message.Message):
     ASOF_DATETIME_FIELD_NUMBER: _ClassVar[int]
     CPI_PRICE_INPUT_FIELD_NUMBER: _ClassVar[int]
     REFERENCE_RATE_INPUT_FIELD_NUMBER: _ClassVar[int]
+    PRODUCT_INPUT_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
     operation_type: _operation_pb2.RequestOperationTypeProto
@@ -34,4 +36,5 @@ class ValuationRequestProto(_message.Message):
     asof_datetime: _local_timestamp_pb2.LocalTimestampProto
     cpi_price_input: _price_pb2.PriceProto
     reference_rate_input: _price_pb2.PriceProto
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., operation_type: _Optional[_Union[_operation_pb2.RequestOperationTypeProto, str]] = ..., measures: _Optional[_Iterable[_Union[_measure_pb2.MeasureProto, str]]] = ..., security_input: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., position_input: _Optional[_Union[_position_pb2.PositionProto, _Mapping]] = ..., price_input: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ..., asof_datetime: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., cpi_price_input: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ..., reference_rate_input: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ...) -> None: ...
+    product_input: _product_inputs_pb2.ProductInput
+    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., operation_type: _Optional[_Union[_operation_pb2.RequestOperationTypeProto, str]] = ..., measures: _Optional[_Iterable[_Union[_measure_pb2.MeasureProto, str]]] = ..., security_input: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., position_input: _Optional[_Union[_position_pb2.PositionProto, _Mapping]] = ..., price_input: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ..., asof_datetime: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., cpi_price_input: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ..., reference_rate_input: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ..., product_input: _Optional[_Union[_product_inputs_pb2.ProductInput, _Mapping]] = ...) -> None: ...

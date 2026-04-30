@@ -11,6 +11,7 @@ import * as fintekkers_models_price_price_pb from "../../../fintekkers/models/pr
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_requests_util_operation_pb from "../../../fintekkers/requests/util/operation_pb";
 import * as fintekkers_models_position_measure_pb from "../../../fintekkers/models/position/measure_pb";
+import * as fintekkers_requests_valuation_product_inputs_pb from "../../../fintekkers/requests/valuation/product_inputs_pb";
 
 export class ValuationRequestProto extends jspb.Message { 
     getObjectClass(): string;
@@ -54,6 +55,11 @@ export class ValuationRequestProto extends jspb.Message {
     getReferenceRateInput(): fintekkers_models_price_price_pb.PriceProto | undefined;
     setReferenceRateInput(value?: fintekkers_models_price_price_pb.PriceProto): ValuationRequestProto;
 
+    hasProductInput(): boolean;
+    clearProductInput(): void;
+    getProductInput(): fintekkers_requests_valuation_product_inputs_pb.ProductInput | undefined;
+    setProductInput(value?: fintekkers_requests_valuation_product_inputs_pb.ProductInput): ValuationRequestProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): ValuationRequestProto.AsObject;
     static toObject(includeInstance: boolean, msg: ValuationRequestProto): ValuationRequestProto.AsObject;
@@ -76,5 +82,6 @@ export namespace ValuationRequestProto {
         asofDatetime?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         cpiPriceInput?: fintekkers_models_price_price_pb.PriceProto.AsObject,
         referenceRateInput?: fintekkers_models_price_price_pb.PriceProto.AsObject,
+        productInput?: fintekkers_requests_valuation_product_inputs_pb.ProductInput.AsObject,
     }
 }

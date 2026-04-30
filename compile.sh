@@ -3,12 +3,25 @@ set -uo pipefail
 
 # compile.sh — Regenerate proto bindings for all languages and run tests.
 # Exits with non-zero if any language fails compilation or tests.
+#
+# Usage: ./compile.sh [--skip-integration]
+#   --skip-integration  Skip all tests that require a running backend service.
+#                       Unit tests still run. Use this in CI or when services
+#                       are not available locally.
 
 # Ensure Homebrew tools (protoc, grpc_node_plugin) are on PATH
 eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$REPO_ROOT"
+
+SKIP_INTEGRATION=false
+for arg in "$@"; do
+    case "$arg" in
+        --skip-integration) SKIP_INTEGRATION=true ;;
+        *) echo "Unknown argument: $arg"; exit 1 ;;
+    esac
+done
 
 # Track results for summary table
 RUST_COMPILE="SKIP"   ; RUST_TESTS="SKIP"
@@ -152,26 +165,31 @@ else
         fail "JavaScript compile"
     fi
 
-    echo "=== JavaScript: running tests ==="
-    # Exclude price-service integration tests (require running backend) from the unit test run
-    if (cd "$JS_DIR" && npm test -- --testPathIgnorePatterns="price-service/price\\.test" 2>&1); then
+    echo "=== JavaScript: running unit tests ==="
+    # Exclude all tests in wrappers/services/<*-service>/ — they require a running backend.
+    # wrappers/services/apikey.test.ts (no subdir) is a unit test and is NOT excluded.
+    if (cd "$JS_DIR" && npm test -- --testPathIgnorePatterns="wrappers/services/[a-z]+-service" 2>&1); then
         JS_TESTS="PASS"
-        pass "JavaScript tests"
+        pass "JavaScript unit tests"
     else
         JS_TESTS="FAIL"
-        fail "JavaScript tests"
+        fail "JavaScript unit tests"
     fi
 
-    echo "=== JavaScript: running price-service integration tests ==="
-    JS_INTEG_OUTPUT=$(cd "$JS_DIR" && npm test -- --testPathPattern="price-service/price\\.test" 2>&1)
-    echo "$JS_INTEG_OUTPUT" | tail -5
-    JS_INTEG_PASSED=$(echo "$JS_INTEG_OUTPUT" | grep -oE '[0-9]+ passed' | head -1)
-    JS_INTEG_FAILED=$(echo "$JS_INTEG_OUTPUT" | grep -oE '[0-9]+ failed' | head -1)
-    if [ -n "$JS_INTEG_FAILED" ] && [ "$JS_INTEG_FAILED" != "0 failed" ]; then
-        JS_INTEG="${JS_INTEG_PASSED:-0 passed}, ${JS_INTEG_FAILED}"
-        echo "  - JavaScript price-service integration: $JS_INTEG (service-dependent — does not block build)"
+    if $SKIP_INTEGRATION; then
+        echo "  - JavaScript integration tests: skipped (--skip-integration)"
     else
-        pass "JavaScript price-service integration tests"
+        echo "=== JavaScript: running service integration tests ==="
+        JS_INTEG_OUTPUT=$(cd "$JS_DIR" && npm test -- --testPathPattern="wrappers/services/[a-z]+-service" 2>&1)
+        echo "$JS_INTEG_OUTPUT" | tail -5
+        JS_INTEG_PASSED=$(echo "$JS_INTEG_OUTPUT" | grep -oE '[0-9]+ passed' | head -1)
+        JS_INTEG_FAILED=$(echo "$JS_INTEG_OUTPUT" | grep -oE '[0-9]+ failed' | head -1)
+        if [ -n "$JS_INTEG_FAILED" ] && [ "$JS_INTEG_FAILED" != "0 failed" ]; then
+            JS_INTEG="${JS_INTEG_PASSED:-0 passed}, ${JS_INTEG_FAILED}"
+            echo "  - JavaScript integration: $JS_INTEG (service-dependent — does not block build)"
+        else
+            pass "JavaScript service integration tests"
+        fi
     fi
 fi
 

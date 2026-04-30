@@ -16,4 +16,7 @@ export enum IndexTypeProto {
     SOFR = 10,
     T_BILL_13_WEEK = 11,
     FED_FUNDS = 12,
+    SONIA = 13,
+    ESTR = 14,
+    TONA = 15,
 }
