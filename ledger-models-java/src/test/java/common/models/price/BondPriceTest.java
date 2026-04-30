@@ -12,6 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BondPriceTest {
 
+    private static void assertBigDecimalEquals(BigDecimal expected, BigDecimal actual) {
+        assertEquals(0, expected.compareTo(actual),
+                () -> "Expected " + expected + " but was " + actual);
+    }
+
     @Test
     void getCleanPrice_returnsCleanWhenAccruedInterestProvided() {
         BigDecimal cleanPrice = new BigDecimal("99.50");
@@ -20,7 +25,7 @@ class BondPriceTest {
         BondPrice bondPrice = new BondPrice(UUID.randomUUID(), cleanPrice, accruedInterest,
                 CashSecurity.USD, ZonedDateTime.now());
 
-        assertEquals(new BigDecimal("99.50"), bondPrice.getCleanPrice());
+        assertBigDecimalEquals(new BigDecimal("99.50"), bondPrice.getCleanPrice());
     }
 
     @Test
@@ -31,7 +36,7 @@ class BondPriceTest {
         BondPrice bondPrice = new BondPrice(UUID.randomUUID(), cleanPrice, accruedInterest,
                 CashSecurity.USD, ZonedDateTime.now());
 
-        assertEquals(new BigDecimal("100.75"), bondPrice.getDirtyPrice());
+        assertBigDecimalEquals(new BigDecimal("100.75"), bondPrice.getDirtyPrice());
     }
 
     @Test
@@ -56,7 +61,21 @@ class BondPriceTest {
         BondPrice bondPrice = new BondPrice(UUID.randomUUID(), cleanPrice, accruedInterest,
                 CashSecurity.USD, ZonedDateTime.now());
 
-        assertEquals(new BigDecimal("1.25"), bondPrice.getAccruedInterest());
+        assertBigDecimalEquals(new BigDecimal("1.25"), bondPrice.getAccruedInterest());
+    }
+
+    @Test
+    void getAccruedInterest_throwsWhenConstructedFromDirtyPriceOnly() {
+        BigDecimal dirtyPrice = new BigDecimal("100.75");
+
+        BondPrice bondPrice = new BondPrice(UUID.randomUUID(), dirtyPrice,
+                CashSecurity.USD, ZonedDateTime.now());
+
+        UnsupportedOperationException ex = assertThrows(
+                UnsupportedOperationException.class,
+                bondPrice::getAccruedInterest);
+
+        assertTrue(ex.getMessage().contains("dirty price only"));
     }
 
     @Test
@@ -67,7 +86,7 @@ class BondPriceTest {
         BondPrice bondPrice = BondPrice.getPrice(cleanPrice, accruedInterest,
                 CashSecurity.USD, ZonedDateTime.now());
 
-        assertEquals(new BigDecimal("98.00"), bondPrice.getCleanPrice());
-        assertEquals(new BigDecimal("98.75"), bondPrice.getDirtyPrice());
+        assertBigDecimalEquals(new BigDecimal("98.00"), bondPrice.getCleanPrice());
+        assertBigDecimalEquals(new BigDecimal("98.75"), bondPrice.getDirtyPrice());
     }
 }

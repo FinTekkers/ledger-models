@@ -42,8 +42,10 @@ public class BondPrice extends Price {
     }
 
     public BigDecimal getAccruedInterest() {
-        if(this.accruedInterest == null)
-            throw new RuntimeException("This price was created from a dirty price and accrued interest was not provided");
+        if (this.accruedInterest == null)
+            throw new UnsupportedOperationException(
+                    "Accrued interest is unavailable because this BondPrice was constructed from a dirty price only. " +
+                    "Use the constructor that accepts both cleanPrice and accruedInterest.");
 
         return this.accruedInterest;
     }
