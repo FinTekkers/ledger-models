@@ -25,8 +25,20 @@ impl DateWrapper {
 
 #[derive(Debug)]
 pub enum ParseError {
-    NotValidFormat,
+    NotValidFormat(String),
 }
+
+impl fmt::Display for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ParseError::NotValidFormat(s) => {
+                write!(f, "invalid date '{}', expected {}", s, DATE_FORMAT)
+            }
+        }
+    }
+}
+
+impl std::error::Error for ParseError {}
 
 impl FromStr for DateWrapper {
     type Err = ParseError;
@@ -34,7 +46,7 @@ impl FromStr for DateWrapper {
     // Parses a date from the yyyy-mm-dd format
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         let naive_date = NaiveDate::parse_from_str(value, DATE_FORMAT)
-            .map_err(|_| ParseError::NotValidFormat)?;
+            .map_err(|_| ParseError::NotValidFormat(value.to_string()))?;
 
         Ok(DateWrapper {
             proto: LocalDateProto {
@@ -81,12 +93,7 @@ impl From<DateWrapper> for LocalDateProto {
 
 impl fmt::Display for DateWrapper {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        let date_str = &format!(
-            "{}-{}-{}",
-            &self.proto.year, &self.proto.month, &self.proto.day
-        );
-        fmt.write_str(date_str).unwrap();
-        Ok(())
+        write!(fmt, "{}-{}-{}", self.proto.year, self.proto.month, self.proto.day)
     }
 }
 
@@ -118,12 +125,20 @@ mod test {
     #[test]
     fn test_date_from_invalid_string_returns_err() {
         let result = DateWrapper::from_str("not-a-date");
-        assert!(result.is_err());
+        assert!(matches!(result, Err(ParseError::NotValidFormat(s)) if s == "not-a-date"));
     }
 
     #[test]
     fn test_date_from_empty_string_returns_err() {
         let result = DateWrapper::from_str("");
-        assert!(result.is_err());
+        assert!(matches!(result, Err(ParseError::NotValidFormat(s)) if s.is_empty()));
+    }
+
+    #[test]
+    fn test_parse_error_display() {
+        let err = ParseError::NotValidFormat("bad-input".to_string());
+        let msg = err.to_string();
+        assert!(msg.contains("bad-input"));
+        assert!(msg.contains("%Y-%m-%d"));
     }
 }
