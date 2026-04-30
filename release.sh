@@ -206,12 +206,13 @@ _verify_curl_registry() {
 _verify_ghpkg_registry() {
     local label="$1" pkg_type="$2" pkg_name="$3" version="$4"
 
-    local attempts=0 found=""
+    local attempts=0 found="" raw
     while [[ $attempts -lt 4 ]]; do
-        found=$(gh api \
-            "/orgs/FinTekkers/packages/${pkg_type}/${pkg_name}/versions" \
-            --jq "[.[] | select(.name == \"${version}\")] | length" \
-            2>/dev/null || echo "0")
+        if raw=$(gh api "/orgs/FinTekkers/packages/${pkg_type}/${pkg_name}/versions" 2>/dev/null); then
+            found=$(echo "$raw" | jq "[.[] | select(.name == \"${version}\")] | length" 2>/dev/null || echo "0")
+        else
+            found="0"
+        fi
         if [[ "${found:-0}" -gt 0 ]]; then
             success "${label}: v${version} confirmed"
             return 0
