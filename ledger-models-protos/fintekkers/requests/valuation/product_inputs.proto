@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package fintekkers.requests.valuation;
+
+import "fintekkers/models/security/security.proto";
+import "fintekkers/models/security/index/index_type.proto";
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_date.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "ProductInputProtos";
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ProductInput — the dispatch field on ValuationRequestProto.
+//
+// Exactly one variant should be set per request. The service routes to the
+// appropriate calculation engine based on which oneof field is populated.
+//
+// Field numbers are reserved per the platform product roadmap:
+//   1–7  fixed-income (bond, callable, tips, muni, amortizing, ...)
+//   8    frn
+//   9–12 rates/credit (swap, xccy, repo, loan)
+//   13+  other (mbs, money market, futures, scenario, krd, ...)
+// ═══════════════════════════════════════════════════════════════════════════
+message ProductInput {
+  oneof input {
+    FrnInput frn = 8;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FrnInput — valuation request for a Floating Rate Note.
+//
+// Static security details (spread, reference_rate_index, coupon_frequency,
+// face_value, dated_date, maturity_date) are read from security.frn_details
+// and are not repeated here.
+//
+// Settlement date is read from ValuationRequestProto.asof_datetime.
+// ═══════════════════════════════════════════════════════════════════════════
+message FrnInput {
+  // The FRN security. Must have frn_details populated on the product_details oneof.
+  fintekkers.models.security.SecurityProto security = 1;
+
+  // Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+
+  // Yield curve for projecting floating coupons and discounting cashflows.
+  // curve.index must match security.frn_details.reference_rate_index.
+  // A single curve is used for both projection and discounting (single-curve framework).
+  // This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
+  YieldCurveInput curve = 10;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// YieldCurveInput — a term structure of continuously compounded zero rates.
+//
+// Used to project forward rates for floating coupons and to compute
+// discount factors for present-valuing cashflows.
+// ═══════════════════════════════════════════════════════════════════════════
+message YieldCurveInput {
+  // The benchmark this curve represents (e.g. SOFR, SONIA).
+  // Must match the FRN security's reference_rate_index — validated by the service.
+  fintekkers.models.security.index.IndexTypeProto index = 1;
+
+  // As-of date for the curve, typically today or the most recent business day.
+  fintekkers.models.util.LocalDateProto reference_date = 2;
+
+  // Term structure points, must be sorted by tenor strictly ascending.
+  repeated CurvePoint points = 3;
+}
+
+// A single point on a yield curve.
+message CurvePoint {
+  // Time from reference_date in years (e.g. 0.25, 0.5, 1.0, 2.0, 5.0, 10.0).
+  fintekkers.models.util.DecimalValueProto tenor = 1;
+
+  // Continuously compounded zero rate as a decimal (e.g. 0.0425 = 4.25%).
+  // Not a percentage — 4.25 would be interpreted as 425%.
+  fintekkers.models.util.DecimalValueProto rate = 2;
+}
