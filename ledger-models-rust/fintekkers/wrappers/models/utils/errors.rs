@@ -1,4 +1,5 @@
 use crate::fintekkers::models::position::MeasureProto;
+use crate::fintekkers::wrappers::models::utils::date::ParseError;
 use tonic::{Code, Status};
 
 #[derive(Debug)]
@@ -16,6 +17,12 @@ pub enum Error {
     DateConversion,
     UuidError,
     DeserializationError,
+}
+
+impl From<ParseError> for Error {
+    fn from(_: ParseError) -> Self {
+        Error::DateConversion
+    }
 }
 
 impl From<Error> for Status {
