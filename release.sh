@@ -64,7 +64,9 @@ registry_config() {
             echo "ghpkg|GitHub Packages (npm)|npm|ledger-models"
             ;;
         "maven-publish.yml")
-            echo "ghpkg|GitHub Packages (maven)|maven|io.github.fintekkers.ledger-models"
+            # This workflow only publishes to a local staging-deploy dir (for jReleaser).
+            # It does not push to any external registry, so no version check needed.
+            echo "none"
             ;;
         *)
             echo "none"
