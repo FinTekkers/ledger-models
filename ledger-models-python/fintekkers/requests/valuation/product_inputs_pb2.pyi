@@ -11,10 +11,22 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class ProductInput(_message.Message):
-    __slots__ = ("frn",)
+    __slots__ = ("bond", "frn")
+    BOND_FIELD_NUMBER: _ClassVar[int]
     FRN_FIELD_NUMBER: _ClassVar[int]
+    bond: BondInput
     frn: FrnInput
-    def __init__(self, frn: _Optional[_Union[FrnInput, _Mapping]] = ...) -> None: ...
+    def __init__(self, bond: _Optional[_Union[BondInput, _Mapping]] = ..., frn: _Optional[_Union[FrnInput, _Mapping]] = ...) -> None: ...
+
+class BondInput(_message.Message):
+    __slots__ = ("security", "clean_price", "benchmark_curve")
+    SECURITY_FIELD_NUMBER: _ClassVar[int]
+    CLEAN_PRICE_FIELD_NUMBER: _ClassVar[int]
+    BENCHMARK_CURVE_FIELD_NUMBER: _ClassVar[int]
+    security: _security_pb2.SecurityProto
+    clean_price: _decimal_value_pb2.DecimalValueProto
+    benchmark_curve: SecurityBasedCurveInput
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., benchmark_curve: _Optional[_Union[SecurityBasedCurveInput, _Mapping]] = ...) -> None: ...
 
 class FrnInput(_message.Message):
     __slots__ = ("security", "clean_price", "curve")
@@ -43,3 +55,21 @@ class CurvePoint(_message.Message):
     tenor: _decimal_value_pb2.DecimalValueProto
     rate: _decimal_value_pb2.DecimalValueProto
     def __init__(self, tenor: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
+
+class SecurityBasedCurveInput(_message.Message):
+    __slots__ = ("index", "reference_date", "points")
+    INDEX_FIELD_NUMBER: _ClassVar[int]
+    REFERENCE_DATE_FIELD_NUMBER: _ClassVar[int]
+    POINTS_FIELD_NUMBER: _ClassVar[int]
+    index: _index_type_pb2.IndexTypeProto
+    reference_date: _local_date_pb2.LocalDateProto
+    points: _containers.RepeatedCompositeFieldContainer[SecurityCurvePoint]
+    def __init__(self, index: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ..., reference_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., points: _Optional[_Iterable[_Union[SecurityCurvePoint, _Mapping]]] = ...) -> None: ...
+
+class SecurityCurvePoint(_message.Message):
+    __slots__ = ("security", "clean_price")
+    SECURITY_FIELD_NUMBER: _ClassVar[int]
+    CLEAN_PRICE_FIELD_NUMBER: _ClassVar[int]
+    security: _security_pb2.SecurityProto
+    clean_price: _decimal_value_pb2.DecimalValueProto
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...

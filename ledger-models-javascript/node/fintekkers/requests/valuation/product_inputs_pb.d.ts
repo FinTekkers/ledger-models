@@ -12,6 +12,11 @@ import * as fintekkers_models_util_local_date_pb from "../../../fintekkers/model
 
 export class ProductInput extends jspb.Message { 
 
+    hasBond(): boolean;
+    clearBond(): void;
+    getBond(): BondInput | undefined;
+    setBond(value?: BondInput): ProductInput;
+
     hasFrn(): boolean;
     clearFrn(): void;
     getFrn(): FrnInput | undefined;
@@ -31,14 +36,51 @@ export class ProductInput extends jspb.Message {
 
 export namespace ProductInput {
     export type AsObject = {
+        bond?: BondInput.AsObject,
         frn?: FrnInput.AsObject,
     }
 
     export enum InputCase {
         INPUT_NOT_SET = 0,
+        BOND = 1,
         FRN = 8,
     }
 
+}
+
+export class BondInput extends jspb.Message { 
+
+    hasSecurity(): boolean;
+    clearSecurity(): void;
+    getSecurity(): fintekkers_models_security_security_pb.SecurityProto | undefined;
+    setSecurity(value?: fintekkers_models_security_security_pb.SecurityProto): BondInput;
+
+    hasCleanPrice(): boolean;
+    clearCleanPrice(): void;
+    getCleanPrice(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setCleanPrice(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): BondInput;
+
+    hasBenchmarkCurve(): boolean;
+    clearBenchmarkCurve(): void;
+    getBenchmarkCurve(): SecurityBasedCurveInput | undefined;
+    setBenchmarkCurve(value?: SecurityBasedCurveInput): BondInput;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): BondInput.AsObject;
+    static toObject(includeInstance: boolean, msg: BondInput): BondInput.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: BondInput, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): BondInput;
+    static deserializeBinaryFromReader(message: BondInput, reader: jspb.BinaryReader): BondInput;
+}
+
+export namespace BondInput {
+    export type AsObject = {
+        security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
+        cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        benchmarkCurve?: SecurityBasedCurveInput.AsObject,
+    }
 }
 
 export class FrnInput extends jspb.Message { 
@@ -133,5 +175,65 @@ export namespace CurvePoint {
     export type AsObject = {
         tenor?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         rate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+    }
+}
+
+export class SecurityBasedCurveInput extends jspb.Message { 
+    getIndex(): fintekkers_models_security_index_index_type_pb.IndexTypeProto;
+    setIndex(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): SecurityBasedCurveInput;
+
+    hasReferenceDate(): boolean;
+    clearReferenceDate(): void;
+    getReferenceDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
+    setReferenceDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): SecurityBasedCurveInput;
+    clearPointsList(): void;
+    getPointsList(): Array<SecurityCurvePoint>;
+    setPointsList(value: Array<SecurityCurvePoint>): SecurityBasedCurveInput;
+    addPoints(value?: SecurityCurvePoint, index?: number): SecurityCurvePoint;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SecurityBasedCurveInput.AsObject;
+    static toObject(includeInstance: boolean, msg: SecurityBasedCurveInput): SecurityBasedCurveInput.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SecurityBasedCurveInput, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SecurityBasedCurveInput;
+    static deserializeBinaryFromReader(message: SecurityBasedCurveInput, reader: jspb.BinaryReader): SecurityBasedCurveInput;
+}
+
+export namespace SecurityBasedCurveInput {
+    export type AsObject = {
+        index: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
+        referenceDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
+        pointsList: Array<SecurityCurvePoint.AsObject>,
+    }
+}
+
+export class SecurityCurvePoint extends jspb.Message { 
+
+    hasSecurity(): boolean;
+    clearSecurity(): void;
+    getSecurity(): fintekkers_models_security_security_pb.SecurityProto | undefined;
+    setSecurity(value?: fintekkers_models_security_security_pb.SecurityProto): SecurityCurvePoint;
+
+    hasCleanPrice(): boolean;
+    clearCleanPrice(): void;
+    getCleanPrice(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setCleanPrice(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): SecurityCurvePoint;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SecurityCurvePoint.AsObject;
+    static toObject(includeInstance: boolean, msg: SecurityCurvePoint): SecurityCurvePoint.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SecurityCurvePoint, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SecurityCurvePoint;
+    static deserializeBinaryFromReader(message: SecurityCurvePoint, reader: jspb.BinaryReader): SecurityCurvePoint;
+}
+
+export namespace SecurityCurvePoint {
+    export type AsObject = {
+        security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
+        cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }

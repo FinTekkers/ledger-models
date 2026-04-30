@@ -26,6 +26,16 @@ pub enum IndexTypeProto {
     Estr = 14,
     /// Tokyo Overnight Average Rate — primary JPY benchmark post-LIBOR. <https://www.boj.or.jp/en/statistics/market/short/mutan/index.htm>
     Tona = 15,
+    /// Government bond benchmark curves (used for Z-spread bootstrapping)
+    ///
+    /// US Treasury on-the-run curve. <https://home.treasury.gov/resource-center/data-chart-center/interest-rates/>
+    UsTreasury = 20,
+    /// UK Gilt curve. <https://www.dmo.gov.uk/data/gilt-market/>
+    UkGilt = 21,
+    /// German Bund curve. <https://www.bundesbank.de/en/statistics/money-and-capital-markets/yields-and-interest-rates>
+    DeBund = 22,
+    /// Japanese Government Bond curve. <https://www.mof.go.jp/english/jgbs/>
+    JpJgb = 23,
 }
 impl IndexTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -46,6 +56,10 @@ impl IndexTypeProto {
             IndexTypeProto::Sonia => "SONIA",
             IndexTypeProto::Estr => "ESTR",
             IndexTypeProto::Tona => "TONA",
+            IndexTypeProto::UsTreasury => "US_TREASURY",
+            IndexTypeProto::UkGilt => "UK_GILT",
+            IndexTypeProto::DeBund => "DE_BUND",
+            IndexTypeProto::JpJgb => "JP_JGB",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -63,6 +77,10 @@ impl IndexTypeProto {
             "SONIA" => Some(Self::Sonia),
             "ESTR" => Some(Self::Estr),
             "TONA" => Some(Self::Tona),
+            "US_TREASURY" => Some(Self::UsTreasury),
+            "UK_GILT" => Some(Self::UkGilt),
+            "DE_BUND" => Some(Self::DeBund),
+            "JP_JGB" => Some(Self::JpJgb),
             _ => None,
         }
     }
