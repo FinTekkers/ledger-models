@@ -8,14 +8,17 @@ option java_outer_classname = "IndexTypeProtos";
 
 enum IndexTypeProto {
   UNKNOWN_INDEX_TYPE = 0;
-  CPI_U = 1; //Consumer Price Index - All Urban Consumers
-  CPI_W = 2; //Consumer Price Index - Urban Wage Earners and Clerical Workers
-  CORE_CPI = 3; //CPI less food and energy
-  PCE = 4; //Personal Consumption Expenditures
-  HICP = 5; //Harmonised Index of Consumer Prices (EU)
+  CPI_U = 1;    // Consumer Price Index - All Urban Consumers. https://www.bls.gov/cpi/
+  CPI_W = 2;    // Consumer Price Index - Urban Wage Earners and Clerical Workers. https://www.bls.gov/cpi/
+  CORE_CPI = 3; // CPI less food and energy. https://www.bls.gov/cpi/
+  PCE = 4;      // Personal Consumption Expenditures. https://www.bea.gov/data/personal-consumption-expenditures-price-index
+  HICP = 5;     // Harmonised Index of Consumer Prices (EU). https://ec.europa.eu/eurostat/web/hicp
 
-  //Floating rate benchmarks
-  SOFR = 10; //Secured Overnight Financing Rate (primary USD benchmark post-LIBOR)
-  T_BILL_13_WEEK = 11; //13-week Treasury bill auction high rate
-  FED_FUNDS = 12; //Federal Funds effective rate
+  // Floating rate benchmarks (Risk-Free Rates and related)
+  SOFR = 10;         // Secured Overnight Financing Rate — primary USD benchmark post-LIBOR. https://www.newyorkfed.org/markets/reference-rates/sofr
+  T_BILL_13_WEEK = 11; // 13-week Treasury bill auction high rate. https://home.treasury.gov/resource-center/data-chart-center/interest-rates/
+  FED_FUNDS = 12;    // Federal Funds effective rate. https://www.newyorkfed.org/markets/reference-rates/effr
+  SONIA = 13;        // Sterling Overnight Index Average — primary GBP benchmark post-LIBOR. https://www.bankofengland.co.uk/markets/sonia-benchmark
+  ESTR = 14;         // Euro Short-Term Rate — primary EUR benchmark post-LIBOR. https://www.ecb.europa.eu/stats/financial_markets_and_interest_rates/euro_short-term_rate/html/index.en.html
+  TONA = 15;         // Tokyo Overnight Average Rate — primary JPY benchmark post-LIBOR. https://www.boj.or.jp/en/statistics/market/short/mutan/index.htm
 }
