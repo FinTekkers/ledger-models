@@ -63,7 +63,7 @@ impl SecurityProtoBuilder {
             security_type: SecurityTypeProto::UnknownSecurityType,
             asset_class: "Unknown".to_string(),
             issuer_name: "Unknown Issue".to_string(),
-            settlement_currency: "Unknown settlement currency".to_string(),
+            settlement_currency: String::new(),
         }
     }
 
@@ -141,7 +141,16 @@ impl SecurityProtoBuilder {
             security_type: self.security_type.into(),
             asset_class: self.asset_class,
             issuer_name: self.issuer_name,
-            settlement_currency: None,
+            settlement_currency: if self.settlement_currency.is_empty() {
+                None
+            } else {
+                Some(Box::new(SecurityProto {
+                    uuid: Some(UUIDWrapper::new_random().into()),
+                    security_type: SecurityTypeProto::CashSecurity.into(),
+                    cash_id: self.settlement_currency,
+                    ..Default::default()
+                }))
+            },
             cash_id: "".to_string(),
 
             quantity_type: 0,
@@ -207,6 +216,41 @@ mod test {
             .unwrap();
 
         assert!(result.asset_class.contains("Asset"));
+    }
+
+    #[test]
+    fn test_settlement_currency_passed_through() {
+        let result = SecurityProtoBuilder::new()
+            .settlement_currency("USD".to_string())
+            .build()
+            .unwrap();
+
+        let currency = result.settlement_currency.expect("settlement_currency should be Some");
+        assert_eq!(currency.security_type, SecurityTypeProto::CashSecurity as i32);
+        assert_eq!(currency.cash_id, "USD");
+    }
+
+    #[test]
+    fn test_settlement_currency_none_when_empty() {
+        let result = SecurityProtoBuilder::new()
+            .build()
+            .unwrap();
+
+        assert!(result.settlement_currency.is_none());
+    }
+
+    #[test]
+    fn test_settlement_currency_round_trip() {
+        let result = SecurityProtoBuilder::new()
+            .settlement_currency("BTC".to_string())
+            .build()
+            .unwrap();
+
+        let parsed = round_trip(&result);
+        let currency = parsed.settlement_currency.expect("settlement_currency should survive round-trip");
+        assert_eq!(currency.security_type, SecurityTypeProto::CashSecurity as i32);
+        assert_eq!(currency.cash_id, "BTC");
+        assert!(currency.uuid.is_some(), "uuid should survive round-trip");
     }
 
     #[test]
