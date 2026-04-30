@@ -24,8 +24,30 @@ option java_outer_classname = "ProductInputProtos";
 // ═══════════════════════════════════════════════════════════════════════════
 message ProductInput {
   oneof input {
+    BondInput bond = 1;
     FrnInput frn = 8;
   }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BondInput — valuation request for a fixed-rate bond.
+//
+// Static security details (coupon_rate, coupon_frequency, face_value,
+// dated_date, maturity_date) are read from the SecurityProto.
+//
+// Settlement date is read from ValuationRequestProto.asof_datetime.
+// ═══════════════════════════════════════════════════════════════════════════
+message BondInput {
+  // The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+  // coupon_type FIXED and all standard fixed-income fields populated.
+  fintekkers.models.security.SecurityProto security = 1;
+
+  // Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+
+  // Optional benchmark yield curve for Z-spread computation.
+  // When omitted, Z-spread measures are not computed.
+  YieldCurveInput benchmark_curve = 10;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

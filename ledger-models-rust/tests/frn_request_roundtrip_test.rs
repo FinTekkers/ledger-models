@@ -129,6 +129,7 @@ fn product_input_frn_variant_survives_roundtrip() {
             assert_eq!(f.clean_price.unwrap().arbitrary_precision_value, "99.875");
             assert_eq!(f.curve.unwrap().index, IndexTypeProto::Sofr as i32);
         }
+        other => panic!("Expected Frn variant, got {:?}", other),
     }
 }
 
@@ -156,6 +157,7 @@ fn valuation_request_product_input_field_survives_roundtrip() {
         product_input::Input::Frn(f) => {
             assert_eq!(f.clean_price.unwrap().arbitrary_precision_value, "100.25");
         }
+        other => panic!("Expected Frn variant, got {:?}", other),
     }
 }
 
