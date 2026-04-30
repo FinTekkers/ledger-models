@@ -64,7 +64,7 @@ registry_config() {
             echo "ghpkg|GitHub Packages (npm)|npm|ledger-models"
             ;;
         "maven-publish.yml")
-            echo "ghpkg|GitHub Packages (maven)|maven|io.github.fintekkers%3Aledger-models"
+            echo "ghpkg|GitHub Packages (maven)|maven|io.github.fintekkers.ledger-models"
             ;;
         *)
             echo "none"

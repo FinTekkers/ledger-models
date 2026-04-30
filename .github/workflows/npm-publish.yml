@@ -39,5 +39,5 @@ jobs:
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
           npm ci
           echo ${{ env.release_version }} will be published to GitHub Packages
-          npm version ${{ env.release_version }} 
+          npm version ${{ env.release_version }} --allow-same-version
           npm publish  --access public
