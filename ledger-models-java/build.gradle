@@ -163,6 +163,8 @@ jreleaser {
                     active = 'ALWAYS'
                     url = 'https://central.sonatype.com/api/v1/publisher'
                     stagingRepository('build/staging-deploy')
+                    retryDelay = 10000
+                    maxRetries = 120
                 }
             }
 //
