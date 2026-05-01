@@ -112,7 +112,7 @@ pub struct CurveResponseProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ProductInput {
-    #[prost(oneof = "product_input::Input", tags = "1, 8")]
+    #[prost(oneof = "product_input::Input", tags = "1, 2, 8")]
     pub input: ::core::option::Option<product_input::Input>,
 }
 /// Nested message and enum types in `ProductInput`.
@@ -122,6 +122,8 @@ pub mod product_input {
     pub enum Input {
         #[prost(message, tag = "1")]
         Bond(super::BondInput),
+        #[prost(message, tag = "2")]
+        Tips(super::TipsInput),
         #[prost(message, tag = "8")]
         Frn(super::FrnInput),
     }
@@ -151,6 +153,37 @@ pub struct BondInput {
     /// a zero-coupon spot curve internally. When omitted, Z-spread is not computed.
     #[prost(message, optional, tag = "10")]
     pub benchmark_curve: ::core::option::Option<SecurityBasedCurveInput>,
+}
+/// ═══════════════════════════════════════════════════════════════════════════
+/// TipsInput — valuation request for a Treasury Inflation-Protected Security.
+///
+/// Static security details (real coupon_rate, coupon_frequency, face_value,
+/// maturity_date) are read from the SecurityProto.
+/// Base CPI at issuance is read from SecurityProto.base_cpi.
+///
+/// Settlement date is read from ValuationRequestProto.asof_datetime.
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TipsInput {
+    /// The TIPS security. Must be SecurityTypeProto.TIPS with coupon_type FIXED,
+    /// all standard fixed-income fields populated, and base_cpi set to the
+    /// reference CPI index value at issuance.
+    #[prost(message, optional, tag = "1")]
+    pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
+    /// Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
+    #[prost(message, optional, tag = "2")]
+    pub clean_price: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
+    >,
+    /// Current CPI index value (e.g. 310.326). Used to compute:
+    ///    index_ratio = current_cpi / base_cpi
+    ///    adjusted_principal = face_value * index_ratio
+    /// The base CPI is read from security.base_cpi.
+    #[prost(message, optional, tag = "3")]
+    pub current_cpi: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
+    >,
 }
 /// ═══════════════════════════════════════════════════════════════════════════
 /// FrnInput — valuation request for a Floating Rate Note.
