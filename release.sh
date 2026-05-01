@@ -11,8 +11,9 @@ set -euo pipefail
 # ── Config ────────────────────────────────────────────────────────────────────
 
 REPO="FinTekkers/ledger-models"
-POLL_INTERVAL=20   # seconds between workflow status polls
-POLL_TIMEOUT=1200  # seconds before giving up (20 min)
+POLL_INTERVAL=20            # seconds between workflow status polls
+POLL_TIMEOUT=1200           # seconds before giving up (20 min)
+MAVEN_CENTRAL_TIMEOUT=300   # 5 min — Maven Central indexing lags; exit OK if still running
 
 WORKFLOWS=(
     "cargo-publish.yml"
@@ -150,10 +151,18 @@ get_run_id() {
     echo ""
 }
 
-# Poll a run until completed. Returns 0 on success, 1 on failure/timeout.
+# Poll a run until completed.
+#   $1 run_id
+#   $2 timeout_seconds  (default: POLL_TIMEOUT)
+#   $3 ok_if_running    "true" → treat timeout-while-in-progress as success
+#
+# Returns 0 on success or on timeout-while-running when ok_if_running=true.
+# Returns 1 on workflow failure or hard timeout.
 wait_for_run() {
     local run_id="$1"
-    local deadline=$(( $(date +%s) + POLL_TIMEOUT ))
+    local timeout="${2:-$POLL_TIMEOUT}"
+    local ok_if_running="${3:-false}"
+    local deadline=$(( $(date +%s) + timeout ))
 
     while [[ $(date +%s) -lt $deadline ]]; do
         local json status conclusion
@@ -168,6 +177,12 @@ wait_for_run() {
         fi
         sleep "$POLL_INTERVAL"
     done
+
+    if [[ "$ok_if_running" == "true" ]]; then
+        warn "  Timed out after ${timeout}s but workflow is still running — proceeding."
+        warn "  Verify manually: https://github.com/${REPO}/actions"
+        return 0
+    fi
 
     echo "timed_out" >&2
     return 1
@@ -358,8 +373,16 @@ main() {
             continue
         fi
 
+        # Maven Central indexing lags — cap at 5 min and exit OK if still running.
+        local wf_timeout=$POLL_TIMEOUT
+        local wf_ok_if_running="false"
+        if [[ "$wf" == "maven-central.yml" ]]; then
+            wf_timeout=$MAVEN_CENTRAL_TIMEOUT
+            wf_ok_if_running="true"
+        fi
+
         info "  Waiting for ${wf} (run #${run_id})..."
-        if wait_for_run "$run_id"; then
+        if wait_for_run "$run_id" "$wf_timeout" "$wf_ok_if_running"; then
             ci_results+=("success")
             info "  ${wf}: passed — verifying registry..."
             if verify_registry "$wf" "$version"; then
