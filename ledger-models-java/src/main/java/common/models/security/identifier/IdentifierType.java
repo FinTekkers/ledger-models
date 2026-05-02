@@ -6,5 +6,6 @@ public enum IdentifierType {
     CUSIP,
     OSI,
     FIGI,
+    SERIES_ID,
     CASH
 }
