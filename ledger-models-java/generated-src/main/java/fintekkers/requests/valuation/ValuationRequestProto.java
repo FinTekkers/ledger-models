@@ -436,6 +436,7 @@ private static final long serialVersionUID = 0L;
    * <pre>
    *The current reference rate observation for floating rate note (FRN) valuation.
    *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+   *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -449,6 +450,7 @@ private static final long serialVersionUID = 0L;
    * <pre>
    *The current reference rate observation for floating rate note (FRN) valuation.
    *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+   *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -462,6 +464,7 @@ private static final long serialVersionUID = 0L;
    * <pre>
    *The current reference rate observation for floating rate note (FRN) valuation.
    *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+   *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -469,6 +472,53 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public fintekkers.models.price.PriceProtoOrBuilder getReferenceRateInputOrBuilder() {
     return referenceRateInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : referenceRateInput_;
+  }
+
+  public static final int PRODUCT_INPUT_FIELD_NUMBER = 70;
+  private fintekkers.requests.valuation.ProductInput productInput_;
+  /**
+   * <pre>
+   * Product-specific input — determines the calculation path in the service.
+   * When set, the service routes to the new engine dispatch; existing flat fields
+   * (security_input, price_input, etc.) are ignored for the purposes of the
+   * product calculation but may still be read for logging and audit.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+   * @return Whether the productInput field is set.
+   */
+  @java.lang.Override
+  public boolean hasProductInput() {
+    return productInput_ != null;
+  }
+  /**
+   * <pre>
+   * Product-specific input — determines the calculation path in the service.
+   * When set, the service routes to the new engine dispatch; existing flat fields
+   * (security_input, price_input, etc.) are ignored for the purposes of the
+   * product calculation but may still be read for logging and audit.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+   * @return The productInput.
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.ProductInput getProductInput() {
+    return productInput_ == null ? fintekkers.requests.valuation.ProductInput.getDefaultInstance() : productInput_;
+  }
+  /**
+   * <pre>
+   * Product-specific input — determines the calculation path in the service.
+   * When set, the service routes to the new engine dispatch; existing flat fields
+   * (security_input, price_input, etc.) are ignored for the purposes of the
+   * product calculation but may still be read for logging and audit.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.ProductInputOrBuilder getProductInputOrBuilder() {
+    return productInput_ == null ? fintekkers.requests.valuation.ProductInput.getDefaultInstance() : productInput_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -519,6 +569,9 @@ private static final long serialVersionUID = 0L;
     }
     for (int i = 0; i < measures_.size(); i++) {
       output.writeEnumNoTag(measures_.get(i));
+    }
+    if (productInput_ != null) {
+      output.writeMessage(70, getProductInput());
     }
     getUnknownFields().writeTo(output);
   }
@@ -575,6 +628,10 @@ private static final long serialVersionUID = 0L;
           .computeUInt32SizeNoTag(dataSize);
       }measuresMemoizedSerializedSize = dataSize;
     }
+    if (productInput_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(70, getProductInput());
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -626,6 +683,11 @@ private static final long serialVersionUID = 0L;
       if (!getReferenceRateInput()
           .equals(other.getReferenceRateInput())) return false;
     }
+    if (hasProductInput() != other.hasProductInput()) return false;
+    if (hasProductInput()) {
+      if (!getProductInput()
+          .equals(other.getProductInput())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -670,6 +732,10 @@ private static final long serialVersionUID = 0L;
     if (hasReferenceRateInput()) {
       hash = (37 * hash) + REFERENCE_RATE_INPUT_FIELD_NUMBER;
       hash = (53 * hash) + getReferenceRateInput().hashCode();
+    }
+    if (hasProductInput()) {
+      hash = (37 * hash) + PRODUCT_INPUT_FIELD_NUMBER;
+      hash = (53 * hash) + getProductInput().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -841,6 +907,11 @@ private static final long serialVersionUID = 0L;
         referenceRateInputBuilder_.dispose();
         referenceRateInputBuilder_ = null;
       }
+      productInput_ = null;
+      if (productInputBuilder_ != null) {
+        productInputBuilder_.dispose();
+        productInputBuilder_ = null;
+      }
       return this;
     }
 
@@ -921,6 +992,11 @@ private static final long serialVersionUID = 0L;
         result.referenceRateInput_ = referenceRateInputBuilder_ == null
             ? referenceRateInput_
             : referenceRateInputBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000400) != 0)) {
+        result.productInput_ = productInputBuilder_ == null
+            ? productInput_
+            : productInputBuilder_.build();
       }
     }
 
@@ -1008,6 +1084,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasReferenceRateInput()) {
         mergeReferenceRateInput(other.getReferenceRateInput());
+      }
+      if (other.hasProductInput()) {
+        mergeProductInput(other.getProductInput());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -1109,6 +1188,13 @@ private static final long serialVersionUID = 0L;
               input.popLimit(oldLimit);
               break;
             } // case 242
+            case 562: {
+              input.readMessage(
+                  getProductInputFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000400;
+              break;
+            } // case 562
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -2327,6 +2413,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The current reference rate observation for floating rate note (FRN) valuation.
      *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -2339,6 +2426,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The current reference rate observation for floating rate note (FRN) valuation.
      *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -2355,6 +2443,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The current reference rate observation for floating rate note (FRN) valuation.
      *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -2376,6 +2465,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The current reference rate observation for floating rate note (FRN) valuation.
      *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -2395,6 +2485,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The current reference rate observation for floating rate note (FRN) valuation.
      *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -2419,6 +2510,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The current reference rate observation for floating rate note (FRN) valuation.
      *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -2437,6 +2529,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The current reference rate observation for floating rate note (FRN) valuation.
      *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -2450,6 +2543,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The current reference rate observation for floating rate note (FRN) valuation.
      *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -2466,6 +2560,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The current reference rate observation for floating rate note (FRN) valuation.
      *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -2482,6 +2577,188 @@ private static final long serialVersionUID = 0L;
         referenceRateInput_ = null;
       }
       return referenceRateInputBuilder_;
+    }
+
+    private fintekkers.requests.valuation.ProductInput productInput_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.ProductInput, fintekkers.requests.valuation.ProductInput.Builder, fintekkers.requests.valuation.ProductInputOrBuilder> productInputBuilder_;
+    /**
+     * <pre>
+     * Product-specific input — determines the calculation path in the service.
+     * When set, the service routes to the new engine dispatch; existing flat fields
+     * (security_input, price_input, etc.) are ignored for the purposes of the
+     * product calculation but may still be read for logging and audit.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+     * @return Whether the productInput field is set.
+     */
+    public boolean hasProductInput() {
+      return ((bitField0_ & 0x00000400) != 0);
+    }
+    /**
+     * <pre>
+     * Product-specific input — determines the calculation path in the service.
+     * When set, the service routes to the new engine dispatch; existing flat fields
+     * (security_input, price_input, etc.) are ignored for the purposes of the
+     * product calculation but may still be read for logging and audit.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+     * @return The productInput.
+     */
+    public fintekkers.requests.valuation.ProductInput getProductInput() {
+      if (productInputBuilder_ == null) {
+        return productInput_ == null ? fintekkers.requests.valuation.ProductInput.getDefaultInstance() : productInput_;
+      } else {
+        return productInputBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Product-specific input — determines the calculation path in the service.
+     * When set, the service routes to the new engine dispatch; existing flat fields
+     * (security_input, price_input, etc.) are ignored for the purposes of the
+     * product calculation but may still be read for logging and audit.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+     */
+    public Builder setProductInput(fintekkers.requests.valuation.ProductInput value) {
+      if (productInputBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        productInput_ = value;
+      } else {
+        productInputBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Product-specific input — determines the calculation path in the service.
+     * When set, the service routes to the new engine dispatch; existing flat fields
+     * (security_input, price_input, etc.) are ignored for the purposes of the
+     * product calculation but may still be read for logging and audit.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+     */
+    public Builder setProductInput(
+        fintekkers.requests.valuation.ProductInput.Builder builderForValue) {
+      if (productInputBuilder_ == null) {
+        productInput_ = builderForValue.build();
+      } else {
+        productInputBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Product-specific input — determines the calculation path in the service.
+     * When set, the service routes to the new engine dispatch; existing flat fields
+     * (security_input, price_input, etc.) are ignored for the purposes of the
+     * product calculation but may still be read for logging and audit.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+     */
+    public Builder mergeProductInput(fintekkers.requests.valuation.ProductInput value) {
+      if (productInputBuilder_ == null) {
+        if (((bitField0_ & 0x00000400) != 0) &&
+          productInput_ != null &&
+          productInput_ != fintekkers.requests.valuation.ProductInput.getDefaultInstance()) {
+          getProductInputBuilder().mergeFrom(value);
+        } else {
+          productInput_ = value;
+        }
+      } else {
+        productInputBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Product-specific input — determines the calculation path in the service.
+     * When set, the service routes to the new engine dispatch; existing flat fields
+     * (security_input, price_input, etc.) are ignored for the purposes of the
+     * product calculation but may still be read for logging and audit.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+     */
+    public Builder clearProductInput() {
+      bitField0_ = (bitField0_ & ~0x00000400);
+      productInput_ = null;
+      if (productInputBuilder_ != null) {
+        productInputBuilder_.dispose();
+        productInputBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Product-specific input — determines the calculation path in the service.
+     * When set, the service routes to the new engine dispatch; existing flat fields
+     * (security_input, price_input, etc.) are ignored for the purposes of the
+     * product calculation but may still be read for logging and audit.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+     */
+    public fintekkers.requests.valuation.ProductInput.Builder getProductInputBuilder() {
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return getProductInputFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Product-specific input — determines the calculation path in the service.
+     * When set, the service routes to the new engine dispatch; existing flat fields
+     * (security_input, price_input, etc.) are ignored for the purposes of the
+     * product calculation but may still be read for logging and audit.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+     */
+    public fintekkers.requests.valuation.ProductInputOrBuilder getProductInputOrBuilder() {
+      if (productInputBuilder_ != null) {
+        return productInputBuilder_.getMessageOrBuilder();
+      } else {
+        return productInput_ == null ?
+            fintekkers.requests.valuation.ProductInput.getDefaultInstance() : productInput_;
+      }
+    }
+    /**
+     * <pre>
+     * Product-specific input — determines the calculation path in the service.
+     * When set, the service routes to the new engine dispatch; existing flat fields
+     * (security_input, price_input, etc.) are ignored for the purposes of the
+     * product calculation but may still be read for logging and audit.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.ProductInput, fintekkers.requests.valuation.ProductInput.Builder, fintekkers.requests.valuation.ProductInputOrBuilder> 
+        getProductInputFieldBuilder() {
+      if (productInputBuilder_ == null) {
+        productInputBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.requests.valuation.ProductInput, fintekkers.requests.valuation.ProductInput.Builder, fintekkers.requests.valuation.ProductInputOrBuilder>(
+                getProductInput(),
+                getParentForChildren(),
+                isClean());
+        productInput_ = null;
+      }
+      return productInputBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

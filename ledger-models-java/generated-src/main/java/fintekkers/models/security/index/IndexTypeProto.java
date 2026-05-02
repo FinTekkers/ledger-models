@@ -14,7 +14,7 @@ public enum IndexTypeProto
   UNKNOWN_INDEX_TYPE(0),
   /**
    * <pre>
-   *Consumer Price Index - All Urban Consumers
+   * Consumer Price Index - All Urban Consumers. https://www.bls.gov/cpi/
    * </pre>
    *
    * <code>CPI_U = 1;</code>
@@ -22,7 +22,7 @@ public enum IndexTypeProto
   CPI_U(1),
   /**
    * <pre>
-   *Consumer Price Index - Urban Wage Earners and Clerical Workers
+   * Consumer Price Index - Urban Wage Earners and Clerical Workers. https://www.bls.gov/cpi/
    * </pre>
    *
    * <code>CPI_W = 2;</code>
@@ -30,7 +30,7 @@ public enum IndexTypeProto
   CPI_W(2),
   /**
    * <pre>
-   *CPI less food and energy
+   * CPI less food and energy. https://www.bls.gov/cpi/
    * </pre>
    *
    * <code>CORE_CPI = 3;</code>
@@ -38,7 +38,7 @@ public enum IndexTypeProto
   CORE_CPI(3),
   /**
    * <pre>
-   *Personal Consumption Expenditures
+   * Personal Consumption Expenditures. https://www.bea.gov/data/personal-consumption-expenditures-price-index
    * </pre>
    *
    * <code>PCE = 4;</code>
@@ -46,7 +46,7 @@ public enum IndexTypeProto
   PCE(4),
   /**
    * <pre>
-   *Harmonised Index of Consumer Prices (EU)
+   * Harmonised Index of Consumer Prices (EU). https://ec.europa.eu/eurostat/web/hicp
    * </pre>
    *
    * <code>HICP = 5;</code>
@@ -54,7 +54,7 @@ public enum IndexTypeProto
   HICP(5),
   /**
    * <pre>
-   *Floating rate benchmarks
+   * Floating rate benchmarks (Risk-Free Rates and related)
    * </pre>
    *
    * <code>SOFR = 10;</code>
@@ -62,7 +62,7 @@ public enum IndexTypeProto
   SOFR(10),
   /**
    * <pre>
-   *13-week Treasury bill auction high rate
+   * 13-week Treasury bill auction high rate. https://home.treasury.gov/resource-center/data-chart-center/interest-rates/
    * </pre>
    *
    * <code>T_BILL_13_WEEK = 11;</code>
@@ -70,12 +70,68 @@ public enum IndexTypeProto
   T_BILL_13_WEEK(11),
   /**
    * <pre>
-   *Federal Funds effective rate
+   * Federal Funds effective rate. https://www.newyorkfed.org/markets/reference-rates/effr
    * </pre>
    *
    * <code>FED_FUNDS = 12;</code>
    */
   FED_FUNDS(12),
+  /**
+   * <pre>
+   * Sterling Overnight Index Average — primary GBP benchmark post-LIBOR. https://www.bankofengland.co.uk/markets/sonia-benchmark
+   * </pre>
+   *
+   * <code>SONIA = 13;</code>
+   */
+  SONIA(13),
+  /**
+   * <pre>
+   * Euro Short-Term Rate — primary EUR benchmark post-LIBOR. https://www.ecb.europa.eu/stats/financial_markets_and_interest_rates/euro_short-term_rate/html/index.en.html
+   * </pre>
+   *
+   * <code>ESTR = 14;</code>
+   */
+  ESTR(14),
+  /**
+   * <pre>
+   * Tokyo Overnight Average Rate — primary JPY benchmark post-LIBOR. https://www.boj.or.jp/en/statistics/market/short/mutan/index.htm
+   * </pre>
+   *
+   * <code>TONA = 15;</code>
+   */
+  TONA(15),
+  /**
+   * <pre>
+   * Government bond benchmark curves (used for Z-spread bootstrapping)
+   * </pre>
+   *
+   * <code>US_TREASURY = 20;</code>
+   */
+  US_TREASURY(20),
+  /**
+   * <pre>
+   * UK Gilt curve. https://www.dmo.gov.uk/data/gilt-market/
+   * </pre>
+   *
+   * <code>UK_GILT = 21;</code>
+   */
+  UK_GILT(21),
+  /**
+   * <pre>
+   * German Bund curve. https://www.bundesbank.de/en/statistics/money-and-capital-markets/yields-and-interest-rates
+   * </pre>
+   *
+   * <code>DE_BUND = 22;</code>
+   */
+  DE_BUND(22),
+  /**
+   * <pre>
+   * Japanese Government Bond curve. https://www.mof.go.jp/english/jgbs/
+   * </pre>
+   *
+   * <code>JP_JGB = 23;</code>
+   */
+  JP_JGB(23),
   UNRECOGNIZED(-1),
   ;
 
@@ -85,7 +141,7 @@ public enum IndexTypeProto
   public static final int UNKNOWN_INDEX_TYPE_VALUE = 0;
   /**
    * <pre>
-   *Consumer Price Index - All Urban Consumers
+   * Consumer Price Index - All Urban Consumers. https://www.bls.gov/cpi/
    * </pre>
    *
    * <code>CPI_U = 1;</code>
@@ -93,7 +149,7 @@ public enum IndexTypeProto
   public static final int CPI_U_VALUE = 1;
   /**
    * <pre>
-   *Consumer Price Index - Urban Wage Earners and Clerical Workers
+   * Consumer Price Index - Urban Wage Earners and Clerical Workers. https://www.bls.gov/cpi/
    * </pre>
    *
    * <code>CPI_W = 2;</code>
@@ -101,7 +157,7 @@ public enum IndexTypeProto
   public static final int CPI_W_VALUE = 2;
   /**
    * <pre>
-   *CPI less food and energy
+   * CPI less food and energy. https://www.bls.gov/cpi/
    * </pre>
    *
    * <code>CORE_CPI = 3;</code>
@@ -109,7 +165,7 @@ public enum IndexTypeProto
   public static final int CORE_CPI_VALUE = 3;
   /**
    * <pre>
-   *Personal Consumption Expenditures
+   * Personal Consumption Expenditures. https://www.bea.gov/data/personal-consumption-expenditures-price-index
    * </pre>
    *
    * <code>PCE = 4;</code>
@@ -117,7 +173,7 @@ public enum IndexTypeProto
   public static final int PCE_VALUE = 4;
   /**
    * <pre>
-   *Harmonised Index of Consumer Prices (EU)
+   * Harmonised Index of Consumer Prices (EU). https://ec.europa.eu/eurostat/web/hicp
    * </pre>
    *
    * <code>HICP = 5;</code>
@@ -125,7 +181,7 @@ public enum IndexTypeProto
   public static final int HICP_VALUE = 5;
   /**
    * <pre>
-   *Floating rate benchmarks
+   * Floating rate benchmarks (Risk-Free Rates and related)
    * </pre>
    *
    * <code>SOFR = 10;</code>
@@ -133,7 +189,7 @@ public enum IndexTypeProto
   public static final int SOFR_VALUE = 10;
   /**
    * <pre>
-   *13-week Treasury bill auction high rate
+   * 13-week Treasury bill auction high rate. https://home.treasury.gov/resource-center/data-chart-center/interest-rates/
    * </pre>
    *
    * <code>T_BILL_13_WEEK = 11;</code>
@@ -141,12 +197,68 @@ public enum IndexTypeProto
   public static final int T_BILL_13_WEEK_VALUE = 11;
   /**
    * <pre>
-   *Federal Funds effective rate
+   * Federal Funds effective rate. https://www.newyorkfed.org/markets/reference-rates/effr
    * </pre>
    *
    * <code>FED_FUNDS = 12;</code>
    */
   public static final int FED_FUNDS_VALUE = 12;
+  /**
+   * <pre>
+   * Sterling Overnight Index Average — primary GBP benchmark post-LIBOR. https://www.bankofengland.co.uk/markets/sonia-benchmark
+   * </pre>
+   *
+   * <code>SONIA = 13;</code>
+   */
+  public static final int SONIA_VALUE = 13;
+  /**
+   * <pre>
+   * Euro Short-Term Rate — primary EUR benchmark post-LIBOR. https://www.ecb.europa.eu/stats/financial_markets_and_interest_rates/euro_short-term_rate/html/index.en.html
+   * </pre>
+   *
+   * <code>ESTR = 14;</code>
+   */
+  public static final int ESTR_VALUE = 14;
+  /**
+   * <pre>
+   * Tokyo Overnight Average Rate — primary JPY benchmark post-LIBOR. https://www.boj.or.jp/en/statistics/market/short/mutan/index.htm
+   * </pre>
+   *
+   * <code>TONA = 15;</code>
+   */
+  public static final int TONA_VALUE = 15;
+  /**
+   * <pre>
+   * Government bond benchmark curves (used for Z-spread bootstrapping)
+   * </pre>
+   *
+   * <code>US_TREASURY = 20;</code>
+   */
+  public static final int US_TREASURY_VALUE = 20;
+  /**
+   * <pre>
+   * UK Gilt curve. https://www.dmo.gov.uk/data/gilt-market/
+   * </pre>
+   *
+   * <code>UK_GILT = 21;</code>
+   */
+  public static final int UK_GILT_VALUE = 21;
+  /**
+   * <pre>
+   * German Bund curve. https://www.bundesbank.de/en/statistics/money-and-capital-markets/yields-and-interest-rates
+   * </pre>
+   *
+   * <code>DE_BUND = 22;</code>
+   */
+  public static final int DE_BUND_VALUE = 22;
+  /**
+   * <pre>
+   * Japanese Government Bond curve. https://www.mof.go.jp/english/jgbs/
+   * </pre>
+   *
+   * <code>JP_JGB = 23;</code>
+   */
+  public static final int JP_JGB_VALUE = 23;
 
 
   public final int getNumber() {
@@ -182,6 +294,13 @@ public enum IndexTypeProto
       case 10: return SOFR;
       case 11: return T_BILL_13_WEEK;
       case 12: return FED_FUNDS;
+      case 13: return SONIA;
+      case 14: return ESTR;
+      case 15: return TONA;
+      case 20: return US_TREASURY;
+      case 21: return UK_GILT;
+      case 22: return DE_BUND;
+      case 23: return JP_JGB;
       default: return null;
     }
   }

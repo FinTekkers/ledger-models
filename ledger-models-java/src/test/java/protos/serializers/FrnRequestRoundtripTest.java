@@ -1,14 +1,14 @@
 package protos.serializers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import fintekkers.models.security.index.IndexTypeProtos.IndexTypeProto;
-import fintekkers.models.util.DecimalValueProtos.DecimalValueProto;
-import fintekkers.models.util.LocalDateProtos.LocalDateProto;
-import fintekkers.requests.valuation.ProductInputProtos.ProductInput;
-import fintekkers.requests.valuation.ProductInputProtos.FrnInput;
-import fintekkers.requests.valuation.ProductInputProtos.YieldCurveInput;
-import fintekkers.requests.valuation.ProductInputProtos.CurvePoint;
-import fintekkers.requests.valuation.ValuationRequestProtos.ValuationRequestProto;
+import fintekkers.models.security.index.IndexTypeProto;
+import fintekkers.models.util.DecimalValue.DecimalValueProto;
+import fintekkers.models.util.LocalDate.LocalDateProto;
+import fintekkers.requests.valuation.ProductInput;
+import fintekkers.requests.valuation.FrnInput;
+import fintekkers.requests.valuation.YieldCurveInput;
+import fintekkers.requests.valuation.CurvePoint;
+import fintekkers.requests.valuation.ValuationRequestProto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

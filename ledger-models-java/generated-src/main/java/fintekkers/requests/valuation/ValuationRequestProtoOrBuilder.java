@@ -243,6 +243,7 @@ public interface ValuationRequestProtoOrBuilder extends
    * <pre>
    *The current reference rate observation for floating rate note (FRN) valuation.
    *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+   *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -253,6 +254,7 @@ public interface ValuationRequestProtoOrBuilder extends
    * <pre>
    *The current reference rate observation for floating rate note (FRN) valuation.
    *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+   *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -263,9 +265,46 @@ public interface ValuationRequestProtoOrBuilder extends
    * <pre>
    *The current reference rate observation for floating rate note (FRN) valuation.
    *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
+   *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
    */
   fintekkers.models.price.PriceProtoOrBuilder getReferenceRateInputOrBuilder();
+
+  /**
+   * <pre>
+   * Product-specific input — determines the calculation path in the service.
+   * When set, the service routes to the new engine dispatch; existing flat fields
+   * (security_input, price_input, etc.) are ignored for the purposes of the
+   * product calculation but may still be read for logging and audit.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+   * @return Whether the productInput field is set.
+   */
+  boolean hasProductInput();
+  /**
+   * <pre>
+   * Product-specific input — determines the calculation path in the service.
+   * When set, the service routes to the new engine dispatch; existing flat fields
+   * (security_input, price_input, etc.) are ignored for the purposes of the
+   * product calculation but may still be read for logging and audit.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+   * @return The productInput.
+   */
+  fintekkers.requests.valuation.ProductInput getProductInput();
+  /**
+   * <pre>
+   * Product-specific input — determines the calculation path in the service.
+   * When set, the service routes to the new engine dispatch; existing flat fields
+   * (security_input, price_input, etc.) are ignored for the purposes of the
+   * product calculation but may still be read for logging and audit.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
+   */
+  fintekkers.requests.valuation.ProductInputOrBuilder getProductInputOrBuilder();
 }

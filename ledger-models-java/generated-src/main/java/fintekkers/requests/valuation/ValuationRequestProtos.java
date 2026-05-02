@@ -36,22 +36,25 @@ public final class ValuationRequestProtos {
       "ice.proto\032,fintekkers/models/util/local_" +
       "timestamp.proto\032(fintekkers/requests/uti" +
       "l/operation.proto\032(fintekkers/models/pos" +
-      "ition/measure.proto\"\314\004\n\025ValuationRequest" +
-      "Proto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007version\030\002" +
-      " \001(\t\022K\n\016operation_type\030\n \001(\01623.fintekker" +
-      "s.requests.util.RequestOperationTypeProt" +
-      "o\022:\n\010measures\030\036 \003(\0162(.fintekkers.models." +
-      "position.MeasureProto\022A\n\016security_input\030" +
-      "\024 \001(\0132).fintekkers.models.security.Secur" +
-      "ityProto\022A\n\016position_input\030\025 \001(\0132).finte" +
-      "kkers.models.position.PositionProto\0228\n\013p" +
-      "rice_input\030\026 \001(\0132#.fintekkers.models.pri" +
-      "ce.PriceProto\022B\n\rasof_datetime\030\027 \001(\0132+.f" +
-      "intekkers.models.util.LocalTimestampProt" +
-      "o\022<\n\017cpi_price_input\030\030 \001(\0132#.fintekkers." +
-      "models.price.PriceProto\022A\n\024reference_rat" +
-      "e_input\030\031 \001(\0132#.fintekkers.models.price." +
-      "PriceProtoB\032B\026ValuationRequestProtosP\001b\006" +
+      "ition/measure.proto\0322fintekkers/requests" +
+      "/valuation/product_inputs.proto\"\220\005\n\025Valu" +
+      "ationRequestProto\022\024\n\014object_class\030\001 \001(\t\022" +
+      "\017\n\007version\030\002 \001(\t\022K\n\016operation_type\030\n \001(\016" +
+      "23.fintekkers.requests.util.RequestOpera" +
+      "tionTypeProto\022:\n\010measures\030\036 \003(\0162(.fintek" +
+      "kers.models.position.MeasureProto\022A\n\016sec" +
+      "urity_input\030\024 \001(\0132).fintekkers.models.se" +
+      "curity.SecurityProto\022A\n\016position_input\030\025" +
+      " \001(\0132).fintekkers.models.position.Positi" +
+      "onProto\0228\n\013price_input\030\026 \001(\0132#.fintekker" +
+      "s.models.price.PriceProto\022B\n\rasof_dateti" +
+      "me\030\027 \001(\0132+.fintekkers.models.util.LocalT" +
+      "imestampProto\022<\n\017cpi_price_input\030\030 \001(\0132#" +
+      ".fintekkers.models.price.PriceProto\022A\n\024r" +
+      "eference_rate_input\030\031 \001(\0132#.fintekkers.m" +
+      "odels.price.PriceProto\022B\n\rproduct_input\030" +
+      "F \001(\0132+.fintekkers.requests.valuation.Pr" +
+      "oductInputB\032B\026ValuationRequestProtosP\001b\006" +
       "proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
@@ -63,19 +66,21 @@ public final class ValuationRequestProtos {
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.requests.util.Operation.getDescriptor(),
           fintekkers.models.position.MeasureProtos.getDescriptor(),
+          fintekkers.requests.valuation.ProductInputProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_valuation_ValuationRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_valuation_ValuationRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_ValuationRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "OperationType", "Measures", "SecurityInput", "PositionInput", "PriceInput", "AsofDatetime", "CpiPriceInput", "ReferenceRateInput", });
+        new java.lang.String[] { "ObjectClass", "Version", "OperationType", "Measures", "SecurityInput", "PositionInput", "PriceInput", "AsofDatetime", "CpiPriceInput", "ReferenceRateInput", "ProductInput", });
     fintekkers.models.security.SecurityProtos.getDescriptor();
     fintekkers.models.position.PositionProtos.getDescriptor();
     fintekkers.models.price.PriceProtos.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.requests.util.Operation.getDescriptor();
     fintekkers.models.position.MeasureProtos.getDescriptor();
+    fintekkers.requests.valuation.ProductInputProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)
