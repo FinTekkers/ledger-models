@@ -21,4 +21,19 @@ class IdentifierSerializerTest {
 
         Assertions.assertEquals(id, idCopy);
     }
+
+    @Test
+    public void seriesIdRoundTrip() {
+        Identifier id = new Identifier(IdentifierType.SERIES_ID, "CUUR0000SA0");
+
+        IdentifierSerializer serializer = IdentifierSerializer.getInstance();
+
+        IdentifierProto proto = serializer.serialize(id);
+        String json = serializer.serializeToJson(proto);
+
+        IdentifierProto protoCopy = serializer.deserializeFromJson(json);
+        Identifier idCopy = serializer.deserialize(protoCopy);
+
+        Assertions.assertEquals(id, idCopy);
+    }
 }
