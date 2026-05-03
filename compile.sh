@@ -137,9 +137,12 @@ else
         fi
     done
 
-    # Fix gRPC imports: Homebrew grpc_node_plugin generates require('grpc')
-    # but the project uses @grpc/grpc-js. Patch the generated files.
-    find "$JS_OUT" -name "*_grpc_pb.js" -exec sed -i '' "s/require('grpc')/require('@grpc\/grpc-js')/g" {} +
+    # Fix gRPC imports: grpc_node_plugin generates require('grpc') but the
+    # project uses @grpc/grpc-js. Patch the generated files in place.
+    # `sed -i.bak ... && rm` is portable across BSD (macOS) and GNU (Linux) sed
+    # — `sed -i ''` is BSD-only and silently no-ops on Linux.
+    find "$JS_OUT" -name "*_grpc_pb.js" -exec sed -i.bak "s/require('grpc')/require('@grpc\/grpc-js')/g" {} +
+    find "$JS_OUT" -name "*_grpc_pb.js.bak" -delete
 
     # Generate TypeScript definitions
     if ! $PROTOC \
@@ -199,12 +202,18 @@ fi
 echo ""
 echo "=== Python: generating protos ==="
 
-# Create and setup virtual environment if needed
+# Create and setup virtual environment if needed.
+# Install from ledger-models-python/requirements.txt — that pulls in
+# grpcio-tools (for protoc), pytest (for the unit tests), and the runtime
+# deps the generated bindings need. A fresh venv with only grpcio-tools
+# fails at the pytest step, which is silent on machines that have a
+# pre-existing venv with pytest already installed (i.e. local dev) and
+# only surfaces in CI.
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
     python3 -m venv venv
     source venv/bin/activate
-    pip install grpcio-tools 2>&1
+    pip install -r ledger-models-python/requirements.txt 2>&1
 else
     source venv/bin/activate
 fi
