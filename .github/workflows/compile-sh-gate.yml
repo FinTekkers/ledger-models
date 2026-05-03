@@ -1,0 +1,77 @@
+name: compile.sh gate
+
+# Runs ./compile.sh --skip-integration on every PR and fails if either:
+#   1. the script exits non-zero, OR
+#   2. `git status --porcelain` is non-empty after the run (i.e. the committed
+#      generated bindings drifted from the .proto sources, or new tsc artifacts
+#      / Python pyi / Rust descriptor outputs weren't staged).
+#
+# This catches the partial-regen pattern documented in
+# FinTekkers/second-brain#192 — proto edit committed without the full set of
+# regenerated outputs across all four language targets.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  compile-sh:
+    name: ./compile.sh --skip-integration + clean git status
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Node.js 16
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.x'
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install Rust stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Install protoc + grpc_node_plugin
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler protobuf-compiler-grpc
+          protoc --version
+          which grpc_node_plugin
+
+      - name: npm ci (ledger-models-javascript)
+        working-directory: ledger-models-javascript
+        run: npm ci
+
+      - name: Run ./compile.sh --skip-integration
+        run: ./compile.sh --skip-integration
+
+      - name: Verify git status is clean
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::./compile.sh --skip-integration produced uncommitted changes."
+            echo "::error::This means the committed generated bindings have drifted from the .proto sources,"
+            echo "::error::or new generated/test artifacts were not staged. See README.md DevOps section."
+            echo ""
+            echo "=== git status ==="
+            git status
+            echo ""
+            echo "=== git diff (tracked files) ==="
+            git --no-pager diff
+            exit 1
+          fi
+          echo "git status is clean — proto bindings match .proto sources."
