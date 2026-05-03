@@ -9,6 +9,8 @@ pub enum Error {
     MissingFaceValue,
     MissingCouponRate,
     MissingMaturityDate,
+    MissingIssueDate,
+    NotABondSecurity,
     MissingSecurityInput,
     MissingBaseCpi,
     MissingCurrentCpi,
