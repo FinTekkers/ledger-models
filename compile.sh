@@ -244,22 +244,27 @@ else
 fi
 
 # Run integration tests separately (may fail if services aren't running)
-echo "=== Python: running integration tests ==="
-INTEG_OUTPUT=$(cd ledger-models-python && python -m pytest -m "integration" --tb=line 2>&1)
-echo "$INTEG_OUTPUT"
-if echo "$INTEG_OUTPUT" | grep -q "passed"; then
-    INTEG_PASSED=$(echo "$INTEG_OUTPUT" | grep -oE '[0-9]+ passed' | head -1)
-    INTEG_FAILED=$(echo "$INTEG_OUTPUT" | grep -oE '[0-9]+ failed' | head -1)
-    if echo "$INTEG_OUTPUT" | grep -q "failed"; then
-        PY_INTEG="${INTEG_PASSED}, ${INTEG_FAILED}"
-        echo "  - Python integration: $PY_INTEG (service-dependent — does not block build)"
-    else
-        PY_INTEG="PASS (${INTEG_PASSED})"
-        pass "Python integration tests"
-    fi
+if $SKIP_INTEGRATION; then
+    PY_INTEG="SKIP (--skip-integration)"
+    echo "  - Python integration tests: skipped (--skip-integration)"
 else
-    PY_INTEG="SKIP (no services)"
-    echo "  - Python integration: skipped (services not running)"
+    echo "=== Python: running integration tests ==="
+    INTEG_OUTPUT=$(cd ledger-models-python && python -m pytest -m "integration" --tb=line 2>&1)
+    echo "$INTEG_OUTPUT"
+    if echo "$INTEG_OUTPUT" | grep -q "passed"; then
+        INTEG_PASSED=$(echo "$INTEG_OUTPUT" | grep -oE '[0-9]+ passed' | head -1)
+        INTEG_FAILED=$(echo "$INTEG_OUTPUT" | grep -oE '[0-9]+ failed' | head -1)
+        if echo "$INTEG_OUTPUT" | grep -q "failed"; then
+            PY_INTEG="${INTEG_PASSED}, ${INTEG_FAILED}"
+            echo "  - Python integration: $PY_INTEG (service-dependent — does not block build)"
+        else
+            PY_INTEG="PASS (${INTEG_PASSED})"
+            pass "Python integration tests"
+        fi
+    else
+        PY_INTEG="SKIP (no services)"
+        echo "  - Python integration: skipped (services not running)"
+    fi
 fi
 
 deactivate 2>/dev/null || true
