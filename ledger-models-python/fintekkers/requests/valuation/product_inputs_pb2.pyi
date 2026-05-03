@@ -11,12 +11,14 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class ProductInput(_message.Message):
-    __slots__ = ("bond", "frn")
+    __slots__ = ("bond", "tips", "frn")
     BOND_FIELD_NUMBER: _ClassVar[int]
+    TIPS_FIELD_NUMBER: _ClassVar[int]
     FRN_FIELD_NUMBER: _ClassVar[int]
     bond: BondInput
+    tips: TipsInput
     frn: FrnInput
-    def __init__(self, bond: _Optional[_Union[BondInput, _Mapping]] = ..., frn: _Optional[_Union[FrnInput, _Mapping]] = ...) -> None: ...
+    def __init__(self, bond: _Optional[_Union[BondInput, _Mapping]] = ..., tips: _Optional[_Union[TipsInput, _Mapping]] = ..., frn: _Optional[_Union[FrnInput, _Mapping]] = ...) -> None: ...
 
 class BondInput(_message.Message):
     __slots__ = ("security", "clean_price", "benchmark_curve")
@@ -27,6 +29,16 @@ class BondInput(_message.Message):
     clean_price: _decimal_value_pb2.DecimalValueProto
     benchmark_curve: SecurityBasedCurveInput
     def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., benchmark_curve: _Optional[_Union[SecurityBasedCurveInput, _Mapping]] = ...) -> None: ...
+
+class TipsInput(_message.Message):
+    __slots__ = ("security", "clean_price", "current_cpi")
+    SECURITY_FIELD_NUMBER: _ClassVar[int]
+    CLEAN_PRICE_FIELD_NUMBER: _ClassVar[int]
+    CURRENT_CPI_FIELD_NUMBER: _ClassVar[int]
+    security: _security_pb2.SecurityProto
+    clean_price: _decimal_value_pb2.DecimalValueProto
+    current_cpi: _decimal_value_pb2.DecimalValueProto
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., current_cpi: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
 
 class FrnInput(_message.Message):
     __slots__ = ("security", "clean_price", "curve")
