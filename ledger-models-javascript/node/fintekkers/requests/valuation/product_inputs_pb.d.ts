@@ -17,6 +17,11 @@ export class ProductInput extends jspb.Message {
     getBond(): BondInput | undefined;
     setBond(value?: BondInput): ProductInput;
 
+    hasTips(): boolean;
+    clearTips(): void;
+    getTips(): TipsInput | undefined;
+    setTips(value?: TipsInput): ProductInput;
+
     hasFrn(): boolean;
     clearFrn(): void;
     getFrn(): FrnInput | undefined;
@@ -37,12 +42,14 @@ export class ProductInput extends jspb.Message {
 export namespace ProductInput {
     export type AsObject = {
         bond?: BondInput.AsObject,
+        tips?: TipsInput.AsObject,
         frn?: FrnInput.AsObject,
     }
 
     export enum InputCase {
         INPUT_NOT_SET = 0,
         BOND = 1,
+        TIPS = 2,
         FRN = 8,
     }
 
@@ -80,6 +87,41 @@ export namespace BondInput {
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         benchmarkCurve?: SecurityBasedCurveInput.AsObject,
+    }
+}
+
+export class TipsInput extends jspb.Message { 
+
+    hasSecurity(): boolean;
+    clearSecurity(): void;
+    getSecurity(): fintekkers_models_security_security_pb.SecurityProto | undefined;
+    setSecurity(value?: fintekkers_models_security_security_pb.SecurityProto): TipsInput;
+
+    hasCleanPrice(): boolean;
+    clearCleanPrice(): void;
+    getCleanPrice(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setCleanPrice(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TipsInput;
+
+    hasCurrentCpi(): boolean;
+    clearCurrentCpi(): void;
+    getCurrentCpi(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setCurrentCpi(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TipsInput;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): TipsInput.AsObject;
+    static toObject(includeInstance: boolean, msg: TipsInput): TipsInput.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: TipsInput, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): TipsInput;
+    static deserializeBinaryFromReader(message: TipsInput, reader: jspb.BinaryReader): TipsInput;
+}
+
+export namespace TipsInput {
+    export type AsObject = {
+        security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
+        cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        currentCpi?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }
 

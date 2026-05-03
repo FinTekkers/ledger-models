@@ -79,7 +79,11 @@ The above philosophy is very important so that we don't end up re-using a techni
 
 ## Compiling protobufs
 
-Run the contents of compile.sh manually on the command line
+`./compile.sh` regenerates the proto bindings for all four language targets (Java, Python, Rust, JavaScript/TypeScript) and runs the test suites. Pass `--skip-integration` to exclude tests that require a running backend service.
+
+**Before opening a PR that touches `*.proto` files, run `./compile.sh` and commit the resulting changes** (under `ledger-models-java/generated-src/`, `ledger-models-python/fintekkers/`, `ledger-models-javascript/node/`, and `ledger-models-rust/src/codegen/` + `ledger_models_file_descriptor_set_v_todo.bin`) along with your edit. A partial regen — proto edit committed without the full set of generated outputs — has historically caused downstream consumers to fail at runtime against a stale published jar.
+
+Equivalently: `git status` should be empty after `./compile.sh --skip-integration` exits cleanly. If it isn't, stage and commit whatever it produced.
 
 ## Publishing
 
