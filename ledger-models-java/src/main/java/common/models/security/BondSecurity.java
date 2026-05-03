@@ -157,8 +157,18 @@ public class BondSecurity extends Security {
         return new Tenor(TenorType.TERM, Period.between(issueDate, maturityDate));
     }
 
+    public Tenor getAdjustedTenor(LocalDate asOfDate) {
+        return new Tenor(TenorType.TERM, Period.between(asOfDate, maturityDate));
+    }
+
+    /**
+     * @deprecated Hardcodes {@link LocalDate#now()}, which makes backtesting and
+     * deterministic curve construction impossible. Prefer
+     * {@link #getAdjustedTenor(LocalDate)} with an explicit as-of date.
+     */
+    @Deprecated
     public Tenor getAdjustedTenor() {
-        return new Tenor(TenorType.TERM, Period.between(LocalDate.now(), maturityDate));
+        return getAdjustedTenor(LocalDate.now());
     }
 
     @Override
