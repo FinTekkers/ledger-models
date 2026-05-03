@@ -46,16 +46,30 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Install protoc + grpc_node_plugin
+      - name: Install protoc
         run: |
           sudo apt-get update
-          sudo apt-get install -y protobuf-compiler protobuf-compiler-grpc
+          sudo apt-get install -y protobuf-compiler
           protoc --version
-          which grpc_node_plugin
 
       - name: npm ci (ledger-models-javascript)
         working-directory: ledger-models-javascript
         run: npm ci
+
+      - name: Add grpc-tools bin to PATH (provides grpc_node_plugin)
+        # Ubuntu's protobuf-compiler-grpc package no longer ships
+        # grpc_node_plugin in current releases. The npm grpc-tools package
+        # (already a devDependency) bundles it; expose it on PATH so
+        # compile.sh's `which grpc_node_plugin` finds it.
+        run: |
+          GRPC_TOOLS_BIN="$GITHUB_WORKSPACE/ledger-models-javascript/node_modules/grpc-tools/bin"
+          if [ ! -x "$GRPC_TOOLS_BIN/grpc_node_plugin" ]; then
+            echo "::error::grpc_node_plugin not found at $GRPC_TOOLS_BIN — npm ci may have failed or grpc-tools was removed from package.json"
+            ls -la "$GRPC_TOOLS_BIN" || true
+            exit 1
+          fi
+          echo "$GRPC_TOOLS_BIN" >> "$GITHUB_PATH"
+          "$GRPC_TOOLS_BIN/grpc_node_plugin" --version 2>/dev/null || echo "grpc_node_plugin found at $GRPC_TOOLS_BIN/grpc_node_plugin"
 
       - name: Run ./compile.sh --skip-integration
         run: ./compile.sh --skip-integration
