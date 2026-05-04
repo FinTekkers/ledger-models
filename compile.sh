@@ -137,9 +137,12 @@ else
         fi
     done
 
-    # Fix gRPC imports: Homebrew grpc_node_plugin generates require('grpc')
-    # but the project uses @grpc/grpc-js. Patch the generated files.
-    find "$JS_OUT" -name "*_grpc_pb.js" -exec sed -i '' "s/require('grpc')/require('@grpc\/grpc-js')/g" {} +
+    # Fix gRPC imports: grpc_node_plugin generates require('grpc') but the
+    # project uses @grpc/grpc-js. Patch the generated files in place.
+    # `sed -i.bak ... && rm` is portable across BSD (macOS) and GNU (Linux) sed
+    # — `sed -i ''` is BSD-only and silently no-ops on Linux.
+    find "$JS_OUT" -name "*_grpc_pb.js" -exec sed -i.bak "s/require('grpc')/require('@grpc\/grpc-js')/g" {} +
+    find "$JS_OUT" -name "*_grpc_pb.js.bak" -delete
 
     # Generate TypeScript definitions
     if ! $PROTOC \
@@ -199,12 +202,18 @@ fi
 echo ""
 echo "=== Python: generating protos ==="
 
-# Create and setup virtual environment if needed
+# Create and setup virtual environment if needed.
+# Install from ledger-models-python/requirements.txt — that pulls in
+# grpcio-tools (for protoc), pytest (for the unit tests), and the runtime
+# deps the generated bindings need. A fresh venv with only grpcio-tools
+# fails at the pytest step, which is silent on machines that have a
+# pre-existing venv with pytest already installed (i.e. local dev) and
+# only surfaces in CI.
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
     python3 -m venv venv
     source venv/bin/activate
-    pip install grpcio-tools 2>&1
+    pip install -r ledger-models-python/requirements.txt 2>&1
 else
     source venv/bin/activate
 fi
@@ -235,22 +244,27 @@ else
 fi
 
 # Run integration tests separately (may fail if services aren't running)
-echo "=== Python: running integration tests ==="
-INTEG_OUTPUT=$(cd ledger-models-python && python -m pytest -m "integration" --tb=line 2>&1)
-echo "$INTEG_OUTPUT"
-if echo "$INTEG_OUTPUT" | grep -q "passed"; then
-    INTEG_PASSED=$(echo "$INTEG_OUTPUT" | grep -oE '[0-9]+ passed' | head -1)
-    INTEG_FAILED=$(echo "$INTEG_OUTPUT" | grep -oE '[0-9]+ failed' | head -1)
-    if echo "$INTEG_OUTPUT" | grep -q "failed"; then
-        PY_INTEG="${INTEG_PASSED}, ${INTEG_FAILED}"
-        echo "  - Python integration: $PY_INTEG (service-dependent — does not block build)"
-    else
-        PY_INTEG="PASS (${INTEG_PASSED})"
-        pass "Python integration tests"
-    fi
+if $SKIP_INTEGRATION; then
+    PY_INTEG="SKIP (--skip-integration)"
+    echo "  - Python integration tests: skipped (--skip-integration)"
 else
-    PY_INTEG="SKIP (no services)"
-    echo "  - Python integration: skipped (services not running)"
+    echo "=== Python: running integration tests ==="
+    INTEG_OUTPUT=$(cd ledger-models-python && python -m pytest -m "integration" --tb=line 2>&1)
+    echo "$INTEG_OUTPUT"
+    if echo "$INTEG_OUTPUT" | grep -q "passed"; then
+        INTEG_PASSED=$(echo "$INTEG_OUTPUT" | grep -oE '[0-9]+ passed' | head -1)
+        INTEG_FAILED=$(echo "$INTEG_OUTPUT" | grep -oE '[0-9]+ failed' | head -1)
+        if echo "$INTEG_OUTPUT" | grep -q "failed"; then
+            PY_INTEG="${INTEG_PASSED}, ${INTEG_FAILED}"
+            echo "  - Python integration: $PY_INTEG (service-dependent — does not block build)"
+        else
+            PY_INTEG="PASS (${INTEG_PASSED})"
+            pass "Python integration tests"
+        fi
+    else
+        PY_INTEG="SKIP (no services)"
+        echo "  - Python integration: skipped (services not running)"
+    fi
 fi
 
 deactivate 2>/dev/null || true

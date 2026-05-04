@@ -15,7 +15,8 @@ build
 #runtime errors. 
 
 protobuf #The protobuf libraries
-grpcio  #Will install grpc packages
+grpcio  #gRPC runtime
+grpcio-tools  #protoc + grpc plugin for Python codegen (used by compile.sh)
 
 pytest #For testing
 requests~=2.28.2

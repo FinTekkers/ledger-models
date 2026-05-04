@@ -46,16 +46,38 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Install protoc + grpc_node_plugin
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y protobuf-compiler protobuf-compiler-grpc
-          protoc --version
-          which grpc_node_plugin
+      - name: Install protoc 34.0 (matches local Homebrew version)
+        # Ubuntu's apt protoc is 3.21.12; the developer's local protoc (via
+        # Homebrew) is 34.0. The two generate slightly different *_pb.js
+        # output, which would produce a false-positive `git status` dirty
+        # signal even when the committed bindings are correct for the
+        # developer's protoc. Pin the CI protoc to match local so the gate
+        # only flags actual proto-vs-binding drift.
+        uses: arduino/setup-protoc@v3
+        with:
+          version: '34.0'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Print protoc version
+        run: protoc --version
 
       - name: npm ci (ledger-models-javascript)
         working-directory: ledger-models-javascript
         run: npm ci
+
+      - name: Add grpc-tools bin to PATH (provides grpc_node_plugin)
+        # Ubuntu's protobuf-compiler-grpc package no longer ships
+        # grpc_node_plugin in current releases. The npm grpc-tools package
+        # (already a devDependency) bundles it; expose it on PATH so
+        # compile.sh's `which grpc_node_plugin` finds it.
+        run: |
+          GRPC_TOOLS_BIN="$GITHUB_WORKSPACE/ledger-models-javascript/node_modules/grpc-tools/bin"
+          if [ ! -x "$GRPC_TOOLS_BIN/grpc_node_plugin" ]; then
+            echo "::error::grpc_node_plugin not found at $GRPC_TOOLS_BIN — npm ci may have failed or grpc-tools was removed from package.json"
+            ls -la "$GRPC_TOOLS_BIN" || true
+            exit 1
+          fi
+          echo "$GRPC_TOOLS_BIN" >> "$GITHUB_PATH"
+          "$GRPC_TOOLS_BIN/grpc_node_plugin" --version 2>/dev/null || echo "grpc_node_plugin found at $GRPC_TOOLS_BIN/grpc_node_plugin"
 
       - name: Run ./compile.sh --skip-integration
         run: ./compile.sh --skip-integration
