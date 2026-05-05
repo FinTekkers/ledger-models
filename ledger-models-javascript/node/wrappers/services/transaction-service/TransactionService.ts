@@ -15,6 +15,7 @@ import { CreateTransactionResponseProto } from '../../../fintekkers/requests/tra
 import { QueryTransactionRequestProto } from '../../../fintekkers/requests/transaction/query_transaction_request_pb';
 import { QueryTransactionResponseProto } from '../../../fintekkers/requests/transaction/query_transaction_response_pb';
 import EnvConfig from '../../models/utils/requestcontext';
+import LinkResolver from '../../util/link-resolver';
 
 
 class TransactionService {
@@ -88,6 +89,34 @@ class TransactionService {
     }
 
     return processStreamSynchronously();
+  }
+
+  /**
+   * Search transactions and hydrate each Transaction's embedded Security
+   * AND Portfolio from link to full entity, with both fetches batched.
+   *
+   * Pass a shared `linkResolver` to share caching across multiple
+   * service-wrapper calls in the same request scope. If omitted, a new
+   * resolver is constructed per call.
+   *
+   * Mutates each returned Transaction.proto's embedded SecurityProto and
+   * PortfolioProto in place (link → full). See LinkResolver for cache +
+   * dedupe semantics.
+   */
+  async searchWithSecurityAndPortfolio(
+    asOf: LocalTimestampProto,
+    positionFilter: PositionFilter,
+    maxResults: number = 100,
+    linkResolver?: LinkResolver,
+  ): Promise<Transaction[]> {
+    const txns = await this.searchTransaction(asOf, positionFilter, maxResults);
+    const resolver = linkResolver ?? new LinkResolver();
+    // Run both resolves in parallel — they hit different services.
+    await Promise.all([
+      resolver.resolveSecurities(txns),
+      resolver.resolvePortfolios(txns),
+    ]);
+    return txns;
   }
 }
 

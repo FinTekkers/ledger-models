@@ -71,6 +71,15 @@ class Security {
     return UUID.fromU8Array(uuid.getRawUuid_asU8());
   }
 
+  /**
+   * True iff this Security is a link reference (only the uuid is populated;
+   * other fields should not be relied on). See docs/adr/is_link_pattern.md.
+   * Pair with LinkResolver to hydrate to a full entity.
+   */
+  isLink(): boolean {
+    return this.proto.getIsLink();
+  }
+
   getAsOf(): ZonedDateTime {
     const asOf = this.proto.getAsOf();
     if (!asOf) throw new Error("AsOf is required");
