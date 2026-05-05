@@ -11,6 +11,19 @@ declare class Security {
      * Factory method to create the appropriate Security subclass based on security type
      */
     static create(proto: SecurityProto): Security;
+    /**
+     * Type guard: true iff this Security is a BondSecurity (BOND_SECURITY,
+     * TIPS, or FRN). Use to narrow before calling bond-specific getters:
+     *
+     *   if (sec.isBond()) {
+     *     // sec: BondSecurity here — TS knows about getCouponRate(), etc.
+     *     console.log(sec.getMaturityDate());
+     *   }
+     *
+     * Implemented as a runtime check on the proto's securityType so it
+     * works regardless of how the wrapper was constructed.
+     */
+    isBond(): this is import('./BondSecurity').default;
     toString(): string;
     getFields(): FieldProto[];
     getField(field: FieldProto): any;
@@ -26,7 +39,29 @@ declare class Security {
     getProductClass(): string;
     getProductType(): string;
     getSecurityID(): IdentifierProto;
-    getIssueDate(): LocalDate;
+    /**
+     * Returns the issue date if set, else null. Per-type semantic:
+     *   - Bond / TIPS / FRN: auction date.
+     *   - Equity: IPO listing date (when present in source data).
+     *   - CPI series: first observation date.
+     *   - Cash / FX: typically null.
+     *
+     * Returns null on equities/cash/etc. that don't have an issue date set,
+     * rather than throwing — issue date is optional on the base Security.
+     * For bond-specific code paths, prefer narrowing first via isBond() and
+     * calling BondSecurity.getIssueDate() (which returns LocalDate, not null).
+     */
+    getIssueDate(): LocalDate | null;
+    /**
+     * @deprecated Maturity date is a bond-only concept. On the base Security
+     * this still throws when unset for backwards compatibility. Prefer
+     * narrowing first:
+     *
+     *   if (sec.isBond()) sec.getMaturityDate();   // BondSecurity, returns LocalDate
+     *
+     * In a future major version this method will move to BondSecurity only
+     * and TS will catch the misuse at compile time.
+     */
     getMaturityDate(): LocalDate;
     /**
      * Returns the bond-like details sub-message from the oneof, if set.

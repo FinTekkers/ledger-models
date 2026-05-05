@@ -116,6 +116,19 @@ class BondSecurity extends Security {
     return new Decimal('0.01');
   }
 
+  /**
+   * Bond issue date is the auction date and is required for bonds.
+   * Overrides Security.getIssueDate (which returns LocalDate | null on the
+   * base) with a non-nullable return type — for a properly-formed bond,
+   * issue date is always present, and TS callers narrowed via isBond()
+   * shouldn't have to null-check.
+   */
+  getIssueDate(): LocalDate {
+    const date = super.getIssueDate();
+    if (!date) throw new Error("Issue date is required for bonds");
+    return date;
+  }
+
   getProductType(): string {
     // Only BondSecurity has getTenor implemented
     // Check if getTenor method exists (it's only in BondSecurity)
