@@ -2,7 +2,10 @@
 
 ## Status
 
-Accepted (JS implementation only — Python/Java/Rust parity is a separate follow-up).
+Accepted. Implementations:
+- **JS** — `ledger-models-javascript/node/wrappers/util/link-resolver.ts` (shipped in #181).
+- **Python** — `ledger-models-python/fintekkers/wrappers/util/link_resolver.py` (this PR).
+- **Java / Rust** — separate follow-up tickets (require new service-wrapper plumbing that doesn't exist yet in those languages).
 
 ## Context
 
@@ -62,9 +65,26 @@ Per the [`is_link_pattern.md`](./is_link_pattern.md) addendum: when the link sub
 
 This matters for backtesting and deterministic replay: a search at `asOf=2024-01-01` returns prices whose embedded link-securities also carry `as_of=2024-01-01`. Without per-link `as_of` propagation the resolver would silently return *current* securities, mixing time vintages in one result set.
 
+## Cross-language parity
+
+The Python implementation (`fintekkers/wrappers/util/link_resolver.py`) mirrors the JS shape:
+
+- `LinkResolver(cache_size=1000, ttl_ms=None, security_stub=None, portfolio_stub=None)`
+- `get_security(uuid, as_of=None)` / `get_portfolio(uuid, as_of=None)`
+- `resolve_securities(items)` / `resolve_portfolios(items)`
+- `Security.is_link()` / `Price.is_link()` helpers
+- `PriceService.search_with_securities(request, link_resolver=None)`
+
+Python differences from the JS impl that are intentional:
+- Synchronous (matches the rest of `wrappers/services/`). Concurrent dedup uses `threading.Lock` + `concurrent.futures.Future` — N parallel callers under different threads still collapse to one RPC.
+- LRU is a thread-safe `OrderedDict` (no `lru-cache` dep needed).
+- `search_with_securities` returns `list[Price]` (not a generator) because the resolve step needs the full set before it can batch.
+
+Java and Rust follow-ups are separate tickets because they require new service-wrapper infrastructure that doesn't exist yet (Java has `PortfolioService` / `ValuationService` only; Rust has no `wrappers/services/` directory at all).
+
 ## Out of scope
 
-- **Python / Java / Rust parity.** The same shape transplants directly (each language has typed protobuf accessors and the same `GetByIds` RPCs), but each is its own ticket — different consumer surface, different reviewer.
+- **Java / Rust LinkResolver.** Filed as separate follow-up tickets — see "Status" above.
 - **Auto-resolution on access.** Considered (Option 1 in the original analysis) but rejected: sync getters can't `await` an RPC, and making all getters async is a four-language breaking change with poor ergonomics. Explicit batch-then-access is better.
 - **Streaming hydration during `search`.** The `priceService.search` stream still returns link-mode prices; only `searchWithSecurities` hydrates. Streaming buffer-and-hydrate is a possible future optimisation but isn't worth the complexity until profiling shows it's needed.
 
