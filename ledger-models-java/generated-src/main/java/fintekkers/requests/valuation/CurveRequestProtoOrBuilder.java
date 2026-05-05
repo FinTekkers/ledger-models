@@ -33,7 +33,10 @@ public interface CurveRequestProtoOrBuilder extends
 
   /**
    * <pre>
-   * The as-of datetime for the curve construction.
+   * The as-of datetime for the curve construction. **Required** — the server
+   * returns InvalidArgument if missing. This drives the effective tenor of
+   * every input bond (`maturity_date - asof_datetime`) when `CurveInputProto.tenor`
+   * is not explicitly set, and any YTM solve performed against `clean_price`.
    * </pre>
    *
    * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 10;</code>
@@ -42,7 +45,10 @@ public interface CurveRequestProtoOrBuilder extends
   boolean hasAsofDatetime();
   /**
    * <pre>
-   * The as-of datetime for the curve construction.
+   * The as-of datetime for the curve construction. **Required** — the server
+   * returns InvalidArgument if missing. This drives the effective tenor of
+   * every input bond (`maturity_date - asof_datetime`) when `CurveInputProto.tenor`
+   * is not explicitly set, and any YTM solve performed against `clean_price`.
    * </pre>
    *
    * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 10;</code>
@@ -51,7 +57,10 @@ public interface CurveRequestProtoOrBuilder extends
   fintekkers.models.util.LocalTimestamp.LocalTimestampProto getAsofDatetime();
   /**
    * <pre>
-   * The as-of datetime for the curve construction.
+   * The as-of datetime for the curve construction. **Required** — the server
+   * returns InvalidArgument if missing. This drives the effective tenor of
+   * every input bond (`maturity_date - asof_datetime`) when `CurveInputProto.tenor`
+   * is not explicitly set, and any YTM solve performed against `clean_price`.
    * </pre>
    *
    * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 10;</code>

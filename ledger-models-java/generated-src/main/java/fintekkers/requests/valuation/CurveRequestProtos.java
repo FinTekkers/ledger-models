@@ -40,19 +40,22 @@ public final class CurveRequestProtos {
       "to\032*fintekkers/models/util/decimal_value" +
       ".proto\032,fintekkers/models/util/local_tim" +
       "estamp.proto\032(fintekkers/models/position" +
-      "/measure.proto\"\202\001\n\017CurveInputProto\022;\n\010se" +
+      "/measure.proto\"\374\001\n\017CurveInputProto\022;\n\010se" +
       "curity\030\001 \001(\0132).fintekkers.models.securit" +
       "y.SecurityProto\0222\n\005price\030\002 \001(\0132#.fintekk" +
-      "ers.models.price.PriceProto\"\304\002\n\021CurveReq" +
-      "uestProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007versi" +
-      "on\030\002 \001(\t\022B\n\rasof_datetime\030\n \001(\0132+.fintek" +
-      "kers.models.util.LocalTimestampProto\022=\n\013" +
-      "curve_types\030\024 \003(\0162(.fintekkers.models.po" +
-      "sition.MeasureProto\022D\n\014curve_inputs\030\036 \003(" +
-      "\0132..fintekkers.requests.valuation.CurveI" +
-      "nputProto\022?\n\014tenor_points\030( \003(\0132).fintek" +
-      "kers.models.util.DecimalValueProtoB\026B\022Cu" +
-      "rveRequestProtosP\001b\006proto3"
+      "ers.models.price.PriceProto\0228\n\005tenor\030\004 \001" +
+      "(\0132).fintekkers.models.util.DecimalValue" +
+      "Proto\022>\n\013clean_price\030\005 \001(\0132).fintekkers." +
+      "models.util.DecimalValueProto\"\304\002\n\021CurveR" +
+      "equestProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007ver" +
+      "sion\030\002 \001(\t\022B\n\rasof_datetime\030\n \001(\0132+.fint" +
+      "ekkers.models.util.LocalTimestampProto\022=" +
+      "\n\013curve_types\030\024 \003(\0162(.fintekkers.models." +
+      "position.MeasureProto\022D\n\014curve_inputs\030\036 " +
+      "\003(\0132..fintekkers.requests.valuation.Curv" +
+      "eInputProto\022?\n\014tenor_points\030( \003(\0132).fint" +
+      "ekkers.models.util.DecimalValueProtoB\026B\022" +
+      "CurveRequestProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -68,7 +71,7 @@ public final class CurveRequestProtos {
     internal_static_fintekkers_requests_valuation_CurveInputProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_CurveInputProto_descriptor,
-        new java.lang.String[] { "Security", "Price", });
+        new java.lang.String[] { "Security", "Price", "Tenor", "CleanPrice", });
     internal_static_fintekkers_requests_valuation_CurveRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_fintekkers_requests_valuation_CurveRequestProto_fieldAccessorTable = new

@@ -10,6 +10,7 @@ import testutil.DummyEquityObjects;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -65,5 +66,41 @@ class BondSecurityTest {
 
         //The maturation cash impact should be the face value of the bond, i.e. not based on the price paid
         Assertions.assertEquals(transaction.getDirectedQuantity(), futureCashImpact.getCashTransaction().getDirectedQuantity());
+    }
+
+    /**
+     * Cross-language fixture (issue=2025-01-15, maturity=2035-01-15, asOf=2030-07-15)
+     * shared with the Rust BondSecurity::effective_tenor and TS BondSecurity.getTenor(asOf)
+     * tests. All three should return "4 years 6 months 0 days" (Java/TS calendar period)
+     * or its ACT/ACT decimal-year equivalent ≈ 4.504 (Rust).
+     */
+    @Test
+    public void getAdjustedTenorWithAsOfArg_returnsRemainingTermFromAsOfDate() {
+        BondSecurity bond = new BondSecurity(
+                UUID.randomUUID(), "Issuer", ZonedDateTime.now(), CashSecurity.USD);
+        bond.setIssueDate(LocalDate.of(2025, 1, 15));
+        bond.setMaturityDate(LocalDate.of(2035, 1, 15));
+
+        Tenor tenor = bond.getAdjustedTenor(LocalDate.of(2030, 7, 15));
+        Period period = tenor.getTenor();
+
+        Assertions.assertEquals(TenorType.TERM, tenor.getType());
+        Assertions.assertEquals(4, period.getYears());
+        Assertions.assertEquals(6, period.getMonths());
+        Assertions.assertEquals(0, period.getDays());
+    }
+
+    @Test
+    public void getAdjustedTenor_atIssueDate_equalsOriginalTenor() {
+        BondSecurity bond = new BondSecurity(
+                UUID.randomUUID(), "Issuer", ZonedDateTime.now(), CashSecurity.USD);
+        bond.setIssueDate(LocalDate.of(2025, 1, 15));
+        bond.setMaturityDate(LocalDate.of(2035, 1, 15));
+
+        Period adjusted = bond.getAdjustedTenor(LocalDate.of(2025, 1, 15)).getTenor();
+        Period original = bond.getTenor().getTenor();
+
+        Assertions.assertEquals(original, adjusted);
+        Assertions.assertEquals(10, adjusted.getYears());
     }
 }

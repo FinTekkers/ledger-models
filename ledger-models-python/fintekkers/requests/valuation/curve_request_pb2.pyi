@@ -12,12 +12,16 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class CurveInputProto(_message.Message):
-    __slots__ = ("security", "price")
+    __slots__ = ("security", "price", "tenor", "clean_price")
     SECURITY_FIELD_NUMBER: _ClassVar[int]
     PRICE_FIELD_NUMBER: _ClassVar[int]
+    TENOR_FIELD_NUMBER: _ClassVar[int]
+    CLEAN_PRICE_FIELD_NUMBER: _ClassVar[int]
     security: _security_pb2.SecurityProto
     price: _price_pb2.PriceProto
-    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., price: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ...) -> None: ...
+    tenor: _decimal_value_pb2.DecimalValueProto
+    clean_price: _decimal_value_pb2.DecimalValueProto
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., price: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ..., tenor: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
 
 class CurveRequestProto(_message.Message):
     __slots__ = ("object_class", "version", "asof_datetime", "curve_types", "curve_inputs", "tenor_points")

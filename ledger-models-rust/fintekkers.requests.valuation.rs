@@ -1,14 +1,45 @@
-/// A single security+price pair representing one observed point on the curve.
-/// For example, a 10-year US Treasury trading at 95.50.
+/// A single observation that contributes one point to the curve.
+///
+/// Two equivalent shapes are supported:
+///
+///    1. Bond + price (the typical case): provide `security` (with `issue_date`
+///       and `maturity_date` populated) and either `price` (already a yield) or
+///       `clean_price` (server runs YTM internally to derive the yield). The
+///       server computes the tenor from `(maturity_date - asof_datetime)`.
+///
+///    2. Synthetic CMT-style point: provide `tenor` and `price` directly. Use
+///       this for inputs that have no underlying bond (e.g. CMT par yields
+///       published by Treasury). When `tenor` is set it overrides any tenor
+///       that would otherwise be computed from `security`.
+///
+/// `price` and `clean_price` are mutually exclusive; if both are set the
+/// server returns InvalidArgument.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CurveInputProto {
-    /// The bond security at this curve point.
+    /// The bond security at this curve point. Required unless `tenor` is set.
+    /// Must carry `issue_date` and `maturity_date` for tenor computation when
+    /// `tenor` is not explicitly provided.
     #[prost(message, optional, tag = "1")]
     pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
-    /// The observed market price for this security (quoted as % of par).
+    /// The observed yield for this security, expressed as a yield (e.g. 4.25
+    /// for 4.25%). Mutually exclusive with `clean_price`.
     #[prost(message, optional, tag = "2")]
     pub price: ::core::option::Option<super::super::models::price::PriceProto>,
+    /// Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+    /// When set, this is used as the curve point's x-coordinate directly, bypassing
+    /// any date-based computation from `security`. Intended for synthetic CMT-style
+    /// inputs that have no bond.
+    #[prost(message, optional, tag = "4")]
+    pub tenor: ::core::option::Option<super::super::models::util::DecimalValueProto>,
+    /// Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+    /// `price`: when set, the server runs a YTM solver against the bond's cash
+    /// flows to derive the yield used for curve fitting. Mutually exclusive
+    /// with `price`.
+    #[prost(message, optional, tag = "5")]
+    pub clean_price: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
+    >,
 }
 /// Request to construct a yield curve from a set of bond prices.
 ///
@@ -26,7 +57,10 @@ pub struct CurveRequestProto {
     pub object_class: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
-    /// The as-of datetime for the curve construction.
+    /// The as-of datetime for the curve construction. **Required** — the server
+    /// returns InvalidArgument if missing. This drives the effective tenor of
+    /// every input bond (`maturity_date - asof_datetime`) when `CurveInputProto.tenor`
+    /// is not explicitly set, and any YTM solve performed against `clean_price`.
     #[prost(message, optional, tag = "10")]
     pub asof_datetime: ::core::option::Option<
         super::super::models::util::LocalTimestampProto,

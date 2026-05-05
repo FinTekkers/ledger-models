@@ -5,8 +5,18 @@ package fintekkers.requests.valuation;
 
 /**
  * <pre>
- * A single security+price pair representing one observed point on the curve.
- * For example, a 10-year US Treasury trading at 95.50.
+ * A single observation that contributes one point to the curve.
+ * Two equivalent shapes are supported:
+ *   1. Bond + price (the typical case): provide `security` (with `issue_date`
+ *      and `maturity_date` populated) and either `price` (already a yield) or
+ *      `clean_price` (server runs YTM internally to derive the yield). The
+ *      server computes the tenor from `(maturity_date - asof_datetime)`.
+ *   2. Synthetic CMT-style point: provide `tenor` and `price` directly. Use
+ *      this for inputs that have no underlying bond (e.g. CMT par yields
+ *      published by Treasury). When `tenor` is set it overrides any tenor
+ *      that would otherwise be computed from `security`.
+ * `price` and `clean_price` are mutually exclusive; if both are set the
+ * server returns InvalidArgument.
  * </pre>
  *
  * Protobuf type {@code fintekkers.requests.valuation.CurveInputProto}
@@ -52,7 +62,9 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.security.SecurityProto security_;
   /**
    * <pre>
-   * The bond security at this curve point.
+   * The bond security at this curve point. Required unless `tenor` is set.
+   * Must carry `issue_date` and `maturity_date` for tenor computation when
+   * `tenor` is not explicitly provided.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -64,7 +76,9 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The bond security at this curve point.
+   * The bond security at this curve point. Required unless `tenor` is set.
+   * Must carry `issue_date` and `maturity_date` for tenor computation when
+   * `tenor` is not explicitly provided.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -76,7 +90,9 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The bond security at this curve point.
+   * The bond security at this curve point. Required unless `tenor` is set.
+   * Must carry `issue_date` and `maturity_date` for tenor computation when
+   * `tenor` is not explicitly provided.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -90,7 +106,8 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.price.PriceProto price_;
   /**
    * <pre>
-   * The observed market price for this security (quoted as % of par).
+   * The observed yield for this security, expressed as a yield (e.g. 4.25
+   * for 4.25%). Mutually exclusive with `clean_price`.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -102,7 +119,8 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The observed market price for this security (quoted as % of par).
+   * The observed yield for this security, expressed as a yield (e.g. 4.25
+   * for 4.25%). Mutually exclusive with `clean_price`.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -114,7 +132,8 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The observed market price for this security (quoted as % of par).
+   * The observed yield for this security, expressed as a yield (e.g. 4.25
+   * for 4.25%). Mutually exclusive with `clean_price`.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -122,6 +141,100 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public fintekkers.models.price.PriceProtoOrBuilder getPriceOrBuilder() {
     return price_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : price_;
+  }
+
+  public static final int TENOR_FIELD_NUMBER = 4;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto tenor_;
+  /**
+   * <pre>
+   * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+   * When set, this is used as the curve point's x-coordinate directly, bypassing
+   * any date-based computation from `security`. Intended for synthetic CMT-style
+   * inputs that have no bond.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+   * @return Whether the tenor field is set.
+   */
+  @java.lang.Override
+  public boolean hasTenor() {
+    return tenor_ != null;
+  }
+  /**
+   * <pre>
+   * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+   * When set, this is used as the curve point's x-coordinate directly, bypassing
+   * any date-based computation from `security`. Intended for synthetic CMT-style
+   * inputs that have no bond.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+   * @return The tenor.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getTenor() {
+    return tenor_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : tenor_;
+  }
+  /**
+   * <pre>
+   * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+   * When set, this is used as the curve point's x-coordinate directly, bypassing
+   * any date-based computation from `security`. Intended for synthetic CMT-style
+   * inputs that have no bond.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getTenorOrBuilder() {
+    return tenor_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : tenor_;
+  }
+
+  public static final int CLEAN_PRICE_FIELD_NUMBER = 5;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto cleanPrice_;
+  /**
+   * <pre>
+   * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+   * `price`: when set, the server runs a YTM solver against the bond's cash
+   * flows to derive the yield used for curve fitting. Mutually exclusive
+   * with `price`.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+   * @return Whether the cleanPrice field is set.
+   */
+  @java.lang.Override
+  public boolean hasCleanPrice() {
+    return cleanPrice_ != null;
+  }
+  /**
+   * <pre>
+   * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+   * `price`: when set, the server runs a YTM solver against the bond's cash
+   * flows to derive the yield used for curve fitting. Mutually exclusive
+   * with `price`.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+   * @return The cleanPrice.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getCleanPrice() {
+    return cleanPrice_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : cleanPrice_;
+  }
+  /**
+   * <pre>
+   * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+   * `price`: when set, the server runs a YTM solver against the bond's cash
+   * flows to derive the yield used for curve fitting. Mutually exclusive
+   * with `price`.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCleanPriceOrBuilder() {
+    return cleanPrice_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : cleanPrice_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -144,6 +257,12 @@ private static final long serialVersionUID = 0L;
     if (price_ != null) {
       output.writeMessage(2, getPrice());
     }
+    if (tenor_ != null) {
+      output.writeMessage(4, getTenor());
+    }
+    if (cleanPrice_ != null) {
+      output.writeMessage(5, getCleanPrice());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -160,6 +279,14 @@ private static final long serialVersionUID = 0L;
     if (price_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(2, getPrice());
+    }
+    if (tenor_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(4, getTenor());
+    }
+    if (cleanPrice_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(5, getCleanPrice());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -186,6 +313,16 @@ private static final long serialVersionUID = 0L;
       if (!getPrice()
           .equals(other.getPrice())) return false;
     }
+    if (hasTenor() != other.hasTenor()) return false;
+    if (hasTenor()) {
+      if (!getTenor()
+          .equals(other.getTenor())) return false;
+    }
+    if (hasCleanPrice() != other.hasCleanPrice()) return false;
+    if (hasCleanPrice()) {
+      if (!getCleanPrice()
+          .equals(other.getCleanPrice())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -204,6 +341,14 @@ private static final long serialVersionUID = 0L;
     if (hasPrice()) {
       hash = (37 * hash) + PRICE_FIELD_NUMBER;
       hash = (53 * hash) + getPrice().hashCode();
+    }
+    if (hasTenor()) {
+      hash = (37 * hash) + TENOR_FIELD_NUMBER;
+      hash = (53 * hash) + getTenor().hashCode();
+    }
+    if (hasCleanPrice()) {
+      hash = (37 * hash) + CLEAN_PRICE_FIELD_NUMBER;
+      hash = (53 * hash) + getCleanPrice().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -302,8 +447,18 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * A single security+price pair representing one observed point on the curve.
-   * For example, a 10-year US Treasury trading at 95.50.
+   * A single observation that contributes one point to the curve.
+   * Two equivalent shapes are supported:
+   *   1. Bond + price (the typical case): provide `security` (with `issue_date`
+   *      and `maturity_date` populated) and either `price` (already a yield) or
+   *      `clean_price` (server runs YTM internally to derive the yield). The
+   *      server computes the tenor from `(maturity_date - asof_datetime)`.
+   *   2. Synthetic CMT-style point: provide `tenor` and `price` directly. Use
+   *      this for inputs that have no underlying bond (e.g. CMT par yields
+   *      published by Treasury). When `tenor` is set it overrides any tenor
+   *      that would otherwise be computed from `security`.
+   * `price` and `clean_price` are mutually exclusive; if both are set the
+   * server returns InvalidArgument.
    * </pre>
    *
    * Protobuf type {@code fintekkers.requests.valuation.CurveInputProto}
@@ -349,6 +504,16 @@ private static final long serialVersionUID = 0L;
         priceBuilder_.dispose();
         priceBuilder_ = null;
       }
+      tenor_ = null;
+      if (tenorBuilder_ != null) {
+        tenorBuilder_.dispose();
+        tenorBuilder_ = null;
+      }
+      cleanPrice_ = null;
+      if (cleanPriceBuilder_ != null) {
+        cleanPriceBuilder_.dispose();
+        cleanPriceBuilder_ = null;
+      }
       return this;
     }
 
@@ -391,6 +556,16 @@ private static final long serialVersionUID = 0L;
         result.price_ = priceBuilder_ == null
             ? price_
             : priceBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.tenor_ = tenorBuilder_ == null
+            ? tenor_
+            : tenorBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.cleanPrice_ = cleanPriceBuilder_ == null
+            ? cleanPrice_
+            : cleanPriceBuilder_.build();
       }
     }
 
@@ -444,6 +619,12 @@ private static final long serialVersionUID = 0L;
       if (other.hasPrice()) {
         mergePrice(other.getPrice());
       }
+      if (other.hasTenor()) {
+        mergeTenor(other.getTenor());
+      }
+      if (other.hasCleanPrice()) {
+        mergeCleanPrice(other.getCleanPrice());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -484,6 +665,20 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000002;
               break;
             } // case 18
+            case 34: {
+              input.readMessage(
+                  getTenorFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 34
+            case 42: {
+              input.readMessage(
+                  getCleanPriceFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 42
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -506,7 +701,9 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> securityBuilder_;
     /**
      * <pre>
-     * The bond security at this curve point.
+     * The bond security at this curve point. Required unless `tenor` is set.
+     * Must carry `issue_date` and `maturity_date` for tenor computation when
+     * `tenor` is not explicitly provided.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -517,7 +714,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security at this curve point.
+     * The bond security at this curve point. Required unless `tenor` is set.
+     * Must carry `issue_date` and `maturity_date` for tenor computation when
+     * `tenor` is not explicitly provided.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -532,7 +731,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security at this curve point.
+     * The bond security at this curve point. Required unless `tenor` is set.
+     * Must carry `issue_date` and `maturity_date` for tenor computation when
+     * `tenor` is not explicitly provided.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -552,7 +753,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security at this curve point.
+     * The bond security at this curve point. Required unless `tenor` is set.
+     * Must carry `issue_date` and `maturity_date` for tenor computation when
+     * `tenor` is not explicitly provided.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -570,7 +773,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security at this curve point.
+     * The bond security at this curve point. Required unless `tenor` is set.
+     * Must carry `issue_date` and `maturity_date` for tenor computation when
+     * `tenor` is not explicitly provided.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -593,7 +798,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security at this curve point.
+     * The bond security at this curve point. Required unless `tenor` is set.
+     * Must carry `issue_date` and `maturity_date` for tenor computation when
+     * `tenor` is not explicitly provided.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -610,7 +817,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security at this curve point.
+     * The bond security at this curve point. Required unless `tenor` is set.
+     * Must carry `issue_date` and `maturity_date` for tenor computation when
+     * `tenor` is not explicitly provided.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -622,7 +831,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security at this curve point.
+     * The bond security at this curve point. Required unless `tenor` is set.
+     * Must carry `issue_date` and `maturity_date` for tenor computation when
+     * `tenor` is not explicitly provided.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -637,7 +848,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security at this curve point.
+     * The bond security at this curve point. Required unless `tenor` is set.
+     * Must carry `issue_date` and `maturity_date` for tenor computation when
+     * `tenor` is not explicitly provided.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -661,7 +874,8 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> priceBuilder_;
     /**
      * <pre>
-     * The observed market price for this security (quoted as % of par).
+     * The observed yield for this security, expressed as a yield (e.g. 4.25
+     * for 4.25%). Mutually exclusive with `clean_price`.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -672,7 +886,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The observed market price for this security (quoted as % of par).
+     * The observed yield for this security, expressed as a yield (e.g. 4.25
+     * for 4.25%). Mutually exclusive with `clean_price`.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -687,7 +902,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The observed market price for this security (quoted as % of par).
+     * The observed yield for this security, expressed as a yield (e.g. 4.25
+     * for 4.25%). Mutually exclusive with `clean_price`.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -707,7 +923,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The observed market price for this security (quoted as % of par).
+     * The observed yield for this security, expressed as a yield (e.g. 4.25
+     * for 4.25%). Mutually exclusive with `clean_price`.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -725,7 +942,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The observed market price for this security (quoted as % of par).
+     * The observed yield for this security, expressed as a yield (e.g. 4.25
+     * for 4.25%). Mutually exclusive with `clean_price`.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -748,7 +966,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The observed market price for this security (quoted as % of par).
+     * The observed yield for this security, expressed as a yield (e.g. 4.25
+     * for 4.25%). Mutually exclusive with `clean_price`.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -765,7 +984,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The observed market price for this security (quoted as % of par).
+     * The observed yield for this security, expressed as a yield (e.g. 4.25
+     * for 4.25%). Mutually exclusive with `clean_price`.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -777,7 +997,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The observed market price for this security (quoted as % of par).
+     * The observed yield for this security, expressed as a yield (e.g. 4.25
+     * for 4.25%). Mutually exclusive with `clean_price`.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -792,7 +1013,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The observed market price for this security (quoted as % of par).
+     * The observed yield for this security, expressed as a yield (e.g. 4.25
+     * for 4.25%). Mutually exclusive with `clean_price`.
      * </pre>
      *
      * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -809,6 +1031,370 @@ private static final long serialVersionUID = 0L;
         price_ = null;
       }
       return priceBuilder_;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto tenor_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> tenorBuilder_;
+    /**
+     * <pre>
+     * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+     * When set, this is used as the curve point's x-coordinate directly, bypassing
+     * any date-based computation from `security`. Intended for synthetic CMT-style
+     * inputs that have no bond.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+     * @return Whether the tenor field is set.
+     */
+    public boolean hasTenor() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     * <pre>
+     * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+     * When set, this is used as the curve point's x-coordinate directly, bypassing
+     * any date-based computation from `security`. Intended for synthetic CMT-style
+     * inputs that have no bond.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+     * @return The tenor.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getTenor() {
+      if (tenorBuilder_ == null) {
+        return tenor_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : tenor_;
+      } else {
+        return tenorBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+     * When set, this is used as the curve point's x-coordinate directly, bypassing
+     * any date-based computation from `security`. Intended for synthetic CMT-style
+     * inputs that have no bond.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+     */
+    public Builder setTenor(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (tenorBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        tenor_ = value;
+      } else {
+        tenorBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+     * When set, this is used as the curve point's x-coordinate directly, bypassing
+     * any date-based computation from `security`. Intended for synthetic CMT-style
+     * inputs that have no bond.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+     */
+    public Builder setTenor(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (tenorBuilder_ == null) {
+        tenor_ = builderForValue.build();
+      } else {
+        tenorBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+     * When set, this is used as the curve point's x-coordinate directly, bypassing
+     * any date-based computation from `security`. Intended for synthetic CMT-style
+     * inputs that have no bond.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+     */
+    public Builder mergeTenor(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (tenorBuilder_ == null) {
+        if (((bitField0_ & 0x00000004) != 0) &&
+          tenor_ != null &&
+          tenor_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getTenorBuilder().mergeFrom(value);
+        } else {
+          tenor_ = value;
+        }
+      } else {
+        tenorBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+     * When set, this is used as the curve point's x-coordinate directly, bypassing
+     * any date-based computation from `security`. Intended for synthetic CMT-style
+     * inputs that have no bond.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+     */
+    public Builder clearTenor() {
+      bitField0_ = (bitField0_ & ~0x00000004);
+      tenor_ = null;
+      if (tenorBuilder_ != null) {
+        tenorBuilder_.dispose();
+        tenorBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+     * When set, this is used as the curve point's x-coordinate directly, bypassing
+     * any date-based computation from `security`. Intended for synthetic CMT-style
+     * inputs that have no bond.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getTenorBuilder() {
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return getTenorFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+     * When set, this is used as the curve point's x-coordinate directly, bypassing
+     * any date-based computation from `security`. Intended for synthetic CMT-style
+     * inputs that have no bond.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getTenorOrBuilder() {
+      if (tenorBuilder_ != null) {
+        return tenorBuilder_.getMessageOrBuilder();
+      } else {
+        return tenor_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : tenor_;
+      }
+    }
+    /**
+     * <pre>
+     * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+     * When set, this is used as the curve point's x-coordinate directly, bypassing
+     * any date-based computation from `security`. Intended for synthetic CMT-style
+     * inputs that have no bond.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getTenorFieldBuilder() {
+      if (tenorBuilder_ == null) {
+        tenorBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getTenor(),
+                getParentForChildren(),
+                isClean());
+        tenor_ = null;
+      }
+      return tenorBuilder_;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto cleanPrice_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> cleanPriceBuilder_;
+    /**
+     * <pre>
+     * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+     * `price`: when set, the server runs a YTM solver against the bond's cash
+     * flows to derive the yield used for curve fitting. Mutually exclusive
+     * with `price`.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+     * @return Whether the cleanPrice field is set.
+     */
+    public boolean hasCleanPrice() {
+      return ((bitField0_ & 0x00000008) != 0);
+    }
+    /**
+     * <pre>
+     * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+     * `price`: when set, the server runs a YTM solver against the bond's cash
+     * flows to derive the yield used for curve fitting. Mutually exclusive
+     * with `price`.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+     * @return The cleanPrice.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getCleanPrice() {
+      if (cleanPriceBuilder_ == null) {
+        return cleanPrice_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : cleanPrice_;
+      } else {
+        return cleanPriceBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+     * `price`: when set, the server runs a YTM solver against the bond's cash
+     * flows to derive the yield used for curve fitting. Mutually exclusive
+     * with `price`.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+     */
+    public Builder setCleanPrice(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (cleanPriceBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        cleanPrice_ = value;
+      } else {
+        cleanPriceBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+     * `price`: when set, the server runs a YTM solver against the bond's cash
+     * flows to derive the yield used for curve fitting. Mutually exclusive
+     * with `price`.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+     */
+    public Builder setCleanPrice(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (cleanPriceBuilder_ == null) {
+        cleanPrice_ = builderForValue.build();
+      } else {
+        cleanPriceBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+     * `price`: when set, the server runs a YTM solver against the bond's cash
+     * flows to derive the yield used for curve fitting. Mutually exclusive
+     * with `price`.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+     */
+    public Builder mergeCleanPrice(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (cleanPriceBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0) &&
+          cleanPrice_ != null &&
+          cleanPrice_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getCleanPriceBuilder().mergeFrom(value);
+        } else {
+          cleanPrice_ = value;
+        }
+      } else {
+        cleanPriceBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+     * `price`: when set, the server runs a YTM solver against the bond's cash
+     * flows to derive the yield used for curve fitting. Mutually exclusive
+     * with `price`.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+     */
+    public Builder clearCleanPrice() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      cleanPrice_ = null;
+      if (cleanPriceBuilder_ != null) {
+        cleanPriceBuilder_.dispose();
+        cleanPriceBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+     * `price`: when set, the server runs a YTM solver against the bond's cash
+     * flows to derive the yield used for curve fitting. Mutually exclusive
+     * with `price`.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getCleanPriceBuilder() {
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return getCleanPriceFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+     * `price`: when set, the server runs a YTM solver against the bond's cash
+     * flows to derive the yield used for curve fitting. Mutually exclusive
+     * with `price`.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCleanPriceOrBuilder() {
+      if (cleanPriceBuilder_ != null) {
+        return cleanPriceBuilder_.getMessageOrBuilder();
+      } else {
+        return cleanPrice_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : cleanPrice_;
+      }
+    }
+    /**
+     * <pre>
+     * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+     * `price`: when set, the server runs a YTM solver against the bond's cash
+     * flows to derive the yield used for curve fitting. Mutually exclusive
+     * with `price`.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getCleanPriceFieldBuilder() {
+      if (cleanPriceBuilder_ == null) {
+        cleanPriceBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getCleanPrice(),
+                getParentForChildren(),
+                isClean());
+        cleanPrice_ = null;
+      }
+      return cleanPriceBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(
