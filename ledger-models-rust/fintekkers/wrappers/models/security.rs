@@ -175,6 +175,7 @@ impl SecurityProtoBuilder {
             reset_frequency: 0,
             index_type: 0,
             product_details: None,
+            deleted_at: None,
         })
     }
 }

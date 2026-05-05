@@ -39,6 +39,13 @@ message SecurityProto {
 
   SecurityTypeProto security_type = 10;
 
+  // Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
+  // at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
+  // records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
+  // clearing it on a subsequent CreateOrUpdate resurrects the record.
+  // See: https://github.com/FinTekkers/second-brain/issues/188
+  fintekkers.models.util.LocalTimestampProto deleted_at = 15;
+
   //Biz fields
   string asset_class = 11;
   string issuer_name = 12;
