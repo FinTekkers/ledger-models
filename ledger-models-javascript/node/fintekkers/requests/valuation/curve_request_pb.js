@@ -108,7 +108,9 @@ proto.fintekkers.requests.valuation.CurveInputProto.prototype.toObject = functio
 proto.fintekkers.requests.valuation.CurveInputProto.toObject = function(includeInstance, msg) {
   var f, obj = {
     security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-    price: (f = msg.getPrice()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f)
+    price: (f = msg.getPrice()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
+    tenor: (f = msg.getTenor()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -155,6 +157,16 @@ proto.fintekkers.requests.valuation.CurveInputProto.deserializeBinaryFromReader 
       reader.readMessage(value,fintekkers_models_price_price_pb.PriceProto.deserializeBinaryFromReader);
       msg.setPrice(value);
       break;
+    case 4:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setTenor(value);
+      break;
+    case 5:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setCleanPrice(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -198,6 +210,22 @@ proto.fintekkers.requests.valuation.CurveInputProto.serializeBinaryToWriter = fu
       2,
       f,
       fintekkers_models_price_price_pb.PriceProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getTenor();
+  if (f != null) {
+    writer.writeMessage(
+      4,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getCleanPrice();
+  if (f != null) {
+    writer.writeMessage(
+      5,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
     );
   }
 };
@@ -274,6 +302,80 @@ proto.fintekkers.requests.valuation.CurveInputProto.prototype.clearPrice = funct
  */
 proto.fintekkers.requests.valuation.CurveInputProto.prototype.hasPrice = function() {
   return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto tenor = 4;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.requests.valuation.CurveInputProto.prototype.getTenor = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 4));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.requests.valuation.CurveInputProto} returns this
+*/
+proto.fintekkers.requests.valuation.CurveInputProto.prototype.setTenor = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.requests.valuation.CurveInputProto} returns this
+ */
+proto.fintekkers.requests.valuation.CurveInputProto.prototype.clearTenor = function() {
+  return this.setTenor(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.requests.valuation.CurveInputProto.prototype.hasTenor = function() {
+  return jspb.Message.getField(this, 4) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto clean_price = 5;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.requests.valuation.CurveInputProto.prototype.getCleanPrice = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 5));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.requests.valuation.CurveInputProto} returns this
+*/
+proto.fintekkers.requests.valuation.CurveInputProto.prototype.setCleanPrice = function(value) {
+  return jspb.Message.setWrapperField(this, 5, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.requests.valuation.CurveInputProto} returns this
+ */
+proto.fintekkers.requests.valuation.CurveInputProto.prototype.clearCleanPrice = function() {
+  return this.setCleanPrice(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.requests.valuation.CurveInputProto.prototype.hasCleanPrice = function() {
+  return jspb.Message.getField(this, 5) != null;
 };
 
 

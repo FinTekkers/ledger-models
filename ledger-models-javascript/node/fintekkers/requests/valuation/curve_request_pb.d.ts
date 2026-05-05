@@ -23,6 +23,16 @@ export class CurveInputProto extends jspb.Message {
     getPrice(): fintekkers_models_price_price_pb.PriceProto | undefined;
     setPrice(value?: fintekkers_models_price_price_pb.PriceProto): CurveInputProto;
 
+    hasTenor(): boolean;
+    clearTenor(): void;
+    getTenor(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setTenor(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): CurveInputProto;
+
+    hasCleanPrice(): boolean;
+    clearCleanPrice(): void;
+    getCleanPrice(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setCleanPrice(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): CurveInputProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): CurveInputProto.AsObject;
     static toObject(includeInstance: boolean, msg: CurveInputProto): CurveInputProto.AsObject;
@@ -37,6 +47,8 @@ export namespace CurveInputProto {
     export type AsObject = {
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         price?: fintekkers_models_price_price_pb.PriceProto.AsObject,
+        tenor?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }
 

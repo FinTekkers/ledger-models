@@ -9,7 +9,9 @@ public interface CurveInputProtoOrBuilder extends
 
   /**
    * <pre>
-   * The bond security at this curve point.
+   * The bond security at this curve point. Required unless `tenor` is set.
+   * Must carry `issue_date` and `maturity_date` for tenor computation when
+   * `tenor` is not explicitly provided.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -18,7 +20,9 @@ public interface CurveInputProtoOrBuilder extends
   boolean hasSecurity();
   /**
    * <pre>
-   * The bond security at this curve point.
+   * The bond security at this curve point. Required unless `tenor` is set.
+   * Must carry `issue_date` and `maturity_date` for tenor computation when
+   * `tenor` is not explicitly provided.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -27,7 +31,9 @@ public interface CurveInputProtoOrBuilder extends
   fintekkers.models.security.SecurityProto getSecurity();
   /**
    * <pre>
-   * The bond security at this curve point.
+   * The bond security at this curve point. Required unless `tenor` is set.
+   * Must carry `issue_date` and `maturity_date` for tenor computation when
+   * `tenor` is not explicitly provided.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -36,7 +42,8 @@ public interface CurveInputProtoOrBuilder extends
 
   /**
    * <pre>
-   * The observed market price for this security (quoted as % of par).
+   * The observed yield for this security, expressed as a yield (e.g. 4.25
+   * for 4.25%). Mutually exclusive with `clean_price`.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -45,7 +52,8 @@ public interface CurveInputProtoOrBuilder extends
   boolean hasPrice();
   /**
    * <pre>
-   * The observed market price for this security (quoted as % of par).
+   * The observed yield for this security, expressed as a yield (e.g. 4.25
+   * for 4.25%). Mutually exclusive with `clean_price`.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto price = 2;</code>
@@ -54,10 +62,83 @@ public interface CurveInputProtoOrBuilder extends
   fintekkers.models.price.PriceProto getPrice();
   /**
    * <pre>
-   * The observed market price for this security (quoted as % of par).
+   * The observed yield for this security, expressed as a yield (e.g. 4.25
+   * for 4.25%). Mutually exclusive with `clean_price`.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto price = 2;</code>
    */
   fintekkers.models.price.PriceProtoOrBuilder getPriceOrBuilder();
+
+  /**
+   * <pre>
+   * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+   * When set, this is used as the curve point's x-coordinate directly, bypassing
+   * any date-based computation from `security`. Intended for synthetic CMT-style
+   * inputs that have no bond.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+   * @return Whether the tenor field is set.
+   */
+  boolean hasTenor();
+  /**
+   * <pre>
+   * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+   * When set, this is used as the curve point's x-coordinate directly, bypassing
+   * any date-based computation from `security`. Intended for synthetic CMT-style
+   * inputs that have no bond.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+   * @return The tenor.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getTenor();
+  /**
+   * <pre>
+   * Optional tenor override, in decimal years (e.g. 0.5 for 6M, 10.0 for 10Y).
+   * When set, this is used as the curve point's x-coordinate directly, bypassing
+   * any date-based computation from `security`. Intended for synthetic CMT-style
+   * inputs that have no bond.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto tenor = 4;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getTenorOrBuilder();
+
+  /**
+   * <pre>
+   * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+   * `price`: when set, the server runs a YTM solver against the bond's cash
+   * flows to derive the yield used for curve fitting. Mutually exclusive
+   * with `price`.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+   * @return Whether the cleanPrice field is set.
+   */
+  boolean hasCleanPrice();
+  /**
+   * <pre>
+   * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+   * `price`: when set, the server runs a YTM solver against the bond's cash
+   * flows to derive the yield used for curve fitting. Mutually exclusive
+   * with `price`.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+   * @return The cleanPrice.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getCleanPrice();
+  /**
+   * <pre>
+   * Optional clean price (quoted as % of par, e.g. 99.50). Alternative to
+   * `price`: when set, the server runs a YTM solver against the bond's cash
+   * flows to derive the yield used for curve fitting. Mutually exclusive
+   * with `price`.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto clean_price = 5;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCleanPriceOrBuilder();
 }
