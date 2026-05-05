@@ -33,6 +33,13 @@ prost-types = "0.11.2"
 tonic-build = "0.9.0"
 walkdir = "2"
 
+# LinkResolver (consumer-side is_link hydration). tokio is already in
+# the dep tree transitively via tonic; making it explicit + adding
+# async-trait documents the requirement and lets us define the
+# fetcher trait used by tests.
+tokio = { version = "1", features = ["sync", "macros", "rt", "rt-multi-thread"] }
+async-trait = "0.1"
+
 ##Used in all calculations. Equivalent of Java BigDecimal implementation
 rust_decimal = "1.30.0"
 rust_decimal_macros = "1.30" #To get dec! macro
