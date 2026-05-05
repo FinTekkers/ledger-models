@@ -1,5 +1,6 @@
 import { SecurityProto } from '../../fintekkers/models/security/security_pb';
 import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
+import { LocalTimestampProto } from '../../fintekkers/models/util/local_timestamp_pb';
 import { SecurityClient } from '../../fintekkers/services/security-service/security_service_grpc_pb';
 import { PortfolioClient } from '../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
 import Security from '../models/security/security';
@@ -37,6 +38,14 @@ import { UUID } from '../models/utils/uuid';
  * only the inner SecurityProto is swapped from link-stub to full entity.
  * Wrapper objects that read through the proto (`price.getSecurity()`)
  * automatically see the resolved data.
+ *
+ * Time-travel (`as_of`) semantic: per is_link_pattern.md addendum, when
+ * a link sub-message has only `uuid` set the resolver fetches the latest
+ * version. When the link sub-message ALSO has `as_of` set, the resolver
+ * fetches the version of the entity as of that timestamp. The cache is
+ * keyed on (uuid, as_of) so the same UUID at different timestamps does
+ * not collide. Bulk lookups group by `as_of` (one GetByIds RPC per unique
+ * timestamp bucket, since the request proto carries a single as_of).
  */
 export interface LinkResolverOptions {
     /** Optional API key. If omitted, EnvConfig.apiCredentials is used. */
@@ -61,19 +70,27 @@ declare class LinkResolver {
     private portfolioInFlight;
     constructor(opts?: LinkResolverOptions);
     /**
-     * Resolve a single SecurityProto by UUID. Cached + concurrent-deduped.
+     * Resolve a single SecurityProto by UUID. If `asOf` is supplied, fetch
+     * the version of the entity as of that timestamp; otherwise fetch the
+     * latest. Cached + concurrent-deduped on the (uuid, asOf) pair.
      * Throws if the server doesn't return the UUID (no silent null).
      */
-    getSecurity(uuid: UUID): Promise<Security>;
+    getSecurity(uuid: UUID, asOf?: LocalTimestampProto): Promise<Security>;
     /**
-     * Resolve a single PortfolioProto by UUID. Cached + concurrent-deduped.
+     * Resolve a single PortfolioProto by UUID, optionally as of `asOf`.
+     * Cached + concurrent-deduped on (uuid, asOf).
      */
-    getPortfolio(uuid: UUID): Promise<Portfolio>;
+    getPortfolio(uuid: UUID, asOf?: LocalTimestampProto): Promise<Portfolio>;
     /**
-     * Walk `items`, find the ones whose embedded security is `is_link=true`
-     * (or unset), batch-fetch the unique UUIDs in one GetByIds RPC, and
-     * mutate each item's proto in place so subsequent `item.getSecurity()`
-     * calls return the full entity. Returns the same array for chaining.
+     * Walk `items`, find the ones whose embedded security is `is_link=true`,
+     * batch-fetch the unique (uuid, as_of) pairs (grouped by as_of so each
+     * GetByIds RPC carries one timestamp), and mutate each item's proto in
+     * place so subsequent `item.getSecurity()` calls return the full entity.
+     * Returns the same array for chaining.
+     *
+     * Honors per-link `as_of`: if the embedded sub-message has `as_of` set,
+     * the resolver fetches the version of the entity at that timestamp,
+     * not the latest.
      *
      * `T` is structural: anything with a `proto` field that exposes
      * `getSecurity()` / `setSecurity()` works (Price, Transaction, etc).
@@ -81,6 +98,7 @@ declare class LinkResolver {
     resolveSecurities<T extends ResolvableSecurity>(items: T[]): Promise<T[]>;
     /**
      * Same shape as resolveSecurities, but for embedded PortfolioProto.
+     * Honors per-link `as_of` the same way.
      */
     resolvePortfolios<T extends ResolvablePortfolio>(items: T[]): Promise<T[]>;
     /** Test/debug helper. Not part of the stable API. */

@@ -68,6 +68,23 @@ class TinyLRU {
         this.map.clear();
     }
 }
+/**
+ * Stable serialization of a LocalTimestampProto for use in cache keys
+ * and as_of-bucket grouping. Uses the proto's binary form (Uint8Array
+ * → base64). Returns the literal "latest" when as_of is undefined so
+ * unset and explicit-undefined collapse to the same bucket.
+ *
+ * Two LocalTimestampProto instances representing the same moment will
+ * produce the same key as long as the underlying nanos/seconds match —
+ * proto3 binary encoding is canonical for unset fields.
+ */
+function asOfKey(asOf) {
+    if (!asOf)
+        return 'latest';
+    // serializeBinary returns Uint8Array.
+    const bytes = asOf.serializeBinary();
+    return Buffer.from(bytes).toString('base64');
+}
 class LinkResolver {
     constructor(opts = {}) {
         var _a;
@@ -102,29 +119,37 @@ class LinkResolver {
         }
     }
     /**
-     * Resolve a single SecurityProto by UUID. Cached + concurrent-deduped.
+     * Resolve a single SecurityProto by UUID. If `asOf` is supplied, fetch
+     * the version of the entity as of that timestamp; otherwise fetch the
+     * latest. Cached + concurrent-deduped on the (uuid, asOf) pair.
      * Throws if the server doesn't return the UUID (no silent null).
      */
-    getSecurity(uuid) {
+    getSecurity(uuid, asOf) {
         return __awaiter(this, void 0, void 0, function* () {
-            const proto = yield this.fetchSecurityProto(uuid);
+            const proto = yield this.fetchSecurityProto(uuid, asOf);
             return security_1.default.create(proto);
         });
     }
     /**
-     * Resolve a single PortfolioProto by UUID. Cached + concurrent-deduped.
+     * Resolve a single PortfolioProto by UUID, optionally as of `asOf`.
+     * Cached + concurrent-deduped on (uuid, asOf).
      */
-    getPortfolio(uuid) {
+    getPortfolio(uuid, asOf) {
         return __awaiter(this, void 0, void 0, function* () {
-            const proto = yield this.fetchPortfolioProto(uuid);
+            const proto = yield this.fetchPortfolioProto(uuid, asOf);
             return new portfolio_1.default(proto);
         });
     }
     /**
-     * Walk `items`, find the ones whose embedded security is `is_link=true`
-     * (or unset), batch-fetch the unique UUIDs in one GetByIds RPC, and
-     * mutate each item's proto in place so subsequent `item.getSecurity()`
-     * calls return the full entity. Returns the same array for chaining.
+     * Walk `items`, find the ones whose embedded security is `is_link=true`,
+     * batch-fetch the unique (uuid, as_of) pairs (grouped by as_of so each
+     * GetByIds RPC carries one timestamp), and mutate each item's proto in
+     * place so subsequent `item.getSecurity()` calls return the full entity.
+     * Returns the same array for chaining.
+     *
+     * Honors per-link `as_of`: if the embedded sub-message has `as_of` set,
+     * the resolver fetches the version of the entity at that timestamp,
+     * not the latest.
      *
      * `T` is structural: anything with a `proto` field that exposes
      * `getSecurity()` / `setSecurity()` works (Price, Transaction, etc).
@@ -133,7 +158,8 @@ class LinkResolver {
         return __awaiter(this, void 0, void 0, function* () {
             if (items.length === 0)
                 return items;
-            const uuidsToFetch = new Map();
+            // Group: as_of bucket → (cacheKey → UUID) for items not yet cached.
+            const buckets = new Map();
             for (const item of items) {
                 const sec = item.proto.getSecurity();
                 if (!sec || !sec.getIsLink())
@@ -142,25 +168,35 @@ class LinkResolver {
                 if (!uuidProto)
                     continue;
                 const uuid = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8());
-                const key = uuid.toString();
-                // Skip if already cached.
-                if (this.securityCache.get(key)) {
-                    uuidsToFetch.delete(key);
+                const asOf = sec.getAsOf();
+                const bucketKey = asOfKey(asOf);
+                const cacheKey = `${uuid.toString()}@${bucketKey}`;
+                // Skip if already cached for this exact (uuid, as_of).
+                if (this.securityCache.get(cacheKey))
                     continue;
+                let bucket = buckets.get(bucketKey);
+                if (!bucket) {
+                    bucket = new Map();
+                    buckets.set(bucketKey, bucket);
                 }
-                if (!uuidsToFetch.has(key))
-                    uuidsToFetch.set(key, uuid);
+                if (!bucket.has(cacheKey))
+                    bucket.set(cacheKey, uuid);
             }
-            if (uuidsToFetch.size > 0) {
-                const fetched = yield this.batchFetchSecurities(Array.from(uuidsToFetch.values()));
+            // One GetByIds RPC per as_of bucket. Fire in parallel.
+            yield Promise.all(Array.from(buckets.entries()).map(([bucketKey, uuidMap]) => __awaiter(this, void 0, void 0, function* () {
+                // Recover the LocalTimestampProto for this bucket from the first
+                // item whose serialized as_of matches. We could store it alongside
+                // but it's cheap to re-find.
+                const asOf = bucketKey === 'latest' ? undefined : findAsOfForBucket(items, (sec) => sec.getSecurity(), bucketKey);
+                const fetched = yield this.batchFetchSecurities(Array.from(uuidMap.values()), asOf);
                 for (const proto of fetched) {
                     const uuidProto = proto.getUuid();
                     if (!uuidProto)
                         continue;
-                    const key = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
-                    this.securityCache.set(key, proto);
+                    const uuidStr = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+                    this.securityCache.set(`${uuidStr}@${bucketKey}`, proto);
                 }
-            }
+            })));
             // Mutate each item's embedded security in place.
             for (const item of items) {
                 const sec = item.proto.getSecurity();
@@ -169,23 +205,24 @@ class LinkResolver {
                 const uuidProto = sec.getUuid();
                 if (!uuidProto)
                     continue;
-                const key = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
-                const resolved = this.securityCache.get(key);
-                if (resolved) {
+                const uuidStr = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+                const bucketKey = asOfKey(sec.getAsOf());
+                const resolved = this.securityCache.get(`${uuidStr}@${bucketKey}`);
+                if (resolved)
                     item.proto.setSecurity(resolved);
-                }
             }
             return items;
         });
     }
     /**
      * Same shape as resolveSecurities, but for embedded PortfolioProto.
+     * Honors per-link `as_of` the same way.
      */
     resolvePortfolios(items) {
         return __awaiter(this, void 0, void 0, function* () {
             if (items.length === 0)
                 return items;
-            const uuidsToFetch = new Map();
+            const buckets = new Map();
             for (const item of items) {
                 const port = item.proto.getPortfolio();
                 if (!port || !port.getIsLink())
@@ -194,24 +231,30 @@ class LinkResolver {
                 if (!uuidProto)
                     continue;
                 const uuid = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8());
-                const key = uuid.toString();
-                if (this.portfolioCache.get(key)) {
-                    uuidsToFetch.delete(key);
+                const asOf = port.getAsOf();
+                const bucketKey = asOfKey(asOf);
+                const cacheKey = `${uuid.toString()}@${bucketKey}`;
+                if (this.portfolioCache.get(cacheKey))
                     continue;
+                let bucket = buckets.get(bucketKey);
+                if (!bucket) {
+                    bucket = new Map();
+                    buckets.set(bucketKey, bucket);
                 }
-                if (!uuidsToFetch.has(key))
-                    uuidsToFetch.set(key, uuid);
+                if (!bucket.has(cacheKey))
+                    bucket.set(cacheKey, uuid);
             }
-            if (uuidsToFetch.size > 0) {
-                const fetched = yield this.batchFetchPortfolios(Array.from(uuidsToFetch.values()));
+            yield Promise.all(Array.from(buckets.entries()).map(([bucketKey, uuidMap]) => __awaiter(this, void 0, void 0, function* () {
+                const asOf = bucketKey === 'latest' ? undefined : findAsOfForBucket(items, (it) => it.getPortfolio(), bucketKey);
+                const fetched = yield this.batchFetchPortfolios(Array.from(uuidMap.values()), asOf);
                 for (const proto of fetched) {
                     const uuidProto = proto.getUuid();
                     if (!uuidProto)
                         continue;
-                    const key = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
-                    this.portfolioCache.set(key, proto);
+                    const uuidStr = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+                    this.portfolioCache.set(`${uuidStr}@${bucketKey}`, proto);
                 }
-            }
+            })));
             for (const item of items) {
                 const port = item.proto.getPortfolio();
                 if (!port || !port.getIsLink())
@@ -219,11 +262,11 @@ class LinkResolver {
                 const uuidProto = port.getUuid();
                 if (!uuidProto)
                     continue;
-                const key = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
-                const resolved = this.portfolioCache.get(key);
-                if (resolved) {
+                const uuidStr = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+                const bucketKey = asOfKey(port.getAsOf());
+                const resolved = this.portfolioCache.get(`${uuidStr}@${bucketKey}`);
+                if (resolved)
                     item.proto.setPortfolio(resolved);
-                }
             }
             return items;
         });
@@ -236,18 +279,18 @@ class LinkResolver {
         this.portfolioInFlight.clear();
     }
     // ---------- internals ----------
-    fetchSecurityProto(uuid) {
+    fetchSecurityProto(uuid, asOf) {
         return __awaiter(this, void 0, void 0, function* () {
-            const key = uuid.toString();
+            const key = `${uuid.toString()}@${asOfKey(asOf)}`;
             const cached = this.securityCache.get(key);
             if (cached)
                 return cached;
             const inFlight = this.securityInFlight.get(key);
             if (inFlight)
                 return inFlight;
-            const promise = this.batchFetchSecurities([uuid]).then((protos) => {
+            const promise = this.batchFetchSecurities([uuid], asOf).then((protos) => {
                 if (protos.length === 0) {
-                    throw new Error(`Security not found: ${key}`);
+                    throw new Error(`Security not found: ${uuid.toString()}@${asOfKey(asOf)}`);
                 }
                 const proto = protos[0];
                 this.securityCache.set(key, proto);
@@ -259,18 +302,18 @@ class LinkResolver {
             return promise;
         });
     }
-    fetchPortfolioProto(uuid) {
+    fetchPortfolioProto(uuid, asOf) {
         return __awaiter(this, void 0, void 0, function* () {
-            const key = uuid.toString();
+            const key = `${uuid.toString()}@${asOfKey(asOf)}`;
             const cached = this.portfolioCache.get(key);
             if (cached)
                 return cached;
             const inFlight = this.portfolioInFlight.get(key);
             if (inFlight)
                 return inFlight;
-            const promise = this.batchFetchPortfolios([uuid]).then((protos) => {
+            const promise = this.batchFetchPortfolios([uuid], asOf).then((protos) => {
                 if (protos.length === 0) {
-                    throw new Error(`Portfolio not found: ${key}`);
+                    throw new Error(`Portfolio not found: ${uuid.toString()}@${asOfKey(asOf)}`);
                 }
                 const proto = protos[0];
                 this.portfolioCache.set(key, proto);
@@ -282,7 +325,7 @@ class LinkResolver {
             return promise;
         });
     }
-    batchFetchSecurities(uuids) {
+    batchFetchSecurities(uuids, asOf) {
         return __awaiter(this, void 0, void 0, function* () {
             if (uuids.length === 0)
                 return [];
@@ -291,12 +334,14 @@ class LinkResolver {
             request.setVersion('0.0.1');
             const uuidProtos = uuids.map((u) => u.toUUIDProto());
             request.setUuidsList(uuidProtos);
+            if (asOf)
+                request.setAsOf(asOf);
             const getByIdsAsync = (0, util_1.promisify)(this.securityClient.getByIds.bind(this.securityClient));
             const response = (yield getByIdsAsync(request));
             return response.getSecurityResponseList();
         });
     }
-    batchFetchPortfolios(uuids) {
+    batchFetchPortfolios(uuids, asOf) {
         return __awaiter(this, void 0, void 0, function* () {
             if (uuids.length === 0)
                 return [];
@@ -305,11 +350,29 @@ class LinkResolver {
             request.setVersion('0.0.1');
             const uuidProtos = uuids.map((u) => u.toUUIDProto());
             request.setUuidsList(uuidProtos);
+            if (asOf)
+                request.setAsOf(asOf);
             const getByIdsAsync = (0, util_1.promisify)(this.portfolioClient.getByIds.bind(this.portfolioClient));
             const response = (yield getByIdsAsync(request));
             return response.getPortfolioResponseList();
         });
     }
+}
+/**
+ * Walk `items` and return the first sub-message's as_of whose serialized
+ * key matches `bucketKey`. Used by the bulk resolvers to recover the
+ * canonical LocalTimestampProto instance for a bucket.
+ */
+function findAsOfForBucket(items, read, bucketKey) {
+    for (const item of items) {
+        const sub = read(item.proto);
+        if (!sub || !sub.getIsLink())
+            continue;
+        const asOf = sub.getAsOf();
+        if (asOfKey(asOf) === bucketKey)
+            return asOf;
+    }
+    return undefined;
 }
 exports.default = LinkResolver;
 //# sourceMappingURL=link-resolver.js.map

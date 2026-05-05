@@ -52,6 +52,16 @@ This means after `resolveSecurities(prices)`, `price.getSecurity().getIdentifier
 
 Process-lifetime cache is the right default for the dominant use case (UI request handlers reading a few hundred prices). Long-running services that worry about staleness can pass `{ ttlMs: 60_000 }`. Tests pass `{ cacheSize: 0 }` to opt out.
 
+### Honors per-link `as_of` (time-travel)
+
+Per the [`is_link_pattern.md`](./is_link_pattern.md) addendum: when the link sub-message has `as_of` set, the resolver fetches the version of the entity at that timestamp; otherwise it fetches the latest.
+
+- The cache is keyed on **(uuid, as_of)** — the same UUID at different timestamps does not collide. "Latest" is its own bucket (key suffix `@latest`).
+- Bulk lookups group items by `as_of` and fire **one `GetByIds` RPC per bucket** (the request proto carries a single `as_of`, so different timestamps cannot share a request).
+- Single-UUID `getSecurity(uuid)` defaults to latest; `getSecurity(uuid, asOf)` time-travels.
+
+This matters for backtesting and deterministic replay: a search at `asOf=2024-01-01` returns prices whose embedded link-securities also carry `as_of=2024-01-01`. Without per-link `as_of` propagation the resolver would silently return *current* securities, mixing time vintages in one result set.
+
 ## Out of scope
 
 - **Python / Java / Rust parity.** The same shape transplants directly (each language has typed protobuf accessors and the same `GetByIds` RPCs), but each is its own ticket — different consumer surface, different reviewer.
