@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_security_security_pb = require('../../../fintekkers/models/security/security_pb.js');
 goog.object.extend(proto, fintekkers_models_security_security_pb);
@@ -101,8 +107,8 @@ proto.fintekkers.requests.valuation.CurveInputProto.prototype.toObject = functio
  */
 proto.fintekkers.requests.valuation.CurveInputProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-price: (f = msg.getPrice()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f)
+    security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
+    price: (f = msg.getPrice()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -115,7 +121,7 @@ price: (f = msg.getPrice()) && fintekkers_models_price_price_pb.PriceProto.toObj
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.CurveInputProto}
  */
 proto.fintekkers.requests.valuation.CurveInputProto.deserializeBinary = function(bytes) {
@@ -310,13 +316,13 @@ proto.fintekkers.requests.valuation.CurveRequestProto.prototype.toObject = funct
  */
 proto.fintekkers.requests.valuation.CurveRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-asofDatetime: (f = msg.getAsofDatetime()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-curveTypesList: (f = jspb.Message.getRepeatedField(msg, 20)) == null ? undefined : f,
-curveInputsList: jspb.Message.toObjectList(msg.getCurveInputsList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    asofDatetime: (f = msg.getAsofDatetime()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    curveTypesList: (f = jspb.Message.getRepeatedField(msg, 20)) == null ? undefined : f,
+    curveInputsList: jspb.Message.toObjectList(msg.getCurveInputsList(),
     proto.fintekkers.requests.valuation.CurveInputProto.toObject, includeInstance),
-tenorPointsList: jspb.Message.toObjectList(msg.getTenorPointsList(),
+    tenorPointsList: jspb.Message.toObjectList(msg.getTenorPointsList(),
     fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject, includeInstance)
   };
 
@@ -330,7 +336,7 @@ tenorPointsList: jspb.Message.toObjectList(msg.getTenorPointsList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.CurveRequestProto}
  */
 proto.fintekkers.requests.valuation.CurveRequestProto.deserializeBinary = function(bytes) {
@@ -355,11 +361,11 @@ proto.fintekkers.requests.valuation.CurveRequestProto.deserializeBinaryFromReade
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 10:
@@ -368,7 +374,10 @@ proto.fintekkers.requests.valuation.CurveRequestProto.deserializeBinaryFromReade
       msg.setAsofDatetime(value);
       break;
     case 20:
-      reader.readPackableEnumInto(msg.getCurveTypesList());
+      var values = /** @type {!Array<!proto.fintekkers.models.position.MeasureProto>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
+      for (var i = 0; i < values.length; i++) {
+        msg.addCurveTypes(values[i]);
+      }
       break;
     case 30:
       var value = new proto.fintekkers.requests.valuation.CurveInputProto;

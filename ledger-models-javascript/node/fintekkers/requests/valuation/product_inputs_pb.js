@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_security_security_pb = require('../../../fintekkers/models/security/security_pb.js');
 goog.object.extend(proto, fintekkers_models_security_security_pb);
@@ -259,9 +265,9 @@ proto.fintekkers.requests.valuation.ProductInput.prototype.toObject = function(o
  */
 proto.fintekkers.requests.valuation.ProductInput.toObject = function(includeInstance, msg) {
   var f, obj = {
-bond: (f = msg.getBond()) && proto.fintekkers.requests.valuation.BondInput.toObject(includeInstance, f),
-tips: (f = msg.getTips()) && proto.fintekkers.requests.valuation.TipsInput.toObject(includeInstance, f),
-frn: (f = msg.getFrn()) && proto.fintekkers.requests.valuation.FrnInput.toObject(includeInstance, f)
+    bond: (f = msg.getBond()) && proto.fintekkers.requests.valuation.BondInput.toObject(includeInstance, f),
+    tips: (f = msg.getTips()) && proto.fintekkers.requests.valuation.TipsInput.toObject(includeInstance, f),
+    frn: (f = msg.getFrn()) && proto.fintekkers.requests.valuation.FrnInput.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -274,7 +280,7 @@ frn: (f = msg.getFrn()) && proto.fintekkers.requests.valuation.FrnInput.toObject
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.ProductInput}
  */
 proto.fintekkers.requests.valuation.ProductInput.deserializeBinary = function(bytes) {
@@ -512,9 +518,9 @@ proto.fintekkers.requests.valuation.BondInput.prototype.toObject = function(opt_
  */
 proto.fintekkers.requests.valuation.BondInput.toObject = function(includeInstance, msg) {
   var f, obj = {
-security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-benchmarkCurve: (f = msg.getBenchmarkCurve()) && proto.fintekkers.requests.valuation.SecurityBasedCurveInput.toObject(includeInstance, f)
+    security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
+    cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    benchmarkCurve: (f = msg.getBenchmarkCurve()) && proto.fintekkers.requests.valuation.SecurityBasedCurveInput.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -527,7 +533,7 @@ benchmarkCurve: (f = msg.getBenchmarkCurve()) && proto.fintekkers.requests.valua
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.BondInput}
  */
 proto.fintekkers.requests.valuation.BondInput.deserializeBinary = function(bytes) {
@@ -765,9 +771,9 @@ proto.fintekkers.requests.valuation.TipsInput.prototype.toObject = function(opt_
  */
 proto.fintekkers.requests.valuation.TipsInput.toObject = function(includeInstance, msg) {
   var f, obj = {
-security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-currentCpi: (f = msg.getCurrentCpi()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
+    cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    currentCpi: (f = msg.getCurrentCpi()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -780,7 +786,7 @@ currentCpi: (f = msg.getCurrentCpi()) && fintekkers_models_util_decimal_value_pb
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.TipsInput}
  */
 proto.fintekkers.requests.valuation.TipsInput.deserializeBinary = function(bytes) {
@@ -1018,9 +1024,9 @@ proto.fintekkers.requests.valuation.FrnInput.prototype.toObject = function(opt_i
  */
 proto.fintekkers.requests.valuation.FrnInput.toObject = function(includeInstance, msg) {
   var f, obj = {
-security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-curve: (f = msg.getCurve()) && proto.fintekkers.requests.valuation.YieldCurveInput.toObject(includeInstance, f)
+    security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
+    cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    curve: (f = msg.getCurve()) && proto.fintekkers.requests.valuation.YieldCurveInput.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1033,7 +1039,7 @@ curve: (f = msg.getCurve()) && proto.fintekkers.requests.valuation.YieldCurveInp
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.FrnInput}
  */
 proto.fintekkers.requests.valuation.FrnInput.deserializeBinary = function(bytes) {
@@ -1278,9 +1284,9 @@ proto.fintekkers.requests.valuation.YieldCurveInput.prototype.toObject = functio
  */
 proto.fintekkers.requests.valuation.YieldCurveInput.toObject = function(includeInstance, msg) {
   var f, obj = {
-index: jspb.Message.getFieldWithDefault(msg, 1, 0),
-referenceDate: (f = msg.getReferenceDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-pointsList: jspb.Message.toObjectList(msg.getPointsList(),
+    index: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    referenceDate: (f = msg.getReferenceDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    pointsList: jspb.Message.toObjectList(msg.getPointsList(),
     proto.fintekkers.requests.valuation.CurvePoint.toObject, includeInstance)
   };
 
@@ -1294,7 +1300,7 @@ pointsList: jspb.Message.toObjectList(msg.getPointsList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.YieldCurveInput}
  */
 proto.fintekkers.requests.valuation.YieldCurveInput.deserializeBinary = function(bytes) {
@@ -1512,8 +1518,8 @@ proto.fintekkers.requests.valuation.CurvePoint.prototype.toObject = function(opt
  */
 proto.fintekkers.requests.valuation.CurvePoint.toObject = function(includeInstance, msg) {
   var f, obj = {
-tenor: (f = msg.getTenor()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-rate: (f = msg.getRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    tenor: (f = msg.getTenor()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    rate: (f = msg.getRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1526,7 +1532,7 @@ rate: (f = msg.getRate()) && fintekkers_models_util_decimal_value_pb.DecimalValu
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.CurvePoint}
  */
 proto.fintekkers.requests.valuation.CurvePoint.deserializeBinary = function(bytes) {
@@ -1721,9 +1727,9 @@ proto.fintekkers.requests.valuation.SecurityBasedCurveInput.prototype.toObject =
  */
 proto.fintekkers.requests.valuation.SecurityBasedCurveInput.toObject = function(includeInstance, msg) {
   var f, obj = {
-index: jspb.Message.getFieldWithDefault(msg, 1, 0),
-referenceDate: (f = msg.getReferenceDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-pointsList: jspb.Message.toObjectList(msg.getPointsList(),
+    index: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    referenceDate: (f = msg.getReferenceDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    pointsList: jspb.Message.toObjectList(msg.getPointsList(),
     proto.fintekkers.requests.valuation.SecurityCurvePoint.toObject, includeInstance)
   };
 
@@ -1737,7 +1743,7 @@ pointsList: jspb.Message.toObjectList(msg.getPointsList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.SecurityBasedCurveInput}
  */
 proto.fintekkers.requests.valuation.SecurityBasedCurveInput.deserializeBinary = function(bytes) {
@@ -1955,8 +1961,8 @@ proto.fintekkers.requests.valuation.SecurityCurvePoint.prototype.toObject = func
  */
 proto.fintekkers.requests.valuation.SecurityCurvePoint.toObject = function(includeInstance, msg) {
   var f, obj = {
-security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
+    cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1969,7 +1975,7 @@ cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.SecurityCurvePoint}
  */
 proto.fintekkers.requests.valuation.SecurityCurvePoint.deserializeBinary = function(bytes) {

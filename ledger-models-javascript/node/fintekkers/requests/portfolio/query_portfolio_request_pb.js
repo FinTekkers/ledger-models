@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_util_uuid_pb = require('../../../fintekkers/models/util/uuid_pb.js');
 goog.object.extend(proto, fintekkers_models_util_uuid_pb);
@@ -82,13 +88,13 @@ proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.prototype.toObjec
  */
 proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-uuidsList: jspb.Message.toObjectList(msg.getUuidsList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    uuidsList: jspb.Message.toObjectList(msg.getUuidsList(),
     fintekkers_models_util_uuid_pb.UUIDProto.toObject, includeInstance),
-searchPortfolioInput: (f = msg.getSearchPortfolioInput()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
-asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-nameFilter: jspb.Message.getFieldWithDefault(msg, 24, "")
+    searchPortfolioInput: (f = msg.getSearchPortfolioInput()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
+    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    nameFilter: jspb.Message.getFieldWithDefault(msg, 24, "")
   };
 
   if (includeInstance) {
@@ -101,7 +107,7 @@ nameFilter: jspb.Message.getFieldWithDefault(msg, 24, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto}
  */
 proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.deserializeBinary = function(bytes) {
@@ -126,11 +132,11 @@ proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.deserializeBinary
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 21:
@@ -149,7 +155,7 @@ proto.fintekkers.requests.portfolio.QueryPortfolioRequestProto.deserializeBinary
       msg.setAsOf(value);
       break;
     case 24:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setNameFilter(value);
       break;
     default:

@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_requests_util_errors_error_pb = require('../../../../fintekkers/requests/util/errors/error_pb.js');
 goog.object.extend(proto, fintekkers_requests_util_errors_error_pb);
@@ -78,9 +84,9 @@ proto.fintekkers.requests.util.errors.SummaryProto.prototype.toObject = function
  */
 proto.fintekkers.requests.util.errors.SummaryProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-errorsList: jspb.Message.toObjectList(msg.getErrorsList(),
+    errorsList: jspb.Message.toObjectList(msg.getErrorsList(),
     fintekkers_requests_util_errors_error_pb.ErrorProto.toObject, includeInstance),
-warningsList: jspb.Message.toObjectList(msg.getWarningsList(),
+    warningsList: jspb.Message.toObjectList(msg.getWarningsList(),
     fintekkers_requests_util_errors_error_pb.WarningProto.toObject, includeInstance)
   };
 
@@ -94,7 +100,7 @@ warningsList: jspb.Message.toObjectList(msg.getWarningsList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.util.errors.SummaryProto}
  */
 proto.fintekkers.requests.util.errors.SummaryProto.deserializeBinary = function(bytes) {

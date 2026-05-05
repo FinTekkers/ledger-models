@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_util_local_date_pb = require('../../../fintekkers/models/util/local_date_pb.js');
 goog.object.extend(proto, fintekkers_models_util_local_date_pb);
@@ -75,11 +81,11 @@ proto.fintekkers.models.valuation.CashflowProto.prototype.toObject = function(op
  */
 proto.fintekkers.models.valuation.CashflowProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-cashflowDate: (f = msg.getCashflowDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-pvAmount: (f = msg.getPvAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-fvAmount: (f = msg.getFvAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-currency: (f = msg.getCurrency()) && fintekkers_models_util_currency_pb.CurrencyProto.toObject(includeInstance, f)
+    cashflowDate: (f = msg.getCashflowDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    pvAmount: (f = msg.getPvAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    fvAmount: (f = msg.getFvAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    currency: (f = msg.getCurrency()) && fintekkers_models_util_currency_pb.CurrencyProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -92,7 +98,7 @@ currency: (f = msg.getCurrency()) && fintekkers_models_util_currency_pb.Currency
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.valuation.CashflowProto}
  */
 proto.fintekkers.models.valuation.CashflowProto.deserializeBinary = function(bytes) {

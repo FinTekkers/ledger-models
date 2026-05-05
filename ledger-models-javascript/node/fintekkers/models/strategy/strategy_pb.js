@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_util_local_timestamp_pb = require('../../../fintekkers/models/util/local_timestamp_pb.js');
 goog.object.extend(proto, fintekkers_models_util_local_timestamp_pb);
@@ -73,15 +79,15 @@ proto.fintekkers.models.strategy.StrategyProto.prototype.toObject = function(opt
  */
 proto.fintekkers.models.strategy.StrategyProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
-asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
-validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-strategyName: jspb.Message.getFieldWithDefault(msg, 10, ""),
-parent: (f = msg.getParent()) && proto.fintekkers.models.strategy.StrategyProto.toObject(includeInstance, f)
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
+    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
+    validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    strategyName: jspb.Message.getFieldWithDefault(msg, 10, ""),
+    parent: (f = msg.getParent()) && proto.fintekkers.models.strategy.StrategyProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -94,7 +100,7 @@ parent: (f = msg.getParent()) && proto.fintekkers.models.strategy.StrategyProto.
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.strategy.StrategyProto}
  */
 proto.fintekkers.models.strategy.StrategyProto.deserializeBinary = function(bytes) {
@@ -119,11 +125,11 @@ proto.fintekkers.models.strategy.StrategyProto.deserializeBinaryFromReader = fun
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 5:
@@ -151,7 +157,7 @@ proto.fintekkers.models.strategy.StrategyProto.deserializeBinaryFromReader = fun
       msg.setValidTo(value);
       break;
     case 10:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setStrategyName(value);
       break;
     case 11:

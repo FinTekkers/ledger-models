@@ -6,7 +6,7 @@ import warnings
 from fintekkers.requests.index_composition import create_index_composition_request_pb2 as fintekkers_dot_requests_dot_index__composition_dot_create__index__composition__request__pb2
 from fintekkers.requests.index_composition import get_index_composition_request_pb2 as fintekkers_dot_requests_dot_index__composition_dot_get__index__composition__request__pb2
 
-GRPC_GENERATED_VERSION = '1.78.0'
+GRPC_GENERATED_VERSION = '1.76.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 

@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_portfolio_portfolio_pb = require('../../../fintekkers/models/portfolio/portfolio_pb.js');
 goog.object.extend(proto, fintekkers_models_portfolio_portfolio_pb);
@@ -80,10 +86,10 @@ proto.fintekkers.requests.portfolio.CreatePortfolioResponseProto.prototype.toObj
  */
 proto.fintekkers.requests.portfolio.CreatePortfolioResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-createPortfolioRequest: (f = msg.getCreatePortfolioRequest()) && fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto.toObject(includeInstance, f),
-portfolioResponseList: jspb.Message.toObjectList(msg.getPortfolioResponseList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    createPortfolioRequest: (f = msg.getCreatePortfolioRequest()) && fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto.toObject(includeInstance, f),
+    portfolioResponseList: jspb.Message.toObjectList(msg.getPortfolioResponseList(),
     fintekkers_models_portfolio_portfolio_pb.PortfolioProto.toObject, includeInstance)
   };
 
@@ -97,7 +103,7 @@ portfolioResponseList: jspb.Message.toObjectList(msg.getPortfolioResponseList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.portfolio.CreatePortfolioResponseProto}
  */
 proto.fintekkers.requests.portfolio.CreatePortfolioResponseProto.deserializeBinary = function(bytes) {
@@ -122,11 +128,11 @@ proto.fintekkers.requests.portfolio.CreatePortfolioResponseProto.deserializeBina
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 20:

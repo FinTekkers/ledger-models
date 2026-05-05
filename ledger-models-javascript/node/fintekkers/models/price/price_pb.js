@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_util_decimal_value_pb = require('../../../fintekkers/models/util/decimal_value_pb.js');
 goog.object.extend(proto, fintekkers_models_util_decimal_value_pb);
@@ -79,16 +85,16 @@ proto.fintekkers.models.price.PriceProto.prototype.toObject = function(opt_inclu
  */
 proto.fintekkers.models.price.PriceProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
-asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
-validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-price: (f = msg.getPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-priceType: jspb.Message.getFieldWithDefault(msg, 12, 0)
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
+    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
+    validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    price: (f = msg.getPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
+    priceType: jspb.Message.getFieldWithDefault(msg, 12, 0)
   };
 
   if (includeInstance) {
@@ -101,7 +107,7 @@ priceType: jspb.Message.getFieldWithDefault(msg, 12, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.price.PriceProto}
  */
 proto.fintekkers.models.price.PriceProto.deserializeBinary = function(bytes) {
@@ -126,11 +132,11 @@ proto.fintekkers.models.price.PriceProto.deserializeBinaryFromReader = function(
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 5:

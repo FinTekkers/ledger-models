@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_util_uuid_pb = require('../../../fintekkers/models/util/uuid_pb.js');
 goog.object.extend(proto, fintekkers_models_util_uuid_pb);
@@ -116,9 +122,9 @@ proto.fintekkers.requests.util.AffectedEntityProto.prototype.toObject = function
  */
 proto.fintekkers.requests.util.AffectedEntityProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-entityType: jspb.Message.getFieldWithDefault(msg, 1, 0),
-uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
-description: jspb.Message.getFieldWithDefault(msg, 3, "")
+    entityType: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
+    description: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -131,7 +137,7 @@ description: jspb.Message.getFieldWithDefault(msg, 3, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.util.AffectedEntityProto}
  */
 proto.fintekkers.requests.util.AffectedEntityProto.deserializeBinary = function(bytes) {
@@ -165,7 +171,7 @@ proto.fintekkers.requests.util.AffectedEntityProto.deserializeBinaryFromReader =
       msg.setUuid(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setDescription(value);
       break;
     default:
@@ -327,13 +333,13 @@ proto.fintekkers.requests.util.DeleteRequestProto.prototype.toObject = function(
  */
 proto.fintekkers.requests.util.DeleteRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
-entityType: jspb.Message.getFieldWithDefault(msg, 11, 0),
-dryRun: jspb.Message.getBooleanFieldWithDefault(msg, 20, false),
-cascade: jspb.Message.getBooleanFieldWithDefault(msg, 21, false),
-force: jspb.Message.getBooleanFieldWithDefault(msg, 22, false)
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
+    entityType: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    dryRun: jspb.Message.getBooleanFieldWithDefault(msg, 20, false),
+    cascade: jspb.Message.getBooleanFieldWithDefault(msg, 21, false),
+    force: jspb.Message.getBooleanFieldWithDefault(msg, 22, false)
   };
 
   if (includeInstance) {
@@ -346,7 +352,7 @@ force: jspb.Message.getBooleanFieldWithDefault(msg, 22, false)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.util.DeleteRequestProto}
  */
 proto.fintekkers.requests.util.DeleteRequestProto.deserializeBinary = function(bytes) {
@@ -371,11 +377,11 @@ proto.fintekkers.requests.util.DeleteRequestProto.deserializeBinaryFromReader = 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 10:
@@ -665,15 +671,15 @@ proto.fintekkers.requests.util.DeleteResponseProto.prototype.toObject = function
  */
 proto.fintekkers.requests.util.DeleteResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-deleteRequest: (f = msg.getDeleteRequest()) && proto.fintekkers.requests.util.DeleteRequestProto.toObject(includeInstance, f),
-success: jspb.Message.getBooleanFieldWithDefault(msg, 20, false),
-wasDryRun: jspb.Message.getBooleanFieldWithDefault(msg, 21, false),
-totalCount: jspb.Message.getFieldWithDefault(msg, 22, 0),
-affectedEntitiesList: jspb.Message.toObjectList(msg.getAffectedEntitiesList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    deleteRequest: (f = msg.getDeleteRequest()) && proto.fintekkers.requests.util.DeleteRequestProto.toObject(includeInstance, f),
+    success: jspb.Message.getBooleanFieldWithDefault(msg, 20, false),
+    wasDryRun: jspb.Message.getBooleanFieldWithDefault(msg, 21, false),
+    totalCount: jspb.Message.getFieldWithDefault(msg, 22, 0),
+    affectedEntitiesList: jspb.Message.toObjectList(msg.getAffectedEntitiesList(),
     proto.fintekkers.requests.util.AffectedEntityProto.toObject, includeInstance),
-warningsList: (f = jspb.Message.getRepeatedField(msg, 40)) == null ? undefined : f
+    warningsList: (f = jspb.Message.getRepeatedField(msg, 40)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -686,7 +692,7 @@ warningsList: (f = jspb.Message.getRepeatedField(msg, 40)) == null ? undefined :
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.util.DeleteResponseProto}
  */
 proto.fintekkers.requests.util.DeleteResponseProto.deserializeBinary = function(bytes) {
@@ -711,11 +717,11 @@ proto.fintekkers.requests.util.DeleteResponseProto.deserializeBinaryFromReader =
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 10:
@@ -741,7 +747,7 @@ proto.fintekkers.requests.util.DeleteResponseProto.deserializeBinaryFromReader =
       msg.addAffectedEntities(value);
       break;
     case 40:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.addWarnings(value);
       break;
     default:

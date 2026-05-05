@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_requests_util_errors_message_pb = require('../../../../fintekkers/requests/util/errors/message_pb.js');
 goog.object.extend(proto, fintekkers_requests_util_errors_message_pb);
@@ -94,8 +100,8 @@ proto.fintekkers.requests.util.errors.ErrorProto.prototype.toObject = function(o
  */
 proto.fintekkers.requests.util.errors.ErrorProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-code: jspb.Message.getFieldWithDefault(msg, 1, 0),
-detail: (f = msg.getDetail()) && fintekkers_requests_util_errors_message_pb.Message.toObject(includeInstance, f)
+    code: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    detail: (f = msg.getDetail()) && fintekkers_requests_util_errors_message_pb.Message.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -108,7 +114,7 @@ detail: (f = msg.getDetail()) && fintekkers_requests_util_errors_message_pb.Mess
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.util.errors.ErrorProto}
  */
 proto.fintekkers.requests.util.errors.ErrorProto.deserializeBinary = function(bytes) {
@@ -275,8 +281,8 @@ proto.fintekkers.requests.util.errors.WarningProto.prototype.toObject = function
  */
 proto.fintekkers.requests.util.errors.WarningProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-code: jspb.Message.getFieldWithDefault(msg, 1, 0),
-detail: (f = msg.getDetail()) && fintekkers_requests_util_errors_message_pb.Message.toObject(includeInstance, f)
+    code: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    detail: (f = msg.getDetail()) && fintekkers_requests_util_errors_message_pb.Message.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -289,7 +295,7 @@ detail: (f = msg.getDetail()) && fintekkers_requests_util_errors_message_pb.Mess
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.util.errors.WarningProto}
  */
 proto.fintekkers.requests.util.errors.WarningProto.deserializeBinary = function(bytes) {

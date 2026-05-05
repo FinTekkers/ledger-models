@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_util_decimal_value_pb = require('../../../fintekkers/models/util/decimal_value_pb.js');
 goog.object.extend(proto, fintekkers_models_util_decimal_value_pb);
@@ -96,26 +102,26 @@ proto.fintekkers.models.transaction.TransactionProto.prototype.toObject = functi
  */
 proto.fintekkers.models.transaction.TransactionProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
-asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
-validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-portfolio: (f = msg.getPortfolio()) && fintekkers_models_portfolio_portfolio_pb.PortfolioProto.toObject(includeInstance, f),
-security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-transactionType: jspb.Message.getFieldWithDefault(msg, 12, 0),
-quantity: (f = msg.getQuantity()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-price: (f = msg.getPrice()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
-tradeDate: (f = msg.getTradeDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-settlementDate: (f = msg.getSettlementDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-childtransactionsList: jspb.Message.toObjectList(msg.getChildtransactionsList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
+    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
+    validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    portfolio: (f = msg.getPortfolio()) && fintekkers_models_portfolio_portfolio_pb.PortfolioProto.toObject(includeInstance, f),
+    security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
+    transactionType: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    quantity: (f = msg.getQuantity()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    price: (f = msg.getPrice()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
+    tradeDate: (f = msg.getTradeDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    settlementDate: (f = msg.getSettlementDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    childtransactionsList: jspb.Message.toObjectList(msg.getChildtransactionsList(),
     proto.fintekkers.models.transaction.TransactionProto.toObject, includeInstance),
-positionStatus: jspb.Message.getFieldWithDefault(msg, 25, 0),
-tradeName: jspb.Message.getFieldWithDefault(msg, 26, ""),
-strategyAllocation: (f = msg.getStrategyAllocation()) && fintekkers_models_strategy_strategy_allocation_pb.StrategyAllocationProto.toObject(includeInstance, f),
-isCancelled: jspb.Message.getBooleanFieldWithDefault(msg, 30, false)
+    positionStatus: jspb.Message.getFieldWithDefault(msg, 25, 0),
+    tradeName: jspb.Message.getFieldWithDefault(msg, 26, ""),
+    strategyAllocation: (f = msg.getStrategyAllocation()) && fintekkers_models_strategy_strategy_allocation_pb.StrategyAllocationProto.toObject(includeInstance, f),
+    isCancelled: jspb.Message.getBooleanFieldWithDefault(msg, 30, false)
   };
 
   if (includeInstance) {
@@ -128,7 +134,7 @@ isCancelled: jspb.Message.getBooleanFieldWithDefault(msg, 30, false)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.transaction.TransactionProto}
  */
 proto.fintekkers.models.transaction.TransactionProto.deserializeBinary = function(bytes) {
@@ -153,11 +159,11 @@ proto.fintekkers.models.transaction.TransactionProto.deserializeBinaryFromReader
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 5:
@@ -228,7 +234,7 @@ proto.fintekkers.models.transaction.TransactionProto.deserializeBinaryFromReader
       msg.setPositionStatus(value);
       break;
     case 26:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setTradeName(value);
       break;
     case 27:

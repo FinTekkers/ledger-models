@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 goog.exportSymbol('proto.fintekkers.models.util.DecimalValueProto', null, global);
 /**
@@ -69,7 +75,7 @@ proto.fintekkers.models.util.DecimalValueProto.prototype.toObject = function(opt
  */
 proto.fintekkers.models.util.DecimalValueProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-arbitraryPrecisionValue: jspb.Message.getFieldWithDefault(msg, 10, "")
+    arbitraryPrecisionValue: jspb.Message.getFieldWithDefault(msg, 10, "")
   };
 
   if (includeInstance) {
@@ -82,7 +88,7 @@ arbitraryPrecisionValue: jspb.Message.getFieldWithDefault(msg, 10, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.util.DecimalValueProto}
  */
 proto.fintekkers.models.util.DecimalValueProto.deserializeBinary = function(bytes) {
@@ -107,7 +113,7 @@ proto.fintekkers.models.util.DecimalValueProto.deserializeBinaryFromReader = fun
     var field = reader.getFieldNumber();
     switch (field) {
     case 10:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setArbitraryPrecisionValue(value);
       break;
     default:

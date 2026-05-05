@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 goog.exportSymbol('proto.fintekkers.models.util.lock.NodePartition', null, global);
 /**
@@ -69,10 +75,10 @@ proto.fintekkers.models.util.lock.NodePartition.prototype.toObject = function(op
  */
 proto.fintekkers.models.util.lock.NodePartition.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-partition: jspb.Message.getFieldWithDefault(msg, 3, 0),
-namespace: jspb.Message.getFieldWithDefault(msg, 4, "")
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    partition: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    namespace: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -85,7 +91,7 @@ namespace: jspb.Message.getFieldWithDefault(msg, 4, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.util.lock.NodePartition}
  */
 proto.fintekkers.models.util.lock.NodePartition.deserializeBinary = function(bytes) {
@@ -110,11 +116,11 @@ proto.fintekkers.models.util.lock.NodePartition.deserializeBinaryFromReader = fu
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 3:
@@ -122,7 +128,7 @@ proto.fintekkers.models.util.lock.NodePartition.deserializeBinaryFromReader = fu
       msg.setPartition(value);
       break;
     case 4:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setNamespace(value);
       break;
     default:

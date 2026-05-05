@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_security_security_pb = require('../../../fintekkers/models/security/security_pb.js');
 goog.object.extend(proto, fintekkers_models_security_security_pb);
@@ -90,17 +96,17 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.toObject = f
  */
 proto.fintekkers.requests.valuation.ValuationRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
-measuresList: (f = jspb.Message.getRepeatedField(msg, 30)) == null ? undefined : f,
-securityInput: (f = msg.getSecurityInput()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-positionInput: (f = msg.getPositionInput()) && fintekkers_models_position_position_pb.PositionProto.toObject(includeInstance, f),
-priceInput: (f = msg.getPriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
-asofDatetime: (f = msg.getAsofDatetime()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-cpiPriceInput: (f = msg.getCpiPriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
-referenceRateInput: (f = msg.getReferenceRateInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
-productInput: (f = msg.getProductInput()) && fintekkers_requests_valuation_product_inputs_pb.ProductInput.toObject(includeInstance, f)
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    measuresList: (f = jspb.Message.getRepeatedField(msg, 30)) == null ? undefined : f,
+    securityInput: (f = msg.getSecurityInput()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
+    positionInput: (f = msg.getPositionInput()) && fintekkers_models_position_position_pb.PositionProto.toObject(includeInstance, f),
+    priceInput: (f = msg.getPriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
+    asofDatetime: (f = msg.getAsofDatetime()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    cpiPriceInput: (f = msg.getCpiPriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
+    referenceRateInput: (f = msg.getReferenceRateInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
+    productInput: (f = msg.getProductInput()) && fintekkers_requests_valuation_product_inputs_pb.ProductInput.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -113,7 +119,7 @@ productInput: (f = msg.getProductInput()) && fintekkers_requests_valuation_produ
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.ValuationRequestProto}
  */
 proto.fintekkers.requests.valuation.ValuationRequestProto.deserializeBinary = function(bytes) {
@@ -138,11 +144,11 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.deserializeBinaryFromR
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 10:
@@ -150,7 +156,10 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.deserializeBinaryFromR
       msg.setOperationType(value);
       break;
     case 30:
-      reader.readPackableEnumInto(msg.getMeasuresList());
+      var values = /** @type {!Array<!proto.fintekkers.models.position.MeasureProto>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
+      for (var i = 0; i < values.length; i++) {
+        msg.addMeasures(values[i]);
+      }
       break;
     case 20:
       var value = new fintekkers_models_security_security_pb.SecurityProto;

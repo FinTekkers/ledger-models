@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_position_position_util_pb = require('../../../fintekkers/models/position/position_util_pb.js');
 goog.object.extend(proto, fintekkers_models_position_position_util_pb);
@@ -82,15 +88,15 @@ proto.fintekkers.models.position.PositionProto.prototype.toObject = function(opt
  */
 proto.fintekkers.models.position.PositionProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-positionView: jspb.Message.getFieldWithDefault(msg, 10, 0),
-positionType: jspb.Message.getFieldWithDefault(msg, 11, 0),
-measuresList: jspb.Message.toObjectList(msg.getMeasuresList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    positionView: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    positionType: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    measuresList: jspb.Message.toObjectList(msg.getMeasuresList(),
     fintekkers_models_position_position_util_pb.MeasureMapEntry.toObject, includeInstance),
-fieldsList: jspb.Message.toObjectList(msg.getFieldsList(),
+    fieldsList: jspb.Message.toObjectList(msg.getFieldsList(),
     fintekkers_models_position_position_util_pb.FieldMapEntry.toObject, includeInstance),
-reportingCurrency: (f = msg.getReportingCurrency()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f)
+    reportingCurrency: (f = msg.getReportingCurrency()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -103,7 +109,7 @@ reportingCurrency: (f = msg.getReportingCurrency()) && fintekkers_models_securit
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.position.PositionProto}
  */
 proto.fintekkers.models.position.PositionProto.deserializeBinary = function(bytes) {
@@ -128,11 +134,11 @@ proto.fintekkers.models.position.PositionProto.deserializeBinaryFromReader = fun
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 10:

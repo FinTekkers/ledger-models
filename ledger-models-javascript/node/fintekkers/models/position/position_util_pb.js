@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var google_protobuf_any_pb = require('google-protobuf/google/protobuf/any_pb.js');
 goog.object.extend(proto, google_protobuf_any_pb);
@@ -101,8 +107,8 @@ proto.fintekkers.models.position.MeasureMapEntry.prototype.toObject = function(o
  */
 proto.fintekkers.models.position.MeasureMapEntry.toObject = function(includeInstance, msg) {
   var f, obj = {
-measure: jspb.Message.getFieldWithDefault(msg, 1, 0),
-measureDecimalValue: (f = msg.getMeasureDecimalValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    measure: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    measureDecimalValue: (f = msg.getMeasureDecimalValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -115,7 +121,7 @@ measureDecimalValue: (f = msg.getMeasureDecimalValue()) && fintekkers_models_uti
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.position.MeasureMapEntry}
  */
 proto.fintekkers.models.position.MeasureMapEntry.deserializeBinary = function(bytes) {
@@ -309,11 +315,11 @@ proto.fintekkers.models.position.FieldMapEntry.prototype.toObject = function(opt
  */
 proto.fintekkers.models.position.FieldMapEntry.toObject = function(includeInstance, msg) {
   var f, obj = {
-field: jspb.Message.getFieldWithDefault(msg, 1, 0),
-fieldValuePacked: (f = msg.getFieldValuePacked()) && google_protobuf_any_pb.Any.toObject(includeInstance, f),
-enumValue: (f = jspb.Message.getField(msg, 5)) == null ? undefined : f,
-stringValue: (f = jspb.Message.getField(msg, 6)) == null ? undefined : f,
-operator: jspb.Message.getFieldWithDefault(msg, 20, 0)
+    field: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    fieldValuePacked: (f = msg.getFieldValuePacked()) && google_protobuf_any_pb.Any.toObject(includeInstance, f),
+    enumValue: jspb.Message.getFieldWithDefault(msg, 5, 0),
+    stringValue: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    operator: jspb.Message.getFieldWithDefault(msg, 20, 0)
   };
 
   if (includeInstance) {
@@ -326,7 +332,7 @@ operator: jspb.Message.getFieldWithDefault(msg, 20, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.position.FieldMapEntry}
  */
 proto.fintekkers.models.position.FieldMapEntry.deserializeBinary = function(bytes) {
@@ -364,7 +370,7 @@ proto.fintekkers.models.position.FieldMapEntry.deserializeBinaryFromReader = fun
       msg.setEnumValue(value);
       break;
     case 6:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setStringValue(value);
       break;
     case 20:

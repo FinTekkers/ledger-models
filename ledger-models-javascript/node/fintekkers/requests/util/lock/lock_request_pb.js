@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_util_lock_node_partition_pb = require('../../../../fintekkers/models/util/lock/node_partition_pb.js');
 goog.object.extend(proto, fintekkers_models_util_lock_node_partition_pb);
@@ -73,10 +79,10 @@ proto.fintekkers.requests.util.lock.LockRequestProto.prototype.toObject = functi
  */
 proto.fintekkers.requests.util.lock.LockRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-nodePartition: (f = msg.getNodePartition()) && fintekkers_models_util_lock_node_partition_pb.NodePartition.toObject(includeInstance, f),
-endpoint: (f = msg.getEndpoint()) && fintekkers_models_util_endpoint_pb.Endpoint.toObject(includeInstance, f)
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    nodePartition: (f = msg.getNodePartition()) && fintekkers_models_util_lock_node_partition_pb.NodePartition.toObject(includeInstance, f),
+    endpoint: (f = msg.getEndpoint()) && fintekkers_models_util_endpoint_pb.Endpoint.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -89,7 +95,7 @@ endpoint: (f = msg.getEndpoint()) && fintekkers_models_util_endpoint_pb.Endpoint
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.util.lock.LockRequestProto}
  */
 proto.fintekkers.requests.util.lock.LockRequestProto.deserializeBinary = function(bytes) {
@@ -114,11 +120,11 @@ proto.fintekkers.requests.util.lock.LockRequestProto.deserializeBinaryFromReader
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 11:

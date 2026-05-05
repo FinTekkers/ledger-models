@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_position_position_util_pb = require('../../../fintekkers/models/position/position_util_pb.js');
 goog.object.extend(proto, fintekkers_models_position_position_util_pb);
@@ -84,13 +90,13 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.toObject = 
  */
 proto.fintekkers.requests.valuation.ValuationResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-valuationRequest: (f = msg.getValuationRequest()) && fintekkers_requests_valuation_valuation_request_pb.ValuationRequestProto.toObject(includeInstance, f),
-measureResultsList: jspb.Message.toObjectList(msg.getMeasureResultsList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    valuationRequest: (f = msg.getValuationRequest()) && fintekkers_requests_valuation_valuation_request_pb.ValuationRequestProto.toObject(includeInstance, f),
+    measureResultsList: jspb.Message.toObjectList(msg.getMeasureResultsList(),
     fintekkers_models_position_position_util_pb.MeasureMapEntry.toObject, includeInstance),
-summary: (f = msg.getSummary()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f),
-cashflowsList: jspb.Message.toObjectList(msg.getCashflowsList(),
+    summary: (f = msg.getSummary()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f),
+    cashflowsList: jspb.Message.toObjectList(msg.getCashflowsList(),
     fintekkers_models_valuation_cashflow_pb.CashflowProto.toObject, includeInstance)
   };
 
@@ -104,7 +110,7 @@ cashflowsList: jspb.Message.toObjectList(msg.getCashflowsList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.ValuationResponseProto}
  */
 proto.fintekkers.requests.valuation.ValuationResponseProto.deserializeBinary = function(bytes) {
@@ -129,11 +135,11 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.deserializeBinaryFrom
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 20:

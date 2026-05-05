@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_security_index_composition_pb = require('../../../fintekkers/models/security/index_composition_pb.js');
 goog.object.extend(proto, fintekkers_models_security_index_composition_pb);
@@ -95,10 +101,10 @@ proto.fintekkers.requests.index_composition.CreateIndexCompositionRequestProto.p
  */
 proto.fintekkers.requests.index_composition.CreateIndexCompositionRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
-createIndexCompositionInput: (f = msg.getCreateIndexCompositionInput()) && fintekkers_models_security_index_composition_pb.IndexCompositionProto.toObject(includeInstance, f)
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    createIndexCompositionInput: (f = msg.getCreateIndexCompositionInput()) && fintekkers_models_security_index_composition_pb.IndexCompositionProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -111,7 +117,7 @@ createIndexCompositionInput: (f = msg.getCreateIndexCompositionInput()) && finte
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.index_composition.CreateIndexCompositionRequestProto}
  */
 proto.fintekkers.requests.index_composition.CreateIndexCompositionRequestProto.deserializeBinary = function(bytes) {
@@ -136,11 +142,11 @@ proto.fintekkers.requests.index_composition.CreateIndexCompositionRequestProto.d
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 10:
@@ -336,11 +342,11 @@ proto.fintekkers.requests.index_composition.CreateIndexCompositionResponseProto.
  */
 proto.fintekkers.requests.index_composition.CreateIndexCompositionResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
-createIndexCompositionRequest: (f = msg.getCreateIndexCompositionRequest()) && proto.fintekkers.requests.index_composition.CreateIndexCompositionRequestProto.toObject(includeInstance, f),
-indexCompositionResponse: (f = msg.getIndexCompositionResponse()) && fintekkers_models_security_index_composition_pb.IndexCompositionProto.toObject(includeInstance, f)
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    createIndexCompositionRequest: (f = msg.getCreateIndexCompositionRequest()) && proto.fintekkers.requests.index_composition.CreateIndexCompositionRequestProto.toObject(includeInstance, f),
+    indexCompositionResponse: (f = msg.getIndexCompositionResponse()) && fintekkers_models_security_index_composition_pb.IndexCompositionProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -353,7 +359,7 @@ indexCompositionResponse: (f = msg.getIndexCompositionResponse()) && fintekkers_
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.index_composition.CreateIndexCompositionResponseProto}
  */
 proto.fintekkers.requests.index_composition.CreateIndexCompositionResponseProto.deserializeBinary = function(bytes) {
@@ -378,11 +384,11 @@ proto.fintekkers.requests.index_composition.CreateIndexCompositionResponseProto.
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 10:
