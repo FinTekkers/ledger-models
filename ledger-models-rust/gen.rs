@@ -5,8 +5,11 @@ use walkdir::WalkDir;
 fn main() {
     print!("{}", "Generating Rust code from ledger-models-protos to ledger-models-rust");
 
-    //find paths of all proto files
-    let proto_files: Vec<String> = WalkDir::new("../ledger-models-protos")
+    // Sort: WalkDir preserves filesystem readdir order, which differs across
+    // filesystems (APFS / overlayfs / ext4) and produces different *.rs struct
+    // ordering on otherwise-identical inputs. Sorting makes regen deterministic
+    // across host environments so the compile.sh gate can be cleanly satisfied.
+    let mut proto_files: Vec<String> = WalkDir::new("../ledger-models-protos")
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| {
@@ -26,6 +29,7 @@ fn main() {
                 .ok()
         })
         .collect();
+    proto_files.sort();
 
     // for (name, value) in env::vars() {
     //     println!("{} {}", name, value);

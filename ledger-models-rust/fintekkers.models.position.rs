@@ -1,34 +1,142 @@
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
-pub enum PositionStatusProto {
-    Unknown = 0,
-    /// Hypothetical status means a transaction, tax lot or position that may never occur. This can be used to understand how potential actions could impact a portfolio
-    Hypothetical = 1,
-    /// Intended status means a transaction, tax lot or position that is expected to occur if nothing changes. For example a fixed income bond that is expected to pay a coupon, or a security that is expected to mature in a specific point in the future
-    Intended = 2,
-    /// Executed status means a transaction, tax lot or position that is the result of a legally binding transaction
-    Executed = 3,
+pub enum FieldProto {
+    UnknownField = 0,
+    /// (UUID.class)
+    Id = 1,
+    /// ZonedDateTime
+    AsOf = 2,
+    /// Attribute fields. Likely to be fields that one would pivot on.
+    ///
+    /// LocalDate.class
+    EffectiveDate = 10,
+    /// common.model.strategy.Strategy.class
+    Strategy = 11,
+    /// common.model.security.Security.class
+    Security = 12,
+    SecurityDescription = 61,
+    SecurityIssuerName = 62,
+    /// common.model.security.Security.class
+    CashImpactSecurity = 13,
+    /// Security Fields
+    ///
+    ///   AssetClass(String.class), //FixedIncome, Equity, etc
+    AssetClass = 50,
+    /// ProductClass(String.class), //Bond, CashEquity, etc
+    ProductClass = 51,
+    /// ProductType (String.class), //TBILL, BOND, etc
+    ProductType = 52,
+    SecurityId = 53,
+    Identifier = 54,
+    /// 1M
+    Tenor = 55,
+    IssueDate = 58,
+    MaturityDate = 56,
+    AdjustedTenor = 57,
+    /// Portfolio fields
+    ///
+    /// common.model.portfolio.Portfolio.class
+    Portfolio = 14,
+    /// UUID
+    PortfolioId = 15,
+    PortfolioName = 60,
+    /// Miscellaneous
+    ///
+    /// common.model.price.Price.class
+    Price = 16,
+    /// UUID
+    PriceId = 17,
+    /// Boolean.class
+    IsCancelled = 18,
+    /// PositionStatus.class
+    PositionStatus = 19,
+    /// Transaction only
+    ///
+    /// TradeDate(LocalDate.class),
+    TradeDate = 30,
+    ///   SettlementDate(LocalDate.class),
+    SettlementDate = 31,
+    /// BUY, SELL, MATURATION, etc (TransactionType.class)
+    TransactionType = 32,
+    /// Tax Lot only
+    ///
+    ///   TaxLotOpenDate(LocalDate.class),
+    TaxLotOpenDate = 40,
+    ///   TaxLotCloseDate(LocalDate.class),
+    TaxLotCloseDate = 41,
 }
-impl PositionStatusProto {
+impl FieldProto {
     /// String value of the enum field names used in the ProtoBuf definition.
     ///
     /// The values are not transformed in any way and thus are considered stable
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
-            PositionStatusProto::Unknown => "UNKNOWN",
-            PositionStatusProto::Hypothetical => "HYPOTHETICAL",
-            PositionStatusProto::Intended => "INTENDED",
-            PositionStatusProto::Executed => "EXECUTED",
+            FieldProto::UnknownField => "UNKNOWN_FIELD",
+            FieldProto::Id => "ID",
+            FieldProto::AsOf => "AS_OF",
+            FieldProto::EffectiveDate => "EFFECTIVE_DATE",
+            FieldProto::Strategy => "STRATEGY",
+            FieldProto::Security => "SECURITY",
+            FieldProto::SecurityDescription => "SECURITY_DESCRIPTION",
+            FieldProto::SecurityIssuerName => "SECURITY_ISSUER_NAME",
+            FieldProto::CashImpactSecurity => "CASH_IMPACT_SECURITY",
+            FieldProto::AssetClass => "ASSET_CLASS",
+            FieldProto::ProductClass => "PRODUCT_CLASS",
+            FieldProto::ProductType => "PRODUCT_TYPE",
+            FieldProto::SecurityId => "SECURITY_ID",
+            FieldProto::Identifier => "IDENTIFIER",
+            FieldProto::Tenor => "TENOR",
+            FieldProto::IssueDate => "ISSUE_DATE",
+            FieldProto::MaturityDate => "MATURITY_DATE",
+            FieldProto::AdjustedTenor => "ADJUSTED_TENOR",
+            FieldProto::Portfolio => "PORTFOLIO",
+            FieldProto::PortfolioId => "PORTFOLIO_ID",
+            FieldProto::PortfolioName => "PORTFOLIO_NAME",
+            FieldProto::Price => "PRICE",
+            FieldProto::PriceId => "PRICE_ID",
+            FieldProto::IsCancelled => "IS_CANCELLED",
+            FieldProto::PositionStatus => "POSITION_STATUS",
+            FieldProto::TradeDate => "TRADE_DATE",
+            FieldProto::SettlementDate => "SETTLEMENT_DATE",
+            FieldProto::TransactionType => "TRANSACTION_TYPE",
+            FieldProto::TaxLotOpenDate => "TAX_LOT_OPEN_DATE",
+            FieldProto::TaxLotCloseDate => "TAX_LOT_CLOSE_DATE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
-            "UNKNOWN" => Some(Self::Unknown),
-            "HYPOTHETICAL" => Some(Self::Hypothetical),
-            "INTENDED" => Some(Self::Intended),
-            "EXECUTED" => Some(Self::Executed),
+            "UNKNOWN_FIELD" => Some(Self::UnknownField),
+            "ID" => Some(Self::Id),
+            "AS_OF" => Some(Self::AsOf),
+            "EFFECTIVE_DATE" => Some(Self::EffectiveDate),
+            "STRATEGY" => Some(Self::Strategy),
+            "SECURITY" => Some(Self::Security),
+            "SECURITY_DESCRIPTION" => Some(Self::SecurityDescription),
+            "SECURITY_ISSUER_NAME" => Some(Self::SecurityIssuerName),
+            "CASH_IMPACT_SECURITY" => Some(Self::CashImpactSecurity),
+            "ASSET_CLASS" => Some(Self::AssetClass),
+            "PRODUCT_CLASS" => Some(Self::ProductClass),
+            "PRODUCT_TYPE" => Some(Self::ProductType),
+            "SECURITY_ID" => Some(Self::SecurityId),
+            "IDENTIFIER" => Some(Self::Identifier),
+            "TENOR" => Some(Self::Tenor),
+            "ISSUE_DATE" => Some(Self::IssueDate),
+            "MATURITY_DATE" => Some(Self::MaturityDate),
+            "ADJUSTED_TENOR" => Some(Self::AdjustedTenor),
+            "PORTFOLIO" => Some(Self::Portfolio),
+            "PORTFOLIO_ID" => Some(Self::PortfolioId),
+            "PORTFOLIO_NAME" => Some(Self::PortfolioName),
+            "PRICE" => Some(Self::Price),
+            "PRICE_ID" => Some(Self::PriceId),
+            "IS_CANCELLED" => Some(Self::IsCancelled),
+            "POSITION_STATUS" => Some(Self::PositionStatus),
+            "TRADE_DATE" => Some(Self::TradeDate),
+            "SETTLEMENT_DATE" => Some(Self::SettlementDate),
+            "TRANSACTION_TYPE" => Some(Self::TransactionType),
+            "TAX_LOT_OPEN_DATE" => Some(Self::TaxLotOpenDate),
+            "TAX_LOT_CLOSE_DATE" => Some(Self::TaxLotCloseDate),
             _ => None,
         }
     }
@@ -477,149 +585,6 @@ impl MeasureProto {
         }
     }
 }
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
-#[repr(i32)]
-pub enum FieldProto {
-    UnknownField = 0,
-    /// (UUID.class)
-    Id = 1,
-    /// ZonedDateTime
-    AsOf = 2,
-    /// Attribute fields. Likely to be fields that one would pivot on.
-    ///
-    /// LocalDate.class
-    EffectiveDate = 10,
-    /// common.model.strategy.Strategy.class
-    Strategy = 11,
-    /// common.model.security.Security.class
-    Security = 12,
-    SecurityDescription = 61,
-    SecurityIssuerName = 62,
-    /// common.model.security.Security.class
-    CashImpactSecurity = 13,
-    /// Security Fields
-    ///
-    ///   AssetClass(String.class), //FixedIncome, Equity, etc
-    AssetClass = 50,
-    /// ProductClass(String.class), //Bond, CashEquity, etc
-    ProductClass = 51,
-    /// ProductType (String.class), //TBILL, BOND, etc
-    ProductType = 52,
-    SecurityId = 53,
-    Identifier = 54,
-    /// 1M
-    Tenor = 55,
-    IssueDate = 58,
-    MaturityDate = 56,
-    AdjustedTenor = 57,
-    /// Portfolio fields
-    ///
-    /// common.model.portfolio.Portfolio.class
-    Portfolio = 14,
-    /// UUID
-    PortfolioId = 15,
-    PortfolioName = 60,
-    /// Miscellaneous
-    ///
-    /// common.model.price.Price.class
-    Price = 16,
-    /// UUID
-    PriceId = 17,
-    /// Boolean.class
-    IsCancelled = 18,
-    /// PositionStatus.class
-    PositionStatus = 19,
-    /// Transaction only
-    ///
-    /// TradeDate(LocalDate.class),
-    TradeDate = 30,
-    ///   SettlementDate(LocalDate.class),
-    SettlementDate = 31,
-    /// BUY, SELL, MATURATION, etc (TransactionType.class)
-    TransactionType = 32,
-    /// Tax Lot only
-    ///
-    ///   TaxLotOpenDate(LocalDate.class),
-    TaxLotOpenDate = 40,
-    ///   TaxLotCloseDate(LocalDate.class),
-    TaxLotCloseDate = 41,
-}
-impl FieldProto {
-    /// String value of the enum field names used in the ProtoBuf definition.
-    ///
-    /// The values are not transformed in any way and thus are considered stable
-    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
-    pub fn as_str_name(&self) -> &'static str {
-        match self {
-            FieldProto::UnknownField => "UNKNOWN_FIELD",
-            FieldProto::Id => "ID",
-            FieldProto::AsOf => "AS_OF",
-            FieldProto::EffectiveDate => "EFFECTIVE_DATE",
-            FieldProto::Strategy => "STRATEGY",
-            FieldProto::Security => "SECURITY",
-            FieldProto::SecurityDescription => "SECURITY_DESCRIPTION",
-            FieldProto::SecurityIssuerName => "SECURITY_ISSUER_NAME",
-            FieldProto::CashImpactSecurity => "CASH_IMPACT_SECURITY",
-            FieldProto::AssetClass => "ASSET_CLASS",
-            FieldProto::ProductClass => "PRODUCT_CLASS",
-            FieldProto::ProductType => "PRODUCT_TYPE",
-            FieldProto::SecurityId => "SECURITY_ID",
-            FieldProto::Identifier => "IDENTIFIER",
-            FieldProto::Tenor => "TENOR",
-            FieldProto::IssueDate => "ISSUE_DATE",
-            FieldProto::MaturityDate => "MATURITY_DATE",
-            FieldProto::AdjustedTenor => "ADJUSTED_TENOR",
-            FieldProto::Portfolio => "PORTFOLIO",
-            FieldProto::PortfolioId => "PORTFOLIO_ID",
-            FieldProto::PortfolioName => "PORTFOLIO_NAME",
-            FieldProto::Price => "PRICE",
-            FieldProto::PriceId => "PRICE_ID",
-            FieldProto::IsCancelled => "IS_CANCELLED",
-            FieldProto::PositionStatus => "POSITION_STATUS",
-            FieldProto::TradeDate => "TRADE_DATE",
-            FieldProto::SettlementDate => "SETTLEMENT_DATE",
-            FieldProto::TransactionType => "TRANSACTION_TYPE",
-            FieldProto::TaxLotOpenDate => "TAX_LOT_OPEN_DATE",
-            FieldProto::TaxLotCloseDate => "TAX_LOT_CLOSE_DATE",
-        }
-    }
-    /// Creates an enum from field names used in the ProtoBuf definition.
-    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
-        match value {
-            "UNKNOWN_FIELD" => Some(Self::UnknownField),
-            "ID" => Some(Self::Id),
-            "AS_OF" => Some(Self::AsOf),
-            "EFFECTIVE_DATE" => Some(Self::EffectiveDate),
-            "STRATEGY" => Some(Self::Strategy),
-            "SECURITY" => Some(Self::Security),
-            "SECURITY_DESCRIPTION" => Some(Self::SecurityDescription),
-            "SECURITY_ISSUER_NAME" => Some(Self::SecurityIssuerName),
-            "CASH_IMPACT_SECURITY" => Some(Self::CashImpactSecurity),
-            "ASSET_CLASS" => Some(Self::AssetClass),
-            "PRODUCT_CLASS" => Some(Self::ProductClass),
-            "PRODUCT_TYPE" => Some(Self::ProductType),
-            "SECURITY_ID" => Some(Self::SecurityId),
-            "IDENTIFIER" => Some(Self::Identifier),
-            "TENOR" => Some(Self::Tenor),
-            "ISSUE_DATE" => Some(Self::IssueDate),
-            "MATURITY_DATE" => Some(Self::MaturityDate),
-            "ADJUSTED_TENOR" => Some(Self::AdjustedTenor),
-            "PORTFOLIO" => Some(Self::Portfolio),
-            "PORTFOLIO_ID" => Some(Self::PortfolioId),
-            "PORTFOLIO_NAME" => Some(Self::PortfolioName),
-            "PRICE" => Some(Self::Price),
-            "PRICE_ID" => Some(Self::PriceId),
-            "IS_CANCELLED" => Some(Self::IsCancelled),
-            "POSITION_STATUS" => Some(Self::PositionStatus),
-            "TRADE_DATE" => Some(Self::TradeDate),
-            "SETTLEMENT_DATE" => Some(Self::SettlementDate),
-            "TRANSACTION_TYPE" => Some(Self::TransactionType),
-            "TAX_LOT_OPEN_DATE" => Some(Self::TaxLotOpenDate),
-            "TAX_LOT_CLOSE_DATE" => Some(Self::TaxLotCloseDate),
-            _ => None,
-        }
-    }
-}
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MeasureMapEntry {
@@ -786,4 +751,39 @@ pub struct PositionFilterProto {
     pub version: ::prost::alloc::string::String,
     #[prost(message, repeated, tag = "21")]
     pub filters: ::prost::alloc::vec::Vec<FieldMapEntry>,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum PositionStatusProto {
+    Unknown = 0,
+    /// Hypothetical status means a transaction, tax lot or position that may never occur. This can be used to understand how potential actions could impact a portfolio
+    Hypothetical = 1,
+    /// Intended status means a transaction, tax lot or position that is expected to occur if nothing changes. For example a fixed income bond that is expected to pay a coupon, or a security that is expected to mature in a specific point in the future
+    Intended = 2,
+    /// Executed status means a transaction, tax lot or position that is the result of a legally binding transaction
+    Executed = 3,
+}
+impl PositionStatusProto {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            PositionStatusProto::Unknown => "UNKNOWN",
+            PositionStatusProto::Hypothetical => "HYPOTHETICAL",
+            PositionStatusProto::Intended => "INTENDED",
+            PositionStatusProto::Executed => "EXECUTED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN" => Some(Self::Unknown),
+            "HYPOTHETICAL" => Some(Self::Hypothetical),
+            "INTENDED" => Some(Self::Intended),
+            "EXECUTED" => Some(Self::Executed),
+            _ => None,
+        }
+    }
 }
