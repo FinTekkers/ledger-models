@@ -18,16 +18,25 @@ The message is a fully populated entity. All fields are set and meaningful. This
 
 ### When `is_link = true`
 
-The message is a **reference**. Only the `uuid` field is populated — all other fields should be ignored by the consumer. To obtain the full entity, the caller must resolve it by calling the entity's service:
+The message is a **reference**. Only `uuid` (and optionally `as_of`) is populated — all other fields should be ignored by the consumer. To obtain the full entity, the caller must resolve it by calling the entity's service:
 
 | Entity | Resolve via |
 |--------|-------------|
-| SecurityProto | `SecurityService.GetByIds(uuid)` |
-| PriceProto | `PriceService.GetByIds(uuid)` |
-| PortfolioProto | `PortfolioService.GetByIds(uuid)` |
-| TransactionProto | `TransactionService.GetByIds(uuid)` |
+| SecurityProto | `SecurityService.GetByIds(uuid, [as_of])` |
+| PriceProto | `PriceService.GetByIds(uuid, [as_of])` |
+| PortfolioProto | `PortfolioService.GetByIds(uuid, [as_of])` |
+| TransactionProto | `TransactionService.GetByIds(uuid, [as_of])` |
 | StrategyProto | (no service yet) |
 | StrategyAllocationProto | (no service yet) |
+
+#### Resolution semantics: `uuid` only vs. `uuid` + `as_of`
+
+- **`uuid` populated, `as_of` unset** → resolve to the **latest** version of the record. This is the default and is the right choice for live UI flows that always want the current entity.
+- **`uuid` populated, `as_of` populated** → resolve to the version of the record **as of that timestamp**. This is required for backtesting, deterministic replay, and any flow where the link reference itself encodes a point in time (e.g., a position aggregated as-of `T` whose embedded security must also be as-of `T`).
+
+A naive resolver that ignores `as_of` and always returns "latest" will silently mix time vintages within a single result set — a position computed as-of 2024-01-01 should not embed a security that was modified in 2025. The resolver MUST propagate the link's `as_of` into the corresponding `GetByIds` call.
+
+Callers SHOULD set `as_of` on link sub-messages whenever the parent message itself carries an `as_of` (e.g., `Position.as_of`, search results from `XService.Search` with an explicit `as_of`). Server implementations SHOULD echo the parent's `as_of` onto link sub-messages they emit.
 
 ## Which protos use `is_link`
 
@@ -56,8 +65,11 @@ Another common case: `TransactionProto.security` and `TransactionProto.portfolio
 ```
 // Pseudocode for any language
 if (securityProto.is_link) {
-    // Only UUID is meaningful — resolve the full entity
-    fullSecurity = securityService.getByIds(securityProto.uuid);
+    // Only uuid (and optionally as_of) is meaningful — resolve the full entity.
+    // Pass the link's as_of through if set; pass nothing for "latest".
+    fullSecurity = securityProto.has_as_of()
+        ? securityService.getByIds(securityProto.uuid, securityProto.as_of)
+        : securityService.getByIds(securityProto.uuid);
 } else {
     // Full entity — use directly
     fullSecurity = securityProto;
@@ -65,6 +77,8 @@ if (securityProto.is_link) {
 ```
 
 Callers that only need the UUID (e.g. for equality checks or map keys) can use the UUID directly without resolving.
+
+In JS, the `LinkResolver` utility (`wrappers/util/link-resolver.ts`) handles the `as_of` propagation, batching, and caching for you — see [`link_resolver.md`](./link_resolver.md).
 
 ## Consequences
 
