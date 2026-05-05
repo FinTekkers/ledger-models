@@ -42,6 +42,12 @@ pub struct QueryPriceRequestProto {
     /// Optional: Used to filter the price frequency and horizon
     #[prost(enumeration = "PriceFrequencyProto", tag = "24")]
     pub frequency: i32,
+    /// Maximum number of price records the server may return. If unset or < 1
+    /// the server applies a default cap (typically 1000) and surfaces a warning
+    /// in QueryPriceResponseProto.errors_or_warnings. Servers may also enforce
+    /// a hard ceiling above which `limit` is clamped silently.
+    #[prost(int32, tag = "27")]
+    pub limit: i32,
     #[prost(oneof = "query_price_request_proto::TimeRange", tags = "25, 26")]
     pub time_range: ::core::option::Option<query_price_request_proto::TimeRange>,
 }
@@ -163,4 +169,9 @@ pub struct QueryPriceResponseProto {
     pub price_response: ::prost::alloc::vec::Vec<
         super::super::models::price::PriceProto,
     >,
+    /// If no errors or warnings in the response then the request was processed successfully without any
+    /// contingencies. Servers populate this with a warning when `limit` was unset and a default cap was
+    /// applied, or when other notable behavior occurred (matching QueryTransactionResponseProto).
+    #[prost(message, optional, tag = "40")]
+    pub errors_or_warnings: ::core::option::Option<super::util::errors::SummaryProto>,
 }
