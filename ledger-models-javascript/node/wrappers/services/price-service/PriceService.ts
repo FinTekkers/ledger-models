@@ -16,6 +16,7 @@ import { CreatePriceResponseProto } from '../../../fintekkers/requests/price/cre
 import { UUID } from '../../models/utils/uuid';
 import * as dt from '../../models/utils/datetime';
 import EnvConfig from '../../models/utils/requestcontext';
+import LinkResolver from '../../util/link-resolver';
 
 class PriceService {
   private client: PriceClient;
@@ -121,6 +122,34 @@ class PriceService {
       .addEqualsFilter(FieldProto.SECURITY_ID, securityUuid);
 
     return this.search(effectiveAsOf, filter);
+  }
+
+  /**
+   * Search prices and hydrate each Price's embedded Security from link
+   * to full entity in a single batched lookup. Equivalent to:
+   *
+   *   const prices = await priceService.search(asOf, filter);
+   *   await new LinkResolver().resolveSecurities(prices);
+   *
+   * but with the LinkResolver instance reusable across calls (cache hits
+   * benefit subsequent lookups).
+   *
+   * Pass a shared `linkResolver` to share caching across multiple
+   * service-wrapper calls in the same request scope. If omitted, a new
+   * resolver is constructed per call (no cross-call cache reuse).
+   *
+   * Mutates each returned Price.proto's embedded SecurityProto in place
+   * (link → full). See LinkResolver for cache + dedupe semantics.
+   */
+  async searchWithSecurities(
+    asOf: LocalTimestampProto,
+    positionFilter: PositionFilter,
+    linkResolver?: LinkResolver,
+  ): Promise<Price[]> {
+    const prices = await this.search(asOf, positionFilter);
+    const resolver = linkResolver ?? new LinkResolver();
+    await resolver.resolveSecurities(prices);
+    return prices;
   }
 }
 

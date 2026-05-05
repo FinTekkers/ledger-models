@@ -46,6 +46,7 @@ const create_price_request_pb_1 = require("../../../fintekkers/requests/price/cr
 const uuid_1 = require("../../models/utils/uuid");
 const dt = __importStar(require("../../models/utils/datetime"));
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
+const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 class PriceService {
     constructor(apiKey) {
         if (apiKey) {
@@ -144,6 +145,31 @@ class PriceService {
             const filter = new positionfilter_1.PositionFilter()
                 .addEqualsFilter(field_pb_1.FieldProto.SECURITY_ID, securityUuid);
             return this.search(effectiveAsOf, filter);
+        });
+    }
+    /**
+     * Search prices and hydrate each Price's embedded Security from link
+     * to full entity in a single batched lookup. Equivalent to:
+     *
+     *   const prices = await priceService.search(asOf, filter);
+     *   await new LinkResolver().resolveSecurities(prices);
+     *
+     * but with the LinkResolver instance reusable across calls (cache hits
+     * benefit subsequent lookups).
+     *
+     * Pass a shared `linkResolver` to share caching across multiple
+     * service-wrapper calls in the same request scope. If omitted, a new
+     * resolver is constructed per call (no cross-call cache reuse).
+     *
+     * Mutates each returned Price.proto's embedded SecurityProto in place
+     * (link → full). See LinkResolver for cache + dedupe semantics.
+     */
+    searchWithSecurities(asOf, positionFilter, linkResolver) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const prices = yield this.search(asOf, positionFilter);
+            const resolver = linkResolver !== null && linkResolver !== void 0 ? linkResolver : new link_resolver_1.default();
+            yield resolver.resolveSecurities(prices);
+            return prices;
         });
     }
 }

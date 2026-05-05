@@ -22,6 +22,7 @@ const transaction_service_grpc_pb_1 = require("../../../fintekkers/services/tran
 const create_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/create_transaction_request_pb");
 const query_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/query_transaction_request_pb");
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
+const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 class TransactionService {
     constructor(apiKey) {
         if (apiKey) {
@@ -85,6 +86,30 @@ class TransactionService {
             });
         }
         return processStreamSynchronously();
+    }
+    /**
+     * Search transactions and hydrate each Transaction's embedded Security
+     * AND Portfolio from link to full entity, with both fetches batched.
+     *
+     * Pass a shared `linkResolver` to share caching across multiple
+     * service-wrapper calls in the same request scope. If omitted, a new
+     * resolver is constructed per call.
+     *
+     * Mutates each returned Transaction.proto's embedded SecurityProto and
+     * PortfolioProto in place (link → full). See LinkResolver for cache +
+     * dedupe semantics.
+     */
+    searchWithSecurityAndPortfolio(asOf, positionFilter, maxResults = 100, linkResolver) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const txns = yield this.searchTransaction(asOf, positionFilter, maxResults);
+            const resolver = linkResolver !== null && linkResolver !== void 0 ? linkResolver : new link_resolver_1.default();
+            // Run both resolves in parallel — they hit different services.
+            yield Promise.all([
+                resolver.resolveSecurities(txns),
+                resolver.resolvePortfolios(txns),
+            ]);
+            return txns;
+        });
     }
 }
 exports.TransactionService = TransactionService;

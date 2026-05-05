@@ -15,6 +15,12 @@ declare class Security {
     getFields(): FieldProto[];
     getField(field: FieldProto): any;
     getID(): UUID;
+    /**
+     * True iff this Security is a link reference (only the uuid is populated;
+     * other fields should not be relied on). See docs/adr/is_link_pattern.md.
+     * Pair with LinkResolver to hydrate to a full entity.
+     */
+    isLink(): boolean;
     getAsOf(): ZonedDateTime;
     getAssetClass(): string;
     getProductClass(): string;

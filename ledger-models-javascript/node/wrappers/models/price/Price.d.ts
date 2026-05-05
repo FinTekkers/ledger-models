@@ -27,6 +27,11 @@ declare class Price {
      */
     static getCashPrice(cashSecurity: Security, asOf: ZonedDateTime): Price;
     getID(): UUID;
+    /**
+     * True iff this Price is a link reference (only the uuid is populated).
+     * See docs/adr/is_link_pattern.md. Pair with LinkResolver to hydrate.
+     */
+    isLink(): boolean;
     getPrice(): Decimal;
     getPriceType(): PriceTypeProto;
     getSecurity(): Security;

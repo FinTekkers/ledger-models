@@ -68,6 +68,13 @@ class Price {
             throw new Error("UUID is required");
         return uuid_1.UUID.fromU8Array(uuid.getRawUuid_asU8());
     }
+    /**
+     * True iff this Price is a link reference (only the uuid is populated).
+     * See docs/adr/is_link_pattern.md. Pair with LinkResolver to hydrate.
+     */
+    isLink() {
+        return this.proto.getIsLink();
+    }
     getPrice() {
         const priceValue = this.proto.getPrice();
         if (!priceValue)

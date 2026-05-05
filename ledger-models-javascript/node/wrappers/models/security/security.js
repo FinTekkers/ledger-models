@@ -62,6 +62,14 @@ class Security {
             throw new Error("UUID is required");
         return uuid_1.UUID.fromU8Array(uuid.getRawUuid_asU8());
     }
+    /**
+     * True iff this Security is a link reference (only the uuid is populated;
+     * other fields should not be relied on). See docs/adr/is_link_pattern.md.
+     * Pair with LinkResolver to hydrate to a full entity.
+     */
+    isLink() {
+        return this.proto.getIsLink();
+    }
     getAsOf() {
         const asOf = this.proto.getAsOf();
         if (!asOf)
