@@ -25,6 +25,7 @@ from fintekkers.wrappers.requests.security import QuerySecurityRequest
 
 from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
 from fintekkers.wrappers.services.security import SecurityService
+from fintekkers.wrappers.util.link_resolver import LinkResolver
 
 from fintekkers.services.price_service.price_service_pb2_grpc import PriceStub
 
@@ -96,6 +97,31 @@ class PriceService:
         # Yield each price as it comes in from the search
         for price in self.search(request):
             yield price
+
+    def search_with_securities(
+        self, request: QueryPriceRequest, link_resolver: "LinkResolver | None" = None
+    ) -> list[Price]:
+        """Search prices and hydrate each Price's embedded Security from
+        link to full entity in one batched GetByIds call. Equivalent to:
+
+            prices = list(price_service.search(request))
+            LinkResolver().resolve_securities(prices)
+
+        but with the LinkResolver instance reusable across calls. Pass a
+        shared `link_resolver` to share caching across multiple service-
+        wrapper calls in the same request scope. If omitted, a new resolver
+        is constructed per call (no cross-call cache reuse).
+
+        Mutates each returned Price.proto's embedded SecurityProto in place
+        (link → full). See LinkResolver for cache + dedupe semantics.
+
+        Returns a list (materialized from the underlying generator) because
+        we must collect everything before issuing the batched resolve.
+        """
+        prices: list[Price] = list(self.search(request))
+        resolver = link_resolver if link_resolver is not None else LinkResolver()
+        resolver.resolve_securities(prices)
+        return prices
 
     def search(self, request: QueryPriceRequest) -> Generator[Price, None, None]:
         responses = self.stub.Search(request=request.proto)

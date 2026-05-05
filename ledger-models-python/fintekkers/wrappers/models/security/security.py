@@ -40,6 +40,12 @@ class Security():
     def __str__(self) -> str:
         return f"ID[{str(self.get_id())}], {self.get_security_id()}[{self.proto.issuer_name}]"
 
+    def is_link(self) -> bool:
+        """True iff this Security is a link reference (only uuid + optionally
+        as_of populated). See docs/adr/is_link_pattern.md. Pair with
+        LinkResolver to hydrate to a full entity."""
+        return self.proto.is_link
+
     def get_fields(self) -> list[FieldProto]:
         return [
             ID, SECURITY_ID, AS_OF, ASSET_CLASS, IDENTIFIER

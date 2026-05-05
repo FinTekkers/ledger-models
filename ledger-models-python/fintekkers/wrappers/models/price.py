@@ -29,6 +29,11 @@ class Price:
         uuid: FintekkersUuid = ProtoSerializationUtil.deserialize(self.proto.uuid)
         return uuid.as_uuid()
 
+    def is_link(self) -> bool:
+        """True iff this Price is a link reference. See
+        docs/adr/is_link_pattern.md. Pair with LinkResolver to hydrate."""
+        return self.proto.is_link
+
 
     @staticmethod
     def create_price(security:Security, price: float, as_of_date:Timestamp):
