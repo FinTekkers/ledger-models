@@ -46,6 +46,11 @@ export class SecurityProto extends jspb.Message {
     setValidTo(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): SecurityProto;
     getSecurityType(): fintekkers_models_security_security_type_pb.SecurityTypeProto;
     setSecurityType(value: fintekkers_models_security_security_type_pb.SecurityTypeProto): SecurityProto;
+
+    hasDeletedAt(): boolean;
+    clearDeletedAt(): void;
+    getDeletedAt(): fintekkers_models_util_local_timestamp_pb.LocalTimestampProto | undefined;
+    setDeletedAt(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): SecurityProto;
     getAssetClass(): string;
     setAssetClass(value: string): SecurityProto;
     getIssuerName(): string;
@@ -184,6 +189,7 @@ export namespace SecurityProto {
         validFrom?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         validTo?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         securityType: fintekkers_models_security_security_type_pb.SecurityTypeProto,
+        deletedAt?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         assetClass: string,
         issuerName: string,
         settlementCurrency?: SecurityProto.AsObject,
