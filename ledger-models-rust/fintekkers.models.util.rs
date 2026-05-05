@@ -1,3 +1,19 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LocalTimestampProto {
+    #[prost(message, optional, tag = "1")]
+    pub timestamp: ::core::option::Option<::prost_types::Timestamp>,
+    /// TODO: Need to decide how to model this: <https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations>
+    /// <https://docs.oracle.com/javase/8/docs/api/java/time/ZoneId.html>
+    #[prost(string, tag = "2")]
+    pub time_zone: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UuidProto {
+    #[prost(bytes = "vec", tag = "1")]
+    pub raw_uuid: ::prost::alloc::vec::Vec<u8>,
+}
 ///   uint32 scale = 1;
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -16,38 +32,6 @@ pub struct LocalDateProto {
     pub month: u32,
     #[prost(uint32, tag = "3")]
     pub day: u32,
-}
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct LocalTimestampProto {
-    #[prost(message, optional, tag = "1")]
-    pub timestamp: ::core::option::Option<::prost_types::Timestamp>,
-    /// TODO: Need to decide how to model this: <https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations>
-    /// <https://docs.oracle.com/javase/8/docs/api/java/time/ZoneId.html>
-    #[prost(string, tag = "2")]
-    pub time_zone: ::prost::alloc::string::String,
-}
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UuidProto {
-    #[prost(bytes = "vec", tag = "1")]
-    pub raw_uuid: ::prost::alloc::vec::Vec<u8>,
-}
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct Endpoint {
-    /// The IP address that an endpoint is exposed through. The assumption is the IP
-    /// is exposed to internal clients through VPC/Security rules, or to the public
-    /// internet if public-facing
-    #[prost(string, tag = "1")]
-    pub ip: ::prost::alloc::string::String,
-    /// The port that the service is listening to on the specified IP address.
-    #[prost(uint32, tag = "2")]
-    pub port: u32,
-    /// Placeholder for the future. For public-facing traffic a URL will be used, and
-    /// the resolution to IP occurs via DNS.
-    #[prost(string, tag = "3")]
-    pub fully_qualified_url: ::prost::alloc::string::String,
 }
 /// A currency, identified by its ISO 4217 alpha code (e.g. "USD", "GBP", "EUR").
 /// This is a lightweight alternative to embedding a full CASH_SECURITY SecurityProto
@@ -71,4 +55,20 @@ pub struct DateRangeProto {
     pub start: ::core::option::Option<LocalTimestampProto>,
     #[prost(message, optional, tag = "11")]
     pub end: ::core::option::Option<LocalTimestampProto>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Endpoint {
+    /// The IP address that an endpoint is exposed through. The assumption is the IP
+    /// is exposed to internal clients through VPC/Security rules, or to the public
+    /// internet if public-facing
+    #[prost(string, tag = "1")]
+    pub ip: ::prost::alloc::string::String,
+    /// The port that the service is listening to on the specified IP address.
+    #[prost(uint32, tag = "2")]
+    pub port: u32,
+    /// Placeholder for the future. For public-facing traffic a URL will be used, and
+    /// the resolution to IP occurs via DNS.
+    #[prost(string, tag = "3")]
+    pub fully_qualified_url: ::prost::alloc::string::String,
 }

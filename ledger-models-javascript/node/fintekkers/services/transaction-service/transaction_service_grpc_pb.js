@@ -16,7 +16,7 @@ function serialize_fintekkers_requests_security_GetFieldValuesRequestProto(arg) 
   if (!(arg instanceof fintekkers_requests_security_get_field_values_request_pb.GetFieldValuesRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.security.GetFieldValuesRequestProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_security_GetFieldValuesRequestProto(buffer_arg) {
@@ -27,7 +27,7 @@ function serialize_fintekkers_requests_security_GetFieldValuesResponseProto(arg)
   if (!(arg instanceof fintekkers_requests_security_get_field_values_response_pb.GetFieldValuesResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.security.GetFieldValuesResponseProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_security_GetFieldValuesResponseProto(buffer_arg) {
@@ -38,7 +38,7 @@ function serialize_fintekkers_requests_transaction_CreateTransactionRequestProto
   if (!(arg instanceof fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.transaction.CreateTransactionRequestProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_transaction_CreateTransactionRequestProto(buffer_arg) {
@@ -49,7 +49,7 @@ function serialize_fintekkers_requests_transaction_CreateTransactionResponseProt
   if (!(arg instanceof fintekkers_requests_transaction_create_transaction_response_pb.CreateTransactionResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.transaction.CreateTransactionResponseProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_transaction_CreateTransactionResponseProto(buffer_arg) {
@@ -60,7 +60,7 @@ function serialize_fintekkers_requests_transaction_QueryTransactionRequestProto(
   if (!(arg instanceof fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.transaction.QueryTransactionRequestProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_transaction_QueryTransactionRequestProto(buffer_arg) {
@@ -71,7 +71,7 @@ function serialize_fintekkers_requests_transaction_QueryTransactionResponseProto
   if (!(arg instanceof fintekkers_requests_transaction_query_transaction_response_pb.QueryTransactionResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.transaction.QueryTransactionResponseProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_transaction_QueryTransactionResponseProto(buffer_arg) {
@@ -82,7 +82,7 @@ function serialize_fintekkers_requests_util_DeleteRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_util_delete_request_pb.DeleteRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.util.DeleteRequestProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_util_DeleteRequestProto(buffer_arg) {
@@ -93,7 +93,7 @@ function serialize_fintekkers_requests_util_DeleteResponseProto(arg) {
   if (!(arg instanceof fintekkers_requests_util_delete_request_pb.DeleteResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.util.DeleteResponseProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_util_DeleteResponseProto(buffer_arg) {
@@ -104,7 +104,7 @@ function serialize_fintekkers_requests_util_errors_SummaryProto(arg) {
   if (!(arg instanceof fintekkers_requests_util_errors_summary_pb.SummaryProto)) {
     throw new Error('Expected argument of type fintekkers.requests.util.errors.SummaryProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_util_errors_SummaryProto(buffer_arg) {
@@ -115,7 +115,7 @@ function serialize_google_protobuf_Empty(arg) {
   if (!(arg instanceof google_protobuf_empty_pb.Empty)) {
     throw new Error('Expected argument of type google.protobuf.Empty');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_google_protobuf_Empty(buffer_arg) {
@@ -225,4 +225,4 @@ var TransactionService = exports.TransactionService = {
   },
 };
 
-exports.TransactionClient = grpc.makeGenericClientConstructor(TransactionService);
+exports.TransactionClient = grpc.makeGenericClientConstructor(TransactionService, 'Transaction');

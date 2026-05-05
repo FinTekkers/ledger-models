@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_position_position_pb = require('../../../fintekkers/models/position/position_pb.js');
 goog.object.extend(proto, fintekkers_models_position_position_pb);
@@ -80,11 +86,11 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.prototype.toObject
  */
 proto.fintekkers.requests.position.QueryPositionResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-positionRequest: (f = msg.getPositionRequest()) && fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto.toObject(includeInstance, f),
-reportingCurrency: jspb.Message.getFieldWithDefault(msg, 12, ""),
-positionsList: jspb.Message.toObjectList(msg.getPositionsList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    positionRequest: (f = msg.getPositionRequest()) && fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto.toObject(includeInstance, f),
+    reportingCurrency: jspb.Message.getFieldWithDefault(msg, 12, ""),
+    positionsList: jspb.Message.toObjectList(msg.getPositionsList(),
     fintekkers_models_position_position_pb.PositionProto.toObject, includeInstance)
   };
 
@@ -98,7 +104,7 @@ positionsList: jspb.Message.toObjectList(msg.getPositionsList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.position.QueryPositionResponseProto}
  */
 proto.fintekkers.requests.position.QueryPositionResponseProto.deserializeBinary = function(bytes) {
@@ -123,11 +129,11 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.deserializeBinaryF
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 11:
@@ -136,7 +142,7 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.deserializeBinaryF
       msg.setPositionRequest(value);
       break;
     case 12:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setReportingCurrency(value);
       break;
     case 30:

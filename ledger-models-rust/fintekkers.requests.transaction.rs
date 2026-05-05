@@ -1,5 +1,33 @@
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateTransactionRequestProto {
+    #[prost(string, tag = "1")]
+    pub object_class: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "20")]
+    pub create_transaction_input: ::core::option::Option<
+        super::super::models::transaction::TransactionProto,
+    >,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateTransactionResponseProto {
+    #[prost(string, tag = "1")]
+    pub object_class: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "20")]
+    pub create_transaction_request: ::core::option::Option<
+        CreateTransactionRequestProto,
+    >,
+    #[prost(message, optional, tag = "30")]
+    pub transaction_response: ::core::option::Option<
+        super::super::models::transaction::TransactionProto,
+    >,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct QueryTransactionRequestProto {
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
@@ -37,32 +65,4 @@ pub struct QueryTransactionResponseProto {
     /// contingencies.
     #[prost(message, optional, tag = "40")]
     pub errors_or_warnings: ::core::option::Option<super::util::errors::SummaryProto>,
-}
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct CreateTransactionRequestProto {
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    #[prost(message, optional, tag = "20")]
-    pub create_transaction_input: ::core::option::Option<
-        super::super::models::transaction::TransactionProto,
-    >,
-}
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct CreateTransactionResponseProto {
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    #[prost(message, optional, tag = "20")]
-    pub create_transaction_request: ::core::option::Option<
-        CreateTransactionRequestProto,
-    >,
-    #[prost(message, optional, tag = "30")]
-    pub transaction_response: ::core::option::Option<
-        super::super::models::transaction::TransactionProto,
-    >,
 }

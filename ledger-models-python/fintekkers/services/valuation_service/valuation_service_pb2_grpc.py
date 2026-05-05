@@ -8,7 +8,7 @@ from fintekkers.requests.valuation import curve_response_pb2 as fintekkers_dot_r
 from fintekkers.requests.valuation import valuation_request_pb2 as fintekkers_dot_requests_dot_valuation_dot_valuation__request__pb2
 from fintekkers.requests.valuation import valuation_response_pb2 as fintekkers_dot_requests_dot_valuation_dot_valuation__response__pb2
 
-GRPC_GENERATED_VERSION = '1.78.0'
+GRPC_GENERATED_VERSION = '1.76.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 

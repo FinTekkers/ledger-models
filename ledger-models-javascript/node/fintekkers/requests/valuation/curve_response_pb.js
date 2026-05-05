@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_util_decimal_value_pb = require('../../../fintekkers/models/util/decimal_value_pb.js');
 goog.object.extend(proto, fintekkers_models_util_decimal_value_pb);
@@ -121,8 +127,8 @@ proto.fintekkers.requests.valuation.CurvePointProto.prototype.toObject = functio
  */
 proto.fintekkers.requests.valuation.CurvePointProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-tenor: (f = msg.getTenor()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-yield: (f = msg.getYield()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    tenor: (f = msg.getTenor()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    yield: (f = msg.getYield()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -135,7 +141,7 @@ yield: (f = msg.getYield()) && fintekkers_models_util_decimal_value_pb.DecimalVa
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.CurvePointProto}
  */
 proto.fintekkers.requests.valuation.CurvePointProto.deserializeBinary = function(bytes) {
@@ -330,8 +336,8 @@ proto.fintekkers.requests.valuation.CurveResultProto.prototype.toObject = functi
  */
 proto.fintekkers.requests.valuation.CurveResultProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-curveType: jspb.Message.getFieldWithDefault(msg, 1, 0),
-pointsList: jspb.Message.toObjectList(msg.getPointsList(),
+    curveType: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    pointsList: jspb.Message.toObjectList(msg.getPointsList(),
     proto.fintekkers.requests.valuation.CurvePointProto.toObject, includeInstance)
   };
 
@@ -345,7 +351,7 @@ pointsList: jspb.Message.toObjectList(msg.getPointsList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.CurveResultProto}
  */
 proto.fintekkers.requests.valuation.CurveResultProto.deserializeBinary = function(bytes) {
@@ -520,12 +526,12 @@ proto.fintekkers.requests.valuation.CurveResponseProto.prototype.toObject = func
  */
 proto.fintekkers.requests.valuation.CurveResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-curveRequest: (f = msg.getCurveRequest()) && fintekkers_requests_valuation_curve_request_pb.CurveRequestProto.toObject(includeInstance, f),
-curveResultsList: jspb.Message.toObjectList(msg.getCurveResultsList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    curveRequest: (f = msg.getCurveRequest()) && fintekkers_requests_valuation_curve_request_pb.CurveRequestProto.toObject(includeInstance, f),
+    curveResultsList: jspb.Message.toObjectList(msg.getCurveResultsList(),
     proto.fintekkers.requests.valuation.CurveResultProto.toObject, includeInstance),
-summary: (f = msg.getSummary()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
+    summary: (f = msg.getSummary()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -538,7 +544,7 @@ summary: (f = msg.getSummary()) && fintekkers_requests_util_errors_summary_pb.Su
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.valuation.CurveResponseProto}
  */
 proto.fintekkers.requests.valuation.CurveResponseProto.deserializeBinary = function(bytes) {
@@ -563,11 +569,11 @@ proto.fintekkers.requests.valuation.CurveResponseProto.deserializeBinaryFromRead
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 10:

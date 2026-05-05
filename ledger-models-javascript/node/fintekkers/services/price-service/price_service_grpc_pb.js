@@ -12,7 +12,7 @@ function serialize_fintekkers_requests_price_CreatePriceRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_price_create_price_request_pb.CreatePriceRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.price.CreatePriceRequestProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_price_CreatePriceRequestProto(buffer_arg) {
@@ -23,7 +23,7 @@ function serialize_fintekkers_requests_price_CreatePriceResponseProto(arg) {
   if (!(arg instanceof fintekkers_requests_price_create_price_response_pb.CreatePriceResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.price.CreatePriceResponseProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_price_CreatePriceResponseProto(buffer_arg) {
@@ -34,7 +34,7 @@ function serialize_fintekkers_requests_price_QueryPriceRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_price_query_price_request_pb.QueryPriceRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.price.QueryPriceRequestProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_price_QueryPriceRequestProto(buffer_arg) {
@@ -45,7 +45,7 @@ function serialize_fintekkers_requests_price_QueryPriceResponseProto(arg) {
   if (!(arg instanceof fintekkers_requests_price_query_price_response_pb.QueryPriceResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.price.QueryPriceResponseProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_price_QueryPriceResponseProto(buffer_arg) {
@@ -56,7 +56,7 @@ function serialize_fintekkers_requests_util_errors_SummaryProto(arg) {
   if (!(arg instanceof fintekkers_requests_util_errors_summary_pb.SummaryProto)) {
     throw new Error('Expected argument of type fintekkers.requests.util.errors.SummaryProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_util_errors_SummaryProto(buffer_arg) {
@@ -133,4 +133,4 @@ var PriceService = exports.PriceService = {
   },
 };
 
-exports.PriceClient = grpc.makeGenericClientConstructor(PriceService);
+exports.PriceClient = grpc.makeGenericClientConstructor(PriceService, 'Price');

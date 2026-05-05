@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 goog.exportSymbol('proto.fintekkers.requests.util.errors.Message', null, global);
 /**
@@ -69,8 +75,8 @@ proto.fintekkers.requests.util.errors.Message.prototype.toObject = function(opt_
  */
 proto.fintekkers.requests.util.errors.Message.toObject = function(includeInstance, msg) {
   var f, obj = {
-messageForUser: jspb.Message.getFieldWithDefault(msg, 1, ""),
-messageForDeveloper: jspb.Message.getFieldWithDefault(msg, 2, "")
+    messageForUser: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    messageForDeveloper: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -83,7 +89,7 @@ messageForDeveloper: jspb.Message.getFieldWithDefault(msg, 2, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.util.errors.Message}
  */
 proto.fintekkers.requests.util.errors.Message.deserializeBinary = function(bytes) {
@@ -108,11 +114,11 @@ proto.fintekkers.requests.util.errors.Message.deserializeBinaryFromReader = func
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setMessageForUser(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setMessageForDeveloper(value);
       break;
     default:

@@ -11,7 +11,7 @@ function serialize_fintekkers_requests_valuation_CurveRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_valuation_curve_request_pb.CurveRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.valuation.CurveRequestProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_valuation_CurveRequestProto(buffer_arg) {
@@ -22,7 +22,7 @@ function serialize_fintekkers_requests_valuation_CurveResponseProto(arg) {
   if (!(arg instanceof fintekkers_requests_valuation_curve_response_pb.CurveResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.valuation.CurveResponseProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_valuation_CurveResponseProto(buffer_arg) {
@@ -33,7 +33,7 @@ function serialize_fintekkers_requests_valuation_ValuationRequestProto(arg) {
   if (!(arg instanceof fintekkers_requests_valuation_valuation_request_pb.ValuationRequestProto)) {
     throw new Error('Expected argument of type fintekkers.requests.valuation.ValuationRequestProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_valuation_ValuationRequestProto(buffer_arg) {
@@ -44,7 +44,7 @@ function serialize_fintekkers_requests_valuation_ValuationResponseProto(arg) {
   if (!(arg instanceof fintekkers_requests_valuation_valuation_response_pb.ValuationResponseProto)) {
     throw new Error('Expected argument of type fintekkers.requests.valuation.ValuationResponseProto');
   }
-  return new Buffer(arg.serializeBinary());
+  return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_fintekkers_requests_valuation_ValuationResponseProto(buffer_arg) {
@@ -77,4 +77,4 @@ var ValuationService = exports.ValuationService = {
   },
 };
 
-exports.ValuationClient = grpc.makeGenericClientConstructor(ValuationService);
+exports.ValuationClient = grpc.makeGenericClientConstructor(ValuationService, 'Valuation');

@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
 goog.object.extend(proto, google_protobuf_timestamp_pb);
@@ -71,8 +77,8 @@ proto.fintekkers.models.util.LocalTimestampProto.prototype.toObject = function(o
  */
 proto.fintekkers.models.util.LocalTimestampProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-timestamp: (f = msg.getTimestamp()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
-timeZone: jspb.Message.getFieldWithDefault(msg, 2, "")
+    timestamp: (f = msg.getTimestamp()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+    timeZone: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -85,7 +91,7 @@ timeZone: jspb.Message.getFieldWithDefault(msg, 2, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.util.LocalTimestampProto}
  */
 proto.fintekkers.models.util.LocalTimestampProto.deserializeBinary = function(bytes) {
@@ -115,7 +121,7 @@ proto.fintekkers.models.util.LocalTimestampProto.deserializeBinaryFromReader = f
       msg.setTimestamp(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setTimeZone(value);
       break;
     default:

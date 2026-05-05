@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 goog.exportSymbol('proto.fintekkers.models.util.Endpoint', null, global);
 /**
@@ -69,9 +75,9 @@ proto.fintekkers.models.util.Endpoint.prototype.toObject = function(opt_includeI
  */
 proto.fintekkers.models.util.Endpoint.toObject = function(includeInstance, msg) {
   var f, obj = {
-ip: jspb.Message.getFieldWithDefault(msg, 1, ""),
-port: jspb.Message.getFieldWithDefault(msg, 2, 0),
-fullyQualifiedUrl: jspb.Message.getFieldWithDefault(msg, 3, "")
+    ip: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    port: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    fullyQualifiedUrl: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -84,7 +90,7 @@ fullyQualifiedUrl: jspb.Message.getFieldWithDefault(msg, 3, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.util.Endpoint}
  */
 proto.fintekkers.models.util.Endpoint.deserializeBinary = function(bytes) {
@@ -109,7 +115,7 @@ proto.fintekkers.models.util.Endpoint.deserializeBinaryFromReader = function(msg
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setIp(value);
       break;
     case 2:
@@ -117,7 +123,7 @@ proto.fintekkers.models.util.Endpoint.deserializeBinaryFromReader = function(msg
       msg.setPort(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setFullyQualifiedUrl(value);
       break;
     default:

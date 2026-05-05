@@ -1,59 +1,3 @@
-/// A request to allow clients to find existing securities.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct QuerySecurityRequestProto {
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// The list of UUIds to return
-    #[prost(message, repeated, tag = "21")]
-    pub uu_ids: ::prost::alloc::vec::Vec<super::super::models::util::UuidProto>,
-    /// A list of position filters that will filter securities that match.
-    #[prost(message, optional, tag = "22")]
-    pub search_security_input: ::core::option::Option<
-        super::super::models::position::PositionFilterProto,
-    >,
-    #[prost(message, optional, tag = "23")]
-    pub as_of: ::core::option::Option<super::super::models::util::LocalTimestampProto>,
-    /// Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
-    /// Empty string means no filter (return all).
-    #[prost(string, tag = "24")]
-    pub name_filter: ::prost::alloc::string::String,
-}
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct QuerySecurityResponseProto {
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// The input that was provided for this request.
-    #[prost(message, optional, tag = "20")]
-    pub query_security_input: ::core::option::Option<QuerySecurityRequestProto>,
-    /// The security (or securities) that was matched by this request.
-    #[prost(message, repeated, tag = "30")]
-    pub security_response: ::prost::alloc::vec::Vec<
-        super::super::models::security::SecurityProto,
-    >,
-    /// Any errors or warnings related to this request
-    #[prost(message, repeated, tag = "40")]
-    pub errors_or_warnings: ::prost::alloc::vec::Vec<super::util::errors::SummaryProto>,
-}
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GetFieldsResponseProto {
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    #[prost(
-        enumeration = "super::super::models::position::FieldProto",
-        repeated,
-        tag = "10"
-    )]
-    pub fields: ::prost::alloc::vec::Vec<i32>,
-}
 /// Use this request to create or update securities. Uniqueness is guaranteed via the UUID.
 /// Security identifiers do not guarantee uniqueness. As an example a bond ISIN or stock ticker
 /// may be re-used over time. Therefore if you send 2 requests with the same security identifier
@@ -117,4 +61,60 @@ pub struct GetFieldValuesResponseProto {
     pub version: ::prost::alloc::string::String,
     #[prost(message, repeated, tag = "10")]
     pub values: ::prost::alloc::vec::Vec<::prost_types::Any>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetFieldsResponseProto {
+    #[prost(string, tag = "1")]
+    pub object_class: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    #[prost(
+        enumeration = "super::super::models::position::FieldProto",
+        repeated,
+        tag = "10"
+    )]
+    pub fields: ::prost::alloc::vec::Vec<i32>,
+}
+/// A request to allow clients to find existing securities.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct QuerySecurityRequestProto {
+    #[prost(string, tag = "1")]
+    pub object_class: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    /// The list of UUIds to return
+    #[prost(message, repeated, tag = "21")]
+    pub uu_ids: ::prost::alloc::vec::Vec<super::super::models::util::UuidProto>,
+    /// A list of position filters that will filter securities that match.
+    #[prost(message, optional, tag = "22")]
+    pub search_security_input: ::core::option::Option<
+        super::super::models::position::PositionFilterProto,
+    >,
+    #[prost(message, optional, tag = "23")]
+    pub as_of: ::core::option::Option<super::super::models::util::LocalTimestampProto>,
+    /// Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
+    /// Empty string means no filter (return all).
+    #[prost(string, tag = "24")]
+    pub name_filter: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct QuerySecurityResponseProto {
+    #[prost(string, tag = "1")]
+    pub object_class: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    /// The input that was provided for this request.
+    #[prost(message, optional, tag = "20")]
+    pub query_security_input: ::core::option::Option<QuerySecurityRequestProto>,
+    /// The security (or securities) that was matched by this request.
+    #[prost(message, repeated, tag = "30")]
+    pub security_response: ::prost::alloc::vec::Vec<
+        super::super::models::security::SecurityProto,
+    >,
+    /// Any errors or warnings related to this request
+    #[prost(message, repeated, tag = "40")]
+    pub errors_or_warnings: ::prost::alloc::vec::Vec<super::util::errors::SummaryProto>,
 }

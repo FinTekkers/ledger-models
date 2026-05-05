@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_util_uuid_pb = require('../../../fintekkers/models/util/uuid_pb.js');
 goog.object.extend(proto, fintekkers_models_util_uuid_pb);
@@ -99,10 +105,10 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prot
  */
 proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-indexUuid: (f = msg.getIndexUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
-asOfDate: (f = msg.getAsOfDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    indexUuid: (f = msg.getIndexUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
+    asOfDate: (f = msg.getAsOfDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -115,7 +121,7 @@ asOfDate: (f = msg.getAsOfDate()) && fintekkers_models_util_local_date_pb.LocalD
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto}
  */
 proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.deserializeBinary = function(bytes) {
@@ -140,11 +146,11 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.dese
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 10:
@@ -361,11 +367,11 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.pro
  */
 proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
-composition: (f = msg.getComposition()) && fintekkers_models_security_index_composition_pb.IndexCompositionProto.toObject(includeInstance, f),
-resolvedEffectiveDate: (f = msg.getResolvedEffectiveDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    composition: (f = msg.getComposition()) && fintekkers_models_security_index_composition_pb.IndexCompositionProto.toObject(includeInstance, f),
+    resolvedEffectiveDate: (f = msg.getResolvedEffectiveDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -378,7 +384,7 @@ resolvedEffectiveDate: (f = msg.getResolvedEffectiveDate()) && fintekkers_models
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto}
  */
 proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.deserializeBinary = function(bytes) {
@@ -403,11 +409,11 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.des
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 10:

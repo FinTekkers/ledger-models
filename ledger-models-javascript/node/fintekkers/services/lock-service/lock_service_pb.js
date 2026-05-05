@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var google_protobuf_empty_pb = require('google-protobuf/google/protobuf/empty_pb.js');
 goog.object.extend(proto, google_protobuf_empty_pb);
@@ -174,7 +180,7 @@ proto.fintekkers.services.lock_service.NamespaceList.prototype.toObject = functi
  */
 proto.fintekkers.services.lock_service.NamespaceList.toObject = function(includeInstance, msg) {
   var f, obj = {
-namespacesList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
+    namespacesList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -187,7 +193,7 @@ namespacesList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined 
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.services.lock_service.NamespaceList}
  */
 proto.fintekkers.services.lock_service.NamespaceList.deserializeBinary = function(bytes) {
@@ -212,7 +218,7 @@ proto.fintekkers.services.lock_service.NamespaceList.deserializeBinaryFromReader
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.addNamespaces(value);
       break;
     default:
@@ -330,7 +336,7 @@ proto.fintekkers.services.lock_service.PartitionsList.prototype.toObject = funct
  */
 proto.fintekkers.services.lock_service.PartitionsList.toObject = function(includeInstance, msg) {
   var f, obj = {
-partitionsList: jspb.Message.toObjectList(msg.getPartitionsList(),
+    partitionsList: jspb.Message.toObjectList(msg.getPartitionsList(),
     fintekkers_models_util_lock_node_partition_pb.NodePartition.toObject, includeInstance)
   };
 
@@ -344,7 +350,7 @@ partitionsList: jspb.Message.toObjectList(msg.getPartitionsList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.services.lock_service.PartitionsList}
  */
 proto.fintekkers.services.lock_service.PartitionsList.deserializeBinary = function(bytes) {
@@ -490,7 +496,7 @@ proto.fintekkers.services.lock_service.NodeStateList.prototype.toObject = functi
  */
 proto.fintekkers.services.lock_service.NodeStateList.toObject = function(includeInstance, msg) {
   var f, obj = {
-nodesList: jspb.Message.toObjectList(msg.getNodesList(),
+    nodesList: jspb.Message.toObjectList(msg.getNodesList(),
     fintekkers_models_util_lock_node_state_pb.NodeState.toObject, includeInstance)
   };
 
@@ -504,7 +510,7 @@ nodesList: jspb.Message.toObjectList(msg.getNodesList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.services.lock_service.NodeStateList}
  */
 proto.fintekkers.services.lock_service.NodeStateList.deserializeBinary = function(bytes) {
@@ -643,7 +649,7 @@ proto.fintekkers.services.lock_service.CreateNamespaceRequest.prototype.toObject
  */
 proto.fintekkers.services.lock_service.CreateNamespaceRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-name: jspb.Message.getFieldWithDefault(msg, 1, "")
+    name: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -656,7 +662,7 @@ name: jspb.Message.getFieldWithDefault(msg, 1, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.services.lock_service.CreateNamespaceRequest}
  */
 proto.fintekkers.services.lock_service.CreateNamespaceRequest.deserializeBinary = function(bytes) {
@@ -681,7 +687,7 @@ proto.fintekkers.services.lock_service.CreateNamespaceRequest.deserializeBinaryF
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setName(value);
       break;
     default:
@@ -773,8 +779,8 @@ proto.fintekkers.services.lock_service.CreatePartitionRequest.prototype.toObject
  */
 proto.fintekkers.services.lock_service.CreatePartitionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-name: jspb.Message.getFieldWithDefault(msg, 1, ""),
-partition: jspb.Message.getFieldWithDefault(msg, 2, 0)
+    name: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    partition: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -787,7 +793,7 @@ partition: jspb.Message.getFieldWithDefault(msg, 2, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.services.lock_service.CreatePartitionRequest}
  */
 proto.fintekkers.services.lock_service.CreatePartitionRequest.deserializeBinary = function(bytes) {
@@ -812,7 +818,7 @@ proto.fintekkers.services.lock_service.CreatePartitionRequest.deserializeBinaryF
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setName(value);
       break;
     case 2:

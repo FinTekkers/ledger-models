@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_security_bond_auction_type_pb = require('../../../../fintekkers/models/security/bond/auction_type_pb.js');
 goog.object.extend(proto, fintekkers_models_security_bond_auction_type_pb);
@@ -77,19 +83,19 @@ proto.fintekkers.models.security.bond.IssuanceProto.prototype.toObject = functio
  */
 proto.fintekkers.models.security.bond.IssuanceProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-auctionAnnouncementDate: (f = msg.getAuctionAnnouncementDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-auctionIssueDate: (f = msg.getAuctionIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-postAuctionOutstandingQuantity: (f = msg.getPostAuctionOutstandingQuantity()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-auctionOfferingAmount: (f = msg.getAuctionOfferingAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-auctionType: jspb.Message.getFieldWithDefault(msg, 24, 0),
-priceForSinglePriceAuction: (f = msg.getPriceForSinglePriceAuction()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-totalAccepted: (f = msg.getTotalAccepted()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-matureSecurityAmount: (f = msg.getMatureSecurityAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    auctionAnnouncementDate: (f = msg.getAuctionAnnouncementDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    auctionIssueDate: (f = msg.getAuctionIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    postAuctionOutstandingQuantity: (f = msg.getPostAuctionOutstandingQuantity()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    auctionOfferingAmount: (f = msg.getAuctionOfferingAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    auctionType: jspb.Message.getFieldWithDefault(msg, 24, 0),
+    priceForSinglePriceAuction: (f = msg.getPriceForSinglePriceAuction()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    totalAccepted: (f = msg.getTotalAccepted()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    matureSecurityAmount: (f = msg.getMatureSecurityAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -102,7 +108,7 @@ matureSecurityAmount: (f = msg.getMatureSecurityAmount()) && fintekkers_models_u
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.bond.IssuanceProto}
  */
 proto.fintekkers.models.security.bond.IssuanceProto.deserializeBinary = function(bytes) {
@@ -127,11 +133,11 @@ proto.fintekkers.models.security.bond.IssuanceProto.deserializeBinaryFromReader 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 6:

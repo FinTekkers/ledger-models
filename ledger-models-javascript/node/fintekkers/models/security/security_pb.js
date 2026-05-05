@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_util_decimal_value_pb = require('../../../fintekkers/models/util/decimal_value_pb.js');
 goog.object.extend(proto, fintekkers_models_util_decimal_value_pb);
@@ -284,46 +290,46 @@ proto.fintekkers.models.security.SecurityProto.prototype.toObject = function(opt
  */
 proto.fintekkers.models.security.SecurityProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
-asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
-validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-securityType: jspb.Message.getFieldWithDefault(msg, 10, 0),
-assetClass: jspb.Message.getFieldWithDefault(msg, 11, ""),
-issuerName: jspb.Message.getFieldWithDefault(msg, 12, ""),
-settlementCurrency: (f = msg.getSettlementCurrency()) && proto.fintekkers.models.security.SecurityProto.toObject(includeInstance, f),
-quantityType: jspb.Message.getFieldWithDefault(msg, 14, 0),
-identifier: (f = msg.getIdentifier()) && fintekkers_models_security_identifier_identifier_pb.IdentifierProto.toObject(includeInstance, f),
-description: jspb.Message.getFieldWithDefault(msg, 41, ""),
-identifiersList: jspb.Message.toObjectList(msg.getIdentifiersList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
+    asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
+    validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
+    securityType: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    assetClass: jspb.Message.getFieldWithDefault(msg, 11, ""),
+    issuerName: jspb.Message.getFieldWithDefault(msg, 12, ""),
+    settlementCurrency: (f = msg.getSettlementCurrency()) && proto.fintekkers.models.security.SecurityProto.toObject(includeInstance, f),
+    quantityType: jspb.Message.getFieldWithDefault(msg, 14, 0),
+    identifier: (f = msg.getIdentifier()) && fintekkers_models_security_identifier_identifier_pb.IdentifierProto.toObject(includeInstance, f),
+    description: jspb.Message.getFieldWithDefault(msg, 41, ""),
+    identifiersList: jspb.Message.toObjectList(msg.getIdentifiersList(),
     fintekkers_models_security_identifier_identifier_pb.IdentifierProto.toObject, includeInstance),
-cashId: jspb.Message.getFieldWithDefault(msg, 50, ""),
-couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-couponType: jspb.Message.getFieldWithDefault(msg, 61, 0),
-couponFrequency: jspb.Message.getFieldWithDefault(msg, 62, 0),
-datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
+    cashId: jspb.Message.getFieldWithDefault(msg, 50, ""),
+    couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    couponType: jspb.Message.getFieldWithDefault(msg, 61, 0),
+    couponFrequency: jspb.Message.getFieldWithDefault(msg, 62, 0),
+    datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
     fintekkers_models_security_bond_issuance_pb.IssuanceProto.toObject, includeInstance),
-baseCpi: (f = msg.getBaseCpi()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-indexDate: (f = msg.getIndexDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-inflationIndexType: jspb.Message.getFieldWithDefault(msg, 72, 0),
-spread: (f = msg.getSpread()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-referenceRateIndex: jspb.Message.getFieldWithDefault(msg, 91, 0),
-resetFrequency: jspb.Message.getFieldWithDefault(msg, 92, 0),
-indexType: jspb.Message.getFieldWithDefault(msg, 80, 0),
-bondDetails: (f = msg.getBondDetails()) && proto.fintekkers.models.security.BondDetailsProto.toObject(includeInstance, f),
-tipsDetails: (f = msg.getTipsDetails()) && proto.fintekkers.models.security.TipsDetailsProto.toObject(includeInstance, f),
-frnDetails: (f = msg.getFrnDetails()) && proto.fintekkers.models.security.FrnDetailsProto.toObject(includeInstance, f),
-indexDetails: (f = msg.getIndexDetails()) && proto.fintekkers.models.security.IndexDetailsProto.toObject(includeInstance, f),
-equityDetails: (f = msg.getEquityDetails()) && proto.fintekkers.models.security.EquityDetailsProto.toObject(includeInstance, f),
-cashDetails: (f = msg.getCashDetails()) && proto.fintekkers.models.security.CashDetailsProto.toObject(includeInstance, f),
-fxSpotDetails: (f = msg.getFxSpotDetails()) && proto.fintekkers.models.security.FxSpotDetailsProto.toObject(includeInstance, f)
+    baseCpi: (f = msg.getBaseCpi()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    indexDate: (f = msg.getIndexDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    inflationIndexType: jspb.Message.getFieldWithDefault(msg, 72, 0),
+    spread: (f = msg.getSpread()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    referenceRateIndex: jspb.Message.getFieldWithDefault(msg, 91, 0),
+    resetFrequency: jspb.Message.getFieldWithDefault(msg, 92, 0),
+    indexType: jspb.Message.getFieldWithDefault(msg, 80, 0),
+    bondDetails: (f = msg.getBondDetails()) && proto.fintekkers.models.security.BondDetailsProto.toObject(includeInstance, f),
+    tipsDetails: (f = msg.getTipsDetails()) && proto.fintekkers.models.security.TipsDetailsProto.toObject(includeInstance, f),
+    frnDetails: (f = msg.getFrnDetails()) && proto.fintekkers.models.security.FrnDetailsProto.toObject(includeInstance, f),
+    indexDetails: (f = msg.getIndexDetails()) && proto.fintekkers.models.security.IndexDetailsProto.toObject(includeInstance, f),
+    equityDetails: (f = msg.getEquityDetails()) && proto.fintekkers.models.security.EquityDetailsProto.toObject(includeInstance, f),
+    cashDetails: (f = msg.getCashDetails()) && proto.fintekkers.models.security.CashDetailsProto.toObject(includeInstance, f),
+    fxSpotDetails: (f = msg.getFxSpotDetails()) && proto.fintekkers.models.security.FxSpotDetailsProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -336,7 +342,7 @@ fxSpotDetails: (f = msg.getFxSpotDetails()) && proto.fintekkers.models.security.
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.SecurityProto}
  */
 proto.fintekkers.models.security.SecurityProto.deserializeBinary = function(bytes) {
@@ -361,11 +367,11 @@ proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader = fun
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 5:
@@ -397,11 +403,11 @@ proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader = fun
       msg.setSecurityType(value);
       break;
     case 11:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setAssetClass(value);
       break;
     case 12:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setIssuerName(value);
       break;
     case 13:
@@ -419,7 +425,7 @@ proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader = fun
       msg.setIdentifier(value);
       break;
     case 41:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setDescription(value);
       break;
     case 42:
@@ -428,7 +434,7 @@ proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader = fun
       msg.addIdentifiers(value);
       break;
     case 50:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setCashId(value);
       break;
     case 60:
@@ -2018,14 +2024,14 @@ proto.fintekkers.models.security.BondDetailsProto.prototype.toObject = function(
  */
 proto.fintekkers.models.security.BondDetailsProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-couponType: jspb.Message.getFieldWithDefault(msg, 2, 0),
-couponFrequency: jspb.Message.getFieldWithDefault(msg, 3, 0),
-datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
+    couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    couponType: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    couponFrequency: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
     fintekkers_models_security_bond_issuance_pb.IssuanceProto.toObject, includeInstance)
   };
 
@@ -2039,7 +2045,7 @@ issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.BondDetailsProto}
  */
 proto.fintekkers.models.security.BondDetailsProto.deserializeBinary = function(bytes) {
@@ -2493,18 +2499,18 @@ proto.fintekkers.models.security.TipsDetailsProto.prototype.toObject = function(
  */
 proto.fintekkers.models.security.TipsDetailsProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-couponType: jspb.Message.getFieldWithDefault(msg, 2, 0),
-couponFrequency: jspb.Message.getFieldWithDefault(msg, 3, 0),
-datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
+    couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    couponType: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    couponFrequency: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
     fintekkers_models_security_bond_issuance_pb.IssuanceProto.toObject, includeInstance),
-baseCpi: (f = msg.getBaseCpi()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-indexDate: (f = msg.getIndexDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-inflationIndexType: jspb.Message.getFieldWithDefault(msg, 12, 0)
+    baseCpi: (f = msg.getBaseCpi()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    indexDate: (f = msg.getIndexDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    inflationIndexType: jspb.Message.getFieldWithDefault(msg, 12, 0)
   };
 
   if (includeInstance) {
@@ -2517,7 +2523,7 @@ inflationIndexType: jspb.Message.getFieldWithDefault(msg, 12, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.TipsDetailsProto}
  */
 proto.fintekkers.models.security.TipsDetailsProto.deserializeBinary = function(bytes) {
@@ -3100,18 +3106,18 @@ proto.fintekkers.models.security.FrnDetailsProto.prototype.toObject = function(o
  */
 proto.fintekkers.models.security.FrnDetailsProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-couponType: jspb.Message.getFieldWithDefault(msg, 2, 0),
-couponFrequency: jspb.Message.getFieldWithDefault(msg, 3, 0),
-datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
+    couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    couponType: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    couponFrequency: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    datedDate: (f = msg.getDatedDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    faceValue: (f = msg.getFaceValue()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
     fintekkers_models_security_bond_issuance_pb.IssuanceProto.toObject, includeInstance),
-spread: (f = msg.getSpread()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-referenceRateIndex: jspb.Message.getFieldWithDefault(msg, 11, 0),
-resetFrequency: jspb.Message.getFieldWithDefault(msg, 12, 0)
+    spread: (f = msg.getSpread()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    referenceRateIndex: jspb.Message.getFieldWithDefault(msg, 11, 0),
+    resetFrequency: jspb.Message.getFieldWithDefault(msg, 12, 0)
   };
 
   if (includeInstance) {
@@ -3124,7 +3130,7 @@ resetFrequency: jspb.Message.getFieldWithDefault(msg, 12, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.FrnDetailsProto}
  */
 proto.fintekkers.models.security.FrnDetailsProto.deserializeBinary = function(bytes) {
@@ -3679,7 +3685,7 @@ proto.fintekkers.models.security.IndexDetailsProto.prototype.toObject = function
  */
 proto.fintekkers.models.security.IndexDetailsProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-indexType: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    indexType: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -3692,7 +3698,7 @@ indexType: jspb.Message.getFieldWithDefault(msg, 1, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.IndexDetailsProto}
  */
 proto.fintekkers.models.security.IndexDetailsProto.deserializeBinary = function(bytes) {
@@ -3822,7 +3828,7 @@ proto.fintekkers.models.security.EquityDetailsProto.toObject = function(includeI
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.EquityDetailsProto}
  */
 proto.fintekkers.models.security.EquityDetailsProto.deserializeBinary = function(bytes) {
@@ -3910,7 +3916,7 @@ proto.fintekkers.models.security.CashDetailsProto.prototype.toObject = function(
  */
 proto.fintekkers.models.security.CashDetailsProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-cashId: jspb.Message.getFieldWithDefault(msg, 1, "")
+    cashId: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -3923,7 +3929,7 @@ cashId: jspb.Message.getFieldWithDefault(msg, 1, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.CashDetailsProto}
  */
 proto.fintekkers.models.security.CashDetailsProto.deserializeBinary = function(bytes) {
@@ -3948,7 +3954,7 @@ proto.fintekkers.models.security.CashDetailsProto.deserializeBinaryFromReader = 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setCashId(value);
       break;
     default:
@@ -4040,9 +4046,9 @@ proto.fintekkers.models.security.FxSpotDetailsProto.prototype.toObject = functio
  */
 proto.fintekkers.models.security.FxSpotDetailsProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-baseCurrency: (f = msg.getBaseCurrency()) && proto.fintekkers.models.security.SecurityProto.toObject(includeInstance, f),
-quoteCurrency: (f = msg.getQuoteCurrency()) && proto.fintekkers.models.security.SecurityProto.toObject(includeInstance, f),
-convention: jspb.Message.getFieldWithDefault(msg, 3, "")
+    baseCurrency: (f = msg.getBaseCurrency()) && proto.fintekkers.models.security.SecurityProto.toObject(includeInstance, f),
+    quoteCurrency: (f = msg.getQuoteCurrency()) && proto.fintekkers.models.security.SecurityProto.toObject(includeInstance, f),
+    convention: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -4055,7 +4061,7 @@ convention: jspb.Message.getFieldWithDefault(msg, 3, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.models.security.FxSpotDetailsProto}
  */
 proto.fintekkers.models.security.FxSpotDetailsProto.deserializeBinary = function(bytes) {
@@ -4090,7 +4096,7 @@ proto.fintekkers.models.security.FxSpotDetailsProto.deserializeBinaryFromReader 
       msg.setQuoteCurrency(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setConvention(value);
       break;
     default:

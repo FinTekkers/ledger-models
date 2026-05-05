@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = globalThis;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
 
 var fintekkers_models_price_price_pb = require('../../../fintekkers/models/price/price_pb.js');
 goog.object.extend(proto, fintekkers_models_price_price_pb);
@@ -80,10 +86,10 @@ proto.fintekkers.requests.price.CreatePriceResponseProto.prototype.toObject = fu
  */
 proto.fintekkers.requests.price.CreatePriceResponseProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-createPriceRequest: (f = msg.getCreatePriceRequest()) && fintekkers_requests_price_create_price_request_pb.CreatePriceRequestProto.toObject(includeInstance, f),
-priceResponseList: jspb.Message.toObjectList(msg.getPriceResponseList(),
+    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    createPriceRequest: (f = msg.getCreatePriceRequest()) && fintekkers_requests_price_create_price_request_pb.CreatePriceRequestProto.toObject(includeInstance, f),
+    priceResponseList: jspb.Message.toObjectList(msg.getPriceResponseList(),
     fintekkers_models_price_price_pb.PriceProto.toObject, includeInstance)
   };
 
@@ -97,7 +103,7 @@ priceResponseList: jspb.Message.toObjectList(msg.getPriceResponseList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.fintekkers.requests.price.CreatePriceResponseProto}
  */
 proto.fintekkers.requests.price.CreatePriceResponseProto.deserializeBinary = function(bytes) {
@@ -122,11 +128,11 @@ proto.fintekkers.requests.price.CreatePriceResponseProto.deserializeBinaryFromRe
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setObjectClass(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
       break;
     case 20:
