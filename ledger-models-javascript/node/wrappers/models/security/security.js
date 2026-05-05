@@ -24,6 +24,24 @@ class Security {
                 return new Security(proto);
         }
     }
+    /**
+     * Type guard: true iff this Security is a BondSecurity (BOND_SECURITY,
+     * TIPS, or FRN). Use to narrow before calling bond-specific getters:
+     *
+     *   if (sec.isBond()) {
+     *     // sec: BondSecurity here — TS knows about getCouponRate(), etc.
+     *     console.log(sec.getMaturityDate());
+     *   }
+     *
+     * Implemented as a runtime check on the proto's securityType so it
+     * works regardless of how the wrapper was constructed.
+     */
+    isBond() {
+        const t = this.proto.getSecurityType();
+        return t === security_type_pb_1.SecurityTypeProto.BOND_SECURITY
+            || t === security_type_pb_1.SecurityTypeProto.TIPS
+            || t === security_type_pb_1.SecurityTypeProto.FRN;
+    }
     toString() {
         return `ID[${this.getID().toString()}], ${this.getSecurityID()}[${this.getIssuerName()}]`;
     }
@@ -49,8 +67,11 @@ class Security {
             case field_pb_1.FieldProto.ADJUSTED_TENOR:
                 throw new Error('Not implemented yet');
             case field_pb_1.FieldProto.MATURITY_DATE:
-                return this.getMaturityDate();
+                // Maturity date is bond-only. Mirror Java's Security.getField:
+                // delegate to BondSecurity, return null for non-bonds.
+                return this.isBond() ? this.getMaturityDate() : null;
             case field_pb_1.FieldProto.ISSUE_DATE:
+                // getIssueDate already returns null on non-bonds; just forward.
                 return this.getIssueDate();
             default:
                 throw new Error(`Field not mapped in Security wrapper: ${field}`);
@@ -93,14 +114,36 @@ class Security {
             throw new Error("Identifier is required");
         return identifier;
     }
+    /**
+     * Returns the issue date if set, else null. Per-type semantic:
+     *   - Bond / TIPS / FRN: auction date.
+     *   - Equity: IPO listing date (when present in source data).
+     *   - CPI series: first observation date.
+     *   - Cash / FX: typically null.
+     *
+     * Returns null on equities/cash/etc. that don't have an issue date set,
+     * rather than throwing — issue date is optional on the base Security.
+     * For bond-specific code paths, prefer narrowing first via isBond() and
+     * calling BondSecurity.getIssueDate() (which returns LocalDate, not null).
+     */
     getIssueDate() {
         // Prefer oneof bond sub-message if available, fall back to flat fields
         const bond = this.getBondLikeDetails();
         const date = bond ? bond.getIssueDate() : this.proto.getIssueDate();
         if (!date)
-            throw new Error("Issue date is required");
+            return null;
         return new date_1.LocalDate(date);
     }
+    /**
+     * @deprecated Maturity date is a bond-only concept. On the base Security
+     * this still throws when unset for backwards compatibility. Prefer
+     * narrowing first:
+     *
+     *   if (sec.isBond()) sec.getMaturityDate();   // BondSecurity, returns LocalDate
+     *
+     * In a future major version this method will move to BondSecurity only
+     * and TS will catch the misuse at compile time.
+     */
     getMaturityDate() {
         // Prefer oneof bond sub-message if available, fall back to flat fields
         const bond = this.getBondLikeDetails();

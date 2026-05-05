@@ -35,6 +35,14 @@ declare class BondSecurity extends Security {
      * @returns The price scale factor as a Decimal (0.01)
      */
     getPriceScaleFactor(): Decimal;
+    /**
+     * Bond issue date is the auction date and is required for bonds.
+     * Overrides Security.getIssueDate (which returns LocalDate | null on the
+     * base) with a non-nullable return type — for a properly-formed bond,
+     * issue date is always present, and TS callers narrowed via isBond()
+     * shouldn't have to null-check.
+     */
+    getIssueDate(): LocalDate;
     getProductType(): string;
 }
 export default BondSecurity;
