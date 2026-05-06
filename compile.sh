@@ -9,7 +9,9 @@ set -uo pipefail
 #                       Unit tests still run. Use this in CI or when services
 #                       are not available locally.
 
-# Ensure Homebrew tools (protoc, grpc_node_plugin) are on PATH
+# Ensure Homebrew is on PATH for any non-proto tools that come from there
+# (e.g. node, python). Proto generation pins to npm grpc-tools — see the
+# JS section below — so PATH-resolved protoc is no longer used.
 eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
@@ -109,23 +111,40 @@ PROTO_DIR="$REPO_ROOT/ledger-models-protos"
 JS_OUT="$JS_DIR/node"
 TS_PLUGIN="$JS_DIR/node_modules/.bin/protoc-gen-ts"
 
-# Use system protoc (ARM64 via Homebrew) + brew grpc_node_plugin
-# instead of the x86-only grpc-tools bundled protoc
-PROTOC="$(which protoc)"
-GRPC_PLUGIN="$(which grpc_node_plugin)"
+# Always use the npm grpc-tools toolchain (pinned in package.json devDeps,
+# bundles protoc 3.19.1 + grpc_node_plugin). This is the same toolchain
+# CI's compile.sh-gate workflow uses, so local regen produces byte-identical
+# output to CI — no host-toolchain drift.
+#
+# On Mac ARM the bundled binaries are x86_64; Rosetta 2 is required:
+#   softwareupdate --install-rosetta --agree-to-license
+#
+# History: this used to resolve via `which protoc` which picked up Homebrew's
+# protoc 34 + protoc-gen-js 4.0.2 on Mac, producing different bytes than CI's
+# protoc 3.19.1 — the gate fired on cosmetic drift on every proto edit. See
+# FinTekkers/second-brain#218 for the full diagnosis.
+PROTOC="$JS_DIR/node_modules/grpc-tools/bin/protoc"
+GRPC_PLUGIN="$JS_DIR/node_modules/grpc-tools/bin/grpc_node_plugin"
 
-if [ -z "$PROTOC" ] || [ -z "$GRPC_PLUGIN" ]; then
-    echo "ERROR: protoc or grpc_node_plugin not found. Install via: brew install protobuf grpc"
+if [ ! -x "$PROTOC" ] || [ ! -x "$GRPC_PLUGIN" ]; then
+    echo "ERROR: grpc-tools binaries not found at $JS_DIR/node_modules/grpc-tools/bin/"
+    echo "       Run: cd ledger-models-javascript && npm ci"
     JS_COMPILE="FAIL"
     fail "JavaScript compile — missing tools"
+elif ! "$PROTOC" --version > /dev/null 2>&1; then
+    echo "ERROR: $PROTOC could not execute. The bundled binary is x86_64;"
+    echo "       on Mac ARM you need Rosetta 2:"
+    echo "         softwareupdate --install-rosetta --agree-to-license"
+    JS_COMPILE="FAIL"
+    fail "JavaScript compile — protoc not executable on this host"
 else
     JS_COMPILE_OK=true
 
     cd "$PROTO_DIR"
 
-    # Generate JS + gRPC service stubs for services, requests, models
-    # Note: Homebrew grpc_node_plugin doesn't support the grpc_js parameter,
-    # so we generate with the default mode and post-process the imports.
+    # Generate JS + gRPC service stubs for services, requests, models.
+    # protoc 3.19.1 has the JS generator (--js_out) built in, and
+    # grpc_node_plugin from grpc-tools generates the gRPC stubs.
     for PATTERN in "**/services/**/*.proto" "**/requests/**/*.proto" "**/models/**/*.proto"; do
         if ! $PROTOC \
             --js_out=import_style=commonjs,binary:"$JS_OUT" \
