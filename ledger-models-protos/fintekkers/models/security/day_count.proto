@@ -1,0 +1,13 @@
+syntax = "proto3";
+package fintekkers.models.security;
+option java_multiple_files = true;
+option java_outer_classname = "DayCountProtos";
+
+enum DayCountConventionProto {
+  UNKNOWN_DAY_COUNT = 0;
+  ACTUAL_ACTUAL_ICMA = 1;    // US Treasuries, Euro Govt, UK Gilts
+  ACTUAL_365_FIXED = 2;      // JGBs
+  THIRTY_360_US = 3;         // US Corporate, Muni, Agency
+  THIRTY_E_360 = 4;          // Eurobonds
+  ACTUAL_360 = 5;            // Money market, bank loans, CDs
+}
