@@ -85,6 +85,23 @@ The above philosophy is very important so that we don't end up re-using a techni
 
 Equivalently: `git status` should be empty after `./compile.sh --skip-integration` exits cleanly. If it isn't, stage and commit whatever it produced.
 
+### Toolchain
+
+`compile.sh` pins its proto generators to the npm `grpc-tools` package (a `devDependency` of `ledger-models-javascript`, ships protoc 3.19.1 + `grpc_node_plugin`). This is the same toolchain CI uses, so local regen produces byte-identical output to CI on every host.
+
+Prerequisites:
+
+- `cd ledger-models-javascript && npm ci` — installs `grpc-tools` into `node_modules/`.
+- **Mac ARM only**: install Rosetta 2 once. The bundled `grpc-tools` binaries are x86_64.
+
+  ```
+  softwareupdate --install-rosetta --agree-to-license
+  ```
+
+  After that, `compile.sh` runs natively (Rosetta is fast — typically 2-5× slower than native, far better than full QEMU emulation). No docker harness needed.
+
+Java, Python, and Rust toolchains are also pinned (gradle protobuf plugin, `requirements.txt`, `Cargo.lock` + sorted `gen.rs`), so the four-language regen is fully deterministic across hosts.
+
 ## Publishing
 
 Publishing of java/rust/etc packages are done via GitHub actions when PRs are integrated. If you need to publish a package locally or get a snapshot, this is currently manual
