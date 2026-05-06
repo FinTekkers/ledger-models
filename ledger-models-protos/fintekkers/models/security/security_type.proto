@@ -16,4 +16,7 @@ enum SecurityTypeProto {
   INDEX_SECURITY = 6;
   FX_SPOT = 7;
   EQUITY_INDEX_SECURITY = 8;  // Equity market indices (DJIA, S&P 500, Nasdaq-100, etc.)
+  BANK_LOAN = 9;
+  FUTURES_CONTRACT = 10;
+  CERTIFICATE_OF_DEPOSIT = 11;
 }
