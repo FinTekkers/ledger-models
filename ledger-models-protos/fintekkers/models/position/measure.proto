@@ -405,4 +405,31 @@ enum MeasureProto {
   // Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
   // Units: Dollars per basis point.
   DV01 = 25;
+
+  // Z-spread: static spread over benchmark yield curve
+  Z_SPREAD = 26;
+
+  // Spread DV01: dollar sensitivity to 1bp spread change
+  SPREAD_DV01 = 27;
+
+  // Basis: futures price minus spot price (for futures)
+  BASIS = 28;
+
+  // Invoice price: futures settlement price x conversion factor + accrued interest (for futures)
+  INVOICE_PRICE = 29;
+
+  // Implied repo rate: return from cash-and-carry arbitrage (for futures)
+  IMPLIED_REPO_RATE = 30;
+
+  // Convexity adjustment: bias between futures and forward rates
+  FUTURES_CONVEXITY_ADJUSTMENT = 31;
+
+  // Carrying value: for bank loans, the current outstanding principal
+  CARRYING_VALUE = 32;
+
+  // Discount yield: for CDs, the annualized yield on a discount basis
+  DISCOUNT_YIELD = 33;
+
+  // Bond-equivalent yield: for CDs, yield converted to semiannual bond-equivalent
+  BOND_EQUIVALENT_YIELD = 34;
 }
