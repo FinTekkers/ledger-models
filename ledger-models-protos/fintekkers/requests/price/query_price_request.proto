@@ -48,12 +48,17 @@ message QueryPriceRequestProto {
 
   // Optional: Used to filter the price frequency and horizon
   PriceFrequencyProto frequency = 24;
-  
+
   oneof time_range{
      PriceHorizonProto horizon = 25;
      fintekkers.models.util.DateRangeProto date_range = 26;
   }
 
+  // Maximum number of price records the server may return. If unset or < 1
+  // the server applies a default cap (typically 1000) and surfaces a warning
+  // in QueryPriceResponseProto.errors_or_warnings. Servers may also enforce
+  // a hard ceiling above which `limit` is clamped silently.
+  int32 limit = 27;
 }
 
 

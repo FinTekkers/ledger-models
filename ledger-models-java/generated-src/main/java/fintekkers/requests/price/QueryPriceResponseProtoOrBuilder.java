@@ -69,4 +69,37 @@ public interface QueryPriceResponseProtoOrBuilder extends
    */
   fintekkers.models.price.PriceProtoOrBuilder getPriceResponseOrBuilder(
       int index);
+
+  /**
+   * <pre>
+   *If no errors or warnings in the response then the request was processed successfully without any
+   *contingencies. Servers populate this with a warning when `limit` was unset and a default cap was
+   *applied, or when other notable behavior occurred (matching QueryTransactionResponseProto).
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   * @return Whether the errorsOrWarnings field is set.
+   */
+  boolean hasErrorsOrWarnings();
+  /**
+   * <pre>
+   *If no errors or warnings in the response then the request was processed successfully without any
+   *contingencies. Servers populate this with a warning when `limit` was unset and a default cap was
+   *applied, or when other notable behavior occurred (matching QueryTransactionResponseProto).
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   * @return The errorsOrWarnings.
+   */
+  fintekkers.requests.util.errors.Summary.SummaryProto getErrorsOrWarnings();
+  /**
+   * <pre>
+   *If no errors or warnings in the response then the request was processed successfully without any
+   *contingencies. Servers populate this with a warning when `limit` was unset and a default cap was
+   *applied, or when other notable behavior occurred (matching QueryTransactionResponseProto).
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   */
+  fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getErrorsOrWarningsOrBuilder();
 }

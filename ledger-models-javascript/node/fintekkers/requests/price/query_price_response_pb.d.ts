@@ -7,6 +7,7 @@
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_price_price_pb from "../../../fintekkers/models/price/price_pb";
 import * as fintekkers_requests_price_query_price_request_pb from "../../../fintekkers/requests/price/query_price_request_pb";
+import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
 
 export class QueryPriceResponseProto extends jspb.Message { 
     getObjectClass(): string;
@@ -22,6 +23,11 @@ export class QueryPriceResponseProto extends jspb.Message {
     getPriceResponseList(): Array<fintekkers_models_price_price_pb.PriceProto>;
     setPriceResponseList(value: Array<fintekkers_models_price_price_pb.PriceProto>): QueryPriceResponseProto;
     addPriceResponse(value?: fintekkers_models_price_price_pb.PriceProto, index?: number): fintekkers_models_price_price_pb.PriceProto;
+
+    hasErrorsOrWarnings(): boolean;
+    clearErrorsOrWarnings(): void;
+    getErrorsOrWarnings(): fintekkers_requests_util_errors_summary_pb.SummaryProto | undefined;
+    setErrorsOrWarnings(value?: fintekkers_requests_util_errors_summary_pb.SummaryProto): QueryPriceResponseProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QueryPriceResponseProto.AsObject;
@@ -39,5 +45,6 @@ export namespace QueryPriceResponseProto {
         version: string,
         queryPriceRequest?: fintekkers_requests_price_query_price_request_pb.QueryPriceRequestProto.AsObject,
         priceResponseList: Array<fintekkers_models_price_price_pb.PriceProto.AsObject>,
+        errorsOrWarnings?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,
     }
 }

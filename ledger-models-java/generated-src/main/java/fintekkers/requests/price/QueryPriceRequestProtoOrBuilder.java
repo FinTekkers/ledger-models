@@ -135,5 +135,18 @@ public interface QueryPriceRequestProtoOrBuilder extends
    */
   fintekkers.models.util.DateRange.DateRangeProtoOrBuilder getDateRangeOrBuilder();
 
+  /**
+   * <pre>
+   * Maximum number of price records the server may return. If unset or &lt; 1
+   * the server applies a default cap (typically 1000) and surfaces a warning
+   * in QueryPriceResponseProto.errors_or_warnings. Servers may also enforce
+   * a hard ceiling above which `limit` is clamped silently.
+   * </pre>
+   *
+   * <code>int32 limit = 27;</code>
+   * @return The limit.
+   */
+  int getLimit();
+
   public fintekkers.requests.price.QueryPriceRequestProto.TimeRangeCase getTimeRangeCase();
 }

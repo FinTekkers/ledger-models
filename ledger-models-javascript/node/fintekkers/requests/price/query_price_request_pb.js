@@ -127,7 +127,8 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.toObject = function(inclu
     asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     frequency: jspb.Message.getFieldWithDefault(msg, 24, 0),
     horizon: jspb.Message.getFieldWithDefault(msg, 25, 0),
-    dateRange: (f = msg.getDateRange()) && fintekkers_models_util_date_range_pb.DateRangeProto.toObject(includeInstance, f)
+    dateRange: (f = msg.getDateRange()) && fintekkers_models_util_date_range_pb.DateRangeProto.toObject(includeInstance, f),
+    limit: jspb.Message.getFieldWithDefault(msg, 27, 0)
   };
 
   if (includeInstance) {
@@ -199,6 +200,10 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.deserializeBinaryFromRead
       var value = new fintekkers_models_util_date_range_pb.DateRangeProto;
       reader.readMessage(value,fintekkers_models_util_date_range_pb.DateRangeProto.deserializeBinaryFromReader);
       msg.setDateRange(value);
+      break;
+    case 27:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setLimit(value);
       break;
     default:
       reader.skipField();
@@ -287,6 +292,13 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.serializeBinaryToWriter =
       26,
       f,
       fintekkers_models_util_date_range_pb.DateRangeProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getLimit();
+  if (f !== 0) {
+    writer.writeInt32(
+      27,
+      f
     );
   }
 };
@@ -528,6 +540,24 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.clearDateRange 
  */
 proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.hasDateRange = function() {
   return jspb.Message.getField(this, 26) != null;
+};
+
+
+/**
+ * optional int32 limit = 27;
+ * @return {number}
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.getLimit = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 27, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.price.QueryPriceRequestProto} returns this
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.setLimit = function(value) {
+  return jspb.Message.setProto3IntField(this, 27, value);
 };
 
 
