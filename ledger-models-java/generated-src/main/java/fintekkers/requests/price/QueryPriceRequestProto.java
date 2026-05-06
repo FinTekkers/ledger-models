@@ -347,6 +347,24 @@ private static final long serialVersionUID = 0L;
     return fintekkers.models.util.DateRange.DateRangeProto.getDefaultInstance();
   }
 
+  public static final int LIMIT_FIELD_NUMBER = 27;
+  private int limit_ = 0;
+  /**
+   * <pre>
+   * Maximum number of price records the server may return. If unset or &lt; 1
+   * the server applies a default cap (typically 1000) and surfaces a warning
+   * in QueryPriceResponseProto.errors_or_warnings. Servers may also enforce
+   * a hard ceiling above which `limit` is clamped silently.
+   * </pre>
+   *
+   * <code>int32 limit = 27;</code>
+   * @return The limit.
+   */
+  @java.lang.Override
+  public int getLimit() {
+    return limit_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -384,6 +402,9 @@ private static final long serialVersionUID = 0L;
     }
     if (timeRangeCase_ == 26) {
       output.writeMessage(26, (fintekkers.models.util.DateRange.DateRangeProto) timeRange_);
+    }
+    if (limit_ != 0) {
+      output.writeInt32(27, limit_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -424,6 +445,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(26, (fintekkers.models.util.DateRange.DateRangeProto) timeRange_);
     }
+    if (limit_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(27, limit_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -456,6 +481,8 @@ private static final long serialVersionUID = 0L;
           .equals(other.getAsOf())) return false;
     }
     if (frequency_ != other.frequency_) return false;
+    if (getLimit()
+        != other.getLimit()) return false;
     if (!getTimeRangeCase().equals(other.getTimeRangeCase())) return false;
     switch (timeRangeCase_) {
       case 25:
@@ -498,6 +525,8 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + FREQUENCY_FIELD_NUMBER;
     hash = (53 * hash) + frequency_;
+    hash = (37 * hash) + LIMIT_FIELD_NUMBER;
+    hash = (53 * hash) + getLimit();
     switch (timeRangeCase_) {
       case 25:
         hash = (37 * hash) + HORIZON_FIELD_NUMBER;
@@ -662,6 +691,7 @@ private static final long serialVersionUID = 0L;
       if (dateRangeBuilder_ != null) {
         dateRangeBuilder_.clear();
       }
+      limit_ = 0;
       timeRangeCase_ = 0;
       timeRange_ = null;
       return this;
@@ -729,6 +759,9 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000020) != 0)) {
         result.frequency_ = frequency_;
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.limit_ = limit_;
       }
     }
 
@@ -830,6 +863,9 @@ private static final long serialVersionUID = 0L;
       if (other.frequency_ != 0) {
         setFrequencyValue(other.getFrequencyValue());
       }
+      if (other.getLimit() != 0) {
+        setLimit(other.getLimit());
+      }
       switch (other.getTimeRangeCase()) {
         case HORIZON: {
           setHorizonValue(other.getHorizonValue());
@@ -924,6 +960,11 @@ private static final long serialVersionUID = 0L;
               timeRangeCase_ = 26;
               break;
             } // case 210
+            case 216: {
+              limit_ = input.readInt32();
+              bitField0_ |= 0x00000100;
+              break;
+            } // case 216
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1861,6 +1902,59 @@ private static final long serialVersionUID = 0L;
       timeRangeCase_ = 26;
       onChanged();
       return dateRangeBuilder_;
+    }
+
+    private int limit_ ;
+    /**
+     * <pre>
+     * Maximum number of price records the server may return. If unset or &lt; 1
+     * the server applies a default cap (typically 1000) and surfaces a warning
+     * in QueryPriceResponseProto.errors_or_warnings. Servers may also enforce
+     * a hard ceiling above which `limit` is clamped silently.
+     * </pre>
+     *
+     * <code>int32 limit = 27;</code>
+     * @return The limit.
+     */
+    @java.lang.Override
+    public int getLimit() {
+      return limit_;
+    }
+    /**
+     * <pre>
+     * Maximum number of price records the server may return. If unset or &lt; 1
+     * the server applies a default cap (typically 1000) and surfaces a warning
+     * in QueryPriceResponseProto.errors_or_warnings. Servers may also enforce
+     * a hard ceiling above which `limit` is clamped silently.
+     * </pre>
+     *
+     * <code>int32 limit = 27;</code>
+     * @param value The limit to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLimit(int value) {
+      
+      limit_ = value;
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Maximum number of price records the server may return. If unset or &lt; 1
+     * the server applies a default cap (typically 1000) and surfaces a warning
+     * in QueryPriceResponseProto.errors_or_warnings. Servers may also enforce
+     * a hard ceiling above which `limit` is clamped silently.
+     * </pre>
+     *
+     * <code>int32 limit = 27;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearLimit() {
+      bitField0_ = (bitField0_ & ~0x00000100);
+      limit_ = 0;
+      onChanged();
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(
