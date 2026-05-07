@@ -495,6 +495,63 @@ pub struct FxSpotDetailsProto {
     #[prost(string, tag = "3")]
     pub convention: ::prost::alloc::string::String,
 }
+/// Canonical vocabulary for the asset class of a security.
+///
+/// Note: the SecurityProto.asset_class field is currently `string` (security.proto
+/// field 11). This enum defines the canonical values; the field type stays
+/// string in this release to avoid coordinating a breaking change with
+/// ledger-service / valuation-service / market-data-inputs. A follow-up
+/// will flip the field type after a data-normalization audit.
+///
+/// Initial values are conservative — only those with active usage in the
+/// codebase as of the v0.1.x line:
+///    Cash, Equity, Fixed Income, Index
+/// Add new variants only when there is concrete consumer demand.
+///
+/// Naming note: proto3 enforces package-wide uniqueness for enum value
+/// names (C++ scoping rules — enum values are siblings of their type, not
+/// children of it). `IdentifierTypeProto.CASH` already exists in this
+/// package, so the cash-asset-class value is named `CASH_ASSET_CLASS` to
+/// disambiguate. The other values (FIXED_INCOME, EQUITY, INDEX) are
+/// unique within the package and stay bare.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum AssetClassProto {
+    UnknownAssetClass = 0,
+    FixedIncome = 1,
+    Equity = 2,
+    CashAssetClass = 3,
+    /// INDEX covers reference instruments like SP500, CMT-derived treasury
+    /// indices, etc. — used in market-data-inputs today. Borderline as an
+    /// "asset class" in finance terminology, but matches in-use data.
+    Index = 4,
+}
+impl AssetClassProto {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            AssetClassProto::UnknownAssetClass => "UNKNOWN_ASSET_CLASS",
+            AssetClassProto::FixedIncome => "FIXED_INCOME",
+            AssetClassProto::Equity => "EQUITY",
+            AssetClassProto::CashAssetClass => "CASH_ASSET_CLASS",
+            AssetClassProto::Index => "INDEX",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_ASSET_CLASS" => Some(Self::UnknownAssetClass),
+            "FIXED_INCOME" => Some(Self::FixedIncome),
+            "EQUITY" => Some(Self::Equity),
+            "CASH_ASSET_CLASS" => Some(Self::CashAssetClass),
+            "INDEX" => Some(Self::Index),
+            _ => None,
+        }
+    }
+}
 /// A point-in-time snapshot of an equity index's constituent securities and weights.
 ///
 /// Temporal model (identical to PriceProto):
