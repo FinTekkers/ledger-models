@@ -45,7 +45,27 @@ public enum Measure {
             "Formula: MarketValue - (UnadjustedCostBasis / 100 * DirectedQuantity). Units: Dollars."),
 
     PROFIT_LOSS_PERCENT("The profit or loss as a percentage of the original cost basis. " +
-            "Formula: ProfitLoss / (UnadjustedCostBasis / 100 * DirectedQuantity). Units: Decimal (0-1 scale).");
+            "Formula: ProfitLoss / (UnadjustedCostBasis / 100 * DirectedQuantity). Units: Decimal (0-1 scale)."),
+
+    ACCRUED_INTEREST("Bond coupon interest earned but not yet paid since the last coupon date. " +
+            "Computed by valuation-service from coupon_rate, coupon_frequency, and the day-count " +
+            "fraction between the last coupon and the as-of date. Bond-specific; null for non-bonds."),
+
+    DIRTY_PRICE("Bond invoice price including accrued interest, expressed as % of par. " +
+            "Computed by valuation-service as DirtyPrice = market_value / directed_quantity * 100. " +
+            "Bond-specific; null for non-bonds."),
+
+    CLEAN_PRICE("Bond quoted price excluding accrued interest, expressed as % of par. " +
+            "Computed by valuation-service as CleanPrice = DirtyPrice − (AccruedInterest / DirectedQuantity * 100). " +
+            "Bond-specific; null for non-bonds."),
+
+    CONVEXITY("Second-order sensitivity of bond price to yield changes (curvature of the price-yield curve). " +
+            "Computed by valuation-service as Σ[t(t+1) × PV_t] / (P_dollar × n² × (1+r)²). " +
+            "Bond-specific; null for non-bonds."),
+
+    MODIFIED_DURATION("First-order sensitivity of bond price to yield changes, expressed in years. " +
+            "Computed by valuation-service as MacaulayDuration / (1 + y/n). " +
+            "Bond-specific; null for non-bonds.");
 
     static {
         Set<String> measureNames = Arrays.stream(Measure.values())
