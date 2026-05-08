@@ -37,6 +37,48 @@ pass() { echo "  ✓ $1"; }
 fail() { echo "  ✗ $1"; FAILED=1; }
 
 ###########################################
+######### TOOLCHAIN PIN ENFORCEMENT #######
+###########################################
+# Per FinTekkers/second-brain#228, all four language regen toolchains are
+# pinned so output is byte-deterministic across hosts:
+#   - JS:     npm grpc-tools (bundles protoc 3.19.1 + grpc_node_plugin),
+#             pinned in ledger-models-javascript/package.json devDeps.
+#             See compile.sh-gate ticket #218 for history.
+#   - Rust:   tonic-build / prost-build pinned in Cargo.lock; gen.rs sorts
+#             walkdir output for filesystem-independence; PROTOC env points
+#             at the same npm grpc-tools binary used by JS so the .bin
+#             descriptor bytes match CI byte-for-byte.
+#   - Python: grpcio-tools + protobuf pinned in requirements.txt. Versions
+#             are baked into generated *_pb2*.py headers, so unpinned drift
+#             produces ~80 spurious header diffs on every regen.
+#   - Java:   protocVersion / grpcVersion / protobuf-gradle-plugin all
+#             pinned in ledger-models-java/build.gradle. Already
+#             host-deterministic; no compile.sh-side action needed.
+#
+# Rosetta dependency on Mac ARM: the npm grpc-tools binaries are x86_64.
+# One-time install:  softwareupdate --install-rosetta --agree-to-license
+JS_DIR="$REPO_ROOT/ledger-models-javascript"
+PROTO_DIR="$REPO_ROOT/ledger-models-protos"
+JS_OUT="$JS_DIR/node"
+TS_PLUGIN="$JS_DIR/node_modules/.bin/protoc-gen-ts"
+PROTOC="$JS_DIR/node_modules/grpc-tools/bin/protoc"
+GRPC_PLUGIN="$JS_DIR/node_modules/grpc-tools/bin/grpc_node_plugin"
+
+# Pre-flight: the bundled toolchain must exist before Rust/JS regen runs.
+# CI installs it via `npm ci` before invoking compile.sh; locally it's
+# whatever the developer last installed.
+if [ ! -x "$PROTOC" ] || [ ! -x "$GRPC_PLUGIN" ]; then
+    echo "ERROR: grpc-tools binaries not found at $JS_DIR/node_modules/grpc-tools/bin/"
+    echo "       Run: cd ledger-models-javascript && npm ci"
+    exit 1
+elif ! "$PROTOC" --version > /dev/null 2>&1; then
+    echo "ERROR: $PROTOC could not execute. The bundled binary is x86_64;"
+    echo "       on Mac ARM you need Rosetta 2:"
+    echo "         softwareupdate --install-rosetta --agree-to-license"
+    exit 1
+fi
+
+###########################################
 ######### CATALOG FILE DISTRIBUTION #######
 ###########################################
 echo "=== Distributing catalog files ==="
@@ -62,7 +104,12 @@ pass "Catalog files copied to all languages"
 #########################################
 echo ""
 echo "=== Rust: generating protos ==="
-if (cd ledger-models-rust && cargo run --bin gen 2>&1); then
+# tonic-build / prost-build invoke `which protoc` if PROTOC is unset.
+# Pin to the same npm grpc-tools binary used by the JS section so the
+# descriptor.bin bytes are stable across hosts (different protoc minor
+# versions emit slightly different source_code_info / syntax encoding
+# fields in the FileDescriptorSet — generated *.rs files don't differ).
+if (cd ledger-models-rust && PROTOC="$PROTOC" cargo run --bin gen 2>&1); then
     RUST_COMPILE="PASS"
     pass "Rust compile"
 else
@@ -106,112 +153,83 @@ fi
 echo ""
 echo "=== JavaScript: generating protos ==="
 
-JS_DIR="$REPO_ROOT/ledger-models-javascript"
-PROTO_DIR="$REPO_ROOT/ledger-models-protos"
-JS_OUT="$JS_DIR/node"
-TS_PLUGIN="$JS_DIR/node_modules/.bin/protoc-gen-ts"
+# JS_DIR / PROTO_DIR / JS_OUT / TS_PLUGIN / PROTOC / GRPC_PLUGIN all defined
+# in the toolchain pin block at the top of this script. Pre-flight check
+# (binaries exist + executable) also happens there, so by the time we get
+# here those guarantees hold — JS_COMPILE_OK can start at true.
+JS_COMPILE_OK=true
 
-# Always use the npm grpc-tools toolchain (pinned in package.json devDeps,
-# bundles protoc 3.19.1 + grpc_node_plugin). This is the same toolchain
-# CI's compile.sh-gate workflow uses, so local regen produces byte-identical
-# output to CI — no host-toolchain drift.
-#
-# On Mac ARM the bundled binaries are x86_64; Rosetta 2 is required:
-#   softwareupdate --install-rosetta --agree-to-license
-#
-# History: this used to resolve via `which protoc` which picked up Homebrew's
-# protoc 34 + protoc-gen-js 4.0.2 on Mac, producing different bytes than CI's
-# protoc 3.19.1 — the gate fired on cosmetic drift on every proto edit. See
-# FinTekkers/second-brain#218 for the full diagnosis.
-PROTOC="$JS_DIR/node_modules/grpc-tools/bin/protoc"
-GRPC_PLUGIN="$JS_DIR/node_modules/grpc-tools/bin/grpc_node_plugin"
+cd "$PROTO_DIR"
 
-if [ ! -x "$PROTOC" ] || [ ! -x "$GRPC_PLUGIN" ]; then
-    echo "ERROR: grpc-tools binaries not found at $JS_DIR/node_modules/grpc-tools/bin/"
-    echo "       Run: cd ledger-models-javascript && npm ci"
-    JS_COMPILE="FAIL"
-    fail "JavaScript compile — missing tools"
-elif ! "$PROTOC" --version > /dev/null 2>&1; then
-    echo "ERROR: $PROTOC could not execute. The bundled binary is x86_64;"
-    echo "       on Mac ARM you need Rosetta 2:"
-    echo "         softwareupdate --install-rosetta --agree-to-license"
-    JS_COMPILE="FAIL"
-    fail "JavaScript compile — protoc not executable on this host"
-else
-    JS_COMPILE_OK=true
-
-    cd "$PROTO_DIR"
-
-    # Generate JS + gRPC service stubs for services, requests, models.
-    # protoc 3.19.1 has the JS generator (--js_out) built in, and
-    # grpc_node_plugin from grpc-tools generates the gRPC stubs.
-    for PATTERN in "**/services/**/*.proto" "**/requests/**/*.proto" "**/models/**/*.proto"; do
-        if ! $PROTOC \
-            --js_out=import_style=commonjs,binary:"$JS_OUT" \
-            --grpc_out="$JS_OUT" \
-            --plugin=protoc-gen-grpc="$GRPC_PLUGIN" \
-            -I . \
-            $(find . -ipath "$PATTERN") 2>&1; then
-            JS_COMPILE_OK=false
-        fi
-    done
-
-    # Fix gRPC imports: grpc_node_plugin generates require('grpc') but the
-    # project uses @grpc/grpc-js. Patch the generated files in place.
-    # `sed -i.bak ... && rm` is portable across BSD (macOS) and GNU (Linux) sed
-    # — `sed -i ''` is BSD-only and silently no-ops on Linux.
-    find "$JS_OUT" -name "*_grpc_pb.js" -exec sed -i.bak "s/require('grpc')/require('@grpc\/grpc-js')/g" {} +
-    find "$JS_OUT" -name "*_grpc_pb.js.bak" -delete
-
-    # Generate TypeScript definitions
+# Generate JS + gRPC service stubs for services, requests, models.
+# protoc 3.19.1 has the JS generator (--js_out) built in, and
+# grpc_node_plugin from grpc-tools generates the gRPC stubs.
+for PATTERN in "**/services/**/*.proto" "**/requests/**/*.proto" "**/models/**/*.proto"; do
     if ! $PROTOC \
-        --plugin=protoc-gen-ts="$TS_PLUGIN" \
-        --ts_out=grpc_js:"$JS_OUT" \
+        --js_out=import_style=commonjs,binary:"$JS_OUT" \
+        --grpc_out="$JS_OUT" \
+        --plugin=protoc-gen-grpc="$GRPC_PLUGIN" \
         -I . \
-        $(find . -iname "*.proto") 2>&1; then
+        $(find . -ipath "$PATTERN") 2>&1; then
         JS_COMPILE_OK=false
     fi
+done
 
-    cd "$REPO_ROOT"
+# Fix gRPC imports: grpc_node_plugin generates require('grpc') but the
+# project uses @grpc/grpc-js. Patch the generated files in place.
+# `sed -i.bak ... && rm` is portable across BSD (macOS) and GNU (Linux) sed
+# — `sed -i ''` is BSD-only and silently no-ops on Linux.
+find "$JS_OUT" -name "*_grpc_pb.js" -exec sed -i.bak "s/require('grpc')/require('@grpc\/grpc-js')/g" {} +
+find "$JS_OUT" -name "*_grpc_pb.js.bak" -delete
 
-    # Compile TypeScript wrappers
-    if ! "$JS_DIR/node_modules/.bin/tsc" -p "$JS_DIR/tsconfig.json" 2>&1; then
-        JS_COMPILE_OK=false
-    fi
+# Generate TypeScript definitions
+if ! $PROTOC \
+    --plugin=protoc-gen-ts="$TS_PLUGIN" \
+    --ts_out=grpc_js:"$JS_OUT" \
+    -I . \
+    $(find . -iname "*.proto") 2>&1; then
+    JS_COMPILE_OK=false
+fi
 
-    if $JS_COMPILE_OK; then
-        JS_COMPILE="PASS"
-        pass "JavaScript compile"
+cd "$REPO_ROOT"
+
+# Compile TypeScript wrappers
+if ! "$JS_DIR/node_modules/.bin/tsc" -p "$JS_DIR/tsconfig.json" 2>&1; then
+    JS_COMPILE_OK=false
+fi
+
+if $JS_COMPILE_OK; then
+    JS_COMPILE="PASS"
+    pass "JavaScript compile"
+else
+    JS_COMPILE="FAIL"
+    fail "JavaScript compile"
+fi
+
+echo "=== JavaScript: running unit tests ==="
+# Exclude all tests in wrappers/services/<*-service>/ — they require a running backend.
+# wrappers/services/apikey.test.ts (no subdir) is a unit test and is NOT excluded.
+if (cd "$JS_DIR" && npm test -- --testPathIgnorePatterns="wrappers/services/[a-z]+-service" 2>&1); then
+    JS_TESTS="PASS"
+    pass "JavaScript unit tests"
+else
+    JS_TESTS="FAIL"
+    fail "JavaScript unit tests"
+fi
+
+if $SKIP_INTEGRATION; then
+    echo "  - JavaScript integration tests: skipped (--skip-integration)"
+else
+    echo "=== JavaScript: running service integration tests ==="
+    JS_INTEG_OUTPUT=$(cd "$JS_DIR" && npm test -- --testPathPattern="wrappers/services/[a-z]+-service" 2>&1)
+    echo "$JS_INTEG_OUTPUT" | tail -5
+    JS_INTEG_PASSED=$(echo "$JS_INTEG_OUTPUT" | grep -oE '[0-9]+ passed' | head -1)
+    JS_INTEG_FAILED=$(echo "$JS_INTEG_OUTPUT" | grep -oE '[0-9]+ failed' | head -1)
+    if [ -n "$JS_INTEG_FAILED" ] && [ "$JS_INTEG_FAILED" != "0 failed" ]; then
+        JS_INTEG="${JS_INTEG_PASSED:-0 passed}, ${JS_INTEG_FAILED}"
+        echo "  - JavaScript integration: $JS_INTEG (service-dependent — does not block build)"
     else
-        JS_COMPILE="FAIL"
-        fail "JavaScript compile"
-    fi
-
-    echo "=== JavaScript: running unit tests ==="
-    # Exclude all tests in wrappers/services/<*-service>/ — they require a running backend.
-    # wrappers/services/apikey.test.ts (no subdir) is a unit test and is NOT excluded.
-    if (cd "$JS_DIR" && npm test -- --testPathIgnorePatterns="wrappers/services/[a-z]+-service" 2>&1); then
-        JS_TESTS="PASS"
-        pass "JavaScript unit tests"
-    else
-        JS_TESTS="FAIL"
-        fail "JavaScript unit tests"
-    fi
-
-    if $SKIP_INTEGRATION; then
-        echo "  - JavaScript integration tests: skipped (--skip-integration)"
-    else
-        echo "=== JavaScript: running service integration tests ==="
-        JS_INTEG_OUTPUT=$(cd "$JS_DIR" && npm test -- --testPathPattern="wrappers/services/[a-z]+-service" 2>&1)
-        echo "$JS_INTEG_OUTPUT" | tail -5
-        JS_INTEG_PASSED=$(echo "$JS_INTEG_OUTPUT" | grep -oE '[0-9]+ passed' | head -1)
-        JS_INTEG_FAILED=$(echo "$JS_INTEG_OUTPUT" | grep -oE '[0-9]+ failed' | head -1)
-        if [ -n "$JS_INTEG_FAILED" ] && [ "$JS_INTEG_FAILED" != "0 failed" ]; then
-            JS_INTEG="${JS_INTEG_PASSED:-0 passed}, ${JS_INTEG_FAILED}"
-            echo "  - JavaScript integration: $JS_INTEG (service-dependent — does not block build)"
-        else
-            pass "JavaScript service integration tests"
-        fi
+        pass "JavaScript service integration tests"
     fi
 fi
 
@@ -221,21 +239,17 @@ fi
 echo ""
 echo "=== Python: generating protos ==="
 
-# Create and setup virtual environment if needed.
-# Install from ledger-models-python/requirements.txt — that pulls in
-# grpcio-tools (for protoc), pytest (for the unit tests), and the runtime
-# deps the generated bindings need. A fresh venv with only grpcio-tools
-# fails at the pytest step, which is silent on machines that have a
-# pre-existing venv with pytest already installed (i.e. local dev) and
-# only surfaces in CI.
+# Create the venv if missing, then ALWAYS sync from requirements.txt.
+# requirements.txt pins grpcio-tools and protobuf (their versions are
+# baked into generated *_pb2*.py headers); an unsynced existing venv
+# could still hold older/newer versions and produce drift on regen.
+# pip install is idempotent and fast when nothing changes.
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
     python3 -m venv venv
-    source venv/bin/activate
-    pip install -r ledger-models-python/requirements.txt 2>&1
-else
-    source venv/bin/activate
 fi
+source venv/bin/activate
+pip install --quiet -r ledger-models-python/requirements.txt 2>&1
 
 cd "$PROTO_DIR"
 if python -m grpc_tools.protoc -I=. \
