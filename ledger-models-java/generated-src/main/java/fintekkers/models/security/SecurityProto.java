@@ -345,10 +345,11 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.util.LocalTimestamp.LocalTimestampProto deletedAt_;
   /**
    * <pre>
-   * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-   * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-   * clearing it on a subsequent CreateOrUpdate resurrects the record.
+   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+   * at this timestamp. SecurityService.Search and GetByIds filter out
+   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+   * the record.
    * See: https://github.com/FinTekkers/second-brain/issues/188
    * </pre>
    *
@@ -361,10 +362,11 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-   * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-   * clearing it on a subsequent CreateOrUpdate resurrects the record.
+   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+   * at this timestamp. SecurityService.Search and GetByIds filter out
+   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+   * the record.
    * See: https://github.com/FinTekkers/second-brain/issues/188
    * </pre>
    *
@@ -377,10 +379,11 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-   * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-   * clearing it on a subsequent CreateOrUpdate resurrects the record.
+   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+   * at this timestamp. SecurityService.Search and GetByIds filter out
+   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+   * the record.
    * See: https://github.com/FinTekkers/second-brain/issues/188
    * </pre>
    *
@@ -3764,10 +3767,11 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto, fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder, fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder> deletedAtBuilder_;
     /**
      * <pre>
-     * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-     * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-     * clearing it on a subsequent CreateOrUpdate resurrects the record.
+     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+     * at this timestamp. SecurityService.Search and GetByIds filter out
+     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+     * the record.
      * See: https://github.com/FinTekkers/second-brain/issues/188
      * </pre>
      *
@@ -3779,10 +3783,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-     * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-     * clearing it on a subsequent CreateOrUpdate resurrects the record.
+     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+     * at this timestamp. SecurityService.Search and GetByIds filter out
+     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+     * the record.
      * See: https://github.com/FinTekkers/second-brain/issues/188
      * </pre>
      *
@@ -3798,10 +3803,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-     * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-     * clearing it on a subsequent CreateOrUpdate resurrects the record.
+     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+     * at this timestamp. SecurityService.Search and GetByIds filter out
+     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+     * the record.
      * See: https://github.com/FinTekkers/second-brain/issues/188
      * </pre>
      *
@@ -3822,10 +3828,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-     * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-     * clearing it on a subsequent CreateOrUpdate resurrects the record.
+     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+     * at this timestamp. SecurityService.Search and GetByIds filter out
+     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+     * the record.
      * See: https://github.com/FinTekkers/second-brain/issues/188
      * </pre>
      *
@@ -3844,10 +3851,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-     * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-     * clearing it on a subsequent CreateOrUpdate resurrects the record.
+     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+     * at this timestamp. SecurityService.Search and GetByIds filter out
+     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+     * the record.
      * See: https://github.com/FinTekkers/second-brain/issues/188
      * </pre>
      *
@@ -3871,10 +3879,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-     * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-     * clearing it on a subsequent CreateOrUpdate resurrects the record.
+     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+     * at this timestamp. SecurityService.Search and GetByIds filter out
+     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+     * the record.
      * See: https://github.com/FinTekkers/second-brain/issues/188
      * </pre>
      *
@@ -3892,10 +3901,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-     * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-     * clearing it on a subsequent CreateOrUpdate resurrects the record.
+     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+     * at this timestamp. SecurityService.Search and GetByIds filter out
+     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+     * the record.
      * See: https://github.com/FinTekkers/second-brain/issues/188
      * </pre>
      *
@@ -3908,10 +3918,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-     * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-     * clearing it on a subsequent CreateOrUpdate resurrects the record.
+     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+     * at this timestamp. SecurityService.Search and GetByIds filter out
+     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+     * the record.
      * See: https://github.com/FinTekkers/second-brain/issues/188
      * </pre>
      *
@@ -3927,10 +3938,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-     * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-     * clearing it on a subsequent CreateOrUpdate resurrects the record.
+     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+     * at this timestamp. SecurityService.Search and GetByIds filter out
+     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+     * the record.
      * See: https://github.com/FinTekkers/second-brain/issues/188
      * </pre>
      *

@@ -251,10 +251,11 @@ pub struct SecurityProto {
     pub valid_to: ::core::option::Option<super::util::LocalTimestampProto>,
     #[prost(enumeration = "SecurityTypeProto", tag = "10")]
     pub security_type: i32,
-    /// Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-    /// at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-    /// records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-    /// clearing it on a subsequent CreateOrUpdate resurrects the record.
+    /// Soft-delete marker. null/unset = active record; non-null = soft-deleted
+    /// at this timestamp. SecurityService.Search and GetByIds filter out
+    /// soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+    /// is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+    /// the record.
     /// See: <https://github.com/FinTekkers/second-brain/issues/188>
     #[prost(message, optional, tag = "15")]
     pub deleted_at: ::core::option::Option<super::util::LocalTimestampProto>,
