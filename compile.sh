@@ -266,6 +266,14 @@ fi
 
 cd "$REPO_ROOT"
 
+# Backfill __init__.py in any new directory produced by protoc. Without
+# this, setuptools.find_packages() skips dirs that contain only generated
+# *_pb2.py files, the wheel ships .pyi stubs without their runtime modules,
+# and Python consumers fail to import e.g. fintekkers.models.security.index
+# .index_type_pb2 — see FinTekkers/second-brain#217.
+# Idempotent; safe to run every regen.
+(cd ledger-models-python && python build_generate_init_files.py)
+
 # Run unit tests (exclude integration tests that require running services)
 echo "=== Python: running unit tests ==="
 if (cd ledger-models-python && python -m pytest -m "not integration" 2>&1); then
