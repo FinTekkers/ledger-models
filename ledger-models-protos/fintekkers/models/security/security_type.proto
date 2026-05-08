@@ -16,4 +16,19 @@ enum SecurityTypeProto {
   INDEX_SECURITY = 6;
   FX_SPOT = 7;
   EQUITY_INDEX_SECURITY = 8;  // Equity market indices (DJIA, S&P 500, Nasdaq-100, etc.)
+
+  // Principal-stripped Treasury components. Each STRIPS is a single
+  // zero-coupon cashflow (the principal piece, or a coupon piece) of an
+  // underlying note/bond, traded separately. Distinct from BOND_SECURITY
+  // because STRIPS have no coupon and a maturity = the cashflow date, so
+  // pricing / yield mechanics differ even though the wire shape is similar.
+  STRIPS_SECURITY = 9;
+
+  // Treasury bills — short-tenor (≤1y), zero-coupon, sold at discount and
+  // redeemed at par. Distinct from BOND_SECURITY because bill mechanics
+  // are discount-yield based, not coupon-based, and the standard market
+  // convention is ACT/360 rather than ACT/ACT. Holding T_BILL as a
+  // first-class type lets pickers / classifiers filter on type rather
+  // than the coupon_rate==0 heuristic the codebase has been using.
+  T_BILL = 10;
 }

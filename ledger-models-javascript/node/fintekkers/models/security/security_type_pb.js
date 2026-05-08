@@ -34,7 +34,9 @@ proto.fintekkers.models.security.SecurityTypeProto = {
   FRN: 5,
   INDEX_SECURITY: 6,
   FX_SPOT: 7,
-  EQUITY_INDEX_SECURITY: 8
+  EQUITY_INDEX_SECURITY: 8,
+  STRIPS_SECURITY: 9,
+  T_BILL: 10
 };
 
 goog.object.extend(exports, proto.fintekkers.models.security);

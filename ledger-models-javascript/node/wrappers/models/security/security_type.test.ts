@@ -52,6 +52,8 @@ describe('SecurityType.getAllTypeNames', () => {
         //   INDEX_SECURITY = 6;
         //   FX_SPOT = 7;
         //   EQUITY_INDEX_SECURITY = 8;
+        //   STRIPS_SECURITY = 9;          (added in #246)
+        //   T_BILL = 10;                  (added in #246)
         expect(SecurityType.getAllTypeNames()).toEqual([
             'CASH_SECURITY',
             'EQUITY_SECURITY',
@@ -61,6 +63,8 @@ describe('SecurityType.getAllTypeNames', () => {
             'INDEX_SECURITY',
             'FX_SPOT',
             'EQUITY_INDEX_SECURITY',
+            'STRIPS_SECURITY',
+            'T_BILL',
         ]);
     });
 
