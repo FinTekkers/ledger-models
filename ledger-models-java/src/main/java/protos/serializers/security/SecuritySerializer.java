@@ -144,6 +144,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             case BOND_SECURITY:
             case TIPS:
             case FRN:
+            case T_BILL:
+            case STRIPS_SECURITY:
                 validateBondDates(proto);
                 security = new BondSerializer().deserializeBondSecurity(proto, id, asOf, issuer, settlementCurrency);
                 break;

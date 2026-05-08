@@ -127,6 +127,13 @@ public class BondSerializer {
 
         switch (securityType) {
             case BOND_SECURITY:
+            case T_BILL:
+            case STRIPS_SECURITY:
+                // T_BILL and STRIPS_SECURITY are zero-coupon bonds with the same
+                // shape as a vanilla bond (face_value, issue_date, maturity_date,
+                // dated_date, coupon_rate=0). No specialized subclass yet — when
+                // T-bill-specific behavior emerges (e.g. discount-yield convention),
+                // we'll add a TBillSecurity subclass and split the cases.
                 return new BondSecurity(id, issuer, asOf, settlementCurrency);
             case TIPS:
                 return new TIPSBond(id, issuer, asOf, settlementCurrency);
