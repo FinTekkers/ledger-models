@@ -1,7 +1,9 @@
 pub mod bond_security;
+pub mod coupon_frequency;
 pub mod portfolio;
 pub mod position;
 pub mod price;
 pub mod raw_datamodel_object;
 pub mod security;
+pub mod security_type;
 pub mod utils;
