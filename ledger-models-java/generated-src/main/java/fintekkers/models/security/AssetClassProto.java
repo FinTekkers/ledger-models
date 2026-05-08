@@ -53,6 +53,19 @@ public enum AssetClassProto
    * <code>INDEX = 4;</code>
    */
   INDEX(4),
+  /**
+   * <pre>
+   * VOLATILITY covers volatility-class reference instruments — VIX
+   * (CBOE Volatility Index), VVIX, etc. Stored as INDEX_SECURITY at the
+   * proto type level (these are reference indices, not holdable
+   * instruments) but distinct asset_class to differentiate from
+   * equity / fixed-income reference indices like SP500 or CMT yields.
+   * Added per FinTekkers/second-brain#236.
+   * </pre>
+   *
+   * <code>VOLATILITY = 5;</code>
+   */
+  VOLATILITY(5),
   UNRECOGNIZED(-1),
   ;
 
@@ -82,6 +95,19 @@ public enum AssetClassProto
    * <code>INDEX = 4;</code>
    */
   public static final int INDEX_VALUE = 4;
+  /**
+   * <pre>
+   * VOLATILITY covers volatility-class reference instruments — VIX
+   * (CBOE Volatility Index), VVIX, etc. Stored as INDEX_SECURITY at the
+   * proto type level (these are reference indices, not holdable
+   * instruments) but distinct asset_class to differentiate from
+   * equity / fixed-income reference indices like SP500 or CMT yields.
+   * Added per FinTekkers/second-brain#236.
+   * </pre>
+   *
+   * <code>VOLATILITY = 5;</code>
+   */
+  public static final int VOLATILITY_VALUE = 5;
 
 
   public final int getNumber() {
@@ -113,6 +139,7 @@ public enum AssetClassProto
       case 2: return EQUITY;
       case 3: return CASH_ASSET_CLASS;
       case 4: return INDEX;
+      case 5: return VOLATILITY;
       default: return null;
     }
   }

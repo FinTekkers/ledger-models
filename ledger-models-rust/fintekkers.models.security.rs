@@ -542,6 +542,13 @@ pub enum AssetClassProto {
     /// indices, etc. — used in market-data-inputs today. Borderline as an
     /// "asset class" in finance terminology, but matches in-use data.
     Index = 4,
+    /// VOLATILITY covers volatility-class reference instruments — VIX
+    /// (CBOE Volatility Index), VVIX, etc. Stored as INDEX_SECURITY at the
+    /// proto type level (these are reference indices, not holdable
+    /// instruments) but distinct asset_class to differentiate from
+    /// equity / fixed-income reference indices like SP500 or CMT yields.
+    /// Added per FinTekkers/second-brain#236.
+    Volatility = 5,
 }
 impl AssetClassProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -555,6 +562,7 @@ impl AssetClassProto {
             AssetClassProto::Equity => "EQUITY",
             AssetClassProto::CashAssetClass => "CASH_ASSET_CLASS",
             AssetClassProto::Index => "INDEX",
+            AssetClassProto::Volatility => "VOLATILITY",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -565,6 +573,7 @@ impl AssetClassProto {
             "EQUITY" => Some(Self::Equity),
             "CASH_ASSET_CLASS" => Some(Self::CashAssetClass),
             "INDEX" => Some(Self::Index),
+            "VOLATILITY" => Some(Self::Volatility),
             _ => None,
         }
     }

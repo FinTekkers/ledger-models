@@ -34,4 +34,11 @@ enum AssetClassProto {
   // indices, etc. — used in market-data-inputs today. Borderline as an
   // "asset class" in finance terminology, but matches in-use data.
   INDEX = 4;
+  // VOLATILITY covers volatility-class reference instruments — VIX
+  // (CBOE Volatility Index), VVIX, etc. Stored as INDEX_SECURITY at the
+  // proto type level (these are reference indices, not holdable
+  // instruments) but distinct asset_class to differentiate from
+  // equity / fixed-income reference indices like SP500 or CMT yields.
+  // Added per FinTekkers/second-brain#236.
+  VOLATILITY = 5;
 }
