@@ -12,4 +12,5 @@ export enum AssetClassProto {
     EQUITY = 2,
     CASH_ASSET_CLASS = 3,
     INDEX = 4,
+    VOLATILITY = 5,
 }

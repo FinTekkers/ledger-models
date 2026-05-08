@@ -11,8 +11,10 @@ class AssetClassProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     EQUITY: _ClassVar[AssetClassProto]
     CASH_ASSET_CLASS: _ClassVar[AssetClassProto]
     INDEX: _ClassVar[AssetClassProto]
+    VOLATILITY: _ClassVar[AssetClassProto]
 UNKNOWN_ASSET_CLASS: AssetClassProto
 FIXED_INCOME: AssetClassProto
 EQUITY: AssetClassProto
 CASH_ASSET_CLASS: AssetClassProto
 INDEX: AssetClassProto
+VOLATILITY: AssetClassProto

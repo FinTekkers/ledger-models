@@ -38,11 +38,13 @@ describe('AssetClass.getAllTypeNames', () => {
         //                                 with IdentifierTypeProto.CASH per
         //                                 proto3 package-wide uniqueness)
         //   INDEX = 4;
+        //   VOLATILITY = 5;              (added in #236 for VIX support)
         expect(asset_class_1.AssetClass.getAllTypeNames()).toEqual([
             'FIXED_INCOME',
             'EQUITY',
             'CASH_ASSET_CLASS',
             'INDEX',
+            'VOLATILITY',
         ]);
     });
     test('excludes the UNKNOWN_ASSET_CLASS sentinel', () => {
