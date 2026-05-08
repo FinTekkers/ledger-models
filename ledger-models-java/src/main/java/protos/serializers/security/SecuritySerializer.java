@@ -87,7 +87,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             builder.addAllIdentifiers(security.getSecurityProto().getIdentifiersList());
         }
 
-        // Preserve soft-delete tombstone (deleted_at) — see #188.
+        // Preserve soft-delete marker (deleted_at) — see #188.
         // null/unset = active record, non-null = soft-deleted at this timestamp.
         if (security.getSecurityProto() != null && security.getSecurityProto().hasDeletedAt()) {
             builder.setDeletedAt(security.getSecurityProto().getDeletedAt());

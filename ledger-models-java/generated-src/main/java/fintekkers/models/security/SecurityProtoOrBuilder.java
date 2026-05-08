@@ -130,10 +130,11 @@ public interface SecurityProtoOrBuilder extends
 
   /**
    * <pre>
-   * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-   * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-   * clearing it on a subsequent CreateOrUpdate resurrects the record.
+   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+   * at this timestamp. SecurityService.Search and GetByIds filter out
+   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+   * the record.
    * See: https://github.com/FinTekkers/second-brain/issues/188
    * </pre>
    *
@@ -143,10 +144,11 @@ public interface SecurityProtoOrBuilder extends
   boolean hasDeletedAt();
   /**
    * <pre>
-   * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-   * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-   * clearing it on a subsequent CreateOrUpdate resurrects the record.
+   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+   * at this timestamp. SecurityService.Search and GetByIds filter out
+   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+   * the record.
    * See: https://github.com/FinTekkers/second-brain/issues/188
    * </pre>
    *
@@ -156,10 +158,11 @@ public interface SecurityProtoOrBuilder extends
   fintekkers.models.util.LocalTimestamp.LocalTimestampProto getDeletedAt();
   /**
    * <pre>
-   * Soft-delete tombstone. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out tombstoned
-   * records by default. Setting deleted_at via CreateOrUpdate is a soft-delete;
-   * clearing it on a subsequent CreateOrUpdate resurrects the record.
+   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
+   * at this timestamp. SecurityService.Search and GetByIds filter out
+   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
+   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
+   * the record.
    * See: https://github.com/FinTekkers/second-brain/issues/188
    * </pre>
    *
