@@ -4,6 +4,7 @@ use rust_decimal::Decimal;
 use crate::fintekkers::models::security::security_proto::ProductDetails;
 use crate::fintekkers::models::security::{SecurityProto, SecurityTypeProto};
 use crate::fintekkers::models::util::LocalDateProto;
+use crate::fintekkers::wrappers::models::security_type::SecurityType;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 
 pub struct BondSecurity {
@@ -12,12 +13,16 @@ pub struct BondSecurity {
 
 impl BondSecurity {
     pub fn from_proto(proto: SecurityProto) -> Result<Self, Error> {
-        let st = SecurityTypeProto::from_i32(proto.security_type)
+        // Resolve the proto's security_type i32 → SecurityTypeProto →
+        // SecurityType wrapper. Bond-flavored security types (Bond, Tips,
+        // Frn) all collapse to SecurityType::Bond/Tips/Frn here, which is
+        // the membership predicate this wrapper cares about.
+        let st_proto = SecurityTypeProto::from_i32(proto.security_type)
             .unwrap_or(SecurityTypeProto::UnknownSecurityType);
-        match st {
-            SecurityTypeProto::BondSecurity
-            | SecurityTypeProto::Tips
-            | SecurityTypeProto::Frn => Ok(BondSecurity { proto }),
+        match SecurityType::from_proto(st_proto) {
+            SecurityType::Bond | SecurityType::Tips | SecurityType::Frn => {
+                Ok(BondSecurity { proto })
+            }
             _ => Err(Error::NotABondSecurity),
         }
     }
