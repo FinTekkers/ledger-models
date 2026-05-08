@@ -27,11 +27,18 @@ use crate::fintekkers::models::security::SecurityTypeProto;
 ///   - `FxSpot` maps to `Currency` (FX-spot quote is the on-the-wire
 ///     name for a currency-pair quote in the proto; consumers reason
 ///     about "this is a currency pair" not "this is a spot trade").
+///
+/// `Strips` and `TBill` are first-class variants (added in #246) so
+/// pickers / classifiers can filter on type rather than the
+/// coupon_rate==0 heuristic the codebase had been using when
+/// everything Treasury-shaped lived under `BondSecurity`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SecurityType {
     Bond,
     Tips,
     Frn,
+    Strips,
+    TBill,
     Equity,
     Cash,
     Index,
@@ -53,6 +60,8 @@ impl SecurityType {
             SecurityTypeProto::IndexSecurity => SecurityType::Index,
             SecurityTypeProto::FxSpot => SecurityType::Currency,
             SecurityTypeProto::EquityIndexSecurity => SecurityType::Index,
+            SecurityTypeProto::StripsSecurity => SecurityType::Strips,
+            SecurityTypeProto::TBill => SecurityType::TBill,
         }
     }
 
@@ -67,6 +76,8 @@ impl SecurityType {
             SecurityType::Bond => SecurityTypeProto::BondSecurity,
             SecurityType::Tips => SecurityTypeProto::Tips,
             SecurityType::Frn => SecurityTypeProto::Frn,
+            SecurityType::Strips => SecurityTypeProto::StripsSecurity,
+            SecurityType::TBill => SecurityTypeProto::TBill,
             SecurityType::Equity => SecurityTypeProto::EquitySecurity,
             SecurityType::Cash => SecurityTypeProto::CashSecurity,
             SecurityType::Index => SecurityTypeProto::IndexSecurity,
@@ -91,6 +102,8 @@ mod tests {
             SecurityType::Bond,
             SecurityType::Tips,
             SecurityType::Frn,
+            SecurityType::Strips,
+            SecurityType::TBill,
             SecurityType::Equity,
             SecurityType::Cash,
             SecurityType::Index,
@@ -145,6 +158,14 @@ mod tests {
             SecurityType::from_proto(SecurityTypeProto::EquityIndexSecurity),
             SecurityType::Index,
             "EquityIndexSecurity collapses to Index alongside IndexSecurity"
+        );
+        assert_eq!(
+            SecurityType::from_proto(SecurityTypeProto::StripsSecurity),
+            SecurityType::Strips
+        );
+        assert_eq!(
+            SecurityType::from_proto(SecurityTypeProto::TBill),
+            SecurityType::TBill
         );
     }
 

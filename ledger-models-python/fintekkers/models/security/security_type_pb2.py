@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n.fintekkers/models/security/security_type.proto\x12\x1a\x66intekkers.models.security*\xb8\x01\n\x11SecurityTypeProto\x12\x19\n\x15UNKNOWN_SECURITY_TYPE\x10\x00\x12\x11\n\rCASH_SECURITY\x10\x01\x12\x13\n\x0f\x45QUITY_SECURITY\x10\x02\x12\x11\n\rBOND_SECURITY\x10\x03\x12\x08\n\x04TIPS\x10\x04\x12\x07\n\x03\x46RN\x10\x05\x12\x12\n\x0eINDEX_SECURITY\x10\x06\x12\x0b\n\x07\x46X_SPOT\x10\x07\x12\x19\n\x15\x45QUITY_INDEX_SECURITY\x10\x08\x42\x16\x42\x12SecurityTypeProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n.fintekkers/models/security/security_type.proto\x12\x1a\x66intekkers.models.security*\xd9\x01\n\x11SecurityTypeProto\x12\x19\n\x15UNKNOWN_SECURITY_TYPE\x10\x00\x12\x11\n\rCASH_SECURITY\x10\x01\x12\x13\n\x0f\x45QUITY_SECURITY\x10\x02\x12\x11\n\rBOND_SECURITY\x10\x03\x12\x08\n\x04TIPS\x10\x04\x12\x07\n\x03\x46RN\x10\x05\x12\x12\n\x0eINDEX_SECURITY\x10\x06\x12\x0b\n\x07\x46X_SPOT\x10\x07\x12\x19\n\x15\x45QUITY_INDEX_SECURITY\x10\x08\x12\x13\n\x0fSTRIPS_SECURITY\x10\t\x12\n\n\x06T_BILL\x10\nB\x16\x42\x12SecurityTypeProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,5 +33,5 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\022SecurityTypeProtosP\001'
   _globals['_SECURITYTYPEPROTO']._serialized_start=79
-  _globals['_SECURITYTYPEPROTO']._serialized_end=263
+  _globals['_SECURITYTYPEPROTO']._serialized_end=296
 # @@protoc_insertion_point(module_scope)

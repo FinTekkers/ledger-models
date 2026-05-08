@@ -69,6 +69,19 @@ pub enum SecurityTypeProto {
     FxSpot = 7,
     /// Equity market indices (DJIA, S&P 500, Nasdaq-100, etc.)
     EquityIndexSecurity = 8,
+    /// Principal-stripped Treasury components. Each STRIPS is a single
+    /// zero-coupon cashflow (the principal piece, or a coupon piece) of an
+    /// underlying note/bond, traded separately. Distinct from BOND_SECURITY
+    /// because STRIPS have no coupon and a maturity = the cashflow date, so
+    /// pricing / yield mechanics differ even though the wire shape is similar.
+    StripsSecurity = 9,
+    /// Treasury bills — short-tenor (≤1y), zero-coupon, sold at discount and
+    /// redeemed at par. Distinct from BOND_SECURITY because bill mechanics
+    /// are discount-yield based, not coupon-based, and the standard market
+    /// convention is ACT/360 rather than ACT/ACT. Holding T_BILL as a
+    /// first-class type lets pickers / classifiers filter on type rather
+    /// than the coupon_rate==0 heuristic the codebase has been using.
+    TBill = 10,
 }
 impl SecurityTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -86,6 +99,8 @@ impl SecurityTypeProto {
             SecurityTypeProto::IndexSecurity => "INDEX_SECURITY",
             SecurityTypeProto::FxSpot => "FX_SPOT",
             SecurityTypeProto::EquityIndexSecurity => "EQUITY_INDEX_SECURITY",
+            SecurityTypeProto::StripsSecurity => "STRIPS_SECURITY",
+            SecurityTypeProto::TBill => "T_BILL",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -100,6 +115,8 @@ impl SecurityTypeProto {
             "INDEX_SECURITY" => Some(Self::IndexSecurity),
             "FX_SPOT" => Some(Self::FxSpot),
             "EQUITY_INDEX_SECURITY" => Some(Self::EquityIndexSecurity),
+            "STRIPS_SECURITY" => Some(Self::StripsSecurity),
+            "T_BILL" => Some(Self::TBill),
             _ => None,
         }
     }

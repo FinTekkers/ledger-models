@@ -16,4 +16,6 @@ export enum SecurityTypeProto {
     INDEX_SECURITY = 6,
     FX_SPOT = 7,
     EQUITY_INDEX_SECURITY = 8,
+    STRIPS_SECURITY = 9,
+    T_BILL = 10,
 }

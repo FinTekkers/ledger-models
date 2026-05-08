@@ -52,6 +52,31 @@ public enum SecurityTypeProto
    * <code>EQUITY_INDEX_SECURITY = 8;</code>
    */
   EQUITY_INDEX_SECURITY(8),
+  /**
+   * <pre>
+   * Principal-stripped Treasury components. Each STRIPS is a single
+   * zero-coupon cashflow (the principal piece, or a coupon piece) of an
+   * underlying note/bond, traded separately. Distinct from BOND_SECURITY
+   * because STRIPS have no coupon and a maturity = the cashflow date, so
+   * pricing / yield mechanics differ even though the wire shape is similar.
+   * </pre>
+   *
+   * <code>STRIPS_SECURITY = 9;</code>
+   */
+  STRIPS_SECURITY(9),
+  /**
+   * <pre>
+   * Treasury bills — short-tenor (≤1y), zero-coupon, sold at discount and
+   * redeemed at par. Distinct from BOND_SECURITY because bill mechanics
+   * are discount-yield based, not coupon-based, and the standard market
+   * convention is ACT/360 rather than ACT/ACT. Holding T_BILL as a
+   * first-class type lets pickers / classifiers filter on type rather
+   * than the coupon_rate==0 heuristic the codebase has been using.
+   * </pre>
+   *
+   * <code>T_BILL = 10;</code>
+   */
+  T_BILL(10),
   UNRECOGNIZED(-1),
   ;
 
@@ -99,6 +124,31 @@ public enum SecurityTypeProto
    * <code>EQUITY_INDEX_SECURITY = 8;</code>
    */
   public static final int EQUITY_INDEX_SECURITY_VALUE = 8;
+  /**
+   * <pre>
+   * Principal-stripped Treasury components. Each STRIPS is a single
+   * zero-coupon cashflow (the principal piece, or a coupon piece) of an
+   * underlying note/bond, traded separately. Distinct from BOND_SECURITY
+   * because STRIPS have no coupon and a maturity = the cashflow date, so
+   * pricing / yield mechanics differ even though the wire shape is similar.
+   * </pre>
+   *
+   * <code>STRIPS_SECURITY = 9;</code>
+   */
+  public static final int STRIPS_SECURITY_VALUE = 9;
+  /**
+   * <pre>
+   * Treasury bills — short-tenor (≤1y), zero-coupon, sold at discount and
+   * redeemed at par. Distinct from BOND_SECURITY because bill mechanics
+   * are discount-yield based, not coupon-based, and the standard market
+   * convention is ACT/360 rather than ACT/ACT. Holding T_BILL as a
+   * first-class type lets pickers / classifiers filter on type rather
+   * than the coupon_rate==0 heuristic the codebase has been using.
+   * </pre>
+   *
+   * <code>T_BILL = 10;</code>
+   */
+  public static final int T_BILL_VALUE = 10;
 
 
   public final int getNumber() {
@@ -134,6 +184,8 @@ public enum SecurityTypeProto
       case 6: return INDEX_SECURITY;
       case 7: return FX_SPOT;
       case 8: return EQUITY_INDEX_SECURITY;
+      case 9: return STRIPS_SECURITY;
+      case 10: return T_BILL;
       default: return null;
     }
   }

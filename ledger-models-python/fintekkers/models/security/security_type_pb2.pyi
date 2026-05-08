@@ -15,6 +15,8 @@ class SecurityTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     INDEX_SECURITY: _ClassVar[SecurityTypeProto]
     FX_SPOT: _ClassVar[SecurityTypeProto]
     EQUITY_INDEX_SECURITY: _ClassVar[SecurityTypeProto]
+    STRIPS_SECURITY: _ClassVar[SecurityTypeProto]
+    T_BILL: _ClassVar[SecurityTypeProto]
 UNKNOWN_SECURITY_TYPE: SecurityTypeProto
 CASH_SECURITY: SecurityTypeProto
 EQUITY_SECURITY: SecurityTypeProto
@@ -24,3 +26,5 @@ FRN: SecurityTypeProto
 INDEX_SECURITY: SecurityTypeProto
 FX_SPOT: SecurityTypeProto
 EQUITY_INDEX_SECURITY: SecurityTypeProto
+STRIPS_SECURITY: SecurityTypeProto
+T_BILL: SecurityTypeProto
