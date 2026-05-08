@@ -2,6 +2,7 @@ package common.models.security;
 
 import common.models.JSONFieldNames;
 import common.models.postion.Field;
+import fintekkers.models.security.SecurityProto;
 import fintekkers.models.security.SecurityTypeProto;
 
 import java.math.BigDecimal;
@@ -142,6 +143,20 @@ public class BondSecurity extends Security {
 
     @Override
     public SecurityTypeProto getSecurityType() {
+        // BondSecurity is the catch-all wrapper for bond-shape proto types
+        // (BOND_SECURITY, T_BILL, STRIPS_SECURITY, plus any future addition
+        // that fits the same field shape). Read the type from the source
+        // proto when present so the marker survives a deserialize → re-
+        // serialize round-trip. Specialized subclasses (TIPSBond,
+        // FloatingRateNote) override this with their own hardcoded type
+        // and are unaffected. Mirrors the proto-first pattern that
+        // Security.getAssetClass uses.
+        SecurityProto src = getSecurityProto();
+        if (src != null) {
+            return src.getSecurityType();
+        }
+        // Legacy fallback: BondSecurity constructed via the (id, issuer,
+        // asOf, settlementCurrency) constructor without a stashed proto.
         return SecurityTypeProto.BOND_SECURITY;
     }
 
