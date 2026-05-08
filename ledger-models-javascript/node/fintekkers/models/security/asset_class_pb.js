@@ -31,7 +31,8 @@ proto.fintekkers.models.security.AssetClassProto = {
   EQUITY: 2,
   CASH_ASSET_CLASS: 3,
   INDEX: 4,
-  VOLATILITY: 5
+  VOLATILITY: 5,
+  CRYPTO: 6
 };
 
 goog.object.extend(exports, proto.fintekkers.models.security);

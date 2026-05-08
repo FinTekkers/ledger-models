@@ -66,6 +66,16 @@ public enum AssetClassProto
    * <code>VOLATILITY = 5;</code>
    */
   VOLATILITY(5),
+  /**
+   * <pre>
+   * CRYPTO covers cryptocurrency holdings — BTC, ETH, and other crypto
+   * assets. Pairs with SecurityTypeProto.CRYPTOCURRENCY. Added per
+   * FinTekkers/second-brain#237.
+   * </pre>
+   *
+   * <code>CRYPTO = 6;</code>
+   */
+  CRYPTO(6),
   UNRECOGNIZED(-1),
   ;
 
@@ -108,6 +118,16 @@ public enum AssetClassProto
    * <code>VOLATILITY = 5;</code>
    */
   public static final int VOLATILITY_VALUE = 5;
+  /**
+   * <pre>
+   * CRYPTO covers cryptocurrency holdings — BTC, ETH, and other crypto
+   * assets. Pairs with SecurityTypeProto.CRYPTOCURRENCY. Added per
+   * FinTekkers/second-brain#237.
+   * </pre>
+   *
+   * <code>CRYPTO = 6;</code>
+   */
+  public static final int CRYPTO_VALUE = 6;
 
 
   public final int getNumber() {
@@ -140,6 +160,7 @@ public enum AssetClassProto
       case 3: return CASH_ASSET_CLASS;
       case 4: return INDEX;
       case 5: return VOLATILITY;
+      case 6: return CRYPTO;
       default: return null;
     }
   }

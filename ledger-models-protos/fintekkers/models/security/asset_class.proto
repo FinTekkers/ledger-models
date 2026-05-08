@@ -41,4 +41,9 @@ enum AssetClassProto {
   // equity / fixed-income reference indices like SP500 or CMT yields.
   // Added per FinTekkers/second-brain#236.
   VOLATILITY = 5;
+
+  // CRYPTO covers cryptocurrency holdings — BTC, ETH, and other crypto
+  // assets. Pairs with SecurityTypeProto.CRYPTOCURRENCY. Added per
+  // FinTekkers/second-brain#237.
+  CRYPTO = 6;
 }

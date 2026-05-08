@@ -45,12 +45,14 @@ describe('AssetClass.getAllTypeNames', () => {
         //                                 proto3 package-wide uniqueness)
         //   INDEX = 4;
         //   VOLATILITY = 5;              (added in #236 for VIX support)
+        //   CRYPTO = 6;                  (added in #237 for BTC support)
         expect(AssetClass.getAllTypeNames()).toEqual([
             'FIXED_INCOME',
             'EQUITY',
             'CASH_ASSET_CLASS',
             'INDEX',
             'VOLATILITY',
+            'CRYPTO',
         ]);
     });
 

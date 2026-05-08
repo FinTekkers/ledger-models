@@ -32,6 +32,9 @@ use crate::fintekkers::models::security::SecurityTypeProto;
 /// pickers / classifiers can filter on type rather than the
 /// coupon_rate==0 heuristic the codebase had been using when
 /// everything Treasury-shaped lived under `BondSecurity`.
+///
+/// `Crypto` was added in #237 alongside the `CryptoSecurity` wrapper
+/// to support BTC / ETH / etc.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum SecurityType {
     Bond,
@@ -43,6 +46,7 @@ pub enum SecurityType {
     Cash,
     Index,
     Currency,
+    Crypto,
     Unknown,
 }
 
@@ -62,6 +66,7 @@ impl SecurityType {
             SecurityTypeProto::EquityIndexSecurity => SecurityType::Index,
             SecurityTypeProto::StripsSecurity => SecurityType::Strips,
             SecurityTypeProto::TBill => SecurityType::TBill,
+            SecurityTypeProto::Cryptocurrency => SecurityType::Crypto,
         }
     }
 
@@ -82,6 +87,7 @@ impl SecurityType {
             SecurityType::Cash => SecurityTypeProto::CashSecurity,
             SecurityType::Index => SecurityTypeProto::IndexSecurity,
             SecurityType::Currency => SecurityTypeProto::FxSpot,
+            SecurityType::Crypto => SecurityTypeProto::Cryptocurrency,
             SecurityType::Unknown => SecurityTypeProto::UnknownSecurityType,
         }
     }
@@ -108,6 +114,7 @@ mod tests {
             SecurityType::Cash,
             SecurityType::Index,
             SecurityType::Currency,
+            SecurityType::Crypto,
             SecurityType::Unknown,
         ] {
             let back = SecurityType::from_proto(variant.to_proto());
@@ -166,6 +173,10 @@ mod tests {
         assert_eq!(
             SecurityType::from_proto(SecurityTypeProto::TBill),
             SecurityType::TBill
+        );
+        assert_eq!(
+            SecurityType::from_proto(SecurityTypeProto::Cryptocurrency),
+            SecurityType::Crypto
         );
     }
 

@@ -24,11 +24,11 @@ public final class AssetClassProtos {
   static {
     java.lang.String[] descriptorData = {
       "\n,fintekkers/models/security/asset_class" +
-      ".proto\022\032fintekkers.models.security*y\n\017As" +
-      "setClassProto\022\027\n\023UNKNOWN_ASSET_CLASS\020\000\022\020" +
-      "\n\014FIXED_INCOME\020\001\022\n\n\006EQUITY\020\002\022\024\n\020CASH_ASS" +
-      "ET_CLASS\020\003\022\t\n\005INDEX\020\004\022\016\n\nVOLATILITY\020\005B\024B" +
-      "\020AssetClassProtosP\001b\006proto3"
+      ".proto\022\032fintekkers.models.security*\205\001\n\017A" +
+      "ssetClassProto\022\027\n\023UNKNOWN_ASSET_CLASS\020\000\022" +
+      "\020\n\014FIXED_INCOME\020\001\022\n\n\006EQUITY\020\002\022\024\n\020CASH_AS" +
+      "SET_CLASS\020\003\022\t\n\005INDEX\020\004\022\016\n\nVOLATILITY\020\005\022\n" +
+      "\n\006CRYPTO\020\006B\024B\020AssetClassProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
