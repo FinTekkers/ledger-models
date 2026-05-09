@@ -45,6 +45,30 @@ This is a **descriptive** document of the current state on `main`. Architectural
 | `T_BILL` | 10 | Treasury bill — short-tenor (≤1y), zero-coupon, ACT/360 discount-yield. First-class to avoid the `coupon_rate==0` heuristic. Added in [#246](https://github.com/FinTekkers/second-brain/issues/246). | `FIXED_INCOME` |
 | `CRYPTOCURRENCY` | 11 | Bitcoin, Ethereum, etc. Identifier convention: `EXCH_TICKER='BTC-USD'` (with quote currency suffix). Added in [#237](https://github.com/FinTekkers/second-brain/issues/237). | `CRYPTO` |
 
+### Asset class → Security type
+
+Asset classes are 1-to-many over security types. Note `INDEX_SECURITY` is the proto type for both index reference instruments (CMT yields, CPI series) and volatility indices (VIX) — the asset class is what differentiates them.
+
+```mermaid
+graph LR
+    classDef ac fill:#dbeafe,stroke:#1e40af,color:#1e3a8a
+    classDef st fill:#fef3c7,stroke:#92400e,color:#78350f
+
+    FIXED_INCOME:::ac --> BOND_SECURITY:::st
+    FIXED_INCOME --> T_BILL:::st
+    FIXED_INCOME --> STRIPS_SECURITY:::st
+    FIXED_INCOME --> TIPS:::st
+    FIXED_INCOME --> FRN:::st
+    EQUITY:::ac --> EQUITY_SECURITY:::st
+    CASH_ASSET_CLASS:::ac --> CASH_SECURITY:::st
+    INDEX:::ac --> INDEX_SECURITY:::st
+    INDEX --> EQUITY_INDEX_SECURITY:::st
+    VOLATILITY:::ac --> INDEX_SECURITY
+    CRYPTO:::ac --> CRYPTOCURRENCY:::st
+```
+
+`FX_SPOT` is omitted — it is a legacy currency-pair quote type with no clean asset-class mapping.
+
 ---
 
 ## 3. Product type
@@ -78,6 +102,56 @@ Security                                    (base — common.models.security.Sec
 ├── CashSecurity                            (CASH_SECURITY)
 └── EquitySecurity                          (EQUITY_SECURITY)
 ```
+
+```mermaid
+classDiagram
+    direction BT
+    class Security {
+        +SecurityProto _sourceProto
+        +getAssetClass() String
+        +getSecurityType() SecurityTypeProto
+        +getQuantityType() QuantityType
+    }
+    class BondSecurity {
+        +couponRate
+        +couponType
+        +couponFrequency
+        +faceValue
+        +issueDate
+        +datedDate
+        +maturityDate
+        +getTenor() Tenor
+    }
+    class TIPSBond {
+        +index
+        +spread
+    }
+    class FloatingRateNote {
+        +spread
+        +getCouponRate() returnsSpread
+    }
+    class CashSecurity {
+        +cashId
+        +isCash() true
+        +USD$ constant
+    }
+    class EquitySecurity
+
+    BondSecurity --|> Security
+    CashSecurity --|> Security
+    EquitySecurity --|> Security
+    TIPSBond --|> BondSecurity
+    FloatingRateNote --|> BondSecurity
+
+    note for Security "Handles INDEX_SECURITY, EQUITY_INDEX_SECURITY, FX_SPOT, CRYPTOCURRENCY (no dedicated subclass)"
+    note for BondSecurity "Catch-all: BOND_SECURITY + T_BILL + STRIPS_SECURITY (see #253)"
+    note for TIPSBond "type = TIPS, implements IndexLinkedSecurity"
+    note for FloatingRateNote "type = FRN, implements IndexLinkedSecurity"
+    note for CashSecurity "type = CASH_SECURITY"
+    note for EquitySecurity "type = EQUITY_SECURITY (marker only)"
+```
+
+The `BondSecurity` catch-all for `T_BILL` and `STRIPS_SECURITY` is a known shape; whether it should split into per-type subclasses (each with its own pricing convention — ACT/360 discount-yield for bills, zero-coupon mechanics for STRIPS) is the subject of [second-brain#253](https://github.com/FinTekkers/second-brain/issues/253).
 
 | Wrapper | File | Specialization beyond `Security` |
 | --- | --- | --- |
@@ -125,6 +199,43 @@ Concrete checklist, against the precedents of [#246](https://github.com/FinTekke
 6. **Add asset class** if needed. Same rules as security type: append, document, don't rename.
 7. **Run `./compile.sh --skip-integration`** end-to-end before opening the PR. All four languages must regenerate cleanly + pass tests.
 8. **Loader work in [market-data-inputs](https://github.com/FinTekkers/market-data-inputs)** (for new instruments with external data sources) is a **separate dispatch** — out of scope for the ledger-models PR.
+
+### Flow
+
+```mermaid
+flowchart TD
+    Start([New instrument concept])
+    AddProto[1. Add SecurityTypeProto enum value<br/>strictly additive<br/>document mechanics in proto comment]
+    AC{2. Asset class<br/>covered?}
+    AddAC[Add AssetClassProto enum value]
+    Decision{3. Real behavioral<br/>specialization?<br/>cashflow / day-count / custody}
+    NewWrapper[Add Java wrapper subclass<br/>override getSecurityType<br/>getAssetClass, getProductType<br/>wire SecuritySerializer.deserialize]
+    Reuse[Use existing wrapper<br/>BondSecurity for bond-shape<br/>base Security for the rest]
+    Rust[4. Update Rust SecurityType enum<br/>variant + from_proto / to_proto arms<br/>compile fails until done]
+    JSPython[5. JS / Python auto pick-up via reflection<br/>update order-pin tests only]
+    Compile[6. ./compile.sh --skip-integration<br/>all 4 languages must be green]
+    Loader[7. Loader work in market-data-inputs<br/>SEPARATE PR — out of scope here]
+    End([Ready to merge])
+
+    Start --> AddProto
+    AddProto --> AC
+    AC -->|No| AddAC
+    AC -->|Yes| Decision
+    AddAC --> Decision
+    Decision -->|Yes| NewWrapper
+    Decision -->|No, reuse| Reuse
+    NewWrapper --> Rust
+    Reuse --> Rust
+    Rust --> JSPython
+    JSPython --> Compile
+    Compile --> Loader
+    Loader --> End
+```
+
+Recent precedents:
+
+- [#246](https://github.com/FinTekkers/second-brain/issues/246) — `T_BILL` + `STRIPS_SECURITY` added to `SecurityTypeProto` and **reused `BondSecurity`** (no new wrapper subclass). Wire-shape identical to a vanilla bond, no specialized behavior demanded yet.
+- [#237](https://github.com/FinTekkers/second-brain/issues/237) — `CRYPTOCURRENCY` + `CRYPTO` asset class added; an empty `CryptoSecurity` wrapper was prototyped and then **dropped** during review on the principle that wrappers should earn their existence ([PR #200](https://github.com/FinTekkers/ledger-models/pull/200)). The base `Security` handles BTC for v1; a wrapper gets added when crypto-specific behavior (custody, on-chain refs) demands it.
 
 ---
 
