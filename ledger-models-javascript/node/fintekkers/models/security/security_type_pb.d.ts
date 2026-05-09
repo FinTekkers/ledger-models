@@ -18,4 +18,5 @@ export enum SecurityTypeProto {
     EQUITY_INDEX_SECURITY = 8,
     STRIPS_SECURITY = 9,
     T_BILL = 10,
+    CRYPTOCURRENCY = 11,
 }

@@ -31,4 +31,13 @@ enum SecurityTypeProto {
   // first-class type lets pickers / classifiers filter on type rather
   // than the coupon_rate==0 heuristic the codebase has been using.
   T_BILL = 10;
+
+  // Cryptocurrency — Bitcoin (BTC), Ethereum (ETH), and other crypto
+  // assets. Identifier convention: EXCH_TICKER='BTC-USD' (with quote
+  // currency suffix) for ingestion. v1 BTC support fits base SecurityProto
+  // fields + asset_class=CRYPTO; if downstream consumers need crypto-
+  // specific fields (e.g. on-chain block reference, custody type), a
+  // sub-message under product_details will be added then. Added per
+  // FinTekkers/second-brain#237.
+  CRYPTOCURRENCY = 11;
 }

@@ -82,6 +82,14 @@ pub enum SecurityTypeProto {
     /// first-class type lets pickers / classifiers filter on type rather
     /// than the coupon_rate==0 heuristic the codebase has been using.
     TBill = 10,
+    /// Cryptocurrency — Bitcoin (BTC), Ethereum (ETH), and other crypto
+    /// assets. Identifier convention: EXCH_TICKER='BTC-USD' (with quote
+    /// currency suffix) for ingestion. v1 BTC support fits base SecurityProto
+    /// fields + asset_class=CRYPTO; if downstream consumers need crypto-
+    /// specific fields (e.g. on-chain block reference, custody type), a
+    /// sub-message under product_details will be added then. Added per
+    /// FinTekkers/second-brain#237.
+    Cryptocurrency = 11,
 }
 impl SecurityTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -101,6 +109,7 @@ impl SecurityTypeProto {
             SecurityTypeProto::EquityIndexSecurity => "EQUITY_INDEX_SECURITY",
             SecurityTypeProto::StripsSecurity => "STRIPS_SECURITY",
             SecurityTypeProto::TBill => "T_BILL",
+            SecurityTypeProto::Cryptocurrency => "CRYPTOCURRENCY",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -117,6 +126,7 @@ impl SecurityTypeProto {
             "EQUITY_INDEX_SECURITY" => Some(Self::EquityIndexSecurity),
             "STRIPS_SECURITY" => Some(Self::StripsSecurity),
             "T_BILL" => Some(Self::TBill),
+            "CRYPTOCURRENCY" => Some(Self::Cryptocurrency),
             _ => None,
         }
     }
@@ -550,6 +560,10 @@ pub enum AssetClassProto {
     /// equity / fixed-income reference indices like SP500 or CMT yields.
     /// Added per FinTekkers/second-brain#236.
     Volatility = 5,
+    /// CRYPTO covers cryptocurrency holdings — BTC, ETH, and other crypto
+    /// assets. Pairs with SecurityTypeProto.CRYPTOCURRENCY. Added per
+    /// FinTekkers/second-brain#237.
+    Crypto = 6,
 }
 impl AssetClassProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -564,6 +578,7 @@ impl AssetClassProto {
             AssetClassProto::CashAssetClass => "CASH_ASSET_CLASS",
             AssetClassProto::Index => "INDEX",
             AssetClassProto::Volatility => "VOLATILITY",
+            AssetClassProto::Crypto => "CRYPTO",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -575,6 +590,7 @@ impl AssetClassProto {
             "CASH_ASSET_CLASS" => Some(Self::CashAssetClass),
             "INDEX" => Some(Self::Index),
             "VOLATILITY" => Some(Self::Volatility),
+            "CRYPTO" => Some(Self::Crypto),
             _ => None,
         }
     }

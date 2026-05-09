@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n,fintekkers/models/security/asset_class.proto\x12\x1a\x66intekkers.models.security*y\n\x0f\x41ssetClassProto\x12\x17\n\x13UNKNOWN_ASSET_CLASS\x10\x00\x12\x10\n\x0c\x46IXED_INCOME\x10\x01\x12\n\n\x06\x45QUITY\x10\x02\x12\x14\n\x10\x43\x41SH_ASSET_CLASS\x10\x03\x12\t\n\x05INDEX\x10\x04\x12\x0e\n\nVOLATILITY\x10\x05\x42\x14\x42\x10\x41ssetClassProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n,fintekkers/models/security/asset_class.proto\x12\x1a\x66intekkers.models.security*\x85\x01\n\x0f\x41ssetClassProto\x12\x17\n\x13UNKNOWN_ASSET_CLASS\x10\x00\x12\x10\n\x0c\x46IXED_INCOME\x10\x01\x12\n\n\x06\x45QUITY\x10\x02\x12\x14\n\x10\x43\x41SH_ASSET_CLASS\x10\x03\x12\t\n\x05INDEX\x10\x04\x12\x0e\n\nVOLATILITY\x10\x05\x12\n\n\x06\x43RYPTO\x10\x06\x42\x14\x42\x10\x41ssetClassProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,6 +32,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.security.
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\020AssetClassProtosP\001'
-  _globals['_ASSETCLASSPROTO']._serialized_start=76
-  _globals['_ASSETCLASSPROTO']._serialized_end=197
+  _globals['_ASSETCLASSPROTO']._serialized_start=77
+  _globals['_ASSETCLASSPROTO']._serialized_end=210
 # @@protoc_insertion_point(module_scope)

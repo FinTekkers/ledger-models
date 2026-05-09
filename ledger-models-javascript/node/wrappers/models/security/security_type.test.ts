@@ -54,6 +54,7 @@ describe('SecurityType.getAllTypeNames', () => {
         //   EQUITY_INDEX_SECURITY = 8;
         //   STRIPS_SECURITY = 9;          (added in #246)
         //   T_BILL = 10;                  (added in #246)
+        //   CRYPTOCURRENCY = 11;          (added in #237)
         expect(SecurityType.getAllTypeNames()).toEqual([
             'CASH_SECURITY',
             'EQUITY_SECURITY',
@@ -65,6 +66,7 @@ describe('SecurityType.getAllTypeNames', () => {
             'EQUITY_INDEX_SECURITY',
             'STRIPS_SECURITY',
             'T_BILL',
+            'CRYPTOCURRENCY',
         ]);
     });
 

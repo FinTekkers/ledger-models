@@ -77,6 +77,20 @@ public enum SecurityTypeProto
    * <code>T_BILL = 10;</code>
    */
   T_BILL(10),
+  /**
+   * <pre>
+   * Cryptocurrency — Bitcoin (BTC), Ethereum (ETH), and other crypto
+   * assets. Identifier convention: EXCH_TICKER='BTC-USD' (with quote
+   * currency suffix) for ingestion. v1 BTC support fits base SecurityProto
+   * fields + asset_class=CRYPTO; if downstream consumers need crypto-
+   * specific fields (e.g. on-chain block reference, custody type), a
+   * sub-message under product_details will be added then. Added per
+   * FinTekkers/second-brain#237.
+   * </pre>
+   *
+   * <code>CRYPTOCURRENCY = 11;</code>
+   */
+  CRYPTOCURRENCY(11),
   UNRECOGNIZED(-1),
   ;
 
@@ -149,6 +163,20 @@ public enum SecurityTypeProto
    * <code>T_BILL = 10;</code>
    */
   public static final int T_BILL_VALUE = 10;
+  /**
+   * <pre>
+   * Cryptocurrency — Bitcoin (BTC), Ethereum (ETH), and other crypto
+   * assets. Identifier convention: EXCH_TICKER='BTC-USD' (with quote
+   * currency suffix) for ingestion. v1 BTC support fits base SecurityProto
+   * fields + asset_class=CRYPTO; if downstream consumers need crypto-
+   * specific fields (e.g. on-chain block reference, custody type), a
+   * sub-message under product_details will be added then. Added per
+   * FinTekkers/second-brain#237.
+   * </pre>
+   *
+   * <code>CRYPTOCURRENCY = 11;</code>
+   */
+  public static final int CRYPTOCURRENCY_VALUE = 11;
 
 
   public final int getNumber() {
@@ -186,6 +214,7 @@ public enum SecurityTypeProto
       case 8: return EQUITY_INDEX_SECURITY;
       case 9: return STRIPS_SECURITY;
       case 10: return T_BILL;
+      case 11: return CRYPTOCURRENCY;
       default: return null;
     }
   }
