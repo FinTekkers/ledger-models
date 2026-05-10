@@ -2,7 +2,7 @@
 //!   - tenor (DecimalValueProto, decimal-years override)
 //!   - clean_price (DecimalValueProto, alternative to price)
 
-use ledger_models::fintekkers::models::security::{SecurityProto, SecurityTypeProto};
+use ledger_models::fintekkers::models::security::{SecurityProto, ProductTypeProto};
 use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
 use ledger_models::fintekkers::requests::valuation::CurveInputProto;
 use prost::Message;
@@ -26,7 +26,7 @@ fn roundtrip(original: &CurveInputProto) -> CurveInputProto {
 #[test]
 fn curve_input_tenor_and_clean_price_survive_roundtrip() {
     let mut sec = SecurityProto::default();
-    sec.security_type = SecurityTypeProto::BondSecurity as i32;
+    sec.product_type = ProductTypeProto::TreasuryNote as i32;
     sec.issue_date = Some(date(2025, 1, 15));
     sec.maturity_date = Some(date(2035, 1, 15));
 
@@ -52,7 +52,7 @@ fn curve_input_tenor_and_clean_price_survive_roundtrip() {
     assert_eq!(parsed_clean_price.arbitrary_precision_value, "99.50");
 
     let parsed_sec = parsed.security.as_ref().expect("security should round-trip");
-    assert_eq!(parsed_sec.security_type, SecurityTypeProto::BondSecurity as i32);
+    assert_eq!(parsed_sec.product_type, ProductTypeProto::TreasuryNote as i32);
     assert_eq!(parsed_sec.maturity_date.as_ref().unwrap().year, 2035);
     assert_eq!(parsed_sec.issue_date.as_ref().unwrap().year, 2025);
 }
@@ -60,7 +60,7 @@ fn curve_input_tenor_and_clean_price_survive_roundtrip() {
 #[test]
 fn curve_input_without_new_fields_remains_compatible() {
     let mut sec = SecurityProto::default();
-    sec.security_type = SecurityTypeProto::BondSecurity as i32;
+    sec.product_type = ProductTypeProto::TreasuryNote as i32;
     sec.maturity_date = Some(date(2035, 1, 15));
 
     let original = CurveInputProto {
