@@ -90,16 +90,16 @@ Multi-leg equity strategies (verticals, calendars, butterflies, condors, straddl
 
 `BITCOIN`, `ETHEREUM`, `USDC` are **not** productTypes — same way `AAPL` is not a productType. The leaf productTypes are the **kind** of crypto; specific coins are Security identities under those leaves.
 
-Note the asset class split: `CRYPTOCURRENCY` carries asset_class=`CRYPTO` (volatile reserve-asset exposure), but `STABLECOIN` carries asset_class=`CASH` (peg, redeem, counterparty — economic exposure to a pegged unit, not to the crypto market).
+Both `CRYPTOCURRENCY` and `STABLECOIN` carry asset_class=`CRYPTO`. Stablecoins de-peg under stress (e.g. USDC in the March 2023 SVB episode), so grouping them with crypto matches institutional digital-asset reporting and keeps de-peg risk surfaced in asset-class roll-ups rather than hidden behind a CASH classification.
 
 | Specific instrument | productType | asset class | instrument_type |
 | --- | --- | --- | --- |
 | Bitcoin (BTC-USD) | CRYPTO › CRYPTOCURRENCY | CRYPTO | CASH |
 | Ethereum (ETH-USD) | CRYPTO › CRYPTOCURRENCY | CRYPTO | CASH |
 | Solana (SOL-USD) | CRYPTO › CRYPTOCURRENCY | CRYPTO | CASH |
-| USDC stablecoin | CRYPTO › STABLECOIN | CASH | CASH |
-| USDT stablecoin | CRYPTO › STABLECOIN | CASH | CASH |
-| DAI stablecoin | CRYPTO › STABLECOIN | CASH | CASH |
+| USDC stablecoin | CRYPTO › STABLECOIN | CRYPTO | CASH |
+| USDT stablecoin | CRYPTO › STABLECOIN | CRYPTO | CASH |
+| DAI stablecoin | CRYPTO › STABLECOIN | CRYPTO | CASH |
 
 ## Commodity
 
@@ -177,7 +177,6 @@ The registry classifies legal form, not economic substance. A bond ETF lives at 
 The same principle applies elsewhere:
 
 - A money-market fund (`MONEY_MARKET_FUND`) is `CASH` even though its underlying holdings are short-tenor treasuries and commercial paper.
-- A stablecoin (`STABLECOIN`) is `CASH` (economic exposure to a pegged unit) even though its productType lives under the `CRYPTO` parent (transport/structural relationship).
 - A leveraged ETF on the S&P 500 is still `STOCK › ETF` with asset_class `EQUITY` — the leverage is a substance question, not a form question.
 
 If you need to see-through, that's a downstream concern. The registry tells you what the wrapper is; the wrapper's contents are someone else's job.

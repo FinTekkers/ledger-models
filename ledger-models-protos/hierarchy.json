@@ -47,7 +47,7 @@
 
     "CRYPTO": { "parent": null, "abstract": true, "label": "Crypto" },
     "CRYPTOCURRENCY": { "parent": "CRYPTO", "asset_class": "CRYPTO", "instrument_type": "CASH", "label": "Cryptocurrency", "status": "active" },
-    "STABLECOIN":     { "parent": "CRYPTO", "asset_class": "CASH",   "instrument_type": "CASH", "label": "Stablecoin",     "status": "active" },
+    "STABLECOIN":     { "parent": "CRYPTO", "asset_class": "CRYPTO", "instrument_type": "CASH", "label": "Stablecoin",     "status": "active" },
 
     "COMMODITY_SPOT": { "parent": null, "abstract": true, "label": "Commodity Spot" },
     "PRECIOUS_METAL": { "parent": "COMMODITY_SPOT", "abstract": true, "label": "Precious Metal" },
