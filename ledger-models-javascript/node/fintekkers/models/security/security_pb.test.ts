@@ -4,7 +4,7 @@ import { LocalDateProto } from '../util/local_date_pb';
 import { CouponFrequencyProto } from './coupon_frequency_pb';
 import { CouponTypeProto } from './coupon_type_pb';
 import { SecurityProto } from './security_pb';
-import { SecurityTypeProto } from './security_type_pb';
+import { ProductTypeProto } from './product_type_pb';
 
 test('create a security proto (from sue) object and test it can be read', () => {
   // Usage example
@@ -19,7 +19,7 @@ test('create a security proto (from sue) object and test it can be read', () => 
   security.setIssueDate(new LocalDateProto().setYear(2023).setMonth(1).setDay(1));
   security.setDatedDate(new LocalDateProto().setYear(2023).setMonth(1).setDay(1));
   security.setMaturityDate(new LocalDateProto().setYear(2023).setMonth(1).setDay(1));
-  security.setSecurityType(SecurityTypeProto.BOND_SECURITY);
+  security.setProductType(ProductTypeProto.TREASURY_NOTE);
   security.setCouponType(CouponTypeProto.FIXED)
 
   // Serialize the object to a binary representation

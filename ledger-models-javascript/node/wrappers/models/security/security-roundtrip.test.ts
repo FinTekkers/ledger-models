@@ -4,7 +4,7 @@
  * For each type: construct → serialize to bytes → deserialize → verify all fields match.
  */
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { SecurityTypeProto } from '../../../fintekkers/models/security/security_type_pb';
+import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { SecurityQuantityTypeProto } from '../../../fintekkers/models/security/security_quantity_type_pb';
@@ -32,7 +32,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const original = new SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
-        original.setSecurityType(SecurityTypeProto.BOND_SECURITY);
+        original.setProductType(ProductTypeProto.TREASURY_NOTE);
         original.setAssetClass('Fixed Income');
         original.setIssuerName('US Treasury');
         original.setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE);
@@ -49,7 +49,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const bytes = original.serializeBinary();
         const parsed = SecurityProto.deserializeBinary(bytes);
 
-        expect(parsed.getSecurityType()).toBe(SecurityTypeProto.BOND_SECURITY);
+        expect(parsed.getProductType()).toBe(ProductTypeProto.TREASURY_NOTE);
         expect(parsed.getAssetClass()).toBe('Fixed Income');
         expect(parsed.getIssuerName()).toBe('US Treasury');
         expect(parsed.getDescription()).toBe('UST 5% 2030');
@@ -71,7 +71,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const original = new SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
-        original.setSecurityType(SecurityTypeProto.TIPS);
+        original.setProductType(ProductTypeProto.TIPS);
         original.setAssetClass('Fixed Income');
         original.setIssuerName('US Treasury');
         original.setCouponRate(makeDecimal('0.625'));
@@ -85,7 +85,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const bytes = original.serializeBinary();
         const parsed = SecurityProto.deserializeBinary(bytes);
 
-        expect(parsed.getSecurityType()).toBe(SecurityTypeProto.TIPS);
+        expect(parsed.getProductType()).toBe(ProductTypeProto.TIPS);
         expect(parsed.getCouponRate()!.getArbitraryPrecisionValue()).toBe('0.625');
         expect(parsed.getCouponType()).toBe(CouponTypeProto.FIXED);
         expect(parsed.getCouponFrequency()).toBe(CouponFrequencyProto.SEMIANNUALLY);
@@ -99,7 +99,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const original = new SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
-        original.setSecurityType(SecurityTypeProto.FRN);
+        original.setProductType(ProductTypeProto.TREASURY_FRN);
         original.setAssetClass('Fixed Income');
         original.setIssuerName('US Treasury');
         original.setCouponType(CouponTypeProto.FLOAT);
@@ -113,7 +113,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const bytes = original.serializeBinary();
         const parsed = SecurityProto.deserializeBinary(bytes);
 
-        expect(parsed.getSecurityType()).toBe(SecurityTypeProto.FRN);
+        expect(parsed.getProductType()).toBe(ProductTypeProto.TREASURY_FRN);
         expect(parsed.getCouponType()).toBe(CouponTypeProto.FLOAT);
         expect(parsed.getCouponFrequency()).toBe(CouponFrequencyProto.QUARTERLY);
         expect(parsed.getFaceValue()!.getArbitraryPrecisionValue()).toBe('100');
@@ -126,7 +126,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const original = new SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
-        original.setSecurityType(SecurityTypeProto.EQUITY_SECURITY);
+        original.setProductType(ProductTypeProto.COMMON_STOCK);
         original.setAssetClass('Equity');
         original.setIssuerName('Apple Inc.');
         original.setQuantityType(SecurityQuantityTypeProto.UNITS);
@@ -136,7 +136,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const bytes = original.serializeBinary();
         const parsed = SecurityProto.deserializeBinary(bytes);
 
-        expect(parsed.getSecurityType()).toBe(SecurityTypeProto.EQUITY_SECURITY);
+        expect(parsed.getProductType()).toBe(ProductTypeProto.COMMON_STOCK);
         expect(parsed.getAssetClass()).toBe('Equity');
         expect(parsed.getIssuerName()).toBe('Apple Inc.');
         expect(parsed.getQuantityType()).toBe(SecurityQuantityTypeProto.UNITS);
@@ -149,7 +149,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const original = new SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
-        original.setSecurityType(SecurityTypeProto.CASH_SECURITY);
+        original.setProductType(ProductTypeProto.CURRENCY);
         original.setAssetClass('Cash');
         original.setIssuerName('Federal Reserve');
         original.setQuantityType(SecurityQuantityTypeProto.UNITS);
@@ -160,7 +160,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const bytes = original.serializeBinary();
         const parsed = SecurityProto.deserializeBinary(bytes);
 
-        expect(parsed.getSecurityType()).toBe(SecurityTypeProto.CASH_SECURITY);
+        expect(parsed.getProductType()).toBe(ProductTypeProto.CURRENCY);
         expect(parsed.getAssetClass()).toBe('Cash');
         expect(parsed.getCashId()).toBe('USD');
         expect(parsed.getDescription()).toBe('US Dollar');
@@ -172,7 +172,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const original = new SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
-        original.setSecurityType(SecurityTypeProto.INDEX_SECURITY);
+        original.setProductType(ProductTypeProto.EQUITY_INDEX);
         original.setAssetClass('Index');
         original.setIssuerName('Bureau of Labor Statistics');
         original.setDescription('US CPI-U All Urban Consumers');
@@ -182,7 +182,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const bytes = original.serializeBinary();
         const parsed = SecurityProto.deserializeBinary(bytes);
 
-        expect(parsed.getSecurityType()).toBe(SecurityTypeProto.INDEX_SECURITY);
+        expect(parsed.getProductType()).toBe(ProductTypeProto.EQUITY_INDEX);
         expect(parsed.getAssetClass()).toBe('Index');
         expect(parsed.getIssuerName()).toBe('Bureau of Labor Statistics');
         expect(parsed.getDescription()).toBe('US CPI-U All Urban Consumers');

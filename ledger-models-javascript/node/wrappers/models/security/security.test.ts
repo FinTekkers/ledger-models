@@ -7,7 +7,7 @@ import BondSecurity from './BondSecurity';
 
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { SecurityTypeProto } from '../../../fintekkers/models/security/security_type_pb';
+import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { SecurityQuantityTypeProto } from '../../../fintekkers/models/security/security_quantity_type_pb';
@@ -92,7 +92,7 @@ function dummyBondSecurity() {
     // to BondSecurity.
     return Security.create(new SecurityProto()
         .setObjectClass('Security').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
-        .setSecurityType(SecurityTypeProto.BOND_SECURITY)
+        .setProductType(ProductTypeProto.TREASURY_NOTE)
         .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
         .setAssetClass("Bond")
@@ -112,7 +112,7 @@ function dummyEquity() {
     // behavior on getMaturityDate.
     return Security.create(new SecurityProto()
         .setObjectClass('Security').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
-        .setSecurityType(SecurityTypeProto.EQUITY_SECURITY)
+        .setProductType(ProductTypeProto.COMMON_STOCK)
         .setAssetClass("Equity")
         .setIssuerName("Dummy issuer Inc.")
         .setDescription("Dummy equity")

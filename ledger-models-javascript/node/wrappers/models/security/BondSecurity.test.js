@@ -7,7 +7,7 @@ const assert = require("assert");
 const security_1 = __importDefault(require("./security"));
 const BondSecurity_1 = __importDefault(require("./BondSecurity"));
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
-const security_type_pb_1 = require("../../../fintekkers/models/security/security_type_pb");
+const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
@@ -29,7 +29,7 @@ function testBondSecurityCreation() {
     securityProto.setObjectClass('Security');
     securityProto.setVersion('0.0.1');
     securityProto.setUuid(uuid_1.UUID.random().toUUIDProto());
-    securityProto.setSecurityType(security_type_pb_1.SecurityTypeProto.BOND_SECURITY);
+    securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
     securityProto.setAssetClass('FixedIncome');
     securityProto.setIssuerName('Test Issuer');
     securityProto.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
@@ -57,7 +57,7 @@ function testBondSecurityTenor() {
     securityProto.setObjectClass('Security');
     securityProto.setVersion('0.0.1');
     securityProto.setUuid(uuid_1.UUID.random().toUUIDProto());
-    securityProto.setSecurityType(security_type_pb_1.SecurityTypeProto.BOND_SECURITY);
+    securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
     securityProto.setAssetClass('FixedIncome');
     securityProto.setIssuerName('Test Issuer');
     securityProto.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
@@ -95,7 +95,7 @@ function testBondSecurityTenor() {
     securityProto2.setObjectClass('Security');
     securityProto2.setVersion('0.0.1');
     securityProto2.setUuid(uuid_1.UUID.random().toUUIDProto());
-    securityProto2.setSecurityType(security_type_pb_1.SecurityTypeProto.BOND_SECURITY);
+    securityProto2.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
     securityProto2.setAssetClass('FixedIncome');
     securityProto2.setIssuerName('Test Issuer');
     securityProto2.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
@@ -122,7 +122,7 @@ function testBondSecurityTenor() {
 function testBondSecurityTenorWithAsOfDate() {
     // Create a SecurityProto with BOND_SECURITY type and dates for a 10-year bond
     const securityProto = new security_pb_1.SecurityProto();
-    securityProto.setSecurityType(security_type_pb_1.SecurityTypeProto.BOND_SECURITY);
+    securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
     securityProto.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     // Set maturity date: January 1, 2031 (exactly 10 years later)
     securityProto.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));

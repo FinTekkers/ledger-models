@@ -11,7 +11,7 @@ import { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value
 import Security from "../security/security";
 import Portfolio from "../portfolio/portfolio";
 import Price from "../price/Price";
-import { SecurityTypeProto } from "../../../fintekkers/models/security/security_type_pb";
+import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 
 //Model Utils
 import { ZonedDateTime } from "../utils/datetime";
@@ -225,7 +225,7 @@ class Transaction {
    * @returns true if the security is cash, false otherwise
    */
   isCashSecurity(): boolean {
-    return this.getSecurity().proto.getSecurityType() === SecurityTypeProto.CASH_SECURITY;
+    return this.getSecurity().proto.getProductType() === ProductTypeProto.CURRENCY;
   }
 
   /**
@@ -273,11 +273,11 @@ class Transaction {
 
     // Calculate book amount
     let bookAmount: Decimal;
-    const securityType = parentTransaction.getSecurity().proto.getSecurityType();
+    const securityType = parentTransaction.getSecurity().proto.getProductType();
 
-    if (securityType === SecurityTypeProto.BOND_SECURITY ||
-      securityType === SecurityTypeProto.TIPS ||
-      securityType === SecurityTypeProto.FRN) {
+    if (securityType === ProductTypeProto.TREASURY_NOTE ||
+      securityType === ProductTypeProto.TIPS ||
+      securityType === ProductTypeProto.TREASURY_FRN) {
       // For bond securities
       if (parentType === TransactionTypeProto.MATURATION || parentType === TransactionTypeProto.MATURATION_OFFSET) {
         // For maturation transactions, use quantity directly
@@ -393,10 +393,10 @@ class Transaction {
    * @param cashSecurity - The cash security to use for cash impacts
    */
   static addDerivedTransactions(transaction: Transaction, cashSecurity: Security): void {
-    const securityType = transaction.getSecurity().proto.getSecurityType();
-    const isBond = securityType === SecurityTypeProto.BOND_SECURITY ||
-      securityType === SecurityTypeProto.FRN ||
-      securityType === SecurityTypeProto.TIPS;
+    const securityType = transaction.getSecurity().proto.getProductType();
+    const isBond = securityType === ProductTypeProto.TREASURY_NOTE ||
+      securityType === ProductTypeProto.TREASURY_FRN ||
+      securityType === ProductTypeProto.TIPS;
 
     const transactionType = transaction.getTransactionType().proto;
     const isABuyTransaction = transactionType === TransactionTypeProto.BUY;
@@ -452,7 +452,7 @@ export default Transaction;
 
 //   BigDecimal bookAmount = null;
 
-//   switch(parentTransaction.getSecurity().getSecurityType()) {
+//   switch(parentTransaction.getSecurity().getProductType()) {
 //       case BOND_SECURITY:
 //           if(TransactionType.MATURATION.equals(parentTransaction.getTransactionType())
 //               || TransactionType.MATURATION_OFFSET.equals(parentTransaction.getTransactionType())) {
@@ -502,9 +502,9 @@ export default Transaction;
 // */
 // public static void addDerivedTransactions(Transaction transaction) {
 //   //TODO: Best to co-locate this with the transaction instantiator where we calculate the cash impacts, right?!
-//   boolean isBond = SecurityTypeProto.BOND_SECURITY.equals(transaction.getSecurity().getSecurityType())
-//           || SecurityTypeProto.FRN.equals(transaction.getSecurity().getSecurityType())
-//           || SecurityTypeProto.TIPS.equals(transaction.getSecurity().getSecurityType());
+//   boolean isBond = ProductTypeProto.TREASURY_NOTE.equals(transaction.getSecurity().getProductType())
+//           || ProductTypeProto.TREASURY_FRN.equals(transaction.getSecurity().getProductType())
+//           || ProductTypeProto.TIPS.equals(transaction.getSecurity().getProductType());
 //   boolean isABuyTransaction = TransactionType.BUY.equals(transaction.getTransactionType());
 //   boolean isASellTransaction = TransactionType.SELL.equals(transaction.getTransactionType());
 //   boolean isaMaturationTransaction = !TransactionType.MATURATION.equals(transaction.getTransactionType())

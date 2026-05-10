@@ -9,7 +9,7 @@ const transaction_type_1 = require("./transaction_type");
 const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
 const security_1 = __importDefault(require("../security/security"));
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
-const security_type_pb_1 = require("../../../fintekkers/models/security/security_type_pb");
+const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const security_quantity_type_pb_1 = require("../../../fintekkers/models/security/security_quantity_type_pb");
@@ -40,7 +40,7 @@ function testCreateCashTransaction() {
     const cashSecurity = createCashSecurity();
     const cashTransaction = transaction_1.default.createCashTransaction(cashSecurity, buyTransaction);
     assert(cashTransaction.getTransactionType().proto === transaction_type_pb_1.TransactionTypeProto.WITHDRAWAL, 'BUY transaction should create WITHDRAWAL cash transaction');
-    assert(cashTransaction.getSecurity().proto.getSecurityType() === security_type_pb_1.SecurityTypeProto.CASH_SECURITY, 'Cash transaction should have cash security');
+    assert(cashTransaction.getSecurity().proto.getProductType() === product_type_pb_1.ProductTypeProto.CURRENCY, 'Cash transaction should have cash security');
     assert(buyTransaction.getChildrenTransactions().length === 1, 'Parent transaction should have one child');
     const foundCash = buyTransaction.getCashTransaction();
     assert(foundCash !== null && foundCash.getID().toString() === cashTransaction.getID().toString(), 'getCashTransaction should return the created cash transaction');
@@ -140,7 +140,7 @@ function createBondSecurity() {
         .setObjectClass('Security')
         .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
-        .setSecurityType(security_type_pb_1.SecurityTypeProto.BOND_SECURITY)
+        .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE)
         .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
         .setAssetClass('FixedIncome')
@@ -158,7 +158,7 @@ function createEquityTransaction() {
         .setObjectClass('Security')
         .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
-        .setSecurityType(security_type_pb_1.SecurityTypeProto.EQUITY_SECURITY)
+        .setProductType(product_type_pb_1.ProductTypeProto.COMMON_STOCK)
         .setAssetClass('Equity')
         .setAsOf(datetime_1.ZonedDateTime.now().toProto()));
     const portfolio = (0, portfolio_test_1.dummyPortfolio)();
@@ -178,7 +178,7 @@ function createCashSecurity() {
         .setObjectClass('Security')
         .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
-        .setSecurityType(security_type_pb_1.SecurityTypeProto.CASH_SECURITY)
+        .setProductType(product_type_pb_1.ProductTypeProto.CURRENCY)
         .setAssetClass('Cash')
         .setAsOf(datetime_1.ZonedDateTime.now().toProto()));
 }

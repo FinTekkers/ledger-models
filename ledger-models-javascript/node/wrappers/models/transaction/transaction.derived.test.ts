@@ -6,7 +6,7 @@ import { PositionStatusProto } from '../../../fintekkers/models/position/positio
 import Security from '../security/security';
 import Portfolio from '../portfolio/portfolio';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { SecurityTypeProto } from '../../../fintekkers/models/security/security_type_pb';
+import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { SecurityQuantityTypeProto } from '../../../fintekkers/models/security/security_quantity_type_pb';
@@ -46,7 +46,7 @@ function testCreateCashTransaction(): void {
     
     assert(cashTransaction.getTransactionType().proto === TransactionTypeProto.WITHDRAWAL,
         'BUY transaction should create WITHDRAWAL cash transaction');
-    assert(cashTransaction.getSecurity().proto.getSecurityType() === SecurityTypeProto.CASH_SECURITY,
+    assert(cashTransaction.getSecurity().proto.getProductType() === ProductTypeProto.CURRENCY,
         'Cash transaction should have cash security');
     assert(buyTransaction.getChildrenTransactions().length === 1,
         'Parent transaction should have one child');
@@ -185,7 +185,7 @@ function createBondSecurity(): Security {
         .setObjectClass('Security')
         .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
-        .setSecurityType(SecurityTypeProto.BOND_SECURITY)
+        .setProductType(ProductTypeProto.TREASURY_NOTE)
         .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
         .setAssetClass('FixedIncome')
@@ -205,7 +205,7 @@ function createEquityTransaction(): Transaction {
         .setObjectClass('Security')
         .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
-        .setSecurityType(SecurityTypeProto.EQUITY_SECURITY)
+        .setProductType(ProductTypeProto.COMMON_STOCK)
         .setAssetClass('Equity')
         .setAsOf(ZonedDateTime.now().toProto())
     );
@@ -228,7 +228,7 @@ function createCashSecurity(): Security {
         .setObjectClass('Security')
         .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
-        .setSecurityType(SecurityTypeProto.CASH_SECURITY)
+        .setProductType(ProductTypeProto.CURRENCY)
         .setAssetClass('Cash')
         .setAsOf(ZonedDateTime.now().toProto())
     );

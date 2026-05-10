@@ -1,6 +1,6 @@
 import Security from './security';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { SecurityTypeProto } from '../../../fintekkers/models/security/security_type_pb';
+import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDate } from '../utils/date';
 import { IssuanceProto } from '../../../fintekkers/models/security/bond/issuance_pb';
@@ -9,13 +9,21 @@ import { CouponType } from './coupon_type';
 import { Tenor, Period } from './term';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
 import { Decimal } from 'decimal.js';
+import { isDescendantOf } from './product_hierarchy';
 
 class BondSecurity extends Security {
   constructor(proto: SecurityProto) {
     super(proto);
-    if (proto.getSecurityType() !== SecurityTypeProto.BOND_SECURITY && proto.getSecurityType() !== SecurityTypeProto.TIPS && proto.getSecurityType() !== SecurityTypeProto.FRN) {
+    // Bond-shape membership uses the registry: any product_type that is
+    // a descendant of "BOND" in hierarchy.json (TBILL, TREASURY_NOTE,
+    // TREASURY_BOND, TIPS, TREASURY_FRN, STRIPS, SOVEREIGN_BOND,
+    // CORP_BOND, MUNI_BOND, plus future planned leaves under
+    // CREDIT_BOND / STRUCTURED_BOND) is accepted.
+    const ptName = (Object.keys(ProductTypeProto) as Array<keyof typeof ProductTypeProto>)
+      .find(k => ProductTypeProto[k] === proto.getProductType());
+    if (!ptName || !isDescendantOf(ptName as string, 'BOND')) {
       throw new Error(
-        `BondSecurity requires BOND_SECURITY type, got ${SecurityTypeProto[proto.getSecurityType()]}`
+        `BondSecurity requires a bond-shape product type (descendant of BOND in hierarchy.json), got ${ptName ?? 'unknown'}`
       );
     }
   }

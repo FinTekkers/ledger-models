@@ -1,5 +1,5 @@
 // The proto module exports the enum as `PositionFilterOperator` (no `Proto`
-// suffix, unlike SecurityTypeProto / AssetClassProto / IdentifierTypeProto).
+// suffix, unlike ProductTypeProto / AssetClassProto / IdentifierTypeProto).
 // Renamed on import to free the natural class name for the wrapper. Consumers
 // who want the enum type for their own annotations can import directly from
 // the proto module:
