@@ -177,6 +177,18 @@ jreleaser {
     }
 }
 
+// Bundle hierarchy.json + companion docs into the jar as classpath
+// resources. Single source of truth lives in ledger-models-protos/
+// alongside the .proto files; they're copied here at build time so
+// ProductHierarchy.class can load /hierarchy.json from the classpath.
+processResources {
+    from('../ledger-models-protos') {
+        include 'hierarchy.json'
+        include 'hierarchy-examples.md'
+        include 'registry-versioning.md'
+    }
+}
+
 protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:${protocVersion}"

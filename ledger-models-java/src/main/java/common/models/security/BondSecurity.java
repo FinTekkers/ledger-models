@@ -2,7 +2,7 @@ package common.models.security;
 
 import common.models.JSONFieldNames;
 import common.models.postion.Field;
-import fintekkers.models.security.SecurityTypeProto;
+import fintekkers.models.security.ProductTypeProto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -140,9 +140,19 @@ public class BondSecurity extends Security {
         return getFaceValue().divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
     }
 
+    /**
+     * BondSecurity is a generic wrapper for bond-shape product types
+     * (TBILL, TREASURY_NOTE, TREASURY_BOND, STRIPS, SOVEREIGN_BOND,
+     * CORP_BOND, MUNI_BOND). When constructed from a proto via the
+     * deserialize path the source proto carries the actual leaf type;
+     * for legacy non-proto-constructed instances we default to
+     * TREASURY_NOTE as the sensible "vanilla bond" fallback.
+     * Specialized subclasses (TIPSBond, FloatingRateNote) override.
+     */
     @Override
-    public SecurityTypeProto getSecurityType() {
-        return SecurityTypeProto.BOND_SECURITY;
+    public ProductTypeProto getProductType() {
+        ProductTypeProto pt = super.getProductType();
+        return pt == ProductTypeProto.PRODUCT_TYPE_UNKNOWN ? ProductTypeProto.TREASURY_NOTE : pt;
     }
 
     @Override
@@ -171,18 +181,11 @@ public class BondSecurity extends Security {
         return getAdjustedTenor(LocalDate.now());
     }
 
-    @Override
-    public ProductType getProductType() {
-        Period tenor = getTenor().getTenor();
-
-        if(tenor.getYears() < 1 || (tenor.getYears() == 1 && tenor.getMonths() == 0)) {
-            return ProductType.BILL;
-        } else if (tenor.getYears() > 19) {
-            return ProductType.BOND;
-        } else {
-            return ProductType.NOTE;
-        }
-    }
+    // The Java-only ProductType enum (BILL/NOTE/BOND derived from tenor)
+    // was deleted as part of the 4-dim registry refactor (M1 of #257).
+    // ProductTypeProto.{TBILL, TREASURY_NOTE, TREASURY_BOND} now carries
+    // the same distinction explicitly on the proto. Tenor-derived
+    // classification is no longer authoritative.
 
     /***
      * Plumbing for positions

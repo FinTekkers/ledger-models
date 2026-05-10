@@ -5,8 +5,8 @@ import common.models.RawDataModelObject;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.security.identifier.Identifier;
+import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
-import fintekkers.models.security.SecurityTypeProto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -102,7 +102,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
             case AS_OF, EFFECTIVE_DATE -> getAsOf();
             case ASSET_CLASS -> getAssetClass();
             case PRODUCT_CLASS -> getProductClass();
-            case PRODUCT_TYPE -> getProductType();
+            case PRODUCT_TYPE -> getProductType().name();
             case IDENTIFIER -> getSecurityId();
             case TENOR, ADJUSTED_TENOR -> Tenor.UNKNOWN_TENOR;
             case SECURITY_DESCRIPTION -> getDescription();
@@ -133,19 +133,17 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     /**
-     * The type of security that is suitable for user display. This will be a lower level of
-     * <p>
-     * BLAH. Maybe need to code in a product hierarchy now? TODO TODO TODO
-     * <p>
-     * 1/ Create a product type enum with opinionated values
-     * 2/ Create a generic value to let people override
-     * <p>
-     * Needs an overridable concept. (a) How would that work; (b) What would the performance penalty be?
-     *
-     * @return TODO NEED TO DO THIS
+     * Reads the leaf productType from the source proto when present.
+     * Specialized subclasses (TIPSBond, FloatingRateNote, EquitySecurity,
+     * CashSecurity) override with a hardcoded value for legacy
+     * non-proto-constructed paths. See ledger-models-protos/hierarchy.json
+     * for the full product registry.
      */
-    public ProductType getProductType() {
-        return ProductType.UNCLASSIFIED;
+    public ProductTypeProto getProductType() {
+        if (_sourceProto != null && _sourceProto.getProductType() != ProductTypeProto.PRODUCT_TYPE_UNKNOWN) {
+            return _sourceProto.getProductType();
+        }
+        return ProductTypeProto.PRODUCT_TYPE_UNKNOWN;
     }
 
     public Set<Field> getFields() {
@@ -180,12 +178,6 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         return getID().hashCode();
     }
 
-    public SecurityTypeProto getSecurityType() {
-        if (_sourceProto != null && _sourceProto.getSecurityType() != SecurityTypeProto.UNKNOWN_SECURITY_TYPE) {
-            return _sourceProto.getSecurityType();
-        }
-        return SecurityTypeProto.UNKNOWN_SECURITY_TYPE;
-    }
 
     /**
      * @return If an explicit description is set then it is return, otherwise a generic description is returned.

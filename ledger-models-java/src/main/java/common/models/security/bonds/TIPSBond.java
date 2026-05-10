@@ -1,7 +1,7 @@
 package common.models.security.bonds;
 
 import common.models.security.*;
-import fintekkers.models.security.SecurityTypeProto;
+import fintekkers.models.security.ProductTypeProto;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -50,12 +50,7 @@ public class TIPSBond extends BondSecurity implements IndexLinkedSecurity {
     }
 
     @Override
-    public SecurityTypeProto getSecurityType() {
-        return SecurityTypeProto.TIPS;
-    }
-
-    @Override
-    public ProductType getProductType() {
-        return ProductType.TIPS;
+    public ProductTypeProto getProductType() {
+        return ProductTypeProto.TIPS;
     }
 }

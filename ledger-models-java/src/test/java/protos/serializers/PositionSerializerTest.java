@@ -8,7 +8,6 @@ import common.models.portfolio.Portfolio;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.postion.Position;
-import common.models.security.ProductType;
 import common.models.security.Security;
 import common.models.security.identifier.Identifier;
 import common.models.security.identifier.IdentifierType;

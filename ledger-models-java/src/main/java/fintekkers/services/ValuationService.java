@@ -7,7 +7,7 @@ import fintekkers.models.position.PositionProto;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.security.SecurityQuantityTypeProto;
-import fintekkers.models.security.SecurityTypeProto;
+import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.util.DecimalValue;
 import fintekkers.models.util.LocalTimestamp;
 import fintekkers.requests.valuation.ValuationRequestProto;
@@ -56,13 +56,13 @@ public class ValuationService {
 
         SecurityProto usd = SecurityProto.newBuilder()
                 .setAsOf(asOf)
-                .setSecurityType(SecurityTypeProto.CASH_SECURITY)
+                .setProductType(ProductTypeProto.CURRENCY)
                 .setAssetClass("Cash")
                 .setCashId("USD").build();
 
         SecurityProto equitySecurity = SecurityProto.newBuilder()
                 .setAsOf(asOf)
-                .setSecurityType(SecurityTypeProto.EQUITY_SECURITY)
+                .setProductType(ProductTypeProto.COMMON_STOCK)
                 .setAssetClass("Equity")
                 .setObjectClass("Security")
                 .setIsLink(false)

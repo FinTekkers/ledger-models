@@ -50,7 +50,7 @@ class OneofProductDetailsRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.BOND_SECURITY)
+                .setProductType(ProductTypeProto.TREASURY_NOTE)
                 .setAssetClass("Fixed Income")
                 .setIssuerName("US Treasury")
                 .setBondDetails(bondDetails)
@@ -88,7 +88,7 @@ class OneofProductDetailsRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.TIPS)
+                .setProductType(ProductTypeProto.TIPS)
                 .setTipsDetails(tipsDetails)
                 .build();
 
@@ -120,7 +120,7 @@ class OneofProductDetailsRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.FRN)
+                .setProductType(ProductTypeProto.TREASURY_FRN)
                 .setFrnDetails(frnDetails)
                 .build();
 
@@ -145,7 +145,7 @@ class OneofProductDetailsRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.INDEX_SECURITY)
+                .setProductType(ProductTypeProto.EQUITY_INDEX)
                 .setIndexDetails(indexDetails)
                 .build();
 
@@ -165,7 +165,7 @@ class OneofProductDetailsRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.CASH_SECURITY)
+                .setProductType(ProductTypeProto.CURRENCY)
                 .setCashDetails(cashDetails)
                 .build();
 
@@ -184,7 +184,7 @@ class OneofProductDetailsRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.EQUITY_SECURITY)
+                .setProductType(ProductTypeProto.COMMON_STOCK)
                 .setAssetClass("Equity")
                 .setEquityDetails(equityDetails)
                 .build();
@@ -209,7 +209,7 @@ class OneofProductDetailsRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.BOND_SECURITY)
+                .setProductType(ProductTypeProto.TREASURY_NOTE)
                 // Flat fields (legacy)
                 .setCouponRate(decimal("5.0"))
                 .setCouponType(CouponTypeProto.FIXED)
@@ -236,7 +236,7 @@ class OneofProductDetailsRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.BOND_SECURITY)
+                .setProductType(ProductTypeProto.TREASURY_NOTE)
                 .setCouponRate(decimal("5.0"))
                 .build();
 

@@ -2,7 +2,6 @@ package common.models.postion;
 
 import common.models.portfolio.Portfolio;
 import common.models.price.Price;
-import common.models.security.ProductType;
 import common.models.security.Security;
 import common.models.security.Tenor;
 import common.models.security.identifier.Identifier;
