@@ -1,7 +1,7 @@
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import IdentifierTypeProto
 
-from fintekkers.models.security.security_type_pb2 import BOND_SECURITY
+from fintekkers.models.security.product_type_pb2 import TREASURY_NOTE
 from fintekkers.models.position.field_pb2 import FieldProto
 
 from fintekkers.requests.security.create_security_request_pb2 import CreateSecurityRequestProto
@@ -21,7 +21,7 @@ def test_create_security_request():
     request = CreateSecurityRequest.create_ust_security_request(
         cusip="TEST_CUSIP", 
         cash_security=USD,
-        security_type=BOND_SECURITY,
+        product_type=TREASURY_NOTE,
         coupon_rate=0.05,
         spread=None, 
         face_value=1000.0

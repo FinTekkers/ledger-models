@@ -5,7 +5,7 @@ For each type: construct → serialize to bytes → deserialize → verify all f
 """
 import pytest
 from fintekkers.models.security import security_pb2
-from fintekkers.models.security import security_type_pb2
+from fintekkers.models.security import product_type_pb2
 from fintekkers.models.security import coupon_frequency_pb2
 from fintekkers.models.security import coupon_type_pb2
 from fintekkers.models.security import security_quantity_type_pb2
@@ -43,7 +43,7 @@ class TestSecurityProtoRoundTrip:
         original = security_pb2.SecurityProto(
             object_class="Security",
             version="0.0.1",
-            security_type=security_type_pb2.BOND_SECURITY,
+            product_type=product_type_pb2.TREASURY_NOTE,
             asset_class="Fixed Income",
             issuer_name="US Treasury",
             quantity_type=security_quantity_type_pb2.ORIGINAL_FACE_VALUE,
@@ -60,7 +60,7 @@ class TestSecurityProtoRoundTrip:
 
         parsed = _roundtrip(original)
 
-        assert parsed.security_type == security_type_pb2.BOND_SECURITY
+        assert parsed.product_type == product_type_pb2.TREASURY_NOTE
         assert parsed.asset_class == "Fixed Income"
         assert parsed.issuer_name == "US Treasury"
         assert parsed.description == "UST 5% 2030"
@@ -83,7 +83,7 @@ class TestSecurityProtoRoundTrip:
         original = security_pb2.SecurityProto(
             object_class="Security",
             version="0.0.1",
-            security_type=security_type_pb2.TIPS,
+            product_type=product_type_pb2.TIPS,
             asset_class="Fixed Income",
             issuer_name="US Treasury",
             coupon_rate=_decimal("0.625"),
@@ -97,7 +97,7 @@ class TestSecurityProtoRoundTrip:
 
         parsed = _roundtrip(original)
 
-        assert parsed.security_type == security_type_pb2.TIPS
+        assert parsed.product_type == product_type_pb2.TIPS
         assert parsed.coupon_rate.arbitrary_precision_value == "0.625"
         assert parsed.coupon_type == coupon_type_pb2.FIXED
         assert parsed.coupon_frequency == coupon_frequency_pb2.SEMIANNUALLY
@@ -110,7 +110,7 @@ class TestSecurityProtoRoundTrip:
         original = security_pb2.SecurityProto(
             object_class="Security",
             version="0.0.1",
-            security_type=security_type_pb2.FRN,
+            product_type=product_type_pb2.TREASURY_FRN,
             asset_class="Fixed Income",
             issuer_name="US Treasury",
             coupon_type=coupon_type_pb2.FLOAT,
@@ -124,7 +124,7 @@ class TestSecurityProtoRoundTrip:
 
         parsed = _roundtrip(original)
 
-        assert parsed.security_type == security_type_pb2.FRN
+        assert parsed.product_type == product_type_pb2.TREASURY_FRN
         assert parsed.coupon_type == coupon_type_pb2.FLOAT
         assert parsed.coupon_frequency == coupon_frequency_pb2.QUARTERLY
         assert parsed.face_value.arbitrary_precision_value == "100"
@@ -137,7 +137,7 @@ class TestSecurityProtoRoundTrip:
         original = security_pb2.SecurityProto(
             object_class="Security",
             version="0.0.1",
-            security_type=security_type_pb2.EQUITY_SECURITY,
+            product_type=product_type_pb2.COMMON_STOCK,
             asset_class="Equity",
             issuer_name="Apple Inc.",
             quantity_type=security_quantity_type_pb2.UNITS,
@@ -147,7 +147,7 @@ class TestSecurityProtoRoundTrip:
 
         parsed = _roundtrip(original)
 
-        assert parsed.security_type == security_type_pb2.EQUITY_SECURITY
+        assert parsed.product_type == product_type_pb2.COMMON_STOCK
         assert parsed.asset_class == "Equity"
         assert parsed.issuer_name == "Apple Inc."
         assert parsed.quantity_type == security_quantity_type_pb2.UNITS
@@ -159,7 +159,7 @@ class TestSecurityProtoRoundTrip:
         original = security_pb2.SecurityProto(
             object_class="Security",
             version="0.0.1",
-            security_type=security_type_pb2.CASH_SECURITY,
+            product_type=product_type_pb2.CURRENCY,
             asset_class="Cash",
             issuer_name="Federal Reserve",
             quantity_type=security_quantity_type_pb2.UNITS,
@@ -170,7 +170,7 @@ class TestSecurityProtoRoundTrip:
 
         parsed = _roundtrip(original)
 
-        assert parsed.security_type == security_type_pb2.CASH_SECURITY
+        assert parsed.product_type == product_type_pb2.CURRENCY
         assert parsed.asset_class == "Cash"
         assert parsed.cash_id == "USD"
         assert parsed.description == "US Dollar"
@@ -181,7 +181,7 @@ class TestSecurityProtoRoundTrip:
         original = security_pb2.SecurityProto(
             object_class="Security",
             version="0.0.1",
-            security_type=security_type_pb2.INDEX_SECURITY,
+            product_type=product_type_pb2.EQUITY_INDEX,
             asset_class="Index",
             issuer_name="Bureau of Labor Statistics",
             description="US CPI-U All Urban Consumers",
@@ -191,7 +191,7 @@ class TestSecurityProtoRoundTrip:
 
         parsed = _roundtrip(original)
 
-        assert parsed.security_type == security_type_pb2.INDEX_SECURITY
+        assert parsed.product_type == product_type_pb2.EQUITY_INDEX
         assert parsed.asset_class == "Index"
         assert parsed.issuer_name == "Bureau of Labor Statistics"
         assert parsed.description == "US CPI-U All Urban Consumers"

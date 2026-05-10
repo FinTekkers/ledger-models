@@ -5,7 +5,7 @@ from fintekkers.models.position.measure_pb2 import (
 )
 from fintekkers.models.security.coupon_frequency_pb2 import CouponFrequencyProto
 from fintekkers.models.security.coupon_type_pb2 import CouponTypeProto
-from fintekkers.models.security.security_type_pb2 import SecurityTypeProto
+from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import IdentifierTypeProto
 from fintekkers.models.util.local_date_pb2 import LocalDateProto
@@ -116,7 +116,7 @@ def test_valuation_with_security_and_price():
     # security:Security = get_security_for_valuation_test()
     
     security:Security = Security(SecurityProto(
-        security_type=SecurityTypeProto.BOND_SECURITY,
+        product_type=ProductTypeProto.TREASURY_NOTE,
         coupon_rate=DecimalValueProto(arbitrary_precision_value="0.0"),
         coupon_frequency=CouponFrequencyProto.NO_COUPON,
         coupon_type=CouponTypeProto.ZERO,

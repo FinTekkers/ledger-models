@@ -6,7 +6,7 @@ from fintekkers.models.position.measure_pb2 import MeasureProto
 
 from uuid import UUID
 from datetime import datetime
-from fintekkers.models.security.security_type_pb2 import SecurityTypeProto
+from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.wrappers.models.security.security_identifier import Identifier
 
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
@@ -127,8 +127,10 @@ class Security():
         src = bond.face_value if bond and bond.HasField('face_value') else self.proto.face_value
         return ProtoSerializationUtil.deserialize(src)
 
-    def get_security_type(self) -> SecurityTypeProto:
-        return self.proto.security_type
+    def get_product_type_proto(self) -> ProductTypeProto:
+        """Returns the leaf ProductTypeProto carried by the proto.
+        For tree walks (parentOf, descendantsOf), see ProductHierarchy."""
+        return self.proto.product_type
 
     def get_description(self) -> str:
         return self.proto.description

@@ -15,10 +15,10 @@ from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import CUSIP
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.security.security_quantity_type_pb2 import ORIGINAL_FACE_VALUE
-from fintekkers.models.security.security_type_pb2 import (
-    BOND_SECURITY,
-    FRN,
-    SecurityTypeProto,
+from fintekkers.models.security.product_type_pb2 import (
+    TREASURY_NOTE,
+    TREASURY_FRN,
+    ProductTypeProto,
 )
 from fintekkers.models.util.date_range_pb2 import DateRangeProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
