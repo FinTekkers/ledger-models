@@ -2,17 +2,19 @@
 
 Concrete real-world instruments mapped across the three classification dimensions shipping in M1: **productType**, **asset_class**, **instrument_type**.
 
-This file ships alongside [`hierarchy.json`](./hierarchy.json) as the canonical reference for "what does each leaf productType actually represent". Reproduced from [second-brain#256](https://github.com/FinTekkers/second-brain/issues/256).
+This file ships alongside [`hierarchy.json`](./hierarchy.json) as the canonical reference for "what does each leaf productType actually represent". Reproduced from [second-brain#256](https://github.com/FinTekkers/second-brain/issues/256), narrowed and revised per the M1 design feedback round.
 
-> **M1 scope note.** The umbrella spec describes a 4-dimensional registry. M1 ships 3 of those dimensions (productType, asset_class, instrument_type). The fourth dimension — **index_type** (`single_name` vs `index`) — is intentionally deferred and will be added in a future milestone. The worked-examples tables below have been narrowed accordingly.
-
-Both productType and asset_class are trees and are written in `PARENT › CHILD` notation throughout. Abstract parent nodes (BOND, GOV_BOND, OPTION, EQUITY_OPTION, …) appear in `hierarchy.json` for tree walking but never get assigned to a Security — leaves are what holdings carry.
-
-> **Status legend.** Examples marked **(planned)** correspond to leaf productTypes whose `status: "planned"` in `hierarchy.json` — they live in the registry for forward-looking design and consumer planning, but the proto enum value isn't shipped yet. Examples without a marker correspond to `status: "active"` leaves and are usable today.
+> **M1 scope notes.**
+>
+> 1. The umbrella spec describes a 4-dimensional registry. M1 ships 3 of those dimensions (productType, asset_class, instrument_type). The fourth dimension — **index_type** (`single_name` vs `index`) — is intentionally deferred and will be added in a future milestone.
+> 2. **Option strategy productTypes are intentionally absent.** A butterfly, calendar spread, iron condor, etc. is a *shape* derived from leg composition, not a productType in its own right. Multi-leg packages are represented by a Security with `repeated SecurityIdProto legs` populated; each leg points at a vanilla option Security. The strategy's productType is just the underlying vanilla productType.
+> 3. **`single_name` and `index` flavours collapse onto one leaf for now.** While the index_type dimension is deferred, leaves like `CDS` (which would split into single-name and index variants once index_type lands) cover both via the legs / underlying reference, and `EQUITY_VANILLA` covers both AAPL options and SPX index options.
 
 ---
 
 ## Fixed Income
+
+> **The Treasury sub-tree mixes orthogonal axes for pragmatic reasons.** TBILL/TREASURY_NOTE/TREASURY_BOND are tenor distinctions of the same coupon-or-discount instrument. TIPS/TREASURY_FRN are coupon-mechanism distinctions. STRIPS is a processing of an underlying note/bond. They sit at the same depth because that matches market-conventional naming and serializer-dispatch needs, not because they form a clean orthogonal taxonomy.
 
 | Specific instrument | productType | asset class | instrument_type |
 | --- | --- | --- | --- |
@@ -23,22 +25,25 @@ Both productType and asset_class are trees and are written in `PARENT › CHILD`
 | 2Y Treasury FRN tied to 13W bill rate | BOND › GOV_BOND › TREASURY_FRN | FIXED_INCOME › RATES | CASH |
 | Treasury STRIPS PO 2055-08-15 (CUSIP 912834ZG6) | BOND › GOV_BOND › STRIPS | FIXED_INCOME › RATES | CASH |
 | German Bund 2% 2034 | BOND › GOV_BOND › SOVEREIGN_BOND | FIXED_INCOME › RATES | CASH |
-| AAPL 4.5% 2030 (CUSIP 037833…) | BOND › CORP_BOND | FIXED_INCOME › CREDIT | CASH |
-| California GO 5% 2035 | BOND › MUNI_BOND | FIXED_INCOME › CREDIT | CASH |
+| AAPL 4.5% 2030 (CUSIP 037833…) | BOND › CREDIT_BOND › CORP_BOND | FIXED_INCOME › CREDIT | CASH |
+| California GO 5% 2035 | BOND › CREDIT_BOND › MUNI_BOND | FIXED_INCOME › CREDIT | CASH |
+| AAPL 1.25% 2027 convertible *(planned)* | BOND › CREDIT_BOND › CONVERTIBLE_BOND | FIXED_INCOME › CREDIT | CASH |
+| FNMA 30Y 5.5% pool *(planned)* | BOND › STRUCTURED_BOND › MBS_PASSTHROUGH | FIXED_INCOME › CREDIT | CASH |
 | ZN Jun 2026 (10Y Treasury future) *(planned)* | FUTURE › BOND_FUTURE | FIXED_INCOME › RATES | DERIVATIVE |
 | SR3 Mar 2027 (3M SOFR future) *(planned)* | FUTURE › INTEREST_RATE_FUTURE | FIXED_INCOME › RATES | DERIVATIVE |
-| 5Y USD IRS (fixed 4% vs 3M SOFR) *(planned)* | SWAP › IRS | FIXED_INCOME › RATES | DERIVATIVE |
+| 5Y USD IRS (fixed 4% vs 3M SOFR) *(planned)* | SWAP › RATES_SWAP › IRS | FIXED_INCOME › RATES | DERIVATIVE |
 | 5Y × 10Y receiver swaption (single) *(planned)* | OPTION › RATES_OPTION › SWAPTION › SWAPTION_VANILLA | FIXED_INCOME › RATES | DERIVATIVE |
 | 5Y SOFR cap @ 4.0% *(planned)* | OPTION › RATES_OPTION › INTEREST_RATE_CAP | FIXED_INCOME › RATES | DERIVATIVE |
 | 5Y SOFR floor @ 3.0% *(planned)* | OPTION › RATES_OPTION › INTEREST_RATE_FLOOR | FIXED_INCOME › RATES | DERIVATIVE |
-| 5Y × 10Y receiver swaption butterfly *(planned)* | OPTION › RATES_OPTION › SWAPTION › SWAPTION_BUTTERFLY | FIXED_INCOME › RATES | DERIVATIVE |
-| 5Y × 10Y / 5Y × 5Y swaption calendar spread *(planned)* | OPTION › RATES_OPTION › SWAPTION › SWAPTION_CALENDAR_SPREAD | FIXED_INCOME › RATES | DERIVATIVE |
-| 5Y AAPL CDS *(planned)* | SWAP › CDS_SINGLE_NAME | FIXED_INCOME › CREDIT | DERIVATIVE |
-| 5Y CDX.NA.IG (Markit IG index, 125 names) *(planned)* | SWAP › CDX_INDEX | FIXED_INCOME › CREDIT | DERIVATIVE |
-| TRS on AAPL 4.5% 2030 *(planned)* | SWAP › TRS_BOND | FIXED_INCOME › CREDIT | DERIVATIVE |
+| 5Y AAPL CDS (single-name) *(planned)* | SWAP › CREDIT_SWAP › CDS | FIXED_INCOME › CREDIT | DERIVATIVE |
+| 5Y CDX.NA.IG (Markit IG index, 125 names) *(planned)* | SWAP › CREDIT_SWAP › CDS | FIXED_INCOME › CREDIT | DERIVATIVE |
+| TRS on AAPL 4.5% 2030 *(planned)* | SWAP › CREDIT_SWAP › TRS_BOND | FIXED_INCOME › CREDIT | DERIVATIVE |
+| Overnight Treasury Repo *(planned)* | FINANCING › REPO | FIXED_INCOME › RATES | CASH |
 | Bloomberg US Treasury Index | INDEX › BOND_INDEX | FIXED_INCOME › RATES | REFERENCE_INDEX |
 | .SOFR (Secured Overnight Financing Rate) | INDEX › SOFR_SERIES | FIXED_INCOME › RATES | REFERENCE_INDEX |
 | .CPI (CPI level series) | INDEX › CPI_SERIES | FIXED_INCOME › RATES | REFERENCE_INDEX |
+
+Single-name CDS and CDX index swaps share the `CDS` leaf today — the distinction will be carried by the index_type dimension when it lands. Until then, the reference name(s) live on the Security identity.
 
 ## Equity
 
@@ -54,15 +59,10 @@ Both productType and asset_class are trees and are written in `PARENT › CHILD`
 | ES Mar 2026 (E-mini S&P 500 future) *(planned)* | FUTURE › EQUITY_INDEX_FUTURE | EQUITY | DERIVATIVE |
 | AAPL 2026-03-21 $200 Call *(planned)* | OPTION › EQUITY_OPTION › EQUITY_VANILLA | EQUITY | DERIVATIVE |
 | TSLA 2026-04-18 $300 Put *(planned)* | OPTION › EQUITY_OPTION › EQUITY_VANILLA | EQUITY | DERIVATIVE |
-| SPX 2026-03-21 5500 Put *(planned)* | OPTION › INDEX_OPTION › INDEX_VANILLA | EQUITY | DERIVATIVE |
-| AAPL Mar 2026 $195/200 vertical call spread *(planned)* | OPTION › EQUITY_OPTION › EQUITY_VERTICAL_SPREAD | EQUITY | DERIVATIVE |
-| AAPL Mar/Apr 2026 $200 calendar call spread *(planned)* | OPTION › EQUITY_OPTION › EQUITY_CALENDAR_SPREAD | EQUITY | DERIVATIVE |
-| AAPL Mar 2026 $190/200/210 call butterfly *(planned)* | OPTION › EQUITY_OPTION › EQUITY_BUTTERFLY | EQUITY | DERIVATIVE |
-| TSLA Apr 2026 ATM straddle *(planned)* | OPTION › EQUITY_OPTION › EQUITY_STRADDLE | EQUITY | DERIVATIVE |
-| AAPL collar (long stock + put + short call) *(planned)* | OPTION › EQUITY_OPTION › EQUITY_COLLAR | EQUITY | DERIVATIVE |
-| SPX Mar 2026 5400/5500/5600 call butterfly *(planned)* | OPTION › INDEX_OPTION › INDEX_BUTTERFLY | EQUITY | DERIVATIVE |
-| SPX Mar 2026 iron condor (5300/5400/5600/5700) *(planned)* | OPTION › INDEX_OPTION › INDEX_IRON_CONDOR | EQUITY | DERIVATIVE |
-| TRS on AAPL stock *(planned)* | SWAP › TRS_EQUITY | EQUITY | DERIVATIVE |
+| SPX 2026-03-21 5500 Put *(planned)* | OPTION › EQUITY_OPTION › EQUITY_VANILLA | EQUITY | DERIVATIVE |
+| TRS on AAPL stock *(planned)* | SWAP › EQUITY_SWAP › TRS_EQUITY | EQUITY | DERIVATIVE |
+
+Multi-leg equity strategies (verticals, calendars, butterflies, condors, straddles, strangles, iron flies, iron condors, risk reversals, collars) are not standalone productTypes. They are represented by a Security whose `legs` field references the per-leg vanilla Security IDs. Querying "all equity option strategies" walks `legs` populated alongside `productType=EQUITY_VANILLA` (or future packaged-strategy types as exchanges list them).
 
 ## Volatility
 
@@ -70,34 +70,36 @@ Both productType and asset_class are trees and are written in `PARENT › CHILD`
 | --- | --- | --- | --- |
 | .VIX (CBOE Volatility Index value) | INDEX › VIX_SPOT | VOLATILITY | REFERENCE_INDEX |
 | VIX Apr 2026 Future *(planned)* | FUTURE › VIX_FUTURE | VOLATILITY | DERIVATIVE |
-| 1Y SPX variance swap *(planned)* | SWAP › VARIANCE_SWAP | VOLATILITY | DERIVATIVE |
+| 1Y SPX variance swap *(planned)* | SWAP › VOLATILITY_SWAP › VARIANCE_SWAP | VOLATILITY | DERIVATIVE |
 
 ## Cash / FX
+
+`CASH` and `FX` are now distinct asset classes. A USD currency holding is `CASH` (cash position), but a EUR/USD spot trade is `FX` (foreign exchange exposure) — same instrument_type=CASH, different economic exposure.
 
 | Specific instrument | productType | asset class | instrument_type |
 | --- | --- | --- | --- |
 | USD currency holding | CASH_INSTRUMENT › CURRENCY | CASH | CASH |
-| EUR/USD spot | CASH_INSTRUMENT › FX_SPOT | CASH | CASH |
+| EUR/USD spot | CASH_INSTRUMENT › FX_SPOT | FX | CASH |
 | Vanguard Federal Money Market Fund | CASH_INSTRUMENT › MONEY_MARKET_FUND | CASH | CASH |
-| EUR/USD 3M forward *(planned)* | FORWARD › FX_FORWARD | CASH | DERIVATIVE |
-| EUR/USD 3M FX swap (spot + forward) *(planned)* | SWAP › FX_SWAP | CASH | DERIVATIVE |
-| 5Y USD/JPY cross-currency basis swap *(planned)* | SWAP › XCCY_SWAP | FIXED_INCOME › RATES | DERIVATIVE |
-| EUR/USD 1M ATM Call *(planned)* | OPTION › FX_OPTION › FX_VANILLA | CASH | DERIVATIVE |
-| EUR/USD 1M 25Δ risk reversal *(planned)* | OPTION › FX_OPTION › FX_RISK_REVERSAL | CASH | DERIVATIVE |
-| EUR/USD 1M ATM straddle *(planned)* | OPTION › FX_OPTION › FX_STRADDLE | CASH | DERIVATIVE |
+| EUR/USD 3M forward *(planned)* | FORWARD › FX_FORWARD | FX | DERIVATIVE |
+| EUR/USD 3M FX swap (spot + forward) *(planned)* | SWAP › FX_SWAP_GROUP › FX_SWAP | FX | DERIVATIVE |
+| 5Y USD/JPY cross-currency basis swap *(planned)* | SWAP › FX_SWAP_GROUP › XCCY_SWAP | FX | DERIVATIVE |
+| EUR/USD 1M ATM Call *(planned)* | OPTION › FX_OPTION › FX_VANILLA | FX | DERIVATIVE |
 
 ## Crypto
 
-`BITCOIN` and `ETHEREUM` are **not** productTypes — same way `AAPL` is not a productType. The leaf productTypes are the **kind** of crypto; specific coins are Security identities under those leaves.
+`BITCOIN`, `ETHEREUM`, `USDC` are **not** productTypes — same way `AAPL` is not a productType. The leaf productTypes are the **kind** of crypto; specific coins are Security identities under those leaves.
+
+Note the asset class split: `CRYPTOCURRENCY` carries asset_class=`CRYPTO` (volatile reserve-asset exposure), but `STABLECOIN` carries asset_class=`CASH` (peg, redeem, counterparty — economic exposure to a pegged unit, not to the crypto market).
 
 | Specific instrument | productType | asset class | instrument_type |
 | --- | --- | --- | --- |
 | Bitcoin (BTC-USD) | CRYPTO › CRYPTOCURRENCY | CRYPTO | CASH |
 | Ethereum (ETH-USD) | CRYPTO › CRYPTOCURRENCY | CRYPTO | CASH |
 | Solana (SOL-USD) | CRYPTO › CRYPTOCURRENCY | CRYPTO | CASH |
-| USDC stablecoin | CRYPTO › STABLECOIN | CRYPTO | CASH |
-| USDT stablecoin | CRYPTO › STABLECOIN | CRYPTO | CASH |
-| DAI stablecoin | CRYPTO › STABLECOIN | CRYPTO | CASH |
+| USDC stablecoin | CRYPTO › STABLECOIN | CASH | CASH |
+| USDT stablecoin | CRYPTO › STABLECOIN | CASH | CASH |
+| DAI stablecoin | CRYPTO › STABLECOIN | CASH | CASH |
 
 ## Commodity
 
@@ -112,6 +114,12 @@ Both productType and asset_class are trees and are written in `PARENT › CHILD`
 | GC Mar 2026 $2200 Call (gold future option) *(planned)* | OPTION › COMMODITY_OPTION › COMMODITY_VANILLA | COMMODITY › METALS | DERIVATIVE |
 | Bloomberg Commodity Index | INDEX › COMMODITY_INDEX | COMMODITY | REFERENCE_INDEX |
 
+## Alternative
+
+| Specific instrument | productType | asset class | instrument_type |
+| --- | --- | --- | --- |
+| LP interest in private-equity fund *(planned)* | FUND_LP | ALTERNATIVE | CASH |
+
 ---
 
 ## How to read a row
@@ -124,7 +132,7 @@ For any row, the three columns answer three orthogonal questions about the instr
 | **asset_class** | What exposure family does it belong to? (Walked similarly; consumers can ask "all FIXED_INCOME" via `descendantsOf`.) |
 | **instrument_type** | Does it settle to a position (`CASH`), derive value from an underlying (`DERIVATIVE`), or is it observational only (`REFERENCE_INDEX`)? |
 
-The key insight: these dimensions are independent. A single-leg AAPL call (`EQUITY_VANILLA`) is `EQUITY + DERIVATIVE`; an SPX butterfly (`INDEX_BUTTERFLY`) is `EQUITY + DERIVATIVE`; SPY (an ETF) is `EQUITY + CASH`; .SPX (the index level itself) is `EQUITY + REFERENCE_INDEX`. All four sit in the same `EQUITY` asset class but answer the productType and instrument_type questions differently.
+The key insight: these dimensions are independent. A vanilla AAPL call (`EQUITY_VANILLA`) is `EQUITY + DERIVATIVE`; SPY (an ETF) is `EQUITY + CASH`; .SPX (the index level itself) is `EQUITY + REFERENCE_INDEX`. All three sit in the same `EQUITY` asset class but answer the productType and instrument_type questions differently.
 
 ## Common queries against this registry
 
@@ -138,11 +146,17 @@ The key insight: these dimensions are independent. A single-leg AAPL call (`EQUI
 "All bond-shaped"
   → isDescendantOf(productType, 'BOND')
 
-"All equity options (vanilla + every strategy)"
-  → isDescendantOf(productType, 'EQUITY_OPTION')
+"All government bonds (treasuries + sovereigns)"
+  → isDescendantOf(productType, 'GOV_BOND')
 
-"All rates options (swaptions + caps/floors)"
-  → isDescendantOf(productType, 'RATES_OPTION')
+"All credit bonds (corp + muni + future converts/CoCos/structured)"
+  → isDescendantOf(productType, 'CREDIT_BOND')
+
+"All credit swaps (CDS + CDX + bond TRS, regardless of single vs index)"
+  → isDescendantOf(productType, 'CREDIT_SWAP')
+
+"All FX exposures (spot, forward, swap, xccy, FX vanilla, eventually FX options)"
+  → assetClassOf(productType) == 'FX'
 
 "All on-the-run treasuries"
   → productType IN (TBILL, TREASURY_NOTE, TREASURY_BOND, TIPS, TREASURY_FRN)
@@ -153,3 +167,17 @@ The key insight: these dimensions are independent. A single-leg AAPL call (`EQUI
 ```
 
 These queries are powered by the registry helpers shipped in M1.5: `parentOf`, `descendantsOf`, `isDescendantOf`, `assetClassOf`, `instrumentTypeOf`, `labelOf`. Identical signatures across Java / Rust / Python / JS-TS. (`indexTypeOf` is deferred along with the index_type dimension itself.)
+
+---
+
+## Look-through: legal form vs economic substance
+
+The registry classifies legal form, not economic substance. A bond ETF lives at `STOCK › ETF` with asset_class `EQUITY` because that is its instrument structure, even though its economic exposure is fixed income. Risk look-through (bond ETF → underlying bond exposure) is a separate concern, typically resolved at the position-service layer or in dedicated risk reporting.
+
+The same principle applies elsewhere:
+
+- A money-market fund (`MONEY_MARKET_FUND`) is `CASH` even though its underlying holdings are short-tenor treasuries and commercial paper.
+- A stablecoin (`STABLECOIN`) is `CASH` (economic exposure to a pegged unit) even though its productType lives under the `CRYPTO` parent (transport/structural relationship).
+- A leveraged ETF on the S&P 500 is still `STOCK › ETF` with asset_class `EQUITY` — the leverage is a substance question, not a form question.
+
+If you need to see-through, that's a downstream concern. The registry tells you what the wrapper is; the wrapper's contents are someone else's job.
