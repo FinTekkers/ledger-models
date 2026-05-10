@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package fintekkers.models.security;
+
+option java_multiple_files = true;
+
+option java_outer_classname = "ProductTypeProtos";
+
+// Leaf product types — the kind of contract a Security represents.
+//
+// Authoritative shape lives in ledger-models-protos/hierarchy.json
+// (single source of truth: parent chain, asset_class, instrument_type,
+// label, status). Every active leaf in hierarchy.json must have a
+// matching enum value here; CI guard enforces the round-trip.
+//
+// Abstract parent nodes (BOND, GOV_BOND, OPTION, EQUITY_OPTION, etc.)
+// live only in hierarchy.json — they are never assigned to a Security.
+//
+// Strategies (butterfly, vertical spread, calendar spread, condor,
+// straddle, ...) are intentionally absent. They are derived from the
+// SecurityProto.legs field, not from a productType enum value.
+//
+// Multi-language wrapper helpers (parentOf, descendantsOf,
+// isDescendantOf, labelOf, assetClassOf, instrumentTypeOf) load
+// hierarchy.json at startup and dispatch on the leaf identity carried
+// by ProductTypeProto.
+//
+// See ../../../hierarchy-examples.md for worked examples and
+// ../../../registry-versioning.md for compatibility rules on changes
+// to this enum.
+enum ProductTypeProto {
+  PRODUCT_TYPE_UNKNOWN = 0;
+
+  // Bonds (1-19)
+  TBILL          = 1;
+  TREASURY_NOTE  = 2;
+  TREASURY_BOND  = 3;
+  TIPS           = 4;
+  TREASURY_FRN   = 5;
+  STRIPS         = 6;
+  SOVEREIGN_BOND = 7;
+  CORP_BOND      = 8;
+  MUNI_BOND      = 9;
+
+  // Stocks (20-29)
+  COMMON_STOCK    = 20;
+  PREFERRED_STOCK = 21;
+  ADR             = 22;
+  ETF             = 23;
+
+  // Reference indices and rate series (30-39)
+  EQUITY_INDEX    = 30;
+  BOND_INDEX      = 31;
+  COMMODITY_INDEX = 32;
+  VIX_SPOT        = 33;
+  CPI_SERIES      = 34;
+  SOFR_SERIES     = 35;
+
+  // Cash and FX (40-49)
+  CURRENCY          = 40;
+  FX_SPOT           = 41;
+  MONEY_MARKET_FUND = 42;
+
+  // Crypto (50-59)
+  CRYPTOCURRENCY = 50;
+  STABLECOIN     = 51;
+
+  // Commodity spot (60-69)
+  GOLD   = 60;
+  SILVER = 61;
+}

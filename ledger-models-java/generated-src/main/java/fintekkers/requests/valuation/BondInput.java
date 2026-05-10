@@ -56,7 +56,7 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.security.SecurityProto security_;
   /**
    * <pre>
-   * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
    * coupon_type FIXED and all standard fixed-income fields populated.
    * </pre>
    *
@@ -69,7 +69,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
    * coupon_type FIXED and all standard fixed-income fields populated.
    * </pre>
    *
@@ -82,7 +82,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
    * coupon_type FIXED and all standard fixed-income fields populated.
    * </pre>
    *
@@ -597,7 +597,7 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> securityBuilder_;
     /**
      * <pre>
-     * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
      * coupon_type FIXED and all standard fixed-income fields populated.
      * </pre>
      *
@@ -609,7 +609,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
      * coupon_type FIXED and all standard fixed-income fields populated.
      * </pre>
      *
@@ -625,7 +625,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
      * coupon_type FIXED and all standard fixed-income fields populated.
      * </pre>
      *
@@ -646,7 +646,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
      * coupon_type FIXED and all standard fixed-income fields populated.
      * </pre>
      *
@@ -665,7 +665,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
      * coupon_type FIXED and all standard fixed-income fields populated.
      * </pre>
      *
@@ -689,7 +689,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
      * coupon_type FIXED and all standard fixed-income fields populated.
      * </pre>
      *
@@ -707,7 +707,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
      * coupon_type FIXED and all standard fixed-income fields populated.
      * </pre>
      *
@@ -720,7 +720,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
      * coupon_type FIXED and all standard fixed-income fields populated.
      * </pre>
      *
@@ -736,7 +736,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
      * coupon_type FIXED and all standard fixed-income fields populated.
      * </pre>
      *

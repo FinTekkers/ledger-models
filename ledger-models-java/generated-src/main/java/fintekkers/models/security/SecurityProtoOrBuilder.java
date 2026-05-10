@@ -118,15 +118,102 @@ public interface SecurityProtoOrBuilder extends
   fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getValidToOrBuilder();
 
   /**
-   * <code>.fintekkers.models.security.SecurityTypeProto security_type = 10;</code>
-   * @return The enum numeric value on the wire for securityType.
+   * <code>.fintekkers.models.security.ProductTypeProto product_type = 10;</code>
+   * @return The enum numeric value on the wire for productType.
    */
-  int getSecurityTypeValue();
+  int getProductTypeValue();
   /**
-   * <code>.fintekkers.models.security.SecurityTypeProto security_type = 10;</code>
-   * @return The securityType.
+   * <code>.fintekkers.models.security.ProductTypeProto product_type = 10;</code>
+   * @return The productType.
    */
-  fintekkers.models.security.SecurityTypeProto getSecurityType();
+  fintekkers.models.security.ProductTypeProto getProductType();
+
+  /**
+   * <pre>
+   * Orthogonal to product_type — see instrument_type.proto.
+   * CASH (positionable), DERIVATIVE (value derives from underlying),
+   * REFERENCE_INDEX (observational only).
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.InstrumentTypeProto instrument_type = 16;</code>
+   * @return The enum numeric value on the wire for instrumentType.
+   */
+  int getInstrumentTypeValue();
+  /**
+   * <pre>
+   * Orthogonal to product_type — see instrument_type.proto.
+   * CASH (positionable), DERIVATIVE (value derives from underlying),
+   * REFERENCE_INDEX (observational only).
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.InstrumentTypeProto instrument_type = 16;</code>
+   * @return The instrumentType.
+   */
+  fintekkers.models.security.InstrumentTypeProto getInstrumentType();
+
+  /**
+   * <pre>
+   * Multi-leg strategy package legs — each leg is itself a Security
+   * identified by UUID. See hierarchy-examples.md for the pattern:
+   * butterflies, calendar spreads, iron condors, etc. are not
+   * productTypes; they're a Security whose product_type is the
+   * underlying vanilla type with `legs` populated.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+   */
+  java.util.List<fintekkers.models.security.SecurityIdProto> 
+      getLegsList();
+  /**
+   * <pre>
+   * Multi-leg strategy package legs — each leg is itself a Security
+   * identified by UUID. See hierarchy-examples.md for the pattern:
+   * butterflies, calendar spreads, iron condors, etc. are not
+   * productTypes; they're a Security whose product_type is the
+   * underlying vanilla type with `legs` populated.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+   */
+  fintekkers.models.security.SecurityIdProto getLegs(int index);
+  /**
+   * <pre>
+   * Multi-leg strategy package legs — each leg is itself a Security
+   * identified by UUID. See hierarchy-examples.md for the pattern:
+   * butterflies, calendar spreads, iron condors, etc. are not
+   * productTypes; they're a Security whose product_type is the
+   * underlying vanilla type with `legs` populated.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+   */
+  int getLegsCount();
+  /**
+   * <pre>
+   * Multi-leg strategy package legs — each leg is itself a Security
+   * identified by UUID. See hierarchy-examples.md for the pattern:
+   * butterflies, calendar spreads, iron condors, etc. are not
+   * productTypes; they're a Security whose product_type is the
+   * underlying vanilla type with `legs` populated.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+   */
+  java.util.List<? extends fintekkers.models.security.SecurityIdProtoOrBuilder> 
+      getLegsOrBuilderList();
+  /**
+   * <pre>
+   * Multi-leg strategy package legs — each leg is itself a Security
+   * identified by UUID. See hierarchy-examples.md for the pattern:
+   * butterflies, calendar spreads, iron condors, etc. are not
+   * productTypes; they're a Security whose product_type is the
+   * underlying vanilla type with `legs` populated.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+   */
+  fintekkers.models.security.SecurityIdProtoOrBuilder getLegsOrBuilder(
+      int index);
 
   /**
    * <pre>

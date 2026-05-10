@@ -9,7 +9,7 @@ public interface BondInputOrBuilder extends
 
   /**
    * <pre>
-   * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
    * coupon_type FIXED and all standard fixed-income fields populated.
    * </pre>
    *
@@ -19,7 +19,7 @@ public interface BondInputOrBuilder extends
   boolean hasSecurity();
   /**
    * <pre>
-   * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
    * coupon_type FIXED and all standard fixed-income fields populated.
    * </pre>
    *
@@ -29,7 +29,7 @@ public interface BondInputOrBuilder extends
   fintekkers.models.security.SecurityProto getSecurity();
   /**
    * <pre>
-   * The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
    * coupon_type FIXED and all standard fixed-income fields populated.
    * </pre>
    *

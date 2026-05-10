@@ -71,132 +71,137 @@ public final class SecurityProtos {
       "to\032!fintekkers/models/util/uuid.proto\0326f" +
       "intekkers/models/security/identifier/ide" +
       "ntifier.proto\032.fintekkers/models/securit" +
-      "y/bond/issuance.proto\032.fintekkers/models" +
-      "/security/security_type.proto\0327fintekker" +
-      "s/models/security/security_quantity_type" +
-      ".proto\0321fintekkers/models/security/coupo" +
-      "n_frequency.proto\032,fintekkers/models/sec" +
-      "urity/coupon_type.proto\0321fintekkers/mode" +
-      "ls/security/index/index_type.proto\"\241\022\n\rS" +
-      "ecurityProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007ve" +
-      "rsion\030\002 \001(\t\022/\n\004uuid\030\005 \001(\0132!.fintekkers.m" +
-      "odels.util.UUIDProto\022:\n\005as_of\030\006 \001(\0132+.fi" +
+      "y/bond/issuance.proto\032-fintekkers/models" +
+      "/security/product_type.proto\0320fintekkers" +
+      "/models/security/instrument_type.proto\032," +
+      "fintekkers/models/security/security_id.p" +
+      "roto\0327fintekkers/models/security/securit" +
+      "y_quantity_type.proto\0321fintekkers/models" +
+      "/security/coupon_frequency.proto\032,fintek" +
+      "kers/models/security/coupon_type.proto\0321" +
+      "fintekkers/models/security/index/index_t" +
+      "ype.proto\"\244\023\n\rSecurityProto\022\024\n\014object_cl" +
+      "ass\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022/\n\004uuid\030\005 \001(\013" +
+      "2!.fintekkers.models.util.UUIDProto\022:\n\005a" +
+      "s_of\030\006 \001(\0132+.fintekkers.models.util.Loca" +
+      "lTimestampProto\022\017\n\007is_link\030\007 \001(\010\022?\n\nvali" +
+      "d_from\030\010 \001(\0132+.fintekkers.models.util.Lo" +
+      "calTimestampProto\022=\n\010valid_to\030\t \001(\0132+.fi" +
       "ntekkers.models.util.LocalTimestampProto" +
-      "\022\017\n\007is_link\030\007 \001(\010\022?\n\nvalid_from\030\010 \001(\0132+." +
-      "fintekkers.models.util.LocalTimestampPro" +
-      "to\022=\n\010valid_to\030\t \001(\0132+.fintekkers.models" +
-      ".util.LocalTimestampProto\022D\n\rsecurity_ty" +
-      "pe\030\n \001(\0162-.fintekkers.models.security.Se" +
-      "curityTypeProto\022?\n\ndeleted_at\030\017 \001(\0132+.fi" +
-      "ntekkers.models.util.LocalTimestampProto" +
-      "\022\023\n\013asset_class\030\013 \001(\t\022\023\n\013issuer_name\030\014 \001" +
-      "(\t\022F\n\023settlement_currency\030\r \001(\0132).fintek" +
-      "kers.models.security.SecurityProto\022L\n\rqu" +
-      "antity_type\030\016 \001(\01625.fintekkers.models.se" +
-      "curity.SecurityQuantityTypeProto\022?\n\niden" +
-      "tifier\030( \001(\0132+.fintekkers.models.securit" +
-      "y.IdentifierProto\022\023\n\013description\030) \001(\t\022@" +
-      "\n\013identifiers\030* \003(\0132+.fintekkers.models." +
-      "security.IdentifierProto\022\017\n\007cash_id\0302 \001(" +
-      "\t\022>\n\013coupon_rate\030< \001(\0132).fintekkers.mode" +
-      "ls.util.DecimalValueProto\022@\n\013coupon_type" +
-      "\030= \001(\0162+.fintekkers.models.security.Coup" +
-      "onTypeProto\022J\n\020coupon_frequency\030> \001(\01620." +
-      "fintekkers.models.security.CouponFrequen" +
-      "cyProto\022:\n\ndated_date\030? \001(\0132&.fintekkers" +
-      ".models.util.LocalDateProto\022=\n\nface_valu" +
-      "e\030@ \001(\0132).fintekkers.models.util.Decimal" +
-      "ValueProto\022:\n\nissue_date\030A \001(\0132&.fintekk" +
-      "ers.models.util.LocalDateProto\022=\n\rmaturi" +
-      "ty_date\030B \001(\0132&.fintekkers.models.util.L" +
-      "ocalDateProto\022E\n\rissuance_info\030C \003(\0132..f" +
-      "intekkers.models.security.bond.IssuanceP" +
-      "roto\022;\n\010base_cpi\030F \001(\0132).fintekkers.mode" +
-      "ls.util.DecimalValueProto\022:\n\nindex_date\030" +
-      "G \001(\0132&.fintekkers.models.util.LocalDate" +
-      "Proto\022N\n\024inflation_index_type\030H \001(\01620.fi" +
-      "ntekkers.models.security.index.IndexType" +
-      "Proto\0229\n\006spread\030Z \001(\0132).fintekkers.model" +
-      "s.util.DecimalValueProto\022N\n\024reference_ra" +
-      "te_index\030[ \001(\01620.fintekkers.models.secur" +
-      "ity.index.IndexTypeProto\022I\n\017reset_freque" +
-      "ncy\030\\ \001(\01620.fintekkers.models.security.C" +
-      "ouponFrequencyProto\022D\n\nindex_type\030P \001(\0162" +
+      "\022B\n\014product_type\030\n \001(\0162,.fintekkers.mode" +
+      "ls.security.ProductTypeProto\022H\n\017instrume" +
+      "nt_type\030\020 \001(\0162/.fintekkers.models.securi" +
+      "ty.InstrumentTypeProto\0229\n\004legs\030\021 \003(\0132+.f" +
+      "intekkers.models.security.SecurityIdProt" +
+      "o\022?\n\ndeleted_at\030\017 \001(\0132+.fintekkers.model" +
+      "s.util.LocalTimestampProto\022\023\n\013asset_clas" +
+      "s\030\013 \001(\t\022\023\n\013issuer_name\030\014 \001(\t\022F\n\023settleme" +
+      "nt_currency\030\r \001(\0132).fintekkers.models.se" +
+      "curity.SecurityProto\022L\n\rquantity_type\030\016 " +
+      "\001(\01625.fintekkers.models.security.Securit" +
+      "yQuantityTypeProto\022?\n\nidentifier\030( \001(\0132+" +
+      ".fintekkers.models.security.IdentifierPr" +
+      "oto\022\023\n\013description\030) \001(\t\022@\n\013identifiers\030" +
+      "* \003(\0132+.fintekkers.models.security.Ident" +
+      "ifierProto\022\017\n\007cash_id\0302 \001(\t\022>\n\013coupon_ra" +
+      "te\030< \001(\0132).fintekkers.models.util.Decima" +
+      "lValueProto\022@\n\013coupon_type\030= \001(\0162+.finte" +
+      "kkers.models.security.CouponTypeProto\022J\n" +
+      "\020coupon_frequency\030> \001(\01620.fintekkers.mod" +
+      "els.security.CouponFrequencyProto\022:\n\ndat" +
+      "ed_date\030? \001(\0132&.fintekkers.models.util.L" +
+      "ocalDateProto\022=\n\nface_value\030@ \001(\0132).fint" +
+      "ekkers.models.util.DecimalValueProto\022:\n\n" +
+      "issue_date\030A \001(\0132&.fintekkers.models.uti" +
+      "l.LocalDateProto\022=\n\rmaturity_date\030B \001(\0132" +
+      "&.fintekkers.models.util.LocalDateProto\022" +
+      "E\n\rissuance_info\030C \003(\0132..fintekkers.mode" +
+      "ls.security.bond.IssuanceProto\022;\n\010base_c" +
+      "pi\030F \001(\0132).fintekkers.models.util.Decima" +
+      "lValueProto\022:\n\nindex_date\030G \001(\0132&.fintek" +
+      "kers.models.util.LocalDateProto\022N\n\024infla" +
+      "tion_index_type\030H \001(\01620.fintekkers.model" +
+      "s.security.index.IndexTypeProto\0229\n\006sprea" +
+      "d\030Z \001(\0132).fintekkers.models.util.Decimal" +
+      "ValueProto\022N\n\024reference_rate_index\030[ \001(\016" +
+      "20.fintekkers.models.security.index.Inde" +
+      "xTypeProto\022I\n\017reset_frequency\030\\ \001(\01620.fi" +
+      "ntekkers.models.security.CouponFrequency" +
+      "Proto\022D\n\nindex_type\030P \001(\01620.fintekkers.m" +
+      "odels.security.index.IndexTypeProto\022E\n\014b" +
+      "ond_details\030\310\001 \001(\0132,.fintekkers.models.s" +
+      "ecurity.BondDetailsProtoH\000\022E\n\014tips_detai" +
+      "ls\030\311\001 \001(\0132,.fintekkers.models.security.T" +
+      "ipsDetailsProtoH\000\022C\n\013frn_details\030\312\001 \001(\0132" +
+      "+.fintekkers.models.security.FrnDetailsP" +
+      "rotoH\000\022G\n\rindex_details\030\313\001 \001(\0132-.fintekk" +
+      "ers.models.security.IndexDetailsProtoH\000\022" +
+      "I\n\016equity_details\030\314\001 \001(\0132..fintekkers.mo" +
+      "dels.security.EquityDetailsProtoH\000\022E\n\014ca" +
+      "sh_details\030\315\001 \001(\0132,.fintekkers.models.se" +
+      "curity.CashDetailsProtoH\000\022J\n\017fx_spot_det" +
+      "ails\030\316\001 \001(\0132..fintekkers.models.security" +
+      ".FxSpotDetailsProtoH\000B\021\n\017product_details" +
+      "\"\235\004\n\020BondDetailsProto\022>\n\013coupon_rate\030\001 \001" +
+      "(\0132).fintekkers.models.util.DecimalValue" +
+      "Proto\022@\n\013coupon_type\030\002 \001(\0162+.fintekkers." +
+      "models.security.CouponTypeProto\022J\n\020coupo" +
+      "n_frequency\030\003 \001(\01620.fintekkers.models.se" +
+      "curity.CouponFrequencyProto\022:\n\ndated_dat" +
+      "e\030\004 \001(\0132&.fintekkers.models.util.LocalDa" +
+      "teProto\022=\n\nface_value\030\005 \001(\0132).fintekkers" +
+      ".models.util.DecimalValueProto\022:\n\nissue_" +
+      "date\030\006 \001(\0132&.fintekkers.models.util.Loca" +
+      "lDateProto\022=\n\rmaturity_date\030\007 \001(\0132&.fint" +
+      "ekkers.models.util.LocalDateProto\022E\n\riss" +
+      "uance_info\030\010 \003(\0132..fintekkers.models.sec" +
+      "urity.bond.IssuanceProto\"\346\005\n\020TipsDetails" +
+      "Proto\022>\n\013coupon_rate\030\001 \001(\0132).fintekkers." +
+      "models.util.DecimalValueProto\022@\n\013coupon_" +
+      "type\030\002 \001(\0162+.fintekkers.models.security." +
+      "CouponTypeProto\022J\n\020coupon_frequency\030\003 \001(" +
+      "\01620.fintekkers.models.security.CouponFre" +
+      "quencyProto\022:\n\ndated_date\030\004 \001(\0132&.fintek" +
+      "kers.models.util.LocalDateProto\022=\n\nface_" +
+      "value\030\005 \001(\0132).fintekkers.models.util.Dec" +
+      "imalValueProto\022:\n\nissue_date\030\006 \001(\0132&.fin" +
+      "tekkers.models.util.LocalDateProto\022=\n\rma" +
+      "turity_date\030\007 \001(\0132&.fintekkers.models.ut" +
+      "il.LocalDateProto\022E\n\rissuance_info\030\010 \003(\013" +
+      "2..fintekkers.models.security.bond.Issua" +
+      "nceProto\022;\n\010base_cpi\030\n \001(\0132).fintekkers." +
+      "models.util.DecimalValueProto\022:\n\nindex_d" +
+      "ate\030\013 \001(\0132&.fintekkers.models.util.Local" +
+      "DateProto\022N\n\024inflation_index_type\030\014 \001(\0162" +
       "0.fintekkers.models.security.index.Index" +
-      "TypeProto\022E\n\014bond_details\030\310\001 \001(\0132,.finte" +
-      "kkers.models.security.BondDetailsProtoH\000" +
-      "\022E\n\014tips_details\030\311\001 \001(\0132,.fintekkers.mod" +
-      "els.security.TipsDetailsProtoH\000\022C\n\013frn_d" +
-      "etails\030\312\001 \001(\0132+.fintekkers.models.securi" +
-      "ty.FrnDetailsProtoH\000\022G\n\rindex_details\030\313\001" +
-      " \001(\0132-.fintekkers.models.security.IndexD" +
-      "etailsProtoH\000\022I\n\016equity_details\030\314\001 \001(\0132." +
-      ".fintekkers.models.security.EquityDetail" +
-      "sProtoH\000\022E\n\014cash_details\030\315\001 \001(\0132,.fintek" +
-      "kers.models.security.CashDetailsProtoH\000\022" +
-      "J\n\017fx_spot_details\030\316\001 \001(\0132..fintekkers.m" +
-      "odels.security.FxSpotDetailsProtoH\000B\021\n\017p" +
-      "roduct_details\"\235\004\n\020BondDetailsProto\022>\n\013c" +
-      "oupon_rate\030\001 \001(\0132).fintekkers.models.uti" +
-      "l.DecimalValueProto\022@\n\013coupon_type\030\002 \001(\016" +
-      "2+.fintekkers.models.security.CouponType" +
-      "Proto\022J\n\020coupon_frequency\030\003 \001(\01620.fintek" +
-      "kers.models.security.CouponFrequencyProt" +
-      "o\022:\n\ndated_date\030\004 \001(\0132&.fintekkers.model" +
-      "s.util.LocalDateProto\022=\n\nface_value\030\005 \001(" +
-      "\0132).fintekkers.models.util.DecimalValueP" +
-      "roto\022:\n\nissue_date\030\006 \001(\0132&.fintekkers.mo" +
-      "dels.util.LocalDateProto\022=\n\rmaturity_dat" +
-      "e\030\007 \001(\0132&.fintekkers.models.util.LocalDa" +
-      "teProto\022E\n\rissuance_info\030\010 \003(\0132..fintekk" +
-      "ers.models.security.bond.IssuanceProto\"\346" +
-      "\005\n\020TipsDetailsProto\022>\n\013coupon_rate\030\001 \001(\013" +
-      "2).fintekkers.models.util.DecimalValuePr" +
-      "oto\022@\n\013coupon_type\030\002 \001(\0162+.fintekkers.mo" +
-      "dels.security.CouponTypeProto\022J\n\020coupon_" +
-      "frequency\030\003 \001(\01620.fintekkers.models.secu" +
-      "rity.CouponFrequencyProto\022:\n\ndated_date\030" +
-      "\004 \001(\0132&.fintekkers.models.util.LocalDate" +
-      "Proto\022=\n\nface_value\030\005 \001(\0132).fintekkers.m" +
-      "odels.util.DecimalValueProto\022:\n\nissue_da" +
-      "te\030\006 \001(\0132&.fintekkers.models.util.LocalD" +
-      "ateProto\022=\n\rmaturity_date\030\007 \001(\0132&.fintek" +
-      "kers.models.util.LocalDateProto\022E\n\rissua" +
-      "nce_info\030\010 \003(\0132..fintekkers.models.secur" +
-      "ity.bond.IssuanceProto\022;\n\010base_cpi\030\n \001(\013" +
-      "2).fintekkers.models.util.DecimalValuePr" +
-      "oto\022:\n\nindex_date\030\013 \001(\0132&.fintekkers.mod" +
-      "els.util.LocalDateProto\022N\n\024inflation_ind" +
-      "ex_type\030\014 \001(\01620.fintekkers.models.securi" +
-      "ty.index.IndexTypeProto\"\362\005\n\017FrnDetailsPr" +
-      "oto\022>\n\013coupon_rate\030\001 \001(\0132).fintekkers.mo" +
-      "dels.util.DecimalValueProto\022@\n\013coupon_ty" +
-      "pe\030\002 \001(\0162+.fintekkers.models.security.Co" +
-      "uponTypeProto\022J\n\020coupon_frequency\030\003 \001(\0162" +
-      "0.fintekkers.models.security.CouponFrequ" +
-      "encyProto\022:\n\ndated_date\030\004 \001(\0132&.fintekke" +
-      "rs.models.util.LocalDateProto\022=\n\nface_va" +
-      "lue\030\005 \001(\0132).fintekkers.models.util.Decim" +
-      "alValueProto\022:\n\nissue_date\030\006 \001(\0132&.finte" +
-      "kkers.models.util.LocalDateProto\022=\n\rmatu" +
-      "rity_date\030\007 \001(\0132&.fintekkers.models.util" +
-      ".LocalDateProto\022E\n\rissuance_info\030\010 \003(\0132." +
-      ".fintekkers.models.security.bond.Issuanc" +
-      "eProto\0229\n\006spread\030\n \001(\0132).fintekkers.mode" +
-      "ls.util.DecimalValueProto\022N\n\024reference_r" +
-      "ate_index\030\013 \001(\01620.fintekkers.models.secu" +
-      "rity.index.IndexTypeProto\022I\n\017reset_frequ" +
-      "ency\030\014 \001(\01620.fintekkers.models.security." +
-      "CouponFrequencyProto\"Y\n\021IndexDetailsProt" +
-      "o\022D\n\nindex_type\030\001 \001(\01620.fintekkers.model" +
-      "s.security.index.IndexTypeProto\"\024\n\022Equit" +
-      "yDetailsProto\"#\n\020CashDetailsProto\022\017\n\007cas" +
-      "h_id\030\001 \001(\t\"\255\001\n\022FxSpotDetailsProto\022@\n\rbas" +
-      "e_currency\030\001 \001(\0132).fintekkers.models.sec" +
-      "urity.SecurityProto\022A\n\016quote_currency\030\002 " +
-      "\001(\0132).fintekkers.models.security.Securit" +
-      "yProto\022\022\n\nconvention\030\003 \001(\tB\022B\016SecurityPr" +
-      "otosP\001b\006proto3"
+      "TypeProto\"\362\005\n\017FrnDetailsProto\022>\n\013coupon_" +
+      "rate\030\001 \001(\0132).fintekkers.models.util.Deci" +
+      "malValueProto\022@\n\013coupon_type\030\002 \001(\0162+.fin" +
+      "tekkers.models.security.CouponTypeProto\022" +
+      "J\n\020coupon_frequency\030\003 \001(\01620.fintekkers.m" +
+      "odels.security.CouponFrequencyProto\022:\n\nd" +
+      "ated_date\030\004 \001(\0132&.fintekkers.models.util" +
+      ".LocalDateProto\022=\n\nface_value\030\005 \001(\0132).fi" +
+      "ntekkers.models.util.DecimalValueProto\022:" +
+      "\n\nissue_date\030\006 \001(\0132&.fintekkers.models.u" +
+      "til.LocalDateProto\022=\n\rmaturity_date\030\007 \001(" +
+      "\0132&.fintekkers.models.util.LocalDateProt" +
+      "o\022E\n\rissuance_info\030\010 \003(\0132..fintekkers.mo" +
+      "dels.security.bond.IssuanceProto\0229\n\006spre" +
+      "ad\030\n \001(\0132).fintekkers.models.util.Decima" +
+      "lValueProto\022N\n\024reference_rate_index\030\013 \001(" +
+      "\01620.fintekkers.models.security.index.Ind" +
+      "exTypeProto\022I\n\017reset_frequency\030\014 \001(\01620.f" +
+      "intekkers.models.security.CouponFrequenc" +
+      "yProto\"Y\n\021IndexDetailsProto\022D\n\nindex_typ" +
+      "e\030\001 \001(\01620.fintekkers.models.security.ind" +
+      "ex.IndexTypeProto\"\024\n\022EquityDetailsProto\"" +
+      "#\n\020CashDetailsProto\022\017\n\007cash_id\030\001 \001(\t\"\255\001\n" +
+      "\022FxSpotDetailsProto\022@\n\rbase_currency\030\001 \001" +
+      "(\0132).fintekkers.models.security.Security" +
+      "Proto\022A\n\016quote_currency\030\002 \001(\0132).fintekke" +
+      "rs.models.security.SecurityProto\022\022\n\nconv" +
+      "ention\030\003 \001(\tB\022B\016SecurityProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -207,7 +212,9 @@ public final class SecurityProtos {
           fintekkers.models.util.Uuid.getDescriptor(),
           fintekkers.models.security.IdentifierProtos.getDescriptor(),
           fintekkers.models.security.bond.IssuanceProtos.getDescriptor(),
-          fintekkers.models.security.SecurityTypeProtos.getDescriptor(),
+          fintekkers.models.security.ProductTypeProtos.getDescriptor(),
+          fintekkers.models.security.InstrumentTypeProtos.getDescriptor(),
+          fintekkers.models.security.SecurityIdProtos.getDescriptor(),
           fintekkers.models.security.SecurityQuantityTypeProtos.getDescriptor(),
           fintekkers.models.security.CouponFrequencyProtos.getDescriptor(),
           fintekkers.models.security.CouponTypeProtos.getDescriptor(),
@@ -218,7 +225,7 @@ public final class SecurityProtos {
     internal_static_fintekkers_models_security_SecurityProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_security_SecurityProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "SecurityType", "DeletedAt", "AssetClass", "IssuerName", "SettlementCurrency", "QuantityType", "Identifier", "Description", "Identifiers", "CashId", "CouponRate", "CouponType", "CouponFrequency", "DatedDate", "FaceValue", "IssueDate", "MaturityDate", "IssuanceInfo", "BaseCpi", "IndexDate", "InflationIndexType", "Spread", "ReferenceRateIndex", "ResetFrequency", "IndexType", "BondDetails", "TipsDetails", "FrnDetails", "IndexDetails", "EquityDetails", "CashDetails", "FxSpotDetails", "ProductDetails", });
+        new java.lang.String[] { "ObjectClass", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "ProductType", "InstrumentType", "Legs", "DeletedAt", "AssetClass", "IssuerName", "SettlementCurrency", "QuantityType", "Identifier", "Description", "Identifiers", "CashId", "CouponRate", "CouponType", "CouponFrequency", "DatedDate", "FaceValue", "IssueDate", "MaturityDate", "IssuanceInfo", "BaseCpi", "IndexDate", "InflationIndexType", "Spread", "ReferenceRateIndex", "ResetFrequency", "IndexType", "BondDetails", "TipsDetails", "FrnDetails", "IndexDetails", "EquityDetails", "CashDetails", "FxSpotDetails", "ProductDetails", });
     internal_static_fintekkers_models_security_BondDetailsProto_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_fintekkers_models_security_BondDetailsProto_fieldAccessorTable = new
@@ -267,7 +274,9 @@ public final class SecurityProtos {
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.security.IdentifierProtos.getDescriptor();
     fintekkers.models.security.bond.IssuanceProtos.getDescriptor();
-    fintekkers.models.security.SecurityTypeProtos.getDescriptor();
+    fintekkers.models.security.ProductTypeProtos.getDescriptor();
+    fintekkers.models.security.InstrumentTypeProtos.getDescriptor();
+    fintekkers.models.security.SecurityIdProtos.getDescriptor();
     fintekkers.models.security.SecurityQuantityTypeProtos.getDescriptor();
     fintekkers.models.security.CouponFrequencyProtos.getDescriptor();
     fintekkers.models.security.CouponTypeProtos.getDescriptor();
