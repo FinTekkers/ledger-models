@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
 # check-hierarchy-mirrors.sh
 #
-# CI guard. Verifies that each language-package mirror of hierarchy.json
-# matches the canonical at ledger-models-protos/hierarchy.json byte-for-byte.
+# Defensive guard for the release path. Verifies that each language-
+# package mirror of hierarchy.json has been materialized AND matches
+# the canonical at ledger-models-protos/hierarchy.json byte-for-byte.
 #
-# Exits 0 if all mirrors agree with the canonical.
-# Exits 1 with a clear remediation message if any mirror has drifted.
+# Exits 0 if all mirrors exist and agree with the canonical.
+# Exits 1 with a clear remediation message if any mirror is missing or
+# has drifted.
 #
-# Pair script: sync-hierarchy-mirrors.sh refreshes the mirrors from the
-# canonical. compile.sh calls sync at the top so local builds never see
-# drift. This guard is invoked from compile.sh + release.sh (and any CI
-# workflow that wants pre-merge enforcement) to catch the case where a
-# contributor edits a mirror directly or forgets to re-sync after
-# editing the canonical.
+# The mirrors are build artifacts (gitignored). They normally arrive on
+# disk via sync-hierarchy-mirrors.sh — called from compile.sh during
+# local builds, and from each language's publish workflow right after
+# checkout. release.sh's preflight calls THIS guard to fail fast if a
+# release is about to ship without the mirrors materialized correctly.
 #
 # See registry-versioning.md for the editing rule.
 

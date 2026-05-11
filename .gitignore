@@ -38,3 +38,12 @@ node_modules/
 *.pem
 *.key
 credentials.json
+
+# hierarchy.json language-package mirrors — generated at build time by
+# sync-hierarchy-mirrors.sh from the canonical at
+# ledger-models-protos/hierarchy.json. ONLY the canonical is committed;
+# the three mirrors are build artifacts so cargo / npm / pip can bundle
+# them into their tarballs. See registry-versioning.md.
+ledger-models-rust/hierarchy.json
+ledger-models-javascript/hierarchy.json
+ledger-models-python/fintekkers/wrappers/models/security/hierarchy.json

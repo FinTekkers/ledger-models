@@ -61,28 +61,32 @@ Loaders in market-data-inputs (separate repo) consume the leaf when they encount
 
 ## The single-source-of-truth rule
 
-The canonical `hierarchy.json` lives at:
+**`hierarchy.json` exists exactly once in source control:**
 
 ```
 ledger-models-protos/hierarchy.json
 ```
 
-Three language-package mirrors exist because cargo / npm / pip each require bundled assets to live inside their package root:
+The three language-package mirrors are **gitignored build artifacts**, not committed files:
 
 ```
-ledger-models-rust/hierarchy.json
-ledger-models-javascript/hierarchy.json
-ledger-models-python/fintekkers/wrappers/models/security/hierarchy.json
+ledger-models-rust/hierarchy.json                                       (gitignored)
+ledger-models-javascript/hierarchy.json                                 (gitignored)
+ledger-models-python/fintekkers/wrappers/models/security/hierarchy.json (gitignored)
 ```
 
-(Java is the exception — Gradle's `processResources` task copies the canonical into the jar at build time, so no physical mirror is needed there.)
+They exist on disk at build/publish time only, materialized from the canonical by `sync-hierarchy-mirrors.sh`. (Java is the exception — Gradle's `processResources` task reads the canonical directly via `../ledger-models-protos/` and copies it into the jar at build time, so no script-generated mirror is needed there.)
 
-**Only edit the canonical.** Never hand-edit a mirror. Two scripts at the repo root keep things consistent:
+Why mirrors are still needed at all: cargo publish / npm publish / pip wheel each require bundled assets to live inside their package root. The canonical at `ledger-models-protos/hierarchy.json` is OUTSIDE all three package roots, so each language must ship an in-package copy in its registry tarball. The copies just don't need to live in git — they're generated on demand.
 
-- **`./sync-hierarchy-mirrors.sh`** — copies the canonical to all three mirrors. Idempotent. Called automatically at the top of `compile.sh`. Run it manually after editing the canonical if you want to verify the mirrors before kicking off the full build.
-- **`./check-hierarchy-mirrors.sh`** — CI guard. Diffs each mirror against the canonical and exits non-zero if any has drifted. Called automatically at the top of `release.sh` so a release fails fast on drift.
+**Only edit the canonical.** The mirror paths are gitignored; the file you actually edit lives in exactly one place. Two scripts at the repo root drive the lifecycle:
 
-If you ever see a mirror diverge from the canonical, do NOT edit the mirror to fix it. Edit the canonical (if the canonical is the version you want) or revert the canonical (if the mirror is the version you want), then run `./sync-hierarchy-mirrors.sh` and commit. The mirrors are downstream artifacts of the canonical, not parallel sources of truth.
+- **`./sync-hierarchy-mirrors.sh`** — materializes all three mirrors from the canonical. Idempotent. Called automatically:
+  - At the top of `compile.sh` (every local build).
+  - In each of the four publish workflows (`cargo-publish.yml`, `pypi-publish.yml`, `npmjs-publish.yml`, `npm-publish.yml`) right after `actions/checkout`, before the language-specific publish step reads its package manifest's bundled-assets list.
+- **`./check-hierarchy-mirrors.sh`** — defensive guard. Diffs each mirror against the canonical and exits non-zero if any is missing or has drifted. Useful for CI workflows that want pre-publish enforcement.
+
+Net effect: one file in git, three transient mirrors at build/publish time, zero opportunity for committed drift.
 
 ## What is *not* a registry change
 

@@ -1,27 +1,30 @@
 #!/usr/bin/env bash
 # sync-hierarchy-mirrors.sh
 #
-# Copy ledger-models-protos/hierarchy.json (the canonical source of truth
-# for the FinTekkers product registry) to each language-package mirror so
-# cargo / npm / pip can bundle it in their respective tarballs.
+# Materializes the three language-package mirrors of hierarchy.json from
+# the canonical source of truth at ledger-models-protos/hierarchy.json.
 #
-# Why mirrors exist: cargo publish / npm publish / pip wheel each require
-# bundled assets to live inside their package root. The canonical file
-# lives in ledger-models-protos/ — outside all three package roots — so
-# each language ships an in-package copy.
+# The mirrors are BUILD ARTIFACTS, not committed files. Only the canonical
+# lives in source control (see .gitignore entries pointing here). This
+# script generates the mirrors when needed:
+#   - compile.sh calls it at the start of every local build.
+#   - Each language's publish workflow (cargo / pypi / npmjs / npm) calls
+#     it right after checkout, before the language-specific publish step
+#     reads its package manifest's bundled-assets list.
 #
-# Java is the exception: Gradle's processResources task copies the
-# canonical file into the jar at build time, so no physical mirror is
-# needed there.
+# Why mirrors are needed at all: cargo publish / npm publish / pip wheel
+# each require bundled assets to live inside their package root. The
+# canonical at ledger-models-protos/hierarchy.json is OUTSIDE all three
+# package roots, so each language must ship an in-package copy in its
+# registry tarball.
 #
-# This script makes drift impossible by overwriting each mirror with the
-# canonical version every time it's run. compile.sh calls it at the top.
-# check-hierarchy-mirrors.sh (CI guard) verifies the mirrors agree with
-# the canonical and fails loudly if any contributor edited a mirror
-# directly or forgot to sync after updating the canonical.
+# Java is the exception: Gradle's processResources task reads the
+# canonical directly via ../ledger-models-protos/ and copies it into the
+# jar at build time. No script-generated mirror needed.
 #
-# Editing rule: only edit ledger-models-protos/hierarchy.json. Never
-# edit the mirrors directly. See registry-versioning.md.
+# Editing rule: only edit ledger-models-protos/hierarchy.json. The mirror
+# locations under ledger-models-{rust,javascript,python}/ are gitignored
+# and rewritten on every sync. See registry-versioning.md.
 
 set -euo pipefail
 

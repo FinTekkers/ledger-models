@@ -17,6 +17,15 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
+      - name: Materialize hierarchy.json mirrors
+        # hierarchy.json lives once in source control at
+        # ledger-models-protos/hierarchy.json. cargo publish requires
+        # bundled assets to be inside the crate root, so this step
+        # copies the canonical into ledger-models-rust/hierarchy.json
+        # before `cargo publish` reads Cargo.toml's `include` list.
+        # See registry-versioning.md.
+        run: ./sync-hierarchy-mirrors.sh
+        working-directory: .
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:

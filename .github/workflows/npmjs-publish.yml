@@ -17,6 +17,15 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v3
+      - name: Materialize hierarchy.json mirrors
+        # hierarchy.json lives once in source control at
+        # ledger-models-protos/hierarchy.json. The npm package bundles
+        # it from the package root, so this step copies the canonical
+        # into ledger-models-javascript/hierarchy.json before
+        # `npm publish` reads package.json's `files` glob. See
+        # registry-versioning.md.
+        run: ./sync-hierarchy-mirrors.sh
+        working-directory: .
       # Setup .npmrc file to publish to GitHub Packages
       - uses: actions/setup-node@v3
         with:

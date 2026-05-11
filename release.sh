@@ -99,10 +99,10 @@ preflight() {
     dirty=$(git status --porcelain --untracked-files=no)
     [[ -z "$dirty" ]] || die "Working tree has uncommitted changes to tracked files. Commit or stash first."
 
-    # Fail fast on hierarchy.json mirror drift — never ship a release
-    # where language packages disagree on the registry shape.
-    ./check-hierarchy-mirrors.sh >/dev/null 2>&1 \
-        || die "hierarchy.json mirrors out of sync. Run ./sync-hierarchy-mirrors.sh, commit, then retry."
+    # hierarchy.json mirrors are gitignored build artifacts. CI publish
+    # workflows materialize them from the canonical at workflow time
+    # (see .github/workflows/{cargo,pypi,npmjs,npm}-publish.yml), so
+    # no local mirror check is needed in this preflight.
 
     success "Pre-flight passed."
 }
