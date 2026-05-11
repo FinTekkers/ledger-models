@@ -50,13 +50,43 @@ If a rename is unavoidable, the safe sequence is:
 
 For most cases (a new instrument type, a new option underlying, a new commodity) the addition is straightforward:
 
-1. Edit `hierarchy.json`. Add the entry under the appropriate parent.
+1. Edit **`ledger-models-protos/hierarchy.json`** — the **canonical** registry. Add the entry under the appropriate parent.
 2. Pick `status: planned` if the proto enum value isn't being added in the same PR; pick `status: active` if it is.
 3. If `status: active`: add the `ProductTypeProto` enum value with the next available number. The CI guard verifies that every active leaf has a matching proto enum value; the test fails until both sides are updated.
-4. Update any worked example in [`hierarchy-examples.md`](./hierarchy-examples.md) that exemplifies the new leaf.
-5. Ship as a minor version bump.
+4. Run **`./sync-hierarchy-mirrors.sh`** from the repo root. This refreshes the three language-package mirrors (Rust / JS / Python) so they ship in their respective tarballs. `compile.sh` calls this automatically at the start of every build; running it manually is the right move if you only edited the canonical and want to verify the mirrors before running the full build.
+5. Update any worked example in [`hierarchy-examples.md`](./hierarchy-examples.md) that exemplifies the new leaf.
+6. Ship as a minor version bump.
 
 Loaders in market-data-inputs (separate repo) consume the leaf when they encounter the upstream code that maps to it. That mapping work is loader-side, not registry-side.
+
+## The single-source-of-truth rule
+
+**`hierarchy.json` exists exactly once in source control:**
+
+```
+ledger-models-protos/hierarchy.json
+```
+
+The three language-package mirrors are **gitignored build artifacts**, not committed files:
+
+```
+ledger-models-rust/hierarchy.json                                       (gitignored)
+ledger-models-javascript/hierarchy.json                                 (gitignored)
+ledger-models-python/fintekkers/wrappers/models/security/hierarchy.json (gitignored)
+```
+
+They exist on disk at build/publish time only, materialized from the canonical by `sync-hierarchy-mirrors.sh`. (Java is the exception — Gradle's `processResources` task reads the canonical directly via `../ledger-models-protos/` and copies it into the jar at build time, so no script-generated mirror is needed there.)
+
+Why mirrors are still needed at all: cargo publish / npm publish / pip wheel each require bundled assets to live inside their package root. The canonical at `ledger-models-protos/hierarchy.json` is OUTSIDE all three package roots, so each language must ship an in-package copy in its registry tarball. The copies just don't need to live in git — they're generated on demand.
+
+**Only edit the canonical.** The mirror paths are gitignored; the file you actually edit lives in exactly one place. Two scripts at the repo root drive the lifecycle:
+
+- **`./sync-hierarchy-mirrors.sh`** — materializes all three mirrors from the canonical. Idempotent. Called automatically:
+  - At the top of `compile.sh` (every local build).
+  - In each of the four publish workflows (`cargo-publish.yml`, `pypi-publish.yml`, `npmjs-publish.yml`, `npm-publish.yml`) right after `actions/checkout`, before the language-specific publish step reads its package manifest's bundled-assets list.
+- **`./check-hierarchy-mirrors.sh`** — defensive guard. Diffs each mirror against the canonical and exits non-zero if any is missing or has drifted. Useful for CI workflows that want pre-publish enforcement.
+
+Net effect: one file in git, three transient mirrors at build/publish time, zero opportunity for committed drift.
 
 ## What is *not* a registry change
 
