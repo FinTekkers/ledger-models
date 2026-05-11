@@ -7,6 +7,14 @@
 //! bundled into the crate via `include_str!`. Because the JSON is embedded at
 //! compile time, no I/O or runtime config is required.
 //!
+//! The file lives at the crate root (`ledger-models-rust/hierarchy.json`) so
+//! it survives `cargo package` / `cargo publish` (the canonical source under
+//! `ledger-models-protos/` is OUTSIDE the crate and is therefore unavailable
+//! to the packaged tarball; we mirror it at the crate root). The mirror copy
+//! is kept in sync with `ledger-models-protos/hierarchy.json` — when the
+//! latter changes, the copy must be refreshed (and Cargo.toml's `include`
+//! list bundles the crate-root copy).
+//!
 //! Two trees are exposed:
 //!   - **product_type** — what kind of contract is this. Walked via
 //!     [`parent_of`], [`descendants_of`], [`is_descendant_of`].
@@ -23,7 +31,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::sync::OnceLock;
 
-const HIERARCHY_JSON: &str = include_str!("../../../../ledger-models-protos/hierarchy.json");
+const HIERARCHY_JSON: &str = include_str!("../../../hierarchy.json");
 
 #[derive(Debug, Deserialize)]
 pub struct ProductTypeEntry {
