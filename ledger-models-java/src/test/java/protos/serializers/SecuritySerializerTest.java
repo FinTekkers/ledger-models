@@ -206,4 +206,113 @@ class SecuritySerializerTest {
         assertDoesNotThrow(() -> SecuritySerializer.getInstance().deserialize(proto),
                 "deserialize() must accept bond where maturity_date > issue_date");
     }
+
+    // ------------------------------------------------------------------------
+    // v0.2.1 — round-trip preservation for four fields that have no domain
+    // accessor on Security (or whose domain-subclass overrides hardcode legacy
+    // values). Same shape as the existing deleted_at / issuance_info /
+    // identifiers / index_type preservation in SecuritySerializer.serialize().
+    // Eliminates the SecurityProtoRoundtrip workaround in ledger-service M2
+    // PR #36 (second-brain#258).
+    //
+    // Each test: build a clean proto via the existing dummy, set the field
+    // under test on toBuilder(), run through serialize(deserialize(proto)),
+    // assert preservation.
+    // ------------------------------------------------------------------------
+
+    private static SecurityProto equityProtoWith(java.util.function.Function<SecurityProto.Builder, SecurityProto.Builder> mutator) {
+        SecurityProto base = SecuritySerializer.getInstance().serialize(DummyEquityObjects.getDummySecurity());
+        return mutator.apply(base.toBuilder()).build();
+    }
+
+    @Test
+    public void instrumentType_preservedOnRoundtrip() {
+        SecurityProto input = equityProtoWith(b ->
+                b.setInstrumentType(fintekkers.models.security.InstrumentTypeProto.INSTRUMENT_TYPE_DERIVATIVE));
+
+        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
+                SecuritySerializer.getInstance().deserialize(input));
+
+        assertEquals(fintekkers.models.security.InstrumentTypeProto.INSTRUMENT_TYPE_DERIVATIVE,
+                reSerialized.getInstrumentType(),
+                "instrument_type must survive round-trip; domain Security has no setter, "
+                + "so the serializer must copy from the stashed source proto.");
+    }
+
+    @Test
+    public void legs_preservedOnRoundtrip() {
+        fintekkers.models.util.Uuid.UUIDProto leg1Uuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
+                .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[16])).build();
+        fintekkers.models.util.Uuid.UUIDProto leg2Uuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
+                .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[]{
+                        1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,1})).build();
+        fintekkers.models.security.SecurityIdProto leg1 =
+                fintekkers.models.security.SecurityIdProto.newBuilder().setUuid(leg1Uuid).build();
+        fintekkers.models.security.SecurityIdProto leg2 =
+                fintekkers.models.security.SecurityIdProto.newBuilder().setUuid(leg2Uuid).build();
+
+        SecurityProto input = equityProtoWith(b -> b.addLegs(leg1).addLegs(leg2));
+
+        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
+                SecuritySerializer.getInstance().deserialize(input));
+
+        assertEquals(2, reSerialized.getLegsCount(),
+                "Multi-leg strategy packages: legs must survive round-trip.");
+        assertEquals(leg1.getUuid(), reSerialized.getLegs(0).getUuid());
+        assertEquals(leg2.getUuid(), reSerialized.getLegs(1).getUuid());
+    }
+
+    @Test
+    public void assetClass_canonicalRegistryStringPreserved() {
+        // EquitySecurity's getAssetClass() hardcodes the legacy "Equity"
+        // string. Without preservation, that hardcode wins and the canonical
+        // "EQUITY" set on the input proto is overwritten on the way out.
+        SecurityProto input = equityProtoWith(b -> b.setAssetClass("EQUITY"));
+
+        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
+                SecuritySerializer.getInstance().deserialize(input));
+
+        assertEquals("EQUITY", reSerialized.getAssetClass(),
+                "Canonical registry asset_class string from the input proto must survive; "
+                + "the domain-subclass legacy hardcode must NOT win.");
+    }
+
+    @Test
+    public void productType_preservesPreferredStockOverEquitySecurityHardcode() {
+        // EquitySecurity.getProductType() hardcodes COMMON_STOCK. Without
+        // preservation, PREFERRED_STOCK / ADR / ETF on the input proto
+        // collapse to COMMON_STOCK on round-trip.
+        SecurityProto input = equityProtoWith(b ->
+                b.setProductType(fintekkers.models.security.ProductTypeProto.PREFERRED_STOCK));
+
+        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
+                SecuritySerializer.getInstance().deserialize(input));
+
+        assertEquals(fintekkers.models.security.ProductTypeProto.PREFERRED_STOCK,
+                reSerialized.getProductType(),
+                "PREFERRED_STOCK / ADR / ETF must survive round-trip against EquitySecurity's "
+                + "COMMON_STOCK hardcode.");
+    }
+
+    @Test
+    public void productType_preservesAdrOverEquitySecurityHardcode() {
+        SecurityProto input = equityProtoWith(b ->
+                b.setProductType(fintekkers.models.security.ProductTypeProto.ADR));
+
+        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
+                SecuritySerializer.getInstance().deserialize(input));
+
+        assertEquals(fintekkers.models.security.ProductTypeProto.ADR, reSerialized.getProductType());
+    }
+
+    @Test
+    public void productType_preservesEtfOverEquitySecurityHardcode() {
+        SecurityProto input = equityProtoWith(b ->
+                b.setProductType(fintekkers.models.security.ProductTypeProto.ETF));
+
+        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
+                SecuritySerializer.getInstance().deserialize(input));
+
+        assertEquals(fintekkers.models.security.ProductTypeProto.ETF, reSerialized.getProductType());
+    }
 }
