@@ -99,6 +99,11 @@ preflight() {
     dirty=$(git status --porcelain --untracked-files=no)
     [[ -z "$dirty" ]] || die "Working tree has uncommitted changes to tracked files. Commit or stash first."
 
+    # Fail fast on hierarchy.json mirror drift — never ship a release
+    # where language packages disagree on the registry shape.
+    ./check-hierarchy-mirrors.sh >/dev/null 2>&1 \
+        || die "hierarchy.json mirrors out of sync. Run ./sync-hierarchy-mirrors.sh, commit, then retry."
+
     success "Pre-flight passed."
 }
 

@@ -50,13 +50,39 @@ If a rename is unavoidable, the safe sequence is:
 
 For most cases (a new instrument type, a new option underlying, a new commodity) the addition is straightforward:
 
-1. Edit `hierarchy.json`. Add the entry under the appropriate parent.
+1. Edit **`ledger-models-protos/hierarchy.json`** — the **canonical** registry. Add the entry under the appropriate parent.
 2. Pick `status: planned` if the proto enum value isn't being added in the same PR; pick `status: active` if it is.
 3. If `status: active`: add the `ProductTypeProto` enum value with the next available number. The CI guard verifies that every active leaf has a matching proto enum value; the test fails until both sides are updated.
-4. Update any worked example in [`hierarchy-examples.md`](./hierarchy-examples.md) that exemplifies the new leaf.
-5. Ship as a minor version bump.
+4. Run **`./sync-hierarchy-mirrors.sh`** from the repo root. This refreshes the three language-package mirrors (Rust / JS / Python) so they ship in their respective tarballs. `compile.sh` calls this automatically at the start of every build; running it manually is the right move if you only edited the canonical and want to verify the mirrors before running the full build.
+5. Update any worked example in [`hierarchy-examples.md`](./hierarchy-examples.md) that exemplifies the new leaf.
+6. Ship as a minor version bump.
 
 Loaders in market-data-inputs (separate repo) consume the leaf when they encounter the upstream code that maps to it. That mapping work is loader-side, not registry-side.
+
+## The single-source-of-truth rule
+
+The canonical `hierarchy.json` lives at:
+
+```
+ledger-models-protos/hierarchy.json
+```
+
+Three language-package mirrors exist because cargo / npm / pip each require bundled assets to live inside their package root:
+
+```
+ledger-models-rust/hierarchy.json
+ledger-models-javascript/hierarchy.json
+ledger-models-python/fintekkers/wrappers/models/security/hierarchy.json
+```
+
+(Java is the exception — Gradle's `processResources` task copies the canonical into the jar at build time, so no physical mirror is needed there.)
+
+**Only edit the canonical.** Never hand-edit a mirror. Two scripts at the repo root keep things consistent:
+
+- **`./sync-hierarchy-mirrors.sh`** — copies the canonical to all three mirrors. Idempotent. Called automatically at the top of `compile.sh`. Run it manually after editing the canonical if you want to verify the mirrors before kicking off the full build.
+- **`./check-hierarchy-mirrors.sh`** — CI guard. Diffs each mirror against the canonical and exits non-zero if any has drifted. Called automatically at the top of `release.sh` so a release fails fast on drift.
+
+If you ever see a mirror diverge from the canonical, do NOT edit the mirror to fix it. Edit the canonical (if the canonical is the version you want) or revert the canonical (if the mirror is the version you want), then run `./sync-hierarchy-mirrors.sh` and commit. The mirrors are downstream artifacts of the canonical, not parallel sources of truth.
 
 ## What is *not* a registry change
 

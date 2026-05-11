@@ -99,6 +99,14 @@ touch ledger-models-python/fintekkers/catalog/__init__.py
 
 pass "Catalog files copied to all languages"
 
+###########################################
+######### HIERARCHY.JSON MIRRORS ##########
+###########################################
+echo ""
+echo "=== Syncing hierarchy.json mirrors ==="
+./sync-hierarchy-mirrors.sh
+pass "hierarchy.json synced to language-package mirrors"
+
 #########################################
 ######### RUST PROTO GENERATION #########
 #########################################
