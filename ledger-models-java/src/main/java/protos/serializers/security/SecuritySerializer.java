@@ -94,6 +94,52 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             builder.setDeletedAt(security.getSecurityProto().getDeletedAt());
         }
 
+        // v0.2.1: preserve four fields from the stashed source proto that
+        // have no domain-level getter/setter on the Security object, so
+        // without this copy they drop on round-trip. Same shape as the
+        // deleted_at preservation just above. See second-brain#258 for
+        // history.
+        if (security.getSecurityProto() != null) {
+            SecurityProto stash = security.getSecurityProto();
+
+            // instrument_type (tag 16). proto3 enum default is 0 = UNKNOWN;
+            // preserve when explicitly set.
+            if (stash.getInstrumentType() != InstrumentTypeProto.INSTRUMENT_TYPE_UNKNOWN) {
+                builder.setInstrumentType(stash.getInstrumentType());
+            }
+
+            // legs (tag 17, repeated SecurityIdProto) — multi-leg strategy
+            // packages. Domain object has no leg accessors today, so the
+            // stash is the only source.
+            if (stash.getLegsCount() > 0) {
+                builder.addAllLegs(stash.getLegsList());
+            }
+
+            // asset_class: the domain subclasses (BondSecurity, EquitySecurity,
+            // CashSecurity) still hardcode legacy free-form strings ("Fixed
+            // Income", "Equity", "Cash") in their getAssetClass() overrides,
+            // so without this copy the canonical registry string ("RATES",
+            // "EQUITY", "CASH") set by the client gets overwritten on the
+            // way out. Until the domain subclasses are aligned with the
+            // registry, the stash is the truth.
+            String stashedAssetClass = stash.getAssetClass();
+            if (stashedAssetClass != null && !stashedAssetClass.isEmpty()) {
+                builder.setAssetClass(stashedAssetClass);
+            }
+
+            // product_type: EquitySecurity hardcodes getProductType() →
+            // COMMON_STOCK so PREFERRED_STOCK / ADR / ETF all collapse to
+            // COMMON_STOCK on the upstream serialize. Same fix shape as
+            // asset_class — the stashed proto's value is the source of
+            // truth. Removable once the domain subclasses dispatch to the
+            // registry.
+            ProductTypeProto stashedProductType = stash.getProductType();
+            if (stashedProductType != ProductTypeProto.PRODUCT_TYPE_UNKNOWN
+                    && stashedProductType != builder.getProductType()) {
+                builder.setProductType(stashedProductType);
+            }
+        }
+
         return builder.build();
     }
 
