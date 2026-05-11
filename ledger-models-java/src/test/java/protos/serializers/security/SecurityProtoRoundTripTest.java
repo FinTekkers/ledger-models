@@ -45,7 +45,7 @@ class SecurityProtoRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.BOND_SECURITY)
+                .setProductType(ProductTypeProto.TREASURY_NOTE)
                 .setAssetClass("Fixed Income")
                 .setIssuerName("US Treasury")
                 .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
@@ -62,7 +62,7 @@ class SecurityProtoRoundTripTest {
 
         SecurityProto parsed = roundTrip(original);
 
-        assertEquals(SecurityTypeProto.BOND_SECURITY, parsed.getSecurityType());
+        assertEquals(ProductTypeProto.TREASURY_NOTE, parsed.getProductType());
         assertEquals("Fixed Income", parsed.getAssetClass());
         assertEquals("US Treasury", parsed.getIssuerName());
         assertEquals("UST 5% 2030", parsed.getDescription());
@@ -85,7 +85,7 @@ class SecurityProtoRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.TIPS)
+                .setProductType(ProductTypeProto.TIPS)
                 .setAssetClass("Fixed Income")
                 .setIssuerName("US Treasury")
                 .setCouponRate(decimal("0.625"))
@@ -99,7 +99,7 @@ class SecurityProtoRoundTripTest {
 
         SecurityProto parsed = roundTrip(original);
 
-        assertEquals(SecurityTypeProto.TIPS, parsed.getSecurityType());
+        assertEquals(ProductTypeProto.TIPS, parsed.getProductType());
         assertEquals("0.625", parsed.getCouponRate().getArbitraryPrecisionValue());
         assertEquals(CouponTypeProto.FIXED, parsed.getCouponType());
         assertEquals(CouponFrequencyProto.SEMIANNUALLY, parsed.getCouponFrequency());
@@ -114,7 +114,7 @@ class SecurityProtoRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.FRN)
+                .setProductType(ProductTypeProto.TREASURY_FRN)
                 .setAssetClass("Fixed Income")
                 .setIssuerName("US Treasury")
                 .setCouponType(CouponTypeProto.FLOAT)
@@ -128,7 +128,7 @@ class SecurityProtoRoundTripTest {
 
         SecurityProto parsed = roundTrip(original);
 
-        assertEquals(SecurityTypeProto.FRN, parsed.getSecurityType());
+        assertEquals(ProductTypeProto.TREASURY_FRN, parsed.getProductType());
         assertEquals(CouponTypeProto.FLOAT, parsed.getCouponType());
         assertEquals(CouponFrequencyProto.QUARTERLY, parsed.getCouponFrequency());
         assertEquals("100", parsed.getFaceValue().getArbitraryPrecisionValue());
@@ -143,7 +143,7 @@ class SecurityProtoRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.EQUITY_SECURITY)
+                .setProductType(ProductTypeProto.COMMON_STOCK)
                 .setAssetClass("Equity")
                 .setIssuerName("Apple Inc.")
                 .setQuantityType(SecurityQuantityTypeProto.UNITS)
@@ -153,7 +153,7 @@ class SecurityProtoRoundTripTest {
 
         SecurityProto parsed = roundTrip(original);
 
-        assertEquals(SecurityTypeProto.EQUITY_SECURITY, parsed.getSecurityType());
+        assertEquals(ProductTypeProto.COMMON_STOCK, parsed.getProductType());
         assertEquals("Equity", parsed.getAssetClass());
         assertEquals("Apple Inc.", parsed.getIssuerName());
         assertEquals(SecurityQuantityTypeProto.UNITS, parsed.getQuantityType());
@@ -167,7 +167,7 @@ class SecurityProtoRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.CASH_SECURITY)
+                .setProductType(ProductTypeProto.CURRENCY)
                 .setAssetClass("Cash")
                 .setIssuerName("Federal Reserve")
                 .setQuantityType(SecurityQuantityTypeProto.UNITS)
@@ -178,7 +178,7 @@ class SecurityProtoRoundTripTest {
 
         SecurityProto parsed = roundTrip(original);
 
-        assertEquals(SecurityTypeProto.CASH_SECURITY, parsed.getSecurityType());
+        assertEquals(ProductTypeProto.CURRENCY, parsed.getProductType());
         assertEquals("Cash", parsed.getAssetClass());
         assertEquals("USD", parsed.getCashId());
         assertEquals("US Dollar", parsed.getDescription());
@@ -191,7 +191,7 @@ class SecurityProtoRoundTripTest {
         SecurityProto original = SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(SecurityTypeProto.INDEX_SECURITY)
+                .setProductType(ProductTypeProto.EQUITY_INDEX)
                 .setAssetClass("Index")
                 .setIssuerName("Bureau of Labor Statistics")
                 .setDescription("US CPI-U All Urban Consumers")
@@ -201,7 +201,7 @@ class SecurityProtoRoundTripTest {
 
         SecurityProto parsed = roundTrip(original);
 
-        assertEquals(SecurityTypeProto.INDEX_SECURITY, parsed.getSecurityType());
+        assertEquals(ProductTypeProto.EQUITY_INDEX, parsed.getProductType());
         assertEquals("Index", parsed.getAssetClass());
         assertEquals("Bureau of Labor Statistics", parsed.getIssuerName());
         assertEquals("US CPI-U All Urban Consumers", parsed.getDescription());

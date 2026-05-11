@@ -33,8 +33,12 @@ var fintekkers_models_security_identifier_identifier_pb = require('../../../fint
 goog.object.extend(proto, fintekkers_models_security_identifier_identifier_pb);
 var fintekkers_models_security_bond_issuance_pb = require('../../../fintekkers/models/security/bond/issuance_pb.js');
 goog.object.extend(proto, fintekkers_models_security_bond_issuance_pb);
-var fintekkers_models_security_security_type_pb = require('../../../fintekkers/models/security/security_type_pb.js');
-goog.object.extend(proto, fintekkers_models_security_security_type_pb);
+var fintekkers_models_security_product_type_pb = require('../../../fintekkers/models/security/product_type_pb.js');
+goog.object.extend(proto, fintekkers_models_security_product_type_pb);
+var fintekkers_models_security_instrument_type_pb = require('../../../fintekkers/models/security/instrument_type_pb.js');
+goog.object.extend(proto, fintekkers_models_security_instrument_type_pb);
+var fintekkers_models_security_security_id_pb = require('../../../fintekkers/models/security/security_id_pb.js');
+goog.object.extend(proto, fintekkers_models_security_security_id_pb);
 var fintekkers_models_security_security_quantity_type_pb = require('../../../fintekkers/models/security/security_quantity_type_pb.js');
 goog.object.extend(proto, fintekkers_models_security_security_quantity_type_pb);
 var fintekkers_models_security_coupon_frequency_pb = require('../../../fintekkers/models/security/coupon_frequency_pb.js');
@@ -226,7 +230,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.fintekkers.models.security.SecurityProto.repeatedFields_ = [42,67];
+proto.fintekkers.models.security.SecurityProto.repeatedFields_ = [17,42,67];
 
 /**
  * Oneof group definitions for this message. Each group defines the field
@@ -297,7 +301,10 @@ proto.fintekkers.models.security.SecurityProto.toObject = function(includeInstan
     isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
     validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-    securityType: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    productType: jspb.Message.getFieldWithDefault(msg, 10, 0),
+    instrumentType: jspb.Message.getFieldWithDefault(msg, 16, 0),
+    legsList: jspb.Message.toObjectList(msg.getLegsList(),
+    fintekkers_models_security_security_id_pb.SecurityIdProto.toObject, includeInstance),
     deletedAt: (f = msg.getDeletedAt()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     assetClass: jspb.Message.getFieldWithDefault(msg, 11, ""),
     issuerName: jspb.Message.getFieldWithDefault(msg, 12, ""),
@@ -400,8 +407,17 @@ proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader = fun
       msg.setValidTo(value);
       break;
     case 10:
-      var value = /** @type {!proto.fintekkers.models.security.SecurityTypeProto} */ (reader.readEnum());
-      msg.setSecurityType(value);
+      var value = /** @type {!proto.fintekkers.models.security.ProductTypeProto} */ (reader.readEnum());
+      msg.setProductType(value);
+      break;
+    case 16:
+      var value = /** @type {!proto.fintekkers.models.security.InstrumentTypeProto} */ (reader.readEnum());
+      msg.setInstrumentType(value);
+      break;
+    case 17:
+      var value = new fintekkers_models_security_security_id_pb.SecurityIdProto;
+      reader.readMessage(value,fintekkers_models_security_security_id_pb.SecurityIdProto.deserializeBinaryFromReader);
+      msg.addLegs(value);
       break;
     case 15:
       var value = new fintekkers_models_util_local_timestamp_pb.LocalTimestampProto;
@@ -629,11 +645,26 @@ proto.fintekkers.models.security.SecurityProto.serializeBinaryToWriter = functio
       fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.serializeBinaryToWriter
     );
   }
-  f = message.getSecurityType();
+  f = message.getProductType();
   if (f !== 0.0) {
     writer.writeEnum(
       10,
       f
+    );
+  }
+  f = message.getInstrumentType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      16,
+      f
+    );
+  }
+  f = message.getLegsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      17,
+      f,
+      fintekkers_models_security_security_id_pb.SecurityIdProto.serializeBinaryToWriter
     );
   }
   f = message.getDeletedAt();
@@ -1079,20 +1110,76 @@ proto.fintekkers.models.security.SecurityProto.prototype.hasValidTo = function()
 
 
 /**
- * optional SecurityTypeProto security_type = 10;
- * @return {!proto.fintekkers.models.security.SecurityTypeProto}
+ * optional ProductTypeProto product_type = 10;
+ * @return {!proto.fintekkers.models.security.ProductTypeProto}
  */
-proto.fintekkers.models.security.SecurityProto.prototype.getSecurityType = function() {
-  return /** @type {!proto.fintekkers.models.security.SecurityTypeProto} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+proto.fintekkers.models.security.SecurityProto.prototype.getProductType = function() {
+  return /** @type {!proto.fintekkers.models.security.ProductTypeProto} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
 };
 
 
 /**
- * @param {!proto.fintekkers.models.security.SecurityTypeProto} value
+ * @param {!proto.fintekkers.models.security.ProductTypeProto} value
  * @return {!proto.fintekkers.models.security.SecurityProto} returns this
  */
-proto.fintekkers.models.security.SecurityProto.prototype.setSecurityType = function(value) {
+proto.fintekkers.models.security.SecurityProto.prototype.setProductType = function(value) {
   return jspb.Message.setProto3EnumField(this, 10, value);
+};
+
+
+/**
+ * optional InstrumentTypeProto instrument_type = 16;
+ * @return {!proto.fintekkers.models.security.InstrumentTypeProto}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.getInstrumentType = function() {
+  return /** @type {!proto.fintekkers.models.security.InstrumentTypeProto} */ (jspb.Message.getFieldWithDefault(this, 16, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.security.InstrumentTypeProto} value
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.setInstrumentType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 16, value);
+};
+
+
+/**
+ * repeated SecurityIdProto legs = 17;
+ * @return {!Array<!proto.fintekkers.models.security.SecurityIdProto>}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.getLegsList = function() {
+  return /** @type{!Array<!proto.fintekkers.models.security.SecurityIdProto>} */ (
+    jspb.Message.getRepeatedWrapperField(this, fintekkers_models_security_security_id_pb.SecurityIdProto, 17));
+};
+
+
+/**
+ * @param {!Array<!proto.fintekkers.models.security.SecurityIdProto>} value
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+*/
+proto.fintekkers.models.security.SecurityProto.prototype.setLegsList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 17, value);
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.security.SecurityIdProto=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.fintekkers.models.security.SecurityIdProto}
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.addLegs = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 17, opt_value, proto.fintekkers.models.security.SecurityIdProto, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.fintekkers.models.security.SecurityProto} returns this
+ */
+proto.fintekkers.models.security.SecurityProto.prototype.clearLegsList = function() {
+  return this.setLegsList([]);
 };
 
 

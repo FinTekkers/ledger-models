@@ -20,7 +20,7 @@ public class JSONFieldNames {
     public final static String COUPON_FREQUENCY = "coupon_frequency";
     public final static String COUPON_TYPE = "coupon_type";
     public final static String COUPON_RATE = "coupon_rate";
-    public final static String SECURITY_TYPE = "security_type";
+    public final static String PRODUCT_TYPE = "product_type";
     public final static String QUANTITY_TYPE = "quantity_type";
     public final static String POSITION_STATUS = "position_status";
 

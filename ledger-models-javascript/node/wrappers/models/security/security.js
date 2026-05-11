@@ -4,7 +4,7 @@ const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 const datetime_1 = require("../utils/datetime");
 const uuid_1 = require("../utils/uuid");
 const date_1 = require("../utils/date");
-const security_type_pb_1 = require("../../../fintekkers/models/security/security_type_pb");
+const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 class Security {
     constructor(proto) {
         this.proto = proto;
@@ -13,10 +13,10 @@ class Security {
      * Factory method to create the appropriate Security subclass based on security type
      */
     static create(proto) {
-        switch (proto.getSecurityType()) {
-            case security_type_pb_1.SecurityTypeProto.BOND_SECURITY:
-            case security_type_pb_1.SecurityTypeProto.TIPS:
-            case security_type_pb_1.SecurityTypeProto.FRN:
+        switch (proto.getProductType()) {
+            case product_type_pb_1.ProductTypeProto.TREASURY_NOTE:
+            case product_type_pb_1.ProductTypeProto.TIPS:
+            case product_type_pb_1.ProductTypeProto.TREASURY_FRN:
                 // Lazy import to avoid circular dependency
                 const BondSecurity = require('./BondSecurity').default;
                 return new BondSecurity(proto);
@@ -37,10 +37,10 @@ class Security {
      * works regardless of how the wrapper was constructed.
      */
     isBond() {
-        const t = this.proto.getSecurityType();
-        return t === security_type_pb_1.SecurityTypeProto.BOND_SECURITY
-            || t === security_type_pb_1.SecurityTypeProto.TIPS
-            || t === security_type_pb_1.SecurityTypeProto.FRN;
+        const t = this.proto.getProductType();
+        return t === product_type_pb_1.ProductTypeProto.TREASURY_NOTE
+            || t === product_type_pb_1.ProductTypeProto.TIPS
+            || t === product_type_pb_1.ProductTypeProto.TREASURY_FRN;
     }
     toString() {
         return `ID[${this.getID().toString()}], ${this.getSecurityID()}[${this.getIssuerName()}]`;
@@ -104,8 +104,8 @@ class Security {
         throw new Error('Not implemented yet. See Java implementation for reference');
     }
     getProductType() {
-        const securityType = this.proto.getSecurityType();
-        const securityTypeString = Object.keys(security_type_pb_1.SecurityTypeProto).find(key => security_type_pb_1.SecurityTypeProto[key] === securityType);
+        const securityType = this.proto.getProductType();
+        const securityTypeString = Object.keys(product_type_pb_1.ProductTypeProto).find(key => product_type_pb_1.ProductTypeProto[key] === securityType);
         return securityTypeString || 'UNKNOWN_SECURITY_TYPE';
     }
     getSecurityID() {

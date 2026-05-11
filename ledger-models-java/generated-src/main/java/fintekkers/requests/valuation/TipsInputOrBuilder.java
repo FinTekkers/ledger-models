@@ -9,7 +9,7 @@ public interface TipsInputOrBuilder extends
 
   /**
    * <pre>
-   * The TIPS security. Must be SecurityTypeProto.TIPS with coupon_type FIXED,
+   * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
    * all standard fixed-income fields populated, and base_cpi set to the
    * reference CPI index value at issuance.
    * </pre>
@@ -20,7 +20,7 @@ public interface TipsInputOrBuilder extends
   boolean hasSecurity();
   /**
    * <pre>
-   * The TIPS security. Must be SecurityTypeProto.TIPS with coupon_type FIXED,
+   * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
    * all standard fixed-income fields populated, and base_cpi set to the
    * reference CPI index value at issuance.
    * </pre>
@@ -31,7 +31,7 @@ public interface TipsInputOrBuilder extends
   fintekkers.models.security.SecurityProto getSecurity();
   /**
    * <pre>
-   * The TIPS security. Must be SecurityTypeProto.TIPS with coupon_type FIXED,
+   * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
    * all standard fixed-income fields populated, and base_cpi set to the
    * reference CPI index value at issuance.
    * </pre>

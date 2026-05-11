@@ -11,7 +11,9 @@ import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_security_identifier_identifier_pb from "../../../fintekkers/models/security/identifier/identifier_pb";
 import * as fintekkers_models_security_bond_issuance_pb from "../../../fintekkers/models/security/bond/issuance_pb";
-import * as fintekkers_models_security_security_type_pb from "../../../fintekkers/models/security/security_type_pb";
+import * as fintekkers_models_security_product_type_pb from "../../../fintekkers/models/security/product_type_pb";
+import * as fintekkers_models_security_instrument_type_pb from "../../../fintekkers/models/security/instrument_type_pb";
+import * as fintekkers_models_security_security_id_pb from "../../../fintekkers/models/security/security_id_pb";
 import * as fintekkers_models_security_security_quantity_type_pb from "../../../fintekkers/models/security/security_quantity_type_pb";
 import * as fintekkers_models_security_coupon_frequency_pb from "../../../fintekkers/models/security/coupon_frequency_pb";
 import * as fintekkers_models_security_coupon_type_pb from "../../../fintekkers/models/security/coupon_type_pb";
@@ -44,8 +46,14 @@ export class SecurityProto extends jspb.Message {
     clearValidTo(): void;
     getValidTo(): fintekkers_models_util_local_timestamp_pb.LocalTimestampProto | undefined;
     setValidTo(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): SecurityProto;
-    getSecurityType(): fintekkers_models_security_security_type_pb.SecurityTypeProto;
-    setSecurityType(value: fintekkers_models_security_security_type_pb.SecurityTypeProto): SecurityProto;
+    getProductType(): fintekkers_models_security_product_type_pb.ProductTypeProto;
+    setProductType(value: fintekkers_models_security_product_type_pb.ProductTypeProto): SecurityProto;
+    getInstrumentType(): fintekkers_models_security_instrument_type_pb.InstrumentTypeProto;
+    setInstrumentType(value: fintekkers_models_security_instrument_type_pb.InstrumentTypeProto): SecurityProto;
+    clearLegsList(): void;
+    getLegsList(): Array<fintekkers_models_security_security_id_pb.SecurityIdProto>;
+    setLegsList(value: Array<fintekkers_models_security_security_id_pb.SecurityIdProto>): SecurityProto;
+    addLegs(value?: fintekkers_models_security_security_id_pb.SecurityIdProto, index?: number): fintekkers_models_security_security_id_pb.SecurityIdProto;
 
     hasDeletedAt(): boolean;
     clearDeletedAt(): void;
@@ -188,7 +196,9 @@ export namespace SecurityProto {
         isLink: boolean,
         validFrom?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         validTo?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
-        securityType: fintekkers_models_security_security_type_pb.SecurityTypeProto,
+        productType: fintekkers_models_security_product_type_pb.ProductTypeProto,
+        instrumentType: fintekkers_models_security_instrument_type_pb.InstrumentTypeProto,
+        legsList: Array<fintekkers_models_security_security_id_pb.SecurityIdProto.AsObject>,
         deletedAt?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         assetClass: string,
         issuerName: string,

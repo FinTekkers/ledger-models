@@ -2,7 +2,7 @@ import assert = require('assert');
 import Price from './Price';
 import Security from '../security/security';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { SecurityTypeProto } from '../../../fintekkers/models/security/security_type_pb';
+import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { UUID } from '../utils/uuid';
 import { ZonedDateTime } from '../utils/datetime';
 import { Decimal } from 'decimal.js';
@@ -34,7 +34,7 @@ function createDummyCashSecurity(): Security {
     securityProto.setObjectClass('Security');
     securityProto.setVersion('0.0.1');
     securityProto.setUuid(UUID.random().toUUIDProto());
-    securityProto.setSecurityType(SecurityTypeProto.CASH_SECURITY);
+    securityProto.setProductType(ProductTypeProto.CURRENCY);
     securityProto.setAsOf(ZonedDateTime.now().toProto());
     securityProto.setAssetClass('Cash');
     securityProto.setCashId('USD');

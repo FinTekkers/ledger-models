@@ -9,12 +9,13 @@ import common.models.postion.PositionFilter;
 import common.models.price.Price;
 import common.models.security.BondSecurity;
 import common.models.security.CashSecurity;
+import common.models.security.ProductHierarchy;
 import common.models.security.Security;
 import common.models.strategy.Strategy;
 import common.models.strategy.StrategyAllocation;
 import common.models.util.persistence.IForeignKey;
 import fintekkers.models.position.PositionStatusProto;
-import fintekkers.models.security.SecurityTypeProto;
+import fintekkers.models.security.ProductTypeProto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -436,30 +437,28 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
         BigDecimal bookAmount = null;
 
-        switch(parentTransaction.getSecurity().getSecurityType()) {
-            case BOND_SECURITY:
-                if(TransactionType.MATURATION.equals(parentTransaction.getTransactionType())
-                    || TransactionType.MATURATION_OFFSET.equals(parentTransaction.getTransactionType())) {
-                    bookAmount = parentTransaction.getQuantity();
-                } else {
-                    //E.g. if you bought 50 bonds with face value of $1000 @ $99.
-                    // The face amount is $50k
-                    // The book amount is: $49.5k  (i.e. 50 * (99 * scaled price))
-                    BondSecurity bond = (BondSecurity) parentTransaction.getSecurity();
-                    BigDecimal faceValue = bond.getFaceValue();
-                    if (faceValue == null) {
-                        throw new TransactionProcessingException(
-                                "Bond face_value is required for transaction cash impact calculation");
-                    }
-                    BigDecimal priceScaleFactor = bond.getPriceScaleFactor();
-                    BigDecimal scaledPrice = parentTransaction.getPrice().getPrice().multiply(priceScaleFactor);
-                    BigDecimal numberBondUnits = parentTransaction.getQuantity().divide(faceValue);
-
-                    bookAmount = numberBondUnits.multiply(scaledPrice);
+        if (ProductHierarchy.isDescendantOf(parentTransaction.getSecurity().getProductType(), "BOND")) {
+            if(TransactionType.MATURATION.equals(parentTransaction.getTransactionType())
+                || TransactionType.MATURATION_OFFSET.equals(parentTransaction.getTransactionType())) {
+                bookAmount = parentTransaction.getQuantity();
+            } else {
+                //E.g. if you bought 50 bonds with face value of $1000 @ $99.
+                // The face amount is $50k
+                // The book amount is: $49.5k  (i.e. 50 * (99 * scaled price))
+                BondSecurity bond = (BondSecurity) parentTransaction.getSecurity();
+                BigDecimal faceValue = bond.getFaceValue();
+                if (faceValue == null) {
+                    throw new TransactionProcessingException(
+                            "Bond face_value is required for transaction cash impact calculation");
                 }
-                break;
-            default:
-                bookAmount = parentTransaction.getQuantity().multiply(parentTransaction.getPrice().getPrice());
+                BigDecimal priceScaleFactor = bond.getPriceScaleFactor();
+                BigDecimal scaledPrice = parentTransaction.getPrice().getPrice().multiply(priceScaleFactor);
+                BigDecimal numberBondUnits = parentTransaction.getQuantity().divide(faceValue);
+
+                bookAmount = numberBondUnits.multiply(scaledPrice);
+            }
+        } else {
+            bookAmount = parentTransaction.getQuantity().multiply(parentTransaction.getPrice().getPrice());
         }
 
         Transaction cashTransaction = new Transaction(
@@ -491,9 +490,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
      */
     public static void addDerivedTransactions(Transaction transaction) {
         //TODO: Best to co-locate this with the transaction instantiator where we calculate the cash impacts, right?!
-        boolean isBond = SecurityTypeProto.BOND_SECURITY.equals(transaction.getSecurity().getSecurityType())
-                || SecurityTypeProto.FRN.equals(transaction.getSecurity().getSecurityType())
-                || SecurityTypeProto.TIPS.equals(transaction.getSecurity().getSecurityType());
+        boolean isBond = ProductHierarchy.isDescendantOf(transaction.getSecurity().getProductType(), "BOND");
         boolean isABuyTransaction = TransactionType.BUY.equals(transaction.getTransactionType());
         boolean isASellTransaction = TransactionType.SELL.equals(transaction.getTransactionType());
         boolean isaMaturationTransaction = !TransactionType.MATURATION.equals(transaction.getTransactionType())

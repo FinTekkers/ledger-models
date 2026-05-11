@@ -13,7 +13,7 @@ const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_valu
 const security_1 = __importDefault(require("../security/security"));
 const portfolio_1 = __importDefault(require("../portfolio/portfolio"));
 const Price_1 = __importDefault(require("../price/Price"));
-const security_type_pb_1 = require("../../../fintekkers/models/security/security_type_pb");
+const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 //Model Utils
 const datetime_1 = require("../utils/datetime");
 const uuid_1 = require("../utils/uuid");
@@ -189,7 +189,7 @@ class Transaction {
      * @returns true if the security is cash, false otherwise
      */
     isCashSecurity() {
-        return this.getSecurity().proto.getSecurityType() === security_type_pb_1.SecurityTypeProto.CASH_SECURITY;
+        return this.getSecurity().proto.getProductType() === product_type_pb_1.ProductTypeProto.CURRENCY;
     }
     /**
      * Searches child transactions for a cash transaction
@@ -236,10 +236,10 @@ class Transaction {
         }
         // Calculate book amount
         let bookAmount;
-        const securityType = parentTransaction.getSecurity().proto.getSecurityType();
-        if (securityType === security_type_pb_1.SecurityTypeProto.BOND_SECURITY ||
-            securityType === security_type_pb_1.SecurityTypeProto.TIPS ||
-            securityType === security_type_pb_1.SecurityTypeProto.FRN) {
+        const securityType = parentTransaction.getSecurity().proto.getProductType();
+        if (securityType === product_type_pb_1.ProductTypeProto.TREASURY_NOTE ||
+            securityType === product_type_pb_1.ProductTypeProto.TIPS ||
+            securityType === product_type_pb_1.ProductTypeProto.TREASURY_FRN) {
             // For bond securities
             if (parentType === transaction_type_pb_1.TransactionTypeProto.MATURATION || parentType === transaction_type_pb_1.TransactionTypeProto.MATURATION_OFFSET) {
                 // For maturation transactions, use quantity directly
@@ -338,10 +338,10 @@ class Transaction {
      * @param cashSecurity - The cash security to use for cash impacts
      */
     static addDerivedTransactions(transaction, cashSecurity) {
-        const securityType = transaction.getSecurity().proto.getSecurityType();
-        const isBond = securityType === security_type_pb_1.SecurityTypeProto.BOND_SECURITY ||
-            securityType === security_type_pb_1.SecurityTypeProto.FRN ||
-            securityType === security_type_pb_1.SecurityTypeProto.TIPS;
+        const securityType = transaction.getSecurity().proto.getProductType();
+        const isBond = securityType === product_type_pb_1.ProductTypeProto.TREASURY_NOTE ||
+            securityType === product_type_pb_1.ProductTypeProto.TREASURY_FRN ||
+            securityType === product_type_pb_1.ProductTypeProto.TIPS;
         const transactionType = transaction.getTransactionType().proto;
         const isABuyTransaction = transactionType === transaction_type_pb_1.TransactionTypeProto.BUY;
         const isASellTransaction = transactionType === transaction_type_pb_1.TransactionTypeProto.SELL;
@@ -387,7 +387,7 @@ exports.default = Transaction;
 //           throw new RuntimeException("SHOULDN'T GET HERE");
 //   }
 //   BigDecimal bookAmount = null;
-//   switch(parentTransaction.getSecurity().getSecurityType()) {
+//   switch(parentTransaction.getSecurity().getProductType()) {
 //       case BOND_SECURITY:
 //           if(TransactionType.MATURATION.equals(parentTransaction.getTransactionType())
 //               || TransactionType.MATURATION_OFFSET.equals(parentTransaction.getTransactionType())) {
@@ -432,9 +432,9 @@ exports.default = Transaction;
 // */
 // public static void addDerivedTransactions(Transaction transaction) {
 //   //TODO: Best to co-locate this with the transaction instantiator where we calculate the cash impacts, right?!
-//   boolean isBond = SecurityTypeProto.BOND_SECURITY.equals(transaction.getSecurity().getSecurityType())
-//           || SecurityTypeProto.FRN.equals(transaction.getSecurity().getSecurityType())
-//           || SecurityTypeProto.TIPS.equals(transaction.getSecurity().getSecurityType());
+//   boolean isBond = ProductTypeProto.TREASURY_NOTE.equals(transaction.getSecurity().getProductType())
+//           || ProductTypeProto.TREASURY_FRN.equals(transaction.getSecurity().getProductType())
+//           || ProductTypeProto.TIPS.equals(transaction.getSecurity().getProductType());
 //   boolean isABuyTransaction = TransactionType.BUY.equals(transaction.getTransactionType());
 //   boolean isASellTransaction = TransactionType.SELL.equals(transaction.getTransactionType());
 //   boolean isaMaturationTransaction = !TransactionType.MATURATION.equals(transaction.getTransactionType())

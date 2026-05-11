@@ -3,7 +3,7 @@
 //! For each new message type: construct → encode to bytes → decode → verify all fields match.
 
 use ledger_models::fintekkers::models::security::{
-    CouponFrequencyProto, CouponTypeProto, SecurityProto, SecurityTypeProto,
+    CouponFrequencyProto, CouponTypeProto, SecurityProto, ProductTypeProto,
 };
 use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
 use ledger_models::fintekkers::models::security::index::IndexTypeProto;
@@ -23,7 +23,7 @@ fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
 
 fn treasury_security() -> SecurityProto {
     let mut sec = SecurityProto::default();
-    sec.security_type = SecurityTypeProto::BondSecurity.into();
+    sec.product_type = ProductTypeProto::TreasuryNote.into();
     sec.coupon_type = CouponTypeProto::Fixed.into();
     sec.coupon_frequency = CouponFrequencyProto::Semiannually.into();
     sec.face_value = Some(decimal("1000"));
@@ -34,7 +34,7 @@ fn treasury_security() -> SecurityProto {
 
 fn make_benchmark_bond(coupon_rate: &str, maturity_year: u32, maturity_month: u32, maturity_day: u32) -> SecurityCurvePoint {
     let mut sec = SecurityProto::default();
-    sec.security_type = SecurityTypeProto::BondSecurity.into();
+    sec.product_type = ProductTypeProto::TreasuryNote.into();
     sec.coupon_type = CouponTypeProto::Fixed.into();
     sec.coupon_frequency = CouponFrequencyProto::Semiannually.into();
     sec.face_value = Some(decimal("1000"));
@@ -109,7 +109,7 @@ fn bond_input_security_fields_survive_roundtrip() {
     match parsed.input.unwrap() {
         product_input::Input::Bond(b) => {
             let sec = b.security.unwrap();
-            assert_eq!(sec.security_type(), SecurityTypeProto::BondSecurity);
+            assert_eq!(sec.product_type(), ProductTypeProto::TreasuryNote);
             assert_eq!(sec.coupon_type(), CouponTypeProto::Fixed);
             assert_eq!(sec.coupon_frequency(), CouponFrequencyProto::Semiannually);
             assert_eq!(sec.coupon_rate.unwrap().arbitrary_precision_value, "4.5");

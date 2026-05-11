@@ -48,6 +48,10 @@ chrono = "0.4.24" #Rust's most popular time package. Used for local date tiems
 chrono-tz = "0.8.1" #Used to parse IANA timezones into offsets (E.g. America/New_York to -5)
 iana-time-zone = "0.1.53" #Used to get the IANA formatted timezone across operating systems (e.g. America/New_York)
 
+# ProductHierarchy registry helper loads hierarchy.json (embedded via include_str!).
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
 [dependencies.uuid]
 version = "1.3.0"
 features = [

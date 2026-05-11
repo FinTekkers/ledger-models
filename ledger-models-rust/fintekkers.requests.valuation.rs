@@ -173,7 +173,7 @@ pub mod product_input {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BondInput {
-    /// The bond security. Must be SecurityTypeProto.BOND_SECURITY with
+    /// The bond security. Must be ProductTypeProto.TREASURY_NOTE with
     /// coupon_type FIXED and all standard fixed-income fields populated.
     #[prost(message, optional, tag = "1")]
     pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
@@ -200,7 +200,7 @@ pub struct BondInput {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TipsInput {
-    /// The TIPS security. Must be SecurityTypeProto.TIPS with coupon_type FIXED,
+    /// The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
     /// all standard fixed-income fields populated, and base_cpi set to the
     /// reference CPI index value at issuance.
     #[prost(message, optional, tag = "1")]

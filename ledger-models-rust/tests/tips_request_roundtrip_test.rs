@@ -3,7 +3,7 @@
 //! For each field: construct → encode to bytes → decode → verify field matches.
 
 use ledger_models::fintekkers::models::security::{
-    CouponFrequencyProto, CouponTypeProto, SecurityProto, SecurityTypeProto,
+    CouponFrequencyProto, CouponTypeProto, SecurityProto, ProductTypeProto,
 };
 use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
 use ledger_models::fintekkers::requests::valuation::{
@@ -21,7 +21,7 @@ fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
 
 fn tips_security(base_cpi: &str) -> SecurityProto {
     let mut sec = SecurityProto::default();
-    sec.security_type = SecurityTypeProto::Tips.into();
+    sec.product_type = ProductTypeProto::Tips.into();
     sec.coupon_type = CouponTypeProto::Fixed.into();
     sec.coupon_frequency = CouponFrequencyProto::Semiannually.into();
     sec.face_value = Some(decimal("1000"));
@@ -101,7 +101,7 @@ fn tips_input_security_fields_survive_roundtrip() {
     match parsed.input.unwrap() {
         product_input::Input::Tips(t) => {
             let sec = t.security.unwrap();
-            assert_eq!(sec.security_type(), SecurityTypeProto::Tips);
+            assert_eq!(sec.product_type(), ProductTypeProto::Tips);
             assert_eq!(sec.coupon_type(), CouponTypeProto::Fixed);
             assert_eq!(sec.coupon_frequency(), CouponFrequencyProto::Semiannually);
             assert_eq!(sec.coupon_rate.unwrap().arbitrary_precision_value, "0.625");

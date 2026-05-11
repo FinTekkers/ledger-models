@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package fintekkers.models.security;
+
+option java_multiple_files = true;
+
+option java_outer_classname = "InstrumentTypeProtos";
+
+// Mechanical structure of a Security — orthogonal to productType.
+//
+// Three values:
+//
+//   CASH             A tradable underlying that settles to a position.
+//                    T-Bill, common stock, BTC, FX spot, money-market
+//                    fund, ETF.
+//
+//   DERIVATIVE       A contract whose value derives from an underlying.
+//                    Future, option, swap, forward, FX swap, variance
+//                    swap.
+//
+//   REFERENCE_INDEX  Observational only, never positioned. Used as
+//                    fixings for derivatives or as display benchmarks.
+//                    Cash-index values (.SPX, .NDX, .VIX), reference
+//                    rate series (.SOFR, .CPI), and benchmark indices
+//                    (Bloomberg Commodity Index).
+//
+// The distinction matters because: .SPX (REFERENCE_INDEX) and SPY (CASH
+// ETF that tracks .SPX) are both "EQUITY index"-flavoured but only SPY
+// is positionable; ES future (DERIVATIVE) is positionable but isn't the
+// same instrument as either.
+//
+// Enum-value names are prefixed INSTRUMENT_TYPE_* because proto3
+// enforces package-wide uniqueness for enum value names — bare CASH
+// would collide with IdentifierTypeProto.CASH in this package.
+enum InstrumentTypeProto {
+  INSTRUMENT_TYPE_UNKNOWN         = 0;
+  INSTRUMENT_TYPE_CASH            = 1;
+  INSTRUMENT_TYPE_DERIVATIVE      = 2;
+  INSTRUMENT_TYPE_REFERENCE_INDEX = 3;
+}

@@ -10,7 +10,7 @@ const security_1 = __importDefault(require("./security"));
 const BondSecurity_1 = __importDefault(require("./BondSecurity"));
 const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
-const security_type_pb_1 = require("../../../fintekkers/models/security/security_type_pb");
+const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
 const security_quantity_type_pb_1 = require("../../../fintekkers/models/security/security_quantity_type_pb");
@@ -82,7 +82,7 @@ function dummyBondSecurity() {
     // to BondSecurity.
     return security_1.default.create(new security_pb_1.SecurityProto()
         .setObjectClass('Security').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
-        .setSecurityType(security_type_pb_1.SecurityTypeProto.BOND_SECURITY)
+        .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE)
         .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
         .setAssetClass("Bond")
@@ -100,7 +100,7 @@ function dummyEquity() {
     // behavior on getMaturityDate.
     return security_1.default.create(new security_pb_1.SecurityProto()
         .setObjectClass('Security').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
-        .setSecurityType(security_type_pb_1.SecurityTypeProto.EQUITY_SECURITY)
+        .setProductType(product_type_pb_1.ProductTypeProto.COMMON_STOCK)
         .setAssetClass("Equity")
         .setIssuerName("Dummy issuer Inc.")
         .setDescription("Dummy equity"));

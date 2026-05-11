@@ -18,11 +18,11 @@ from fintekkers.models.security.security_pb2 import (
     FrnDetailsProto,
 )
 from fintekkers.models.security.security_quantity_type_pb2 import ORIGINAL_FACE_VALUE
-from fintekkers.models.security.security_type_pb2 import (
-    BOND_SECURITY,
-    FRN,
+from fintekkers.models.security.product_type_pb2 import (
+    TREASURY_NOTE,
+    TREASURY_FRN,
     TIPS,
-    SecurityTypeProto,
+    ProductTypeProto,
 )
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
@@ -46,7 +46,7 @@ class CreateSecurityRequest:
     def create_ust_security_request(
         cusip: str,
         cash_security: SecurityProto,
-        security_type: SecurityTypeProto = SecurityTypeProto.BOND_SECURITY,
+        product_type: ProductTypeProto = ProductTypeProto.TREASURY_NOTE,
         coupon_rate: float = 0.0,
         spread: float = 0.0,
         face_value: float = 0.0,
@@ -80,14 +80,14 @@ class CreateSecurityRequest:
 
         # Configure coupon settings based on security type parameter
         # Note: The security_type parameter is used here (not overwritten)
-        if security_type == TIPS:
+        if product_type == TIPS:
             # TIPS are inflation-indexed bonds, typically with fixed coupon
             coupon_type = FIXED
-        elif security_type == FRN:
+        elif product_type == TREASURY_FRN:
             # Floating Rate Notes use floating coupon with spread
             coupon_type = FLOAT
             coupon_rate = spread
-        elif security_type == BOND_SECURITY:
+        elif product_type == TREASURY_NOTE:
             # Check for zero-coupon conditions
             if days_to_maturity <= 365:
                 # Treasury Bills: maturity <= 1 year are always zero-coupon
@@ -136,7 +136,7 @@ class CreateSecurityRequest:
             issue_date=issue_date_proto,
             dated_date=dated_date_proto,
             maturity_date=maturity_date_proto,
-            security_type=security_type,
+            product_type=product_type,
             quantity_type=ORIGINAL_FACE_VALUE,
             settlement_currency=cash_security,
             coupon_frequency=coupon_frequency,
@@ -159,11 +159,11 @@ class CreateSecurityRequest:
             issuance_info=issuance_list,
         )
 
-        if security_type == BOND_SECURITY:
+        if product_type == TREASURY_NOTE:
             security_proto.bond_details.CopyFrom(BondDetailsProto(**bond_base_kwargs))
-        elif security_type == TIPS:
+        elif product_type == TIPS:
             security_proto.tips_details.CopyFrom(TipsDetailsProto(**bond_base_kwargs))
-        elif security_type == FRN:
+        elif product_type == TREASURY_FRN:
             frn_kwargs = dict(
                 **bond_base_kwargs,
                 spread=ProtoSerializationUtil.serialize(spread),

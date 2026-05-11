@@ -2,7 +2,7 @@ import assert = require('assert');
 import Security from './security';
 import BondSecurity from './BondSecurity';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { SecurityTypeProto } from '../../../fintekkers/models/security/security_type_pb';
+import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
@@ -29,7 +29,7 @@ function testBondSecurityCreation(): void {
     securityProto.setObjectClass('Security');
     securityProto.setVersion('0.0.1');
     securityProto.setUuid(UUID.random().toUUIDProto());
-    securityProto.setSecurityType(SecurityTypeProto.BOND_SECURITY);
+    securityProto.setProductType(ProductTypeProto.TREASURY_NOTE);
     securityProto.setAssetClass('FixedIncome');
     securityProto.setIssuerName('Test Issuer');
     securityProto.setCouponType(CouponTypeProto.FIXED);
@@ -62,7 +62,7 @@ function testBondSecurityTenor(): void {
     securityProto.setObjectClass('Security');
     securityProto.setVersion('0.0.1');
     securityProto.setUuid(UUID.random().toUUIDProto());
-    securityProto.setSecurityType(SecurityTypeProto.BOND_SECURITY);
+    securityProto.setProductType(ProductTypeProto.TREASURY_NOTE);
     securityProto.setAssetClass('FixedIncome');
     securityProto.setIssuerName('Test Issuer');
     securityProto.setCouponType(CouponTypeProto.FIXED);
@@ -107,7 +107,7 @@ function testBondSecurityTenor(): void {
     securityProto2.setObjectClass('Security');
     securityProto2.setVersion('0.0.1');
     securityProto2.setUuid(UUID.random().toUUIDProto());
-    securityProto2.setSecurityType(SecurityTypeProto.BOND_SECURITY);
+    securityProto2.setProductType(ProductTypeProto.TREASURY_NOTE);
     securityProto2.setAssetClass('FixedIncome');
     securityProto2.setIssuerName('Test Issuer');
     securityProto2.setCouponType(CouponTypeProto.FIXED);
@@ -140,7 +140,7 @@ function testBondSecurityTenorWithAsOfDate(): void {
     // Create a SecurityProto with BOND_SECURITY type and dates for a 10-year bond
     const securityProto = new SecurityProto();
 
-    securityProto.setSecurityType(SecurityTypeProto.BOND_SECURITY);
+    securityProto.setProductType(ProductTypeProto.TREASURY_NOTE);
     securityProto.setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     // Set maturity date: January 1, 2031 (exactly 10 years later)
     securityProto.setMaturityDate(new LocalDateProto().setYear(2031).setMonth(1).setDay(1));

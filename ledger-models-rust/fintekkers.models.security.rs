@@ -55,81 +55,212 @@ pub struct IdentifierProto {
     #[prost(enumeration = "IdentifierTypeProto", tag = "6")]
     pub identifier_type: i32,
 }
+/// Leaf product types — the kind of contract a Security represents.
+///
+/// Authoritative shape lives in ledger-models-protos/hierarchy.json
+/// (single source of truth: parent chain, asset_class, instrument_type,
+/// label, status). Every active leaf in hierarchy.json must have a
+/// matching enum value here; CI guard enforces the round-trip.
+///
+/// Abstract parent nodes (BOND, GOV_BOND, OPTION, EQUITY_OPTION, etc.)
+/// live only in hierarchy.json — they are never assigned to a Security.
+///
+/// Strategies (butterfly, vertical spread, calendar spread, condor,
+/// straddle, ...) are intentionally absent. They are derived from the
+/// SecurityProto.legs field, not from a productType enum value.
+///
+/// Multi-language wrapper helpers (parentOf, descendantsOf,
+/// isDescendantOf, labelOf, assetClassOf, instrumentTypeOf) load
+/// hierarchy.json at startup and dispatch on the leaf identity carried
+/// by ProductTypeProto.
+///
+/// See ../../../hierarchy-examples.md for worked examples and
+/// ../../../registry-versioning.md for compatibility rules on changes
+/// to this enum.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
-pub enum SecurityTypeProto {
-    /// Maps to Security
-    UnknownSecurityType = 0,
-    CashSecurity = 1,
-    EquitySecurity = 2,
-    BondSecurity = 3,
+pub enum ProductTypeProto {
+    ProductTypeUnknown = 0,
+    /// Bonds (1-19)
+    Tbill = 1,
+    TreasuryNote = 2,
+    TreasuryBond = 3,
     Tips = 4,
-    Frn = 5,
-    IndexSecurity = 6,
-    FxSpot = 7,
-    /// Equity market indices (DJIA, S&P 500, Nasdaq-100, etc.)
-    EquityIndexSecurity = 8,
-    /// Principal-stripped Treasury components. Each STRIPS is a single
-    /// zero-coupon cashflow (the principal piece, or a coupon piece) of an
-    /// underlying note/bond, traded separately. Distinct from BOND_SECURITY
-    /// because STRIPS have no coupon and a maturity = the cashflow date, so
-    /// pricing / yield mechanics differ even though the wire shape is similar.
-    StripsSecurity = 9,
-    /// Treasury bills — short-tenor (≤1y), zero-coupon, sold at discount and
-    /// redeemed at par. Distinct from BOND_SECURITY because bill mechanics
-    /// are discount-yield based, not coupon-based, and the standard market
-    /// convention is ACT/360 rather than ACT/ACT. Holding T_BILL as a
-    /// first-class type lets pickers / classifiers filter on type rather
-    /// than the coupon_rate==0 heuristic the codebase has been using.
-    TBill = 10,
-    /// Cryptocurrency — Bitcoin (BTC), Ethereum (ETH), and other crypto
-    /// assets. Identifier convention: EXCH_TICKER='BTC-USD' (with quote
-    /// currency suffix) for ingestion. v1 BTC support fits base SecurityProto
-    /// fields + asset_class=CRYPTO; if downstream consumers need crypto-
-    /// specific fields (e.g. on-chain block reference, custody type), a
-    /// sub-message under product_details will be added then. Added per
-    /// FinTekkers/second-brain#237.
-    Cryptocurrency = 11,
+    TreasuryFrn = 5,
+    Strips = 6,
+    SovereignBond = 7,
+    CorpBond = 8,
+    MuniBond = 9,
+    /// Stocks (20-29)
+    CommonStock = 20,
+    PreferredStock = 21,
+    Adr = 22,
+    Etf = 23,
+    /// Reference indices and rate series (30-39)
+    EquityIndex = 30,
+    BondIndex = 31,
+    CommodityIndex = 32,
+    VixSpot = 33,
+    CpiSeries = 34,
+    SofrSeries = 35,
+    /// Cash and FX (40-49)
+    Currency = 40,
+    FxSpot = 41,
+    MoneyMarketFund = 42,
+    /// Crypto (50-59)
+    Cryptocurrency = 50,
+    Stablecoin = 51,
+    /// Commodity spot (60-69)
+    Gold = 60,
+    Silver = 61,
 }
-impl SecurityTypeProto {
+impl ProductTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
     ///
     /// The values are not transformed in any way and thus are considered stable
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
-            SecurityTypeProto::UnknownSecurityType => "UNKNOWN_SECURITY_TYPE",
-            SecurityTypeProto::CashSecurity => "CASH_SECURITY",
-            SecurityTypeProto::EquitySecurity => "EQUITY_SECURITY",
-            SecurityTypeProto::BondSecurity => "BOND_SECURITY",
-            SecurityTypeProto::Tips => "TIPS",
-            SecurityTypeProto::Frn => "FRN",
-            SecurityTypeProto::IndexSecurity => "INDEX_SECURITY",
-            SecurityTypeProto::FxSpot => "FX_SPOT",
-            SecurityTypeProto::EquityIndexSecurity => "EQUITY_INDEX_SECURITY",
-            SecurityTypeProto::StripsSecurity => "STRIPS_SECURITY",
-            SecurityTypeProto::TBill => "T_BILL",
-            SecurityTypeProto::Cryptocurrency => "CRYPTOCURRENCY",
+            ProductTypeProto::ProductTypeUnknown => "PRODUCT_TYPE_UNKNOWN",
+            ProductTypeProto::Tbill => "TBILL",
+            ProductTypeProto::TreasuryNote => "TREASURY_NOTE",
+            ProductTypeProto::TreasuryBond => "TREASURY_BOND",
+            ProductTypeProto::Tips => "TIPS",
+            ProductTypeProto::TreasuryFrn => "TREASURY_FRN",
+            ProductTypeProto::Strips => "STRIPS",
+            ProductTypeProto::SovereignBond => "SOVEREIGN_BOND",
+            ProductTypeProto::CorpBond => "CORP_BOND",
+            ProductTypeProto::MuniBond => "MUNI_BOND",
+            ProductTypeProto::CommonStock => "COMMON_STOCK",
+            ProductTypeProto::PreferredStock => "PREFERRED_STOCK",
+            ProductTypeProto::Adr => "ADR",
+            ProductTypeProto::Etf => "ETF",
+            ProductTypeProto::EquityIndex => "EQUITY_INDEX",
+            ProductTypeProto::BondIndex => "BOND_INDEX",
+            ProductTypeProto::CommodityIndex => "COMMODITY_INDEX",
+            ProductTypeProto::VixSpot => "VIX_SPOT",
+            ProductTypeProto::CpiSeries => "CPI_SERIES",
+            ProductTypeProto::SofrSeries => "SOFR_SERIES",
+            ProductTypeProto::Currency => "CURRENCY",
+            ProductTypeProto::FxSpot => "FX_SPOT",
+            ProductTypeProto::MoneyMarketFund => "MONEY_MARKET_FUND",
+            ProductTypeProto::Cryptocurrency => "CRYPTOCURRENCY",
+            ProductTypeProto::Stablecoin => "STABLECOIN",
+            ProductTypeProto::Gold => "GOLD",
+            ProductTypeProto::Silver => "SILVER",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
     pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
         match value {
-            "UNKNOWN_SECURITY_TYPE" => Some(Self::UnknownSecurityType),
-            "CASH_SECURITY" => Some(Self::CashSecurity),
-            "EQUITY_SECURITY" => Some(Self::EquitySecurity),
-            "BOND_SECURITY" => Some(Self::BondSecurity),
+            "PRODUCT_TYPE_UNKNOWN" => Some(Self::ProductTypeUnknown),
+            "TBILL" => Some(Self::Tbill),
+            "TREASURY_NOTE" => Some(Self::TreasuryNote),
+            "TREASURY_BOND" => Some(Self::TreasuryBond),
             "TIPS" => Some(Self::Tips),
-            "FRN" => Some(Self::Frn),
-            "INDEX_SECURITY" => Some(Self::IndexSecurity),
+            "TREASURY_FRN" => Some(Self::TreasuryFrn),
+            "STRIPS" => Some(Self::Strips),
+            "SOVEREIGN_BOND" => Some(Self::SovereignBond),
+            "CORP_BOND" => Some(Self::CorpBond),
+            "MUNI_BOND" => Some(Self::MuniBond),
+            "COMMON_STOCK" => Some(Self::CommonStock),
+            "PREFERRED_STOCK" => Some(Self::PreferredStock),
+            "ADR" => Some(Self::Adr),
+            "ETF" => Some(Self::Etf),
+            "EQUITY_INDEX" => Some(Self::EquityIndex),
+            "BOND_INDEX" => Some(Self::BondIndex),
+            "COMMODITY_INDEX" => Some(Self::CommodityIndex),
+            "VIX_SPOT" => Some(Self::VixSpot),
+            "CPI_SERIES" => Some(Self::CpiSeries),
+            "SOFR_SERIES" => Some(Self::SofrSeries),
+            "CURRENCY" => Some(Self::Currency),
             "FX_SPOT" => Some(Self::FxSpot),
-            "EQUITY_INDEX_SECURITY" => Some(Self::EquityIndexSecurity),
-            "STRIPS_SECURITY" => Some(Self::StripsSecurity),
-            "T_BILL" => Some(Self::TBill),
+            "MONEY_MARKET_FUND" => Some(Self::MoneyMarketFund),
             "CRYPTOCURRENCY" => Some(Self::Cryptocurrency),
+            "STABLECOIN" => Some(Self::Stablecoin),
+            "GOLD" => Some(Self::Gold),
+            "SILVER" => Some(Self::Silver),
             _ => None,
         }
     }
+}
+/// Mechanical structure of a Security — orthogonal to productType.
+///
+/// Three values:
+///
+///    CASH             A tradable underlying that settles to a position.
+///                     T-Bill, common stock, BTC, FX spot, money-market
+///                     fund, ETF.
+///
+///    DERIVATIVE       A contract whose value derives from an underlying.
+///                     Future, option, swap, forward, FX swap, variance
+///                     swap.
+///
+///    REFERENCE_INDEX  Observational only, never positioned. Used as
+///                     fixings for derivatives or as display benchmarks.
+///                     Cash-index values (.SPX, .NDX, .VIX), reference
+///                     rate series (.SOFR, .CPI), and benchmark indices
+///                     (Bloomberg Commodity Index).
+///
+/// The distinction matters because: .SPX (REFERENCE_INDEX) and SPY (CASH
+/// ETF that tracks .SPX) are both "EQUITY index"-flavoured but only SPY
+/// is positionable; ES future (DERIVATIVE) is positionable but isn't the
+/// same instrument as either.
+///
+/// Enum-value names are prefixed INSTRUMENT_TYPE_* because proto3
+/// enforces package-wide uniqueness for enum value names — bare CASH
+/// would collide with IdentifierTypeProto.CASH in this package.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum InstrumentTypeProto {
+    InstrumentTypeUnknown = 0,
+    InstrumentTypeCash = 1,
+    InstrumentTypeDerivative = 2,
+    InstrumentTypeReferenceIndex = 3,
+}
+impl InstrumentTypeProto {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            InstrumentTypeProto::InstrumentTypeUnknown => "INSTRUMENT_TYPE_UNKNOWN",
+            InstrumentTypeProto::InstrumentTypeCash => "INSTRUMENT_TYPE_CASH",
+            InstrumentTypeProto::InstrumentTypeDerivative => "INSTRUMENT_TYPE_DERIVATIVE",
+            InstrumentTypeProto::InstrumentTypeReferenceIndex => {
+                "INSTRUMENT_TYPE_REFERENCE_INDEX"
+            }
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "INSTRUMENT_TYPE_UNKNOWN" => Some(Self::InstrumentTypeUnknown),
+            "INSTRUMENT_TYPE_CASH" => Some(Self::InstrumentTypeCash),
+            "INSTRUMENT_TYPE_DERIVATIVE" => Some(Self::InstrumentTypeDerivative),
+            "INSTRUMENT_TYPE_REFERENCE_INDEX" => Some(Self::InstrumentTypeReferenceIndex),
+            _ => None,
+        }
+    }
+}
+/// Lightweight reference to a Security by UUID.
+///
+/// Used for the SecurityProto.legs field (multi-leg strategy packages
+/// where each leg is itself a Security). Unlike SecurityProto with
+/// is_link=true, this carries only the UUID — no settlement currency
+/// echo, no embedded fields. Resolve to a full SecurityProto via
+/// SecurityService.GetByIds.
+///
+/// See hierarchy-examples.md for the multi-leg-strategy pattern: a
+/// strategy Security carries productType=EQUITY_VANILLA (for example)
+/// and a legs list of per-leg Security IDs; cashflows and risk
+/// aggregate over legs.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SecurityIdProto {
+    #[prost(message, optional, tag = "1")]
+    pub uuid: ::core::option::Option<super::util::UuidProto>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -259,8 +390,20 @@ pub struct SecurityProto {
     pub valid_from: ::core::option::Option<super::util::LocalTimestampProto>,
     #[prost(message, optional, tag = "9")]
     pub valid_to: ::core::option::Option<super::util::LocalTimestampProto>,
-    #[prost(enumeration = "SecurityTypeProto", tag = "10")]
-    pub security_type: i32,
+    #[prost(enumeration = "ProductTypeProto", tag = "10")]
+    pub product_type: i32,
+    /// Orthogonal to product_type — see instrument_type.proto.
+    /// CASH (positionable), DERIVATIVE (value derives from underlying),
+    /// REFERENCE_INDEX (observational only).
+    #[prost(enumeration = "InstrumentTypeProto", tag = "16")]
+    pub instrument_type: i32,
+    /// Multi-leg strategy package legs — each leg is itself a Security
+    /// identified by UUID. See hierarchy-examples.md for the pattern:
+    /// butterflies, calendar spreads, iron condors, etc. are not
+    /// productTypes; they're a Security whose product_type is the
+    /// underlying vanilla type with `legs` populated.
+    #[prost(message, repeated, tag = "17")]
+    pub legs: ::prost::alloc::vec::Vec<SecurityIdProto>,
     /// Soft-delete marker. null/unset = active record; non-null = soft-deleted
     /// at this timestamp. SecurityService.Search and GetByIds filter out
     /// soft-deleted records by default. Setting deleted_at via CreateOrUpdate
@@ -561,7 +704,7 @@ pub enum AssetClassProto {
     /// Added per FinTekkers/second-brain#236.
     Volatility = 5,
     /// CRYPTO covers cryptocurrency holdings — BTC, ETH, and other crypto
-    /// assets. Pairs with SecurityTypeProto.CRYPTOCURRENCY. Added per
+    /// assets. Pairs with ProductTypeProto.CRYPTOCURRENCY. Added per
     /// FinTekkers/second-brain#237.
     Crypto = 6,
 }

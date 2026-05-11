@@ -4,7 +4,7 @@ import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { LocalDate } from "../utils/date";
-import { SecurityTypeProto } from "../../../fintekkers/models/security/security_type_pb";
+import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 
 class Security {
   proto: SecurityProto;
@@ -17,10 +17,10 @@ class Security {
    * Factory method to create the appropriate Security subclass based on security type
    */
   static create(proto: SecurityProto): Security {
-    switch (proto.getSecurityType()) {
-      case SecurityTypeProto.BOND_SECURITY:
-      case SecurityTypeProto.TIPS:
-      case SecurityTypeProto.FRN:
+    switch (proto.getProductType()) {
+      case ProductTypeProto.TREASURY_NOTE:
+      case ProductTypeProto.TIPS:
+      case ProductTypeProto.TREASURY_FRN:
         // Lazy import to avoid circular dependency
         const BondSecurity = require('./BondSecurity').default;
         return new BondSecurity(proto);
@@ -42,10 +42,10 @@ class Security {
    * works regardless of how the wrapper was constructed.
    */
   isBond(): this is import('./BondSecurity').default {
-    const t = this.proto.getSecurityType();
-    return t === SecurityTypeProto.BOND_SECURITY
-        || t === SecurityTypeProto.TIPS
-        || t === SecurityTypeProto.FRN;
+    const t = this.proto.getProductType();
+    return t === ProductTypeProto.TREASURY_NOTE
+        || t === ProductTypeProto.TIPS
+        || t === ProductTypeProto.TREASURY_FRN;
   }
 
 
@@ -117,9 +117,9 @@ class Security {
   }
 
   getProductType(): string {
-    const securityType = this.proto.getSecurityType();
-    const securityTypeString = (Object.keys(SecurityTypeProto) as Array<keyof typeof SecurityTypeProto>).find(
-      key => SecurityTypeProto[key] === securityType
+    const securityType = this.proto.getProductType();
+    const securityTypeString = (Object.keys(ProductTypeProto) as Array<keyof typeof ProductTypeProto>).find(
+      key => ProductTypeProto[key] === securityType
     );
 
     return securityTypeString || 'UNKNOWN_SECURITY_TYPE';

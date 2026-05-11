@@ -6,7 +6,7 @@ import fintekkers.models.security.CouponFrequencyProto;
 import fintekkers.models.security.CouponTypeProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.security.SecurityQuantityTypeProto;
-import fintekkers.models.security.SecurityTypeProto;
+import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import fintekkers.models.util.LocalDate.LocalDateProto;
 import org.junit.jupiter.api.Test;
@@ -39,13 +39,13 @@ class TBillStripsRoundTripTest {
                 .build();
     }
 
-    private static SecurityProto.Builder zeroCouponBondShape(SecurityTypeProto type) {
+    private static SecurityProto.Builder zeroCouponBondShape(ProductTypeProto type) {
         LocalDate issue = LocalDate.of(2025, 1, 15);
         LocalDate maturity = LocalDate.of(2025, 7, 15);
         return SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
-                .setSecurityType(type)
+                .setProductType(type)
                 .setAssetClass("Fixed Income")
                 .setIssuerName("US Treasury")
                 .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
@@ -60,7 +60,7 @@ class TBillStripsRoundTripTest {
 
     @Test
     public void tBillBondFieldsSurviveDeserialize() {
-        SecurityProto proto = zeroCouponBondShape(SecurityTypeProto.T_BILL).build();
+        SecurityProto proto = zeroCouponBondShape(ProductTypeProto.TBILL).build();
 
         Security security = SecuritySerializer.getInstance().deserialize(proto);
 
@@ -78,7 +78,7 @@ class TBillStripsRoundTripTest {
 
     @Test
     public void stripsSecurityBondFieldsSurviveDeserialize() {
-        SecurityProto proto = zeroCouponBondShape(SecurityTypeProto.STRIPS_SECURITY).build();
+        SecurityProto proto = zeroCouponBondShape(ProductTypeProto.STRIPS).build();
 
         Security security = SecuritySerializer.getInstance().deserialize(proto);
 

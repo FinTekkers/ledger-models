@@ -123,24 +123,27 @@ public class BondSerializer {
 
     private BondSecurity initiatlize(SecurityProto proto, UUID id, ZonedDateTime asOf,
                                      String issuer, CashSecurity settlementCurrency) {
-        SecurityTypeProto securityType = proto.getSecurityType();
+        ProductTypeProto productType = proto.getProductType();
 
-        switch (securityType) {
-            case BOND_SECURITY:
-            case T_BILL:
-            case STRIPS_SECURITY:
-                // T_BILL and STRIPS_SECURITY are zero-coupon bonds with the same
-                // shape as a vanilla bond (face_value, issue_date, maturity_date,
-                // dated_date, coupon_rate=0). No specialized subclass yet — when
-                // T-bill-specific behavior emerges (e.g. discount-yield convention),
-                // we'll add a TBillSecurity subclass and split the cases.
+        switch (productType) {
+            case TBILL:
+            case TREASURY_NOTE:
+            case TREASURY_BOND:
+            case STRIPS:
+            case SOVEREIGN_BOND:
+            case CORP_BOND:
+            case MUNI_BOND:
+                // Bond-shape product types without specialized subclasses share
+                // the generic BondSecurity wrapper today. M1.6 collapses this
+                // wrapper into the base Security; until then BondSecurity is
+                // the bond-fields container. Specialized subclasses below.
                 return new BondSecurity(id, issuer, asOf, settlementCurrency);
             case TIPS:
                 return new TIPSBond(id, issuer, asOf, settlementCurrency);
-            case FRN:
+            case TREASURY_FRN:
                 return new FloatingRateNote(id, issuer, asOf, settlementCurrency);
             default:
-                throw new RuntimeException(String.format("The security type is not supported %s", securityType.name()));
+                throw new RuntimeException(String.format("The product type is not supported %s", productType.name()));
         }
     }
 

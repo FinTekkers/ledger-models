@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import common.models.JSONFieldNames;
 import common.models.security.*;
+import common.models.security.ProductHierarchy;
 import common.models.security.identifier.Identifier;
 import fintekkers.models.security.*;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +48,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
                 .setAssetClass(security.getAssetClass())
                 .setQuantityType(SecurityQuantityTypeProto.valueOf(security.getQuantityType().name()));
 
-        builder.setSecurityType(security.getSecurityType());
+        builder.setProductType(security.getProductType());
 
         if(security.getDescription() != null)
             builder.setDescription(security.getDescription());
@@ -120,41 +121,35 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             }
         }
 
-        // Determine type: prefer oneof if set, fall back to security_type enum
-        SecurityTypeProto securityType = proto.getSecurityType();
+        // Determine type: prefer oneof if set, fall back to product_type enum
+        ProductTypeProto productType = proto.getProductType();
         SecurityProto.ProductDetailsCase detailsCase = proto.getProductDetailsCase();
 
-        // If oneof is set but security_type is missing/unknown, infer from oneof
-        if (securityType == SecurityTypeProto.UNKNOWN_SECURITY_TYPE
+        // If oneof is set but product_type is missing/unknown, infer from oneof.
+        // BOND_DETAILS isn't unambiguous (could be TBILL / TREASURY_NOTE /
+        // TREASURY_BOND / STRIPS / SOVEREIGN_BOND / CORP_BOND / MUNI_BOND);
+        // pick TREASURY_NOTE as the default-bond guess.
+        if (productType == ProductTypeProto.PRODUCT_TYPE_UNKNOWN
                 && detailsCase != SecurityProto.ProductDetailsCase.PRODUCTDETAILS_NOT_SET) {
             switch (detailsCase) {
-                case BOND_DETAILS: securityType = SecurityTypeProto.BOND_SECURITY; break;
-                case TIPS_DETAILS: securityType = SecurityTypeProto.TIPS; break;
-                case FRN_DETAILS: securityType = SecurityTypeProto.FRN; break;
-                case CASH_DETAILS: securityType = SecurityTypeProto.CASH_SECURITY; break;
-                case EQUITY_DETAILS: securityType = SecurityTypeProto.EQUITY_SECURITY; break;
-                case INDEX_DETAILS: securityType = SecurityTypeProto.INDEX_SECURITY; break;
+                case BOND_DETAILS:   productType = ProductTypeProto.TREASURY_NOTE; break;
+                case TIPS_DETAILS:   productType = ProductTypeProto.TIPS; break;
+                case FRN_DETAILS:    productType = ProductTypeProto.TREASURY_FRN; break;
+                case CASH_DETAILS:   productType = ProductTypeProto.CURRENCY; break;
+                case EQUITY_DETAILS: productType = ProductTypeProto.COMMON_STOCK; break;
+                case INDEX_DETAILS:  productType = ProductTypeProto.EQUITY_INDEX; break;
             }
         }
 
-        switch (securityType) {
-            case CASH_SECURITY:
-                security = new CashSecurity(id, issuer, asOf);
-                break;
-            case BOND_SECURITY:
-            case TIPS:
-            case FRN:
-            case T_BILL:
-            case STRIPS_SECURITY:
-                validateBondDates(proto);
-                security = new BondSerializer().deserializeBondSecurity(proto, id, asOf, issuer, settlementCurrency);
-                break;
-            case EQUITY_SECURITY:
-                security = deserializeEquitySecurity(id, asOf, issuer, settlementCurrency);
-                break;
-            default:
-                security = new Security(id, issuer, asOf, settlementCurrency);
-                break;
+        if (productType == ProductTypeProto.CURRENCY) {
+            security = new CashSecurity(id, issuer, asOf);
+        } else if (ProductHierarchy.isDescendantOf(productType, "BOND")) {
+            validateBondDates(proto);
+            security = new BondSerializer().deserializeBondSecurity(proto, id, asOf, issuer, settlementCurrency);
+        } else if (ProductHierarchy.isDescendantOf(productType, "STOCK")) {
+            security = deserializeEquitySecurity(id, asOf, issuer, settlementCurrency);
+        } else {
+            security = new Security(id, issuer, asOf, settlementCurrency);
         }
 
         if(!StringUtils.isEmpty(proto.getDescription())) {
@@ -234,17 +229,15 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             builder.setCouponFrequency(CouponFrequencyProto.valueOf(security.getCouponFrequency().name()));
 
         // 2. oneof product_details sub-message (new path)
-        switch (security.getSecurityType()) {
-            case BOND_SECURITY:
-                builder.setBondDetails(buildBondDetailsProto(security));
-                break;
-            case TIPS:
-                builder.setTipsDetails(buildTipsDetailsProto(security));
-                break;
-            case FRN:
-                builder.setFrnDetails(buildFrnDetailsProto(security));
-                break;
+        ProductTypeProto pt = security.getProductType();
+        if (pt == ProductTypeProto.TIPS) {
+            builder.setTipsDetails(buildTipsDetailsProto(security));
+        } else if (pt == ProductTypeProto.TREASURY_FRN) {
+            builder.setFrnDetails(buildFrnDetailsProto(security));
+        } else if (ProductHierarchy.isDescendantOf(pt, "BOND")) {
+            builder.setBondDetails(buildBondDetailsProto(security));
         }
+        // Non-bond product types skip the oneof bond sub-messages.
     }
 
     private BondDetailsProto buildBondDetailsProto(BondSecurity security) {
@@ -362,29 +355,25 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
 
         JsonObject securityJsonObject = gson.fromJson(json, JsonObject.class);
 
-        SecurityTypeProto securityType = SecurityTypeProto.forNumber(securityJsonObject.get(SECURITY_TYPE).getAsInt());
-        securityJsonObject.add(SECURITY_TYPE, new JsonPrimitive(securityType.name()));
+        ProductTypeProto productType = ProductTypeProto.forNumber(securityJsonObject.get(PRODUCT_TYPE).getAsInt());
+        securityJsonObject.add(PRODUCT_TYPE, new JsonPrimitive(productType.name()));
 
         SecurityQuantityTypeProto quantityType = SecurityQuantityTypeProto.forNumber(securityJsonObject.get(QUANTITY_TYPE).getAsInt());
         securityJsonObject.add(QUANTITY_TYPE, new JsonPrimitive(quantityType.name()));
 
-        switch (proto.getSecurityType()) {
-            case BOND_SECURITY:
-            case FRN:
-            case TIPS:
-                CouponTypeProto couponType = CouponTypeProto.forNumber(securityJsonObject.get(COUPON_TYPE).getAsInt());
-                securityJsonObject.add(COUPON_TYPE, new JsonPrimitive(couponType.name()));
-                CouponFrequencyProto frequencyProto = CouponFrequencyProto.forNumber(securityJsonObject.get(COUPON_FREQUENCY).getAsInt());
-                securityJsonObject.add(COUPON_FREQUENCY, new JsonPrimitive(frequencyProto.name()));
-                break;
-            default:
-                securityJsonObject.remove(COUPON_FREQUENCY);
-                securityJsonObject.remove(COUPON_TYPE);
+        if (ProductHierarchy.isDescendantOf(proto.getProductType(), "BOND")) {
+            CouponTypeProto couponType = CouponTypeProto.forNumber(securityJsonObject.get(COUPON_TYPE).getAsInt());
+            securityJsonObject.add(COUPON_TYPE, new JsonPrimitive(couponType.name()));
+            CouponFrequencyProto frequencyProto = CouponFrequencyProto.forNumber(securityJsonObject.get(COUPON_FREQUENCY).getAsInt());
+            securityJsonObject.add(COUPON_FREQUENCY, new JsonPrimitive(frequencyProto.name()));
+        } else {
+            securityJsonObject.remove(COUPON_FREQUENCY);
+            securityJsonObject.remove(COUPON_TYPE);
         }
 
         securityJsonObject.add(JSONFieldNames.DESCRIPTION, new JsonPrimitive(proto.getDescription()));
 
-        if(!SecurityTypeProto.CASH_SECURITY.equals(proto.getSecurityType())) {
+        if(!ProductTypeProto.CURRENCY.equals(proto.getProductType())) {
             String cashSecurityJson = serializeToJson(proto.getSettlementCurrency());
             JsonObject cashSecurityJsonObject = gson.fromJson(cashSecurityJson, JsonObject.class);
             securityJsonObject.add(SETTLEMENT_CURRENCY, cashSecurityJsonObject);
@@ -425,8 +414,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         Gson gson = JsonSerializationUtil.getGsonBuilder();
         JsonObject securityJsonObject = gson.fromJson(json, JsonObject.class);
 
-        String securityTypeString = securityJsonObject.get(SECURITY_TYPE).getAsString();
-        SecurityTypeProto securityType = SecurityTypeProto.valueOf(securityTypeString);
+        String productTypeString = securityJsonObject.get(PRODUCT_TYPE).getAsString();
+        ProductTypeProto productType = ProductTypeProto.valueOf(productTypeString);
 
         if(securityJsonObject.has(IDENTIFIER)) {
             String idType = securityJsonObject.get(IDENTIFIER).getAsJsonObject().get(IDENTIFIER_TYPE).getAsString();
@@ -437,26 +426,21 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
 
         SecurityProto settlementSecurityProto = null;
 
-        if(!SecurityTypeProto.CASH_SECURITY.equals(securityType)) {
+        if(!ProductTypeProto.CURRENCY.equals(productType)) {
             JsonObject settlementSecurityJsonObject = securityJsonObject.getAsJsonObject(SETTLEMENT_CURRENCY);
             settlementSecurityProto = deserializeFromJson(settlementSecurityJsonObject.toString());
             securityJsonObject.remove(SETTLEMENT_CURRENCY);
         }
 
-        securityJsonObject.add(SECURITY_TYPE,
-                new JsonPrimitive(securityType.getNumber()));
+        securityJsonObject.add(PRODUCT_TYPE,
+                new JsonPrimitive(productType.getNumber()));
 
         String quantityTypeString = securityJsonObject.get(QUANTITY_TYPE).getAsString();
         securityJsonObject.add(QUANTITY_TYPE,
                 new JsonPrimitive(SecurityQuantityTypeProto.valueOf(quantityTypeString).getNumber()));
 
-        //Will need to refactor this as number of securities grow
-        switch (securityType) {
-            case BOND_SECURITY:
-            case TIPS:
-            case FRN:
-                serializeBondCouponInformation(securityJsonObject);
-                break;
+        if (ProductHierarchy.isDescendantOf(productType, "BOND")) {
+            serializeBondCouponInformation(securityJsonObject);
         }
 
         return serializeSettlementCurrencySecurity(gson, securityJsonObject, settlementSecurityProto);

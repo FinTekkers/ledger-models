@@ -8,7 +8,7 @@ import common.models.security.*;
 import common.models.transaction.Transaction;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.SecurityProto;
-import fintekkers.models.security.SecurityTypeProto;
+import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.transaction.TransactionProto;
 import org.junit.jupiter.api.Test;
 import testutil.DummyBondObjects;
@@ -32,13 +32,13 @@ class SerializerFactoryTest {
         assertEquals(Any.class, proto.getClass());
         assertTrue(((Any)proto).is(SecurityProto.class));
         proto = ((Any) proto).unpack(SecurityProto.class);
-        assertEquals(SecurityTypeProto.BOND_SECURITY, ((SecurityProto) proto).getSecurityType());
+        assertEquals(ProductTypeProto.TREASURY_NOTE, ((SecurityProto) proto).getProductType());
 
         proto = factory.serialize(equitySecurity);
         assertEquals(Any.class, proto.getClass());
         assertTrue(((Any)proto).is(SecurityProto.class));
         proto = ((Any) proto).unpack(SecurityProto.class);
-        assertEquals(SecurityTypeProto.EQUITY_SECURITY, ((SecurityProto) proto).getSecurityType());
+        assertEquals(ProductTypeProto.COMMON_STOCK, ((SecurityProto) proto).getProductType());
 
         Transaction transaction = DummyBondObjects.getDummyTransaction();
         proto = factory.serialize(transaction);

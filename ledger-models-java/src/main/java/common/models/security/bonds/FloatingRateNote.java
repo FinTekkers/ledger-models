@@ -1,7 +1,7 @@
 package common.models.security.bonds;
 
 import common.models.security.*;
-import fintekkers.models.security.SecurityTypeProto;
+import fintekkers.models.security.ProductTypeProto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -74,12 +74,7 @@ public class FloatingRateNote extends BondSecurity implements IndexLinkedSecurit
     }
 
     @Override
-    public SecurityTypeProto getSecurityType() {
-        return SecurityTypeProto.FRN;
-    }
-
-    @Override
-    public ProductType getProductType() {
-        return ProductType.FRN;
+    public ProductTypeProto getProductType() {
+        return ProductTypeProto.TREASURY_FRN;
     }
 }

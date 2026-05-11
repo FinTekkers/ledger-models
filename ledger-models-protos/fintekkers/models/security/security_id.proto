@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package fintekkers.models.security;
+
+import "fintekkers/models/util/uuid.proto";
+
+option java_multiple_files = true;
+
+option java_outer_classname = "SecurityIdProtos";
+
+// Lightweight reference to a Security by UUID.
+//
+// Used for the SecurityProto.legs field (multi-leg strategy packages
+// where each leg is itself a Security). Unlike SecurityProto with
+// is_link=true, this carries only the UUID — no settlement currency
+// echo, no embedded fields. Resolve to a full SecurityProto via
+// SecurityService.GetByIds.
+//
+// See hierarchy-examples.md for the multi-leg-strategy pattern: a
+// strategy Security carries productType=EQUITY_VANILLA (for example)
+// and a legs list of per-leg Security IDs; cashflows and risk
+// aggregate over legs.
+message SecurityIdProto {
+  fintekkers.models.util.UUIDProto uuid = 1;
+}

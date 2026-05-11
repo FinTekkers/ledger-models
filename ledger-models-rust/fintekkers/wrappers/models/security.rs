@@ -1,4 +1,4 @@
-use crate::fintekkers::models::security::{SecurityProto, SecurityTypeProto};
+use crate::fintekkers::models::security::{SecurityProto, ProductTypeProto};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
@@ -42,7 +42,7 @@ pub struct SecurityProtoBuilder {
     is_link: bool,
 
     uuid: UUIDWrapper,
-    security_type: SecurityTypeProto,
+    product_type: ProductTypeProto,
     asset_class: String,
     issuer_name: String,
     settlement_currency: String,
@@ -60,7 +60,7 @@ impl SecurityProtoBuilder {
             version: "0.0.1".to_string(),
             is_link: false,
             uuid: UUIDWrapper::new_random(),
-            security_type: SecurityTypeProto::UnknownSecurityType,
+            product_type: ProductTypeProto::ProductTypeUnknown,
             asset_class: "Unknown".to_string(),
             issuer_name: "Unknown Issue".to_string(),
             settlement_currency: String::new(),
@@ -102,8 +102,8 @@ impl SecurityProtoBuilder {
         self
     }
 
-    pub fn security_type(mut self, security_type: SecurityTypeProto) -> Self {
-        self.security_type = security_type;
+    pub fn product_type(mut self, product_type: ProductTypeProto) -> Self {
+        self.product_type = product_type;
         self
     }
 
@@ -138,7 +138,9 @@ impl SecurityProtoBuilder {
             is_link: self.is_link,
 
             uuid: Some(self.uuid.into()),
-            security_type: self.security_type.into(),
+            product_type: self.product_type.into(),
+            instrument_type: 0,
+            legs: vec![],
             asset_class: self.asset_class,
             issuer_name: self.issuer_name,
             settlement_currency: if self.settlement_currency.is_empty() {
@@ -146,7 +148,7 @@ impl SecurityProtoBuilder {
             } else {
                 Some(Box::new(SecurityProto {
                     uuid: Some(UUIDWrapper::new_random().into()),
-                    security_type: SecurityTypeProto::CashSecurity.into(),
+                    product_type: ProductTypeProto::Currency.into(),
                     cash_id: self.settlement_currency,
                     ..Default::default()
                 }))
@@ -227,7 +229,7 @@ mod test {
             .unwrap();
 
         let currency = result.settlement_currency.expect("settlement_currency should be Some");
-        assert_eq!(currency.security_type, SecurityTypeProto::CashSecurity as i32);
+        assert_eq!(currency.product_type, ProductTypeProto::Currency as i32);
         assert_eq!(currency.cash_id, "USD");
     }
 
@@ -249,7 +251,7 @@ mod test {
 
         let parsed = round_trip(&result);
         let currency = parsed.settlement_currency.expect("settlement_currency should survive round-trip");
-        assert_eq!(currency.security_type, SecurityTypeProto::CashSecurity as i32);
+        assert_eq!(currency.product_type, ProductTypeProto::Currency as i32);
         assert_eq!(currency.cash_id, "BTC");
         assert!(currency.uuid.is_some(), "uuid should survive round-trip");
     }
@@ -257,7 +259,7 @@ mod test {
     #[test]
     fn test_oneof_bond_details_round_trip() {
         let proto = SecurityProto {
-            security_type: SecurityTypeProto::BondSecurity as i32,
+            product_type: ProductTypeProto::TreasuryNote as i32,
             asset_class: "Fixed Income".to_string(),
             product_details: Some(ProductDetails::BondDetails(BondDetailsProto {
                 coupon_rate: decimal("5.0"),
@@ -287,7 +289,7 @@ mod test {
     #[test]
     fn test_oneof_tips_details_round_trip() {
         let proto = SecurityProto {
-            security_type: SecurityTypeProto::Tips as i32,
+            product_type: ProductTypeProto::Tips as i32,
             product_details: Some(ProductDetails::TipsDetails(TipsDetailsProto {
                 coupon_rate: decimal("0.625"),
                 coupon_type: CouponTypeProto::Fixed as i32,
@@ -318,7 +320,7 @@ mod test {
     #[test]
     fn test_oneof_frn_details_round_trip() {
         let proto = SecurityProto {
-            security_type: SecurityTypeProto::Frn as i32,
+            product_type: ProductTypeProto::TreasuryFrn as i32,
             product_details: Some(ProductDetails::FrnDetails(FrnDetailsProto {
                 coupon_rate: None,
                 coupon_type: CouponTypeProto::Float as i32,
@@ -349,7 +351,7 @@ mod test {
     #[test]
     fn test_oneof_index_details_round_trip() {
         let proto = SecurityProto {
-            security_type: SecurityTypeProto::IndexSecurity as i32,
+            product_type: ProductTypeProto::EquityIndex as i32,
             product_details: Some(ProductDetails::IndexDetails(IndexDetailsProto {
                 index_type: IndexTypeProto::CpiU as i32,
             })),
@@ -368,7 +370,7 @@ mod test {
     #[test]
     fn test_oneof_cash_details_round_trip() {
         let proto = SecurityProto {
-            security_type: SecurityTypeProto::CashSecurity as i32,
+            product_type: ProductTypeProto::Currency as i32,
             product_details: Some(ProductDetails::CashDetails(CashDetailsProto {
                 cash_id: "USD".to_string(),
             })),
@@ -387,7 +389,7 @@ mod test {
     #[test]
     fn test_oneof_equity_details_round_trip() {
         let proto = SecurityProto {
-            security_type: SecurityTypeProto::EquitySecurity as i32,
+            product_type: ProductTypeProto::CommonStock as i32,
             product_details: Some(ProductDetails::EquityDetails(EquityDetailsProto {})),
             ..Default::default()
         };
@@ -402,7 +404,7 @@ mod test {
     #[test]
     fn test_dual_write_flat_and_oneof_coexist() {
         let proto = SecurityProto {
-            security_type: SecurityTypeProto::BondSecurity as i32,
+            product_type: ProductTypeProto::TreasuryNote as i32,
             // Flat fields (legacy)
             coupon_rate: decimal("5.0"),
             coupon_type: CouponTypeProto::Fixed as i32,
@@ -441,7 +443,7 @@ mod test {
     #[test]
     fn test_no_oneof_set_returns_none() {
         let proto = SecurityProto {
-            security_type: SecurityTypeProto::BondSecurity as i32,
+            product_type: ProductTypeProto::TreasuryNote as i32,
             coupon_rate: decimal("5.0"),
             ..Default::default()
         };

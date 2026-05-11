@@ -9,7 +9,9 @@ import "fintekkers/models/util/uuid.proto";
 
 import "fintekkers/models/security/identifier/identifier.proto";
 import "fintekkers/models/security/bond/issuance.proto";
-import "fintekkers/models/security/security_type.proto";
+import "fintekkers/models/security/product_type.proto";
+import "fintekkers/models/security/instrument_type.proto";
+import "fintekkers/models/security/security_id.proto";
 import "fintekkers/models/security/security_quantity_type.proto";
 import "fintekkers/models/security/coupon_frequency.proto";
 import "fintekkers/models/security/coupon_type.proto";
@@ -37,7 +39,19 @@ message SecurityProto {
   util.LocalTimestampProto valid_from = 8;
   util.LocalTimestampProto valid_to = 9;
 
-  SecurityTypeProto security_type = 10;
+  ProductTypeProto product_type = 10;
+
+  // Orthogonal to product_type — see instrument_type.proto.
+  // CASH (positionable), DERIVATIVE (value derives from underlying),
+  // REFERENCE_INDEX (observational only).
+  InstrumentTypeProto instrument_type = 16;
+
+  // Multi-leg strategy package legs — each leg is itself a Security
+  // identified by UUID. See hierarchy-examples.md for the pattern:
+  // butterflies, calendar spreads, iron condors, etc. are not
+  // productTypes; they're a Security whose product_type is the
+  // underlying vanilla type with `legs` populated.
+  repeated SecurityIdProto legs = 17;
 
   // Soft-delete marker. null/unset = active record; non-null = soft-deleted
   // at this timestamp. SecurityService.Search and GetByIds filter out

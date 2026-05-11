@@ -1,6 +1,6 @@
 package common.models.security;
 
-import fintekkers.models.security.SecurityTypeProto;
+import fintekkers.models.security.ProductTypeProto;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -24,12 +24,7 @@ public class EquitySecurity extends Security {
     }
 
     @Override
-    public SecurityTypeProto getSecurityType() {
-        return SecurityTypeProto.EQUITY_SECURITY;
-    }
-
-    @Override
-    public ProductType getProductType() {
-        return ProductType.EQUITY;
+    public ProductTypeProto getProductType() {
+        return ProductTypeProto.COMMON_STOCK;
     }
 }

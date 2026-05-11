@@ -69,7 +69,7 @@ public enum AssetClassProto
   /**
    * <pre>
    * CRYPTO covers cryptocurrency holdings — BTC, ETH, and other crypto
-   * assets. Pairs with SecurityTypeProto.CRYPTOCURRENCY. Added per
+   * assets. Pairs with ProductTypeProto.CRYPTOCURRENCY. Added per
    * FinTekkers/second-brain#237.
    * </pre>
    *
@@ -121,7 +121,7 @@ public enum AssetClassProto
   /**
    * <pre>
    * CRYPTO covers cryptocurrency holdings — BTC, ETH, and other crypto
-   * assets. Pairs with SecurityTypeProto.CRYPTOCURRENCY. Added per
+   * assets. Pairs with ProductTypeProto.CRYPTOCURRENCY. Added per
    * FinTekkers/second-brain#237.
    * </pre>
    *

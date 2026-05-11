@@ -4,18 +4,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const security_1 = __importDefault(require("./security"));
-const security_type_pb_1 = require("../../../fintekkers/models/security/security_type_pb");
+const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const date_1 = require("../utils/date");
 const coupon_frequency_1 = require("./coupon_frequency");
 const coupon_type_1 = require("./coupon_type");
 const term_1 = require("./term");
 const tenor_type_pb_1 = require("../../../fintekkers/models/security/tenor_type_pb");
 const decimal_js_1 = require("decimal.js");
+const product_hierarchy_1 = require("./product_hierarchy");
 class BondSecurity extends security_1.default {
     constructor(proto) {
         super(proto);
-        if (proto.getSecurityType() !== security_type_pb_1.SecurityTypeProto.BOND_SECURITY && proto.getSecurityType() !== security_type_pb_1.SecurityTypeProto.TIPS && proto.getSecurityType() !== security_type_pb_1.SecurityTypeProto.FRN) {
-            throw new Error(`BondSecurity requires BOND_SECURITY type, got ${security_type_pb_1.SecurityTypeProto[proto.getSecurityType()]}`);
+        // Bond-shape membership uses the registry: any product_type that is
+        // a descendant of "BOND" in hierarchy.json (TBILL, TREASURY_NOTE,
+        // TREASURY_BOND, TIPS, TREASURY_FRN, STRIPS, SOVEREIGN_BOND,
+        // CORP_BOND, MUNI_BOND, plus future planned leaves under
+        // CREDIT_BOND / STRUCTURED_BOND) is accepted.
+        const ptName = Object.keys(product_type_pb_1.ProductTypeProto)
+            .find(k => product_type_pb_1.ProductTypeProto[k] === proto.getProductType());
+        if (!ptName || !(0, product_hierarchy_1.isDescendantOf)(ptName, 'BOND')) {
+            throw new Error(`BondSecurity requires a bond-shape product type (descendant of BOND in hierarchy.json), got ${ptName !== null && ptName !== void 0 ? ptName : 'unknown'}`);
         }
     }
     /** Returns the tenor (term) of the bond as a Tenor object.

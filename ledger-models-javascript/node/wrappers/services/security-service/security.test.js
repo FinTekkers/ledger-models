@@ -37,7 +37,7 @@ const security_pb_1 = require("../../../fintekkers/models/security/security_pb")
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
-const security_type_pb_1 = require("../../../fintekkers/models/security/security_type_pb");
+const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 // Model Utils
 const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
@@ -70,7 +70,7 @@ function testSecurity() {
         security.setAssetClass('FixedIncome');
         security.setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
         security.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
-        security.setSecurityType(security_type_pb_1.SecurityTypeProto.BOND_SECURITY);
+        security.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
         const faceValue = new decimal_value_pb_1.DecimalValueProto();
         faceValue.setArbitraryPrecisionValue('1000.00');
         security.setFaceValue(faceValue);

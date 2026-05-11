@@ -8,7 +8,7 @@ from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
-from fintekkers.models.security.security_type_pb2 import SecurityTypeProto
+from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.wrappers.models.price import Price
 from fintekkers.wrappers.models.security.security import Security
 
@@ -24,7 +24,7 @@ class TestPrice(unittest.TestCase):
             is_link=False,
             object_class="Security",
             version="0.0.1",
-            security_type=SecurityTypeProto.BOND_SECURITY,
+            product_type=ProductTypeProto.TREASURY_NOTE,
             asset_class="Fixed Income",
             issuer_name="Test Issuer",
             identifier=IdentifierProto(

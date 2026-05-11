@@ -2,9 +2,9 @@ use chrono::{DateTime, Datelike, NaiveDate, TimeZone};
 use rust_decimal::Decimal;
 
 use crate::fintekkers::models::security::security_proto::ProductDetails;
-use crate::fintekkers::models::security::{SecurityProto, SecurityTypeProto};
+use crate::fintekkers::models::security::{SecurityProto, ProductTypeProto};
 use crate::fintekkers::models::util::LocalDateProto;
-use crate::fintekkers::wrappers::models::security_type::SecurityType;
+// security_type wrapper deleted in M1; use ProductTypeProto directly or ProductHierarchy helper.
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 
 pub struct BondSecurity {
@@ -13,17 +13,19 @@ pub struct BondSecurity {
 
 impl BondSecurity {
     pub fn from_proto(proto: SecurityProto) -> Result<Self, Error> {
-        // Resolve the proto's security_type i32 → SecurityTypeProto →
-        // SecurityType wrapper. Bond-flavored security types (Bond, Tips,
-        // Frn) all collapse to SecurityType::Bond/Tips/Frn here, which is
-        // the membership predicate this wrapper cares about.
-        let st_proto = SecurityTypeProto::from_i32(proto.security_type)
-            .unwrap_or(SecurityTypeProto::UnknownSecurityType);
-        match SecurityType::from_proto(st_proto) {
-            SecurityType::Bond | SecurityType::Tips | SecurityType::Frn => {
-                Ok(BondSecurity { proto })
-            }
-            _ => Err(Error::NotABondSecurity),
+        // Bond-shape membership uses the registry: any product_type that is
+        // a descendant of "BOND" in hierarchy.json (TBILL, TREASURY_NOTE,
+        // TREASURY_BOND, TIPS, TREASURY_FRN, STRIPS, SOVEREIGN_BOND,
+        // CORP_BOND, MUNI_BOND, plus future planned leaves under
+        // CREDIT_BOND / STRUCTURED_BOND) is accepted.
+        use crate::fintekkers::wrappers::models::product_hierarchy;
+        let pt = ProductTypeProto::from_i32(proto.product_type)
+            .unwrap_or(ProductTypeProto::ProductTypeUnknown);
+        let name = pt.as_str_name();
+        if product_hierarchy::is_descendant_of(name, "BOND") {
+            Ok(BondSecurity { proto })
+        } else {
+            Err(Error::NotABondSecurity)
         }
     }
 
@@ -133,7 +135,7 @@ mod tests {
         use_oneof: bool,
     ) -> SecurityProto {
         let mut proto = SecurityProto {
-            security_type: SecurityTypeProto::BondSecurity as i32,
+            product_type: ProductTypeProto::TreasuryNote as i32,
             ..Default::default()
         };
         if use_oneof {
@@ -157,7 +159,7 @@ mod tests {
     #[test]
     fn rejects_non_bond_security_types() {
         let proto = SecurityProto {
-            security_type: SecurityTypeProto::EquitySecurity as i32,
+            product_type: ProductTypeProto::CommonStock as i32,
             ..Default::default()
         };
         let result = BondSecurity::from_proto(proto);
@@ -167,12 +169,12 @@ mod tests {
     #[test]
     fn accepts_bond_tips_and_frn() {
         for st in [
-            SecurityTypeProto::BondSecurity,
-            SecurityTypeProto::Tips,
-            SecurityTypeProto::Frn,
+            ProductTypeProto::TreasuryNote,
+            ProductTypeProto::Tips,
+            ProductTypeProto::TreasuryFrn,
         ] {
             let proto = SecurityProto {
-                security_type: st as i32,
+                product_type: st as i32,
                 ..Default::default()
             };
             assert!(
