@@ -44,6 +44,19 @@ jobs:
           pwd
 
           BUILD_VERSION=${{ env.release_version }} python3 setup.py sdist bdist_wheel
+
+          # v0.2.2 — verify the wheel actually bundles hierarchy.json
+          # before twine upload. v0.2.1 shipped a broken wheel
+          # (MANIFEST.in didn't list *.json) and consumers had to vendor
+          # the file. Fail loudly on regression rather than re-shipping
+          # a broken artifact.
+          if ! unzip -l dist/*.whl | grep -q ' fintekkers/wrappers/models/security/hierarchy.json$'; then
+              echo "ERROR: built wheel does not bundle hierarchy.json — refusing to publish."
+              echo "       see ledger-models-protos/registry-versioning.md and"
+              echo "       check-python-wheel-hierarchy.sh for the regression history."
+              exit 1
+          fi
+
           pip3 install twine
-          
+
           twine upload -u __token__ -p "${{ secrets.PYPI_TOKEN }}" --repository pypi dist/*

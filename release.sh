@@ -104,6 +104,17 @@ preflight() {
     # (see .github/workflows/{cargo,pypi,npmjs,npm}-publish.yml), so
     # no local mirror check is needed in this preflight.
 
+    # v0.2.2 — verify the Python wheel actually bundles hierarchy.json.
+    # v0.2.1 shipped a broken wheel that forced consumers to vendor the
+    # file (market-data-inputs PR #14). Build the wheel locally and
+    # inspect; fail fast if the data file is missing. Skip the check if
+    # python3 isn't available (rare on a dev machine that ships
+    # ledger-models, but be permissive).
+    if command -v python3 >/dev/null 2>&1; then
+        ./check-python-wheel-hierarchy.sh >/dev/null 2>&1 \
+            || die "Python wheel does not bundle hierarchy.json. Run ./check-python-wheel-hierarchy.sh for details. Do NOT release until fixed — see registry-versioning.md."
+    fi
+
     success "Pre-flight passed."
 }
 
