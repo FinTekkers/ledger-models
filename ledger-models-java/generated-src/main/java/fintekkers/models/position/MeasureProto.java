@@ -461,6 +461,61 @@ public enum MeasureProto
    * <code>DV01 = 25;</code>
    */
   DV01(25),
+  /**
+   * <pre>
+   * U.S. Treasury Bill discount-basis yield. The market convention used by
+   * TreasuryDirect auction results ("High discount rate"), Bloomberg TBILL
+   * screens, and most short-tenor money-market quotes.
+   * Formula:
+   *   DiscountYield = (F - P) / F × 360 / days_to_maturity
+   *   Where F = face value (par), P = dollar price, day count is Actual/360.
+   * Example: 13W TBill 912797TW7 priced at 99.082, days_to_maturity=91:
+   *   DiscountYield = (100 - 99.082) / 100 × 360 / 91 = 0.0363 = 3.63%
+   * Distinct from YIELD_TO_MATURITY which uses the annual-compound convention
+   * (F/P)^(1/years) - 1; the two differ by 5-14bp at typical TBill tenors.
+   * The U.S. Treasury publishes BOTH conventions for each auction plus
+   * BOND_EQUIVALENT_YIELD; the industry-standard wire format for TBills is
+   * DiscountYield. See #209.
+   * Model assumptions:
+   *   - Simple (non-compounded) discount basis — standard U.S. money-market.
+   *   - 360-day year (Actual/360 day count).
+   *   - Assumes the security has a defined maturity_date and face_value;
+   *     null for instruments where days_to_maturity is undefined.
+   * Applicability: Zero-coupon short-tenor securities — Tbill, principal-only
+   *   Strips with &lt;1yr remaining. Returns null/error for other product types.
+   * Units: Decimal (0-1 scale; e.g. 0.0363 = 3.63%).
+   * </pre>
+   *
+   * <code>DISCOUNT_YIELD = 26;</code>
+   */
+  DISCOUNT_YIELD(26),
+  /**
+   * <pre>
+   * Bond-Equivalent Yield (BEY) for U.S. Treasury Bills — also known as the
+   * "investment rate" published alongside DISCOUNT_YIELD on TreasuryDirect.
+   * The conventional way to compare TBill returns to coupon-bearing bond
+   * yields (which conventionally use a 365-day year).
+   * Formula:
+   *   BondEquivalentYield = (F - P) / P × 365 / days_to_maturity
+   *   Where F = face value (par), P = dollar price, day count is Actual/365.
+   * Example: 13W TBill 912797TW7 priced at 99.082, days_to_maturity=91:
+   *   BEY = (100 - 99.082) / 99.082 × 365 / 91 = 0.0371 = 3.71%
+   * Distinct from DISCOUNT_YIELD which uses 360-day simple discount; BEY's
+   * dividing-by-P (not F) and 365-day basis make it directly comparable to
+   * YTM on a coupon-bearing Treasury Note of equivalent tenor. The Treasury
+   * calls this the "investment rate" on auction results. See #209.
+   * Model assumptions:
+   *   - Simple (non-compounded) basis.
+   *   - 365-day year (Actual/365 day count).
+   *   - Same applicability constraints as DISCOUNT_YIELD.
+   * Applicability: Zero-coupon short-tenor securities — Tbill, principal-only
+   *   Strips with &lt;1yr remaining. Returns null/error for other product types.
+   * Units: Decimal (0-1 scale; e.g. 0.0371 = 3.71%).
+   * </pre>
+   *
+   * <code>BOND_EQUIVALENT_YIELD = 27;</code>
+   */
+  BOND_EQUIVALENT_YIELD(27),
   UNRECOGNIZED(-1),
   ;
 
@@ -917,6 +972,61 @@ public enum MeasureProto
    * <code>DV01 = 25;</code>
    */
   public static final int DV01_VALUE = 25;
+  /**
+   * <pre>
+   * U.S. Treasury Bill discount-basis yield. The market convention used by
+   * TreasuryDirect auction results ("High discount rate"), Bloomberg TBILL
+   * screens, and most short-tenor money-market quotes.
+   * Formula:
+   *   DiscountYield = (F - P) / F × 360 / days_to_maturity
+   *   Where F = face value (par), P = dollar price, day count is Actual/360.
+   * Example: 13W TBill 912797TW7 priced at 99.082, days_to_maturity=91:
+   *   DiscountYield = (100 - 99.082) / 100 × 360 / 91 = 0.0363 = 3.63%
+   * Distinct from YIELD_TO_MATURITY which uses the annual-compound convention
+   * (F/P)^(1/years) - 1; the two differ by 5-14bp at typical TBill tenors.
+   * The U.S. Treasury publishes BOTH conventions for each auction plus
+   * BOND_EQUIVALENT_YIELD; the industry-standard wire format for TBills is
+   * DiscountYield. See #209.
+   * Model assumptions:
+   *   - Simple (non-compounded) discount basis — standard U.S. money-market.
+   *   - 360-day year (Actual/360 day count).
+   *   - Assumes the security has a defined maturity_date and face_value;
+   *     null for instruments where days_to_maturity is undefined.
+   * Applicability: Zero-coupon short-tenor securities — Tbill, principal-only
+   *   Strips with &lt;1yr remaining. Returns null/error for other product types.
+   * Units: Decimal (0-1 scale; e.g. 0.0363 = 3.63%).
+   * </pre>
+   *
+   * <code>DISCOUNT_YIELD = 26;</code>
+   */
+  public static final int DISCOUNT_YIELD_VALUE = 26;
+  /**
+   * <pre>
+   * Bond-Equivalent Yield (BEY) for U.S. Treasury Bills — also known as the
+   * "investment rate" published alongside DISCOUNT_YIELD on TreasuryDirect.
+   * The conventional way to compare TBill returns to coupon-bearing bond
+   * yields (which conventionally use a 365-day year).
+   * Formula:
+   *   BondEquivalentYield = (F - P) / P × 365 / days_to_maturity
+   *   Where F = face value (par), P = dollar price, day count is Actual/365.
+   * Example: 13W TBill 912797TW7 priced at 99.082, days_to_maturity=91:
+   *   BEY = (100 - 99.082) / 99.082 × 365 / 91 = 0.0371 = 3.71%
+   * Distinct from DISCOUNT_YIELD which uses 360-day simple discount; BEY's
+   * dividing-by-P (not F) and 365-day basis make it directly comparable to
+   * YTM on a coupon-bearing Treasury Note of equivalent tenor. The Treasury
+   * calls this the "investment rate" on auction results. See #209.
+   * Model assumptions:
+   *   - Simple (non-compounded) basis.
+   *   - 365-day year (Actual/365 day count).
+   *   - Same applicability constraints as DISCOUNT_YIELD.
+   * Applicability: Zero-coupon short-tenor securities — Tbill, principal-only
+   *   Strips with &lt;1yr remaining. Returns null/error for other product types.
+   * Units: Decimal (0-1 scale; e.g. 0.0371 = 3.71%).
+   * </pre>
+   *
+   * <code>BOND_EQUIVALENT_YIELD = 27;</code>
+   */
+  public static final int BOND_EQUIVALENT_YIELD_VALUE = 27;
 
 
   public final int getNumber() {
@@ -968,6 +1078,8 @@ public enum MeasureProto
       case 23: return CLEAN_PRICE;
       case 24: return MODIFIED_DURATION;
       case 25: return DV01;
+      case 26: return DISCOUNT_YIELD;
+      case 27: return BOND_EQUIVALENT_YIELD;
       default: return null;
     }
   }

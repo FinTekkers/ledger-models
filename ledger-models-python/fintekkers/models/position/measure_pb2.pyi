@@ -31,6 +31,8 @@ class MeasureProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     CLEAN_PRICE: _ClassVar[MeasureProto]
     MODIFIED_DURATION: _ClassVar[MeasureProto]
     DV01: _ClassVar[MeasureProto]
+    DISCOUNT_YIELD: _ClassVar[MeasureProto]
+    BOND_EQUIVALENT_YIELD: _ClassVar[MeasureProto]
 UNKNOWN_MEASURE: MeasureProto
 DIRECTED_QUANTITY: MeasureProto
 MARKET_VALUE: MeasureProto
@@ -56,3 +58,5 @@ DIRTY_PRICE: MeasureProto
 CLEAN_PRICE: MeasureProto
 MODIFIED_DURATION: MeasureProto
 DV01: MeasureProto
+DISCOUNT_YIELD: MeasureProto
+BOND_EQUIVALENT_YIELD: MeasureProto
