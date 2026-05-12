@@ -50,7 +50,9 @@ proto.fintekkers.models.position.MeasureProto = {
   DIRTY_PRICE: 22,
   CLEAN_PRICE: 23,
   MODIFIED_DURATION: 24,
-  DV01: 25
+  DV01: 25,
+  DISCOUNT_YIELD: 26,
+  BOND_EQUIVALENT_YIELD: 27
 };
 
 goog.object.extend(exports, proto.fintekkers.models.position);

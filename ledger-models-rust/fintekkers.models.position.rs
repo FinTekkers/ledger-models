@@ -518,6 +518,59 @@ pub enum MeasureProto {
     /// Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
     /// Units: Dollars per basis point.
     Dv01 = 25,
+    /// U.S. Treasury Bill discount-basis yield. The market convention used by
+    /// TreasuryDirect auction results ("High discount rate"), Bloomberg TBILL
+    /// screens, and most short-tenor money-market quotes.
+    ///
+    /// Formula:
+    ///    DiscountYield = (F - P) / F × 360 / days_to_maturity
+    ///    Where F = face value (par), P = dollar price, day count is Actual/360.
+    ///
+    /// Example: 13W TBill 912797TW7 priced at 99.082, days_to_maturity=91:
+    ///    DiscountYield = (100 - 99.082) / 100 × 360 / 91 = 0.0363 = 3.63%
+    ///
+    /// Distinct from YIELD_TO_MATURITY which uses the annual-compound convention
+    /// (F/P)^(1/years) - 1; the two differ by 5-14bp at typical TBill tenors.
+    /// The U.S. Treasury publishes BOTH conventions for each auction plus
+    /// BOND_EQUIVALENT_YIELD; the industry-standard wire format for TBills is
+    /// DiscountYield. See #209.
+    ///
+    /// Model assumptions:
+    ///    - Simple (non-compounded) discount basis — standard U.S. money-market.
+    ///    - 360-day year (Actual/360 day count).
+    ///    - Assumes the security has a defined maturity_date and face_value;
+    ///      null for instruments where days_to_maturity is undefined.
+    ///
+    /// Applicability: Zero-coupon short-tenor securities — Tbill, principal-only
+    ///    Strips with <1yr remaining. Returns null/error for other product types.
+    /// Units: Decimal (0-1 scale; e.g. 0.0363 = 3.63%).
+    DiscountYield = 26,
+    /// Bond-Equivalent Yield (BEY) for U.S. Treasury Bills — also known as the
+    /// "investment rate" published alongside DISCOUNT_YIELD on TreasuryDirect.
+    /// The conventional way to compare TBill returns to coupon-bearing bond
+    /// yields (which conventionally use a 365-day year).
+    ///
+    /// Formula:
+    ///    BondEquivalentYield = (F - P) / P × 365 / days_to_maturity
+    ///    Where F = face value (par), P = dollar price, day count is Actual/365.
+    ///
+    /// Example: 13W TBill 912797TW7 priced at 99.082, days_to_maturity=91:
+    ///    BEY = (100 - 99.082) / 99.082 × 365 / 91 = 0.0371 = 3.71%
+    ///
+    /// Distinct from DISCOUNT_YIELD which uses 360-day simple discount; BEY's
+    /// dividing-by-P (not F) and 365-day basis make it directly comparable to
+    /// YTM on a coupon-bearing Treasury Note of equivalent tenor. The Treasury
+    /// calls this the "investment rate" on auction results. See #209.
+    ///
+    /// Model assumptions:
+    ///    - Simple (non-compounded) basis.
+    ///    - 365-day year (Actual/365 day count).
+    ///    - Same applicability constraints as DISCOUNT_YIELD.
+    ///
+    /// Applicability: Zero-coupon short-tenor securities — Tbill, principal-only
+    ///    Strips with <1yr remaining. Returns null/error for other product types.
+    /// Units: Decimal (0-1 scale; e.g. 0.0371 = 3.71%).
+    BondEquivalentYield = 27,
 }
 impl MeasureProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -551,6 +604,8 @@ impl MeasureProto {
             MeasureProto::CleanPrice => "CLEAN_PRICE",
             MeasureProto::ModifiedDuration => "MODIFIED_DURATION",
             MeasureProto::Dv01 => "DV01",
+            MeasureProto::DiscountYield => "DISCOUNT_YIELD",
+            MeasureProto::BondEquivalentYield => "BOND_EQUIVALENT_YIELD",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -581,6 +636,8 @@ impl MeasureProto {
             "CLEAN_PRICE" => Some(Self::CleanPrice),
             "MODIFIED_DURATION" => Some(Self::ModifiedDuration),
             "DV01" => Some(Self::Dv01),
+            "DISCOUNT_YIELD" => Some(Self::DiscountYield),
+            "BOND_EQUIVALENT_YIELD" => Some(Self::BondEquivalentYield),
             _ => None,
         }
     }

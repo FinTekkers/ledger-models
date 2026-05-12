@@ -64,6 +64,8 @@ describe('Measure.getAllTypeNames', () => {
         //   CLEAN_PRICE = 23;
         //   MODIFIED_DURATION = 24;
         //   DV01 = 25;
+        //   DISCOUNT_YIELD = 26;          (v0.2.3, #209 — TBill yield conventions)
+        //   BOND_EQUIVALENT_YIELD = 27;   (v0.2.3, #209)
         expect(measure_1.Measure.getAllTypeNames()).toEqual([
             'DIRECTED_QUANTITY',
             'MARKET_VALUE',
@@ -89,6 +91,8 @@ describe('Measure.getAllTypeNames', () => {
             'CLEAN_PRICE',
             'MODIFIED_DURATION',
             'DV01',
+            'DISCOUNT_YIELD',
+            'BOND_EQUIVALENT_YIELD',
         ]);
     });
     test('excludes the UNKNOWN_MEASURE sentinel', () => {

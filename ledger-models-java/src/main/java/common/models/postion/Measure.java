@@ -65,7 +65,17 @@ public enum Measure {
 
     MODIFIED_DURATION("First-order sensitivity of bond price to yield changes, expressed in years. " +
             "Computed by valuation-service as MacaulayDuration / (1 + y/n). " +
-            "Bond-specific; null for non-bonds.");
+            "Bond-specific; null for non-bonds."),
+
+    DISCOUNT_YIELD("U.S. Treasury Bill discount-basis yield (360-day simple). " +
+            "Computed as (F - P) / F × 360 / days_to_maturity. " +
+            "TBill-specific (and principal-only Strips <1yr); null otherwise. " +
+            "Market convention used by TreasuryDirect auction results."),
+
+    BOND_EQUIVALENT_YIELD("U.S. Treasury Bill bond-equivalent yield (365-day, conventional). " +
+            "Computed as (F - P) / P × 365 / days_to_maturity. " +
+            "Comparable to YTM on coupon-bearing Treasuries. " +
+            "TBill-specific (and principal-only Strips <1yr); null otherwise.");
 
     static {
         Set<String> measureNames = Arrays.stream(Measure.values())

@@ -32,4 +32,6 @@ export enum MeasureProto {
     CLEAN_PRICE = 23,
     MODIFIED_DURATION = 24,
     DV01 = 25,
+    DISCOUNT_YIELD = 26,
+    BOND_EQUIVALENT_YIELD = 27,
 }
