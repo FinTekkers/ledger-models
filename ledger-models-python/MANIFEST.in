@@ -3,3 +3,14 @@ include README.rst
 include fintekkers/py.typed
 
 recursive-include * *.pyi
+
+# Bundle hierarchy.json (canonical product registry, mirrored from
+# ledger-models-protos/hierarchy.json into the package directory by
+# sync-hierarchy-mirrors.sh) and catalog/*.json (field + measure
+# catalogs distributed by compile.sh). Without this, wheels don't ship
+# the runtime data files and ProductHierarchy fails to load on
+# consumer installs (forcing the vendoring-into-consumer-repo
+# antipattern). Pattern is `recursive-include fintekkers *.json`
+# rather than restricting to specific subdirs so future registry
+# files are picked up automatically.
+recursive-include fintekkers *.json

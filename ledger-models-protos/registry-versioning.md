@@ -88,6 +88,19 @@ Why mirrors are still needed at all: cargo publish / npm publish / pip wheel eac
 
 Net effect: one file in git, three transient mirrors at build/publish time, zero opportunity for committed drift.
 
+### Bundling the mirror in each language's tarball
+
+Materializing the mirror to the right path on disk isn't enough — each language's package manifest also has to **bundle** the file into the published artifact:
+
+| Language | Where bundling is declared | Notes |
+| --- | --- | --- |
+| Rust | `ledger-models-rust/Cargo.toml` → `include = [..., "hierarchy.json"]` | Without the include list entry, `cargo publish` skips the file. Verified with `cargo package --list`. |
+| Python | `ledger-models-python/MANIFEST.in` → `recursive-include fintekkers *.json` | Without the recursive-include, `bdist_wheel` skips `*.json` even with `include_package_data=True`. This is the v0.2.1 regression that forced market-data-inputs to vendor the file. Guard: `./check-python-wheel-hierarchy.sh` builds + inspects. |
+| JS | `ledger-models-javascript/package.json` (default `npm pack` behavior with no `files` array) | `npm pack` bundles non-gitignored files at the package root by default; the repo-root `.gitignore` doesn't propagate into npm. Verified with `npm pack --dry-run`. |
+| Java | `ledger-models-java/build.gradle` → `processResources` from `../ledger-models-protos` | Java reads the canonical directly at build time; no mirror needed. |
+
+If you change any of these manifests, run the language-specific dry-run (`cargo package --list`, `unzip -l dist/*.whl`, `npm pack --dry-run`) and grep for `hierarchy.json` before merging.
+
 ## What is *not* a registry change
 
 The registry classifies **legal form**. It does not classify:
