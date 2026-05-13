@@ -6,7 +6,7 @@
 #
 # Why: v0.2.1 shipped without hierarchy.json in the wheel because
 # MANIFEST.in didn't include *.json. Consumers (market-data-inputs) had
-# to vendor the file into their own repos as a workaround. v0.2.2 adds
+# to vendor the file into their own repos as a workaround. v0.2.2 added
 # `recursive-include fintekkers *.json` to MANIFEST.in to fix this;
 # this script makes the breakage harder to ship again by failing the
 # release if the wheel ever loses the file.
@@ -31,11 +31,16 @@ if [[ ! -f "${PY_DIR}/setup.py" ]]; then
 fi
 
 # Build into a temp dist so we don't disturb whatever's in dist/ already.
+# Wipe ledger-models-python/build/ first so setuptools doesn't reuse a
+# cached lib/ from a prior (potentially-broken-MANIFEST) build. Without
+# this wipe, a broken MANIFEST.in change wouldn't surface because the
+# build/lib/ tree from the previous good build still has the file.
 BUILD_DIR="$(mktemp -d)"
 trap 'rm -rf "$BUILD_DIR"' EXIT
 
 (
     cd "$PY_DIR"
+    rm -rf build
     BUILD_VERSION="0.0.0-check" python3 setup.py bdist_wheel \
         --dist-dir "$BUILD_DIR" >/dev/null 2>&1
 )
@@ -46,8 +51,19 @@ if [[ -z "$WHL" ]]; then
     exit 1
 fi
 
-# Inspect the wheel — zip archives expose their file listing via unzip -l.
-if unzip -l "$WHL" 2>/dev/null | grep -q " $EXPECTED_PATH$"; then
+# Inspect the wheel via Python's zipfile module. Earlier revision used
+# `unzip -l "$WHL" 2>/dev/null | grep -q " $EXPECTED_PATH$"` which
+# exhibited non-deterministic match failures (~25% rate, observed up to
+# 5/5 in some sessions) under this script's `set -o pipefail` discipline
+# when run repeatedly on freshly built wheels — the wheel verifiably
+# contained the file, but the pipeline reported no match. Python's
+# zipfile.namelist() check is byte-exact and free of shell-pattern /
+# pipefail hazards (verified 10/10 deterministic in local testing).
+if python3 -c "
+import sys, zipfile
+with zipfile.ZipFile(sys.argv[1]) as z:
+    sys.exit(0 if sys.argv[2] in z.namelist() else 1)
+" "$WHL" "$EXPECTED_PATH"; then
     echo "OK: $EXPECTED_PATH present in $(basename "$WHL")"
     exit 0
 fi
@@ -61,7 +77,7 @@ echo "  1. Verify MANIFEST.in includes 'recursive-include fintekkers *.json'." >
 echo "  2. Verify ledger-models-python/fintekkers/wrappers/models/security/hierarchy.json" >&2
 echo "     exists (run ./sync-hierarchy-mirrors.sh from the repo root)." >&2
 echo "  3. Re-build: rm -rf dist build; BUILD_VERSION=test python3 setup.py bdist_wheel" >&2
-echo "  4. Re-inspect: unzip -l dist/*.whl | grep hierarchy.json" >&2
+echo "  4. Re-inspect: python3 -m zipfile -l dist/*.whl | grep hierarchy.json" >&2
 echo "" >&2
 echo "Background: v0.2.1 shipped without hierarchy.json, forcing consumers to" >&2
 echo "vendor it. v0.2.2 fixed MANIFEST.in. This guard prevents regressing." >&2
