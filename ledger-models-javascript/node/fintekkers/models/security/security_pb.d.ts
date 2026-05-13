@@ -13,7 +13,6 @@ import * as fintekkers_models_security_identifier_identifier_pb from "../../../f
 import * as fintekkers_models_security_bond_issuance_pb from "../../../fintekkers/models/security/bond/issuance_pb";
 import * as fintekkers_models_security_product_type_pb from "../../../fintekkers/models/security/product_type_pb";
 import * as fintekkers_models_security_instrument_type_pb from "../../../fintekkers/models/security/instrument_type_pb";
-import * as fintekkers_models_security_security_id_pb from "../../../fintekkers/models/security/security_id_pb";
 import * as fintekkers_models_security_security_quantity_type_pb from "../../../fintekkers/models/security/security_quantity_type_pb";
 import * as fintekkers_models_security_coupon_frequency_pb from "../../../fintekkers/models/security/coupon_frequency_pb";
 import * as fintekkers_models_security_coupon_type_pb from "../../../fintekkers/models/security/coupon_type_pb";
@@ -51,9 +50,9 @@ export class SecurityProto extends jspb.Message {
     getInstrumentType(): fintekkers_models_security_instrument_type_pb.InstrumentTypeProto;
     setInstrumentType(value: fintekkers_models_security_instrument_type_pb.InstrumentTypeProto): SecurityProto;
     clearLegsList(): void;
-    getLegsList(): Array<fintekkers_models_security_security_id_pb.SecurityIdProto>;
-    setLegsList(value: Array<fintekkers_models_security_security_id_pb.SecurityIdProto>): SecurityProto;
-    addLegs(value?: fintekkers_models_security_security_id_pb.SecurityIdProto, index?: number): fintekkers_models_security_security_id_pb.SecurityIdProto;
+    getLegsList(): Array<SecurityProto>;
+    setLegsList(value: Array<SecurityProto>): SecurityProto;
+    addLegs(value?: SecurityProto, index?: number): SecurityProto;
 
     hasDeletedAt(): boolean;
     clearDeletedAt(): void;
@@ -198,7 +197,7 @@ export namespace SecurityProto {
         validTo?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         productType: fintekkers_models_security_product_type_pb.ProductTypeProto,
         instrumentType: fintekkers_models_security_instrument_type_pb.InstrumentTypeProto,
-        legsList: Array<fintekkers_models_security_security_id_pb.SecurityIdProto.AsObject>,
+        legsList: Array<SecurityProto.AsObject>,
         deletedAt?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         assetClass: string,
         issuerName: string,
@@ -449,6 +448,10 @@ export namespace FrnDetailsProto {
 export class IndexDetailsProto extends jspb.Message { 
     getIndexType(): fintekkers_models_security_index_index_type_pb.IndexTypeProto;
     setIndexType(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): IndexDetailsProto;
+    clearConstituentsList(): void;
+    getConstituentsList(): Array<SecurityProto>;
+    setConstituentsList(value: Array<SecurityProto>): IndexDetailsProto;
+    addConstituents(value?: SecurityProto, index?: number): SecurityProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): IndexDetailsProto.AsObject;
@@ -463,6 +466,7 @@ export class IndexDetailsProto extends jspb.Message {
 export namespace IndexDetailsProto {
     export type AsObject = {
         indexType: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
+        constituentsList: Array<SecurityProto.AsObject>,
     }
 }
 

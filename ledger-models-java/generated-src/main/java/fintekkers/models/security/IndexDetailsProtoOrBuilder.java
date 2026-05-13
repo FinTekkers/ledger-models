@@ -17,4 +17,68 @@ public interface IndexDetailsProtoOrBuilder extends
    * @return The indexType.
    */
   fintekkers.models.security.index.IndexTypeProto getIndexType();
+
+  /**
+   * <pre>
+   * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+   * resolver computes constituents for the request asOf. Each constituent
+   * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+   * full security via SecurityService.GetByIds).
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+   */
+  java.util.List<fintekkers.models.security.SecurityProto> 
+      getConstituentsList();
+  /**
+   * <pre>
+   * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+   * resolver computes constituents for the request asOf. Each constituent
+   * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+   * full security via SecurityService.GetByIds).
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+   */
+  fintekkers.models.security.SecurityProto getConstituents(int index);
+  /**
+   * <pre>
+   * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+   * resolver computes constituents for the request asOf. Each constituent
+   * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+   * full security via SecurityService.GetByIds).
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+   */
+  int getConstituentsCount();
+  /**
+   * <pre>
+   * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+   * resolver computes constituents for the request asOf. Each constituent
+   * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+   * full security via SecurityService.GetByIds).
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+   */
+  java.util.List<? extends fintekkers.models.security.SecurityProtoOrBuilder> 
+      getConstituentsOrBuilderList();
+  /**
+   * <pre>
+   * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+   * resolver computes constituents for the request asOf. Each constituent
+   * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+   * full security via SecurityService.GetByIds).
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+   */
+  fintekkers.models.security.SecurityProtoOrBuilder getConstituentsOrBuilder(
+      int index);
 }

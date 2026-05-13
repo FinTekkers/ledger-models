@@ -37,8 +37,6 @@ var fintekkers_models_security_product_type_pb = require('../../../fintekkers/mo
 goog.object.extend(proto, fintekkers_models_security_product_type_pb);
 var fintekkers_models_security_instrument_type_pb = require('../../../fintekkers/models/security/instrument_type_pb.js');
 goog.object.extend(proto, fintekkers_models_security_instrument_type_pb);
-var fintekkers_models_security_security_id_pb = require('../../../fintekkers/models/security/security_id_pb.js');
-goog.object.extend(proto, fintekkers_models_security_security_id_pb);
 var fintekkers_models_security_security_quantity_type_pb = require('../../../fintekkers/models/security/security_quantity_type_pb.js');
 goog.object.extend(proto, fintekkers_models_security_security_quantity_type_pb);
 var fintekkers_models_security_coupon_frequency_pb = require('../../../fintekkers/models/security/coupon_frequency_pb.js');
@@ -151,7 +149,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.fintekkers.models.security.IndexDetailsProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.fintekkers.models.security.IndexDetailsProto.repeatedFields_, null);
 };
 goog.inherits(proto.fintekkers.models.security.IndexDetailsProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -304,7 +302,7 @@ proto.fintekkers.models.security.SecurityProto.toObject = function(includeInstan
     productType: jspb.Message.getFieldWithDefault(msg, 10, 0),
     instrumentType: jspb.Message.getFieldWithDefault(msg, 16, 0),
     legsList: jspb.Message.toObjectList(msg.getLegsList(),
-    fintekkers_models_security_security_id_pb.SecurityIdProto.toObject, includeInstance),
+    proto.fintekkers.models.security.SecurityProto.toObject, includeInstance),
     deletedAt: (f = msg.getDeletedAt()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     assetClass: jspb.Message.getFieldWithDefault(msg, 11, ""),
     issuerName: jspb.Message.getFieldWithDefault(msg, 12, ""),
@@ -415,8 +413,8 @@ proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader = fun
       msg.setInstrumentType(value);
       break;
     case 17:
-      var value = new fintekkers_models_security_security_id_pb.SecurityIdProto;
-      reader.readMessage(value,fintekkers_models_security_security_id_pb.SecurityIdProto.deserializeBinaryFromReader);
+      var value = new proto.fintekkers.models.security.SecurityProto;
+      reader.readMessage(value,proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader);
       msg.addLegs(value);
       break;
     case 15:
@@ -664,7 +662,7 @@ proto.fintekkers.models.security.SecurityProto.serializeBinaryToWriter = functio
     writer.writeRepeatedMessage(
       17,
       f,
-      fintekkers_models_security_security_id_pb.SecurityIdProto.serializeBinaryToWriter
+      proto.fintekkers.models.security.SecurityProto.serializeBinaryToWriter
     );
   }
   f = message.getDeletedAt();
@@ -1146,17 +1144,17 @@ proto.fintekkers.models.security.SecurityProto.prototype.setInstrumentType = fun
 
 
 /**
- * repeated SecurityIdProto legs = 17;
- * @return {!Array<!proto.fintekkers.models.security.SecurityIdProto>}
+ * repeated SecurityProto legs = 17;
+ * @return {!Array<!proto.fintekkers.models.security.SecurityProto>}
  */
 proto.fintekkers.models.security.SecurityProto.prototype.getLegsList = function() {
-  return /** @type{!Array<!proto.fintekkers.models.security.SecurityIdProto>} */ (
-    jspb.Message.getRepeatedWrapperField(this, fintekkers_models_security_security_id_pb.SecurityIdProto, 17));
+  return /** @type{!Array<!proto.fintekkers.models.security.SecurityProto>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.fintekkers.models.security.SecurityProto, 17));
 };
 
 
 /**
- * @param {!Array<!proto.fintekkers.models.security.SecurityIdProto>} value
+ * @param {!Array<!proto.fintekkers.models.security.SecurityProto>} value
  * @return {!proto.fintekkers.models.security.SecurityProto} returns this
 */
 proto.fintekkers.models.security.SecurityProto.prototype.setLegsList = function(value) {
@@ -1165,12 +1163,12 @@ proto.fintekkers.models.security.SecurityProto.prototype.setLegsList = function(
 
 
 /**
- * @param {!proto.fintekkers.models.security.SecurityIdProto=} opt_value
+ * @param {!proto.fintekkers.models.security.SecurityProto=} opt_value
  * @param {number=} opt_index
- * @return {!proto.fintekkers.models.security.SecurityIdProto}
+ * @return {!proto.fintekkers.models.security.SecurityProto}
  */
 proto.fintekkers.models.security.SecurityProto.prototype.addLegs = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 17, opt_value, proto.fintekkers.models.security.SecurityIdProto, opt_index);
+  return jspb.Message.addToRepeatedWrapperField(this, 17, opt_value, proto.fintekkers.models.security.SecurityProto, opt_index);
 };
 
 
@@ -3792,6 +3790,13 @@ proto.fintekkers.models.security.FrnDetailsProto.prototype.setResetFrequency = f
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.fintekkers.models.security.IndexDetailsProto.repeatedFields_ = [2];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -3823,7 +3828,9 @@ proto.fintekkers.models.security.IndexDetailsProto.prototype.toObject = function
  */
 proto.fintekkers.models.security.IndexDetailsProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    indexType: jspb.Message.getFieldWithDefault(msg, 1, 0)
+    indexType: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    constituentsList: jspb.Message.toObjectList(msg.getConstituentsList(),
+    proto.fintekkers.models.security.SecurityProto.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -3864,6 +3871,11 @@ proto.fintekkers.models.security.IndexDetailsProto.deserializeBinaryFromReader =
       var value = /** @type {!proto.fintekkers.models.security.index.IndexTypeProto} */ (reader.readEnum());
       msg.setIndexType(value);
       break;
+    case 2:
+      var value = new proto.fintekkers.models.security.SecurityProto;
+      reader.readMessage(value,proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader);
+      msg.addConstituents(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -3900,6 +3912,14 @@ proto.fintekkers.models.security.IndexDetailsProto.serializeBinaryToWriter = fun
       f
     );
   }
+  f = message.getConstituentsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      2,
+      f,
+      proto.fintekkers.models.security.SecurityProto.serializeBinaryToWriter
+    );
+  }
 };
 
 
@@ -3918,6 +3938,44 @@ proto.fintekkers.models.security.IndexDetailsProto.prototype.getIndexType = func
  */
 proto.fintekkers.models.security.IndexDetailsProto.prototype.setIndexType = function(value) {
   return jspb.Message.setProto3EnumField(this, 1, value);
+};
+
+
+/**
+ * repeated SecurityProto constituents = 2;
+ * @return {!Array<!proto.fintekkers.models.security.SecurityProto>}
+ */
+proto.fintekkers.models.security.IndexDetailsProto.prototype.getConstituentsList = function() {
+  return /** @type{!Array<!proto.fintekkers.models.security.SecurityProto>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.fintekkers.models.security.SecurityProto, 2));
+};
+
+
+/**
+ * @param {!Array<!proto.fintekkers.models.security.SecurityProto>} value
+ * @return {!proto.fintekkers.models.security.IndexDetailsProto} returns this
+*/
+proto.fintekkers.models.security.IndexDetailsProto.prototype.setConstituentsList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.security.SecurityProto=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.fintekkers.models.security.SecurityProto}
+ */
+proto.fintekkers.models.security.IndexDetailsProto.prototype.addConstituents = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.fintekkers.models.security.SecurityProto, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.fintekkers.models.security.IndexDetailsProto} returns this
+ */
+proto.fintekkers.models.security.IndexDetailsProto.prototype.clearConstituentsList = function() {
+  return this.setConstituentsList([]);
 };
 
 

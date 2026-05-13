@@ -8,6 +8,31 @@ declare class Security {
     proto: SecurityProto;
     constructor(proto: SecurityProto);
     /**
+     * Build a SecurityProto link reference (is_link=true) with uuid and as_of
+     * populated. Use this whenever you embed a Security inside another message
+     * that itself carries an as_of (Position, Transaction, Price, etc.) — the
+     * link MUST carry the same as_of as the parent so the resolver hydrates
+     * the correct point-in-time vintage. See docs/adr/is_link_pattern.md.
+     *
+     * @param uuid The Security UUID to reference.
+     * @param asOf The as-of timestamp; required. For "always latest" semantics
+     *             use linkOfLatest(uuid) instead.
+     */
+    static linkOf(uuid: UUID, asOf: ZonedDateTime): SecurityProto;
+    /**
+     * Build a SecurityProto link reference (is_link=true) with only uuid set.
+     * Resolution returns the latest version. Explicit escape hatch — most
+     * callers should prefer linkOf(uuid, asOf).
+     */
+    static linkOfLatest(uuid: UUID): SecurityProto;
+    private static _uuidToProto;
+    private static _zonedDateTimeToProto;
+    /**
+     * Throws if this Security is in link mode. Use to guard accessors that
+     * would otherwise return proto3 default values on a link reference.
+     */
+    private assertNotLink;
+    /**
      * Factory method to create the appropriate Security subclass based on security type
      */
     static create(proto: SecurityProto): Security;

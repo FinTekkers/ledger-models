@@ -37,6 +37,17 @@ public enum IdentifierTypeProto
    */
   SERIES_ID(6),
   /**
+   * <pre>
+   * Identifier for index securities (e.g. 'US Treasury Curve', 'S&amp;P 500',
+   * 'CDX.NA.IG'). Used when productType is one of the *_INDEX leaves and
+   * there's no exchange-listed ticker or ISIN that uniquely identifies
+   * the index. Added per second-brain#268.
+   * </pre>
+   *
+   * <code>INDEX_NAME = 7;</code>
+   */
+  INDEX_NAME(7),
+  /**
    * <code>CASH = 50;</code>
    */
   CASH(50),
@@ -71,6 +82,17 @@ public enum IdentifierTypeProto
    * <code>SERIES_ID = 6;</code>
    */
   public static final int SERIES_ID_VALUE = 6;
+  /**
+   * <pre>
+   * Identifier for index securities (e.g. 'US Treasury Curve', 'S&amp;P 500',
+   * 'CDX.NA.IG'). Used when productType is one of the *_INDEX leaves and
+   * there's no exchange-listed ticker or ISIN that uniquely identifies
+   * the index. Added per second-brain#268.
+   * </pre>
+   *
+   * <code>INDEX_NAME = 7;</code>
+   */
+  public static final int INDEX_NAME_VALUE = 7;
   /**
    * <code>CASH = 50;</code>
    */
@@ -108,6 +130,7 @@ public enum IdentifierTypeProto
       case 4: return OSI;
       case 5: return FIGI;
       case 6: return SERIES_ID;
+      case 7: return INDEX_NAME;
       case 50: return CASH;
       default: return null;
     }

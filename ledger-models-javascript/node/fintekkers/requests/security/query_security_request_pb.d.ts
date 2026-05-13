@@ -30,6 +30,8 @@ export class QuerySecurityRequestProto extends jspb.Message {
     setAsOf(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): QuerySecurityRequestProto;
     getNameFilter(): string;
     setNameFilter(value: string): QuerySecurityRequestProto;
+    getLookthrough(): boolean;
+    setLookthrough(value: boolean): QuerySecurityRequestProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QuerySecurityRequestProto.AsObject;
@@ -49,5 +51,6 @@ export namespace QuerySecurityRequestProto {
         searchSecurityInput?: fintekkers_models_position_position_filter_pb.PositionFilterProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         nameFilter: string,
+        lookthrough: boolean,
     }
 }

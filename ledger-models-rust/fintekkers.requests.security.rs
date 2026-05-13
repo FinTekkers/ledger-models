@@ -98,6 +98,13 @@ pub struct QuerySecurityRequestProto {
     /// Empty string means no filter (return all).
     #[prost(string, tag = "24")]
     pub name_filter: ::prost::alloc::string::String,
+    /// When true, the server populates IndexDetailsProto.constituents on
+    /// returned index securities (productType=*_INDEX) by running its
+    /// registered resolver against the request asOf. Default false:
+    /// index securities are returned without constituents (back-compat).
+    /// Added per second-brain#268.
+    #[prost(bool, tag = "25")]
+    pub lookthrough: bool,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

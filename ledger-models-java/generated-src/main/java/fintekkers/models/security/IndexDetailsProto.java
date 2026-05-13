@@ -5,7 +5,7 @@ package fintekkers.models.security;
 
 /**
  * <pre>
- * Index security details (e.g. CPI-U, SOFR index).
+ * Index security details (e.g. CPI-U, SOFR index, S&amp;P 500).
  * </pre>
  *
  * Protobuf type {@code fintekkers.models.security.IndexDetailsProto}
@@ -21,6 +21,7 @@ private static final long serialVersionUID = 0L;
   }
   private IndexDetailsProto() {
     indexType_ = 0;
+    constituents_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -66,6 +67,87 @@ private static final long serialVersionUID = 0L;
     return result == null ? fintekkers.models.security.index.IndexTypeProto.UNRECOGNIZED : result;
   }
 
+  public static final int CONSTITUENTS_FIELD_NUMBER = 2;
+  @SuppressWarnings("serial")
+  private java.util.List<fintekkers.models.security.SecurityProto> constituents_;
+  /**
+   * <pre>
+   * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+   * resolver computes constituents for the request asOf. Each constituent
+   * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+   * full security via SecurityService.GetByIds).
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+   */
+  @java.lang.Override
+  public java.util.List<fintekkers.models.security.SecurityProto> getConstituentsList() {
+    return constituents_;
+  }
+  /**
+   * <pre>
+   * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+   * resolver computes constituents for the request asOf. Each constituent
+   * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+   * full security via SecurityService.GetByIds).
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends fintekkers.models.security.SecurityProtoOrBuilder> 
+      getConstituentsOrBuilderList() {
+    return constituents_;
+  }
+  /**
+   * <pre>
+   * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+   * resolver computes constituents for the request asOf. Each constituent
+   * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+   * full security via SecurityService.GetByIds).
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+   */
+  @java.lang.Override
+  public int getConstituentsCount() {
+    return constituents_.size();
+  }
+  /**
+   * <pre>
+   * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+   * resolver computes constituents for the request asOf. Each constituent
+   * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+   * full security via SecurityService.GetByIds).
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.SecurityProto getConstituents(int index) {
+    return constituents_.get(index);
+  }
+  /**
+   * <pre>
+   * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+   * resolver computes constituents for the request asOf. Each constituent
+   * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+   * full security via SecurityService.GetByIds).
+   * See docs/adr/is_link_pattern.md.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.SecurityProtoOrBuilder getConstituentsOrBuilder(
+      int index) {
+    return constituents_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -83,6 +165,9 @@ private static final long serialVersionUID = 0L;
     if (indexType_ != fintekkers.models.security.index.IndexTypeProto.UNKNOWN_INDEX_TYPE.getNumber()) {
       output.writeEnum(1, indexType_);
     }
+    for (int i = 0; i < constituents_.size(); i++) {
+      output.writeMessage(2, constituents_.get(i));
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -95,6 +180,10 @@ private static final long serialVersionUID = 0L;
     if (indexType_ != fintekkers.models.security.index.IndexTypeProto.UNKNOWN_INDEX_TYPE.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(1, indexType_);
+    }
+    for (int i = 0; i < constituents_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(2, constituents_.get(i));
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -112,6 +201,8 @@ private static final long serialVersionUID = 0L;
     fintekkers.models.security.IndexDetailsProto other = (fintekkers.models.security.IndexDetailsProto) obj;
 
     if (indexType_ != other.indexType_) return false;
+    if (!getConstituentsList()
+        .equals(other.getConstituentsList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -125,6 +216,10 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + INDEX_TYPE_FIELD_NUMBER;
     hash = (53 * hash) + indexType_;
+    if (getConstituentsCount() > 0) {
+      hash = (37 * hash) + CONSTITUENTS_FIELD_NUMBER;
+      hash = (53 * hash) + getConstituentsList().hashCode();
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -222,7 +317,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Index security details (e.g. CPI-U, SOFR index).
+   * Index security details (e.g. CPI-U, SOFR index, S&amp;P 500).
    * </pre>
    *
    * Protobuf type {@code fintekkers.models.security.IndexDetailsProto}
@@ -259,6 +354,13 @@ private static final long serialVersionUID = 0L;
       super.clear();
       bitField0_ = 0;
       indexType_ = 0;
+      if (constituentsBuilder_ == null) {
+        constituents_ = java.util.Collections.emptyList();
+      } else {
+        constituents_ = null;
+        constituentsBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
 
@@ -285,9 +387,22 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.models.security.IndexDetailsProto buildPartial() {
       fintekkers.models.security.IndexDetailsProto result = new fintekkers.models.security.IndexDetailsProto(this);
+      buildPartialRepeatedFields(result);
       if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
+    }
+
+    private void buildPartialRepeatedFields(fintekkers.models.security.IndexDetailsProto result) {
+      if (constituentsBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0)) {
+          constituents_ = java.util.Collections.unmodifiableList(constituents_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.constituents_ = constituents_;
+      } else {
+        result.constituents_ = constituentsBuilder_.build();
+      }
     }
 
     private void buildPartial0(fintekkers.models.security.IndexDetailsProto result) {
@@ -344,6 +459,32 @@ private static final long serialVersionUID = 0L;
       if (other.indexType_ != 0) {
         setIndexTypeValue(other.getIndexTypeValue());
       }
+      if (constituentsBuilder_ == null) {
+        if (!other.constituents_.isEmpty()) {
+          if (constituents_.isEmpty()) {
+            constituents_ = other.constituents_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureConstituentsIsMutable();
+            constituents_.addAll(other.constituents_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.constituents_.isEmpty()) {
+          if (constituentsBuilder_.isEmpty()) {
+            constituentsBuilder_.dispose();
+            constituentsBuilder_ = null;
+            constituents_ = other.constituents_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+            constituentsBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getConstituentsFieldBuilder() : null;
+          } else {
+            constituentsBuilder_.addAllMessages(other.constituents_);
+          }
+        }
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -375,6 +516,19 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000001;
               break;
             } // case 8
+            case 18: {
+              fintekkers.models.security.SecurityProto m =
+                  input.readMessage(
+                      fintekkers.models.security.SecurityProto.parser(),
+                      extensionRegistry);
+              if (constituentsBuilder_ == null) {
+                ensureConstituentsIsMutable();
+                constituents_.add(m);
+              } else {
+                constituentsBuilder_.addMessage(m);
+              }
+              break;
+            } // case 18
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -443,6 +597,390 @@ private static final long serialVersionUID = 0L;
       indexType_ = 0;
       onChanged();
       return this;
+    }
+
+    private java.util.List<fintekkers.models.security.SecurityProto> constituents_ =
+      java.util.Collections.emptyList();
+    private void ensureConstituentsIsMutable() {
+      if (!((bitField0_ & 0x00000002) != 0)) {
+        constituents_ = new java.util.ArrayList<fintekkers.models.security.SecurityProto>(constituents_);
+        bitField0_ |= 0x00000002;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> constituentsBuilder_;
+
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public java.util.List<fintekkers.models.security.SecurityProto> getConstituentsList() {
+      if (constituentsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(constituents_);
+      } else {
+        return constituentsBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public int getConstituentsCount() {
+      if (constituentsBuilder_ == null) {
+        return constituents_.size();
+      } else {
+        return constituentsBuilder_.getCount();
+      }
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public fintekkers.models.security.SecurityProto getConstituents(int index) {
+      if (constituentsBuilder_ == null) {
+        return constituents_.get(index);
+      } else {
+        return constituentsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public Builder setConstituents(
+        int index, fintekkers.models.security.SecurityProto value) {
+      if (constituentsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureConstituentsIsMutable();
+        constituents_.set(index, value);
+        onChanged();
+      } else {
+        constituentsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public Builder setConstituents(
+        int index, fintekkers.models.security.SecurityProto.Builder builderForValue) {
+      if (constituentsBuilder_ == null) {
+        ensureConstituentsIsMutable();
+        constituents_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        constituentsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public Builder addConstituents(fintekkers.models.security.SecurityProto value) {
+      if (constituentsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureConstituentsIsMutable();
+        constituents_.add(value);
+        onChanged();
+      } else {
+        constituentsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public Builder addConstituents(
+        int index, fintekkers.models.security.SecurityProto value) {
+      if (constituentsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureConstituentsIsMutable();
+        constituents_.add(index, value);
+        onChanged();
+      } else {
+        constituentsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public Builder addConstituents(
+        fintekkers.models.security.SecurityProto.Builder builderForValue) {
+      if (constituentsBuilder_ == null) {
+        ensureConstituentsIsMutable();
+        constituents_.add(builderForValue.build());
+        onChanged();
+      } else {
+        constituentsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public Builder addConstituents(
+        int index, fintekkers.models.security.SecurityProto.Builder builderForValue) {
+      if (constituentsBuilder_ == null) {
+        ensureConstituentsIsMutable();
+        constituents_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        constituentsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public Builder addAllConstituents(
+        java.lang.Iterable<? extends fintekkers.models.security.SecurityProto> values) {
+      if (constituentsBuilder_ == null) {
+        ensureConstituentsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, constituents_);
+        onChanged();
+      } else {
+        constituentsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public Builder clearConstituents() {
+      if (constituentsBuilder_ == null) {
+        constituents_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+      } else {
+        constituentsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public Builder removeConstituents(int index) {
+      if (constituentsBuilder_ == null) {
+        ensureConstituentsIsMutable();
+        constituents_.remove(index);
+        onChanged();
+      } else {
+        constituentsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public fintekkers.models.security.SecurityProto.Builder getConstituentsBuilder(
+        int index) {
+      return getConstituentsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public fintekkers.models.security.SecurityProtoOrBuilder getConstituentsOrBuilder(
+        int index) {
+      if (constituentsBuilder_ == null) {
+        return constituents_.get(index);  } else {
+        return constituentsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public java.util.List<? extends fintekkers.models.security.SecurityProtoOrBuilder> 
+         getConstituentsOrBuilderList() {
+      if (constituentsBuilder_ != null) {
+        return constituentsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(constituents_);
+      }
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public fintekkers.models.security.SecurityProto.Builder addConstituentsBuilder() {
+      return getConstituentsFieldBuilder().addBuilder(
+          fintekkers.models.security.SecurityProto.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public fintekkers.models.security.SecurityProto.Builder addConstituentsBuilder(
+        int index) {
+      return getConstituentsFieldBuilder().addBuilder(
+          index, fintekkers.models.security.SecurityProto.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     * Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+     * resolver computes constituents for the request asOf. Each constituent
+     * is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+     * full security via SecurityService.GetByIds).
+     * See docs/adr/is_link_pattern.md.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.models.security.SecurityProto constituents = 2;</code>
+     */
+    public java.util.List<fintekkers.models.security.SecurityProto.Builder> 
+         getConstituentsBuilderList() {
+      return getConstituentsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> 
+        getConstituentsFieldBuilder() {
+      if (constituentsBuilder_ == null) {
+        constituentsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder>(
+                constituents_,
+                ((bitField0_ & 0x00000002) != 0),
+                getParentForChildren(),
+                isClean());
+        constituents_ = null;
+      }
+      return constituentsBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

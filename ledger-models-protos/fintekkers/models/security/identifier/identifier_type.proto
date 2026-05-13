@@ -14,6 +14,11 @@ enum IdentifierTypeProto {
   OSI=4;
   FIGI=5;
   SERIES_ID=6;
+  // Identifier for index securities (e.g. 'US Treasury Curve', 'S&P 500',
+  // 'CDX.NA.IG'). Used when productType is one of the *_INDEX leaves and
+  // there's no exchange-listed ticker or ISIN that uniquely identifies
+  // the index. Added per second-brain#268.
+  INDEX_NAME=7;
 
   CASH=50;
 }

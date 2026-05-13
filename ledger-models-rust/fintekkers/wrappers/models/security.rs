@@ -1,7 +1,9 @@
 use crate::fintekkers::models::security::{SecurityProto, ProductTypeProto};
+use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
+use uuid::Uuid;
 
 //Imports below are for RawDataModelObject related macro. IDE might not complain if you remove
 //them but will fail at compile time
@@ -20,6 +22,73 @@ impl SecurityWrapper {
 
     pub fn uuid_wrapper(&self) -> UUIDWrapper {
         UUIDWrapper::new(self.proto.uuid.as_ref().unwrap().clone())
+    }
+
+    /// True iff the wrapped proto is a link reference (is_link=true).
+    /// When true, only `uuid` (and optionally `as_of`) is meaningful;
+    /// other accessors panic to force resolution via SecurityService.
+    /// See docs/adr/is_link_pattern.md.
+    pub fn is_link(&self) -> bool {
+        self.proto.is_link
+    }
+
+    fn assert_not_link(&self, accessor: &str) {
+        if self.proto.is_link {
+            panic!(
+                "Cannot read {} on a link-mode SecurityWrapper (is_link=true). \
+                 Resolve via SecurityService::get_by_ids first. \
+                 See docs/adr/is_link_pattern.md.",
+                accessor
+            );
+        }
+    }
+
+    /// Returns the product_type i32; panics if this is a link.
+    pub fn product_type_i32(&self) -> i32 {
+        self.assert_not_link("product_type");
+        self.proto.product_type
+    }
+
+    pub fn asset_class(&self) -> &str {
+        self.assert_not_link("asset_class");
+        &self.proto.asset_class
+    }
+
+    pub fn issuer_name(&self) -> &str {
+        self.assert_not_link("issuer_name");
+        &self.proto.issuer_name
+    }
+}
+
+fn uuid_proto_from(uuid: Uuid) -> UuidProto {
+    UuidProto { raw_uuid: uuid.as_bytes().to_vec() }
+}
+
+/// Build a SecurityProto link reference (is_link=true) with the given uuid and
+/// as_of populated. Use this whenever you embed a Security inside another
+/// message that itself carries an as_of (Position, Transaction, Price, etc.) —
+/// the link MUST carry the same as_of as the parent so the resolver hydrates
+/// the correct point-in-time vintage. See docs/adr/is_link_pattern.md.
+///
+/// `as_of` is required; for the rare "always-latest" case use
+/// [`link_of_latest`].
+pub fn link_of(uuid: Uuid, as_of: LocalTimestampProto) -> SecurityProto {
+    SecurityProto {
+        is_link: true,
+        uuid: Some(uuid_proto_from(uuid)),
+        as_of: Some(as_of),
+        ..Default::default()
+    }
+}
+
+/// Build a SecurityProto link reference (is_link=true) with only uuid set.
+/// Resolution returns the latest version of the record. Explicit escape hatch
+/// for floats — most callers should prefer [`link_of`].
+pub fn link_of_latest(uuid: Uuid) -> SecurityProto {
+    SecurityProto {
+        is_link: true,
+        uuid: Some(uuid_proto_from(uuid)),
+        ..Default::default()
     }
 }
 
@@ -354,6 +423,7 @@ mod test {
             product_type: ProductTypeProto::EquityIndex as i32,
             product_details: Some(ProductDetails::IndexDetails(IndexDetailsProto {
                 index_type: IndexTypeProto::CpiU as i32,
+                constituents: vec![],
             })),
             ..Default::default()
         };

@@ -94,7 +94,8 @@ proto.fintekkers.requests.security.QuerySecurityRequestProto.toObject = function
     fintekkers_models_util_uuid_pb.UUIDProto.toObject, includeInstance),
     searchSecurityInput: (f = msg.getSearchSecurityInput()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
     asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-    nameFilter: jspb.Message.getFieldWithDefault(msg, 24, "")
+    nameFilter: jspb.Message.getFieldWithDefault(msg, 24, ""),
+    lookthrough: jspb.Message.getBooleanFieldWithDefault(msg, 25, false)
   };
 
   if (includeInstance) {
@@ -157,6 +158,10 @@ proto.fintekkers.requests.security.QuerySecurityRequestProto.deserializeBinaryFr
     case 24:
       var value = /** @type {string} */ (reader.readString());
       msg.setNameFilter(value);
+      break;
+    case 25:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setLookthrough(value);
       break;
     default:
       reader.skipField();
@@ -229,6 +234,13 @@ proto.fintekkers.requests.security.QuerySecurityRequestProto.serializeBinaryToWr
   if (f.length > 0) {
     writer.writeString(
       24,
+      f
+    );
+  }
+  f = message.getLookthrough();
+  if (f) {
+    writer.writeBool(
+      25,
       f
     );
   }
@@ -398,6 +410,24 @@ proto.fintekkers.requests.security.QuerySecurityRequestProto.prototype.getNameFi
  */
 proto.fintekkers.requests.security.QuerySecurityRequestProto.prototype.setNameFilter = function(value) {
   return jspb.Message.setProto3StringField(this, 24, value);
+};
+
+
+/**
+ * optional bool lookthrough = 25;
+ * @return {boolean}
+ */
+proto.fintekkers.requests.security.QuerySecurityRequestProto.prototype.getLookthrough = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 25, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.fintekkers.requests.security.QuerySecurityRequestProto} returns this
+ */
+proto.fintekkers.requests.security.QuerySecurityRequestProto.prototype.setLookthrough = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 25, value);
 };
 
 

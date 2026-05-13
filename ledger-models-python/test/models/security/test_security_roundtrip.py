@@ -197,3 +197,121 @@ class TestSecurityProtoRoundTrip:
         assert parsed.description == "US CPI-U All Urban Consumers"
         assert parsed.index_type == index_type_pb2.CPI_U
         assert parsed.identifier.identifier_value == "CPI-U"
+
+
+# ---------- v0.2.5: link helpers + constituents + wire-compat ----------
+
+class TestV025LinkHelpersAndConstituents:
+    def test_link_of_populates_uuid_and_as_of_and_sets_is_link(self):
+        from fintekkers.wrappers.models.security.security import Security
+        from uuid import uuid4
+        from datetime import datetime, timezone
+
+        uid = uuid4()
+        as_of = datetime(2025, 1, 15, 12, 0, 0, tzinfo=timezone.utc)
+        link = Security.link_of(uid, as_of)
+
+        assert link.is_link is True
+        assert bytes(link.uuid.raw_uuid) == uid.bytes
+        assert link.HasField("as_of")
+        # No other fields populated
+        assert link.asset_class == ""
+        assert link.issuer_name == ""
+
+    def test_link_of_latest_skips_as_of(self):
+        from fintekkers.wrappers.models.security.security import Security
+        from uuid import uuid4
+
+        uid = uuid4()
+        link = Security.link_of_latest(uid)
+        assert link.is_link is True
+        assert bytes(link.uuid.raw_uuid) == uid.bytes
+        assert not link.HasField("as_of"), \
+            "link_of_latest must leave as_of unset (resolver returns latest)"
+
+    def test_link_of_requires_as_of(self):
+        from fintekkers.wrappers.models.security.security import Security
+        from uuid import uuid4
+
+        with pytest.raises(ValueError, match="as_of is required"):
+            Security.link_of(uuid4(), None)
+
+    def test_is_link_reads_proto_flag(self):
+        from fintekkers.wrappers.models.security.security import Security
+        from uuid import uuid4
+        from datetime import datetime, timezone
+
+        full = Security(security_pb2.SecurityProto())
+        assert full.is_link() is False
+
+        link_proto = Security.link_of(uuid4(),
+                                       datetime(2025, 1, 1, tzinfo=timezone.utc))
+        link = Security(link_proto)
+        assert link.is_link() is True
+
+    def test_accessors_raise_on_link(self):
+        from fintekkers.wrappers.models.security.security import Security
+        from uuid import uuid4
+        from datetime import datetime, timezone
+
+        link = Security(Security.link_of(
+            uuid4(), datetime(2025, 1, 1, tzinfo=timezone.utc)))
+
+        with pytest.raises(RuntimeError, match="link-mode"):
+            link.get_asset_class()
+        with pytest.raises(RuntimeError, match="link-mode"):
+            link.get_product_type_proto()
+        with pytest.raises(RuntimeError, match="link-mode"):
+            link.get_security_id()
+
+    def test_link_round_trips_via_serialize(self):
+        from fintekkers.wrappers.models.security.security import Security
+        from uuid import uuid4
+        from datetime import datetime, timezone
+
+        uid = uuid4()
+        as_of = datetime(2025, 6, 1, 0, 0, 0, tzinfo=timezone.utc)
+        link = Security.link_of(uid, as_of)
+        parsed = _roundtrip(link)
+        assert parsed.is_link is True
+        assert bytes(parsed.uuid.raw_uuid) == uid.bytes
+
+    def test_index_details_constituents_round_trip(self):
+        from fintekkers.wrappers.models.security.security import Security
+        from uuid import uuid4
+        from datetime import datetime, timezone
+
+        as_of = datetime(2025, 1, 1, tzinfo=timezone.utc)
+        c1 = Security.link_of(uuid4(), as_of)
+        c2 = Security.link_of(uuid4(), as_of)
+
+        index_details = security_pb2.IndexDetailsProto(
+            index_type=index_type_pb2.CPI_U,
+            constituents=[c1, c2],
+        )
+        original = security_pb2.SecurityProto(
+            product_type=product_type_pb2.EQUITY_INDEX,
+            index_details=index_details,
+        )
+
+        parsed = _roundtrip(original)
+        assert len(parsed.index_details.constituents) == 2
+        assert parsed.index_details.constituents[0].is_link is True
+        assert parsed.index_details.constituents[0].HasField("as_of")
+
+    def test_legs_wire_compat_with_legacy_security_id_proto_bytes(self):
+        # SecurityIdProto carried uuid at tag 1 — identical wire format to
+        # SecurityProto.uuid. Build the legacy wire shape by encoding a
+        # SecurityProto with only uuid set; same bytes.
+        from uuid import uuid4
+        from fintekkers.models.util.uuid_pb2 import UUIDProto
+
+        uid = uuid4()
+        legacy = security_pb2.SecurityProto(
+            uuid=UUIDProto(raw_uuid=uid.bytes),
+        )
+        bytes_ = legacy.SerializeToString()
+
+        parsed = security_pb2.SecurityProto()
+        parsed.ParseFromString(bytes_)
+        assert bytes(parsed.uuid.raw_uuid) == uid.bytes

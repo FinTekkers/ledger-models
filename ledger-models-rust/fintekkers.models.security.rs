@@ -8,6 +8,11 @@ pub enum IdentifierTypeProto {
     Osi = 4,
     Figi = 5,
     SeriesId = 6,
+    /// Identifier for index securities (e.g. 'US Treasury Curve', 'S&P 500',
+    /// 'CDX.NA.IG'). Used when productType is one of the *_INDEX leaves and
+    /// there's no exchange-listed ticker or ISIN that uniquely identifies
+    /// the index. Added per second-brain#268.
+    IndexName = 7,
     Cash = 50,
 }
 impl IdentifierTypeProto {
@@ -24,6 +29,7 @@ impl IdentifierTypeProto {
             IdentifierTypeProto::Osi => "OSI",
             IdentifierTypeProto::Figi => "FIGI",
             IdentifierTypeProto::SeriesId => "SERIES_ID",
+            IdentifierTypeProto::IndexName => "INDEX_NAME",
             IdentifierTypeProto::Cash => "CASH",
         }
     }
@@ -37,6 +43,7 @@ impl IdentifierTypeProto {
             "OSI" => Some(Self::Osi),
             "FIGI" => Some(Self::Figi),
             "SERIES_ID" => Some(Self::SeriesId),
+            "INDEX_NAME" => Some(Self::IndexName),
             "CASH" => Some(Self::Cash),
             _ => None,
         }
@@ -244,24 +251,6 @@ impl InstrumentTypeProto {
         }
     }
 }
-/// Lightweight reference to a Security by UUID.
-///
-/// Used for the SecurityProto.legs field (multi-leg strategy packages
-/// where each leg is itself a Security). Unlike SecurityProto with
-/// is_link=true, this carries only the UUID — no settlement currency
-/// echo, no embedded fields. Resolve to a full SecurityProto via
-/// SecurityService.GetByIds.
-///
-/// See hierarchy-examples.md for the multi-leg-strategy pattern: a
-/// strategy Security carries productType=EQUITY_VANILLA (for example)
-/// and a legs list of per-leg Security IDs; cashflows and risk
-/// aggregate over legs.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct SecurityIdProto {
-    #[prost(message, optional, tag = "1")]
-    pub uuid: ::core::option::Option<super::util::UuidProto>,
-}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum SecurityQuantityTypeProto {
@@ -398,12 +387,20 @@ pub struct SecurityProto {
     #[prost(enumeration = "InstrumentTypeProto", tag = "16")]
     pub instrument_type: i32,
     /// Multi-leg strategy package legs — each leg is itself a Security
-    /// identified by UUID. See hierarchy-examples.md for the pattern:
-    /// butterflies, calendar spreads, iron condors, etc. are not
+    /// referenced by UUID using the is_link=true pattern (see
+    /// docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+    /// pattern: butterflies, calendar spreads, iron condors, etc. are not
     /// productTypes; they're a Security whose product_type is the
     /// underlying vanilla type with `legs` populated.
+    ///
+    /// Each leg MUST have is_link=true with uuid and as_of populated.
+    /// Resolve full legs via SecurityService.GetByIds.
+    ///
+    /// WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+    /// SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+    /// Legacy persisted bytes parse correctly under the new type.
     #[prost(message, repeated, tag = "17")]
-    pub legs: ::prost::alloc::vec::Vec<SecurityIdProto>,
+    pub legs: ::prost::alloc::vec::Vec<SecurityProto>,
     /// Soft-delete marker. null/unset = active record; non-null = soft-deleted
     /// at this timestamp. SecurityService.Search and GetByIds filter out
     /// soft-deleted records by default. Setting deleted_at via CreateOrUpdate
@@ -623,12 +620,19 @@ pub struct FrnDetailsProto {
     #[prost(enumeration = "CouponFrequencyProto", tag = "12")]
     pub reset_frequency: i32,
 }
-/// Index security details (e.g. CPI-U, SOFR index).
+/// Index security details (e.g. CPI-U, SOFR index, S&P 500).
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct IndexDetailsProto {
     #[prost(enumeration = "index::IndexTypeProto", tag = "1")]
     pub index_type: i32,
+    /// Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+    /// resolver computes constituents for the request asOf. Each constituent
+    /// is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+    /// full security via SecurityService.GetByIds).
+    /// See docs/adr/is_link_pattern.md.
+    #[prost(message, repeated, tag = "2")]
+    pub constituents: ::prost::alloc::vec::Vec<SecurityProto>,
 }
 /// Equity security details. Minimal for now — placeholder for future fields
 /// (e.g. shares_outstanding, dividend_yield, sector).

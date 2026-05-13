@@ -108,9 +108,11 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
                 builder.setInstrumentType(stash.getInstrumentType());
             }
 
-            // legs (tag 17, repeated SecurityIdProto) — multi-leg strategy
-            // packages. Domain object has no leg accessors today, so the
-            // stash is the only source.
+            // legs (tag 17, repeated SecurityProto in link mode) —
+            // multi-leg strategy packages. Domain object has no leg
+            // accessors today, so the stash is the only source. v0.2.5
+            // migrated the leg element type from SecurityIdProto to
+            // SecurityProto with is_link=true (wire-compatible).
             if (stash.getLegsCount() > 0) {
                 builder.addAllLegs(stash.getLegsList());
             }

@@ -7,8 +7,12 @@ import common.models.postion.Measure;
 import common.models.security.identifier.Identifier;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
+import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
+import fintekkers.models.util.Uuid.UUIDProto;
+import com.google.protobuf.ByteString;
 
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -29,6 +33,83 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         super(id, asOf);
         this.issuer = issuer;
         this.settlementCurrency = settlementCurrency;
+    }
+
+    /**
+     * Build a {@link SecurityProto} link reference (is_link=true) with the given
+     * uuid and as_of populated. Use this whenever you embed a Security inside
+     * another message that itself carries an as_of (Position, Transaction,
+     * Price, etc.) — the link MUST carry the same as_of as the parent so the
+     * resolver hydrates the correct point-in-time vintage. See
+     * docs/adr/is_link_pattern.md for the full pattern.
+     *
+     * @param uuid The Security UUID to reference.
+     * @param asOf The as-of timestamp to embed; must be non-null. For "always
+     *             return the latest version", use {@link #linkOfLatest(UUID)}.
+     * @return A SecurityProto with is_link=true, uuid + as_of populated.
+     */
+    public static SecurityProto linkOf(UUID uuid, ZonedDateTime asOf) {
+        Objects.requireNonNull(uuid, "uuid is required for linkOf");
+        Objects.requireNonNull(asOf, "asOf is required for linkOf; use linkOfLatest(uuid) for latest-version semantics");
+        return SecurityProto.newBuilder()
+                .setIsLink(true)
+                .setUuid(toUuidProto(uuid))
+                .setAsOf(toTimestampProto(asOf))
+                .build();
+    }
+
+    /**
+     * Build a {@link SecurityProto} link reference (is_link=true) with only
+     * uuid populated. Resolution returns the latest version of the record.
+     *
+     * Explicit escape hatch for the rare case where the link is meant to
+     * float to "latest" rather than carry the parent's as_of. Most callers
+     * should prefer {@link #linkOf(UUID, ZonedDateTime)}.
+     */
+    public static SecurityProto linkOfLatest(UUID uuid) {
+        Objects.requireNonNull(uuid, "uuid is required for linkOfLatest");
+        return SecurityProto.newBuilder()
+                .setIsLink(true)
+                .setUuid(toUuidProto(uuid))
+                .build();
+    }
+
+    /**
+     * True iff this Security wraps a link-mode SecurityProto. When true, only
+     * {@link #getID()} and the as_of are meaningful; other field accessors
+     * throw {@link IllegalStateException} to force the caller to resolve the
+     * full entity via SecurityService.GetByIds. See
+     * docs/adr/is_link_pattern.md.
+     */
+    public boolean isLink() {
+        return _sourceProto != null && _sourceProto.getIsLink();
+    }
+
+    private void throwIfLink(String accessor) {
+        if (isLink()) {
+            throw new IllegalStateException(
+                    "Cannot read " + accessor + " on a link-mode Security (is_link=true). "
+                    + "Resolve via SecurityService.GetByIds first. "
+                    + "See docs/adr/is_link_pattern.md.");
+        }
+    }
+
+    private static UUIDProto toUuidProto(UUID uuid) {
+        ByteBuffer bb = ByteBuffer.allocate(16);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        return UUIDProto.newBuilder().setRawUuid(ByteString.copyFrom(bb.array())).build();
+    }
+
+    private static LocalTimestampProto toTimestampProto(ZonedDateTime asOf) {
+        java.time.Instant instant = asOf.toInstant();
+        return LocalTimestampProto.newBuilder()
+                .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build())
+                .setTimeZone(asOf.getZone().getId())
+                .build();
     }
 
     /**
@@ -56,6 +137,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     public CashSecurity getSettlementCurrency() {
+        throwIfLink("settlementCurrency");
         return settlementCurrency;
     }
 
@@ -64,6 +146,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     public String getIssuer() {
+        throwIfLink("issuer");
         return this.issuer;
     }
 
@@ -73,6 +156,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
      * @return Returns unclassified for basic securities, and a suitable value for other security values.
      */
     public String getAssetClass() {
+        throwIfLink("assetClass");
         if (_sourceProto != null && !_sourceProto.getAssetClass().isEmpty()) {
             return _sourceProto.getAssetClass();
         }
@@ -140,6 +224,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
      * for the full product registry.
      */
     public ProductTypeProto getProductType() {
+        throwIfLink("productType");
         if (_sourceProto != null && _sourceProto.getProductType() != ProductTypeProto.PRODUCT_TYPE_UNKNOWN) {
             return _sourceProto.getProductType();
         }
