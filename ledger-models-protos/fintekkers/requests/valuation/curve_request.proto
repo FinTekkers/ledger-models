@@ -85,4 +85,13 @@ message CurveRequestProto {
   // Examples: 0.25 (3M), 0.5 (6M), 1.0 (1Y), 2.0, 3.0, 5.0, 7.0, 10.0, 20.0, 30.0.
   // If empty, the service returns yields only at the observed maturity points.
   repeated fintekkers.models.util.DecimalValueProto tenor_points = 40;
+
+  // Term length, in whole years, for FORWARD_YIELD curve construction.
+  //
+  // When set, FORWARD_YIELD curve result returns f(t, t+T) at annual t for
+  // t in [0, T_max - T]. When unset, existing behavior preserved.
+  //
+  // Annual granularity only (uint32). Added per #264. Only meaningful when
+  // FORWARD_YIELD is among `curve_types`; ignored otherwise.
+  uint32 forward_term_years = 50;
 }

@@ -87,6 +87,15 @@ pub struct CurveRequestProto {
     pub tenor_points: ::prost::alloc::vec::Vec<
         super::super::models::util::DecimalValueProto,
     >,
+    /// Term length, in whole years, for FORWARD_YIELD curve construction.
+    ///
+    /// When set, FORWARD_YIELD curve result returns f(t, t+T) at annual t for
+    /// t in [0, T_max - T]. When unset, existing behavior preserved.
+    ///
+    /// Annual granularity only (uint32). Added per #264. Only meaningful when
+    /// FORWARD_YIELD is among `curve_types`; ignored otherwise.
+    #[prost(uint32, tag = "50")]
+    pub forward_term_years: u32,
 }
 /// A single point on the yield curve: a tenor and its corresponding yield.
 #[allow(clippy::derive_partial_eq_without_eq)]

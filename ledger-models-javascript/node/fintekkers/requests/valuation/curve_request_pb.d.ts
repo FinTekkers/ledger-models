@@ -74,6 +74,8 @@ export class CurveRequestProto extends jspb.Message {
     getTenorPointsList(): Array<fintekkers_models_util_decimal_value_pb.DecimalValueProto>;
     setTenorPointsList(value: Array<fintekkers_models_util_decimal_value_pb.DecimalValueProto>): CurveRequestProto;
     addTenorPoints(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto, index?: number): fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+    getForwardTermYears(): number;
+    setForwardTermYears(value: number): CurveRequestProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): CurveRequestProto.AsObject;
@@ -93,5 +95,6 @@ export namespace CurveRequestProto {
         curveTypesList: Array<fintekkers_models_position_measure_pb.MeasureProto>,
         curveInputsList: Array<CurveInputProto.AsObject>,
         tenorPointsList: Array<fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject>,
+        forwardTermYears: number,
     }
 }
