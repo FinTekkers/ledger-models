@@ -28,6 +28,9 @@ target/**
 #Mac related folders
 .DS_Store
 
+#Local tooling state (Claude Code, etc.)
+.claude/
+
 
 #npm
 node_modules/

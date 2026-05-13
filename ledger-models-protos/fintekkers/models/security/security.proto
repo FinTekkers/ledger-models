@@ -11,7 +11,6 @@ import "fintekkers/models/security/identifier/identifier.proto";
 import "fintekkers/models/security/bond/issuance.proto";
 import "fintekkers/models/security/product_type.proto";
 import "fintekkers/models/security/instrument_type.proto";
-import "fintekkers/models/security/security_id.proto";
 import "fintekkers/models/security/security_quantity_type.proto";
 import "fintekkers/models/security/coupon_frequency.proto";
 import "fintekkers/models/security/coupon_type.proto";
@@ -47,11 +46,19 @@ message SecurityProto {
   InstrumentTypeProto instrument_type = 16;
 
   // Multi-leg strategy package legs — each leg is itself a Security
-  // identified by UUID. See hierarchy-examples.md for the pattern:
-  // butterflies, calendar spreads, iron condors, etc. are not
+  // referenced by UUID using the is_link=true pattern (see
+  // docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+  // pattern: butterflies, calendar spreads, iron condors, etc. are not
   // productTypes; they're a Security whose product_type is the
   // underlying vanilla type with `legs` populated.
-  repeated SecurityIdProto legs = 17;
+  //
+  // Each leg MUST have is_link=true with uuid and as_of populated.
+  // Resolve full legs via SecurityService.GetByIds.
+  //
+  // WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+  // SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+  // Legacy persisted bytes parse correctly under the new type.
+  repeated SecurityProto legs = 17;
 
   // Soft-delete marker. null/unset = active record; non-null = soft-deleted
   // at this timestamp. SecurityService.Search and GetByIds filter out
@@ -176,9 +183,16 @@ message FrnDetailsProto {
   CouponFrequencyProto reset_frequency = 12; //How often the floating coupon rate resets
 }
 
-// Index security details (e.g. CPI-U, SOFR index).
+// Index security details (e.g. CPI-U, SOFR index, S&P 500).
 message IndexDetailsProto {
   fintekkers.models.security.index.IndexTypeProto index_type = 1;
+
+  // Populated when QuerySecurityRequestProto.lookthrough=true. Server-side
+  // resolver computes constituents for the request asOf. Each constituent
+  // is a SecurityProto with is_link=true (uuid + as_of populated; resolve
+  // full security via SecurityService.GetByIds).
+  // See docs/adr/is_link_pattern.md.
+  repeated SecurityProto constituents = 2;
 }
 
 // Equity security details. Minimal for now — placeholder for future fields

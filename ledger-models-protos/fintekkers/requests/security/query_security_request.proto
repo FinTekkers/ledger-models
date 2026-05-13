@@ -25,6 +25,13 @@ message QuerySecurityRequestProto {
   // Case-insensitive substring match on security name (issuer) or identifier (e.g. ticker).
   // Empty string means no filter (return all).
   string name_filter = 24;
+
+  // When true, the server populates IndexDetailsProto.constituents on
+  // returned index securities (productType=*_INDEX) by running its
+  // registered resolver against the request asOf. Default false:
+  // index securities are returned without constituents (back-compat).
+  // Added per second-brain#268.
+  bool lookthrough = 25;
 }
 
 

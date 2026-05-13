@@ -33,6 +33,7 @@ proto.fintekkers.models.security.IdentifierTypeProto = {
   OSI: 4,
   FIGI: 5,
   SERIES_ID: 6,
+  INDEX_NAME: 7,
   CASH: 50
 };
 

@@ -138,4 +138,18 @@ public interface QuerySecurityRequestProtoOrBuilder extends
    */
   com.google.protobuf.ByteString
       getNameFilterBytes();
+
+  /**
+   * <pre>
+   * When true, the server populates IndexDetailsProto.constituents on
+   * returned index securities (productType=*_INDEX) by running its
+   * registered resolver against the request asOf. Default false:
+   * index securities are returned without constituents (back-compat).
+   * Added per second-brain#268.
+   * </pre>
+   *
+   * <code>bool lookthrough = 25;</code>
+   * @return The lookthrough.
+   */
+  boolean getLookthrough();
 }

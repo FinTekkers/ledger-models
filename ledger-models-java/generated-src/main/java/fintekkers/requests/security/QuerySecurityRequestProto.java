@@ -303,6 +303,25 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int LOOKTHROUGH_FIELD_NUMBER = 25;
+  private boolean lookthrough_ = false;
+  /**
+   * <pre>
+   * When true, the server populates IndexDetailsProto.constituents on
+   * returned index securities (productType=*_INDEX) by running its
+   * registered resolver against the request asOf. Default false:
+   * index securities are returned without constituents (back-compat).
+   * Added per second-brain#268.
+   * </pre>
+   *
+   * <code>bool lookthrough = 25;</code>
+   * @return The lookthrough.
+   */
+  @java.lang.Override
+  public boolean getLookthrough() {
+    return lookthrough_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -335,6 +354,9 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(nameFilter_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 24, nameFilter_);
     }
+    if (lookthrough_ != false) {
+      output.writeBool(25, lookthrough_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -364,6 +386,10 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(nameFilter_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(24, nameFilter_);
+    }
+    if (lookthrough_ != false) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBoolSize(25, lookthrough_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -398,6 +424,8 @@ private static final long serialVersionUID = 0L;
     }
     if (!getNameFilter()
         .equals(other.getNameFilter())) return false;
+    if (getLookthrough()
+        != other.getLookthrough()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -427,6 +455,9 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + NAME_FILTER_FIELD_NUMBER;
     hash = (53 * hash) + getNameFilter().hashCode();
+    hash = (37 * hash) + LOOKTHROUGH_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+        getLookthrough());
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -580,6 +611,7 @@ private static final long serialVersionUID = 0L;
         asOfBuilder_ = null;
       }
       nameFilter_ = "";
+      lookthrough_ = false;
       return this;
     }
 
@@ -644,6 +676,9 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000020) != 0)) {
         result.nameFilter_ = nameFilter_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.lookthrough_ = lookthrough_;
       }
     }
 
@@ -738,6 +773,9 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000020;
         onChanged();
       }
+      if (other.getLookthrough() != false) {
+        setLookthrough(other.getLookthrough());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -806,6 +844,11 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000020;
               break;
             } // case 194
+            case 200: {
+              lookthrough_ = input.readBool();
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 200
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1646,6 +1689,62 @@ private static final long serialVersionUID = 0L;
       checkByteStringIsUtf8(value);
       nameFilter_ = value;
       bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+
+    private boolean lookthrough_ ;
+    /**
+     * <pre>
+     * When true, the server populates IndexDetailsProto.constituents on
+     * returned index securities (productType=*_INDEX) by running its
+     * registered resolver against the request asOf. Default false:
+     * index securities are returned without constituents (back-compat).
+     * Added per second-brain#268.
+     * </pre>
+     *
+     * <code>bool lookthrough = 25;</code>
+     * @return The lookthrough.
+     */
+    @java.lang.Override
+    public boolean getLookthrough() {
+      return lookthrough_;
+    }
+    /**
+     * <pre>
+     * When true, the server populates IndexDetailsProto.constituents on
+     * returned index securities (productType=*_INDEX) by running its
+     * registered resolver against the request asOf. Default false:
+     * index securities are returned without constituents (back-compat).
+     * Added per second-brain#268.
+     * </pre>
+     *
+     * <code>bool lookthrough = 25;</code>
+     * @param value The lookthrough to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLookthrough(boolean value) {
+      
+      lookthrough_ = value;
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * When true, the server populates IndexDetailsProto.constituents on
+     * returned index securities (productType=*_INDEX) by running its
+     * registered resolver against the request asOf. Default false:
+     * index securities are returned without constituents (back-compat).
+     * Added per second-brain#268.
+     * </pre>
+     *
+     * <code>bool lookthrough = 25;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearLookthrough() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      lookthrough_ = false;
       onChanged();
       return this;
     }

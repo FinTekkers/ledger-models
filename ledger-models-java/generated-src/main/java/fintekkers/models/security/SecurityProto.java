@@ -375,48 +375,66 @@ private static final long serialVersionUID = 0L;
 
   public static final int LEGS_FIELD_NUMBER = 17;
   @SuppressWarnings("serial")
-  private java.util.List<fintekkers.models.security.SecurityIdProto> legs_;
+  private java.util.List<fintekkers.models.security.SecurityProto> legs_;
   /**
    * <pre>
    * Multi-leg strategy package legs — each leg is itself a Security
-   * identified by UUID. See hierarchy-examples.md for the pattern:
-   * butterflies, calendar spreads, iron condors, etc. are not
+   * referenced by UUID using the is_link=true pattern (see
+   * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+   * pattern: butterflies, calendar spreads, iron condors, etc. are not
    * productTypes; they're a Security whose product_type is the
    * underlying vanilla type with `legs` populated.
+   * Each leg MUST have is_link=true with uuid and as_of populated.
+   * Resolve full legs via SecurityService.GetByIds.
+   * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+   * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+   * Legacy persisted bytes parse correctly under the new type.
    * </pre>
    *
-   * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+   * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
    */
   @java.lang.Override
-  public java.util.List<fintekkers.models.security.SecurityIdProto> getLegsList() {
+  public java.util.List<fintekkers.models.security.SecurityProto> getLegsList() {
     return legs_;
   }
   /**
    * <pre>
    * Multi-leg strategy package legs — each leg is itself a Security
-   * identified by UUID. See hierarchy-examples.md for the pattern:
-   * butterflies, calendar spreads, iron condors, etc. are not
+   * referenced by UUID using the is_link=true pattern (see
+   * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+   * pattern: butterflies, calendar spreads, iron condors, etc. are not
    * productTypes; they're a Security whose product_type is the
    * underlying vanilla type with `legs` populated.
+   * Each leg MUST have is_link=true with uuid and as_of populated.
+   * Resolve full legs via SecurityService.GetByIds.
+   * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+   * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+   * Legacy persisted bytes parse correctly under the new type.
    * </pre>
    *
-   * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+   * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
    */
   @java.lang.Override
-  public java.util.List<? extends fintekkers.models.security.SecurityIdProtoOrBuilder> 
+  public java.util.List<? extends fintekkers.models.security.SecurityProtoOrBuilder> 
       getLegsOrBuilderList() {
     return legs_;
   }
   /**
    * <pre>
    * Multi-leg strategy package legs — each leg is itself a Security
-   * identified by UUID. See hierarchy-examples.md for the pattern:
-   * butterflies, calendar spreads, iron condors, etc. are not
+   * referenced by UUID using the is_link=true pattern (see
+   * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+   * pattern: butterflies, calendar spreads, iron condors, etc. are not
    * productTypes; they're a Security whose product_type is the
    * underlying vanilla type with `legs` populated.
+   * Each leg MUST have is_link=true with uuid and as_of populated.
+   * Resolve full legs via SecurityService.GetByIds.
+   * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+   * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+   * Legacy persisted bytes parse correctly under the new type.
    * </pre>
    *
-   * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+   * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
    */
   @java.lang.Override
   public int getLegsCount() {
@@ -425,31 +443,43 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * Multi-leg strategy package legs — each leg is itself a Security
-   * identified by UUID. See hierarchy-examples.md for the pattern:
-   * butterflies, calendar spreads, iron condors, etc. are not
+   * referenced by UUID using the is_link=true pattern (see
+   * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+   * pattern: butterflies, calendar spreads, iron condors, etc. are not
    * productTypes; they're a Security whose product_type is the
    * underlying vanilla type with `legs` populated.
+   * Each leg MUST have is_link=true with uuid and as_of populated.
+   * Resolve full legs via SecurityService.GetByIds.
+   * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+   * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+   * Legacy persisted bytes parse correctly under the new type.
    * </pre>
    *
-   * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+   * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
    */
   @java.lang.Override
-  public fintekkers.models.security.SecurityIdProto getLegs(int index) {
+  public fintekkers.models.security.SecurityProto getLegs(int index) {
     return legs_.get(index);
   }
   /**
    * <pre>
    * Multi-leg strategy package legs — each leg is itself a Security
-   * identified by UUID. See hierarchy-examples.md for the pattern:
-   * butterflies, calendar spreads, iron condors, etc. are not
+   * referenced by UUID using the is_link=true pattern (see
+   * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+   * pattern: butterflies, calendar spreads, iron condors, etc. are not
    * productTypes; they're a Security whose product_type is the
    * underlying vanilla type with `legs` populated.
+   * Each leg MUST have is_link=true with uuid and as_of populated.
+   * Resolve full legs via SecurityService.GetByIds.
+   * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+   * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+   * Legacy persisted bytes parse correctly under the new type.
    * </pre>
    *
-   * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+   * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
    */
   @java.lang.Override
-  public fintekkers.models.security.SecurityIdProtoOrBuilder getLegsOrBuilder(
+  public fintekkers.models.security.SecurityProtoOrBuilder getLegsOrBuilder(
       int index) {
     return legs_.get(index);
   }
@@ -2977,9 +3007,9 @@ private static final long serialVersionUID = 0L;
               break;
             } // case 128
             case 138: {
-              fintekkers.models.security.SecurityIdProto m =
+              fintekkers.models.security.SecurityProto m =
                   input.readMessage(
-                      fintekkers.models.security.SecurityIdProto.parser(),
+                      fintekkers.models.security.SecurityProto.parser(),
                       extensionRegistry);
               if (legsBuilder_ == null) {
                 ensureLegsIsMutable();
@@ -4048,30 +4078,36 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private java.util.List<fintekkers.models.security.SecurityIdProto> legs_ =
+    private java.util.List<fintekkers.models.security.SecurityProto> legs_ =
       java.util.Collections.emptyList();
     private void ensureLegsIsMutable() {
       if (!((bitField0_ & 0x00000200) != 0)) {
-        legs_ = new java.util.ArrayList<fintekkers.models.security.SecurityIdProto>(legs_);
+        legs_ = new java.util.ArrayList<fintekkers.models.security.SecurityProto>(legs_);
         bitField0_ |= 0x00000200;
        }
     }
 
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        fintekkers.models.security.SecurityIdProto, fintekkers.models.security.SecurityIdProto.Builder, fintekkers.models.security.SecurityIdProtoOrBuilder> legsBuilder_;
+        fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> legsBuilder_;
 
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
-    public java.util.List<fintekkers.models.security.SecurityIdProto> getLegsList() {
+    public java.util.List<fintekkers.models.security.SecurityProto> getLegsList() {
       if (legsBuilder_ == null) {
         return java.util.Collections.unmodifiableList(legs_);
       } else {
@@ -4081,13 +4117,19 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
     public int getLegsCount() {
       if (legsBuilder_ == null) {
@@ -4099,15 +4141,21 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
-    public fintekkers.models.security.SecurityIdProto getLegs(int index) {
+    public fintekkers.models.security.SecurityProto getLegs(int index) {
       if (legsBuilder_ == null) {
         return legs_.get(index);
       } else {
@@ -4117,16 +4165,22 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
     public Builder setLegs(
-        int index, fintekkers.models.security.SecurityIdProto value) {
+        int index, fintekkers.models.security.SecurityProto value) {
       if (legsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -4142,16 +4196,22 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
     public Builder setLegs(
-        int index, fintekkers.models.security.SecurityIdProto.Builder builderForValue) {
+        int index, fintekkers.models.security.SecurityProto.Builder builderForValue) {
       if (legsBuilder_ == null) {
         ensureLegsIsMutable();
         legs_.set(index, builderForValue.build());
@@ -4164,15 +4224,21 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
-    public Builder addLegs(fintekkers.models.security.SecurityIdProto value) {
+    public Builder addLegs(fintekkers.models.security.SecurityProto value) {
       if (legsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -4188,16 +4254,22 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
     public Builder addLegs(
-        int index, fintekkers.models.security.SecurityIdProto value) {
+        int index, fintekkers.models.security.SecurityProto value) {
       if (legsBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -4213,16 +4285,22 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
     public Builder addLegs(
-        fintekkers.models.security.SecurityIdProto.Builder builderForValue) {
+        fintekkers.models.security.SecurityProto.Builder builderForValue) {
       if (legsBuilder_ == null) {
         ensureLegsIsMutable();
         legs_.add(builderForValue.build());
@@ -4235,16 +4313,22 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
     public Builder addLegs(
-        int index, fintekkers.models.security.SecurityIdProto.Builder builderForValue) {
+        int index, fintekkers.models.security.SecurityProto.Builder builderForValue) {
       if (legsBuilder_ == null) {
         ensureLegsIsMutable();
         legs_.add(index, builderForValue.build());
@@ -4257,16 +4341,22 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
     public Builder addAllLegs(
-        java.lang.Iterable<? extends fintekkers.models.security.SecurityIdProto> values) {
+        java.lang.Iterable<? extends fintekkers.models.security.SecurityProto> values) {
       if (legsBuilder_ == null) {
         ensureLegsIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -4280,13 +4370,19 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
     public Builder clearLegs() {
       if (legsBuilder_ == null) {
@@ -4301,13 +4397,19 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
     public Builder removeLegs(int index) {
       if (legsBuilder_ == null) {
@@ -4322,30 +4424,42 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
-    public fintekkers.models.security.SecurityIdProto.Builder getLegsBuilder(
+    public fintekkers.models.security.SecurityProto.Builder getLegsBuilder(
         int index) {
       return getLegsFieldBuilder().getBuilder(index);
     }
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
-    public fintekkers.models.security.SecurityIdProtoOrBuilder getLegsOrBuilder(
+    public fintekkers.models.security.SecurityProtoOrBuilder getLegsOrBuilder(
         int index) {
       if (legsBuilder_ == null) {
         return legs_.get(index);  } else {
@@ -4355,15 +4469,21 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
-    public java.util.List<? extends fintekkers.models.security.SecurityIdProtoOrBuilder> 
+    public java.util.List<? extends fintekkers.models.security.SecurityProtoOrBuilder> 
          getLegsOrBuilderList() {
       if (legsBuilder_ != null) {
         return legsBuilder_.getMessageOrBuilderList();
@@ -4374,55 +4494,73 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
-    public fintekkers.models.security.SecurityIdProto.Builder addLegsBuilder() {
+    public fintekkers.models.security.SecurityProto.Builder addLegsBuilder() {
       return getLegsFieldBuilder().addBuilder(
-          fintekkers.models.security.SecurityIdProto.getDefaultInstance());
+          fintekkers.models.security.SecurityProto.getDefaultInstance());
     }
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
-    public fintekkers.models.security.SecurityIdProto.Builder addLegsBuilder(
+    public fintekkers.models.security.SecurityProto.Builder addLegsBuilder(
         int index) {
       return getLegsFieldBuilder().addBuilder(
-          index, fintekkers.models.security.SecurityIdProto.getDefaultInstance());
+          index, fintekkers.models.security.SecurityProto.getDefaultInstance());
     }
     /**
      * <pre>
      * Multi-leg strategy package legs — each leg is itself a Security
-     * identified by UUID. See hierarchy-examples.md for the pattern:
-     * butterflies, calendar spreads, iron condors, etc. are not
+     * referenced by UUID using the is_link=true pattern (see
+     * docs/adr/is_link_pattern.md). See hierarchy-examples.md for the
+     * pattern: butterflies, calendar spreads, iron condors, etc. are not
      * productTypes; they're a Security whose product_type is the
      * underlying vanilla type with `legs` populated.
+     * Each leg MUST have is_link=true with uuid and as_of populated.
+     * Resolve full legs via SecurityService.GetByIds.
+     * WIRE COMPATIBLE with the prior SecurityIdProto type at this tag:
+     * SecurityIdProto carried uuid at tag 1, identical to SecurityProto.
+     * Legacy persisted bytes parse correctly under the new type.
      * </pre>
      *
-     * <code>repeated .fintekkers.models.security.SecurityIdProto legs = 17;</code>
+     * <code>repeated .fintekkers.models.security.SecurityProto legs = 17;</code>
      */
-    public java.util.List<fintekkers.models.security.SecurityIdProto.Builder> 
+    public java.util.List<fintekkers.models.security.SecurityProto.Builder> 
          getLegsBuilderList() {
       return getLegsFieldBuilder().getBuilderList();
     }
     private com.google.protobuf.RepeatedFieldBuilderV3<
-        fintekkers.models.security.SecurityIdProto, fintekkers.models.security.SecurityIdProto.Builder, fintekkers.models.security.SecurityIdProtoOrBuilder> 
+        fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> 
         getLegsFieldBuilder() {
       if (legsBuilder_ == null) {
         legsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-            fintekkers.models.security.SecurityIdProto, fintekkers.models.security.SecurityIdProto.Builder, fintekkers.models.security.SecurityIdProtoOrBuilder>(
+            fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder>(
                 legs_,
                 ((bitField0_ & 0x00000200) != 0),
                 getParentForChildren(),

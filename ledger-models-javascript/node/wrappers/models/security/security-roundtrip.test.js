@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * ISSUE #7: SecurityProto round-trip serialization tests for all 6 security types.
@@ -6,6 +9,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * For each type: construct → serialize to bytes → deserialize → verify all fields match.
  */
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
+const security_pb_2 = require("../../../fintekkers/models/security/security_pb");
+const security_1 = __importDefault(require("./security"));
+const uuid_1 = require("../utils/uuid");
+const datetime_1 = require("../utils/datetime");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
@@ -26,7 +33,7 @@ function makeIdentifier(type, value) {
 }
 describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () => {
     test('BOND_SECURITY: all bond fields survive round-trip', () => {
-        const original = new security_pb_1.SecurityProto();
+        const original = new security_pb_2.SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
@@ -43,7 +50,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         original.setDatedDate(makeDate(2020, 1, 15));
         original.setMaturityDate(makeDate(2030, 1, 15));
         const bytes = original.serializeBinary();
-        const parsed = security_pb_1.SecurityProto.deserializeBinary(bytes);
+        const parsed = security_pb_2.SecurityProto.deserializeBinary(bytes);
         expect(parsed.getProductType()).toBe(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
         expect(parsed.getAssetClass()).toBe('Fixed Income');
         expect(parsed.getIssuerName()).toBe('US Treasury');
@@ -62,7 +69,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getIdentifier().getIdentifierType()).toBe(identifier_type_pb_1.IdentifierTypeProto.CUSIP);
     });
     test('TIPS: bond fields + base_cpi + inflation_index_type survive round-trip', () => {
-        const original = new security_pb_1.SecurityProto();
+        const original = new security_pb_2.SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.TIPS);
@@ -76,7 +83,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         original.setBaseCpi(makeDecimal('256.394'));
         original.setInflationIndexType(index_type_pb_1.IndexTypeProto.CPI_U);
         const bytes = original.serializeBinary();
-        const parsed = security_pb_1.SecurityProto.deserializeBinary(bytes);
+        const parsed = security_pb_2.SecurityProto.deserializeBinary(bytes);
         expect(parsed.getProductType()).toBe(product_type_pb_1.ProductTypeProto.TIPS);
         expect(parsed.getCouponRate().getArbitraryPrecisionValue()).toBe('0.625');
         expect(parsed.getCouponType()).toBe(coupon_type_pb_1.CouponTypeProto.FIXED);
@@ -87,7 +94,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getInflationIndexType()).toBe(index_type_pb_1.IndexTypeProto.CPI_U);
     });
     test('FRN: spread + reference_rate_index + reset_frequency survive round-trip', () => {
-        const original = new security_pb_1.SecurityProto();
+        const original = new security_pb_2.SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_FRN);
@@ -101,7 +108,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         original.setReferenceRateIndex(index_type_pb_1.IndexTypeProto.T_BILL_13_WEEK);
         // Note: setResetFrequency (field 92) not yet in generated JS — codegen needs update
         const bytes = original.serializeBinary();
-        const parsed = security_pb_1.SecurityProto.deserializeBinary(bytes);
+        const parsed = security_pb_2.SecurityProto.deserializeBinary(bytes);
         expect(parsed.getProductType()).toBe(product_type_pb_1.ProductTypeProto.TREASURY_FRN);
         expect(parsed.getCouponType()).toBe(coupon_type_pb_1.CouponTypeProto.FLOAT);
         expect(parsed.getCouponFrequency()).toBe(coupon_frequency_pb_1.CouponFrequencyProto.QUARTERLY);
@@ -111,7 +118,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getReferenceRateIndex()).toBe(index_type_pb_1.IndexTypeProto.T_BILL_13_WEEK);
     });
     test('EQUITY_SECURITY: identifier + asset_class survive round-trip', () => {
-        const original = new security_pb_1.SecurityProto();
+        const original = new security_pb_2.SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.COMMON_STOCK);
@@ -121,7 +128,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         original.setIdentifier(makeIdentifier(identifier_type_pb_1.IdentifierTypeProto.EXCH_TICKER, 'AAPL'));
         original.setDescription('Apple Inc. Common Stock');
         const bytes = original.serializeBinary();
-        const parsed = security_pb_1.SecurityProto.deserializeBinary(bytes);
+        const parsed = security_pb_2.SecurityProto.deserializeBinary(bytes);
         expect(parsed.getProductType()).toBe(product_type_pb_1.ProductTypeProto.COMMON_STOCK);
         expect(parsed.getAssetClass()).toBe('Equity');
         expect(parsed.getIssuerName()).toBe('Apple Inc.');
@@ -131,7 +138,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getIdentifier().getIdentifierType()).toBe(identifier_type_pb_1.IdentifierTypeProto.EXCH_TICKER);
     });
     test('CASH_SECURITY: cash_id + settlement fields survive round-trip', () => {
-        const original = new security_pb_1.SecurityProto();
+        const original = new security_pb_2.SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.CURRENCY);
@@ -142,7 +149,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         original.setDescription('US Dollar');
         original.setIdentifier(makeIdentifier(identifier_type_pb_1.IdentifierTypeProto.CASH, 'USD'));
         const bytes = original.serializeBinary();
-        const parsed = security_pb_1.SecurityProto.deserializeBinary(bytes);
+        const parsed = security_pb_2.SecurityProto.deserializeBinary(bytes);
         expect(parsed.getProductType()).toBe(product_type_pb_1.ProductTypeProto.CURRENCY);
         expect(parsed.getAssetClass()).toBe('Cash');
         expect(parsed.getCashId()).toBe('USD');
@@ -151,7 +158,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getIdentifier().getIdentifierType()).toBe(identifier_type_pb_1.IdentifierTypeProto.CASH);
     });
     test('INDEX_SECURITY: index_type + inflation_index_type survive round-trip', () => {
-        const original = new security_pb_1.SecurityProto();
+        const original = new security_pb_2.SecurityProto();
         original.setObjectClass('Security');
         original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.EQUITY_INDEX);
@@ -161,13 +168,90 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         original.setIndexType(index_type_pb_1.IndexTypeProto.CPI_U);
         original.setIdentifier(makeIdentifier(identifier_type_pb_1.IdentifierTypeProto.CUSIP, 'CPI-U'));
         const bytes = original.serializeBinary();
-        const parsed = security_pb_1.SecurityProto.deserializeBinary(bytes);
+        const parsed = security_pb_2.SecurityProto.deserializeBinary(bytes);
         expect(parsed.getProductType()).toBe(product_type_pb_1.ProductTypeProto.EQUITY_INDEX);
         expect(parsed.getAssetClass()).toBe('Index');
         expect(parsed.getIssuerName()).toBe('Bureau of Labor Statistics');
         expect(parsed.getDescription()).toBe('US CPI-U All Urban Consumers');
         expect(parsed.getIndexType()).toBe(index_type_pb_1.IndexTypeProto.CPI_U);
         expect(parsed.getIdentifier().getIdentifierValue()).toBe('CPI-U');
+    });
+});
+describe('v0.2.5: Security link helpers + IndexDetailsProto.constituents', () => {
+    test('linkOf populates uuid, as_of and sets is_link=true', () => {
+        const uuid = uuid_1.UUID.random();
+        const asOf = datetime_1.ZonedDateTime.now();
+        const link = security_1.default.linkOf(uuid, asOf);
+        expect(link.getIsLink()).toBe(true);
+        expect(link.getUuid()).toBeDefined();
+        expect(link.getAsOf()).toBeDefined();
+        expect(link.getAssetClass()).toBe(''); // no other fields populated
+    });
+    test('linkOfLatest skips as_of', () => {
+        const uuid = uuid_1.UUID.random();
+        const link = security_1.default.linkOfLatest(uuid);
+        expect(link.getIsLink()).toBe(true);
+        expect(link.getUuid()).toBeDefined();
+        expect(link.getAsOf()).toBeUndefined();
+    });
+    test('linkOf requires asOf (throws when called without it)', () => {
+        const uuid = uuid_1.UUID.random();
+        expect(() => security_1.default.linkOf(uuid, undefined)).toThrow(/asOf is required/);
+    });
+    test('Security.isLink() reads the proto flag', () => {
+        const full = new security_pb_2.SecurityProto();
+        const wrapperFull = new security_1.default(full);
+        expect(wrapperFull.isLink()).toBe(false);
+        const link = security_1.default.linkOf(uuid_1.UUID.random(), datetime_1.ZonedDateTime.now());
+        const wrapperLink = new security_1.default(link);
+        expect(wrapperLink.isLink()).toBe(true);
+    });
+    test('Accessors throw on link wrappers', () => {
+        const link = security_1.default.linkOf(uuid_1.UUID.random(), datetime_1.ZonedDateTime.now());
+        const wrapper = new security_1.default(link);
+        expect(() => wrapper.getAssetClass()).toThrow(/link-mode/);
+        expect(() => wrapper.getIssuerName()).toThrow(/link-mode/);
+        expect(() => wrapper.getProductType()).toThrow(/link-mode/);
+    });
+    test('Link round-trips via serializeBinary preserving uuid + as_of + is_link', () => {
+        const uuid = uuid_1.UUID.random();
+        const asOf = datetime_1.ZonedDateTime.now();
+        const link = security_1.default.linkOf(uuid, asOf);
+        const bytes = link.serializeBinary();
+        const parsed = security_pb_2.SecurityProto.deserializeBinary(bytes);
+        expect(parsed.getIsLink()).toBe(true);
+        expect(parsed.getUuid()).toBeDefined();
+        const parsedBytes = Array.from(parsed.getUuid().getRawUuid_asU8());
+        expect(parsedBytes).toEqual(uuid.toBytes());
+        expect(parsed.getAsOf().getTimeZone()).toBe(asOf.toProto().getTimeZone());
+    });
+    test('IndexDetailsProto.constituents round-trip with each constituent in link mode', () => {
+        const asOf = datetime_1.ZonedDateTime.now();
+        const c1 = security_1.default.linkOf(uuid_1.UUID.random(), asOf);
+        const c2 = security_1.default.linkOf(uuid_1.UUID.random(), asOf);
+        const details = new security_pb_1.IndexDetailsProto();
+        details.setIndexType(index_type_pb_1.IndexTypeProto.CPI_U);
+        details.setConstituentsList([c1, c2]);
+        const original = new security_pb_2.SecurityProto();
+        original.setProductType(product_type_pb_1.ProductTypeProto.EQUITY_INDEX);
+        original.setIndexDetails(details);
+        const parsed = security_pb_2.SecurityProto.deserializeBinary(original.serializeBinary());
+        const parsedDetails = parsed.getIndexDetails();
+        expect(parsedDetails.getConstituentsList().length).toBe(2);
+        expect(parsedDetails.getConstituentsList()[0].getIsLink()).toBe(true);
+        expect(parsedDetails.getConstituentsList()[0].getAsOf()).toBeDefined();
+    });
+    test('Wire compat: SecurityIdProto-shaped bytes (uuid at tag 1) parse as SecurityProto', () => {
+        // Pre-v0.2.5, legs were SecurityIdProto (uuid at tag 1). We rebuild that
+        // wire shape by serializing a SecurityProto with only uuid set — same
+        // bytes — and confirm round-trip under the new type.
+        const uuid = uuid_1.UUID.random();
+        const legacy = new security_pb_2.SecurityProto();
+        legacy.setUuid(uuid.toUUIDProto());
+        const legacyBytes = legacy.serializeBinary();
+        const parsed = security_pb_2.SecurityProto.deserializeBinary(legacyBytes);
+        const parsedBytes = Array.from(parsed.getUuid().getRawUuid_asU8());
+        expect(parsedBytes).toEqual(uuid.toBytes());
     });
 });
 //# sourceMappingURL=security-roundtrip.test.js.map

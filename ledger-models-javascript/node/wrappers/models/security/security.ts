@@ -1,6 +1,8 @@
 import { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { IdentifierProto } from "../../../fintekkers/models/security/identifier/identifier_pb";
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
+import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
+import { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { LocalDate } from "../utils/date";
@@ -11,6 +13,62 @@ class Security {
 
   constructor(proto: SecurityProto) {
     this.proto = proto;
+  }
+
+  /**
+   * Build a SecurityProto link reference (is_link=true) with uuid and as_of
+   * populated. Use this whenever you embed a Security inside another message
+   * that itself carries an as_of (Position, Transaction, Price, etc.) — the
+   * link MUST carry the same as_of as the parent so the resolver hydrates
+   * the correct point-in-time vintage. See docs/adr/is_link_pattern.md.
+   *
+   * @param uuid The Security UUID to reference.
+   * @param asOf The as-of timestamp; required. For "always latest" semantics
+   *             use linkOfLatest(uuid) instead.
+   */
+  static linkOf(uuid: UUID, asOf: ZonedDateTime): SecurityProto {
+    if (!uuid) throw new Error("uuid is required for linkOf");
+    if (!asOf) throw new Error("asOf is required for linkOf; use linkOfLatest(uuid) for latest-version semantics");
+    const proto = new SecurityProto();
+    proto.setIsLink(true);
+    proto.setUuid(Security._uuidToProto(uuid));
+    proto.setAsOf(Security._zonedDateTimeToProto(asOf));
+    return proto;
+  }
+
+  /**
+   * Build a SecurityProto link reference (is_link=true) with only uuid set.
+   * Resolution returns the latest version. Explicit escape hatch — most
+   * callers should prefer linkOf(uuid, asOf).
+   */
+  static linkOfLatest(uuid: UUID): SecurityProto {
+    if (!uuid) throw new Error("uuid is required for linkOfLatest");
+    const proto = new SecurityProto();
+    proto.setIsLink(true);
+    proto.setUuid(Security._uuidToProto(uuid));
+    return proto;
+  }
+
+  private static _uuidToProto(uuid: UUID): UUIDProto {
+    return uuid.toUUIDProto();
+  }
+
+  private static _zonedDateTimeToProto(asOf: ZonedDateTime): LocalTimestampProto {
+    return asOf.toProto();
+  }
+
+  /**
+   * Throws if this Security is in link mode. Use to guard accessors that
+   * would otherwise return proto3 default values on a link reference.
+   */
+  private assertNotLink(accessor: string): void {
+    if (this.proto.getIsLink()) {
+      throw new Error(
+        `Cannot read ${accessor} on a link-mode Security (is_link=true). `
+        + `Resolve via SecurityService.GetByIds first. `
+        + `See docs/adr/is_link_pattern.md.`
+      );
+    }
   }
 
   /**
@@ -109,14 +167,17 @@ class Security {
   }
 
   getAssetClass(): string {
+    this.assertNotLink('assetClass');
     return this.proto.getAssetClass();
   }
 
   getProductClass(): string {
+    this.assertNotLink('productClass');
     throw new Error('Not implemented yet. See Java implementation for reference');
   }
 
   getProductType(): string {
+    this.assertNotLink('productType');
     const securityType = this.proto.getProductType();
     const securityTypeString = (Object.keys(ProductTypeProto) as Array<keyof typeof ProductTypeProto>).find(
       key => ProductTypeProto[key] === securityType
@@ -126,6 +187,7 @@ class Security {
   }
 
   getSecurityID(): IdentifierProto {
+    this.assertNotLink('securityId');
     const identifier = this.proto.getIdentifier();
     if (!identifier) throw new Error("Identifier is required");
     return identifier;
@@ -144,6 +206,7 @@ class Security {
    * calling BondSecurity.getIssueDate() (which returns LocalDate, not null).
    */
   getIssueDate(): LocalDate | null {
+    this.assertNotLink('issueDate');
     // Prefer oneof bond sub-message if available, fall back to flat fields
     const bond = this.getBondLikeDetails();
     const date = bond ? bond.getIssueDate() : this.proto.getIssueDate();
@@ -162,6 +225,7 @@ class Security {
    * and TS will catch the misuse at compile time.
    */
   getMaturityDate(): LocalDate {
+    this.assertNotLink('maturityDate');
     // Prefer oneof bond sub-message if available, fall back to flat fields
     const bond = this.getBondLikeDetails();
     const date = bond ? bond.getMaturityDate() : this.proto.getMaturityDate();
@@ -187,6 +251,7 @@ class Security {
   }
 
   getIssuerName(): string {
+    this.assertNotLink('issuerName');
     return this.proto.getIssuerName();
   }
 

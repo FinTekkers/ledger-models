@@ -7,7 +7,7 @@ This file ships alongside [`hierarchy.json`](./hierarchy.json) as the canonical 
 > **M1 scope notes.**
 >
 > 1. The umbrella spec describes a 4-dimensional registry. M1 ships 3 of those dimensions (productType, asset_class, instrument_type). The fourth dimension — **index_type** (`single_name` vs `index`) — is intentionally deferred and will be added in a future milestone.
-> 2. **Option strategy productTypes are intentionally absent.** A butterfly, calendar spread, iron condor, etc. is a *shape* derived from leg composition, not a productType in its own right. Multi-leg packages are represented by a Security with `repeated SecurityIdProto legs` populated; each leg points at a vanilla option Security. The strategy's productType is just the underlying vanilla productType.
+> 2. **Option strategy productTypes are intentionally absent.** A butterfly, calendar spread, iron condor, etc. is a *shape* derived from leg composition, not a productType in its own right. Multi-leg packages are represented by a Security with `repeated SecurityProto legs` populated, where each leg uses the `is_link=true` pattern (uuid + as_of set, resolve via `SecurityService.GetByIds`). The strategy's productType is just the underlying vanilla productType.
 > 3. **`single_name` and `index` flavours collapse onto one leaf for now.** While the index_type dimension is deferred, leaves like `CDS` (which would split into single-name and index variants once index_type lands) cover both via the legs / underlying reference, and `EQUITY_VANILLA` covers both AAPL options and SPX index options.
 
 ---

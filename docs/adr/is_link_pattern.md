@@ -36,7 +36,20 @@ The message is a **reference**. Only `uuid` (and optionally `as_of`) is populate
 
 A naive resolver that ignores `as_of` and always returns "latest" will silently mix time vintages within a single result set — a position computed as-of 2024-01-01 should not embed a security that was modified in 2025. The resolver MUST propagate the link's `as_of` into the corresponding `GetByIds` call.
 
-Callers SHOULD set `as_of` on link sub-messages whenever the parent message itself carries an `as_of` (e.g., `Position.as_of`, search results from `XService.Search` with an explicit `as_of`). Server implementations SHOULD echo the parent's `as_of` onto link sub-messages they emit.
+When a producer emits a link inside a parent message that has an `as_of`, the link **MUST** carry that same `as_of` unless the producer is intentionally floating the link to "latest". This applies to both callers building requests (e.g., positions snapshotted as-of `T` whose embedded security link must also be as-of `T`) and to servers echoing links onto responses (e.g., `Position.security` mirroring `Position.as_of`). A resolver that ignores `as_of` and always returns "latest" silently mixes time vintages within a single result set — a position computed as-of 2024-01-01 must not embed a security that was modified in 2025.
+
+This was previously a SHOULD; v0.2.5 tightened it to MUST because the new `IndexDetailsProto.constituents` and `SecurityProto.legs` fields both rely on the parent's `as_of` flowing into the link to time-resolve correctly.
+
+### Wrapper helpers (all 4 languages)
+
+To make the as-of propagation easy to get right at call sites, every language wrapper provides:
+
+- **`Security.linkOf(uuid, asOf)`** — Build a link with `is_link=true`, both `uuid` and `as_of` populated. **`asOf` is a required parameter**; this is the function callers should reach for in 99% of cases (any parent that has its own `as_of`).
+- **`Security.linkOfLatest(uuid)`** — Build a link with `is_link=true` and only `uuid` populated; `as_of` is left unset → resolver returns the latest version. Explicit escape hatch for "I really do want latest, even though my parent message has an as_of" — UI flows where the link reference outlives any single result set.
+- **`Security.isLink()`** — Instance method; returns the proto's `is_link` flag.
+- **Field accessors throw on link instances.** Calling `getFaceValue()` / `getProductType()` / etc. on a link wrapper raises `IllegalStateException` (Java) / `panic` (Rust) / `ValueError` (Python) / `Error` (JS). This forces consumers to resolve via `GetByIds` first, rather than silently reading proto3 default values.
+
+The naming and behavior are identical across Java, Rust, Python, and JS/TS.
 
 ## Which protos use `is_link`
 
@@ -59,6 +72,8 @@ The most common use of links is in the **position aggregation** pipeline. When t
 - **Link**: when the caller only needs the UUID for further lookups (e.g. for aggregation keys)
 
 Another common case: `TransactionProto.security` and `TransactionProto.portfolio` are typically stored as links in the database to avoid data duplication. The service hydrates them on read if the caller needs full data.
+
+**`SecurityProto.legs` and `IndexDetailsProto.constituents` (v0.2.5).** Multi-leg strategy packages carry their legs as `repeated SecurityProto legs` with each leg in link mode; index securities under `lookthrough=true` carry their members as `repeated SecurityProto constituents` with each constituent in link mode. Both fields use the same link wire format described in this ADR. The dedicated `SecurityIdProto` message (which previously typed the `legs` field) has been removed — `SecurityProto` with `is_link=true` is the single canonical link type. The wire change at tag 17 is binary-compatible: `SecurityIdProto` carried the uuid at tag 1, identical to `SecurityProto`, so any legacy persisted bytes parse correctly under the new field type.
 
 ## How callers should handle `is_link`
 

@@ -116,6 +116,7 @@ describe('Identifier.getAllTypeNames', () => {
         //   OSI = 4;
         //   FIGI = 5;
         //   SERIES_ID = 6;
+        //   INDEX_NAME = 7;
         //   CASH = 50;
         expect(Identifier.getAllTypeNames()).toEqual([
             'EXCH_TICKER',
@@ -124,6 +125,7 @@ describe('Identifier.getAllTypeNames', () => {
             'OSI',
             'FIGI',
             'SERIES_ID',
+            'INDEX_NAME',
             'CASH',
         ]);
     });

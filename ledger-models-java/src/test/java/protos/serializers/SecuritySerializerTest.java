@@ -241,15 +241,16 @@ class SecuritySerializerTest {
 
     @Test
     public void legs_preservedOnRoundtrip() {
+        // v0.2.5: legs migrated from repeated SecurityIdProto to
+        // repeated SecurityProto (each leg in is_link=true mode with
+        // uuid + as_of populated). See docs/adr/is_link_pattern.md.
         fintekkers.models.util.Uuid.UUIDProto leg1Uuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
                 .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[16])).build();
         fintekkers.models.util.Uuid.UUIDProto leg2Uuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
                 .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[]{
                         1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,1})).build();
-        fintekkers.models.security.SecurityIdProto leg1 =
-                fintekkers.models.security.SecurityIdProto.newBuilder().setUuid(leg1Uuid).build();
-        fintekkers.models.security.SecurityIdProto leg2 =
-                fintekkers.models.security.SecurityIdProto.newBuilder().setUuid(leg2Uuid).build();
+        SecurityProto leg1 = SecurityProto.newBuilder().setIsLink(true).setUuid(leg1Uuid).build();
+        SecurityProto leg2 = SecurityProto.newBuilder().setIsLink(true).setUuid(leg2Uuid).build();
 
         SecurityProto input = equityProtoWith(b -> b.addLegs(leg1).addLegs(leg2));
 
@@ -258,8 +259,79 @@ class SecuritySerializerTest {
 
         assertEquals(2, reSerialized.getLegsCount(),
                 "Multi-leg strategy packages: legs must survive round-trip.");
-        assertEquals(leg1.getUuid(), reSerialized.getLegs(0).getUuid());
-        assertEquals(leg2.getUuid(), reSerialized.getLegs(1).getUuid());
+        assertTrue(reSerialized.getLegs(0).getIsLink(), "Each leg must be is_link=true");
+        assertEquals(leg1Uuid, reSerialized.getLegs(0).getUuid());
+        assertEquals(leg2Uuid, reSerialized.getLegs(1).getUuid());
+    }
+
+    @Test
+    public void legs_wireCompatibleWithLegacySecurityIdProtoBytes() {
+        // v0.2.5 wire-compat: SecurityIdProto carried uuid at tag 1 — identical
+        // tag to SecurityProto.uuid. Bytes serialized by the old SecurityIdProto
+        // type MUST parse correctly under the new SecurityProto type at
+        // SecurityProto.legs (tag 17). This guards against silent data loss for
+        // any legacy persisted legs in long-lived stores.
+        //
+        // We don't depend on SecurityIdProto at compile time (it's gone). We
+        // reconstruct its wire form: a length-delimited UUIDProto at field tag 1
+        // — which is exactly what SecurityProto.uuid (also tag 1) encodes to.
+        // So the bytes a SecurityIdProto produced are bit-for-bit a valid
+        // SecurityProto with only the uuid field populated.
+        fintekkers.models.util.Uuid.UUIDProto legUuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
+                .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[]{
+                        7,7,0,0,0,0,0,0, 0,0,0,0,0,0,0,7})).build();
+        // Encode a "legacy" SecurityIdProto-shaped leg by encoding a
+        // SecurityProto with ONLY the uuid set — same wire bytes.
+        SecurityProto legacyShape = SecurityProto.newBuilder().setUuid(legUuid).build();
+        byte[] legacyBytes = legacyShape.toByteArray();
+
+        // Now reverse: parse the legacy bytes back as a SecurityProto and
+        // confirm uuid round-trips. This is the contract: any consumer
+        // upgrading past v0.2.5 can read existing leg bytes without
+        // re-encoding the database.
+        try {
+            SecurityProto parsed = SecurityProto.parseFrom(legacyBytes);
+            assertEquals(legUuid, parsed.getUuid(),
+                    "Legacy SecurityIdProto wire bytes (uuid at tag 1) must parse as SecurityProto with same uuid.");
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw new AssertionError("Legacy bytes must parse under new type", e);
+        }
+    }
+
+    @Test
+    public void indexDetails_constituents_preservedOnRoundtrip() throws com.google.protobuf.InvalidProtocolBufferException {
+        // v0.2.5: IndexDetailsProto.constituents — server-populated under
+        // QuerySecurityRequestProto.lookthrough=true. Each constituent is
+        // is_link=true with uuid + as_of populated.
+        fintekkers.models.util.Uuid.UUIDProto constUuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
+                .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[]{
+                        2,2,0,0,0,0,0,0, 0,0,0,0,0,0,0,2})).build();
+        fintekkers.models.util.LocalTimestamp.LocalTimestampProto asOf =
+                fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder()
+                        .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
+                                .setSeconds(1_700_000_000L).build())
+                        .setTimeZone("UTC")
+                        .build();
+        SecurityProto constituent = SecurityProto.newBuilder()
+                .setIsLink(true).setUuid(constUuid).setAsOf(asOf).build();
+        fintekkers.models.security.IndexDetailsProto details =
+                fintekkers.models.security.IndexDetailsProto.newBuilder()
+                        .setIndexType(fintekkers.models.security.index.IndexTypeProto.CPI_U)
+                        .addConstituents(constituent)
+                        .build();
+
+        SecurityProto original = SecurityProto.newBuilder()
+                .setProductType(fintekkers.models.security.ProductTypeProto.EQUITY_INDEX)
+                .setIndexDetails(details)
+                .build();
+
+        SecurityProto parsed = SecurityProto.parseFrom(original.toByteArray());
+
+        assertEquals(1, parsed.getIndexDetails().getConstituentsCount());
+        SecurityProto pc = parsed.getIndexDetails().getConstituents(0);
+        assertTrue(pc.getIsLink(), "Constituent must be is_link=true");
+        assertEquals(constUuid, pc.getUuid());
+        assertEquals(asOf, pc.getAsOf(), "Constituent must carry the parent's as_of");
     }
 
     @Test
