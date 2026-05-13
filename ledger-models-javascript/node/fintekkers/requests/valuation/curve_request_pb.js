@@ -425,7 +425,8 @@ proto.fintekkers.requests.valuation.CurveRequestProto.toObject = function(includ
     curveInputsList: jspb.Message.toObjectList(msg.getCurveInputsList(),
     proto.fintekkers.requests.valuation.CurveInputProto.toObject, includeInstance),
     tenorPointsList: jspb.Message.toObjectList(msg.getTenorPointsList(),
-    fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject, includeInstance)
+    fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject, includeInstance),
+    forwardTermYears: jspb.Message.getFieldWithDefault(msg, 50, 0)
   };
 
   if (includeInstance) {
@@ -490,6 +491,10 @@ proto.fintekkers.requests.valuation.CurveRequestProto.deserializeBinaryFromReade
       var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
       reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
       msg.addTenorPoints(value);
+      break;
+    case 50:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setForwardTermYears(value);
       break;
     default:
       reader.skipField();
@@ -563,6 +568,13 @@ proto.fintekkers.requests.valuation.CurveRequestProto.serializeBinaryToWriter = 
       40,
       f,
       fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getForwardTermYears();
+  if (f !== 0) {
+    writer.writeUint32(
+      50,
+      f
     );
   }
 };
@@ -751,6 +763,24 @@ proto.fintekkers.requests.valuation.CurveRequestProto.prototype.addTenorPoints =
  */
 proto.fintekkers.requests.valuation.CurveRequestProto.prototype.clearTenorPointsList = function() {
   return this.setTenorPointsList([]);
+};
+
+
+/**
+ * optional uint32 forward_term_years = 50;
+ * @return {number}
+ */
+proto.fintekkers.requests.valuation.CurveRequestProto.prototype.getForwardTermYears = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 50, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.valuation.CurveRequestProto} returns this
+ */
+proto.fintekkers.requests.valuation.CurveRequestProto.prototype.setForwardTermYears = function(value) {
+  return jspb.Message.setProto3IntField(this, 50, value);
 };
 
 

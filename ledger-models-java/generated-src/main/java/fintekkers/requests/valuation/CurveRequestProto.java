@@ -418,6 +418,25 @@ private static final long serialVersionUID = 0L;
     return tenorPoints_.get(index);
   }
 
+  public static final int FORWARD_TERM_YEARS_FIELD_NUMBER = 50;
+  private int forwardTermYears_ = 0;
+  /**
+   * <pre>
+   * Term length, in whole years, for FORWARD_YIELD curve construction.
+   * When set, FORWARD_YIELD curve result returns f(t, t+T) at annual t for
+   * t in [0, T_max - T]. When unset, existing behavior preserved.
+   * Annual granularity only (uint32). Added per #264. Only meaningful when
+   * FORWARD_YIELD is among `curve_types`; ignored otherwise.
+   * </pre>
+   *
+   * <code>uint32 forward_term_years = 50;</code>
+   * @return The forwardTermYears.
+   */
+  @java.lang.Override
+  public int getForwardTermYears() {
+    return forwardTermYears_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -454,6 +473,9 @@ private static final long serialVersionUID = 0L;
     }
     for (int i = 0; i < tenorPoints_.size(); i++) {
       output.writeMessage(40, tenorPoints_.get(i));
+    }
+    if (forwardTermYears_ != 0) {
+      output.writeUInt32(50, forwardTermYears_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -494,6 +516,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(40, tenorPoints_.get(i));
     }
+    if (forwardTermYears_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeUInt32Size(50, forwardTermYears_);
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -523,6 +549,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getCurveInputsList())) return false;
     if (!getTenorPointsList()
         .equals(other.getTenorPointsList())) return false;
+    if (getForwardTermYears()
+        != other.getForwardTermYears()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -554,6 +582,8 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + TENOR_POINTS_FIELD_NUMBER;
       hash = (53 * hash) + getTenorPointsList().hashCode();
     }
+    hash = (37 * hash) + FORWARD_TERM_YEARS_FIELD_NUMBER;
+    hash = (53 * hash) + getForwardTermYears();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -716,6 +746,7 @@ private static final long serialVersionUID = 0L;
         tenorPointsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000020);
+      forwardTermYears_ = 0;
       return this;
     }
 
@@ -786,6 +817,9 @@ private static final long serialVersionUID = 0L;
         result.asofDatetime_ = asofDatetimeBuilder_ == null
             ? asofDatetime_
             : asofDatetimeBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.forwardTermYears_ = forwardTermYears_;
       }
     }
 
@@ -908,6 +942,9 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (other.getForwardTermYears() != 0) {
+        setForwardTermYears(other.getForwardTermYears());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -994,6 +1031,11 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 322
+            case 400: {
+              forwardTermYears_ = input.readUInt32();
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 400
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -2261,6 +2303,62 @@ private static final long serialVersionUID = 0L;
         tenorPoints_ = null;
       }
       return tenorPointsBuilder_;
+    }
+
+    private int forwardTermYears_ ;
+    /**
+     * <pre>
+     * Term length, in whole years, for FORWARD_YIELD curve construction.
+     * When set, FORWARD_YIELD curve result returns f(t, t+T) at annual t for
+     * t in [0, T_max - T]. When unset, existing behavior preserved.
+     * Annual granularity only (uint32). Added per #264. Only meaningful when
+     * FORWARD_YIELD is among `curve_types`; ignored otherwise.
+     * </pre>
+     *
+     * <code>uint32 forward_term_years = 50;</code>
+     * @return The forwardTermYears.
+     */
+    @java.lang.Override
+    public int getForwardTermYears() {
+      return forwardTermYears_;
+    }
+    /**
+     * <pre>
+     * Term length, in whole years, for FORWARD_YIELD curve construction.
+     * When set, FORWARD_YIELD curve result returns f(t, t+T) at annual t for
+     * t in [0, T_max - T]. When unset, existing behavior preserved.
+     * Annual granularity only (uint32). Added per #264. Only meaningful when
+     * FORWARD_YIELD is among `curve_types`; ignored otherwise.
+     * </pre>
+     *
+     * <code>uint32 forward_term_years = 50;</code>
+     * @param value The forwardTermYears to set.
+     * @return This builder for chaining.
+     */
+    public Builder setForwardTermYears(int value) {
+      
+      forwardTermYears_ = value;
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Term length, in whole years, for FORWARD_YIELD curve construction.
+     * When set, FORWARD_YIELD curve result returns f(t, t+T) at annual t for
+     * t in [0, T_max - T]. When unset, existing behavior preserved.
+     * Annual granularity only (uint32). Added per #264. Only meaningful when
+     * FORWARD_YIELD is among `curve_types`; ignored otherwise.
+     * </pre>
+     *
+     * <code>uint32 forward_term_years = 50;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearForwardTermYears() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      forwardTermYears_ = 0;
+      onChanged();
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

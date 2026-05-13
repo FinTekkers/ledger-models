@@ -238,4 +238,18 @@ public interface CurveRequestProtoOrBuilder extends
    */
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getTenorPointsOrBuilder(
       int index);
+
+  /**
+   * <pre>
+   * Term length, in whole years, for FORWARD_YIELD curve construction.
+   * When set, FORWARD_YIELD curve result returns f(t, t+T) at annual t for
+   * t in [0, T_max - T]. When unset, existing behavior preserved.
+   * Annual granularity only (uint32). Added per #264. Only meaningful when
+   * FORWARD_YIELD is among `curve_types`; ignored otherwise.
+   * </pre>
+   *
+   * <code>uint32 forward_term_years = 50;</code>
+   * @return The forwardTermYears.
+   */
+  int getForwardTermYears();
 }

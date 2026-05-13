@@ -24,17 +24,19 @@ class CurveInputProto(_message.Message):
     def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., price: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ..., tenor: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
 
 class CurveRequestProto(_message.Message):
-    __slots__ = ("object_class", "version", "asof_datetime", "curve_types", "curve_inputs", "tenor_points")
+    __slots__ = ("object_class", "version", "asof_datetime", "curve_types", "curve_inputs", "tenor_points", "forward_term_years")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     ASOF_DATETIME_FIELD_NUMBER: _ClassVar[int]
     CURVE_TYPES_FIELD_NUMBER: _ClassVar[int]
     CURVE_INPUTS_FIELD_NUMBER: _ClassVar[int]
     TENOR_POINTS_FIELD_NUMBER: _ClassVar[int]
+    FORWARD_TERM_YEARS_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
     asof_datetime: _local_timestamp_pb2.LocalTimestampProto
     curve_types: _containers.RepeatedScalarFieldContainer[_measure_pb2.MeasureProto]
     curve_inputs: _containers.RepeatedCompositeFieldContainer[CurveInputProto]
     tenor_points: _containers.RepeatedCompositeFieldContainer[_decimal_value_pb2.DecimalValueProto]
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., asof_datetime: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., curve_types: _Optional[_Iterable[_Union[_measure_pb2.MeasureProto, str]]] = ..., curve_inputs: _Optional[_Iterable[_Union[CurveInputProto, _Mapping]]] = ..., tenor_points: _Optional[_Iterable[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]]] = ...) -> None: ...
+    forward_term_years: int
+    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., asof_datetime: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., curve_types: _Optional[_Iterable[_Union[_measure_pb2.MeasureProto, str]]] = ..., curve_inputs: _Optional[_Iterable[_Union[CurveInputProto, _Mapping]]] = ..., tenor_points: _Optional[_Iterable[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]]] = ..., forward_term_years: _Optional[int] = ...) -> None: ...

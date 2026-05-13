@@ -1,10 +1,9 @@
-//! Round-trip tests for the new CurveInputProto fields (issue #203):
-//!   - tenor (DecimalValueProto, decimal-years override)
-//!   - clean_price (DecimalValueProto, alternative to price)
+//! Round-trip tests for CurveInputProto fields (issue #203) and the
+//! CurveRequestProto.forward_term_years field (issue #264, v0.2.4).
 
 use ledger_models::fintekkers::models::security::{SecurityProto, ProductTypeProto};
 use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
-use ledger_models::fintekkers::requests::valuation::CurveInputProto;
+use ledger_models::fintekkers::requests::valuation::{CurveInputProto, CurveRequestProto};
 use prost::Message;
 
 fn decimal(value: &str) -> DecimalValueProto {
@@ -93,4 +92,40 @@ fn curve_input_synthetic_cmt_shape_survives_roundtrip() {
         "0.5"
     );
     assert!(parsed.clean_price.is_none());
+}
+
+// ---------- CurveRequestProto.forward_term_years (v0.2.4, #264) ----------
+
+fn roundtrip_request(original: &CurveRequestProto) -> CurveRequestProto {
+    let mut buf = Vec::new();
+    original.encode(&mut buf).expect("encode failed");
+    CurveRequestProto::decode(&buf[..]).expect("decode failed")
+}
+
+#[test]
+fn curve_request_forward_term_years_survives_roundtrip() {
+    // When set, FORWARD_YIELD curve result returns f(t, t+T) at annual t
+    // for t in [0, T_max - T]. The proto field is the only carrier of T;
+    // it must survive serialize/deserialize byte-for-byte.
+    let original = CurveRequestProto {
+        forward_term_years: 10,
+        ..Default::default()
+    };
+
+    let parsed = roundtrip_request(&original);
+
+    assert_eq!(parsed.forward_term_years, 10);
+}
+
+#[test]
+fn curve_request_unset_forward_term_years_remains_default_zero() {
+    // Existing-behavior preservation: when the caller doesn't set
+    // forward_term_years, proto3 default of 0 means "unset" and the
+    // server applies its prior FORWARD_YIELD behavior.
+    let original = CurveRequestProto::default();
+
+    let parsed = roundtrip_request(&original);
+
+    assert_eq!(parsed.forward_term_years, 0,
+               "unset forward_term_years must round-trip as proto3 default 0");
 }
