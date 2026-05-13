@@ -122,6 +122,17 @@ public enum FieldProto
   ADJUSTED_TENOR(57),
   /**
    * <pre>
+   * Filter Securities by membership in a specific index, resolved as-of
+   * the request asOf. The filter value is the UUID of the index Security
+   * (productType=*_INDEX). The server returns constituents using its
+   * registered resolver for that index. Added per second-brain#268.
+   * </pre>
+   *
+   * <code>INDEX_MEMBERSHIP_OF = 63;</code>
+   */
+  INDEX_MEMBERSHIP_OF(63),
+  /**
+   * <pre>
    *Portfolio fields
    * </pre>
    *
@@ -329,6 +340,17 @@ public enum FieldProto
   public static final int ADJUSTED_TENOR_VALUE = 57;
   /**
    * <pre>
+   * Filter Securities by membership in a specific index, resolved as-of
+   * the request asOf. The filter value is the UUID of the index Security
+   * (productType=*_INDEX). The server returns constituents using its
+   * registered resolver for that index. Added per second-brain#268.
+   * </pre>
+   *
+   * <code>INDEX_MEMBERSHIP_OF = 63;</code>
+   */
+  public static final int INDEX_MEMBERSHIP_OF_VALUE = 63;
+  /**
+   * <pre>
    *Portfolio fields
    * </pre>
    *
@@ -463,6 +485,7 @@ public enum FieldProto
       case 58: return ISSUE_DATE;
       case 56: return MATURITY_DATE;
       case 57: return ADJUSTED_TENOR;
+      case 63: return INDEX_MEMBERSHIP_OF;
       case 14: return PORTFOLIO;
       case 15: return PORTFOLIO_ID;
       case 60: return PORTFOLIO_NAME;

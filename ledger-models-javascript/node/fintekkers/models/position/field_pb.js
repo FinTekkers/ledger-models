@@ -44,6 +44,7 @@ proto.fintekkers.models.position.FieldProto = {
   ISSUE_DATE: 58,
   MATURITY_DATE: 56,
   ADJUSTED_TENOR: 57,
+  INDEX_MEMBERSHIP_OF: 63,
   PORTFOLIO: 14,
   PORTFOLIO_ID: 15,
   PORTFOLIO_NAME: 60,

@@ -250,7 +250,8 @@ impl Position {
             FieldProto::PortfolioId
             | FieldProto::SecurityId
             | FieldProto::PriceId
-            | FieldProto::Id => {
+            | FieldProto::Id
+            | FieldProto::IndexMembershipOf => {
                 let uuid_proto = UuidProto::decode(binary_value.as_slice())
                     .map_err(|_| "Failed to decode UUIDProto")?;
                 let uuid = ProtoSerializationUtil::deserialize_uuid(&uuid_proto)
@@ -638,6 +639,69 @@ mod test {
         assert_eq!(retrieved_proto.object_class, "PositionFilter");
         assert_eq!(retrieved_proto.version, "0.0.1");
         assert_eq!(retrieved_proto.filters.len(), 1);
+    }
+
+    /// v0.2.5 / second-brain#268 — INDEX_MEMBERSHIP_OF round-trip.
+    /// Filter value is the UUID of an index Security; encode → decode →
+    /// assert preserved byte-for-byte.
+    #[test]
+    fn test_position_filter_index_membership_of_uuid_roundtrip() {
+        let index_uuid = Uuid::parse_str("11111111-2222-3333-4444-555555555555").unwrap();
+        let index_uuid_proto = UuidProto {
+            raw_uuid: index_uuid.as_bytes().to_vec(),
+        };
+        let mut uuid_bytes = Vec::new();
+        index_uuid_proto.encode(&mut uuid_bytes).unwrap();
+
+        let packed_uuid = Any {
+            type_url: "type.googleapis.com/fintekkers.models.util.UUIDProto".to_string(),
+            value: uuid_bytes,
+        };
+
+        let field_entry = FieldMapEntry {
+            field: FieldProto::IndexMembershipOf as i32,
+            operator: PositionFilterOperator::Equals as i32,
+            field_map_value_one_of: Some(field_map_entry::FieldMapValueOneOf::FieldValuePacked(
+                packed_uuid,
+            )),
+        };
+
+        let original = PositionFilterProto {
+            object_class: "PositionFilter".to_string(),
+            version: "0.0.1".to_string(),
+            filters: vec![field_entry],
+        };
+
+        let mut buf = Vec::new();
+        original.encode(&mut buf).expect("encode failed");
+        let parsed =
+            PositionFilterProto::decode(&buf[..]).expect("decode failed");
+
+        assert_eq!(parsed.filters.len(), 1);
+        assert_eq!(parsed.filters[0].field, FieldProto::IndexMembershipOf as i32);
+        assert_eq!(
+            parsed.filters[0].operator,
+            PositionFilterOperator::Equals as i32
+        );
+
+        // Pull the UUID back out via the same unpack path consumers use.
+        let position = Position::new(PositionProto {
+            object_class: "Position".to_string(),
+            version: "0.0.1".to_string(),
+            position_view: 0,
+            position_type: 0,
+            measures: vec![],
+            reporting_currency: None,
+            fields: vec![parsed.filters[0].clone()],
+        });
+        let unpacked = position
+            .get_field_value(FieldProto::IndexMembershipOf)
+            .expect("get_field_value(IndexMembershipOf) should succeed");
+        let parsed_uuid = unpacked
+            .downcast_ref::<Uuid>()
+            .expect("downcast to Uuid should succeed");
+        assert_eq!(*parsed_uuid, index_uuid,
+                   "INDEX_MEMBERSHIP_OF UUID must survive encode/decode/unpack");
     }
 
     #[test]

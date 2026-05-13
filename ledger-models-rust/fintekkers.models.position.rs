@@ -33,6 +33,13 @@ pub enum FieldProto {
     IssueDate = 58,
     MaturityDate = 56,
     AdjustedTenor = 57,
+    /// Filter Securities by membership in a specific index, resolved as-of
+    /// the request asOf. The filter value is the UUID of the index Security
+    /// (productType=*_INDEX). The server returns constituents using its
+    /// registered resolver for that index. Added per second-brain#268.
+    ///
+    /// (UUID.class)
+    IndexMembershipOf = 63,
     /// Portfolio fields
     ///
     /// common.model.portfolio.Portfolio.class
@@ -90,6 +97,7 @@ impl FieldProto {
             FieldProto::IssueDate => "ISSUE_DATE",
             FieldProto::MaturityDate => "MATURITY_DATE",
             FieldProto::AdjustedTenor => "ADJUSTED_TENOR",
+            FieldProto::IndexMembershipOf => "INDEX_MEMBERSHIP_OF",
             FieldProto::Portfolio => "PORTFOLIO",
             FieldProto::PortfolioId => "PORTFOLIO_ID",
             FieldProto::PortfolioName => "PORTFOLIO_NAME",
@@ -125,6 +133,7 @@ impl FieldProto {
             "ISSUE_DATE" => Some(Self::IssueDate),
             "MATURITY_DATE" => Some(Self::MaturityDate),
             "ADJUSTED_TENOR" => Some(Self::AdjustedTenor),
+            "INDEX_MEMBERSHIP_OF" => Some(Self::IndexMembershipOf),
             "PORTFOLIO" => Some(Self::Portfolio),
             "PORTFOLIO_ID" => Some(Self::PortfolioId),
             "PORTFOLIO_NAME" => Some(Self::PortfolioName),

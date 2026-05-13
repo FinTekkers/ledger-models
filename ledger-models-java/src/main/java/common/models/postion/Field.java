@@ -112,7 +112,11 @@ public enum Field {
             "terms (e.g. callables, American options, etc) will exhibit their initial tenor with max tenor. "),
     ADJUSTED_TENOR(Tenor.class, String.format("Same concept as %s though adjusted for the current/asOf date. " +
             "For example a 30 year bond issued 20 years ago has a remaining time to maturity of 10 years, therefore " +
-            "the adjusted tenor is 10 years.", TENOR.name()))
+            "the adjusted tenor is 10 years.", TENOR.name())),
+
+    INDEX_MEMBERSHIP_OF(UUID.class, "Filter Securities by membership in a specific index, resolved as-of the " +
+            "request asOf. The filter value is the UUID of the index Security (productType=*_INDEX). The server " +
+            "returns constituents using its registered resolver for that index. Added per second-brain#268.")
     ;
 
 

@@ -35,6 +35,12 @@ enum FieldProto {
   MATURITY_DATE = 56;
   ADJUSTED_TENOR = 57;
 
+  // Filter Securities by membership in a specific index, resolved as-of
+  // the request asOf. The filter value is the UUID of the index Security
+  // (productType=*_INDEX). The server returns constituents using its
+  // registered resolver for that index. Added per second-brain#268.
+  INDEX_MEMBERSHIP_OF = 63; //(UUID.class)
+
   //Portfolio fields
   PORTFOLIO = 14; //common.model.portfolio.Portfolio.class
   PORTFOLIO_ID=15; //UUID

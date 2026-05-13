@@ -24,6 +24,7 @@ class FieldProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     ISSUE_DATE: _ClassVar[FieldProto]
     MATURITY_DATE: _ClassVar[FieldProto]
     ADJUSTED_TENOR: _ClassVar[FieldProto]
+    INDEX_MEMBERSHIP_OF: _ClassVar[FieldProto]
     PORTFOLIO: _ClassVar[FieldProto]
     PORTFOLIO_ID: _ClassVar[FieldProto]
     PORTFOLIO_NAME: _ClassVar[FieldProto]
@@ -54,6 +55,7 @@ TENOR: FieldProto
 ISSUE_DATE: FieldProto
 MATURITY_DATE: FieldProto
 ADJUSTED_TENOR: FieldProto
+INDEX_MEMBERSHIP_OF: FieldProto
 PORTFOLIO: FieldProto
 PORTFOLIO_ID: FieldProto
 PORTFOLIO_NAME: FieldProto
