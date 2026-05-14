@@ -2,6 +2,20 @@ import { LocalTimestampProto } from '../../../fintekkers/models/util/local_times
 import { DateTime } from 'luxon';
 declare class ZonedDateTime {
     private proto;
+    /**
+     * Wraps a LocalTimestampProto.
+     *
+     * Throws if `time_zone` is empty/whitespace — luxon's DateTime would
+     * otherwise silently produce an invalid DateTime (isValid=false,
+     * year=NaN), which propagates as silent corruption rather than a clear
+     * failure. See second-brain#276 for the original report from
+     * backend-dev-ledger during #268 verification.
+     *
+     * Callers with optional/unset timestamps should gate
+     * `new ZonedDateTime(parent.getAsOf())` with a `parent.hasAsOf()`
+     * check at the call site rather than relying on the constructor to
+     * substitute a default.
+     */
     constructor(proto: LocalTimestampProto);
     getTimezone(): string;
     getSeconds(): number;

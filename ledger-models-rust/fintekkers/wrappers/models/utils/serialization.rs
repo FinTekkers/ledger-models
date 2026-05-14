@@ -52,3 +52,81 @@ impl ProtoSerializationUtil {
             .map_err(|_| Error::DecimalConversion)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use prost_types::Timestamp;
+
+    // second-brain#276 — lock in that deserialize_timestamp rejects empty
+    // time_zone with Err(DateConversion). Rust already loud-fails here
+    // (chrono_tz::Tz::from_str returns Err on ""), but without a test
+    // future refactors of this helper could regress into silent defaults.
+
+    #[test]
+    fn deserialize_timestamp_returns_err_on_empty_time_zone() {
+        let proto = LocalTimestampProto {
+            timestamp: Some(Timestamp {
+                seconds: 1_700_000_000,
+                nanos: 0,
+            }),
+            time_zone: String::new(),
+        };
+
+        let result = ProtoSerializationUtil::deserialize_timestamp(&proto);
+        assert!(
+            matches!(result, Err(Error::DateConversion)),
+            "Empty time_zone must surface as Err(DateConversion), not a silent default. \
+             Got: {:?}",
+            result
+        );
+    }
+
+    #[test]
+    fn deserialize_timestamp_returns_err_on_default_proto() {
+        // Wholly default LocalTimestampProto — no timestamp, no time_zone.
+        // Should also error; we don't want some other silent path to substitute
+        // a zero-epoch datetime here.
+        let proto = LocalTimestampProto::default();
+        let result = ProtoSerializationUtil::deserialize_timestamp(&proto);
+        assert!(
+            matches!(result, Err(Error::DateConversion)),
+            "Default LocalTimestampProto must surface as Err(DateConversion). \
+             Got: {:?}",
+            result
+        );
+    }
+
+    #[test]
+    fn deserialize_timestamp_round_trips_utc() {
+        // Sanity: a properly-populated proto continues to decode.
+        let proto = LocalTimestampProto {
+            timestamp: Some(Timestamp {
+                seconds: 1_700_000_000,
+                nanos: 0,
+            }),
+            time_zone: "UTC".to_string(),
+        };
+
+        let result = ProtoSerializationUtil::deserialize_timestamp(&proto);
+        assert!(result.is_ok(), "valid UTC proto must decode: {:?}", result);
+    }
+
+    #[test]
+    fn deserialize_timestamp_returns_err_on_unparseable_zone() {
+        let proto = LocalTimestampProto {
+            timestamp: Some(Timestamp {
+                seconds: 1_700_000_000,
+                nanos: 0,
+            }),
+            time_zone: "Not/A_Zone".to_string(),
+        };
+
+        let result = ProtoSerializationUtil::deserialize_timestamp(&proto);
+        assert!(
+            matches!(result, Err(Error::DateConversion)),
+            "Unparseable time_zone must surface as Err(DateConversion). Got: {:?}",
+            result
+        );
+    }
+}
