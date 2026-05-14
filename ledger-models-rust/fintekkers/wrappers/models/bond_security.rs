@@ -31,34 +31,28 @@ impl BondSecurity {
         }
     }
 
-    pub fn issue_date(&self) -> Result<NaiveDate, Error> {
-        bond_dates(&self.proto)
-            .0
-            .ok_or(Error::MissingIssueDate)
-            .and_then(local_date_proto_to_naive)
+    pub fn issue_date(&self) -> Option<NaiveDate> {
+        bond_dates(&self.proto).0.and_then(|p| local_date_proto_to_naive(p).ok())
     }
 
-    pub fn maturity_date(&self) -> Result<NaiveDate, Error> {
-        bond_dates(&self.proto)
-            .1
-            .ok_or(Error::MissingMaturityDate)
-            .and_then(local_date_proto_to_naive)
+    pub fn maturity_date(&self) -> Option<NaiveDate> {
+        bond_dates(&self.proto).1.and_then(|p| local_date_proto_to_naive(p).ok())
     }
 
     /// Original tenor in decimal years: `maturity_date - issue_date` under
-    /// ACT/ACT (Treasury convention).
-    pub fn original_tenor(&self) -> Result<Decimal, Error> {
+    /// ACT/ACT (Treasury convention). Returns None when either date is missing.
+    pub fn original_tenor(&self) -> Option<Decimal> {
         let issue = self.issue_date()?;
         let maturity = self.maturity_date()?;
-        Ok(act_act_year_fraction(issue, maturity))
+        Some(act_act_year_fraction(issue, maturity))
     }
 
     /// Effective tenor in decimal years: `maturity_date - as_of` under ACT/ACT.
-    /// Returns 0 if `as_of` is at or after maturity.
-    pub fn effective_tenor<Tz: TimeZone>(&self, as_of: DateTime<Tz>) -> Result<Decimal, Error> {
+    /// Returns 0 if `as_of` is at or after maturity, None when maturity is missing.
+    pub fn effective_tenor<Tz: TimeZone>(&self, as_of: DateTime<Tz>) -> Option<Decimal> {
         let maturity = self.maturity_date()?;
         let as_of_date = as_of.naive_utc().date();
-        Ok(act_act_year_fraction(as_of_date, maturity))
+        Some(act_act_year_fraction(as_of_date, maturity))
     }
 
     /// All `Issuance` records attached to the bond (auctions / reopenings).
@@ -308,16 +302,16 @@ mod tests {
     fn missing_maturity_returns_error() {
         let proto = bond_proto(date(2025, 1, 15), None, false);
         let bond = BondSecurity::from_proto(proto).unwrap();
-        assert!(matches!(bond.maturity_date(), Err(Error::MissingMaturityDate)));
-        assert!(matches!(bond.original_tenor(), Err(Error::MissingMaturityDate)));
+        assert!(bond.maturity_date().is_none());
+        assert!(bond.original_tenor().is_none());
     }
 
     #[test]
     fn missing_issue_returns_error() {
         let proto = bond_proto(None, date(2035, 1, 15), false);
         let bond = BondSecurity::from_proto(proto).unwrap();
-        assert!(matches!(bond.issue_date(), Err(Error::MissingIssueDate)));
-        assert!(matches!(bond.original_tenor(), Err(Error::MissingIssueDate)));
+        assert!(bond.issue_date().is_none());
+        assert!(bond.original_tenor().is_none());
     }
 
     #[test]

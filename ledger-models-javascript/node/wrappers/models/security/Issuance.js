@@ -7,7 +7,7 @@ const date_1 = require("../utils/date");
 const decimal_js_1 = __importDefault(require("decimal.js"));
 /**
  * Typed wrapper around a single IssuanceProto. Returns null for unset
- * sub-messages and Decimal/LocalDate for populated ones — callers no longer
+ * sub-messages and Decimal/Date for populated ones — callers no longer
  * have to spell out the proto / Decimal coercions at every call site.
  *
  * Note: IssuanceProto has no `dated_date` or `auction_date` field on the
@@ -22,18 +22,13 @@ class Issuance {
             return null;
         return new decimal_js_1.default(value.getArbitraryPrecisionValue());
     }
-    static _toLocalDate(value) {
-        if (!value)
-            return null;
-        return new date_1.LocalDate(value);
-    }
     /** Auction issue (settlement) date. Null if unset. */
     getIssueDate() {
-        return Issuance._toLocalDate(this.proto.getAuctionIssueDate());
+        return (0, date_1.localDateProtoToDate)(this.proto.getAuctionIssueDate());
     }
     /** Auction announcement date. Null if unset. */
     getAnnouncementDate() {
-        return Issuance._toLocalDate(this.proto.getAuctionAnnouncementDate());
+        return (0, date_1.localDateProtoToDate)(this.proto.getAuctionAnnouncementDate());
     }
     /** Auction offering amount (original face value offered). Null if unset. */
     getOriginalFaceValue() {

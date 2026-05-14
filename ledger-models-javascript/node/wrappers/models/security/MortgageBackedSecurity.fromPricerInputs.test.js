@@ -11,11 +11,11 @@ const product_type_pb_1 = require("../../../fintekkers/models/security/product_t
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const agency_pb_1 = require("../../../fintekkers/models/security/bond/agency_pb");
-const date_1 = require("../utils/date");
-const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 const decimal_js_1 = require("decimal.js");
 function makeDate(y, m, d) {
-    return new date_1.LocalDate(new local_date_pb_1.LocalDateProto().setYear(y).setMonth(m).setDay(d));
+    const date = new Date(y, m - 1, d);
+    date.setHours(0, 0, 0, 0);
+    return date;
 }
 const baseInputs = {
     faceValue: new decimal_js_1.Decimal('250000000'),
@@ -75,10 +75,14 @@ test('MortgageBackedSecurity typed accessors read back the expected values', () 
     const proto = MortgageBackedSecurity_1.default.fromPricerInputs(mbsInputs);
     const sec = security_1.default.create(proto);
     // Bond-side checks (inherited from BondSecurity).
-    expect(sec.getCouponRate().getArbitraryPrecisionValue()).toBe('0.04');
-    expect(sec.getFaceValue().getArbitraryPrecisionValue()).toBe('250000000');
-    expect(sec.getIssueDate().toDate().getFullYear()).toBe(2024);
-    expect(sec.getMaturityDate().toDate().getFullYear()).toBe(2054);
+    expect(sec.getCouponRate().equals(new decimal_js_1.Decimal('0.04'))).toBe(true);
+    expect(sec.getFaceValue().equals(new decimal_js_1.Decimal('250000000'))).toBe(true);
+    const issueDate = sec.getIssueDate();
+    const maturityDate = sec.getMaturityDate();
+    expect(issueDate).toBeInstanceOf(Date);
+    expect(maturityDate).toBeInstanceOf(Date);
+    expect(issueDate.getFullYear()).toBe(2024);
+    expect(maturityDate.getFullYear()).toBe(2054);
     // MBS-specific accessor checks.
     expect(sec.getPoolNumber()).toBe('FN AS1234');
     expect(sec.getAgency()).toBe(agency_pb_1.AgencyProto.FNMA);

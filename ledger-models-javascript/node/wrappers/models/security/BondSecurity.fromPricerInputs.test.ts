@@ -6,12 +6,12 @@ import { ProductTypeProto } from '../../../fintekkers/models/security/product_ty
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
-import { LocalDate } from '../utils/date';
-import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { Decimal } from 'decimal.js';
 
-function makeDate(y: number, m: number, d: number): LocalDate {
-  return new LocalDate(new LocalDateProto().setYear(y).setMonth(m).setDay(d));
+function makeDate(y: number, m: number, d: number): Date {
+  const date = new Date(y, m - 1, d);
+  date.setHours(0, 0, 0, 0);
+  return date;
 }
 
 const baseInputs = {
@@ -29,12 +29,16 @@ test('BondSecurity.fromPricerInputs round-trips through Security.create as a Bon
   const sec = Security.create(proto);
   expect(sec).toBeInstanceOf(BondSecurity);
   const bond = sec as BondSecurity;
-  expect(bond.getCouponRate().getArbitraryPrecisionValue()).toBe('0.045');
-  expect(bond.getFaceValue().getArbitraryPrecisionValue()).toBe('1000');
+  expect(bond.getCouponRate()!.equals(new Decimal('0.045'))).toBe(true);
+  expect(bond.getFaceValue()!.equals(new Decimal('1000'))).toBe(true);
   expect(bond.getCouponType().name()).toBe('FIXED');
   expect(bond.getCouponFrequency().toString()).toBe('SEMIANNUALLY');
-  expect(bond.getIssueDate().toDate().getFullYear()).toBe(2024);
-  expect(bond.getMaturityDate().toDate().getFullYear()).toBe(2034);
+  const issueDate = bond.getIssueDate();
+  const maturityDate = bond.getMaturityDate();
+  expect(issueDate).toBeInstanceOf(Date);
+  expect(maturityDate).toBeInstanceOf(Date);
+  expect(issueDate!.getFullYear()).toBe(2024);
+  expect(maturityDate!.getFullYear()).toBe(2034);
 });
 
 test('TIPSBond.fromPricerInputs round-trips with tips_extension populated', () => {
@@ -51,10 +55,12 @@ test('TIPSBond.fromPricerInputs round-trips with tips_extension populated', () =
   expect(sec).toBeInstanceOf(TIPSBond);
   const tips = sec as TIPSBond;
   // Bond-side checks (inherited from BondSecurity)
-  expect(tips.getCouponRate().getArbitraryPrecisionValue()).toBe('0.045');
+  expect(tips.getCouponRate()!.equals(new Decimal('0.045'))).toBe(true);
   // TIPS-specific checks
   expect(tips.getBaseCpi()?.toString()).toBe('301.5');
-  expect(tips.getIndexDate()?.toDate().getFullYear()).toBe(2024);
+  const indexDate = tips.getIndexDate();
+  expect(indexDate).toBeInstanceOf(Date);
+  expect(indexDate!.getFullYear()).toBe(2024);
   expect(tips.getInflationIndexType()).toBe(IndexTypeProto.CPI_U);
 });
 
@@ -71,7 +77,7 @@ test('FloatingRateNote.fromPricerInputs round-trips with frn_extension populated
   const sec = Security.create(proto);
   expect(sec).toBeInstanceOf(FloatingRateNote);
   const frn = sec as FloatingRateNote;
-  expect(frn.getCouponRate().getArbitraryPrecisionValue()).toBe('0.045');
+  expect(frn.getCouponRate()!.equals(new Decimal('0.045'))).toBe(true);
   expect(frn.getSpread()?.toString()).toBe('0.0015');
   expect(frn.getReferenceRateIndex()).toBe(IndexTypeProto.SOFR);
   expect(frn.getResetFrequency()).toBe(CouponFrequencyProto.QUARTERLY);

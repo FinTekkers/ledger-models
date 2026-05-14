@@ -40,8 +40,8 @@ class Transaction {
         const asOfZonedDateTime = datetime_1.ZonedDateTime.from(params.asOfDate);
         transactionProto.setAsOf(asOfZonedDateTime.toProto());
         // Convert tradeDate and settlementDate to LocalDateProto
-        transactionProto.setTradeDate(date_1.LocalDate.from(params.tradeDate).toProto());
-        transactionProto.setSettlementDate(date_1.LocalDate.from(params.settlementDate).toProto());
+        transactionProto.setTradeDate((0, date_1.dateToLocalDateProto)(params.tradeDate));
+        transactionProto.setSettlementDate((0, date_1.dateToLocalDateProto)(params.settlementDate));
         // Create Price using Price.create() factory method
         const price = Price_1.default.create(params.price, params.security, asOfZonedDateTime);
         transactionProto.setPrice(price.proto);
@@ -63,13 +63,13 @@ class Transaction {
         return transactionProto;
     }
     toString() {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         try {
             const validTo = (_b = (_a = this.proto.getValidTo()) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : "NULL";
             const validFrom = (_d = (_c = this.proto.getValidFrom()) === null || _c === void 0 ? void 0 : _c.toString()) !== null && _d !== void 0 ? _d : "NULL";
             const strategyAllocation = (_f = (_e = this.proto.getStrategyAllocation()) === null || _e === void 0 ? void 0 : _e.toString()) !== null && _f !== void 0 ? _f : "NULL";
             return `${ /*this.proto.isCancelled()*/false ? "INVALIDATED: " : ""}TXN[${this.getID().toString()}], ` +
-                `TradeDate[${this.getTradeDate().toString()}], TxnType[${this.getTransactionType()}], Price[${this.getPrice()}], Quantity[${this.getQuantity()}], ` +
+                `TradeDate[${(_h = (_g = this.getTradeDate()) === null || _g === void 0 ? void 0 : _g.toString()) !== null && _h !== void 0 ? _h : "NULL"}], TxnType[${this.getTransactionType()}], Price[${this.getPrice()}], Quantity[${this.getQuantity()}], ` +
                 `AsOf[${this.getAsOf().toString()}], Portfolio[${this.getPortfolio().getPortfolioName()}], Issuer[${this.getSecurity().getIssuerName()}], ` +
                 `ValidFrom[${validFrom}], ValidTo[${validTo}], Strategy[${strategyAllocation}]`;
         }
@@ -156,16 +156,10 @@ class Transaction {
         return this.getQuantity().mul(this.getTransactionType().getDirectionMultiplier());
     }
     getTradeDate() {
-        const tradeDate = this.proto.getTradeDate();
-        if (!tradeDate)
-            throw new Error("TradeDate is required");
-        return new date_1.LocalDate(tradeDate);
+        return (0, date_1.localDateProtoToDate)(this.proto.getTradeDate());
     }
     getSettlementDate() {
-        const settlementDate = this.proto.getSettlementDate();
-        if (!settlementDate)
-            throw new Error("SettlementDate is required");
-        return new date_1.LocalDate(settlementDate);
+        return (0, date_1.localDateProtoToDate)(this.proto.getSettlementDate());
     }
     getTransactionType() {
         return new transaction_type_1.TransactionType(this.proto.getTransactionType());
@@ -253,8 +247,9 @@ class Transaction {
                 const BondSecurity = require('../security/BondSecurity').default;
                 const bondSecurity = new BondSecurity(parentTransaction.getSecurity().proto);
                 const priceScaleFactor = bondSecurity.getPriceScaleFactor();
-                const faceValueProto = bondSecurity.getFaceValue();
-                const faceValue = new decimal_js_1.Decimal(faceValueProto.getArbitraryPrecisionValue());
+                const faceValue = bondSecurity.getFaceValue();
+                if (!faceValue)
+                    throw new Error("Face value is required for bond cash impact calculation");
                 const priceProto = parentTransaction.getPrice();
                 const priceValue = new decimal_js_1.Decimal(((_a = priceProto.getPrice()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue()) || '0');
                 const scaledPrice = priceValue.mul(priceScaleFactor);
@@ -271,10 +266,16 @@ class Transaction {
         }
         // Get asOf ZonedDateTime
         const asOf = parentTransaction.getAsOf();
+        const tradeDate = parentTransaction.getTradeDate();
+        const settlementDate = parentTransaction.getSettlementDate();
+        if (!tradeDate)
+            throw new Error("TradeDate is required to derive a cash transaction");
+        if (!settlementDate)
+            throw new Error("SettlementDate is required to derive a cash transaction");
         // Create cash transaction using parameter-based constructor
         const cashTransaction = new Transaction({
-            tradeDate: parentTransaction.getTradeDate().toDate(),
-            settlementDate: parentTransaction.getSettlementDate().toDate(),
+            tradeDate,
+            settlementDate,
             asOfDate: asOf.toDateTime().toJSDate(),
             price: new decimal_js_1.Decimal('1.0'),
             security: cashSecurity,
@@ -304,10 +305,11 @@ class Transaction {
         const bondSecurity = new BondSecurity(transaction.getSecurity().proto);
         // Get maturity date
         const maturityDate = bondSecurity.getMaturityDate();
+        if (!maturityDate)
+            throw new Error("Maturity date is required to derive a maturation transaction");
         // Calculate settlement date: maturity date + 2 days
-        const maturityDateObj = maturityDate.toDate();
-        maturityDateObj.setDate(maturityDateObj.getDate() + 2);
-        const settlementDate = date_1.LocalDate.from(maturityDateObj);
+        const settlementDate = new Date(maturityDate.getTime());
+        settlementDate.setDate(settlementDate.getDate() + 2);
         // Get price as Decimal
         const priceProto = transaction.getPrice();
         const priceValue = new decimal_js_1.Decimal(((_a = priceProto.getPrice()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue()) || '0');
@@ -315,8 +317,8 @@ class Transaction {
         const asOf = transaction.getAsOf();
         // Create maturation transaction
         const maturation = new Transaction({
-            tradeDate: maturityDate.toDate(),
-            settlementDate: settlementDate.toDate(),
+            tradeDate: maturityDate,
+            settlementDate,
             asOfDate: asOf.toDateTime().toJSDate(),
             price: priceValue,
             security: transaction.getSecurity(),

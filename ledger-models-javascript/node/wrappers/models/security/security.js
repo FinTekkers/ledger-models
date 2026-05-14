@@ -123,6 +123,56 @@ class Security {
             return false;
         return (0, product_hierarchy_1.isDescendantOf)(ptName, 'BOND');
     }
+    /**
+     * Type guard: true iff this Security is a MortgageBackedSecurity (a
+     * descendant of STRUCTURED_BOND in hierarchy.json — MBS_PASSTHROUGH today,
+     * CMBS/ABS/CLO when those leaves become active).
+     */
+    isMbs() {
+        return this.proto.getProductType() === product_type_pb_1.ProductTypeProto.MORTGAGE_BACKED;
+    }
+    /**
+     * Type guard: true iff this Security is an IndexSecurity (any descendant
+     * of INDEX in hierarchy.json — CPI_SERIES, SOFR_SERIES, EQUITY_INDEX, ...).
+     */
+    isIndex() {
+        const t = this.proto.getProductType();
+        const ptName = Object.keys(product_type_pb_1.ProductTypeProto)
+            .find(k => product_type_pb_1.ProductTypeProto[k] === t);
+        if (!ptName)
+            return false;
+        return (0, product_hierarchy_1.isDescendantOf)(ptName, 'INDEX');
+    }
+    /**
+     * Runtime predicate: true iff this Security wraps a cash currency
+     * (product_type == CURRENCY). No dedicated CashSecurity wrapper exists
+     * yet so this isn't a TS type-guard — the return is base Security.
+     */
+    isCash() {
+        return this.proto.getProductType() === product_type_pb_1.ProductTypeProto.CURRENCY;
+    }
+    /**
+     * Runtime predicate: true iff this Security wraps a stock-shape product
+     * type (any descendant of STOCK in hierarchy.json — COMMON_STOCK,
+     * PREFERRED_STOCK, ADR, ETF). No dedicated EquitySecurity wrapper exists
+     * yet so this isn't a TS type-guard — the return is base Security.
+     */
+    isEquity() {
+        const t = this.proto.getProductType();
+        const ptName = Object.keys(product_type_pb_1.ProductTypeProto)
+            .find(k => product_type_pb_1.ProductTypeProto[k] === t);
+        if (!ptName)
+            return false;
+        return (0, product_hierarchy_1.isDescendantOf)(ptName, 'STOCK');
+    }
+    /**
+     * Runtime predicate: true iff this Security wraps an FX spot
+     * (product_type == FX_SPOT). No dedicated FxSpotSecurity wrapper exists
+     * yet so this isn't a TS type-guard — the return is base Security.
+     */
+    isFxSpot() {
+        return this.proto.getProductType() === product_type_pb_1.ProductTypeProto.FX_SPOT;
+    }
     toString() {
         const ids = this.proto.getIsLink() ? [] : this.proto.getIdentifiersList();
         const idStr = ids && ids.length > 0
@@ -232,33 +282,26 @@ class Security {
      * Returns null on equities/cash/etc. that don't have an issue date set,
      * rather than throwing — issue date is optional on the base Security.
      * For bond-specific code paths, prefer narrowing first via isBond() and
-     * calling BondSecurity.getIssueDate() (which returns LocalDate, not null).
+     * calling BondSecurity.getIssueDate() (which is non-nullable on a
+     * properly-formed bond).
      */
     getIssueDate() {
         this.assertNotLink('issueDate');
         const bond = this.getBondLikeDetails();
         const date = bond ? bond.getIssueDate() : undefined;
-        if (!date)
-            return null;
-        return new date_1.LocalDate(date);
+        return (0, date_1.localDateProtoToDate)(date);
     }
     /**
-     * @deprecated Maturity date is a bond-only concept. On the base Security
-     * this still throws when unset for backwards compatibility. Prefer
-     * narrowing first:
-     *
-     *   if (sec.isBond()) sec.getMaturityDate();   // BondSecurity, returns LocalDate
-     *
-     * In a future major version this method will move to BondSecurity only
-     * and TS will catch the misuse at compile time.
+     * Returns the maturity date if set, else null. Maturity date is a
+     * bond-only concept; on non-bond securities this returns null rather
+     * than throwing. Prefer narrowing first via isBond() for bond-specific
+     * code paths.
      */
     getMaturityDate() {
         this.assertNotLink('maturityDate');
         const bond = this.getBondLikeDetails();
         const date = bond ? bond.getMaturityDate() : undefined;
-        if (!date)
-            throw new Error("Maturity date is required");
-        return new date_1.LocalDate(date);
+        return (0, date_1.localDateProtoToDate)(date);
     }
     /**
      * Returns the canonical bond_details sub-message if set, else undefined.

@@ -8,7 +8,6 @@ import Security from "../security/security";
 import Portfolio from "../portfolio/portfolio";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
-import { LocalDate } from "../utils/date";
 import { Decimal } from "decimal.js";
 interface TransactionConstructorParams {
     tradeDate: Date;
@@ -39,8 +38,8 @@ declare class Transaction {
     getQuantity(): Decimal;
     getIssuerName(): string;
     getDirectedQuantity(): Decimal;
-    getTradeDate(): LocalDate;
-    getSettlementDate(): LocalDate;
+    getTradeDate(): Date | null;
+    getSettlementDate(): Date | null;
     getTransactionType(): TransactionType;
     getTradeName(): string;
     getPositionStatus(): PositionStatusProto;

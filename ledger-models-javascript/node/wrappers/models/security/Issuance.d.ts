@@ -1,10 +1,9 @@
 import { IssuanceProto } from "../../../fintekkers/models/security/bond/issuance_pb";
 import { AuctionTypeProto } from "../../../fintekkers/models/security/bond/auction_type_pb";
-import { LocalDate } from "../utils/date";
 import Decimal from "decimal.js";
 /**
  * Typed wrapper around a single IssuanceProto. Returns null for unset
- * sub-messages and Decimal/LocalDate for populated ones — callers no longer
+ * sub-messages and Decimal/Date for populated ones — callers no longer
  * have to spell out the proto / Decimal coercions at every call site.
  *
  * Note: IssuanceProto has no `dated_date` or `auction_date` field on the
@@ -14,11 +13,10 @@ declare class Issuance {
     proto: IssuanceProto;
     constructor(proto: IssuanceProto);
     private static _toDecimal;
-    private static _toLocalDate;
     /** Auction issue (settlement) date. Null if unset. */
-    getIssueDate(): LocalDate | null;
+    getIssueDate(): Date | null;
     /** Auction announcement date. Null if unset. */
-    getAnnouncementDate(): LocalDate | null;
+    getAnnouncementDate(): Date | null;
     /** Auction offering amount (original face value offered). Null if unset. */
     getOriginalFaceValue(): Decimal | null;
     /** Total quantity accepted at auction. Null if unset. */

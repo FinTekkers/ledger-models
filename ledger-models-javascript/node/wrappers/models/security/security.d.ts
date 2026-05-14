@@ -2,7 +2,6 @@ import { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
-import { LocalDate } from "../utils/date";
 import { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
 import { Identifier } from "./identifier";
 declare class Security {
@@ -57,6 +56,36 @@ declare class Security {
      * works regardless of how the wrapper was constructed.
      */
     isBond(): this is import('./BondSecurity').default;
+    /**
+     * Type guard: true iff this Security is a MortgageBackedSecurity (a
+     * descendant of STRUCTURED_BOND in hierarchy.json — MBS_PASSTHROUGH today,
+     * CMBS/ABS/CLO when those leaves become active).
+     */
+    isMbs(): this is import('./MortgageBackedSecurity').default;
+    /**
+     * Type guard: true iff this Security is an IndexSecurity (any descendant
+     * of INDEX in hierarchy.json — CPI_SERIES, SOFR_SERIES, EQUITY_INDEX, ...).
+     */
+    isIndex(): this is import('./IndexSecurity').default;
+    /**
+     * Runtime predicate: true iff this Security wraps a cash currency
+     * (product_type == CURRENCY). No dedicated CashSecurity wrapper exists
+     * yet so this isn't a TS type-guard — the return is base Security.
+     */
+    isCash(): boolean;
+    /**
+     * Runtime predicate: true iff this Security wraps a stock-shape product
+     * type (any descendant of STOCK in hierarchy.json — COMMON_STOCK,
+     * PREFERRED_STOCK, ADR, ETF). No dedicated EquitySecurity wrapper exists
+     * yet so this isn't a TS type-guard — the return is base Security.
+     */
+    isEquity(): boolean;
+    /**
+     * Runtime predicate: true iff this Security wraps an FX spot
+     * (product_type == FX_SPOT). No dedicated FxSpotSecurity wrapper exists
+     * yet so this isn't a TS type-guard — the return is base Security.
+     */
+    isFxSpot(): boolean;
     toString(): string;
     getFields(): FieldProto[];
     getField(field: FieldProto): any;
@@ -91,20 +120,17 @@ declare class Security {
      * Returns null on equities/cash/etc. that don't have an issue date set,
      * rather than throwing — issue date is optional on the base Security.
      * For bond-specific code paths, prefer narrowing first via isBond() and
-     * calling BondSecurity.getIssueDate() (which returns LocalDate, not null).
+     * calling BondSecurity.getIssueDate() (which is non-nullable on a
+     * properly-formed bond).
      */
-    getIssueDate(): LocalDate | null;
+    getIssueDate(): Date | null;
     /**
-     * @deprecated Maturity date is a bond-only concept. On the base Security
-     * this still throws when unset for backwards compatibility. Prefer
-     * narrowing first:
-     *
-     *   if (sec.isBond()) sec.getMaturityDate();   // BondSecurity, returns LocalDate
-     *
-     * In a future major version this method will move to BondSecurity only
-     * and TS will catch the misuse at compile time.
+     * Returns the maturity date if set, else null. Maturity date is a
+     * bond-only concept; on non-bond securities this returns null rather
+     * than throwing. Prefer narrowing first via isBond() for bond-specific
+     * code paths.
      */
-    getMaturityDate(): LocalDate;
+    getMaturityDate(): Date | null;
     /**
      * Returns the canonical bond_details sub-message if set, else undefined.
      * TIPS and FRN extras live in their own tips_extension / frn_extension

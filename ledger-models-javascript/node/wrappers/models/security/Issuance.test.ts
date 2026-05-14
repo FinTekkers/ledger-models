@@ -20,8 +20,16 @@ function buildProto(): IssuanceProto {
 
 test('Issuance typed accessors return wrapped values', () => {
   const iss = new Issuance(buildProto());
-  expect(iss.getIssueDate()?.toString()).toBe('2023-2-15');
-  expect(iss.getAnnouncementDate()?.toString()).toBe('2023-2-8');
+  const issueDate = iss.getIssueDate();
+  const announcementDate = iss.getAnnouncementDate();
+  expect(issueDate).toBeInstanceOf(Date);
+  expect(announcementDate).toBeInstanceOf(Date);
+  expect(issueDate!.getFullYear()).toBe(2023);
+  expect(issueDate!.getMonth()).toBe(1); // February (0-based)
+  expect(issueDate!.getDate()).toBe(15);
+  expect(announcementDate!.getFullYear()).toBe(2023);
+  expect(announcementDate!.getMonth()).toBe(1);
+  expect(announcementDate!.getDate()).toBe(8);
   expect(iss.getOriginalFaceValue()?.toString()).toBe('45000000000');
   expect(iss.getTotalAccepted()?.toString()).toBe('44999500000');
   expect(iss.getPostAuctionOutstandingQuantity()?.toString()).toBe('44999500000');
