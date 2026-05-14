@@ -6,7 +6,7 @@ use ledger_models::fintekkers::models::security::{
     CouponFrequencyProto, CouponTypeProto, IdentifierProto, IdentifierTypeProto,
     IndexDetailsProto, SecurityProto, SecurityQuantityTypeProto, ProductTypeProto,
 };
-use ledger_models::fintekkers::models::security::security_proto::ProductDetails;
+use ledger_models::fintekkers::models::security::security_proto::NonBondDetails;
 use ledger_models::fintekkers::models::security::index::IndexTypeProto;
 use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto, LocalTimestampProto, UuidProto};
 use ledger_models::fintekkers::wrappers::models::security::{link_of, link_of_latest, SecurityWrapper};
@@ -300,7 +300,7 @@ fn index_details_constituents_round_trip() {
 
     let index_security = SecurityProto {
         product_type: ProductTypeProto::EquityIndex as i32,
-        product_details: Some(ProductDetails::IndexDetails(IndexDetailsProto {
+        non_bond_details: Some(NonBondDetails::IndexDetails(IndexDetailsProto {
             index_type: IndexTypeProto::CpiU as i32,
             constituents: vec![c1.clone(), c2.clone()],
         })),
@@ -308,8 +308,8 @@ fn index_details_constituents_round_trip() {
     };
 
     let parsed = roundtrip(&index_security);
-    match &parsed.product_details {
-        Some(ProductDetails::IndexDetails(idx)) => {
+    match &parsed.non_bond_details {
+        Some(NonBondDetails::IndexDetails(idx)) => {
             assert_eq!(idx.constituents.len(), 2);
             assert!(idx.constituents[0].is_link);
             assert_eq!(idx.constituents[0].as_of.as_ref().unwrap(), &as_of);

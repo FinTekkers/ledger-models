@@ -9,9 +9,9 @@ public interface TipsInputOrBuilder extends
 
   /**
    * <pre>
-   * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-   * all standard fixed-income fields populated, and base_cpi set to the
-   * reference CPI index value at issuance.
+   * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+   * populated (coupon_type FIXED, etc.) and tips_extension populated with
+   * base_cpi set to the reference CPI index value at issuance.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -20,9 +20,9 @@ public interface TipsInputOrBuilder extends
   boolean hasSecurity();
   /**
    * <pre>
-   * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-   * all standard fixed-income fields populated, and base_cpi set to the
-   * reference CPI index value at issuance.
+   * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+   * populated (coupon_type FIXED, etc.) and tips_extension populated with
+   * base_cpi set to the reference CPI index value at issuance.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -31,9 +31,9 @@ public interface TipsInputOrBuilder extends
   fintekkers.models.security.SecurityProto getSecurity();
   /**
    * <pre>
-   * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-   * all standard fixed-income fields populated, and base_cpi set to the
-   * reference CPI index value at issuance.
+   * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+   * populated (coupon_type FIXED, etc.) and tips_extension populated with
+   * base_cpi set to the reference CPI index value at issuance.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -72,7 +72,7 @@ public interface TipsInputOrBuilder extends
    * Current CPI index value (e.g. 310.326). Used to compute:
    *   index_ratio = current_cpi / base_cpi
    *   adjusted_principal = face_value * index_ratio
-   * The base CPI is read from security.base_cpi.
+   * The base CPI is read from security.tips_extension.base_cpi.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -84,7 +84,7 @@ public interface TipsInputOrBuilder extends
    * Current CPI index value (e.g. 310.326). Used to compute:
    *   index_ratio = current_cpi / base_cpi
    *   adjusted_principal = face_value * index_ratio
-   * The base CPI is read from security.base_cpi.
+   * The base CPI is read from security.tips_extension.base_cpi.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -96,7 +96,7 @@ public interface TipsInputOrBuilder extends
    * Current CPI index value (e.g. 310.326). Used to compute:
    *   index_ratio = current_cpi / base_cpi
    *   adjusted_principal = face_value * index_ratio
-   * The base CPI is read from security.base_cpi.
+   * The base CPI is read from security.tips_extension.base_cpi.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>

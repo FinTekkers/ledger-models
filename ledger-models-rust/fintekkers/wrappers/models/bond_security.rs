@@ -1,7 +1,6 @@
 use chrono::{DateTime, Datelike, NaiveDate, TimeZone};
 use rust_decimal::Decimal;
 
-use crate::fintekkers::models::security::security_proto::ProductDetails;
 use crate::fintekkers::models::security::{SecurityProto, ProductTypeProto};
 use crate::fintekkers::models::util::LocalDateProto;
 // security_type wrapper deleted in M1; use ProductTypeProto directly or ProductHierarchy helper.
@@ -61,13 +60,10 @@ impl BondSecurity {
 }
 
 fn bond_dates(proto: &SecurityProto) -> (Option<LocalDateProto>, Option<LocalDateProto>) {
-    if let Some(details) = &proto.product_details {
-        match details {
-            ProductDetails::BondDetails(b) => return (b.issue_date.clone(), b.maturity_date.clone()),
-            ProductDetails::TipsDetails(t) => return (t.issue_date.clone(), t.maturity_date.clone()),
-            ProductDetails::FrnDetails(f) => return (f.issue_date.clone(), f.maturity_date.clone()),
-            _ => {}
-        }
+    // v0.3.0: single canonical bond_details for all bond-shape products.
+    // Fall back to legacy flat fields when bond_details isn't populated.
+    if let Some(bond) = &proto.bond_details {
+        return (bond.issue_date.clone(), bond.maturity_date.clone());
     }
     (proto.issue_date.clone(), proto.maturity_date.clone())
 }
@@ -132,14 +128,14 @@ mod tests {
     fn bond_proto(
         issue: Option<LocalDateProto>,
         maturity: Option<LocalDateProto>,
-        use_oneof: bool,
+        use_structured: bool,
     ) -> SecurityProto {
         let mut proto = SecurityProto {
             product_type: ProductTypeProto::TreasuryNote as i32,
             ..Default::default()
         };
-        if use_oneof {
-            proto.product_details = Some(ProductDetails::BondDetails(BondDetailsProto {
+        if use_structured {
+            proto.bond_details = Some(BondDetailsProto {
                 coupon_rate: decimal("5.0"),
                 coupon_type: CouponTypeProto::Fixed as i32,
                 coupon_frequency: CouponFrequencyProto::Semiannually as i32,
@@ -148,7 +144,7 @@ mod tests {
                 dated_date: None,
                 maturity_date: maturity,
                 issuance_info: vec![],
-            }));
+            });
         } else {
             proto.issue_date = issue;
             proto.maturity_date = maturity;
@@ -199,7 +195,7 @@ mod tests {
     }
 
     #[test]
-    fn original_tenor_works_via_oneof() {
+    fn original_tenor_works_via_structured_bond_details() {
         let proto = bond_proto(date(2025, 1, 15), date(2035, 1, 15), true);
         let bond = BondSecurity::from_proto(proto).unwrap();
         assert_eq!(bond.original_tenor().unwrap(), dec!(10));

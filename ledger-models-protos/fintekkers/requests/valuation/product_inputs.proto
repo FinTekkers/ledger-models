@@ -55,16 +55,17 @@ message BondInput {
 // ═══════════════════════════════════════════════════════════════════════════
 // TipsInput — valuation request for a Treasury Inflation-Protected Security.
 //
-// Static security details (real coupon_rate, coupon_frequency, face_value,
-// maturity_date) are read from the SecurityProto.
-// Base CPI at issuance is read from SecurityProto.base_cpi.
+// Static security details: shared bond fields (real coupon_rate,
+// coupon_frequency, face_value, maturity_date) are read from
+// security.bond_details. TIPS-specific extras (base_cpi, index_date,
+// inflation_index_type) are read from security.tips_extension.
 //
 // Settlement date is read from ValuationRequestProto.asof_datetime.
 // ═══════════════════════════════════════════════════════════════════════════
 message TipsInput {
-  // The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-  // all standard fixed-income fields populated, and base_cpi set to the
-  // reference CPI index value at issuance.
+  // The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+  // populated (coupon_type FIXED, etc.) and tips_extension populated with
+  // base_cpi set to the reference CPI index value at issuance.
   fintekkers.models.security.SecurityProto security = 1;
 
   // Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
@@ -73,28 +74,29 @@ message TipsInput {
   // Current CPI index value (e.g. 310.326). Used to compute:
   //   index_ratio = current_cpi / base_cpi
   //   adjusted_principal = face_value * index_ratio
-  // The base CPI is read from security.base_cpi.
+  // The base CPI is read from security.tips_extension.base_cpi.
   fintekkers.models.util.DecimalValueProto current_cpi = 3;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
 // FrnInput — valuation request for a Floating Rate Note.
 //
-// Static security details (spread, reference_rate_index, coupon_frequency,
-// face_value, dated_date, maturity_date) are read from security.frn_details
-// and are not repeated here.
+// Static security details: shared bond fields (coupon_frequency, face_value,
+// dated_date, maturity_date) are read from security.bond_details; FRN-specific
+// extras (spread, reference_rate_index, reset_frequency) are read from
+// security.frn_extension. None are repeated on this message.
 //
 // Settlement date is read from ValuationRequestProto.asof_datetime.
 // ═══════════════════════════════════════════════════════════════════════════
 message FrnInput {
-  // The FRN security. Must have frn_details populated on the product_details oneof.
+  // The FRN security. Must have bond_details and frn_extension populated.
   fintekkers.models.security.SecurityProto security = 1;
 
   // Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
   fintekkers.models.util.DecimalValueProto clean_price = 2;
 
   // Yield curve for projecting floating coupons and discounting cashflows.
-  // curve.index must match security.frn_details.reference_rate_index.
+  // curve.index must match security.frn_extension.reference_rate_index.
   // A single curve is used for both projection and discounting (single-curve framework).
   // This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
   YieldCurveInput curve = 10;

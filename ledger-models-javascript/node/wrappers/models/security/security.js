@@ -212,20 +212,16 @@ class Security {
         return new date_1.LocalDate(date);
     }
     /**
-     * Returns the bond-like details sub-message from the oneof, if set.
-     * Works for BondDetails, TipsDetails, and FrnDetails (all share the same
-     * base bond fields: coupon_rate, maturity_date, etc.).
-     * Returns undefined if the oneof is not set or the proto doesn't support it
-     * (e.g. when JS codegen hasn't been updated).
+     * Returns the canonical bond_details sub-message if set, else undefined.
+     * v0.3.0 collapsed the prior 3-arm bond/tips/frn oneof into a single
+     * top-level bond_details — TIPS and FRN extras now live in their own
+     * tips_extension / frn_extension fields.
      */
     getBondLikeDetails() {
-        // Guard: check if the oneof accessor exists (JS codegen may be stale)
+        var _a;
         if (typeof this.proto.getBondDetails !== 'function')
             return undefined;
-        return this.proto.getBondDetails() ||
-            this.proto.getTipsDetails() ||
-            this.proto.getFrnDetails() ||
-            undefined;
+        return (_a = this.proto.getBondDetails()) !== null && _a !== void 0 ? _a : undefined;
     }
     getIssuerName() {
         this.assertNotLink('issuerName');

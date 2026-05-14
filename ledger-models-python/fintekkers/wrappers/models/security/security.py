@@ -151,14 +151,14 @@ class Security():
     ### if set, falling back to flat fields for backward compatibility.
     ###
     def _get_bond_like_details(self):
-        """Returns the bond-like oneof sub-message if set, or None."""
-        oneof = self.proto.WhichOneof('product_details')
-        if oneof == 'bond_details':
+        """Returns the canonical bond_details sub-message if populated, else None.
+
+        v0.3.0 collapsed bond/tips/frn into a single bond_details. TIPS and FRN
+        extras live in tips_extension / frn_extension and co-exist with
+        bond_details rather than replacing it.
+        """
+        if self.proto.HasField('bond_details'):
             return self.proto.bond_details
-        elif oneof == 'tips_details':
-            return self.proto.tips_details
-        elif oneof == 'frn_details':
-            return self.proto.frn_details
         return None
 
     def get_issue_date(self) -> datetime:

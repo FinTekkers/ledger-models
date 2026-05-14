@@ -479,45 +479,32 @@ pub struct SecurityProto {
     /// Index Security fields
     #[prost(enumeration = "index::IndexTypeProto", tag = "80")]
     pub index_type: i32,
-    /// ============================================================================
-    /// oneof product_details — structured alternative to the flat fields above.
-    ///
-    /// During migration, BOTH the flat fields (tags 50-92) and the oneof (tags 200+)
-    /// may be populated. Consumers should prefer the oneof if set, falling back to
-    /// flat fields for backward compatibility. Writers should populate BOTH during
-    /// the dual-write period.
-    ///
-    /// Once all consumers have migrated to the oneof, the flat fields will be
-    /// deprecated and eventually removed in a major version bump.
-    /// ============================================================================
-    #[prost(
-        oneof = "security_proto::ProductDetails",
-        tags = "200, 201, 202, 203, 204, 205, 206"
-    )]
-    pub product_details: ::core::option::Option<security_proto::ProductDetails>,
+    /// Bond-shape details. Populated for any product_type descending from BOND
+    /// in hierarchy.json (TBILL, TREASURY_NOTE, TREASURY_BOND, TIPS,
+    /// TREASURY_FRN, STRIPS, SOVEREIGN_BOND, CORP_BOND, MUNI_BOND, ...).
+    /// Single canonical home for the 8 shared bond fields. Null for non-bonds.
+    #[prost(message, optional, tag = "200")]
+    pub bond_details: ::core::option::Option<BondDetailsProto>,
+    /// TIPS-specific extras. Populated when product_type == TIPS.
+    /// Co-exists with bond_details (does NOT replace it).
+    #[prost(message, optional, tag = "201")]
+    pub tips_extension: ::core::option::Option<TipsExtensionProto>,
+    /// FRN-specific extras. Populated when product_type == TREASURY_FRN.
+    /// Co-exists with bond_details (does NOT replace it).
+    #[prost(message, optional, tag = "202")]
+    pub frn_extension: ::core::option::Option<FrnExtensionProto>,
+    /// Non-bond product details. These ARE mutually exclusive — Cash, Equity,
+    /// Index, FxSpot have no shared shape — so a oneof fits.
+    #[prost(oneof = "security_proto::NonBondDetails", tags = "203, 204, 205, 206")]
+    pub non_bond_details: ::core::option::Option<security_proto::NonBondDetails>,
 }
 /// Nested message and enum types in `SecurityProto`.
 pub mod security_proto {
-    /// ============================================================================
-    /// oneof product_details — structured alternative to the flat fields above.
-    ///
-    /// During migration, BOTH the flat fields (tags 50-92) and the oneof (tags 200+)
-    /// may be populated. Consumers should prefer the oneof if set, falling back to
-    /// flat fields for backward compatibility. Writers should populate BOTH during
-    /// the dual-write period.
-    ///
-    /// Once all consumers have migrated to the oneof, the flat fields will be
-    /// deprecated and eventually removed in a major version bump.
-    /// ============================================================================
+    /// Non-bond product details. These ARE mutually exclusive — Cash, Equity,
+    /// Index, FxSpot have no shared shape — so a oneof fits.
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum ProductDetails {
-        #[prost(message, tag = "200")]
-        BondDetails(super::BondDetailsProto),
-        #[prost(message, tag = "201")]
-        TipsDetails(super::TipsDetailsProto),
-        #[prost(message, tag = "202")]
-        FrnDetails(super::FrnDetailsProto),
+    pub enum NonBondDetails {
         #[prost(message, tag = "203")]
         IndexDetails(super::IndexDetailsProto),
         #[prost(message, tag = "204")]
@@ -550,74 +537,36 @@ pub struct BondDetailsProto {
     #[prost(message, repeated, tag = "8")]
     pub issuance_info: ::prost::alloc::vec::Vec<bond::IssuanceProto>,
 }
-/// TIPS (Treasury Inflation-Protected Securities) details.
-/// Extends bond fields with inflation-indexing information.
+/// TIPS (Treasury Inflation-Protected Securities) extras.
+/// Carries ONLY the TIPS-specific fields; shared bond fields live in
+/// SecurityProto.bond_details. Populated when product_type == TIPS.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct TipsDetailsProto {
-    /// Shared bond fields
-    #[prost(message, optional, tag = "1")]
-    pub coupon_rate: ::core::option::Option<super::util::DecimalValueProto>,
-    #[prost(enumeration = "CouponTypeProto", tag = "2")]
-    pub coupon_type: i32,
-    #[prost(enumeration = "CouponFrequencyProto", tag = "3")]
-    pub coupon_frequency: i32,
-    #[prost(message, optional, tag = "4")]
-    pub dated_date: ::core::option::Option<super::util::LocalDateProto>,
-    #[prost(message, optional, tag = "5")]
-    pub face_value: ::core::option::Option<super::util::DecimalValueProto>,
-    #[prost(message, optional, tag = "6")]
-    pub issue_date: ::core::option::Option<super::util::LocalDateProto>,
-    #[prost(message, optional, tag = "7")]
-    pub maturity_date: ::core::option::Option<super::util::LocalDateProto>,
-    #[prost(message, repeated, tag = "8")]
-    pub issuance_info: ::prost::alloc::vec::Vec<bond::IssuanceProto>,
-    /// TIPS-specific fields
-    ///
+pub struct TipsExtensionProto {
     /// Reference CPI at bond issuance (e.g. 256.394)
-    #[prost(message, optional, tag = "10")]
+    #[prost(message, optional, tag = "1")]
     pub base_cpi: ::core::option::Option<super::util::DecimalValueProto>,
     /// The date the base CPI was observed
-    #[prost(message, optional, tag = "11")]
+    #[prost(message, optional, tag = "2")]
     pub index_date: ::core::option::Option<super::util::LocalDateProto>,
     /// Which inflation index (e.g. CPI_U)
-    #[prost(enumeration = "index::IndexTypeProto", tag = "12")]
+    #[prost(enumeration = "index::IndexTypeProto", tag = "3")]
     pub inflation_index_type: i32,
 }
-/// Floating Rate Note (FRN) details.
-/// Extends bond fields with floating-rate-specific information.
+/// Floating Rate Note (FRN) extras.
+/// Carries ONLY the FRN-specific fields; shared bond fields live in
+/// SecurityProto.bond_details. Populated when product_type == TREASURY_FRN.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct FrnDetailsProto {
-    /// Shared bond fields
-    ///
-    /// Unused for FRN (rate is computed from reference_rate + spread). If set, must be in decimal form (0.05=5%).
-    #[prost(message, optional, tag = "1")]
-    pub coupon_rate: ::core::option::Option<super::util::DecimalValueProto>,
-    #[prost(enumeration = "CouponTypeProto", tag = "2")]
-    pub coupon_type: i32,
-    #[prost(enumeration = "CouponFrequencyProto", tag = "3")]
-    pub coupon_frequency: i32,
-    #[prost(message, optional, tag = "4")]
-    pub dated_date: ::core::option::Option<super::util::LocalDateProto>,
-    #[prost(message, optional, tag = "5")]
-    pub face_value: ::core::option::Option<super::util::DecimalValueProto>,
-    #[prost(message, optional, tag = "6")]
-    pub issue_date: ::core::option::Option<super::util::LocalDateProto>,
-    #[prost(message, optional, tag = "7")]
-    pub maturity_date: ::core::option::Option<super::util::LocalDateProto>,
-    #[prost(message, repeated, tag = "8")]
-    pub issuance_info: ::prost::alloc::vec::Vec<bond::IssuanceProto>,
-    /// FRN-specific fields
-    ///
+pub struct FrnExtensionProto {
     /// Fixed spread over the reference rate, in basis points
-    #[prost(message, optional, tag = "10")]
+    #[prost(message, optional, tag = "1")]
     pub spread: ::core::option::Option<super::util::DecimalValueProto>,
     /// Which floating rate benchmark (e.g. SOFR)
-    #[prost(enumeration = "index::IndexTypeProto", tag = "11")]
+    #[prost(enumeration = "index::IndexTypeProto", tag = "2")]
     pub reference_rate_index: i32,
     /// How often the floating coupon rate resets
-    #[prost(enumeration = "CouponFrequencyProto", tag = "12")]
+    #[prost(enumeration = "CouponFrequencyProto", tag = "3")]
     pub reset_frequency: i32,
 }
 /// Index security details (e.g. CPI-U, SOFR index, S&P 500).

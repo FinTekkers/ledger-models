@@ -169,23 +169,28 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             }
         }
 
-        // Determine type: prefer oneof if set, fall back to product_type enum
+        // v0.3.0: bond_details / tips_extension / frn_extension are top-level;
+        // the oneof is non_bond_details (Cash/Equity/Index/FxSpot only).
         ProductTypeProto productType = proto.getProductType();
-        SecurityProto.ProductDetailsCase detailsCase = proto.getProductDetailsCase();
+        SecurityProto.NonBondDetailsCase nonBondCase = proto.getNonBondDetailsCase();
 
-        // If oneof is set but product_type is missing/unknown, infer from oneof.
-        // BOND_DETAILS isn't unambiguous (could be TBILL / TREASURY_NOTE /
-        // TREASURY_BOND / STRIPS / SOVEREIGN_BOND / CORP_BOND / MUNI_BOND);
-        // pick TREASURY_NOTE as the default-bond guess.
-        if (productType == ProductTypeProto.PRODUCT_TYPE_UNKNOWN
-                && detailsCase != SecurityProto.ProductDetailsCase.PRODUCTDETAILS_NOT_SET) {
-            switch (detailsCase) {
-                case BOND_DETAILS:   productType = ProductTypeProto.TREASURY_NOTE; break;
-                case TIPS_DETAILS:   productType = ProductTypeProto.TIPS; break;
-                case FRN_DETAILS:    productType = ProductTypeProto.TREASURY_FRN; break;
-                case CASH_DETAILS:   productType = ProductTypeProto.CURRENCY; break;
-                case EQUITY_DETAILS: productType = ProductTypeProto.COMMON_STOCK; break;
-                case INDEX_DETAILS:  productType = ProductTypeProto.EQUITY_INDEX; break;
+        if (productType == ProductTypeProto.PRODUCT_TYPE_UNKNOWN) {
+            // Infer from structured shape when product_type is missing.
+            if (proto.hasTipsExtension()) {
+                productType = ProductTypeProto.TIPS;
+            } else if (proto.hasFrnExtension()) {
+                productType = ProductTypeProto.TREASURY_FRN;
+            } else if (proto.hasBondDetails()) {
+                // BOND descendant is ambiguous (TBILL / TREASURY_NOTE / etc.);
+                // default to TREASURY_NOTE as the bond-guess.
+                productType = ProductTypeProto.TREASURY_NOTE;
+            } else if (nonBondCase != SecurityProto.NonBondDetailsCase.NONBONDDETAILS_NOT_SET) {
+                switch (nonBondCase) {
+                    case CASH_DETAILS:   productType = ProductTypeProto.CURRENCY; break;
+                    case EQUITY_DETAILS: productType = ProductTypeProto.COMMON_STOCK; break;
+                    case INDEX_DETAILS:  productType = ProductTypeProto.EQUITY_INDEX; break;
+                    default: break;
+                }
             }
         }
 
@@ -228,21 +233,13 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         LocalDateProto issueDate = null;
         LocalDateProto maturityDate = null;
 
-        // Prefer oneof sub-messages (new path), fall back to flat fields (legacy path)
+        // v0.3.0: single canonical bond_details; flat-field fallback for
+        // legacy fixtures that haven't been re-encoded yet.
         if (proto.hasBondDetails()) {
             BondDetailsProto bond = proto.getBondDetails();
             if (bond.hasIssueDate()) issueDate = bond.getIssueDate();
             if (bond.hasMaturityDate()) maturityDate = bond.getMaturityDate();
-        } else if (proto.hasTipsDetails()) {
-            TipsDetailsProto tips = proto.getTipsDetails();
-            if (tips.hasIssueDate()) issueDate = tips.getIssueDate();
-            if (tips.hasMaturityDate()) maturityDate = tips.getMaturityDate();
-        } else if (proto.hasFrnDetails()) {
-            FrnDetailsProto frn = proto.getFrnDetails();
-            if (frn.hasIssueDate()) issueDate = frn.getIssueDate();
-            if (frn.hasMaturityDate()) maturityDate = frn.getMaturityDate();
         } else {
-            // Flat fields (backward compat)
             if (proto.hasIssueDate()) issueDate = proto.getIssueDate();
             if (proto.hasMaturityDate()) maturityDate = proto.getMaturityDate();
         }
@@ -258,9 +255,12 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
     }
 
     private void serializeBondSecurityAttributes(BondSecurity security, SecurityProto.Builder builder) {
-        // DUAL-WRITE: populate both flat fields (legacy) AND oneof sub-message (new)
+        // v0.3.0: single canonical bond_details for shared fields; sibling
+        // tips_extension / frn_extension for subtype extras. Flat fields are
+        // still mirrored to ease the v0.2.x → v0.3.0 reader transition; they
+        // will be removed in a future bump (consumers should read structured).
 
-        // 1. Flat fields (legacy path — consumed by old clients)
+        // 1. Flat fields (legacy mirror — still consumed by some readers)
         if(security.getIssueDate() != null)
             builder.setIssueDate(ProtoSerializationUtil.serializeLocalDate(security.getIssueDate()));
         if(security.getDatedDate() != null)
@@ -276,16 +276,17 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         if(security.getCouponFrequency() != null)
             builder.setCouponFrequency(CouponFrequencyProto.valueOf(security.getCouponFrequency().name()));
 
-        // 2. oneof product_details sub-message (new path)
+        // 2. Structured shape (new canonical path)
         ProductTypeProto pt = security.getProductType();
-        if (pt == ProductTypeProto.TIPS) {
-            builder.setTipsDetails(buildTipsDetailsProto(security));
-        } else if (pt == ProductTypeProto.TREASURY_FRN) {
-            builder.setFrnDetails(buildFrnDetailsProto(security));
-        } else if (ProductHierarchy.isDescendantOf(pt, "BOND")) {
+        if (ProductHierarchy.isDescendantOf(pt, "BOND")) {
             builder.setBondDetails(buildBondDetailsProto(security));
         }
-        // Non-bond product types skip the oneof bond sub-messages.
+
+        if (pt == ProductTypeProto.TIPS) {
+            builder.setTipsExtension(buildTipsExtensionProto(security));
+        } else if (pt == ProductTypeProto.TREASURY_FRN) {
+            builder.setFrnExtension(buildFrnExtensionProto(security));
+        }
     }
 
     private BondDetailsProto buildBondDetailsProto(BondSecurity security) {
@@ -309,26 +310,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         return b.build();
     }
 
-    private TipsDetailsProto buildTipsDetailsProto(BondSecurity security) {
-        TipsDetailsProto.Builder b = TipsDetailsProto.newBuilder();
-        // Bond base fields
-        if (security.getCouponRate() != null)
-            b.setCouponRate(ProtoSerializationUtil.serializeBigDecimal(security.getCouponRate()));
-        if (security.getCouponType() != null)
-            b.setCouponType(CouponTypeProto.valueOf(security.getCouponType().name()));
-        if (security.getCouponFrequency() != null)
-            b.setCouponFrequency(CouponFrequencyProto.valueOf(security.getCouponFrequency().name()));
-        if (security.getFaceValue() != null)
-            b.setFaceValue(ProtoSerializationUtil.serializeBigDecimal(security.getFaceValue()));
-        if (security.getIssueDate() != null)
-            b.setIssueDate(ProtoSerializationUtil.serializeLocalDate(security.getIssueDate()));
-        if (security.getDatedDate() != null)
-            b.setDatedDate(ProtoSerializationUtil.serializeLocalDate(security.getDatedDate()));
-        if (security.getMaturityDate() != null)
-            b.setMaturityDate(ProtoSerializationUtil.serializeLocalDate(security.getMaturityDate()));
-        if (security.getSecurityProto() != null && security.getSecurityProto().getIssuanceInfoCount() > 0)
-            b.addAllIssuanceInfo(security.getSecurityProto().getIssuanceInfoList());
-        // TIPS-specific: read from the flat fields on the source proto
+    private TipsExtensionProto buildTipsExtensionProto(BondSecurity security) {
+        TipsExtensionProto.Builder b = TipsExtensionProto.newBuilder();
         if (security.getSecurityProto() != null) {
             if (security.getSecurityProto().hasBaseCpi())
                 b.setBaseCpi(security.getSecurityProto().getBaseCpi());
@@ -340,26 +323,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         return b.build();
     }
 
-    private FrnDetailsProto buildFrnDetailsProto(BondSecurity security) {
-        FrnDetailsProto.Builder b = FrnDetailsProto.newBuilder();
-        // Bond base fields
-        if (security.getCouponRate() != null)
-            b.setCouponRate(ProtoSerializationUtil.serializeBigDecimal(security.getCouponRate()));
-        if (security.getCouponType() != null)
-            b.setCouponType(CouponTypeProto.valueOf(security.getCouponType().name()));
-        if (security.getCouponFrequency() != null)
-            b.setCouponFrequency(CouponFrequencyProto.valueOf(security.getCouponFrequency().name()));
-        if (security.getFaceValue() != null)
-            b.setFaceValue(ProtoSerializationUtil.serializeBigDecimal(security.getFaceValue()));
-        if (security.getIssueDate() != null)
-            b.setIssueDate(ProtoSerializationUtil.serializeLocalDate(security.getIssueDate()));
-        if (security.getDatedDate() != null)
-            b.setDatedDate(ProtoSerializationUtil.serializeLocalDate(security.getDatedDate()));
-        if (security.getMaturityDate() != null)
-            b.setMaturityDate(ProtoSerializationUtil.serializeLocalDate(security.getMaturityDate()));
-        if (security.getSecurityProto() != null && security.getSecurityProto().getIssuanceInfoCount() > 0)
-            b.addAllIssuanceInfo(security.getSecurityProto().getIssuanceInfoList());
-        // FRN-specific: read from the flat fields on the source proto
+    private FrnExtensionProto buildFrnExtensionProto(BondSecurity security) {
+        FrnExtensionProto.Builder b = FrnExtensionProto.newBuilder();
         if (security.getSecurityProto() != null) {
             if (security.getSecurityProto().hasSpread())
                 b.setSpread(security.getSecurityProto().getSpread());
@@ -434,16 +399,18 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
                     new JsonPrimitive(identifierTypeProto.name()));
         }
 
-        // Strip oneof sub-message fields from JSON output — Gson can't round-trip protobuf oneofs.
-        // The JSON path is a legacy human-readable format; the binary proto path handles oneof correctly.
+        // Strip structured sub-message fields from JSON output — Gson can't round-trip
+        // protobuf oneofs or sub-messages cleanly. The JSON path is a legacy human-readable
+        // format; the binary proto path handles the structured shape correctly.
         securityJsonObject.remove("bond_details");
-        securityJsonObject.remove("tips_details");
-        securityJsonObject.remove("frn_details");
+        securityJsonObject.remove("tips_extension");
+        securityJsonObject.remove("frn_extension");
         securityJsonObject.remove("index_details");
         securityJsonObject.remove("equity_details");
         securityJsonObject.remove("cash_details");
-        securityJsonObject.remove("product_details_case");
-        securityJsonObject.remove("product_details");
+        securityJsonObject.remove("fx_spot_details");
+        securityJsonObject.remove("non_bond_details_case");
+        securityJsonObject.remove("non_bond_details");
 
         return securityJsonObject.toString();
     }

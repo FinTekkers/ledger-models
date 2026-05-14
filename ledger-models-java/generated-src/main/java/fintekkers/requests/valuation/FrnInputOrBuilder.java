@@ -9,7 +9,7 @@ public interface FrnInputOrBuilder extends
 
   /**
    * <pre>
-   * The FRN security. Must have frn_details populated on the product_details oneof.
+   * The FRN security. Must have bond_details and frn_extension populated.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -18,7 +18,7 @@ public interface FrnInputOrBuilder extends
   boolean hasSecurity();
   /**
    * <pre>
-   * The FRN security. Must have frn_details populated on the product_details oneof.
+   * The FRN security. Must have bond_details and frn_extension populated.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -27,7 +27,7 @@ public interface FrnInputOrBuilder extends
   fintekkers.models.security.SecurityProto getSecurity();
   /**
    * <pre>
-   * The FRN security. Must have frn_details populated on the product_details oneof.
+   * The FRN security. Must have bond_details and frn_extension populated.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -64,7 +64,7 @@ public interface FrnInputOrBuilder extends
   /**
    * <pre>
    * Yield curve for projecting floating coupons and discounting cashflows.
-   * curve.index must match security.frn_details.reference_rate_index.
+   * curve.index must match security.frn_extension.reference_rate_index.
    * A single curve is used for both projection and discounting (single-curve framework).
    * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
    * </pre>
@@ -76,7 +76,7 @@ public interface FrnInputOrBuilder extends
   /**
    * <pre>
    * Yield curve for projecting floating coupons and discounting cashflows.
-   * curve.index must match security.frn_details.reference_rate_index.
+   * curve.index must match security.frn_extension.reference_rate_index.
    * A single curve is used for both projection and discounting (single-curve framework).
    * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
    * </pre>
@@ -88,7 +88,7 @@ public interface FrnInputOrBuilder extends
   /**
    * <pre>
    * Yield curve for projecting floating coupons and discounting cashflows.
-   * curve.index must match security.frn_details.reference_rate_index.
+   * curve.index must match security.frn_extension.reference_rate_index.
    * A single curve is used for both projection and discounting (single-curve framework).
    * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
    * </pre>
