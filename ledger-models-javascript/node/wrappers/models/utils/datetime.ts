@@ -5,7 +5,29 @@ import { DateTime } from 'luxon';
 class ZonedDateTime {
   private proto: LocalTimestampProto;
 
+  /**
+   * Wraps a LocalTimestampProto.
+   *
+   * Throws if `time_zone` is empty/whitespace — luxon's DateTime would
+   * otherwise silently produce an invalid DateTime (isValid=false,
+   * year=NaN), which propagates as silent corruption rather than a clear
+   * failure. See second-brain#276 for the original report from
+   * backend-dev-ledger during #268 verification.
+   *
+   * Callers with optional/unset timestamps should gate
+   * `new ZonedDateTime(parent.getAsOf())` with a `parent.hasAsOf()`
+   * check at the call site rather than relying on the constructor to
+   * substitute a default.
+   */
   constructor(proto: LocalTimestampProto) {
+    const tz = proto.getTimeZone();
+    if (!tz || tz.trim().length === 0) {
+      throw new Error(
+        "LocalTimestampProto.time_zone is required but was empty. "
+        + "Producers must set time_zone (e.g. \"UTC\" or \"America/New_York\") "
+        + "when populating LocalTimestampProto. See second-brain#276."
+      );
+    }
     this.proto = proto;
   }
 

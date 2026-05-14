@@ -175,10 +175,35 @@ public class ProtoSerializationUtil {
                 .build();
     }
 
+    /**
+     * Deserialize a {@link LocalTimestamp.LocalTimestampProto} into a
+     * {@link ZonedDateTime}.
+     *
+     * <p>Empty/blank {@code time_zone} is rejected with
+     * {@link IllegalArgumentException}. Previously this method silently
+     * returned {@code ZonedDateTime.now(UTC)}, which corrupted as-of
+     * semantics for every downstream consumer — a missing/malformed
+     * timestamp would be served as the current wall-clock time, indistinguishable
+     * from a valid record stamped right now. See FinTekkers/second-brain#276
+     * for the original report (surfaced by backend-dev-ledger during #268
+     * verification).
+     *
+     * <p>Callers that legitimately have an optional/unset timestamp should
+     * gate this call with {@code parent.hasAsOf()} (or equivalent) at the
+     * call site rather than relying on the helper to substitute a default.
+     *
+     * @throws IllegalArgumentException if {@code ts.getTimeZone()} is null, empty,
+     *         or whitespace-only.
+     * @throws java.time.DateTimeException if the time_zone string is non-empty
+     *         but not a parseable {@link ZoneId}.
+     */
     public static ZonedDateTime deserializeTimestamp(LocalTimestamp.LocalTimestampProto ts) {
         String timeZone = ts.getTimeZone();
         if (timeZone == null || timeZone.isBlank()) {
-            return ZonedDateTime.now(ZoneOffset.UTC);
+            throw new IllegalArgumentException(
+                    "LocalTimestampProto.time_zone is required but was empty. "
+                    + "Producers must set time_zone (e.g. \"UTC\" or \"America/New_York\") "
+                    + "when populating LocalTimestampProto. See second-brain#276.");
         }
 
         ZoneId zoneId = ZoneId.of(timeZone);

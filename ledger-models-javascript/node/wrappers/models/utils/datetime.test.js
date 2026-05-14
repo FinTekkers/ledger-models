@@ -50,4 +50,42 @@ test('test the date time', () => __awaiter(void 0, void 0, void 0, function* () 
     //Expect timestamp match
     expect(timestampStr).toMatch(/^[0-9]{4}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/);
 }));
+// second-brain#276 — lock in that the ZonedDateTime constructor throws on
+// empty time_zone. Pre-fix: luxon's DateTime silently produced
+// isValid=false / year=NaN, indistinguishable from a real value at most
+// call sites until much later. Now: loud failure at construction.
+describe('ZonedDateTime constructor — second-brain#276', () => {
+    test('throws when time_zone is empty (proto3 default)', () => {
+        const proto = new local_timestamp_pb_1.LocalTimestampProto();
+        const ts = new timestamp_pb_js_1.Timestamp();
+        ts.setSeconds(1700000000);
+        proto.setTimestamp(ts);
+        // time_zone left at the proto3 default ""
+        expect(() => new datetime_1.ZonedDateTime(proto)).toThrow(/time_zone is required/);
+    });
+    test('throws when time_zone is whitespace-only', () => {
+        const proto = new local_timestamp_pb_1.LocalTimestampProto();
+        const ts = new timestamp_pb_js_1.Timestamp();
+        ts.setSeconds(1700000000);
+        proto.setTimestamp(ts);
+        proto.setTimeZone('   ');
+        expect(() => new datetime_1.ZonedDateTime(proto)).toThrow(/time_zone is required/);
+    });
+    test('throws on fully-default LocalTimestampProto', () => {
+        // No timestamp, no time_zone — wholly default instance.
+        expect(() => new datetime_1.ZonedDateTime(new local_timestamp_pb_1.LocalTimestampProto()))
+            .toThrow(/time_zone is required/);
+    });
+    test('happy path with UTC still constructs successfully', () => {
+        const proto = new local_timestamp_pb_1.LocalTimestampProto();
+        const ts = new timestamp_pb_js_1.Timestamp();
+        ts.setSeconds(1700000000);
+        proto.setTimestamp(ts);
+        proto.setTimeZone('UTC');
+        const zdt = new datetime_1.ZonedDateTime(proto);
+        const dt = zdt.toDateTime();
+        expect(dt.isValid).toBe(true);
+        expect(dt.year).toBe(2023);
+    });
+});
 //# sourceMappingURL=datetime.test.js.map

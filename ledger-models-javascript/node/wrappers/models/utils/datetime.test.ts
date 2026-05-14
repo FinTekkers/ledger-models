@@ -49,3 +49,49 @@ test('test the date time', async () => {
     //Expect timestamp match
     expect(timestampStr).toMatch(/^[0-9]{4}\/[0-9]{2}\/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/);
 });
+
+// second-brain#276 — lock in that the ZonedDateTime constructor throws on
+// empty time_zone. Pre-fix: luxon's DateTime silently produced
+// isValid=false / year=NaN, indistinguishable from a real value at most
+// call sites until much later. Now: loud failure at construction.
+
+describe('ZonedDateTime constructor — second-brain#276', () => {
+    test('throws when time_zone is empty (proto3 default)', () => {
+        const proto = new LocalTimestampProto();
+        const ts = new Timestamp();
+        ts.setSeconds(1_700_000_000);
+        proto.setTimestamp(ts);
+        // time_zone left at the proto3 default ""
+
+        expect(() => new ZonedDateTime(proto)).toThrow(/time_zone is required/);
+    });
+
+    test('throws when time_zone is whitespace-only', () => {
+        const proto = new LocalTimestampProto();
+        const ts = new Timestamp();
+        ts.setSeconds(1_700_000_000);
+        proto.setTimestamp(ts);
+        proto.setTimeZone('   ');
+
+        expect(() => new ZonedDateTime(proto)).toThrow(/time_zone is required/);
+    });
+
+    test('throws on fully-default LocalTimestampProto', () => {
+        // No timestamp, no time_zone — wholly default instance.
+        expect(() => new ZonedDateTime(new LocalTimestampProto()))
+            .toThrow(/time_zone is required/);
+    });
+
+    test('happy path with UTC still constructs successfully', () => {
+        const proto = new LocalTimestampProto();
+        const ts = new Timestamp();
+        ts.setSeconds(1_700_000_000);
+        proto.setTimestamp(ts);
+        proto.setTimeZone('UTC');
+
+        const zdt = new ZonedDateTime(proto);
+        const dt = zdt.toDateTime();
+        expect(dt.isValid).toBe(true);
+        expect(dt.year).toBe(2023);
+    });
+});
