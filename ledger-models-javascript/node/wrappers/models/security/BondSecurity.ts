@@ -3,7 +3,7 @@ import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/secu
 import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
-import { LocalDate } from '../utils/date';
+import { dateToLocalDateProto, localDateProtoToDate } from '../utils/date';
 import { IssuanceProto } from '../../../fintekkers/models/security/bond/issuance_pb';
 import { CouponFrequency } from './coupon_frequency';
 import { CouponType } from './coupon_type';
@@ -24,17 +24,8 @@ export interface BondPricerInputs {
   couponRate: Decimal;
   couponType: CouponTypeProto;
   couponFrequency: CouponFrequencyProto;
-  issueDate: LocalDate;
-  maturityDate: LocalDate;
-}
-
-/**
- * Build a LocalDateProto from a LocalDate wrapper. Exported so subclass
- * builders (TIPSBond, FloatingRateNote) can re-use it without poking at
- * LocalDate's proto privately.
- */
-export function localDateToProto(d: LocalDate): LocalDateProto {
-  return d.toProto();
+  issueDate: Date;
+  maturityDate: Date;
 }
 
 /** Build a DecimalValueProto from a Decimal. */
@@ -52,8 +43,8 @@ export function buildBondDetails(args: BondPricerInputs): BondDetailsProto {
     .setCouponRate(decimalToProto(args.couponRate))
     .setCouponType(args.couponType)
     .setCouponFrequency(args.couponFrequency)
-    .setIssueDate(localDateToProto(args.issueDate))
-    .setMaturityDate(localDateToProto(args.maturityDate));
+    .setIssueDate(dateToLocalDateProto(args.issueDate))
+    .setMaturityDate(dateToLocalDateProto(args.maturityDate));
 }
 
 class BondSecurity extends Security {
@@ -81,8 +72,11 @@ class BondSecurity extends Security {
    * @returns The tenor (term) of the bond as a Tenor object.
    */
   getTenor(asOfDate?: Date): Tenor {
-    const startDate = asOfDate ? asOfDate : this.getIssueDate().toDate();
-    const maturityDate = this.getMaturityDate().toDate();
+    const issueDate = this.getIssueDate();
+    const maturityDate = this.getMaturityDate();
+    if (!issueDate) throw new Error("Issue date is required for getTenor");
+    if (!maturityDate) throw new Error("Maturity date is required for getTenor");
+    const startDate = asOfDate ? asOfDate : issueDate;
 
     // Calculate the period between issue date and maturity date
     const period = this.calculatePeriod(startDate, maturityDate);
@@ -120,18 +114,18 @@ class BondSecurity extends Security {
     };
   }
 
-  getCouponRate(): DecimalValueProto {
+  getCouponRate(): Decimal | null {
     const bond = this.getBondLikeDetails();
     const rate = bond ? bond.getCouponRate() : undefined;
-    if (!rate) throw new Error("Coupon rate is required for bonds");
-    return rate;
+    if (!rate) return null;
+    return new Decimal(rate.getArbitraryPrecisionValue());
   }
 
-  getFaceValue(): DecimalValueProto {
+  getFaceValue(): Decimal | null {
     const bond = this.getBondLikeDetails();
     const faceValue = bond ? bond.getFaceValue() : undefined;
-    if (!faceValue) throw new Error("Face value is required for bonds");
-    return faceValue;
+    if (!faceValue) return null;
+    return new Decimal(faceValue.getArbitraryPrecisionValue());
   }
 
   getCouponType(): CouponType {
@@ -148,10 +142,10 @@ class BondSecurity extends Security {
     return new CouponFrequency(couponFrequency);
   }
 
-  getDatedDate(): LocalDate | undefined {
+  getDatedDate(): Date | null {
     const bond = this.getBondLikeDetails();
     const datedDate = bond ? bond.getDatedDate() : undefined;
-    return datedDate ? new LocalDate(datedDate) : undefined;
+    return localDateProtoToDate(datedDate);
   }
 
   /**
@@ -184,19 +178,6 @@ class BondSecurity extends Security {
    */
   getPriceScaleFactor(): Decimal {
     return new Decimal('0.01');
-  }
-
-  /**
-   * Bond issue date is the auction date and is required for bonds.
-   * Overrides Security.getIssueDate (which returns LocalDate | null on the
-   * base) with a non-nullable return type — for a properly-formed bond,
-   * issue date is always present, and TS callers narrowed via isBond()
-   * shouldn't have to null-check.
-   */
-  getIssueDate(): LocalDate {
-    const date = super.getIssueDate();
-    if (!date) throw new Error("Issue date is required for bonds");
-    return date;
   }
 
   getProductType(): string {

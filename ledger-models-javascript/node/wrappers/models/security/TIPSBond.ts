@@ -2,12 +2,11 @@ import BondSecurity, {
   BondPricerInputs,
   buildBondDetails,
   decimalToProto,
-  localDateToProto,
 } from './BondSecurity';
 import { SecurityProto, TipsExtensionProto } from '../../../fintekkers/models/security/security_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
-import { LocalDate } from '../utils/date';
+import { dateToLocalDateProto, localDateProtoToDate } from '../utils/date';
 import { Decimal } from 'decimal.js';
 
 /**
@@ -33,11 +32,10 @@ class TIPSBond extends BondSecurity {
   }
 
   /** Reference date for the base CPI fixing. */
-  getIndexDate(): LocalDate | null {
+  getIndexDate(): Date | null {
     const ext = this.getTipsExtension();
     const d = ext ? ext.getIndexDate() : undefined;
-    if (!d) return null;
-    return new LocalDate(d);
+    return localDateProtoToDate(d);
   }
 
   /** Which inflation index drives accruals (CPI_U on US TIPS). */
@@ -52,13 +50,13 @@ class TIPSBond extends BondSecurity {
    */
   static fromPricerInputs(args: BondPricerInputs & {
     baseCpi: Decimal;
-    indexDate: LocalDate;
+    indexDate: Date;
     inflationIndexType: IndexTypeProto;
   }): SecurityProto {
     const bond = buildBondDetails(args);
     const tips = new TipsExtensionProto()
       .setBaseCpi(decimalToProto(args.baseCpi))
-      .setIndexDate(localDateToProto(args.indexDate))
+      .setIndexDate(dateToLocalDateProto(args.indexDate))
       .setInflationIndexType(args.inflationIndexType);
     return new SecurityProto()
       .setProductType(ProductTypeProto.TIPS)

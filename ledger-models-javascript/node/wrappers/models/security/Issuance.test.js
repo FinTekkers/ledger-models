@@ -22,15 +22,23 @@ function buildProto() {
     return p;
 }
 test('Issuance typed accessors return wrapped values', () => {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e;
     const iss = new Issuance_1.default(buildProto());
-    expect((_a = iss.getIssueDate()) === null || _a === void 0 ? void 0 : _a.toString()).toBe('2023-2-15');
-    expect((_b = iss.getAnnouncementDate()) === null || _b === void 0 ? void 0 : _b.toString()).toBe('2023-2-8');
-    expect((_c = iss.getOriginalFaceValue()) === null || _c === void 0 ? void 0 : _c.toString()).toBe('45000000000');
-    expect((_d = iss.getTotalAccepted()) === null || _d === void 0 ? void 0 : _d.toString()).toBe('44999500000');
-    expect((_e = iss.getPostAuctionOutstandingQuantity()) === null || _e === void 0 ? void 0 : _e.toString()).toBe('44999500000');
-    expect((_f = iss.getMatureSecurityAmount()) === null || _f === void 0 ? void 0 : _f.toString()).toBe('0');
-    expect((_g = iss.getPriceForSinglePriceAuction()) === null || _g === void 0 ? void 0 : _g.toString()).toBe('99.875');
+    const issueDate = iss.getIssueDate();
+    const announcementDate = iss.getAnnouncementDate();
+    expect(issueDate).toBeInstanceOf(Date);
+    expect(announcementDate).toBeInstanceOf(Date);
+    expect(issueDate.getFullYear()).toBe(2023);
+    expect(issueDate.getMonth()).toBe(1); // February (0-based)
+    expect(issueDate.getDate()).toBe(15);
+    expect(announcementDate.getFullYear()).toBe(2023);
+    expect(announcementDate.getMonth()).toBe(1);
+    expect(announcementDate.getDate()).toBe(8);
+    expect((_a = iss.getOriginalFaceValue()) === null || _a === void 0 ? void 0 : _a.toString()).toBe('45000000000');
+    expect((_b = iss.getTotalAccepted()) === null || _b === void 0 ? void 0 : _b.toString()).toBe('44999500000');
+    expect((_c = iss.getPostAuctionOutstandingQuantity()) === null || _c === void 0 ? void 0 : _c.toString()).toBe('44999500000');
+    expect((_d = iss.getMatureSecurityAmount()) === null || _d === void 0 ? void 0 : _d.toString()).toBe('0');
+    expect((_e = iss.getPriceForSinglePriceAuction()) === null || _e === void 0 ? void 0 : _e.toString()).toBe('99.875');
     expect(iss.getAuctionType()).toBe(auction_type_pb_1.AuctionTypeProto.SINGLE_PRICE);
 });
 test('Issuance returns null for unset sub-messages', () => {

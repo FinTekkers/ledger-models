@@ -46,16 +46,18 @@ function testTransactionConstructor(): void {
     // Verify all getters return expected values
 
     // getTradeDate() - should match input tradeDate
-    const tradeDateFromTransaction = transaction.getTradeDate().toDate();
-    assert(tradeDateFromTransaction.getFullYear() === tradeDate.getFullYear());
-    assert(tradeDateFromTransaction.getMonth() === tradeDate.getMonth());
-    assert(tradeDateFromTransaction.getDate() === tradeDate.getDate());
+    const tradeDateFromTransaction = transaction.getTradeDate();
+    assert(tradeDateFromTransaction !== null, 'TradeDate should not be null');
+    assert(tradeDateFromTransaction!.getFullYear() === tradeDate.getFullYear());
+    assert(tradeDateFromTransaction!.getMonth() === tradeDate.getMonth());
+    assert(tradeDateFromTransaction!.getDate() === tradeDate.getDate());
 
     // getSettlementDate() - should match input settlementDate
-    const settlementDateFromTransaction = transaction.getSettlementDate().toDate();
-    assert(settlementDateFromTransaction.getFullYear() === settlementDate.getFullYear());
-    assert(settlementDateFromTransaction.getMonth() === settlementDate.getMonth());
-    assert(settlementDateFromTransaction.getDate() === settlementDate.getDate());
+    const settlementDateFromTransaction = transaction.getSettlementDate();
+    assert(settlementDateFromTransaction !== null, 'SettlementDate should not be null');
+    assert(settlementDateFromTransaction!.getFullYear() === settlementDate.getFullYear());
+    assert(settlementDateFromTransaction!.getMonth() === settlementDate.getMonth());
+    assert(settlementDateFromTransaction!.getDate() === settlementDate.getDate());
 
     // getAsOf() - should match input asOfDate (converted to ZonedDateTime)
     const asOfFromTransaction = transaction.getAsOf();

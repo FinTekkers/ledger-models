@@ -11,11 +11,11 @@ const product_type_pb_1 = require("../../../fintekkers/models/security/product_t
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const index_type_pb_1 = require("../../../fintekkers/models/security/index/index_type_pb");
-const date_1 = require("../utils/date");
-const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 const decimal_js_1 = require("decimal.js");
 function makeDate(y, m, d) {
-    return new date_1.LocalDate(new local_date_pb_1.LocalDateProto().setYear(y).setMonth(m).setDay(d));
+    const date = new Date(y, m - 1, d);
+    date.setHours(0, 0, 0, 0);
+    return date;
 }
 const baseInputs = {
     faceValue: new decimal_js_1.Decimal('1000'),
@@ -31,15 +31,19 @@ test('BondSecurity.fromPricerInputs round-trips through Security.create as a Bon
     const sec = security_1.default.create(proto);
     expect(sec).toBeInstanceOf(BondSecurity_1.default);
     const bond = sec;
-    expect(bond.getCouponRate().getArbitraryPrecisionValue()).toBe('0.045');
-    expect(bond.getFaceValue().getArbitraryPrecisionValue()).toBe('1000');
+    expect(bond.getCouponRate().equals(new decimal_js_1.Decimal('0.045'))).toBe(true);
+    expect(bond.getFaceValue().equals(new decimal_js_1.Decimal('1000'))).toBe(true);
     expect(bond.getCouponType().name()).toBe('FIXED');
     expect(bond.getCouponFrequency().toString()).toBe('SEMIANNUALLY');
-    expect(bond.getIssueDate().toDate().getFullYear()).toBe(2024);
-    expect(bond.getMaturityDate().toDate().getFullYear()).toBe(2034);
+    const issueDate = bond.getIssueDate();
+    const maturityDate = bond.getMaturityDate();
+    expect(issueDate).toBeInstanceOf(Date);
+    expect(maturityDate).toBeInstanceOf(Date);
+    expect(issueDate.getFullYear()).toBe(2024);
+    expect(maturityDate.getFullYear()).toBe(2034);
 });
 test('TIPSBond.fromPricerInputs round-trips with tips_extension populated', () => {
-    var _a, _b;
+    var _a;
     const proto = TIPSBond_1.default.fromPricerInputs(Object.assign(Object.assign({}, baseInputs), { baseCpi: new decimal_js_1.Decimal('301.5'), indexDate: makeDate(2024, 1, 15), inflationIndexType: index_type_pb_1.IndexTypeProto.CPI_U }));
     expect(proto.getProductType()).toBe(product_type_pb_1.ProductTypeProto.TIPS);
     expect(proto.hasTipsExtension()).toBe(true);
@@ -47,10 +51,12 @@ test('TIPSBond.fromPricerInputs round-trips with tips_extension populated', () =
     expect(sec).toBeInstanceOf(TIPSBond_1.default);
     const tips = sec;
     // Bond-side checks (inherited from BondSecurity)
-    expect(tips.getCouponRate().getArbitraryPrecisionValue()).toBe('0.045');
+    expect(tips.getCouponRate().equals(new decimal_js_1.Decimal('0.045'))).toBe(true);
     // TIPS-specific checks
     expect((_a = tips.getBaseCpi()) === null || _a === void 0 ? void 0 : _a.toString()).toBe('301.5');
-    expect((_b = tips.getIndexDate()) === null || _b === void 0 ? void 0 : _b.toDate().getFullYear()).toBe(2024);
+    const indexDate = tips.getIndexDate();
+    expect(indexDate).toBeInstanceOf(Date);
+    expect(indexDate.getFullYear()).toBe(2024);
     expect(tips.getInflationIndexType()).toBe(index_type_pb_1.IndexTypeProto.CPI_U);
 });
 test('FloatingRateNote.fromPricerInputs round-trips with frn_extension populated', () => {
@@ -61,7 +67,7 @@ test('FloatingRateNote.fromPricerInputs round-trips with frn_extension populated
     const sec = security_1.default.create(proto);
     expect(sec).toBeInstanceOf(FloatingRateNote_1.default);
     const frn = sec;
-    expect(frn.getCouponRate().getArbitraryPrecisionValue()).toBe('0.045');
+    expect(frn.getCouponRate().equals(new decimal_js_1.Decimal('0.045'))).toBe(true);
     expect((_a = frn.getSpread()) === null || _a === void 0 ? void 0 : _a.toString()).toBe('0.0015');
     expect(frn.getReferenceRateIndex()).toBe(index_type_pb_1.IndexTypeProto.SOFR);
     expect(frn.getResetFrequency()).toBe(coupon_frequency_pb_1.CouponFrequencyProto.QUARTERLY);

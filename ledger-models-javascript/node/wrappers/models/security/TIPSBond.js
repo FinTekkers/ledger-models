@@ -54,9 +54,7 @@ class TIPSBond extends BondSecurity_1.default {
     getIndexDate() {
         const ext = this.getTipsExtension();
         const d = ext ? ext.getIndexDate() : undefined;
-        if (!d)
-            return null;
-        return new date_1.LocalDate(d);
+        return (0, date_1.localDateProtoToDate)(d);
     }
     /** Which inflation index drives accruals (CPI_U on US TIPS). */
     getInflationIndexType() {
@@ -71,7 +69,7 @@ class TIPSBond extends BondSecurity_1.default {
         const bond = (0, BondSecurity_1.buildBondDetails)(args);
         const tips = new security_pb_1.TipsExtensionProto()
             .setBaseCpi((0, BondSecurity_1.decimalToProto)(args.baseCpi))
-            .setIndexDate((0, BondSecurity_1.localDateToProto)(args.indexDate))
+            .setIndexDate((0, date_1.dateToLocalDateProto)(args.indexDate))
             .setInflationIndexType(args.inflationIndexType);
         return new security_pb_1.SecurityProto()
             .setProductType(product_type_pb_1.ProductTypeProto.TIPS)

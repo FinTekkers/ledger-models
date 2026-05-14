@@ -45,12 +45,14 @@ function testTransactionConstructor() {
     });
     // Verify all getters return expected values
     // getTradeDate() - should match input tradeDate
-    const tradeDateFromTransaction = transaction.getTradeDate().toDate();
+    const tradeDateFromTransaction = transaction.getTradeDate();
+    assert(tradeDateFromTransaction !== null, 'TradeDate should not be null');
     assert(tradeDateFromTransaction.getFullYear() === tradeDate.getFullYear());
     assert(tradeDateFromTransaction.getMonth() === tradeDate.getMonth());
     assert(tradeDateFromTransaction.getDate() === tradeDate.getDate());
     // getSettlementDate() - should match input settlementDate
-    const settlementDateFromTransaction = transaction.getSettlementDate().toDate();
+    const settlementDateFromTransaction = transaction.getSettlementDate();
+    assert(settlementDateFromTransaction !== null, 'SettlementDate should not be null');
     assert(settlementDateFromTransaction.getFullYear() === settlementDate.getFullYear());
     assert(settlementDateFromTransaction.getMonth() === settlementDate.getMonth());
     assert(settlementDateFromTransaction.getDate() === settlementDate.getDate());

@@ -1,13 +1,12 @@
 import { IssuanceProto } from "../../../fintekkers/models/security/bond/issuance_pb";
 import { AuctionTypeProto } from "../../../fintekkers/models/security/bond/auction_type_pb";
 import { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value_pb";
-import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";
-import { LocalDate } from "../utils/date";
+import { localDateProtoToDate } from "../utils/date";
 import Decimal from "decimal.js";
 
 /**
  * Typed wrapper around a single IssuanceProto. Returns null for unset
- * sub-messages and Decimal/LocalDate for populated ones — callers no longer
+ * sub-messages and Decimal/Date for populated ones — callers no longer
  * have to spell out the proto / Decimal coercions at every call site.
  *
  * Note: IssuanceProto has no `dated_date` or `auction_date` field on the
@@ -25,19 +24,14 @@ class Issuance {
     return new Decimal(value.getArbitraryPrecisionValue());
   }
 
-  private static _toLocalDate(value: LocalDateProto | undefined): LocalDate | null {
-    if (!value) return null;
-    return new LocalDate(value);
-  }
-
   /** Auction issue (settlement) date. Null if unset. */
-  getIssueDate(): LocalDate | null {
-    return Issuance._toLocalDate(this.proto.getAuctionIssueDate());
+  getIssueDate(): Date | null {
+    return localDateProtoToDate(this.proto.getAuctionIssueDate());
   }
 
   /** Auction announcement date. Null if unset. */
-  getAnnouncementDate(): LocalDate | null {
-    return Issuance._toLocalDate(this.proto.getAuctionAnnouncementDate());
+  getAnnouncementDate(): Date | null {
+    return localDateProtoToDate(this.proto.getAuctionAnnouncementDate());
   }
 
   /** Auction offering amount (original face value offered). Null if unset. */

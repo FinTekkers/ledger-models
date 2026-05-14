@@ -1,7 +1,6 @@
 import BondSecurity, { BondPricerInputs } from './BondSecurity';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
-import { LocalDate } from '../utils/date';
 import { Decimal } from 'decimal.js';
 /**
  * TIPS-specific accessors layered on top of BondSecurity. The inflation
@@ -14,7 +13,7 @@ declare class TIPSBond extends BondSecurity {
     /** Base CPI value at issue, used to scale inflation-adjusted principal. */
     getBaseCpi(): Decimal | null;
     /** Reference date for the base CPI fixing. */
-    getIndexDate(): LocalDate | null;
+    getIndexDate(): Date | null;
     /** Which inflation index drives accruals (CPI_U on US TIPS). */
     getInflationIndexType(): IndexTypeProto;
     /**
@@ -23,7 +22,7 @@ declare class TIPSBond extends BondSecurity {
      */
     static fromPricerInputs(args: BondPricerInputs & {
         baseCpi: Decimal;
-        indexDate: LocalDate;
+        indexDate: Date;
         inflationIndexType: IndexTypeProto;
     }): SecurityProto;
 }

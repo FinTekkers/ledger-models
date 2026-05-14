@@ -17,6 +17,7 @@ const SecurityService_1 = require("./SecurityService");
 const positionfilter_1 = require("../../models/position/positionfilter");
 const serialization_1 = require("../../models/utils/serialization");
 test('test the api.fintekkers.org security service by creating a maturity ladder for the US government', () => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     //Get list of all securities from the US government, with a maturity data beyond today's date
     const securityService = new SecurityService_1.SecurityService();
     const positionFilter = new positionfilter_1.PositionFilter();
@@ -32,10 +33,11 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
         let issuanceList = bondDetails ? bondDetails.getIssuanceInfoList() : [];
         let issuance = issuanceList && issuanceList.length > 0 ? issuanceList[0] : null;
         if (issuance) {
-            if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().toDate().getFullYear() > 2009) {
+            const maturityYear = (_b = (_a = security.getMaturityDate()) === null || _a === void 0 ? void 0 : _a.getFullYear()) !== null && _b !== void 0 ? _b : 0;
+            if (!issuance.getPostAuctionOutstandingQuantity() && maturityYear > 2009) {
                 // (debug only) primary identifier available via security.getIdentifiers()[0]
             }
-            else if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().toDate().getFullYear() <= 2009) {
+            else if (!issuance.getPostAuctionOutstandingQuantity() && maturityYear <= 2009) {
                 //Swallow this data gap. It's old and we don't mind
             }
             else {

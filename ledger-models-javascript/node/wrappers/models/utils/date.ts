@@ -36,4 +36,28 @@ class LocalDate {
   }
 }
 
-export { LocalDate };
+/**
+ * Convert a LocalDateProto to a native Date, or null when the proto is
+ * undefined/null. Hours/min/sec/ms are zeroed so equality comparisons across
+ * accessors are deterministic. Months are translated from proto's 1-based
+ * convention to JavaScript's 0-based Date constructor.
+ */
+function localDateProtoToDate(proto: LocalDateProto | undefined | null): Date | null {
+  if (!proto) return null;
+  const d = new Date(proto.getYear(), proto.getMonth() - 1, proto.getDay());
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+/**
+ * Convert a native Date to a LocalDateProto. Translates JS's 0-based month
+ * to the proto's 1-based convention; year/day pass through.
+ */
+function dateToLocalDateProto(d: Date): LocalDateProto {
+  return new LocalDateProto()
+    .setYear(d.getFullYear())
+    .setMonth(d.getMonth() + 1)
+    .setDay(d.getDate());
+}
+
+export { LocalDate, localDateProtoToDate, dateToLocalDateProto };
