@@ -259,6 +259,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             builder.setTipsExtension(buildTipsExtensionProto(security));
         } else if (pt == ProductTypeProto.TREASURY_FRN) {
             builder.setFrnExtension(buildFrnExtensionProto(security));
+        } else if (pt == ProductTypeProto.MORTGAGE_BACKED) {
+            builder.setMbsExtension(buildMbsExtensionProto(security));
         }
     }
 
@@ -310,6 +312,26 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
                 b.setReferenceRateIndex(stashed.getReferenceRateIndex());
             if (stashed.getResetFrequency().getNumber() > 0)
                 b.setResetFrequency(stashed.getResetFrequency());
+        }
+        return b.build();
+    }
+
+    private MbsExtensionProto buildMbsExtensionProto(BondSecurity security) {
+        MbsExtensionProto.Builder b = MbsExtensionProto.newBuilder();
+        // MBS extras live exclusively on mbs_extension on the stashed proto.
+        if (security.getSecurityProto() != null && security.getSecurityProto().hasMbsExtension()) {
+            MbsExtensionProto stashed = security.getSecurityProto().getMbsExtension();
+            if (stashed.getPoolNumber() != null && !stashed.getPoolNumber().isEmpty())
+                b.setPoolNumber(stashed.getPoolNumber());
+            if (stashed.getAgency().getNumber() > 0)
+                b.setAgency(stashed.getAgency());
+            if (stashed.hasWac()) b.setWac(stashed.getWac());
+            if (stashed.getWam() != 0) b.setWam(stashed.getWam());
+            if (stashed.hasPassThroughRate()) b.setPassThroughRate(stashed.getPassThroughRate());
+            if (stashed.hasCurrentFactor()) b.setCurrentFactor(stashed.getCurrentFactor());
+            if (stashed.hasOriginalFaceValue()) b.setOriginalFaceValue(stashed.getOriginalFaceValue());
+            if (stashed.hasCurrentUpb()) b.setCurrentUpb(stashed.getCurrentUpb());
+            if (stashed.hasPsaSpeed()) b.setPsaSpeed(stashed.getPsaSpeed());
         }
         return b.build();
     }

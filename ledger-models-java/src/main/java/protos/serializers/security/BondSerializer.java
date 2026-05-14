@@ -2,6 +2,7 @@ package protos.serializers.security;
 
 import common.models.security.*;
 import common.models.security.bonds.FloatingRateNote;
+import common.models.security.bonds.MortgageBackedSecurity;
 import common.models.security.bonds.TIPSBond;
 import fintekkers.models.security.*;
 import fintekkers.models.security.index.IndexTypeProto;
@@ -75,6 +76,8 @@ public class BondSerializer {
                 return new TIPSBond(id, issuer, asOf, settlementCurrency);
             case TREASURY_FRN:
                 return new FloatingRateNote(id, issuer, asOf, settlementCurrency);
+            case MORTGAGE_BACKED:
+                return new MortgageBackedSecurity(id, issuer, asOf, settlementCurrency);
             default:
                 throw new RuntimeException(String.format("The product type is not supported %s", productType.name()));
         }

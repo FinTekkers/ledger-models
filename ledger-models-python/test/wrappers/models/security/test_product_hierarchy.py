@@ -38,10 +38,11 @@ def test_registry_loads_without_error():
 
 
 def test_active_product_types_match_m1_spec_count():
-    """M1 of #257 locked in 26 active leaves; the count is a sentinel
-    for accidental dropping or reverting of registry entries."""
+    """Sentinel against accidental dropping or reverting of registry entries.
+    M1 of #257 locked in 26 active leaves; #274 Phase 2 promotes
+    MORTGAGE_BACKED to active, taking the count to 27."""
     active = PH.active_product_types()
-    assert len(active) == 26, f"expected 26 active leaves, got {len(active)}: {active}"
+    assert len(active) == 27, f"expected 27 active leaves, got {len(active)}: {active}"
 
 
 def test_active_product_types_include_known_m1_leaves():

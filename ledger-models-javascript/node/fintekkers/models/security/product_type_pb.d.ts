@@ -17,6 +17,7 @@ export enum ProductTypeProto {
     SOVEREIGN_BOND = 7,
     CORP_BOND = 8,
     MUNI_BOND = 9,
+    MORTGAGE_BACKED = 10,
     COMMON_STOCK = 20,
     PREFERRED_STOCK = 21,
     ADR = 22,

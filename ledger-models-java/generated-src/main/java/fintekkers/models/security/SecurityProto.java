@@ -1021,6 +1021,53 @@ private static final long serialVersionUID = 0L;
     return fintekkers.models.security.FxSpotDetailsProto.getDefaultInstance();
   }
 
+  public static final int MBS_EXTENSION_FIELD_NUMBER = 207;
+  private fintekkers.models.security.MbsExtensionProto mbsExtension_;
+  /**
+   * <pre>
+   * Agency MBS pass-through extras. Populated when
+   * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+   * (does NOT replace it) — pool-level coupon / face / maturity
+   * are still on bond_details.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+   * @return Whether the mbsExtension field is set.
+   */
+  @java.lang.Override
+  public boolean hasMbsExtension() {
+    return mbsExtension_ != null;
+  }
+  /**
+   * <pre>
+   * Agency MBS pass-through extras. Populated when
+   * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+   * (does NOT replace it) — pool-level coupon / face / maturity
+   * are still on bond_details.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+   * @return The mbsExtension.
+   */
+  @java.lang.Override
+  public fintekkers.models.security.MbsExtensionProto getMbsExtension() {
+    return mbsExtension_ == null ? fintekkers.models.security.MbsExtensionProto.getDefaultInstance() : mbsExtension_;
+  }
+  /**
+   * <pre>
+   * Agency MBS pass-through extras. Populated when
+   * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+   * (does NOT replace it) — pool-level coupon / face / maturity
+   * are still on bond_details.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.security.MbsExtensionProtoOrBuilder getMbsExtensionOrBuilder() {
+    return mbsExtension_ == null ? fintekkers.models.security.MbsExtensionProto.getDefaultInstance() : mbsExtension_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -1106,6 +1153,9 @@ private static final long serialVersionUID = 0L;
     }
     if (nonBondDetailsCase_ == 206) {
       output.writeMessage(206, (fintekkers.models.security.FxSpotDetailsProto) nonBondDetails_);
+    }
+    if (mbsExtension_ != null) {
+      output.writeMessage(207, getMbsExtension());
     }
     getUnknownFields().writeTo(output);
   }
@@ -1207,6 +1257,10 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(206, (fintekkers.models.security.FxSpotDetailsProto) nonBondDetails_);
     }
+    if (mbsExtension_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(207, getMbsExtension());
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -1285,6 +1339,11 @@ private static final long serialVersionUID = 0L;
     if (hasFrnExtension()) {
       if (!getFrnExtension()
           .equals(other.getFrnExtension())) return false;
+    }
+    if (hasMbsExtension() != other.hasMbsExtension()) return false;
+    if (hasMbsExtension()) {
+      if (!getMbsExtension()
+          .equals(other.getMbsExtension())) return false;
     }
     if (!getNonBondDetailsCase().equals(other.getNonBondDetailsCase())) return false;
     switch (nonBondDetailsCase_) {
@@ -1380,6 +1439,10 @@ private static final long serialVersionUID = 0L;
     if (hasFrnExtension()) {
       hash = (37 * hash) + FRN_EXTENSION_FIELD_NUMBER;
       hash = (53 * hash) + getFrnExtension().hashCode();
+    }
+    if (hasMbsExtension()) {
+      hash = (37 * hash) + MBS_EXTENSION_FIELD_NUMBER;
+      hash = (53 * hash) + getMbsExtension().hashCode();
     }
     switch (nonBondDetailsCase_) {
       case 203:
@@ -1610,6 +1673,11 @@ private static final long serialVersionUID = 0L;
       if (fxSpotDetailsBuilder_ != null) {
         fxSpotDetailsBuilder_.clear();
       }
+      mbsExtension_ = null;
+      if (mbsExtensionBuilder_ != null) {
+        mbsExtensionBuilder_.dispose();
+        mbsExtensionBuilder_ = null;
+      }
       nonBondDetailsCase_ = 0;
       nonBondDetails_ = null;
       return this;
@@ -1739,6 +1807,11 @@ private static final long serialVersionUID = 0L;
         result.frnExtension_ = frnExtensionBuilder_ == null
             ? frnExtension_
             : frnExtensionBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x01000000) != 0)) {
+        result.mbsExtension_ = mbsExtensionBuilder_ == null
+            ? mbsExtension_
+            : mbsExtensionBuilder_.build();
       }
     }
 
@@ -1922,6 +1995,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasFrnExtension()) {
         mergeFrnExtension(other.getFrnExtension());
+      }
+      if (other.hasMbsExtension()) {
+        mergeMbsExtension(other.getMbsExtension());
       }
       switch (other.getNonBondDetailsCase()) {
         case INDEX_DETAILS: {
@@ -2132,6 +2208,13 @@ private static final long serialVersionUID = 0L;
               nonBondDetailsCase_ = 206;
               break;
             } // case 1650
+            case 1658: {
+              input.readMessage(
+                  getMbsExtensionFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x01000000;
+              break;
+            } // case 1658
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -5554,6 +5637,188 @@ private static final long serialVersionUID = 0L;
       nonBondDetailsCase_ = 206;
       onChanged();
       return fxSpotDetailsBuilder_;
+    }
+
+    private fintekkers.models.security.MbsExtensionProto mbsExtension_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.MbsExtensionProto, fintekkers.models.security.MbsExtensionProto.Builder, fintekkers.models.security.MbsExtensionProtoOrBuilder> mbsExtensionBuilder_;
+    /**
+     * <pre>
+     * Agency MBS pass-through extras. Populated when
+     * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+     * (does NOT replace it) — pool-level coupon / face / maturity
+     * are still on bond_details.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+     * @return Whether the mbsExtension field is set.
+     */
+    public boolean hasMbsExtension() {
+      return ((bitField0_ & 0x01000000) != 0);
+    }
+    /**
+     * <pre>
+     * Agency MBS pass-through extras. Populated when
+     * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+     * (does NOT replace it) — pool-level coupon / face / maturity
+     * are still on bond_details.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+     * @return The mbsExtension.
+     */
+    public fintekkers.models.security.MbsExtensionProto getMbsExtension() {
+      if (mbsExtensionBuilder_ == null) {
+        return mbsExtension_ == null ? fintekkers.models.security.MbsExtensionProto.getDefaultInstance() : mbsExtension_;
+      } else {
+        return mbsExtensionBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Agency MBS pass-through extras. Populated when
+     * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+     * (does NOT replace it) — pool-level coupon / face / maturity
+     * are still on bond_details.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+     */
+    public Builder setMbsExtension(fintekkers.models.security.MbsExtensionProto value) {
+      if (mbsExtensionBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        mbsExtension_ = value;
+      } else {
+        mbsExtensionBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x01000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Agency MBS pass-through extras. Populated when
+     * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+     * (does NOT replace it) — pool-level coupon / face / maturity
+     * are still on bond_details.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+     */
+    public Builder setMbsExtension(
+        fintekkers.models.security.MbsExtensionProto.Builder builderForValue) {
+      if (mbsExtensionBuilder_ == null) {
+        mbsExtension_ = builderForValue.build();
+      } else {
+        mbsExtensionBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x01000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Agency MBS pass-through extras. Populated when
+     * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+     * (does NOT replace it) — pool-level coupon / face / maturity
+     * are still on bond_details.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+     */
+    public Builder mergeMbsExtension(fintekkers.models.security.MbsExtensionProto value) {
+      if (mbsExtensionBuilder_ == null) {
+        if (((bitField0_ & 0x01000000) != 0) &&
+          mbsExtension_ != null &&
+          mbsExtension_ != fintekkers.models.security.MbsExtensionProto.getDefaultInstance()) {
+          getMbsExtensionBuilder().mergeFrom(value);
+        } else {
+          mbsExtension_ = value;
+        }
+      } else {
+        mbsExtensionBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x01000000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Agency MBS pass-through extras. Populated when
+     * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+     * (does NOT replace it) — pool-level coupon / face / maturity
+     * are still on bond_details.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+     */
+    public Builder clearMbsExtension() {
+      bitField0_ = (bitField0_ & ~0x01000000);
+      mbsExtension_ = null;
+      if (mbsExtensionBuilder_ != null) {
+        mbsExtensionBuilder_.dispose();
+        mbsExtensionBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Agency MBS pass-through extras. Populated when
+     * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+     * (does NOT replace it) — pool-level coupon / face / maturity
+     * are still on bond_details.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+     */
+    public fintekkers.models.security.MbsExtensionProto.Builder getMbsExtensionBuilder() {
+      bitField0_ |= 0x01000000;
+      onChanged();
+      return getMbsExtensionFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Agency MBS pass-through extras. Populated when
+     * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+     * (does NOT replace it) — pool-level coupon / face / maturity
+     * are still on bond_details.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+     */
+    public fintekkers.models.security.MbsExtensionProtoOrBuilder getMbsExtensionOrBuilder() {
+      if (mbsExtensionBuilder_ != null) {
+        return mbsExtensionBuilder_.getMessageOrBuilder();
+      } else {
+        return mbsExtension_ == null ?
+            fintekkers.models.security.MbsExtensionProto.getDefaultInstance() : mbsExtension_;
+      }
+    }
+    /**
+     * <pre>
+     * Agency MBS pass-through extras. Populated when
+     * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+     * (does NOT replace it) — pool-level coupon / face / maturity
+     * are still on bond_details.
+     * </pre>
+     *
+     * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.security.MbsExtensionProto, fintekkers.models.security.MbsExtensionProto.Builder, fintekkers.models.security.MbsExtensionProtoOrBuilder> 
+        getMbsExtensionFieldBuilder() {
+      if (mbsExtensionBuilder_ == null) {
+        mbsExtensionBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.security.MbsExtensionProto, fintekkers.models.security.MbsExtensionProto.Builder, fintekkers.models.security.MbsExtensionProtoOrBuilder>(
+                getMbsExtension(),
+                getParentForChildren(),
+                isClean());
+        mbsExtension_ = null;
+      }
+      return mbsExtensionBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

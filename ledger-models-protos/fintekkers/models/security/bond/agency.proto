@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package fintekkers.models.security.bond;
+
+option java_multiple_files = true;
+option java_outer_classname = "AgencyProtos";
+
+// The issuing agency for an Agency MBS pass-through. Drives wire-format
+// distinctions and credit treatment downstream.
+//   FNMA  — Fannie Mae (Federal National Mortgage Association)
+//   FHLMC — Freddie Mac (Federal Home Loan Mortgage Corporation)
+//   GNMA  — Ginnie Mae (Government National Mortgage Association)
+enum AgencyProto {
+  AGENCY_UNKNOWN = 0;
+  FNMA = 1;
+  FHLMC = 2;
+  GNMA = 3;
+}

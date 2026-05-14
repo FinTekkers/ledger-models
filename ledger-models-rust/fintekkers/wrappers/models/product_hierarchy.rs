@@ -235,8 +235,8 @@ mod test {
     #[test]
     fn registry_loads_and_active_count_matches_spec() {
         let active = active_product_types();
-        // M1 spec: 26 active leaves
-        assert_eq!(active.len(), 26, "expected 26 active leaves, got {}: {active:?}", active.len());
+        // M1 locked 26 active leaves; #274 Phase 2 promotes MORTGAGE_BACKED → 27.
+        assert_eq!(active.len(), 27, "expected 27 active leaves, got {}: {active:?}", active.len());
     }
 
     #[test]
@@ -244,7 +244,7 @@ mod test {
         let descendants = descendants_of("BOND");
         for expected in [
             "TBILL", "TREASURY_NOTE", "TREASURY_BOND", "TIPS", "TREASURY_FRN",
-            "STRIPS", "SOVEREIGN_BOND", "CORP_BOND", "MUNI_BOND",
+            "STRIPS", "SOVEREIGN_BOND", "CORP_BOND", "MUNI_BOND", "MORTGAGE_BACKED",
         ] {
             assert!(descendants.contains(&expected.to_string()), "{expected} missing from descendants_of(\"BOND\")");
         }

@@ -1,3 +1,40 @@
+/// The issuing agency for an Agency MBS pass-through. Drives wire-format
+/// distinctions and credit treatment downstream.
+///    FNMA  — Fannie Mae (Federal National Mortgage Association)
+///    FHLMC — Freddie Mac (Federal Home Loan Mortgage Corporation)
+///    GNMA  — Ginnie Mae (Government National Mortgage Association)
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum AgencyProto {
+    AgencyUnknown = 0,
+    Fnma = 1,
+    Fhlmc = 2,
+    Gnma = 3,
+}
+impl AgencyProto {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            AgencyProto::AgencyUnknown => "AGENCY_UNKNOWN",
+            AgencyProto::Fnma => "FNMA",
+            AgencyProto::Fhlmc => "FHLMC",
+            AgencyProto::Gnma => "GNMA",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "AGENCY_UNKNOWN" => Some(Self::AgencyUnknown),
+            "FNMA" => Some(Self::Fnma),
+            "FHLMC" => Some(Self::Fhlmc),
+            "GNMA" => Some(Self::Gnma),
+            _ => None,
+        }
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum AuctionTypeProto {

@@ -20,8 +20,8 @@
     "CONVERTIBLE_BOND": { "parent": "CREDIT_BOND", "asset_class": "CREDIT", "instrument_type": "CASH", "label": "Convertible Bond",   "status": "planned" },
     "COCO":             { "parent": "CREDIT_BOND", "asset_class": "CREDIT", "instrument_type": "CASH", "label": "Contingent Convertible Bond (CoCo)", "status": "planned" },
 
-    "STRUCTURED_BOND":  { "parent": "BOND", "abstract": true, "status": "planned", "label": "Structured Bond" },
-    "MBS_PASSTHROUGH":  { "parent": "STRUCTURED_BOND", "asset_class": "CREDIT", "instrument_type": "CASH", "label": "MBS Pass-Through",           "status": "planned" },
+    "STRUCTURED_BOND":  { "parent": "BOND", "abstract": true, "label": "Structured Bond" },
+    "MORTGAGE_BACKED":  { "parent": "STRUCTURED_BOND", "asset_class": "CREDIT", "instrument_type": "CASH", "label": "Agency MBS Pass-Through",    "status": "active" },
     "CMBS":             { "parent": "STRUCTURED_BOND", "asset_class": "CREDIT", "instrument_type": "CASH", "label": "Commercial MBS",             "status": "planned" },
     "ABS":              { "parent": "STRUCTURED_BOND", "asset_class": "CREDIT", "instrument_type": "CASH", "label": "Asset-Backed Security",      "status": "planned" },
     "CLO":              { "parent": "STRUCTURED_BOND", "asset_class": "CREDIT", "instrument_type": "CASH", "label": "Collateralized Loan Obligation", "status": "planned" },
