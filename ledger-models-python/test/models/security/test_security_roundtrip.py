@@ -37,11 +37,10 @@ def _roundtrip(proto: security_pb2.SecurityProto) -> security_pb2.SecurityProto:
 
 
 class TestSecurityProtoRoundTrip:
-    """v0.4.0 round-trip tests — structured shape only.
+    """Structured-shape round-trip tests.
 
     Bond fields → bond_details. TIPS extras → tips_extension.
     FRN extras → frn_extension. Cash/Equity/Index → non_bond_details oneof.
-    Flat fields removed in v0.4.0 (#277 / #278).
     """
 
     def test_bond_security(self):
@@ -182,7 +181,7 @@ class TestSecurityProtoRoundTrip:
         assert parsed.identifiers[0].identifier_value == "CPI-U"
 
 
-# ---------- v0.2.5: link helpers + constituents + wire-compat ----------
+# ---------- link helpers + constituents + wire-compat ----------
 
 class TestV025LinkHelpersAndConstituents:
     def test_link_of_populates_uuid_and_as_of_and_sets_is_link(self):

@@ -1,8 +1,6 @@
-//! v0.2.5 link-helpers / wire-compat and v0.3.0 IndexDetailsProto.constituents
-//! round-trip tests. The original v0.2.x flat-field round-trip tests for all
-//! 6 security types were removed in v0.4.0 (#277/#278); structured-shape
-//! coverage lives in ledger-models-rust/fintekkers/wrappers/models/security.rs's
-//! inline test module.
+//! Link-helper, wire-compat, and IndexDetailsProto.constituents round-trip
+//! tests. Structured-shape coverage lives in
+//! ledger-models-rust/fintekkers/wrappers/models/security.rs's inline test module.
 
 use ledger_models::fintekkers::models::security::{
     IndexDetailsProto, SecurityProto, ProductTypeProto,
@@ -21,7 +19,7 @@ fn roundtrip(original: &SecurityProto) -> SecurityProto {
     SecurityProto::decode(&buf[..]).expect("decode failed")
 }
 
-// ---------- v0.2.5: link helpers + constituents + wire-compat ----------
+// ---------- link helpers + constituents + wire-compat ----------
 
 fn timestamp_at(seconds: i64) -> LocalTimestampProto {
     LocalTimestampProto {

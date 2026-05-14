@@ -124,9 +124,8 @@ class CreateSecurityRequest:
         coupon_rate_proto = ProtoSerializationUtil.serialize(coupon_rate)
         face_value_proto = ProtoSerializationUtil.serialize(face_value)
 
-        # v0.4.0 (#277/#278): structured-shape only. Bond fields live in
-        # bond_details; subtype extras in tips_extension / frn_extension.
-        # The legacy flat SecurityProto fields were removed.
+        # Bond fields live in bond_details; subtype extras in
+        # tips_extension / frn_extension.
         security_proto: SecurityProto = SecurityProto(
             as_of=LocalTimestampProto(
                 time_zone="America/New_York",

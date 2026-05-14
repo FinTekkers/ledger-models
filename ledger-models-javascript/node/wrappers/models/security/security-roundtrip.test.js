@@ -192,7 +192,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getIdentifiersList()[0].getIdentifierValue()).toBe('CPI-U');
     });
 });
-describe('v0.2.5: Security link helpers + IndexDetailsProto.constituents', () => {
+describe('Security link helpers + IndexDetailsProto.constituents', () => {
     test('linkOf populates uuid, as_of and sets is_link=true', () => {
         const uuid = uuid_1.UUID.random();
         const asOf = datetime_1.ZonedDateTime.now();
@@ -257,9 +257,10 @@ describe('v0.2.5: Security link helpers + IndexDetailsProto.constituents', () =>
         expect(parsedDetails.getConstituentsList()[0].getAsOf()).toBeDefined();
     });
     test('Wire compat: SecurityIdProto-shaped bytes (uuid at tag 1) parse as SecurityProto', () => {
-        // Pre-v0.2.5, legs were SecurityIdProto (uuid at tag 1). We rebuild that
-        // wire shape by serializing a SecurityProto with only uuid set — same
-        // bytes — and confirm round-trip under the new type.
+        // Wire-format contract: SecurityIdProto-shaped bytes (uuid at tag 1)
+        // are bit-for-bit a SecurityProto with only uuid set. We rebuild that
+        // shape by serializing a SecurityProto with only uuid set and confirm
+        // round-trip under the new type.
         const uuid = uuid_1.UUID.random();
         const legacy = new security_pb_2.SecurityProto();
         legacy.setUuid(uuid.toUUIDProto());

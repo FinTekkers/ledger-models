@@ -62,7 +62,6 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             serializeBondSecurityAttributes((BondSecurity) security, builder);
         }
 
-        // v0.4.0: singular `identifier` (tag 40, DEPRECATED) removed.
         // Promote the domain security id into `identifiers` (tag 42, repeated)
         // as the primary entry. Round-trip preservation of any additional
         // repeated identifiers happens below.
@@ -72,9 +71,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             builder.addIdentifiers(proto);
         }
 
-        // v0.4.0: index_type flat field (tag 80) removed. The structured
-        // home is IndexDetailsProto.index_type via the non_bond_details
-        // oneof. Preserve when set on the stashed source proto.
+        // The structured home for index_type is IndexDetailsProto.index_type via
+        // the non_bond_details oneof. Preserve when set on the stashed source proto.
         if (security.getSecurityProto() != null
                 && security.getSecurityProto().hasIndexDetails()
                 && security.getSecurityProto().getIndexDetails().getIndexType().getNumber() > 0) {
@@ -88,17 +86,16 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             builder.addAllIdentifiers(security.getSecurityProto().getIdentifiersList());
         }
 
-        // Preserve soft-delete marker (deleted_at) — see #188.
+        // Preserve soft-delete marker (deleted_at).
         // null/unset = active record, non-null = soft-deleted at this timestamp.
         if (security.getSecurityProto() != null && security.getSecurityProto().hasDeletedAt()) {
             builder.setDeletedAt(security.getSecurityProto().getDeletedAt());
         }
 
-        // v0.2.1: preserve four fields from the stashed source proto that
-        // have no domain-level getter/setter on the Security object, so
-        // without this copy they drop on round-trip. Same shape as the
-        // deleted_at preservation just above. See second-brain#258 for
-        // history.
+        // Preserve four fields from the stashed source proto that have no
+        // domain-level getter/setter on the Security object, so without this
+        // copy they drop on round-trip. Same shape as the deleted_at
+        // preservation just above.
         if (security.getSecurityProto() != null) {
             SecurityProto stash = security.getSecurityProto();
 
@@ -110,9 +107,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
 
             // legs (tag 17, repeated SecurityProto in link mode) —
             // multi-leg strategy packages. Domain object has no leg
-            // accessors today, so the stash is the only source. v0.2.5
-            // migrated the leg element type from SecurityIdProto to
-            // SecurityProto with is_link=true (wire-compatible).
+            // accessors today, so the stash is the only source.
             if (stash.getLegsCount() > 0) {
                 builder.addAllLegs(stash.getLegsList());
             }
@@ -169,7 +164,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             }
         }
 
-        // v0.3.0: bond_details / tips_extension / frn_extension are top-level;
+        // bond_details / tips_extension / frn_extension are top-level;
         // the oneof is non_bond_details (Cash/Equity/Index/FxSpot only).
         ProductTypeProto productType = proto.getProductType();
         SecurityProto.NonBondDetailsCase nonBondCase = proto.getNonBondDetailsCase();
@@ -209,8 +204,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             security.setDescription(proto.getDescription());
         }
 
-        // v0.4.0: singular `identifier` (tag 40) removed. Read the primary
-        // entry from the `identifiers` repeated field (tag 42).
+        // Read the primary entry from the `identifiers` repeated field (tag 42).
         if (proto.getIdentifiersCount() > 0) {
             Identifier identifier = IdentifierSerializer.getInstance().deserialize(proto.getIdentifiers(0));
             security.setSecurityId(identifier);
@@ -248,10 +242,6 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
     }
 
     private void serializeBondSecurityAttributes(BondSecurity security, SecurityProto.Builder builder) {
-        // v0.4.0: structured shape only. All shared bond fields land in
-        // bond_details; TIPS / FRN extras land in their respective
-        // extensions. The legacy flat-field mirror block was removed
-        // in v0.4.0 (#277 / #278).
         ProductTypeProto pt = security.getProductType();
         if (ProductHierarchy.isDescendantOf(pt, "BOND")) {
             builder.setBondDetails(buildBondDetailsProto(security));
@@ -280,8 +270,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             b.setDatedDate(ProtoSerializationUtil.serializeLocalDate(security.getDatedDate()));
         if (security.getMaturityDate() != null)
             b.setMaturityDate(ProtoSerializationUtil.serializeLocalDate(security.getMaturityDate()));
-        // v0.4.0: issuance_info flat field (tag 67) removed; preserve from the
-        // stashed bond_details if present.
+        // Preserve issuance_info from the stashed bond_details if present.
         if (security.getSecurityProto() != null
                 && security.getSecurityProto().hasBondDetails()
                 && security.getSecurityProto().getBondDetails().getIssuanceInfoCount() > 0) {
@@ -292,9 +281,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
 
     private TipsExtensionProto buildTipsExtensionProto(BondSecurity security) {
         TipsExtensionProto.Builder b = TipsExtensionProto.newBuilder();
-        // v0.4.0: TIPS extras live exclusively on tips_extension on the
-        // stashed proto. Flat fields (base_cpi, index_date, inflation_index_type)
-        // were removed in v0.4.0 (#277 / #278).
+        // TIPS extras live exclusively on tips_extension on the stashed proto.
         if (security.getSecurityProto() != null && security.getSecurityProto().hasTipsExtension()) {
             TipsExtensionProto stashed = security.getSecurityProto().getTipsExtension();
             if (stashed.hasBaseCpi()) b.setBaseCpi(stashed.getBaseCpi());
@@ -307,9 +294,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
 
     private FrnExtensionProto buildFrnExtensionProto(BondSecurity security) {
         FrnExtensionProto.Builder b = FrnExtensionProto.newBuilder();
-        // v0.4.0: FRN extras live exclusively on frn_extension on the
-        // stashed proto. Flat fields (spread, reference_rate_index,
-        // reset_frequency) were removed in v0.4.0.
+        // FRN extras live exclusively on frn_extension on the stashed proto.
         if (security.getSecurityProto() != null && security.getSecurityProto().hasFrnExtension()) {
             FrnExtensionProto stashed = security.getSecurityProto().getFrnExtension();
             if (stashed.hasSpread()) b.setSpread(stashed.getSpread());
@@ -322,8 +307,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
     }
 
     private void serializeCashAttributes(Security security, SecurityProto.Builder builder) {
-        // v0.4.0: cash_id flat field (tag 50) removed. CashDetailsProto on the
-        // non_bond_details oneof is the single canonical home.
+        // CashDetailsProto on the non_bond_details oneof is the single canonical
+        // home for cash_id.
         if(security instanceof CashSecurity) {
             String cashId = ((CashSecurity) security).getCashId();
             builder.setCashDetails(CashDetailsProto.newBuilder().setCashId(cashId).build());
@@ -358,10 +343,9 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         SecurityQuantityTypeProto quantityType = SecurityQuantityTypeProto.forNumber(securityJsonObject.get(QUANTITY_TYPE).getAsInt());
         securityJsonObject.add(QUANTITY_TYPE, new JsonPrimitive(quantityType.name()));
 
-        // v0.4.0: flat coupon_type / coupon_frequency removed. They now live
-        // inside bond_details; the JSON path doesn't try to round-trip the
-        // nested message (the structured shape is consumed via the binary
-        // proto path instead).
+        // coupon_type / coupon_frequency live inside bond_details; the JSON
+        // path doesn't try to round-trip the nested message (the structured
+        // shape is consumed via the binary proto path instead).
 
         securityJsonObject.add(JSONFieldNames.DESCRIPTION, new JsonPrimitive(proto.getDescription()));
 
@@ -371,11 +355,11 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             securityJsonObject.add(SETTLEMENT_CURRENCY, cashSecurityJsonObject);
         }
 
-        // v0.4.0: bond_details / tips_extension / frn_extension are top-level
-        // proto fields now (not oneof variants) — Gson can round-trip them
-        // as nested JSON objects. Only the non_bond_details oneof discriminator
-        // needs stripping; Gson serializes oneof variants as separate top-level
-        // keys plus a *_case field that doesn't deserialize cleanly.
+        // bond_details / tips_extension / frn_extension are top-level proto
+        // fields (not oneof variants) — Gson can round-trip them as nested
+        // JSON objects. Only the non_bond_details oneof discriminator needs
+        // stripping; Gson serializes oneof variants as separate top-level keys
+        // plus a *_case field that doesn't deserialize cleanly.
         securityJsonObject.remove("index_details");
         securityJsonObject.remove("equity_details");
         securityJsonObject.remove("cash_details");
@@ -418,9 +402,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         securityJsonObject.add(QUANTITY_TYPE,
                 new JsonPrimitive(SecurityQuantityTypeProto.valueOf(quantityTypeString).getNumber()));
 
-        // v0.4.0: bond coupon translation through flat fields removed.
-        // Bond fields are nested inside bond_details (a sub-message);
-        // the JSON path doesn't attempt to translate nested enum names.
+        // Bond fields are nested inside bond_details (a sub-message); the
+        // JSON path doesn't attempt to translate nested enum names.
 
         return serializeSettlementCurrencySecurity(gson, securityJsonObject, settlementSecurityProto);
     }

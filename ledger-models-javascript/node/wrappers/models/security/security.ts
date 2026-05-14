@@ -187,8 +187,7 @@ class Security {
   }
 
   getSecurityID(): IdentifierProto {
-    // v0.4.0: singular `identifier` (tag 40) removed; primary identifier
-    // lives at identifiers[0] (tag 42).
+    // Primary identifier lives at identifiers[0] (tag 42).
     this.assertNotLink('securityId');
     const list = this.proto.getIdentifiersList();
     if (!list || list.length === 0) throw new Error("Identifier is required");
@@ -208,7 +207,6 @@ class Security {
    * calling BondSecurity.getIssueDate() (which returns LocalDate, not null).
    */
   getIssueDate(): LocalDate | null {
-    // v0.4.0: bond fields exclusively from bond_details.
     this.assertNotLink('issueDate');
     const bond = this.getBondLikeDetails();
     const date = bond ? bond.getIssueDate() : undefined;
@@ -227,7 +225,6 @@ class Security {
    * and TS will catch the misuse at compile time.
    */
   getMaturityDate(): LocalDate {
-    // v0.4.0: bond fields exclusively from bond_details.
     this.assertNotLink('maturityDate');
     const bond = this.getBondLikeDetails();
     const date = bond ? bond.getMaturityDate() : undefined;
@@ -237,9 +234,8 @@ class Security {
 
   /**
    * Returns the canonical bond_details sub-message if set, else undefined.
-   * v0.3.0 collapsed the prior 3-arm bond/tips/frn oneof into a single
-   * top-level bond_details — TIPS and FRN extras now live in their own
-   * tips_extension / frn_extension fields.
+   * TIPS and FRN extras live in their own tips_extension / frn_extension
+   * fields and co-exist with bond_details.
    */
   protected getBondLikeDetails(): any | undefined {
     if (typeof this.proto.getBondDetails !== 'function') return undefined;

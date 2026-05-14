@@ -21,7 +21,6 @@ fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
     LocalDateProto { year, month, day }
 }
 
-// v0.4.0: bond fields live in BondDetailsProto on SecurityProto. Flat fields removed.
 fn bond_details(coupon_rate: &str, maturity: LocalDateProto) -> BondDetailsProto {
     BondDetailsProto {
         coupon_type: CouponTypeProto::Fixed.into(),

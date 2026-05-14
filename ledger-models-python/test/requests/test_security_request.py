@@ -29,7 +29,6 @@ def test_create_security_request():
 
     proto:CreateSecurityRequestProto = request.proto
 
-    # v0.4.0: face_value lives in bond_details.
     assert proto.security_input.bond_details.face_value.arbitrary_precision_value == "1000.0"
     
 def test_query_security_request():

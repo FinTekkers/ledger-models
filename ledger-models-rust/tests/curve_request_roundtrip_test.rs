@@ -1,5 +1,5 @@
-//! Round-trip tests for CurveInputProto fields (issue #203) and the
-//! CurveRequestProto.forward_term_years field (issue #264, v0.2.4).
+//! Round-trip tests for CurveInputProto fields and the
+//! CurveRequestProto.forward_term_years field.
 
 use ledger_models::fintekkers::models::security::{BondDetailsProto, SecurityProto, ProductTypeProto};
 use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
@@ -24,7 +24,6 @@ fn roundtrip(original: &CurveInputProto) -> CurveInputProto {
 
 #[test]
 fn curve_input_tenor_and_clean_price_survive_roundtrip() {
-    // v0.4.0: dates live in bond_details rather than flat top-level fields.
     let sec = SecurityProto {
         product_type: ProductTypeProto::TreasuryNote as i32,
         bond_details: Some(BondDetailsProto {
@@ -106,7 +105,7 @@ fn curve_input_synthetic_cmt_shape_survives_roundtrip() {
     assert!(parsed.clean_price.is_none());
 }
 
-// ---------- CurveRequestProto.forward_term_years (v0.2.4, #264) ----------
+// ---------- CurveRequestProto.forward_term_years ----------
 
 fn roundtrip_request(original: &CurveRequestProto) -> CurveRequestProto {
     let mut buf = Vec::new();

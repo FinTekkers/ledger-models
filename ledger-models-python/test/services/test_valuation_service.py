@@ -114,8 +114,7 @@ def test_valuation_with_cash_security():
 def test_valuation_with_security_and_price():
     """Test valuation with security and price inputs"""
     # security:Security = get_security_for_valuation_test()
-    
-    # v0.4.0: bond fields nested in bond_details; identifier promoted to identifiers[].
+
     from fintekkers.models.security.security_pb2 import BondDetailsProto
     security:Security = Security(SecurityProto(
         product_type=ProductTypeProto.TREASURY_NOTE,

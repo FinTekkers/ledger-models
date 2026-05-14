@@ -142,32 +142,27 @@ class Security():
         raise ValueError("Not implemented yet. See Java implementation for reference")
 
     def get_security_id(self) -> Identifier:
-        # v0.4.0: singular `identifier` (tag 40) removed; primary identifier
-        # lives at identifiers[0] (tag 42).
+        # Primary identifier lives at identifiers[0] (tag 42).
         self._assert_not_link("security_id")
         if len(self.proto.identifiers) == 0:
             return Identifier(IdentifierProto())
         return Identifier(self.proto.identifiers[0])
-    
+
     ###
-    ### Bond specific functions. These prefer the oneof product_details sub-message
-    ### if set, falling back to flat fields for backward compatibility.
+    ### Bond specific functions. Bond fields live on the canonical bond_details
+    ### sub-message; TIPS and FRN extras co-exist on tips_extension / frn_extension.
     ###
     def _get_bond_like_details(self):
         """Returns the canonical bond_details sub-message if populated, else None.
 
-        v0.3.0 collapsed bond/tips/frn into a single bond_details. TIPS and FRN
-        extras live in tips_extension / frn_extension and co-exist with
-        bond_details rather than replacing it.
+        TIPS and FRN extras live in tips_extension / frn_extension and co-exist
+        with bond_details rather than replacing it.
         """
         if self.proto.HasField('bond_details'):
             return self.proto.bond_details
         return None
 
     def get_issue_date(self) -> datetime:
-        # v0.4.0 (#277/#278): flat `issue_date` (tag 65) removed; field lives
-        # only on bond_details. The v0.3.0 dual-shape fallback would raise
-        # AttributeError under v0.4.0 — replaced with an explicit ValueError.
         self._assert_not_link("issue_date")
         bond = self._get_bond_like_details()
         if bond is None or not bond.HasField('issue_date'):
@@ -175,7 +170,6 @@ class Security():
         return ProtoSerializationUtil.deserialize(bond.issue_date)
 
     def get_maturity_date(self) -> datetime:
-        # v0.4.0: flat `maturity_date` (tag 66) removed.
         self._assert_not_link("maturity_date")
         bond = self._get_bond_like_details()
         if bond is None or not bond.HasField('maturity_date'):
@@ -187,7 +181,6 @@ class Security():
         return ProtoSerializationUtil.deserialize(self.proto.tenor)
 
     def get_face_value(self) -> float:
-        # v0.4.0: flat `face_value` (tag 64) removed.
         self._assert_not_link("face_value")
         bond = self._get_bond_like_details()
         if bond is None or not bond.HasField('face_value'):

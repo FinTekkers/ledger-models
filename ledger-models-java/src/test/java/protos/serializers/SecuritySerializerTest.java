@@ -92,11 +92,9 @@ class SecuritySerializerTest {
 
     @Test
     public void testJSONSerializationForCashSecurity() {
-        // v0.4.0 (#277/#278) removed the 17 flat fields and reshaped the
-        // wire layout, so the prior hand-coded exact-string expected JSON no
-        // longer matches what Gson emits. The structural contract is what
-        // matters: serialize → deserialize → equal domain object. Exact
-        // JSON output is a serializer implementation detail.
+        // The structural contract is what matters: serialize → deserialize →
+        // equal domain object. Exact JSON output is a serializer implementation
+        // detail.
         final var security = CashSecurity.USD;
 
         final SecuritySerializer serializer = SecuritySerializer.getInstance();
@@ -208,12 +206,10 @@ class SecuritySerializerTest {
     }
 
     // ------------------------------------------------------------------------
-    // v0.2.1 — round-trip preservation for four fields that have no domain
-    // accessor on Security (or whose domain-subclass overrides hardcode legacy
-    // values). Same shape as the existing deleted_at / issuance_info /
-    // identifiers / index_type preservation in SecuritySerializer.serialize().
-    // Eliminates the SecurityProtoRoundtrip workaround in ledger-service M2
-    // PR #36 (second-brain#258).
+    // Round-trip preservation for fields that have no domain accessor on
+    // Security (or whose domain-subclass overrides hardcode legacy values).
+    // Same shape as the existing deleted_at / issuance_info / identifiers /
+    // index_type preservation in SecuritySerializer.serialize().
     //
     // Each test: build a clean proto via the existing dummy, set the field
     // under test on toBuilder(), run through serialize(deserialize(proto)),
@@ -241,9 +237,8 @@ class SecuritySerializerTest {
 
     @Test
     public void legs_preservedOnRoundtrip() {
-        // v0.2.5: legs migrated from repeated SecurityIdProto to
-        // repeated SecurityProto (each leg in is_link=true mode with
-        // uuid + as_of populated). See docs/adr/is_link_pattern.md.
+        // legs is repeated SecurityProto with each leg in is_link=true mode
+        // with uuid + as_of populated. See docs/adr/is_link_pattern.md.
         fintekkers.models.util.Uuid.UUIDProto leg1Uuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
                 .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[16])).build();
         fintekkers.models.util.Uuid.UUIDProto leg2Uuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
@@ -266,29 +261,18 @@ class SecuritySerializerTest {
 
     @Test
     public void legs_wireCompatibleWithLegacySecurityIdProtoBytes() {
-        // v0.2.5 wire-compat: SecurityIdProto carried uuid at tag 1 — identical
-        // tag to SecurityProto.uuid. Bytes serialized by the old SecurityIdProto
-        // type MUST parse correctly under the new SecurityProto type at
-        // SecurityProto.legs (tag 17). This guards against silent data loss for
-        // any legacy persisted legs in long-lived stores.
-        //
-        // We don't depend on SecurityIdProto at compile time (it's gone). We
-        // reconstruct its wire form: a length-delimited UUIDProto at field tag 1
-        // — which is exactly what SecurityProto.uuid (also tag 1) encodes to.
-        // So the bytes a SecurityIdProto produced are bit-for-bit a valid
-        // SecurityProto with only the uuid field populated.
+        // Wire-format contract for SecurityProto.legs: a length-delimited
+        // UUIDProto at field tag 1 — which is exactly what SecurityProto.uuid
+        // (also tag 1) encodes to. We don't depend on SecurityIdProto at
+        // compile time; reconstruct its wire form by encoding a SecurityProto
+        // with ONLY the uuid set, then confirm those bytes parse back as a
+        // SecurityProto with the same uuid.
         fintekkers.models.util.Uuid.UUIDProto legUuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
                 .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[]{
                         7,7,0,0,0,0,0,0, 0,0,0,0,0,0,0,7})).build();
-        // Encode a "legacy" SecurityIdProto-shaped leg by encoding a
-        // SecurityProto with ONLY the uuid set — same wire bytes.
         SecurityProto legacyShape = SecurityProto.newBuilder().setUuid(legUuid).build();
         byte[] legacyBytes = legacyShape.toByteArray();
 
-        // Now reverse: parse the legacy bytes back as a SecurityProto and
-        // confirm uuid round-trips. This is the contract: any consumer
-        // upgrading past v0.2.5 can read existing leg bytes without
-        // re-encoding the database.
         try {
             SecurityProto parsed = SecurityProto.parseFrom(legacyBytes);
             assertEquals(legUuid, parsed.getUuid(),
@@ -300,7 +284,7 @@ class SecuritySerializerTest {
 
     @Test
     public void indexDetails_constituents_preservedOnRoundtrip() throws com.google.protobuf.InvalidProtocolBufferException {
-        // v0.2.5: IndexDetailsProto.constituents — server-populated under
+        // IndexDetailsProto.constituents is server-populated under
         // QuerySecurityRequestProto.lookthrough=true. Each constituent is
         // is_link=true with uuid + as_of populated.
         fintekkers.models.util.Uuid.UUIDProto constUuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()

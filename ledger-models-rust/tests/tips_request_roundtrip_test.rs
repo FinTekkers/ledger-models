@@ -20,8 +20,7 @@ fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
     LocalDateProto { year, month, day }
 }
 
-// v0.4.0: TIPS shared fields live in bond_details; TIPS-specific extras in
-// tips_extension.
+// TIPS shared fields live in bond_details; TIPS-specific extras in tips_extension.
 fn tips_security(base_cpi: &str) -> SecurityProto {
     SecurityProto {
         product_type: ProductTypeProto::Tips.into(),

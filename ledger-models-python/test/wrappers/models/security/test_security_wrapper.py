@@ -13,12 +13,6 @@ from fintekkers.wrappers.models.security.security import Security
 
 
 def test_security_wrapper():
-    # v0.4.0 (#277/#278): the previous test used a hardcoded binary fixture
-    # encoded under the v0.2.x flat-field shape (with `identifier` at tag 40
-    # and bond flat fields). Those tags are reserved in v0.4.0, so the old
-    # bytes silently parse with empty identifier. Constructed programmatically
-    # here under the v0.4.0 structured shape.
-
     as_of = LocalTimestampProto(
         timestamp=Timestamp(seconds=1_700_000_000, nanos=0),
         time_zone="America/New_York",

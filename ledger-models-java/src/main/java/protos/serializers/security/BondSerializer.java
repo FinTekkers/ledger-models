@@ -17,8 +17,6 @@ public class BondSerializer {
     public Security deserializeBondSecurity(SecurityProto proto, UUID id, ZonedDateTime asOf, String issuer, CashSecurity settlementCurrency) {
         final BondSecurity bondSecurity = initiatlize(proto, id, asOf, issuer, settlementCurrency);
 
-        // v0.4.0: shared bond fields are sourced exclusively from
-        // proto.bond_details; flat-field fallback removed (#277 / #278).
         if (proto.hasBondDetails()) {
             deserializeFromBondDetails(proto, bondSecurity);
         }

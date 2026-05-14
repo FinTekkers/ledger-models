@@ -60,7 +60,6 @@ impl BondSecurity {
 }
 
 fn bond_dates(proto: &SecurityProto) -> (Option<LocalDateProto>, Option<LocalDateProto>) {
-    // v0.4.0: bond fields live exclusively in bond_details; flat fields removed.
     proto.bond_details.as_ref()
         .map(|b| (b.issue_date.clone(), b.maturity_date.clone()))
         .unwrap_or((None, None))
@@ -126,9 +125,8 @@ mod tests {
     fn bond_proto(
         issue: Option<LocalDateProto>,
         maturity: Option<LocalDateProto>,
-        // v0.4.0: only the structured shape exists. Parameter retained
-        // so existing call sites compile, but both branches now write
-        // through bond_details.
+        // Parameter retained so existing call sites compile; both branches
+        // write through bond_details.
         _use_structured: bool,
     ) -> SecurityProto {
         SecurityProto {

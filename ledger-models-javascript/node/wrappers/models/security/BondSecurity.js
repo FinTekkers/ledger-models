@@ -66,8 +66,6 @@ class BondSecurity extends security_1.default {
             days
         };
     }
-    // v0.4.0: bond fields live exclusively in bond_details; flat-field
-    // fallback removed.
     getCouponRate() {
         const bond = this.getBondLikeDetails();
         const rate = bond ? bond.getCouponRate() : undefined;

@@ -212,9 +212,8 @@ impl SecurityProtoBuilder {
             legs: vec![],
             asset_class: self.asset_class,
             issuer_name: self.issuer_name,
-            // v0.4.0: cash_id flat field removed; the settlement currency's
-            // currency code lives in CashDetailsProto on the non_bond_details
-            // oneof.
+            // The settlement currency's code lives in CashDetailsProto on the
+            // non_bond_details oneof.
             settlement_currency: if self.settlement_currency.is_empty() {
                 None
             } else {
@@ -234,7 +233,6 @@ impl SecurityProtoBuilder {
             description: "".to_string(),
             identifiers: vec![],
 
-            // v0.4.0: structured-only — flat product fields removed.
             bond_details: None,
             tips_extension: None,
             frn_extension: None,
@@ -284,8 +282,7 @@ mod test {
     }
 
     fn cash_id_of(currency: &SecurityProto) -> &str {
-        // v0.4.0: cash currency code lives in CashDetailsProto on the
-        // non_bond_details oneof; the flat cash_id field was removed.
+        // Cash currency code lives in CashDetailsProto on the non_bond_details oneof.
         match currency.non_bond_details.as_ref() {
             Some(NonBondDetails::CashDetails(cd)) => &cd.cash_id,
             _ => "",
@@ -357,8 +354,8 @@ mod test {
 
     #[test]
     fn test_tips_round_trip_uses_bond_details_plus_tips_extension() {
-        // v0.3.0: TIPS carries shared bond fields in bond_details AND
-        // TIPS-specific extras in tips_extension. Both co-exist.
+        // TIPS carries shared bond fields in bond_details AND TIPS-specific
+        // extras in tips_extension. Both co-exist.
         let proto = SecurityProto {
             product_type: ProductTypeProto::Tips as i32,
             bond_details: Some(BondDetailsProto {
@@ -474,9 +471,6 @@ mod test {
             other => panic!("Expected EquityDetails, got {:?}", other),
         }
     }
-
-    // v0.4.0: the v0.3.0 "flat-and-bond-details coexist" test was removed
-    // because the flat fields no longer exist in the proto.
 
     #[test]
     fn test_no_structured_set_returns_none() {

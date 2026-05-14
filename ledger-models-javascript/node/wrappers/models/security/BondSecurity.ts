@@ -75,9 +75,6 @@ class BondSecurity extends Security {
     };
   }
 
-  // v0.4.0: bond fields live exclusively in bond_details; flat-field
-  // fallback removed.
-
   getCouponRate(): DecimalValueProto {
     const bond = this.getBondLikeDetails();
     const rate = bond ? bond.getCouponRate() : undefined;
