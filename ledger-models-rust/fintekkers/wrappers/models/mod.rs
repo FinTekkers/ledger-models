@@ -1,9 +1,13 @@
 pub mod bond_security;
 pub mod coupon_frequency;
+pub mod floating_rate_note;
+pub mod index_security;
+pub mod issuance;
 pub mod portfolio;
 pub mod position;
 pub mod price;
 pub mod product_hierarchy;
 pub mod raw_datamodel_object;
 pub mod security;
+pub mod tips_bond;
 pub mod utils;

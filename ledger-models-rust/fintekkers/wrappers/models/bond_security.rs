@@ -1,9 +1,12 @@
 use chrono::{DateTime, Datelike, NaiveDate, TimeZone};
 use rust_decimal::Decimal;
 
-use crate::fintekkers::models::security::{SecurityProto, ProductTypeProto};
-use crate::fintekkers::models::util::LocalDateProto;
+use crate::fintekkers::models::security::{
+    BondDetailsProto, CouponFrequencyProto, CouponTypeProto, ProductTypeProto, SecurityProto,
+};
+use crate::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
 // security_type wrapper deleted in M1; use ProductTypeProto directly or ProductHierarchy helper.
+use crate::fintekkers::wrappers::models::issuance::Issuance;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 
 pub struct BondSecurity {
@@ -56,6 +59,63 @@ impl BondSecurity {
         let maturity = self.maturity_date()?;
         let as_of_date = as_of.naive_utc().date();
         Ok(act_act_year_fraction(as_of_date, maturity))
+    }
+
+    /// All `Issuance` records attached to the bond (auctions / reopenings).
+    /// Empty when `bond_details` is unset or carries no issuance info.
+    pub fn issuances(&self) -> Vec<Issuance> {
+        self.proto
+            .bond_details
+            .as_ref()
+            .map(|b| {
+                b.issuance_info
+                    .iter()
+                    .cloned()
+                    .map(Issuance::new)
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+
+    /// Build a vanilla treasury-note-shaped `SecurityProto` from the typed
+    /// inputs used by the pricer. Produces `bond_details` populated, no
+    /// extensions, `product_type = TreasuryNote`.
+    pub fn from_pricer_inputs(
+        face_value: Decimal,
+        coupon_rate: Decimal,
+        coupon_type: CouponTypeProto,
+        coupon_frequency: CouponFrequencyProto,
+        issue_date: NaiveDate,
+        maturity_date: NaiveDate,
+    ) -> SecurityProto {
+        SecurityProto {
+            product_type: ProductTypeProto::TreasuryNote as i32,
+            bond_details: Some(BondDetailsProto {
+                coupon_rate: Some(decimal_proto(coupon_rate)),
+                coupon_type: coupon_type as i32,
+                coupon_frequency: coupon_frequency as i32,
+                face_value: Some(decimal_proto(face_value)),
+                issue_date: Some(date_proto(issue_date)),
+                dated_date: None,
+                maturity_date: Some(date_proto(maturity_date)),
+                issuance_info: vec![],
+            }),
+            ..Default::default()
+        }
+    }
+}
+
+fn decimal_proto(d: Decimal) -> DecimalValueProto {
+    DecimalValueProto {
+        arbitrary_precision_value: d.to_string(),
+    }
+}
+
+fn date_proto(d: NaiveDate) -> LocalDateProto {
+    LocalDateProto {
+        year: d.year() as u32,
+        month: d.month(),
+        day: d.day(),
     }
 }
 

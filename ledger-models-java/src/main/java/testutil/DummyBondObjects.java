@@ -44,7 +44,7 @@ public class DummyBondObjects {
         }
 
         bond.setCouponRate(couponRate);
-        bond.setSecurityId(new Identifier(IdentifierType.CUSIP, cusip));
+        bond.addIdentifier(new Identifier(IdentifierType.CUSIP, cusip));
         bond.setFaceValue(BigDecimal.valueOf(1000));
 
         bond.setDatedDate(issueDate);

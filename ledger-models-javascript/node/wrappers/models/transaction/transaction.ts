@@ -122,8 +122,10 @@ class Transaction {
         return this.getSecurity().getProductClass();
       case FieldProto.PRODUCT_TYPE:
         return this.getSecurity().getProductType();
-      case FieldProto.IDENTIFIER:
-        return this.getSecurity().getSecurityID();
+      case FieldProto.IDENTIFIER: {
+        const ids = this.getSecurity().getIdentifiers();
+        return ids.length > 0 ? ids[0] : null;
+      }
       case FieldProto.TENOR:
       case FieldProto.ADJUSTED_TENOR:
         throw new Error('Not implemented yet');

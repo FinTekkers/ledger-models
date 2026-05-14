@@ -2,13 +2,23 @@ package common.models.security;
 
 import common.models.JSONFieldNames;
 import common.models.postion.Field;
+import common.models.security.bonds.Issuance;
+import fintekkers.models.security.BondDetailsProto;
+import fintekkers.models.security.CouponFrequencyProto;
+import fintekkers.models.security.CouponTypeProto;
 import fintekkers.models.security.ProductTypeProto;
+import fintekkers.models.security.SecurityProto;
+import fintekkers.models.security.bond.IssuanceProto;
+import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 /***
@@ -157,10 +167,81 @@ public class BondSecurity extends Security {
 
     @Override
     public String toString() {
-        String securityId = getSecurityId() != null ? getSecurityId().toString() : "No Security Id";
+        String securityId = identifiers.isEmpty() ? "No Security Id" : identifiers.get(0).toString();
         String tenorDescription = getTenor().getTenorDescription();
         return "Bond: " + securityId + " " + maturityDate +
                 " " + couponRate + "% " + tenorDescription;
+    }
+
+    /**
+     * Per-auction issuance details for this bond. Reads from the stashed
+     * {@code SecurityProto.bond_details.issuance_info} list. Empty when no
+     * issuance info has been populated. Each entry is a typed wrapper over
+     * an {@link IssuanceProto}.
+     */
+    public List<Issuance> getIssuances() {
+        SecurityProto proto = getSecurityProto();
+        if (proto == null || !proto.hasBondDetails()) {
+            return Collections.emptyList();
+        }
+        List<IssuanceProto> raw = proto.getBondDetails().getIssuanceInfoList();
+        if (raw.isEmpty()) return Collections.emptyList();
+        List<Issuance> out = new ArrayList<>(raw.size());
+        for (IssuanceProto p : raw) {
+            out.add(new Issuance(p));
+        }
+        return out;
+    }
+
+    /**
+     * Build a vanilla bond {@link SecurityProto} from the pricer's expected
+     * inputs. Populates {@code bond_details} with the six shared fields and
+     * sets {@code product_type = TREASURY_NOTE} as the generic bond-shape
+     * default. Specialized subclasses ({@link common.models.security.bonds.TIPSBond},
+     * {@link common.models.security.bonds.FloatingRateNote}) build on top of
+     * this contract by also populating their respective extension messages.
+     */
+    public static SecurityProto fromPricerInputs(BigDecimal faceValue,
+                                                 BigDecimal couponRate,
+                                                 CouponTypeProto couponType,
+                                                 CouponFrequencyProto couponFrequency,
+                                                 LocalDate issueDate,
+                                                 LocalDate maturityDate) {
+        return SecurityProto.newBuilder()
+                .setProductType(ProductTypeProto.TREASURY_NOTE)
+                .setBondDetails(buildBondDetails(faceValue, couponRate, couponType,
+                        couponFrequency, issueDate, maturityDate))
+                .build();
+    }
+
+    /**
+     * Shared bond_details builder for pricer-input helpers on this class and
+     * specialized subclasses. {@link common.models.security.bonds.TIPSBond}
+     * and {@link common.models.security.bonds.FloatingRateNote} live in a
+     * sibling package and layer their extension messages on top — they need
+     * cross-package visibility, so this stays public rather than
+     * package-private.
+     */
+    public static BondDetailsProto buildBondDetails(BigDecimal faceValue,
+                                              BigDecimal couponRate,
+                                              CouponTypeProto couponType,
+                                              CouponFrequencyProto couponFrequency,
+                                              LocalDate issueDate,
+                                              LocalDate maturityDate) {
+        BondDetailsProto.Builder b = BondDetailsProto.newBuilder();
+        if (faceValue != null)
+            b.setFaceValue(ProtoSerializationUtil.serializeBigDecimal(faceValue));
+        if (couponRate != null)
+            b.setCouponRate(ProtoSerializationUtil.serializeBigDecimal(couponRate));
+        if (couponType != null)
+            b.setCouponType(couponType);
+        if (couponFrequency != null)
+            b.setCouponFrequency(couponFrequency);
+        if (issueDate != null)
+            b.setIssueDate(ProtoSerializationUtil.serializeLocalDate(issueDate));
+        if (maturityDate != null)
+            b.setMaturityDate(ProtoSerializationUtil.serializeLocalDate(maturityDate));
+        return b.build();
     }
 
     public Tenor getTenor() {

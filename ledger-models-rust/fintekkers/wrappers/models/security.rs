@@ -1,4 +1,4 @@
-use crate::fintekkers::models::security::{SecurityProto, ProductTypeProto};
+use crate::fintekkers::models::security::{IdentifierProto, IdentifierTypeProto, SecurityProto, ProductTypeProto};
 use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
@@ -57,6 +57,24 @@ impl SecurityWrapper {
     pub fn issuer_name(&self) -> &str {
         self.assert_not_link("issuer_name");
         &self.proto.issuer_name
+    }
+
+    /// All identifiers attached to this security. The first entry is the
+    /// primary identifier (CUSIP for US Treasuries, ISIN for Gilts, ...);
+    /// secondary identifiers follow. Empty when no identifiers are set.
+    pub fn identifiers(&self) -> Vec<&IdentifierProto> {
+        self.assert_not_link("identifiers");
+        self.proto.identifiers.iter().collect()
+    }
+
+    /// Find the first identifier matching the given type. Returns `None`
+    /// when no identifier of that type is attached.
+    pub fn identifier_by_type(&self, ty: IdentifierTypeProto) -> Option<&IdentifierProto> {
+        self.assert_not_link("identifier_by_type");
+        self.proto
+            .identifiers
+            .iter()
+            .find(|i| i.identifier_type == ty as i32)
     }
 }
 

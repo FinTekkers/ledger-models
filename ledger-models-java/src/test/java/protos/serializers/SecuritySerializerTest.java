@@ -50,8 +50,8 @@ class SecuritySerializerTest {
         assertEquals(security.getSettlementCurrency().getIssuer(), copy.getSettlementCurrency().getIssuer());
         assertEquals(security.getSettlementCurrency().getQuantityType(), copy.getSettlementCurrency().getQuantityType());
 
-        assertEquals(security.getSecurityId().getIdentifier(), copy.getSecurityId().getIdentifier());
-        assertEquals(security.getSecurityId().getIdentifierType(), copy.getSecurityId().getIdentifierType());
+        assertEquals(security.getIdentifiers().get(0).getIdentifier(), copy.getIdentifiers().get(0).getIdentifier());
+        assertEquals(security.getIdentifiers().get(0).getIdentifierType(), copy.getIdentifiers().get(0).getIdentifierType());
     }
     @Test
     public void testBondSecuritySerialize() {
@@ -106,7 +106,7 @@ class SecuritySerializerTest {
 
         assertEquals(security.getID(), copy.getID());
         assertTrue(security.getAsOf().truncatedTo(ChronoUnit.MILLIS).isEqual(copy.getAsOf().truncatedTo(ChronoUnit.MILLIS)));
-        assertEquals(security.getSecurityId(), copy.getSecurityId());
+        assertEquals(security.getIdentifiers(), copy.getIdentifiers());
         assertEquals(security.getCashId(), copy.getCashId());
     }
 
@@ -148,7 +148,7 @@ class SecuritySerializerTest {
         assertEquals(security.getID(), copy.getID());
         assertTrue(security.getAsOf().truncatedTo(ChronoUnit.MILLIS)
                 .isEqual(copy.getAsOf().truncatedTo(ChronoUnit.MILLIS)));
-        assertEquals(security.getSecurityId(), copy.getSecurityId());
+        assertEquals(security.getIdentifiers(), copy.getIdentifiers());
 
         //Bond security
         assertEquals(security.getCouponType(), copy.getCouponType());
@@ -157,7 +157,7 @@ class SecuritySerializerTest {
         assertEquals(security.getIssueDate(), copy.getIssueDate());
         assertEquals(security.getDatedDate(), copy.getDatedDate());
         assertEquals(security.getMaturityDate(), copy.getMaturityDate());
-        assertEquals(security.getSecurityId(), copy.getSecurityId());
+        assertEquals(security.getIdentifiers(), copy.getIdentifiers());
     }
 
     // Issue #96: maturity_date must be strictly after issue_date for bond-type securities

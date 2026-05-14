@@ -1,9 +1,16 @@
 package common.models.security.bonds;
 
 import common.models.security.*;
+import fintekkers.models.security.CouponFrequencyProto;
+import fintekkers.models.security.CouponTypeProto;
 import fintekkers.models.security.ProductTypeProto;
+import fintekkers.models.security.SecurityProto;
+import fintekkers.models.security.TipsExtensionProto;
+import fintekkers.models.security.index.IndexTypeProto;
+import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -52,5 +59,70 @@ public class TIPSBond extends BondSecurity implements IndexLinkedSecurity {
     @Override
     public ProductTypeProto getProductType() {
         return ProductTypeProto.TIPS;
+    }
+
+    /**
+     * Reference CPI at bond issuance. Reads from the stashed proto's
+     * {@code tips_extension.base_cpi}; null if unset.
+     */
+    public BigDecimal getBaseCpi() {
+        SecurityProto proto = getSecurityProto();
+        if (proto == null || !proto.hasTipsExtension()) return null;
+        TipsExtensionProto tips = proto.getTipsExtension();
+        if (!tips.hasBaseCpi()) return null;
+        return ProtoSerializationUtil.deserializeBigDecimal(tips.getBaseCpi());
+    }
+
+    /**
+     * The date the base CPI was observed. Reads from the stashed proto's
+     * {@code tips_extension.index_date}; null if unset.
+     */
+    public LocalDate getIndexDate() {
+        SecurityProto proto = getSecurityProto();
+        if (proto == null || !proto.hasTipsExtension()) return null;
+        TipsExtensionProto tips = proto.getTipsExtension();
+        if (!tips.hasIndexDate()) return null;
+        return ProtoSerializationUtil.deserializeLocalDate(tips.getIndexDate());
+    }
+
+    /**
+     * Which inflation index drives par-value adjustment (e.g. CPI_U). Reads
+     * from the stashed proto's {@code tips_extension.inflation_index_type}.
+     */
+    public IndexTypeProto getInflationIndexType() {
+        SecurityProto proto = getSecurityProto();
+        if (proto == null || !proto.hasTipsExtension()) return IndexTypeProto.UNKNOWN_INDEX_TYPE;
+        return proto.getTipsExtension().getInflationIndexType();
+    }
+
+    /**
+     * Build a TIPS {@link SecurityProto} from the pricer's expected inputs.
+     * Populates {@code bond_details} with the shared bond shape plus
+     * {@code tips_extension} with the inflation-linked extras, and sets
+     * {@code product_type = TIPS}.
+     */
+    public static SecurityProto fromPricerInputs(BigDecimal faceValue,
+                                                 BigDecimal couponRate,
+                                                 CouponTypeProto couponType,
+                                                 CouponFrequencyProto couponFrequency,
+                                                 LocalDate issueDate,
+                                                 LocalDate maturityDate,
+                                                 BigDecimal baseCpi,
+                                                 LocalDate indexDate,
+                                                 IndexTypeProto inflationIndexType) {
+        TipsExtensionProto.Builder tips = TipsExtensionProto.newBuilder();
+        if (baseCpi != null)
+            tips.setBaseCpi(ProtoSerializationUtil.serializeBigDecimal(baseCpi));
+        if (indexDate != null)
+            tips.setIndexDate(ProtoSerializationUtil.serializeLocalDate(indexDate));
+        if (inflationIndexType != null)
+            tips.setInflationIndexType(inflationIndexType);
+
+        return SecurityProto.newBuilder()
+                .setProductType(ProductTypeProto.TIPS)
+                .setBondDetails(BondSecurity.buildBondDetails(faceValue, couponRate, couponType,
+                        couponFrequency, issueDate, maturityDate))
+                .setTipsExtension(tips.build())
+                .build();
     }
 }

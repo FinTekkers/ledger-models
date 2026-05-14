@@ -17,20 +17,20 @@ class SecurityTest {
         Assertions.assertTrue(settlementCurrency.getIssuer().contains("USD"));
 
         Security equitySecurity = DummyEquityObjects.getDummySecurity();
-        Assertions.assertTrue(equitySecurity.getDisplayDescription().contains(equitySecurity.getSecurityId().getIdentifier()));
+        Assertions.assertTrue(equitySecurity.getDisplayDescription().contains(equitySecurity.getIdentifiers().get(0).getIdentifier()));
         Assertions.assertTrue(equitySecurity.getIssuer().contains("dummy"));
         Assertions.assertTrue(equitySecurity.getField(Field.SECURITY_ISSUER_NAME).toString().contains("dummy"));
 
-        equitySecurity.setSecurityId(null);
+        equitySecurity.getIdentifiers().clear();
         Assertions.assertTrue(equitySecurity.getDisplayDescription().contains("EquitySecurity[dummy issuer]"));
 
-        equitySecurity.setSecurityId(new Identifier(IdentifierType.EXCH_TICKER, "MSFT"));
+        equitySecurity.addIdentifier(new Identifier(IdentifierType.EXCH_TICKER, "MSFT"));
         Assertions.assertTrue(equitySecurity.getDisplayDescription().contains("MSFT"));
 
         Security bondSecurity = DummyBondObjects.getDummySecurity();
-        Assertions.assertTrue(bondSecurity.getDisplayDescription().contains(bondSecurity.getSecurityId().getIdentifier()));
+        Assertions.assertTrue(bondSecurity.getDisplayDescription().contains(bondSecurity.getIdentifiers().get(0).getIdentifier()));
 
-        bondSecurity.setSecurityId(null);
+        bondSecurity.getIdentifiers().clear();
         Assertions.assertTrue(bondSecurity.getDisplayDescription().startsWith("Bond: No Security Id"));
     }
 

@@ -24,7 +24,7 @@ public class CashSecurity extends Security {
     public CashSecurity(UUID id, String cashId, ZonedDateTime asOf) {
         super(id, cashId, asOf, null);
         this.cashId = cashId;
-        this.identifier = new Identifier(IdentifierType.CASH, cashId);
+        addIdentifier(new Identifier(IdentifierType.CASH, cashId));
     }
 
     @Override
@@ -48,6 +48,6 @@ public class CashSecurity extends Security {
 
     @Override
     public String getDescription() {
-        return this.identifier.getIdentifier();
+        return cashId;
     }
 }

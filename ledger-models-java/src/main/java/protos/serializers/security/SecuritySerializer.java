@@ -62,12 +62,13 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             serializeBondSecurityAttributes((BondSecurity) security, builder);
         }
 
-        // Promote the domain security id into `identifiers` (tag 42, repeated)
-        // as the primary entry. Round-trip preservation of any additional
-        // repeated identifiers happens below.
-        if(security.getSecurityId() != null) {
-            Identifier securityId = security.getSecurityId();
-            IdentifierProto proto = IdentifierSerializer.getInstance().serialize(securityId);
+        // Promote the domain identifiers into `identifiers` (tag 42, repeated).
+        // The first entry on the domain side is the primary; any additional
+        // identifiers (e.g. CUSIP + ISIN) round-trip via the stashed proto
+        // path below.
+        if (!security.getIdentifiers().isEmpty()) {
+            Identifier primary = security.getIdentifiers().get(0);
+            IdentifierProto proto = IdentifierSerializer.getInstance().serialize(primary);
             builder.addIdentifiers(proto);
         }
 
@@ -196,6 +197,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             security = new BondSerializer().deserializeBondSecurity(proto, id, asOf, issuer, settlementCurrency);
         } else if (ProductHierarchy.isDescendantOf(productType, "STOCK")) {
             security = deserializeEquitySecurity(id, asOf, issuer, settlementCurrency);
+        } else if (ProductHierarchy.isDescendantOf(productType, "INDEX")) {
+            security = new IndexSecurity(id, issuer, asOf, settlementCurrency);
         } else {
             security = new Security(id, issuer, asOf, settlementCurrency);
         }
@@ -204,10 +207,15 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             security.setDescription(proto.getDescription());
         }
 
-        // Read the primary entry from the `identifiers` repeated field (tag 42).
+        // Read the primary entry from the `identifiers` repeated field (tag 42)
+        // and surface it on the domain object. Additional identifiers remain
+        // on the stashed proto and round-trip via the serialize path. Clear
+        // first because some subclass constructors (e.g. CashSecurity) seed
+        // an identifier — the wire copy is authoritative on deserialize.
         if (proto.getIdentifiersCount() > 0) {
             Identifier identifier = IdentifierSerializer.getInstance().deserialize(proto.getIdentifiers(0));
-            security.setSecurityId(identifier);
+            security.getIdentifiers().clear();
+            security.addIdentifier(identifier);
         }
 
         //Adding the security proto so we move other fields around too like the issuance info.

@@ -6,6 +6,8 @@ const datetime_1 = require("../utils/datetime");
 const uuid_1 = require("../utils/uuid");
 const date_1 = require("../utils/date");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
+const identifier_1 = require("./identifier");
+const product_hierarchy_1 = require("./product_hierarchy");
 class Security {
     constructor(proto) {
         this.proto = proto;
@@ -63,19 +65,38 @@ class Security {
         }
     }
     /**
-     * Factory method to create the appropriate Security subclass based on security type
+     * Factory method to create the appropriate Security subclass based on
+     * the proto's product_type. Dispatch rules:
+     *   - TIPS                       -> TIPSBond
+     *   - TREASURY_FRN               -> FloatingRateNote
+     *   - any other descendant of BOND in hierarchy.json -> BondSecurity
+     *   - any descendant of INDEX in hierarchy.json     -> IndexSecurity
+     *   - everything else (equity, cash, fx, etc.)       -> base Security
      */
     static create(proto) {
-        switch (proto.getProductType()) {
-            case product_type_pb_1.ProductTypeProto.TREASURY_NOTE:
-            case product_type_pb_1.ProductTypeProto.TIPS:
-            case product_type_pb_1.ProductTypeProto.TREASURY_FRN:
-                // Lazy import to avoid circular dependency
-                const BondSecurity = require('./BondSecurity').default;
-                return new BondSecurity(proto);
-            default:
-                return new Security(proto);
+        const productType = proto.getProductType();
+        const ptName = Object.keys(product_type_pb_1.ProductTypeProto)
+            .find(k => product_type_pb_1.ProductTypeProto[k] === productType);
+        // TIPS / FRN have dedicated wrappers with extension-specific accessors.
+        if (productType === product_type_pb_1.ProductTypeProto.TIPS) {
+            const TIPSBond = require('./TIPSBond').default;
+            return new TIPSBond(proto);
         }
+        if (productType === product_type_pb_1.ProductTypeProto.TREASURY_FRN) {
+            const FloatingRateNote = require('./FloatingRateNote').default;
+            return new FloatingRateNote(proto);
+        }
+        // Any other BOND descendant -> generic BondSecurity wrapper.
+        if (ptName && (0, product_hierarchy_1.isDescendantOf)(ptName, 'BOND')) {
+            const BondSecurity = require('./BondSecurity').default;
+            return new BondSecurity(proto);
+        }
+        // INDEX descendants get the IndexSecurity wrapper.
+        if (ptName && (0, product_hierarchy_1.isDescendantOf)(ptName, 'INDEX')) {
+            const IndexSecurity = require('./IndexSecurity').default;
+            return new IndexSecurity(proto);
+        }
+        return new Security(proto);
     }
     /**
      * Type guard: true iff this Security is a BondSecurity (BOND_SECURITY,
@@ -91,12 +112,19 @@ class Security {
      */
     isBond() {
         const t = this.proto.getProductType();
-        return t === product_type_pb_1.ProductTypeProto.TREASURY_NOTE
-            || t === product_type_pb_1.ProductTypeProto.TIPS
-            || t === product_type_pb_1.ProductTypeProto.TREASURY_FRN;
+        const ptName = Object.keys(product_type_pb_1.ProductTypeProto)
+            .find(k => product_type_pb_1.ProductTypeProto[k] === t);
+        if (!ptName)
+            return false;
+        return (0, product_hierarchy_1.isDescendantOf)(ptName, 'BOND');
     }
     toString() {
-        return `ID[${this.getID().toString()}], ${this.getSecurityID()}[${this.getIssuerName()}]`;
+        const ids = this.proto.getIsLink() ? [] : this.proto.getIdentifiersList();
+        const idStr = ids && ids.length > 0
+            ? new identifier_1.Identifier(ids[0]).toString()
+            : '<no-identifier>';
+        const issuer = this.proto.getIsLink() ? '<link>' : this.getIssuerName();
+        return `ID[${this.getID().toString()}], ${idStr}[${issuer}]`;
     }
     getFields() {
         return [field_pb_1.FieldProto.ID, field_pb_1.FieldProto.SECURITY_ID, field_pb_1.FieldProto.AS_OF, field_pb_1.FieldProto.ASSET_CLASS, field_pb_1.FieldProto.IDENTIFIER];
@@ -114,8 +142,10 @@ class Security {
                 return this.getProductClass();
             case field_pb_1.FieldProto.PRODUCT_TYPE:
                 return this.getProductType();
-            case field_pb_1.FieldProto.IDENTIFIER:
-                return this.getSecurityID();
+            case field_pb_1.FieldProto.IDENTIFIER: {
+                const list = this.proto.getIdentifiersList();
+                return list && list.length > 0 ? new identifier_1.Identifier(list[0]) : null;
+            }
             case field_pb_1.FieldProto.TENOR:
             case field_pb_1.FieldProto.ADJUSTED_TENOR:
                 throw new Error('Not implemented yet');
@@ -164,13 +194,28 @@ class Security {
         const securityTypeString = Object.keys(product_type_pb_1.ProductTypeProto).find(key => product_type_pb_1.ProductTypeProto[key] === securityType);
         return securityTypeString || 'UNKNOWN_SECURITY_TYPE';
     }
-    getSecurityID() {
-        // Primary identifier lives at identifiers[0] (tag 42).
-        this.assertNotLink('securityId');
+    /**
+     * Returns every Identifier attached to this security as typed wrappers.
+     * Empty list if none are set. Throws on a link-mode Security.
+     */
+    getIdentifiers() {
+        this.assertNotLink('identifiers');
         const list = this.proto.getIdentifiersList();
-        if (!list || list.length === 0)
-            throw new Error("Identifier is required");
-        return list[0];
+        if (!list)
+            return [];
+        return list.map(p => new identifier_1.Identifier(p));
+    }
+    /**
+     * Returns the first Identifier matching the given IdentifierTypeProto,
+     * or undefined if none is present. Throws on a link-mode Security.
+     */
+    getIdentifierByType(type) {
+        this.assertNotLink('identifierByType');
+        const list = this.proto.getIdentifiersList();
+        if (!list)
+            return undefined;
+        const found = list.find(p => p.getIdentifierType() === type);
+        return found ? new identifier_1.Identifier(found) : undefined;
     }
     /**
      * Returns the issue date if set, else null. Per-type semantic:

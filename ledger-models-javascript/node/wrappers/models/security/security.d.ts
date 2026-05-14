@@ -1,9 +1,10 @@
 import { FieldProto } from "../../../fintekkers/models/position/field_pb";
-import { IdentifierProto } from "../../../fintekkers/models/security/identifier/identifier_pb";
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { LocalDate } from "../utils/date";
+import { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
+import { Identifier } from "./identifier";
 declare class Security {
     proto: SecurityProto;
     constructor(proto: SecurityProto);
@@ -33,7 +34,13 @@ declare class Security {
      */
     private assertNotLink;
     /**
-     * Factory method to create the appropriate Security subclass based on security type
+     * Factory method to create the appropriate Security subclass based on
+     * the proto's product_type. Dispatch rules:
+     *   - TIPS                       -> TIPSBond
+     *   - TREASURY_FRN               -> FloatingRateNote
+     *   - any other descendant of BOND in hierarchy.json -> BondSecurity
+     *   - any descendant of INDEX in hierarchy.json     -> IndexSecurity
+     *   - everything else (equity, cash, fx, etc.)       -> base Security
      */
     static create(proto: SecurityProto): Security;
     /**
@@ -63,7 +70,16 @@ declare class Security {
     getAssetClass(): string;
     getProductClass(): string;
     getProductType(): string;
-    getSecurityID(): IdentifierProto;
+    /**
+     * Returns every Identifier attached to this security as typed wrappers.
+     * Empty list if none are set. Throws on a link-mode Security.
+     */
+    getIdentifiers(): Identifier[];
+    /**
+     * Returns the first Identifier matching the given IdentifierTypeProto,
+     * or undefined if none is present. Throws on a link-mode Security.
+     */
+    getIdentifierByType(type: IdentifierTypeProto): Identifier | undefined;
     /**
      * Returns the issue date if set, else null. Per-type semantic:
      *   - Bond / TIPS / FRN: auction date.
