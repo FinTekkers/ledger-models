@@ -1,5 +1,5 @@
 // Models
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/security/security_pb';
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
@@ -42,30 +42,32 @@ async function testSecurity(): Promise<boolean> {
   security.setSettlementCurrency(usd_security.proto);
   security.setAsOf(now.toProto());
   security.setAssetClass('FixedIncome');
-  security.setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY);
-  security.setCouponType(CouponTypeProto.FIXED);
   security.setProductType(ProductTypeProto.TREASURY_NOTE);
+
+  const bond = new BondDetailsProto();
+  bond.setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY);
+  bond.setCouponType(CouponTypeProto.FIXED);
 
   const faceValue = new DecimalValueProto();
   faceValue.setArbitraryPrecisionValue('1000.00');
-  security.setFaceValue(faceValue);
+  bond.setFaceValue(faceValue);
 
   const couponRate = new DecimalValueProto();
   couponRate.setArbitraryPrecisionValue('0.05');
-  security.setCouponRate(couponRate); // Fixed a typo here. It was security.setFaceValue(couponRate);
+  bond.setCouponRate(couponRate); // Fixed a typo here. It was security.setFaceValue(couponRate);
 
   const issueDate = new LocalDateProto();
   issueDate.setYear(2023);
   issueDate.setMonth(1);
   issueDate.setDay(1);
-  security.setIssueDate(issueDate);
-  security.setDatedDate(issueDate);
+  bond.setIssueDate(issueDate);
+  bond.setDatedDate(issueDate);
 
   const maturityDate = new LocalDateProto();
   maturityDate.setYear(2033); //10Y
   maturityDate.setMonth(1);
   maturityDate.setDay(1);
-  security.setMaturityDate(maturityDate);
+  bond.setMaturityDate(maturityDate);
 
   security.setIssuerName('US Treasury');
   security.setDescription('Dummy US Treasury 10Y Bond');
@@ -73,7 +75,8 @@ async function testSecurity(): Promise<boolean> {
   const issuance = new IssuanceProto();
   issuance.setPostAuctionOutstandingQuantity(ProtoSerializationUtil.serialize(1000000.00) as DecimalValueProto);
   issuance.setTotalAccepted(ProtoSerializationUtil.serialize(100000000.00) as DecimalValueProto);
-  security.addIssuanceInfo(issuance);
+  bond.addIssuanceInfo(issuance);
+  security.setBondDetails(bond);
 
   var validationSummary = await securityService.validateCreateSecurity(security);
   expect(validationSummary.getErrorsList().length).toBe(0);

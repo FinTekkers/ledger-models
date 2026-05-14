@@ -124,6 +124,9 @@ class CreateSecurityRequest:
         coupon_rate_proto = ProtoSerializationUtil.serialize(coupon_rate)
         face_value_proto = ProtoSerializationUtil.serialize(face_value)
 
+        # v0.4.0 (#277/#278): structured-shape only. Bond fields live in
+        # bond_details; subtype extras in tips_extension / frn_extension.
+        # The legacy flat SecurityProto fields were removed.
         security_proto: SecurityProto = SecurityProto(
             as_of=LocalTimestampProto(
                 time_zone="America/New_York",
@@ -131,25 +134,13 @@ class CreateSecurityRequest:
             ),
             uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
             issuer_name="US Government",
-            identifier=id,
-            # Flat fields (legacy — consumed by old clients)
-            issue_date=issue_date_proto,
-            dated_date=dated_date_proto,
-            maturity_date=maturity_date_proto,
+            identifiers=[id],
             product_type=product_type,
             quantity_type=ORIGINAL_FACE_VALUE,
             settlement_currency=cash_security,
-            coupon_frequency=coupon_frequency,
-            coupon_type=coupon_type,
-            coupon_rate=coupon_rate_proto,
             asset_class="Fixed Income",
-            face_value=face_value_proto,
-            issuance_info=issuance_list,
         )
 
-        # v0.3.0: single canonical bond_details for shared bond fields;
-        # tips_extension / frn_extension carry only the subtype-specific
-        # extras and co-exist with bond_details.
         bond_base_kwargs = dict(
             coupon_rate=coupon_rate_proto,
             coupon_type=coupon_type,

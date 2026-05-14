@@ -69,75 +69,12 @@ export class SecurityProto extends jspb.Message {
     setSettlementCurrency(value?: SecurityProto): SecurityProto;
     getQuantityType(): fintekkers_models_security_security_quantity_type_pb.SecurityQuantityTypeProto;
     setQuantityType(value: fintekkers_models_security_security_quantity_type_pb.SecurityQuantityTypeProto): SecurityProto;
-
-    hasIdentifier(): boolean;
-    clearIdentifier(): void;
-    getIdentifier(): fintekkers_models_security_identifier_identifier_pb.IdentifierProto | undefined;
-    setIdentifier(value?: fintekkers_models_security_identifier_identifier_pb.IdentifierProto): SecurityProto;
     getDescription(): string;
     setDescription(value: string): SecurityProto;
     clearIdentifiersList(): void;
     getIdentifiersList(): Array<fintekkers_models_security_identifier_identifier_pb.IdentifierProto>;
     setIdentifiersList(value: Array<fintekkers_models_security_identifier_identifier_pb.IdentifierProto>): SecurityProto;
     addIdentifiers(value?: fintekkers_models_security_identifier_identifier_pb.IdentifierProto, index?: number): fintekkers_models_security_identifier_identifier_pb.IdentifierProto;
-    getCashId(): string;
-    setCashId(value: string): SecurityProto;
-
-    hasCouponRate(): boolean;
-    clearCouponRate(): void;
-    getCouponRate(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setCouponRate(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): SecurityProto;
-    getCouponType(): fintekkers_models_security_coupon_type_pb.CouponTypeProto;
-    setCouponType(value: fintekkers_models_security_coupon_type_pb.CouponTypeProto): SecurityProto;
-    getCouponFrequency(): fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto;
-    setCouponFrequency(value: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto): SecurityProto;
-
-    hasDatedDate(): boolean;
-    clearDatedDate(): void;
-    getDatedDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setDatedDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): SecurityProto;
-
-    hasFaceValue(): boolean;
-    clearFaceValue(): void;
-    getFaceValue(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setFaceValue(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): SecurityProto;
-
-    hasIssueDate(): boolean;
-    clearIssueDate(): void;
-    getIssueDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setIssueDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): SecurityProto;
-
-    hasMaturityDate(): boolean;
-    clearMaturityDate(): void;
-    getMaturityDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setMaturityDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): SecurityProto;
-    clearIssuanceInfoList(): void;
-    getIssuanceInfoList(): Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>;
-    setIssuanceInfoList(value: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>): SecurityProto;
-    addIssuanceInfo(value?: fintekkers_models_security_bond_issuance_pb.IssuanceProto, index?: number): fintekkers_models_security_bond_issuance_pb.IssuanceProto;
-
-    hasBaseCpi(): boolean;
-    clearBaseCpi(): void;
-    getBaseCpi(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setBaseCpi(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): SecurityProto;
-
-    hasIndexDate(): boolean;
-    clearIndexDate(): void;
-    getIndexDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setIndexDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): SecurityProto;
-    getInflationIndexType(): fintekkers_models_security_index_index_type_pb.IndexTypeProto;
-    setInflationIndexType(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): SecurityProto;
-
-    hasSpread(): boolean;
-    clearSpread(): void;
-    getSpread(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setSpread(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): SecurityProto;
-    getReferenceRateIndex(): fintekkers_models_security_index_index_type_pb.IndexTypeProto;
-    setReferenceRateIndex(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): SecurityProto;
-    getResetFrequency(): fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto;
-    setResetFrequency(value: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto): SecurityProto;
-    getIndexType(): fintekkers_models_security_index_index_type_pb.IndexTypeProto;
-    setIndexType(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): SecurityProto;
 
     hasBondDetails(): boolean;
     clearBondDetails(): void;
@@ -203,25 +140,8 @@ export namespace SecurityProto {
         issuerName: string,
         settlementCurrency?: SecurityProto.AsObject,
         quantityType: fintekkers_models_security_security_quantity_type_pb.SecurityQuantityTypeProto,
-        identifier?: fintekkers_models_security_identifier_identifier_pb.IdentifierProto.AsObject,
         description: string,
         identifiersList: Array<fintekkers_models_security_identifier_identifier_pb.IdentifierProto.AsObject>,
-        cashId: string,
-        couponRate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
-        couponType: fintekkers_models_security_coupon_type_pb.CouponTypeProto,
-        couponFrequency: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto,
-        datedDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-        faceValue?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
-        issueDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-        maturityDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-        issuanceInfoList: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto.AsObject>,
-        baseCpi?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
-        indexDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-        inflationIndexType: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
-        spread?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
-        referenceRateIndex: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
-        resetFrequency: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto,
-        indexType: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
         bondDetails?: BondDetailsProto.AsObject,
         tipsExtension?: TipsExtensionProto.AsObject,
         frnExtension?: FrnExtensionProto.AsObject,

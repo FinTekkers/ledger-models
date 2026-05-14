@@ -3,7 +3,7 @@
 //! For each new message type: construct → encode to bytes → decode → verify all fields match.
 
 use ledger_models::fintekkers::models::security::{
-    CouponFrequencyProto, CouponTypeProto, SecurityProto, ProductTypeProto,
+    BondDetailsProto, CouponFrequencyProto, CouponTypeProto, SecurityProto, ProductTypeProto,
 };
 use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
 use ledger_models::fintekkers::models::security::index::IndexTypeProto;
@@ -21,27 +21,33 @@ fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
     LocalDateProto { year, month, day }
 }
 
+// v0.4.0: bond fields live in BondDetailsProto on SecurityProto. Flat fields removed.
+fn bond_details(coupon_rate: &str, maturity: LocalDateProto) -> BondDetailsProto {
+    BondDetailsProto {
+        coupon_type: CouponTypeProto::Fixed.into(),
+        coupon_frequency: CouponFrequencyProto::Semiannually.into(),
+        face_value: Some(decimal("1000")),
+        coupon_rate: Some(decimal(coupon_rate)),
+        maturity_date: Some(maturity),
+        ..Default::default()
+    }
+}
+
 fn treasury_security() -> SecurityProto {
-    let mut sec = SecurityProto::default();
-    sec.product_type = ProductTypeProto::TreasuryNote.into();
-    sec.coupon_type = CouponTypeProto::Fixed.into();
-    sec.coupon_frequency = CouponFrequencyProto::Semiannually.into();
-    sec.face_value = Some(decimal("1000"));
-    sec.coupon_rate = Some(decimal("4.5"));
-    sec.maturity_date = Some(date(2030, 11, 15));
-    sec
+    SecurityProto {
+        product_type: ProductTypeProto::TreasuryNote.into(),
+        bond_details: Some(bond_details("4.5", date(2030, 11, 15))),
+        ..Default::default()
+    }
 }
 
 fn make_benchmark_bond(coupon_rate: &str, maturity_year: u32, maturity_month: u32, maturity_day: u32) -> SecurityCurvePoint {
-    let mut sec = SecurityProto::default();
-    sec.product_type = ProductTypeProto::TreasuryNote.into();
-    sec.coupon_type = CouponTypeProto::Fixed.into();
-    sec.coupon_frequency = CouponFrequencyProto::Semiannually.into();
-    sec.face_value = Some(decimal("1000"));
-    sec.coupon_rate = Some(decimal(coupon_rate));
-    sec.maturity_date = Some(date(maturity_year, maturity_month, maturity_day));
     SecurityCurvePoint {
-        security: Some(sec),
+        security: Some(SecurityProto {
+            product_type: ProductTypeProto::TreasuryNote.into(),
+            bond_details: Some(bond_details(coupon_rate, date(maturity_year, maturity_month, maturity_day))),
+            ..Default::default()
+        }),
         clean_price: Some(decimal("100.00")),
     }
 }
@@ -110,11 +116,12 @@ fn bond_input_security_fields_survive_roundtrip() {
         product_input::Input::Bond(b) => {
             let sec = b.security.unwrap();
             assert_eq!(sec.product_type(), ProductTypeProto::TreasuryNote);
-            assert_eq!(sec.coupon_type(), CouponTypeProto::Fixed);
-            assert_eq!(sec.coupon_frequency(), CouponFrequencyProto::Semiannually);
-            assert_eq!(sec.coupon_rate.unwrap().arbitrary_precision_value, "4.5");
-            assert_eq!(sec.face_value.unwrap().arbitrary_precision_value, "1000");
-            let mat = sec.maturity_date.unwrap();
+            let bond = sec.bond_details.unwrap();
+            assert_eq!(bond.coupon_type(), CouponTypeProto::Fixed);
+            assert_eq!(bond.coupon_frequency(), CouponFrequencyProto::Semiannually);
+            assert_eq!(bond.coupon_rate.unwrap().arbitrary_precision_value, "4.5");
+            assert_eq!(bond.face_value.unwrap().arbitrary_precision_value, "1000");
+            let mat = bond.maturity_date.unwrap();
             assert_eq!(mat.year, 2030);
             assert_eq!(mat.month, 11);
             assert_eq!(mat.day, 15);
@@ -143,7 +150,11 @@ fn bond_input_with_benchmark_curve_survives_roundtrip() {
             assert_eq!(curve.index(), IndexTypeProto::UsTreasury);
             assert_eq!(curve.points.len(), 5);
             let mid_sec = curve.points[2].security.as_ref().unwrap();
-            assert_eq!(mid_sec.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "4.00");
+            assert_eq!(
+                mid_sec.bond_details.as_ref().unwrap()
+                    .coupon_rate.as_ref().unwrap().arbitrary_precision_value,
+                "4.00"
+            );
         }
         other => panic!("Expected Bond variant, got {:?}", other),
     }

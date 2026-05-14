@@ -187,10 +187,12 @@ class Security {
   }
 
   getSecurityID(): IdentifierProto {
+    // v0.4.0: singular `identifier` (tag 40) removed; primary identifier
+    // lives at identifiers[0] (tag 42).
     this.assertNotLink('securityId');
-    const identifier = this.proto.getIdentifier();
-    if (!identifier) throw new Error("Identifier is required");
-    return identifier;
+    const list = this.proto.getIdentifiersList();
+    if (!list || list.length === 0) throw new Error("Identifier is required");
+    return list[0];
   }
 
   /**
@@ -206,10 +208,10 @@ class Security {
    * calling BondSecurity.getIssueDate() (which returns LocalDate, not null).
    */
   getIssueDate(): LocalDate | null {
+    // v0.4.0: bond fields exclusively from bond_details.
     this.assertNotLink('issueDate');
-    // Prefer oneof bond sub-message if available, fall back to flat fields
     const bond = this.getBondLikeDetails();
-    const date = bond ? bond.getIssueDate() : this.proto.getIssueDate();
+    const date = bond ? bond.getIssueDate() : undefined;
     if (!date) return null;
     return new LocalDate(date);
   }
@@ -225,10 +227,10 @@ class Security {
    * and TS will catch the misuse at compile time.
    */
   getMaturityDate(): LocalDate {
+    // v0.4.0: bond fields exclusively from bond_details.
     this.assertNotLink('maturityDate');
-    // Prefer oneof bond sub-message if available, fall back to flat fields
     const bond = this.getBondLikeDetails();
-    const date = bond ? bond.getMaturityDate() : this.proto.getMaturityDate();
+    const date = bond ? bond.getMaturityDate() : undefined;
     if (!date) throw new Error("Maturity date is required");
     return new LocalDate(date);
   }

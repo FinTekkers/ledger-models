@@ -64,34 +64,38 @@ test('BondSecurity.getMaturityDate works on bond (inherited from Security)', () 
     expect(bond.getMaturityDate().toDate().getFullYear()).toBe(2026);
 });
 function dummySecurity() {
-    return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
-        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-        .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
-        .setAssetClass("Bond")
-        .setIssuerName("Dummy issuer")
+    const bond = new security_pb_1.BondDetailsProto()
         .setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'))
         .setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED)
+        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2026).setMonth(1).setDay(1))
-        .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1))
+        .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    return security_1.default.create(new security_pb_1.SecurityProto()
+        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
+        .setAssetClass("Bond")
+        .setIssuerName("Dummy issuer")
+        .setBondDetails(bond)
         .setDescription("Dummy security"));
 }
 function dummyBondSecurity() {
     // Same dummy security but with securityType set so the factory routes
     // to BondSecurity.
-    return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
-        .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE)
-        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-        .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
-        .setAssetClass("Bond")
-        .setIssuerName("Dummy issuer")
+    const bond = new security_pb_1.BondDetailsProto()
         .setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'))
         .setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED)
+        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2026).setMonth(1).setDay(1))
-        .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1))
+        .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    return security_1.default.create(new security_pb_1.SecurityProto()
+        .setObjectClass('Security').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE)
+        .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
+        .setAssetClass("Bond")
+        .setIssuerName("Dummy issuer")
+        .setBondDetails(bond)
         .setDescription("Dummy bond"));
 }
 function dummyEquity() {

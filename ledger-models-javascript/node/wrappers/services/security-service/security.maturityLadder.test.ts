@@ -26,7 +26,8 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
     for (let index in securities) {
         let security: Security = securities[index];
 
-        let issuanceList = security.proto.getIssuanceInfoList();
+        let bondDetails = security.proto.getBondDetails();
+        let issuanceList = bondDetails ? bondDetails.getIssuanceInfoList() : [];
         let issuance = issuanceList && issuanceList.length > 0 ? issuanceList[0] : null;
 
         if (issuance) {

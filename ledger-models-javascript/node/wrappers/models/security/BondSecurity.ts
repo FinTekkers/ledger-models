@@ -75,43 +75,46 @@ class BondSecurity extends Security {
     };
   }
 
+  // v0.4.0: bond fields live exclusively in bond_details; flat-field
+  // fallback removed.
+
   getCouponRate(): DecimalValueProto {
     const bond = this.getBondLikeDetails();
-    const rate = bond ? bond.getCouponRate() : this.proto.getCouponRate();
+    const rate = bond ? bond.getCouponRate() : undefined;
     if (!rate) throw new Error("Coupon rate is required for bonds");
     return rate;
   }
 
   getFaceValue(): DecimalValueProto {
     const bond = this.getBondLikeDetails();
-    const faceValue = bond ? bond.getFaceValue() : this.proto.getFaceValue();
+    const faceValue = bond ? bond.getFaceValue() : undefined;
     if (!faceValue) throw new Error("Face value is required for bonds");
     return faceValue;
   }
 
   getCouponType(): CouponType {
     const bond = this.getBondLikeDetails();
-    const couponType = bond ? bond.getCouponType() : this.proto.getCouponType();
-    if (!couponType) throw new Error("Coupon Type is required for bonds");
+    const couponType = bond ? bond.getCouponType() : undefined;
+    if (couponType === undefined) throw new Error("Coupon Type is required for bonds");
     return new CouponType(couponType);
   }
 
   getCouponFrequency(): CouponFrequency {
     const bond = this.getBondLikeDetails();
-    const couponFrequency = bond ? bond.getCouponFrequency() : this.proto.getCouponFrequency();
-    if (!couponFrequency) throw new Error("Coupon Frequency is required for bonds");
+    const couponFrequency = bond ? bond.getCouponFrequency() : undefined;
+    if (couponFrequency === undefined) throw new Error("Coupon Frequency is required for bonds");
     return new CouponFrequency(couponFrequency);
   }
 
   getDatedDate(): LocalDate | undefined {
     const bond = this.getBondLikeDetails();
-    const datedDate = bond ? bond.getDatedDate() : this.proto.getDatedDate();
+    const datedDate = bond ? bond.getDatedDate() : undefined;
     return datedDate ? new LocalDate(datedDate) : undefined;
   }
 
   getIssuanceInfo(): IssuanceProto[] {
     const bond = this.getBondLikeDetails();
-    return bond ? bond.getIssuanceInfoList() : this.proto.getIssuanceInfoList();
+    return bond ? bond.getIssuanceInfoList() : [];
   }
 
   /**

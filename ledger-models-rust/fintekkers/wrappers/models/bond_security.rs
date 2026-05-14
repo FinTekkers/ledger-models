@@ -60,12 +60,10 @@ impl BondSecurity {
 }
 
 fn bond_dates(proto: &SecurityProto) -> (Option<LocalDateProto>, Option<LocalDateProto>) {
-    // v0.3.0: single canonical bond_details for all bond-shape products.
-    // Fall back to legacy flat fields when bond_details isn't populated.
-    if let Some(bond) = &proto.bond_details {
-        return (bond.issue_date.clone(), bond.maturity_date.clone());
-    }
-    (proto.issue_date.clone(), proto.maturity_date.clone())
+    // v0.4.0: bond fields live exclusively in bond_details; flat fields removed.
+    proto.bond_details.as_ref()
+        .map(|b| (b.issue_date.clone(), b.maturity_date.clone()))
+        .unwrap_or((None, None))
 }
 
 fn local_date_proto_to_naive(p: LocalDateProto) -> Result<NaiveDate, Error> {
@@ -128,14 +126,14 @@ mod tests {
     fn bond_proto(
         issue: Option<LocalDateProto>,
         maturity: Option<LocalDateProto>,
-        use_structured: bool,
+        // v0.4.0: only the structured shape exists. Parameter retained
+        // so existing call sites compile, but both branches now write
+        // through bond_details.
+        _use_structured: bool,
     ) -> SecurityProto {
-        let mut proto = SecurityProto {
+        SecurityProto {
             product_type: ProductTypeProto::TreasuryNote as i32,
-            ..Default::default()
-        };
-        if use_structured {
-            proto.bond_details = Some(BondDetailsProto {
+            bond_details: Some(BondDetailsProto {
                 coupon_rate: decimal("5.0"),
                 coupon_type: CouponTypeProto::Fixed as i32,
                 coupon_frequency: CouponFrequencyProto::Semiannually as i32,
@@ -144,12 +142,9 @@ mod tests {
                 dated_date: None,
                 maturity_date: maturity,
                 issuance_info: vec![],
-            });
-        } else {
-            proto.issue_date = issue;
-            proto.maturity_date = maturity;
+            }),
+            ..Default::default()
         }
-        proto
     }
 
     #[test]

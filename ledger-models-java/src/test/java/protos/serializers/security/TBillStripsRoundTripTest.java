@@ -42,14 +42,26 @@ class TBillStripsRoundTripTest {
     private static SecurityProto.Builder zeroCouponBondShape(ProductTypeProto type) {
         LocalDate issue = LocalDate.of(2025, 1, 15);
         LocalDate maturity = LocalDate.of(2025, 7, 15);
-        // as_of populated explicitly per second-brain#276 — deserializeTimestamp
-        // now throws on missing time_zone rather than silently substituting now().
+        // as_of populated explicitly per second-brain#276 (deserializeTimestamp
+        // throws on missing time_zone).
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto asOf =
                 fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder()
                         .setTimeZone("UTC")
                         .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
                                 .setSeconds(issue.atStartOfDay(java.time.ZoneOffset.UTC).toEpochSecond())
                                 .build())
+                        .build();
+        // v0.4.0: bond fields land in the canonical bond_details message —
+        // flat fields removed.
+        fintekkers.models.security.BondDetailsProto bondDetails =
+                fintekkers.models.security.BondDetailsProto.newBuilder()
+                        .setCouponRate(decimal("0"))
+                        .setCouponType(CouponTypeProto.ZERO)
+                        .setCouponFrequency(CouponFrequencyProto.NO_COUPON)
+                        .setFaceValue(decimal("1000"))
+                        .setIssueDate(date(issue))
+                        .setDatedDate(date(issue))
+                        .setMaturityDate(date(maturity))
                         .build();
         return SecurityProto.newBuilder()
                 .setObjectClass("Security")
@@ -59,13 +71,7 @@ class TBillStripsRoundTripTest {
                 .setAssetClass("Fixed Income")
                 .setIssuerName("US Treasury")
                 .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
-                .setCouponRate(decimal("0"))
-                .setCouponType(CouponTypeProto.ZERO)
-                .setCouponFrequency(CouponFrequencyProto.NO_COUPON)
-                .setFaceValue(decimal("1000"))
-                .setIssueDate(date(issue))
-                .setDatedDate(date(issue))
-                .setMaturityDate(date(maturity));
+                .setBondDetails(bondDetails);
     }
 
     @Test

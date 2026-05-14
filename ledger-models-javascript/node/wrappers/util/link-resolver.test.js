@@ -94,7 +94,7 @@ function fullSecurity(uuid, issuerName) {
     proto.setIssuerName(issuerName);
     const ident = new identifier_pb_1.IdentifierProto();
     ident.setIdentifierValue(`TICKER-${issuerName}`);
-    proto.setIdentifier(ident);
+    proto.setIdentifiersList([ident]);
     return proto;
 }
 function linkPrice(securityUuid, priceValue, asOf) {

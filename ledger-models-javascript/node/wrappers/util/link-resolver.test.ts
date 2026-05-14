@@ -99,7 +99,7 @@ function fullSecurity(uuid: UUID, issuerName: string): SecurityProto {
   proto.setIssuerName(issuerName);
   const ident = new IdentifierProto();
   ident.setIdentifierValue(`TICKER-${issuerName}`);
-  proto.setIdentifier(ident);
+  proto.setIdentifiersList([ident]);
   return proto;
 }
 

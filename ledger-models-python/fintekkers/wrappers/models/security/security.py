@@ -142,9 +142,12 @@ class Security():
         raise ValueError("Not implemented yet. See Java implementation for reference")
 
     def get_security_id(self) -> Identifier:
+        # v0.4.0: singular `identifier` (tag 40) removed; primary identifier
+        # lives at identifiers[0] (tag 42).
         self._assert_not_link("security_id")
-        id:IdentifierProto = self.proto.identifier
-        return Identifier(id)
+        if len(self.proto.identifiers) == 0:
+            return Identifier(IdentifierProto())
+        return Identifier(self.proto.identifiers[0])
     
     ###
     ### Bond specific functions. These prefer the oneof product_details sub-message

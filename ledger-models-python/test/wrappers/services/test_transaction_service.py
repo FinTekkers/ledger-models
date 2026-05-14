@@ -39,7 +39,7 @@ def _full_security(uuid_obj: UUID, name: str) -> SecurityProto:
         uuid=UUIDProto(raw_uuid=uuid_obj.bytes),
         is_link=False,
         issuer_name=name,
-        identifier=IdentifierProto(identifier_value=f"TICKER-{name}"),
+        identifiers=[IdentifierProto(identifier_value=f"TICKER-{name}")],
     )
 
 

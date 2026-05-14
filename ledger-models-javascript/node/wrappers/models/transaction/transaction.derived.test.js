@@ -136,20 +136,22 @@ function createBondTransaction(transactionType) {
     });
 }
 function createBondSecurity() {
+    const bond = new security_pb_1.BondDetailsProto()
+        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
+        .setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'))
+        .setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY)
+        .setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED)
+        .setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2034).setMonth(1).setDay(1))
+        .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2024).setMonth(1).setDay(1));
     return security_1.default.create(new security_pb_1.SecurityProto()
         .setObjectClass('Security')
         .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE)
-        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
         .setAssetClass('FixedIncome')
         .setIssuerName('Test Issuer')
-        .setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'))
-        .setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY)
-        .setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED)
-        .setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2034).setMonth(1).setDay(1))
-        .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2024).setMonth(1).setDay(1))
+        .setBondDetails(bond)
         .setAsOf(datetime_1.ZonedDateTime.now().toProto())
         .setDescription('Test bond security'));
 }

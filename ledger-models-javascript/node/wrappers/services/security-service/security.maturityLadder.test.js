@@ -28,7 +28,8 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
     //Map results into list of maps -> Date, Amount
     for (let index in securities) {
         let security = securities[index];
-        let issuanceList = security.proto.getIssuanceInfoList();
+        let bondDetails = security.proto.getBondDetails();
+        let issuanceList = bondDetails ? bondDetails.getIssuanceInfoList() : [];
         let issuance = issuanceList && issuanceList.length > 0 ? issuanceList[0] : null;
         if (issuance) {
             if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().toDate().getFullYear() > 2009) {

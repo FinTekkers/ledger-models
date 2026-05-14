@@ -28,9 +28,11 @@ function createDummyBondSecurity() {
     securityProto.setUuid(uuid_1.UUID.random().toUUIDProto());
     securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
     securityProto.setAsOf(datetime_1.ZonedDateTime.now().toProto());
-    securityProto.setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
-    securityProto.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
-    securityProto.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+    const bond = new security_pb_1.BondDetailsProto();
+    bond.setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
+    bond.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    bond.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+    securityProto.setBondDetails(bond);
     return new BondSecurity_1.default(securityProto);
 }
 //# sourceMappingURL=BondSecurity.priceScale.test.js.map

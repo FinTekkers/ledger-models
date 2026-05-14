@@ -165,11 +165,13 @@ class Security {
         return securityTypeString || 'UNKNOWN_SECURITY_TYPE';
     }
     getSecurityID() {
+        // v0.4.0: singular `identifier` (tag 40) removed; primary identifier
+        // lives at identifiers[0] (tag 42).
         this.assertNotLink('securityId');
-        const identifier = this.proto.getIdentifier();
-        if (!identifier)
+        const list = this.proto.getIdentifiersList();
+        if (!list || list.length === 0)
             throw new Error("Identifier is required");
-        return identifier;
+        return list[0];
     }
     /**
      * Returns the issue date if set, else null. Per-type semantic:
@@ -184,10 +186,10 @@ class Security {
      * calling BondSecurity.getIssueDate() (which returns LocalDate, not null).
      */
     getIssueDate() {
+        // v0.4.0: bond fields exclusively from bond_details.
         this.assertNotLink('issueDate');
-        // Prefer oneof bond sub-message if available, fall back to flat fields
         const bond = this.getBondLikeDetails();
-        const date = bond ? bond.getIssueDate() : this.proto.getIssueDate();
+        const date = bond ? bond.getIssueDate() : undefined;
         if (!date)
             return null;
         return new date_1.LocalDate(date);
@@ -203,10 +205,10 @@ class Security {
      * and TS will catch the misuse at compile time.
      */
     getMaturityDate() {
+        // v0.4.0: bond fields exclusively from bond_details.
         this.assertNotLink('maturityDate');
-        // Prefer oneof bond sub-message if available, fall back to flat fields
         const bond = this.getBondLikeDetails();
-        const date = bond ? bond.getMaturityDate() : this.proto.getMaturityDate();
+        const date = bond ? bond.getMaturityDate() : undefined;
         if (!date)
             throw new Error("Maturity date is required");
         return new date_1.LocalDate(date);

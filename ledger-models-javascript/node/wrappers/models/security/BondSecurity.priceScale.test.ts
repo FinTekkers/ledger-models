@@ -1,6 +1,6 @@
 import assert = require('assert');
 import BondSecurity from './BondSecurity';
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/security/security_pb';
 import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
@@ -28,9 +28,11 @@ function createDummyBondSecurity(): BondSecurity {
     securityProto.setUuid(UUID.random().toUUIDProto());
     securityProto.setProductType(ProductTypeProto.TREASURY_NOTE);
     securityProto.setAsOf(ZonedDateTime.now().toProto());
-    securityProto.setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
-    securityProto.setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
-    securityProto.setMaturityDate(new LocalDateProto().setYear(2031).setMonth(1).setDay(1));
-    
+    const bond = new BondDetailsProto();
+    bond.setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
+    bond.setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    bond.setMaturityDate(new LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+    securityProto.setBondDetails(bond);
+
     return new BondSecurity(securityProto);
 }

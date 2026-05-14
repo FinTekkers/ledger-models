@@ -60,7 +60,7 @@ function fullSecurity(uuid, issuerName) {
     proto.setIssuerName(issuerName);
     const ident = new identifier_pb_1.IdentifierProto();
     ident.setIdentifierValue(`TICKER-${issuerName}`);
-    proto.setIdentifier(ident);
+    proto.setIdentifiersList([ident]);
     return proto;
 }
 function linkPriceProto(securityUuid, priceValue) {
@@ -119,7 +119,7 @@ test('PriceService.searchWithSecurities returns hydrated Prices end-to-end', () 
         const sec = p.proto.getSecurity();
         expect(sec.getIsLink()).toBe(false);
         expect(['AAPL', 'MSFT']).toContain(sec.getIssuerName());
-        expect(sec.getIdentifier().getIdentifierValue()).toMatch(/^TICKER-/);
+        expect(sec.getIdentifiersList()[0].getIdentifierValue()).toMatch(/^TICKER-/);
     }
 }));
 //# sourceMappingURL=searchWithSecurities.test.js.map
