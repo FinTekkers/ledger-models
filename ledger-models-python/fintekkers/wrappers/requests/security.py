@@ -14,8 +14,8 @@ from fintekkers.models.security.identifier.identifier_type_pb2 import CUSIP
 from fintekkers.models.security.security_pb2 import (
     SecurityProto,
     BondDetailsProto,
-    TipsDetailsProto,
-    FrnDetailsProto,
+    TipsExtensionProto,
+    FrnExtensionProto,
 )
 from fintekkers.models.security.security_quantity_type_pb2 import ORIGINAL_FACE_VALUE
 from fintekkers.models.security.product_type_pb2 import (
@@ -147,7 +147,9 @@ class CreateSecurityRequest:
             issuance_info=issuance_list,
         )
 
-        # DUAL-WRITE: also populate the oneof product_details sub-message
+        # v0.3.0: single canonical bond_details for shared bond fields;
+        # tips_extension / frn_extension carry only the subtype-specific
+        # extras and co-exist with bond_details.
         bond_base_kwargs = dict(
             coupon_rate=coupon_rate_proto,
             coupon_type=coupon_type,
@@ -159,16 +161,13 @@ class CreateSecurityRequest:
             issuance_info=issuance_list,
         )
 
-        if product_type == TREASURY_NOTE:
+        if product_type in (TREASURY_NOTE, TIPS, TREASURY_FRN):
             security_proto.bond_details.CopyFrom(BondDetailsProto(**bond_base_kwargs))
-        elif product_type == TIPS:
-            security_proto.tips_details.CopyFrom(TipsDetailsProto(**bond_base_kwargs))
-        elif product_type == TREASURY_FRN:
-            frn_kwargs = dict(
-                **bond_base_kwargs,
+
+        if product_type == TREASURY_FRN:
+            security_proto.frn_extension.CopyFrom(FrnExtensionProto(
                 spread=ProtoSerializationUtil.serialize(spread),
-            )
-            security_proto.frn_details.CopyFrom(FrnDetailsProto(**frn_kwargs))
+            ))
 
         security = Security(security_proto)
 

@@ -112,20 +112,43 @@ message SecurityProto {
   fintekkers.models.security.index.IndexTypeProto index_type = 80;
 
   // ============================================================================
-  // oneof product_details — structured alternative to the flat fields above.
+  // Structured product details — v0.3.0 shape (#265 / #272).
   //
-  // During migration, BOTH the flat fields (tags 50-92) and the oneof (tags 200+)
-  // may be populated. Consumers should prefer the oneof if set, falling back to
-  // flat fields for backward compatibility. Writers should populate BOTH during
-  // the dual-write period.
+  // Bond-shape products use the canonical `bond_details` field for the 8
+  // shared fields (coupon_rate, coupon_type, coupon_frequency, dated_date,
+  // face_value, issue_date, maturity_date, issuance_info). TIPS and FRN
+  // additionally populate `tips_extension` / `frn_extension` with their
+  // subtype-specific extras — these CO-EXIST with bond_details and do NOT
+  // replace it.
   //
-  // Once all consumers have migrated to the oneof, the flat fields will be
-  // deprecated and eventually removed in a major version bump.
+  // Non-bond products (Cash, Equity, Index, FxSpot) use the
+  // `non_bond_details` oneof since they have no shared shape and are
+  // mutually exclusive.
+  //
+  // Flat fields (tags 50-92) are retained for now alongside this structured
+  // shape; v0.3.0 doesn't yet remove them. They mirror the equivalent
+  // structured field where applicable. Writers SHOULD populate the
+  // structured fields; readers SHOULD prefer the structured fields and
+  // fall back to flat only when structured is unset.
   // ============================================================================
-  oneof product_details {
-    BondDetailsProto bond_details = 200;
-    TipsDetailsProto tips_details = 201;
-    FrnDetailsProto frn_details = 202;
+
+  // Bond-shape details. Populated for any product_type descending from BOND
+  // in hierarchy.json (TBILL, TREASURY_NOTE, TREASURY_BOND, TIPS,
+  // TREASURY_FRN, STRIPS, SOVEREIGN_BOND, CORP_BOND, MUNI_BOND, ...).
+  // Single canonical home for the 8 shared bond fields. Null for non-bonds.
+  BondDetailsProto bond_details = 200;
+
+  // TIPS-specific extras. Populated when product_type == TIPS.
+  // Co-exists with bond_details (does NOT replace it).
+  TipsExtensionProto tips_extension = 201;
+
+  // FRN-specific extras. Populated when product_type == TREASURY_FRN.
+  // Co-exists with bond_details (does NOT replace it).
+  FrnExtensionProto frn_extension = 202;
+
+  // Non-bond product details. These ARE mutually exclusive — Cash, Equity,
+  // Index, FxSpot have no shared shape — so a oneof fits.
+  oneof non_bond_details {
     IndexDetailsProto index_details = 203;
     EquityDetailsProto equity_details = 204;
     CashDetailsProto cash_details = 205;
@@ -145,42 +168,22 @@ message BondDetailsProto {
   repeated fintekkers.models.security.bond.IssuanceProto issuance_info = 8;
 }
 
-// TIPS (Treasury Inflation-Protected Securities) details.
-// Extends bond fields with inflation-indexing information.
-message TipsDetailsProto {
-  // Shared bond fields
-  fintekkers.models.util.DecimalValueProto coupon_rate = 1;
-  CouponTypeProto coupon_type = 2;
-  CouponFrequencyProto coupon_frequency = 3;
-  fintekkers.models.util.LocalDateProto dated_date = 4;
-  fintekkers.models.util.DecimalValueProto face_value = 5;
-  fintekkers.models.util.LocalDateProto issue_date = 6;
-  fintekkers.models.util.LocalDateProto maturity_date = 7;
-  repeated fintekkers.models.security.bond.IssuanceProto issuance_info = 8;
-
-  // TIPS-specific fields
-  fintekkers.models.util.DecimalValueProto base_cpi = 10; //Reference CPI at bond issuance (e.g. 256.394)
-  fintekkers.models.util.LocalDateProto index_date = 11; //The date the base CPI was observed
-  fintekkers.models.security.index.IndexTypeProto inflation_index_type = 12; //Which inflation index (e.g. CPI_U)
+// TIPS (Treasury Inflation-Protected Securities) extras.
+// Carries ONLY the TIPS-specific fields; shared bond fields live in
+// SecurityProto.bond_details. Populated when product_type == TIPS.
+message TipsExtensionProto {
+  fintekkers.models.util.DecimalValueProto base_cpi = 1; //Reference CPI at bond issuance (e.g. 256.394)
+  fintekkers.models.util.LocalDateProto index_date = 2;  //The date the base CPI was observed
+  fintekkers.models.security.index.IndexTypeProto inflation_index_type = 3; //Which inflation index (e.g. CPI_U)
 }
 
-// Floating Rate Note (FRN) details.
-// Extends bond fields with floating-rate-specific information.
-message FrnDetailsProto {
-  // Shared bond fields
-  fintekkers.models.util.DecimalValueProto coupon_rate = 1; // Unused for FRN (rate is computed from reference_rate + spread). If set, must be in decimal form (0.05=5%).
-  CouponTypeProto coupon_type = 2;
-  CouponFrequencyProto coupon_frequency = 3;
-  fintekkers.models.util.LocalDateProto dated_date = 4;
-  fintekkers.models.util.DecimalValueProto face_value = 5;
-  fintekkers.models.util.LocalDateProto issue_date = 6;
-  fintekkers.models.util.LocalDateProto maturity_date = 7;
-  repeated fintekkers.models.security.bond.IssuanceProto issuance_info = 8;
-
-  // FRN-specific fields
-  fintekkers.models.util.DecimalValueProto spread = 10; //Fixed spread over the reference rate, in basis points
-  fintekkers.models.security.index.IndexTypeProto reference_rate_index = 11; //Which floating rate benchmark (e.g. SOFR)
-  CouponFrequencyProto reset_frequency = 12; //How often the floating coupon rate resets
+// Floating Rate Note (FRN) extras.
+// Carries ONLY the FRN-specific fields; shared bond fields live in
+// SecurityProto.bond_details. Populated when product_type == TREASURY_FRN.
+message FrnExtensionProto {
+  fintekkers.models.util.DecimalValueProto spread = 1;                       //Fixed spread over the reference rate, in basis points
+  fintekkers.models.security.index.IndexTypeProto reference_rate_index = 2;  //Which floating rate benchmark (e.g. SOFR)
+  CouponFrequencyProto reset_frequency = 3;                                  //How often the floating coupon rate resets
 }
 
 // Index security details (e.g. CPI-U, SOFR index, S&P 500).

@@ -774,49 +774,100 @@ public interface SecurityProtoOrBuilder extends
   fintekkers.models.security.index.IndexTypeProto getIndexType();
 
   /**
+   * <pre>
+   * Bond-shape details. Populated for any product_type descending from BOND
+   * in hierarchy.json (TBILL, TREASURY_NOTE, TREASURY_BOND, TIPS,
+   * TREASURY_FRN, STRIPS, SOVEREIGN_BOND, CORP_BOND, MUNI_BOND, ...).
+   * Single canonical home for the 8 shared bond fields. Null for non-bonds.
+   * </pre>
+   *
    * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
    * @return Whether the bondDetails field is set.
    */
   boolean hasBondDetails();
   /**
+   * <pre>
+   * Bond-shape details. Populated for any product_type descending from BOND
+   * in hierarchy.json (TBILL, TREASURY_NOTE, TREASURY_BOND, TIPS,
+   * TREASURY_FRN, STRIPS, SOVEREIGN_BOND, CORP_BOND, MUNI_BOND, ...).
+   * Single canonical home for the 8 shared bond fields. Null for non-bonds.
+   * </pre>
+   *
    * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
    * @return The bondDetails.
    */
   fintekkers.models.security.BondDetailsProto getBondDetails();
   /**
+   * <pre>
+   * Bond-shape details. Populated for any product_type descending from BOND
+   * in hierarchy.json (TBILL, TREASURY_NOTE, TREASURY_BOND, TIPS,
+   * TREASURY_FRN, STRIPS, SOVEREIGN_BOND, CORP_BOND, MUNI_BOND, ...).
+   * Single canonical home for the 8 shared bond fields. Null for non-bonds.
+   * </pre>
+   *
    * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
    */
   fintekkers.models.security.BondDetailsProtoOrBuilder getBondDetailsOrBuilder();
 
   /**
-   * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
-   * @return Whether the tipsDetails field is set.
+   * <pre>
+   * TIPS-specific extras. Populated when product_type == TIPS.
+   * Co-exists with bond_details (does NOT replace it).
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.TipsExtensionProto tips_extension = 201;</code>
+   * @return Whether the tipsExtension field is set.
    */
-  boolean hasTipsDetails();
+  boolean hasTipsExtension();
   /**
-   * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
-   * @return The tipsDetails.
+   * <pre>
+   * TIPS-specific extras. Populated when product_type == TIPS.
+   * Co-exists with bond_details (does NOT replace it).
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.TipsExtensionProto tips_extension = 201;</code>
+   * @return The tipsExtension.
    */
-  fintekkers.models.security.TipsDetailsProto getTipsDetails();
+  fintekkers.models.security.TipsExtensionProto getTipsExtension();
   /**
-   * <code>.fintekkers.models.security.TipsDetailsProto tips_details = 201;</code>
+   * <pre>
+   * TIPS-specific extras. Populated when product_type == TIPS.
+   * Co-exists with bond_details (does NOT replace it).
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.TipsExtensionProto tips_extension = 201;</code>
    */
-  fintekkers.models.security.TipsDetailsProtoOrBuilder getTipsDetailsOrBuilder();
+  fintekkers.models.security.TipsExtensionProtoOrBuilder getTipsExtensionOrBuilder();
 
   /**
-   * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
-   * @return Whether the frnDetails field is set.
+   * <pre>
+   * FRN-specific extras. Populated when product_type == TREASURY_FRN.
+   * Co-exists with bond_details (does NOT replace it).
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.FrnExtensionProto frn_extension = 202;</code>
+   * @return Whether the frnExtension field is set.
    */
-  boolean hasFrnDetails();
+  boolean hasFrnExtension();
   /**
-   * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
-   * @return The frnDetails.
+   * <pre>
+   * FRN-specific extras. Populated when product_type == TREASURY_FRN.
+   * Co-exists with bond_details (does NOT replace it).
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.FrnExtensionProto frn_extension = 202;</code>
+   * @return The frnExtension.
    */
-  fintekkers.models.security.FrnDetailsProto getFrnDetails();
+  fintekkers.models.security.FrnExtensionProto getFrnExtension();
   /**
-   * <code>.fintekkers.models.security.FrnDetailsProto frn_details = 202;</code>
+   * <pre>
+   * FRN-specific extras. Populated when product_type == TREASURY_FRN.
+   * Co-exists with bond_details (does NOT replace it).
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.FrnExtensionProto frn_extension = 202;</code>
    */
-  fintekkers.models.security.FrnDetailsProtoOrBuilder getFrnDetailsOrBuilder();
+  fintekkers.models.security.FrnExtensionProtoOrBuilder getFrnExtensionOrBuilder();
 
   /**
    * <code>.fintekkers.models.security.IndexDetailsProto index_details = 203;</code>
@@ -878,5 +929,5 @@ public interface SecurityProtoOrBuilder extends
    */
   fintekkers.models.security.FxSpotDetailsProtoOrBuilder getFxSpotDetailsOrBuilder();
 
-  public fintekkers.models.security.SecurityProto.ProductDetailsCase getProductDetailsCase();
+  public fintekkers.models.security.SecurityProto.NonBondDetailsCase getNonBondDetailsCase();
 }

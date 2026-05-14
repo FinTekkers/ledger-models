@@ -245,7 +245,10 @@ impl SecurityProtoBuilder {
             reference_rate_index: 0,
             reset_frequency: 0,
             index_type: 0,
-            product_details: None,
+            bond_details: None,
+            tips_extension: None,
+            frn_extension: None,
+            non_bond_details: None,
             deleted_at: None,
         })
     }
@@ -254,9 +257,9 @@ impl SecurityProtoBuilder {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::fintekkers::models::security::security_proto::ProductDetails;
+    use crate::fintekkers::models::security::security_proto::NonBondDetails;
     use crate::fintekkers::models::security::{
-        BondDetailsProto, TipsDetailsProto, FrnDetailsProto,
+        BondDetailsProto, TipsExtensionProto, FrnExtensionProto,
         IndexDetailsProto, CashDetailsProto, EquityDetailsProto,
         CouponTypeProto, CouponFrequencyProto,
     };
@@ -326,11 +329,11 @@ mod test {
     }
 
     #[test]
-    fn test_oneof_bond_details_round_trip() {
+    fn test_bond_details_round_trip() {
         let proto = SecurityProto {
             product_type: ProductTypeProto::TreasuryNote as i32,
             asset_class: "Fixed Income".to_string(),
-            product_details: Some(ProductDetails::BondDetails(BondDetailsProto {
+            bond_details: Some(BondDetailsProto {
                 coupon_rate: decimal("5.0"),
                 coupon_type: CouponTypeProto::Fixed as i32,
                 coupon_frequency: CouponFrequencyProto::Semiannually as i32,
@@ -339,27 +342,27 @@ mod test {
                 dated_date: date(2020, 1, 15),
                 maturity_date: date(2030, 1, 15),
                 issuance_info: vec![],
-            })),
+            }),
             ..Default::default()
         };
 
         let parsed = round_trip(&proto);
-        match &parsed.product_details {
-            Some(ProductDetails::BondDetails(bond)) => {
-                assert_eq!(bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
-                assert_eq!(bond.coupon_type, CouponTypeProto::Fixed as i32);
-                assert_eq!(bond.maturity_date.as_ref().unwrap().year, 2030);
-                assert_eq!(bond.face_value.as_ref().unwrap().arbitrary_precision_value, "1000");
-            }
-            other => panic!("Expected BondDetails, got {:?}", other),
-        }
+        let bond = parsed.bond_details.expect("bond_details must round-trip");
+        assert_eq!(bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
+        assert_eq!(bond.coupon_type, CouponTypeProto::Fixed as i32);
+        assert_eq!(bond.maturity_date.as_ref().unwrap().year, 2030);
+        assert_eq!(bond.face_value.as_ref().unwrap().arbitrary_precision_value, "1000");
+        assert!(parsed.tips_extension.is_none(), "non-TIPS must not populate tips_extension");
+        assert!(parsed.frn_extension.is_none(), "non-FRN must not populate frn_extension");
     }
 
     #[test]
-    fn test_oneof_tips_details_round_trip() {
+    fn test_tips_round_trip_uses_bond_details_plus_tips_extension() {
+        // v0.3.0: TIPS carries shared bond fields in bond_details AND
+        // TIPS-specific extras in tips_extension. Both co-exist.
         let proto = SecurityProto {
             product_type: ProductTypeProto::Tips as i32,
-            product_details: Some(ProductDetails::TipsDetails(TipsDetailsProto {
+            bond_details: Some(BondDetailsProto {
                 coupon_rate: decimal("0.625"),
                 coupon_type: CouponTypeProto::Fixed as i32,
                 coupon_frequency: CouponFrequencyProto::Semiannually as i32,
@@ -368,29 +371,29 @@ mod test {
                 dated_date: None,
                 maturity_date: date(2030, 1, 15),
                 issuance_info: vec![],
+            }),
+            tips_extension: Some(TipsExtensionProto {
                 base_cpi: decimal("256.394"),
                 index_date: date(2020, 1, 1),
                 inflation_index_type: IndexTypeProto::CpiU as i32,
-            })),
+            }),
             ..Default::default()
         };
 
         let parsed = round_trip(&proto);
-        match &parsed.product_details {
-            Some(ProductDetails::TipsDetails(tips)) => {
-                assert_eq!(tips.base_cpi.as_ref().unwrap().arbitrary_precision_value, "256.394");
-                assert_eq!(tips.inflation_index_type, IndexTypeProto::CpiU as i32);
-                assert_eq!(tips.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "0.625");
-            }
-            other => panic!("Expected TipsDetails, got {:?}", other),
-        }
+        let bond = parsed.bond_details.expect("bond_details must round-trip on TIPS");
+        assert_eq!(bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "0.625");
+        let tips = parsed.tips_extension.expect("tips_extension must round-trip");
+        assert_eq!(tips.base_cpi.as_ref().unwrap().arbitrary_precision_value, "256.394");
+        assert_eq!(tips.inflation_index_type, IndexTypeProto::CpiU as i32);
+        assert!(parsed.frn_extension.is_none());
     }
 
     #[test]
-    fn test_oneof_frn_details_round_trip() {
+    fn test_frn_round_trip_uses_bond_details_plus_frn_extension() {
         let proto = SecurityProto {
             product_type: ProductTypeProto::TreasuryFrn as i32,
-            product_details: Some(ProductDetails::FrnDetails(FrnDetailsProto {
+            bond_details: Some(BondDetailsProto {
                 coupon_rate: None,
                 coupon_type: CouponTypeProto::Float as i32,
                 coupon_frequency: CouponFrequencyProto::Quarterly as i32,
@@ -399,29 +402,30 @@ mod test {
                 dated_date: None,
                 maturity_date: date(2028, 1, 15),
                 issuance_info: vec![],
+            }),
+            frn_extension: Some(FrnExtensionProto {
                 spread: decimal("50"),
                 reference_rate_index: IndexTypeProto::TBill13Week as i32,
                 reset_frequency: CouponFrequencyProto::Quarterly as i32,
-            })),
+            }),
             ..Default::default()
         };
 
         let parsed = round_trip(&proto);
-        match &parsed.product_details {
-            Some(ProductDetails::FrnDetails(frn)) => {
-                assert_eq!(frn.spread.as_ref().unwrap().arbitrary_precision_value, "50");
-                assert_eq!(frn.reference_rate_index, IndexTypeProto::TBill13Week as i32);
-                assert_eq!(frn.reset_frequency, CouponFrequencyProto::Quarterly as i32);
-            }
-            other => panic!("Expected FrnDetails, got {:?}", other),
-        }
+        let bond = parsed.bond_details.expect("bond_details must round-trip on FRN");
+        assert_eq!(bond.maturity_date.as_ref().unwrap().year, 2028);
+        let frn = parsed.frn_extension.expect("frn_extension must round-trip");
+        assert_eq!(frn.spread.as_ref().unwrap().arbitrary_precision_value, "50");
+        assert_eq!(frn.reference_rate_index, IndexTypeProto::TBill13Week as i32);
+        assert_eq!(frn.reset_frequency, CouponFrequencyProto::Quarterly as i32);
+        assert!(parsed.tips_extension.is_none());
     }
 
     #[test]
-    fn test_oneof_index_details_round_trip() {
+    fn test_non_bond_details_index_round_trip() {
         let proto = SecurityProto {
             product_type: ProductTypeProto::EquityIndex as i32,
-            product_details: Some(ProductDetails::IndexDetails(IndexDetailsProto {
+            non_bond_details: Some(NonBondDetails::IndexDetails(IndexDetailsProto {
                 index_type: IndexTypeProto::CpiU as i32,
                 constituents: vec![],
             })),
@@ -429,27 +433,28 @@ mod test {
         };
 
         let parsed = round_trip(&proto);
-        match &parsed.product_details {
-            Some(ProductDetails::IndexDetails(idx)) => {
+        match &parsed.non_bond_details {
+            Some(NonBondDetails::IndexDetails(idx)) => {
                 assert_eq!(idx.index_type, IndexTypeProto::CpiU as i32);
             }
             other => panic!("Expected IndexDetails, got {:?}", other),
         }
+        assert!(parsed.bond_details.is_none(), "non-bond must not populate bond_details");
     }
 
     #[test]
-    fn test_oneof_cash_details_round_trip() {
+    fn test_non_bond_details_cash_round_trip() {
         let proto = SecurityProto {
             product_type: ProductTypeProto::Currency as i32,
-            product_details: Some(ProductDetails::CashDetails(CashDetailsProto {
+            non_bond_details: Some(NonBondDetails::CashDetails(CashDetailsProto {
                 cash_id: "USD".to_string(),
             })),
             ..Default::default()
         };
 
         let parsed = round_trip(&proto);
-        match &parsed.product_details {
-            Some(ProductDetails::CashDetails(cash)) => {
+        match &parsed.non_bond_details {
+            Some(NonBondDetails::CashDetails(cash)) => {
                 assert_eq!(cash.cash_id, "USD");
             }
             other => panic!("Expected CashDetails, got {:?}", other),
@@ -457,31 +462,33 @@ mod test {
     }
 
     #[test]
-    fn test_oneof_equity_details_round_trip() {
+    fn test_non_bond_details_equity_round_trip() {
         let proto = SecurityProto {
             product_type: ProductTypeProto::CommonStock as i32,
-            product_details: Some(ProductDetails::EquityDetails(EquityDetailsProto {})),
+            non_bond_details: Some(NonBondDetails::EquityDetails(EquityDetailsProto {})),
             ..Default::default()
         };
 
         let parsed = round_trip(&proto);
-        match &parsed.product_details {
-            Some(ProductDetails::EquityDetails(_)) => {}
+        match &parsed.non_bond_details {
+            Some(NonBondDetails::EquityDetails(_)) => {}
             other => panic!("Expected EquityDetails, got {:?}", other),
         }
     }
 
     #[test]
-    fn test_dual_write_flat_and_oneof_coexist() {
+    fn test_flat_and_bond_details_coexist_during_v030_transition() {
+        // v0.3.0 still mirrors bond fields to the flat-field block alongside
+        // bond_details to ease the wire-shape transition for any readers that
+        // haven't moved to bond_details yet. Once all consumers are off the
+        // flat fields, this co-existence goes away.
         let proto = SecurityProto {
             product_type: ProductTypeProto::TreasuryNote as i32,
-            // Flat fields (legacy)
             coupon_rate: decimal("5.0"),
             coupon_type: CouponTypeProto::Fixed as i32,
             face_value: decimal("1000"),
             maturity_date: date(2030, 1, 15),
-            // oneof (new)
-            product_details: Some(ProductDetails::BondDetails(BondDetailsProto {
+            bond_details: Some(BondDetailsProto {
                 coupon_rate: decimal("5.0"),
                 coupon_type: CouponTypeProto::Fixed as i32,
                 coupon_frequency: 0,
@@ -490,28 +497,18 @@ mod test {
                 dated_date: None,
                 maturity_date: date(2030, 1, 15),
                 issuance_info: vec![],
-            })),
+            }),
             ..Default::default()
         };
 
         let parsed = round_trip(&proto);
-
-        // Flat fields survive
         assert_eq!(parsed.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
-        assert_eq!(parsed.maturity_date.as_ref().unwrap().year, 2030);
-
-        // oneof fields survive
-        match &parsed.product_details {
-            Some(ProductDetails::BondDetails(bond)) => {
-                assert_eq!(bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
-                assert_eq!(bond.maturity_date.as_ref().unwrap().year, 2030);
-            }
-            other => panic!("Expected BondDetails, got {:?}", other),
-        }
+        let bond = parsed.bond_details.expect("bond_details must round-trip");
+        assert_eq!(bond.maturity_date.as_ref().unwrap().year, 2030);
     }
 
     #[test]
-    fn test_no_oneof_set_returns_none() {
+    fn test_no_structured_set_returns_none() {
         let proto = SecurityProto {
             product_type: ProductTypeProto::TreasuryNote as i32,
             coupon_rate: decimal("5.0"),
@@ -519,7 +516,10 @@ mod test {
         };
 
         let parsed = round_trip(&proto);
-        assert!(parsed.product_details.is_none());
+        assert!(parsed.bond_details.is_none());
+        assert!(parsed.tips_extension.is_none());
+        assert!(parsed.frn_extension.is_none());
+        assert!(parsed.non_bond_details.is_none());
         assert_eq!(parsed.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
     }
 

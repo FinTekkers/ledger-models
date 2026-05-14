@@ -144,15 +144,15 @@ export class SecurityProto extends jspb.Message {
     getBondDetails(): BondDetailsProto | undefined;
     setBondDetails(value?: BondDetailsProto): SecurityProto;
 
-    hasTipsDetails(): boolean;
-    clearTipsDetails(): void;
-    getTipsDetails(): TipsDetailsProto | undefined;
-    setTipsDetails(value?: TipsDetailsProto): SecurityProto;
+    hasTipsExtension(): boolean;
+    clearTipsExtension(): void;
+    getTipsExtension(): TipsExtensionProto | undefined;
+    setTipsExtension(value?: TipsExtensionProto): SecurityProto;
 
-    hasFrnDetails(): boolean;
-    clearFrnDetails(): void;
-    getFrnDetails(): FrnDetailsProto | undefined;
-    setFrnDetails(value?: FrnDetailsProto): SecurityProto;
+    hasFrnExtension(): boolean;
+    clearFrnExtension(): void;
+    getFrnExtension(): FrnExtensionProto | undefined;
+    setFrnExtension(value?: FrnExtensionProto): SecurityProto;
 
     hasIndexDetails(): boolean;
     clearIndexDetails(): void;
@@ -174,7 +174,7 @@ export class SecurityProto extends jspb.Message {
     getFxSpotDetails(): FxSpotDetailsProto | undefined;
     setFxSpotDetails(value?: FxSpotDetailsProto): SecurityProto;
 
-    getProductDetailsCase(): SecurityProto.ProductDetailsCase;
+    getNonBondDetailsCase(): SecurityProto.NonBondDetailsCase;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): SecurityProto.AsObject;
@@ -223,19 +223,16 @@ export namespace SecurityProto {
         resetFrequency: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto,
         indexType: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
         bondDetails?: BondDetailsProto.AsObject,
-        tipsDetails?: TipsDetailsProto.AsObject,
-        frnDetails?: FrnDetailsProto.AsObject,
+        tipsExtension?: TipsExtensionProto.AsObject,
+        frnExtension?: FrnExtensionProto.AsObject,
         indexDetails?: IndexDetailsProto.AsObject,
         equityDetails?: EquityDetailsProto.AsObject,
         cashDetails?: CashDetailsProto.AsObject,
         fxSpotDetails?: FxSpotDetailsProto.AsObject,
     }
 
-    export enum ProductDetailsCase {
-        PRODUCT_DETAILS_NOT_SET = 0,
-        BOND_DETAILS = 200,
-        TIPS_DETAILS = 201,
-        FRN_DETAILS = 202,
+    export enum NonBondDetailsCase {
+        NON_BOND_DETAILS_NOT_SET = 0,
         INDEX_DETAILS = 203,
         EQUITY_DETAILS = 204,
         CASH_DETAILS = 205,
@@ -302,143 +299,61 @@ export namespace BondDetailsProto {
     }
 }
 
-export class TipsDetailsProto extends jspb.Message { 
-
-    hasCouponRate(): boolean;
-    clearCouponRate(): void;
-    getCouponRate(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setCouponRate(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TipsDetailsProto;
-    getCouponType(): fintekkers_models_security_coupon_type_pb.CouponTypeProto;
-    setCouponType(value: fintekkers_models_security_coupon_type_pb.CouponTypeProto): TipsDetailsProto;
-    getCouponFrequency(): fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto;
-    setCouponFrequency(value: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto): TipsDetailsProto;
-
-    hasDatedDate(): boolean;
-    clearDatedDate(): void;
-    getDatedDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setDatedDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): TipsDetailsProto;
-
-    hasFaceValue(): boolean;
-    clearFaceValue(): void;
-    getFaceValue(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setFaceValue(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TipsDetailsProto;
-
-    hasIssueDate(): boolean;
-    clearIssueDate(): void;
-    getIssueDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setIssueDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): TipsDetailsProto;
-
-    hasMaturityDate(): boolean;
-    clearMaturityDate(): void;
-    getMaturityDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setMaturityDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): TipsDetailsProto;
-    clearIssuanceInfoList(): void;
-    getIssuanceInfoList(): Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>;
-    setIssuanceInfoList(value: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>): TipsDetailsProto;
-    addIssuanceInfo(value?: fintekkers_models_security_bond_issuance_pb.IssuanceProto, index?: number): fintekkers_models_security_bond_issuance_pb.IssuanceProto;
+export class TipsExtensionProto extends jspb.Message { 
 
     hasBaseCpi(): boolean;
     clearBaseCpi(): void;
     getBaseCpi(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setBaseCpi(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TipsDetailsProto;
+    setBaseCpi(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TipsExtensionProto;
 
     hasIndexDate(): boolean;
     clearIndexDate(): void;
     getIndexDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setIndexDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): TipsDetailsProto;
+    setIndexDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): TipsExtensionProto;
     getInflationIndexType(): fintekkers_models_security_index_index_type_pb.IndexTypeProto;
-    setInflationIndexType(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): TipsDetailsProto;
+    setInflationIndexType(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): TipsExtensionProto;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): TipsDetailsProto.AsObject;
-    static toObject(includeInstance: boolean, msg: TipsDetailsProto): TipsDetailsProto.AsObject;
+    toObject(includeInstance?: boolean): TipsExtensionProto.AsObject;
+    static toObject(includeInstance: boolean, msg: TipsExtensionProto): TipsExtensionProto.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: TipsDetailsProto, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): TipsDetailsProto;
-    static deserializeBinaryFromReader(message: TipsDetailsProto, reader: jspb.BinaryReader): TipsDetailsProto;
+    static serializeBinaryToWriter(message: TipsExtensionProto, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): TipsExtensionProto;
+    static deserializeBinaryFromReader(message: TipsExtensionProto, reader: jspb.BinaryReader): TipsExtensionProto;
 }
 
-export namespace TipsDetailsProto {
+export namespace TipsExtensionProto {
     export type AsObject = {
-        couponRate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
-        couponType: fintekkers_models_security_coupon_type_pb.CouponTypeProto,
-        couponFrequency: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto,
-        datedDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-        faceValue?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
-        issueDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-        maturityDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-        issuanceInfoList: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto.AsObject>,
         baseCpi?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         indexDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
         inflationIndexType: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
     }
 }
 
-export class FrnDetailsProto extends jspb.Message { 
-
-    hasCouponRate(): boolean;
-    clearCouponRate(): void;
-    getCouponRate(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setCouponRate(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): FrnDetailsProto;
-    getCouponType(): fintekkers_models_security_coupon_type_pb.CouponTypeProto;
-    setCouponType(value: fintekkers_models_security_coupon_type_pb.CouponTypeProto): FrnDetailsProto;
-    getCouponFrequency(): fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto;
-    setCouponFrequency(value: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto): FrnDetailsProto;
-
-    hasDatedDate(): boolean;
-    clearDatedDate(): void;
-    getDatedDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setDatedDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): FrnDetailsProto;
-
-    hasFaceValue(): boolean;
-    clearFaceValue(): void;
-    getFaceValue(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setFaceValue(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): FrnDetailsProto;
-
-    hasIssueDate(): boolean;
-    clearIssueDate(): void;
-    getIssueDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setIssueDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): FrnDetailsProto;
-
-    hasMaturityDate(): boolean;
-    clearMaturityDate(): void;
-    getMaturityDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setMaturityDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): FrnDetailsProto;
-    clearIssuanceInfoList(): void;
-    getIssuanceInfoList(): Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>;
-    setIssuanceInfoList(value: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>): FrnDetailsProto;
-    addIssuanceInfo(value?: fintekkers_models_security_bond_issuance_pb.IssuanceProto, index?: number): fintekkers_models_security_bond_issuance_pb.IssuanceProto;
+export class FrnExtensionProto extends jspb.Message { 
 
     hasSpread(): boolean;
     clearSpread(): void;
     getSpread(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setSpread(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): FrnDetailsProto;
+    setSpread(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): FrnExtensionProto;
     getReferenceRateIndex(): fintekkers_models_security_index_index_type_pb.IndexTypeProto;
-    setReferenceRateIndex(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): FrnDetailsProto;
+    setReferenceRateIndex(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): FrnExtensionProto;
     getResetFrequency(): fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto;
-    setResetFrequency(value: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto): FrnDetailsProto;
+    setResetFrequency(value: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto): FrnExtensionProto;
 
     serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): FrnDetailsProto.AsObject;
-    static toObject(includeInstance: boolean, msg: FrnDetailsProto): FrnDetailsProto.AsObject;
+    toObject(includeInstance?: boolean): FrnExtensionProto.AsObject;
+    static toObject(includeInstance: boolean, msg: FrnExtensionProto): FrnExtensionProto.AsObject;
     static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
     static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: FrnDetailsProto, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): FrnDetailsProto;
-    static deserializeBinaryFromReader(message: FrnDetailsProto, reader: jspb.BinaryReader): FrnDetailsProto;
+    static serializeBinaryToWriter(message: FrnExtensionProto, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): FrnExtensionProto;
+    static deserializeBinaryFromReader(message: FrnExtensionProto, reader: jspb.BinaryReader): FrnExtensionProto;
 }
 
-export namespace FrnDetailsProto {
+export namespace FrnExtensionProto {
     export type AsObject = {
-        couponRate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
-        couponType: fintekkers_models_security_coupon_type_pb.CouponTypeProto,
-        couponFrequency: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto,
-        datedDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-        faceValue?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
-        issueDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-        maturityDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
-        issuanceInfoList: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto.AsObject>,
         spread?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         referenceRateIndex: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
         resetFrequency: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto,

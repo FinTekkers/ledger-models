@@ -7,9 +7,10 @@ package fintekkers.requests.valuation;
  * <pre>
  * ═══════════════════════════════════════════════════════════════════════════
  * TipsInput — valuation request for a Treasury Inflation-Protected Security.
- * Static security details (real coupon_rate, coupon_frequency, face_value,
- * maturity_date) are read from the SecurityProto.
- * Base CPI at issuance is read from SecurityProto.base_cpi.
+ * Static security details: shared bond fields (real coupon_rate,
+ * coupon_frequency, face_value, maturity_date) are read from
+ * security.bond_details. TIPS-specific extras (base_cpi, index_date,
+ * inflation_index_type) are read from security.tips_extension.
  * Settlement date is read from ValuationRequestProto.asof_datetime.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
@@ -57,9 +58,9 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.security.SecurityProto security_;
   /**
    * <pre>
-   * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-   * all standard fixed-income fields populated, and base_cpi set to the
-   * reference CPI index value at issuance.
+   * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+   * populated (coupon_type FIXED, etc.) and tips_extension populated with
+   * base_cpi set to the reference CPI index value at issuance.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -71,9 +72,9 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-   * all standard fixed-income fields populated, and base_cpi set to the
-   * reference CPI index value at issuance.
+   * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+   * populated (coupon_type FIXED, etc.) and tips_extension populated with
+   * base_cpi set to the reference CPI index value at issuance.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -85,9 +86,9 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-   * all standard fixed-income fields populated, and base_cpi set to the
-   * reference CPI index value at issuance.
+   * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+   * populated (coupon_type FIXED, etc.) and tips_extension populated with
+   * base_cpi set to the reference CPI index value at issuance.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -142,7 +143,7 @@ private static final long serialVersionUID = 0L;
    * Current CPI index value (e.g. 310.326). Used to compute:
    *   index_ratio = current_cpi / base_cpi
    *   adjusted_principal = face_value * index_ratio
-   * The base CPI is read from security.base_cpi.
+   * The base CPI is read from security.tips_extension.base_cpi.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -157,7 +158,7 @@ private static final long serialVersionUID = 0L;
    * Current CPI index value (e.g. 310.326). Used to compute:
    *   index_ratio = current_cpi / base_cpi
    *   adjusted_principal = face_value * index_ratio
-   * The base CPI is read from security.base_cpi.
+   * The base CPI is read from security.tips_extension.base_cpi.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -172,7 +173,7 @@ private static final long serialVersionUID = 0L;
    * Current CPI index value (e.g. 310.326). Used to compute:
    *   index_ratio = current_cpi / base_cpi
    *   adjusted_principal = face_value * index_ratio
-   * The base CPI is read from security.base_cpi.
+   * The base CPI is read from security.tips_extension.base_cpi.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -378,9 +379,10 @@ private static final long serialVersionUID = 0L;
    * <pre>
    * ═══════════════════════════════════════════════════════════════════════════
    * TipsInput — valuation request for a Treasury Inflation-Protected Security.
-   * Static security details (real coupon_rate, coupon_frequency, face_value,
-   * maturity_date) are read from the SecurityProto.
-   * Base CPI at issuance is read from SecurityProto.base_cpi.
+   * Static security details: shared bond fields (real coupon_rate,
+   * coupon_frequency, face_value, maturity_date) are read from
+   * security.bond_details. TIPS-specific extras (base_cpi, index_date,
+   * inflation_index_type) are read from security.tips_extension.
    * Settlement date is read from ValuationRequestProto.asof_datetime.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
@@ -605,9 +607,9 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> securityBuilder_;
     /**
      * <pre>
-     * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-     * all standard fixed-income fields populated, and base_cpi set to the
-     * reference CPI index value at issuance.
+     * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+     * populated (coupon_type FIXED, etc.) and tips_extension populated with
+     * base_cpi set to the reference CPI index value at issuance.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -618,9 +620,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-     * all standard fixed-income fields populated, and base_cpi set to the
-     * reference CPI index value at issuance.
+     * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+     * populated (coupon_type FIXED, etc.) and tips_extension populated with
+     * base_cpi set to the reference CPI index value at issuance.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -635,9 +637,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-     * all standard fixed-income fields populated, and base_cpi set to the
-     * reference CPI index value at issuance.
+     * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+     * populated (coupon_type FIXED, etc.) and tips_extension populated with
+     * base_cpi set to the reference CPI index value at issuance.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -657,9 +659,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-     * all standard fixed-income fields populated, and base_cpi set to the
-     * reference CPI index value at issuance.
+     * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+     * populated (coupon_type FIXED, etc.) and tips_extension populated with
+     * base_cpi set to the reference CPI index value at issuance.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -677,9 +679,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-     * all standard fixed-income fields populated, and base_cpi set to the
-     * reference CPI index value at issuance.
+     * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+     * populated (coupon_type FIXED, etc.) and tips_extension populated with
+     * base_cpi set to the reference CPI index value at issuance.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -702,9 +704,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-     * all standard fixed-income fields populated, and base_cpi set to the
-     * reference CPI index value at issuance.
+     * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+     * populated (coupon_type FIXED, etc.) and tips_extension populated with
+     * base_cpi set to the reference CPI index value at issuance.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -721,9 +723,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-     * all standard fixed-income fields populated, and base_cpi set to the
-     * reference CPI index value at issuance.
+     * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+     * populated (coupon_type FIXED, etc.) and tips_extension populated with
+     * base_cpi set to the reference CPI index value at issuance.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -735,9 +737,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-     * all standard fixed-income fields populated, and base_cpi set to the
-     * reference CPI index value at issuance.
+     * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+     * populated (coupon_type FIXED, etc.) and tips_extension populated with
+     * base_cpi set to the reference CPI index value at issuance.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -752,9 +754,9 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The TIPS security. Must be ProductTypeProto.TIPS with coupon_type FIXED,
-     * all standard fixed-income fields populated, and base_cpi set to the
-     * reference CPI index value at issuance.
+     * The TIPS security. Must be ProductTypeProto.TIPS with bond_details
+     * populated (coupon_type FIXED, etc.) and tips_extension populated with
+     * base_cpi set to the reference CPI index value at issuance.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -936,7 +938,7 @@ private static final long serialVersionUID = 0L;
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
      *   adjusted_principal = face_value * index_ratio
-     * The base CPI is read from security.base_cpi.
+     * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -950,7 +952,7 @@ private static final long serialVersionUID = 0L;
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
      *   adjusted_principal = face_value * index_ratio
-     * The base CPI is read from security.base_cpi.
+     * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -968,7 +970,7 @@ private static final long serialVersionUID = 0L;
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
      *   adjusted_principal = face_value * index_ratio
-     * The base CPI is read from security.base_cpi.
+     * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -991,7 +993,7 @@ private static final long serialVersionUID = 0L;
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
      *   adjusted_principal = face_value * index_ratio
-     * The base CPI is read from security.base_cpi.
+     * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -1012,7 +1014,7 @@ private static final long serialVersionUID = 0L;
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
      *   adjusted_principal = face_value * index_ratio
-     * The base CPI is read from security.base_cpi.
+     * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -1038,7 +1040,7 @@ private static final long serialVersionUID = 0L;
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
      *   adjusted_principal = face_value * index_ratio
-     * The base CPI is read from security.base_cpi.
+     * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -1058,7 +1060,7 @@ private static final long serialVersionUID = 0L;
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
      *   adjusted_principal = face_value * index_ratio
-     * The base CPI is read from security.base_cpi.
+     * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -1073,7 +1075,7 @@ private static final long serialVersionUID = 0L;
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
      *   adjusted_principal = face_value * index_ratio
-     * The base CPI is read from security.base_cpi.
+     * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
@@ -1091,7 +1093,7 @@ private static final long serialVersionUID = 0L;
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
      *   adjusted_principal = face_value * index_ratio
-     * The base CPI is read from security.base_cpi.
+     * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>

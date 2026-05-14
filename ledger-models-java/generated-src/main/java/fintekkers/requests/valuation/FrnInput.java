@@ -7,9 +7,10 @@ package fintekkers.requests.valuation;
  * <pre>
  * ═══════════════════════════════════════════════════════════════════════════
  * FrnInput — valuation request for a Floating Rate Note.
- * Static security details (spread, reference_rate_index, coupon_frequency,
- * face_value, dated_date, maturity_date) are read from security.frn_details
- * and are not repeated here.
+ * Static security details: shared bond fields (coupon_frequency, face_value,
+ * dated_date, maturity_date) are read from security.bond_details; FRN-specific
+ * extras (spread, reference_rate_index, reset_frequency) are read from
+ * security.frn_extension. None are repeated on this message.
  * Settlement date is read from ValuationRequestProto.asof_datetime.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
@@ -57,7 +58,7 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.security.SecurityProto security_;
   /**
    * <pre>
-   * The FRN security. Must have frn_details populated on the product_details oneof.
+   * The FRN security. Must have bond_details and frn_extension populated.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -69,7 +70,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The FRN security. Must have frn_details populated on the product_details oneof.
+   * The FRN security. Must have bond_details and frn_extension populated.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -81,7 +82,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The FRN security. Must have frn_details populated on the product_details oneof.
+   * The FRN security. Must have bond_details and frn_extension populated.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -134,7 +135,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * Yield curve for projecting floating coupons and discounting cashflows.
-   * curve.index must match security.frn_details.reference_rate_index.
+   * curve.index must match security.frn_extension.reference_rate_index.
    * A single curve is used for both projection and discounting (single-curve framework).
    * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
    * </pre>
@@ -149,7 +150,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * Yield curve for projecting floating coupons and discounting cashflows.
-   * curve.index must match security.frn_details.reference_rate_index.
+   * curve.index must match security.frn_extension.reference_rate_index.
    * A single curve is used for both projection and discounting (single-curve framework).
    * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
    * </pre>
@@ -164,7 +165,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * Yield curve for projecting floating coupons and discounting cashflows.
-   * curve.index must match security.frn_details.reference_rate_index.
+   * curve.index must match security.frn_extension.reference_rate_index.
    * A single curve is used for both projection and discounting (single-curve framework).
    * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
    * </pre>
@@ -372,9 +373,10 @@ private static final long serialVersionUID = 0L;
    * <pre>
    * ═══════════════════════════════════════════════════════════════════════════
    * FrnInput — valuation request for a Floating Rate Note.
-   * Static security details (spread, reference_rate_index, coupon_frequency,
-   * face_value, dated_date, maturity_date) are read from security.frn_details
-   * and are not repeated here.
+   * Static security details: shared bond fields (coupon_frequency, face_value,
+   * dated_date, maturity_date) are read from security.bond_details; FRN-specific
+   * extras (spread, reference_rate_index, reset_frequency) are read from
+   * security.frn_extension. None are repeated on this message.
    * Settlement date is read from ValuationRequestProto.asof_datetime.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
@@ -599,7 +601,7 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> securityBuilder_;
     /**
      * <pre>
-     * The FRN security. Must have frn_details populated on the product_details oneof.
+     * The FRN security. Must have bond_details and frn_extension populated.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -610,7 +612,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The FRN security. Must have frn_details populated on the product_details oneof.
+     * The FRN security. Must have bond_details and frn_extension populated.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -625,7 +627,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The FRN security. Must have frn_details populated on the product_details oneof.
+     * The FRN security. Must have bond_details and frn_extension populated.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -645,7 +647,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The FRN security. Must have frn_details populated on the product_details oneof.
+     * The FRN security. Must have bond_details and frn_extension populated.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -663,7 +665,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The FRN security. Must have frn_details populated on the product_details oneof.
+     * The FRN security. Must have bond_details and frn_extension populated.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -686,7 +688,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The FRN security. Must have frn_details populated on the product_details oneof.
+     * The FRN security. Must have bond_details and frn_extension populated.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -703,7 +705,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The FRN security. Must have frn_details populated on the product_details oneof.
+     * The FRN security. Must have bond_details and frn_extension populated.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -715,7 +717,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The FRN security. Must have frn_details populated on the product_details oneof.
+     * The FRN security. Must have bond_details and frn_extension populated.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -730,7 +732,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The FRN security. Must have frn_details populated on the product_details oneof.
+     * The FRN security. Must have bond_details and frn_extension populated.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -910,7 +912,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Yield curve for projecting floating coupons and discounting cashflows.
-     * curve.index must match security.frn_details.reference_rate_index.
+     * curve.index must match security.frn_extension.reference_rate_index.
      * A single curve is used for both projection and discounting (single-curve framework).
      * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
      * </pre>
@@ -924,7 +926,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Yield curve for projecting floating coupons and discounting cashflows.
-     * curve.index must match security.frn_details.reference_rate_index.
+     * curve.index must match security.frn_extension.reference_rate_index.
      * A single curve is used for both projection and discounting (single-curve framework).
      * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
      * </pre>
@@ -942,7 +944,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Yield curve for projecting floating coupons and discounting cashflows.
-     * curve.index must match security.frn_details.reference_rate_index.
+     * curve.index must match security.frn_extension.reference_rate_index.
      * A single curve is used for both projection and discounting (single-curve framework).
      * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
      * </pre>
@@ -965,7 +967,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Yield curve for projecting floating coupons and discounting cashflows.
-     * curve.index must match security.frn_details.reference_rate_index.
+     * curve.index must match security.frn_extension.reference_rate_index.
      * A single curve is used for both projection and discounting (single-curve framework).
      * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
      * </pre>
@@ -986,7 +988,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Yield curve for projecting floating coupons and discounting cashflows.
-     * curve.index must match security.frn_details.reference_rate_index.
+     * curve.index must match security.frn_extension.reference_rate_index.
      * A single curve is used for both projection and discounting (single-curve framework).
      * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
      * </pre>
@@ -1012,7 +1014,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Yield curve for projecting floating coupons and discounting cashflows.
-     * curve.index must match security.frn_details.reference_rate_index.
+     * curve.index must match security.frn_extension.reference_rate_index.
      * A single curve is used for both projection and discounting (single-curve framework).
      * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
      * </pre>
@@ -1032,7 +1034,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Yield curve for projecting floating coupons and discounting cashflows.
-     * curve.index must match security.frn_details.reference_rate_index.
+     * curve.index must match security.frn_extension.reference_rate_index.
      * A single curve is used for both projection and discounting (single-curve framework).
      * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
      * </pre>
@@ -1047,7 +1049,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Yield curve for projecting floating coupons and discounting cashflows.
-     * curve.index must match security.frn_details.reference_rate_index.
+     * curve.index must match security.frn_extension.reference_rate_index.
      * A single curve is used for both projection and discounting (single-curve framework).
      * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
      * </pre>
@@ -1065,7 +1067,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Yield curve for projecting floating coupons and discounting cashflows.
-     * curve.index must match security.frn_details.reference_rate_index.
+     * curve.index must match security.frn_extension.reference_rate_index.
      * A single curve is used for both projection and discounting (single-curve framework).
      * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
      * </pre>
