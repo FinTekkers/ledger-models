@@ -42,9 +42,19 @@ class TBillStripsRoundTripTest {
     private static SecurityProto.Builder zeroCouponBondShape(ProductTypeProto type) {
         LocalDate issue = LocalDate.of(2025, 1, 15);
         LocalDate maturity = LocalDate.of(2025, 7, 15);
+        // as_of populated explicitly per second-brain#276 — deserializeTimestamp
+        // now throws on missing time_zone rather than silently substituting now().
+        fintekkers.models.util.LocalTimestamp.LocalTimestampProto asOf =
+                fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder()
+                        .setTimeZone("UTC")
+                        .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
+                                .setSeconds(issue.atStartOfDay(java.time.ZoneOffset.UTC).toEpochSecond())
+                                .build())
+                        .build();
         return SecurityProto.newBuilder()
                 .setObjectClass("Security")
                 .setVersion("0.0.1")
+                .setAsOf(asOf)
                 .setProductType(type)
                 .setAssetClass("Fixed Income")
                 .setIssuerName("US Treasury")
