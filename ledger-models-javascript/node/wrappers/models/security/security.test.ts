@@ -6,7 +6,7 @@ import Security from './security';
 import BondSecurity from './BondSecurity';
 
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/security/security_pb';
 import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
@@ -70,19 +70,19 @@ test('BondSecurity.getMaturityDate works on bond (inherited from Security)', () 
 });
 
 function dummySecurity() {
-    return Security.create(new SecurityProto()
-        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
-        .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-        .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
-        .setAssetClass("Bond")
-        .setIssuerName("Dummy issuer")
-
+    const bond = new BondDetailsProto()
         .setCouponRate(new DecimalValueProto().setArbitraryPrecisionValue('0.05'))
         .setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(CouponTypeProto.FIXED)
-
+        .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setMaturityDate(new LocalDateProto().setYear(2026).setMonth(1).setDay(1))
-        .setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1))
+        .setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    return Security.create(new SecurityProto()
+        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
+        .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
+        .setAssetClass("Bond")
+        .setIssuerName("Dummy issuer")
+        .setBondDetails(bond)
         .setDescription("Dummy security")
     );
 }
@@ -90,18 +90,20 @@ function dummySecurity() {
 function dummyBondSecurity() {
     // Same dummy security but with securityType set so the factory routes
     // to BondSecurity.
-    return Security.create(new SecurityProto()
-        .setObjectClass('Security').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
-        .setProductType(ProductTypeProto.TREASURY_NOTE)
-        .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-        .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
-        .setAssetClass("Bond")
-        .setIssuerName("Dummy issuer")
+    const bond = new BondDetailsProto()
         .setCouponRate(new DecimalValueProto().setArbitraryPrecisionValue('0.05'))
         .setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(CouponTypeProto.FIXED)
+        .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setMaturityDate(new LocalDateProto().setYear(2026).setMonth(1).setDay(1))
-        .setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1))
+        .setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    return Security.create(new SecurityProto()
+        .setObjectClass('Security').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
+        .setProductType(ProductTypeProto.TREASURY_NOTE)
+        .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
+        .setAssetClass("Bond")
+        .setIssuerName("Dummy issuer")
+        .setBondDetails(bond)
         .setDescription("Dummy bond")
     );
 }

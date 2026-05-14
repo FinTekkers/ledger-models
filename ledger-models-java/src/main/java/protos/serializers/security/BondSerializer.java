@@ -17,13 +17,8 @@ public class BondSerializer {
     public Security deserializeBondSecurity(SecurityProto proto, UUID id, ZonedDateTime asOf, String issuer, CashSecurity settlementCurrency) {
         final BondSecurity bondSecurity = initiatlize(proto, id, asOf, issuer, settlementCurrency);
 
-        // v0.3.0: shared bond fields live in proto.bond_details; subtype extras
-        // co-exist in proto.tips_extension / frn_extension. Fall back to the
-        // legacy flat fields when bond_details isn't populated.
         if (proto.hasBondDetails()) {
             deserializeFromBondDetails(proto, bondSecurity);
-        } else {
-            deserializeFromFlatFields(proto, bondSecurity);
         }
 
         if (bondSecurity instanceof FloatingRateNote && proto.hasFrnExtension()) {
@@ -56,34 +51,6 @@ public class BondSerializer {
             bondSecurity.setCouponType(CouponType.valueOf(bond.getCouponType().name()));
         if (!CouponFrequencyProto.UNKNOWN_COUPON_FREQUENCY.equals(bond.getCouponFrequency()))
             bondSecurity.setCouponFrequency(CouponFrequency.valueOf(bond.getCouponFrequency().name()));
-    }
-
-    /**
-     * Deserialize bond fields from the legacy flat fields on SecurityProto.
-     * Used when bond_details isn't populated (backward compatibility with
-     * the flat-only fixtures still used in some tests).
-     */
-    private void deserializeFromFlatFields(SecurityProto proto, BondSecurity bondSecurity) {
-        if(proto.hasCouponRate())
-            bondSecurity.setCouponRate(ProtoSerializationUtil.deserializeBigDecimal(proto.getCouponRate()));
-
-        if(proto.hasFaceValue())
-            bondSecurity.setFaceValue(ProtoSerializationUtil.deserializeBigDecimal(proto.getFaceValue()));
-
-        if(proto.hasDatedDate())
-            bondSecurity.setDatedDate(ProtoSerializationUtil.deserializeLocalDate(proto.getDatedDate()));
-
-        if(proto.hasIssueDate())
-            bondSecurity.setIssueDate(ProtoSerializationUtil.deserializeLocalDate(proto.getIssueDate()));
-
-        if(proto.hasMaturityDate())
-            bondSecurity.setMaturityDate(ProtoSerializationUtil.deserializeLocalDate(proto.getMaturityDate()));
-
-        if(!CouponTypeProto.UNKNOWN_COUPON_TYPE.equals(proto.getCouponType()))
-            bondSecurity.setCouponType(CouponType.valueOf(proto.getCouponType().name()));
-
-        if(!CouponFrequencyProto.UNKNOWN_COUPON_FREQUENCY.equals(proto.getCouponFrequency()))
-            bondSecurity.setCouponFrequency(CouponFrequency.valueOf(proto.getCouponFrequency().name()));
     }
 
 

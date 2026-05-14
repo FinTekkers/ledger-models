@@ -62,43 +62,40 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             serializeBondSecurityAttributes((BondSecurity) security, builder);
         }
 
+        // Promote the domain security id into `identifiers` (tag 42, repeated)
+        // as the primary entry. Round-trip preservation of any additional
+        // repeated identifiers happens below.
         if(security.getSecurityId() != null) {
             Identifier securityId = security.getSecurityId();
             IdentifierProto proto = IdentifierSerializer.getInstance().serialize(securityId);
-            builder.setIdentifier(proto);
+            builder.addIdentifiers(proto);
         }
 
-        //Preserving the auction data on the issuance proto.
-        if(security.getSecurityProto() != null && security.getSecurityProto().getIssuanceInfoCount() > 0) {
-            builder.addAllIssuanceInfo(security.getSecurityProto().getIssuanceInfoList());
+        // The structured home for index_type is IndexDetailsProto.index_type via
+        // the non_bond_details oneof. Preserve when set on the stashed source proto.
+        if (security.getSecurityProto() != null
+                && security.getSecurityProto().hasIndexDetails()
+                && security.getSecurityProto().getIndexDetails().getIndexType().getNumber() > 0) {
+            builder.setIndexDetails(security.getSecurityProto().getIndexDetails());
         }
 
-        //Preserve index_type for INDEX_SECURITY types
-        if(security.getSecurityProto() != null && security.getSecurityProto().getIndexType().getNumber() > 0) {
-            // Flat field (legacy)
-            builder.setIndexType(security.getSecurityProto().getIndexType());
-            // oneof (new)
-            builder.setIndexDetails(IndexDetailsProto.newBuilder()
-                    .setIndexType(security.getSecurityProto().getIndexType())
-                    .build());
-        }
-
-        // Preserve repeated identifiers (e.g. ISIN) from the raw proto round-trip
+        // Preserve repeated identifiers (e.g. ISIN) from the raw proto round-trip.
+        // The primary identifier added above appears first; any others from the
+        // stashed proto append after.
         if (security.getSecurityProto() != null && security.getSecurityProto().getIdentifiersCount() > 0) {
             builder.addAllIdentifiers(security.getSecurityProto().getIdentifiersList());
         }
 
-        // Preserve soft-delete marker (deleted_at) — see #188.
+        // Preserve soft-delete marker (deleted_at).
         // null/unset = active record, non-null = soft-deleted at this timestamp.
         if (security.getSecurityProto() != null && security.getSecurityProto().hasDeletedAt()) {
             builder.setDeletedAt(security.getSecurityProto().getDeletedAt());
         }
 
-        // v0.2.1: preserve four fields from the stashed source proto that
-        // have no domain-level getter/setter on the Security object, so
-        // without this copy they drop on round-trip. Same shape as the
-        // deleted_at preservation just above. See second-brain#258 for
-        // history.
+        // Preserve four fields from the stashed source proto that have no
+        // domain-level getter/setter on the Security object, so without this
+        // copy they drop on round-trip. Same shape as the deleted_at
+        // preservation just above.
         if (security.getSecurityProto() != null) {
             SecurityProto stash = security.getSecurityProto();
 
@@ -110,9 +107,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
 
             // legs (tag 17, repeated SecurityProto in link mode) —
             // multi-leg strategy packages. Domain object has no leg
-            // accessors today, so the stash is the only source. v0.2.5
-            // migrated the leg element type from SecurityIdProto to
-            // SecurityProto with is_link=true (wire-compatible).
+            // accessors today, so the stash is the only source.
             if (stash.getLegsCount() > 0) {
                 builder.addAllLegs(stash.getLegsList());
             }
@@ -169,7 +164,7 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             }
         }
 
-        // v0.3.0: bond_details / tips_extension / frn_extension are top-level;
+        // bond_details / tips_extension / frn_extension are top-level;
         // the oneof is non_bond_details (Cash/Equity/Index/FxSpot only).
         ProductTypeProto productType = proto.getProductType();
         SecurityProto.NonBondDetailsCase nonBondCase = proto.getNonBondDetailsCase();
@@ -209,11 +204,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             security.setDescription(proto.getDescription());
         }
 
-        if(proto.hasIdentifier()) {
-            Identifier identifier = IdentifierSerializer.getInstance().deserialize(proto.getIdentifier());
-            security.setSecurityId(identifier);
-        } else if (proto.getIdentifiersCount() > 0) {
-            // No singular primary identifier — promote the first entry from the repeated list
+        // Read the primary entry from the `identifiers` repeated field (tag 42).
+        if (proto.getIdentifiersCount() > 0) {
             Identifier identifier = IdentifierSerializer.getInstance().deserialize(proto.getIdentifiers(0));
             security.setSecurityId(identifier);
         }
@@ -226,22 +218,17 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
 
     /**
      * Validates that maturity_date is strictly after issue_date for bond-type securities.
-     * Reads from the oneof sub-message if present (new path), falls back to flat fields.
+     * Reads from the canonical bond_details sub-message.
      * Throws IllegalArgumentException (maps to gRPC INVALID_ARGUMENT at the service layer).
      */
     public void validateBondDates(SecurityProto proto) {
         LocalDateProto issueDate = null;
         LocalDateProto maturityDate = null;
 
-        // v0.3.0: single canonical bond_details; flat-field fallback for
-        // legacy fixtures that haven't been re-encoded yet.
         if (proto.hasBondDetails()) {
             BondDetailsProto bond = proto.getBondDetails();
             if (bond.hasIssueDate()) issueDate = bond.getIssueDate();
             if (bond.hasMaturityDate()) maturityDate = bond.getMaturityDate();
-        } else {
-            if (proto.hasIssueDate()) issueDate = proto.getIssueDate();
-            if (proto.hasMaturityDate()) maturityDate = proto.getMaturityDate();
         }
 
         if (issueDate != null && maturityDate != null) {
@@ -255,28 +242,6 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
     }
 
     private void serializeBondSecurityAttributes(BondSecurity security, SecurityProto.Builder builder) {
-        // v0.3.0: single canonical bond_details for shared fields; sibling
-        // tips_extension / frn_extension for subtype extras. Flat fields are
-        // still mirrored to ease the v0.2.x → v0.3.0 reader transition; they
-        // will be removed in a future bump (consumers should read structured).
-
-        // 1. Flat fields (legacy mirror — still consumed by some readers)
-        if(security.getIssueDate() != null)
-            builder.setIssueDate(ProtoSerializationUtil.serializeLocalDate(security.getIssueDate()));
-        if(security.getDatedDate() != null)
-            builder.setDatedDate(ProtoSerializationUtil.serializeLocalDate(security.getDatedDate()));
-        if(security.getMaturityDate() != null)
-            builder.setMaturityDate(ProtoSerializationUtil.serializeLocalDate(security.getMaturityDate()));
-        if(security.getCouponRate() != null)
-            builder.setCouponRate(ProtoSerializationUtil.serializeBigDecimal(security.getCouponRate()));
-        if(security.getFaceValue() != null)
-            builder.setFaceValue(ProtoSerializationUtil.serializeBigDecimal(security.getFaceValue()));
-        if(security.getCouponType() != null)
-            builder.setCouponType(CouponTypeProto.valueOf(security.getCouponType().name()));
-        if(security.getCouponFrequency() != null)
-            builder.setCouponFrequency(CouponFrequencyProto.valueOf(security.getCouponFrequency().name()));
-
-        // 2. Structured shape (new canonical path)
         ProductTypeProto pt = security.getProductType();
         if (ProductHierarchy.isDescendantOf(pt, "BOND")) {
             builder.setBondDetails(buildBondDetailsProto(security));
@@ -305,43 +270,47 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             b.setDatedDate(ProtoSerializationUtil.serializeLocalDate(security.getDatedDate()));
         if (security.getMaturityDate() != null)
             b.setMaturityDate(ProtoSerializationUtil.serializeLocalDate(security.getMaturityDate()));
-        if (security.getSecurityProto() != null && security.getSecurityProto().getIssuanceInfoCount() > 0)
-            b.addAllIssuanceInfo(security.getSecurityProto().getIssuanceInfoList());
+        // Preserve issuance_info from the stashed bond_details if present.
+        if (security.getSecurityProto() != null
+                && security.getSecurityProto().hasBondDetails()
+                && security.getSecurityProto().getBondDetails().getIssuanceInfoCount() > 0) {
+            b.addAllIssuanceInfo(security.getSecurityProto().getBondDetails().getIssuanceInfoList());
+        }
         return b.build();
     }
 
     private TipsExtensionProto buildTipsExtensionProto(BondSecurity security) {
         TipsExtensionProto.Builder b = TipsExtensionProto.newBuilder();
-        if (security.getSecurityProto() != null) {
-            if (security.getSecurityProto().hasBaseCpi())
-                b.setBaseCpi(security.getSecurityProto().getBaseCpi());
-            if (security.getSecurityProto().hasIndexDate())
-                b.setIndexDate(security.getSecurityProto().getIndexDate());
-            if (security.getSecurityProto().getInflationIndexType().getNumber() > 0)
-                b.setInflationIndexType(security.getSecurityProto().getInflationIndexType());
+        // TIPS extras live exclusively on tips_extension on the stashed proto.
+        if (security.getSecurityProto() != null && security.getSecurityProto().hasTipsExtension()) {
+            TipsExtensionProto stashed = security.getSecurityProto().getTipsExtension();
+            if (stashed.hasBaseCpi()) b.setBaseCpi(stashed.getBaseCpi());
+            if (stashed.hasIndexDate()) b.setIndexDate(stashed.getIndexDate());
+            if (stashed.getInflationIndexType().getNumber() > 0)
+                b.setInflationIndexType(stashed.getInflationIndexType());
         }
         return b.build();
     }
 
     private FrnExtensionProto buildFrnExtensionProto(BondSecurity security) {
         FrnExtensionProto.Builder b = FrnExtensionProto.newBuilder();
-        if (security.getSecurityProto() != null) {
-            if (security.getSecurityProto().hasSpread())
-                b.setSpread(security.getSecurityProto().getSpread());
-            if (security.getSecurityProto().getReferenceRateIndex().getNumber() > 0)
-                b.setReferenceRateIndex(security.getSecurityProto().getReferenceRateIndex());
-            if (security.getSecurityProto().getResetFrequency().getNumber() > 0)
-                b.setResetFrequency(security.getSecurityProto().getResetFrequency());
+        // FRN extras live exclusively on frn_extension on the stashed proto.
+        if (security.getSecurityProto() != null && security.getSecurityProto().hasFrnExtension()) {
+            FrnExtensionProto stashed = security.getSecurityProto().getFrnExtension();
+            if (stashed.hasSpread()) b.setSpread(stashed.getSpread());
+            if (stashed.getReferenceRateIndex().getNumber() > 0)
+                b.setReferenceRateIndex(stashed.getReferenceRateIndex());
+            if (stashed.getResetFrequency().getNumber() > 0)
+                b.setResetFrequency(stashed.getResetFrequency());
         }
         return b.build();
     }
 
     private void serializeCashAttributes(Security security, SecurityProto.Builder builder) {
+        // CashDetailsProto on the non_bond_details oneof is the single canonical
+        // home for cash_id.
         if(security instanceof CashSecurity) {
             String cashId = ((CashSecurity) security).getCashId();
-            // Flat field (legacy)
-            builder.setCashId(cashId);
-            // oneof (new)
             builder.setCashDetails(CashDetailsProto.newBuilder().setCashId(cashId).build());
         } else {
             builder.setSettlementCurrency(this.serialize(security.getSettlementCurrency()));
@@ -374,15 +343,9 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         SecurityQuantityTypeProto quantityType = SecurityQuantityTypeProto.forNumber(securityJsonObject.get(QUANTITY_TYPE).getAsInt());
         securityJsonObject.add(QUANTITY_TYPE, new JsonPrimitive(quantityType.name()));
 
-        if (ProductHierarchy.isDescendantOf(proto.getProductType(), "BOND")) {
-            CouponTypeProto couponType = CouponTypeProto.forNumber(securityJsonObject.get(COUPON_TYPE).getAsInt());
-            securityJsonObject.add(COUPON_TYPE, new JsonPrimitive(couponType.name()));
-            CouponFrequencyProto frequencyProto = CouponFrequencyProto.forNumber(securityJsonObject.get(COUPON_FREQUENCY).getAsInt());
-            securityJsonObject.add(COUPON_FREQUENCY, new JsonPrimitive(frequencyProto.name()));
-        } else {
-            securityJsonObject.remove(COUPON_FREQUENCY);
-            securityJsonObject.remove(COUPON_TYPE);
-        }
+        // coupon_type / coupon_frequency live inside bond_details; the JSON
+        // path doesn't try to round-trip the nested message (the structured
+        // shape is consumed via the binary proto path instead).
 
         securityJsonObject.add(JSONFieldNames.DESCRIPTION, new JsonPrimitive(proto.getDescription()));
 
@@ -392,19 +355,11 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             securityJsonObject.add(SETTLEMENT_CURRENCY, cashSecurityJsonObject);
         }
 
-        if(securityJsonObject.has(IDENTIFIER)) {
-            int idType = securityJsonObject.get(IDENTIFIER).getAsJsonObject().get(IDENTIFIER_TYPE).getAsInt();
-            IdentifierTypeProto identifierTypeProto = IdentifierTypeProto.forNumber(idType);
-            securityJsonObject.get(IDENTIFIER).getAsJsonObject().add(IDENTIFIER_TYPE,
-                    new JsonPrimitive(identifierTypeProto.name()));
-        }
-
-        // Strip structured sub-message fields from JSON output — Gson can't round-trip
-        // protobuf oneofs or sub-messages cleanly. The JSON path is a legacy human-readable
-        // format; the binary proto path handles the structured shape correctly.
-        securityJsonObject.remove("bond_details");
-        securityJsonObject.remove("tips_extension");
-        securityJsonObject.remove("frn_extension");
+        // bond_details / tips_extension / frn_extension are top-level proto
+        // fields (not oneof variants) — Gson can round-trip them as nested
+        // JSON objects. Only the non_bond_details oneof discriminator needs
+        // stripping; Gson serializes oneof variants as separate top-level keys
+        // plus a *_case field that doesn't deserialize cleanly.
         securityJsonObject.remove("index_details");
         securityJsonObject.remove("equity_details");
         securityJsonObject.remove("cash_details");
@@ -432,13 +387,6 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         String productTypeString = securityJsonObject.get(PRODUCT_TYPE).getAsString();
         ProductTypeProto productType = ProductTypeProto.valueOf(productTypeString);
 
-        if(securityJsonObject.has(IDENTIFIER)) {
-            String idType = securityJsonObject.get(IDENTIFIER).getAsJsonObject().get(IDENTIFIER_TYPE).getAsString();
-            IdentifierTypeProto identifierTypeProto = IdentifierTypeProto.valueOf(idType);
-            securityJsonObject.get(IDENTIFIER).getAsJsonObject().add(IDENTIFIER_TYPE,
-                    new JsonPrimitive(identifierTypeProto.getNumber()));
-        }
-
         SecurityProto settlementSecurityProto = null;
 
         if(!ProductTypeProto.CURRENCY.equals(productType)) {
@@ -454,9 +402,8 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         securityJsonObject.add(QUANTITY_TYPE,
                 new JsonPrimitive(SecurityQuantityTypeProto.valueOf(quantityTypeString).getNumber()));
 
-        if (ProductHierarchy.isDescendantOf(productType, "BOND")) {
-            serializeBondCouponInformation(securityJsonObject);
-        }
+        // Bond fields are nested inside bond_details (a sub-message); the
+        // JSON path doesn't attempt to translate nested enum names.
 
         return serializeSettlementCurrencySecurity(gson, securityJsonObject, settlementSecurityProto);
     }
@@ -484,22 +431,4 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
         }
     }
 
-    private void serializeBondCouponInformation(JsonObject securityJsonObject) {
-        if(securityJsonObject.has(COUPON_TYPE)) {
-            CouponTypeProto couponType = CouponTypeProto.valueOf(securityJsonObject.get(COUPON_TYPE).getAsString());
-            securityJsonObject.add(COUPON_TYPE, new JsonPrimitive(couponType.getNumber()));
-            CouponFrequencyProto frequencyProto = CouponFrequencyProto.valueOf(securityJsonObject.get(COUPON_FREQUENCY).getAsString());
-            securityJsonObject.add(COUPON_FREQUENCY, new JsonPrimitive(frequencyProto.getNumber()));
-
-            if (CouponType.ZERO.name().equals(securityJsonObject.get(COUPON_TYPE).getAsString()) &&
-                    securityJsonObject.has(COUPON_RATE)
-            ) {
-                securityJsonObject.remove(COUPON_RATE);
-                //If the coupon type is zero, then there should be no coupon rate, and therefore we
-                // remove it. We should change the serialization to not use JSON.
-            }
-        } else {
-            System.out.println("");
-        }
-    }
 }

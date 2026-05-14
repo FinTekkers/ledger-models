@@ -29,7 +29,7 @@ def test_create_security_request():
 
     proto:CreateSecurityRequestProto = request.proto
 
-    assert proto.security_input.face_value.arbitrary_precision_value == "1000.0"
+    assert proto.security_input.bond_details.face_value.arbitrary_precision_value == "1000.0"
     
 def test_query_security_request():
     request = CASH_USD_REQUEST

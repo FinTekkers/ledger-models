@@ -165,11 +165,12 @@ class Security {
         return securityTypeString || 'UNKNOWN_SECURITY_TYPE';
     }
     getSecurityID() {
+        // Primary identifier lives at identifiers[0] (tag 42).
         this.assertNotLink('securityId');
-        const identifier = this.proto.getIdentifier();
-        if (!identifier)
+        const list = this.proto.getIdentifiersList();
+        if (!list || list.length === 0)
             throw new Error("Identifier is required");
-        return identifier;
+        return list[0];
     }
     /**
      * Returns the issue date if set, else null. Per-type semantic:
@@ -185,9 +186,8 @@ class Security {
      */
     getIssueDate() {
         this.assertNotLink('issueDate');
-        // Prefer oneof bond sub-message if available, fall back to flat fields
         const bond = this.getBondLikeDetails();
-        const date = bond ? bond.getIssueDate() : this.proto.getIssueDate();
+        const date = bond ? bond.getIssueDate() : undefined;
         if (!date)
             return null;
         return new date_1.LocalDate(date);
@@ -204,18 +204,16 @@ class Security {
      */
     getMaturityDate() {
         this.assertNotLink('maturityDate');
-        // Prefer oneof bond sub-message if available, fall back to flat fields
         const bond = this.getBondLikeDetails();
-        const date = bond ? bond.getMaturityDate() : this.proto.getMaturityDate();
+        const date = bond ? bond.getMaturityDate() : undefined;
         if (!date)
             throw new Error("Maturity date is required");
         return new date_1.LocalDate(date);
     }
     /**
      * Returns the canonical bond_details sub-message if set, else undefined.
-     * v0.3.0 collapsed the prior 3-arm bond/tips/frn oneof into a single
-     * top-level bond_details — TIPS and FRN extras now live in their own
-     * tips_extension / frn_extension fields.
+     * TIPS and FRN extras live in their own tips_extension / frn_extension
+     * fields and co-exist with bond_details.
      */
     getBondLikeDetails() {
         var _a;

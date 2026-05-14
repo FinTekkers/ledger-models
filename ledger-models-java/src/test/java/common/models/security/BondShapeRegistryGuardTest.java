@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 /**
- * v0.3.0 / #272 / Phase 1 — CI guard for the v0.3.0 bond-shape consolidation.
+ * CI guard for the bond-shape consolidation.
  *
  * Every {@code status: "active"} leaf in {@code hierarchy.json} that descends
  * from {@code BOND} must serialize through {@link protos.serializers.security.SecuritySerializer}
@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  * bond-shape leaf is added to the registry but the serializer dispatch isn't
  * updated, this guard catches it before release.
  *
- * <p>Shape mirrors {@link ProductHierarchyRegistryGuardTest} (#257 / M1.7)
- * which guards the active-registry-vs-ProductTypeProto symmetry.
+ * <p>Shape mirrors {@link ProductHierarchyRegistryGuardTest} which guards the
+ * active-registry-vs-ProductTypeProto symmetry.
  */
 class BondShapeRegistryGuardTest {
 
@@ -35,9 +35,9 @@ class BondShapeRegistryGuardTest {
         Set<String> active = new TreeSet<>(ProductHierarchy.activeProductTypes());
         bondShapeLeaves.retainAll(active);
 
-        // Sanity: the 9 known bond-shape leaves at v0.3.0 release time.
-        // If new ones land, they appear in this dynamic test set automatically;
-        // the assertion below catches any serializer dispatch oversight.
+        // Sanity: the 9 known bond-shape leaves. If new ones land, they appear
+        // in this dynamic test set automatically; the assertion below catches
+        // any serializer dispatch oversight.
         assertTrue(bondShapeLeaves.size() >= 9,
                 "Expected at least 9 active bond-shape leaves in hierarchy.json (TBILL, "
                 + "TREASURY_NOTE, TREASURY_BOND, TIPS, TREASURY_FRN, STRIPS, "
@@ -59,7 +59,7 @@ class BondShapeRegistryGuardTest {
                             + "dispatch (BondSerializer.initiatlize switch + ProductHierarchy"
                             + ".isDescendantOf(pt, \"BOND\") branch in serializeBondSecurityAttributes) "
                             + "covers the new productType. See docs/adr/big-bang-proto-change.md "
-                            + "for the v0.3.0 layout.");
+                            + "for the bond-shape layout.");
                 })
         );
     }

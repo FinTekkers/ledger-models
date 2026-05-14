@@ -114,20 +114,23 @@ def test_valuation_with_cash_security():
 def test_valuation_with_security_and_price():
     """Test valuation with security and price inputs"""
     # security:Security = get_security_for_valuation_test()
-    
+
+    from fintekkers.models.security.security_pb2 import BondDetailsProto
     security:Security = Security(SecurityProto(
         product_type=ProductTypeProto.TREASURY_NOTE,
-        coupon_rate=DecimalValueProto(arbitrary_precision_value="0.0"),
-        coupon_frequency=CouponFrequencyProto.NO_COUPON,
-        coupon_type=CouponTypeProto.ZERO,
-        maturity_date=LocalDateProto(year=2025, month=12, day=31),
-        issue_date=LocalDateProto(year=2024, month=1, day=1),
-        face_value=DecimalValueProto(arbitrary_precision_value="1000.0"),
+        bond_details=BondDetailsProto(
+            coupon_rate=DecimalValueProto(arbitrary_precision_value="0.0"),
+            coupon_frequency=CouponFrequencyProto.NO_COUPON,
+            coupon_type=CouponTypeProto.ZERO,
+            maturity_date=LocalDateProto(year=2025, month=12, day=31),
+            issue_date=LocalDateProto(year=2024, month=1, day=1),
+            face_value=DecimalValueProto(arbitrary_precision_value="1000.0"),
+        ),
         as_of=ProtoSerializationUtil.serialize(datetime(2024, 1, 1)),
-        identifier=IdentifierProto(
+        identifiers=[IdentifierProto(
             identifier_type=IdentifierTypeProto.CUSIP,
             identifier_value="912795RL7"
-        ),
+        )],
     ))
 
 

@@ -187,10 +187,11 @@ class Security {
   }
 
   getSecurityID(): IdentifierProto {
+    // Primary identifier lives at identifiers[0] (tag 42).
     this.assertNotLink('securityId');
-    const identifier = this.proto.getIdentifier();
-    if (!identifier) throw new Error("Identifier is required");
-    return identifier;
+    const list = this.proto.getIdentifiersList();
+    if (!list || list.length === 0) throw new Error("Identifier is required");
+    return list[0];
   }
 
   /**
@@ -207,9 +208,8 @@ class Security {
    */
   getIssueDate(): LocalDate | null {
     this.assertNotLink('issueDate');
-    // Prefer oneof bond sub-message if available, fall back to flat fields
     const bond = this.getBondLikeDetails();
-    const date = bond ? bond.getIssueDate() : this.proto.getIssueDate();
+    const date = bond ? bond.getIssueDate() : undefined;
     if (!date) return null;
     return new LocalDate(date);
   }
@@ -226,18 +226,16 @@ class Security {
    */
   getMaturityDate(): LocalDate {
     this.assertNotLink('maturityDate');
-    // Prefer oneof bond sub-message if available, fall back to flat fields
     const bond = this.getBondLikeDetails();
-    const date = bond ? bond.getMaturityDate() : this.proto.getMaturityDate();
+    const date = bond ? bond.getMaturityDate() : undefined;
     if (!date) throw new Error("Maturity date is required");
     return new LocalDate(date);
   }
 
   /**
    * Returns the canonical bond_details sub-message if set, else undefined.
-   * v0.3.0 collapsed the prior 3-arm bond/tips/frn oneof into a single
-   * top-level bond_details — TIPS and FRN extras now live in their own
-   * tips_extension / frn_extension fields.
+   * TIPS and FRN extras live in their own tips_extension / frn_extension
+   * fields and co-exist with bond_details.
    */
   protected getBondLikeDetails(): any | undefined {
     if (typeof this.proto.getBondDetails !== 'function') return undefined;

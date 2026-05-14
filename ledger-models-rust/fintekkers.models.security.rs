@@ -420,9 +420,6 @@ pub struct SecurityProto {
     >,
     #[prost(enumeration = "SecurityQuantityTypeProto", tag = "14")]
     pub quantity_type: i32,
-    /// DEPRECATED: use identifiers
-    #[prost(message, optional, tag = "40")]
-    pub identifier: ::core::option::Option<IdentifierProto>,
     #[prost(string, tag = "41")]
     pub description: ::prost::alloc::string::String,
     /// All known identifiers for this security. The primary identifier (used as
@@ -431,54 +428,6 @@ pub struct SecurityProto {
     /// entry 0 will be {type=CUSIP, value="912828..."}.
     #[prost(message, repeated, tag = "42")]
     pub identifiers: ::prost::alloc::vec::Vec<IdentifierProto>,
-    /// Cash Security fields
-    #[prost(string, tag = "50")]
-    pub cash_id: ::prost::alloc::string::String,
-    /// Bond Security fields
-    ///
-    /// Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
-    #[prost(message, optional, tag = "60")]
-    pub coupon_rate: ::core::option::Option<super::util::DecimalValueProto>,
-    #[prost(enumeration = "CouponTypeProto", tag = "61")]
-    pub coupon_type: i32,
-    #[prost(enumeration = "CouponFrequencyProto", tag = "62")]
-    pub coupon_frequency: i32,
-    #[prost(message, optional, tag = "63")]
-    pub dated_date: ::core::option::Option<super::util::LocalDateProto>,
-    #[prost(message, optional, tag = "64")]
-    pub face_value: ::core::option::Option<super::util::DecimalValueProto>,
-    #[prost(message, optional, tag = "65")]
-    pub issue_date: ::core::option::Option<super::util::LocalDateProto>,
-    #[prost(message, optional, tag = "66")]
-    pub maturity_date: ::core::option::Option<super::util::LocalDateProto>,
-    /// Issuance can be repeated as there may be re-openings of bond auctions (e.g. in US treasuries)
-    #[prost(message, repeated, tag = "67")]
-    pub issuance_info: ::prost::alloc::vec::Vec<bond::IssuanceProto>,
-    /// TIPS Bond fields
-    ///
-    /// Reference CPI at bond issuance (e.g. 256.394)
-    #[prost(message, optional, tag = "70")]
-    pub base_cpi: ::core::option::Option<super::util::DecimalValueProto>,
-    /// The date the base CPI was observed (e.g. the reference CPI date)
-    #[prost(message, optional, tag = "71")]
-    pub index_date: ::core::option::Option<super::util::LocalDateProto>,
-    /// Which inflation index this TIPS references (e.g. CPI_U)
-    #[prost(enumeration = "index::IndexTypeProto", tag = "72")]
-    pub inflation_index_type: i32,
-    /// FRN (Floating Rate Note) fields
-    ///
-    /// Fixed spread over the reference rate, in basis points (e.g. 15 = +15bps)
-    #[prost(message, optional, tag = "90")]
-    pub spread: ::core::option::Option<super::util::DecimalValueProto>,
-    /// Which floating rate benchmark this FRN references (e.g. SOFR, T_BILL_13_WEEK)
-    #[prost(enumeration = "index::IndexTypeProto", tag = "91")]
-    pub reference_rate_index: i32,
-    /// How often the floating coupon rate resets
-    #[prost(enumeration = "CouponFrequencyProto", tag = "92")]
-    pub reset_frequency: i32,
-    /// Index Security fields
-    #[prost(enumeration = "index::IndexTypeProto", tag = "80")]
-    pub index_type: i32,
     /// Bond-shape details. Populated for any product_type descending from BOND
     /// in hierarchy.json (TBILL, TREASURY_NOTE, TREASURY_BOND, TIPS,
     /// TREASURY_FRN, STRIPS, SOVEREIGN_BOND, CORP_BOND, MUNI_BOND, ...).

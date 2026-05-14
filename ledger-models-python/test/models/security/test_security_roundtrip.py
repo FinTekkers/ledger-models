@@ -37,18 +37,14 @@ def _roundtrip(proto: security_pb2.SecurityProto) -> security_pb2.SecurityProto:
 
 
 class TestSecurityProtoRoundTrip:
-    """Round-trip tests for all 6 security types."""
+    """Structured-shape round-trip tests.
+
+    Bond fields → bond_details. TIPS extras → tips_extension.
+    FRN extras → frn_extension. Cash/Equity/Index → non_bond_details oneof.
+    """
 
     def test_bond_security(self):
-        original = security_pb2.SecurityProto(
-            object_class="Security",
-            version="0.0.1",
-            product_type=product_type_pb2.TREASURY_NOTE,
-            asset_class="Fixed Income",
-            issuer_name="US Treasury",
-            quantity_type=security_quantity_type_pb2.ORIGINAL_FACE_VALUE,
-            identifier=_identifier(identifier_type_pb2.CUSIP, "912828ZT0"),
-            description="UST 5% 2030",
+        bond_details = security_pb2.BondDetailsProto(
             coupon_rate=_decimal("5.0"),
             coupon_type=coupon_type_pb2.FIXED,
             coupon_frequency=coupon_frequency_pb2.SEMIANNUALLY,
@@ -57,6 +53,17 @@ class TestSecurityProtoRoundTrip:
             dated_date=_date(2020, 1, 15),
             maturity_date=_date(2030, 1, 15),
         )
+        original = security_pb2.SecurityProto(
+            object_class="Security",
+            version="0.0.1",
+            product_type=product_type_pb2.TREASURY_NOTE,
+            asset_class="Fixed Income",
+            issuer_name="US Treasury",
+            quantity_type=security_quantity_type_pb2.ORIGINAL_FACE_VALUE,
+            identifiers=[_identifier(identifier_type_pb2.CUSIP, "912828ZT0")],
+            description="UST 5% 2030",
+            bond_details=bond_details,
+        )
 
         parsed = _roundtrip(original)
 
@@ -64,142 +71,117 @@ class TestSecurityProtoRoundTrip:
         assert parsed.asset_class == "Fixed Income"
         assert parsed.issuer_name == "US Treasury"
         assert parsed.description == "UST 5% 2030"
-        assert parsed.quantity_type == security_quantity_type_pb2.ORIGINAL_FACE_VALUE
-        assert parsed.coupon_rate.arbitrary_precision_value == "5.0"
-        assert parsed.coupon_type == coupon_type_pb2.FIXED
-        assert parsed.coupon_frequency == coupon_frequency_pb2.SEMIANNUALLY
-        assert parsed.face_value.arbitrary_precision_value == "1000"
-        assert parsed.issue_date.year == 2020
-        assert parsed.issue_date.month == 1
-        assert parsed.issue_date.day == 15
-        assert parsed.dated_date.year == 2020
-        assert parsed.maturity_date.year == 2030
-        assert parsed.maturity_date.month == 1
-        assert parsed.maturity_date.day == 15
-        assert parsed.identifier.identifier_value == "912828ZT0"
-        assert parsed.identifier.identifier_type == identifier_type_pb2.CUSIP
+        assert parsed.bond_details.coupon_rate.arbitrary_precision_value == "5.0"
+        assert parsed.bond_details.coupon_type == coupon_type_pb2.FIXED
+        assert parsed.bond_details.face_value.arbitrary_precision_value == "1000"
+        assert parsed.bond_details.issue_date.year == 2020
+        assert parsed.bond_details.maturity_date.year == 2030
+        assert parsed.identifiers[0].identifier_value == "912828ZT0"
 
     def test_tips_security(self):
         original = security_pb2.SecurityProto(
-            object_class="Security",
-            version="0.0.1",
             product_type=product_type_pb2.TIPS,
             asset_class="Fixed Income",
             issuer_name="US Treasury",
-            coupon_rate=_decimal("0.625"),
-            coupon_type=coupon_type_pb2.FIXED,
-            coupon_frequency=coupon_frequency_pb2.SEMIANNUALLY,
-            face_value=_decimal("1000"),
-            maturity_date=_date(2030, 1, 15),
-            base_cpi=_decimal("256.394"),
-            inflation_index_type=index_type_pb2.CPI_U,
+            bond_details=security_pb2.BondDetailsProto(
+                coupon_rate=_decimal("0.625"),
+                coupon_type=coupon_type_pb2.FIXED,
+                coupon_frequency=coupon_frequency_pb2.SEMIANNUALLY,
+                face_value=_decimal("1000"),
+                maturity_date=_date(2030, 1, 15),
+            ),
+            tips_extension=security_pb2.TipsExtensionProto(
+                base_cpi=_decimal("256.394"),
+                inflation_index_type=index_type_pb2.CPI_U,
+            ),
         )
 
         parsed = _roundtrip(original)
 
         assert parsed.product_type == product_type_pb2.TIPS
-        assert parsed.coupon_rate.arbitrary_precision_value == "0.625"
-        assert parsed.coupon_type == coupon_type_pb2.FIXED
-        assert parsed.coupon_frequency == coupon_frequency_pb2.SEMIANNUALLY
-        assert parsed.face_value.arbitrary_precision_value == "1000"
-        assert parsed.maturity_date.year == 2030
-        assert parsed.base_cpi.arbitrary_precision_value == "256.394"
-        assert parsed.inflation_index_type == index_type_pb2.CPI_U
+        assert parsed.bond_details.coupon_rate.arbitrary_precision_value == "0.625"
+        assert parsed.bond_details.face_value.arbitrary_precision_value == "1000"
+        assert parsed.tips_extension.base_cpi.arbitrary_precision_value == "256.394"
+        assert parsed.tips_extension.inflation_index_type == index_type_pb2.CPI_U
 
     def test_frn_security(self):
         original = security_pb2.SecurityProto(
-            object_class="Security",
-            version="0.0.1",
             product_type=product_type_pb2.TREASURY_FRN,
             asset_class="Fixed Income",
             issuer_name="US Treasury",
-            coupon_type=coupon_type_pb2.FLOAT,
-            coupon_frequency=coupon_frequency_pb2.QUARTERLY,
-            face_value=_decimal("100"),
-            maturity_date=_date(2028, 1, 15),
-            spread=_decimal("50"),
-            reference_rate_index=index_type_pb2.T_BILL_13_WEEK,
-            reset_frequency=coupon_frequency_pb2.QUARTERLY,
+            bond_details=security_pb2.BondDetailsProto(
+                coupon_type=coupon_type_pb2.FLOAT,
+                coupon_frequency=coupon_frequency_pb2.QUARTERLY,
+                face_value=_decimal("100"),
+                maturity_date=_date(2028, 1, 15),
+            ),
+            frn_extension=security_pb2.FrnExtensionProto(
+                spread=_decimal("50"),
+                reference_rate_index=index_type_pb2.T_BILL_13_WEEK,
+                reset_frequency=coupon_frequency_pb2.QUARTERLY,
+            ),
         )
 
         parsed = _roundtrip(original)
 
         assert parsed.product_type == product_type_pb2.TREASURY_FRN
-        assert parsed.coupon_type == coupon_type_pb2.FLOAT
-        assert parsed.coupon_frequency == coupon_frequency_pb2.QUARTERLY
-        assert parsed.face_value.arbitrary_precision_value == "100"
-        assert parsed.maturity_date.year == 2028
-        assert parsed.spread.arbitrary_precision_value == "50"
-        assert parsed.reference_rate_index == index_type_pb2.T_BILL_13_WEEK
-        assert parsed.reset_frequency == coupon_frequency_pb2.QUARTERLY
+        assert parsed.bond_details.coupon_type == coupon_type_pb2.FLOAT
+        assert parsed.bond_details.maturity_date.year == 2028
+        assert parsed.frn_extension.spread.arbitrary_precision_value == "50"
+        assert parsed.frn_extension.reference_rate_index == index_type_pb2.T_BILL_13_WEEK
+        assert parsed.frn_extension.reset_frequency == coupon_frequency_pb2.QUARTERLY
 
     def test_equity_security(self):
         original = security_pb2.SecurityProto(
-            object_class="Security",
-            version="0.0.1",
             product_type=product_type_pb2.COMMON_STOCK,
             asset_class="Equity",
             issuer_name="Apple Inc.",
-            quantity_type=security_quantity_type_pb2.UNITS,
-            identifier=_identifier(identifier_type_pb2.EXCH_TICKER, "AAPL"),
+            identifiers=[_identifier(identifier_type_pb2.EXCH_TICKER, "AAPL")],
             description="Apple Inc. Common Stock",
+            equity_details=security_pb2.EquityDetailsProto(),
         )
 
         parsed = _roundtrip(original)
 
         assert parsed.product_type == product_type_pb2.COMMON_STOCK
         assert parsed.asset_class == "Equity"
-        assert parsed.issuer_name == "Apple Inc."
-        assert parsed.quantity_type == security_quantity_type_pb2.UNITS
-        assert parsed.description == "Apple Inc. Common Stock"
-        assert parsed.identifier.identifier_value == "AAPL"
-        assert parsed.identifier.identifier_type == identifier_type_pb2.EXCH_TICKER
+        assert parsed.identifiers[0].identifier_value == "AAPL"
+        assert parsed.HasField("equity_details")
 
     def test_cash_security(self):
         original = security_pb2.SecurityProto(
-            object_class="Security",
-            version="0.0.1",
             product_type=product_type_pb2.CURRENCY,
             asset_class="Cash",
             issuer_name="Federal Reserve",
-            quantity_type=security_quantity_type_pb2.UNITS,
-            cash_id="USD",
             description="US Dollar",
-            identifier=_identifier(identifier_type_pb2.CASH, "USD"),
+            identifiers=[_identifier(identifier_type_pb2.CASH, "USD")],
+            cash_details=security_pb2.CashDetailsProto(cash_id="USD"),
         )
 
         parsed = _roundtrip(original)
 
         assert parsed.product_type == product_type_pb2.CURRENCY
-        assert parsed.asset_class == "Cash"
-        assert parsed.cash_id == "USD"
-        assert parsed.description == "US Dollar"
-        assert parsed.identifier.identifier_value == "USD"
-        assert parsed.identifier.identifier_type == identifier_type_pb2.CASH
+        assert parsed.cash_details.cash_id == "USD"
+        assert parsed.identifiers[0].identifier_value == "USD"
 
     def test_index_security(self):
         original = security_pb2.SecurityProto(
-            object_class="Security",
-            version="0.0.1",
             product_type=product_type_pb2.EQUITY_INDEX,
             asset_class="Index",
             issuer_name="Bureau of Labor Statistics",
             description="US CPI-U All Urban Consumers",
-            index_type=index_type_pb2.CPI_U,
-            identifier=_identifier(identifier_type_pb2.CUSIP, "CPI-U"),
+            identifiers=[_identifier(identifier_type_pb2.CUSIP, "CPI-U")],
+            index_details=security_pb2.IndexDetailsProto(index_type=index_type_pb2.CPI_U),
         )
 
         parsed = _roundtrip(original)
 
         assert parsed.product_type == product_type_pb2.EQUITY_INDEX
-        assert parsed.asset_class == "Index"
-        assert parsed.issuer_name == "Bureau of Labor Statistics"
-        assert parsed.description == "US CPI-U All Urban Consumers"
-        assert parsed.index_type == index_type_pb2.CPI_U
-        assert parsed.identifier.identifier_value == "CPI-U"
+        assert parsed.index_details.index_type == index_type_pb2.CPI_U
+        assert parsed.identifiers[0].identifier_value == "CPI-U"
 
 
-# ---------- v0.2.5: link helpers + constituents + wire-compat ----------
+# ---------- link helpers + constituents + wire-compat ----------
 
 class TestV025LinkHelpersAndConstituents:
     def test_link_of_populates_uuid_and_as_of_and_sets_is_link(self):

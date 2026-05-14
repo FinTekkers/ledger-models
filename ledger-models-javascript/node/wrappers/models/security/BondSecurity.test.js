@@ -32,12 +32,14 @@ function testBondSecurityCreation() {
     securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
     securityProto.setAssetClass('FixedIncome');
     securityProto.setIssuerName('Test Issuer');
-    securityProto.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
-    securityProto.setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
-    securityProto.setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'));
-    securityProto.setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
-    securityProto.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
-    securityProto.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+    const bond = new security_pb_1.BondDetailsProto();
+    bond.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
+    bond.setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
+    bond.setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'));
+    bond.setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
+    bond.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    bond.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+    securityProto.setBondDetails(bond);
     securityProto.setDescription('Test Bond Security');
     // Call Security.create and validate it returns a BondSecurity
     const security = security_1.default.create(securityProto);
@@ -60,14 +62,16 @@ function testBondSecurityTenor() {
     securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
     securityProto.setAssetClass('FixedIncome');
     securityProto.setIssuerName('Test Issuer');
-    securityProto.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
-    securityProto.setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
-    securityProto.setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'));
-    securityProto.setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
+    const bond = new security_pb_1.BondDetailsProto();
+    bond.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
+    bond.setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
+    bond.setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'));
+    bond.setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
     // Set issue date: January 1, 2021
-    securityProto.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    bond.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     // Set maturity date: January 1, 2031 (exactly 10 years later)
-    securityProto.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+    bond.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+    securityProto.setBondDetails(bond);
     securityProto.setDescription('Test 10-Year Bond Security');
     // Create BondSecurity
     const security = security_1.default.create(securityProto);
@@ -98,14 +102,16 @@ function testBondSecurityTenor() {
     securityProto2.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
     securityProto2.setAssetClass('FixedIncome');
     securityProto2.setIssuerName('Test Issuer');
-    securityProto2.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
-    securityProto2.setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
-    securityProto2.setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'));
-    securityProto2.setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
+    const bond2 = new security_pb_1.BondDetailsProto();
+    bond2.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
+    bond2.setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
+    bond2.setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'));
+    bond2.setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
     // Set issue date: January 15, 2021
-    securityProto2.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(15));
+    bond2.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(15));
     // Set maturity date: July 20, 2023 (2 years, 6 months, 5 days)
-    securityProto2.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2023).setMonth(7).setDay(20));
+    bond2.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2023).setMonth(7).setDay(20));
+    securityProto2.setBondDetails(bond2);
     securityProto2.setDescription('Test Bond with Months and Days');
     const bondSecurity2 = security_1.default.create(securityProto2);
     const tenor2 = bondSecurity2.getTenor();
@@ -123,9 +129,11 @@ function testBondSecurityTenorWithAsOfDate() {
     // Create a SecurityProto with BOND_SECURITY type and dates for a 10-year bond
     const securityProto = new security_pb_1.SecurityProto();
     securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
-    securityProto.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    const bond3 = new security_pb_1.BondDetailsProto();
+    bond3.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     // Set maturity date: January 1, 2031 (exactly 10 years later)
-    securityProto.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+    bond3.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));
+    securityProto.setBondDetails(bond3);
     // Create BondSecurity
     const security = security_1.default.create(securityProto);
     const bondSecurity = security;

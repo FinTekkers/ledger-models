@@ -19,13 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Regression test for #252 — T_BILL and STRIPS_SECURITY were added in v0.1.141
- * but were not wired into SecuritySerializer.deserialize / BondSerializer.initiatlize.
- * They fell through to the default branch and produced a plain Security with all
- * bond fields dropped on round-trip.
+ * Round-trip: T_BILL and STRIPS_SECURITY proto → BondSecurity with face_value,
+ * issue_date, maturity_date, dated_date, coupon_rate populated.
  *
- * This test exercises the fix: T_BILL and STRIPS_SECURITY proto → BondSecurity
- * with face_value, issue_date, maturity_date, dated_date, coupon_rate populated.
+ * Both productTypes must be wired through SecuritySerializer.deserialize /
+ * BondSerializer.initiatlize; otherwise they fall through to the default
+ * branch and produce a plain Security with all bond fields dropped.
  */
 class TBillStripsRoundTripTest {
 
@@ -42,14 +41,24 @@ class TBillStripsRoundTripTest {
     private static SecurityProto.Builder zeroCouponBondShape(ProductTypeProto type) {
         LocalDate issue = LocalDate.of(2025, 1, 15);
         LocalDate maturity = LocalDate.of(2025, 7, 15);
-        // as_of populated explicitly per second-brain#276 — deserializeTimestamp
-        // now throws on missing time_zone rather than silently substituting now().
+        // as_of populated explicitly: deserializeTimestamp throws on missing
+        // time_zone.
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto asOf =
                 fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder()
                         .setTimeZone("UTC")
                         .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
                                 .setSeconds(issue.atStartOfDay(java.time.ZoneOffset.UTC).toEpochSecond())
                                 .build())
+                        .build();
+        fintekkers.models.security.BondDetailsProto bondDetails =
+                fintekkers.models.security.BondDetailsProto.newBuilder()
+                        .setCouponRate(decimal("0"))
+                        .setCouponType(CouponTypeProto.ZERO)
+                        .setCouponFrequency(CouponFrequencyProto.NO_COUPON)
+                        .setFaceValue(decimal("1000"))
+                        .setIssueDate(date(issue))
+                        .setDatedDate(date(issue))
+                        .setMaturityDate(date(maturity))
                         .build();
         return SecurityProto.newBuilder()
                 .setObjectClass("Security")
@@ -59,13 +68,7 @@ class TBillStripsRoundTripTest {
                 .setAssetClass("Fixed Income")
                 .setIssuerName("US Treasury")
                 .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
-                .setCouponRate(decimal("0"))
-                .setCouponType(CouponTypeProto.ZERO)
-                .setCouponFrequency(CouponFrequencyProto.NO_COUPON)
-                .setFaceValue(decimal("1000"))
-                .setIssueDate(date(issue))
-                .setDatedDate(date(issue))
-                .setMaturityDate(date(maturity));
+                .setBondDetails(bondDetails);
     }
 
     @Test

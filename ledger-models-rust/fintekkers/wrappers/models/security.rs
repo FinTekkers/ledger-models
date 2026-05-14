@@ -212,39 +212,27 @@ impl SecurityProtoBuilder {
             legs: vec![],
             asset_class: self.asset_class,
             issuer_name: self.issuer_name,
+            // The settlement currency's code lives in CashDetailsProto on the
+            // non_bond_details oneof.
             settlement_currency: if self.settlement_currency.is_empty() {
                 None
             } else {
+                use crate::fintekkers::models::security::{CashDetailsProto};
+                use crate::fintekkers::models::security::security_proto::NonBondDetails;
                 Some(Box::new(SecurityProto {
                     uuid: Some(UUIDWrapper::new_random().into()),
                     product_type: ProductTypeProto::Currency.into(),
-                    cash_id: self.settlement_currency,
+                    non_bond_details: Some(NonBondDetails::CashDetails(CashDetailsProto {
+                        cash_id: self.settlement_currency,
+                    })),
                     ..Default::default()
                 }))
             },
-            cash_id: "".to_string(),
 
             quantity_type: 0,
-            identifier: None,
             description: "".to_string(),
             identifiers: vec![],
 
-            //Bond specific
-            face_value: None,
-            coupon_rate: None,
-            coupon_frequency: 0,
-            coupon_type: 0,
-            maturity_date: None,
-            dated_date: None,
-            issue_date: None,
-            issuance_info: vec![],
-            base_cpi: None,
-            index_date: None,
-            inflation_index_type: 0,
-            spread: None,
-            reference_rate_index: 0,
-            reset_frequency: 0,
-            index_type: 0,
             bond_details: None,
             tips_extension: None,
             frn_extension: None,
@@ -293,6 +281,14 @@ mod test {
         assert!(result.asset_class.contains("Asset"));
     }
 
+    fn cash_id_of(currency: &SecurityProto) -> &str {
+        // Cash currency code lives in CashDetailsProto on the non_bond_details oneof.
+        match currency.non_bond_details.as_ref() {
+            Some(NonBondDetails::CashDetails(cd)) => &cd.cash_id,
+            _ => "",
+        }
+    }
+
     #[test]
     fn test_settlement_currency_passed_through() {
         let result = SecurityProtoBuilder::new()
@@ -302,7 +298,7 @@ mod test {
 
         let currency = result.settlement_currency.expect("settlement_currency should be Some");
         assert_eq!(currency.product_type, ProductTypeProto::Currency as i32);
-        assert_eq!(currency.cash_id, "USD");
+        assert_eq!(cash_id_of(&currency), "USD");
     }
 
     #[test]
@@ -324,7 +320,7 @@ mod test {
         let parsed = round_trip(&result);
         let currency = parsed.settlement_currency.expect("settlement_currency should survive round-trip");
         assert_eq!(currency.product_type, ProductTypeProto::Currency as i32);
-        assert_eq!(currency.cash_id, "BTC");
+        assert_eq!(cash_id_of(&currency), "BTC");
         assert!(currency.uuid.is_some(), "uuid should survive round-trip");
     }
 
@@ -358,8 +354,8 @@ mod test {
 
     #[test]
     fn test_tips_round_trip_uses_bond_details_plus_tips_extension() {
-        // v0.3.0: TIPS carries shared bond fields in bond_details AND
-        // TIPS-specific extras in tips_extension. Both co-exist.
+        // TIPS carries shared bond fields in bond_details AND TIPS-specific
+        // extras in tips_extension. Both co-exist.
         let proto = SecurityProto {
             product_type: ProductTypeProto::Tips as i32,
             bond_details: Some(BondDetailsProto {
@@ -477,41 +473,11 @@ mod test {
     }
 
     #[test]
-    fn test_flat_and_bond_details_coexist_during_v030_transition() {
-        // v0.3.0 still mirrors bond fields to the flat-field block alongside
-        // bond_details to ease the wire-shape transition for any readers that
-        // haven't moved to bond_details yet. Once all consumers are off the
-        // flat fields, this co-existence goes away.
-        let proto = SecurityProto {
-            product_type: ProductTypeProto::TreasuryNote as i32,
-            coupon_rate: decimal("5.0"),
-            coupon_type: CouponTypeProto::Fixed as i32,
-            face_value: decimal("1000"),
-            maturity_date: date(2030, 1, 15),
-            bond_details: Some(BondDetailsProto {
-                coupon_rate: decimal("5.0"),
-                coupon_type: CouponTypeProto::Fixed as i32,
-                coupon_frequency: 0,
-                face_value: decimal("1000"),
-                issue_date: None,
-                dated_date: None,
-                maturity_date: date(2030, 1, 15),
-                issuance_info: vec![],
-            }),
-            ..Default::default()
-        };
-
-        let parsed = round_trip(&proto);
-        assert_eq!(parsed.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
-        let bond = parsed.bond_details.expect("bond_details must round-trip");
-        assert_eq!(bond.maturity_date.as_ref().unwrap().year, 2030);
-    }
-
-    #[test]
     fn test_no_structured_set_returns_none() {
+        // Sanity: a SecurityProto with no product_details populated round-trips
+        // with bond_details / extensions / non_bond_details all None.
         let proto = SecurityProto {
             product_type: ProductTypeProto::TreasuryNote as i32,
-            coupon_rate: decimal("5.0"),
             ..Default::default()
         };
 
@@ -520,7 +486,6 @@ mod test {
         assert!(parsed.tips_extension.is_none());
         assert!(parsed.frn_extension.is_none());
         assert!(parsed.non_bond_details.is_none());
-        assert_eq!(parsed.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
     }
 
     #[test]

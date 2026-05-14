@@ -105,7 +105,7 @@ class LinkResolverTest {
                 .setUuid(uuidProto(uuid))
                 .setIsLink(false)
                 .setIssuerName(issuer)
-                .setIdentifier(IdentifierProto.newBuilder().setIdentifierValue("TICKER-" + issuer).build())
+                .addIdentifiers(IdentifierProto.newBuilder().setIdentifierValue("TICKER-" + issuer).build())
                 .build();
     }
 

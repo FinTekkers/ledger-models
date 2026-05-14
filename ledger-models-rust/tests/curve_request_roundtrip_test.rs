@@ -1,7 +1,7 @@
-//! Round-trip tests for CurveInputProto fields (issue #203) and the
-//! CurveRequestProto.forward_term_years field (issue #264, v0.2.4).
+//! Round-trip tests for CurveInputProto fields and the
+//! CurveRequestProto.forward_term_years field.
 
-use ledger_models::fintekkers::models::security::{SecurityProto, ProductTypeProto};
+use ledger_models::fintekkers::models::security::{BondDetailsProto, SecurityProto, ProductTypeProto};
 use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
 use ledger_models::fintekkers::requests::valuation::{CurveInputProto, CurveRequestProto};
 use prost::Message;
@@ -24,10 +24,15 @@ fn roundtrip(original: &CurveInputProto) -> CurveInputProto {
 
 #[test]
 fn curve_input_tenor_and_clean_price_survive_roundtrip() {
-    let mut sec = SecurityProto::default();
-    sec.product_type = ProductTypeProto::TreasuryNote as i32;
-    sec.issue_date = Some(date(2025, 1, 15));
-    sec.maturity_date = Some(date(2035, 1, 15));
+    let sec = SecurityProto {
+        product_type: ProductTypeProto::TreasuryNote as i32,
+        bond_details: Some(BondDetailsProto {
+            issue_date: Some(date(2025, 1, 15)),
+            maturity_date: Some(date(2035, 1, 15)),
+            ..Default::default()
+        }),
+        ..Default::default()
+    };
 
     let original = CurveInputProto {
         security: Some(sec),
@@ -52,15 +57,21 @@ fn curve_input_tenor_and_clean_price_survive_roundtrip() {
 
     let parsed_sec = parsed.security.as_ref().expect("security should round-trip");
     assert_eq!(parsed_sec.product_type, ProductTypeProto::TreasuryNote as i32);
-    assert_eq!(parsed_sec.maturity_date.as_ref().unwrap().year, 2035);
-    assert_eq!(parsed_sec.issue_date.as_ref().unwrap().year, 2025);
+    let bd = parsed_sec.bond_details.as_ref().unwrap();
+    assert_eq!(bd.maturity_date.as_ref().unwrap().year, 2035);
+    assert_eq!(bd.issue_date.as_ref().unwrap().year, 2025);
 }
 
 #[test]
 fn curve_input_without_new_fields_remains_compatible() {
-    let mut sec = SecurityProto::default();
-    sec.product_type = ProductTypeProto::TreasuryNote as i32;
-    sec.maturity_date = Some(date(2035, 1, 15));
+    let sec = SecurityProto {
+        product_type: ProductTypeProto::TreasuryNote as i32,
+        bond_details: Some(BondDetailsProto {
+            maturity_date: Some(date(2035, 1, 15)),
+            ..Default::default()
+        }),
+        ..Default::default()
+    };
 
     let original = CurveInputProto {
         security: Some(sec),
@@ -94,7 +105,7 @@ fn curve_input_synthetic_cmt_shape_survives_roundtrip() {
     assert!(parsed.clean_price.is_none());
 }
 
-// ---------- CurveRequestProto.forward_term_years (v0.2.4, #264) ----------
+// ---------- CurveRequestProto.forward_term_years ----------
 
 fn roundtrip_request(original: &CurveRequestProto) -> CurveRequestProto {
     let mut buf = Vec::new();

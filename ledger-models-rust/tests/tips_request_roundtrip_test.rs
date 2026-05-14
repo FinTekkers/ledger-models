@@ -3,7 +3,8 @@
 //! For each field: construct → encode to bytes → decode → verify field matches.
 
 use ledger_models::fintekkers::models::security::{
-    CouponFrequencyProto, CouponTypeProto, SecurityProto, ProductTypeProto,
+    BondDetailsProto, CouponFrequencyProto, CouponTypeProto, SecurityProto, ProductTypeProto,
+    TipsExtensionProto,
 };
 use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
 use ledger_models::fintekkers::requests::valuation::{
@@ -19,16 +20,24 @@ fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
     LocalDateProto { year, month, day }
 }
 
+// TIPS shared fields live in bond_details; TIPS-specific extras in tips_extension.
 fn tips_security(base_cpi: &str) -> SecurityProto {
-    let mut sec = SecurityProto::default();
-    sec.product_type = ProductTypeProto::Tips.into();
-    sec.coupon_type = CouponTypeProto::Fixed.into();
-    sec.coupon_frequency = CouponFrequencyProto::Semiannually.into();
-    sec.face_value = Some(decimal("1000"));
-    sec.coupon_rate = Some(decimal("0.625"));
-    sec.maturity_date = Some(date(2030, 1, 15));
-    sec.base_cpi = Some(decimal(base_cpi));
-    sec
+    SecurityProto {
+        product_type: ProductTypeProto::Tips.into(),
+        bond_details: Some(BondDetailsProto {
+            coupon_type: CouponTypeProto::Fixed.into(),
+            coupon_frequency: CouponFrequencyProto::Semiannually.into(),
+            face_value: Some(decimal("1000")),
+            coupon_rate: Some(decimal("0.625")),
+            maturity_date: Some(date(2030, 1, 15)),
+            ..Default::default()
+        }),
+        tips_extension: Some(TipsExtensionProto {
+            base_cpi: Some(decimal(base_cpi)),
+            ..Default::default()
+        }),
+        ..Default::default()
+    }
 }
 
 fn roundtrip_product_input(original: &ProductInput) -> ProductInput {
@@ -102,15 +111,17 @@ fn tips_input_security_fields_survive_roundtrip() {
         product_input::Input::Tips(t) => {
             let sec = t.security.unwrap();
             assert_eq!(sec.product_type(), ProductTypeProto::Tips);
-            assert_eq!(sec.coupon_type(), CouponTypeProto::Fixed);
-            assert_eq!(sec.coupon_frequency(), CouponFrequencyProto::Semiannually);
-            assert_eq!(sec.coupon_rate.unwrap().arbitrary_precision_value, "0.625");
-            assert_eq!(sec.face_value.unwrap().arbitrary_precision_value, "1000");
-            assert_eq!(sec.base_cpi.unwrap().arbitrary_precision_value, "260.474");
-            let mat = sec.maturity_date.unwrap();
+            let bond = sec.bond_details.unwrap();
+            assert_eq!(bond.coupon_type(), CouponTypeProto::Fixed);
+            assert_eq!(bond.coupon_frequency(), CouponFrequencyProto::Semiannually);
+            assert_eq!(bond.coupon_rate.unwrap().arbitrary_precision_value, "0.625");
+            assert_eq!(bond.face_value.unwrap().arbitrary_precision_value, "1000");
+            let mat = bond.maturity_date.unwrap();
             assert_eq!(mat.year, 2030);
             assert_eq!(mat.month, 1);
             assert_eq!(mat.day, 15);
+            let tips_ext = sec.tips_extension.unwrap();
+            assert_eq!(tips_ext.base_cpi.unwrap().arbitrary_precision_value, "260.474");
         }
         other => panic!("Expected Tips variant, got {:?}", other),
     }
@@ -180,7 +191,10 @@ fn tips_index_ratio_fields_preserve_precision() {
         product_input::Input::Tips(t) => {
             assert_eq!(t.current_cpi.unwrap().arbitrary_precision_value, "310.32600");
             let sec = t.security.unwrap();
-            assert_eq!(sec.base_cpi.unwrap().arbitrary_precision_value, "260.47400");
+            assert_eq!(
+                sec.tips_extension.unwrap().base_cpi.unwrap().arbitrary_precision_value,
+                "260.47400"
+            );
         }
         other => panic!("Expected Tips variant, got {:?}", other),
     }

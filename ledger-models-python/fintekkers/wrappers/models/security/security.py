@@ -142,20 +142,21 @@ class Security():
         raise ValueError("Not implemented yet. See Java implementation for reference")
 
     def get_security_id(self) -> Identifier:
+        # Primary identifier lives at identifiers[0] (tag 42).
         self._assert_not_link("security_id")
-        id:IdentifierProto = self.proto.identifier
-        return Identifier(id)
-    
+        if len(self.proto.identifiers) == 0:
+            return Identifier(IdentifierProto())
+        return Identifier(self.proto.identifiers[0])
+
     ###
-    ### Bond specific functions. These prefer the oneof product_details sub-message
-    ### if set, falling back to flat fields for backward compatibility.
+    ### Bond specific functions. Bond fields live on the canonical bond_details
+    ### sub-message; TIPS and FRN extras co-exist on tips_extension / frn_extension.
     ###
     def _get_bond_like_details(self):
         """Returns the canonical bond_details sub-message if populated, else None.
 
-        v0.3.0 collapsed bond/tips/frn into a single bond_details. TIPS and FRN
-        extras live in tips_extension / frn_extension and co-exist with
-        bond_details rather than replacing it.
+        TIPS and FRN extras live in tips_extension / frn_extension and co-exist
+        with bond_details rather than replacing it.
         """
         if self.proto.HasField('bond_details'):
             return self.proto.bond_details
@@ -164,14 +165,16 @@ class Security():
     def get_issue_date(self) -> datetime:
         self._assert_not_link("issue_date")
         bond = self._get_bond_like_details()
-        src = bond.issue_date if bond and bond.HasField('issue_date') else self.proto.issue_date
-        return ProtoSerializationUtil.deserialize(src)
+        if bond is None or not bond.HasField('issue_date'):
+            raise ValueError("issue_date is not set; populate SecurityProto.bond_details.issue_date")
+        return ProtoSerializationUtil.deserialize(bond.issue_date)
 
     def get_maturity_date(self) -> datetime:
         self._assert_not_link("maturity_date")
         bond = self._get_bond_like_details()
-        src = bond.maturity_date if bond and bond.HasField('maturity_date') else self.proto.maturity_date
-        return ProtoSerializationUtil.deserialize(src)
+        if bond is None or not bond.HasField('maturity_date'):
+            raise ValueError("maturity_date is not set; populate SecurityProto.bond_details.maturity_date")
+        return ProtoSerializationUtil.deserialize(bond.maturity_date)
 
     def get_tenor(self) -> str:
         self._assert_not_link("tenor")
@@ -180,8 +183,9 @@ class Security():
     def get_face_value(self) -> float:
         self._assert_not_link("face_value")
         bond = self._get_bond_like_details()
-        src = bond.face_value if bond and bond.HasField('face_value') else self.proto.face_value
-        return ProtoSerializationUtil.deserialize(src)
+        if bond is None or not bond.HasField('face_value'):
+            raise ValueError("face_value is not set; populate SecurityProto.bond_details.face_value")
+        return ProtoSerializationUtil.deserialize(bond.face_value)
 
     def get_product_type_proto(self) -> ProductTypeProto:
         """Returns the leaf ProductTypeProto carried by the proto.

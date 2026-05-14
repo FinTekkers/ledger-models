@@ -5,6 +5,7 @@ import fintekkers.models.position.MeasureMapEntry;
 import fintekkers.models.position.MeasureProto;
 import fintekkers.models.position.PositionProto;
 import fintekkers.models.price.PriceProto;
+import fintekkers.models.security.CashDetailsProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.security.SecurityQuantityTypeProto;
 import fintekkers.models.security.ProductTypeProto;
@@ -58,7 +59,8 @@ public class ValuationService {
                 .setAsOf(asOf)
                 .setProductType(ProductTypeProto.CURRENCY)
                 .setAssetClass("Cash")
-                .setCashId("USD").build();
+                .setCashDetails(CashDetailsProto.newBuilder().setCashId("USD").build())
+                .build();
 
         SecurityProto equitySecurity = SecurityProto.newBuilder()
                 .setAsOf(asOf)

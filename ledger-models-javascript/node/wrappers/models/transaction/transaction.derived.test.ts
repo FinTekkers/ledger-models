@@ -5,7 +5,7 @@ import { TransactionTypeProto } from '../../../fintekkers/models/transaction/tra
 import { PositionStatusProto } from '../../../fintekkers/models/position/position_status_pb';
 import Security from '../security/security';
 import Portfolio from '../portfolio/portfolio';
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/security/security_pb';
 import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
@@ -181,20 +181,22 @@ function createBondTransaction(transactionType: TransactionTypeProto): Transacti
 }
 
 function createBondSecurity(): Security {
+    const bond = new BondDetailsProto()
+        .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
+        .setCouponRate(new DecimalValueProto().setArbitraryPrecisionValue('0.05'))
+        .setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY)
+        .setCouponType(CouponTypeProto.FIXED)
+        .setMaturityDate(new LocalDateProto().setYear(2034).setMonth(1).setDay(1))
+        .setIssueDate(new LocalDateProto().setYear(2024).setMonth(1).setDay(1));
     return Security.create(new SecurityProto()
         .setObjectClass('Security')
         .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
         .setProductType(ProductTypeProto.TREASURY_NOTE)
-        .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
         .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
         .setAssetClass('FixedIncome')
         .setIssuerName('Test Issuer')
-        .setCouponRate(new DecimalValueProto().setArbitraryPrecisionValue('0.05'))
-        .setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY)
-        .setCouponType(CouponTypeProto.FIXED)
-        .setMaturityDate(new LocalDateProto().setYear(2034).setMonth(1).setDay(1))
-        .setIssueDate(new LocalDateProto().setYear(2024).setMonth(1).setDay(1))
+        .setBondDetails(bond)
         .setAsOf(ZonedDateTime.now().toProto())
         .setDescription('Test bond security')
     );

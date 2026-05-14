@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * v0.3.0 / #272: Round-trip tests for the consolidated SecurityProto shape.
+ * Round-trip tests for the consolidated SecurityProto shape.
  *
  * Shared bond fields live in the canonical {@code bond_details} field for
  * every product type descending from BOND in hierarchy.json. TIPS and FRN

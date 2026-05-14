@@ -36,7 +36,7 @@ function createDummyCashSecurity() {
     securityProto.setProductType(product_type_pb_1.ProductTypeProto.CURRENCY);
     securityProto.setAsOf(datetime_1.ZonedDateTime.now().toProto());
     securityProto.setAssetClass('Cash');
-    securityProto.setCashId('USD');
+    securityProto.setCashDetails(new security_pb_1.CashDetailsProto().setCashId('USD'));
     return security_1.default.create(securityProto);
 }
 //# sourceMappingURL=Price.cash.test.js.map

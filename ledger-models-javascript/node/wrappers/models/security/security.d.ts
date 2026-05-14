@@ -90,9 +90,8 @@ declare class Security {
     getMaturityDate(): LocalDate;
     /**
      * Returns the canonical bond_details sub-message if set, else undefined.
-     * v0.3.0 collapsed the prior 3-arm bond/tips/frn oneof into a single
-     * top-level bond_details — TIPS and FRN extras now live in their own
-     * tips_extension / frn_extension fields.
+     * TIPS and FRN extras live in their own tips_extension / frn_extension
+     * fields and co-exist with bond_details.
      */
     protected getBondLikeDetails(): any | undefined;
     getIssuerName(): string;

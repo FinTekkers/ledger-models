@@ -27,10 +27,10 @@ class TestPrice(unittest.TestCase):
             product_type=ProductTypeProto.TREASURY_NOTE,
             asset_class="Fixed Income",
             issuer_name="Test Issuer",
-            identifier=IdentifierProto(
+            identifiers=[IdentifierProto(
                 identifier_type=IdentifierTypeProto.CUSIP,
                 identifier_value="123456789"
-            )
+            )]
         )
         self.test_security = Security(security_proto)
         

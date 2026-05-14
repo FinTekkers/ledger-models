@@ -5,7 +5,7 @@ import { TransactionTypeProto } from '../../../fintekkers/models/transaction/tra
 import { PositionStatusProto } from '../../../fintekkers/models/position/position_status_pb';
 import Security from '../security/security';
 import Portfolio from '../portfolio/portfolio';
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/security/security_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { SecurityQuantityTypeProto } from '../../../fintekkers/models/security/security_quantity_type_pb';
@@ -89,19 +89,21 @@ function testTransactionConstructor(): void {
 }
 
 function dummySecurity(): Security {
-    return Security.create(new SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
-        .setUuid(UUID.random().toUUIDProto())
+    const bond = new BondDetailsProto()
         .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-        .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
-        .setAssetClass("Bond")
-        .setIssuerName("Test Issuer")
         .setCouponRate(new DecimalValueProto().setArbitraryPrecisionValue('0.05'))
         .setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(CouponTypeProto.FIXED)
         .setMaturityDate(new LocalDateProto().setYear(2026).setMonth(1).setDay(1))
-        .setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1))
+        .setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
+    return Security.create(new SecurityProto()
+        .setObjectClass('Security')
+        .setVersion('0.0.1')
+        .setUuid(UUID.random().toUUIDProto())
+        .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
+        .setAssetClass("Bond")
+        .setIssuerName("Test Issuer")
+        .setBondDetails(bond)
         .setDescription("Test security")
     );
 }
