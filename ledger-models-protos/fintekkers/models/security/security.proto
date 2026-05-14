@@ -8,6 +8,7 @@ import "fintekkers/models/util/local_timestamp.proto";
 import "fintekkers/models/util/uuid.proto";
 
 import "fintekkers/models/security/identifier/identifier.proto";
+import "fintekkers/models/security/bond/agency.proto";
 import "fintekkers/models/security/bond/issuance.proto";
 import "fintekkers/models/security/product_type.proto";
 import "fintekkers/models/security/instrument_type.proto";
@@ -104,6 +105,12 @@ message SecurityProto {
     CashDetailsProto cash_details = 205;
     FxSpotDetailsProto fx_spot_details = 206;
   }
+
+  // Agency MBS pass-through extras. Populated when
+  // product_type == MORTGAGE_BACKED. Co-exists with bond_details
+  // (does NOT replace it) — pool-level coupon / face / maturity
+  // are still on bond_details.
+  MbsExtensionProto mbs_extension = 207;
 }
 
 // Bond security details: fixed-rate coupon bonds (US Treasuries, corporates, etc.)
@@ -134,6 +141,22 @@ message FrnExtensionProto {
   fintekkers.models.util.DecimalValueProto spread = 1;                       //Fixed spread over the reference rate, in basis points
   fintekkers.models.security.index.IndexTypeProto reference_rate_index = 2;  //Which floating rate benchmark (e.g. SOFR)
   CouponFrequencyProto reset_frequency = 3;                                  //How often the floating coupon rate resets
+}
+
+// Agency MBS pass-through extras (FNMA / FHLMC / GNMA).
+// Carries pool-level fields beyond what BondDetailsProto already covers
+// (coupon, face value, maturity date). Populated when
+// product_type == MORTGAGE_BACKED.
+message MbsExtensionProto {
+  string pool_number = 1;                                              // Agency pool identifier (e.g. "FN AS1234")
+  fintekkers.models.security.bond.AgencyProto agency = 2;              // Issuing agency
+  fintekkers.models.util.DecimalValueProto wac = 3;                    // Weighted-average coupon (decimal fraction; 0.045 = 4.5%)
+  int32 wam = 4;                                                       // Weighted-average maturity, in months
+  fintekkers.models.util.DecimalValueProto pass_through_rate = 5;      // Pass-through coupon paid to investors (decimal fraction)
+  fintekkers.models.util.DecimalValueProto current_factor = 6;         // Current pool factor (fraction of original principal remaining)
+  fintekkers.models.util.DecimalValueProto original_face_value = 7;    // Original face / par at issuance
+  fintekkers.models.util.DecimalValueProto current_upb = 8;            // Current unpaid principal balance
+  fintekkers.models.util.DecimalValueProto psa_speed = 9;              // Prepayment speed assumption (PSA model multiplier)
 }
 
 // Index security details (e.g. CPI-U, SOFR index, S&P 500).

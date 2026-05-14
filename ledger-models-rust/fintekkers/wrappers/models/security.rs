@@ -254,6 +254,7 @@ impl SecurityProtoBuilder {
             bond_details: None,
             tips_extension: None,
             frn_extension: None,
+            mbs_extension: None,
             non_bond_details: None,
             deleted_at: None,
         })

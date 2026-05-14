@@ -572,5 +572,41 @@ public interface SecurityProtoOrBuilder extends
    */
   fintekkers.models.security.FxSpotDetailsProtoOrBuilder getFxSpotDetailsOrBuilder();
 
+  /**
+   * <pre>
+   * Agency MBS pass-through extras. Populated when
+   * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+   * (does NOT replace it) — pool-level coupon / face / maturity
+   * are still on bond_details.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+   * @return Whether the mbsExtension field is set.
+   */
+  boolean hasMbsExtension();
+  /**
+   * <pre>
+   * Agency MBS pass-through extras. Populated when
+   * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+   * (does NOT replace it) — pool-level coupon / face / maturity
+   * are still on bond_details.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+   * @return The mbsExtension.
+   */
+  fintekkers.models.security.MbsExtensionProto getMbsExtension();
+  /**
+   * <pre>
+   * Agency MBS pass-through extras. Populated when
+   * product_type == MORTGAGE_BACKED. Co-exists with bond_details
+   * (does NOT replace it) — pool-level coupon / face / maturity
+   * are still on bond_details.
+   * </pre>
+   *
+   * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
+   */
+  fintekkers.models.security.MbsExtensionProtoOrBuilder getMbsExtensionOrBuilder();
+
   public fintekkers.models.security.SecurityProto.NonBondDetailsCase getNonBondDetailsCase();
 }

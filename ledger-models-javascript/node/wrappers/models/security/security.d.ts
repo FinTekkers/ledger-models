@@ -38,6 +38,7 @@ declare class Security {
      * the proto's product_type. Dispatch rules:
      *   - TIPS                       -> TIPSBond
      *   - TREASURY_FRN               -> FloatingRateNote
+     *   - MORTGAGE_BACKED            -> MortgageBackedSecurity
      *   - any other descendant of BOND in hierarchy.json -> BondSecurity
      *   - any descendant of INDEX in hierarchy.json     -> IndexSecurity
      *   - everything else (equity, cash, fx, etc.)       -> base Security

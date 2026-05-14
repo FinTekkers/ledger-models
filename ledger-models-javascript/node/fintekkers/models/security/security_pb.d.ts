@@ -10,6 +10,7 @@ import * as fintekkers_models_util_local_date_pb from "../../../fintekkers/model
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_security_identifier_identifier_pb from "../../../fintekkers/models/security/identifier/identifier_pb";
+import * as fintekkers_models_security_bond_agency_pb from "../../../fintekkers/models/security/bond/agency_pb";
 import * as fintekkers_models_security_bond_issuance_pb from "../../../fintekkers/models/security/bond/issuance_pb";
 import * as fintekkers_models_security_product_type_pb from "../../../fintekkers/models/security/product_type_pb";
 import * as fintekkers_models_security_instrument_type_pb from "../../../fintekkers/models/security/instrument_type_pb";
@@ -111,6 +112,11 @@ export class SecurityProto extends jspb.Message {
     getFxSpotDetails(): FxSpotDetailsProto | undefined;
     setFxSpotDetails(value?: FxSpotDetailsProto): SecurityProto;
 
+    hasMbsExtension(): boolean;
+    clearMbsExtension(): void;
+    getMbsExtension(): MbsExtensionProto | undefined;
+    setMbsExtension(value?: MbsExtensionProto): SecurityProto;
+
     getNonBondDetailsCase(): SecurityProto.NonBondDetailsCase;
 
     serializeBinary(): Uint8Array;
@@ -149,6 +155,7 @@ export namespace SecurityProto {
         equityDetails?: EquityDetailsProto.AsObject,
         cashDetails?: CashDetailsProto.AsObject,
         fxSpotDetails?: FxSpotDetailsProto.AsObject,
+        mbsExtension?: MbsExtensionProto.AsObject,
     }
 
     export enum NonBondDetailsCase {
@@ -277,6 +284,68 @@ export namespace FrnExtensionProto {
         spread?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         referenceRateIndex: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
         resetFrequency: fintekkers_models_security_coupon_frequency_pb.CouponFrequencyProto,
+    }
+}
+
+export class MbsExtensionProto extends jspb.Message { 
+    getPoolNumber(): string;
+    setPoolNumber(value: string): MbsExtensionProto;
+    getAgency(): fintekkers_models_security_bond_agency_pb.AgencyProto;
+    setAgency(value: fintekkers_models_security_bond_agency_pb.AgencyProto): MbsExtensionProto;
+
+    hasWac(): boolean;
+    clearWac(): void;
+    getWac(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setWac(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): MbsExtensionProto;
+    getWam(): number;
+    setWam(value: number): MbsExtensionProto;
+
+    hasPassThroughRate(): boolean;
+    clearPassThroughRate(): void;
+    getPassThroughRate(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setPassThroughRate(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): MbsExtensionProto;
+
+    hasCurrentFactor(): boolean;
+    clearCurrentFactor(): void;
+    getCurrentFactor(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setCurrentFactor(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): MbsExtensionProto;
+
+    hasOriginalFaceValue(): boolean;
+    clearOriginalFaceValue(): void;
+    getOriginalFaceValue(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setOriginalFaceValue(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): MbsExtensionProto;
+
+    hasCurrentUpb(): boolean;
+    clearCurrentUpb(): void;
+    getCurrentUpb(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setCurrentUpb(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): MbsExtensionProto;
+
+    hasPsaSpeed(): boolean;
+    clearPsaSpeed(): void;
+    getPsaSpeed(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setPsaSpeed(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): MbsExtensionProto;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): MbsExtensionProto.AsObject;
+    static toObject(includeInstance: boolean, msg: MbsExtensionProto): MbsExtensionProto.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: MbsExtensionProto, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): MbsExtensionProto;
+    static deserializeBinaryFromReader(message: MbsExtensionProto, reader: jspb.BinaryReader): MbsExtensionProto;
+}
+
+export namespace MbsExtensionProto {
+    export type AsObject = {
+        poolNumber: string,
+        agency: fintekkers_models_security_bond_agency_pb.AgencyProto,
+        wac?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        wam: number,
+        passThroughRate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        currentFactor?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        originalFaceValue?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        currentUpb?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        psaSpeed?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }
 

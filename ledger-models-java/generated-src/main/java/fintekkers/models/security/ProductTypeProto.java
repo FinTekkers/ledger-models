@@ -73,6 +73,10 @@ public enum ProductTypeProto
    */
   MUNI_BOND(9),
   /**
+   * <code>MORTGAGE_BACKED = 10;</code>
+   */
+  MORTGAGE_BACKED(10),
+  /**
    * <pre>
    * Stocks (20-29)
    * </pre>
@@ -208,6 +212,10 @@ public enum ProductTypeProto
    */
   public static final int MUNI_BOND_VALUE = 9;
   /**
+   * <code>MORTGAGE_BACKED = 10;</code>
+   */
+  public static final int MORTGAGE_BACKED_VALUE = 10;
+  /**
    * <pre>
    * Stocks (20-29)
    * </pre>
@@ -331,6 +339,7 @@ public enum ProductTypeProto
       case 7: return SOVEREIGN_BOND;
       case 8: return CORP_BOND;
       case 9: return MUNI_BOND;
+      case 10: return MORTGAGE_BACKED;
       case 20: return COMMON_STOCK;
       case 21: return PREFERRED_STOCK;
       case 22: return ADR;

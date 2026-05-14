@@ -16,6 +16,7 @@ class ProductTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     SOVEREIGN_BOND: _ClassVar[ProductTypeProto]
     CORP_BOND: _ClassVar[ProductTypeProto]
     MUNI_BOND: _ClassVar[ProductTypeProto]
+    MORTGAGE_BACKED: _ClassVar[ProductTypeProto]
     COMMON_STOCK: _ClassVar[ProductTypeProto]
     PREFERRED_STOCK: _ClassVar[ProductTypeProto]
     ADR: _ClassVar[ProductTypeProto]
@@ -43,6 +44,7 @@ STRIPS: ProductTypeProto
 SOVEREIGN_BOND: ProductTypeProto
 CORP_BOND: ProductTypeProto
 MUNI_BOND: ProductTypeProto
+MORTGAGE_BACKED: ProductTypeProto
 COMMON_STOCK: ProductTypeProto
 PREFERRED_STOCK: ProductTypeProto
 ADR: ProductTypeProto

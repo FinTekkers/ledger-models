@@ -41,6 +41,7 @@ enum ProductTypeProto {
   SOVEREIGN_BOND = 7;
   CORP_BOND      = 8;
   MUNI_BOND      = 9;
+  MORTGAGE_BACKED = 10;
 
   // Stocks (20-29)
   COMMON_STOCK    = 20;

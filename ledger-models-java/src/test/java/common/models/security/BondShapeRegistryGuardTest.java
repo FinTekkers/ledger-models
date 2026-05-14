@@ -35,13 +35,13 @@ class BondShapeRegistryGuardTest {
         Set<String> active = new TreeSet<>(ProductHierarchy.activeProductTypes());
         bondShapeLeaves.retainAll(active);
 
-        // Sanity: the 9 known bond-shape leaves. If new ones land, they appear
+        // Sanity: the 10 known bond-shape leaves. If new ones land, they appear
         // in this dynamic test set automatically; the assertion below catches
         // any serializer dispatch oversight.
-        assertTrue(bondShapeLeaves.size() >= 9,
-                "Expected at least 9 active bond-shape leaves in hierarchy.json (TBILL, "
+        assertTrue(bondShapeLeaves.size() >= 10,
+                "Expected at least 10 active bond-shape leaves in hierarchy.json (TBILL, "
                 + "TREASURY_NOTE, TREASURY_BOND, TIPS, TREASURY_FRN, STRIPS, "
-                + "SOVEREIGN_BOND, CORP_BOND, MUNI_BOND). Got: " + bondShapeLeaves);
+                + "SOVEREIGN_BOND, CORP_BOND, MUNI_BOND, MORTGAGE_BACKED). Got: " + bondShapeLeaves);
 
         return bondShapeLeaves.stream().map(leaf ->
                 dynamicTest(leaf + " serializes with bond_details populated", () -> {
@@ -80,6 +80,9 @@ class BondShapeRegistryGuardTest {
         }
         if (pt == ProductTypeProto.TREASURY_FRN) {
             return new common.models.security.bonds.FloatingRateNote(id, "Test", asOf, usd);
+        }
+        if (pt == ProductTypeProto.MORTGAGE_BACKED) {
+            return new common.models.security.bonds.MortgageBackedSecurity(id, "Test", asOf, usd);
         }
         BondSecurity bs = new BondSecurity(id, "Test", asOf, usd);
         SecurityProto stash = SecurityProto.newBuilder().setProductType(pt).build();

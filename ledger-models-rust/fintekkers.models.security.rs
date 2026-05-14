@@ -98,6 +98,7 @@ pub enum ProductTypeProto {
     SovereignBond = 7,
     CorpBond = 8,
     MuniBond = 9,
+    MortgageBacked = 10,
     /// Stocks (20-29)
     CommonStock = 20,
     PreferredStock = 21,
@@ -138,6 +139,7 @@ impl ProductTypeProto {
             ProductTypeProto::SovereignBond => "SOVEREIGN_BOND",
             ProductTypeProto::CorpBond => "CORP_BOND",
             ProductTypeProto::MuniBond => "MUNI_BOND",
+            ProductTypeProto::MortgageBacked => "MORTGAGE_BACKED",
             ProductTypeProto::CommonStock => "COMMON_STOCK",
             ProductTypeProto::PreferredStock => "PREFERRED_STOCK",
             ProductTypeProto::Adr => "ADR",
@@ -170,6 +172,7 @@ impl ProductTypeProto {
             "SOVEREIGN_BOND" => Some(Self::SovereignBond),
             "CORP_BOND" => Some(Self::CorpBond),
             "MUNI_BOND" => Some(Self::MuniBond),
+            "MORTGAGE_BACKED" => Some(Self::MortgageBacked),
             "COMMON_STOCK" => Some(Self::CommonStock),
             "PREFERRED_STOCK" => Some(Self::PreferredStock),
             "ADR" => Some(Self::Adr),
@@ -442,6 +445,12 @@ pub struct SecurityProto {
     /// Co-exists with bond_details (does NOT replace it).
     #[prost(message, optional, tag = "202")]
     pub frn_extension: ::core::option::Option<FrnExtensionProto>,
+    /// Agency MBS pass-through extras. Populated when
+    /// product_type == MORTGAGE_BACKED. Co-exists with bond_details
+    /// (does NOT replace it) — pool-level coupon / face / maturity
+    /// are still on bond_details.
+    #[prost(message, optional, tag = "207")]
+    pub mbs_extension: ::core::option::Option<MbsExtensionProto>,
     /// Non-bond product details. These ARE mutually exclusive — Cash, Equity,
     /// Index, FxSpot have no shared shape — so a oneof fits.
     #[prost(oneof = "security_proto::NonBondDetails", tags = "203, 204, 205, 206")]
@@ -517,6 +526,41 @@ pub struct FrnExtensionProto {
     /// How often the floating coupon rate resets
     #[prost(enumeration = "CouponFrequencyProto", tag = "3")]
     pub reset_frequency: i32,
+}
+/// Agency MBS pass-through extras (FNMA / FHLMC / GNMA).
+/// Carries pool-level fields beyond what BondDetailsProto already covers
+/// (coupon, face value, maturity date). Populated when
+/// product_type == MORTGAGE_BACKED.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MbsExtensionProto {
+    /// Agency pool identifier (e.g. "FN AS1234")
+    #[prost(string, tag = "1")]
+    pub pool_number: ::prost::alloc::string::String,
+    /// Issuing agency
+    #[prost(enumeration = "bond::AgencyProto", tag = "2")]
+    pub agency: i32,
+    /// Weighted-average coupon (decimal fraction; 0.045 = 4.5%)
+    #[prost(message, optional, tag = "3")]
+    pub wac: ::core::option::Option<super::util::DecimalValueProto>,
+    /// Weighted-average maturity, in months
+    #[prost(int32, tag = "4")]
+    pub wam: i32,
+    /// Pass-through coupon paid to investors (decimal fraction)
+    #[prost(message, optional, tag = "5")]
+    pub pass_through_rate: ::core::option::Option<super::util::DecimalValueProto>,
+    /// Current pool factor (fraction of original principal remaining)
+    #[prost(message, optional, tag = "6")]
+    pub current_factor: ::core::option::Option<super::util::DecimalValueProto>,
+    /// Original face / par at issuance
+    #[prost(message, optional, tag = "7")]
+    pub original_face_value: ::core::option::Option<super::util::DecimalValueProto>,
+    /// Current unpaid principal balance
+    #[prost(message, optional, tag = "8")]
+    pub current_upb: ::core::option::Option<super::util::DecimalValueProto>,
+    /// Prepayment speed assumption (PSA model multiplier)
+    #[prost(message, optional, tag = "9")]
+    pub psa_speed: ::core::option::Option<super::util::DecimalValueProto>,
 }
 /// Index security details (e.g. CPI-U, SOFR index, S&P 500).
 #[allow(clippy::derive_partial_eq_without_eq)]

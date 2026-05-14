@@ -3,6 +3,7 @@ pub mod coupon_frequency;
 pub mod floating_rate_note;
 pub mod index_security;
 pub mod issuance;
+pub mod mortgage_backed_security;
 pub mod portfolio;
 pub mod position;
 pub mod price;

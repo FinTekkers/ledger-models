@@ -78,6 +78,7 @@ class Security {
    * the proto's product_type. Dispatch rules:
    *   - TIPS                       -> TIPSBond
    *   - TREASURY_FRN               -> FloatingRateNote
+   *   - MORTGAGE_BACKED            -> MortgageBackedSecurity
    *   - any other descendant of BOND in hierarchy.json -> BondSecurity
    *   - any descendant of INDEX in hierarchy.json     -> IndexSecurity
    *   - everything else (equity, cash, fx, etc.)       -> base Security
@@ -87,7 +88,7 @@ class Security {
     const ptName = (Object.keys(ProductTypeProto) as Array<keyof typeof ProductTypeProto>)
       .find(k => ProductTypeProto[k] === productType);
 
-    // TIPS / FRN have dedicated wrappers with extension-specific accessors.
+    // TIPS / FRN / MBS have dedicated wrappers with extension-specific accessors.
     if (productType === ProductTypeProto.TIPS) {
       const TIPSBond = require('./TIPSBond').default;
       return new TIPSBond(proto);
@@ -95,6 +96,10 @@ class Security {
     if (productType === ProductTypeProto.TREASURY_FRN) {
       const FloatingRateNote = require('./FloatingRateNote').default;
       return new FloatingRateNote(proto);
+    }
+    if (productType === ProductTypeProto.MORTGAGE_BACKED) {
+      const MortgageBackedSecurity = require('./MortgageBackedSecurity').default;
+      return new MortgageBackedSecurity(proto);
     }
 
     // Any other BOND descendant -> generic BondSecurity wrapper.
