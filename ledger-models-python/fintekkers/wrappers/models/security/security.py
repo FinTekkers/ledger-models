@@ -165,26 +165,34 @@ class Security():
         return None
 
     def get_issue_date(self) -> datetime:
+        # v0.4.0 (#277/#278): flat `issue_date` (tag 65) removed; field lives
+        # only on bond_details. The v0.3.0 dual-shape fallback would raise
+        # AttributeError under v0.4.0 — replaced with an explicit ValueError.
         self._assert_not_link("issue_date")
         bond = self._get_bond_like_details()
-        src = bond.issue_date if bond and bond.HasField('issue_date') else self.proto.issue_date
-        return ProtoSerializationUtil.deserialize(src)
+        if bond is None or not bond.HasField('issue_date'):
+            raise ValueError("issue_date is not set; populate SecurityProto.bond_details.issue_date")
+        return ProtoSerializationUtil.deserialize(bond.issue_date)
 
     def get_maturity_date(self) -> datetime:
+        # v0.4.0: flat `maturity_date` (tag 66) removed.
         self._assert_not_link("maturity_date")
         bond = self._get_bond_like_details()
-        src = bond.maturity_date if bond and bond.HasField('maturity_date') else self.proto.maturity_date
-        return ProtoSerializationUtil.deserialize(src)
+        if bond is None or not bond.HasField('maturity_date'):
+            raise ValueError("maturity_date is not set; populate SecurityProto.bond_details.maturity_date")
+        return ProtoSerializationUtil.deserialize(bond.maturity_date)
 
     def get_tenor(self) -> str:
         self._assert_not_link("tenor")
         return ProtoSerializationUtil.deserialize(self.proto.tenor)
 
     def get_face_value(self) -> float:
+        # v0.4.0: flat `face_value` (tag 64) removed.
         self._assert_not_link("face_value")
         bond = self._get_bond_like_details()
-        src = bond.face_value if bond and bond.HasField('face_value') else self.proto.face_value
-        return ProtoSerializationUtil.deserialize(src)
+        if bond is None or not bond.HasField('face_value'):
+            raise ValueError("face_value is not set; populate SecurityProto.bond_details.face_value")
+        return ProtoSerializationUtil.deserialize(bond.face_value)
 
     def get_product_type_proto(self) -> ProductTypeProto:
         """Returns the leaf ProductTypeProto carried by the proto.
