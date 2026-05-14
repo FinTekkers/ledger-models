@@ -1,7 +1,13 @@
 package common.models.security.bonds;
 
 import common.models.security.*;
+import fintekkers.models.security.CouponFrequencyProto;
+import fintekkers.models.security.CouponTypeProto;
+import fintekkers.models.security.FrnExtensionProto;
 import fintekkers.models.security.ProductTypeProto;
+import fintekkers.models.security.SecurityProto;
+import fintekkers.models.security.index.IndexTypeProto;
+import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -76,5 +82,57 @@ public class FloatingRateNote extends BondSecurity implements IndexLinkedSecurit
     @Override
     public ProductTypeProto getProductType() {
         return ProductTypeProto.TREASURY_FRN;
+    }
+
+    /**
+     * Which floating-rate benchmark this note resets against (e.g. SOFR,
+     * T_BILL_13_WEEK). Reads from the stashed proto's
+     * {@code frn_extension.reference_rate_index}.
+     */
+    public IndexTypeProto getReferenceRateIndex() {
+        SecurityProto proto = getSecurityProto();
+        if (proto == null || !proto.hasFrnExtension()) return IndexTypeProto.UNKNOWN_INDEX_TYPE;
+        return proto.getFrnExtension().getReferenceRateIndex();
+    }
+
+    /**
+     * How often the floating coupon rate resets. Reads from the stashed
+     * proto's {@code frn_extension.reset_frequency}.
+     */
+    public CouponFrequencyProto getResetFrequency() {
+        SecurityProto proto = getSecurityProto();
+        if (proto == null || !proto.hasFrnExtension()) return CouponFrequencyProto.UNKNOWN_COUPON_FREQUENCY;
+        return proto.getFrnExtension().getResetFrequency();
+    }
+
+    /**
+     * Build an FRN {@link SecurityProto} from the pricer's expected inputs.
+     * Populates {@code bond_details} with the shared bond shape plus
+     * {@code frn_extension} with the floating-rate extras, and sets
+     * {@code product_type = TREASURY_FRN}.
+     */
+    public static SecurityProto fromPricerInputs(BigDecimal faceValue,
+                                                 BigDecimal couponRate,
+                                                 CouponTypeProto couponType,
+                                                 CouponFrequencyProto couponFrequency,
+                                                 LocalDate issueDate,
+                                                 LocalDate maturityDate,
+                                                 BigDecimal spread,
+                                                 IndexTypeProto referenceRateIndex,
+                                                 CouponFrequencyProto resetFrequency) {
+        FrnExtensionProto.Builder frn = FrnExtensionProto.newBuilder();
+        if (spread != null)
+            frn.setSpread(ProtoSerializationUtil.serializeBigDecimal(spread));
+        if (referenceRateIndex != null)
+            frn.setReferenceRateIndex(referenceRateIndex);
+        if (resetFrequency != null)
+            frn.setResetFrequency(resetFrequency);
+
+        return SecurityProto.newBuilder()
+                .setProductType(ProductTypeProto.TREASURY_FRN)
+                .setBondDetails(BondSecurity.buildBondDetails(faceValue, couponRate, couponType,
+                        couponFrequency, issueDate, maturityDate))
+                .setFrnExtension(frn.build())
+                .build();
     }
 }

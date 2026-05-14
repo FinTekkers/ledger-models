@@ -1,15 +1,60 @@
 import Security from './security';
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/security/security_pb';
 import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
+import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { LocalDate } from '../utils/date';
 import { IssuanceProto } from '../../../fintekkers/models/security/bond/issuance_pb';
 import { CouponFrequency } from './coupon_frequency';
 import { CouponType } from './coupon_type';
 import { Tenor, Period } from './term';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
+import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
+import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { Decimal } from 'decimal.js';
 import { isDescendantOf } from './product_hierarchy';
+import Issuance from './Issuance';
+
+/**
+ * Inputs required to mint a SecurityProto for the bond pricer. Shared by
+ * BondSecurity / TIPSBond / FloatingRateNote builders.
+ */
+export interface BondPricerInputs {
+  faceValue: Decimal;
+  couponRate: Decimal;
+  couponType: CouponTypeProto;
+  couponFrequency: CouponFrequencyProto;
+  issueDate: LocalDate;
+  maturityDate: LocalDate;
+}
+
+/**
+ * Build a LocalDateProto from a LocalDate wrapper. Exported so subclass
+ * builders (TIPSBond, FloatingRateNote) can re-use it without poking at
+ * LocalDate's proto privately.
+ */
+export function localDateToProto(d: LocalDate): LocalDateProto {
+  return d.toProto();
+}
+
+/** Build a DecimalValueProto from a Decimal. */
+export function decimalToProto(v: Decimal): DecimalValueProto {
+  return new DecimalValueProto().setArbitraryPrecisionValue(v.toString());
+}
+
+/**
+ * Build a populated BondDetailsProto from BondPricerInputs. Shared helper
+ * so the three pricer-input builders stay in sync.
+ */
+export function buildBondDetails(args: BondPricerInputs): BondDetailsProto {
+  return new BondDetailsProto()
+    .setFaceValue(decimalToProto(args.faceValue))
+    .setCouponRate(decimalToProto(args.couponRate))
+    .setCouponType(args.couponType)
+    .setCouponFrequency(args.couponFrequency)
+    .setIssueDate(localDateToProto(args.issueDate))
+    .setMaturityDate(localDateToProto(args.maturityDate));
+}
 
 class BondSecurity extends Security {
   constructor(proto: SecurityProto) {
@@ -109,9 +154,26 @@ class BondSecurity extends Security {
     return datedDate ? new LocalDate(datedDate) : undefined;
   }
 
-  getIssuanceInfo(): IssuanceProto[] {
+  /**
+   * Returns every auction/reopening record on this bond as typed Issuance
+   * wrappers. Empty list if bond_details is unset or has no issuances.
+   */
+  getIssuances(): Issuance[] {
     const bond = this.getBondLikeDetails();
-    return bond ? bond.getIssuanceInfoList() : [];
+    const list: IssuanceProto[] = bond ? bond.getIssuanceInfoList() : [];
+    return list.map(p => new Issuance(p));
+  }
+
+  /**
+   * Build a fresh SecurityProto for a vanilla treasury note from pricer
+   * inputs. Use TIPSBond.fromPricerInputs / FloatingRateNote.fromPricerInputs
+   * for the inflation-linked / floating variants.
+   */
+  static fromPricerInputs(args: BondPricerInputs): SecurityProto {
+    const bond = buildBondDetails(args);
+    return new SecurityProto()
+      .setProductType(ProductTypeProto.TREASURY_NOTE)
+      .setBondDetails(bond);
   }
 
   /**

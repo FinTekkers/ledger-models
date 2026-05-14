@@ -32,12 +32,13 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
 
         if (issuance) {
             if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().toDate().getFullYear() > 2009) {
-                // console.log("Issed with %s, issuance: %s", security.getSecurityID().getIdentifierValue(), issuance);
+                // (debug only) primary identifier available via security.getIdentifiers()[0]
             } else if (!issuance.getPostAuctionOutstandingQuantity() && security.getMaturityDate().toDate().getFullYear() <= 2009) {
                 //Swallow this data gap. It's old and we don't mind
             } else {
                 let postAuctionQuantity: number = ProtoSerializationUtil.deserialize(issuance.getPostAuctionOutstandingQuantity()) as number;
-                let id: string = security.getSecurityID() ? security.getSecurityID().getIdentifierValue() : security.getID().toString();
+                const identifiers = security.getIdentifiers();
+                let id: string = identifiers.length > 0 ? identifiers[0].getIdentifierValue() : security.getID().toString();
 
                 let result = {
                     'cusip': id,

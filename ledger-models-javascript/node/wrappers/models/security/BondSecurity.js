@@ -3,8 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.buildBondDetails = exports.decimalToProto = exports.localDateToProto = void 0;
 const security_1 = __importDefault(require("./security"));
+const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
+const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const date_1 = require("../utils/date");
 const coupon_frequency_1 = require("./coupon_frequency");
 const coupon_type_1 = require("./coupon_type");
@@ -12,6 +15,35 @@ const term_1 = require("./term");
 const tenor_type_pb_1 = require("../../../fintekkers/models/security/tenor_type_pb");
 const decimal_js_1 = require("decimal.js");
 const product_hierarchy_1 = require("./product_hierarchy");
+const Issuance_1 = __importDefault(require("./Issuance"));
+/**
+ * Build a LocalDateProto from a LocalDate wrapper. Exported so subclass
+ * builders (TIPSBond, FloatingRateNote) can re-use it without poking at
+ * LocalDate's proto privately.
+ */
+function localDateToProto(d) {
+    return d.toProto();
+}
+exports.localDateToProto = localDateToProto;
+/** Build a DecimalValueProto from a Decimal. */
+function decimalToProto(v) {
+    return new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue(v.toString());
+}
+exports.decimalToProto = decimalToProto;
+/**
+ * Build a populated BondDetailsProto from BondPricerInputs. Shared helper
+ * so the three pricer-input builders stay in sync.
+ */
+function buildBondDetails(args) {
+    return new security_pb_1.BondDetailsProto()
+        .setFaceValue(decimalToProto(args.faceValue))
+        .setCouponRate(decimalToProto(args.couponRate))
+        .setCouponType(args.couponType)
+        .setCouponFrequency(args.couponFrequency)
+        .setIssueDate(localDateToProto(args.issueDate))
+        .setMaturityDate(localDateToProto(args.maturityDate));
+}
+exports.buildBondDetails = buildBondDetails;
 class BondSecurity extends security_1.default {
     constructor(proto) {
         super(proto);
@@ -99,9 +131,25 @@ class BondSecurity extends security_1.default {
         const datedDate = bond ? bond.getDatedDate() : undefined;
         return datedDate ? new date_1.LocalDate(datedDate) : undefined;
     }
-    getIssuanceInfo() {
+    /**
+     * Returns every auction/reopening record on this bond as typed Issuance
+     * wrappers. Empty list if bond_details is unset or has no issuances.
+     */
+    getIssuances() {
         const bond = this.getBondLikeDetails();
-        return bond ? bond.getIssuanceInfoList() : [];
+        const list = bond ? bond.getIssuanceInfoList() : [];
+        return list.map(p => new Issuance_1.default(p));
+    }
+    /**
+     * Build a fresh SecurityProto for a vanilla treasury note from pricer
+     * inputs. Use TIPSBond.fromPricerInputs / FloatingRateNote.fromPricerInputs
+     * for the inflation-linked / floating variants.
+     */
+    static fromPricerInputs(args) {
+        const bond = buildBondDetails(args);
+        return new security_pb_1.SecurityProto()
+            .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE)
+            .setBondDetails(bond);
     }
     /**
      * Returns the price scale factor for bonds.

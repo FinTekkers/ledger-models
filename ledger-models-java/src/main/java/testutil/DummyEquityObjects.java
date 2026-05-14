@@ -29,7 +29,7 @@ public class DummyEquityObjects {
     public static Security getDummySecurity() {
         EquitySecurity equitySecurity = new EquitySecurity(UUID.randomUUID(), "dummy issuer",
                 ZonedDateTime.now().minusYears(10), getCashSecurity());
-        equitySecurity.setSecurityId(new Identifier(IdentifierType.EXCH_TICKER, "TSLA"));
+        equitySecurity.addIdentifier(new Identifier(IdentifierType.EXCH_TICKER, "TSLA"));
         return equitySecurity;
     }
 

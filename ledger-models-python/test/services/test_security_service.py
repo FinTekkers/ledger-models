@@ -24,7 +24,7 @@ def test_get_usd_cash_security():
 
     assert security is not None
     assert "USD" == security.get_description()
-    assert IdentifierTypeProto.CASH == security.get_security_id().get_identifier_type()
+    assert IdentifierTypeProto.CASH == security.get_identifiers()[0].get_identifier_type()
 
 from fintekkers.wrappers.services.util.Environment import EnvConfig
 

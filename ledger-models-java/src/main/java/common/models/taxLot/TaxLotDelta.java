@@ -94,7 +94,7 @@ public class TaxLotDelta extends RawDataModelObject implements IFinancialModelOb
             //Security fields
             case SECURITY -> getSecurity();
             case PRODUCT_TYPE -> getSecurity().getProductType().name();
-            case IDENTIFIER -> getSecurity().getSecurityId();
+            case IDENTIFIER -> getSecurity().getIdentifiers().isEmpty() ? null : getSecurity().getIdentifiers().get(0);
             case ASSET_CLASS -> getSecurity().getAssetClass();
             case PRODUCT_CLASS -> getSecurity().getField(PRODUCT_CLASS);
             case SECURITY_DESCRIPTION -> getSecurity().getDisplayDescription();

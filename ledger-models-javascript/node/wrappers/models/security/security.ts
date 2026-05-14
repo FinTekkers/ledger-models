@@ -1,5 +1,4 @@
 import { FieldProto } from "../../../fintekkers/models/position/field_pb";
-import { IdentifierProto } from "../../../fintekkers/models/security/identifier/identifier_pb";
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
 import { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
@@ -7,6 +6,9 @@ import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { LocalDate } from "../utils/date";
 import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
+import { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
+import { Identifier } from "./identifier";
+import { isDescendantOf } from "./product_hierarchy";
 
 class Security {
   proto: SecurityProto;
@@ -72,19 +74,42 @@ class Security {
   }
 
   /**
-   * Factory method to create the appropriate Security subclass based on security type
+   * Factory method to create the appropriate Security subclass based on
+   * the proto's product_type. Dispatch rules:
+   *   - TIPS                       -> TIPSBond
+   *   - TREASURY_FRN               -> FloatingRateNote
+   *   - any other descendant of BOND in hierarchy.json -> BondSecurity
+   *   - any descendant of INDEX in hierarchy.json     -> IndexSecurity
+   *   - everything else (equity, cash, fx, etc.)       -> base Security
    */
   static create(proto: SecurityProto): Security {
-    switch (proto.getProductType()) {
-      case ProductTypeProto.TREASURY_NOTE:
-      case ProductTypeProto.TIPS:
-      case ProductTypeProto.TREASURY_FRN:
-        // Lazy import to avoid circular dependency
-        const BondSecurity = require('./BondSecurity').default;
-        return new BondSecurity(proto);
-      default:
-        return new Security(proto);
+    const productType = proto.getProductType();
+    const ptName = (Object.keys(ProductTypeProto) as Array<keyof typeof ProductTypeProto>)
+      .find(k => ProductTypeProto[k] === productType);
+
+    // TIPS / FRN have dedicated wrappers with extension-specific accessors.
+    if (productType === ProductTypeProto.TIPS) {
+      const TIPSBond = require('./TIPSBond').default;
+      return new TIPSBond(proto);
     }
+    if (productType === ProductTypeProto.TREASURY_FRN) {
+      const FloatingRateNote = require('./FloatingRateNote').default;
+      return new FloatingRateNote(proto);
+    }
+
+    // Any other BOND descendant -> generic BondSecurity wrapper.
+    if (ptName && isDescendantOf(ptName as string, 'BOND')) {
+      const BondSecurity = require('./BondSecurity').default;
+      return new BondSecurity(proto);
+    }
+
+    // INDEX descendants get the IndexSecurity wrapper.
+    if (ptName && isDescendantOf(ptName as string, 'INDEX')) {
+      const IndexSecurity = require('./IndexSecurity').default;
+      return new IndexSecurity(proto);
+    }
+
+    return new Security(proto);
   }
 
   /**
@@ -101,14 +126,20 @@ class Security {
    */
   isBond(): this is import('./BondSecurity').default {
     const t = this.proto.getProductType();
-    return t === ProductTypeProto.TREASURY_NOTE
-        || t === ProductTypeProto.TIPS
-        || t === ProductTypeProto.TREASURY_FRN;
+    const ptName = (Object.keys(ProductTypeProto) as Array<keyof typeof ProductTypeProto>)
+      .find(k => ProductTypeProto[k] === t);
+    if (!ptName) return false;
+    return isDescendantOf(ptName as string, 'BOND');
   }
 
 
   toString(): string {
-    return `ID[${this.getID().toString()}], ${this.getSecurityID()}[${this.getIssuerName()}]`;
+    const ids = this.proto.getIsLink() ? [] : this.proto.getIdentifiersList();
+    const idStr = ids && ids.length > 0
+      ? new Identifier(ids[0]).toString()
+      : '<no-identifier>';
+    const issuer = this.proto.getIsLink() ? '<link>' : this.getIssuerName();
+    return `ID[${this.getID().toString()}], ${idStr}[${issuer}]`;
   }
 
   getFields(): FieldProto[] {
@@ -128,8 +159,10 @@ class Security {
         return this.getProductClass();
       case FieldProto.PRODUCT_TYPE:
         return this.getProductType();
-      case FieldProto.IDENTIFIER:
-        return this.getSecurityID();
+      case FieldProto.IDENTIFIER: {
+        const list = this.proto.getIdentifiersList();
+        return list && list.length > 0 ? new Identifier(list[0]) : null;
+      }
       case FieldProto.TENOR:
       case FieldProto.ADJUSTED_TENOR:
         throw new Error('Not implemented yet');
@@ -186,12 +219,27 @@ class Security {
     return securityTypeString || 'UNKNOWN_SECURITY_TYPE';
   }
 
-  getSecurityID(): IdentifierProto {
-    // Primary identifier lives at identifiers[0] (tag 42).
-    this.assertNotLink('securityId');
+  /**
+   * Returns every Identifier attached to this security as typed wrappers.
+   * Empty list if none are set. Throws on a link-mode Security.
+   */
+  getIdentifiers(): Identifier[] {
+    this.assertNotLink('identifiers');
     const list = this.proto.getIdentifiersList();
-    if (!list || list.length === 0) throw new Error("Identifier is required");
-    return list[0];
+    if (!list) return [];
+    return list.map(p => new Identifier(p));
+  }
+
+  /**
+   * Returns the first Identifier matching the given IdentifierTypeProto,
+   * or undefined if none is present. Throws on a link-mode Security.
+   */
+  getIdentifierByType(type: IdentifierTypeProto): Identifier | undefined {
+    this.assertNotLink('identifierByType');
+    const list = this.proto.getIdentifiersList();
+    if (!list) return undefined;
+    const found = list.find(p => p.getIdentifierType() === type);
+    return found ? new Identifier(found) : undefined;
   }
 
   /**

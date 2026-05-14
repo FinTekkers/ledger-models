@@ -3,7 +3,7 @@ import datetime
 import time
 from fintekkers.models.security.bond.issuance_pb2 import IssuanceProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
-from fintekkers.wrappers.models.issues.issuance import Issuance
+from fintekkers.wrappers.models.issues.issuance import IssuanceHistory
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
 
@@ -39,7 +39,7 @@ class Testing(unittest.TestCase):
             )
             issuance_protos.append(issuance_proto)
 
-        issuance = Issuance(proto=issuance_protos)
+        issuance = IssuanceHistory(proto=issuance_protos)
 
         issuance.print_auction_history()
 

@@ -244,7 +244,7 @@ class TestV025LinkHelpersAndConstituents:
         with pytest.raises(RuntimeError, match="link-mode"):
             link.get_product_type_proto()
         with pytest.raises(RuntimeError, match="link-mode"):
-            link.get_security_id()
+            link.get_identifiers()
 
     def test_link_round_trips_via_serialize(self):
         from fintekkers.wrappers.models.security.security import Security

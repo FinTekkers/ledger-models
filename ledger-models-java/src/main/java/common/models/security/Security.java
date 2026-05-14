@@ -5,6 +5,7 @@ import common.models.RawDataModelObject;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.security.identifier.Identifier;
+import fintekkers.models.security.IdentifierTypeProto;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
@@ -23,7 +24,7 @@ import java.util.*;
 public class Security extends RawDataModelObject implements Comparable, IFinancialModelObject {
     private final String issuer;
     private final CashSecurity settlementCurrency;
-    protected Identifier identifier;
+    protected List<Identifier> identifiers = new ArrayList<>();
 
     private String description;
 
@@ -167,12 +168,25 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         return QuantityType.UNITS;
     }
 
-    public Identifier getSecurityId() {
-        return identifier;
+    public List<Identifier> getIdentifiers() {
+        throwIfLink("identifiers");
+        return identifiers;
     }
 
-    public void setSecurityId(Identifier identifier) {
-        this.identifier = identifier;
+    public Optional<Identifier> getIdentifierByType(IdentifierTypeProto type) {
+        throwIfLink("identifierByType");
+        if (type == null) return Optional.empty();
+        for (Identifier id : identifiers) {
+            if (id.getIdentifierType().name().equals(type.name())) {
+                return Optional.of(id);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public void addIdentifier(Identifier identifier) {
+        if (identifier == null) return;
+        this.identifiers.add(identifier);
     }
 
     /***
@@ -187,7 +201,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
             case ASSET_CLASS -> getAssetClass();
             case PRODUCT_CLASS -> getProductClass();
             case PRODUCT_TYPE -> getProductType().name();
-            case IDENTIFIER -> getSecurityId();
+            case IDENTIFIER -> identifiers.isEmpty() ? null : identifiers.get(0);
             case TENOR, ADJUSTED_TENOR -> Tenor.UNKNOWN_TENOR;
             case SECURITY_DESCRIPTION -> getDescription();
             case MATURITY_DATE -> LocalDate.of(2999, 12, 31);
@@ -269,9 +283,9 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
      * The description is subject to change and should NEVER be parsed. The goal is for this to be human-readable.
      */
     public String getDisplayDescription() {
-        return description != null ? description :
-                identifier != null ? identifier.toString() :
-                toString();
+        if (description != null) return description;
+        if (!identifiers.isEmpty()) return identifiers.get(0).toString();
+        return toString();
     }
 
     /**

@@ -232,7 +232,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             case SECURITY_ISSUER_NAME -> getSecurity().getField(SECURITY_ISSUER_NAME);
             case ISSUE_DATE -> getSecurity().getField(ISSUE_DATE);
             case PRODUCT_TYPE -> getSecurity().getProductType().name();
-            case IDENTIFIER -> getSecurity().getSecurityId();
+            case IDENTIFIER -> getSecurity().getIdentifiers().isEmpty() ? null : getSecurity().getIdentifiers().get(0);
             case ASSET_CLASS -> getSecurity().getAssetClass();
             case PRODUCT_CLASS -> getSecurity().getField(PRODUCT_CLASS);
             case SECURITY_DESCRIPTION -> getSecurity().getDisplayDescription();

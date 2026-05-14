@@ -1,4 +1,5 @@
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
+from fintekkers.models.security.identifier.identifier_type_pb2 import IdentifierTypeProto
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
@@ -42,7 +43,7 @@ class Security():
         self.proto:SecurityProto = proto
 
     def __str__(self) -> str:
-        return f"ID[{str(self.get_id())}], {self.get_security_id()}[{self.proto.issuer_name}]"
+        return f"ID[{str(self.get_id())}], {self._primary_identifier_str()}[{self.proto.issuer_name}]"
 
     @staticmethod
     def link_of(uuid: UUID, as_of: datetime) -> SecurityProto:
@@ -111,7 +112,8 @@ class Security():
         elif field == PRODUCT_TYPE:
             return self.get_product_type()
         elif field == IDENTIFIER:
-            return self.get_security_id()
+            identifiers = self.get_identifiers()
+            return identifiers[0] if identifiers else None
         elif field in (TENOR, ADJUSTED_TENOR):
             return self.get_tenor()
         elif field == MATURITY_DATE:
@@ -141,12 +143,32 @@ class Security():
         self._assert_not_link("product_type")
         raise ValueError("Not implemented yet. See Java implementation for reference")
 
-    def get_security_id(self) -> Identifier:
-        # Primary identifier lives at identifiers[0] (tag 42).
-        self._assert_not_link("security_id")
-        if len(self.proto.identifiers) == 0:
-            return Identifier(IdentifierProto())
-        return Identifier(self.proto.identifiers[0])
+    def get_identifiers(self) -> list[Identifier]:
+        """Returns all identifiers carried by this security as wrapped
+        Identifier instances. Order matches the proto's repeated field:
+        the primary identifier (used as the human-readable ID) is index 0.
+        """
+        self._assert_not_link("identifiers")
+        return [Identifier(p) for p in self.proto.identifiers]
+
+    def get_identifier_by_type(self, identifier_type) -> Optional[Identifier]:
+        """Returns the first Identifier matching the given IdentifierTypeProto
+        value, or None if no identifier of that type is attached. The argument
+        is the integer enum value (IdentifierTypeProto.CUSIP, .ISIN, ...).
+        """
+        self._assert_not_link("identifiers")
+        for p in self.proto.identifiers:
+            if p.identifier_type == identifier_type:
+                return Identifier(p)
+        return None
+
+    def _primary_identifier_str(self) -> str:
+        """Internal helper for __str__: render the primary identifier or
+        a placeholder when none is attached. Does not trigger a link-mode
+        guard; __str__ is allowed on links so a UUID is still loggable."""
+        if self.proto.is_link or len(self.proto.identifiers) == 0:
+            return str(Identifier(IdentifierProto()))
+        return str(Identifier(self.proto.identifiers[0]))
 
     ###
     ### Bond specific functions. Bond fields live on the canonical bond_details
@@ -197,7 +219,7 @@ class Security():
         return self.proto.description
 
     def __str__(self):
-        return f'ID[{str(self.get_security_id())}], {type(self).__name__}[{self.proto.issuer_name}]'
+        return f'ID[{self._primary_identifier_str()}], {type(self).__name__}[{self.proto.issuer_name}]'
 
     def __eq__(self, other):
         if isinstance(other, Security):
