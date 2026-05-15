@@ -1,5 +1,6 @@
 from typing import Generator
 
+from grpc import RpcError
 from google.protobuf.any_pb2 import Any
 from google.protobuf import wrappers_pb2 as wrappers
 
@@ -55,7 +56,7 @@ class PortfolioService:
                     yield Portfolio(portfolio_proto)
         except StopIteration:
             pass
-        except Exception as e:
+        except RpcError as e:
             print(e)
             self.__init__() #Reinitialize the service to reconnect
 

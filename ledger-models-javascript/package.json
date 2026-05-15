@@ -21,6 +21,7 @@
   "publishConfigNotes": "This package.json does not have a publish config defining the registry because we currently publish to both Github packages & npmjs, so the registry is in the ../.github/workflows/publish.yml files at runtime",
   "scripts": {
     "test": "jest",
+    "test:integration": "jest --config jest.integration.config.js",
     "start": "node index.js"
   },
   "devDependencies": {

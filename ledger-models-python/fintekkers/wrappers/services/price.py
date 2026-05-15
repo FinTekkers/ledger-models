@@ -142,7 +142,7 @@ class PriceService:
         # This will send the cancel message to the server to kill the connection
         try:
             responses.cancel()
-        except Exception as e:
+        except RpcError as e:
             print(f"Error cancelling response stream: {e}")
 
     def create_or_update(self, request: CreatePriceRequest):

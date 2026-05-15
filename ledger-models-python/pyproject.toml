@@ -4,3 +4,25 @@ addopts = ["--import-mode=importlib"]
 markers = [
     "integration: marks tests that require running services (deselect with '-m \"not integration\"')",
 ]
+
+# Silent-failure guardrail per second-brain#297. BLE001 forbids
+# `except Exception` and bare `except` in production code paths.
+# See processes/test-discipline.md.
+[tool.ruff]
+# Lint the wrapper / service layer; skip generated proto bindings and
+# tests. Generated files live under fintekkers/models, fintekkers/requests,
+# and end with _pb2.py.
+extend-exclude = [
+    "test", "tests", "venv", ".venv", "build",
+    "fintekkers/models", "fintekkers/requests",
+    "**/*_pb2.py", "**/*_pb2_grpc.py",
+]
+
+[tool.ruff.lint]
+select = ["BLE"]
+
+[tool.ruff.lint.per-file-ignores]
+# link_resolver intentionally uses `except BaseException` to set the
+# future's exception state and re-raise — narrow to BaseException is
+# the deliberate choice here, but ruff still flags it. Reviewed in PRs.
+"fintekkers/wrappers/util/link_resolver.py" = ["BLE"]

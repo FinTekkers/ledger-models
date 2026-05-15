@@ -1,0 +1,123 @@
+name: tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: python (pytest + ruff BLE)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install runtime + test deps
+        working-directory: ledger-models-python
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install ruff
+
+      - name: ruff check (silent-failure guardrail — BLE001)
+        working-directory: ledger-models-python
+        run: ruff check .
+
+      - name: pytest (unit only)
+        working-directory: ledger-models-python
+        run: python -m pytest -m 'not integration' -x -q
+
+  rust:
+    name: rust (cargo test --lib)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stable Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Materialize hierarchy.json mirror (cargo include_str! target)
+        run: ./sync-hierarchy-mirrors.sh
+
+      - name: cargo test --lib
+        working-directory: ledger-models-rust
+        run: cargo test --lib --quiet
+
+  java:
+    name: java (gradle test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: gradle test
+        working-directory: ledger-models-java
+        run: ./gradlew test --quiet
+
+  javascript:
+    name: javascript (npm test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ledger-models-javascript/package-lock.json
+
+      - name: npm ci
+        working-directory: ledger-models-javascript
+        run: npm ci --ignore-scripts
+
+      - name: Materialize hierarchy.json mirror (jest resolveJsonModule target)
+        run: ./sync-hierarchy-mirrors.sh
+
+      - name: npm test
+        working-directory: ledger-models-javascript
+        run: npm test --silent
+
+  ban-broad-except:
+    name: ban-broad-except (cross-language silent-pass scan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run scan
+        run: bash .github/scripts/ban-broad-except.sh
+
+  downgrade-detector:
+    name: downgrade-detector (fix-upstream-first)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run downgrade-detector against base branch
+        run: python3 .github/scripts/check-downgrades.py --base "origin/${{ github.base_ref }}"

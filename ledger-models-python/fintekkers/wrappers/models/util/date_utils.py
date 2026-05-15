@@ -22,10 +22,10 @@ def get_date(input_date:str) -> datetime:
 
     try:
         return datetime.strptime(input_date, '%Y-%m-%d')
-    except:
+    except ValueError:
         try:
             return datetime.strptime(input_date, '%m/%d/%y')
-        except:
+        except ValueError:
             return datetime.strptime(input_date, '%m/%d/%Y')
 
 def get_date_as_dict(input_date:str) -> dict:

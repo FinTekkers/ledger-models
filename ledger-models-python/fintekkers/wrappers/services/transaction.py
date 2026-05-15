@@ -67,7 +67,7 @@ class TransactionService:
         finally:
             try:
                 responses.cancel()
-            except Exception:
+            except RpcError:
                 pass
 
     def create_or_update(self, request: CreateTransactionRequest):
