@@ -1,5 +1,7 @@
 from typing import Generator
 from uuid import UUID
+
+from grpc import RpcError
 from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry
@@ -42,7 +44,7 @@ class SecurityService:
                     yield Security(security_proto)
         except StopIteration:
             pass
-        except Exception as e:
+        except RpcError as e:
             print(e)
 
         # This will send the cancel message to the server to kill the connection

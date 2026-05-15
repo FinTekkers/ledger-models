@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# ledger-models pre-push: detect which sub-projects changed since the
+# remote tracking ref and run only those test suites.
+#
+# Setup once per clone: `git config core.hooksPath .githooks`
+# (or run `./scripts/install-hooks.sh` if added to the repo).
+#
+# See second-brain/processes/test-discipline.md.
+
+set -euo pipefail
+
+# Determine range of commits being pushed. `git push` passes refs on
+# stdin — fall back to comparing HEAD against origin/main if not.
+if [ -t 0 ]; then
+  base="$(git merge-base HEAD origin/main 2>/dev/null || echo origin/main)"
+else
+  range="$(cat)"
+  base=$(echo "$range" | awk '{print $4}' | head -1)
+  [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ] && \
+    base="$(git merge-base HEAD origin/main 2>/dev/null || echo origin/main)"
+fi
+
+changed=$(git diff --name-only "$base"...HEAD 2>/dev/null || git diff --name-only HEAD)
+echo "pre-push: changed files since $base:"
+echo "$changed" | sed 's/^/  /' | head -20
+echo
+
+run_python=0; run_rust=0; run_java=0; run_js=0; run_protos=0; run_root=0
+while IFS= read -r f; do
+  case "$f" in
+    ledger-models-python/*)     run_python=1 ;;
+    ledger-models-rust/*)       run_rust=1 ;;
+    ledger-models-java/*)       run_java=1 ;;
+    ledger-models-javascript/*) run_js=1 ;;
+    ledger-models-protos/*)     run_protos=1 ;;
+    .github/*|.githooks/*|scripts/*|*.sh|*.py|README.md|LICENSE.txt) run_root=1 ;;
+    *) ;;
+  esac
+done <<< "$changed"
+
+# Proto changes ripple to every binding; run all suites.
+if [ $run_protos -eq 1 ]; then
+  run_python=1; run_rust=1; run_java=1; run_js=1
+fi
+
+# Root scripts (.github, .githooks, top-level *.sh): just run lint scripts.
+if [ $run_root -eq 1 ] && [ $((run_python + run_rust + run_java + run_js)) -eq 0 ]; then
+  echo "pre-push: only root/script files changed; running lint scripts only."
+  bash .github/scripts/ban-broad-except.sh
+  exit $?
+fi
+
+if [ $run_python -eq 1 ]; then
+  echo "==> ledger-models-python: pytest -m 'not integration'"
+  (
+    cd ledger-models-python
+    # Source the per-project venv if present so pytest/ruff resolve.
+    [ -f venv/bin/activate ] && . venv/bin/activate
+    python -m pytest -m 'not integration' -x -q
+  )
+fi
+if [ $run_rust -eq 1 ]; then
+  echo "==> ledger-models-rust: cargo test --lib"
+  (cd ledger-models-rust && cargo test --lib --quiet)
+fi
+if [ $run_java -eq 1 ]; then
+  echo "==> ledger-models-java: ./gradlew test"
+  (cd ledger-models-java && ./gradlew test --quiet)
+fi
+if [ $run_js -eq 1 ]; then
+  echo "==> ledger-models-javascript: npm test"
+  (cd ledger-models-javascript && npm test --silent)
+fi
+
+echo "==> .github/scripts/ban-broad-except.sh"
+bash .github/scripts/ban-broad-except.sh
+
+if command -v python3 >/dev/null 2>&1 \
+   && python3 -c "import sys; sys.exit(0 if sys.version_info >= (3,11) else 1)" 2>/dev/null; then
+  echo "==> .github/scripts/check-downgrades.py (warn-only)"
+  python3 .github/scripts/check-downgrades.py --base origin/main || \
+    echo "downgrade-detector: above will block CI. Add DOWNGRADE-EXCEPTION: <rationale> + <upstream-issue-url> to PR body, or revert."
+fi
