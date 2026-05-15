@@ -26,7 +26,8 @@ jobs:
         working-directory: ledger-models-python
         run: |
           python -m pip install --upgrade pip
-          pip install ruff pytest grpcio grpcio-tools protobuf python-dateutil
+          pip install -r requirements.txt
+          pip install ruff
 
       - name: ruff check (silent-failure guardrail — BLE001)
         working-directory: ledger-models-python
@@ -48,6 +49,9 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+
+      - name: Materialize hierarchy.json mirror (cargo include_str! target)
+        run: ./sync-hierarchy-mirrors.sh
 
       - name: cargo test --lib
         working-directory: ledger-models-rust
@@ -85,6 +89,9 @@ jobs:
       - name: npm ci
         working-directory: ledger-models-javascript
         run: npm ci --ignore-scripts
+
+      - name: Materialize hierarchy.json mirror (jest resolveJsonModule target)
+        run: ./sync-hierarchy-mirrors.sh
 
       - name: npm test
         working-directory: ledger-models-javascript
