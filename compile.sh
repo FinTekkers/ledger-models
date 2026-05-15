@@ -190,6 +190,22 @@ done
 find "$JS_OUT" -name "*_grpc_pb.js" -exec sed -i.bak "s/require('grpc')/require('@grpc\/grpc-js')/g" {} +
 find "$JS_OUT" -name "*_grpc_pb.js.bak" -delete
 
+# Patch decode paths for packed-enum fields to be google-protobuf v4-compatible.
+# The bundled protoc 3.19.1 emits `reader.readPackedEnum()` which was removed
+# in google-protobuf v4 in favour of `readPackableEnumInto(arr)`. No upstream
+# protoc-gen-js release emits the v4 form (the protobuf-javascript project
+# froze before v4 shipped), so we substitute the call at codegen time. The
+# wider migration to @bufbuild/protobuf is tracked separately for v0.5.0.
+#
+# The exact emitted pattern is:
+#   reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]
+# replaced with:
+#   reader.isDelimited() ? (function(){var arr=[];reader.readPackableEnumInto(arr);return arr;})() : [reader.readEnum()]
+find "$JS_OUT" -name "*_pb.js" -exec sed -i.bak \
+    -e 's|reader\.readPackedEnum()|(function(){var arr=[];reader.readPackableEnumInto(arr);return arr;})()|g' \
+    {} +
+find "$JS_OUT" -name "*_pb.js.bak" -delete
+
 # Generate TypeScript definitions
 if ! $PROTOC \
     --plugin=protoc-gen-ts="$TS_PLUGIN" \
