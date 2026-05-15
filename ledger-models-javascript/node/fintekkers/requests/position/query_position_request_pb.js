@@ -160,13 +160,13 @@ proto.fintekkers.requests.position.QueryPositionRequestProto.deserializeBinaryFr
       msg.setPositionView(value);
       break;
     case 30:
-      var values = /** @type {!Array<!proto.fintekkers.models.position.FieldProto>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
+      var values = /** @type {!Array<!proto.fintekkers.models.position.FieldProto>} */ (reader.isDelimited() ? (function(){var arr=[];reader.readPackableEnumInto(arr);return arr;})() : [reader.readEnum()]);
       for (var i = 0; i < values.length; i++) {
         msg.addFields(values[i]);
       }
       break;
     case 31:
-      var values = /** @type {!Array<!proto.fintekkers.models.position.MeasureProto>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
+      var values = /** @type {!Array<!proto.fintekkers.models.position.MeasureProto>} */ (reader.isDelimited() ? (function(){var arr=[];reader.readPackableEnumInto(arr);return arr;})() : [reader.readEnum()]);
       for (var i = 0; i < values.length; i++) {
         msg.addMeasures(values[i]);
       }

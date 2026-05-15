@@ -132,7 +132,7 @@ proto.fintekkers.requests.security.GetFieldsResponseProto.deserializeBinaryFromR
       msg.setVersion(value);
       break;
     case 10:
-      var values = /** @type {!Array<!proto.fintekkers.models.position.FieldProto>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
+      var values = /** @type {!Array<!proto.fintekkers.models.position.FieldProto>} */ (reader.isDelimited() ? (function(){var arr=[];reader.readPackableEnumInto(arr);return arr;})() : [reader.readEnum()]);
       for (var i = 0; i < values.length; i++) {
         msg.addFields(values[i]);
       }

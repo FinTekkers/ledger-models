@@ -477,7 +477,7 @@ proto.fintekkers.requests.valuation.CurveRequestProto.deserializeBinaryFromReade
       msg.setAsofDatetime(value);
       break;
     case 20:
-      var values = /** @type {!Array<!proto.fintekkers.models.position.MeasureProto>} */ (reader.isDelimited() ? reader.readPackedEnum() : [reader.readEnum()]);
+      var values = /** @type {!Array<!proto.fintekkers.models.position.MeasureProto>} */ (reader.isDelimited() ? (function(){var arr=[];reader.readPackableEnumInto(arr);return arr;})() : [reader.readEnum()]);
       for (var i = 0; i < values.length; i++) {
         msg.addCurveTypes(values[i]);
       }
