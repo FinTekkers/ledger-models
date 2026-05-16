@@ -247,48 +247,6 @@ public interface SecurityProtoOrBuilder extends
 
   /**
    * <pre>
-   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out
-   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-   * the record.
-   * See: https://github.com/FinTekkers/second-brain/issues/188
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-   * @return Whether the deletedAt field is set.
-   */
-  boolean hasDeletedAt();
-  /**
-   * <pre>
-   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out
-   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-   * the record.
-   * See: https://github.com/FinTekkers/second-brain/issues/188
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-   * @return The deletedAt.
-   */
-  fintekkers.models.util.LocalTimestamp.LocalTimestampProto getDeletedAt();
-  /**
-   * <pre>
-   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out
-   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-   * the record.
-   * See: https://github.com/FinTekkers/second-brain/issues/188
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-   */
-  fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getDeletedAtOrBuilder();
-
-  /**
-   * <pre>
    *Biz fields
    * </pre>
    *

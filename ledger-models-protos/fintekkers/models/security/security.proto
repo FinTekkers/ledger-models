@@ -61,13 +61,15 @@ message SecurityProto {
   // Legacy persisted bytes parse correctly under the new type.
   repeated SecurityProto legs = 17;
 
-  // Soft-delete marker. null/unset = active record; non-null = soft-deleted
-  // at this timestamp. SecurityService.Search and GetByIds filter out
-  // soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-  // is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-  // the record.
-  // See: https://github.com/FinTekkers/second-brain/issues/188
-  fintekkers.models.util.LocalTimestampProto deleted_at = 15;
+  // Tag 15 previously carried `deleted_at`, a separate soft-delete marker
+  // (second-brain#188). It drifted from the `valid_to` SQL column, causing
+  // P0 incident second-brain#314. The dual encoding has been collapsed:
+  // soft-delete is now encoded on `valid_to` (tag 9) with a time-based
+  // check (`Security.isDeleted(asOf)`). See
+  // /specs/soft-delete-validto-collapse.md (Phase A, second-brain#316).
+  // proto3 ignores unknown fields, so persisted blobs that still carry a
+  // `deleted_at` value parse without error; the field is dropped silently.
+  reserved 15;
 
   //Biz fields
   string asset_class = 11;

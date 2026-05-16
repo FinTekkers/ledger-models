@@ -138,6 +138,19 @@ declare class Security {
      */
     protected getBondLikeDetails(): any | undefined;
     getIssuerName(): string;
+    /**
+     * Time-based soft-delete check. A Security is considered deleted iff it
+     * carries a `valid_to` that has already elapsed at `asOf`. A future-dated
+     * `valid_to` means the row is still live today and becomes deleted
+     * automatically when `asOf` catches up. An unset `valid_to` is always
+     * active.
+     *
+     * Canonical soft-delete check across the platform — the predecessor
+     * `SecurityProto.deleted_at` field has been removed (tag 15 reserved).
+     * See /specs/soft-delete-validto-collapse.md
+     * (FinTekkers/second-brain#316).
+     */
+    isDeleted(asOf?: Date): boolean;
     equals(other: Security): boolean;
 }
 export default Security;

@@ -318,6 +318,30 @@ class Security {
         this.assertNotLink('issuerName');
         return this.proto.getIssuerName();
     }
+    /**
+     * Time-based soft-delete check. A Security is considered deleted iff it
+     * carries a `valid_to` that has already elapsed at `asOf`. A future-dated
+     * `valid_to` means the row is still live today and becomes deleted
+     * automatically when `asOf` catches up. An unset `valid_to` is always
+     * active.
+     *
+     * Canonical soft-delete check across the platform — the predecessor
+     * `SecurityProto.deleted_at` field has been removed (tag 15 reserved).
+     * See /specs/soft-delete-validto-collapse.md
+     * (FinTekkers/second-brain#316).
+     */
+    isDeleted(asOf = new Date()) {
+        if (!this.proto.hasValidTo())
+            return false;
+        const validToProto = this.proto.getValidTo();
+        if (!validToProto)
+            return false;
+        const ts = validToProto.getTimestamp();
+        if (!ts)
+            return false;
+        const validToMs = ts.getSeconds() * 1000 + Math.floor(ts.getNanos() / 1e6);
+        return validToMs < asOf.getTime();
+    }
     equals(other) {
         if (other instanceof Security) {
             return this.getID().equals(other.getID());
