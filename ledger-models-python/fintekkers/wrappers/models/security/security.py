@@ -9,7 +9,7 @@ from fintekkers.models.position.field_pb2 import *
 from fintekkers.models.position.measure_pb2 import MeasureProto
 
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.wrappers.models.security.security_identifier import Identifier
@@ -217,6 +217,25 @@ class Security():
 
     def get_description(self) -> str:
         return self.proto.description
+
+    def is_deleted(self, as_of: Optional[datetime] = None) -> bool:
+        """Time-based soft-delete check. A Security is considered deleted iff
+        it carries a ``valid_to`` that has already elapsed at ``as_of``. A
+        future-dated ``valid_to`` means the row is still live today and
+        becomes deleted automatically when ``as_of`` catches up. An unset
+        ``valid_to`` is always active.
+
+        Canonical soft-delete check across the platform — the predecessor
+        ``SecurityProto.deleted_at`` field has been removed (tag 15
+        reserved). See /specs/soft-delete-validto-collapse.md
+        (FinTekkers/second-brain#316).
+        """
+        if not self.proto.HasField("valid_to"):
+            return False
+        if as_of is None:
+            as_of = datetime.now(timezone.utc)
+        valid_to: datetime = ProtoSerializationUtil.deserialize(self.proto.valid_to)
+        return valid_to < as_of
 
     def __str__(self):
         return f'ID[{self._primary_identifier_str()}], {type(self).__name__}[{self.proto.issuer_name}]'

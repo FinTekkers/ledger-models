@@ -87,16 +87,9 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
             builder.addAllIdentifiers(security.getSecurityProto().getIdentifiersList());
         }
 
-        // Preserve soft-delete marker (deleted_at).
-        // null/unset = active record, non-null = soft-deleted at this timestamp.
-        if (security.getSecurityProto() != null && security.getSecurityProto().hasDeletedAt()) {
-            builder.setDeletedAt(security.getSecurityProto().getDeletedAt());
-        }
-
         // Preserve four fields from the stashed source proto that have no
         // domain-level getter/setter on the Security object, so without this
-        // copy they drop on round-trip. Same shape as the deleted_at
-        // preservation just above.
+        // copy they drop on round-trip.
         if (security.getSecurityProto() != null) {
             SecurityProto stash = security.getSecurityProto();
 

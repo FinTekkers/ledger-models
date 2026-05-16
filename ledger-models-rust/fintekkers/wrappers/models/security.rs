@@ -3,6 +3,7 @@ use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
+use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 //Imports below are for RawDataModelObject related macro. IDE might not complain if you remove
@@ -75,6 +76,32 @@ impl SecurityWrapper {
             .identifiers
             .iter()
             .find(|i| i.identifier_type == ty as i32)
+    }
+
+    /// Time-based soft-delete check. A Security is considered deleted iff
+    /// it carries a non-`None` `valid_to` that has already elapsed at
+    /// `as_of`. A future-dated `valid_to` means the row is still live
+    /// today and becomes deleted automatically when `as_of` catches up.
+    /// A `None` `valid_to` is always active.
+    ///
+    /// Canonical soft-delete check across the platform — the predecessor
+    /// `SecurityProto.deleted_at` field has been removed (tag 15
+    /// reserved). See `/specs/soft-delete-validto-collapse.md`
+    /// (FinTekkers/second-brain#316).
+    pub fn is_deleted(&self, as_of: DateTime<Utc>) -> bool {
+        match self.proto.valid_to.as_ref() {
+            None => false,
+            Some(ts) => {
+                let wrapper = LocalTimestampWrapper::new(ts.clone());
+                let valid_to: DateTime<Utc> = (&wrapper).into();
+                valid_to < as_of
+            }
+        }
+    }
+
+    /// Convenience: `is_deleted(Utc::now())`.
+    pub fn is_deleted_now(&self) -> bool {
+        self.is_deleted(Utc::now())
     }
 }
 
@@ -256,7 +283,6 @@ impl SecurityProtoBuilder {
             frn_extension: None,
             mbs_extension: None,
             non_bond_details: None,
-            deleted_at: None,
         })
     }
 }
@@ -554,5 +580,105 @@ mod test {
         assert!(valid_to.is_some());
         let to_seconds = valid_to.unwrap().proto.timestamp.as_ref().unwrap().seconds;
         assert_eq!(to_seconds, 2_000_000);
+    }
+
+    // ---- Phase A (second-brain#316): canonical soft-delete check ----
+    // SecurityProto.deleted_at is removed (tag 15 reserved); the time-based
+    // is_deleted(as_of) check on valid_to is the single source of truth.
+
+    fn ts_at(seconds: i64) -> LocalTimestampWrapper {
+        use crate::fintekkers::models::util::LocalTimestampProto;
+        use prost_types::Timestamp;
+        LocalTimestampWrapper::new(LocalTimestampProto {
+            timestamp: Some(Timestamp { seconds, nanos: 0 }),
+            time_zone: "UTC".to_string(),
+        })
+    }
+
+    #[test]
+    fn is_deleted_null_valid_to_returns_false() {
+        let proto = SecurityProtoBuilder::new().build().unwrap();
+        let wrapper = SecurityWrapper::new(proto);
+        assert!(!wrapper.is_deleted(Utc::now()));
+        assert!(!wrapper.is_deleted_now());
+    }
+
+    #[test]
+    fn is_deleted_past_valid_to_returns_true() {
+        let proto = SecurityProtoBuilder::new()
+            .valid_to(ts_at(1_000_000_000)) // 2001-09-09
+            .build()
+            .unwrap();
+        let wrapper = SecurityWrapper::new(proto);
+        assert!(wrapper.is_deleted_now());
+    }
+
+    #[test]
+    fn is_deleted_future_valid_to_returns_false() {
+        let future_seconds = Utc::now().timestamp() + 86_400; // tomorrow
+        let proto = SecurityProtoBuilder::new()
+            .valid_to(ts_at(future_seconds))
+            .build()
+            .unwrap();
+        let wrapper = SecurityWrapper::new(proto);
+        assert!(!wrapper.is_deleted_now());
+
+        // Becomes deleted once as_of catches up.
+        let later = Utc::now() + chrono::Duration::seconds(86_401);
+        assert!(wrapper.is_deleted(later));
+    }
+
+    #[test]
+    fn is_deleted_as_of_switches_answer() {
+        use chrono::TimeZone;
+        // valid_to = 2026-01-01 UTC
+        let cutoff_seconds = Utc.with_ymd_and_hms(2026, 1, 1, 0, 0, 0).unwrap().timestamp();
+        let proto = SecurityProtoBuilder::new()
+            .valid_to(ts_at(cutoff_seconds))
+            .build()
+            .unwrap();
+        let wrapper = SecurityWrapper::new(proto);
+
+        let earlier = Utc.with_ymd_and_hms(2025, 6, 1, 0, 0, 0).unwrap();
+        let later = Utc.with_ymd_and_hms(2026, 6, 1, 0, 0, 0).unwrap();
+        assert!(!wrapper.is_deleted(earlier));
+        assert!(wrapper.is_deleted(later));
+    }
+
+    #[test]
+    fn legacy_deleted_at_bytes_are_silently_dropped_on_parse() {
+        // Hand-craft a SecurityProto with a tag-15 LocalTimestampProto field
+        // (the now-removed `deleted_at`). proto3 must ignore unknown fields;
+        // the reserved tag drops the value without error. See spec §4.2.
+        let base = SecurityProtoBuilder::new().build().unwrap();
+        let mut bytes = base.encode_to_vec();
+
+        // Inner google.protobuf.Timestamp { seconds: 1700000000 }:
+        //   key = (1<<3)|0 = 0x08
+        let mut inner_ts: Vec<u8> = vec![0x08];
+        let mut value: u64 = 1_700_000_000;
+        while value >= 0x80 {
+            inner_ts.push(((value & 0x7F) | 0x80) as u8);
+            value >>= 7;
+        }
+        inner_ts.push(value as u8);
+
+        // LocalTimestampProto { timestamp: <Timestamp> } (field 1, len-delim).
+        let mut outer: Vec<u8> = vec![0x0A, inner_ts.len() as u8];
+        outer.extend_from_slice(&inner_ts);
+
+        // SecurityProto.deleted_at (field 15, len-delim):
+        //   key = (15<<3)|2 = 0x7A
+        bytes.push(0x7A);
+        bytes.push(outer.len() as u8);
+        bytes.extend_from_slice(&outer);
+
+        // Reparse — must succeed; the legacy field is silently dropped.
+        let reparsed = SecurityProto::decode(bytes.as_slice())
+            .expect("proto3 must accept and drop the reserved tag 15");
+
+        // valid_to should remain unpopulated (deleted_at must NOT be
+        // silently mapped onto another field).
+        assert!(reparsed.valid_to.is_none());
     }
 }

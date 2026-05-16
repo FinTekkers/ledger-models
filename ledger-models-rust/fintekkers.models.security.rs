@@ -404,14 +404,6 @@ pub struct SecurityProto {
     /// Legacy persisted bytes parse correctly under the new type.
     #[prost(message, repeated, tag = "17")]
     pub legs: ::prost::alloc::vec::Vec<SecurityProto>,
-    /// Soft-delete marker. null/unset = active record; non-null = soft-deleted
-    /// at this timestamp. SecurityService.Search and GetByIds filter out
-    /// soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-    /// is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-    /// the record.
-    /// See: <https://github.com/FinTekkers/second-brain/issues/188>
-    #[prost(message, optional, tag = "15")]
-    pub deleted_at: ::core::option::Option<super::util::LocalTimestampProto>,
     /// Biz fields
     #[prost(string, tag = "11")]
     pub asset_class: ::prost::alloc::string::String,

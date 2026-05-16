@@ -208,8 +208,8 @@ class SecuritySerializerTest {
     // ------------------------------------------------------------------------
     // Round-trip preservation for fields that have no domain accessor on
     // Security (or whose domain-subclass overrides hardcode legacy values).
-    // Same shape as the existing deleted_at / issuance_info / identifiers /
-    // index_type preservation in SecuritySerializer.serialize().
+    // Same shape as the existing issuance_info / identifiers / index_type
+    // preservation in SecuritySerializer.serialize().
     //
     // Each test: build a clean proto via the existing dummy, set the field
     // under test on toBuilder(), run through serialize(deserialize(proto)),

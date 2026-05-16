@@ -146,6 +146,26 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         return false;
     }
 
+    /**
+     * Time-based soft-delete check. A Security is considered deleted iff it
+     * carries a non-null {@code validTo} that has already elapsed at
+     * {@code asOf}. A future-dated {@code validTo} means the row is still
+     * live today and becomes deleted automatically when {@code asOf} catches
+     * up. A null {@code validTo} is always active.
+     *
+     * <p>This is the single canonical soft-delete check across the platform —
+     * the predecessor {@code SecurityProto.deleted_at} field has been removed
+     * (tag 15 reserved). See /specs/soft-delete-validto-collapse.md
+     * (FinTekkers/second-brain#316).</p>
+     */
+    public boolean isDeleted() {
+        return isDeleted(ZonedDateTime.now());
+    }
+
+    public boolean isDeleted(ZonedDateTime asOf) {
+        return getValidTo() != null && getValidTo().isBefore(asOf);
+    }
+
     public String getIssuer() {
         throwIfLink("issuer");
         return this.issuer;

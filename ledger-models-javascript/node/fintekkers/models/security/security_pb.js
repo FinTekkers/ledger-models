@@ -324,7 +324,6 @@ proto.fintekkers.models.security.SecurityProto.toObject = function(includeInstan
     instrumentType: jspb.Message.getFieldWithDefault(msg, 16, 0),
     legsList: jspb.Message.toObjectList(msg.getLegsList(),
     proto.fintekkers.models.security.SecurityProto.toObject, includeInstance),
-    deletedAt: (f = msg.getDeletedAt()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     assetClass: jspb.Message.getFieldWithDefault(msg, 11, ""),
     issuerName: jspb.Message.getFieldWithDefault(msg, 12, ""),
     settlementCurrency: (f = msg.getSettlementCurrency()) && proto.fintekkers.models.security.SecurityProto.toObject(includeInstance, f),
@@ -420,11 +419,6 @@ proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader = fun
       var value = new proto.fintekkers.models.security.SecurityProto;
       reader.readMessage(value,proto.fintekkers.models.security.SecurityProto.deserializeBinaryFromReader);
       msg.addLegs(value);
-      break;
-    case 15:
-      var value = new fintekkers_models_util_local_timestamp_pb.LocalTimestampProto;
-      reader.readMessage(value,fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.deserializeBinaryFromReader);
-      msg.setDeletedAt(value);
       break;
     case 11:
       var value = /** @type {string} */ (reader.readString());
@@ -594,14 +588,6 @@ proto.fintekkers.models.security.SecurityProto.serializeBinaryToWriter = functio
       17,
       f,
       proto.fintekkers.models.security.SecurityProto.serializeBinaryToWriter
-    );
-  }
-  f = message.getDeletedAt();
-  if (f != null) {
-    writer.writeMessage(
-      15,
-      f,
-      fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.serializeBinaryToWriter
     );
   }
   f = message.getAssetClass();
@@ -988,43 +974,6 @@ proto.fintekkers.models.security.SecurityProto.prototype.addLegs = function(opt_
  */
 proto.fintekkers.models.security.SecurityProto.prototype.clearLegsList = function() {
   return this.setLegsList([]);
-};
-
-
-/**
- * optional fintekkers.models.util.LocalTimestampProto deleted_at = 15;
- * @return {?proto.fintekkers.models.util.LocalTimestampProto}
- */
-proto.fintekkers.models.security.SecurityProto.prototype.getDeletedAt = function() {
-  return /** @type{?proto.fintekkers.models.util.LocalTimestampProto} */ (
-    jspb.Message.getWrapperField(this, fintekkers_models_util_local_timestamp_pb.LocalTimestampProto, 15));
-};
-
-
-/**
- * @param {?proto.fintekkers.models.util.LocalTimestampProto|undefined} value
- * @return {!proto.fintekkers.models.security.SecurityProto} returns this
-*/
-proto.fintekkers.models.security.SecurityProto.prototype.setDeletedAt = function(value) {
-  return jspb.Message.setWrapperField(this, 15, value);
-};
-
-
-/**
- * Clears the message field making it undefined.
- * @return {!proto.fintekkers.models.security.SecurityProto} returns this
- */
-proto.fintekkers.models.security.SecurityProto.prototype.clearDeletedAt = function() {
-  return this.setDeletedAt(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.fintekkers.models.security.SecurityProto.prototype.hasDeletedAt = function() {
-  return jspb.Message.getField(this, 15) != null;
 };
 
 

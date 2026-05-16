@@ -54,11 +54,6 @@ export class SecurityProto extends jspb.Message {
     getLegsList(): Array<SecurityProto>;
     setLegsList(value: Array<SecurityProto>): SecurityProto;
     addLegs(value?: SecurityProto, index?: number): SecurityProto;
-
-    hasDeletedAt(): boolean;
-    clearDeletedAt(): void;
-    getDeletedAt(): fintekkers_models_util_local_timestamp_pb.LocalTimestampProto | undefined;
-    setDeletedAt(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): SecurityProto;
     getAssetClass(): string;
     setAssetClass(value: string): SecurityProto;
     getIssuerName(): string;
@@ -141,7 +136,6 @@ export namespace SecurityProto {
         productType: fintekkers_models_security_product_type_pb.ProductTypeProto,
         instrumentType: fintekkers_models_security_instrument_type_pb.InstrumentTypeProto,
         legsList: Array<SecurityProto.AsObject>,
-        deletedAt?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         assetClass: string,
         issuerName: string,
         settlementCurrency?: SecurityProto.AsObject,

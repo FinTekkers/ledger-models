@@ -470,59 +470,6 @@ private static final long serialVersionUID = 0L;
     return legs_.get(index);
   }
 
-  public static final int DELETED_AT_FIELD_NUMBER = 15;
-  private fintekkers.models.util.LocalTimestamp.LocalTimestampProto deletedAt_;
-  /**
-   * <pre>
-   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out
-   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-   * the record.
-   * See: https://github.com/FinTekkers/second-brain/issues/188
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-   * @return Whether the deletedAt field is set.
-   */
-  @java.lang.Override
-  public boolean hasDeletedAt() {
-    return deletedAt_ != null;
-  }
-  /**
-   * <pre>
-   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out
-   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-   * the record.
-   * See: https://github.com/FinTekkers/second-brain/issues/188
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-   * @return The deletedAt.
-   */
-  @java.lang.Override
-  public fintekkers.models.util.LocalTimestamp.LocalTimestampProto getDeletedAt() {
-    return deletedAt_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : deletedAt_;
-  }
-  /**
-   * <pre>
-   * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-   * at this timestamp. SecurityService.Search and GetByIds filter out
-   * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-   * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-   * the record.
-   * See: https://github.com/FinTekkers/second-brain/issues/188
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-   */
-  @java.lang.Override
-  public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getDeletedAtOrBuilder() {
-    return deletedAt_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : deletedAt_;
-  }
-
   public static final int ASSET_CLASS_FIELD_NUMBER = 11;
   @SuppressWarnings("serial")
   private volatile java.lang.Object assetClass_ = "";
@@ -1118,9 +1065,6 @@ private static final long serialVersionUID = 0L;
     if (quantityType_ != fintekkers.models.security.SecurityQuantityTypeProto.UNKNOWN_QUANTITY_TYPE.getNumber()) {
       output.writeEnum(14, quantityType_);
     }
-    if (deletedAt_ != null) {
-      output.writeMessage(15, getDeletedAt());
-    }
     if (instrumentType_ != fintekkers.models.security.InstrumentTypeProto.INSTRUMENT_TYPE_UNKNOWN.getNumber()) {
       output.writeEnum(16, instrumentType_);
     }
@@ -1209,10 +1153,6 @@ private static final long serialVersionUID = 0L;
     if (quantityType_ != fintekkers.models.security.SecurityQuantityTypeProto.UNKNOWN_QUANTITY_TYPE.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(14, quantityType_);
-    }
-    if (deletedAt_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(15, getDeletedAt());
     }
     if (instrumentType_ != fintekkers.models.security.InstrumentTypeProto.INSTRUMENT_TYPE_UNKNOWN.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
@@ -1306,11 +1246,6 @@ private static final long serialVersionUID = 0L;
     if (instrumentType_ != other.instrumentType_) return false;
     if (!getLegsList()
         .equals(other.getLegsList())) return false;
-    if (hasDeletedAt() != other.hasDeletedAt()) return false;
-    if (hasDeletedAt()) {
-      if (!getDeletedAt()
-          .equals(other.getDeletedAt())) return false;
-    }
     if (!getAssetClass()
         .equals(other.getAssetClass())) return false;
     if (!getIssuerName()
@@ -1407,10 +1342,6 @@ private static final long serialVersionUID = 0L;
     if (getLegsCount() > 0) {
       hash = (37 * hash) + LEGS_FIELD_NUMBER;
       hash = (53 * hash) + getLegsList().hashCode();
-    }
-    if (hasDeletedAt()) {
-      hash = (37 * hash) + DELETED_AT_FIELD_NUMBER;
-      hash = (53 * hash) + getDeletedAt().hashCode();
     }
     hash = (37 * hash) + ASSET_CLASS_FIELD_NUMBER;
     hash = (53 * hash) + getAssetClass().hashCode();
@@ -1625,11 +1556,6 @@ private static final long serialVersionUID = 0L;
         legsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000200);
-      deletedAt_ = null;
-      if (deletedAtBuilder_ != null) {
-        deletedAtBuilder_.dispose();
-        deletedAtBuilder_ = null;
-      }
       assetClass_ = "";
       issuerName_ = "";
       settlementCurrency_ = null;
@@ -1645,7 +1571,7 @@ private static final long serialVersionUID = 0L;
         identifiers_ = null;
         identifiersBuilder_.clear();
       }
-      bitField0_ = (bitField0_ & ~0x00010000);
+      bitField0_ = (bitField0_ & ~0x00008000);
       bondDetails_ = null;
       if (bondDetailsBuilder_ != null) {
         bondDetailsBuilder_.dispose();
@@ -1724,9 +1650,9 @@ private static final long serialVersionUID = 0L;
         result.legs_ = legsBuilder_.build();
       }
       if (identifiersBuilder_ == null) {
-        if (((bitField0_ & 0x00010000) != 0)) {
+        if (((bitField0_ & 0x00008000) != 0)) {
           identifiers_ = java.util.Collections.unmodifiableList(identifiers_);
-          bitField0_ = (bitField0_ & ~0x00010000);
+          bitField0_ = (bitField0_ & ~0x00008000);
         }
         result.identifiers_ = identifiers_;
       } else {
@@ -1772,43 +1698,38 @@ private static final long serialVersionUID = 0L;
         result.instrumentType_ = instrumentType_;
       }
       if (((from_bitField0_ & 0x00000400) != 0)) {
-        result.deletedAt_ = deletedAtBuilder_ == null
-            ? deletedAt_
-            : deletedAtBuilder_.build();
-      }
-      if (((from_bitField0_ & 0x00000800) != 0)) {
         result.assetClass_ = assetClass_;
       }
-      if (((from_bitField0_ & 0x00001000) != 0)) {
+      if (((from_bitField0_ & 0x00000800) != 0)) {
         result.issuerName_ = issuerName_;
       }
-      if (((from_bitField0_ & 0x00002000) != 0)) {
+      if (((from_bitField0_ & 0x00001000) != 0)) {
         result.settlementCurrency_ = settlementCurrencyBuilder_ == null
             ? settlementCurrency_
             : settlementCurrencyBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00004000) != 0)) {
+      if (((from_bitField0_ & 0x00002000) != 0)) {
         result.quantityType_ = quantityType_;
       }
-      if (((from_bitField0_ & 0x00008000) != 0)) {
+      if (((from_bitField0_ & 0x00004000) != 0)) {
         result.description_ = description_;
       }
-      if (((from_bitField0_ & 0x00020000) != 0)) {
+      if (((from_bitField0_ & 0x00010000) != 0)) {
         result.bondDetails_ = bondDetailsBuilder_ == null
             ? bondDetails_
             : bondDetailsBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00040000) != 0)) {
+      if (((from_bitField0_ & 0x00020000) != 0)) {
         result.tipsExtension_ = tipsExtensionBuilder_ == null
             ? tipsExtension_
             : tipsExtensionBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00080000) != 0)) {
+      if (((from_bitField0_ & 0x00040000) != 0)) {
         result.frnExtension_ = frnExtensionBuilder_ == null
             ? frnExtension_
             : frnExtensionBuilder_.build();
       }
-      if (((from_bitField0_ & 0x01000000) != 0)) {
+      if (((from_bitField0_ & 0x00800000) != 0)) {
         result.mbsExtension_ = mbsExtensionBuilder_ == null
             ? mbsExtension_
             : mbsExtensionBuilder_.build();
@@ -1937,17 +1858,14 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
-      if (other.hasDeletedAt()) {
-        mergeDeletedAt(other.getDeletedAt());
-      }
       if (!other.getAssetClass().isEmpty()) {
         assetClass_ = other.assetClass_;
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00000400;
         onChanged();
       }
       if (!other.getIssuerName().isEmpty()) {
         issuerName_ = other.issuerName_;
-        bitField0_ |= 0x00001000;
+        bitField0_ |= 0x00000800;
         onChanged();
       }
       if (other.hasSettlementCurrency()) {
@@ -1958,14 +1876,14 @@ private static final long serialVersionUID = 0L;
       }
       if (!other.getDescription().isEmpty()) {
         description_ = other.description_;
-        bitField0_ |= 0x00008000;
+        bitField0_ |= 0x00004000;
         onChanged();
       }
       if (identifiersBuilder_ == null) {
         if (!other.identifiers_.isEmpty()) {
           if (identifiers_.isEmpty()) {
             identifiers_ = other.identifiers_;
-            bitField0_ = (bitField0_ & ~0x00010000);
+            bitField0_ = (bitField0_ & ~0x00008000);
           } else {
             ensureIdentifiersIsMutable();
             identifiers_.addAll(other.identifiers_);
@@ -1978,7 +1896,7 @@ private static final long serialVersionUID = 0L;
             identifiersBuilder_.dispose();
             identifiersBuilder_ = null;
             identifiers_ = other.identifiers_;
-            bitField0_ = (bitField0_ & ~0x00010000);
+            bitField0_ = (bitField0_ & ~0x00008000);
             identifiersBuilder_ = 
               com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                  getIdentifiersFieldBuilder() : null;
@@ -2096,33 +2014,26 @@ private static final long serialVersionUID = 0L;
             } // case 80
             case 90: {
               assetClass_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00000800;
+              bitField0_ |= 0x00000400;
               break;
             } // case 90
             case 98: {
               issuerName_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00001000;
+              bitField0_ |= 0x00000800;
               break;
             } // case 98
             case 106: {
               input.readMessage(
                   getSettlementCurrencyFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00002000;
+              bitField0_ |= 0x00001000;
               break;
             } // case 106
             case 112: {
               quantityType_ = input.readEnum();
-              bitField0_ |= 0x00004000;
+              bitField0_ |= 0x00002000;
               break;
             } // case 112
-            case 122: {
-              input.readMessage(
-                  getDeletedAtFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000400;
-              break;
-            } // case 122
             case 128: {
               instrumentType_ = input.readEnum();
               bitField0_ |= 0x00000100;
@@ -2143,7 +2054,7 @@ private static final long serialVersionUID = 0L;
             } // case 138
             case 330: {
               description_ = input.readStringRequireUtf8();
-              bitField0_ |= 0x00008000;
+              bitField0_ |= 0x00004000;
               break;
             } // case 330
             case 338: {
@@ -2163,21 +2074,21 @@ private static final long serialVersionUID = 0L;
               input.readMessage(
                   getBondDetailsFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00020000;
+              bitField0_ |= 0x00010000;
               break;
             } // case 1602
             case 1610: {
               input.readMessage(
                   getTipsExtensionFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00040000;
+              bitField0_ |= 0x00020000;
               break;
             } // case 1610
             case 1618: {
               input.readMessage(
                   getFrnExtensionFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00080000;
+              bitField0_ |= 0x00040000;
               break;
             } // case 1618
             case 1626: {
@@ -2212,7 +2123,7 @@ private static final long serialVersionUID = 0L;
               input.readMessage(
                   getMbsExtensionFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x01000000;
+              bitField0_ |= 0x00800000;
               break;
             } // case 1658
             default: {
@@ -3587,206 +3498,6 @@ private static final long serialVersionUID = 0L;
       return legsBuilder_;
     }
 
-    private fintekkers.models.util.LocalTimestamp.LocalTimestampProto deletedAt_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.util.LocalTimestamp.LocalTimestampProto, fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder, fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder> deletedAtBuilder_;
-    /**
-     * <pre>
-     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out
-     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-     * the record.
-     * See: https://github.com/FinTekkers/second-brain/issues/188
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-     * @return Whether the deletedAt field is set.
-     */
-    public boolean hasDeletedAt() {
-      return ((bitField0_ & 0x00000400) != 0);
-    }
-    /**
-     * <pre>
-     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out
-     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-     * the record.
-     * See: https://github.com/FinTekkers/second-brain/issues/188
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-     * @return The deletedAt.
-     */
-    public fintekkers.models.util.LocalTimestamp.LocalTimestampProto getDeletedAt() {
-      if (deletedAtBuilder_ == null) {
-        return deletedAt_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : deletedAt_;
-      } else {
-        return deletedAtBuilder_.getMessage();
-      }
-    }
-    /**
-     * <pre>
-     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out
-     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-     * the record.
-     * See: https://github.com/FinTekkers/second-brain/issues/188
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-     */
-    public Builder setDeletedAt(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
-      if (deletedAtBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        deletedAt_ = value;
-      } else {
-        deletedAtBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000400;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out
-     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-     * the record.
-     * See: https://github.com/FinTekkers/second-brain/issues/188
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-     */
-    public Builder setDeletedAt(
-        fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder builderForValue) {
-      if (deletedAtBuilder_ == null) {
-        deletedAt_ = builderForValue.build();
-      } else {
-        deletedAtBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000400;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out
-     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-     * the record.
-     * See: https://github.com/FinTekkers/second-brain/issues/188
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-     */
-    public Builder mergeDeletedAt(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
-      if (deletedAtBuilder_ == null) {
-        if (((bitField0_ & 0x00000400) != 0) &&
-          deletedAt_ != null &&
-          deletedAt_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
-          getDeletedAtBuilder().mergeFrom(value);
-        } else {
-          deletedAt_ = value;
-        }
-      } else {
-        deletedAtBuilder_.mergeFrom(value);
-      }
-      bitField0_ |= 0x00000400;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out
-     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-     * the record.
-     * See: https://github.com/FinTekkers/second-brain/issues/188
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-     */
-    public Builder clearDeletedAt() {
-      bitField0_ = (bitField0_ & ~0x00000400);
-      deletedAt_ = null;
-      if (deletedAtBuilder_ != null) {
-        deletedAtBuilder_.dispose();
-        deletedAtBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out
-     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-     * the record.
-     * See: https://github.com/FinTekkers/second-brain/issues/188
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-     */
-    public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getDeletedAtBuilder() {
-      bitField0_ |= 0x00000400;
-      onChanged();
-      return getDeletedAtFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out
-     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-     * the record.
-     * See: https://github.com/FinTekkers/second-brain/issues/188
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-     */
-    public fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getDeletedAtOrBuilder() {
-      if (deletedAtBuilder_ != null) {
-        return deletedAtBuilder_.getMessageOrBuilder();
-      } else {
-        return deletedAt_ == null ?
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : deletedAt_;
-      }
-    }
-    /**
-     * <pre>
-     * Soft-delete marker. null/unset = active record; non-null = soft-deleted
-     * at this timestamp. SecurityService.Search and GetByIds filter out
-     * soft-deleted records by default. Setting deleted_at via CreateOrUpdate
-     * is a soft-delete; clearing it on a subsequent CreateOrUpdate resurrects
-     * the record.
-     * See: https://github.com/FinTekkers/second-brain/issues/188
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalTimestampProto deleted_at = 15;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.util.LocalTimestamp.LocalTimestampProto, fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder, fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder> 
-        getDeletedAtFieldBuilder() {
-      if (deletedAtBuilder_ == null) {
-        deletedAtBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            fintekkers.models.util.LocalTimestamp.LocalTimestampProto, fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder, fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder>(
-                getDeletedAt(),
-                getParentForChildren(),
-                isClean());
-        deletedAt_ = null;
-      }
-      return deletedAtBuilder_;
-    }
-
     private java.lang.Object assetClass_ = "";
     /**
      * <pre>
@@ -3842,7 +3553,7 @@ private static final long serialVersionUID = 0L;
         java.lang.String value) {
       if (value == null) { throw new NullPointerException(); }
       assetClass_ = value;
-      bitField0_ |= 0x00000800;
+      bitField0_ |= 0x00000400;
       onChanged();
       return this;
     }
@@ -3856,7 +3567,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder clearAssetClass() {
       assetClass_ = getDefaultInstance().getAssetClass();
-      bitField0_ = (bitField0_ & ~0x00000800);
+      bitField0_ = (bitField0_ & ~0x00000400);
       onChanged();
       return this;
     }
@@ -3874,7 +3585,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) { throw new NullPointerException(); }
       checkByteStringIsUtf8(value);
       assetClass_ = value;
-      bitField0_ |= 0x00000800;
+      bitField0_ |= 0x00000400;
       onChanged();
       return this;
     }
@@ -3922,7 +3633,7 @@ private static final long serialVersionUID = 0L;
         java.lang.String value) {
       if (value == null) { throw new NullPointerException(); }
       issuerName_ = value;
-      bitField0_ |= 0x00001000;
+      bitField0_ |= 0x00000800;
       onChanged();
       return this;
     }
@@ -3932,7 +3643,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder clearIssuerName() {
       issuerName_ = getDefaultInstance().getIssuerName();
-      bitField0_ = (bitField0_ & ~0x00001000);
+      bitField0_ = (bitField0_ & ~0x00000800);
       onChanged();
       return this;
     }
@@ -3946,7 +3657,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) { throw new NullPointerException(); }
       checkByteStringIsUtf8(value);
       issuerName_ = value;
-      bitField0_ |= 0x00001000;
+      bitField0_ |= 0x00000800;
       onChanged();
       return this;
     }
@@ -3959,7 +3670,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the settlementCurrency field is set.
      */
     public boolean hasSettlementCurrency() {
-      return ((bitField0_ & 0x00002000) != 0);
+      return ((bitField0_ & 0x00001000) != 0);
     }
     /**
      * <code>.fintekkers.models.security.SecurityProto settlement_currency = 13;</code>
@@ -3984,7 +3695,7 @@ private static final long serialVersionUID = 0L;
       } else {
         settlementCurrencyBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00002000;
+      bitField0_ |= 0x00001000;
       onChanged();
       return this;
     }
@@ -3998,7 +3709,7 @@ private static final long serialVersionUID = 0L;
       } else {
         settlementCurrencyBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00002000;
+      bitField0_ |= 0x00001000;
       onChanged();
       return this;
     }
@@ -4007,7 +3718,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeSettlementCurrency(fintekkers.models.security.SecurityProto value) {
       if (settlementCurrencyBuilder_ == null) {
-        if (((bitField0_ & 0x00002000) != 0) &&
+        if (((bitField0_ & 0x00001000) != 0) &&
           settlementCurrency_ != null &&
           settlementCurrency_ != fintekkers.models.security.SecurityProto.getDefaultInstance()) {
           getSettlementCurrencyBuilder().mergeFrom(value);
@@ -4017,7 +3728,7 @@ private static final long serialVersionUID = 0L;
       } else {
         settlementCurrencyBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00002000;
+      bitField0_ |= 0x00001000;
       onChanged();
       return this;
     }
@@ -4025,7 +3736,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.SecurityProto settlement_currency = 13;</code>
      */
     public Builder clearSettlementCurrency() {
-      bitField0_ = (bitField0_ & ~0x00002000);
+      bitField0_ = (bitField0_ & ~0x00001000);
       settlementCurrency_ = null;
       if (settlementCurrencyBuilder_ != null) {
         settlementCurrencyBuilder_.dispose();
@@ -4038,7 +3749,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.SecurityProto settlement_currency = 13;</code>
      */
     public fintekkers.models.security.SecurityProto.Builder getSettlementCurrencyBuilder() {
-      bitField0_ |= 0x00002000;
+      bitField0_ |= 0x00001000;
       onChanged();
       return getSettlementCurrencyFieldBuilder().getBuilder();
     }
@@ -4085,7 +3796,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setQuantityTypeValue(int value) {
       quantityType_ = value;
-      bitField0_ |= 0x00004000;
+      bitField0_ |= 0x00002000;
       onChanged();
       return this;
     }
@@ -4107,7 +3818,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      bitField0_ |= 0x00004000;
+      bitField0_ |= 0x00002000;
       quantityType_ = value.getNumber();
       onChanged();
       return this;
@@ -4117,7 +3828,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearQuantityType() {
-      bitField0_ = (bitField0_ & ~0x00004000);
+      bitField0_ = (bitField0_ & ~0x00002000);
       quantityType_ = 0;
       onChanged();
       return this;
@@ -4166,7 +3877,7 @@ private static final long serialVersionUID = 0L;
         java.lang.String value) {
       if (value == null) { throw new NullPointerException(); }
       description_ = value;
-      bitField0_ |= 0x00008000;
+      bitField0_ |= 0x00004000;
       onChanged();
       return this;
     }
@@ -4176,7 +3887,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder clearDescription() {
       description_ = getDefaultInstance().getDescription();
-      bitField0_ = (bitField0_ & ~0x00008000);
+      bitField0_ = (bitField0_ & ~0x00004000);
       onChanged();
       return this;
     }
@@ -4190,7 +3901,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) { throw new NullPointerException(); }
       checkByteStringIsUtf8(value);
       description_ = value;
-      bitField0_ |= 0x00008000;
+      bitField0_ |= 0x00004000;
       onChanged();
       return this;
     }
@@ -4198,9 +3909,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<fintekkers.models.security.IdentifierProto> identifiers_ =
       java.util.Collections.emptyList();
     private void ensureIdentifiersIsMutable() {
-      if (!((bitField0_ & 0x00010000) != 0)) {
+      if (!((bitField0_ & 0x00008000) != 0)) {
         identifiers_ = new java.util.ArrayList<fintekkers.models.security.IdentifierProto>(identifiers_);
-        bitField0_ |= 0x00010000;
+        bitField0_ |= 0x00008000;
        }
     }
 
@@ -4427,7 +4138,7 @@ private static final long serialVersionUID = 0L;
     public Builder clearIdentifiers() {
       if (identifiersBuilder_ == null) {
         identifiers_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00010000);
+        bitField0_ = (bitField0_ & ~0x00008000);
         onChanged();
       } else {
         identifiersBuilder_.clear();
@@ -4553,7 +4264,7 @@ private static final long serialVersionUID = 0L;
         identifiersBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
             fintekkers.models.security.IdentifierProto, fintekkers.models.security.IdentifierProto.Builder, fintekkers.models.security.IdentifierProtoOrBuilder>(
                 identifiers_,
-                ((bitField0_ & 0x00010000) != 0),
+                ((bitField0_ & 0x00008000) != 0),
                 getParentForChildren(),
                 isClean());
         identifiers_ = null;
@@ -4576,7 +4287,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the bondDetails field is set.
      */
     public boolean hasBondDetails() {
-      return ((bitField0_ & 0x00020000) != 0);
+      return ((bitField0_ & 0x00010000) != 0);
     }
     /**
      * <pre>
@@ -4615,7 +4326,7 @@ private static final long serialVersionUID = 0L;
       } else {
         bondDetailsBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00020000;
+      bitField0_ |= 0x00010000;
       onChanged();
       return this;
     }
@@ -4636,7 +4347,7 @@ private static final long serialVersionUID = 0L;
       } else {
         bondDetailsBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00020000;
+      bitField0_ |= 0x00010000;
       onChanged();
       return this;
     }
@@ -4652,7 +4363,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeBondDetails(fintekkers.models.security.BondDetailsProto value) {
       if (bondDetailsBuilder_ == null) {
-        if (((bitField0_ & 0x00020000) != 0) &&
+        if (((bitField0_ & 0x00010000) != 0) &&
           bondDetails_ != null &&
           bondDetails_ != fintekkers.models.security.BondDetailsProto.getDefaultInstance()) {
           getBondDetailsBuilder().mergeFrom(value);
@@ -4662,7 +4373,7 @@ private static final long serialVersionUID = 0L;
       } else {
         bondDetailsBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00020000;
+      bitField0_ |= 0x00010000;
       onChanged();
       return this;
     }
@@ -4677,7 +4388,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
      */
     public Builder clearBondDetails() {
-      bitField0_ = (bitField0_ & ~0x00020000);
+      bitField0_ = (bitField0_ & ~0x00010000);
       bondDetails_ = null;
       if (bondDetailsBuilder_ != null) {
         bondDetailsBuilder_.dispose();
@@ -4697,7 +4408,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.BondDetailsProto bond_details = 200;</code>
      */
     public fintekkers.models.security.BondDetailsProto.Builder getBondDetailsBuilder() {
-      bitField0_ |= 0x00020000;
+      bitField0_ |= 0x00010000;
       onChanged();
       return getBondDetailsFieldBuilder().getBuilder();
     }
@@ -4756,7 +4467,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the tipsExtension field is set.
      */
     public boolean hasTipsExtension() {
-      return ((bitField0_ & 0x00040000) != 0);
+      return ((bitField0_ & 0x00020000) != 0);
     }
     /**
      * <pre>
@@ -4791,7 +4502,7 @@ private static final long serialVersionUID = 0L;
       } else {
         tipsExtensionBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00040000;
+      bitField0_ |= 0x00020000;
       onChanged();
       return this;
     }
@@ -4810,7 +4521,7 @@ private static final long serialVersionUID = 0L;
       } else {
         tipsExtensionBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00040000;
+      bitField0_ |= 0x00020000;
       onChanged();
       return this;
     }
@@ -4824,7 +4535,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeTipsExtension(fintekkers.models.security.TipsExtensionProto value) {
       if (tipsExtensionBuilder_ == null) {
-        if (((bitField0_ & 0x00040000) != 0) &&
+        if (((bitField0_ & 0x00020000) != 0) &&
           tipsExtension_ != null &&
           tipsExtension_ != fintekkers.models.security.TipsExtensionProto.getDefaultInstance()) {
           getTipsExtensionBuilder().mergeFrom(value);
@@ -4834,7 +4545,7 @@ private static final long serialVersionUID = 0L;
       } else {
         tipsExtensionBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00040000;
+      bitField0_ |= 0x00020000;
       onChanged();
       return this;
     }
@@ -4847,7 +4558,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.TipsExtensionProto tips_extension = 201;</code>
      */
     public Builder clearTipsExtension() {
-      bitField0_ = (bitField0_ & ~0x00040000);
+      bitField0_ = (bitField0_ & ~0x00020000);
       tipsExtension_ = null;
       if (tipsExtensionBuilder_ != null) {
         tipsExtensionBuilder_.dispose();
@@ -4865,7 +4576,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.TipsExtensionProto tips_extension = 201;</code>
      */
     public fintekkers.models.security.TipsExtensionProto.Builder getTipsExtensionBuilder() {
-      bitField0_ |= 0x00040000;
+      bitField0_ |= 0x00020000;
       onChanged();
       return getTipsExtensionFieldBuilder().getBuilder();
     }
@@ -4920,7 +4631,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the frnExtension field is set.
      */
     public boolean hasFrnExtension() {
-      return ((bitField0_ & 0x00080000) != 0);
+      return ((bitField0_ & 0x00040000) != 0);
     }
     /**
      * <pre>
@@ -4955,7 +4666,7 @@ private static final long serialVersionUID = 0L;
       } else {
         frnExtensionBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00080000;
+      bitField0_ |= 0x00040000;
       onChanged();
       return this;
     }
@@ -4974,7 +4685,7 @@ private static final long serialVersionUID = 0L;
       } else {
         frnExtensionBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00080000;
+      bitField0_ |= 0x00040000;
       onChanged();
       return this;
     }
@@ -4988,7 +4699,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeFrnExtension(fintekkers.models.security.FrnExtensionProto value) {
       if (frnExtensionBuilder_ == null) {
-        if (((bitField0_ & 0x00080000) != 0) &&
+        if (((bitField0_ & 0x00040000) != 0) &&
           frnExtension_ != null &&
           frnExtension_ != fintekkers.models.security.FrnExtensionProto.getDefaultInstance()) {
           getFrnExtensionBuilder().mergeFrom(value);
@@ -4998,7 +4709,7 @@ private static final long serialVersionUID = 0L;
       } else {
         frnExtensionBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00080000;
+      bitField0_ |= 0x00040000;
       onChanged();
       return this;
     }
@@ -5011,7 +4722,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.FrnExtensionProto frn_extension = 202;</code>
      */
     public Builder clearFrnExtension() {
-      bitField0_ = (bitField0_ & ~0x00080000);
+      bitField0_ = (bitField0_ & ~0x00040000);
       frnExtension_ = null;
       if (frnExtensionBuilder_ != null) {
         frnExtensionBuilder_.dispose();
@@ -5029,7 +4740,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.FrnExtensionProto frn_extension = 202;</code>
      */
     public fintekkers.models.security.FrnExtensionProto.Builder getFrnExtensionBuilder() {
-      bitField0_ |= 0x00080000;
+      bitField0_ |= 0x00040000;
       onChanged();
       return getFrnExtensionFieldBuilder().getBuilder();
     }
@@ -5654,7 +5365,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the mbsExtension field is set.
      */
     public boolean hasMbsExtension() {
-      return ((bitField0_ & 0x01000000) != 0);
+      return ((bitField0_ & 0x00800000) != 0);
     }
     /**
      * <pre>
@@ -5693,7 +5404,7 @@ private static final long serialVersionUID = 0L;
       } else {
         mbsExtensionBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x01000000;
+      bitField0_ |= 0x00800000;
       onChanged();
       return this;
     }
@@ -5714,7 +5425,7 @@ private static final long serialVersionUID = 0L;
       } else {
         mbsExtensionBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x01000000;
+      bitField0_ |= 0x00800000;
       onChanged();
       return this;
     }
@@ -5730,7 +5441,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeMbsExtension(fintekkers.models.security.MbsExtensionProto value) {
       if (mbsExtensionBuilder_ == null) {
-        if (((bitField0_ & 0x01000000) != 0) &&
+        if (((bitField0_ & 0x00800000) != 0) &&
           mbsExtension_ != null &&
           mbsExtension_ != fintekkers.models.security.MbsExtensionProto.getDefaultInstance()) {
           getMbsExtensionBuilder().mergeFrom(value);
@@ -5740,7 +5451,7 @@ private static final long serialVersionUID = 0L;
       } else {
         mbsExtensionBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x01000000;
+      bitField0_ |= 0x00800000;
       onChanged();
       return this;
     }
@@ -5755,7 +5466,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
      */
     public Builder clearMbsExtension() {
-      bitField0_ = (bitField0_ & ~0x01000000);
+      bitField0_ = (bitField0_ & ~0x00800000);
       mbsExtension_ = null;
       if (mbsExtensionBuilder_ != null) {
         mbsExtensionBuilder_.dispose();
@@ -5775,7 +5486,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.MbsExtensionProto mbs_extension = 207;</code>
      */
     public fintekkers.models.security.MbsExtensionProto.Builder getMbsExtensionBuilder() {
-      bitField0_ |= 0x01000000;
+      bitField0_ |= 0x00800000;
       onChanged();
       return getMbsExtensionFieldBuilder().getBuilder();
     }
