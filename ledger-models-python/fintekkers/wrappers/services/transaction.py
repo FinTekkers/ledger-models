@@ -30,18 +30,49 @@ class TransactionService:
 
     Adds `search_with_security_and_portfolio` which composes the search
     with a LinkResolver to hydrate both embedded security and embedded
-    portfolio in parallel-ish (one batched RPC per entity type)."""
+    portfolio in parallel-ish (one batched RPC per entity type).
 
-    def __init__(self, stub: Optional[TransactionStub] = None):
-        if stub is None:
+    Singleton: see FinTekkers/ledger-models#223. The gRPC channel is
+    constructed once and reused across all `TransactionService()` calls
+    in the process. Explicit `stub=` injection (used by unit tests)
+    bypasses the cache and returns a fresh non-cached instance — that
+    keeps the existing test isolation pattern working.
+    """
+
+    _instance: "Optional[TransactionService]" = None
+
+    def __new__(cls, stub: Optional[TransactionStub] = None):
+        # Explicit stub injection (test path): build a fresh, non-cached
+        # instance bound to that stub. Two `TransactionService(stub=m1)` /
+        # `TransactionService(stub=m2)` calls in a test must remain
+        # independent — they're not the singleton.
+        if stub is not None:
+            instance = super().__new__(cls)
+            instance.stub = stub
+            return instance
+        if cls._instance is None:
+            instance = super().__new__(cls)
             print(
                 "TransactionService connecting to: "
                 + EnvConfig.api_url(ServiceType.TRANSACTION_SERVICE)
             )
-            stub = TransactionStub(
+            instance.stub = TransactionStub(
                 EnvConfig.get_channel(ServiceType.TRANSACTION_SERVICE)
             )
-        self.stub = stub
+            cls._instance = instance
+        return cls._instance
+
+    def __init__(self, stub: Optional[TransactionStub] = None):
+        # All init lives in __new__ so the cached singleton is not
+        # re-initialized on subsequent `TransactionService()` calls. The
+        # parameter is preserved so test call sites compile unchanged.
+        pass
+
+    @classmethod
+    def _reset_for_tests(cls) -> None:
+        """Drop the cached singleton so the next `TransactionService()`
+        call reconstructs the channel. For test fixtures only."""
+        cls._instance = None
 
     def search(
         self, request: QueryTransactionRequest

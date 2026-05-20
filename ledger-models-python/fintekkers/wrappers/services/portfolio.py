@@ -39,9 +39,39 @@ from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
 
 
 class PortfolioService:
+    # Singleton: see FinTekkers/ledger-models#223. The gRPC channel is
+    # constructed once and reused across all `PortfolioService()` calls
+    # in the process. Tests that need isolation should call
+    # `PortfolioService._reset_for_tests()` between cases.
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            instance = super().__new__(cls)
+            print(
+                "PortfolioService connecting to: "
+                + EnvConfig.api_url(ServiceType.PORTFOLIO_SERVICE)
+            )
+            instance.stub = PortfolioStub(
+                EnvConfig.get_channel(ServiceType.PORTFOLIO_SERVICE)
+            )
+            cls._instance = instance
+        return cls._instance
+
     def __init__(self):
-        print("PortfolioService connecting to: " + EnvConfig.api_url(ServiceType.PORTFOLIO_SERVICE))
-        self.stub = PortfolioStub(EnvConfig.get_channel(ServiceType.PORTFOLIO_SERVICE))
+        pass
+
+    @classmethod
+    def _reset_for_tests(cls) -> None:
+        cls._instance = None
+
+    def _reconnect(self) -> None:
+        """Replace the cached stub with a fresh channel. Called from the
+        search() error path on RpcError. Mutates the singleton in place
+        so existing references continue to work."""
+        self.stub = PortfolioStub(
+            EnvConfig.get_channel(ServiceType.PORTFOLIO_SERVICE)
+        )
 
     def search(
         self, request: QueryPortfolioRequest
@@ -58,7 +88,7 @@ class PortfolioService:
             pass
         except RpcError as e:
             print(e)
-            self.__init__() #Reinitialize the service to reconnect
+            self._reconnect()  # Replace the cached stub with a fresh channel
 
     def create_or_update(
         self, request: CreatePortfolioRequestProto

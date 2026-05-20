@@ -30,10 +30,32 @@ from fintekkers.wrappers.util.link_resolver import LinkResolver
 from fintekkers.services.price_service.price_service_pb2_grpc import PriceStub
 
 class PriceService:
+    # Singleton: see FinTekkers/ledger-models#223. The gRPC channel is
+    # constructed once and reused across all `PriceService()` calls in
+    # the process. Tests that need isolation should call
+    # `PriceService._reset_for_tests()` between cases.
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            instance = super().__new__(cls)
+            # By default will access the broker.
+            print(
+                "PriceService connecting to: "
+                + EnvConfig.api_url(ServiceType.PRICE_SERVICE)
+            )
+            instance.stub = PriceStub(
+                EnvConfig.get_channel(ServiceType.PRICE_SERVICE)
+            )
+            cls._instance = instance
+        return cls._instance
+
     def __init__(self):
-        #By default will access the broker. 
-        print("PriceService connecting to: " + EnvConfig.api_url(ServiceType.PRICE_SERVICE))
-        self.stub = PriceStub(EnvConfig.get_channel(ServiceType.PRICE_SERVICE))
+        pass
+
+    @classmethod
+    def _reset_for_tests(cls) -> None:
+        cls._instance = None
 
     def get_latest_price(self, identifier: str, identifier_type: IdentifierTypeProto) -> Price:
         raise NotImplementedError("get_latest_price is not yet implemented")
