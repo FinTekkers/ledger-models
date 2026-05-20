@@ -19,9 +19,31 @@ from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
 
 
 class ValuationService:
+    # Singleton: see FinTekkers/ledger-models#223. The gRPC channel is
+    # constructed once and reused across all `ValuationService()` calls
+    # in the process. Tests that need isolation should call
+    # `ValuationService._reset_for_tests()` between cases.
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            instance = super().__new__(cls)
+            print(
+                "ValuationService connecting to: "
+                + EnvConfig.api_url(ServiceType.VALUATION_SERVICE)
+            )
+            instance.stub = ValuationStub(
+                EnvConfig.get_channel(ServiceType.VALUATION_SERVICE)
+            )
+            cls._instance = instance
+        return cls._instance
+
     def __init__(self):
-        print("ValuationService connecting to: " + EnvConfig.api_url(ServiceType.VALUATION_SERVICE))
-        self.stub = ValuationStub(EnvConfig.get_channel(ServiceType.VALUATION_SERVICE))
+        pass
+
+    @classmethod
+    def _reset_for_tests(cls) -> None:
+        cls._instance = None
 
     def run_valuation(self, 
                      security: Security = None, 

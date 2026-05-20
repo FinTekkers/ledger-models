@@ -29,9 +29,40 @@ from fintekkers.requests.security.get_field_values_request_pb2 import GetFieldVa
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
 class SecurityService:
+    # Singleton: the gRPC channel underlying `self.stub` is expensive to
+    # construct (TCP / TLS handshake) and is intended to be long-lived and
+    # multiplexed across calls. Consumers instantiate `SecurityService()`
+    # ad-hoc — without caching, that produced a fresh channel per RPC.
+    # See FinTekkers/ledger-models#223.
+    #
+    # Tests that need isolation should call
+    # `SecurityService._reset_for_tests()` between cases.
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            instance = super().__new__(cls)
+            print(
+                "SecurityService connecting to: "
+                + EnvConfig.api_url(ServiceType.SECURITY_SERVICE)
+            )
+            instance.stub = SecurityStub(
+                EnvConfig.get_channel(ServiceType.SECURITY_SERVICE)
+            )
+            cls._instance = instance
+        return cls._instance
+
     def __init__(self):
-        print("SecurityService connecting to: " + EnvConfig.api_url(ServiceType.SECURITY_SERVICE))
-        self.stub = SecurityStub(EnvConfig.get_channel(ServiceType.SECURITY_SERVICE))
+        # Init runs every time `SecurityService()` is called, even when
+        # __new__ returns the cached instance — so all real init lives in
+        # __new__ and __init__ is a no-op to avoid recreating the channel.
+        pass
+
+    @classmethod
+    def _reset_for_tests(cls) -> None:
+        """Drop the cached singleton so the next `SecurityService()` call
+        reconstructs the channel. For test fixtures only."""
+        cls._instance = None
 
     def search(self, request: QuerySecurityRequest) -> Generator[Security, None, None]:
         responses = self.stub.Search(request=request.proto)
