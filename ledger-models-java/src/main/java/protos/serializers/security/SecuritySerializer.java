@@ -129,6 +129,43 @@ public class SecuritySerializer implements IRawDataModelObjectSerializer<Securit
                     && stashedProductType != builder.getProductType()) {
                 builder.setProductType(stashedProductType);
             }
+
+            // Bitemporal fields (valid_from tag 8, valid_to tag 9). The domain
+            // object's lazy getters now decode these from the stashed proto
+            // (FinTekkers/second-brain#338); preserving them on serialize is the
+            // symmetric write-side fix so a round-trip is lossless.
+            //
+            // setValidTo() takes precedence over the stash when explicitly
+            // set, including setValidTo(null) for resurrection per #316 §2.2.
+            // The Security wrapper's getValidTo() already honors that priority.
+            ZonedDateTime explicitValidTo = security.getValidTo();
+            if (explicitValidTo != null) {
+                builder.setValidTo(ProtoSerializationUtil.serializeTimestamp(explicitValidTo));
+            } else if (stash.hasValidTo()) {
+                // No explicit set AND no proto-decoded value would mean
+                // getValidTo() returned null. But if stash.hasValidTo() is true,
+                // getValidTo() lazy-decoded it; the null branch above runs only
+                // for the explicit-clear-via-setValidTo(null) resurrection case.
+                // In that resurrection case, we deliberately do NOT propagate
+                // the stale stash value — the explicit clear wins.
+                //
+                // Unreachable in practice today: if stash has valid_to AND
+                // setValidTo(null) was NOT called, getValidTo() returns the
+                // decoded value (non-null) so we hit the first branch above.
+                // Kept for clarity around the resurrection semantics.
+            }
+
+            // valid_from has no domain setter (parent's field is final) so
+            // the stash is the only source.
+            if (stash.hasValidFrom()) {
+                builder.setValidFrom(stash.getValidFrom());
+            }
+
+            // Unknown fields — preserve any proto3 unknown bytes (e.g. a future
+            // ledger-models release adds a field at a tag this build doesn't
+            // know about; the bytes must survive round-trip). See
+            // FinTekkers/second-brain#338.
+            builder.setUnknownFields(stash.getUnknownFields());
         }
 
         return builder.build();

@@ -11,6 +11,7 @@ import fintekkers.models.security.SecurityProto;
 import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
 import fintekkers.models.util.Uuid.UUIDProto;
 import com.google.protobuf.ByteString;
+import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -29,6 +30,30 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     private String description;
 
     private SecurityProto _sourceProto;
+
+    // Lazy caches for bitemporal ZonedDateTime fields read from the stashed
+    // _sourceProto. See FinTekkers/second-brain#338 (Phase 1 of #335).
+    //
+    // Rationale: ZonedDateTime is ~200B per instance, and validFrom/validTo
+    // are read selectively (validTo only by `isDeleted(asOf)` callers; validFrom
+    // only by bitemporal-supersession audits). Today's SecuritySerializer.deserialize
+    // path does NOT populate these from the proto — validFrom is set to
+    // ZonedDateTime.now() in the parent constructor and validTo defaults to null.
+    // That dropped the proto's bitemporal data on the floor.
+    //
+    // These overrides preserve backward-compat (existing setters via the
+    // RawDataModelObject parent still work and take precedence) AND lazy-decode
+    // from `_sourceProto` on first read when no explicit set has occurred.
+    // Cached after first decode for cheap repeat reads.
+    //
+    // _validToExplicitlySet is the disambiguator for "consumer set validTo to
+    // null (resurrection per #316 §2.2)" vs "validTo never set, defer to proto."
+    // Without this, setValidTo(null) followed by getValidTo() would incorrectly
+    // fall through to the proto's valid_to.
+    private ZonedDateTime _cachedValidTo;
+    private boolean _validToCacheValid = false;
+    private boolean _validToExplicitlySet = false;
+    private ZonedDateTime _cachedValidFromFromProto;
 
     public Security(UUID id, String issuer, ZonedDateTime asOf, CashSecurity settlementCurrency) {
         super(id, asOf);
@@ -135,6 +160,86 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
      */
     public void setSecurityProto(SecurityProto proto) {
         this._sourceProto = proto;
+        // The lazy validTo/validFrom caches refer to the previous _sourceProto's
+        // values. Reset them so the next read decodes from the new proto. See
+        // FinTekkers/second-brain#338.
+        //
+        // _validToExplicitlySet is NOT reset — a prior setValidTo() call still
+        // wins over the new proto. (The typical call shape is
+        // `serializer.deserialize(proto) → setSecurityProto(proto)`; if a
+        // consumer mutates validTo BEFORE setSecurityProto runs, that mutation
+        // is preserved. Today's deserialize sequence never does that.)
+        this._validToCacheValid = false;
+        this._cachedValidTo = null;
+        this._cachedValidFromFromProto = null;
+    }
+
+    /**
+     * Lazy-decode override. Returns, in priority order:
+     *   1. Whatever was explicitly set via {@link #setValidTo(ZonedDateTime)} —
+     *      including {@code null} (resurrection per second-brain#316 §2.2).
+     *   2. Otherwise, the {@code valid_to} from the stashed {@code _sourceProto},
+     *      decoded on first call and cached for subsequent calls.
+     *   3. {@code null} if neither set nor proto-populated.
+     *
+     * This is a correctness fix on top of the pre-#338 behavior, where validTo
+     * was always {@code null} on a freshly-deserialized Security — the proto's
+     * {@code valid_to} was decoded by no path. See FinTekkers/second-brain#338.
+     */
+    @Override
+    public ZonedDateTime getValidTo() {
+        if (_validToExplicitlySet) {
+            return super.getValidTo();
+        }
+        if (_validToCacheValid) {
+            return _cachedValidTo;
+        }
+        if (_sourceProto != null && _sourceProto.hasValidTo()) {
+            _cachedValidTo = ProtoSerializationUtil.deserializeTimestamp(_sourceProto.getValidTo());
+        } else {
+            _cachedValidTo = null;
+        }
+        _validToCacheValid = true;
+        return _cachedValidTo;
+    }
+
+    /**
+     * Lazy-decode override. Returns:
+     *   1. The {@code valid_from} from the stashed {@code _sourceProto} if present,
+     *      decoded on first call and cached.
+     *   2. Otherwise, the parent's {@code validFrom} (set to
+     *      {@code ZonedDateTime.now()} in the {@link RawDataModelObject} constructor —
+     *      a legacy default that loses the proto's authoritative timestamp).
+     *
+     * The proto wins when present because the parent's local-clock default loses
+     * the bitemporal record on every deserialize. Existing tests that build a
+     * Security via the POJO constructor (no proto stashed) continue to see the
+     * local-clock default. See FinTekkers/second-brain#338.
+     */
+    @Override
+    public ZonedDateTime getValidFrom() {
+        if (_cachedValidFromFromProto != null) {
+            return _cachedValidFromFromProto;
+        }
+        if (_sourceProto != null && _sourceProto.hasValidFrom()) {
+            _cachedValidFromFromProto = ProtoSerializationUtil.deserializeTimestamp(_sourceProto.getValidFrom());
+            return _cachedValidFromFromProto;
+        }
+        return super.getValidFrom();
+    }
+
+    /**
+     * Override to invalidate the lazy {@link #getValidTo()} cache and mark the
+     * field as explicitly set, so subsequent reads see the new value (including
+     * an explicit {@code null} for resurrection per second-brain#316 §2.2)
+     * instead of falling back to the proto's {@code valid_to}.
+     */
+    @Override
+    public void setValidTo(ZonedDateTime newValidTo) {
+        super.setValidTo(newValidTo);
+        this._validToExplicitlySet = true;
+        this._validToCacheValid = false;
+        this._cachedValidTo = null;
     }
 
     public CashSecurity getSettlementCurrency() {
