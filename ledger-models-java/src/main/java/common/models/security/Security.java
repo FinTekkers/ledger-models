@@ -44,13 +44,25 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     public Security(SecurityProto proto) {
         super(extractId(proto), extractAsOf(proto));
         Objects.requireNonNull(proto, "SecurityProto must not be null");
-        this.proto = proto;
+        // FinTekkers/ledger-service PR #65 Regression A: when the input
+        // proto has no UUID, extractId() synthesizes one via
+        // UUID.randomUUID() and stores it on the parent. We must ALSO
+        // reflect that synthesized UUID into the stored proto so
+        // getProto() exposes it — otherwise the response proto returned
+        // to clients is missing the server-assigned UUID.
+        if (!proto.hasUuid() && this.getID() != null) {
+            this.proto = proto.toBuilder()
+                    .setUuid(ProtoSerializationUtil.serializeUUID(this.getID()))
+                    .build();
+        } else {
+            this.proto = proto;
+        }
         // Mirror the proto's identifiers into the subclass-visible list so
         // getIdentifiers().clear() and similar legacy mutations behave as
         // expected. The mirror is authoritative; overlay's identifiers list
         // is rebuilt from it on each getProto() call when mutations have
         // occurred. See SecurityTest.testDescription.
-        for (IdentifierProto p : proto.getIdentifiersList()) {
+        for (IdentifierProto p : this.proto.getIdentifiersList()) {
             this.identifiers.add(IdentifierSerializer.getInstance().deserialize(p));
         }
     }
@@ -70,7 +82,12 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     @Deprecated
     public Security(UUID id, String issuer, ZonedDateTime asOf, CashSecurity settlementCurrency) {
         super(id != null ? id : UUID.randomUUID(), asOf);
-        this.proto = buildBaselineProto(id, issuer, asOf, settlementCurrency);
+        // Use the parent's id (post-super) so the proto carries the same
+        // UUID as the wrapper — including the synthesized one when the
+        // caller passed null. Same fix shape as Regression A on the
+        // SecurityProto-based primary constructor (FinTekkers/ledger-service
+        // PR #65).
+        this.proto = buildBaselineProto(this.getID(), issuer, asOf, settlementCurrency);
         for (IdentifierProto p : this.proto.getIdentifiersList()) {
             this.identifiers.add(IdentifierSerializer.getInstance().deserialize(p));
         }
@@ -180,7 +197,23 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
 
     private static UUID extractId(SecurityProto proto) {
         if (proto.hasUuid()) {
-            return ProtoSerializationUtil.deserializeUUID(proto.getUuid());
+            // FinTekkers/ledger-service PR #65 Regression B: explicitly
+            // validate the UUID byte length here so a short/malformed
+            // raw_uuid is rejected at wrapper construction time (pre-#338
+            // SecuritySerializer.deserialize did this; the new code path
+            // must preserve the same validation for gRPC INVALID_ARGUMENT
+            // semantics). deserializeUUID already throws on 1-15 bytes
+            // and returns null on 0 bytes — we add a length-pre-check
+            // so the failure mode is consistent regardless of where it
+            // lives.
+            com.google.protobuf.ByteString raw = proto.getUuid().getRawUuid();
+            int n = raw.size();
+            if (n != 0 && n != 16) {
+                throw new IllegalArgumentException(
+                        "Invalid UUID: expected 16 bytes but got " + n);
+            }
+            UUID parsed = ProtoSerializationUtil.deserializeUUID(proto.getUuid());
+            if (parsed != null) return parsed;
         }
         return UUID.randomUUID();
     }

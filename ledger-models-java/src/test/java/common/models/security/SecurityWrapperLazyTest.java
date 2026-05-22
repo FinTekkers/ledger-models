@@ -247,6 +247,85 @@ class SecurityWrapperLazyTest {
         Assertions.assertEquals(1_700_000_000L, out.getValidTo().getTimestamp().getSeconds());
     }
 
+    // ------------------------------------------------------------------
+    // UUID-handling regressions caught by backend-dev-ledger PR #65 rebase
+    // ------------------------------------------------------------------
+
+    @Test
+    public void fromProto_withoutUuid_synthesizesUuid_andReflectsIntoGetProto() {
+        // Regression A from FinTekkers/ledger-service PR #65: when the input
+        // proto carries no UUID, the wrapper must (a) synthesize a UUID
+        // (today: UUID.randomUUID()) AND (b) reflect it back into the proto
+        // returned by getProto(). Pre-fix, the synthesized UUID lived only
+        // on the wrapper's parent id field; the response proto was missing
+        // the server-assigned UUID.
+        SecurityProto withoutUuid = SecurityProto.newBuilder()
+                .setProductType(fintekkers.models.security.ProductTypeProto.COMMON_STOCK)
+                .setIssuerName("anonymous")
+                .build();
+        Assertions.assertFalse(withoutUuid.hasUuid(),
+                "precondition: input proto has no UUID");
+
+        Security security = Security.fromProto(withoutUuid);
+
+        Assertions.assertNotNull(security.getID(),
+                "wrapper must synthesize a UUID when input proto has none");
+
+        SecurityProto out = security.getProto();
+        Assertions.assertTrue(out.hasUuid(),
+                "synthesized UUID must be reflected into the proto returned by getProto()");
+        java.util.UUID protoUuid = protos.serializers.util.proto.ProtoSerializationUtil
+                .deserializeUUID(out.getUuid());
+        Assertions.assertEquals(security.getID(), protoUuid,
+                "the UUID in the proto must match the wrapper's id");
+    }
+
+    @Test
+    public void fromProto_withShortUuid_rejectsWithIllegalArgumentException() {
+        // Regression B from FinTekkers/ledger-service PR #65: a 4-byte
+        // (short/malformed) raw_uuid must be rejected at wrapper
+        // construction time. Pre-#338, SecuritySerializer.deserialize
+        // threw IllegalArgumentException (mapped to gRPC INVALID_ARGUMENT
+        // at the service layer); the new wrapper path must preserve the
+        // same validation.
+        fintekkers.models.util.Uuid.UUIDProto shortUuid =
+                fintekkers.models.util.Uuid.UUIDProto.newBuilder()
+                        .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[]{1, 2, 3, 4}))
+                        .build();
+        SecurityProto withShortUuid = SecurityProto.newBuilder()
+                .setUuid(shortUuid)
+                .setProductType(fintekkers.models.security.ProductTypeProto.COMMON_STOCK)
+                .build();
+
+        IllegalArgumentException ex = Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> Security.fromProto(withShortUuid),
+                "Security.fromProto must reject a 4-byte raw_uuid");
+        Assertions.assertTrue(ex.getMessage().contains("Invalid UUID"),
+                "Exception message should reference invalid UUID; got: " + ex.getMessage());
+    }
+
+    @Test
+    public void fromProto_withEmptyUuid_fallsThroughToSynthesizedUuid() {
+        // The 0-byte edge case is distinct from short/malformed: an empty
+        // raw_uuid indicates "no UUID supplied" (create-without-id flow)
+        // rather than malformed input. Wrapper treats it the same as
+        // !hasUuid() — synthesize, reflect into proto.
+        fintekkers.models.util.Uuid.UUIDProto emptyUuid =
+                fintekkers.models.util.Uuid.UUIDProto.newBuilder().build();
+        SecurityProto withEmptyUuid = SecurityProto.newBuilder()
+                .setUuid(emptyUuid)
+                .setProductType(fintekkers.models.security.ProductTypeProto.COMMON_STOCK)
+                .setIssuerName("anonymous")
+                .build();
+
+        Security security = Security.fromProto(withEmptyUuid);
+        Assertions.assertNotNull(security.getID(),
+                "empty raw_uuid should fall through to synthesized UUID");
+        Assertions.assertTrue(security.getProto().hasUuid(),
+                "synthesized UUID must be reflected into the proto");
+    }
+
     @Test
     public void mutationOverlay_setValidTo_thenGetProto_reflectsMutation() {
         SecurityProto base = DummyEquityObjects.getDummySecurity().getProto();
