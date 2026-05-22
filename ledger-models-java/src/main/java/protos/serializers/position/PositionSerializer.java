@@ -140,161 +140,18 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
         return position;
     }
 
-    @Override
-    public String serializeToJson(PositionProto proto) {
-        Gson gson = JsonSerializationUtil.getGsonBuilder();
+    // JSON serialize/deserialize removed in FinTekkers/second-brain#338.
+    // The display-name helpers below are retained because they are used by
+    // the position UI/CLI display layers, not by JSON serialization.
 
-        JsonObject map = new JsonObject();
-        addContext(proto, map);
-
-        JsonArray array = new JsonArray();
-        serializeSinglePositionToJson(proto, gson, array);
-        map.add(JSONFieldNames.RECORDS, array);
-
-        return gson.toJson(map);
-    }
-
-    public void serializeSinglePositionToJson(PositionProto proto, Gson gson, JsonArray array) {
-        JsonArray positionRecordArray = new JsonArray();
-        serializeFields(positionRecordArray, proto, gson);
-        serializeMeasures(positionRecordArray, proto);
-        array.add(positionRecordArray);
-    }
-
-    private void addContext(PositionProto proto, JsonObject map) {
-        JsonObject contextMap = new JsonObject();
-        String positionType = proto.getPositionType().name();
-        contextMap.add("PositionType", new JsonPrimitive(convertToDisplayName(positionType)));
-        String positionView = proto.getPositionView().name();
-        contextMap.add("PositionView", new JsonPrimitive(convertToDisplayName(positionView)));
-        map.add(JSONFieldNames.CONTEXT, contextMap);
-    }
-
-    public static void serializeMeasures(JsonArray array, PositionProto proto) {
-        List<MeasureMapEntry> measuresList = proto.getMeasuresList();
-
-        for(MeasureMapEntry measure : measuresList) {
-            try {
-                serializeMeasure(array, measure);
-            } catch (JsonSyntaxException | UnsupportedOperationException e) {
-                throw new RuntimeException("Problem serialization the position to JSON. Position: "+ proto, e);
-            }
-        }
-    }
-
-    public static void serializeMeasure(JsonArray array, MeasureMapEntry measure) {
-        JsonObject map = new JsonObject();
-        String rawFieldName = measure.getMeasure().name();
-        map.add(FIELD_NAME, new JsonPrimitive(rawFieldName));
-        serializeMeasure(measure, map);
-
-        String displayFieldName = convertToDisplayName(rawFieldName);
-        map.add(FIELD_DISPLAY_NAME, new JsonPrimitive(displayFieldName));
-
-        array.add(map);
-    }
-
-    public static void serializeMeasure(MeasureMapEntry measure, JsonObject map) {
-        MeasureProto measureType = measure.getMeasure();
-        BigDecimal value = ProtoSerializationUtil.deserializeBigDecimal(measure.getMeasureDecimalValue());
-
-        String fieldName = measureType.name();
-        map.add(FIELD_NAME, new JsonPrimitive(fieldName));
-        map.add(FIELD_TYPE, new JsonPrimitive("Decimal"));
-        map.add(FIELD_DISPLAY_NAME, new JsonPrimitive(convertToDisplayName(fieldName)));
-        map.add(FIELD_DISPLAY_VALUE, new JsonPrimitive(value.doubleValue()));
-    }
-
-    public static void serializeFields(JsonArray array, PositionProto proto, Gson gson) {
-        List<FieldMapEntry> fieldsList = proto.getFieldsList();
-
-        for(FieldMapEntry field : fieldsList) {
-            try {
-                serializeField(gson, array, field);
-            } catch (JsonSyntaxException | UnsupportedOperationException e) {
-                throw new RuntimeException("Problem serialization the position to JSON. Position: "+ proto, e);
-            }
-        }
-    }
-
-    public static void serializeField(Gson gson, JsonArray array, FieldMapEntry field) {
-        JsonObject map = new JsonObject();
-        String rawFieldName = field.getField().name();
-        map.add(FIELD_NAME, new JsonPrimitive(rawFieldName));
-        serializeField(gson, field, map);
-
-        String displayFieldName = convertToDisplayName(rawFieldName);
-        map.add(FIELD_DISPLAY_NAME, new JsonPrimitive(displayFieldName));
-
-        if(field.getOperatorValue() != 0)
-            map.add(FIELD_OPERATOR, new JsonPrimitive(field.getOperator().name()));
-
-        array.add(map);
-    }
-
-    
     public static String convertToDisplayName(String rawFieldName) {
         String displayFieldName = rawFieldName.replaceAll("_", " ");
         displayFieldName = displayFieldName.toLowerCase();
-        displayFieldName = WordUtils.capitalize(displayFieldName);
+        displayFieldName = org.apache.commons.text.WordUtils.capitalize(displayFieldName);
         return displayFieldName;
     }
 
-    
     public static String convertFromDisplayName(String str) {
         return str.replaceAll(" ", "_").toUpperCase();
-    }
-
-    public static void serializeField(Gson gson, FieldMapEntry field, JsonObject outputJson) {
-        Any fieldValuePacked = field.getFieldValuePacked();
-
-        //If the packed value size is zero then it doesn't exist; we should assume it's an enum
-        if(fieldValuePacked.getValue().size() == 0) {
-            int enumValue = field.getEnumValue();
-
-            serializeEnum(outputJson, field.getField().name(), enumValue);
-            return;
-        }
-
-        Object deserialized = ProtoSerializationUtil.deserialize(fieldValuePacked);
-
-        if(String.class.equals(deserialized.getClass())) {
-            serializeStringType(outputJson, "String", deserialized.toString());
-            return;
-        }
-
-        serializeComplexType(gson, outputJson, deserialized);
-    }
-
-
-    public static void serializeEnum(JsonObject fieldMap, String enumName, int fieldValue) {
-        fieldMap.add(FIELD_TYPE, new JsonPrimitive(enumName));
-        fieldMap.add(FIELD_DISPLAY_VALUE, new JsonPrimitive(fieldValue));
-    }
-
-    public static void serializeStringType(JsonObject fieldMap, String fieldType, String fieldValue) {
-        fieldMap.add(FIELD_TYPE, new JsonPrimitive(fieldType));
-        fieldMap.add(FIELD_DISPLAY_VALUE, new JsonPrimitive(fieldValue));
-    }
-
-    public static void serializeComplexType(Gson gson, JsonObject fieldMap, Object deserialized) {
-        GeneratedMessageV3 msgProto = ProtoSerializationUtil.serialize(deserialized);
-
-        Gson gsonField = JsonSerializationUtil.getGsonBuilder();
-        String string = gsonField.toJson(msgProto);
-
-        //Quotes are getting added by JsonWriter.java. Removing them here. Ideally we'd remove this!
-        if("UUIDProto".equals(msgProto.getDescriptorForType().getName())) {
-            string = string.replaceAll("\"", "");
-        }
-
-        fieldMap.add(FIELD_DISPLAY_VALUE, new JsonPrimitive(deserialized.toString()));
-        fieldMap.add(FIELD_TYPE, new JsonPrimitive(deserialized.getClass().getSimpleName()));
-    }
-
-    @Override
-    public PositionProto deserializeFromJson(String json) {
-        throw new UnsupportedOperationException("Positions are serialized to JSON for display purposes only. They" +
-                " represent a simplified version of the data");
     }
 }

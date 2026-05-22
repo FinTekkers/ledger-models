@@ -93,15 +93,5 @@ public class StrategySerializer implements IRawDataModelObjectSerializer<Strateg
         return allocations;
     }
 
-    @Override
-    public String serializeToJson(StrategyAllocationProto proto) {
-        Gson gson = JsonSerializationUtil.getGsonBuilder();
-        return gson.toJson(proto);
-    }
-
-    @Override
-    public StrategyAllocationProto deserializeFromJson(String json) {
-        Gson gson = JsonSerializationUtil.getGsonBuilder();
-        return gson.fromJson(json, StrategyAllocationProto.class);
-    }
+    // JSON serialize/deserialize removed in FinTekkers/second-brain#338.
 }

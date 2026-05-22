@@ -40,26 +40,7 @@ class StrategySerializerTest {
     }
 
 
-    @Test
-    public void testJSONSerialization() {
-        final var strategyAllocation = DummyEquityObjects.getDummyTransaction().getStrategyAllocation();
-
-        final StrategySerializer serializer = StrategySerializer.getInstance();
-        final StrategyAllocationProto proto = serializer.serialize(strategyAllocation);
-
-        String serialized = serializer.serializeToJson(proto);
-        assertTrue(serialized.contains("\"strategy_name\": \"Strategy Name\""));
-        assertTrue(serialized.contains("\"value\": \"1\""));
-
-        StrategyAllocationProto protoCopy = serializer.deserializeFromJson(serialized);
-        final var copy = (StrategyAllocation) serializer.deserialize(protoCopy);
-
-        //Check IDs
-        Assertions.assertEquals(strategyAllocation.getID(), copy.getID());
-        Assertions.assertTrue(strategyAllocation.getAsOf().truncatedTo(MILLIS).isEqual(copy.getAsOf().truncatedTo(MILLIS)));
-        //Check size, then contents
-        Assertions.assertEquals(strategyAllocation.getAllocations().size(), copy.getAllocations().size());
-        Assertions.assertEquals(strategyAllocation.getAllocations(), copy.getAllocations());
-
-    }
+    // testJSONSerialization removed in FinTekkers/second-brain#338 — JSON
+    // serialize/deserialize methods on StrategySerializer were deleted (no
+    // live callers across the platform).
 }

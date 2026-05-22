@@ -48,32 +48,7 @@ public class TenorSerializer implements IRawDataModelObjectSerializer<TenorProto
         return builder.build();
     }
 
-    @Override
-    public String serializeToJson(TenorProto proto) {
-        Gson gson = JsonSerializationUtil.getGsonBuilder();
-
-        String json = gson.toJson(proto);
-
-        JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
-        IdentifierTypeProto identifierTypeProto =
-                IdentifierTypeProto.forNumber(jsonObject.get(JSONFieldNames.IDENTIFIER_TYPE).getAsInt());
-
-        jsonObject.add(JSONFieldNames.IDENTIFIER_TYPE, new JsonPrimitive(identifierTypeProto.name()));
-
-        return jsonObject.toString();
-    }
-
-    @Override
-    public TenorProto deserializeFromJson(String json) {
-        Gson gson = JsonSerializationUtil.getGsonBuilder();
-
-        JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
-
-        IdentifierTypeProto identifierTypeProto = IdentifierTypeProto.valueOf(jsonObject.get(JSONFieldNames.IDENTIFIER_TYPE).getAsString());
-        jsonObject.add(JSONFieldNames.IDENTIFIER_TYPE, new JsonPrimitive(identifierTypeProto.getNumber()));
-
-        return gson.fromJson(jsonObject.toString(), TenorProto.class);
-    }
+    // JSON serialize/deserialize removed in FinTekkers/second-brain#338.
 
     @Override
     public Tenor deserialize(TenorProto proto) {

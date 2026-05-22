@@ -23,12 +23,24 @@ import java.util.UUID;
  */
 public class MortgageBackedSecurity extends BondSecurity {
 
+    /** Primary constructor — wraps a SecurityProto. */
+    public MortgageBackedSecurity(SecurityProto proto) {
+        super(proto);
+    }
+
+    /** @deprecated Field-by-field test helper. */
+    @Deprecated
     public MortgageBackedSecurity(UUID id, String issuer, ZonedDateTime asOf, CashSecurity settlementCurrency) {
         super(id, issuer, asOf, settlementCurrency);
     }
 
     @Override
     public ProductTypeProto getProductType() {
+        return ProductTypeProto.MORTGAGE_BACKED;
+    }
+
+    @Override
+    protected ProductTypeProto getSubclassProductType() {
         return ProductTypeProto.MORTGAGE_BACKED;
     }
 

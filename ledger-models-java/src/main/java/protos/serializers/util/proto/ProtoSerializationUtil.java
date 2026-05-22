@@ -20,7 +20,6 @@ import fintekkers.models.util.Uuid;
 import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
 import protos.serializers.security.IdentifierSerializer;
-import protos.serializers.security.SecuritySerializer;
 import protos.serializers.security.TenorSerializer;
 import protos.serializers.strategy.StrategySerializer;
 
@@ -55,7 +54,7 @@ public class ProtoSerializationUtil {
         } else if(object instanceof Price) {
             unpacked = PriceSerializer.getInstance().serialize((Price) object);
         } else if(object instanceof Security) {
-            unpacked = SecuritySerializer.getInstance().serialize((Security) object);
+            unpacked = ((Security) object).getProto();
         } else if(object instanceof Portfolio) {
             unpacked = PortfolioSerializer.getInstance().serialize((Portfolio) object);
         }  else if(object instanceof StrategyAllocation) {
@@ -100,7 +99,7 @@ public class ProtoSerializationUtil {
             } else if(any.is(PriceProto.class)) {
                 return PriceSerializer.getInstance().deserialize(any.unpack(PriceProto.class));
             } else if(any.is(SecurityProto.class)) {
-                return SecuritySerializer.getInstance().deserialize(any.unpack(SecurityProto.class));
+                return Security.fromProto(any.unpack(SecurityProto.class));
             } else if(any.is(PortfolioProto.class)) {
                 return PortfolioSerializer.getInstance().deserialize(any.unpack(PortfolioProto.class));
             } else if(any.is(StrategyAllocationProto.class)) {

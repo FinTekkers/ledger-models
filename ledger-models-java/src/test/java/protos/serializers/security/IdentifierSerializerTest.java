@@ -7,31 +7,32 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class IdentifierSerializerTest {
+    /**
+     * Round-trip via proto only — JSON serialize/deserialize was removed in
+     * FinTekkers/second-brain#338 (no live callers). Tests now exercise the
+     * binary proto path which is the canonical serialization mechanism.
+     */
     @Test
-    public void identifierSerialization() {
+    public void identifierSerialization() throws Exception {
         Identifier id = new Identifier(IdentifierType.CUSIP, "US12345678");
 
         IdentifierSerializer serializer = IdentifierSerializer.getInstance();
 
         IdentifierProto proto = serializer.serialize(id);
-        String json = serializer.serializeToJson(proto);
-
-        IdentifierProto protoCopy = serializer.deserializeFromJson(json);
+        IdentifierProto protoCopy = IdentifierProto.parseFrom(proto.toByteArray());
         Identifier idCopy = serializer.deserialize(protoCopy);
 
         Assertions.assertEquals(id, idCopy);
     }
 
     @Test
-    public void seriesIdRoundTrip() {
+    public void seriesIdRoundTrip() throws Exception {
         Identifier id = new Identifier(IdentifierType.SERIES_ID, "CUUR0000SA0");
 
         IdentifierSerializer serializer = IdentifierSerializer.getInstance();
 
         IdentifierProto proto = serializer.serialize(id);
-        String json = serializer.serializeToJson(proto);
-
-        IdentifierProto protoCopy = serializer.deserializeFromJson(json);
+        IdentifierProto protoCopy = IdentifierProto.parseFrom(proto.toByteArray());
         Identifier idCopy = serializer.deserialize(protoCopy);
 
         Assertions.assertEquals(id, idCopy);

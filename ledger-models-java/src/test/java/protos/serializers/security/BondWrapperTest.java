@@ -12,18 +12,23 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-class BondSerializerTest {
+/**
+ * Bond / FRN / TIPS wrapper round-trip tests.
+ *
+ * <p>Post-#338 refactor: renamed from {@code BondSerializerTest}.
+ * Serialize/deserialize entry points are now {@code security.getProto()} and
+ * {@code Security.fromProto(proto)} — no separate BondSerializer indirection.
+ */
+class BondWrapperTest {
+
     @Test
     public void testBond() {
         BondSecurity bond = new BondSecurity(UUID.randomUUID(), "Issuer", ZonedDateTime.now(),
                 CashSecurity.USD);
         setBondFields(bond);
 
-        SecuritySerializer serializer = SecuritySerializer.getInstance();
-        SecurityProto proto = serializer.serialize(bond);
-        String json = serializer.serializeToJson(proto);
-        SecurityProto protoCopy = serializer.deserializeFromJson(json);
-        BondSecurity securityCopy = (BondSecurity) serializer.deserialize(protoCopy);
+        SecurityProto proto = bond.getProto();
+        BondSecurity securityCopy = (BondSecurity) Security.fromProto(proto);
 
         Assertions.assertEquals(bond, securityCopy);
         Assertions.assertEquals(bond.getCouponFrequency(), securityCopy.getCouponFrequency());
@@ -52,16 +57,12 @@ class BondSerializerTest {
         setBondFields(bond);
         bond.setCouponType(CouponType.FLOAT);
 
-        SecuritySerializer serializer = SecuritySerializer.getInstance();
-        SecurityProto proto = serializer.serialize(bond);
-        String json = serializer.serializeToJson(proto);
-        SecurityProto protoCopy = serializer.deserializeFromJson(json);
-        FloatingRateNote securityCopy = (FloatingRateNote) serializer.deserialize(protoCopy);
+        SecurityProto proto = bond.getProto();
+        FloatingRateNote securityCopy = (FloatingRateNote) Security.fromProto(proto);
 
         Assertions.assertEquals(bond, securityCopy);
         Assertions.assertEquals(bond.getCouponFrequency(), securityCopy.getCouponFrequency());
         Assertions.assertEquals(bond.getCouponType(), securityCopy.getCouponType());
-//        Assertions.assertEquals(bond.getCouponRate(), securityCopy.getCouponRate());
         Assertions.assertEquals(bond.getCouponCurrency(), securityCopy.getCouponCurrency());
 
         Assertions.assertEquals(bond.getIssueDate(), securityCopy.getIssueDate());
@@ -75,11 +76,8 @@ class BondSerializerTest {
                 CashSecurity.USD);
         setBondFields(bond);
 
-        SecuritySerializer serializer = SecuritySerializer.getInstance();
-        SecurityProto proto = serializer.serialize(bond);
-        String json = serializer.serializeToJson(proto);
-        SecurityProto protoCopy = serializer.deserializeFromJson(json);
-        TIPSBond securityCopy = (TIPSBond) serializer.deserialize(protoCopy);
+        SecurityProto proto = bond.getProto();
+        TIPSBond securityCopy = (TIPSBond) Security.fromProto(proto);
 
         Assertions.assertEquals(bond, securityCopy);
         Assertions.assertEquals(bond.getCouponFrequency(), securityCopy.getCouponFrequency());

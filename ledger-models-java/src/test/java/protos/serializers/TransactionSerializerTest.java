@@ -45,19 +45,5 @@ class TransactionSerializerTest {
         }
     }
 
-    @Test
-    public void testTransactionSerializeToJson() {
-        TransactionSerializer serializer = TransactionSerializer.getInstance();
-
-        TransactionProto transactionProto = serializer.serialize(DummyBondObjects.getDummyTransaction());
-
-        String json = serializer.serializeToJson(transactionProto);
-
-        TransactionProto transactionProtoCopy = serializer.deserializeFromJson(json);
-
-        Assertions.assertEquals(transactionProto.getPositionStatus(), transactionProtoCopy.getPositionStatus());
-        Assertions.assertEquals(transactionProto.getTradeName(), transactionProtoCopy.getTradeName());
-        Assertions.assertEquals(transactionProto.getIsCancelled(), transactionProtoCopy.getIsCancelled());
-    }
-
+    // testTransactionSerializeToJson removed in FinTekkers/second-brain#338.
 }

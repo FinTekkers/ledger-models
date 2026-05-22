@@ -16,10 +16,14 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
  * CI guard for the bond-shape consolidation.
  *
  * Every {@code status: "active"} leaf in {@code hierarchy.json} that descends
- * from {@code BOND} must serialize through {@link protos.serializers.security.SecuritySerializer}
+ * from {@code BOND} must serialize through {@link common.models.security.Security#getProto()}
  * with the canonical {@code bond_details} sub-message populated. If a new
- * bond-shape leaf is added to the registry but the serializer dispatch isn't
+ * bond-shape leaf is added to the registry but the wrapper dispatch isn't
  * updated, this guard catches it before release.
+ *
+ * <p>Post-#338 refactor: serialize is now {@code security.getProto()} (no
+ * separate Serializer indirection); the dispatch lives in
+ * {@link common.models.security.Security#fromProto(SecurityProto)}.
  *
  * <p>Shape mirrors {@link ProductHierarchyRegistryGuardTest} which guards the
  * active-registry-vs-ProductTypeProto symmetry.
@@ -48,45 +52,29 @@ class BondShapeRegistryGuardTest {
                     ProductTypeProto pt = ProductTypeProto.valueOf(leaf);
                     Security wrapper = buildMinimalBondShapeSecurity(pt);
 
-                    SecurityProto serialized = protos.serializers.security.SecuritySerializer
-                            .getInstance().serialize(wrapper);
+                    SecurityProto serialized = wrapper.getProto();
 
                     assertTrue(serialized.hasBondDetails(),
                             "Active bond-shape leaf " + leaf + " serialized without "
-                            + "bond_details — SecuritySerializer.serializeBondSecurityAttributes "
-                            + "must populate bond_details for every BOND descendant. "
-                            + "If you added a new bond-shape leaf, ensure the serializer "
-                            + "dispatch (BondSerializer.initiatlize switch + ProductHierarchy"
-                            + ".isDescendantOf(pt, \"BOND\") branch in serializeBondSecurityAttributes) "
-                            + "covers the new productType. See docs/adr/big-bang-proto-change.md "
-                            + "for the bond-shape layout.");
+                            + "bond_details — the wrapper's overlay must populate "
+                            + "bond_details for every BOND descendant. If you added a "
+                            + "new bond-shape leaf, ensure the Security.fromProto "
+                            + "dispatch covers the new productType. See "
+                            + "docs/adr/big-bang-proto-change.md.");
                 })
         );
     }
 
     private static Security buildMinimalBondShapeSecurity(ProductTypeProto pt) {
-        java.util.UUID id = java.util.UUID.randomUUID();
-        java.time.ZonedDateTime asOf = java.time.ZonedDateTime.now();
-        CashSecurity usd = CashSecurity.USD;
-
-        // The serializer's bond branch dispatches by productType (TIPS →
-        // TIPSBond, TREASURY_FRN → FloatingRateNote, everything else BOND-
-        // shape → BondSecurity). Each subclass populates getProductType()
-        // appropriately; for the catch-all BondSecurity we stash the proto
-        // so getProductType() returns the leaf value rather than
-        // PRODUCT_TYPE_UNKNOWN.
-        if (pt == ProductTypeProto.TIPS) {
-            return new common.models.security.bonds.TIPSBond(id, "Test", asOf, usd);
-        }
-        if (pt == ProductTypeProto.TREASURY_FRN) {
-            return new common.models.security.bonds.FloatingRateNote(id, "Test", asOf, usd);
-        }
-        if (pt == ProductTypeProto.MORTGAGE_BACKED) {
-            return new common.models.security.bonds.MortgageBackedSecurity(id, "Test", asOf, usd);
-        }
-        BondSecurity bs = new BondSecurity(id, "Test", asOf, usd);
-        SecurityProto stash = SecurityProto.newBuilder().setProductType(pt).build();
-        bs.setSecurityProto(stash);
-        return bs;
+        // Post-#338 refactor: build a proper bond-shape proto with the leaf
+        // productType + an empty bond_details, then dispatch through
+        // Security.fromProto. The wrapper IS the proto holder; the dispatch
+        // logic that used to live in SecuritySerializer + BondSerializer.initialize
+        // is now in Security.fromProto.
+        SecurityProto proto = SecurityProto.newBuilder()
+                .setProductType(pt)
+                .setBondDetails(fintekkers.models.security.BondDetailsProto.getDefaultInstance())
+                .build();
+        return Security.fromProto(proto);
     }
 }

@@ -7,7 +7,6 @@ import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import protos.serializers.security.SecuritySerializer;
 import testutil.DummyBondObjects;
 import testutil.DummyEquityObjects;
 
@@ -99,7 +98,7 @@ class SecurityTest {
         // legacy tag-15 bytes — proto3 parsers concatenate fields and the
         // tag is reserved so the value is dropped without error.
         Security original = DummyBondObjects.getDummySecurity();
-        SecurityProto base = SecuritySerializer.getInstance().serialize(original);
+        SecurityProto base = original.getProto();
 
         // Build the legacy tag-15 bytes manually using protobuf-java's
         // ByteString and a CodedOutputStream.
