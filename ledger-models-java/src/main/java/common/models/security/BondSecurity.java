@@ -22,26 +22,28 @@ import java.util.List;
 import java.util.UUID;
 
 /***
- * Bond security 0.01. Based on treasury bonds. Will expand/evolve significantly
+ * Bond security. Generic wrapper for bond-shape product types.
  *
- * Example US Treasuries:
- *
- *
+ * <p>Post-#338 refactor: thin proto wrapper. Bond fields (coupon_rate,
+ * coupon_type, etc.) read from / write to the {@code bond_details} sub-message
+ * via the overlay using an explicit set-build-merge cycle (each setter rebuilds
+ * the BondDetailsProto and re-attaches it to the overlay so
+ * {@code overlay.hasBondDetails()} reliably reflects mutations — the
+ * pre-#338 bug was a {@code getBondDetailsBuilder()}-based pattern where
+ * {@code hasBondDetails} could return false after mutations).
  */
 public class BondSecurity extends Security {
     public final static String ASSET_CLASS = JSONFieldNames.FIXED_INCOME;
 
-    private BigDecimal couponRate;
-    private CouponType couponType;
-    private CouponFrequency couponFrequency;
-    private LocalDate datedDate;
-    private BigDecimal faceValue;
-    private LocalDate issueDate;
-    private LocalDate maturityDate;
-//    private final Tenor tenor;
+    /** Primary constructor — wraps a SecurityProto. */
+    public BondSecurity(SecurityProto proto) {
+        super(proto);
+    }
+
+    /** @deprecated Field-by-field test helper. */
+    @Deprecated
     public BondSecurity(UUID id, String issuer, ZonedDateTime asOf, CashSecurity settlementCurrency) {
         super(id, issuer, asOf, settlementCurrency);
-//        tenor = new Tenor(TenorType.TERM, Period.between(issueDate, maturityDate));
     }
 
     @Override
@@ -58,107 +60,158 @@ public class BondSecurity extends Security {
         return this.getSettlementCurrency();
     }
 
-    public void setCouponRate(BigDecimal couponRate) {
-        this.couponRate = couponRate;
+    // ---- bond_details overlay-merge helpers ------------------------------
+    //
+    // The safe pattern: read the existing BondDetailsProto (or empty), mutate
+    // a Builder copy, then `setBondDetails(bd.build())` on the overlay. This
+    // guarantees `overlay.hasBondDetails() == true` after any mutation — the
+    // `getBondDetailsBuilder()` pattern didn't.
+
+    private BondDetailsProto readBondDetails() {
+        SecurityProto active = getProto();
+        return active.hasBondDetails() ? active.getBondDetails() : null;
+    }
+
+    private BondDetailsProto.Builder currentBondDetailsForWrite() {
+        SecurityProto.Builder o = ensureOverlay();
+        if (o.hasBondDetails()) {
+            return o.getBondDetails().toBuilder();
+        }
+        return BondDetailsProto.newBuilder();
+    }
+
+    private void commitBondDetails(BondDetailsProto.Builder bd) {
+        ensureOverlay().setBondDetails(bd.build());
     }
 
     public BigDecimal getCouponRate() {
-        return this.couponRate;
+        BondDetailsProto bd = readBondDetails();
+        if (bd == null || !bd.hasCouponRate()) return null;
+        return ProtoSerializationUtil.deserializeBigDecimal(bd.getCouponRate());
     }
 
-    public void setCouponType(CouponType couponType) {
-        this.couponType = couponType;
+    public void setCouponRate(BigDecimal couponRate) {
+        BondDetailsProto.Builder bd = currentBondDetailsForWrite();
+        if (couponRate == null) {
+            bd.clearCouponRate();
+        } else {
+            bd.setCouponRate(ProtoSerializationUtil.serializeBigDecimal(couponRate));
+        }
+        commitBondDetails(bd);
     }
 
     public CouponType getCouponType() {
-        return this.couponType;
+        BondDetailsProto bd = readBondDetails();
+        if (bd == null) return null;
+        CouponTypeProto ct = bd.getCouponType();
+        if (ct == CouponTypeProto.UNKNOWN_COUPON_TYPE) return null;
+        try {
+            return CouponType.valueOf(ct.name());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
-    public void setCouponFrequency(CouponFrequency CouponFrequency) {
-        this.couponFrequency = CouponFrequency;
+    public void setCouponType(CouponType couponType) {
+        BondDetailsProto.Builder bd = currentBondDetailsForWrite();
+        if (couponType == null) {
+            bd.clearCouponType();
+        } else {
+            bd.setCouponType(CouponTypeProto.valueOf(couponType.name()));
+        }
+        commitBondDetails(bd);
     }
 
     public CouponFrequency getCouponFrequency() {
-        return this.couponFrequency;
+        BondDetailsProto bd = readBondDetails();
+        if (bd == null) return null;
+        CouponFrequencyProto cf = bd.getCouponFrequency();
+        if (cf == CouponFrequencyProto.UNKNOWN_COUPON_FREQUENCY) return null;
+        try {
+            return CouponFrequency.valueOf(cf.name());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
-    /***
-     * This is the date when the security starts to accrue interest. Generally,
-     * the dated date will be the same as the issue date, but not always.
-     *
-     * For example US treasuries when re-opening a previous issue, the dated date
-     * may be before the issue date. In this case the buyer of the bond pays the
-     * accrued interest to the seller.
-     *
-     * @param datedDate A LocalDate
-     */
+    public void setCouponFrequency(CouponFrequency couponFrequency) {
+        BondDetailsProto.Builder bd = currentBondDetailsForWrite();
+        if (couponFrequency == null) {
+            bd.clearCouponFrequency();
+        } else {
+            bd.setCouponFrequency(CouponFrequencyProto.valueOf(couponFrequency.name()));
+        }
+        commitBondDetails(bd);
+    }
+
+    public LocalDate getDatedDate() {
+        BondDetailsProto bd = readBondDetails();
+        if (bd == null || !bd.hasDatedDate()) return null;
+        return ProtoSerializationUtil.deserializeLocalDate(bd.getDatedDate());
+    }
+
     public void setDatedDate(LocalDate datedDate) {
-        this.datedDate = datedDate;
+        BondDetailsProto.Builder bd = currentBondDetailsForWrite();
+        if (datedDate == null) {
+            bd.clearDatedDate();
+        } else {
+            bd.setDatedDate(ProtoSerializationUtil.serializeLocalDate(datedDate));
+        }
+        commitBondDetails(bd);
     }
 
-    /***
-     * This is the date when the security starts to accrue interest. Generally,
-     * the dated date will be the same as the issue date, but not always.
-     *
-     * For example US treasuries when re-opening a previous issue, the dated date
-     * may be before the issue date. In this case the buyer of the bond pays the
-     * accrued interest to the seller.
-     *
-    */
-     public LocalDate getDatedDate() {
-        return datedDate;
+    public BigDecimal getFaceValue() {
+        BondDetailsProto bd = readBondDetails();
+        if (bd == null || !bd.hasFaceValue()) return null;
+        return ProtoSerializationUtil.deserializeBigDecimal(bd.getFaceValue());
     }
 
     public void setFaceValue(BigDecimal faceValue) {
-        this.faceValue = faceValue;
-    }
-
-    /***
-     * Gets the face value of a bond. Typically, this represents
-     * the amount you will lend to the borrow when purchasing the
-     * bond at issuance, as well as the mount you will
-     * receive at maturity per individual unit
-     * of the security.
-     *
-     * For example, a US treasury will lend $1,000 to the US Treasury
-     * and receive the same amount at maturity, with a coupon being
-     * paid to the lender semi-annually.
-     *
-     * @return The nominal value per individual unit of a bond
-     */
-    public BigDecimal getFaceValue() {
-        return faceValue;
-    }
-
-    public void setIssueDate(LocalDate issueDate) {
-        this.issueDate = issueDate;
+        BondDetailsProto.Builder bd = currentBondDetailsForWrite();
+        if (faceValue == null) {
+            bd.clearFaceValue();
+        } else {
+            bd.setFaceValue(ProtoSerializationUtil.serializeBigDecimal(faceValue));
+        }
+        commitBondDetails(bd);
     }
 
     public LocalDate getIssueDate() {
-        return issueDate;
+        BondDetailsProto bd = readBondDetails();
+        if (bd == null || !bd.hasIssueDate()) return null;
+        return ProtoSerializationUtil.deserializeLocalDate(bd.getIssueDate());
     }
 
-    public void setMaturityDate(LocalDate maturityDate) {
-        this.maturityDate = maturityDate;
+    public void setIssueDate(LocalDate issueDate) {
+        BondDetailsProto.Builder bd = currentBondDetailsForWrite();
+        if (issueDate == null) {
+            bd.clearIssueDate();
+        } else {
+            bd.setIssueDate(ProtoSerializationUtil.serializeLocalDate(issueDate));
+        }
+        commitBondDetails(bd);
     }
 
     public LocalDate getMaturityDate() {
-        return maturityDate;
+        BondDetailsProto bd = readBondDetails();
+        if (bd == null || !bd.hasMaturityDate()) return null;
+        return ProtoSerializationUtil.deserializeLocalDate(bd.getMaturityDate());
+    }
+
+    public void setMaturityDate(LocalDate maturityDate) {
+        BondDetailsProto.Builder bd = currentBondDetailsForWrite();
+        if (maturityDate == null) {
+            bd.clearMaturityDate();
+        } else {
+            bd.setMaturityDate(ProtoSerializationUtil.serializeLocalDate(maturityDate));
+        }
+        commitBondDetails(bd);
     }
 
     public BigDecimal getPriceScaleFactor() {
         return getFaceValue().divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
     }
 
-    /**
-     * BondSecurity is a generic wrapper for bond-shape product types
-     * (TBILL, TREASURY_NOTE, TREASURY_BOND, STRIPS, SOVEREIGN_BOND,
-     * CORP_BOND, MUNI_BOND). When constructed from a proto via the
-     * deserialize path the source proto carries the actual leaf type;
-     * for legacy non-proto-constructed instances we default to
-     * TREASURY_NOTE as the sensible "vanilla bond" fallback.
-     * Specialized subclasses (TIPSBond, FloatingRateNote) override.
-     */
     @Override
     public ProductTypeProto getProductType() {
         ProductTypeProto pt = super.getProductType();
@@ -166,25 +219,24 @@ public class BondSecurity extends Security {
     }
 
     @Override
-    public String toString() {
-        String securityId = identifiers.isEmpty() ? "No Security Id" : identifiers.get(0).toString();
-        String tenorDescription = getTenor().getTenorDescription();
-        return "Bond: " + securityId + " " + maturityDate +
-                " " + couponRate + "% " + tenorDescription;
+    protected ProductTypeProto getSubclassProductType() {
+        return ProductTypeProto.TREASURY_NOTE;
     }
 
-    /**
-     * Per-auction issuance details for this bond. Reads from the stashed
-     * {@code SecurityProto.bond_details.issuance_info} list. Empty when no
-     * issuance info has been populated. Each entry is a typed wrapper over
-     * an {@link IssuanceProto}.
-     */
+    @Override
+    public String toString() {
+        List<common.models.security.identifier.Identifier> ids = getIdentifiers();
+        String securityId = ids.isEmpty() ? "No Security Id" : ids.get(0).toString();
+        Tenor t = getTenor();
+        String tenorDescription = t.getTenorDescription();
+        return "Bond: " + securityId + " " + getMaturityDate() +
+                " " + getCouponRate() + "% " + tenorDescription;
+    }
+
     public List<Issuance> getIssuances() {
-        SecurityProto proto = getSecurityProto();
-        if (proto == null || !proto.hasBondDetails()) {
-            return Collections.emptyList();
-        }
-        List<IssuanceProto> raw = proto.getBondDetails().getIssuanceInfoList();
+        BondDetailsProto bd = readBondDetails();
+        if (bd == null) return Collections.emptyList();
+        List<IssuanceProto> raw = bd.getIssuanceInfoList();
         if (raw.isEmpty()) return Collections.emptyList();
         List<Issuance> out = new ArrayList<>(raw.size());
         for (IssuanceProto p : raw) {
@@ -193,14 +245,6 @@ public class BondSecurity extends Security {
         return out;
     }
 
-    /**
-     * Build a vanilla bond {@link SecurityProto} from the pricer's expected
-     * inputs. Populates {@code bond_details} with the six shared fields and
-     * sets {@code product_type = TREASURY_NOTE} as the generic bond-shape
-     * default. Specialized subclasses ({@link common.models.security.bonds.TIPSBond},
-     * {@link common.models.security.bonds.FloatingRateNote}) build on top of
-     * this contract by also populating their respective extension messages.
-     */
     public static SecurityProto fromPricerInputs(BigDecimal faceValue,
                                                  BigDecimal couponRate,
                                                  CouponTypeProto couponType,
@@ -214,14 +258,6 @@ public class BondSecurity extends Security {
                 .build();
     }
 
-    /**
-     * Shared bond_details builder for pricer-input helpers on this class and
-     * specialized subclasses. {@link common.models.security.bonds.TIPSBond}
-     * and {@link common.models.security.bonds.FloatingRateNote} live in a
-     * sibling package and layer their extension messages on top — they need
-     * cross-package visibility, so this stays public rather than
-     * package-private.
-     */
     public static BondDetailsProto buildBondDetails(BigDecimal faceValue,
                                               BigDecimal couponRate,
                                               CouponTypeProto couponType,
@@ -245,28 +281,24 @@ public class BondSecurity extends Security {
     }
 
     public Tenor getTenor() {
-        return new Tenor(TenorType.TERM, Period.between(issueDate, maturityDate));
+        LocalDate issue = getIssueDate();
+        LocalDate maturity = getMaturityDate();
+        if (issue == null || maturity == null) {
+            return Tenor.UNKNOWN_TENOR;
+        }
+        return new Tenor(TenorType.TERM, Period.between(issue, maturity));
     }
 
     public Tenor getAdjustedTenor(LocalDate asOfDate) {
-        return new Tenor(TenorType.TERM, Period.between(asOfDate, maturityDate));
+        LocalDate maturity = getMaturityDate();
+        if (maturity == null) return Tenor.UNKNOWN_TENOR;
+        return new Tenor(TenorType.TERM, Period.between(asOfDate, maturity));
     }
 
-    /**
-     * @deprecated Hardcodes {@link LocalDate#now()}, which makes backtesting and
-     * deterministic curve construction impossible. Prefer
-     * {@link #getAdjustedTenor(LocalDate)} with an explicit as-of date.
-     */
     @Deprecated
     public Tenor getAdjustedTenor() {
         return getAdjustedTenor(LocalDate.now());
     }
-
-    // The Java-only ProductType enum (BILL/NOTE/BOND derived from tenor)
-    // was deleted as part of the 4-dim registry refactor (M1 of #257).
-    // ProductTypeProto.{TBILL, TREASURY_NOTE, TREASURY_BOND} now carries
-    // the same distinction explicitly on the proto. Tenor-derived
-    // classification is no longer authoritative.
 
     /***
      * Plumbing for positions

@@ -5,12 +5,14 @@ import common.models.RawDataModelObject;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.security.identifier.Identifier;
+import fintekkers.models.security.IdentifierProto;
 import fintekkers.models.security.IdentifierTypeProto;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
 import fintekkers.models.util.Uuid.UUIDProto;
 import com.google.protobuf.ByteString;
+import protos.serializers.security.IdentifierSerializer;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
@@ -21,59 +23,117 @@ import java.util.*;
 
 /***
  * Generally shouldn't be used except for tests, or absolute emergencies.
+ *
+ * <p>Phase 1 / sub-issue FinTekkers/second-brain#338 refactor: Security is now
+ * a thin wrapper around a {@link SecurityProto}. The proto is the single source
+ * of truth; field accessors forward to {@code proto.getXxx()} with light type
+ * conversion (BigDecimal, ZonedDateTime) where needed. Mutations write into a
+ * lazily-allocated {@code overlay} {@link SecurityProto.Builder}; {@link #getProto()}
+ * returns the overlay-merged result so re-serialize is correct without any
+ * separate SecuritySerializer indirection. Mirrors Rust / Python / JS wrappers.
  */
 public class Security extends RawDataModelObject implements Comparable, IFinancialModelObject {
-    private final String issuer;
-    private final CashSecurity settlementCurrency;
-    protected List<Identifier> identifiers = new ArrayList<>();
 
-    private String description;
+    /** Original immutable baseline. */
+    private final SecurityProto proto;
 
-    private SecurityProto _sourceProto;
+    /** Lazy mutation overlay; {@code null} until first setter. */
+    private SecurityProto.Builder overlay;
 
-    // Lazy caches for bitemporal ZonedDateTime fields read from the stashed
-    // _sourceProto. See FinTekkers/second-brain#338 (Phase 1 of #335).
-    //
-    // Rationale: ZonedDateTime is ~200B per instance, and validFrom/validTo
-    // are read selectively (validTo only by `isDeleted(asOf)` callers; validFrom
-    // only by bitemporal-supersession audits). Today's SecuritySerializer.deserialize
-    // path does NOT populate these from the proto — validFrom is set to
-    // ZonedDateTime.now() in the parent constructor and validTo defaults to null.
-    // That dropped the proto's bitemporal data on the floor.
-    //
-    // These overrides preserve backward-compat (existing setters via the
-    // RawDataModelObject parent still work and take precedence) AND lazy-decode
-    // from `_sourceProto` on first read when no explicit set has occurred.
-    // Cached after first decode for cheap repeat reads.
-    //
-    // _validToExplicitlySet is the disambiguator for "consumer set validTo to
-    // null (resurrection per #316 §2.2)" vs "validTo never set, defer to proto."
-    // Without this, setValidTo(null) followed by getValidTo() would incorrectly
-    // fall through to the proto's valid_to.
-    private ZonedDateTime _cachedValidTo;
-    private boolean _validToCacheValid = false;
-    private boolean _validToExplicitlySet = false;
-    private ZonedDateTime _cachedValidFromFromProto;
-
-    public Security(UUID id, String issuer, ZonedDateTime asOf, CashSecurity settlementCurrency) {
-        super(id, asOf);
-        this.issuer = issuer;
-        this.settlementCurrency = settlementCurrency;
+    /** Primary constructor — wraps a SecurityProto. */
+    public Security(SecurityProto proto) {
+        super(extractId(proto), extractAsOf(proto));
+        Objects.requireNonNull(proto, "SecurityProto must not be null");
+        this.proto = proto;
+        // Mirror the proto's identifiers into the subclass-visible list so
+        // getIdentifiers().clear() and similar legacy mutations behave as
+        // expected. The mirror is authoritative; overlay's identifiers list
+        // is rebuilt from it on each getProto() call when mutations have
+        // occurred. See SecurityTest.testDescription.
+        for (IdentifierProto p : proto.getIdentifiersList()) {
+            this.identifiers.add(IdentifierSerializer.getInstance().deserialize(p));
+        }
     }
 
     /**
-     * Build a {@link SecurityProto} link reference (is_link=true) with the given
-     * uuid and as_of populated. Use this whenever you embed a Security inside
-     * another message that itself carries an as_of (Position, Transaction,
-     * Price, etc.) — the link MUST carry the same as_of as the parent so the
-     * resolver hydrates the correct point-in-time vintage. See
-     * docs/adr/is_link_pattern.md for the full pattern.
+     * @deprecated Field-by-field test helper. Builds an equivalent
+     *             {@link SecurityProto} from the args. New code should use
+     *             {@link #Security(SecurityProto)}.
      *
-     * @param uuid The Security UUID to reference.
-     * @param asOf The as-of timestamp to embed; must be non-null. For "always
-     *             return the latest version", use {@link #linkOfLatest(UUID)}.
-     * @return A SecurityProto with is_link=true, uuid + as_of populated.
+     * <p>Note: asOf is passed directly to the parent constructor rather than
+     * round-tripped through the proto, to avoid a pre-existing timezone
+     * conversion quirk in {@link ProtoSerializationUtil#deserializeTimestamp}
+     * that would shift the wall-clock time by the local timezone offset.
+     * The wire proto carries the same asOf; only the in-memory wrapper field
+     * skips the round-trip.
      */
+    @Deprecated
+    public Security(UUID id, String issuer, ZonedDateTime asOf, CashSecurity settlementCurrency) {
+        super(id != null ? id : UUID.randomUUID(), asOf);
+        this.proto = buildBaselineProto(id, issuer, asOf, settlementCurrency);
+        for (IdentifierProto p : this.proto.getIdentifiersList()) {
+            this.identifiers.add(IdentifierSerializer.getInstance().deserialize(p));
+        }
+    }
+
+    // ---- Static factories ------------------------------------------------
+
+    /**
+     * Subclass dispatcher. Inspects {@code proto.getProductType()} (or infers
+     * from structured shape when product_type is UNKNOWN) and returns the
+     * appropriate concrete subclass instance. Replaces the old
+     * {@code SecuritySerializer.deserialize} dispatch. See #338.
+     */
+    public static Security fromProto(SecurityProto proto) {
+        Objects.requireNonNull(proto, "SecurityProto must not be null");
+
+        ProductTypeProto productType = proto.getProductType();
+        SecurityProto.NonBondDetailsCase nonBondCase = proto.getNonBondDetailsCase();
+
+        if (productType == ProductTypeProto.PRODUCT_TYPE_UNKNOWN) {
+            if (proto.hasTipsExtension()) {
+                productType = ProductTypeProto.TIPS;
+            } else if (proto.hasFrnExtension()) {
+                productType = ProductTypeProto.TREASURY_FRN;
+            } else if (proto.hasMbsExtension()) {
+                productType = ProductTypeProto.MORTGAGE_BACKED;
+            } else if (proto.hasBondDetails()) {
+                productType = ProductTypeProto.TREASURY_NOTE;
+            } else if (nonBondCase != SecurityProto.NonBondDetailsCase.NONBONDDETAILS_NOT_SET) {
+                switch (nonBondCase) {
+                    case CASH_DETAILS:   productType = ProductTypeProto.CURRENCY; break;
+                    case EQUITY_DETAILS: productType = ProductTypeProto.COMMON_STOCK; break;
+                    case INDEX_DETAILS:  productType = ProductTypeProto.EQUITY_INDEX; break;
+                    default: break;
+                }
+            }
+        }
+
+        if (productType == ProductTypeProto.CURRENCY) {
+            return new CashSecurity(proto);
+        }
+        if (ProductHierarchy.isDescendantOf(productType, "BOND")) {
+            validateBondDates(proto);
+            if (productType == ProductTypeProto.TIPS) {
+                return new common.models.security.bonds.TIPSBond(proto);
+            }
+            if (productType == ProductTypeProto.TREASURY_FRN) {
+                return new common.models.security.bonds.FloatingRateNote(proto);
+            }
+            if (productType == ProductTypeProto.MORTGAGE_BACKED) {
+                return new common.models.security.bonds.MortgageBackedSecurity(proto);
+            }
+            return new BondSecurity(proto);
+        }
+        if (ProductHierarchy.isDescendantOf(productType, "STOCK")) {
+            return new EquitySecurity(proto);
+        }
+        if (ProductHierarchy.isDescendantOf(productType, "INDEX")) {
+            return new IndexSecurity(proto);
+        }
+        return new Security(proto);
+    }
+
     public static SecurityProto linkOf(UUID uuid, ZonedDateTime asOf) {
         Objects.requireNonNull(uuid, "uuid is required for linkOf");
         Objects.requireNonNull(asOf, "asOf is required for linkOf; use linkOfLatest(uuid) for latest-version semantics");
@@ -84,14 +144,6 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
                 .build();
     }
 
-    /**
-     * Build a {@link SecurityProto} link reference (is_link=true) with only
-     * uuid populated. Resolution returns the latest version of the record.
-     *
-     * Explicit escape hatch for the rare case where the link is meant to
-     * float to "latest" rather than carry the parent's as_of. Most callers
-     * should prefer {@link #linkOf(UUID, ZonedDateTime)}.
-     */
     public static SecurityProto linkOfLatest(UUID uuid) {
         Objects.requireNonNull(uuid, "uuid is required for linkOfLatest");
         return SecurityProto.newBuilder()
@@ -101,14 +153,150 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     /**
-     * True iff this Security wraps a link-mode SecurityProto. When true, only
-     * {@link #getID()} and the as_of are meaningful; other field accessors
-     * throw {@link IllegalStateException} to force the caller to resolve the
-     * full entity via SecurityService.GetByIds. See
-     * docs/adr/is_link_pattern.md.
+     * Carried forward from the deleted SecuritySerializer.deserialize:
+     * maturity_date must be strictly after issue_date for bond-type securities.
+     * Throws IllegalArgumentException (maps to gRPC INVALID_ARGUMENT at the
+     * service layer).
      */
+    private static void validateBondDates(SecurityProto proto) {
+        fintekkers.models.util.LocalDate.LocalDateProto issueDate = null;
+        fintekkers.models.util.LocalDate.LocalDateProto maturityDate = null;
+        if (proto.hasBondDetails()) {
+            fintekkers.models.security.BondDetailsProto bond = proto.getBondDetails();
+            if (bond.hasIssueDate()) issueDate = bond.getIssueDate();
+            if (bond.hasMaturityDate()) maturityDate = bond.getMaturityDate();
+        }
+        if (issueDate != null && maturityDate != null) {
+            LocalDate issue = ProtoSerializationUtil.deserializeLocalDate(issueDate);
+            LocalDate maturity = ProtoSerializationUtil.deserializeLocalDate(maturityDate);
+            if (!maturity.isAfter(issue)) {
+                throw new IllegalArgumentException(
+                        "maturity_date must be after issue_date: maturity=" + maturity + ", issue=" + issue);
+            }
+        }
+    }
+
+    // ---- Internal helpers -----------------------------------------------
+
+    private static UUID extractId(SecurityProto proto) {
+        if (proto.hasUuid()) {
+            return ProtoSerializationUtil.deserializeUUID(proto.getUuid());
+        }
+        return UUID.randomUUID();
+    }
+
+    private static ZonedDateTime extractAsOf(SecurityProto proto) {
+        if (proto.hasAsOf()) {
+            return ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf());
+        }
+        return null;
+    }
+
+    private static SecurityProto buildBaselineProto(UUID id, String issuer, ZonedDateTime asOf,
+                                                    CashSecurity settlementCurrency) {
+        SecurityProto.Builder b = SecurityProto.newBuilder();
+        if (id != null) b.setUuid(toUuidProto(id));
+        if (asOf != null) b.setAsOf(toTimestampProto(asOf));
+        if (issuer != null) b.setIssuerName(issuer);
+        if (settlementCurrency != null) b.setSettlementCurrency(settlementCurrency.getProto());
+        return b.build();
+    }
+
+    private static UUIDProto toUuidProto(UUID uuid) {
+        ByteBuffer bb = ByteBuffer.allocate(16);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        return UUIDProto.newBuilder().setRawUuid(ByteString.copyFrom(bb.array())).build();
+    }
+
+    private static LocalTimestampProto toTimestampProto(ZonedDateTime asOf) {
+        // Align with ProtoSerializationUtil.serializeTimestamp's convention:
+        // store wall-clock-as-UTC seconds (NOT the true UTC instant). The
+        // corresponding deserializeTimestamp recovers the wall-clock and
+        // reassembles with the zoneId. Includes nanos so millisecond-precision
+        // round-trip tests pass; the existing serializeTimestamp drops nanos,
+        // but readers (deserializeTimestamp) honor whatever nanos are present
+        // so this is wire-compatible.
+        java.time.Instant wallClockInstant = asOf.toLocalDateTime().toInstant(java.time.ZoneOffset.UTC);
+        return LocalTimestampProto.newBuilder()
+                .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
+                        .setSeconds(wallClockInstant.getEpochSecond())
+                        .setNanos(wallClockInstant.getNano())
+                        .build())
+                .setTimeZone(asOf.getZone().getId())
+                .build();
+    }
+
+    protected SecurityProto.Builder ensureOverlay() {
+        if (overlay == null) {
+            overlay = proto.toBuilder();
+        }
+        return overlay;
+    }
+
+    /**
+     * Returns the active view of the proto: the overlay-built result if any
+     * mutation has occurred, else the original immutable proto. Replaces
+     * {@code SecuritySerializer.getInstance().serialize(security)}.
+     *
+     * <p>If the subclass-visible {@code identifiers} mirror was mutated
+     * (legacy {@code getIdentifiers().clear()} / {@code addIdentifier}
+     * call sites), the rebuilt proto reflects the mirror's contents.
+     */
+    public SecurityProto getProto() {
+        // Sync the mirror's identifiers into the overlay if they diverge.
+        if (identifiersDifferFromProto()) {
+            SecurityProto.Builder o = ensureOverlay();
+            o.clearIdentifiers();
+            for (Identifier id : identifiers) {
+                o.addIdentifiers(IdentifierSerializer.getInstance().serialize(id));
+            }
+        }
+        // Materialize the subclass's hardcoded product_type into the proto
+        // when the active proto is UNKNOWN. This preserves legacy behavior
+        // where SecuritySerializer.serialize set product_type from the
+        // domain object — needed for SerializerFactoryTest and any consumer
+        // that round-trips a field-by-field-built subclass through the wire.
+        ProductTypeProto activeProductType = (overlay != null)
+                ? overlay.getProductType()
+                : proto.getProductType();
+        if (activeProductType == ProductTypeProto.PRODUCT_TYPE_UNKNOWN) {
+            ProductTypeProto subclassDefault = getSubclassProductType();
+            if (subclassDefault != ProductTypeProto.PRODUCT_TYPE_UNKNOWN) {
+                ensureOverlay().setProductType(subclassDefault);
+            }
+        }
+        if (overlay != null) {
+            return overlay.build();
+        }
+        return proto;
+    }
+
+    /**
+     * Hook for subclasses to provide their hardcoded product type for the
+     * UNKNOWN-in-proto fallback path used by {@link #getProto()}. Base
+     * Security returns UNKNOWN (no hardcoded type); BondSecurity returns
+     * TREASURY_NOTE; EquitySecurity returns COMMON_STOCK; etc.
+     */
+    protected ProductTypeProto getSubclassProductType() {
+        return ProductTypeProto.PRODUCT_TYPE_UNKNOWN;
+    }
+
+    private boolean identifiersDifferFromProto() {
+        SecurityProto active = (overlay != null) ? overlay.build() : proto;
+        List<IdentifierProto> protoIds = active.getIdentifiersList();
+        if (protoIds.size() != identifiers.size()) return true;
+        for (int i = 0; i < identifiers.size(); i++) {
+            IdentifierProto serialized = IdentifierSerializer.getInstance().serialize(identifiers.get(i));
+            if (!serialized.equals(protoIds.get(i))) return true;
+        }
+        return false;
+    }
+
+    // ---- is_link semantics ----------------------------------------------
+
     public boolean isLink() {
-        return _sourceProto != null && _sourceProto.getIsLink();
+        return proto.getIsLink();
     }
 
     private void throwIfLink(String accessor) {
@@ -120,149 +308,82 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         }
     }
 
-    private static UUIDProto toUuidProto(UUID uuid) {
-        ByteBuffer bb = ByteBuffer.allocate(16);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-        return UUIDProto.newBuilder().setRawUuid(ByteString.copyFrom(bb.array())).build();
-    }
-
-    private static LocalTimestampProto toTimestampProto(ZonedDateTime asOf) {
-        java.time.Instant instant = asOf.toInstant();
-        return LocalTimestampProto.newBuilder()
-                .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
-                        .setSeconds(instant.getEpochSecond())
-                        .setNanos(instant.getNano())
-                        .build())
-                .setTimeZone(asOf.getZone().getId())
-                .build();
-    }
+    // ---- Legacy serializer-compat accessors -----------------------------
 
     /**
-     * Experimental. DO NOT USE.
-     *
-     * @return the security proto
-     * */
+     * Legacy compat — returns the active proto view. Equivalent to
+     * {@link #getProto()}. Retained for source-compat with consumers that
+     * still call {@code security.getSecurityProto()}; prefer
+     * {@link #getProto()} in new code.
+     */
     public SecurityProto getSecurityProto() {
-        return this._sourceProto;
+        return getProto();
     }
 
     /**
-     * Experimental. DO NOT USE. Rather than serializing/deserializing protos, we're going to
-     * migrate the security to store the proto. This will be more extensible as it
-     * means you can add fields to the security object without any code changes
-     * to this codebase. However it may mean we create more Java-specific objects
-     * like ZonedDateTime etc if we do it on-demand without caching.
-     *
-     * This should be called only when initializing the security object.
-     *
-     * @param proto
+     * @deprecated Construct via {@link #Security(SecurityProto)} or
+     *             {@link #fromProto(SecurityProto)} instead. Retained as an
+     *             overlay-rebind hook so any straggler caller doesn't break.
      */
+    @Deprecated
     public void setSecurityProto(SecurityProto proto) {
-        this._sourceProto = proto;
-        // The lazy validTo/validFrom caches refer to the previous _sourceProto's
-        // values. Reset them so the next read decodes from the new proto. See
-        // FinTekkers/second-brain#338.
-        //
-        // _validToExplicitlySet is NOT reset — a prior setValidTo() call still
-        // wins over the new proto. (The typical call shape is
-        // `serializer.deserialize(proto) → setSecurityProto(proto)`; if a
-        // consumer mutates validTo BEFORE setSecurityProto runs, that mutation
-        // is preserved. Today's deserialize sequence never does that.)
-        this._validToCacheValid = false;
-        this._cachedValidTo = null;
-        this._cachedValidFromFromProto = null;
+        if (proto != this.proto && !this.proto.equals(proto)) {
+            this.overlay = proto.toBuilder();
+        }
     }
 
-    /**
-     * Lazy-decode override. Returns, in priority order:
-     *   1. Whatever was explicitly set via {@link #setValidTo(ZonedDateTime)} —
-     *      including {@code null} (resurrection per second-brain#316 §2.2).
-     *   2. Otherwise, the {@code valid_to} from the stashed {@code _sourceProto},
-     *      decoded on first call and cached for subsequent calls.
-     *   3. {@code null} if neither set nor proto-populated.
-     *
-     * This is a correctness fix on top of the pre-#338 behavior, where validTo
-     * was always {@code null} on a freshly-deserialized Security — the proto's
-     * {@code valid_to} was decoded by no path. See FinTekkers/second-brain#338.
-     */
+    // ---- Bitemporal accessors (proto-backed) -----------------------------
+
     @Override
     public ZonedDateTime getValidTo() {
-        if (_validToExplicitlySet) {
-            return super.getValidTo();
+        ZonedDateTime explicitlySet = super.getValidTo();
+        if (explicitlySet != null) {
+            return explicitlySet;
         }
-        if (_validToCacheValid) {
-            return _cachedValidTo;
+        SecurityProto active = getProto();
+        if (active.hasValidTo()) {
+            return ProtoSerializationUtil.deserializeTimestamp(active.getValidTo());
         }
-        if (_sourceProto != null && _sourceProto.hasValidTo()) {
-            _cachedValidTo = ProtoSerializationUtil.deserializeTimestamp(_sourceProto.getValidTo());
-        } else {
-            _cachedValidTo = null;
-        }
-        _validToCacheValid = true;
-        return _cachedValidTo;
+        return null;
     }
 
-    /**
-     * Lazy-decode override. Returns:
-     *   1. The {@code valid_from} from the stashed {@code _sourceProto} if present,
-     *      decoded on first call and cached.
-     *   2. Otherwise, the parent's {@code validFrom} (set to
-     *      {@code ZonedDateTime.now()} in the {@link RawDataModelObject} constructor —
-     *      a legacy default that loses the proto's authoritative timestamp).
-     *
-     * The proto wins when present because the parent's local-clock default loses
-     * the bitemporal record on every deserialize. Existing tests that build a
-     * Security via the POJO constructor (no proto stashed) continue to see the
-     * local-clock default. See FinTekkers/second-brain#338.
-     */
     @Override
     public ZonedDateTime getValidFrom() {
-        if (_cachedValidFromFromProto != null) {
-            return _cachedValidFromFromProto;
-        }
-        if (_sourceProto != null && _sourceProto.hasValidFrom()) {
-            _cachedValidFromFromProto = ProtoSerializationUtil.deserializeTimestamp(_sourceProto.getValidFrom());
-            return _cachedValidFromFromProto;
+        SecurityProto active = getProto();
+        if (active.hasValidFrom()) {
+            return ProtoSerializationUtil.deserializeTimestamp(active.getValidFrom());
         }
         return super.getValidFrom();
     }
 
-    /**
-     * Override to invalidate the lazy {@link #getValidTo()} cache and mark the
-     * field as explicitly set, so subsequent reads see the new value (including
-     * an explicit {@code null} for resurrection per second-brain#316 §2.2)
-     * instead of falling back to the proto's {@code valid_to}.
-     */
     @Override
     public void setValidTo(ZonedDateTime newValidTo) {
         super.setValidTo(newValidTo);
-        this._validToExplicitlySet = true;
-        this._validToCacheValid = false;
-        this._cachedValidTo = null;
+        if (newValidTo == null) {
+            ensureOverlay().clearValidTo();
+        } else {
+            ensureOverlay().setValidTo(ProtoSerializationUtil.serializeTimestamp(newValidTo));
+        }
     }
+
+    // ---- Business-field accessors (proto-backed) ------------------------
 
     public CashSecurity getSettlementCurrency() {
         throwIfLink("settlementCurrency");
-        return settlementCurrency;
+        SecurityProto active = getProto();
+        if (!active.hasSettlementCurrency()) return null;
+        SecurityProto sc = active.getSettlementCurrency();
+        if (sc.getIsLink()) {
+            // UUID-only link reference — caller resolves via SecurityService.
+            return null;
+        }
+        return new CashSecurity(sc);
     }
 
     public boolean isCash() {
         return false;
     }
 
-    /**
-     * Time-based soft-delete check. A Security is considered deleted iff it
-     * carries a non-null {@code validTo} that has already elapsed at
-     * {@code asOf}. A future-dated {@code validTo} means the row is still
-     * live today and becomes deleted automatically when {@code asOf} catches
-     * up. A null {@code validTo} is always active.
-     *
-     * <p>This is the single canonical soft-delete check across the platform —
-     * the predecessor {@code SecurityProto.deleted_at} field has been removed
-     * (tag 15 reserved). See /specs/soft-delete-validto-collapse.md
-     * (FinTekkers/second-brain#316).</p>
-     */
     public boolean isDeleted() {
         return isDeleted(ZonedDateTime.now());
     }
@@ -273,35 +394,39 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
 
     public String getIssuer() {
         throwIfLink("issuer");
-        return this.issuer;
+        return getProto().getIssuerName();
     }
 
-    /**
-     * Returns a high-level asset class for a security, such as 'Equity', 'FixedIncome', etc.
-     *
-     * @return Returns unclassified for basic securities, and a suitable value for other security values.
-     */
     public String getAssetClass() {
         throwIfLink("assetClass");
-        if (_sourceProto != null && !_sourceProto.getAssetClass().isEmpty()) {
-            return _sourceProto.getAssetClass();
-        }
-        return "Unclassified";
+        String assetClass = getProto().getAssetClass();
+        return assetClass.isEmpty() ? "Unclassified" : assetClass;
     }
 
     public QuantityType getQuantityType() {
         return QuantityType.UNITS;
     }
 
+    /**
+     * Subclass-visible mirror of the identifiers list. Subclass {@code toString}
+     * implementations and field-by-field test helpers read this directly.
+     * Kept in sync with the active proto's {@code identifiers} via
+     * {@link #addIdentifier(Identifier)}.
+     */
+    protected List<Identifier> identifiers = new ArrayList<>();
+
     public List<Identifier> getIdentifiers() {
         throwIfLink("identifiers");
+        // Mirror is authoritative (populated from proto on construction and
+        // mutated via addIdentifier / list.clear()). Returns the live list so
+        // legacy {@code getIdentifiers().clear()} call sites still work.
         return identifiers;
     }
 
     public Optional<Identifier> getIdentifierByType(IdentifierTypeProto type) {
         throwIfLink("identifierByType");
         if (type == null) return Optional.empty();
-        for (Identifier id : identifiers) {
+        for (Identifier id : getIdentifiers()) {
             if (id.getIdentifierType().name().equals(type.name())) {
                 return Optional.of(id);
             }
@@ -311,6 +436,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
 
     public void addIdentifier(Identifier identifier) {
         if (identifier == null) return;
+        // Mirror is authoritative — getProto() syncs into the overlay.
         this.identifiers.add(identifier);
     }
 
@@ -326,7 +452,10 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
             case ASSET_CLASS -> getAssetClass();
             case PRODUCT_CLASS -> getProductClass();
             case PRODUCT_TYPE -> getProductType().name();
-            case IDENTIFIER -> identifiers.isEmpty() ? null : identifiers.get(0);
+            case IDENTIFIER -> {
+                List<Identifier> ids = getIdentifiers();
+                yield ids.isEmpty() ? null : ids.get(0);
+            }
             case TENOR, ADJUSTED_TENOR -> Tenor.UNKNOWN_TENOR;
             case SECURITY_DESCRIPTION -> getDescription();
             case MATURITY_DATE -> LocalDate.of(2999, 12, 31);
@@ -347,27 +476,14 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * The type of security as modeled in code layers. Examples: BondSecurity, EquitySecurity, etc.
-     * @return String representation of the class, generally matches the class name in Java.
-     */
     private String getProductClass() {
         return getClass().getSimpleName();
     }
 
-    /**
-     * Reads the leaf productType from the source proto when present.
-     * Specialized subclasses (TIPSBond, FloatingRateNote, EquitySecurity,
-     * CashSecurity) override with a hardcoded value for legacy
-     * non-proto-constructed paths. See ledger-models-protos/hierarchy.json
-     * for the full product registry.
-     */
     public ProductTypeProto getProductType() {
         throwIfLink("productType");
-        if (_sourceProto != null && _sourceProto.getProductType() != ProductTypeProto.PRODUCT_TYPE_UNKNOWN) {
-            return _sourceProto.getProductType();
-        }
-        return ProductTypeProto.PRODUCT_TYPE_UNKNOWN;
+        ProductTypeProto pt = getProto().getProductType();
+        return pt;
     }
 
     public Set<Field> getFields() {
@@ -403,27 +519,24 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
 
-    /**
-     * @return If an explicit description is set then it is return, otherwise a generic description is returned.
-     * The description is subject to change and should NEVER be parsed. The goal is for this to be human-readable.
-     */
     public String getDisplayDescription() {
-        if (description != null) return description;
-        if (!identifiers.isEmpty()) return identifiers.get(0).toString();
+        String desc = getDescription();
+        if (desc != null && !desc.isEmpty()) return desc;
+        List<Identifier> ids = getIdentifiers();
+        if (!ids.isEmpty()) return ids.get(0).toString();
         return toString();
     }
 
-    /**
-     * @return the explicitly set description if set
-     */
     public String getDescription() {
-        return description;
+        String d = getProto().getDescription();
+        return d.isEmpty() ? null : d;
     }
 
-    /**
-     * @param description Human-readable description
-     */
     public void setDescription(String description) {
-        this.description = description;
+        if (description == null) {
+            ensureOverlay().clearDescription();
+        } else {
+            ensureOverlay().setDescription(description);
+        }
     }
 }

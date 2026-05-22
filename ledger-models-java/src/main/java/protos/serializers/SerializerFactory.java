@@ -14,7 +14,6 @@ import fintekkers.models.security.SecurityProto;
 import fintekkers.models.transaction.TransactionProto;
 import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
-import protos.serializers.security.SecuritySerializer;
 import protos.serializers.transaction.TransactionSerializer;
 
 import java.util.HashMap;
@@ -27,27 +26,33 @@ public class SerializerFactory implements IRawDataModelObjectSerializer {
         return INSTANCE;
     }
 
+    /**
+     * Security routes through {@code new Security(proto)} / {@code security.getProto()}
+     * directly — SecuritySerializer was deleted in FinTekkers/second-brain#338.
+     * The other entities still use their (proto-only) serializer indirection
+     * for now; Transaction / Price / Portfolio refactors are tracked as their
+     * own sub-issues.
+     */
     private final static Map<Class, IRawDataModelObjectSerializer> serializers = new HashMap<>() {{
         put(Transaction.class, TransactionSerializer.getInstance());
-        put(Security.class, SecuritySerializer.getInstance());
         put(Price.class, PriceSerializer.getInstance());
         put(Portfolio.class, PortfolioSerializer.getInstance());
     }};
 
     private final static Map<Class, IRawDataModelObjectSerializer> serializers_by_proto = new HashMap<>() {{
         put(TransactionProto.class, TransactionSerializer.getInstance());
-        put(SecurityProto.class, SecuritySerializer.getInstance());
         put(PriceProto.class, PriceSerializer.getInstance());
         put(PortfolioProto.class, PortfolioSerializer.getInstance());
     }};
 
     @Override
     public GeneratedMessageV3 serialize(IRawDataModelObject dataModelObject) {
-        IRawDataModelObjectSerializer serializer = serializers.get(dataModelObject.getClass());
-
-        if (serializer == null && Security.class.isAssignableFrom(dataModelObject.getClass())) {
-            serializer = serializers.get(Security.class);
+        // Security — the wrapper IS the proto holder; no serializer indirection.
+        if (dataModelObject instanceof Security) {
+            return Any.pack(((Security) dataModelObject).getProto());
         }
+
+        IRawDataModelObjectSerializer serializer = serializers.get(dataModelObject.getClass());
 
         if (serializer == null) {
             throw new RuntimeException("No serializer found for " + dataModelObject.getClass().getSimpleName());
@@ -78,7 +83,8 @@ public class SerializerFactory implements IRawDataModelObjectSerializer {
             if (any.is(TransactionProto.class)) {
                 unpacked = any.unpack(TransactionProto.class);
             } else if (any.is(SecurityProto.class)) {
-                unpacked = any.unpack(SecurityProto.class);
+                // Security — no serializer indirection; route through fromProto.
+                return Security.fromProto(any.unpack(SecurityProto.class));
             } else if (any.is(PriceProto.class)) {
                 unpacked = any.unpack(PriceProto.class);
             } else if (any.is(PortfolioProto.class)) {
@@ -97,19 +103,5 @@ public class SerializerFactory implements IRawDataModelObjectSerializer {
     public IRawDataModelObject deserialize(byte[] bytes) {
         final GeneratedMessageV3 proto = protos.serializers.SerializerFactory.deserializeFromBytes(bytes);
         return this.deserialize(proto);
-    }
-
-    @Override
-    public String serializeToJson(GeneratedMessageV3 proto) {
-        IRawDataModelObjectSerializer serializer = serializers_by_proto.get(proto.getClass());
-        if (serializer == null) {
-            throw new RuntimeException("No serializer found for " + proto.getClass().getSimpleName());
-        }
-        return serializer.serializeToJson(proto);
-    }
-
-    @Override
-    public GeneratedMessageV3 deserializeFromJson(String json) {
-        throw new UnsupportedOperationException("Not implemented");
     }
 }

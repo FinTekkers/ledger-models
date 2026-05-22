@@ -47,15 +47,5 @@ public class PortfolioSerializer implements IRawDataModelObjectSerializer<Portfo
         return PositionStatusProto.valueOf(status.name());
     }
 
-    @Override
-    public String serializeToJson(PortfolioProto proto) {
-        Gson gson = JsonSerializationUtil.getGsonBuilder();
-        return gson.toJson(proto);
-    }
-
-    @Override
-    public PortfolioProto deserializeFromJson(String json) {
-        Gson gson = JsonSerializationUtil.getGsonBuilder();
-        return gson.fromJson(json, PortfolioProto.class);
-    }
+    // JSON serialize/deserialize removed in FinTekkers/second-brain#338.
 }

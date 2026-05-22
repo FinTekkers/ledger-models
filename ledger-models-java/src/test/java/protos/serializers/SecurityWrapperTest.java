@@ -1,11 +1,10 @@
 package protos.serializers;
 
-import com.amazonaws.util.StringUtils;
 import common.models.security.BondSecurity;
 import common.models.security.CashSecurity;
+import common.models.security.Security;
 import fintekkers.models.security.SecurityProto;
 import org.junit.jupiter.api.Test;
-import protos.serializers.security.SecuritySerializer;
 import testutil.DummyBondObjects;
 import testutil.DummyEquityObjects;
 
@@ -22,18 +21,28 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class SecuritySerializerTest {
+/**
+ * Wrapper round-trip + preservation tests for {@link Security}.
+ *
+ * <p>Post-#338 refactor: replaces SecuritySerializerTest. The serialize/
+ * deserialize entry points are now {@code security.getProto()} and
+ * {@code Security.fromProto(proto)} — no separate Serializer indirection.
+ *
+ * <p>Round-trip invariant: wrap-then-unwrap (or unwrap-then-wrap) preserves
+ * all data, including fields without an explicit domain accessor (instrument_type,
+ * legs, asset_class, product_type, index_details).
+ */
+class SecurityWrapperTest {
+
     @Test
-    public void testBaseSecurityAndEquitySecuritySerialize() {
+    public void testBaseSecurityAndEquitySecurityWrap() {
         final var security = DummyEquityObjects.getDummySecurity();
 
         String description = new Random().nextInt() % 2 == 0 ? null : "TEST";
         security.setDescription(description);
 
-        final SecuritySerializer serializer = SecuritySerializer.getInstance();
-        final SecurityProto proto = serializer.serialize(security);
-
-        final var copy = serializer.deserialize(proto);
+        final SecurityProto proto = security.getProto();
+        final var copy = Security.fromProto(proto);
 
         assertEquals(security.getID(), copy.getID());
         assertTrue(security.getAsOf().truncatedTo(ChronoUnit.MILLIS).isEqual(copy.getAsOf().truncatedTo(ChronoUnit.MILLIS)));
@@ -43,7 +52,6 @@ class SecuritySerializerTest {
 
         assertEquals(security.getDescription(), copy.getDescription());
 
-        //Settlement security - Indirectly testing cash
         assertEquals(security.getSettlementCurrency().getID(), copy.getSettlementCurrency().getID());
         assertTrue(security.getAsOf().truncatedTo(ChronoUnit.MILLIS).isEqual(copy.getAsOf().truncatedTo(ChronoUnit.MILLIS)));
 
@@ -53,16 +61,14 @@ class SecuritySerializerTest {
         assertEquals(security.getIdentifiers().get(0).getIdentifier(), copy.getIdentifiers().get(0).getIdentifier());
         assertEquals(security.getIdentifiers().get(0).getIdentifierType(), copy.getIdentifiers().get(0).getIdentifierType());
     }
+
     @Test
-    public void testBondSecuritySerialize() {
+    public void testBondSecurityWrap() {
         final var security = DummyBondObjects.getDummySecurity();
 
-        final SecuritySerializer serializer = SecuritySerializer.getInstance();
-        final SecurityProto proto = serializer.serialize(security);
+        final SecurityProto proto = security.getProto();
+        final var copy = (BondSecurity) Security.fromProto(proto);
 
-        final var copy = (BondSecurity) serializer.deserialize(proto);
-
-        //NOTE: Only testing bond specific items here
         assertEquals(security.getID(), copy.getID());
         assertTrue(security.getAsOf().truncatedTo(ChronoUnit.MILLIS).isEqual(copy.getAsOf().truncatedTo(ChronoUnit.MILLIS)));
 
@@ -77,43 +83,20 @@ class SecuritySerializerTest {
     }
 
     @Test
-    public void testCashSerialization() {
+    public void testCashWrap() {
         final var security = CashSecurity.USD;
 
-        final SecuritySerializer serializer = SecuritySerializer.getInstance();
-        final SecurityProto proto = serializer.serialize(security);
-
-        final var copy = (CashSecurity) serializer.deserialize(proto);
-
-        //NOTE: Only testing bond specific items here
-        assertEquals(security.getID(), copy.getID());
-        assertTrue(security.getAsOf().truncatedTo(ChronoUnit.MILLIS).isEqual(copy.getAsOf().truncatedTo(ChronoUnit.MILLIS)));
-    }
-
-    @Test
-    public void testJSONSerializationForCashSecurity() {
-        // The structural contract is what matters: serialize → deserialize →
-        // equal domain object. Exact JSON output is a serializer implementation
-        // detail.
-        final var security = CashSecurity.USD;
-
-        final SecuritySerializer serializer = SecuritySerializer.getInstance();
-        final SecurityProto proto = serializer.serialize(security);
-
-        String serialized = serializer.serializeToJson(proto);
-        SecurityProto protoCopy = serializer.deserializeFromJson(serialized);
-        final var copy = (CashSecurity) serializer.deserialize(protoCopy);
+        final SecurityProto proto = security.getProto();
+        final var copy = (CashSecurity) Security.fromProto(proto);
 
         assertEquals(security.getID(), copy.getID());
         assertTrue(security.getAsOf().truncatedTo(ChronoUnit.MILLIS).isEqual(copy.getAsOf().truncatedTo(ChronoUnit.MILLIS)));
-        assertEquals(security.getIdentifiers(), copy.getIdentifiers());
-        assertEquals(security.getCashId(), copy.getCashId());
     }
 
     @Test
     public void testDeserializeSettlementCurrencyIsLinkDoesNotThrow() {
         // Issue #93: when settlement_currency has is_link=true (UUID-only reference),
-        // deserialize() must not throw ClassCastException — it should produce null instead.
+        // Security.fromProto must not throw — it should produce null instead.
         UUID linkUuid = UUID.randomUUID();
         SecurityProto linkProto = SecurityProto.newBuilder()
                 .setIsLink(true)
@@ -121,103 +104,62 @@ class SecuritySerializerTest {
                 .build();
 
         SecurityProto bondWithLink = SecurityProto.newBuilder(
-                        SecuritySerializer.getInstance().serialize(DummyBondObjects.getDummySecurity()))
+                        DummyBondObjects.getDummySecurity().getProto())
                 .setSettlementCurrency(linkProto)
                 .build();
 
-        final SecuritySerializer serializer = SecuritySerializer.getInstance();
-        common.models.security.Security result = assertDoesNotThrow(() -> serializer.deserialize(bondWithLink),
-                "deserialize() must not throw when settlement_currency.is_link=true");
+        Security result = assertDoesNotThrow(() -> Security.fromProto(bondWithLink),
+                "Security.fromProto must not throw when settlement_currency.is_link=true");
         assertNull(result.getSettlementCurrency(),
                 "settlement_currency should be null when the embedded proto is a link reference");
     }
 
-    @Test
-    public void testJSONSerializationForBondSecurity() {
-        final var security = DummyBondObjects.getDummySecurity();
-
-        final SecuritySerializer serializer = SecuritySerializer.getInstance();
-        final SecurityProto proto = serializer.serialize(security);
-
-        String serialized = serializer.serializeToJson(proto);
-
-        SecurityProto protoCopy = serializer.deserializeFromJson(serialized);
-        final var copy = (BondSecurity) serializer.deserialize(protoCopy);
-
-        //NOTE: Only testing cash specific items here
-        assertEquals(security.getID(), copy.getID());
-        assertTrue(security.getAsOf().truncatedTo(ChronoUnit.MILLIS)
-                .isEqual(copy.getAsOf().truncatedTo(ChronoUnit.MILLIS)));
-        assertEquals(security.getIdentifiers(), copy.getIdentifiers());
-
-        //Bond security
-        assertEquals(security.getCouponType(), copy.getCouponType());
-        assertEquals(security.getCouponFrequency(), copy.getCouponFrequency());
-        assertEquals(security.getSettlementCurrency(), copy.getSettlementCurrency());
-        assertEquals(security.getIssueDate(), copy.getIssueDate());
-        assertEquals(security.getDatedDate(), copy.getDatedDate());
-        assertEquals(security.getMaturityDate(), copy.getMaturityDate());
-        assertEquals(security.getIdentifiers(), copy.getIdentifiers());
-    }
-
-    // Issue #96: maturity_date must be strictly after issue_date for bond-type securities
+    // Issue #96: maturity_date must be strictly after issue_date for bond-type securities.
+    // Validation lives in Security.fromProto (carried forward from the deleted SecuritySerializer).
 
     @Test
     public void testBondWithMaturityBeforeIssueDateThrows() {
-        // maturity 2022 < issue 2032 — must be rejected
         BondSecurity invalid = DummyBondObjects.getDummySecurity(
                 ZonedDateTime.now(), "91282CEP2",
                 LocalDate.of(2032, 5, 16),
                 LocalDate.of(2022, 5, 16),
                 BigDecimal.valueOf(2.875));
-        SecurityProto proto = SecuritySerializer.getInstance().serialize(invalid);
+        SecurityProto proto = invalid.getProto();
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> SecuritySerializer.getInstance().deserialize(proto),
-                "deserialize() must reject bond where maturity_date < issue_date");
-        assertTrue(ex.getMessage().contains("maturity_date must be after issue_date"),
-                "Exception message should contain 'maturity_date must be after issue_date'");
+                () -> Security.fromProto(proto),
+                "Security.fromProto must reject bond where maturity_date < issue_date");
+        assertTrue(ex.getMessage().contains("maturity_date must be after issue_date"));
     }
 
     @Test
     public void testBondWithMaturityEqualToIssueDateThrows() {
-        // maturity == issue — must be rejected (not strictly after)
         LocalDate sameDate = LocalDate.of(2025, 6, 1);
         BondSecurity invalid = DummyBondObjects.getDummySecurity(
                 ZonedDateTime.now(), "91282CEP2",
                 sameDate,
                 sameDate,
                 BigDecimal.valueOf(2.875));
-        SecurityProto proto = SecuritySerializer.getInstance().serialize(invalid);
+        SecurityProto proto = invalid.getProto();
 
         assertThrows(IllegalArgumentException.class,
-                () -> SecuritySerializer.getInstance().deserialize(proto),
-                "deserialize() must reject bond where maturity_date == issue_date");
+                () -> Security.fromProto(proto),
+                "Security.fromProto must reject bond where maturity_date == issue_date");
     }
 
     @Test
     public void testBondWithValidDatesDoesNotThrow() {
-        // sanity: the standard DummyBondObjects security (issue 2022, maturity 2032) must still pass
         BondSecurity valid = DummyBondObjects.getDummySecurity();
-        SecurityProto proto = SecuritySerializer.getInstance().serialize(valid);
+        SecurityProto proto = valid.getProto();
 
-        assertDoesNotThrow(() -> SecuritySerializer.getInstance().deserialize(proto),
-                "deserialize() must accept bond where maturity_date > issue_date");
+        assertDoesNotThrow(() -> Security.fromProto(proto),
+                "Security.fromProto must accept bond where maturity_date > issue_date");
     }
 
-    // ------------------------------------------------------------------------
-    // Round-trip preservation for fields that have no domain accessor on
-    // Security (or whose domain-subclass overrides hardcode legacy values).
-    // Same shape as the existing issuance_info / identifiers / index_type
-    // preservation in SecuritySerializer.serialize().
-    //
-    // Each test: build a clean proto via the existing dummy, set the field
-    // under test on toBuilder(), run through serialize(deserialize(proto)),
-    // assert preservation.
-    // ------------------------------------------------------------------------
+    // ---- Round-trip preservation for fields without explicit domain accessors ----
 
     private static SecurityProto equityProtoWith(java.util.function.Function<SecurityProto.Builder, SecurityProto.Builder> mutator) {
-        SecurityProto base = SecuritySerializer.getInstance().serialize(DummyEquityObjects.getDummySecurity());
+        SecurityProto base = DummyEquityObjects.getDummySecurity().getProto();
         return mutator.apply(base.toBuilder()).build();
     }
 
@@ -226,19 +168,15 @@ class SecuritySerializerTest {
         SecurityProto input = equityProtoWith(b ->
                 b.setInstrumentType(fintekkers.models.security.InstrumentTypeProto.INSTRUMENT_TYPE_DERIVATIVE));
 
-        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
-                SecuritySerializer.getInstance().deserialize(input));
+        SecurityProto reSerialized = Security.fromProto(input).getProto();
 
         assertEquals(fintekkers.models.security.InstrumentTypeProto.INSTRUMENT_TYPE_DERIVATIVE,
                 reSerialized.getInstrumentType(),
-                "instrument_type must survive round-trip; domain Security has no setter, "
-                + "so the serializer must copy from the stashed source proto.");
+                "instrument_type must survive round-trip via the proto-backed wrapper.");
     }
 
     @Test
     public void legs_preservedOnRoundtrip() {
-        // legs is repeated SecurityProto with each leg in is_link=true mode
-        // with uuid + as_of populated. See docs/adr/is_link_pattern.md.
         fintekkers.models.util.Uuid.UUIDProto leg1Uuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
                 .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[16])).build();
         fintekkers.models.util.Uuid.UUIDProto leg2Uuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
@@ -249,24 +187,16 @@ class SecuritySerializerTest {
 
         SecurityProto input = equityProtoWith(b -> b.addLegs(leg1).addLegs(leg2));
 
-        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
-                SecuritySerializer.getInstance().deserialize(input));
+        SecurityProto reSerialized = Security.fromProto(input).getProto();
 
-        assertEquals(2, reSerialized.getLegsCount(),
-                "Multi-leg strategy packages: legs must survive round-trip.");
-        assertTrue(reSerialized.getLegs(0).getIsLink(), "Each leg must be is_link=true");
+        assertEquals(2, reSerialized.getLegsCount());
+        assertTrue(reSerialized.getLegs(0).getIsLink());
         assertEquals(leg1Uuid, reSerialized.getLegs(0).getUuid());
         assertEquals(leg2Uuid, reSerialized.getLegs(1).getUuid());
     }
 
     @Test
     public void legs_wireCompatibleWithLegacySecurityIdProtoBytes() {
-        // Wire-format contract for SecurityProto.legs: a length-delimited
-        // UUIDProto at field tag 1 — which is exactly what SecurityProto.uuid
-        // (also tag 1) encodes to. We don't depend on SecurityIdProto at
-        // compile time; reconstruct its wire form by encoding a SecurityProto
-        // with ONLY the uuid set, then confirm those bytes parse back as a
-        // SecurityProto with the same uuid.
         fintekkers.models.util.Uuid.UUIDProto legUuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
                 .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[]{
                         7,7,0,0,0,0,0,0, 0,0,0,0,0,0,0,7})).build();
@@ -275,8 +205,7 @@ class SecuritySerializerTest {
 
         try {
             SecurityProto parsed = SecurityProto.parseFrom(legacyBytes);
-            assertEquals(legUuid, parsed.getUuid(),
-                    "Legacy SecurityIdProto wire bytes (uuid at tag 1) must parse as SecurityProto with same uuid.");
+            assertEquals(legUuid, parsed.getUuid());
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
             throw new AssertionError("Legacy bytes must parse under new type", e);
         }
@@ -284,9 +213,6 @@ class SecuritySerializerTest {
 
     @Test
     public void indexDetails_constituents_preservedOnRoundtrip() throws com.google.protobuf.InvalidProtocolBufferException {
-        // IndexDetailsProto.constituents is server-populated under
-        // QuerySecurityRequestProto.lookthrough=true. Each constituent is
-        // is_link=true with uuid + as_of populated.
         fintekkers.models.util.Uuid.UUIDProto constUuid = fintekkers.models.util.Uuid.UUIDProto.newBuilder()
                 .setRawUuid(com.google.protobuf.ByteString.copyFrom(new byte[]{
                         2,2,0,0,0,0,0,0, 0,0,0,0,0,0,0,2})).build();
@@ -313,41 +239,30 @@ class SecuritySerializerTest {
 
         assertEquals(1, parsed.getIndexDetails().getConstituentsCount());
         SecurityProto pc = parsed.getIndexDetails().getConstituents(0);
-        assertTrue(pc.getIsLink(), "Constituent must be is_link=true");
+        assertTrue(pc.getIsLink());
         assertEquals(constUuid, pc.getUuid());
-        assertEquals(asOf, pc.getAsOf(), "Constituent must carry the parent's as_of");
+        assertEquals(asOf, pc.getAsOf());
     }
 
     @Test
     public void assetClass_canonicalRegistryStringPreserved() {
-        // EquitySecurity's getAssetClass() hardcodes the legacy "Equity"
-        // string. Without preservation, that hardcode wins and the canonical
-        // "EQUITY" set on the input proto is overwritten on the way out.
         SecurityProto input = equityProtoWith(b -> b.setAssetClass("EQUITY"));
 
-        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
-                SecuritySerializer.getInstance().deserialize(input));
+        SecurityProto reSerialized = Security.fromProto(input).getProto();
 
         assertEquals("EQUITY", reSerialized.getAssetClass(),
-                "Canonical registry asset_class string from the input proto must survive; "
-                + "the domain-subclass legacy hardcode must NOT win.");
+                "Canonical registry asset_class string from the input proto must survive round-trip.");
     }
 
     @Test
     public void productType_preservesPreferredStockOverEquitySecurityHardcode() {
-        // EquitySecurity.getProductType() hardcodes COMMON_STOCK. Without
-        // preservation, PREFERRED_STOCK / ADR / ETF on the input proto
-        // collapse to COMMON_STOCK on round-trip.
         SecurityProto input = equityProtoWith(b ->
                 b.setProductType(fintekkers.models.security.ProductTypeProto.PREFERRED_STOCK));
 
-        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
-                SecuritySerializer.getInstance().deserialize(input));
+        SecurityProto reSerialized = Security.fromProto(input).getProto();
 
         assertEquals(fintekkers.models.security.ProductTypeProto.PREFERRED_STOCK,
-                reSerialized.getProductType(),
-                "PREFERRED_STOCK / ADR / ETF must survive round-trip against EquitySecurity's "
-                + "COMMON_STOCK hardcode.");
+                reSerialized.getProductType());
     }
 
     @Test
@@ -355,8 +270,7 @@ class SecuritySerializerTest {
         SecurityProto input = equityProtoWith(b ->
                 b.setProductType(fintekkers.models.security.ProductTypeProto.ADR));
 
-        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
-                SecuritySerializer.getInstance().deserialize(input));
+        SecurityProto reSerialized = Security.fromProto(input).getProto();
 
         assertEquals(fintekkers.models.security.ProductTypeProto.ADR, reSerialized.getProductType());
     }
@@ -366,8 +280,7 @@ class SecuritySerializerTest {
         SecurityProto input = equityProtoWith(b ->
                 b.setProductType(fintekkers.models.security.ProductTypeProto.ETF));
 
-        SecurityProto reSerialized = SecuritySerializer.getInstance().serialize(
-                SecuritySerializer.getInstance().deserialize(input));
+        SecurityProto reSerialized = Security.fromProto(input).getProto();
 
         assertEquals(fintekkers.models.security.ProductTypeProto.ETF, reSerialized.getProductType());
     }

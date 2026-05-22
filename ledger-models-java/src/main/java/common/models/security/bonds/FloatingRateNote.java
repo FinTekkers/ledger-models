@@ -15,56 +15,65 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 /**
- * A Floating rate bond issued by the US treasury. The coupon is based on the 13 week bill.
+ * A Floating rate bond issued by the US treasury. Post-#338 refactor: thin
+ * proto wrapper; FRN extras live on the active proto's {@code frn_extension}.
  */
-public class FloatingRateNote extends BondSecurity implements IndexLinkedSecurity{
-    private BigDecimal spread;
-    private Security index;
-    private BigDecimal couponRate;
+public class FloatingRateNote extends BondSecurity implements IndexLinkedSecurity {
 
+    /** Primary constructor — wraps a SecurityProto. */
+    public FloatingRateNote(SecurityProto proto) {
+        super(proto);
+    }
+
+    /** @deprecated Field-by-field test helper. */
+    @Deprecated
     public FloatingRateNote(UUID id, String issuer, ZonedDateTime asOf, CashSecurity settlementCurrency) {
         super(id, issuer, asOf, settlementCurrency);
     }
 
+    private FrnExtensionProto.Builder currentFrnExtensionForWrite() {
+        SecurityProto.Builder o = ensureOverlay();
+        if (o.hasFrnExtension()) {
+            return o.getFrnExtension().toBuilder();
+        }
+        return FrnExtensionProto.newBuilder();
+    }
+
+    private void commitFrnExtension(FrnExtensionProto.Builder frn) {
+        ensureOverlay().setFrnExtension(frn.build());
+    }
+
+    /** Fixed spread over the reference rate, in basis points. */
     public BigDecimal getSpread() {
-        return spread;
+        SecurityProto active = getProto();
+        if (!active.hasFrnExtension() || !active.getFrnExtension().hasSpread()) return null;
+        return ProtoSerializationUtil.deserializeBigDecimal(active.getFrnExtension().getSpread());
     }
 
     public void setSpread(BigDecimal spread) {
-        this.spread = spread;
+        FrnExtensionProto.Builder frn = currentFrnExtensionForWrite();
+        if (spread == null) {
+            frn.clearSpread();
+        } else {
+            frn.setSpread(ProtoSerializationUtil.serializeBigDecimal(spread));
+        }
+        commitFrnExtension(frn);
     }
 
-
     public Security getIndex() {
-        throw new UnsupportedOperationException("Not supported yet. Need to think this through:" +
-                "" +
-                "1a/ Index could just be a security. E.g. Index = Treasury FRN Index. " +
-                "Perhaps it would be an index security that has an identifier. It has the logic embedded " +
-                "in it that knows how to look up other securities to resolve. In this case the index would have " +
-                "to know to find securities with 13 week maturities, find the auction dates, resolve the data " +
-                "and stitch it together. Perhaps makes sense to think through the response structure to the client " +
-                "before modelling. " +
-                "" +
-                "Why do we need this:" +
-                "* As the rate changes over time, we need the ability to query rates as of a point in time. This " +
-                "is needed in turn to calculate interest" +
-                "TODO: Given the Fed holdings of this are smaller than TIPS, perhaps we start with TIPS. "
-                );
+        throw new UnsupportedOperationException("Not supported yet. Need to think this through.");
     }
 
     public void setIndex(Security index) {
-        this.index = index;
+        // No-op; index reference not yet wired through the FRN proto extension.
     }
 
     @Override
     public void setCouponRate(BigDecimal couponRate) {
-        this.couponRate = couponRate;
+        super.setCouponRate(couponRate);
     }
 
-    /**
-     *
-     * @return Returns the spread of the FRN
-     */
+    /** FRN treats spread as the effective coupon rate. */
     @Override
     public BigDecimal getCouponRate() {
         return getSpread();
@@ -84,33 +93,23 @@ public class FloatingRateNote extends BondSecurity implements IndexLinkedSecurit
         return ProductTypeProto.TREASURY_FRN;
     }
 
-    /**
-     * Which floating-rate benchmark this note resets against (e.g. SOFR,
-     * T_BILL_13_WEEK). Reads from the stashed proto's
-     * {@code frn_extension.reference_rate_index}.
-     */
+    @Override
+    protected ProductTypeProto getSubclassProductType() {
+        return ProductTypeProto.TREASURY_FRN;
+    }
+
     public IndexTypeProto getReferenceRateIndex() {
-        SecurityProto proto = getSecurityProto();
-        if (proto == null || !proto.hasFrnExtension()) return IndexTypeProto.UNKNOWN_INDEX_TYPE;
-        return proto.getFrnExtension().getReferenceRateIndex();
+        SecurityProto active = getProto();
+        if (!active.hasFrnExtension()) return IndexTypeProto.UNKNOWN_INDEX_TYPE;
+        return active.getFrnExtension().getReferenceRateIndex();
     }
 
-    /**
-     * How often the floating coupon rate resets. Reads from the stashed
-     * proto's {@code frn_extension.reset_frequency}.
-     */
     public CouponFrequencyProto getResetFrequency() {
-        SecurityProto proto = getSecurityProto();
-        if (proto == null || !proto.hasFrnExtension()) return CouponFrequencyProto.UNKNOWN_COUPON_FREQUENCY;
-        return proto.getFrnExtension().getResetFrequency();
+        SecurityProto active = getProto();
+        if (!active.hasFrnExtension()) return CouponFrequencyProto.UNKNOWN_COUPON_FREQUENCY;
+        return active.getFrnExtension().getResetFrequency();
     }
 
-    /**
-     * Build an FRN {@link SecurityProto} from the pricer's expected inputs.
-     * Populates {@code bond_details} with the shared bond shape plus
-     * {@code frn_extension} with the floating-rate extras, and sets
-     * {@code product_type = TREASURY_FRN}.
-     */
     public static SecurityProto fromPricerInputs(BigDecimal faceValue,
                                                  BigDecimal couponRate,
                                                  CouponTypeProto couponType,

@@ -75,7 +75,7 @@ class TBillStripsRoundTripTest {
     public void tBillBondFieldsSurviveDeserialize() {
         SecurityProto proto = zeroCouponBondShape(ProductTypeProto.TBILL).build();
 
-        Security security = SecuritySerializer.getInstance().deserialize(proto);
+        Security security = Security.fromProto(proto);
 
         assertInstanceOf(BondSecurity.class, security,
                 "T_BILL must deserialize to BondSecurity, not the default plain Security");
@@ -93,7 +93,7 @@ class TBillStripsRoundTripTest {
     public void stripsSecurityBondFieldsSurviveDeserialize() {
         SecurityProto proto = zeroCouponBondShape(ProductTypeProto.STRIPS).build();
 
-        Security security = SecuritySerializer.getInstance().deserialize(proto);
+        Security security = Security.fromProto(proto);
 
         assertInstanceOf(BondSecurity.class, security,
                 "STRIPS_SECURITY must deserialize to BondSecurity, not the default plain Security");

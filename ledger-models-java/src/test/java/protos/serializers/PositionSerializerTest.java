@@ -90,40 +90,6 @@ class PositionSerializerTest {
         Assertions.assertEquals(positionStatusEnumValue, positionStatusEnumValueCopy);
     }
 
-    @Test
-    public void testJSONSerialization() {
-        final var position = createPosition();
-
-        final PositionSerializer serializer = PositionSerializer.getInstance();
-        final PositionProto proto = serializer.serialize(position);
-
-        String serialized = serializer.serializeToJson(proto);
-
-        for(Field field : position.getFields()) {
-            String name = field.name();
-            Assertions.assertTrue(serialized.contains(name));
-        }
-
-        for(Measure measure : position.getMeasures()) {
-            String name = measure.name();
-            Assertions.assertTrue(serialized.contains(name));
-        }
-
-        //Don't support deserialization from position as it is a simplified state of the data. We would need to
-        //implement pointers (i.e. primary key / asOf) to allow for lookup.
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> serializer.deserializeFromJson(serialized));
-
-        Gson gson = new Gson();
-        //Should not throw an error otherwise the Json is malformed
-        JsonObject jsonObject = gson.fromJson(serialized, JsonObject.class);
-
-        jsonObject.get(JSONFieldNames.CONTEXT);
-        JsonElement firstRecord = jsonObject.get(JSONFieldNames.RECORDS).getAsJsonArray().get(0);
-        JsonObject firstFieldInRecord = firstRecord.getAsJsonArray().get(0).getAsJsonObject();
-
-        firstFieldInRecord.get(JSONFieldNames.FIELD_NAME);
-        firstFieldInRecord.get(JSONFieldNames.FIELD_TYPE);
-        firstFieldInRecord.get(JSONFieldNames.FIELD_DISPLAY_NAME);
-        firstFieldInRecord.get(JSONFieldNames.FIELD_DISPLAY_VALUE);
-    }
+    // testJSONSerialization removed in FinTekkers/second-brain#338 — JSON
+    // serialize/deserialize methods on PositionSerializer were deleted.
 }
