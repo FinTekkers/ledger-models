@@ -58,7 +58,32 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     /** Original immutable baseline. */
     private final TransactionProto proto;
 
-    /** Lazy mutation overlay; null until first setter. */
+    /**
+     * Write buffer for in-place mutations. {@code null} until the first setter
+     * call; allocated lazily by {@link #ensureOverlay()} as a copy of
+     * {@link #proto} (via {@code proto.toBuilder()}, which deep-copies nested
+     * sub-protos — non-trivial, hence the laziness).
+     *
+     * <p>Write lifecycle:
+     * <ol>
+     *   <li>Construction: {@code proto} = caller-supplied baseline (immutable);
+     *       {@code overlay} = null. All reads go straight to {@code proto}.</li>
+     *   <li>First setter (e.g. {@link #setQuantity}, {@link #setValidTo}):
+     *       {@link #ensureOverlay()} clones {@code proto} into a Builder;
+     *       the setter writes into that Builder. Subsequent reads via
+     *       {@link #active()} prefer {@code overlay} when non-null, so writes
+     *       are visible to in-process getters immediately.</li>
+     *   <li>Serialize ({@link #getProto()}): the overlay (or {@code proto} if
+     *       no writes occurred) is the basis for the emitted proto, with
+     *       strip-on-write applied to nested Security/Portfolio/Price
+     *       sub-protos and child transactions rebuilt from the in-memory
+     *       {@code childrenTransactions} list.</li>
+     * </ol>
+     *
+     * <p>The {@code overlay == null} check doubles as a "has been mutated?"
+     * predicate (used by {@link #getRawProto()} to skip the rebuild path
+     * entirely on untouched wrappers).
+     */
     private TransactionProto.Builder overlay;
 
     /** Parent transaction is NOT in the proto (commented-out tag 21). In-memory only. */
