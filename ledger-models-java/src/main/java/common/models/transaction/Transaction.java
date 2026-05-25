@@ -20,15 +20,12 @@ import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.transaction.TransactionProto;
 import fintekkers.models.transaction.TransactionTypeProto;
-import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
-import fintekkers.models.util.Uuid.UUIDProto;
 import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
 import protos.serializers.strategy.StrategySerializer;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
-import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -183,26 +180,6 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return null;
     }
 
-    private static UUIDProto toUuidProto(UUID uuid) {
-        ByteBuffer bb = ByteBuffer.allocate(16);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-        return UUIDProto.newBuilder().setRawUuid(ByteString.copyFrom(bb.array())).build();
-    }
-
-    private static LocalTimestampProto toTimestampProto(ZonedDateTime asOf) {
-        // Align with ProtoSerializationUtil.serializeTimestamp's wall-clock-as-UTC
-        // convention (same as Phase 1 Security wrapper).
-        java.time.Instant wallClockInstant = asOf.toLocalDateTime().toInstant(java.time.ZoneOffset.UTC);
-        return LocalTimestampProto.newBuilder()
-                .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
-                        .setSeconds(wallClockInstant.getEpochSecond())
-                        .setNanos(wallClockInstant.getNano())
-                        .build())
-                .setTimeZone(asOf.getZone().getId())
-                .build();
-    }
-
     private static TransactionProto buildBaselineProto(
             UUID id, Portfolio portfolio, Price price, LocalDate tradeDate, LocalDate settlementDate,
             BigDecimal quantity, Security security, TransactionType transactionType,
@@ -210,8 +187,8 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         TransactionProto.Builder b = TransactionProto.newBuilder()
                 .setObjectClass(Transaction.class.getSimpleName())
                 .setVersion("0.0.1");
-        if (id != null) b.setUuid(toUuidProto(id));
-        if (asOf != null) b.setAsOf(toTimestampProto(asOf));
+        if (id != null) b.setUuid(ProtoSerializationUtil.serializeUUID(id));
+        if (asOf != null) b.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
         if (portfolio != null) b.setPortfolio(PortfolioSerializer.getInstance().serialize(portfolio));
         if (security != null) b.setSecurity(security.getProto());
         if (transactionType != null) b.setTransactionType(TransactionTypeProto.valueOf(transactionType.name()));
@@ -338,8 +315,13 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                     getValidFrom().toString(), validTo,
                     getStrategyAllocation().toString());
         } catch (NullPointerException | IllegalStateException e) {
-            // IllegalStateException for is_link-mode Security/Portfolio reads.
-            return "WHOOPS";
+            // is_link-mode Security/Portfolio reads (or partially-populated proto):
+            // emit a link-style summary so logs are still useful.
+            TransactionProto a = active();
+            String idStr = a.hasUuid()
+                    ? ProtoSerializationUtil.deserializeUUID(a.getUuid()).toString()
+                    : "?";
+            return String.format("Link[Transaction:%s]", idStr);
         }
     }
 
@@ -484,7 +466,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         if (newValidTo == null) {
             ensureOverlay().clearValidTo();
         } else {
-            ensureOverlay().setValidTo(toTimestampProto(newValidTo));
+            ensureOverlay().setValidTo(ProtoSerializationUtil.serializeTimestamp(newValidTo));
         }
     }
 

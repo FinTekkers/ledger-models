@@ -14,6 +14,7 @@ import fintekkers.services.portfolio_service.PortfolioGrpc;
 import fintekkers.services.security_service.SecurityGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -273,7 +274,7 @@ public class LinkResolver {
             if (!hasSec.test(item)) continue;
             SecurityProto sec = getSec.apply(item);
             if (!sec.getIsLink()) continue;
-            UUID uuid = uuidFromProto(sec.getUuid());
+            UUID uuid = ProtoSerializationUtil.deserializeUUID(sec.getUuid());
             LocalTimestampProto asOf = sec.hasAsOf() ? sec.getAsOf() : null;
             String bucketKey = bucketKey(asOf);
             String cacheKey = cacheKey(uuid, asOf);
@@ -287,7 +288,7 @@ public class LinkResolver {
             LocalTimestampProto asOf = bucketAsOfs.get(bucketKey);
             List<SecurityProto> fetched = batchFetchSecurities(uuids, asOf);
             for (SecurityProto p : fetched) {
-                UUID u = uuidFromProto(p.getUuid());
+                UUID u = ProtoSerializationUtil.deserializeUUID(p.getUuid());
                 securityCache.set(cacheKey(u, asOf), p);
             }
         }
@@ -301,7 +302,7 @@ public class LinkResolver {
             if (!t.hasPortfolio()) continue;
             PortfolioProto port = t.getPortfolio();
             if (!port.getIsLink()) continue;
-            UUID uuid = uuidFromProto(port.getUuid());
+            UUID uuid = ProtoSerializationUtil.deserializeUUID(port.getUuid());
             LocalTimestampProto asOf = port.hasAsOf() ? port.getAsOf() : null;
             String bucketKey = bucketKey(asOf);
             String cacheKey = cacheKey(uuid, asOf);
@@ -315,20 +316,20 @@ public class LinkResolver {
             LocalTimestampProto asOf = bucketAsOfs.get(bucketKey);
             List<PortfolioProto> fetched = batchFetchPortfolios(uuids, asOf);
             for (PortfolioProto p : fetched) {
-                UUID u = uuidFromProto(p.getUuid());
+                UUID u = ProtoSerializationUtil.deserializeUUID(p.getUuid());
                 portfolioCache.set(cacheKey(u, asOf), p);
             }
         }
     }
 
     private SecurityProto lookupResolvedSecurity(SecurityProto link) {
-        UUID uuid = uuidFromProto(link.getUuid());
+        UUID uuid = ProtoSerializationUtil.deserializeUUID(link.getUuid());
         LocalTimestampProto asOf = link.hasAsOf() ? link.getAsOf() : null;
         return securityCache.get(cacheKey(uuid, asOf));
     }
 
     private PortfolioProto lookupResolvedPortfolio(PortfolioProto link) {
-        UUID uuid = uuidFromProto(link.getUuid());
+        UUID uuid = ProtoSerializationUtil.deserializeUUID(link.getUuid());
         LocalTimestampProto asOf = link.hasAsOf() ? link.getAsOf() : null;
         return portfolioCache.get(cacheKey(uuid, asOf));
     }
@@ -338,7 +339,7 @@ public class LinkResolver {
         QuerySecurityRequestProto.Builder b = QuerySecurityRequestProto.newBuilder()
                 .setObjectClass("SecurityRequest")
                 .setVersion("0.0.1");
-        for (UUID u : uuids) b.addUuIds(uuidToProto(u));
+        for (UUID u : uuids) b.addUuIds(ProtoSerializationUtil.serializeUUID(u));
         if (asOf != null) b.setAsOf(asOf);
         QuerySecurityResponseProto response = securityFetcher.getByIds(b.build());
         return response.getSecurityResponseList();
@@ -349,7 +350,7 @@ public class LinkResolver {
         QueryPortfolioRequestProto.Builder b = QueryPortfolioRequestProto.newBuilder()
                 .setObjectClass("PortfolioRequest")
                 .setVersion("0.0.1");
-        for (UUID u : uuids) b.addUuIds(uuidToProto(u));
+        for (UUID u : uuids) b.addUuIds(ProtoSerializationUtil.serializeUUID(u));
         if (asOf != null) b.setAsOf(asOf);
         QueryPortfolioResponseProto response = portfolioFetcher.getByIds(b.build());
         return response.getPortfolioResponseList();
@@ -362,23 +363,6 @@ public class LinkResolver {
 
     private static String cacheKey(UUID uuid, LocalTimestampProto asOf) {
         return uuid.toString() + "@" + bucketKey(asOf);
-    }
-
-    private static UUID uuidFromProto(UUIDProto proto) {
-        byte[] raw = proto.getRawUuid().toByteArray();
-        java.nio.ByteBuffer bb = java.nio.ByteBuffer.wrap(raw);
-        long high = bb.getLong();
-        long low = bb.getLong();
-        return new UUID(high, low);
-    }
-
-    private static UUIDProto uuidToProto(UUID uuid) {
-        java.nio.ByteBuffer bb = java.nio.ByteBuffer.allocate(16);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-        return UUIDProto.newBuilder()
-                .setRawUuid(com.google.protobuf.ByteString.copyFrom(bb.array()))
-                .build();
     }
 
     private static <T> T joinUnchecked(CompletableFuture<T> f) {
