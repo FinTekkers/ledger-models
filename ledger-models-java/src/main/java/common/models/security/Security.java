@@ -9,14 +9,10 @@ import fintekkers.models.security.IdentifierProto;
 import fintekkers.models.security.IdentifierTypeProto;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
-import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
-import fintekkers.models.util.Uuid.UUIDProto;
-import com.google.protobuf.ByteString;
 import protos.serializers.security.IdentifierSerializer;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
-import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -156,8 +152,8 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         Objects.requireNonNull(asOf, "asOf is required for linkOf; use linkOfLatest(uuid) for latest-version semantics");
         return SecurityProto.newBuilder()
                 .setIsLink(true)
-                .setUuid(toUuidProto(uuid))
-                .setAsOf(toTimestampProto(asOf))
+                .setUuid(ProtoSerializationUtil.serializeUUID(uuid))
+                .setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf))
                 .build();
     }
 
@@ -165,7 +161,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         Objects.requireNonNull(uuid, "uuid is required for linkOfLatest");
         return SecurityProto.newBuilder()
                 .setIsLink(true)
-                .setUuid(toUuidProto(uuid))
+                .setUuid(ProtoSerializationUtil.serializeUUID(uuid))
                 .build();
     }
 
@@ -228,36 +224,11 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     private static SecurityProto buildBaselineProto(UUID id, String issuer, ZonedDateTime asOf,
                                                     CashSecurity settlementCurrency) {
         SecurityProto.Builder b = SecurityProto.newBuilder();
-        if (id != null) b.setUuid(toUuidProto(id));
-        if (asOf != null) b.setAsOf(toTimestampProto(asOf));
+        if (id != null) b.setUuid(ProtoSerializationUtil.serializeUUID(id));
+        if (asOf != null) b.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
         if (issuer != null) b.setIssuerName(issuer);
         if (settlementCurrency != null) b.setSettlementCurrency(settlementCurrency.getProto());
         return b.build();
-    }
-
-    private static UUIDProto toUuidProto(UUID uuid) {
-        ByteBuffer bb = ByteBuffer.allocate(16);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-        return UUIDProto.newBuilder().setRawUuid(ByteString.copyFrom(bb.array())).build();
-    }
-
-    private static LocalTimestampProto toTimestampProto(ZonedDateTime asOf) {
-        // Align with ProtoSerializationUtil.serializeTimestamp's convention:
-        // store wall-clock-as-UTC seconds (NOT the true UTC instant). The
-        // corresponding deserializeTimestamp recovers the wall-clock and
-        // reassembles with the zoneId. Includes nanos so millisecond-precision
-        // round-trip tests pass; the existing serializeTimestamp drops nanos,
-        // but readers (deserializeTimestamp) honor whatever nanos are present
-        // so this is wire-compatible.
-        java.time.Instant wallClockInstant = asOf.toLocalDateTime().toInstant(java.time.ZoneOffset.UTC);
-        return LocalTimestampProto.newBuilder()
-                .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
-                        .setSeconds(wallClockInstant.getEpochSecond())
-                        .setNanos(wallClockInstant.getNano())
-                        .build())
-                .setTimeZone(asOf.getZone().getId())
-                .build();
     }
 
     protected SecurityProto.Builder ensureOverlay() {

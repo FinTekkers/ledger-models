@@ -14,7 +14,6 @@ import fintekkers.models.security.SecurityProto;
 import fintekkers.models.transaction.TransactionProto;
 import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
-import protos.serializers.transaction.TransactionSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,29 +26,31 @@ public class SerializerFactory implements IRawDataModelObjectSerializer {
     }
 
     /**
-     * Security routes through {@code new Security(proto)} / {@code security.getProto()}
-     * directly — SecuritySerializer was deleted in FinTekkers/second-brain#338.
-     * The other entities still use their (proto-only) serializer indirection
-     * for now; Transaction / Price / Portfolio refactors are tracked as their
-     * own sub-issues.
+     * Security + Transaction route through their wrappers directly:
+     *   - new Security(proto) / security.getProto()  (Phase 1, #338)
+     *   - new Transaction(proto) / transaction.getProto()  (Phase 2, #340)
+     * SecuritySerializer + TransactionSerializer were deleted.
+     * Price + Portfolio still use their (proto-only) serializer indirection
+     * until their Phase 3+ refactors.
      */
     private final static Map<Class, IRawDataModelObjectSerializer> serializers = new HashMap<>() {{
-        put(Transaction.class, TransactionSerializer.getInstance());
         put(Price.class, PriceSerializer.getInstance());
         put(Portfolio.class, PortfolioSerializer.getInstance());
     }};
 
     private final static Map<Class, IRawDataModelObjectSerializer> serializers_by_proto = new HashMap<>() {{
-        put(TransactionProto.class, TransactionSerializer.getInstance());
         put(PriceProto.class, PriceSerializer.getInstance());
         put(PortfolioProto.class, PortfolioSerializer.getInstance());
     }};
 
     @Override
     public GeneratedMessageV3 serialize(IRawDataModelObject dataModelObject) {
-        // Security — the wrapper IS the proto holder; no serializer indirection.
+        // Security + Transaction — wrappers ARE proto holders; no serializer.
         if (dataModelObject instanceof Security) {
             return Any.pack(((Security) dataModelObject).getProto());
+        }
+        if (dataModelObject instanceof Transaction) {
+            return Any.pack(((Transaction) dataModelObject).getProto());
         }
 
         IRawDataModelObjectSerializer serializer = serializers.get(dataModelObject.getClass());
@@ -81,7 +82,8 @@ public class SerializerFactory implements IRawDataModelObjectSerializer {
             GeneratedMessageV3 unpacked;
 
             if (any.is(TransactionProto.class)) {
-                unpacked = any.unpack(TransactionProto.class);
+                // Transaction — no serializer indirection; route through Transaction(proto).
+                return new Transaction(any.unpack(TransactionProto.class));
             } else if (any.is(SecurityProto.class)) {
                 // Security — no serializer indirection; route through fromProto.
                 return Security.fromProto(any.unpack(SecurityProto.class));

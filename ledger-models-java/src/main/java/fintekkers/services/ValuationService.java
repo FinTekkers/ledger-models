@@ -1,6 +1,5 @@
 package fintekkers.services;
 
-import com.google.protobuf.Timestamp;
 import fintekkers.models.position.MeasureMapEntry;
 import fintekkers.models.position.MeasureProto;
 import fintekkers.models.position.PositionProto;
@@ -19,6 +18,8 @@ import io.grpc.ManagedChannelBuilder;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class ValuationService {
     private static ValuationService DEFAULT_VALUATION_SERVICE_INSTANCE = new ValuationService("api.fintekkers.org", 8080, false);
@@ -50,10 +51,11 @@ public class ValuationService {
 
     public static void main(String[] args) {
 
-        LocalTimestamp.LocalTimestampProto asOf = LocalTimestamp.LocalTimestampProto.newBuilder()
-                .setTimestamp(Timestamp.newBuilder().setSeconds(1).setNanos(1).build())
-                .setTimeZone("America/New_York")
-                .build();
+        // Wall-clock-as-UTC seconds=1, nanos=1, tz=America/New_York.
+        ZonedDateTime asOfZdt = ZonedDateTime.of(
+                1970, 1, 1, 0, 0, 1, 1, ZoneId.of("America/New_York"));
+        LocalTimestamp.LocalTimestampProto asOf =
+                ProtoSerializationUtil.serializeTimestamp(asOfZdt);
 
         SecurityProto usd = SecurityProto.newBuilder()
                 .setAsOf(asOf)

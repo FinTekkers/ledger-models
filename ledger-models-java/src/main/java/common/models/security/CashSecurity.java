@@ -7,10 +7,8 @@ import fintekkers.models.security.IdentifierProto;
 import fintekkers.models.security.IdentifierTypeProto;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
-import fintekkers.models.util.Uuid.UUIDProto;
-import com.google.protobuf.ByteString;
+import protos.serializers.util.proto.ProtoSerializationUtil;
 
-import java.nio.ByteBuffer;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -58,16 +56,8 @@ public class CashSecurity extends Security {
                 .setProductType(ProductTypeProto.CURRENCY)
                 .setAssetClass(ASSET_CLASS);
         if (cashId != null) b.setIssuerName(cashId);
-        if (id != null) b.setUuid(toUuidProto(id));
-        if (asOf != null) {
-            b.setAsOf(fintekkers.models.util.LocalTimestamp.LocalTimestampProto.newBuilder()
-                    .setTimestamp(com.google.protobuf.Timestamp.newBuilder()
-                            .setSeconds(asOf.toInstant().getEpochSecond())
-                            .setNanos(asOf.toInstant().getNano())
-                            .build())
-                    .setTimeZone(asOf.getZone().getId())
-                    .build());
-        }
+        if (id != null) b.setUuid(ProtoSerializationUtil.serializeUUID(id));
+        if (asOf != null) b.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
         if (cashId != null) {
             b.setCashDetails(CashDetailsProto.newBuilder().setCashId(cashId).build());
             b.addIdentifiers(IdentifierProto.newBuilder()
@@ -76,13 +66,6 @@ public class CashSecurity extends Security {
                     .build());
         }
         return b.build();
-    }
-
-    private static UUIDProto toUuidProto(UUID uuid) {
-        ByteBuffer bb = ByteBuffer.allocate(16);
-        bb.putLong(uuid.getMostSignificantBits());
-        bb.putLong(uuid.getLeastSignificantBits());
-        return UUIDProto.newBuilder().setRawUuid(ByteString.copyFrom(bb.array())).build();
     }
 
     @Override
