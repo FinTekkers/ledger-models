@@ -22,7 +22,6 @@ import fintekkers.models.transaction.TransactionProto;
 import fintekkers.models.transaction.TransactionTypeProto;
 import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
-import protos.serializers.strategy.StrategySerializer;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
@@ -225,7 +224,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         if (strategy == null) {
             strategy = new StrategyAllocation(UUID.randomUUID(), ZonedDateTime.now());
         }
-        b.setStrategyAllocation(StrategySerializer.getInstance().serialize(strategy));
+        b.setStrategyAllocation(strategy.getProto());
         if (tradeName != null) b.setTradeName(tradeName);
         b.setIsCancelled(false);
         return b.build();
@@ -382,7 +381,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     public StrategyAllocation getStrategyAllocation() {
         TransactionProto a = active();
         if (!a.hasStrategyAllocation()) return null;
-        return StrategySerializer.getInstance().deserialize(a.getStrategyAllocation());
+        return new StrategyAllocation(a.getStrategyAllocation());
     }
 
     @Override

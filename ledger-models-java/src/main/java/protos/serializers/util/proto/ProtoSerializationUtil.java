@@ -21,7 +21,6 @@ import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
 import protos.serializers.security.IdentifierSerializer;
 import protos.serializers.security.TenorSerializer;
-import protos.serializers.strategy.StrategySerializer;
 
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -58,7 +57,7 @@ public class ProtoSerializationUtil {
         } else if(object instanceof Portfolio) {
             unpacked = PortfolioSerializer.getInstance().serialize((Portfolio) object);
         }  else if(object instanceof StrategyAllocation) {
-            unpacked = StrategySerializer.getInstance().serialize((StrategyAllocation)object);
+            unpacked = ((StrategyAllocation) object).getProto();
         } else if(object instanceof String) {
             //TODO: Remove this and serialize the string rather than packing it
             unpacked = StringValue.of(object.toString());
@@ -103,7 +102,7 @@ public class ProtoSerializationUtil {
             } else if(any.is(PortfolioProto.class)) {
                 return PortfolioSerializer.getInstance().deserialize(any.unpack(PortfolioProto.class));
             } else if(any.is(StrategyAllocationProto.class)) {
-                return StrategySerializer.getInstance().deserialize(any.unpack(StrategyAllocationProto.class));
+                return new StrategyAllocation(any.unpack(StrategyAllocationProto.class));
             } else if(any.is(StringValue.class)) {
                 //TODO: Remove this and serialize the string rather than packing it
                 return any.unpack(StringValue.class).getValue();
