@@ -61,6 +61,23 @@ class Transaction():
         docs/adr/is_link_pattern.md. Pair with LinkResolver to hydrate."""
         return self.proto.is_link
 
+    def get_as_of(self) -> datetime:
+        """Return tx.as_of as a Python datetime. Mirrors Security.get_as_of();
+        callers building link references (e.g. Security.link_of) need the
+        parent transaction's as_of so the resolver hydrates the correct
+        point-in-time vintage."""
+        # Inline import: serialization.py imports TransactionType from this module
+        from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+        return ProtoSerializationUtil.deserialize(self.proto.as_of)
+
+    def get_security(self) -> "Security":
+        """Return tx.security as a wrapped Security. When the returned Security
+        is a link (is_link=true), the caller must resolve via SecurityService
+        before reading non-uuid/as_of fields. See docs/adr/is_link_pattern.md."""
+        # Inline import to avoid pulling the full security module at parse time
+        from fintekkers.wrappers.models.security.security import Security
+        return Security(self.proto.security)
+
 class TransactionType():
     def __init__(self, proto: TransactionTypeProto):
         self.proto = proto
