@@ -25,11 +25,12 @@ public final class TransactionTypeProtos {
     java.lang.String[] descriptorData = {
       "\n4fintekkers/models/transaction/transact" +
       "ion_type.proto\022\035fintekkers.models.transa" +
-      "ction*z\n\024TransactionTypeProto\022\013\n\007UNKNOWN" +
-      "\020\000\022\007\n\003BUY\020\001\022\010\n\004SELL\020\002\022\013\n\007DEPOSIT\020\003\022\016\n\nWI" +
-      "THDRAWAL\020\004\022\016\n\nMATURATION\020\005\022\025\n\021MATURATION" +
-      "_OFFSET\020\006B\031B\025TransactionTypeProtosP\001b\006pr" +
-      "oto3"
+      "ction*\257\001\n\024TransactionTypeProto\022\013\n\007UNKNOW" +
+      "N\020\000\022\007\n\003BUY\020\001\022\010\n\004SELL\020\002\022\013\n\007DEPOSIT\020\003\022\016\n\nW" +
+      "ITHDRAWAL\020\004\022\016\n\nMATURATION\020\005\022\025\n\021MATURATIO" +
+      "N_OFFSET\020\006\022\025\n\021PRINCIPAL_PAYDOWN\020\007\022\034\n\030PRI" +
+      "NCIPAL_PAYDOWN_OFFSET\020\010B\031B\025TransactionTy" +
+      "peProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

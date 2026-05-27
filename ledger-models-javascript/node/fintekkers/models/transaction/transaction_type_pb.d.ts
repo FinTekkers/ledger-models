@@ -14,4 +14,6 @@ export enum TransactionTypeProto {
     WITHDRAWAL = 4,
     MATURATION = 5,
     MATURATION_OFFSET = 6,
+    PRINCIPAL_PAYDOWN = 7,
+    PRINCIPAL_PAYDOWN_OFFSET = 8,
 }
