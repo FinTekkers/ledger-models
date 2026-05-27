@@ -14,4 +14,19 @@ enum TransactionTypeProto {
   WITHDRAWAL=4;
   MATURATION=5;
   MATURATION_OFFSET=6;
+
+  // Partial / scheduled principal repayment from issuer to holder.
+  // Covers: MBS pass-through paydowns, amortizing bond sinking-fund
+  // payments, PE return of capital, perpetual bond partial calls.
+  //
+  // Distinct from SELL (no counterparty trade, no P&L event, no
+  // tax-lot realization) and from MATURATION (partial, not terminal,
+  // security continues to exist with reduced face).
+  //
+  // Pairs with PRINCIPAL_PAYDOWN_OFFSET as the cash leg, mirroring
+  // the MATURATION / MATURATION_OFFSET pattern.
+  //
+  // See docs/adr/principal_paydown_pattern.md.
+  PRINCIPAL_PAYDOWN=7;
+  PRINCIPAL_PAYDOWN_OFFSET=8;
 }

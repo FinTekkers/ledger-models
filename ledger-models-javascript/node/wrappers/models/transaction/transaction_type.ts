@@ -22,10 +22,12 @@ export class TransactionType {
             case TransactionTypeProto.BUY:
             case TransactionTypeProto.DEPOSIT:
             case TransactionTypeProto.MATURATION_OFFSET:
+            case TransactionTypeProto.PRINCIPAL_PAYDOWN_OFFSET:
                 return 1;
             case TransactionTypeProto.SELL:
             case TransactionTypeProto.WITHDRAWAL:
             case TransactionTypeProto.MATURATION:
+            case TransactionTypeProto.PRINCIPAL_PAYDOWN:
                 return -1;
             case TransactionTypeProto.UNKNOWN:
                 throw new Error('Unknown transaction type: ' + this.toString());

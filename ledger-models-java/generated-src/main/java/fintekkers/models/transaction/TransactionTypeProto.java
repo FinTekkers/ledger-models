@@ -36,6 +36,26 @@ public enum TransactionTypeProto
    * <code>MATURATION_OFFSET = 6;</code>
    */
   MATURATION_OFFSET(6),
+  /**
+   * <pre>
+   * Partial / scheduled principal repayment from issuer to holder.
+   * Covers: MBS pass-through paydowns, amortizing bond sinking-fund
+   * payments, PE return of capital, perpetual bond partial calls.
+   * Distinct from SELL (no counterparty trade, no P&amp;L event, no
+   * tax-lot realization) and from MATURATION (partial, not terminal,
+   * security continues to exist with reduced face).
+   * Pairs with PRINCIPAL_PAYDOWN_OFFSET as the cash leg, mirroring
+   * the MATURATION / MATURATION_OFFSET pattern.
+   * See docs/adr/principal_paydown_pattern.md.
+   * </pre>
+   *
+   * <code>PRINCIPAL_PAYDOWN = 7;</code>
+   */
+  PRINCIPAL_PAYDOWN(7),
+  /**
+   * <code>PRINCIPAL_PAYDOWN_OFFSET = 8;</code>
+   */
+  PRINCIPAL_PAYDOWN_OFFSET(8),
   UNRECOGNIZED(-1),
   ;
 
@@ -67,6 +87,26 @@ public enum TransactionTypeProto
    * <code>MATURATION_OFFSET = 6;</code>
    */
   public static final int MATURATION_OFFSET_VALUE = 6;
+  /**
+   * <pre>
+   * Partial / scheduled principal repayment from issuer to holder.
+   * Covers: MBS pass-through paydowns, amortizing bond sinking-fund
+   * payments, PE return of capital, perpetual bond partial calls.
+   * Distinct from SELL (no counterparty trade, no P&amp;L event, no
+   * tax-lot realization) and from MATURATION (partial, not terminal,
+   * security continues to exist with reduced face).
+   * Pairs with PRINCIPAL_PAYDOWN_OFFSET as the cash leg, mirroring
+   * the MATURATION / MATURATION_OFFSET pattern.
+   * See docs/adr/principal_paydown_pattern.md.
+   * </pre>
+   *
+   * <code>PRINCIPAL_PAYDOWN = 7;</code>
+   */
+  public static final int PRINCIPAL_PAYDOWN_VALUE = 7;
+  /**
+   * <code>PRINCIPAL_PAYDOWN_OFFSET = 8;</code>
+   */
+  public static final int PRINCIPAL_PAYDOWN_OFFSET_VALUE = 8;
 
 
   public final int getNumber() {
@@ -100,6 +140,8 @@ public enum TransactionTypeProto
       case 4: return WITHDRAWAL;
       case 5: return MATURATION;
       case 6: return MATURATION_OFFSET;
+      case 7: return PRINCIPAL_PAYDOWN;
+      case 8: return PRINCIPAL_PAYDOWN_OFFSET;
       default: return null;
     }
   }

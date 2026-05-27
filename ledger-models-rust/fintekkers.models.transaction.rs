@@ -8,6 +8,20 @@ pub enum TransactionTypeProto {
     Withdrawal = 4,
     Maturation = 5,
     MaturationOffset = 6,
+    /// Partial / scheduled principal repayment from issuer to holder.
+    /// Covers: MBS pass-through paydowns, amortizing bond sinking-fund
+    /// payments, PE return of capital, perpetual bond partial calls.
+    ///
+    /// Distinct from SELL (no counterparty trade, no P&L event, no
+    /// tax-lot realization) and from MATURATION (partial, not terminal,
+    /// security continues to exist with reduced face).
+    ///
+    /// Pairs with PRINCIPAL_PAYDOWN_OFFSET as the cash leg, mirroring
+    /// the MATURATION / MATURATION_OFFSET pattern.
+    ///
+    /// See docs/adr/principal_paydown_pattern.md.
+    PrincipalPaydown = 7,
+    PrincipalPaydownOffset = 8,
 }
 impl TransactionTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -23,6 +37,8 @@ impl TransactionTypeProto {
             TransactionTypeProto::Withdrawal => "WITHDRAWAL",
             TransactionTypeProto::Maturation => "MATURATION",
             TransactionTypeProto::MaturationOffset => "MATURATION_OFFSET",
+            TransactionTypeProto::PrincipalPaydown => "PRINCIPAL_PAYDOWN",
+            TransactionTypeProto::PrincipalPaydownOffset => "PRINCIPAL_PAYDOWN_OFFSET",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -35,6 +51,8 @@ impl TransactionTypeProto {
             "WITHDRAWAL" => Some(Self::Withdrawal),
             "MATURATION" => Some(Self::Maturation),
             "MATURATION_OFFSET" => Some(Self::MaturationOffset),
+            "PRINCIPAL_PAYDOWN" => Some(Self::PrincipalPaydown),
+            "PRINCIPAL_PAYDOWN_OFFSET" => Some(Self::PrincipalPaydownOffset),
             _ => None,
         }
     }

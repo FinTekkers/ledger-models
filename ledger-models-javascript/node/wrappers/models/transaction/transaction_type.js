@@ -11,10 +11,12 @@ class TransactionType {
             case transaction_type_pb_1.TransactionTypeProto.BUY:
             case transaction_type_pb_1.TransactionTypeProto.DEPOSIT:
             case transaction_type_pb_1.TransactionTypeProto.MATURATION_OFFSET:
+            case transaction_type_pb_1.TransactionTypeProto.PRINCIPAL_PAYDOWN_OFFSET:
                 return 1;
             case transaction_type_pb_1.TransactionTypeProto.SELL:
             case transaction_type_pb_1.TransactionTypeProto.WITHDRAWAL:
             case transaction_type_pb_1.TransactionTypeProto.MATURATION:
+            case transaction_type_pb_1.TransactionTypeProto.PRINCIPAL_PAYDOWN:
                 return -1;
             case transaction_type_pb_1.TransactionTypeProto.UNKNOWN:
                 throw new Error('Unknown transaction type: ' + this.toString());

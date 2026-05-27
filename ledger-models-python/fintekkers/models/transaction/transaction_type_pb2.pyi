@@ -13,6 +13,8 @@ class TransactionTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     WITHDRAWAL: _ClassVar[TransactionTypeProto]
     MATURATION: _ClassVar[TransactionTypeProto]
     MATURATION_OFFSET: _ClassVar[TransactionTypeProto]
+    PRINCIPAL_PAYDOWN: _ClassVar[TransactionTypeProto]
+    PRINCIPAL_PAYDOWN_OFFSET: _ClassVar[TransactionTypeProto]
 UNKNOWN: TransactionTypeProto
 BUY: TransactionTypeProto
 SELL: TransactionTypeProto
@@ -20,3 +22,5 @@ DEPOSIT: TransactionTypeProto
 WITHDRAWAL: TransactionTypeProto
 MATURATION: TransactionTypeProto
 MATURATION_OFFSET: TransactionTypeProto
+PRINCIPAL_PAYDOWN: TransactionTypeProto
+PRINCIPAL_PAYDOWN_OFFSET: TransactionTypeProto
