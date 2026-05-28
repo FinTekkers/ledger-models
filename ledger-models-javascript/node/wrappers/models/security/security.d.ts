@@ -4,6 +4,7 @@ import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
 import { Identifier } from "./identifier";
+import LinkResolver from "../../util/link-resolver";
 declare class Security {
     proto: SecurityProto;
     constructor(proto: SecurityProto);
@@ -28,14 +29,31 @@ declare class Security {
     private static _uuidToProto;
     private static _zonedDateTimeToProto;
     /**
+     * Async hydration — fetches the full proto via the default
+     * `LinkResolver` (or one you pass in) and swaps it onto this wrapper.
+     * Returns `this` so it can be chained.
+     *
+     *   const sec = await new Security(linkProto).hydrate();
+     *   console.log(sec.getIssuerName());
+     *
+     * Mirrors the Java / Python / Rust auto-resolve story — except in TS
+     * the fetch is necessarily async (no sync-from-async bridge in
+     * idiomatic Node.js), so the user pays one extra `await`. The default
+     * resolver is the process-wide singleton from
+     * `LinkResolver.getDefault()`; override per call by passing your own.
+     *
+     * On a non-link wrapper, this is a no-op and returns immediately.
+     */
+    hydrate(resolver?: LinkResolver): Promise<this>;
+    /**
      * Lazy hydration. If this Security is in link mode, swap in the resolved
      * proto from LinkCache. On cache miss, throws — caller must pre-warm via
-     * LinkResolver. See docs/adr/lazy-link-hydration.md.
+     * LinkResolver or call `hydrate()` first. See docs/adr/lazy-link-hydration.md.
      *
-     * TS variant is cache-only (no fetcher hook) because the gRPC stubs are
-     * async and chaining the resolver into every getter would force every
-     * accessor to become async. Pre-warming through LinkResolver keeps the
-     * sync getter API.
+     * TS variant is cache-only (no sync fetcher hook) because the gRPC stubs
+     * are async and chaining the resolver into every getter would force every
+     * accessor to become async. Pre-warming through LinkResolver / `hydrate()`
+     * keeps the sync getter API.
      */
     private ensureHydrated;
     /**

@@ -133,7 +133,34 @@ function asOfKey(asOf) {
     const bytes = asOf.serializeBinary();
     return Buffer.from(bytes).toString('base64');
 }
+// Process-wide default singleton — lazily constructed on first
+// `LinkResolver.getDefault()` call. Used by the wrapper `hydrate()`
+// methods so callers don't have to thread a resolver instance through
+// their code. Override the default by calling `LinkResolver.setDefault(...)`
+// at process start (tests with mocked clients, alternate endpoints, etc.).
+let defaultLinkResolver;
 class LinkResolver {
+    /**
+     * Process-wide singleton — lazily constructed with default options
+     * (env-derived endpoint via `EnvConfig`). The wrapper `hydrate()`
+     * methods reach for this when no resolver is passed explicitly, so
+     * users get auto-resolve on link-mode wrappers without threading a
+     * resolver through every call site.
+     */
+    static getDefault() {
+        if (!defaultLinkResolver) {
+            defaultLinkResolver = new LinkResolver();
+        }
+        return defaultLinkResolver;
+    }
+    /**
+     * Replace the process-wide default. Call once at process start for
+     * tests with mocked clients or to point at a non-default endpoint.
+     * Pass `undefined` to clear (next `getDefault()` call rebuilds).
+     */
+    static setDefault(resolver) {
+        defaultLinkResolver = resolver;
+    }
     constructor(opts = {}) {
         var _a;
         // Concurrent-call dedupe: a UUID currently being fetched maps to the

@@ -22,6 +22,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
@@ -32,6 +44,7 @@ const product_type_pb_1 = require("../../../fintekkers/models/security/product_t
 const identifier_1 = require("./identifier");
 const product_hierarchy_1 = require("./product_hierarchy");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
+const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 class Security {
     constructor(proto) {
         this.proto = proto;
@@ -78,14 +91,47 @@ class Security {
         return asOf.toProto();
     }
     /**
+     * Async hydration — fetches the full proto via the default
+     * `LinkResolver` (or one you pass in) and swaps it onto this wrapper.
+     * Returns `this` so it can be chained.
+     *
+     *   const sec = await new Security(linkProto).hydrate();
+     *   console.log(sec.getIssuerName());
+     *
+     * Mirrors the Java / Python / Rust auto-resolve story — except in TS
+     * the fetch is necessarily async (no sync-from-async bridge in
+     * idiomatic Node.js), so the user pays one extra `await`. The default
+     * resolver is the process-wide singleton from
+     * `LinkResolver.getDefault()`; override per call by passing your own.
+     *
+     * On a non-link wrapper, this is a no-op and returns immediately.
+     */
+    hydrate(resolver) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.proto.getIsLink())
+                return this;
+            const uuidProto = this.proto.getUuid();
+            if (!uuidProto) {
+                throw new Error("Cannot hydrate a link-mode Security with no UUID set.");
+            }
+            const uuid = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8());
+            const asOfProto = (_a = this.proto.getAsOf()) !== null && _a !== void 0 ? _a : undefined;
+            const r = resolver !== null && resolver !== void 0 ? resolver : link_resolver_1.default.getDefault();
+            const resolved = yield r.getSecurity(uuid, asOfProto);
+            this.proto = resolved.proto;
+            return this;
+        });
+    }
+    /**
      * Lazy hydration. If this Security is in link mode, swap in the resolved
      * proto from LinkCache. On cache miss, throws — caller must pre-warm via
-     * LinkResolver. See docs/adr/lazy-link-hydration.md.
+     * LinkResolver or call `hydrate()` first. See docs/adr/lazy-link-hydration.md.
      *
-     * TS variant is cache-only (no fetcher hook) because the gRPC stubs are
-     * async and chaining the resolver into every getter would force every
-     * accessor to become async. Pre-warming through LinkResolver keeps the
-     * sync getter API.
+     * TS variant is cache-only (no sync fetcher hook) because the gRPC stubs
+     * are async and chaining the resolver into every getter would force every
+     * accessor to become async. Pre-warming through LinkResolver / `hydrate()`
+     * keeps the sync getter API.
      */
     ensureHydrated() {
         if (!this.proto.getIsLink())
@@ -103,7 +149,8 @@ class Security {
             return;
         }
         throw new Error(`Cannot read fields on link-mode Security uuid=${uuidKey} `
-            + `— LinkCache miss. Pre-warm via LinkResolver. `
+            + `— LinkCache miss. Call \`await security.hydrate()\` first, `
+            + `or pre-warm via LinkResolver. `
             + `See docs/adr/lazy-link-hydration.md.`);
     }
     /**

@@ -68,6 +68,20 @@ declare class LinkResolver {
     private portfolioCache;
     private securityInFlight;
     private portfolioInFlight;
+    /**
+     * Process-wide singleton — lazily constructed with default options
+     * (env-derived endpoint via `EnvConfig`). The wrapper `hydrate()`
+     * methods reach for this when no resolver is passed explicitly, so
+     * users get auto-resolve on link-mode wrappers without threading a
+     * resolver through every call site.
+     */
+    static getDefault(): LinkResolver;
+    /**
+     * Replace the process-wide default. Call once at process start for
+     * tests with mocked clients or to point at a non-default endpoint.
+     * Pass `undefined` to clear (next `getDefault()` call rebuilds).
+     */
+    static setDefault(resolver: LinkResolver | undefined): void;
     constructor(opts?: LinkResolverOptions);
     /**
      * Resolve a single SecurityProto by UUID. If `asOf` is supplied, fetch
