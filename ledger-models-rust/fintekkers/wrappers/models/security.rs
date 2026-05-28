@@ -47,7 +47,144 @@ pub fn clear_security_fetcher() {
 }
 
 fn current_security_fetcher() -> Option<SecurityFetchFn> {
-    security_fetcher_slot().read().unwrap().clone()
+    // Fast path: a fetcher is already installed (production override or
+    // test mock). Return it.
+    {
+        let read = security_fetcher_slot().read().unwrap();
+        if let Some(f) = read.as_ref() {
+            return Some(f.clone());
+        }
+    }
+    // Slow path: no fetcher installed yet — lazily build and install the
+    // gRPC default. Subsequent calls take the fast path.
+    let mut write = security_fetcher_slot().write().unwrap();
+    if write.is_none() {
+        *write = Some(default_security_fetch_fn());
+    }
+    write.clone()
+}
+
+// ---------- Default gRPC fetcher (W1) ----------
+//
+// The wrappers' accessor surface is sync; tonic's SecurityClient is async.
+// We use a dedicated worker thread that owns its own tokio runtime and
+// receives fetch requests over a std::sync::mpsc channel. This composes
+// with any caller context (sync, inside another tokio runtime, inside a
+// tonic handler) — the caller thread blocks on the result channel, never
+// on the runtime itself.
+
+use crate::fintekkers::services::security_service::security_client::SecurityClient;
+use crate::fintekkers::requests::security::{
+    QuerySecurityRequestProto, QuerySecurityResponseProto,
+};
+use std::sync::mpsc;
+
+struct FetchRequest {
+    uuid: Uuid,
+    as_of: Option<LocalTimestampProto>,
+    reply: mpsc::Sender<Result<SecurityProto, LinkResolverError>>,
+}
+
+static SECURITY_WORKER_TX: OnceLock<mpsc::Sender<FetchRequest>> = OnceLock::new();
+
+fn security_worker_tx() -> mpsc::Sender<FetchRequest> {
+    SECURITY_WORKER_TX
+        .get_or_init(spawn_security_worker)
+        .clone()
+}
+
+fn spawn_security_worker() -> mpsc::Sender<FetchRequest> {
+    let (tx, rx) = mpsc::channel::<FetchRequest>();
+    std::thread::Builder::new()
+        .name("security-fetcher".into())
+        .spawn(move || {
+            let rt = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(1)
+                .enable_all()
+                .build()
+                .expect("failed to build default security-fetcher runtime");
+            rt.block_on(async move {
+                let mut client: Option<SecurityClient<tonic::transport::Channel>> = None;
+                while let Ok(req) = rx.recv() {
+                    let client_ref = match &mut client {
+                        Some(c) => c,
+                        None => {
+                            match connect_default_security_client().await {
+                                Ok(c) => {
+                                    client = Some(c);
+                                    client.as_mut().unwrap()
+                                }
+                                Err(e) => {
+                                    let _ = req.reply.send(Err(e));
+                                    continue;
+                                }
+                            }
+                        }
+                    };
+                    let request = QuerySecurityRequestProto {
+                        object_class: "SecurityRequest".into(),
+                        version: "0.0.1".into(),
+                        uu_ids: vec![UuidProto { raw_uuid: req.uuid.as_bytes().to_vec() }],
+                        as_of: req.as_of,
+                        ..Default::default()
+                    };
+                    let result: Result<SecurityProto, LinkResolverError> = client_ref
+                        .get_by_ids(request)
+                        .await
+                        .map_err(LinkResolverError::Rpc)
+                        .and_then(|resp: tonic::Response<QuerySecurityResponseProto>| {
+                            resp.into_inner()
+                                .security_response
+                                .into_iter()
+                                .next()
+                                .ok_or(LinkResolverError::NotFound {
+                                    uuid: req.uuid,
+                                    as_of_bucket: "latest".to_string(),
+                                })
+                        });
+                    let _ = req.reply.send(result);
+                }
+            });
+        })
+        .expect("failed to spawn security-fetcher worker");
+    tx
+}
+
+async fn connect_default_security_client(
+) -> Result<SecurityClient<tonic::transport::Channel>, LinkResolverError> {
+    let url = std::env::var("API_URL").unwrap_or_else(|_| "http://api.fintekkers.org".to_string());
+    let endpoint = if url.contains(':') {
+        url
+    } else {
+        // Default port for SecurityService, matching Python ServiceType convention.
+        format!("{}:8082", url)
+    };
+    let channel = tonic::transport::Channel::from_shared(endpoint)
+        .map_err(|e| LinkResolverError::Malformed(e.to_string()))?
+        .connect()
+        .await
+        .map_err(|e| LinkResolverError::Malformed(e.to_string()))?;
+    Ok(SecurityClient::new(channel))
+}
+
+/// Default gRPC fetcher closure. Sends each fetch to the dedicated
+/// worker thread and blocks on the reply. Override at process start
+/// via `set_security_fetcher(...)` for tests with canned protos or
+/// in-process consumers that prefer a local API call.
+fn default_security_fetch_fn() -> SecurityFetchFn {
+    Arc::new(|uuid, as_of| {
+        let (reply_tx, reply_rx) = mpsc::channel();
+        security_worker_tx()
+            .send(FetchRequest {
+                uuid,
+                as_of: as_of.cloned(),
+                reply: reply_tx,
+            })
+            .map_err(|e| LinkResolverError::Malformed(format!("fetcher worker gone: {}", e)))?;
+        reply_rx
+            .recv()
+            .map_err(|e| LinkResolverError::Malformed(format!("fetcher worker hung up: {}", e)))?
+    })
 }
 
 //Imports below are for RawDataModelObject related macro. IDE might not complain if you remove

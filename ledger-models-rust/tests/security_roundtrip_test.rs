@@ -8,8 +8,12 @@ use ledger_models::fintekkers::models::security::{
 use ledger_models::fintekkers::models::security::security_proto::NonBondDetails;
 use ledger_models::fintekkers::models::security::index::IndexTypeProto;
 use ledger_models::fintekkers::models::util::{LocalTimestampProto, UuidProto};
-use ledger_models::fintekkers::wrappers::models::security::{link_of, link_of_latest, SecurityWrapper};
+use ledger_models::fintekkers::wrappers::models::security::{
+    link_of, link_of_latest, set_security_fetcher, SecurityWrapper,
+};
+use ledger_models::fintekkers::wrappers::util::link_resolver::LinkResolverError;
 use prost::Message;
+use std::sync::Arc;
 use uuid::Uuid;
 use prost_types::Timestamp;
 
@@ -79,17 +83,35 @@ fn security_wrapper_is_link_reads_proto() {
     assert!(wrapper_link.is_link());
 }
 
+// Post-W1 the wrapper always has a fetcher (default gRPC unless overridden),
+// so accessor reads on link-mode wrappers no longer panic with "LinkCache
+// miss / no fetcher registered" — they call the fetcher. Install a sentinel
+// fetcher in these tests that fails fast (NotFound) to keep the panic-on-
+// link-mode assertion meaningful without trying to reach the real
+// SecurityService.
+
+fn install_not_found_fetcher() {
+    set_security_fetcher(Arc::new(|uuid, _as_of| {
+        Err(LinkResolverError::NotFound {
+            uuid,
+            as_of_bucket: "latest".to_string(),
+        })
+    }));
+}
+
 #[test]
-#[should_panic(expected = "LinkCache miss")]
+#[should_panic(expected = "fetcher returned error")]
 fn security_wrapper_product_type_panics_on_link() {
+    install_not_found_fetcher();
     let link = link_of(Uuid::new_v4(), timestamp_at(1_700_000_000));
     let wrapper = SecurityWrapper::new(link);
     let _ = wrapper.product_type_i32();
 }
 
 #[test]
-#[should_panic(expected = "LinkCache miss")]
+#[should_panic(expected = "fetcher returned error")]
 fn security_wrapper_asset_class_panics_on_link() {
+    install_not_found_fetcher();
     let link = link_of(Uuid::new_v4(), timestamp_at(1_700_000_000));
     let wrapper = SecurityWrapper::new(link);
     let _ = wrapper.asset_class();
