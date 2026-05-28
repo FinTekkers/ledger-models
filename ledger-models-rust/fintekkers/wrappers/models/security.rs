@@ -4,9 +4,51 @@ use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 use crate::fintekkers::wrappers::util::link_cache;
+use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
 use chrono::{DateTime, Utc};
-use std::sync::OnceLock;
+use std::sync::{Arc, OnceLock, RwLock};
 use uuid::Uuid;
+
+// ---------- Fetcher hook (parity with Java Security.Fetcher / Python set_security_fetcher) ----------
+
+/// Sync fetcher signature: "(uuid, as_of) → SecurityProto". This is a closure
+/// type alias rather than a trait so we don't define a new interface that
+/// would need to track gRPC service evolution — implementers (production
+/// gRPC clients, in-process API calls, test mocks) just provide a function
+/// of this shape. Reuses `LinkResolverError` so we don't introduce a parallel
+/// error hierarchy either.
+///
+/// Implementations bridge to their preferred async runtime (the typical
+/// pattern is a dedicated tokio runtime + `block_on` inside the closure).
+pub type SecurityFetchFn = Arc<
+    dyn Fn(Uuid, Option<&LocalTimestampProto>) -> Result<SecurityProto, LinkResolverError>
+        + Send
+        + Sync,
+>;
+
+static SECURITY_FETCHER: OnceLock<RwLock<Option<SecurityFetchFn>>> = OnceLock::new();
+
+fn security_fetcher_slot() -> &'static RwLock<Option<SecurityFetchFn>> {
+    SECURITY_FETCHER.get_or_init(|| RwLock::new(None))
+}
+
+/// Register the fetcher used when a link-mode `SecurityWrapper` misses the
+/// `LinkCache`. Called once at process start by the service-client layer;
+/// tests register a closure that returns canned protos.
+/// See `docs/adr/lazy-link-hydration.md`.
+pub fn set_security_fetcher(fetcher: SecurityFetchFn) {
+    *security_fetcher_slot().write().unwrap() = Some(fetcher);
+}
+
+/// Test helper — clear any registered fetcher so subsequent reads behave
+/// as "no fetcher registered" again.
+pub fn clear_security_fetcher() {
+    *security_fetcher_slot().write().unwrap() = None;
+}
+
+fn current_security_fetcher() -> Option<SecurityFetchFn> {
+    security_fetcher_slot().read().unwrap().clone()
+}
 
 //Imports below are for RawDataModelObject related macro. IDE might not complain if you remove
 //them but will fail at compile time
@@ -48,11 +90,13 @@ impl SecurityWrapper {
         self.resolved.get().unwrap_or(&self.proto)
     }
 
-    /// Lazy hydration. On a link-mode proto, look up the LinkCache and swap
-    /// in the resolved value. On cache miss, panics — caller must pre-warm
-    /// via LinkResolver (the cache-only variant; matches the TypeScript
-    /// design rationale in PR #234 — Rust's async getters use the two-getter
-    /// Shape B pattern from the ADR, tracked as a follow-up).
+    /// Lazy hydration. On a link-mode proto, look up the LinkCache first;
+    /// on a miss, fall back to the registered fetcher (see
+    /// [`set_security_fetcher`]) and write through to the cache. Matches
+    /// Java / Python behavior — accessor reads on link-mode wrappers Just
+    /// Work as long as a fetcher is wired at process start. Panics only
+    /// when both paths are exhausted (cache empty AND no fetcher
+    /// registered), which is a deployment bug.
     fn ensure_hydrated(&self) {
         if !self.proto.is_link {
             return;
@@ -61,17 +105,42 @@ impl SecurityWrapper {
             return;
         }
         let uuid = self.uuid_wrapper().as_uuid();
-        let cached = link_cache::security().get(uuid, self.proto.as_of.as_ref());
-        if let Some(arc) = cached {
-            // OnceLock::set fails if already populated — fine, another thread
-            // hydrated us first. Both resolved values come from the same cache
-            // entry so they're equivalent.
+        let as_of = self.proto.as_of.as_ref();
+
+        // 1. Cache hit?
+        if let Some(arc) = link_cache::security().get(uuid, as_of) {
+            // OnceLock::set fails if already populated — fine, another
+            // thread hydrated us first. Both resolved values come from
+            // the same cache entry so they're equivalent.
             let _ = self.resolved.set((*arc).clone());
             return;
         }
+
+        // 2. Fetcher fallback. Mirror of Java's ensureHydrated() Fetcher
+        // path — calls out to the registered closure, populates the cache
+        // for everyone else in the process, then swaps the resolved proto.
+        if let Some(fetcher) = current_security_fetcher() {
+            match fetcher(uuid, as_of) {
+                Ok(resolved) => {
+                    let resolved_as_of = resolved.as_of.clone().or_else(|| as_of.cloned());
+                    link_cache::security().put(uuid, resolved.clone(), resolved_as_of);
+                    let _ = self.resolved.set(resolved);
+                    return;
+                }
+                Err(e) => panic!(
+                    "Cannot read fields on link-mode SecurityWrapper uuid={} \
+                     — fetcher returned error: {}. See docs/adr/lazy-link-hydration.md.",
+                    uuid, e
+                ),
+            }
+        }
+
+        // 3. No cache, no fetcher — deployment misconfigured.
         panic!(
             "Cannot read fields on link-mode SecurityWrapper uuid={} \
-             — LinkCache miss. Pre-warm via LinkResolver. \
+             — LinkCache miss and no fetcher registered. \
+             Call security::set_security_fetcher(...) at process start, \
+             or pre-warm via LinkResolver. \
              See docs/adr/lazy-link-hydration.md.",
             uuid
         );
@@ -792,29 +861,114 @@ mod test {
         link_cache::security().evict(uuid);
     }
 
-    // ---- C. asOf semantics ----
-
-    #[test]
-    #[should_panic(expected = "LinkCache miss")]
-    fn lazy_c_link_as_of_differs_from_cached_is_miss() {
-        let uuid = Uuid::new_v4();
-        let as_of_t1 = make_as_of(1_700_000_010);
-        let as_of_t2 = make_as_of(1_700_000_020);
-        let t2_proto = make_full_proto(uuid, as_of_t2.clone(), "T2");
-        link_cache::security().put(uuid, t2_proto, Some(as_of_t2));
-
-        // Request the T1 vintage — cache only has T2.
-        let wrapper = SecurityWrapper::new(link_of(uuid, as_of_t1));
-        let _ = wrapper.issuer_name();
-    }
+    // ---- C. asOf semantics — covered by link_cache unit tests
+    //
+    // Pre-#244 lazy_c verified that a cache miss on asOf-mismatch panics
+    // with "LinkCache miss". Post-#244 the miss path falls back to the
+    // fetcher, so the panic-shape assertion no longer holds in this
+    // module. The underlying behavior (cache.get(uuid, T1) returns None
+    // when only T2 is cached) is covered cleanly by the link_cache unit
+    // tests in fintekkers::wrappers::util::link_cache::tests, which don't
+    // touch the wrapper's global fetcher state and so can't race.
 
     // ---- D. Resolve failure ----
+    //
+    // The "no fetcher + cache miss" panic path is covered by the integration
+    // test in tests/security_roundtrip_test.rs — that runs in a separate
+    // process so the global fetcher slot is guaranteed empty. Replicating
+    // it here would race against the lazy_e tests below which install a
+    // fetcher in the shared lib-test process.
+
+    // ---- E. Fetcher path (parity with Java/Python) ----
+
+    use super::{set_security_fetcher, clear_security_fetcher};
+    use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
+    use std::sync::{Arc, Mutex};
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    /// Single-threaded gate for the fetcher-path tests. Both lazy_e tests
+    /// install global fetcher state; parallel execution would let one
+    /// observe another's installed fetcher mid-flight. Acquire this mutex
+    /// at the top of every test that touches `set_security_fetcher` so the
+    /// fetcher group serializes against itself but still runs in parallel
+    /// with unrelated tests.
+    static FETCHER_TEST_LOCK: Mutex<()> = Mutex::new(());
 
     #[test]
-    #[should_panic(expected = "LinkCache miss")]
-    fn lazy_d_cache_miss_panics_with_uuid_in_message() {
+    fn lazy_e_cache_miss_calls_fetcher_then_writes_through_then_error_panics() {
+        // Two assertions in one test to avoid the global-fetcher-slot race
+        // between parallel #[test] cases:
+        //   1) successful fetcher: returns proto, populates cache, second
+        //      read for same (uuid, as_of) hits cache (no second call).
+        //   2) failing fetcher (NotFound): accessor read panics with
+        //      'fetcher returned error', and the panic doesn't leak the
+        //      fetcher into other tests (catch_unwind + RAII cleanup).
+        //
+        // Important: do NOT call link_cache::security().clear() — that
+        // wipes other concurrent tests' entries and causes spurious
+        // failures elsewhere. Use unique UUIDs (Uuid::new_v4 already does)
+        // and evict only what this test puts.
+        use std::panic;
+
+        let _serialize = FETCHER_TEST_LOCK.lock().expect("test lock poisoned");
+
+        // ---- Sub-assertion 1: happy path ----
         let uuid = Uuid::new_v4();
-        let wrapper = SecurityWrapper::new(link_of(uuid, make_as_of(1_700_000_030)));
-        let _ = wrapper.asset_class();
+        let as_of = make_as_of(1_700_000_040);
+        let resolved = make_full_proto(uuid, as_of.clone(), "FROM-FETCHER");
+        let calls = Arc::new(AtomicUsize::new(0));
+        let calls_inner = calls.clone();
+        set_security_fetcher(Arc::new(move |_uuid, _as_of| {
+            calls_inner.fetch_add(1, Ordering::SeqCst);
+            Ok(resolved.clone())
+        }));
+
+        let wrapper = SecurityWrapper::new(link_of(uuid, as_of.clone()));
+        assert_eq!(wrapper.issuer_name(), "FROM-FETCHER");
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+
+        let cached = link_cache::security().get(uuid, Some(&as_of));
+        assert!(cached.is_some(), "fetcher must write-through to LinkCache");
+
+        let wrapper2 = SecurityWrapper::new(link_of(uuid, as_of.clone()));
+        assert_eq!(wrapper2.issuer_name(), "FROM-FETCHER");
+        assert_eq!(
+            calls.load(Ordering::SeqCst),
+            1,
+            "second read must hit cache, not refetch"
+        );
+
+        // ---- Sub-assertion 2: error path ----
+        set_security_fetcher(Arc::new(|uuid, _as_of| {
+            Err(LinkResolverError::NotFound {
+                uuid,
+                as_of_bucket: "latest".to_string(),
+            })
+        }));
+        let err_uuid = Uuid::new_v4();
+        let wrapper_err = SecurityWrapper::new(link_of(err_uuid, make_as_of(1_700_000_050)));
+        let panic_result = panic::catch_unwind(panic::AssertUnwindSafe(|| {
+            let _ = wrapper_err.issuer_name();
+        }));
+        assert!(panic_result.is_err(), "accessor read must panic on fetcher error");
+        let panic_msg = panic_result
+            .err()
+            .and_then(|e| {
+                e.downcast_ref::<String>().cloned().or_else(|| {
+                    e.downcast_ref::<&str>().map(|s| s.to_string())
+                })
+            })
+            .unwrap_or_default();
+        assert!(
+            panic_msg.contains("fetcher returned error"),
+            "panic message should include 'fetcher returned error', got: {panic_msg}"
+        );
+
+        // Targeted cleanup: clear the fetcher (global) and evict only the
+        // UUIDs this test put into the cache. Do not call clear() — other
+        // concurrent tests have their own entries.
+        clear_security_fetcher();
+        link_cache::security().evict(uuid);
+        link_cache::security().evict(err_uuid);
     }
 }
