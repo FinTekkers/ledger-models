@@ -90,6 +90,7 @@ public final class LinkCache<V> {
     public static final LinkCache<SecurityProto>    SECURITY    = new LinkCache<>();
     public static final LinkCache<PortfolioProto>   PORTFOLIO   = new LinkCache<>();
     public static final LinkCache<TransactionProto> TRANSACTION = new LinkCache<>();
+    public static final LinkCache<PriceProto>       PRICE       = new LinkCache<>();
 
     private final ConcurrentMap<UUID, V> map = new ConcurrentHashMap<>();
 
@@ -137,7 +138,7 @@ Most consumers want "latest" (UI, current positions, dispatch by `isCash`/`isBon
 | **Security** | **Yes** | SecurityService | Primary use case. Drives almost all the pain. |
 | **Portfolio** | **Yes** | PortfolioService | Mirror of Security; same pattern. |
 | **Transaction** | **Yes** | TransactionService | Wrapper already proto-backed (#340). Adding hydrate so `tx.getChildTransactions()` etc. work when a Transaction is itself a link reference (rare today, but the proto allows it). |
-| Price | TBD | PriceService | Less acute pain today. Defer until a consumer surfaces. |
+| **Price** | **Yes** | PriceService | Same pattern. `tx.getPrice()` and `tx.getPrice().getSecurity()` are both reachable through link mode; hydrating the embedded Price wrapper closes the same gap that exists for Security and Portfolio. |
 | Strategy / StrategyAllocation | No | none | No service to resolve against (per session 2026-05-28 conversation). Wrapper migration done in PR #229, no is_link. |
 
 ## Per-language implementation plan
@@ -150,10 +151,11 @@ Migration:
 1. `LinkCache` class + tests in `common/util/`.
 2. `Security` wrapper: add `proto()`, `ensureHydrated()`, route every getter through `ensureHydrated()` except `getID()` / `getAsOf()` / `isLink()`. Delete the `_assert_not_link` (`throwIfLink`) guard — hydration replaces it.
 3. `Portfolio` wrapper: mirror change.
-4. `Transaction` wrapper: same pattern. The wrapper is already proto-backed from #340; add `ensureHydrated()` and route the few non-link-safe accessors through it.
-5. `SecurityServiceClient` / `PortfolioServiceClient` / `TransactionServiceClient`: `createOrUpdate` writes through to `LinkCache`.
-6. `LinkResolver.resolveXOnTransactions(...)`: change to write to `LinkCache` instead of (or in addition to) mutating wrapper internals. Becomes the pre-warm path.
-7. Tests: lazy hydrate from cache, lazy hydrate from service on miss, throw on resolve failure, write-through on mutate, batch pre-warm populates cache.
+4. `Price` wrapper: mirror change. Service backing is `PriceService`.
+5. `Transaction` wrapper: same pattern. The wrapper is already proto-backed from #340; add `ensureHydrated()` and route the few non-link-safe accessors through it.
+6. `SecurityServiceClient` / `PortfolioServiceClient` / `PriceServiceClient` / `TransactionServiceClient`: `createOrUpdate` writes through to `LinkCache`.
+7. `LinkResolver.resolveXOnTransactions(...)`: change to write to `LinkCache` instead of (or in addition to) mutating wrapper internals. Becomes the pre-warm path.
+8. Tests: lazy hydrate from cache, lazy hydrate from service on miss, throw on resolve failure, write-through on mutate, batch pre-warm populates cache.
 
 ### Python (`ledger-models-python`)
 
@@ -163,10 +165,11 @@ Migration:
 1. `LinkCache` module at `fintekkers/wrappers/util/link_cache.py` — `dict[UUID, SecurityProto]` etc., process-wide singleton.
 2. `Security` wrapper: replace `_assert_not_link(accessor)` calls with `_ensure_hydrated()`. Method body cache-check, then RPC via the existing `SecurityService` wrapper, then cache-put.
 3. `Portfolio` wrapper: mirror change. (May not exist yet — file if missing.)
-4. `Transaction` wrapper: extend the existing `Transaction(proto)` wrapper with `ensure_hydrated()` plus hydrating accessors for nested security/portfolio. Today the wrapper is thin — `get_security()` returns a wrapped `Security` and the caller hits the link guard if they read non-link fields.
-5. Service-wrapper write-through: `SecurityService.create_or_update` → `LinkCache.SECURITY[id] = resolved`.
-6. `LinkResolver` updated to populate `LinkCache`.
-7. Tests: pytest equivalents of the Java suite.
+4. `Price` wrapper: mirror change.
+5. `Transaction` wrapper: extend the existing `Transaction(proto)` wrapper with `ensure_hydrated()` plus hydrating accessors for nested security/portfolio/price. Today the wrapper is thin — `get_security()` returns a wrapped `Security` and the caller hits the link guard if they read non-link fields.
+6. Service-wrapper write-through: `SecurityService.create_or_update` → `LinkCache.SECURITY[id] = resolved` (and equivalents for Portfolio / Price / Transaction).
+7. `LinkResolver` updated to populate `LinkCache`.
+8. Tests: pytest equivalents of the Java suite.
 
 ### TypeScript / JavaScript (`ledger-models-javascript`)
 
@@ -176,10 +179,11 @@ Migration:
 1. `LinkCache` class at `node/wrappers/util/LinkCache.ts` — Map-based, module-singleton.
 2. `Security.ts` (and `BondSecurity`, `MortgageBackedSecurity`, etc. subclasses): add `ensureHydrated()`. Subclasses' field accessors route through it. The hydrate path uses the existing service stub (`SecurityServiceClient` via `node/wrappers/services/`).
 3. `Portfolio.ts`: mirror.
-4. `Transaction.ts`: mirror.
-5. Service-client write-through.
-6. `LinkResolver` updated to populate `LinkCache`.
-7. Jest tests.
+4. `Price.ts`: mirror.
+5. `Transaction.ts`: mirror.
+6. Service-client write-through (Security / Portfolio / Price / Transaction).
+7. `LinkResolver` updated to populate `LinkCache`.
+8. Jest tests.
 
 ### Rust (`ledger-models-rust`) — deferred for v1
 
@@ -196,7 +200,7 @@ Tracking issue: file when a Rust caller hits the pain.
 
 ## Order of execution
 
-1. **Java first** — biggest pain surface, most active codebase. Establishes the reference behavior + tests. Single PR per wrapper to keep review tractable: PR(LinkCache) → PR(Security) → PR(Portfolio) → PR(Transaction) → PR(LinkResolver → cache write-through).
+1. **Java first** — biggest pain surface, most active codebase. Establishes the reference behavior + tests. Single PR per wrapper to keep review tractable: PR(LinkCache) → PR(Security) → PR(Portfolio) → PR(Price) → PR(Transaction) → PR(LinkResolver → cache write-through).
 2. **Python second** — parallel migration once Java pattern is stable.
 3. **TypeScript third** — same pattern.
 4. **Rust** — deferred; file a follow-up issue.
@@ -221,7 +225,7 @@ Tracking issue: file when a Rust caller hits the pain.
 - Cross-process cache invalidation (pub/sub or TTL). Future work if eventual-consistency surfaces as a real problem.
 - Async hydration (futures / suspend functions). Current consumers are sync; revisit if a high-throughput async path emerges.
 - Vintage-precise caching. Latest-only cache is by design; vintage queries go through explicit batch resolve.
-- Price + Strategy + StrategyAllocation lazy hydration. Price deferred until acute pain. Strategy has no backing service.
+- Strategy + StrategyAllocation lazy hydration. No backing service exists; wrapper migration done in PR #229 without is_link.
 - Rust wrapper layer. Deferred entirely.
 
 ## References
