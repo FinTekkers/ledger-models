@@ -185,25 +185,34 @@ Migration:
 7. `LinkResolver` updated to populate `LinkCache`.
 8. Jest tests.
 
-### Rust (`ledger-models-rust`) — deferred for v1
+### Rust (`ledger-models-rust`)
 
-Today: **No wrapper layer.** Only generated proto structs in `fintekkers.models.*.rs` (via `tonic-build` / `prost-build`). Rust consumers work directly with `SecurityProto { is_link: bool, ... }` — there's no business-logic wrapper to add lazy hydration to.
+Today: Full wrapper ecosystem at `fintekkers/wrappers/models/` — `SecurityWrapper`, `PortfolioWrapper`, `PriceWrapper`, etc. Same pattern as the other languages: `proto` field, `is_link()` boolean, `assert_not_link(accessor)` that **panics** (Rust idiom instead of throwing). A `LinkResolver` at `fintekkers/wrappers/util/link_resolver.rs` already implements bulk hydration with an `(uuid, as_of)` keyed LRU cache + optional TTL — in fact more sophisticated than the current Java implementation.
 
-Decision for v1: **defer.** Rust consumers must explicitly check `proto.is_link` and call SecurityService directly when they need full fields. Document this in `is_link_pattern.md`.
+Migration:
+1. `LinkCache` module: align with the Java pattern. Latest-vintage only, keyed by UUID. The existing `(uuid, as_of)` LRU stays available as the explicit-vintage path's cache (Rust gets to keep what's already there for the time-travel case); the latest-only `LinkCache` is the new path for lazy hydration.
+2. `SecurityWrapper`: replace each `assert_not_link(accessor)` call with `ensure_hydrated()`. Method body cache-check, then call SecurityService via the generated `tonic` stub, then cache-put.
+3. `PortfolioWrapper`, `PriceWrapper`, `TransactionWrapper`: mirror change.
+4. Service-stub write-through on `create_or_update`.
+5. `LinkResolver` updated to populate the latest-only `LinkCache` (in addition to its existing per-vintage cache).
+6. `cargo test` parity with the Java suite.
 
-Future work if Rust consumers grow: add a `wrappers/` module in `ledger-models-rust` that mirrors the Java/Python/TS pattern. Building it requires:
-- A Rust HTTP/gRPC client for SecurityService (`tonic`-generated stub).
-- An async `LinkCache` (`tokio::sync::Mutex<HashMap<Uuid, SecurityProto>>` or a sharded variant).
-- Rust trait-based getters that wrap the proto and gate non-link fields behind `ensure_hydrated()`.
+**The async wrinkle.** Rust is async-first; `ensure_hydrated()` needs an RPC, which is naturally `async`. Three shapes worth picking between (open for review):
 
-Tracking issue: file when a Rust caller hits the pain.
+| Shape | Sync getters? | Cost |
+|---|---|---|
+| **A — `ensure_hydrated()` blocks on the runtime** (`tokio::runtime::Handle::current().block_on(...)`) | Yes | Cannot be called from inside an `async` context that holds the same runtime — would deadlock. Works for sync callers. |
+| **B — Two getter sets**: sync `product_type()` returns `Result<_, LinkNotResolved>` (cache-hit only); async `product_type_async()` does the RPC | Yes (when cache hit) | Two methods per field. Callers must handle the cache-miss `Err`. |
+| **C — Getters return `impl Future`** ; whole wrapper API becomes async | No | Cleanest async story; breaks API parity with the other languages where getters are sync. |
+
+Recommendation: **B** — sync getter returns `Result`, async getter does the RPC. Callers that always pre-warm via `LinkResolver` (the recommended path) use the sync getter and ignore the `Err` case. Callers that want the lazy behavior call the async version. Keeps the wrapper API close to the other languages while respecting Rust's "no hidden blocking" convention.
 
 ## Order of execution
 
 1. **Java first** — biggest pain surface, most active codebase. Establishes the reference behavior + tests. Single PR per wrapper to keep review tractable: PR(LinkCache) → PR(Security) → PR(Portfolio) → PR(Price) → PR(Transaction) → PR(LinkResolver → cache write-through).
 2. **Python second** — parallel migration once Java pattern is stable.
 3. **TypeScript third** — same pattern.
-4. **Rust** — deferred; file a follow-up issue.
+4. **Rust fourth** — same pattern, plus the sync/async getter decision (Shape B above) baked in. Includes deciding what `LinkResolver`'s existing `(uuid, as_of)` LRU keeps doing vs. the new latest-only `LinkCache`.
 
 ## Tests required (per language)
 
@@ -223,10 +232,9 @@ Tracking issue: file when a Rust caller hits the pain.
 ## Out of scope (v1)
 
 - Cross-process cache invalidation (pub/sub or TTL). Future work if eventual-consistency surfaces as a real problem.
-- Async hydration (futures / suspend functions). Current consumers are sync; revisit if a high-throughput async path emerges.
-- Vintage-precise caching. Latest-only cache is by design; vintage queries go through explicit batch resolve.
+- Async hydration in Java/Python/TS (futures / coroutines). Current consumers in those languages are sync; revisit if a high-throughput async path emerges. (Rust is async by construction — see Rust section.)
+- Vintage-precise caching for the latest-only `LinkCache`. Vintage queries go through explicit batch resolve. (Rust keeps its existing `(uuid, as_of)` LRU for that path.)
 - Strategy + StrategyAllocation lazy hydration. No backing service exists; wrapper migration done in PR #229 without is_link.
-- Rust wrapper layer. Deferred entirely.
 
 ## References
 
