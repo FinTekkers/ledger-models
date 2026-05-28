@@ -42,6 +42,24 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
         }
     }
 
+    /**
+     * Java contract: when equals() is overridden, hashCode() must produce
+     * identical values for objects that compare equal. equals() above keys
+     * off getID(); hashCode() does the same. Without this override,
+     * {@link Object#hashCode} returns identity hashes — so two Portfolio
+     * instances built from the same UUID land in different HashMap buckets
+     * and silently fail to dedupe in collectors / sets.
+     *
+     * Surfaced post-#340 because {@link common.models.transaction.Transaction#getPortfolio}
+     * now deserializes a fresh Portfolio wrapper on every call. Pre-#340 the
+     * wrapper was a stored POJO reference (identity hash matched without an
+     * override), masking this bug.
+     */
+    @Override
+    public int hashCode() {
+        return getID().hashCode();
+    }
+
     public String getPortfolioName() {
         return portfolioName;
     }

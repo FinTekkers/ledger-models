@@ -54,4 +54,20 @@ public class Price extends RawDataModelObject {
         Price price1 = (Price) o;
         return Objects.equals(id, price1.id) && Objects.equals(getAsOf(), price1.getAsOf());
     }
+
+    /**
+     * Java contract: equals() above keys off (id, asOf); hashCode() must
+     * combine the same two so equal instances hash equal. Without this
+     * override, Object#hashCode returns identity hashes — so two Price
+     * instances built from the same (id, asOf) land in different HashMap
+     * buckets and silently fail to dedupe in collectors / sets.
+     *
+     * Surfaced post-#340: Transaction#getPrice (and equivalent wrapper
+     * deserialization paths) now build a fresh Price on every call,
+     * exposing the missing override.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, getAsOf());
+    }
 }
