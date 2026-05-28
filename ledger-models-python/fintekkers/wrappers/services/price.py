@@ -26,6 +26,7 @@ from fintekkers.wrappers.requests.security import QuerySecurityRequest
 from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
 from fintekkers.wrappers.services.security import SecurityService
 from fintekkers.wrappers.util.link_resolver import LinkResolver
+from fintekkers.wrappers.util import link_cache as _link_cache
 
 from fintekkers.services.price_service.price_service_pb2_grpc import PriceStub
 
@@ -169,13 +170,22 @@ class PriceService:
 
     def create_or_update(self, request: CreatePriceRequest):
         try:
-            return self.stub.CreateOrUpdate(request.proto)
+            response = self.stub.CreateOrUpdate(request.proto)
         except RpcError as e:
             if e.code() == grpc.StatusCode.CANCELLED:
                 print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url()} ({e.details()})")
             else:
                 print(f"Service unavailable trying to contact {EnvConfig.api_url()} ({e.details()})")
             raise e
+        # Write-through to LinkCache. price_response is a repeated field on
+        # CreatePriceResponseProto.
+        if response is not None:
+            for persisted in response.price_response:
+                if persisted.HasField("uuid") and persisted.HasField("as_of"):
+                    uuid_obj = ProtoSerializationUtil.deserialize(persisted.uuid).uuid
+                    as_of_dt = ProtoSerializationUtil.deserialize(persisted.as_of)
+                    _link_cache.PRICE.put(uuid_obj, persisted, as_of_dt)
+        return response
         
     def get_price_by_uuid(self,uuid: UUID) -> Price:
         """

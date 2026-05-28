@@ -47,6 +47,7 @@ const uuid_1 = require("../../models/utils/uuid");
 const dt = __importStar(require("../../models/utils/datetime"));
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
 const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
+const LinkCacheModule = __importStar(require("../../util/link-cache"));
 class PriceService {
     constructor(apiKey) {
         if (apiKey) {
@@ -81,6 +82,15 @@ class PriceService {
             createRequest.setCreatePriceInput(priceProto);
             const createAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
             const response = yield createAsync(createRequest);
+            // Write-through to LinkCache. price_response is a repeated field.
+            for (const persisted of response.getPriceResponseList()) {
+                const uuidProto = persisted.getUuid();
+                const asOfProto = persisted.getAsOf();
+                if (uuidProto && asOfProto) {
+                    const uuidKey = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+                    LinkCacheModule.PRICE.put(uuidKey, persisted, new dt.ZonedDateTime(asOfProto));
+                }
+            }
             return response;
         });
     }

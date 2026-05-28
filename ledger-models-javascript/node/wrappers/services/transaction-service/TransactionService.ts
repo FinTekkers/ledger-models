@@ -16,6 +16,9 @@ import { QueryTransactionRequestProto } from '../../../fintekkers/requests/trans
 import { QueryTransactionResponseProto } from '../../../fintekkers/requests/transaction/query_transaction_response_pb';
 import EnvConfig from '../../models/utils/requestcontext';
 import LinkResolver from '../../util/link-resolver';
+import * as LinkCacheModule from '../../util/link-cache';
+import { UUID } from '../../models/utils/uuid';
+import { ZonedDateTime } from '../../models/utils/datetime';
 
 
 class TransactionService {
@@ -49,6 +52,16 @@ class TransactionService {
 
     const createTransactionAsync = promisify(this.client.createOrUpdate.bind(this.client));
     const response = await createTransactionAsync(createRequest) as CreateTransactionResponseProto;
+    // Write-through to LinkCache. transactionResponse is a singular field.
+    const persisted = response.getTransactionResponse();
+    if (persisted) {
+      const uuidProto = persisted.getUuid();
+      const asOfProto = persisted.getAsOf();
+      if (uuidProto && asOfProto) {
+        const uuidKey = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+        LinkCacheModule.TRANSACTION.put(uuidKey, persisted, new ZonedDateTime(asOfProto));
+      }
+    }
     return response;
   }
 
