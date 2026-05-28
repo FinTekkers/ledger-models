@@ -59,9 +59,7 @@ impl PriceWrapper {
 
     pub fn security_wrapper(&self) -> SecurityWrapper {
         let security_proto = self.proto.security.clone().unwrap();
-        SecurityWrapper {
-            proto: security_proto
-        }
+        SecurityWrapper::new(security_proto)
     }
 }
 

@@ -3,7 +3,9 @@ use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
+use crate::fintekkers::wrappers::util::link_cache;
 use chrono::{DateTime, Utc};
+use std::sync::OnceLock;
 use uuid::Uuid;
 
 //Imports below are for RawDataModelObject related macro. IDE might not complain if you remove
@@ -14,65 +16,96 @@ use prost::Message;
 
 pub struct SecurityWrapper {
     pub proto: SecurityProto,
+    /// Lazy hydration slot. Empty for non-link or pre-hydration wrappers;
+    /// populated once when `ensure_hydrated()` resolves a link-mode proto
+    /// from LinkCache. Field accessors read from this when set, otherwise
+    /// from `proto` — see [`SecurityWrapper::active`].
+    resolved: OnceLock<SecurityProto>,
 }
 
 impl SecurityWrapper {
     pub fn new(proto: SecurityProto) -> Self {
-        SecurityWrapper { proto }
+        SecurityWrapper { proto, resolved: OnceLock::new() }
     }
 
     pub fn uuid_wrapper(&self) -> UUIDWrapper {
         UUIDWrapper::new(self.proto.uuid.as_ref().unwrap().clone())
     }
 
-    /// True iff the wrapped proto is a link reference (is_link=true).
-    /// When true, only `uuid` (and optionally `as_of`) is meaningful;
-    /// other accessors panic to force resolution via SecurityService.
-    /// See docs/adr/is_link_pattern.md.
+    /// True iff the *original* wrapped proto was a link reference. Does not
+    /// reflect post-hydration state — once `ensure_hydrated()` swaps in a
+    /// resolved proto, field accessors return the resolved values, but this
+    /// still reads from the constructor-time proto so callers can tell that
+    /// hydration happened. See docs/adr/lazy-link-hydration.md.
     pub fn is_link(&self) -> bool {
         self.proto.is_link
     }
 
-    fn assert_not_link(&self, accessor: &str) {
-        if self.proto.is_link {
-            panic!(
-                "Cannot read {} on a link-mode SecurityWrapper (is_link=true). \
-                 Resolve via SecurityService::get_by_ids first. \
-                 See docs/adr/is_link_pattern.md.",
-                accessor
-            );
-        }
+    /// Returns the active proto — resolved if hydration has populated it,
+    /// else the constructor-time proto. Internal helper used by every
+    /// non-link-safe accessor.
+    fn active(&self) -> &SecurityProto {
+        self.resolved.get().unwrap_or(&self.proto)
     }
 
-    /// Returns the product_type i32; panics if this is a link.
+    /// Lazy hydration. On a link-mode proto, look up the LinkCache and swap
+    /// in the resolved value. On cache miss, panics — caller must pre-warm
+    /// via LinkResolver (the cache-only variant; matches the TypeScript
+    /// design rationale in PR #234 — Rust's async getters use the two-getter
+    /// Shape B pattern from the ADR, tracked as a follow-up).
+    fn ensure_hydrated(&self) {
+        if !self.proto.is_link {
+            return;
+        }
+        if self.resolved.get().is_some() {
+            return;
+        }
+        let uuid = self.uuid_wrapper().as_uuid();
+        let cached = link_cache::security().get(uuid, self.proto.as_of.as_ref());
+        if let Some(arc) = cached {
+            // OnceLock::set fails if already populated — fine, another thread
+            // hydrated us first. Both resolved values come from the same cache
+            // entry so they're equivalent.
+            let _ = self.resolved.set((*arc).clone());
+            return;
+        }
+        panic!(
+            "Cannot read fields on link-mode SecurityWrapper uuid={} \
+             — LinkCache miss. Pre-warm via LinkResolver. \
+             See docs/adr/lazy-link-hydration.md.",
+            uuid
+        );
+    }
+
+    /// Returns the product_type i32; panics if this is an unresolved link.
     pub fn product_type_i32(&self) -> i32 {
-        self.assert_not_link("product_type");
-        self.proto.product_type
+        self.ensure_hydrated();
+        self.active().product_type
     }
 
     pub fn asset_class(&self) -> &str {
-        self.assert_not_link("asset_class");
-        &self.proto.asset_class
+        self.ensure_hydrated();
+        &self.active().asset_class
     }
 
     pub fn issuer_name(&self) -> &str {
-        self.assert_not_link("issuer_name");
-        &self.proto.issuer_name
+        self.ensure_hydrated();
+        &self.active().issuer_name
     }
 
     /// All identifiers attached to this security. The first entry is the
     /// primary identifier (CUSIP for US Treasuries, ISIN for Gilts, ...);
     /// secondary identifiers follow. Empty when no identifiers are set.
     pub fn identifiers(&self) -> Vec<&IdentifierProto> {
-        self.assert_not_link("identifiers");
-        self.proto.identifiers.iter().collect()
+        self.ensure_hydrated();
+        self.active().identifiers.iter().collect()
     }
 
     /// Find the first identifier matching the given type. Returns `None`
     /// when no identifier of that type is attached.
     pub fn identifier_by_type(&self, ty: IdentifierTypeProto) -> Option<&IdentifierProto> {
-        self.assert_not_link("identifier_by_type");
-        self.proto
+        self.ensure_hydrated();
+        self.active()
             .identifiers
             .iter()
             .find(|i| i.identifier_type == ty as i32)
@@ -680,5 +713,108 @@ mod test {
         // valid_to should remain unpopulated (deleted_at must NOT be
         // silently mapped onto another field).
         assert!(reparsed.valid_to.is_none());
+    }
+
+    // ---- Lazy hydrate (FinTekkers/second-brain — lazy-link-hydration ADR) ----
+
+    fn make_as_of(seconds: i64) -> LocalTimestampProto {
+        use prost_types::Timestamp;
+        LocalTimestampProto {
+            timestamp: Some(Timestamp { seconds, nanos: 0 }),
+            time_zone: "UTC".to_string(),
+        }
+    }
+
+    fn make_full_proto(uuid: Uuid, as_of: LocalTimestampProto, issuer: &str) -> SecurityProto {
+        SecurityProto {
+            uuid: Some(uuid_proto_from(uuid)),
+            as_of: Some(as_of),
+            issuer_name: issuer.into(),
+            asset_class: "Equity".into(),
+            ..Default::default()
+        }
+    }
+
+    // ---- A. Hydration on accessors ----
+
+    #[test]
+    fn lazy_a_link_safe_accessors_do_not_hydrate() {
+        // Empty cache; is_link / uuid_wrapper must work without panicking.
+        let uuid = Uuid::new_v4();
+        let proto = link_of(uuid, make_as_of(0));
+        let wrapper = SecurityWrapper::new(proto);
+        assert!(wrapper.is_link());
+        assert_eq!(wrapper.uuid_wrapper().as_uuid(), uuid);
+    }
+
+    #[test]
+    fn lazy_a_field_accessor_hydrates_from_cache() {
+        let uuid = Uuid::new_v4();
+        let as_of = make_as_of(1_700_000_000);
+        let resolved = make_full_proto(uuid, as_of.clone(), "ACME-resolved");
+        link_cache::security().put(uuid, resolved, Some(as_of.clone()));
+
+        let wrapper = SecurityWrapper::new(link_of(uuid, as_of));
+        assert!(wrapper.is_link());
+        assert_eq!(wrapper.issuer_name(), "ACME-resolved");
+        assert_eq!(wrapper.asset_class(), "Equity");
+        link_cache::security().evict(uuid);
+    }
+
+    // ---- B. Cache behavior ----
+
+    #[test]
+    fn lazy_b_ii_second_call_reuses_resolved_slot_after_cache_evict() {
+        let uuid = Uuid::new_v4();
+        let as_of = make_as_of(1_700_000_001);
+        let resolved = make_full_proto(uuid, as_of.clone(), "stable");
+        link_cache::security().put(uuid, resolved, Some(as_of.clone()));
+
+        let wrapper = SecurityWrapper::new(link_of(uuid, as_of));
+        assert_eq!(wrapper.issuer_name(), "stable");
+        // Cache eviction must NOT affect a wrapper that already hydrated —
+        // the resolved slot owns its own clone of the proto.
+        link_cache::security().evict(uuid);
+        assert_eq!(wrapper.asset_class(), "Equity");
+    }
+
+    #[test]
+    fn lazy_b_iii_fresh_wrapper_same_uuid_as_of_hits_cache() {
+        let uuid = Uuid::new_v4();
+        let as_of = make_as_of(1_700_000_002);
+        let resolved = make_full_proto(uuid, as_of.clone(), "shared");
+        link_cache::security().put(uuid, resolved, Some(as_of.clone()));
+
+        let a = SecurityWrapper::new(link_of(uuid, as_of.clone()));
+        let b = SecurityWrapper::new(link_of(uuid, as_of));
+        assert_eq!(a.issuer_name(), "shared");
+        assert_eq!(b.issuer_name(), "shared");
+        link_cache::security().evict(uuid);
+    }
+
+    // ---- C. asOf semantics ----
+
+    #[test]
+    #[should_panic(expected = "LinkCache miss")]
+    fn lazy_c_link_as_of_differs_from_cached_is_miss() {
+        let uuid = Uuid::new_v4();
+        let as_of_t1 = make_as_of(1_700_000_010);
+        let as_of_t2 = make_as_of(1_700_000_020);
+        let t2_proto = make_full_proto(uuid, as_of_t2.clone(), "T2");
+        link_cache::security().put(uuid, t2_proto, Some(as_of_t2));
+
+        // Request the T1 vintage — cache only has T2.
+        let wrapper = SecurityWrapper::new(link_of(uuid, as_of_t1));
+        let _ = wrapper.issuer_name();
+    }
+
+    // ---- D. Resolve failure ----
+
+    #[test]
+    #[should_panic(expected = "LinkCache miss")]
+    fn lazy_d_cache_miss_panics_with_uuid_in_message() {
+        let uuid = Uuid::new_v4();
+        let wrapper = SecurityWrapper::new(link_of(uuid, make_as_of(1_700_000_030)));
+        let _ = wrapper.asset_class();
     }
 }
