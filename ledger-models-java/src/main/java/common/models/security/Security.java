@@ -474,7 +474,20 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     public boolean isCash() {
-        return false;
+        // Lazy-hydrate aware: a link-mode wrapper constructed via
+        // Security.fromProto(linkProto) falls through to the base Security
+        // dispatch (product_type=UNKNOWN on the link). Without hydration,
+        // base isCash() returns false even when the underlying entity IS
+        // cash — breaking cash-impact detection in consumers like
+        // InMemoryTransactionStore.addTransaction. Hydrate (cache hit + swap
+        // proto) and then dispatch on the resolved product_type or
+        // cash_details. CashSecurity overrides and short-circuits this.
+        if (proto.getIsLink() && !isHydrated) {
+            ensureHydrated();
+        }
+        SecurityProto active = getProto();
+        return active.getProductType() == ProductTypeProto.CURRENCY
+                || active.hasCashDetails();
     }
 
     public boolean isDeleted() {
