@@ -239,4 +239,28 @@ class SecurityLazyHydrateTest {
         assertEquals("912828ABC",
                 wrapper.getIdentifiers().get(0).getIdentifier());
     }
+
+    // ---------- F. Default fetcher auto-registered at class load ----------
+
+    @Test
+    void f_defaultGrpcFetcher_isConstructible() {
+        // The class-load default is `private static volatile Fetcher fetcher
+        // = defaultGrpcFetcher();` so by the time this test runs the JVM has
+        // already proven the helper returns non-null. Verify it directly
+        // here as a smoke test — this is the function that any caller who
+        // wants to RESET to the default (after overriding for a test or
+        // in-process consumer) would call.
+        Security.Fetcher def = Security.defaultGrpcFetcher();
+        assertNotNull(def, "Default grpc fetcher must be constructible");
+    }
+
+    @Test
+    void f_setFetcher_overridesDefault() {
+        // After class load, an explicit setFetcher() must replace the
+        // class-load default. Verifies the override path works.
+        Security.Fetcher canned = (id, asOf) -> null;
+        Security.setFetcher(canned);
+        assertEquals(canned, Security.getFetcher(),
+                "setFetcher must replace the class-load default");
+    }
 }

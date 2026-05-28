@@ -55,9 +55,57 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     public interface Fetcher {
         SecurityProto fetch(java.util.UUID id, java.time.ZonedDateTime asOf);
     }
-    private static volatile Fetcher fetcher;
+    private static volatile Fetcher fetcher = defaultGrpcFetcher();
     public static void setFetcher(Fetcher f) { fetcher = f; }
     public static Fetcher getFetcher()       { return fetcher; }
+
+    /**
+     * Default fetcher: calls {@code SecurityService.GetByIds} via a gRPC stub
+     * constructed from environment ({@code API_URL}, default
+     * {@code api.fintekkers.org}; port {@code 8082} matching the Python
+     * convention). Auto-registered as the {@link Fetcher} for typical
+     * deployments. Override with {@link #setFetcher(Fetcher)} for tests
+     * (canned protos), in-process consumers (local API call instead of a
+     * self-RPC), or non-default endpoints.
+     *
+     * <p>Channel + stub are lazily constructed on first call and cached for
+     * the JVM lifetime. Failures bubble out as {@link RuntimeException}.
+     *
+     * <p>Package-private so {@code SecurityLazyHydrateTest} can verify the
+     * default is constructible; production callers should not invoke it
+     * directly.
+     */
+    static Fetcher defaultGrpcFetcher() {
+        final java.util.concurrent.atomic.AtomicReference<
+                fintekkers.services.security_service.SecurityGrpc.SecurityBlockingStub
+        > stubRef = new java.util.concurrent.atomic.AtomicReference<>();
+        return (uuid, asOf) -> {
+            fintekkers.services.security_service.SecurityGrpc.SecurityBlockingStub stub = stubRef.get();
+            if (stub == null) {
+                String url = System.getenv().getOrDefault("API_URL", "api.fintekkers.org");
+                int port = 8082;
+                io.grpc.ManagedChannelBuilder<?> builder =
+                        io.grpc.ManagedChannelBuilder.forAddress(url, port);
+                if ("localhost".equals(url) || "127.0.0.1".equals(url)) {
+                    builder.usePlaintext();
+                }
+                io.grpc.ManagedChannel channel = builder.build();
+                stub = fintekkers.services.security_service.SecurityGrpc.newBlockingStub(channel);
+                stubRef.compareAndSet(null, stub);
+                stub = stubRef.get();
+            }
+            fintekkers.requests.security.QuerySecurityRequestProto.Builder reqB =
+                    fintekkers.requests.security.QuerySecurityRequestProto.newBuilder()
+                            .setObjectClass("SecurityRequest")
+                            .setVersion("0.0.1")
+                            .addUuIds(ProtoSerializationUtil.serializeUUID(uuid));
+            if (asOf != null) {
+                reqB.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
+            }
+            fintekkers.requests.security.QuerySecurityResponseProto resp = stub.getByIds(reqB.build());
+            return resp.getSecurityResponseCount() > 0 ? resp.getSecurityResponse(0) : null;
+        };
+    }
 
     /** Primary constructor — wraps a SecurityProto. */
     public Security(SecurityProto proto) {
