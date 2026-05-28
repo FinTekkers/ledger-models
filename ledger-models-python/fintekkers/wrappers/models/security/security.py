@@ -33,53 +33,19 @@ def set_security_fetcher(fetcher) -> None:
 
 
 def _default_security_fetcher(uuid_obj: UUID, as_of_dt: Optional[datetime]):
-    """Default fetcher — calls SecurityService.GetByIds via the configured
-    environment (EnvConfig + ServiceType.SECURITY_SERVICE).
+    """Default fetcher — delegates to `SecurityService.get_security_by_uuid`.
+    No duplicated request-construction or stub-management; the service
+    wrapper owns that. Auto-registered at module load. Override with
+    `set_security_fetcher(...)` for tests (canned protos) or alternate
+    endpoints."""
+    # Lazy import to avoid a cycle at module load.
+    from fintekkers.wrappers.services.security import SecurityService
 
-    Auto-registered at module load. Override with `set_security_fetcher(...)`
-    for tests (canned protos) or alternate endpoints. Same wire shape as
-    `LinkResolver._batch_fetch_securities` so behavior matches the existing
-    bulk pre-warm path."""
-    # Lazy imports to avoid cycles at module load.
-    from fintekkers.requests.security.query_security_request_pb2 import (
-        QuerySecurityRequestProto,
+    as_of_proto = (
+        ProtoSerializationUtil.serialize(as_of_dt) if as_of_dt is not None else None
     )
-    from fintekkers.services.security_service.security_service_pb2_grpc import (
-        SecurityStub,
-    )
-    from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
-
-    request = QuerySecurityRequestProto(
-        object_class="SecurityRequest",
-        version="0.0.1",
-        uuIds=[UUIDProto(raw_uuid=uuid_obj.bytes)],
-    )
-    if as_of_dt is not None:
-        # The fetcher hands us a datetime; re-serialize for the request.
-        as_of_proto = ProtoSerializationUtil.serialize(as_of_dt)
-        request.as_of.CopyFrom(as_of_proto)
-
-    stub = _default_security_stub_cache()
-    if stub is None:
-        stub = SecurityStub(EnvConfig.get_channel(ServiceType.SECURITY_SERVICE))
-        _default_security_stub_cache(stub)
-    response = stub.GetByIds(request)
-    if len(response.security_response) == 0:
-        return None
-    return response.security_response[0]
-
-
-# Cached default stub — set on first call, reused for the process lifetime.
-_default_security_stub = None
-
-
-def _default_security_stub_cache(set_to=None):
-    """Tiny accessor + setter for the cached default SecurityStub. Calling
-    with no args returns the current value; passing a stub stores it."""
-    global _default_security_stub
-    if set_to is not None:
-        _default_security_stub = set_to
-    return _default_security_stub
+    security = SecurityService().get_security_by_uuid(uuid_obj, as_of=as_of_proto)
+    return security.proto if security is not None else None
 
 
 _security_fetcher = _default_security_fetcher
