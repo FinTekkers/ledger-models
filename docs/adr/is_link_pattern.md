@@ -8,7 +8,7 @@
 
 A single Treasury security can appear inside thousands of `TransactionProto` messages on a busy day. If every embedded reference carried the full security record — CUSIP, maturity, coupon, bond_details, identifiers — the wire would carry that record ten thousand times even though it doesn't change. Big response, slow request, expensive serialization, and a lot of duplicate bytes sitting on disk.
 
-The `is_link` field lets us inline a **reference** instead: just the UUID, plus the as-of timestamp the parent message is anchored to. The full entity is fetched on demand, once, and cached. Net effect: messages get small, the database row count drops, and the round-trip cost is paid once per process per entity instead of per message.
+The `is_link` field lets us inline a **reference** instead: just the UUID, plus the as-of timestamp the parent message is anchored to. The full entity is fetched on demand, once, and cached. Net effect: messages get small, and the round-trip cost is paid once per process per entity instead of per message. (Storage on the server is unchanged — `is_link` is a wire-shape choice for embedded references, not a change to how entities are persisted.)
 
 ```
 ┌────────────────────────────┐         ┌────────────────────────────┐
@@ -30,7 +30,7 @@ The `is_link` field lets us inline a **reference** instead: just the UUID, plus 
        ~2 KB
 ```
 
-The same on-disk row, the same on-wire response — orders of magnitude smaller in the link form.
+Same on-wire response — orders of magnitude smaller in the link form. (The database row is unchanged; `is_link` is a wire-shape choice, not a storage choice.)
 
 ---
 
@@ -63,78 +63,57 @@ boolean   isCash   = txn.getSecurity().isCash();
 
 If the security inside `protoFromRpc` arrived as `is_link=true`, the first call to `txn.getSecurity().getIssuerName()` triggers `ensureHydrated()`:
 1. Consult `LinkCache.SECURITY.get(uuid, asOf)`. If hit → swap in resolved proto, return field.
-2. Miss → call the registered `Security.Fetcher` (one-time process-startup wiring; see below) → swap, populate cache, return field.
+2. Miss → call the registered `Security.Fetcher` → swap, populate cache, return field.
 3. No fetcher registered and cache miss → throw `IllegalStateException` naming the missing UUID.
 
-**One-time process startup** — register a Fetcher so step 2 has somewhere to go:
-
-```java
-Security.setFetcher((uuid, asOf) ->
-    SecurityServiceClient.getInstance().getByUuid(uuid, asOf).getProto());
-Portfolio.setFetcher(...);
-Price.setFetcher(...);
-```
-
-In-process services (ledger-service itself) call the local API instead of a gRPC stub; out-of-process consumers wrap their `SecurityServiceClient`.
+A default Fetcher targeting the standard `SecurityServiceClient` ships pre-registered for typical consumers. Override only if you need the wrapper to resolve from somewhere other than the default gRPC service — for example, a unit test that returns canned protos, or an in-process consumer that prefers a direct local API call over a self-RPC.
 
 ### Python
 
 ```python
 from fintekkers.wrappers.models.transaction import Transaction
-from fintekkers.wrappers.models.security.security import set_security_fetcher
-from fintekkers.wrappers.services.security import SecurityService
 
-# Process startup, once:
-def _fetch_security(uuid, as_of):
-    return SecurityService().get_security_by_uuid(uuid).proto
-set_security_fetcher(_fetch_security)
-
-# Then anywhere:
 txn = Transaction(proto_from_rpc)
 issuer = txn.proto.security.issuer_name      # auto-hydrates if needed
 ```
 
-`set_portfolio_fetcher`, `set_price_fetcher`, `set_transaction_fetcher` follow the same pattern.
+Same mental model as Java: accessor reads on a link-mode embedded entity consult the cache, then fall back to the default Fetcher (which calls the corresponding gRPC service), then cache the result. `set_security_fetcher`, `set_portfolio_fetcher`, `set_price_fetcher`, `set_transaction_fetcher` exist if you need to override the default — for tests with canned data, or to point at a non-default endpoint.
 
 ### TypeScript / Node.js
 
-TS getters are **synchronous**, so the wrapper doesn't fire RPCs from inside an accessor. On a cache miss, accessor reads throw with a clear "pre-warm via LinkResolver" message. Practical pattern:
+TS getters are **synchronous**, so the wrapper doesn't fire RPCs from inside an accessor. Use the wrapper-service methods that include hydration as part of the call:
 
 ```typescript
-import LinkResolver from 'ledger-models/wrappers/util/link-resolver';
 import { TransactionService } from 'ledger-models/wrappers/services/transaction-service/TransactionService';
 
-// One LinkResolver per request scope works well — the cache lives for the
-// scope, and the inner LinkCache write-through means subsequent accessor
-// reads in the same process get cache hits even after the resolver is GC'd.
-const resolver = new LinkResolver();
 const txns = await new TransactionService()
-    .searchWithSecurityAndPortfolio(asOf, filter, 100, resolver);
+    .searchWithSecurityAndPortfolio(asOf, filter, 100);
 
-// Now safe to read.
 for (const t of txns) {
   console.log(t.getSecurity().getIssuerName());
 }
 ```
 
-If you call `searchTransaction` without `searchWithSecurityAndPortfolio` (i.e. you skipped the bulk hydrate), accessor reads on link-mode embedded securities throw. The error message names the missing UUID and points back here.
+`searchWithSecurityAndPortfolio` handles batching internally and writes every resolved entity into the process-wide `LinkCache`. Once those returned items have been read, the cache also satisfies subsequent independent reads in the same process — you don't need a long-lived resolver instance to benefit from it.
+
+If you reach for the lower-level `searchTransaction` (no hydration) instead, accessor reads on link-mode embedded securities throw — the error names the missing UUID and points you here.
 
 ### Rust
 
-Rust mirrors the TypeScript "cache-only" model in v0.4.10 — sync getters consult `link_cache`, panic on miss with the UUID in the message:
+In v0.4.10 the Rust wrappers consult `link_cache` on sync accessor reads and **panic on cache miss** with the UUID in the message — they don't yet fall back to a fetcher. This is being closed in a follow-up (`docs/adr/lazy-link-hydration.md` § "async wrinkle"). For now, batch-hydrate via the bulk-resolve path before reading.
 
 ```rust
 let txn = TransactionWrapper::new(proto_from_rpc);
-let issuer = txn.security_wrapper().issuer_name();  // panics on link-mode miss
+let issuer = txn.security_wrapper().issuer_name();  // panics on link-mode cache miss in v0.4.10
 ```
 
-Pre-warm via the bulk-resolve path before the read. The roadmap (`docs/adr/lazy-link-hydration.md` § "async wrinkle") covers the two-getter Shape B (`field()` returning `Result` + `field_async()` doing the RPC) as a follow-up; not in v0.4.10.
+Once the follow-up lands, behavior matches Java / Python: cache → fetcher → hydrated value, no caller-side pre-warm required.
 
 ---
 
 ## Caching: what to expect
 
-Two caches sit between you and the network. You can ignore both for correctness, but understanding them helps reason about performance.
+One cache sits between you and the network, and you can ignore it for correctness — it only affects performance and freshness. (A second internal cache lives inside `LinkResolver` today and is slated for consolidation into `LinkCache` — see the follow-up row in `docs/adr/lazy-link-hydration-checklist.md`.)
 
 ### LinkCache (process-wide, the one that matters)
 
