@@ -15,6 +15,8 @@ Title: `feat(lazy-hydrate): Security/Portfolio/Price/Transaction wrappers + Link
 
 The whole Java story lands in one PR. Reviewer sees the full shape: cache → wrappers → resolver pre-warm → mutation write-through.
 
+**Pre-req discovered during planning**: `Portfolio` and `Price` wrappers were never proto-backed (the wrapper-migration work in #338/#340 covered only `Security` and `Transaction`). Both still hold POJO fields and rely on `PortfolioSerializer` / `PriceSerializer`. The lazy-hydrate work depends on the proto-backed shape, so this PR also proto-backs Portfolio and Price before adding their `ensureHydrated()`. The PR is bigger as a result but stays single-concern: "bring all four wrappers to the lazy-hydrate baseline."
+
 **LinkCache** — `ledger-models-java/src/main/java/common/util/LinkCache.java`
 - [ ] Generic `LinkCache<V>` with `ConcurrentMap<UUID, V>` backing
 - [ ] `static final` singletons: `SECURITY`, `PORTFOLIO`, `PRICE`, `TRANSACTION`
@@ -28,11 +30,38 @@ The whole Java story lands in one PR. Reviewer sees the full shape: cache → wr
 - [ ] `ensureHydrated()`: cache check → on miss `SecurityServiceClient.getLatestByUuid(id)` → on null throw `IllegalStateException` with uuid in message → swap `this.proto`, set `isHydrated=true`, populate cache
 - [ ] Delete the `_assert_not_link` / `throwIfLink` guard
 
-**Portfolio, Price, Transaction wrappers** — same shape
+**Portfolio wrapper** — proto-back AND lazy-hydrate in one move
 - [ ] `common/models/portfolio/Portfolio.java`
+  - [ ] Replace POJO fields (`portfolioName`) with `proto` (PortfolioProto) + `isHydrated`
+  - [ ] Constructor accepts `PortfolioProto`; validate required fields (uuid, asOf)
+  - [ ] Keep POJO-args constructor for back-compat (builds proto internally, validates non-null)
+  - [ ] `proto()` accessor
+  - [ ] `getPortfolioName()` and all non-link-safe getters route through `ensureHydrated()` → `LinkCache.PORTFOLIO` → `PortfolioServiceClient.getLatestByUuid` (or `getByUuid(id, asOf)`)
+- [ ] Delete `PortfolioSerializer` (mirror of how `TransactionSerializer` was retired in #340)
+- [ ] Update callers of `PortfolioSerializer.getInstance().serialize/deserialize` → `portfolio.proto()` / `new Portfolio(proto)`
+  - [ ] `Transaction.buildBaselineProto` line that uses PortfolioSerializer
+  - [ ] `ProtoSerializationUtil` serialize/deserialize branches for PortfolioProto
+
+**Price wrapper** — proto-back AND lazy-hydrate in one move
 - [ ] `common/models/price/Price.java`
+  - [ ] Replace POJO fields (`price`, `security`) with `proto` (PriceProto) + `isHydrated`
+  - [ ] Constructor accepts `PriceProto`; validate required fields
+  - [ ] Keep POJO-args constructor; build proto internally, validate non-null
+  - [ ] `proto()` accessor
+  - [ ] `getPrice()`, `getSecurity()`, and all non-link-safe getters route through `ensureHydrated()` → `LinkCache.PRICE` → `PriceServiceClient.getLatestByUuid`
+  - [ ] `getSecurity()` returns a wrapped `Security` — that wrapper self-hydrates if its own embedded security is link-mode
+  - [ ] Static `CASH_PRICE` rebuild — construct via proto, not POJO field-by-field
+- [ ] Delete `PriceSerializer`
+- [ ] Update callers
+  - [ ] `Transaction.buildBaselineProto` line that uses PriceSerializer
+  - [ ] `ProtoSerializationUtil` serialize/deserialize branches for PriceProto
+
+**Transaction wrapper** — already proto-backed; just add lazy-hydrate
 - [ ] `common/models/transaction/Transaction.java`
-- [ ] For Transaction: `getSecurity()` / `getPortfolio()` / `getPrice()` return wrapped sub-entities (those wrappers self-hydrate); no `ensureHydrated()` on Transaction needed for embedded-link reads
+  - [ ] Add `isHydrated` field (proto field already exists from #340)
+  - [ ] `ensureHydrated()` → `LinkCache.TRANSACTION` → `TransactionServiceClient.getLatestByUuid`
+  - [ ] Route `getTransactionType`, `getQuantity`, `getTradeDate`, `getSettlementDate`, `getTradeName`, `getPositionStatus`, `isCancelled`, `getChildTransactions`, `getStrategyAllocation` through `ensureHydrated()`
+  - [ ] `getSecurity()` / `getPortfolio()` / `getPrice()` return wrapped sub-entities (those wrappers self-hydrate); no `ensureHydrated()` on Transaction needed for embedded-link reads
 
 **LinkResolver** — `common/util/LinkResolver.java`
 - [ ] `resolveSecuritiesOnTransactions(txs)`: after batch RPC, populate `LinkCache.SECURITY` (no longer mutates wrapper internals)

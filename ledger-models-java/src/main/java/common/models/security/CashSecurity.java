@@ -30,7 +30,15 @@ public class CashSecurity extends Security {
         UUID id = new UUID(1, 1);
         ZonedDateTime asOf = ZonedDateTime.of(
                 1000, 1, 1, 0, 0, 0, 0, ZoneId.of("America/New_York"));
-        return new CashSecurity(id, "USD", asOf);
+        CashSecurity usd = new CashSecurity(id, "USD", asOf);
+        // Prime LinkCache.SECURITY so any consumer encountering a link-mode
+        // reference to the cash security (e.g. a stripped cash leg on a
+        // transaction) can hydrate from cache without needing a
+        // SecurityService round-trip. The USD security is a process-wide
+        // singleton — its fields don't change — so the cache entry is
+        // correct for the lifetime of the JVM.
+        common.util.LinkCache.SECURITY.put(id, usd.getProto(), asOf);
+        return usd;
     }
 
     /** Primary constructor — wraps a SecurityProto. */
