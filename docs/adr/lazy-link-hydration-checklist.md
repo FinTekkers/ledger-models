@@ -27,6 +27,7 @@ Companion to [`lazy-link-hydration.md`](lazy-link-hydration.md). **5 PRs total**
 | follow-up | Rust two-getter Shape B (sync `Result` + async `_async` variant) | pending — captured in ADR §"async wrinkle" |
 | follow-up | Rust Portfolio + Price + Transaction wrappers | pending |
 | follow-up | Rust LinkResolver write-through + service-stub write-through | pending |
+| follow-up | **Collapse LinkResolver internal LRU → LinkCache** (all 4 langs). Post-#237 write-through, the resolver's per-instance LRU stores the same protos as the process-wide LinkCache and is GC'd at the end of most service-wrapper calls (callers rarely thread a shared resolver across calls). Route the resolver's "have we already fetched?" check through `LinkCache.get(uuid, as_of)`, delete the `_TinyLRU` + `cache_size` / `ttl_ms` ctor params, and give `LinkCache` an LRU-with-cap option (per-entity TTLs already noted: Portfolio ~1d, Security ~1d, Transaction ~1m, Price ~30s). Net effect: one cache, one TTL story, one source of truth. Removes the asymmetry where #240's `isCash()` ensure-hydrate reads LinkCache but the resolver writes (and reads) the LRU first. | pending |
 
 **Cross-language scope audit (2026-05-28)**
 
