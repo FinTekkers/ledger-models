@@ -861,21 +861,15 @@ mod test {
         link_cache::security().evict(uuid);
     }
 
-    // ---- C. asOf semantics ----
-
-    #[test]
-    #[should_panic(expected = "LinkCache miss")]
-    fn lazy_c_link_as_of_differs_from_cached_is_miss() {
-        let uuid = Uuid::new_v4();
-        let as_of_t1 = make_as_of(1_700_000_010);
-        let as_of_t2 = make_as_of(1_700_000_020);
-        let t2_proto = make_full_proto(uuid, as_of_t2.clone(), "T2");
-        link_cache::security().put(uuid, t2_proto, Some(as_of_t2));
-
-        // Request the T1 vintage — cache only has T2.
-        let wrapper = SecurityWrapper::new(link_of(uuid, as_of_t1));
-        let _ = wrapper.issuer_name();
-    }
+    // ---- C. asOf semantics — covered by link_cache unit tests
+    //
+    // Pre-#244 lazy_c verified that a cache miss on asOf-mismatch panics
+    // with "LinkCache miss". Post-#244 the miss path falls back to the
+    // fetcher, so the panic-shape assertion no longer holds in this
+    // module. The underlying behavior (cache.get(uuid, T1) returns None
+    // when only T2 is cached) is covered cleanly by the link_cache unit
+    // tests in fintekkers::wrappers::util::link_cache::tests, which don't
+    // touch the wrapper's global fetcher state and so can't race.
 
     // ---- D. Resolve failure ----
     //
