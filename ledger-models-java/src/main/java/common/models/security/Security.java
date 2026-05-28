@@ -482,9 +482,8 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         // InMemoryTransactionStore.addTransaction. Hydrate (cache hit + swap
         // proto) and then dispatch on the resolved product_type or
         // cash_details. CashSecurity overrides and short-circuits this.
-        if (proto.getIsLink() && !isHydrated) {
-            ensureHydrated();
-        }
+        // ensureHydrated() no-ops when isHydrated is already true.
+        ensureHydrated();
         SecurityProto active = getProto();
         return active.getProductType() == ProductTypeProto.CURRENCY
                 || active.hasCashDetails();
