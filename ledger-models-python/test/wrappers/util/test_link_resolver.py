@@ -291,3 +291,53 @@ def test_cache_key_includes_as_of():
 
     resolver.get_security(uuid, _make_as_of(1_700_000_000))
     assert log.count == 2  # cache hit on (uuid, t1)
+
+
+# ---------- LinkCache write-through ----------
+
+def _full_security_with_as_of(uuid_obj: UUID, issuer: str, as_of: LocalTimestampProto) -> SecurityProto:
+    proto = _full_security(uuid_obj, issuer)
+    proto.as_of.CopyFrom(as_of)
+    return proto
+
+
+def test_get_security_populates_link_cache():
+    from fintekkers.wrappers.util import link_cache as _link_cache
+    from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+
+    _link_cache.SECURITY.clear()
+    uuid = uuid4()
+    as_of = _make_as_of(1_700_000_000)
+    store = {str(uuid): _full_security_with_as_of(uuid, "ACME", as_of)}
+    log = _SecurityCallLog()
+    resolver = _new_resolver(store, log)
+
+    out = resolver.get_security(uuid, as_of)
+    assert out.issuer_name == "ACME"
+
+    as_of_dt = ProtoSerializationUtil.deserialize(as_of)
+    cached = _link_cache.SECURITY.get(uuid, as_of_dt)
+    assert cached is not None, "LinkCache.SECURITY must contain the resolved proto after get_security"
+    assert cached.issuer_name == "ACME"
+    _link_cache.SECURITY.clear()
+
+
+def test_resolve_securities_populates_link_cache():
+    from fintekkers.wrappers.util import link_cache as _link_cache
+    from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+
+    _link_cache.SECURITY.clear()
+    uuid = uuid4()
+    as_of = _make_as_of(1_700_000_001)
+    store = {str(uuid): _full_security_with_as_of(uuid, "BULK", as_of)}
+    log = _SecurityCallLog()
+    resolver = _new_resolver(store, log)
+
+    price = _link_price(uuid, "100", as_of)
+    resolver.resolve_securities([price])
+
+    as_of_dt = ProtoSerializationUtil.deserialize(as_of)
+    cached = _link_cache.SECURITY.get(uuid, as_of_dt)
+    assert cached is not None
+    assert cached.issuer_name == "BULK"
+    _link_cache.SECURITY.clear()

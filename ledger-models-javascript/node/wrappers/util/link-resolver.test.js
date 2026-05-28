@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -344,6 +367,58 @@ describe('LinkResolver', () => {
         // Third: same (uuid, t1) → cache hit, no new RPC.
         yield resolver.getSecurity(uuid, makeAsOf(1700000000));
         expect(callLog.count).toBe(2);
+    }));
+});
+const LinkCacheModule = __importStar(require("./link-cache"));
+const datetime_1 = require("../models/utils/datetime");
+describe('LinkResolver write-through to LinkCache', () => {
+    beforeEach(() => {
+        LinkCacheModule.SECURITY.clear();
+        LinkCacheModule.PORTFOLIO.clear();
+    });
+    function fullSecurityWithAsOf(uuid, issuer, asOf) {
+        const proto = fullSecurity(uuid, issuer);
+        proto.setAsOf(asOf);
+        return proto;
+    }
+    test('getSecurity populates LinkCache.SECURITY', () => __awaiter(void 0, void 0, void 0, function* () {
+        const uuid = uuid_1.UUID.random();
+        const asOf = makeAsOf(1700000010);
+        const store = new Map([
+            [uuid.toString(), fullSecurityWithAsOf(uuid, 'ACME', asOf)],
+        ]);
+        const resolver = new link_resolver_1.default({
+            securityClient: mockSecurityClient(store, newCallLog()),
+            portfolioClient: mockPortfolioClient(new Map(), newCallLog()),
+        });
+        const out = yield resolver.getSecurity(uuid, asOf);
+        expect(out.getIssuerName()).toBe('ACME');
+        const cached = LinkCacheModule.SECURITY.get(uuid.toString(), new datetime_1.ZonedDateTime(asOf));
+        expect(cached).toBeDefined();
+        expect(cached.getIssuerName()).toBe('ACME');
+    }));
+    test('resolveSecurities populates LinkCache.SECURITY', () => __awaiter(void 0, void 0, void 0, function* () {
+        const uuid = uuid_1.UUID.random();
+        const asOf = makeAsOf(1700000011);
+        const store = new Map([
+            [uuid.toString(), fullSecurityWithAsOf(uuid, 'BULK', asOf)],
+        ]);
+        const resolver = new link_resolver_1.default({
+            securityClient: mockSecurityClient(store, newCallLog()),
+            portfolioClient: mockPortfolioClient(new Map(), newCallLog()),
+        });
+        const linkSec = new security_pb_1.SecurityProto();
+        linkSec.setUuid(uuid.toUUIDProto());
+        linkSec.setIsLink(true);
+        linkSec.setAsOf(asOf);
+        const priceProto = new price_pb_1.PriceProto();
+        priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
+        priceProto.setSecurity(linkSec);
+        const price = new Price_1.default(priceProto);
+        yield resolver.resolveSecurities([price]);
+        const cached = LinkCacheModule.SECURITY.get(uuid.toString(), new datetime_1.ZonedDateTime(asOf));
+        expect(cached).toBeDefined();
+        expect(cached.getIssuerName()).toBe('BULK');
     }));
 });
 //# sourceMappingURL=link-resolver.test.js.map

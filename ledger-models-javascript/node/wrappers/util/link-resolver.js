@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -21,6 +44,31 @@ const security_1 = __importDefault(require("../models/security/security"));
 const portfolio_1 = __importDefault(require("../models/portfolio/portfolio"));
 const uuid_1 = require("../models/utils/uuid");
 const requestcontext_1 = __importDefault(require("../models/utils/requestcontext"));
+const datetime_1 = require("../models/utils/datetime");
+const LinkCacheModule = __importStar(require("./link-cache"));
+/**
+ * Mirror a freshly-fetched SecurityProto into the process-wide
+ * `LinkCache.SECURITY`. The lazy-hydrate `SecurityWrapper.ensureHydrated()`
+ * reads from this cache, so pre-warming via LinkResolver immediately
+ * benefits accessor reads. Skips silently when the resolved proto lacks
+ * uuid or as_of — `LinkCache.put` requires both.
+ */
+function populateSecurityLinkCache(proto) {
+    const uuidProto = proto.getUuid();
+    const asOfProto = proto.getAsOf();
+    if (!uuidProto || !asOfProto)
+        return;
+    const uuidKey = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+    LinkCacheModule.SECURITY.put(uuidKey, proto, new datetime_1.ZonedDateTime(asOfProto));
+}
+function populatePortfolioLinkCache(proto) {
+    const uuidProto = proto.getUuid();
+    const asOfProto = proto.getAsOf();
+    if (!uuidProto || !asOfProto)
+        return;
+    const uuidKey = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+    LinkCacheModule.PORTFOLIO.put(uuidKey, proto, new datetime_1.ZonedDateTime(asOfProto));
+}
 /**
  * Tiny LRU. Map keeps insertion order; on get-hit we delete + re-insert
  * to bump to the end (most recently used). On overflow we drop the
@@ -195,6 +243,7 @@ class LinkResolver {
                         continue;
                     const uuidStr = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
                     this.securityCache.set(`${uuidStr}@${bucketKey}`, proto);
+                    populateSecurityLinkCache(proto);
                 }
             })));
             // Mutate each item's embedded security in place.
@@ -253,6 +302,7 @@ class LinkResolver {
                         continue;
                     const uuidStr = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
                     this.portfolioCache.set(`${uuidStr}@${bucketKey}`, proto);
+                    populatePortfolioLinkCache(proto);
                 }
             })));
             for (const item of items) {
@@ -294,6 +344,7 @@ class LinkResolver {
                 }
                 const proto = protos[0];
                 this.securityCache.set(key, proto);
+                populateSecurityLinkCache(proto);
                 return proto;
             }).finally(() => {
                 this.securityInFlight.delete(key);
@@ -317,6 +368,7 @@ class LinkResolver {
                 }
                 const proto = protos[0];
                 this.portfolioCache.set(key, proto);
+                populatePortfolioLinkCache(proto);
                 return proto;
             }).finally(() => {
                 this.portfolioInFlight.delete(key);

@@ -61,6 +61,8 @@ from fintekkers.services.portfolio_service.portfolio_service_pb2_grpc import (
 )
 from fintekkers.services.security_service.security_service_pb2_grpc import SecurityStub
 from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
+from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+from fintekkers.wrappers.util import link_cache as _link_cache_mod
 
 
 T = TypeVar("T")
@@ -86,6 +88,28 @@ def _link_as_of(sub_message) -> Optional[LocalTimestampProto]:
     if not sub_message.HasField("as_of"):
         return None
     return sub_message.as_of
+
+
+def _populate_security_link_cache(proto: SecurityProto) -> None:
+    """Mirror a freshly-fetched SecurityProto into the process-wide
+    `link_cache.SECURITY`. Lazy-hydrate wrappers consult this cache, so
+    pre-warmed entities become visible to accessors without a separate
+    RPC. Skips silently when the resolved proto lacks the bitemporal
+    anchor (uuid / as_of); link_cache requires both."""
+    if proto is None or not proto.HasField("uuid") or not proto.HasField("as_of"):
+        return
+    uuid_obj = ProtoSerializationUtil.deserialize(proto.uuid).uuid
+    as_of_dt = ProtoSerializationUtil.deserialize(proto.as_of)
+    _link_cache_mod.SECURITY.put(uuid_obj, proto, as_of_dt)
+
+
+def _populate_portfolio_link_cache(proto: PortfolioProto) -> None:
+    """Mirror counterpart of [`_populate_security_link_cache`] for Portfolio."""
+    if proto is None or not proto.HasField("uuid") or not proto.HasField("as_of"):
+        return
+    uuid_obj = ProtoSerializationUtil.deserialize(proto.uuid).uuid
+    as_of_dt = ProtoSerializationUtil.deserialize(proto.as_of)
+    _link_cache_mod.PORTFOLIO.put(uuid_obj, proto, as_of_dt)
 
 
 class _TinyLRU:
@@ -197,6 +221,7 @@ class LinkResolver:
                 raise LookupError(f"Security not found: {uuid}@{_as_of_key(as_of)}")
             proto = protos[0]
             self._security_cache.set(key, proto)
+            _populate_security_link_cache(proto)
             future.set_result(proto)
             return proto
         except BaseException as e:
@@ -233,6 +258,7 @@ class LinkResolver:
                 raise LookupError(f"Portfolio not found: {uuid}@{_as_of_key(as_of)}")
             proto = protos[0]
             self._portfolio_cache.set(key, proto)
+            _populate_portfolio_link_cache(proto)
             future.set_result(proto)
             return proto
         except BaseException as e:
@@ -281,6 +307,7 @@ class LinkResolver:
             for proto in fetched:
                 uuid_obj = UUID(bytes=bytes(proto.uuid.raw_uuid))
                 self._security_cache.set(f"{uuid_obj}@{bucket_key}", proto)
+                _populate_security_link_cache(proto)
 
         # Mutate each item in place.
         for item in items_list:
@@ -324,6 +351,7 @@ class LinkResolver:
             for proto in fetched:
                 uuid_obj = UUID(bytes=bytes(proto.uuid.raw_uuid))
                 self._portfolio_cache.set(f"{uuid_obj}@{bucket_key}", proto)
+                _populate_portfolio_link_cache(proto)
 
         for item in items_list:
             if not item.proto.HasField("portfolio"):

@@ -43,6 +43,7 @@ use crate::fintekkers::models::price::PriceProto;
 use crate::fintekkers::models::security::SecurityProto;
 use crate::fintekkers::models::transaction::TransactionProto;
 use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
+use crate::fintekkers::wrappers::util::link_cache;
 use crate::fintekkers::requests::portfolio::{
     QueryPortfolioRequestProto, QueryPortfolioResponseProto,
 };
@@ -214,6 +215,7 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
             }
         })?;
         self.security_cache.lock().unwrap().set(key, proto.clone());
+        populate_security_link_cache(&proto);
         Ok(proto)
     }
 
@@ -236,6 +238,7 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
             }
         })?;
         self.portfolio_cache.lock().unwrap().set(key, proto.clone());
+        populate_portfolio_link_cache(&proto);
         Ok(proto)
     }
 
@@ -371,7 +374,8 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
             for proto in fetched {
                 if let Some(uuid_proto) = proto.uuid.as_ref() {
                     if let Some(uuid) = uuid_from_proto(uuid_proto) {
-                        cache.set(format!("{}@{}", uuid, bk), proto);
+                        cache.set(format!("{}@{}", uuid, bk), proto.clone());
+                        populate_security_link_cache(&proto);
                     }
                 }
             }
@@ -419,7 +423,8 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
             for proto in fetched {
                 if let Some(uuid_proto) = proto.uuid.as_ref() {
                     if let Some(uuid) = uuid_from_proto(uuid_proto) {
-                        cache.set(format!("{}@{}", uuid, bk), proto);
+                        cache.set(format!("{}@{}", uuid, bk), proto.clone());
+                        populate_portfolio_link_cache(&proto);
                     }
                 }
             }
@@ -484,6 +489,25 @@ fn bucket_key(as_of: Option<&LocalTimestampProto>) -> String {
 
 fn cache_key(uuid: Uuid, as_of: Option<&LocalTimestampProto>) -> String {
     format!("{}@{}", uuid, bucket_key(as_of))
+}
+
+/// Mirror a freshly-fetched SecurityProto into the process-wide
+/// `link_cache::security()`. `SecurityWrapper::ensure_hydrated` consults
+/// this cache, so pre-warming via the resolver immediately benefits
+/// accessor reads with no second RPC. Skips silently when the resolved
+/// proto lacks uuid or as_of — the cache requires both for newest-wins.
+fn populate_security_link_cache(proto: &SecurityProto) {
+    let Some(uuid_proto) = proto.uuid.as_ref() else { return };
+    let Some(as_of) = proto.as_of.clone() else { return };
+    let Some(uuid) = uuid_from_proto(uuid_proto) else { return };
+    link_cache::security().put(uuid, proto.clone(), Some(as_of));
+}
+
+fn populate_portfolio_link_cache(proto: &PortfolioProto) {
+    let Some(uuid_proto) = proto.uuid.as_ref() else { return };
+    let Some(as_of) = proto.as_of.clone() else { return };
+    let Some(uuid) = uuid_from_proto(uuid_proto) else { return };
+    link_cache::portfolio().put(uuid, proto.clone(), Some(as_of));
 }
 
 fn uuid_from_proto(proto: &UuidProto) -> Option<Uuid> {
@@ -960,5 +984,94 @@ mod tests {
             assert!(["Strategy X", "Strategy Y"]
                 .contains(&t.portfolio.as_ref().unwrap().portfolio_name.as_str()));
         }
+    }
+
+    // ---------- LinkCache write-through ----------
+
+    fn full_security_with_as_of(uuid: Uuid, name: &str, as_of: LocalTimestampProto) -> SecurityProto {
+        SecurityProto {
+            object_class: "Security".into(),
+            version: "0.0.1".into(),
+            uuid: Some(uuid_to_proto(uuid)),
+            as_of: Some(as_of),
+            is_link: false,
+            issuer_name: name.into(),
+            ..Default::default()
+        }
+    }
+
+    fn full_portfolio_with_as_of(uuid: Uuid, name: &str, as_of: LocalTimestampProto) -> PortfolioProto {
+        PortfolioProto {
+            object_class: "Portfolio".into(),
+            version: "0.0.1".into(),
+            uuid: Some(uuid_to_proto(uuid)),
+            as_of: Some(as_of),
+            is_link: false,
+            portfolio_name: name.into(),
+            ..Default::default()
+        }
+    }
+
+    #[tokio::test]
+    async fn get_security_populates_link_cache() {
+        link_cache::security().clear();
+        let uuid = Uuid::new_v4();
+        let as_of = as_of_at(1_700_000_000);
+        let mut store = HashMap::new();
+        store.insert(
+            uuid.to_string(),
+            full_security_with_as_of(uuid, "ACME", as_of.clone()),
+        );
+        let resolver = make_resolver(store, HashMap::new(), 1000);
+
+        let out = resolver.get_security(uuid, Some(as_of.clone())).await.unwrap();
+        assert_eq!(out.issuer_name, "ACME");
+
+        let cached = link_cache::security().get(uuid, Some(&as_of));
+        assert!(cached.is_some(), "link_cache::security() must contain the resolved proto");
+        assert_eq!(cached.unwrap().issuer_name, "ACME");
+        link_cache::security().clear();
+    }
+
+    #[tokio::test]
+    async fn get_portfolio_populates_link_cache() {
+        link_cache::portfolio().clear();
+        let uuid = Uuid::new_v4();
+        let as_of = as_of_at(1_700_000_001);
+        let mut store = HashMap::new();
+        store.insert(
+            uuid.to_string(),
+            full_portfolio_with_as_of(uuid, "Strategy Z", as_of.clone()),
+        );
+        let resolver = make_resolver(HashMap::new(), store, 1000);
+
+        let out = resolver.get_portfolio(uuid, Some(as_of.clone())).await.unwrap();
+        assert_eq!(out.portfolio_name, "Strategy Z");
+
+        let cached = link_cache::portfolio().get(uuid, Some(&as_of));
+        assert!(cached.is_some(), "link_cache::portfolio() must contain the resolved proto");
+        assert_eq!(cached.unwrap().portfolio_name, "Strategy Z");
+        link_cache::portfolio().clear();
+    }
+
+    #[tokio::test]
+    async fn bulk_resolve_securities_on_prices_populates_link_cache() {
+        link_cache::security().clear();
+        let uuid = Uuid::new_v4();
+        let as_of = as_of_at(1_700_000_002);
+        let mut store = HashMap::new();
+        store.insert(
+            uuid.to_string(),
+            full_security_with_as_of(uuid, "BULK", as_of.clone()),
+        );
+        let resolver = make_resolver(store, HashMap::new(), 1000);
+
+        let price = link_price(uuid, Some(as_of.clone()));
+        let _ = resolver.resolve_securities_on_prices(vec![price]).await.unwrap();
+
+        let cached = link_cache::security().get(uuid, Some(&as_of));
+        assert!(cached.is_some(), "bulk resolve must populate link_cache::security()");
+        assert_eq!(cached.unwrap().issuer_name, "BULK");
+        link_cache::security().clear();
     }
 }

@@ -400,3 +400,65 @@ describe('LinkResolver', () => {
     expect(callLog.count).toBe(2);
   });
 });
+
+import * as LinkCacheModule from './link-cache';
+import { ZonedDateTime } from '../models/utils/datetime';
+
+describe('LinkResolver write-through to LinkCache', () => {
+  beforeEach(() => {
+    LinkCacheModule.SECURITY.clear();
+    LinkCacheModule.PORTFOLIO.clear();
+  });
+
+  function fullSecurityWithAsOf(uuid: UUID, issuer: string, asOf: LocalTimestampProto): SecurityProto {
+    const proto = fullSecurity(uuid, issuer);
+    proto.setAsOf(asOf);
+    return proto;
+  }
+
+  test('getSecurity populates LinkCache.SECURITY', async () => {
+    const uuid = UUID.random();
+    const asOf = makeAsOf(1_700_000_010);
+    const store = new Map<string, SecurityProto>([
+      [uuid.toString(), fullSecurityWithAsOf(uuid, 'ACME', asOf)],
+    ]);
+    const resolver = new LinkResolver({
+      securityClient: mockSecurityClient(store, newCallLog()),
+      portfolioClient: mockPortfolioClient(new Map(), newCallLog()),
+    });
+
+    const out = await resolver.getSecurity(uuid, asOf);
+    expect(out.getIssuerName()).toBe('ACME');
+
+    const cached = LinkCacheModule.SECURITY.get(uuid.toString(), new ZonedDateTime(asOf));
+    expect(cached).toBeDefined();
+    expect(cached!.getIssuerName()).toBe('ACME');
+  });
+
+  test('resolveSecurities populates LinkCache.SECURITY', async () => {
+    const uuid = UUID.random();
+    const asOf = makeAsOf(1_700_000_011);
+    const store = new Map<string, SecurityProto>([
+      [uuid.toString(), fullSecurityWithAsOf(uuid, 'BULK', asOf)],
+    ]);
+    const resolver = new LinkResolver({
+      securityClient: mockSecurityClient(store, newCallLog()),
+      portfolioClient: mockPortfolioClient(new Map(), newCallLog()),
+    });
+
+    const linkSec = new SecurityProto();
+    linkSec.setUuid(uuid.toUUIDProto());
+    linkSec.setIsLink(true);
+    linkSec.setAsOf(asOf);
+    const priceProto = new PriceProto();
+    priceProto.setUuid(UUID.random().toUUIDProto());
+    priceProto.setSecurity(linkSec);
+    const price = new Price(priceProto);
+
+    await resolver.resolveSecurities([price]);
+
+    const cached = LinkCacheModule.SECURITY.get(uuid.toString(), new ZonedDateTime(asOf));
+    expect(cached).toBeDefined();
+    expect(cached!.getIssuerName()).toBe('BULK');
+  });
+});
