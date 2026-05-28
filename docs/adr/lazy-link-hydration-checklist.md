@@ -17,8 +17,13 @@ Companion to [`lazy-link-hydration.md`](lazy-link-hydration.md). **5 PRs total**
 | follow-up | Transaction full ensureHydrated | pending (only Price-field lazy in #231) |
 | follow-up | LinkResolver write-through to LinkCache | pending |
 | follow-up | Service-client write-through on createOrUpdate | pending |
+| ledger-models#233 | Python partial: LinkCache (python) + Security wrapper `_ensure_hydrated` + 19 new tests | open 2026-05-28 |
+| follow-up | Python Portfolio + Price + Transaction wrappers (some still not proto-backed) | pending |
+| follow-up | Python LinkResolver write-through + service-client write-through | pending |
 
 **ledger-service test suite: 25 → 19 failures with #231 merged.** The 5 deterministic failures listed below all turn green. Remaining 19 are fixture gaps, other-service-down tests, and pre-existing unrelated bugs.
+
+**ledger-models-python wrappers: 71/71 pass with #233.** No regressions; mirrors the Java partial scope.
 
 ---
 
