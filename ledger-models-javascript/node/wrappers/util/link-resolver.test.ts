@@ -1,6 +1,7 @@
 import LinkResolver from './link-resolver';
 import Price from '../models/price/Price';
 import { UUID } from '../models/utils/uuid';
+import * as LinkCacheModuleTop from './link-cache';
 
 import { SecurityProto } from '../../fintekkers/models/security/security_pb';
 import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
@@ -121,6 +122,14 @@ function linkPrice(securityUuid: UUID, priceValue: string, asOf?: LocalTimestamp
 }
 
 describe('LinkResolver', () => {
+  // Process-wide LinkCache singletons survive across tests, so clear them
+  // between cases to keep tests independent (post-W4 the resolver no longer
+  // owns its own cache).
+  beforeEach(() => {
+    LinkCacheModuleTop.SECURITY.clear();
+    LinkCacheModuleTop.PORTFOLIO.clear();
+  });
+
   test('bulk resolveSecurities dedupes UUIDs (5 prices, 3 unique → 1 RPC, 3 UUIDs)', async () => {
     const uuidA = UUID.random();
     const uuidB = UUID.random();
@@ -203,7 +212,10 @@ describe('LinkResolver', () => {
     for (const r of results) expect(r.getIssuerName()).toBe('AAPL');
   });
 
-  test('caching disabled (cacheSize=0) re-RPCs every call', async () => {
+  test('LinkCache evict between calls forces refetch', async () => {
+    // Post-W4 the resolver no longer owns its cache. Evict the entry from
+    // LinkCache.SECURITY between calls to force a refetch — the equivalent
+    // of the old `cacheSize=0` semantic.
     const uuid = UUID.random();
     const store = new Map<string, SecurityProto>([
       [uuid.toString(), fullSecurity(uuid, 'AAPL')],
@@ -211,12 +223,12 @@ describe('LinkResolver', () => {
     const callLog = newCallLog();
 
     const resolver = new LinkResolver({
-      cacheSize: 0,
       securityClient: mockSecurityClient(store, callLog),
       portfolioClient: mockPortfolioClient(new Map(), newCallLog()),
     });
 
     await resolver.getSecurity(uuid);
+    LinkCacheModuleTop.SECURITY.evict(uuid.toString());
     await resolver.getSecurity(uuid);
 
     expect(callLog.count).toBe(2);

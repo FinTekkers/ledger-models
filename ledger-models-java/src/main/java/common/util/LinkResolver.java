@@ -21,10 +21,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,6 +34,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * pattern documented in {@code docs/adr/is_link_pattern.md} (and the
  * technical-details addendum that codifies the (uuid, as_of) cache key +
  * per-bucket batching contract).
+ *
+ * <p><b>W4: the resolver no longer owns its own LRU.</b> Cache reads/writes
+ * route through the process-wide {@link LinkCache#SECURITY} / {@link
+ * LinkCache#PORTFOLIO} singletons. The resolver still does
+ * concurrent-call dedup (single in-flight RPC per (uuid, as_of)) and bulk
+ * per-bucket batching; storage and eviction live in LinkCache.
  *
  * <p>Surface:
  * <ul>
@@ -49,12 +53,6 @@ import java.util.concurrent.ConcurrentHashMap;
  *       hydrated copies; the input list is not mutated. Items whose embedded
  *       sub-message is already a full entity pass through unchanged.</li>
  * </ul>
- *
- * <p>Why batch by {@code as_of}: {@code GetByIds} carries a single
- * {@code as_of} per request, so a heterogeneous result set (e.g. a backtest
- * result with mixed timestamps) must group by {@code as_of} bucket and fire
- * one RPC per bucket. The cache is keyed on (uuid, as_of) so the same UUID
- * at different timestamps does not alias.
  *
  * <p>Test injection: pass {@link SecurityFetcher} / {@link PortfolioFetcher}
  * implementations into the constructor to mock the gRPC layer in unit tests.
@@ -80,37 +78,26 @@ public class LinkResolver {
     private final SecurityFetcher securityFetcher;
     private final PortfolioFetcher portfolioFetcher;
 
-    private final TinyLRU<SecurityProto> securityCache;
-    private final TinyLRU<PortfolioProto> portfolioCache;
-
     private final ConcurrentHashMap<String, CompletableFuture<SecurityProto>> securityInFlight
             = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, CompletableFuture<PortfolioProto>> portfolioInFlight
             = new ConcurrentHashMap<>();
 
-    /** Default constructor: blocking stubs against the configured endpoint.
-     * 1000-entry LRU, no TTL. */
+    /** Default constructor: blocking stubs against the configured endpoint. */
     public LinkResolver(String url, int port, boolean isHttp) {
         this(buildSecurityFetcher(url, port, isHttp),
-             buildPortfolioFetcher(url, port, isHttp),
-             1000, 0);
+             buildPortfolioFetcher(url, port, isHttp));
     }
 
     /** Test / advanced constructor.
      *
      * @param securityFetcher  inject a fake here in tests
      * @param portfolioFetcher inject a fake here in tests
-     * @param cacheSize        LRU max entries; 0 disables caching
-     * @param ttlMillis        per-entry TTL in ms; 0 = no expiry
      */
     public LinkResolver(SecurityFetcher securityFetcher,
-                        PortfolioFetcher portfolioFetcher,
-                        int cacheSize,
-                        long ttlMillis) {
+                        PortfolioFetcher portfolioFetcher) {
         this.securityFetcher = securityFetcher;
         this.portfolioFetcher = portfolioFetcher;
-        this.securityCache = new TinyLRU<>(cacheSize, ttlMillis);
-        this.portfolioCache = new TinyLRU<>(cacheSize, ttlMillis);
     }
 
     private static SecurityFetcher buildSecurityFetcher(String url, int port, boolean isHttp) {
@@ -136,10 +123,11 @@ public class LinkResolver {
     }
 
     public SecurityProto getSecurity(UUID uuid, LocalTimestampProto asOf) {
-        String key = cacheKey(uuid, asOf);
-        SecurityProto cached = securityCache.get(key);
+        ZonedDateTime asOfZ = toZdt(asOf);
+        SecurityProto cached = LinkCache.SECURITY.get(uuid, asOfZ);
         if (cached != null) return cached;
 
+        String key = cacheKey(uuid, asOf);
         // Concurrent-call dedup: putIfAbsent decides who gets to do the fetch.
         CompletableFuture<SecurityProto> existing = securityInFlight.get(key);
         if (existing != null) return joinUnchecked(existing);
@@ -157,8 +145,7 @@ public class LinkResolver {
                 throw e;
             }
             SecurityProto proto = protos.get(0);
-            securityCache.set(key, proto);
-            populateSecurityLinkCache(proto);
+            LinkCache.SECURITY.put(uuid, proto, asOfZ);
             created.complete(proto);
             return proto;
         } finally {
@@ -171,10 +158,11 @@ public class LinkResolver {
     }
 
     public PortfolioProto getPortfolio(UUID uuid, LocalTimestampProto asOf) {
-        String key = cacheKey(uuid, asOf);
-        PortfolioProto cached = portfolioCache.get(key);
+        ZonedDateTime asOfZ = toZdt(asOf);
+        PortfolioProto cached = LinkCache.PORTFOLIO.get(uuid, asOfZ);
         if (cached != null) return cached;
 
+        String key = cacheKey(uuid, asOf);
         CompletableFuture<PortfolioProto> existing = portfolioInFlight.get(key);
         if (existing != null) return joinUnchecked(existing);
 
@@ -191,8 +179,7 @@ public class LinkResolver {
                 throw e;
             }
             PortfolioProto proto = protos.get(0);
-            portfolioCache.set(key, proto);
-            populatePortfolioLinkCache(proto);
+            LinkCache.PORTFOLIO.put(uuid, proto, asOfZ);
             created.complete(proto);
             return proto;
         } finally {
@@ -265,13 +252,13 @@ public class LinkResolver {
     // ---------- internals ----------
 
     /** Walk items, group link UUIDs by as_of, fire one batched GetByIds per
-     * bucket, populate the security cache. */
+     * bucket, populate {@link LinkCache#SECURITY}. */
     private <T> void ensureSecuritiesCached(
             List<T> items,
             java.util.function.Predicate<T> hasSec,
             java.util.function.Function<T, SecurityProto> getSec) {
-        // bucketKey -> list of UUIDs (deduped) for that as_of
-        Map<String, Map<String, UUID>> buckets = new HashMap<>();
+        // bucketKey -> uuid -> uuid (deduped) for that as_of
+        Map<String, Map<UUID, UUID>> buckets = new HashMap<>();
         Map<String, LocalTimestampProto> bucketAsOfs = new HashMap<>();
         for (T item : items) {
             if (!hasSec.test(item)) continue;
@@ -279,28 +266,27 @@ public class LinkResolver {
             if (!sec.getIsLink()) continue;
             UUID uuid = ProtoSerializationUtil.deserializeUUID(sec.getUuid());
             LocalTimestampProto asOf = sec.hasAsOf() ? sec.getAsOf() : null;
+            if (LinkCache.SECURITY.get(uuid, toZdt(asOf)) != null) continue;
             String bucketKey = bucketKey(asOf);
-            String cacheKey = cacheKey(uuid, asOf);
-            if (securityCache.get(cacheKey) != null) continue;
-            buckets.computeIfAbsent(bucketKey, k -> new HashMap<>()).putIfAbsent(cacheKey, uuid);
+            buckets.computeIfAbsent(bucketKey, k -> new HashMap<>()).putIfAbsent(uuid, uuid);
             bucketAsOfs.put(bucketKey, asOf);
         }
-        for (Map.Entry<String, Map<String, UUID>> entry : buckets.entrySet()) {
+        for (Map.Entry<String, Map<UUID, UUID>> entry : buckets.entrySet()) {
             String bucketKey = entry.getKey();
             Collection<UUID> uuids = entry.getValue().values();
             LocalTimestampProto asOf = bucketAsOfs.get(bucketKey);
+            ZonedDateTime asOfZ = toZdt(asOf);
             List<SecurityProto> fetched = batchFetchSecurities(uuids, asOf);
             for (SecurityProto p : fetched) {
                 UUID u = ProtoSerializationUtil.deserializeUUID(p.getUuid());
-                securityCache.set(cacheKey(u, asOf), p);
-                populateSecurityLinkCache(p);
+                LinkCache.SECURITY.put(u, p, asOfZ);
             }
         }
     }
 
     /** Same as ensureSecuritiesCached but for Transaction.portfolio. */
     private void ensurePortfoliosCached(List<TransactionProto> items) {
-        Map<String, Map<String, UUID>> buckets = new HashMap<>();
+        Map<String, Map<UUID, UUID>> buckets = new HashMap<>();
         Map<String, LocalTimestampProto> bucketAsOfs = new HashMap<>();
         for (TransactionProto t : items) {
             if (!t.hasPortfolio()) continue;
@@ -308,57 +294,34 @@ public class LinkResolver {
             if (!port.getIsLink()) continue;
             UUID uuid = ProtoSerializationUtil.deserializeUUID(port.getUuid());
             LocalTimestampProto asOf = port.hasAsOf() ? port.getAsOf() : null;
+            if (LinkCache.PORTFOLIO.get(uuid, toZdt(asOf)) != null) continue;
             String bucketKey = bucketKey(asOf);
-            String cacheKey = cacheKey(uuid, asOf);
-            if (portfolioCache.get(cacheKey) != null) continue;
-            buckets.computeIfAbsent(bucketKey, k -> new HashMap<>()).putIfAbsent(cacheKey, uuid);
+            buckets.computeIfAbsent(bucketKey, k -> new HashMap<>()).putIfAbsent(uuid, uuid);
             bucketAsOfs.put(bucketKey, asOf);
         }
-        for (Map.Entry<String, Map<String, UUID>> entry : buckets.entrySet()) {
+        for (Map.Entry<String, Map<UUID, UUID>> entry : buckets.entrySet()) {
             String bucketKey = entry.getKey();
             Collection<UUID> uuids = entry.getValue().values();
             LocalTimestampProto asOf = bucketAsOfs.get(bucketKey);
+            ZonedDateTime asOfZ = toZdt(asOf);
             List<PortfolioProto> fetched = batchFetchPortfolios(uuids, asOf);
             for (PortfolioProto p : fetched) {
                 UUID u = ProtoSerializationUtil.deserializeUUID(p.getUuid());
-                portfolioCache.set(cacheKey(u, asOf), p);
-                populatePortfolioLinkCache(p);
+                LinkCache.PORTFOLIO.put(u, p, asOfZ);
             }
         }
-    }
-
-    /**
-     * Mirror a freshly-fetched SecurityProto into the process-wide
-     * {@link LinkCache#SECURITY}. This makes pre-warmed entities visible to
-     * the lazy-hydrate path on `SecurityWrapper.ensureHydrated()` — no
-     * separate cache, no extra RPC. Skips silently when the resolved proto
-     * is missing the bitemporal anchor (uuid / asOf); LinkCache requires
-     * both for newest-wins merge semantics.
-     */
-    private static void populateSecurityLinkCache(SecurityProto proto) {
-        if (proto == null || !proto.hasUuid() || !proto.hasAsOf()) return;
-        UUID uuid = ProtoSerializationUtil.deserializeUUID(proto.getUuid());
-        ZonedDateTime asOf = ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf());
-        LinkCache.SECURITY.put(uuid, proto, asOf);
-    }
-
-    private static void populatePortfolioLinkCache(PortfolioProto proto) {
-        if (proto == null || !proto.hasUuid() || !proto.hasAsOf()) return;
-        UUID uuid = ProtoSerializationUtil.deserializeUUID(proto.getUuid());
-        ZonedDateTime asOf = ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf());
-        LinkCache.PORTFOLIO.put(uuid, proto, asOf);
     }
 
     private SecurityProto lookupResolvedSecurity(SecurityProto link) {
         UUID uuid = ProtoSerializationUtil.deserializeUUID(link.getUuid());
         LocalTimestampProto asOf = link.hasAsOf() ? link.getAsOf() : null;
-        return securityCache.get(cacheKey(uuid, asOf));
+        return LinkCache.SECURITY.get(uuid, toZdt(asOf));
     }
 
     private PortfolioProto lookupResolvedPortfolio(PortfolioProto link) {
         UUID uuid = ProtoSerializationUtil.deserializeUUID(link.getUuid());
         LocalTimestampProto asOf = link.hasAsOf() ? link.getAsOf() : null;
-        return portfolioCache.get(cacheKey(uuid, asOf));
+        return LinkCache.PORTFOLIO.get(uuid, toZdt(asOf));
     }
 
     private List<SecurityProto> batchFetchSecurities(Collection<UUID> uuids, LocalTimestampProto asOf) {
@@ -392,6 +355,10 @@ public class LinkResolver {
         return uuid.toString() + "@" + bucketKey(asOf);
     }
 
+    private static ZonedDateTime toZdt(LocalTimestampProto asOf) {
+        return asOf == null ? null : ProtoSerializationUtil.deserializeTimestamp(asOf);
+    }
+
     private static <T> T joinUnchecked(CompletableFuture<T> f) {
         try {
             return f.get();
@@ -404,55 +371,11 @@ public class LinkResolver {
         }
     }
 
-    /** Test/debug helper. */
+    /** Test/debug helper. Clears in-flight maps; the process-wide
+     * {@link LinkCache} is left alone (tests that need to drop a specific
+     * cached entry call {@code LinkCache.SECURITY.evict(uuid)} directly). */
     public void clearCache() {
-        securityCache.clear();
-        portfolioCache.clear();
-    }
-
-    /** Tiny LRU. {@code synchronized} on {@code LinkedHashMap} for thread
-     * safety; access-order so {@code get} bumps to most-recently-used.
-     * {@code removeEldestEntry} caps the size automatically. */
-    private static final class TinyLRU<V> {
-        private final int maxSize;
-        private final long ttlMillis;
-        private final LinkedHashMap<String, Entry<V>> data;
-
-        TinyLRU(int maxSize, long ttlMillis) {
-            this.maxSize = maxSize;
-            this.ttlMillis = ttlMillis;
-            this.data = new LinkedHashMap<>(16, 0.75f, /* accessOrder = */ true) {
-                @Override
-                protected boolean removeEldestEntry(Map.Entry<String, Entry<V>> eldest) {
-                    return TinyLRU.this.maxSize > 0 && size() > TinyLRU.this.maxSize;
-                }
-            };
-        }
-
-        synchronized V get(String key) {
-            if (maxSize == 0) return null;
-            Entry<V> entry = data.get(key);
-            if (entry == null) return null;
-            if (ttlMillis > 0 && System.currentTimeMillis() - entry.insertedAt > ttlMillis) {
-                data.remove(key);
-                return null;
-            }
-            return entry.value;
-        }
-
-        synchronized void set(String key, V value) {
-            if (maxSize == 0) return;
-            data.put(key, new Entry<>(value, System.currentTimeMillis()));
-        }
-
-        synchronized void clear() {
-            data.clear();
-        }
-
-        private static final class Entry<V> {
-            final V value;
-            final long insertedAt;
-            Entry(V value, long insertedAt) { this.value = value; this.insertedAt = insertedAt; }
-        }
+        securityInFlight.clear();
+        portfolioInFlight.clear();
     }
 }

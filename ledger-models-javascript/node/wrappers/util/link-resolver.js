@@ -47,91 +47,19 @@ const requestcontext_1 = __importDefault(require("../models/utils/requestcontext
 const datetime_1 = require("../models/utils/datetime");
 const LinkCacheModule = __importStar(require("./link-cache"));
 /**
- * Mirror a freshly-fetched SecurityProto into the process-wide
- * `LinkCache.SECURITY`. The lazy-hydrate `SecurityWrapper.ensureHydrated()`
- * reads from this cache, so pre-warming via LinkResolver immediately
- * benefits accessor reads. Skips silently when the resolved proto lacks
- * uuid or as_of — `LinkCache.put` requires both.
- */
-function populateSecurityLinkCache(proto) {
-    const uuidProto = proto.getUuid();
-    const asOfProto = proto.getAsOf();
-    if (!uuidProto || !asOfProto)
-        return;
-    const uuidKey = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
-    LinkCacheModule.SECURITY.put(uuidKey, proto, new datetime_1.ZonedDateTime(asOfProto));
-}
-function populatePortfolioLinkCache(proto) {
-    const uuidProto = proto.getUuid();
-    const asOfProto = proto.getAsOf();
-    if (!uuidProto || !asOfProto)
-        return;
-    const uuidKey = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
-    LinkCacheModule.PORTFOLIO.put(uuidKey, proto, new datetime_1.ZonedDateTime(asOfProto));
-}
-/**
- * Tiny LRU. Map keeps insertion order; on get-hit we delete + re-insert
- * to bump to the end (most recently used). On overflow we drop the
- * oldest entry (first key in the Map). Avoids pulling in lru-cache as a
- * dependency for ~30 lines of logic.
- */
-class TinyLRU {
-    constructor(maxSize, ttlMs) {
-        this.maxSize = maxSize;
-        this.ttlMs = ttlMs;
-        this.map = new Map();
-    }
-    get(key) {
-        if (this.maxSize === 0)
-            return undefined;
-        const entry = this.map.get(key);
-        if (!entry)
-            return undefined;
-        if (this.ttlMs !== undefined && Date.now() - entry.insertedAt > this.ttlMs) {
-            this.map.delete(key);
-            return undefined;
-        }
-        // Bump to most-recently-used.
-        this.map.delete(key);
-        this.map.set(key, entry);
-        return entry.value;
-    }
-    set(key, value) {
-        if (this.maxSize === 0)
-            return;
-        if (this.map.has(key))
-            this.map.delete(key);
-        this.map.set(key, { value, insertedAt: Date.now() });
-        while (this.map.size > this.maxSize) {
-            const oldest = this.map.keys().next().value;
-            if (oldest === undefined)
-                break;
-            this.map.delete(oldest);
-        }
-    }
-    size() {
-        return this.map.size;
-    }
-    clear() {
-        this.map.clear();
-    }
-}
-/**
- * Stable serialization of a LocalTimestampProto for use in cache keys
- * and as_of-bucket grouping. Uses the proto's binary form (Uint8Array
+ * Stable serialization of a LocalTimestampProto for use in in-flight dedup
+ * keys and as_of-bucket grouping. Uses the proto's binary form (Uint8Array
  * → base64). Returns the literal "latest" when as_of is undefined so
  * unset and explicit-undefined collapse to the same bucket.
- *
- * Two LocalTimestampProto instances representing the same moment will
- * produce the same key as long as the underlying nanos/seconds match —
- * proto3 binary encoding is canonical for unset fields.
  */
 function asOfKey(asOf) {
     if (!asOf)
         return 'latest';
-    // serializeBinary returns Uint8Array.
     const bytes = asOf.serializeBinary();
     return Buffer.from(bytes).toString('base64');
+}
+function asOfToZdt(asOf) {
+    return asOf ? new datetime_1.ZonedDateTime(asOf) : null;
 }
 // Process-wide default singleton — lazily constructed on first
 // `LinkResolver.getDefault()` call. Used by the wrapper `hydrate()`
@@ -162,16 +90,11 @@ class LinkResolver {
         defaultLinkResolver = resolver;
     }
     constructor(opts = {}) {
-        var _a;
         // Concurrent-call dedupe: a UUID currently being fetched maps to the
         // promise the *first* caller is awaiting. Subsequent callers for the
         // same UUID receive that same promise.
         this.securityInFlight = new Map();
         this.portfolioInFlight = new Map();
-        const cacheSize = (_a = opts.cacheSize) !== null && _a !== void 0 ? _a : 1000;
-        const ttlMs = opts.ttlMs;
-        this.securityCache = new TinyLRU(cacheSize, ttlMs);
-        this.portfolioCache = new TinyLRU(cacheSize, ttlMs);
         if (opts.securityClient) {
             this.securityClient = opts.securityClient;
         }
@@ -222,10 +145,6 @@ class LinkResolver {
      * place so subsequent `item.getSecurity()` calls return the full entity.
      * Returns the same array for chaining.
      *
-     * Honors per-link `as_of`: if the embedded sub-message has `as_of` set,
-     * the resolver fetches the version of the entity at that timestamp,
-     * not the latest.
-     *
      * `T` is structural: anything with a `proto` field that exposes
      * `getSecurity()` / `setSecurity()` works (Price, Transaction, etc).
      */
@@ -233,7 +152,7 @@ class LinkResolver {
         return __awaiter(this, void 0, void 0, function* () {
             if (items.length === 0)
                 return items;
-            // Group: as_of bucket → (cacheKey → UUID) for items not yet cached.
+            // Group: as_of bucket → (uuid string → UUID) for items not yet cached.
             const buckets = new Map();
             for (const item of items) {
                 const sec = item.proto.getSecurity();
@@ -244,33 +163,29 @@ class LinkResolver {
                     continue;
                 const uuid = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8());
                 const asOf = sec.getAsOf();
-                const bucketKey = asOfKey(asOf);
-                const cacheKey = `${uuid.toString()}@${bucketKey}`;
-                // Skip if already cached for this exact (uuid, as_of).
-                if (this.securityCache.get(cacheKey))
+                const uuidStr = uuid.toString();
+                if (LinkCacheModule.SECURITY.get(uuidStr, asOfToZdt(asOf)))
                     continue;
+                const bucketKey = asOfKey(asOf);
                 let bucket = buckets.get(bucketKey);
                 if (!bucket) {
                     bucket = new Map();
                     buckets.set(bucketKey, bucket);
                 }
-                if (!bucket.has(cacheKey))
-                    bucket.set(cacheKey, uuid);
+                if (!bucket.has(uuidStr))
+                    bucket.set(uuidStr, uuid);
             }
             // One GetByIds RPC per as_of bucket. Fire in parallel.
             yield Promise.all(Array.from(buckets.entries()).map(([bucketKey, uuidMap]) => __awaiter(this, void 0, void 0, function* () {
-                // Recover the LocalTimestampProto for this bucket from the first
-                // item whose serialized as_of matches. We could store it alongside
-                // but it's cheap to re-find.
-                const asOf = bucketKey === 'latest' ? undefined : findAsOfForBucket(items, (sec) => sec.getSecurity(), bucketKey);
+                const asOf = bucketKey === 'latest' ? undefined : findAsOfForBucket(items, (proto) => proto.getSecurity(), bucketKey);
+                const asOfZdt = asOfToZdt(asOf);
                 const fetched = yield this.batchFetchSecurities(Array.from(uuidMap.values()), asOf);
                 for (const proto of fetched) {
                     const uuidProto = proto.getUuid();
                     if (!uuidProto)
                         continue;
                     const uuidStr = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
-                    this.securityCache.set(`${uuidStr}@${bucketKey}`, proto);
-                    populateSecurityLinkCache(proto);
+                    LinkCacheModule.SECURITY.put(uuidStr, proto, asOfZdt);
                 }
             })));
             // Mutate each item's embedded security in place.
@@ -282,8 +197,7 @@ class LinkResolver {
                 if (!uuidProto)
                     continue;
                 const uuidStr = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
-                const bucketKey = asOfKey(sec.getAsOf());
-                const resolved = this.securityCache.get(`${uuidStr}@${bucketKey}`);
+                const resolved = LinkCacheModule.SECURITY.get(uuidStr, asOfToZdt(sec.getAsOf()));
                 if (resolved)
                     item.proto.setSecurity(resolved);
             }
@@ -308,28 +222,28 @@ class LinkResolver {
                     continue;
                 const uuid = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8());
                 const asOf = port.getAsOf();
-                const bucketKey = asOfKey(asOf);
-                const cacheKey = `${uuid.toString()}@${bucketKey}`;
-                if (this.portfolioCache.get(cacheKey))
+                const uuidStr = uuid.toString();
+                if (LinkCacheModule.PORTFOLIO.get(uuidStr, asOfToZdt(asOf)))
                     continue;
+                const bucketKey = asOfKey(asOf);
                 let bucket = buckets.get(bucketKey);
                 if (!bucket) {
                     bucket = new Map();
                     buckets.set(bucketKey, bucket);
                 }
-                if (!bucket.has(cacheKey))
-                    bucket.set(cacheKey, uuid);
+                if (!bucket.has(uuidStr))
+                    bucket.set(uuidStr, uuid);
             }
             yield Promise.all(Array.from(buckets.entries()).map(([bucketKey, uuidMap]) => __awaiter(this, void 0, void 0, function* () {
-                const asOf = bucketKey === 'latest' ? undefined : findAsOfForBucket(items, (it) => it.getPortfolio(), bucketKey);
+                const asOf = bucketKey === 'latest' ? undefined : findAsOfForBucket(items, (proto) => proto.getPortfolio(), bucketKey);
+                const asOfZdt = asOfToZdt(asOf);
                 const fetched = yield this.batchFetchPortfolios(Array.from(uuidMap.values()), asOf);
                 for (const proto of fetched) {
                     const uuidProto = proto.getUuid();
                     if (!uuidProto)
                         continue;
                     const uuidStr = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
-                    this.portfolioCache.set(`${uuidStr}@${bucketKey}`, proto);
-                    populatePortfolioLinkCache(proto);
+                    LinkCacheModule.PORTFOLIO.put(uuidStr, proto, asOfZdt);
                 }
             })));
             for (const item of items) {
@@ -340,38 +254,38 @@ class LinkResolver {
                 if (!uuidProto)
                     continue;
                 const uuidStr = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
-                const bucketKey = asOfKey(port.getAsOf());
-                const resolved = this.portfolioCache.get(`${uuidStr}@${bucketKey}`);
+                const resolved = LinkCacheModule.PORTFOLIO.get(uuidStr, asOfToZdt(port.getAsOf()));
                 if (resolved)
                     item.proto.setPortfolio(resolved);
             }
             return items;
         });
     }
-    /** Test/debug helper. Not part of the stable API. */
+    /** Test/debug helper. Clears in-flight maps; the process-wide LinkCache
+     * is left alone (tests that need to drop a specific cached entry call
+     * `LinkCache.SECURITY.evict(uuid)` directly). */
     clearCache() {
-        this.securityCache.clear();
-        this.portfolioCache.clear();
         this.securityInFlight.clear();
         this.portfolioInFlight.clear();
     }
     // ---------- internals ----------
     fetchSecurityProto(uuid, asOf) {
         return __awaiter(this, void 0, void 0, function* () {
-            const key = `${uuid.toString()}@${asOfKey(asOf)}`;
-            const cached = this.securityCache.get(key);
+            const uuidStr = uuid.toString();
+            const asOfZdt = asOfToZdt(asOf);
+            const cached = LinkCacheModule.SECURITY.get(uuidStr, asOfZdt);
             if (cached)
                 return cached;
+            const key = `${uuidStr}@${asOfKey(asOf)}`;
             const inFlight = this.securityInFlight.get(key);
             if (inFlight)
                 return inFlight;
             const promise = this.batchFetchSecurities([uuid], asOf).then((protos) => {
                 if (protos.length === 0) {
-                    throw new Error(`Security not found: ${uuid.toString()}@${asOfKey(asOf)}`);
+                    throw new Error(`Security not found: ${key}`);
                 }
                 const proto = protos[0];
-                this.securityCache.set(key, proto);
-                populateSecurityLinkCache(proto);
+                LinkCacheModule.SECURITY.put(uuidStr, proto, asOfZdt);
                 return proto;
             }).finally(() => {
                 this.securityInFlight.delete(key);
@@ -382,20 +296,21 @@ class LinkResolver {
     }
     fetchPortfolioProto(uuid, asOf) {
         return __awaiter(this, void 0, void 0, function* () {
-            const key = `${uuid.toString()}@${asOfKey(asOf)}`;
-            const cached = this.portfolioCache.get(key);
+            const uuidStr = uuid.toString();
+            const asOfZdt = asOfToZdt(asOf);
+            const cached = LinkCacheModule.PORTFOLIO.get(uuidStr, asOfZdt);
             if (cached)
                 return cached;
+            const key = `${uuidStr}@${asOfKey(asOf)}`;
             const inFlight = this.portfolioInFlight.get(key);
             if (inFlight)
                 return inFlight;
             const promise = this.batchFetchPortfolios([uuid], asOf).then((protos) => {
                 if (protos.length === 0) {
-                    throw new Error(`Portfolio not found: ${uuid.toString()}@${asOfKey(asOf)}`);
+                    throw new Error(`Portfolio not found: ${key}`);
                 }
                 const proto = protos[0];
-                this.portfolioCache.set(key, proto);
-                populatePortfolioLinkCache(proto);
+                LinkCacheModule.PORTFOLIO.put(uuidStr, proto, asOfZdt);
                 return proto;
             }).finally(() => {
                 this.portfolioInFlight.delete(key);

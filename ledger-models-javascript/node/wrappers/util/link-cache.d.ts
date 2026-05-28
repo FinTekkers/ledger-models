@@ -20,15 +20,21 @@ import { ZonedDateTime } from '../models/utils/datetime';
  * Write semantics (`put`): newest-vintage wins. An older-vintage put does
  * not evict a newer cached entry.
  *
- * Later Portfolio can likely be 1 day, security 1 day, transaction 1 minute,
- * price 30 seconds — once per-entity TTLs are wired up, the shared singletons
- * below should be constructed with those values.
+ * Eviction: bounded LRU. When `put` causes the map to exceed `maxEntries`,
+ * the least-recently-used entry is removed. `get` bumps recency.
+ *
+ * Per-entity singletons SECURITY/PORTFOLIO/PRICE/TRANSACTION are tuned
+ * for the typical access pattern of each entity (Portfolio + Security
+ * change slowly so TTL is 1 day; Price + Transaction change quickly so
+ * TTL is short).
  */
 export declare const DEFAULT_TTL_FOR_LATEST_MS = 600000;
+export declare const DEFAULT_MAX_ENTRIES = 10000;
 export declare class LinkCache<V> {
     private ttlForLatestMs;
+    private maxEntries;
     private map;
-    constructor(ttlForLatestMs?: number);
+    constructor(ttlForLatestMs?: number, maxEntries?: number);
     /**
      * @param uuidKey         the entity uuid rendered as a stable string key
      *                        (use uuid.toString())
@@ -40,9 +46,10 @@ export declare class LinkCache<V> {
     get(uuidKey: string, requestedAsOf: ZonedDateTime | null): V | undefined;
     /**
      * Newest-wins write: if a cached entry for `uuidKey` already exists with
-     * an asOf strictly after the incoming asOf, the write is ignored.
+     * an asOf strictly after the incoming asOf, the write is ignored (but
+     * recency is still bumped — the caller saw a fresh reference).
      */
-    put(uuidKey: string, value: V, asOf: ZonedDateTime): void;
+    put(uuidKey: string, value: V, asOf: ZonedDateTime | null): void;
     evict(uuidKey: string): void;
     clear(): void;
     /** Test helper. */

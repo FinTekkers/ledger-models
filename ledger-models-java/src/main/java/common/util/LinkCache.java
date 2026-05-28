@@ -8,13 +8,14 @@ import fintekkers.models.transaction.TransactionProto;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Process-wide cache for proto bodies backing link-mode wrappers. Single
- * slot per UUID with asOf-validating reads.
+ * slot per UUID with asOf-validating reads, bounded LRU eviction, and
+ * per-entity TTL bounds on null-asOf reads.
  *
  * <p><b>Read semantics</b> ({@link #get(UUID, ZonedDateTime)}):
  * <ul>
@@ -32,41 +33,71 @@ import java.util.concurrent.ConcurrentMap;
  * entry — that preserves the cache's "newest known" invariant for
  * {@code requestedAsOf == null} reads.
  *
+ * <p><b>Eviction:</b> bounded LRU. When {@code put} causes the map to
+ * exceed its cap, the least-recently-used entry is removed. {@code get}
+ * bumps recency.
+ *
  * <p>Static singletons {@link #SECURITY}, {@link #PORTFOLIO}, {@link #PRICE},
- * {@link #TRANSACTION} are the process-wide caches for each entity type.
- * Tests can create scoped instances via the public constructor.
+ * {@link #TRANSACTION} are the process-wide caches for each entity type,
+ * each constructed with TTL + cap matching its typical access pattern
+ * (Portfolio + Security change slowly so TTL is 1 day; Price + Transaction
+ * change quickly so TTL is short). Tests can create scoped instances via
+ * the public constructor.
  *
  * <p>See {@code docs/adr/lazy-link-hydration.md} for the design rationale.
  */
 public final class LinkCache<V> {
 
-    /**
-     * Default TTL for null-asOf reads. Bounds cross-process staleness.
-     *
-     * <p>Later Portfolio can likely be 1 day, security 1 day, transaction
-     * 1 minute, price 30 seconds — once per-entity TTLs are wired up, the
-     * shared singletons below should be constructed with those values.
-     */
+    /** Default TTL for null-asOf reads when no entity-specific value is provided. */
     public static final Duration DEFAULT_TTL_FOR_LATEST = Duration.ofSeconds(600);
 
-    public static final LinkCache<SecurityProto>    SECURITY    = new LinkCache<>();
-    public static final LinkCache<PortfolioProto>   PORTFOLIO   = new LinkCache<>();
-    public static final LinkCache<PriceProto>       PRICE       = new LinkCache<>();
-    public static final LinkCache<TransactionProto> TRANSACTION = new LinkCache<>();
+    /** Default max entries when no entity-specific cap is provided. */
+    public static final int DEFAULT_MAX_ENTRIES = 10_000;
 
-    private final ConcurrentMap<UUID, CacheEntry<V>> map = new ConcurrentHashMap<>();
+    // Per-entity singletons. Tuned for the access pattern of each entity
+    // type; production callers should use these and not the no-arg ctor.
+    public static final LinkCache<SecurityProto>    SECURITY    =
+            new LinkCache<>(Duration.ofDays(1), 100_000);
+    public static final LinkCache<PortfolioProto>   PORTFOLIO   =
+            new LinkCache<>(Duration.ofDays(1), 10_000);
+    public static final LinkCache<PriceProto>       PRICE       =
+            new LinkCache<>(Duration.ofSeconds(30), 200_000);
+    public static final LinkCache<TransactionProto> TRANSACTION =
+            new LinkCache<>(Duration.ofMinutes(1), 100_000);
+
     private final Duration ttlForLatest;
+    private final int maxEntries;
+    // accessOrder=true so .get() bumps recency; removeEldestEntry caps the
+    // size automatically on .put(). Synchronized on this instance — simple
+    // and correct; perf is good enough for the typical lazy-hydrate access
+    // pattern (mostly reads, low contention).
+    private final LinkedHashMap<UUID, CacheEntry<V>> map;
 
     public LinkCache() {
-        this(DEFAULT_TTL_FOR_LATEST);
+        this(DEFAULT_TTL_FOR_LATEST, DEFAULT_MAX_ENTRIES);
     }
 
     public LinkCache(Duration ttlForLatest) {
+        this(ttlForLatest, DEFAULT_MAX_ENTRIES);
+    }
+
+    public LinkCache(Duration ttlForLatest, int maxEntries) {
         if (ttlForLatest == null || ttlForLatest.isNegative()) {
             throw new IllegalArgumentException(
                 "ttlForLatest must be non-null and non-negative; got " + ttlForLatest);
         }
+        if (maxEntries <= 0) {
+            throw new IllegalArgumentException(
+                "maxEntries must be > 0; got " + maxEntries);
+        }
         this.ttlForLatest = ttlForLatest;
+        this.maxEntries = maxEntries;
+        this.map = new LinkedHashMap<>(16, 0.75f, /* accessOrder = */ true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<UUID, CacheEntry<V>> eldest) {
+                return size() > LinkCache.this.maxEntries;
+            }
+        };
     }
 
     /**
@@ -76,49 +107,49 @@ public final class LinkCache<V> {
      * @return the cached value if the lookup is a hit per the read semantics
      *         above; otherwise null (caller must refetch)
      */
-    public V get(UUID id, ZonedDateTime requestedAsOf) {
+    public synchronized V get(UUID id, ZonedDateTime requestedAsOf) {
         CacheEntry<V> entry = map.get(id);
         if (entry == null) return null;
         if (requestedAsOf == null) {
-            // "Latest" — TTL applies.
             if (Duration.between(entry.cachedAt, Instant.now()).compareTo(ttlForLatest) > 0) {
                 return null;
             }
             return entry.value;
         }
-        // Bitemporal-precise — exact match or miss.
+        if (entry.asOf == null) return null;
         return entry.asOf.equals(requestedAsOf) ? entry.value : null;
     }
 
     /**
      * Newest-wins write: if a cached entry for {@code id} already exists with
-     * an asOf strictly after {@code asOf}, the incoming write is ignored.
+     * an asOf strictly after {@code asOf}, the incoming write is ignored
+     * (but recency is still bumped — the caller saw the entry).
      */
-    public void put(UUID id, V value, ZonedDateTime asOf) {
-        if (id == null || value == null || asOf == null) {
+    public synchronized void put(UUID id, V value, ZonedDateTime asOf) {
+        if (id == null || value == null) {
             throw new IllegalArgumentException(
-                "id / value / asOf must all be non-null; got id=" + id +
-                " value=" + (value == null ? "null" : "<non-null>") + " asOf=" + asOf);
+                "id / value must be non-null; got id=" + id +
+                " value=" + (value == null ? "null" : "<non-null>"));
         }
-        CacheEntry<V> incoming = new CacheEntry<>(value, asOf, Instant.now());
-        map.merge(id, incoming, (existing, in) ->
-            existing.asOf.isAfter(in.asOf) ? existing : in);
+        CacheEntry<V> existing = map.get(id);
+        if (existing != null && existing.asOf != null && asOf != null && existing.asOf.isAfter(asOf)) {
+            // Recency bump only — older vintage doesn't displace newer cached entry.
+            return;
+        }
+        map.put(id, new CacheEntry<>(value, asOf, Instant.now()));
     }
 
-    public void evict(UUID id) {
+    public synchronized void evict(UUID id) {
         map.remove(id);
     }
 
-    public void clear() {
+    public synchronized void clear() {
         map.clear();
     }
 
-    /** Test helper — count of live entries. */
-    public int size() {
+    public synchronized int size() {
         return map.size();
     }
 
-    /** Cache entry — proto value, its bitemporal asOf, and the wall-clock
-     *  moment it was cached (drives the latest-read TTL bound). */
     record CacheEntry<V>(V value, ZonedDateTime asOf, Instant cachedAt) {}
 }

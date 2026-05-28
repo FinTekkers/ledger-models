@@ -122,3 +122,34 @@ def test_singletons_have_independent_state():
     assert lc.PORTFOLIO.get(uuid, _ts()) is None
     assert lc.PRICE.get(uuid, _ts()) is None
     assert lc.TRANSACTION.get(uuid, _ts()) is None
+
+
+# ---- F. LRU bound ----
+
+def test_lru_capacity_evicts_least_recently_used():
+    cache = lc.LinkCache(ttl_for_latest_seconds=60.0, max_entries=3)
+    u1, u2, u3, u4 = uuid4(), uuid4(), uuid4(), uuid4()
+    as_of = _ts()
+    cache.put(u1, "v1", as_of)
+    cache.put(u2, "v2", as_of)
+    cache.put(u3, "v3", as_of)
+    assert cache.size() == 3
+
+    # Touch u1 to make it MRU again.
+    assert cache.get(u1, as_of) == "v1"
+
+    # u4 forces eviction of u2 (now LRU since u1 was touched, u3 was last put).
+    cache.put(u4, "v4", as_of)
+    assert cache.size() == 3
+    assert cache.get(u1, as_of) == "v1"
+    assert cache.get(u2, as_of) is None, "u2 should have been evicted"
+    assert cache.get(u3, as_of) == "v3"
+    assert cache.get(u4, as_of) == "v4"
+
+
+def test_invalid_max_entries_raises():
+    import pytest as _pt
+    with _pt.raises(ValueError, match="max_entries"):
+        lc.LinkCache(max_entries=0)
+    with _pt.raises(ValueError, match="max_entries"):
+        lc.LinkCache(max_entries=-5)

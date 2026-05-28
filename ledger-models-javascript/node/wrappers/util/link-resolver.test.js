@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const link_resolver_1 = __importDefault(require("./link-resolver"));
 const Price_1 = __importDefault(require("../models/price/Price"));
 const uuid_1 = require("../models/utils/uuid");
+const LinkCacheModuleTop = __importStar(require("./link-cache"));
 const security_pb_1 = require("../../fintekkers/models/security/security_pb");
 const price_pb_1 = require("../../fintekkers/models/price/price_pb");
 const decimal_value_pb_1 = require("../../fintekkers/models/util/decimal_value_pb");
@@ -137,6 +138,13 @@ function linkPrice(securityUuid, priceValue, asOf) {
     return new Price_1.default(priceProto);
 }
 describe('LinkResolver', () => {
+    // Process-wide LinkCache singletons survive across tests, so clear them
+    // between cases to keep tests independent (post-W4 the resolver no longer
+    // owns its own cache).
+    beforeEach(() => {
+        LinkCacheModuleTop.SECURITY.clear();
+        LinkCacheModuleTop.PORTFOLIO.clear();
+    });
     test('bulk resolveSecurities dedupes UUIDs (5 prices, 3 unique → 1 RPC, 3 UUIDs)', () => __awaiter(void 0, void 0, void 0, function* () {
         const uuidA = uuid_1.UUID.random();
         const uuidB = uuid_1.UUID.random();
@@ -205,18 +213,21 @@ describe('LinkResolver', () => {
         for (const r of results)
             expect(r.getIssuerName()).toBe('AAPL');
     }));
-    test('caching disabled (cacheSize=0) re-RPCs every call', () => __awaiter(void 0, void 0, void 0, function* () {
+    test('LinkCache evict between calls forces refetch', () => __awaiter(void 0, void 0, void 0, function* () {
+        // Post-W4 the resolver no longer owns its cache. Evict the entry from
+        // LinkCache.SECURITY between calls to force a refetch — the equivalent
+        // of the old `cacheSize=0` semantic.
         const uuid = uuid_1.UUID.random();
         const store = new Map([
             [uuid.toString(), fullSecurity(uuid, 'AAPL')],
         ]);
         const callLog = newCallLog();
         const resolver = new link_resolver_1.default({
-            cacheSize: 0,
             securityClient: mockSecurityClient(store, callLog),
             portfolioClient: mockPortfolioClient(new Map(), newCallLog()),
         });
         yield resolver.getSecurity(uuid);
+        LinkCacheModuleTop.SECURITY.evict(uuid.toString());
         yield resolver.getSecurity(uuid);
         expect(callLog.count).toBe(2);
     }));

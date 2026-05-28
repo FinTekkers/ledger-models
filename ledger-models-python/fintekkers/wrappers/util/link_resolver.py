@@ -15,10 +15,10 @@ Two surface methods:
     proto carries a single as_of), mutates each item's proto to swap the
     link sub-message for the resolved full entity.
 
-Caching:
-  - Process-level LRU keyed on (uuid, as_of). Default 1000 entries, no TTL
-    (entries live until evicted by LRU). Set ttl_ms=<int> for a per-entry
-    TTL. Set cache_size=0 to disable caching (useful in tests).
+Caching (W4 consolidation):
+  - Reads + writes the process-wide LinkCache singletons
+    (link_cache.SECURITY / link_cache.PORTFOLIO). No per-instance LRU.
+    Per-entity TTLs and LRU caps live on LinkCache.
   - Concurrent same-(uuid, as_of) requests dedupe via an in-flight Future
     map under a lock — N parallel callers share one RPC.
 
@@ -90,65 +90,21 @@ def _link_as_of(sub_message) -> Optional[LocalTimestampProto]:
     return sub_message.as_of
 
 
-def _populate_security_link_cache(proto: SecurityProto) -> None:
-    """Mirror a freshly-fetched SecurityProto into the process-wide
-    `link_cache.SECURITY`. Lazy-hydrate wrappers consult this cache, so
-    pre-warmed entities become visible to accessors without a separate
-    RPC. Skips silently when the resolved proto lacks the bitemporal
-    anchor (uuid / as_of); link_cache requires both."""
-    if proto is None or not proto.HasField("uuid") or not proto.HasField("as_of"):
-        return
-    uuid_obj = ProtoSerializationUtil.deserialize(proto.uuid).uuid
-    as_of_dt = ProtoSerializationUtil.deserialize(proto.as_of)
-    _link_cache_mod.SECURITY.put(uuid_obj, proto, as_of_dt)
+def _to_dt(as_of: Optional[LocalTimestampProto]):
+    """Adapter: link_cache stores values keyed by python datetime (not
+    LocalTimestampProto). Convert here so the resolver still takes the
+    wire-shaped param at its public surface."""
+    if as_of is None:
+        return None
+    return ProtoSerializationUtil.deserialize(as_of)
 
 
-def _populate_portfolio_link_cache(proto: PortfolioProto) -> None:
-    """Mirror counterpart of [`_populate_security_link_cache`] for Portfolio."""
-    if proto is None or not proto.HasField("uuid") or not proto.HasField("as_of"):
-        return
-    uuid_obj = ProtoSerializationUtil.deserialize(proto.uuid).uuid
-    as_of_dt = ProtoSerializationUtil.deserialize(proto.as_of)
-    _link_cache_mod.PORTFOLIO.put(uuid_obj, proto, as_of_dt)
-
-
-class _TinyLRU:
-    """Thread-safe LRU. OrderedDict bumps to most-recently-used on get;
-    evicts oldest on overflow. Avoids depending on cachetools."""
-
-    def __init__(self, max_size: int, ttl_ms: Optional[int] = None):
-        self._max_size = max_size
-        self._ttl_ms = ttl_ms
-        self._data: OrderedDict[str, tuple[object, float]] = OrderedDict()
-        self._lock = threading.Lock()
-
-    def get(self, key: str):
-        if self._max_size == 0:
-            return None
-        with self._lock:
-            entry = self._data.get(key)
-            if entry is None:
-                return None
-            value, inserted_at = entry
-            if self._ttl_ms is not None and (time.monotonic() - inserted_at) * 1000 > self._ttl_ms:
-                self._data.pop(key, None)
-                return None
-            self._data.move_to_end(key)
-            return value
-
-    def set(self, key: str, value) -> None:
-        if self._max_size == 0:
-            return
-        with self._lock:
-            if key in self._data:
-                self._data.move_to_end(key)
-            self._data[key] = (value, time.monotonic())
-            while len(self._data) > self._max_size:
-                self._data.popitem(last=False)
-
-    def clear(self) -> None:
-        with self._lock:
-            self._data.clear()
+def _proto_as_of_dt(proto):
+    """Pull the as_of off a resolved proto and return as a python datetime
+    (or None when unset)."""
+    if not proto.HasField("as_of"):
+        return None
+    return ProtoSerializationUtil.deserialize(proto.as_of)
 
 
 class LinkResolver:
@@ -156,21 +112,14 @@ class LinkResolver:
 
     def __init__(
         self,
-        cache_size: int = 1000,
-        ttl_ms: Optional[int] = None,
         security_stub: Optional[SecurityStub] = None,
         portfolio_stub: Optional[PortfolioStub] = None,
     ):
         """
-        :param cache_size: LRU max entries. 0 disables caching.
-        :param ttl_ms: per-entry TTL in milliseconds; None = no expiry.
         :param security_stub: test injection point. Production callers
             should leave None; the resolver constructs the default stub.
         :param portfolio_stub: same as security_stub.
         """
-        self._security_cache: _TinyLRU = _TinyLRU(cache_size, ttl_ms)
-        self._portfolio_cache: _TinyLRU = _TinyLRU(cache_size, ttl_ms)
-
         self._security_inflight: dict[str, Future] = {}
         self._portfolio_inflight: dict[str, Future] = {}
         self._sec_inflight_lock = threading.Lock()
@@ -195,12 +144,13 @@ class LinkResolver:
         """Resolve a single SecurityProto by UUID. If `as_of` is given,
         fetch the version at that timestamp; otherwise latest. Cached +
         concurrent-deduped on (uuid, as_of). Raises if not found."""
-        key = f"{uuid}@{_as_of_key(as_of)}"
-        cached = self._security_cache.get(key)
+        as_of_dt = _to_dt(as_of)
+        cached = _link_cache_mod.SECURITY.get(uuid, as_of_dt)
         if cached is not None:
             return cached
 
-        # In-flight dedupe.
+        # In-flight dedupe — guard against N parallel callers firing N RPCs.
+        key = f"{uuid}@{_as_of_key(as_of)}"
         with self._sec_inflight_lock:
             existing = self._security_inflight.get(key)
             if existing is not None:
@@ -208,9 +158,6 @@ class LinkResolver:
             else:
                 future = Future()
                 self._security_inflight[key] = future
-                owner = True
-                # mark closure-ownership
-                # (sentinel via local var, see below)
 
         if existing is not None:
             return future.result()
@@ -220,8 +167,7 @@ class LinkResolver:
             if not protos:
                 raise LookupError(f"Security not found: {uuid}@{_as_of_key(as_of)}")
             proto = protos[0]
-            self._security_cache.set(key, proto)
-            _populate_security_link_cache(proto)
+            _link_cache_mod.SECURITY.put(uuid, proto, as_of_dt)
             future.set_result(proto)
             return proto
         except BaseException as e:
@@ -236,11 +182,12 @@ class LinkResolver:
     ) -> PortfolioProto:
         """Resolve a single PortfolioProto by UUID, optionally as of `as_of`.
         Cached + concurrent-deduped on (uuid, as_of)."""
-        key = f"{uuid}@{_as_of_key(as_of)}"
-        cached = self._portfolio_cache.get(key)
+        as_of_dt = _to_dt(as_of)
+        cached = _link_cache_mod.PORTFOLIO.get(uuid, as_of_dt)
         if cached is not None:
             return cached
 
+        key = f"{uuid}@{_as_of_key(as_of)}"
         with self._port_inflight_lock:
             existing = self._portfolio_inflight.get(key)
             if existing is not None:
@@ -257,8 +204,7 @@ class LinkResolver:
             if not protos:
                 raise LookupError(f"Portfolio not found: {uuid}@{_as_of_key(as_of)}")
             proto = protos[0]
-            self._portfolio_cache.set(key, proto)
-            _populate_portfolio_link_cache(proto)
+            _link_cache_mod.PORTFOLIO.put(uuid, proto, as_of_dt)
             future.set_result(proto)
             return proto
         except BaseException as e:
@@ -283,7 +229,7 @@ class LinkResolver:
         if not items_list:
             return items_list
 
-        # Group: bucket_key → {cache_key → (uuid, as_of)} of items not cached.
+        # Group items not already cached in LinkCache.SECURITY.
         buckets: dict[str, dict[str, tuple[UUID, Optional[LocalTimestampProto]]]] = {}
         for item in items_list:
             sec = item.proto.security if item.proto.HasField("security") else None
@@ -291,10 +237,10 @@ class LinkResolver:
                 continue
             uuid_obj = UUID(bytes=bytes(sec.uuid.raw_uuid))
             as_of = _link_as_of(sec)
+            if _link_cache_mod.SECURITY.get(uuid_obj, _to_dt(as_of)) is not None:
+                continue
             bucket_key = _as_of_key(as_of)
             cache_key = f"{uuid_obj}@{bucket_key}"
-            if self._security_cache.get(cache_key) is not None:
-                continue
             bucket = buckets.setdefault(bucket_key, {})
             bucket.setdefault(cache_key, (uuid_obj, as_of))
 
@@ -304,10 +250,10 @@ class LinkResolver:
             uuids = [v[0] for v in entries.values()]
             as_of = next(iter(entries.values()))[1]  # all entries in a bucket share as_of
             fetched = self._batch_fetch_securities(uuids, as_of)
+            as_of_dt = _to_dt(as_of)
             for proto in fetched:
                 uuid_obj = UUID(bytes=bytes(proto.uuid.raw_uuid))
-                self._security_cache.set(f"{uuid_obj}@{bucket_key}", proto)
-                _populate_security_link_cache(proto)
+                _link_cache_mod.SECURITY.put(uuid_obj, proto, as_of_dt)
 
         # Mutate each item in place.
         for item in items_list:
@@ -317,8 +263,7 @@ class LinkResolver:
             if not sec.is_link:
                 continue
             uuid_obj = UUID(bytes=bytes(sec.uuid.raw_uuid))
-            bucket_key = _as_of_key(_link_as_of(sec))
-            resolved = self._security_cache.get(f"{uuid_obj}@{bucket_key}")
+            resolved = _link_cache_mod.SECURITY.get(uuid_obj, _to_dt(_link_as_of(sec)))
             if resolved is not None:
                 item.proto.security.CopyFrom(resolved)
 
@@ -337,10 +282,10 @@ class LinkResolver:
                 continue
             uuid_obj = UUID(bytes=bytes(port.uuid.raw_uuid))
             as_of = _link_as_of(port)
+            if _link_cache_mod.PORTFOLIO.get(uuid_obj, _to_dt(as_of)) is not None:
+                continue
             bucket_key = _as_of_key(as_of)
             cache_key = f"{uuid_obj}@{bucket_key}"
-            if self._portfolio_cache.get(cache_key) is not None:
-                continue
             bucket = buckets.setdefault(bucket_key, {})
             bucket.setdefault(cache_key, (uuid_obj, as_of))
 
@@ -348,10 +293,10 @@ class LinkResolver:
             uuids = [v[0] for v in entries.values()]
             as_of = next(iter(entries.values()))[1]
             fetched = self._batch_fetch_portfolios(uuids, as_of)
+            as_of_dt = _to_dt(as_of)
             for proto in fetched:
                 uuid_obj = UUID(bytes=bytes(proto.uuid.raw_uuid))
-                self._portfolio_cache.set(f"{uuid_obj}@{bucket_key}", proto)
-                _populate_portfolio_link_cache(proto)
+                _link_cache_mod.PORTFOLIO.put(uuid_obj, proto, as_of_dt)
 
         for item in items_list:
             if not item.proto.HasField("portfolio"):
@@ -360,17 +305,21 @@ class LinkResolver:
             if not port.is_link:
                 continue
             uuid_obj = UUID(bytes=bytes(port.uuid.raw_uuid))
-            bucket_key = _as_of_key(_link_as_of(port))
-            resolved = self._portfolio_cache.get(f"{uuid_obj}@{bucket_key}")
+            resolved = _link_cache_mod.PORTFOLIO.get(uuid_obj, _to_dt(_link_as_of(port)))
             if resolved is not None:
                 item.proto.portfolio.CopyFrom(resolved)
 
         return items_list
 
     def clear_cache(self) -> None:
-        """Test/debug helper. Not part of the stable API."""
-        self._security_cache.clear()
-        self._portfolio_cache.clear()
+        """Test/debug helper. Not part of the stable API.
+
+        Post-W4 the resolver no longer owns its own cache; the
+        process-wide LinkCache singletons are NOT cleared here (that
+        would wipe entries other tests rely on). Clears only the
+        in-flight dedupe maps. Tests that need to invalidate specific
+        entries should use ``link_cache.SECURITY.evict(uuid)``.
+        """
         with self._sec_inflight_lock:
             self._security_inflight.clear()
         with self._port_inflight_lock:
