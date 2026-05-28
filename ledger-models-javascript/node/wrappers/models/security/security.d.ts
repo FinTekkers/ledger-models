@@ -28,10 +28,16 @@ declare class Security {
     private static _uuidToProto;
     private static _zonedDateTimeToProto;
     /**
-     * Throws if this Security is in link mode. Use to guard accessors that
-     * would otherwise return proto3 default values on a link reference.
+     * Lazy hydration. If this Security is in link mode, swap in the resolved
+     * proto from LinkCache. On cache miss, throws — caller must pre-warm via
+     * LinkResolver. See docs/adr/lazy-link-hydration.md.
+     *
+     * TS variant is cache-only (no fetcher hook) because the gRPC stubs are
+     * async and chaining the resolver into every getter would force every
+     * accessor to become async. Pre-warming through LinkResolver keeps the
+     * sync getter API.
      */
-    private assertNotLink;
+    private ensureHydrated;
     /**
      * Factory method to create the appropriate Security subclass based on
      * the proto's product_type. Dispatch rules:

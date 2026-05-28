@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
@@ -8,6 +31,7 @@ const date_1 = require("../utils/date");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const identifier_1 = require("./identifier");
 const product_hierarchy_1 = require("./product_hierarchy");
+const LinkCacheModule = __importStar(require("../../util/link-cache"));
 class Security {
     constructor(proto) {
         this.proto = proto;
@@ -54,15 +78,33 @@ class Security {
         return asOf.toProto();
     }
     /**
-     * Throws if this Security is in link mode. Use to guard accessors that
-     * would otherwise return proto3 default values on a link reference.
+     * Lazy hydration. If this Security is in link mode, swap in the resolved
+     * proto from LinkCache. On cache miss, throws — caller must pre-warm via
+     * LinkResolver. See docs/adr/lazy-link-hydration.md.
+     *
+     * TS variant is cache-only (no fetcher hook) because the gRPC stubs are
+     * async and chaining the resolver into every getter would force every
+     * accessor to become async. Pre-warming through LinkResolver keeps the
+     * sync getter API.
      */
-    assertNotLink(accessor) {
-        if (this.proto.getIsLink()) {
-            throw new Error(`Cannot read ${accessor} on a link-mode Security (is_link=true). `
-                + `Resolve via SecurityService.GetByIds first. `
-                + `See docs/adr/is_link_pattern.md.`);
+    ensureHydrated() {
+        if (!this.proto.getIsLink())
+            return;
+        const uuidProto = this.proto.getUuid();
+        if (!uuidProto) {
+            throw new Error("Cannot read fields on link-mode Security with no UUID set.");
         }
+        const uuidKey = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+        const asOfProto = this.proto.getAsOf();
+        const asOf = asOfProto ? new datetime_1.ZonedDateTime(asOfProto) : null;
+        const cached = LinkCacheModule.SECURITY.get(uuidKey, asOf);
+        if (cached) {
+            this.proto = cached;
+            return;
+        }
+        throw new Error(`Cannot read fields on link-mode Security uuid=${uuidKey} `
+            + `— LinkCache miss. Pre-warm via LinkResolver. `
+            + `See docs/adr/lazy-link-hydration.md.`);
     }
     /**
      * Factory method to create the appropriate Security subclass based on
@@ -236,15 +278,15 @@ class Security {
         return new datetime_1.ZonedDateTime(asOf);
     }
     getAssetClass() {
-        this.assertNotLink('assetClass');
+        this.ensureHydrated();
         return this.proto.getAssetClass();
     }
     getProductClass() {
-        this.assertNotLink('productClass');
+        this.ensureHydrated();
         throw new Error('Not implemented yet. See Java implementation for reference');
     }
     getProductType() {
-        this.assertNotLink('productType');
+        this.ensureHydrated();
         const securityType = this.proto.getProductType();
         const securityTypeString = Object.keys(product_type_pb_1.ProductTypeProto).find(key => product_type_pb_1.ProductTypeProto[key] === securityType);
         return securityTypeString || 'UNKNOWN_SECURITY_TYPE';
@@ -254,7 +296,7 @@ class Security {
      * Empty list if none are set. Throws on a link-mode Security.
      */
     getIdentifiers() {
-        this.assertNotLink('identifiers');
+        this.ensureHydrated();
         const list = this.proto.getIdentifiersList();
         if (!list)
             return [];
@@ -265,7 +307,7 @@ class Security {
      * or undefined if none is present. Throws on a link-mode Security.
      */
     getIdentifierByType(type) {
-        this.assertNotLink('identifierByType');
+        this.ensureHydrated();
         const list = this.proto.getIdentifiersList();
         if (!list)
             return undefined;
@@ -286,7 +328,7 @@ class Security {
      * properly-formed bond).
      */
     getIssueDate() {
-        this.assertNotLink('issueDate');
+        this.ensureHydrated();
         const bond = this.getBondLikeDetails();
         const date = bond ? bond.getIssueDate() : undefined;
         return (0, date_1.localDateProtoToDate)(date);
@@ -298,7 +340,7 @@ class Security {
      * code paths.
      */
     getMaturityDate() {
-        this.assertNotLink('maturityDate');
+        this.ensureHydrated();
         const bond = this.getBondLikeDetails();
         const date = bond ? bond.getMaturityDate() : undefined;
         return (0, date_1.localDateProtoToDate)(date);
@@ -315,7 +357,7 @@ class Security {
         return (_a = this.proto.getBondDetails()) !== null && _a !== void 0 ? _a : undefined;
     }
     getIssuerName() {
-        this.assertNotLink('issuerName');
+        this.ensureHydrated();
         return this.proto.getIssuerName();
     }
     /**
