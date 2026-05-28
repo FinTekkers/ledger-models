@@ -28,7 +28,7 @@ class FloatingRateNote(BondSecurity):
     """Wraps a SecurityProto with product_type=TREASURY_FRN."""
 
     def get_spread(self) -> Optional[Decimal]:
-        self._assert_not_link("spread")
+        self._ensure_hydrated()
         if not self.proto.HasField("frn_extension"):
             return None
         ext = self.proto.frn_extension
@@ -40,13 +40,13 @@ class FloatingRateNote(BondSecurity):
         return Decimal(value)
 
     def get_reference_rate_index(self) -> IndexTypeProto:
-        self._assert_not_link("reference_rate_index")
+        self._ensure_hydrated()
         if not self.proto.HasField("frn_extension"):
             return IndexTypeProto.UNKNOWN_INDEX_TYPE
         return self.proto.frn_extension.reference_rate_index
 
     def get_reset_frequency(self) -> CouponFrequencyProto:
-        self._assert_not_link("reset_frequency")
+        self._ensure_hydrated()
         if not self.proto.HasField("frn_extension"):
             return CouponFrequencyProto.UNKNOWN_COUPON_FREQUENCY
         return self.proto.frn_extension.reset_frequency

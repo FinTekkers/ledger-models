@@ -16,6 +16,20 @@ from fintekkers.wrappers.models.security.security_identifier import Identifier
 
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+from fintekkers.wrappers.util import link_cache as _link_cache
+
+# Module-level fetcher hook — pluggable so this module stays free of a
+# direct SecurityServiceClient import (avoids cycles in tests). Set via
+# set_security_fetcher(callable). Signature: (uuid: UUID, as_of: Optional[datetime]) -> SecurityProto.
+_security_fetcher = None
+
+
+def set_security_fetcher(fetcher) -> None:
+    """Register the resolver used when a link-mode Security needs to
+    hydrate and the LinkCache misses. Called once at process start by the
+    service-client layer. See `docs/adr/lazy-link-hydration.md`."""
+    global _security_fetcher
+    _security_fetcher = fetcher
 
 class IFinancialModelObject:
     def get_field(field:FieldProto) -> object:
@@ -87,13 +101,41 @@ class Security():
         RuntimeError; resolve via SecurityService.GetByIds first."""
         return self.proto.is_link
 
-    def _assert_not_link(self, accessor: str) -> None:
-        if self.proto.is_link:
+    def _ensure_hydrated(self) -> None:
+        """Lazy hydration. If proto is link-mode, resolve via LinkCache or
+        the registered fetcher and swap in the resolved proto. After this
+        returns, ``self.proto.is_link is False`` and field accessors read
+        through normally. See `docs/adr/lazy-link-hydration.md`."""
+        if not self.proto.is_link:
+            return
+        uuid_proto = self.proto.uuid
+        uuid_obj: UUID = ProtoSerializationUtil.deserialize(uuid_proto).uuid
+        as_of: Optional[datetime] = None
+        if self.proto.HasField("as_of"):
+            as_of = ProtoSerializationUtil.deserialize(self.proto.as_of)
+        cached = _link_cache.SECURITY.get(uuid_obj, as_of)
+        if cached is not None:
+            self.proto = cached
+            return
+        fetcher = _security_fetcher
+        if fetcher is None:
             raise RuntimeError(
-                f"Cannot read {accessor} on a link-mode Security (is_link=true). "
-                f"Resolve via SecurityService.GetByIds first. "
-                f"See docs/adr/is_link_pattern.md."
+                f"Cannot read fields on link-mode Security uuid={uuid_obj} "
+                f"— LinkCache miss and no fetcher registered. "
+                f"Pre-warm via LinkResolver or register one with "
+                f"fintekkers.wrappers.models.security.security.set_security_fetcher(). "
+                f"See docs/adr/lazy-link-hydration.md."
             )
+        resolved: SecurityProto = fetcher(uuid_obj, as_of)
+        if resolved is None or resolved.is_link:
+            raise RuntimeError(
+                f"Fetcher returned no full SecurityProto for uuid={uuid_obj}, as_of={as_of}."
+            )
+        resolved_as_of: Optional[datetime] = None
+        if resolved.HasField("as_of"):
+            resolved_as_of = ProtoSerializationUtil.deserialize(resolved.as_of)
+        _link_cache.SECURITY.put(uuid_obj, resolved, resolved_as_of)
+        self.proto = resolved
 
     def get_fields(self) -> list[FieldProto]:
         return [
@@ -132,15 +174,15 @@ class Security():
         return as_of
         
     def get_asset_class(self) -> str:
-        self._assert_not_link("asset_class")
+        self._ensure_hydrated()
         return self.proto.asset_class
 
     def get_product_class(self) -> str:
-        self._assert_not_link("product_class")
+        self._ensure_hydrated()
         raise ValueError("Not implemented yet. See Java implementation for reference")
 
     def get_product_type(self) -> object:
-        self._assert_not_link("product_type")
+        self._ensure_hydrated()
         raise ValueError("Not implemented yet. See Java implementation for reference")
 
     def get_identifiers(self) -> list[Identifier]:
@@ -148,7 +190,7 @@ class Security():
         Identifier instances. Order matches the proto's repeated field:
         the primary identifier (used as the human-readable ID) is index 0.
         """
-        self._assert_not_link("identifiers")
+        self._ensure_hydrated()
         return [Identifier(p) for p in self.proto.identifiers]
 
     def get_identifier_by_type(self, identifier_type) -> Optional[Identifier]:
@@ -156,7 +198,7 @@ class Security():
         value, or None if no identifier of that type is attached. The argument
         is the integer enum value (IdentifierTypeProto.CUSIP, .ISIN, ...).
         """
-        self._assert_not_link("identifiers")
+        self._ensure_hydrated()
         for p in self.proto.identifiers:
             if p.identifier_type == identifier_type:
                 return Identifier(p)
@@ -185,25 +227,25 @@ class Security():
         return None
 
     def get_issue_date(self) -> datetime:
-        self._assert_not_link("issue_date")
+        self._ensure_hydrated()
         bond = self._get_bond_like_details()
         if bond is None or not bond.HasField('issue_date'):
             raise ValueError("issue_date is not set; populate SecurityProto.bond_details.issue_date")
         return ProtoSerializationUtil.deserialize(bond.issue_date)
 
     def get_maturity_date(self) -> datetime:
-        self._assert_not_link("maturity_date")
+        self._ensure_hydrated()
         bond = self._get_bond_like_details()
         if bond is None or not bond.HasField('maturity_date'):
             raise ValueError("maturity_date is not set; populate SecurityProto.bond_details.maturity_date")
         return ProtoSerializationUtil.deserialize(bond.maturity_date)
 
     def get_tenor(self) -> str:
-        self._assert_not_link("tenor")
+        self._ensure_hydrated()
         return ProtoSerializationUtil.deserialize(self.proto.tenor)
 
     def get_face_value(self) -> float:
-        self._assert_not_link("face_value")
+        self._ensure_hydrated()
         bond = self._get_bond_like_details()
         if bond is None or not bond.HasField('face_value'):
             raise ValueError("face_value is not set; populate SecurityProto.bond_details.face_value")
@@ -212,7 +254,7 @@ class Security():
     def get_product_type_proto(self) -> ProductTypeProto:
         """Returns the leaf ProductTypeProto carried by the proto.
         For tree walks (parentOf, descendantsOf), see ProductHierarchy."""
-        self._assert_not_link("product_type")
+        self._ensure_hydrated()
         return self.proto.product_type
 
     def get_description(self) -> str:

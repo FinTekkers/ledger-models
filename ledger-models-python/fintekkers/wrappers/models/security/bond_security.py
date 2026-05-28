@@ -38,7 +38,7 @@ class BondSecurity(Security):
         """Returns the bond's issuance history as wrapped Issuance objects.
         Empty list when no auctions have been recorded.
         """
-        self._assert_not_link("issuances")
+        self._ensure_hydrated()
         if not self.proto.HasField("bond_details"):
             return []
         return [Issuance(p) for p in self.proto.bond_details.issuance_info]

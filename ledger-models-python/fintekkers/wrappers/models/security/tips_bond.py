@@ -29,7 +29,7 @@ class TIPSBond(BondSecurity):
     """Wraps a SecurityProto with product_type=TIPS."""
 
     def get_base_cpi(self) -> Optional[Decimal]:
-        self._assert_not_link("base_cpi")
+        self._ensure_hydrated()
         if not self.proto.HasField("tips_extension"):
             return None
         ext = self.proto.tips_extension
@@ -41,7 +41,7 @@ class TIPSBond(BondSecurity):
         return Decimal(value)
 
     def get_index_date(self) -> Optional[date]:
-        self._assert_not_link("index_date")
+        self._ensure_hydrated()
         if not self.proto.HasField("tips_extension"):
             return None
         ext = self.proto.tips_extension
@@ -51,7 +51,7 @@ class TIPSBond(BondSecurity):
         return date(d.year, d.month, d.day)
 
     def get_inflation_index_type(self) -> IndexTypeProto:
-        self._assert_not_link("inflation_index_type")
+        self._ensure_hydrated()
         if not self.proto.HasField("tips_extension"):
             return IndexTypeProto.UNKNOWN_INDEX_TYPE
         return self.proto.tips_extension.inflation_index_type

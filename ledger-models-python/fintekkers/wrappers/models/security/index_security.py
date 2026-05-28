@@ -18,7 +18,7 @@ class IndexSecurity(Security):
         index_details. Returns UNKNOWN_INDEX_TYPE when no index_details is
         populated (e.g. the security is mis-typed as an index).
         """
-        self._assert_not_link("index_type")
+        self._ensure_hydrated()
         if self.proto.WhichOneof("non_bond_details") != "index_details":
             return IndexTypeProto.UNKNOWN_INDEX_TYPE
         return self.proto.index_details.index_type
