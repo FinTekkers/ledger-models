@@ -30,19 +30,19 @@ class MortgageBackedSecurity(BondSecurity):
     """Wraps a SecurityProto with product_type=MORTGAGE_BACKED."""
 
     def get_pool_number(self) -> str:
-        self._ensure_hydrated("pool_number")
+        self._ensure_hydrated()
         if not self.proto.HasField("mbs_extension"):
             return ""
         return self.proto.mbs_extension.pool_number
 
     def get_agency(self) -> AgencyProto:
-        self._ensure_hydrated("agency")
+        self._ensure_hydrated()
         if not self.proto.HasField("mbs_extension"):
             return AgencyProto.AGENCY_UNKNOWN
         return self.proto.mbs_extension.agency
 
     def get_wac(self) -> Optional[Decimal]:
-        self._ensure_hydrated("wac")
+        self._ensure_hydrated()
         if not self.proto.HasField("mbs_extension"):
             return None
         ext = self.proto.mbs_extension
@@ -54,13 +54,13 @@ class MortgageBackedSecurity(BondSecurity):
         return Decimal(value)
 
     def get_wam(self) -> int:
-        self._ensure_hydrated("wam")
+        self._ensure_hydrated()
         if not self.proto.HasField("mbs_extension"):
             return 0
         return self.proto.mbs_extension.wam
 
     def get_pass_through_rate(self) -> Optional[Decimal]:
-        self._ensure_hydrated("pass_through_rate")
+        self._ensure_hydrated()
         if not self.proto.HasField("mbs_extension"):
             return None
         ext = self.proto.mbs_extension
@@ -72,7 +72,7 @@ class MortgageBackedSecurity(BondSecurity):
         return Decimal(value)
 
     def get_current_factor(self) -> Optional[Decimal]:
-        self._ensure_hydrated("current_factor")
+        self._ensure_hydrated()
         if not self.proto.HasField("mbs_extension"):
             return None
         ext = self.proto.mbs_extension
@@ -84,7 +84,7 @@ class MortgageBackedSecurity(BondSecurity):
         return Decimal(value)
 
     def get_original_face_value(self) -> Optional[Decimal]:
-        self._ensure_hydrated("original_face_value")
+        self._ensure_hydrated()
         if not self.proto.HasField("mbs_extension"):
             return None
         ext = self.proto.mbs_extension
@@ -96,7 +96,7 @@ class MortgageBackedSecurity(BondSecurity):
         return Decimal(value)
 
     def get_current_upb(self) -> Optional[Decimal]:
-        self._ensure_hydrated("current_upb")
+        self._ensure_hydrated()
         if not self.proto.HasField("mbs_extension"):
             return None
         ext = self.proto.mbs_extension
@@ -108,7 +108,7 @@ class MortgageBackedSecurity(BondSecurity):
         return Decimal(value)
 
     def get_psa_speed(self) -> Optional[Decimal]:
-        self._ensure_hydrated("psa_speed")
+        self._ensure_hydrated()
         if not self.proto.HasField("mbs_extension"):
             return None
         ext = self.proto.mbs_extension
