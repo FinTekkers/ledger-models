@@ -326,7 +326,8 @@ mod test {
 
     #[test]
     fn lazy_price_security_wrapper_on_link_hydrates_from_cache() {
-        link_cache::price().clear();
+        // Fresh uuid → targeted evict() at end; never call clear() (it
+        // wipes entries owned by tests running in parallel).
         let uuid = Uuid::new_v4();
         let as_of = lh_make_as_of(1_700_000_000);
         let resolved = lh_full_price(uuid, as_of.clone(), "9.99");
@@ -335,7 +336,7 @@ mod test {
         let p = PriceWrapper::new(lh_link_price(uuid, as_of));
         assert!(p.is_link());
         let _ = p.security_wrapper();
-        link_cache::price().clear();
+        link_cache::price().evict(uuid);
     }
 
     #[test]

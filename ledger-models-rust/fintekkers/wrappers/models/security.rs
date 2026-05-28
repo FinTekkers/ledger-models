@@ -883,17 +883,41 @@ mod test {
 
     use super::{set_security_fetcher, clear_security_fetcher};
     use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
-    use std::sync::Arc;
+    use std::sync::{Arc, Mutex};
     use std::sync::atomic::{AtomicUsize, Ordering};
 
+    /// Single-threaded gate for the fetcher-path tests. Both lazy_e tests
+    /// install global fetcher state; parallel execution would let one
+    /// observe another's installed fetcher mid-flight. Acquire this mutex
+    /// at the top of every test that touches `set_security_fetcher` so the
+    /// fetcher group serializes against itself but still runs in parallel
+    /// with unrelated tests.
+    static FETCHER_TEST_LOCK: Mutex<()> = Mutex::new(());
+
     #[test]
-    fn lazy_e_cache_miss_calls_fetcher_and_writes_through() {
+    fn lazy_e_cache_miss_calls_fetcher_then_writes_through_then_error_panics() {
+        // Two assertions in one test to avoid the global-fetcher-slot race
+        // between parallel #[test] cases:
+        //   1) successful fetcher: returns proto, populates cache, second
+        //      read for same (uuid, as_of) hits cache (no second call).
+        //   2) failing fetcher (NotFound): accessor read panics with
+        //      'fetcher returned error', and the panic doesn't leak the
+        //      fetcher into other tests (catch_unwind + RAII cleanup).
+        //
+        // Important: do NOT call link_cache::security().clear() — that
+        // wipes other concurrent tests' entries and causes spurious
+        // failures elsewhere. Use unique UUIDs (Uuid::new_v4 already does)
+        // and evict only what this test puts.
+        use std::panic;
+
+        let _serialize = FETCHER_TEST_LOCK.lock().expect("test lock poisoned");
+
+        // ---- Sub-assertion 1: happy path ----
         let uuid = Uuid::new_v4();
         let as_of = make_as_of(1_700_000_040);
         let resolved = make_full_proto(uuid, as_of.clone(), "FROM-FETCHER");
         let calls = Arc::new(AtomicUsize::new(0));
         let calls_inner = calls.clone();
-        link_cache::security().clear();
         set_security_fetcher(Arc::new(move |_uuid, _as_of| {
             calls_inner.fetch_add(1, Ordering::SeqCst);
             Ok(resolved.clone())
@@ -903,32 +927,48 @@ mod test {
         assert_eq!(wrapper.issuer_name(), "FROM-FETCHER");
         assert_eq!(calls.load(Ordering::SeqCst), 1);
 
-        // Write-through: cache now populated for the next reader.
         let cached = link_cache::security().get(uuid, Some(&as_of));
-        assert!(cached.is_some());
+        assert!(cached.is_some(), "fetcher must write-through to LinkCache");
 
-        // Subsequent fresh wrapper for same (uuid, as_of) hits the cache,
-        // not the fetcher.
         let wrapper2 = SecurityWrapper::new(link_of(uuid, as_of.clone()));
         assert_eq!(wrapper2.issuer_name(), "FROM-FETCHER");
-        assert_eq!(calls.load(Ordering::SeqCst), 1, "second read must hit cache");
+        assert_eq!(
+            calls.load(Ordering::SeqCst),
+            1,
+            "second read must hit cache, not refetch"
+        );
 
-        clear_security_fetcher();
-        link_cache::security().clear();
-    }
-
-    #[test]
-    #[should_panic(expected = "fetcher returned error")]
-    fn lazy_e_fetcher_error_panics() {
-        link_cache::security().clear();
+        // ---- Sub-assertion 2: error path ----
         set_security_fetcher(Arc::new(|uuid, _as_of| {
             Err(LinkResolverError::NotFound {
                 uuid,
                 as_of_bucket: "latest".to_string(),
             })
         }));
-        let uuid = Uuid::new_v4();
-        let wrapper = SecurityWrapper::new(link_of(uuid, make_as_of(1_700_000_050)));
-        let _ = wrapper.issuer_name();
+        let err_uuid = Uuid::new_v4();
+        let wrapper_err = SecurityWrapper::new(link_of(err_uuid, make_as_of(1_700_000_050)));
+        let panic_result = panic::catch_unwind(panic::AssertUnwindSafe(|| {
+            let _ = wrapper_err.issuer_name();
+        }));
+        assert!(panic_result.is_err(), "accessor read must panic on fetcher error");
+        let panic_msg = panic_result
+            .err()
+            .and_then(|e| {
+                e.downcast_ref::<String>().cloned().or_else(|| {
+                    e.downcast_ref::<&str>().map(|s| s.to_string())
+                })
+            })
+            .unwrap_or_default();
+        assert!(
+            panic_msg.contains("fetcher returned error"),
+            "panic message should include 'fetcher returned error', got: {panic_msg}"
+        );
+
+        // Targeted cleanup: clear the fetcher (global) and evict only the
+        // UUIDs this test put into the cache. Do not call clear() — other
+        // concurrent tests have their own entries.
+        clear_security_fetcher();
+        link_cache::security().evict(uuid);
+        link_cache::security().evict(err_uuid);
     }
 }
