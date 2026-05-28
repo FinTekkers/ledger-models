@@ -100,14 +100,16 @@ If you reach for the lower-level `searchTransaction` (no hydration) instead, acc
 
 ### Rust
 
-In v0.4.10 the Rust wrappers consult `link_cache` on sync accessor reads and **panic on cache miss** with the UUID in the message — they don't yet fall back to a fetcher. This is being closed in a follow-up (`docs/adr/lazy-link-hydration.md` § "async wrinkle"). For now, batch-hydrate via the bulk-resolve path before reading.
+Same mental model as Java / Python — sync accessor reads consult `link_cache`, fall back to the registered fetcher on miss, and return the resolved field:
 
 ```rust
 let txn = TransactionWrapper::new(proto_from_rpc);
-let issuer = txn.security_wrapper().issuer_name();  // panics on link-mode cache miss in v0.4.10
+let issuer = txn.security_wrapper().issuer_name();
 ```
 
-Once the follow-up lands, behavior matches Java / Python: cache → fetcher → hydrated value, no caller-side pre-warm required.
+The fetcher interface is sync (`fn fetch(uuid, as_of) -> Result<SecurityProto, FetcherError>`) so it composes with the sync accessor surface. Implementations bridge to their preferred async runtime — the typical pattern is a dedicated tokio runtime + `block_on` inside `fetch`. A default impl wrapping the standard tonic stub ships pre-registered. Override with `security::set_security_fetcher(...)` only for tests with canned data or non-default endpoints.
+
+The `PortfolioWrapper` and `PriceWrapper` fetcher hooks are mechanical follow-ups behind `SecurityWrapper` — they read from `LinkCache` today; `set_portfolio_fetcher` / `set_price_fetcher` are slated to land in the same shape as `set_security_fetcher`.
 
 ---
 
