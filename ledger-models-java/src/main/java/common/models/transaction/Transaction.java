@@ -296,6 +296,11 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
     private static SecurityProto stripSecurity(SecurityProto full) {
         if (full.getIsLink()) return full; // already a link
+        // Self-pre-warm: cache the full proto before stripping so any later
+        // consumer that holds the link can lazy-hydrate without an RPC.
+        // Covers same-process write-then-read flows (tests, in-process
+        // gRPC server reading back what it just wrote, etc.).
+        primeSecurityCache(full);
         SecurityProto.Builder link = SecurityProto.newBuilder().setIsLink(true);
         if (full.hasUuid()) link.setUuid(full.getUuid());
         if (full.hasAsOf()) link.setAsOf(full.getAsOf());
@@ -304,6 +309,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
     private static PortfolioProto stripPortfolio(PortfolioProto full) {
         if (full.getIsLink()) return full;
+        primePortfolioCache(full);
         PortfolioProto.Builder link = PortfolioProto.newBuilder().setIsLink(true);
         if (full.hasUuid()) link.setUuid(full.getUuid());
         if (full.hasAsOf()) link.setAsOf(full.getAsOf());
@@ -312,10 +318,34 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
     private static PriceProto stripPrice(PriceProto full) {
         if (full.getIsLink()) return full;
+        primePriceCache(full);
         PriceProto.Builder link = PriceProto.newBuilder().setIsLink(true);
         if (full.hasUuid()) link.setUuid(full.getUuid());
         if (full.hasAsOf()) link.setAsOf(full.getAsOf());
         return link.build();
+    }
+
+    // ---- LinkCache pre-warm helpers (write-through on strip) -------------
+
+    private static void primeSecurityCache(SecurityProto full) {
+        if (!full.hasUuid() || !full.hasAsOf()) return;
+        java.util.UUID id = protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(full.getUuid());
+        java.time.ZonedDateTime asOf = protos.serializers.util.proto.ProtoSerializationUtil.deserializeTimestamp(full.getAsOf());
+        if (id != null && asOf != null) common.util.LinkCache.SECURITY.put(id, full, asOf);
+    }
+
+    private static void primePortfolioCache(PortfolioProto full) {
+        if (!full.hasUuid() || !full.hasAsOf()) return;
+        java.util.UUID id = protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(full.getUuid());
+        java.time.ZonedDateTime asOf = protos.serializers.util.proto.ProtoSerializationUtil.deserializeTimestamp(full.getAsOf());
+        if (id != null && asOf != null) common.util.LinkCache.PORTFOLIO.put(id, full, asOf);
+    }
+
+    private static void primePriceCache(PriceProto full) {
+        if (!full.hasUuid() || !full.hasAsOf()) return;
+        java.util.UUID id = protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(full.getUuid());
+        java.time.ZonedDateTime asOf = protos.serializers.util.proto.ProtoSerializationUtil.deserializeTimestamp(full.getAsOf());
+        if (id != null && asOf != null) common.util.LinkCache.PRICE.put(id, full, asOf);
     }
 
     // ---- toString / equals / hashCode -----------------------------------
@@ -388,7 +418,28 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     public Price getPrice() {
         TransactionProto a = active();
         if (!a.hasPrice()) return null;
-        return PriceSerializer.getInstance().deserialize(a.getPrice());
+        fintekkers.models.price.PriceProto pp = a.getPrice();
+        // Lazy-hydrate the embedded Price: if it's a link-mode proto,
+        // resolve via LinkCache.PRICE. Pre-warm-on-strip in this wrapper's
+        // own getProto() populates that cache for round-trip flows, and
+        // service-side write-through covers cross-process flows.
+        if (pp.getIsLink() && pp.hasUuid()) {
+            java.util.UUID priceId = protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(pp.getUuid());
+            java.time.ZonedDateTime priceAsOf = pp.hasAsOf()
+                    ? protos.serializers.util.proto.ProtoSerializationUtil.deserializeTimestamp(pp.getAsOf())
+                    : null;
+            fintekkers.models.price.PriceProto cached = common.util.LinkCache.PRICE.get(priceId, priceAsOf);
+            if (cached != null) {
+                pp = cached;
+            } else {
+                throw new IllegalStateException(
+                    "Cannot read fields on link-mode Price uuid=" + priceId
+                    + " asOf=" + priceAsOf + " — LinkCache.PRICE miss. "
+                    + "Pre-warm via LinkResolver.resolvePricesOnTransactions(...) "
+                    + "or rely on strip-on-write self-prewarm (same-process flows).");
+            }
+        }
+        return PriceSerializer.getInstance().deserialize(pp);
     }
 
     @Override
