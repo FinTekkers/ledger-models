@@ -17,13 +17,39 @@ Companion to [`lazy-link-hydration.md`](lazy-link-hydration.md). **5 PRs total**
 | follow-up | Transaction full ensureHydrated | pending (only Price-field lazy in #231) |
 | follow-up | LinkResolver write-through to LinkCache | pending |
 | follow-up | Service-client write-through on createOrUpdate | pending |
-| ledger-models#233 | Python partial: LinkCache (python) + Security wrapper `_ensure_hydrated` + 19 new tests | open 2026-05-28 |
+| ledger-models#233 | Python partial: LinkCache (python) + Security wrapper `_ensure_hydrated` + 19 new tests | merged 2026-05-28 |
 | follow-up | Python Portfolio + Price + Transaction wrappers (some still not proto-backed) | pending |
 | follow-up | Python LinkResolver write-through + service-client write-through | pending |
+| ledger-models#234 | TypeScript partial: LinkCache (ts) + Security wrapper `ensureHydrated` + 18 new tests. Cache-only — no fetcher hook, sync getter API preserved | merged 2026-05-28 |
+| follow-up | TypeScript Portfolio + Price + Transaction wrappers | pending |
+| follow-up | TypeScript LinkResolver write-through + service-client write-through | pending |
+| ledger-models#236 | Rust partial: LinkCache (rust) + SecurityWrapper `ensure_hydrated` + 18 new tests. Cache-only via `OnceLock` resolved slot; same design as #234 | open 2026-05-28 |
+| follow-up | Rust two-getter Shape B (sync `Result` + async `_async` variant) | pending — captured in ADR §"async wrinkle" |
+| follow-up | Rust Portfolio + Price + Transaction wrappers | pending |
+| follow-up | Rust LinkResolver write-through + service-stub write-through | pending |
+
+**Cross-language scope audit (2026-05-28)**
+
+| Object | Java #231 | Python #233 | TS #234 | Rust #236 |
+|---|---|---|---|---|
+| `LinkCache` module | ✅ | ✅ | ✅ | ✅ |
+| Security wrapper lazy-hydrate | ✅ | ✅ | ✅ | ✅ |
+| Cash USD cache priming (tactical) | ✅ | n/a | n/a | n/a |
+| Transaction strip-on-write prewarm (tactical) | ✅ | n/a — Python doesn't strip on serialize | n/a | n/a |
+| Transaction.getPrice link-aware (tactical) | ✅ | n/a | n/a | n/a |
+| Portfolio wrapper lazy-hydrate | pending | pending | pending | pending |
+| Price wrapper lazy-hydrate | pending | pending | pending | pending |
+| Transaction full `ensureHydrated()` | pending | pending | pending | pending |
+| LinkResolver write-through to LinkCache | pending | pending | pending | pending |
+| Service-client write-through on createOrUpdate | pending | pending | pending | pending |
+
+**Why Java has tactical extras the others don't:** Java's `Transaction.getProto()` strips embedded Security/Portfolio/Price to `is_link=true` before serializing (see `stripSecurity` / `stripPortfolio` / `stripPrice` in `Transaction.java`). That strip path needed to populate `LinkCache` before stripping so downstream consumers can rehydrate. Python/TS/Rust **do not strip on serialize** — they pass embedded entities through whole — so the same tactical fix does not apply there.
 
 **ledger-service test suite: 25 → 19 failures with #231 merged.** The 5 deterministic failures listed below all turn green. Remaining 19 are fixture gaps, other-service-down tests, and pre-existing unrelated bugs.
 
-**ledger-models-python wrappers: 71/71 pass with #233.** No regressions; mirrors the Java partial scope.
+**ledger-models-python wrappers: 71/71 pass with #233.** No regressions.
+**ledger-models-javascript wrappers: 258/258 pass with #234.** No regressions.
+**ledger-models-rust lib: 108/108 pass with #236.** No regressions.
 
 ---
 
