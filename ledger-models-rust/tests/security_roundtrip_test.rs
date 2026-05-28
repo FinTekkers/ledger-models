@@ -80,7 +80,7 @@ fn security_wrapper_is_link_reads_proto() {
 }
 
 #[test]
-#[should_panic(expected = "Cannot read product_type on a link-mode SecurityWrapper")]
+#[should_panic(expected = "LinkCache miss")]
 fn security_wrapper_product_type_panics_on_link() {
     let link = link_of(Uuid::new_v4(), timestamp_at(1_700_000_000));
     let wrapper = SecurityWrapper::new(link);
@@ -88,7 +88,7 @@ fn security_wrapper_product_type_panics_on_link() {
 }
 
 #[test]
-#[should_panic(expected = "Cannot read asset_class on a link-mode SecurityWrapper")]
+#[should_panic(expected = "LinkCache miss")]
 fn security_wrapper_asset_class_panics_on_link() {
     let link = link_of(Uuid::new_v4(), timestamp_at(1_700_000_000));
     let wrapper = SecurityWrapper::new(link);
