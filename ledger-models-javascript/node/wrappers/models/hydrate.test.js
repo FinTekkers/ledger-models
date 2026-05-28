@@ -72,22 +72,46 @@ function fullPortfolioProto(uuid, asOf, name) {
     p.setPortfolioName(name);
     return p;
 }
-// Stub clients that return canned protos for GetByIds.
+// Stub clients that return canned protos for GetByIds. The
+// `LinkResolverOptions.{security,portfolio}Client` slots expect the full
+// generated client class; we only implement the one method LinkResolver
+// uses and assert the shape to the public client type at the injection
+// site — keeps the test typed end-to-end without re-stubbing dozens of
+// grpc.Client methods.
 function stubSecurityClient(canned) {
-    return {
+    const stub = {
         getByIds(_req, cb) {
             const resp = new query_security_response_pb_1.QuerySecurityResponseProto();
             resp.setSecurityResponseList([canned]);
             cb(null, resp);
         },
     };
+    return stub;
 }
 function stubPortfolioClient(canned) {
-    return {
+    const stub = {
         getByIds(_req, cb) {
             const resp = new query_portfolio_response_pb_1.QueryPortfolioResponseProto();
             resp.setPortfolioResponseList([canned]);
             cb(null, resp);
+        },
+    };
+    return stub;
+}
+/** Stand-in for the "other" client slot in `LinkResolverOptions` when a
+ * test only exercises one entity type — never invoked, but the option is
+ * required by the constructor. */
+function unusedSecurityClient() {
+    return {
+        getByIds() {
+            throw new Error('unused stub: security client should not be called');
+        },
+    };
+}
+function unusedPortfolioClient() {
+    return {
+        getByIds() {
+            throw new Error('unused stub: portfolio client should not be called');
         },
     };
 }
@@ -128,7 +152,7 @@ test('Security.hydrate() fetches via the default resolver and swaps the proto', 
     const resolved = fullSecurityProto(uuid, asOf, 'FROM-RESOLVER');
     const customResolver = new link_resolver_1.default({
         securityClient: stubSecurityClient(resolved),
-        portfolioClient: {},
+        portfolioClient: unusedPortfolioClient(),
     });
     link_resolver_1.default.setDefault(customResolver);
     const sec = new security_1.default(security_1.default.linkOf(uuid, new datetime_1.ZonedDateTime(asOf)));
@@ -144,7 +168,7 @@ test('Security.hydrate() accepts an explicit resolver instead of the default', (
     const resolved = fullSecurityProto(uuid, asOf, 'EXPLICIT');
     const explicit = new link_resolver_1.default({
         securityClient: stubSecurityClient(resolved),
-        portfolioClient: {},
+        portfolioClient: unusedPortfolioClient(),
     });
     const sec = new security_1.default(security_1.default.linkOf(uuid, new datetime_1.ZonedDateTime(asOf)));
     yield sec.hydrate(explicit);
@@ -156,7 +180,7 @@ test('Portfolio.hydrate() fetches via the default resolver and swaps the proto',
     const asOf = makeAsOf(4);
     const resolved = fullPortfolioProto(uuid, asOf, 'Strategy Z');
     const customResolver = new link_resolver_1.default({
-        securityClient: {},
+        securityClient: unusedSecurityClient(),
         portfolioClient: stubPortfolioClient(resolved),
     });
     link_resolver_1.default.setDefault(customResolver);

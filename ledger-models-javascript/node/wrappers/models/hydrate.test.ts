@@ -1,19 +1,43 @@
 // Tests for the W1 async `hydrate()` method on Security/Portfolio wrappers
 // and the LinkResolver default singleton.
 
+import * as grpc from '@grpc/grpc-js';
+
 import { UUID } from './utils/uuid';
 import { ZonedDateTime } from './utils/datetime';
 import { LocalTimestampProto } from '../../fintekkers/models/util/local_timestamp_pb';
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import { SecurityProto } from '../../fintekkers/models/security/security_pb';
 import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
+import { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
 import { QuerySecurityResponseProto } from '../../fintekkers/requests/security/query_security_response_pb';
+import { QueryPortfolioRequestProto } from '../../fintekkers/requests/portfolio/query_portfolio_request_pb';
 import { QueryPortfolioResponseProto } from '../../fintekkers/requests/portfolio/query_portfolio_response_pb';
+import { SecurityClient } from '../../fintekkers/services/security-service/security_service_grpc_pb';
+import { PortfolioClient } from '../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
 
 import Security from './security/security';
 import Portfolio from './portfolio/portfolio';
 import LinkResolver from '../util/link-resolver';
 import * as LinkCacheModule from '../util/link-cache';
+
+/**
+ * Minimal stub shape — captures the one method `LinkResolver` calls.
+ * Cast to `SecurityClient` / `PortfolioClient` at the injection site so
+ * the test reads `securityClient: stub(...)` without an `as any` escape.
+ */
+type GetByIdsCallback<TRes> = (
+  err: grpc.ServiceError | null,
+  res: TRes,
+) => void;
+
+interface SecurityGetByIdsOnly {
+  getByIds(req: QuerySecurityRequestProto, cb: GetByIdsCallback<QuerySecurityResponseProto>): void;
+}
+
+interface PortfolioGetByIdsOnly {
+  getByIds(req: QueryPortfolioRequestProto, cb: GetByIdsCallback<QueryPortfolioResponseProto>): void;
+}
 
 function makeAsOf(seconds = 1_700_000_000): LocalTimestampProto {
   const ts = new Timestamp();
@@ -41,25 +65,51 @@ function fullPortfolioProto(uuid: UUID, asOf: LocalTimestampProto, name: string)
   return p;
 }
 
-// Stub clients that return canned protos for GetByIds.
-function stubSecurityClient(canned: SecurityProto) {
-  return {
-    getByIds(_req: unknown, cb: (err: unknown, res: QuerySecurityResponseProto) => void) {
+// Stub clients that return canned protos for GetByIds. The
+// `LinkResolverOptions.{security,portfolio}Client` slots expect the full
+// generated client class; we only implement the one method LinkResolver
+// uses and assert the shape to the public client type at the injection
+// site — keeps the test typed end-to-end without re-stubbing dozens of
+// grpc.Client methods.
+function stubSecurityClient(canned: SecurityProto): SecurityClient {
+  const stub: SecurityGetByIdsOnly = {
+    getByIds(_req, cb) {
       const resp = new QuerySecurityResponseProto();
       resp.setSecurityResponseList([canned]);
       cb(null, resp);
     },
-  } as any;
+  };
+  return stub as unknown as SecurityClient;
 }
 
-function stubPortfolioClient(canned: PortfolioProto) {
-  return {
-    getByIds(_req: unknown, cb: (err: unknown, res: QueryPortfolioResponseProto) => void) {
+function stubPortfolioClient(canned: PortfolioProto): PortfolioClient {
+  const stub: PortfolioGetByIdsOnly = {
+    getByIds(_req, cb) {
       const resp = new QueryPortfolioResponseProto();
       resp.setPortfolioResponseList([canned]);
       cb(null, resp);
     },
-  } as any;
+  };
+  return stub as unknown as PortfolioClient;
+}
+
+/** Stand-in for the "other" client slot in `LinkResolverOptions` when a
+ * test only exercises one entity type — never invoked, but the option is
+ * required by the constructor. */
+function unusedSecurityClient(): SecurityClient {
+  return {
+    getByIds(): never {
+      throw new Error('unused stub: security client should not be called');
+    },
+  } as unknown as SecurityClient;
+}
+
+function unusedPortfolioClient(): PortfolioClient {
+  return {
+    getByIds(): never {
+      throw new Error('unused stub: portfolio client should not be called');
+    },
+  } as unknown as PortfolioClient;
 }
 
 beforeEach(() => {
@@ -106,7 +156,7 @@ test('Security.hydrate() fetches via the default resolver and swaps the proto', 
   const resolved = fullSecurityProto(uuid, asOf, 'FROM-RESOLVER');
   const customResolver = new LinkResolver({
     securityClient: stubSecurityClient(resolved),
-    portfolioClient: {} as any,
+    portfolioClient: unusedPortfolioClient(),
   });
   LinkResolver.setDefault(customResolver);
 
@@ -124,7 +174,7 @@ test('Security.hydrate() accepts an explicit resolver instead of the default', a
   const resolved = fullSecurityProto(uuid, asOf, 'EXPLICIT');
   const explicit = new LinkResolver({
     securityClient: stubSecurityClient(resolved),
-    portfolioClient: {} as any,
+    portfolioClient: unusedPortfolioClient(),
   });
 
   const sec = new Security(Security.linkOf(uuid, new ZonedDateTime(asOf)));
@@ -139,7 +189,7 @@ test('Portfolio.hydrate() fetches via the default resolver and swaps the proto',
   const asOf = makeAsOf(4);
   const resolved = fullPortfolioProto(uuid, asOf, 'Strategy Z');
   const customResolver = new LinkResolver({
-    securityClient: {} as any,
+    securityClient: unusedSecurityClient(),
     portfolioClient: stubPortfolioClient(resolved),
   });
   LinkResolver.setDefault(customResolver);
