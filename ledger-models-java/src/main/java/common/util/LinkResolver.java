@@ -16,6 +16,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
@@ -157,6 +158,7 @@ public class LinkResolver {
             }
             SecurityProto proto = protos.get(0);
             securityCache.set(key, proto);
+            populateSecurityLinkCache(proto);
             created.complete(proto);
             return proto;
         } finally {
@@ -190,6 +192,7 @@ public class LinkResolver {
             }
             PortfolioProto proto = protos.get(0);
             portfolioCache.set(key, proto);
+            populatePortfolioLinkCache(proto);
             created.complete(proto);
             return proto;
         } finally {
@@ -290,6 +293,7 @@ public class LinkResolver {
             for (SecurityProto p : fetched) {
                 UUID u = ProtoSerializationUtil.deserializeUUID(p.getUuid());
                 securityCache.set(cacheKey(u, asOf), p);
+                populateSecurityLinkCache(p);
             }
         }
     }
@@ -318,8 +322,31 @@ public class LinkResolver {
             for (PortfolioProto p : fetched) {
                 UUID u = ProtoSerializationUtil.deserializeUUID(p.getUuid());
                 portfolioCache.set(cacheKey(u, asOf), p);
+                populatePortfolioLinkCache(p);
             }
         }
+    }
+
+    /**
+     * Mirror a freshly-fetched SecurityProto into the process-wide
+     * {@link LinkCache#SECURITY}. This makes pre-warmed entities visible to
+     * the lazy-hydrate path on `SecurityWrapper.ensureHydrated()` — no
+     * separate cache, no extra RPC. Skips silently when the resolved proto
+     * is missing the bitemporal anchor (uuid / asOf); LinkCache requires
+     * both for newest-wins merge semantics.
+     */
+    private static void populateSecurityLinkCache(SecurityProto proto) {
+        if (proto == null || !proto.hasUuid() || !proto.hasAsOf()) return;
+        UUID uuid = ProtoSerializationUtil.deserializeUUID(proto.getUuid());
+        ZonedDateTime asOf = ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf());
+        LinkCache.SECURITY.put(uuid, proto, asOf);
+    }
+
+    private static void populatePortfolioLinkCache(PortfolioProto proto) {
+        if (proto == null || !proto.hasUuid() || !proto.hasAsOf()) return;
+        UUID uuid = ProtoSerializationUtil.deserializeUUID(proto.getUuid());
+        ZonedDateTime asOf = ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf());
+        LinkCache.PORTFOLIO.put(uuid, proto, asOf);
     }
 
     private SecurityProto lookupResolvedSecurity(SecurityProto link) {

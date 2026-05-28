@@ -16,6 +16,31 @@ import Security from '../models/security/security';
 import Portfolio from '../models/portfolio/portfolio';
 import { UUID } from '../models/utils/uuid';
 import EnvConfig from '../models/utils/requestcontext';
+import { ZonedDateTime } from '../models/utils/datetime';
+import * as LinkCacheModule from './link-cache';
+
+/**
+ * Mirror a freshly-fetched SecurityProto into the process-wide
+ * `LinkCache.SECURITY`. The lazy-hydrate `SecurityWrapper.ensureHydrated()`
+ * reads from this cache, so pre-warming via LinkResolver immediately
+ * benefits accessor reads. Skips silently when the resolved proto lacks
+ * uuid or as_of — `LinkCache.put` requires both.
+ */
+function populateSecurityLinkCache(proto: SecurityProto): void {
+  const uuidProto = proto.getUuid();
+  const asOfProto = proto.getAsOf();
+  if (!uuidProto || !asOfProto) return;
+  const uuidKey = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+  LinkCacheModule.SECURITY.put(uuidKey, proto, new ZonedDateTime(asOfProto));
+}
+
+function populatePortfolioLinkCache(proto: PortfolioProto): void {
+  const uuidProto = proto.getUuid();
+  const asOfProto = proto.getAsOf();
+  if (!uuidProto || !asOfProto) return;
+  const uuidKey = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+  LinkCacheModule.PORTFOLIO.put(uuidKey, proto, new ZonedDateTime(asOfProto));
+}
 
 /**
  * LinkResolver — bulk hydration of `is_link=true` entity references into
@@ -249,6 +274,7 @@ class LinkResolver {
           if (!uuidProto) continue;
           const uuidStr = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
           this.securityCache.set(`${uuidStr}@${bucketKey}`, proto);
+          populateSecurityLinkCache(proto);
         }
       }),
     );
@@ -303,6 +329,7 @@ class LinkResolver {
           if (!uuidProto) continue;
           const uuidStr = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
           this.portfolioCache.set(`${uuidStr}@${bucketKey}`, proto);
+          populatePortfolioLinkCache(proto);
         }
       }),
     );
@@ -346,6 +373,7 @@ class LinkResolver {
       }
       const proto = protos[0];
       this.securityCache.set(key, proto);
+      populateSecurityLinkCache(proto);
       return proto;
     }).finally(() => {
       this.securityInFlight.delete(key);
@@ -370,6 +398,7 @@ class LinkResolver {
       }
       const proto = protos[0];
       this.portfolioCache.set(key, proto);
+      populatePortfolioLinkCache(proto);
       return proto;
     }).finally(() => {
       this.portfolioInFlight.delete(key);

@@ -406,4 +406,98 @@ class LinkResolverTest {
             assertTrue(Set.of("Strategy X", "Strategy Y").contains(t.getPortfolio().getPortfolioName()));
         }
     }
+
+    // ---------- LinkCache write-through ----------
+
+    private static SecurityProto fullSecurityWithAsOf(UUID uuid, String issuer, LocalTimestampProto asOf) {
+        return SecurityProto.newBuilder()
+                .setObjectClass("Security")
+                .setVersion("0.0.1")
+                .setUuid(uuidProto(uuid))
+                .setAsOf(asOf)
+                .setIsLink(false)
+                .setIssuerName(issuer)
+                .build();
+    }
+
+    private static PortfolioProto fullPortfolioWithAsOf(UUID uuid, String name, LocalTimestampProto asOf) {
+        return PortfolioProto.newBuilder()
+                .setObjectClass("Portfolio")
+                .setVersion("0.0.1")
+                .setUuid(uuidProto(uuid))
+                .setAsOf(asOf)
+                .setIsLink(false)
+                .setPortfolioName(name)
+                .build();
+    }
+
+    @Test
+    void getSecurity_populatesLinkCache() {
+        LinkCache.SECURITY.clear();
+        UUID uuid = UUID.randomUUID();
+        LocalTimestampProto asOf = asOfAt(1_700_000_000L);
+        SecurityProto resolved = fullSecurityWithAsOf(uuid, "ACME", asOf);
+        RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(Map.of(uuid.toString(), resolved));
+        LinkResolver resolver = new LinkResolver(fetcher,
+                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); },
+                1000, 0L);
+
+        SecurityProto out = resolver.getSecurity(uuid, asOf);
+        assertEquals("ACME", out.getIssuerName());
+
+        java.time.ZonedDateTime asOfZ = protos.serializers.util.proto.ProtoSerializationUtil
+                .deserializeTimestamp(asOf);
+        SecurityProto fromLinkCache = LinkCache.SECURITY.get(uuid, asOfZ);
+        assertNotNull(fromLinkCache, "LinkCache.SECURITY must contain the resolved proto after getSecurity");
+        assertEquals("ACME", fromLinkCache.getIssuerName());
+        LinkCache.SECURITY.clear();
+    }
+
+    @Test
+    void getPortfolio_populatesLinkCache() {
+        LinkCache.PORTFOLIO.clear();
+        UUID uuid = UUID.randomUUID();
+        LocalTimestampProto asOf = asOfAt(1_700_000_001L);
+        PortfolioProto resolved = fullPortfolioWithAsOf(uuid, "Strategy Z", asOf);
+        RecordingPortfolioFetcher fetcher = new RecordingPortfolioFetcher(Map.of(uuid.toString(), resolved));
+        LinkResolver resolver = new LinkResolver(
+                req -> { throw new IllegalStateException("security fetcher should not be called"); },
+                fetcher, 1000, 0L);
+
+        PortfolioProto out = resolver.getPortfolio(uuid, asOf);
+        assertEquals("Strategy Z", out.getPortfolioName());
+
+        java.time.ZonedDateTime asOfZ = protos.serializers.util.proto.ProtoSerializationUtil
+                .deserializeTimestamp(asOf);
+        PortfolioProto fromLinkCache = LinkCache.PORTFOLIO.get(uuid, asOfZ);
+        assertNotNull(fromLinkCache, "LinkCache.PORTFOLIO must contain the resolved proto after getPortfolio");
+        assertEquals("Strategy Z", fromLinkCache.getPortfolioName());
+        LinkCache.PORTFOLIO.clear();
+    }
+
+    @Test
+    void bulkResolveSecuritiesOnTransactions_populatesLinkCache() {
+        LinkCache.SECURITY.clear();
+        UUID secUuid = UUID.randomUUID();
+        LocalTimestampProto asOf = asOfAt(1_700_000_002L);
+        SecurityProto resolved = fullSecurityWithAsOf(secUuid, "BULK", asOf);
+        RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(Map.of(secUuid.toString(), resolved));
+        LinkResolver resolver = new LinkResolver(fetcher,
+                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); },
+                1000, 0L);
+
+        TransactionProto txn = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setSecurity(linkSecurityWithAsOf(secUuid, asOf))
+                .build();
+        resolver.resolveSecuritiesOnTransactions(List.of(txn));
+
+        java.time.ZonedDateTime asOfZ = protos.serializers.util.proto.ProtoSerializationUtil
+                .deserializeTimestamp(asOf);
+        SecurityProto fromLinkCache = LinkCache.SECURITY.get(secUuid, asOfZ);
+        assertNotNull(fromLinkCache, "Bulk resolve must populate LinkCache.SECURITY");
+        assertEquals("BULK", fromLinkCache.getIssuerName());
+        LinkCache.SECURITY.clear();
+    }
 }
