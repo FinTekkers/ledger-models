@@ -83,10 +83,16 @@ public class Security {
 }
 ```
 
-### LinkCache — latest-only, keyed by UUID
+### LinkCache — single-slot per UUID, asOf-validating
+
+The cache stores **one entry per UUID** (memory-bounded), but every hit is **checked against the requested asOf** before returning. This avoids both pitfalls:
+- Storing one entry per `(uuid, asOf)` would let cache memory grow unboundedly across vintage queries.
+- Storing latest-only-by-UUID and ignoring asOf would silently return the wrong vintage on time-travel reads.
+
+`ensureHydrated()` passes both the cached entry's asOf and the requested asOf to a comparator. If the cached entry covers the requested vintage (either it IS the requested vintage, or the request is for "latest" and the cached entry is the latest known), it's a hit. Otherwise refetch from SecurityService at the requested asOf and overwrite the slot.
 
 ```java
-public final class LinkCache<V> {
+public final class LinkCache<V extends HasAsOf> {
     public static final LinkCache<SecurityProto>    SECURITY    = new LinkCache<>();
     public static final LinkCache<PortfolioProto>   PORTFOLIO   = new LinkCache<>();
     public static final LinkCache<TransactionProto> TRANSACTION = new LinkCache<>();
@@ -94,11 +100,35 @@ public final class LinkCache<V> {
 
     private final ConcurrentMap<UUID, V> map = new ConcurrentHashMap<>();
 
-    public V get(UUID id)             { return map.get(id); }
-    public void put(UUID id, V value) { map.put(id, value); }
+    /**
+     * Return cached value if its asOf matches the requested asOf, or
+     * {@code requestedAsOf == null} (treat as "latest acceptable").
+     * Otherwise return null to force a refetch.
+     */
+    public V get(UUID id, ZonedDateTime requestedAsOf) {
+        V cached = map.get(id);
+        if (cached == null) return null;
+        if (requestedAsOf == null) return cached;                  // "latest" — any cached entry is fine
+        if (cached.getAsOf().equals(requestedAsOf)) return cached; // exact vintage hit
+        return null;                                               // vintage mismatch — caller must refetch
+    }
+
+    /** Latest-or-equal write: only overwrite if the new asOf is the
+     *  same as or after the cached one. Older-vintage fetches don't
+     *  evict newer-vintage cached entries. */
+    public void put(UUID id, V value) {
+        map.merge(id, value, (existing, incoming) ->
+            existing.getAsOf().isAfter(incoming.getAsOf()) ? existing : incoming);
+    }
+
     public void evict(UUID id)        { map.remove(id); }
+    public void clear()               { map.clear(); }
 }
 ```
+
+`HasAsOf` is a small interface the generated proto types satisfy via an adapter — `SecurityProto.getAsOf()` returns a `LocalTimestampProto`; we wrap it as `ZonedDateTime`.
+
+The cache is **single-slot per UUID by design**. The "newest seen" entry stays. Vintage-precise queries that touch an older asOf will refetch every time (cache miss), which is correct — vintage queries are a minority code path and should be explicit anyway.
 
 ### Cache update on local mutation
 
@@ -114,16 +144,16 @@ public Security createOrUpdate(Security s) {
 
 Cross-process consistency is best-effort — each process's cache is independent. Acceptable for read-mostly workloads. Future work could add TTL or a pub/sub invalidation path; not required for v1.
 
-### Path split: lazy-latest vs explicit-vintage
+### Path split: lazy honors link's asOf; explicit batch is the perf path
 
-The bitemporal language in `is_link_pattern.md` said: "a link carrying `(uuid, asOf=T)` MUST resolve to the T-vintage." Lazy hydration with a latest-only cache **breaks that for the lazy path**. We accept the split:
+The bitemporal language in `is_link_pattern.md` said: "a link carrying `(uuid, asOf=T)` MUST resolve to the T-vintage." Lazy hydration honors that, by **reading the link's asOf and passing it through to the cache lookup + refetch**:
 
 | Path | Vintage |
 |---|---|
-| Lazy hydration (`security.getProductType()` on a link-mode wrapper) | **Always latest.** Cached. Use for "what is this security TODAY." |
-| Explicit `LinkResolver.resolveSecuritiesAsOf(txs, T)` | **T-vintage.** Bypasses cache. Use for backtests, point-in-time reports, time-travel queries. |
+| Lazy hydration (`security.getProductType()` on a link-mode wrapper) | **The link's asOf vintage.** Cache hit when the most-recently-seen entry matches; refetch otherwise. Never silently returns the wrong vintage. |
+| Explicit `LinkResolver.resolveSecuritiesAsOf(txs, T)` | **T-vintage.** Batch fetch. Use to pre-warm the cache before a known hot loop, or to fetch many vintages at once. |
 
-Most consumers want "latest" (UI, current positions, dispatch by `isCash`/`isBond`). The minority that need historical vintage call the explicit batch resolver and read off the wrappers it populates.
+Most consumers either want "latest" (`link.asOf == null`) or want exactly the vintage carried on the link they were handed; both are honored. The user does **not** need to "use the exact asOf to hit the cache" — they read whatever asOf the link carries, the wrapper does the right thing. Explicit batch resolve exists as a performance optimization, not a correctness requirement.
 
 ### Failure mode
 

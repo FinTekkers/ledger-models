@@ -44,12 +44,115 @@ The whole Java story lands in one PR. Reviewer sees the full shape: cache → wr
 - [ ] Same for Portfolio, Price, Transaction clients
 - [ ] Add `getLatestByUuid(UUID)` to each client if missing
 
-**Tests** — single test class per wrapper, 8 cases each:
-- [ ] `LinkCacheTest` — get-on-miss, get-after-put, overwrite, evict, singleton isolation, concurrent stress
-- [ ] `SecurityLazyHydrateTest` — getter-on-hydrated-no-fetch, getter-on-link-cache-hit, getter-on-link-fetches-on-miss, resolve-fails-throws, link-safe-accessors-don't-hydrate, isLink-false-after-hydrate, second-read-no-refetch, null-proto-throws
-- [ ] `PortfolioLazyHydrateTest`, `PriceLazyHydrateTest`, `TransactionLazyHydrateTest` — same 8 cases
-- [ ] `LinkResolverWriteThroughTest` — batch resolve populates cache; subsequent getters are cache hits
-- [ ] `ServiceClientWriteThroughTest` (one class covering all 4) — createOrUpdate populates cache; immediate read-back is cache hit
+**Tests** — one class per wrapper. Every test is **Given / When / Then** so it documents the behavior, not just the name. Mock the service stub at the boundary; assert on RPC invocation count where relevant.
+
+### A. Hydration is called on each accessor when starting from a link-mode proto
+
+The test below proves the wrapper actually hydrates on getter call — without it, lazy hydration is unverified.
+
+- [ ] **`getProductType_onLinkWrapper_invokesResolverOnce`**
+  - **Given:** a `SecurityWrapper` built from a `SecurityProto` with `is_link=true`, only `uuid` and `asOf` populated. The mock `SecurityServiceClient.getByUuid(uuid, asOf)` is set to return a full SecurityProto. The `LinkCache.SECURITY` is empty.
+  - **When:** caller invokes `wrapper.getProductType()`.
+  - **Then:** the mock service is invoked **exactly once** (verify with `verify(mockClient, times(1)).getByUuid(uuid, asOf)`), and the returned ProductTypeProto matches the resolved proto's product_type.
+
+- [ ] **`everyNonLinkSafeAccessor_invokesResolverOnLinkWrapper`** *(parameterized — one row per accessor)*
+  - **Given:** link-mode SecurityWrapper, empty cache, mock client returns a populated proto on call.
+  - **When:** caller invokes each accessor in turn — `getProductType`, `getAssetClass`, `getIssuerName`, `getDescription`, `getIdentifiers`, `getIdentifierByType(CUSIP)`, `getBondDetails`, `getMaturityDate`, `getIssueDate`, `getCouponRate`, `getFaceValue`, `isCash`, MBS/TIPS/FRN extension getters.
+  - **Then:** the first accessor triggers exactly one RPC (or one cache check then one RPC if cache is empty); each accessor returns the field from the resolved proto.
+
+- [ ] **`linkSafeAccessors_doNotInvokeResolver`**
+  - **Given:** link-mode SecurityWrapper, empty cache, mock client throws if called.
+  - **When:** caller invokes `getID`, `getAsOf`, `isLink`.
+  - **Then:** no RPC is made (`verify(mockClient, never()).getByUuid(any(), any())`); returns are correct (uuid from proto, asOf from proto, isLink=true).
+
+### B. Cache behavior — three explicit sub-tests
+
+- [ ] **B.i — `firstAccessorCall_hydratesAndPopulatesCache`**
+  - **Given:** link-mode SecurityWrapper for uuid `X`, asOf `T`. `LinkCache.SECURITY.get(X, T)` returns null. Mock client returns a full proto.
+  - **When:** caller invokes `wrapper.getProductType()`.
+  - **Then:** (1) mock client is called exactly once with `(X, T)`; (2) `LinkCache.SECURITY.get(X, T)` now returns the full proto; (3) wrapper's internal `isHydrated` is `true`.
+
+- [ ] **B.ii — `secondAccessorCallOnSameWrapper_doesNotInvokeResolverAgain`**
+  - **Given:** the wrapper from B.i, in the state after the first `getProductType()` call. Cache and internal `isHydrated` flag are populated.
+  - **When:** caller invokes `wrapper.getAssetClass()`, then `wrapper.getIssuerName()`, then `wrapper.getProductType()` again.
+  - **Then:** mock client is invoked **zero additional times** (still total of 1 across the whole test). All accessors return the right values from the in-wrapper proto.
+
+- [ ] **B.iii — `subsequentNewWrapper_sameUuidSameAsOf_hitsCache`**
+  - **Given:** the cache is populated for uuid `X` at asOf `T` (e.g., by a prior LinkResolver pre-warm or by a B.i-style first access). The mock client throws if invoked.
+  - **When:** a brand-new `SecurityWrapper(linkProtoFor(X, T))` is constructed and `wrapper.getProductType()` is invoked.
+  - **Then:** no RPC is made; cached proto is used; wrapper's `isHydrated` is `true` after the first accessor call.
+
+### C. asOf semantics — the cache honors the link's asOf
+
+- [ ] **C.i — `linkAsOfMatchesCachedAsOf_isCacheHit`**
+  - **Given:** cache has an entry for uuid `X` whose `proto.asOf == T1`. Mock client throws if invoked.
+  - **When:** caller creates a fresh wrapper from a link proto with `(uuid=X, asOf=T1)` and reads `getProductType()`.
+  - **Then:** no RPC; cached entry returned. **Cache key insight verified: matching asOf → hit.**
+
+- [ ] **C.ii — `linkAsOfDiffersFromCached_forcesRefetch`**
+  - **Given:** cache has uuid `X` at asOf `T2`. Mock client returns a different proto at asOf `T1` when called for `(X, T1)`.
+  - **When:** caller creates a wrapper from a link proto with `(uuid=X, asOf=T1)` and reads `getProductType()`.
+  - **Then:** RPC IS made (`verify(...).getByUuid(X, T1)`); the returned product_type matches the T1-vintage proto (NOT the cached T2 one); user is never silently served the wrong vintage.
+
+- [ ] **C.iii — `linkAsOfIsNull_treatsAnyCachedEntryAsLatest`**
+  - **Given:** cache has uuid `X` at asOf `T2` (whatever vintage). Mock client throws if invoked.
+  - **When:** caller creates a wrapper from a link proto with `(uuid=X, asOf=null)` (no asOf specified, meaning "latest acceptable") and reads `getProductType()`.
+  - **Then:** no RPC; cached entry returned. The asOf-null link is the "I don't care which vintage, give me whatever's cached" semantic.
+
+- [ ] **C.iv — `putOnCache_doesNotEvictNewerVintage`**
+  - **Given:** cache has uuid `X` at asOf `T2`.
+  - **When:** caller `put`s a proto for uuid `X` at asOf `T1` where `T1 < T2` (older vintage).
+  - **Then:** cache entry remains at `T2`; the older `T1` write does not displace the newer cached entry. **(This is the `put` merge logic from the ADR — single-slot semantics with newest-wins on writes.)**
+
+- [ ] **C.v — `putOnCache_overwritesOlderVintage`**
+  - **Given:** cache has uuid `X` at asOf `T1`.
+  - **When:** caller `put`s a proto for uuid `X` at asOf `T2` where `T2 > T1` (newer vintage).
+  - **Then:** cache entry is now at `T2`; the older proto is gone.
+
+### D. Resolve-failure surfaces clearly
+
+- [ ] **D.i — `getProductType_resolveReturnsNull_throwsIllegalStateException`**
+  - **Given:** link-mode wrapper, empty cache, mock client returns null.
+  - **When:** caller invokes `wrapper.getProductType()`.
+  - **Then:** throws `IllegalStateException` whose message contains the uuid in question. No sentinel value is returned.
+
+- [ ] **D.ii — `getProductType_resolveThrows_propagatesException`**
+  - **Given:** link-mode wrapper, empty cache, mock client throws gRPC `UNAVAILABLE`.
+  - **When:** caller invokes `wrapper.getProductType()`.
+  - **Then:** the gRPC exception propagates. The wrapper does not swallow or transform it into a sentinel.
+
+### E. Mutation write-through
+
+- [ ] **E.i — `createOrUpdate_populatesCache`**
+  - **Given:** `LinkCache.SECURITY` does not have uuid `X`. Mock client's `createOrUpdate` returns the persisted proto with asOf `T2`.
+  - **When:** caller invokes `SecurityServiceClient.createOrUpdate(wrapper)`.
+  - **Then:** after the call returns, `LinkCache.SECURITY.get(X, T2)` returns the persisted proto.
+
+- [ ] **E.ii — `readAfterCreateOrUpdate_hitsCache_noExtraRpc`**
+  - **Given:** the state after E.i. Mock client throws on subsequent `getByUuid` calls.
+  - **When:** caller wraps a fresh link proto for `(X, T2)` and reads `getProductType()`.
+  - **Then:** no RPC; cached proto used.
+
+### F. LinkResolver pre-warm
+
+- [ ] **F.i — `resolveSecuritiesOnTransactions_populatesCacheWithBatchEntries`**
+  - **Given:** a `List<Transaction>` with 100 transactions whose security links cover 30 distinct uuid/asOf pairs. Mock client's `getByIds` returns the 30 protos.
+  - **When:** `LinkResolver.resolveSecuritiesOnTransactions(txs)` runs.
+  - **Then:** the mock client is invoked **exactly once** (batch RPC). After the call, `LinkCache.SECURITY.get(...)` returns the resolved proto for each of the 30 keys.
+
+- [ ] **F.ii — `prewarmThenGetter_isCacheHit`**
+  - **Given:** state after F.i. Mock client throws if `getByUuid` is invoked.
+  - **When:** caller reads `txs.get(0).getSecurity().getProductType()`.
+  - **Then:** no per-getter RPC; cached proto used.
+
+### Coverage scope
+
+Each of these test cases is required for **Security**. The test classes for **Portfolio**, **Price**, and **Transaction** repeat the same 16-case suite (A through F) against their respective service mocks and `LinkCache.PORTFOLIO` / `LinkCache.PRICE` / `LinkCache.TRANSACTION`. The transaction test class adds:
+
+- [ ] **G.i — `txGetSecurity_returnsLazySecurityWrapperWhoseGettersIndependentlyHydrate`**
+  - **Given:** a Transaction with a link-mode embedded security (uuid `S`). `LinkCache.TRANSACTION` is empty; `LinkCache.SECURITY` is empty. Mock `TransactionServiceClient` returns a full Transaction proto whose embedded security is itself link-mode (uuid `S`). Mock `SecurityServiceClient` returns a full SecurityProto for `S`.
+  - **When:** caller reads `tx.getSecurity().getProductType()`.
+  - **Then:** TransactionService is called once (to hydrate the Transaction wrapper); SecurityService is called once (to hydrate the embedded Security). Each cache is populated for its respective wrapper.
 
 **Verification**
 - [ ] `./compile.sh --skip-integration` green
