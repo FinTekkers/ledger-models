@@ -94,17 +94,27 @@ The test below proves the wrapper actually hydrates on getter call — without i
   - **When:** caller creates a wrapper from a link proto with `(uuid=X, asOf=T1)` and reads `getProductType()`.
   - **Then:** RPC IS made (`verify(...).getByUuid(X, T1)`); the returned product_type matches the T1-vintage proto (NOT the cached T2 one); user is never silently served the wrong vintage.
 
-- [ ] **C.iii — `linkAsOfIsNull_treatsAnyCachedEntryAsLatest`**
-  - **Given:** cache has uuid `X` at asOf `T2` (whatever vintage). Mock client throws if invoked.
+- [ ] **C.iii — `requestedAsOfNull_withinTtl_hitsCache`**
+  - **Given:** cache has uuid `X` at asOf `T2`, cached 10 seconds ago. TTL_FOR_LATEST = 60s. Mock client throws if invoked.
   - **When:** caller creates a wrapper from a link proto with `(uuid=X, asOf=null)` (no asOf specified, meaning "latest acceptable") and reads `getProductType()`.
-  - **Then:** no RPC; cached entry returned. The asOf-null link is the "I don't care which vintage, give me whatever's cached" semantic.
+  - **Then:** within TTL → no RPC; cached entry returned. **null is the deliberate "latest acceptable" sentinel — documented at the get/set boundaries.**
 
-- [ ] **C.iv — `putOnCache_doesNotEvictNewerVintage`**
+- [ ] **C.iv — `requestedAsOfNull_pastTtl_refetches`**
+  - **Given:** cache has uuid `X` at asOf `T2`, cached 90 seconds ago. TTL = 60s. Mock client returns the current version.
+  - **When:** caller invokes `read(X, asOf=null)`.
+  - **Then:** past TTL → cache miss → service called once. Cache updated with refreshed `cachedAt`. **This closes the cross-process staleness window: a write by another process at 4:05 PM does not stay invisible forever to this process's null-asOf readers — bounded by TTL.**
+
+- [ ] **C.v — `bitemporallyPreciseRead_neverExpiresByTtl`**
+  - **Given:** cache has uuid `X` at asOf `T1`, cached 24 hours ago. Mock client throws if invoked.
+  - **When:** caller invokes `read(X, asOf=T1)` (non-null, exact match to cached vintage).
+  - **Then:** TTL does NOT apply — history doesn't change — cache hit, no RPC.
+
+- [ ] **C.vi — `putOnCache_doesNotEvictNewerVintage`**
   - **Given:** cache has uuid `X` at asOf `T2`.
   - **When:** caller `put`s a proto for uuid `X` at asOf `T1` where `T1 < T2` (older vintage).
   - **Then:** cache entry remains at `T2`; the older `T1` write does not displace the newer cached entry. **(This is the `put` merge logic from the ADR — single-slot semantics with newest-wins on writes.)**
 
-- [ ] **C.v — `putOnCache_overwritesOlderVintage`**
+- [ ] **C.vii — `putOnCache_overwritesOlderVintage`**
   - **Given:** cache has uuid `X` at asOf `T1`.
   - **When:** caller `put`s a proto for uuid `X` at asOf `T2` where `T2 > T1` (newer vintage).
   - **Then:** cache entry is now at `T2`; the older proto is gone.

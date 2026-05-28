@@ -85,11 +85,11 @@ public class Security {
 
 ### LinkCache — single-slot per UUID, asOf-validating
 
-The cache stores **one entry per UUID** (memory-bounded), but every hit is **checked against the requested asOf** before returning. This avoids both pitfalls:
-- Storing one entry per `(uuid, asOf)` would let cache memory grow unboundedly across vintage queries.
-- Storing latest-only-by-UUID and ignoring asOf would silently return the wrong vintage on time-travel reads.
+The cache stores **one entry per UUID** (memory-bounded), but every hit is **checked against the requested asOf** before returning.
 
-`ensureHydrated()` passes both the cached entry's asOf and the requested asOf to a comparator. If the cached entry covers the requested vintage (either it IS the requested vintage, or the request is for "latest" and the cached entry is the latest known), it's a hit. Otherwise refetch from SecurityService at the requested asOf and overwrite the slot.
+`requestedAsOf` is a `ZonedDateTime` parameter with two meanings:
+- **non-null** → bitemporal-precise: cache hit only when `cached.asOf == requested`. History doesn't change, so no TTL needed.
+- **null** → "latest acceptable": cache hit allowed, but **TTL applies** to bound staleness for cross-process writes that this process didn't observe.
 
 ```java
 public final class LinkCache<V extends HasAsOf> {
@@ -98,37 +98,48 @@ public final class LinkCache<V extends HasAsOf> {
     public static final LinkCache<TransactionProto> TRANSACTION = new LinkCache<>();
     public static final LinkCache<PriceProto>       PRICE       = new LinkCache<>();
 
-    private final ConcurrentMap<UUID, V> map = new ConcurrentHashMap<>();
+    private static final Duration TTL_FOR_LATEST = Duration.ofSeconds(60);
+    private final ConcurrentMap<UUID, CacheEntry<V>> map = new ConcurrentHashMap<>();
 
     /**
-     * Return cached value if its asOf matches the requested asOf, or
-     * {@code requestedAsOf == null} (treat as "latest acceptable").
-     * Otherwise return null to force a refetch.
+     * @param requestedAsOf null = "latest acceptable" (TTL-bounded);
+     *                      non-null = exact-vintage match required.
      */
     public V get(UUID id, ZonedDateTime requestedAsOf) {
-        V cached = map.get(id);
-        if (cached == null) return null;
-        if (requestedAsOf == null) return cached;                  // "latest" — any cached entry is fine
-        if (cached.getAsOf().equals(requestedAsOf)) return cached; // exact vintage hit
-        return null;                                               // vintage mismatch — caller must refetch
+        CacheEntry<V> entry = map.get(id);
+        if (entry == null) return null;
+        if (requestedAsOf == null) {
+            // "Latest" — TTL applies. Past TTL → force refetch.
+            if (Duration.between(entry.cachedAt, Instant.now()).compareTo(TTL_FOR_LATEST) > 0) {
+                return null;
+            }
+            return entry.value;
+        }
+        // Bitemporal-precise — exact match or miss. No TTL (history doesn't change).
+        return entry.value.getAsOf().equals(requestedAsOf) ? entry.value : null;
     }
 
-    /** Latest-or-equal write: only overwrite if the new asOf is the
-     *  same as or after the cached one. Older-vintage fetches don't
-     *  evict newer-vintage cached entries. */
+    /** Newest-wins write: older-vintage writes don't evict newer cached entries. */
     public void put(UUID id, V value) {
-        map.merge(id, value, (existing, incoming) ->
-            existing.getAsOf().isAfter(incoming.getAsOf()) ? existing : incoming);
+        CacheEntry<V> incoming = new CacheEntry<>(value, Instant.now());
+        map.merge(id, incoming, (existing, in) ->
+            existing.value.getAsOf().isAfter(in.value.getAsOf()) ? existing : in);
     }
 
-    public void evict(UUID id)        { map.remove(id); }
-    public void clear()               { map.clear(); }
+    public void evict(UUID id) { map.remove(id); }
+    public void clear()        { map.clear(); }
+
+    private record CacheEntry<V>(V value, Instant cachedAt) {}
 }
 ```
 
 `HasAsOf` is a small interface the generated proto types satisfy via an adapter — `SecurityProto.getAsOf()` returns a `LocalTimestampProto`; we wrap it as `ZonedDateTime`.
 
-The cache is **single-slot per UUID by design**. The "newest seen" entry stays. Vintage-precise queries that touch an older asOf will refetch every time (cache miss), which is correct — vintage queries are a minority code path and should be explicit anyway.
+The cache is **single-slot per UUID by design**. Vintage-precise queries that touch an asOf other than the most-recently-cached entry refetch every time — correct, and vintage queries are a minority code path. `null` requests are TTL-bounded to cap cross-process staleness without infra work.
+
+#### Why not a typed `AsOfSpec` sum type?
+
+Considered (sealed interface with `Latest` singleton + `AtVintage(timestamp)` record), but adds API surface across all four languages and four wrappers. For v1 we accept `null` as a deliberate sentinel meaning "latest acceptable" — documented at the get/set boundaries. If the null overloading becomes a source of bugs in practice, a typed `AsOfSpec` is a clean follow-up that doesn't change the cache mechanics, only the API.
 
 ### Cache update on local mutation
 
