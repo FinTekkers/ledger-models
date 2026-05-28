@@ -5,6 +5,7 @@ import common.models.RawDataModelObject;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.security.identifier.Identifier;
+import common.util.LinkCache;
 import fintekkers.models.security.IdentifierProto;
 import fintekkers.models.security.IdentifierTypeProto;
 import fintekkers.models.security.ProductTypeProto;
@@ -30,11 +31,33 @@ import java.util.*;
  */
 public class Security extends RawDataModelObject implements Comparable, IFinancialModelObject {
 
-    /** Original immutable baseline. */
-    private final SecurityProto proto;
+    /** Active proto. Mutable: swapped on lazy hydration. */
+    private SecurityProto proto;
 
     /** Lazy mutation overlay; {@code null} until first setter. */
     private SecurityProto.Builder overlay;
+
+    /**
+     * True iff this wrapper holds a fully-populated proto. Initialized to
+     * {@code !proto.getIsLink()} in the constructor. Flipped to {@code true}
+     * after a successful {@link #ensureHydrated()} swaps in a resolved proto.
+     */
+    private boolean isHydrated;
+
+    /**
+     * Test seam: set a fetcher that resolves a link-mode security to its
+     * full form. Default null — production wiring sets this at startup;
+     * tests pre-populate {@link LinkCache#SECURITY} instead. If null AND
+     * cache misses on a link-mode read, {@link #ensureHydrated()} throws
+     * with a clear "call LinkResolver to pre-warm" message.
+     */
+    @FunctionalInterface
+    public interface Fetcher {
+        SecurityProto fetch(java.util.UUID id, java.time.ZonedDateTime asOf);
+    }
+    private static volatile Fetcher fetcher;
+    public static void setFetcher(Fetcher f) { fetcher = f; }
+    public static Fetcher getFetcher()       { return fetcher; }
 
     /** Primary constructor — wraps a SecurityProto. */
     public Security(SecurityProto proto) {
@@ -53,13 +76,16 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         } else {
             this.proto = proto;
         }
-        // Mirror the proto's identifiers into the subclass-visible list so
+        // Link-mode protos don't carry identifiers — the mirror stays empty
+        // until ensureHydrated() swaps in a full proto. Otherwise, mirror
+        // the proto's identifiers into the subclass-visible list so
         // getIdentifiers().clear() and similar legacy mutations behave as
-        // expected. The mirror is authoritative; overlay's identifiers list
-        // is rebuilt from it on each getProto() call when mutations have
-        // occurred. See SecurityTest.testDescription.
-        for (IdentifierProto p : this.proto.getIdentifiersList()) {
-            this.identifiers.add(IdentifierSerializer.getInstance().deserialize(p));
+        // expected.
+        this.isHydrated = !this.proto.getIsLink();
+        if (this.isHydrated) {
+            for (IdentifierProto p : this.proto.getIdentifiersList()) {
+                this.identifiers.add(IdentifierSerializer.getInstance().deserialize(p));
+            }
         }
     }
 
@@ -84,6 +110,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         // SecurityProto-based primary constructor (FinTekkers/ledger-service
         // PR #65).
         this.proto = buildBaselineProto(this.getID(), issuer, asOf, settlementCurrency);
+        this.isHydrated = true;   // POJO-args constructor always builds a full proto
         for (IdentifierProto p : this.proto.getIdentifiersList()) {
             this.identifiers.add(IdentifierSerializer.getInstance().deserialize(p));
         }
@@ -297,18 +324,80 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         return false;
     }
 
-    // ---- is_link semantics ----------------------------------------------
+    // ---- is_link / lazy-hydrate semantics --------------------------------
 
+    /**
+     * True iff this wrapper currently holds a link reference (is_link=true)
+     * AND has not yet been hydrated. After {@link #ensureHydrated()} swaps
+     * in a resolved proto, this returns false (the wrapper now holds a full
+     * entity even though the original construction was from a link).
+     */
     public boolean isLink() {
-        return proto.getIsLink();
+        return proto.getIsLink() && !isHydrated;
     }
 
-    private void throwIfLink(String accessor) {
-        if (isLink()) {
-            throw new IllegalStateException(
-                    "Cannot read " + accessor + " on a link-mode Security (is_link=true). "
-                    + "Resolve via SecurityService.GetByIds first. "
-                    + "See docs/adr/is_link_pattern.md.");
+    /**
+     * If this wrapper holds an unresolved link, resolve it: cache hit first;
+     * on miss, call the configured {@link Fetcher}; on miss with no fetcher,
+     * throw. On success, swap the wrapper's internal proto and populate the
+     * identifiers mirror so subsequent accessors return real fields.
+     *
+     * <p>Callers can skip the per-getter resolution by pre-warming the
+     * {@link LinkCache#SECURITY} cache in bulk via
+     * {@code LinkResolver.resolveSecuritiesOnTransactions(txs)}. The lazy
+     * path is the fallback safety net.
+     *
+     * <p>asOf semantic: passes the link's {@code asOf} through to the cache
+     * (bitemporally precise; never returns the wrong vintage). Link with no
+     * asOf set is treated as "latest acceptable", subject to the cache's
+     * TTL bound.
+     */
+    private void ensureHydrated() {
+        if (isHydrated) return;
+
+        java.util.UUID id = getID();
+        java.time.ZonedDateTime asOf = proto.hasAsOf()
+                ? ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf())
+                : null;
+
+        SecurityProto cached = LinkCache.SECURITY.get(id, asOf);
+        if (cached != null) {
+            adoptResolvedProto(cached);
+            return;
+        }
+        Fetcher f = fetcher;
+        if (f != null) {
+            SecurityProto resolved = f.fetch(id, asOf);
+            if (resolved == null) {
+                throw new IllegalStateException(
+                        "Cannot resolve link-mode Security uuid=" + id
+                        + " asOf=" + asOf + " — SecurityService returned no record. "
+                        + "Data lineage broken.");
+            }
+            java.time.ZonedDateTime resolvedAsOf = resolved.hasAsOf()
+                    ? ProtoSerializationUtil.deserializeTimestamp(resolved.getAsOf())
+                    : (asOf != null ? asOf : java.time.ZonedDateTime.now());
+            LinkCache.SECURITY.put(id, resolved, resolvedAsOf);
+            adoptResolvedProto(resolved);
+            return;
+        }
+        throw new IllegalStateException(
+                "Cannot read fields on link-mode Security uuid=" + id
+                + " asOf=" + asOf + " — cache miss and no Security.Fetcher configured. "
+                + "Pre-warm via LinkResolver.resolveSecuritiesOnTransactions(...) "
+                + "or call Security.setFetcher(...) at startup. "
+                + "See docs/adr/lazy-link-hydration.md.");
+    }
+
+    /** Swap the wrapper's internal proto to the resolved one and rebuild the
+     *  identifiers mirror from it. */
+    private void adoptResolvedProto(SecurityProto resolved) {
+        this.proto = resolved;
+        this.isHydrated = true;
+        this.overlay = null;   // overlay was built from the link proto; reset
+        this.identifiers.clear();
+        for (IdentifierProto p : resolved.getIdentifiersList()) {
+            this.identifiers.add(IdentifierSerializer.getInstance().deserialize(p));
         }
     }
 
@@ -373,7 +462,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     // ---- Business-field accessors (proto-backed) ------------------------
 
     public CashSecurity getSettlementCurrency() {
-        throwIfLink("settlementCurrency");
+        ensureHydrated();
         SecurityProto active = getProto();
         if (!active.hasSettlementCurrency()) return null;
         SecurityProto sc = active.getSettlementCurrency();
@@ -397,12 +486,12 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     public String getIssuer() {
-        throwIfLink("issuer");
+        ensureHydrated();
         return getProto().getIssuerName();
     }
 
     public String getAssetClass() {
-        throwIfLink("assetClass");
+        ensureHydrated();
         String assetClass = getProto().getAssetClass();
         return assetClass.isEmpty() ? "Unclassified" : assetClass;
     }
@@ -420,7 +509,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     protected List<Identifier> identifiers = new ArrayList<>();
 
     public List<Identifier> getIdentifiers() {
-        throwIfLink("identifiers");
+        ensureHydrated();
         // Mirror is authoritative (populated from proto on construction and
         // mutated via addIdentifier / list.clear()). Returns the live list so
         // legacy {@code getIdentifiers().clear()} call sites still work.
@@ -428,7 +517,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     public Optional<Identifier> getIdentifierByType(IdentifierTypeProto type) {
-        throwIfLink("identifierByType");
+        ensureHydrated();
         if (type == null) return Optional.empty();
         for (Identifier id : getIdentifiers()) {
             if (id.getIdentifierType().name().equals(type.name())) {
@@ -485,7 +574,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     public ProductTypeProto getProductType() {
-        throwIfLink("productType");
+        ensureHydrated();
         ProductTypeProto pt = getProto().getProductType();
         return pt;
     }
