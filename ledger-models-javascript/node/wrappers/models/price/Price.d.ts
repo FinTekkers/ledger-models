@@ -32,6 +32,11 @@ declare class Price {
      * See docs/adr/is_link_pattern.md. Pair with LinkResolver to hydrate.
      */
     isLink(): boolean;
+    /**
+     * Lazy hydration. Cache-only — caller must pre-warm via LinkResolver.
+     * See docs/adr/lazy-link-hydration.md.
+     */
+    private ensureHydrated;
     getPrice(): Decimal;
     getPriceType(): PriceTypeProto;
     getSecurity(): Security;

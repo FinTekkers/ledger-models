@@ -1,4 +1,7 @@
 from datetime import date, datetime
+from typing import Optional
+from uuid import UUID
+
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from google.protobuf.timestamp_pb2 import Timestamp
 
@@ -15,6 +18,19 @@ from fintekkers.models.util.local_date_pb2 import LocalDateProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
+
+from fintekkers.wrappers.util import link_cache as _link_cache
+
+_transaction_fetcher = None
+
+
+def set_transaction_fetcher(fetcher) -> None:
+    """Register the resolver used when a link-mode Transaction needs to
+    hydrate and the LinkCache misses. Signature:
+    (uuid: UUID, as_of: Optional[datetime]) -> TransactionProto."""
+    global _transaction_fetcher
+    _transaction_fetcher = fetcher
+
 
 class Transaction():
     @staticmethod
@@ -60,6 +76,42 @@ class Transaction():
         """True iff this Transaction is a link reference. See
         docs/adr/is_link_pattern.md. Pair with LinkResolver to hydrate."""
         return self.proto.is_link
+
+    def _ensure_hydrated(self) -> None:
+        """Lazy hydration. See docs/adr/lazy-link-hydration.md."""
+        if not self.proto.is_link:
+            return
+        # Inline import to avoid circular dependency.
+        from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+
+        uuid_obj: UUID = ProtoSerializationUtil.deserialize(self.proto.uuid).uuid
+        as_of: Optional[datetime] = None
+        if self.proto.HasField("as_of"):
+            as_of = ProtoSerializationUtil.deserialize(self.proto.as_of)
+        cached = _link_cache.TRANSACTION.get(uuid_obj, as_of)
+        if cached is not None:
+            self.proto = cached
+            return
+        fetcher = _transaction_fetcher
+        if fetcher is None:
+            raise RuntimeError(
+                f"Cannot read fields on link-mode Transaction uuid={uuid_obj} "
+                f"— LinkCache miss and no fetcher registered. "
+                f"Pre-warm via LinkResolver or register one with "
+                f"fintekkers.wrappers.models.transaction.set_transaction_fetcher(). "
+                f"See docs/adr/lazy-link-hydration.md."
+            )
+        resolved: TransactionProto = fetcher(uuid_obj, as_of)
+        if resolved is None or resolved.is_link:
+            raise RuntimeError(
+                f"Fetcher returned no full TransactionProto for uuid={uuid_obj}, as_of={as_of}."
+            )
+        resolved_as_of: Optional[datetime] = None
+        if resolved.HasField("as_of"):
+            resolved_as_of = ProtoSerializationUtil.deserialize(resolved.as_of)
+        _link_cache.TRANSACTION.put(uuid_obj, resolved, resolved_as_of)
+        self.proto = resolved
+
 
 class TransactionType():
     def __init__(self, proto: TransactionTypeProto):

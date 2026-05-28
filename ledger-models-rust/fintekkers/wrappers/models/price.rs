@@ -1,4 +1,5 @@
 use std::hash::{Hash, Hasher};
+use std::sync::OnceLock;
 use rust_decimal::Decimal;
 
 use crate::fintekkers::models::price::PriceProto;
@@ -10,6 +11,7 @@ use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::decimal::DecimalWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
+use crate::fintekkers::wrappers::util::link_cache;
 
 //Imports below are for RawDataModelObject related macro. IDE might not complain if you remove
 //them but will fail at compile time
@@ -17,9 +19,23 @@ use prost::Message;
 use crate::fintekkers::wrappers::models::raw_datamodel_object::RawDataModelObject;
 use crate::raw_data_model_object_trait;
 
-#[derive(Clone, Default, Debug)]
+#[derive(Default, Debug)]
 pub struct PriceWrapper {
     pub proto: PriceProto,
+    /// Lazy hydration slot.
+    resolved: OnceLock<PriceProto>,
+}
+
+impl Clone for PriceWrapper {
+    fn clone(&self) -> Self {
+        // Resolved slot is not cloned — the clone will re-resolve from
+        // LinkCache on first access if proto is still link-mode. Matches
+        // SecurityWrapper semantics.
+        PriceWrapper {
+            proto: self.proto.clone(),
+            resolved: OnceLock::new(),
+        }
+    }
 }
 
 ///
@@ -47,18 +63,51 @@ pub struct PriceWrapper {
 /// one security is held in memory.
 ///
 impl PriceWrapper {
-    pub fn new(proto:PriceProto) -> Self {
-        PriceWrapper {
-            proto
-        }
+    pub fn new(proto: PriceProto) -> Self {
+        PriceWrapper { proto, resolved: OnceLock::new() }
     }
 
     pub fn uuid_wrapper(&self) -> UUIDWrapper {
         UUIDWrapper::new(self.proto.uuid.as_ref().unwrap().clone())
     }
 
+    pub fn is_link(&self) -> bool {
+        self.proto.is_link
+    }
+
+    fn active(&self) -> &PriceProto {
+        self.resolved.get().unwrap_or(&self.proto)
+    }
+
+    /// Lazy hydration — see docs/adr/lazy-link-hydration.md.
+    fn ensure_hydrated(&self) {
+        if !self.proto.is_link {
+            return;
+        }
+        if self.resolved.get().is_some() {
+            return;
+        }
+        let uuid_proto = self.proto.uuid.as_ref()
+            .expect("Cannot read fields on link-mode PriceWrapper with no UUID set");
+        let uuid_bytes: [u8; 16] = uuid_proto.raw_uuid.as_slice().try_into()
+            .expect("PriceWrapper UUID must be 16 bytes");
+        let uuid = uuid::Uuid::from_bytes(uuid_bytes);
+        let cached = link_cache::price().get(uuid, self.proto.as_of.as_ref());
+        if let Some(arc) = cached {
+            let _ = self.resolved.set((*arc).clone());
+            return;
+        }
+        panic!(
+            "Cannot read fields on link-mode PriceWrapper uuid={} \
+             — LinkCache miss. Pre-warm via LinkResolver. \
+             See docs/adr/lazy-link-hydration.md.",
+            uuid
+        );
+    }
+
     pub fn security_wrapper(&self) -> SecurityWrapper {
-        let security_proto = self.proto.security.clone().unwrap();
+        self.ensure_hydrated();
+        let security_proto = self.active().security.clone().unwrap();
         SecurityWrapper::new(security_proto)
     }
 }
@@ -201,7 +250,7 @@ impl PriceProtoBuilder {
             )
             .build().unwrap();//.expect("Could not build security");
 
-        PriceWrapper{ proto: price_proto }
+        PriceWrapper::new(price_proto)
     }
 }
 
@@ -233,5 +282,67 @@ mod test {
             .proto;
 
         assert_eq!(price_proto.object_class, "Price");
+    }
+
+    // ---- Lazy hydrate (FinTekkers/second-brain — lazy-link-hydration ADR) ----
+
+    use super::{PriceWrapper, link_cache};
+    use crate::fintekkers::models::price::PriceProto;
+    use crate::fintekkers::models::security::SecurityProto;
+    use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto, DecimalValueProto};
+    use prost_types::Timestamp;
+    use uuid::Uuid;
+
+    fn lh_make_as_of(seconds: i64) -> LocalTimestampProto {
+        LocalTimestampProto {
+            timestamp: Some(Timestamp { seconds, nanos: 0 }),
+            time_zone: "UTC".to_string(),
+        }
+    }
+
+    fn lh_full_price(uuid: Uuid, as_of: LocalTimestampProto, value: &str) -> PriceProto {
+        PriceProto {
+            object_class: "Price".to_string(),
+            version: "0.0.1".to_string(),
+            uuid: Some(UuidProto { raw_uuid: uuid.as_bytes().to_vec() }),
+            as_of: Some(as_of),
+            is_link: false,
+            price: Some(DecimalValueProto {
+                arbitrary_precision_value: value.to_string(),
+            }),
+            security: Some(SecurityProto { is_link: false, ..Default::default() }),
+            ..Default::default()
+        }
+    }
+
+    fn lh_link_price(uuid: Uuid, as_of: LocalTimestampProto) -> PriceProto {
+        PriceProto {
+            uuid: Some(UuidProto { raw_uuid: uuid.as_bytes().to_vec() }),
+            as_of: Some(as_of),
+            is_link: true,
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn lazy_price_security_wrapper_on_link_hydrates_from_cache() {
+        link_cache::price().clear();
+        let uuid = Uuid::new_v4();
+        let as_of = lh_make_as_of(1_700_000_000);
+        let resolved = lh_full_price(uuid, as_of.clone(), "9.99");
+        link_cache::price().put(uuid, resolved, Some(as_of.clone()));
+
+        let p = PriceWrapper::new(lh_link_price(uuid, as_of));
+        assert!(p.is_link());
+        let _ = p.security_wrapper();
+        link_cache::price().clear();
+    }
+
+    #[test]
+    #[should_panic(expected = "LinkCache miss")]
+    fn lazy_price_cache_miss_panics() {
+        let uuid = Uuid::new_v4();
+        let p = PriceWrapper::new(lh_link_price(uuid, lh_make_as_of(1_700_000_010)));
+        let _ = p.security_wrapper();
     }
 }

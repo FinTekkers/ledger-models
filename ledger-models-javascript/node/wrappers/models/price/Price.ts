@@ -6,6 +6,7 @@ import Security from "../security/security";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { Decimal } from "decimal.js";
+import * as LinkCacheModule from "../../util/link-cache";
 
 class Price {
     proto: PriceProto;
@@ -88,13 +89,38 @@ class Price {
         return this.proto.getIsLink();
     }
 
+    /**
+     * Lazy hydration. Cache-only — caller must pre-warm via LinkResolver.
+     * See docs/adr/lazy-link-hydration.md.
+     */
+    private ensureHydrated(): void {
+        if (!this.proto.getIsLink()) return;
+        const uuidProto = this.proto.getUuid();
+        if (!uuidProto) throw new Error("Cannot read fields on link-mode Price with no UUID set.");
+        const uuidKey = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+        const asOfProto = this.proto.getAsOf();
+        const asOf = asOfProto ? new ZonedDateTime(asOfProto) : null;
+        const cached = LinkCacheModule.PRICE.get(uuidKey, asOf);
+        if (cached) {
+            this.proto = cached;
+            return;
+        }
+        throw new Error(
+            `Cannot read fields on link-mode Price uuid=${uuidKey} `
+            + `— LinkCache miss. Pre-warm via LinkResolver. `
+            + `See docs/adr/lazy-link-hydration.md.`
+        );
+    }
+
     getPrice(): Decimal {
+        this.ensureHydrated();
         const priceValue = this.proto.getPrice();
         if (!priceValue) throw new Error("Price value is required");
         return new Decimal(priceValue.getArbitraryPrecisionValue());
     }
 
     getPriceType(): PriceTypeProto {
+        this.ensureHydrated();
         return this.proto.getPriceType();
     }
 
