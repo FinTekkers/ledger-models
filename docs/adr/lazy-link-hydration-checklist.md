@@ -4,8 +4,26 @@ Companion to [`lazy-link-hydration.md`](lazy-link-hydration.md). **5 PRs total**
 
 ## Phase 0 — Pre-execution
 
-- [ ] ADR PR #230 merged
+- [x] ADR PR #230 merged (2026-05-28)
 - [ ] Tracking issue filed in `FinTekkers/second-brain` titled "Lazy link hydration rollout" with this checklist's URL in the body. One issue total — not one per language.
+
+## Live progress (auto-updated as PRs land)
+
+| PR | What | Status |
+|---|---|---|
+| ledger-models#231 | Java partial: LinkCache + Security wrapper lazy-hydrate + cash-cache prime + Transaction strip self-prewarm + Transaction.getPrice link-aware | open 2026-05-28 |
+| ledger-service#73 | Consumer: bump ledger-models to 0.4.10-SNAPSHOT; validates **5 deterministic test fixes** + 1 bonus | draft (depends on #231) |
+| follow-up | Portfolio + Price proto-back + lazy-hydrate (still POJO today) | pending |
+| follow-up | Transaction full ensureHydrated | pending (only Price-field lazy in #231) |
+| follow-up | LinkResolver write-through to LinkCache | pending |
+| follow-up | Service-client write-through on createOrUpdate | pending |
+| ledger-models#233 | Python partial: LinkCache (python) + Security wrapper `_ensure_hydrated` + 19 new tests | open 2026-05-28 |
+| follow-up | Python Portfolio + Price + Transaction wrappers (some still not proto-backed) | pending |
+| follow-up | Python LinkResolver write-through + service-client write-through | pending |
+
+**ledger-service test suite: 25 → 19 failures with #231 merged.** The 5 deterministic failures listed below all turn green. Remaining 19 are fixture gaps, other-service-down tests, and pre-existing unrelated bugs.
+
+**ledger-models-python wrappers: 71/71 pass with #233.** No regressions; mirrors the Java partial scope.
 
 ---
 
