@@ -2,9 +2,14 @@ use crate::fintekkers::models::portfolio::PortfolioProto;
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
+use crate::fintekkers::wrappers::util::link_cache;
+use std::sync::OnceLock;
 
 pub struct PortfolioWrapper {
-    proto: PortfolioProto
+    proto: PortfolioProto,
+    /// Lazy hydration slot. Mirror of SecurityWrapper.resolved — see
+    /// docs/adr/lazy-link-hydration.md.
+    resolved: OnceLock<PortfolioProto>,
 }
 
 impl AsRef<PortfolioProto> for PortfolioWrapper {
@@ -14,14 +19,51 @@ impl AsRef<PortfolioProto> for PortfolioWrapper {
 }
 
 impl PortfolioWrapper {
-    pub fn new(proto:PortfolioProto) -> Self {
-        PortfolioWrapper {
-            proto
+    pub fn new(proto: PortfolioProto) -> Self {
+        PortfolioWrapper { proto, resolved: OnceLock::new() }
+    }
+
+    /// True iff the original wrapped proto was a link reference. Stays
+    /// reflective of the constructor-time proto even after hydration —
+    /// matches SecurityWrapper.
+    pub fn is_link(&self) -> bool {
+        self.proto.is_link
+    }
+
+    fn active(&self) -> &PortfolioProto {
+        self.resolved.get().unwrap_or(&self.proto)
+    }
+
+    /// Lazy hydration. On a link-mode proto, look up LinkCache and swap in
+    /// the resolved value. On cache miss, panics.
+    fn ensure_hydrated(&self) {
+        if !self.proto.is_link {
+            return;
         }
+        if self.resolved.get().is_some() {
+            return;
+        }
+        let uuid_proto = self.proto.uuid.as_ref()
+            .expect("Cannot read fields on link-mode PortfolioWrapper with no UUID set");
+        let uuid_bytes: [u8; 16] = uuid_proto.raw_uuid.as_slice().try_into()
+            .expect("PortfolioWrapper UUID must be 16 bytes");
+        let uuid = uuid::Uuid::from_bytes(uuid_bytes);
+        let cached = link_cache::portfolio().get(uuid, self.proto.as_of.as_ref());
+        if let Some(arc) = cached {
+            let _ = self.resolved.set((*arc).clone());
+            return;
+        }
+        panic!(
+            "Cannot read fields on link-mode PortfolioWrapper uuid={} \
+             — LinkCache miss. Pre-warm via LinkResolver. \
+             See docs/adr/lazy-link-hydration.md.",
+            uuid
+        );
     }
 
     pub fn portfolio_name(&self) -> &str {
-        &self.proto.portfolio_name
+        self.ensure_hydrated();
+        &self.active().portfolio_name
     }
 }
 
@@ -124,21 +166,75 @@ mod test {
 
     #[test]
     fn test_portfolio_name() {
-        let portfolio = PortfolioWrapper {
-            proto: PortfolioProto {
-                as_of: None,
-                valid_from: None,
-                valid_to: None,
+        let portfolio = PortfolioWrapper::new(PortfolioProto {
+            as_of: None,
+            valid_from: None,
+            valid_to: None,
 
-                object_class: "Portfolio".to_string(),
-                version: "0.01".to_string(),
-                uuid: None,
-                is_link: false,
-                portfolio_name: "Dummy Name".to_string(),
-            }
-        };
+            object_class: "Portfolio".to_string(),
+            version: "0.01".to_string(),
+            uuid: None,
+            is_link: false,
+            portfolio_name: "Dummy Name".to_string(),
+        });
 
         assert_eq!(portfolio.portfolio_name(), "Dummy Name");
+    }
+
+    // ---- Lazy hydrate (FinTekkers/second-brain — lazy-link-hydration ADR) ----
+
+    use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
+    use prost_types::Timestamp;
+    use uuid::Uuid;
+
+    fn make_as_of(seconds: i64) -> LocalTimestampProto {
+        LocalTimestampProto {
+            timestamp: Some(Timestamp { seconds, nanos: 0 }),
+            time_zone: "UTC".to_string(),
+        }
+    }
+
+    fn full_portfolio(uuid: Uuid, as_of: LocalTimestampProto, name: &str) -> PortfolioProto {
+        PortfolioProto {
+            object_class: "Portfolio".to_string(),
+            version: "0.0.1".to_string(),
+            uuid: Some(UuidProto { raw_uuid: uuid.as_bytes().to_vec() }),
+            as_of: Some(as_of),
+            is_link: false,
+            portfolio_name: name.to_string(),
+            ..Default::default()
+        }
+    }
+
+    fn link_portfolio(uuid: Uuid, as_of: LocalTimestampProto) -> PortfolioProto {
+        PortfolioProto {
+            uuid: Some(UuidProto { raw_uuid: uuid.as_bytes().to_vec() }),
+            as_of: Some(as_of),
+            is_link: true,
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn lazy_portfolio_name_on_link_hydrates_from_cache() {
+        link_cache::portfolio().clear();
+        let uuid = Uuid::new_v4();
+        let as_of = make_as_of(1_700_000_000);
+        let resolved = full_portfolio(uuid, as_of.clone(), "Strategy Z");
+        link_cache::portfolio().put(uuid, resolved, Some(as_of.clone()));
+
+        let p = PortfolioWrapper::new(link_portfolio(uuid, as_of));
+        assert!(p.is_link());
+        assert_eq!(p.portfolio_name(), "Strategy Z");
+        link_cache::portfolio().clear();
+    }
+
+    #[test]
+    #[should_panic(expected = "LinkCache miss")]
+    fn lazy_portfolio_cache_miss_panics() {
+        let uuid = Uuid::new_v4();
+        let p = PortfolioWrapper::new(link_portfolio(uuid, make_as_of(1_700_000_010)));
+        let _ = p.portfolio_name();
     }
 
     #[test]

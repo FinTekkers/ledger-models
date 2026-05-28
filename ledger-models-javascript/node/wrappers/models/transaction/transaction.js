@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -19,6 +42,7 @@ const datetime_1 = require("../utils/datetime");
 const uuid_1 = require("../utils/uuid");
 const date_1 = require("../utils/date");
 const decimal_js_1 = require("decimal.js");
+const LinkCacheModule = __importStar(require("../../util/link-cache"));
 class Transaction {
     constructor(protoOrParams) {
         if (protoOrParams instanceof transaction_pb_1.TransactionProto) {
@@ -107,6 +131,32 @@ class Transaction {
                 throw new Error(`Field not mapped in Security wrapper: ${field}`);
         }
     }
+    isLink() {
+        return this.proto.getIsLink();
+    }
+    /**
+     * Lazy hydration. On a link-mode proto, swap in the resolved proto from
+     * LinkCache. On cache miss, throws — caller must pre-warm via LinkResolver.
+     * See docs/adr/lazy-link-hydration.md.
+     */
+    ensureHydrated() {
+        if (!this.proto.getIsLink())
+            return;
+        const uuidProto = this.proto.getUuid();
+        if (!uuidProto)
+            throw new Error("Cannot read fields on link-mode Transaction with no UUID set.");
+        const uuidKey = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+        const asOfProto = this.proto.getAsOf();
+        const asOf = asOfProto ? new datetime_1.ZonedDateTime(asOfProto) : null;
+        const cached = LinkCacheModule.TRANSACTION.get(uuidKey, asOf);
+        if (cached) {
+            this.proto = cached;
+            return;
+        }
+        throw new Error(`Cannot read fields on link-mode Transaction uuid=${uuidKey} `
+            + `— LinkCache miss. Pre-warm via LinkResolver. `
+            + `See docs/adr/lazy-link-hydration.md.`);
+    }
     getID() {
         const uuid = this.proto.getUuid();
         if (!uuid)
@@ -120,30 +170,35 @@ class Transaction {
         return new datetime_1.ZonedDateTime(asOf);
     }
     getPortfolio() {
+        this.ensureHydrated();
         const portfolio = this.proto.getPortfolio();
         if (!portfolio)
             throw new Error("Portfolio is required");
         return new portfolio_1.default(portfolio);
     }
     getSecurity() {
+        this.ensureHydrated();
         const security = this.proto.getSecurity();
         if (!security)
             throw new Error("Security is required");
         return security_1.default.create(security);
     }
     getStrategyAllocation() {
+        this.ensureHydrated();
         const allocation = this.proto.getStrategyAllocation();
         if (!allocation)
             throw new Error("StrategyAllocation is required");
         return allocation;
     }
     getPrice() {
+        this.ensureHydrated();
         const price = this.proto.getPrice();
         if (!price)
             throw new Error("Price is required");
         return price;
     }
     getQuantity() {
+        this.ensureHydrated();
         const quantity = this.proto.getQuantity();
         if (!quantity)
             throw new Error("Quantity is required");
@@ -156,21 +211,27 @@ class Transaction {
         return this.getQuantity().mul(this.getTransactionType().getDirectionMultiplier());
     }
     getTradeDate() {
+        this.ensureHydrated();
         return (0, date_1.localDateProtoToDate)(this.proto.getTradeDate());
     }
     getSettlementDate() {
+        this.ensureHydrated();
         return (0, date_1.localDateProtoToDate)(this.proto.getSettlementDate());
     }
     getTransactionType() {
+        this.ensureHydrated();
         return new transaction_type_1.TransactionType(this.proto.getTransactionType());
     }
     getTradeName() {
+        this.ensureHydrated();
         return this.proto.getTradeName();
     }
     getPositionStatus() {
+        this.ensureHydrated();
         return this.proto.getPositionStatus();
     }
     getChildrenTransactions() {
+        this.ensureHydrated();
         return this.proto.getChildtransactionsList();
     }
     /**

@@ -2,6 +2,7 @@ import { PortfolioProto } from "../../../fintekkers/models/portfolio/portfolio_p
 import { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
+import * as LinkCacheModule from "../../util/link-cache";
 
 class Portfolio {
     proto: PortfolioProto;
@@ -11,7 +12,38 @@ class Portfolio {
     }
 
     toString(): string {
-        return this.getPortfolioName();
+        return this.isLink() ? `<link ${this.getID().toString()}>` : this.getPortfolioName();
+    }
+
+    isLink(): boolean {
+        return this.proto.getIsLink();
+    }
+
+    /**
+     * Lazy hydration. On a link-mode proto, swap in the resolved proto from
+     * LinkCache. On cache miss, throws — caller must pre-warm via
+     * LinkResolver. Cache-only by design (same rationale as Security wrapper:
+     * keeps the sync getter API). See docs/adr/lazy-link-hydration.md.
+     */
+    private ensureHydrated(): void {
+        if (!this.proto.getIsLink()) return;
+        const uuidProto = this.proto.getUuid();
+        if (!uuidProto) {
+            throw new Error("Cannot read fields on link-mode Portfolio with no UUID set.");
+        }
+        const uuidKey = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+        const asOfProto = this.proto.getAsOf();
+        const asOf = asOfProto ? new ZonedDateTime(asOfProto) : null;
+        const cached = LinkCacheModule.PORTFOLIO.get(uuidKey, asOf);
+        if (cached) {
+            this.proto = cached;
+            return;
+        }
+        throw new Error(
+            `Cannot read fields on link-mode Portfolio uuid=${uuidKey} `
+            + `— LinkCache miss. Pre-warm via LinkResolver. `
+            + `See docs/adr/lazy-link-hydration.md.`
+        );
     }
 
     getID(): UUID {
@@ -27,6 +59,7 @@ class Portfolio {
     }
 
     getPortfolioName(): string {
+        this.ensureHydrated();
         return this.proto.getPortfolioName();
     }
 

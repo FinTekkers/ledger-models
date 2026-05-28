@@ -18,6 +18,7 @@ import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { dateToLocalDateProto, localDateProtoToDate } from "../utils/date";
 import { Decimal } from "decimal.js";
+import * as LinkCacheModule from "../../util/link-cache";
 
 interface TransactionConstructorParams {
   tradeDate: Date;
@@ -136,6 +137,34 @@ class Transaction {
     }
   }
 
+  isLink(): boolean {
+    return this.proto.getIsLink();
+  }
+
+  /**
+   * Lazy hydration. On a link-mode proto, swap in the resolved proto from
+   * LinkCache. On cache miss, throws — caller must pre-warm via LinkResolver.
+   * See docs/adr/lazy-link-hydration.md.
+   */
+  private ensureHydrated(): void {
+    if (!this.proto.getIsLink()) return;
+    const uuidProto = this.proto.getUuid();
+    if (!uuidProto) throw new Error("Cannot read fields on link-mode Transaction with no UUID set.");
+    const uuidKey = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+    const asOfProto = this.proto.getAsOf();
+    const asOf = asOfProto ? new ZonedDateTime(asOfProto) : null;
+    const cached = LinkCacheModule.TRANSACTION.get(uuidKey, asOf);
+    if (cached) {
+      this.proto = cached;
+      return;
+    }
+    throw new Error(
+      `Cannot read fields on link-mode Transaction uuid=${uuidKey} `
+      + `— LinkCache miss. Pre-warm via LinkResolver. `
+      + `See docs/adr/lazy-link-hydration.md.`
+    );
+  }
+
   getID(): UUID {
     const uuid = this.proto.getUuid();
     if (!uuid) throw new Error("UUID is required");
@@ -149,30 +178,35 @@ class Transaction {
   }
 
   getPortfolio(): Portfolio {
+    this.ensureHydrated();
     const portfolio = this.proto.getPortfolio();
     if (!portfolio) throw new Error("Portfolio is required");
     return new Portfolio(portfolio);
   }
 
   getSecurity(): Security {
+    this.ensureHydrated();
     const security = this.proto.getSecurity();
     if (!security) throw new Error("Security is required");
     return Security.create(security);
   }
 
   getStrategyAllocation(): StrategyAllocationProto {
+    this.ensureHydrated();
     const allocation = this.proto.getStrategyAllocation();
     if (!allocation) throw new Error("StrategyAllocation is required");
     return allocation;
   }
 
   getPrice(): PriceProto {
+    this.ensureHydrated();
     const price = this.proto.getPrice();
     if (!price) throw new Error("Price is required");
     return price;
   }
 
   getQuantity(): Decimal {
+    this.ensureHydrated();
     const quantity = this.proto.getQuantity();
     if (!quantity) throw new Error("Quantity is required");
     return new Decimal(quantity.getArbitraryPrecisionValue());
@@ -187,26 +221,32 @@ class Transaction {
   }
 
   getTradeDate(): Date | null {
+    this.ensureHydrated();
     return localDateProtoToDate(this.proto.getTradeDate());
   }
 
   getSettlementDate(): Date | null {
+    this.ensureHydrated();
     return localDateProtoToDate(this.proto.getSettlementDate());
   }
 
   getTransactionType(): TransactionType {
+    this.ensureHydrated();
     return new TransactionType(this.proto.getTransactionType());
   }
 
   getTradeName(): string {
+    this.ensureHydrated();
     return this.proto.getTradeName();
   }
 
   getPositionStatus(): PositionStatusProto {
+    this.ensureHydrated();
     return this.proto.getPositionStatus();
   }
 
   getChildrenTransactions(): TransactionProto[] {
+    this.ensureHydrated();
     return this.proto.getChildtransactionsList();
   }
 

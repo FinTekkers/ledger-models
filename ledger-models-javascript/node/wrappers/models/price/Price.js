@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -11,6 +34,7 @@ const security_1 = __importDefault(require("../security/security"));
 const datetime_1 = require("../utils/datetime");
 const uuid_1 = require("../utils/uuid");
 const decimal_js_1 = require("decimal.js");
+const LinkCacheModule = __importStar(require("../../util/link-cache"));
 class Price {
     constructor(proto) {
         this.proto = proto;
@@ -75,13 +99,37 @@ class Price {
     isLink() {
         return this.proto.getIsLink();
     }
+    /**
+     * Lazy hydration. Cache-only — caller must pre-warm via LinkResolver.
+     * See docs/adr/lazy-link-hydration.md.
+     */
+    ensureHydrated() {
+        if (!this.proto.getIsLink())
+            return;
+        const uuidProto = this.proto.getUuid();
+        if (!uuidProto)
+            throw new Error("Cannot read fields on link-mode Price with no UUID set.");
+        const uuidKey = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+        const asOfProto = this.proto.getAsOf();
+        const asOf = asOfProto ? new datetime_1.ZonedDateTime(asOfProto) : null;
+        const cached = LinkCacheModule.PRICE.get(uuidKey, asOf);
+        if (cached) {
+            this.proto = cached;
+            return;
+        }
+        throw new Error(`Cannot read fields on link-mode Price uuid=${uuidKey} `
+            + `— LinkCache miss. Pre-warm via LinkResolver. `
+            + `See docs/adr/lazy-link-hydration.md.`);
+    }
     getPrice() {
+        this.ensureHydrated();
         const priceValue = this.proto.getPrice();
         if (!priceValue)
             throw new Error("Price value is required");
         return new decimal_js_1.Decimal(priceValue.getArbitraryPrecisionValue());
     }
     getPriceType() {
+        this.ensureHydrated();
         return this.proto.getPriceType();
     }
     getSecurity() {
