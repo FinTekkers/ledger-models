@@ -1014,7 +1014,10 @@ mod tests {
 
     #[tokio::test]
     async fn get_security_populates_link_cache() {
-        link_cache::security().clear();
+        // Use a fresh uuid so we don't collide with other tests that touch
+        // link_cache::security(). Targeted evict() at the end; never call
+        // .clear() — that wipes entries owned by tests running in parallel
+        // and causes spurious failures across the suite.
         let uuid = Uuid::new_v4();
         let as_of = as_of_at(1_700_000_000);
         let mut store = HashMap::new();
@@ -1030,12 +1033,13 @@ mod tests {
         let cached = link_cache::security().get(uuid, Some(&as_of));
         assert!(cached.is_some(), "link_cache::security() must contain the resolved proto");
         assert_eq!(cached.unwrap().issuer_name, "ACME");
-        link_cache::security().clear();
+        link_cache::security().evict(uuid);
     }
 
     #[tokio::test]
     async fn get_portfolio_populates_link_cache() {
-        link_cache::portfolio().clear();
+        // Fresh uuid → targeted evict() at end; do not call clear().
+        // See get_security_populates_link_cache for rationale.
         let uuid = Uuid::new_v4();
         let as_of = as_of_at(1_700_000_001);
         let mut store = HashMap::new();
@@ -1051,12 +1055,13 @@ mod tests {
         let cached = link_cache::portfolio().get(uuid, Some(&as_of));
         assert!(cached.is_some(), "link_cache::portfolio() must contain the resolved proto");
         assert_eq!(cached.unwrap().portfolio_name, "Strategy Z");
-        link_cache::portfolio().clear();
+        link_cache::portfolio().evict(uuid);
     }
 
     #[tokio::test]
     async fn bulk_resolve_securities_on_prices_populates_link_cache() {
-        link_cache::security().clear();
+        // Fresh uuid → targeted evict() at end; do not call clear().
+        // See get_security_populates_link_cache for rationale.
         let uuid = Uuid::new_v4();
         let as_of = as_of_at(1_700_000_002);
         let mut store = HashMap::new();
@@ -1072,6 +1077,6 @@ mod tests {
         let cached = link_cache::security().get(uuid, Some(&as_of));
         assert!(cached.is_some(), "bulk resolve must populate link_cache::security()");
         assert_eq!(cached.unwrap().issuer_name, "BULK");
-        link_cache::security().clear();
+        link_cache::security().evict(uuid);
     }
 }
