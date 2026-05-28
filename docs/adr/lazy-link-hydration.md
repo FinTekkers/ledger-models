@@ -197,15 +197,34 @@ Migration:
 5. `LinkResolver` updated to populate the latest-only `LinkCache` (in addition to its existing per-vintage cache).
 6. `cargo test` parity with the Java suite.
 
-**The async wrinkle.** Rust is async-first; `ensure_hydrated()` needs an RPC, which is naturally `async`. Three shapes worth picking between (open for review):
+**The async wrinkle — decision: two-getter pattern.** Rust is async-first; `ensure_hydrated()` needs an RPC, which is naturally `async`. Each non-link-safe field exposes both a sync and an async accessor:
 
-| Shape | Sync getters? | Cost |
-|---|---|---|
-| **A — `ensure_hydrated()` blocks on the runtime** (`tokio::runtime::Handle::current().block_on(...)`) | Yes | Cannot be called from inside an `async` context that holds the same runtime — would deadlock. Works for sync callers. |
-| **B — Two getter sets**: sync `product_type()` returns `Result<_, LinkNotResolved>` (cache-hit only); async `product_type_async()` does the RPC | Yes (when cache hit) | Two methods per field. Callers must handle the cache-miss `Err`. |
-| **C — Getters return `impl Future`** ; whole wrapper API becomes async | No | Cleanest async story; breaks API parity with the other languages where getters are sync. |
+```rust
+impl SecurityWrapper {
+    // Sync — cache-hit only. Returns Err if the link hasn't been resolved.
+    // Use this when the call site is pre-warming via LinkResolver (the
+    // recommended path).
+    pub fn product_type(&self) -> Result<ProductTypeProto, LinkNotResolved> {
+        let cached = self.try_from_cache_or_proto();
+        cached.ok_or(LinkNotResolved { id: self.uuid_wrapper().to_uuid() })
+            .map(|p| ProductTypeProto::try_from(p.product_type).unwrap())
+    }
 
-Recommendation: **B** — sync getter returns `Result`, async getter does the RPC. Callers that always pre-warm via `LinkResolver` (the recommended path) use the sync getter and ignore the `Err` case. Callers that want the lazy behavior call the async version. Keeps the wrapper API close to the other languages while respecting Rust's "no hidden blocking" convention.
+    // Async — does the RPC on cache miss. Use when the call site can't
+    // batch up front and needs lazy semantics.
+    pub async fn product_type_async(&self) -> Result<ProductTypeProto, ResolveError> {
+        self.ensure_hydrated().await?;
+        Ok(ProductTypeProto::try_from(self.proto.product_type).unwrap())
+    }
+}
+```
+
+Rejected alternatives:
+
+- **`block_on` inside a single sync getter** — deadlocks if called from inside the same tokio runtime. Subtle, dangerous, doesn't fit Rust's "no hidden blocking" convention.
+- **All getters return `impl Future`** — cleanest async story, but breaks API parity with the other languages and makes simple consumers (logging a CUSIP, comparing two securities by id) needlessly awkward.
+
+The two-getter pattern keeps the wrapper API close to Java / Python / TypeScript for the common case (pre-warm + sync access), provides a clean lazy escape hatch via the `_async` variant, and never blocks the runtime.
 
 ## Order of execution
 
