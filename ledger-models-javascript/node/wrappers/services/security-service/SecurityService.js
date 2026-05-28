@@ -44,6 +44,9 @@ const security_service_grpc_pb_1 = require("../../../fintekkers/services/securit
 const query_security_request_pb_1 = require("../../../fintekkers/requests/security/query_security_request_pb");
 const create_security_request_pb_1 = require("../../../fintekkers/requests/security/create_security_request_pb");
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
+const uuid_1 = require("../../models/utils/uuid");
+const datetime_1 = require("../../models/utils/datetime");
+const LinkCacheModule = __importStar(require("../../util/link-cache"));
 class SecurityService {
     constructor(apiKey) {
         if (apiKey) {
@@ -73,6 +76,18 @@ class SecurityService {
             createRequest.setSecurityInput(security);
             const createSecurityAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
             const response = yield createSecurityAsync(createRequest);
+            // Write-through to the process-wide LinkCache. Lazy-hydrate wrappers
+            // read from this cache, so a fresh persist becomes visible to subsequent
+            // accessor reads with no second RPC. See docs/adr/lazy-link-hydration.md.
+            const persisted = response.getSecurityResponse();
+            if (persisted) {
+                const uuidProto = persisted.getUuid();
+                const asOfProto = persisted.getAsOf();
+                if (uuidProto && asOfProto) {
+                    const uuidKey = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+                    LinkCacheModule.SECURITY.put(uuidKey, persisted, new datetime_1.ZonedDateTime(asOfProto));
+                }
+            }
             return response;
         });
     }

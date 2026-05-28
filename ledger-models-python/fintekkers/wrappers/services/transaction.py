@@ -22,6 +22,8 @@ from fintekkers.wrappers.requests.transaction import (
 )
 from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
 from fintekkers.wrappers.util.link_resolver import LinkResolver
+from fintekkers.wrappers.util import link_cache as _link_cache
+from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
 
 class TransactionService:
@@ -103,13 +105,22 @@ class TransactionService:
 
     def create_or_update(self, request: CreateTransactionRequest):
         try:
-            return self.stub.CreateOrUpdate(request.proto)
+            response = self.stub.CreateOrUpdate(request.proto)
         except RpcError as e:
             print(
                 f"Service unavailable trying to contact {EnvConfig.api_url()} "
                 f"({e.details()})"
             )
             raise e
+        # Write-through to LinkCache. transaction_response is a singular
+        # TransactionProto on CreateTransactionResponseProto.
+        if response is not None and response.HasField("transaction_response"):
+            persisted = response.transaction_response
+            if persisted.HasField("uuid") and persisted.HasField("as_of"):
+                uuid_obj = ProtoSerializationUtil.deserialize(persisted.uuid).uuid
+                as_of_dt = ProtoSerializationUtil.deserialize(persisted.as_of)
+                _link_cache.TRANSACTION.put(uuid_obj, persisted, as_of_dt)
+        return response
 
     def get_transaction_by_uuid(self, uuid: UUID) -> Optional[Transaction]:
         """Single-UUID GetByIds convenience. Returns None if not found."""

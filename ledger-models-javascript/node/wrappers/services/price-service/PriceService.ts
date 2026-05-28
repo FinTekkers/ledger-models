@@ -17,6 +17,7 @@ import { UUID } from '../../models/utils/uuid';
 import * as dt from '../../models/utils/datetime';
 import EnvConfig from '../../models/utils/requestcontext';
 import LinkResolver from '../../util/link-resolver';
+import * as LinkCacheModule from '../../util/link-cache';
 
 class PriceService {
   private client: PriceClient;
@@ -56,8 +57,17 @@ class PriceService {
     createRequest.setCreatePriceInput(priceProto);
 
     const createAsync = promisify(this.client.createOrUpdate.bind(this.client));
-    const response = await createAsync(createRequest);
-    return response as CreatePriceResponseProto;
+    const response = await createAsync(createRequest) as CreatePriceResponseProto;
+    // Write-through to LinkCache. price_response is a repeated field.
+    for (const persisted of response.getPriceResponseList()) {
+      const uuidProto = persisted.getUuid();
+      const asOfProto = persisted.getAsOf();
+      if (uuidProto && asOfProto) {
+        const uuidKey = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+        LinkCacheModule.PRICE.put(uuidKey, persisted, new dt.ZonedDateTime(asOfProto));
+      }
+    }
+    return response;
   }
 
   async searchPriceAsOfNow(positionFilter: PositionFilter): Promise<Price[]> {

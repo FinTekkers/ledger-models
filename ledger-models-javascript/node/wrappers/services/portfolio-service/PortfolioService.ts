@@ -16,6 +16,9 @@ import { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portf
 import EnvConfig from '../../models/utils/requestcontext';
 import { PositionFilter } from '../../models/position/positionfilter';
 import Portfolio from '../../models/portfolio/portfolio';
+import { UUID } from '../../models/utils/uuid';
+import { ZonedDateTime } from '../../models/utils/datetime';
+import * as LinkCacheModule from '../../util/link-cache';
 
 class PortfolioService {
   private client: PortfolioClient;
@@ -49,8 +52,17 @@ class PortfolioService {
     createRequest.setCreatePortfolioInput(portfolio);
 
     const createPortfolioAsync = promisify(this.client.createOrUpdate.bind(this.client));
-    const response = await createPortfolioAsync(createRequest);
-    return response as CreatePortfolioResponseProto;
+    const response = await createPortfolioAsync(createRequest) as CreatePortfolioResponseProto;
+    // Write-through to LinkCache. portfolio_response is a repeated field.
+    for (const persisted of response.getPortfolioResponseList()) {
+      const uuidProto = persisted.getUuid();
+      const asOfProto = persisted.getAsOf();
+      if (uuidProto && asOfProto) {
+        const uuidKey = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+        LinkCacheModule.PORTFOLIO.put(uuidKey, persisted, new ZonedDateTime(asOfProto));
+      }
+    }
+    return response;
   }
 
   async searchPortfolio(asOf: LocalTimestampProto,

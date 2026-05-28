@@ -27,6 +27,7 @@ from google.protobuf.empty_pb2 import Empty
 from google.protobuf.any_pb2 import Any
 from fintekkers.requests.security.get_field_values_request_pb2 import GetFieldValuesRequestProto
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+from fintekkers.wrappers.util import link_cache as _link_cache
 
 class SecurityService:
     # Singleton: the gRPC channel underlying `self.stub` is expensive to
@@ -82,7 +83,18 @@ class SecurityService:
         responses.cancel()
 
     def create_or_update(self, request: CreateSecurityRequest):
-        return self.stub.CreateOrUpdate(request.proto)
+        response = self.stub.CreateOrUpdate(request.proto)
+        # Write-through: surface the just-persisted entity to lazy-hydrate
+        # wrappers via the process-wide LinkCache. See
+        # docs/adr/lazy-link-hydration.md. Skips silently when the response
+        # lacks the bitemporal anchor LinkCache needs.
+        if response is not None and response.HasField("security_response"):
+            persisted = response.security_response
+            if persisted.HasField("uuid") and persisted.HasField("as_of"):
+                uuid_obj = ProtoSerializationUtil.deserialize(persisted.uuid).uuid
+                as_of_dt = ProtoSerializationUtil.deserialize(persisted.as_of)
+                _link_cache.SECURITY.put(uuid_obj, persisted, as_of_dt)
+        return response
 
     def validate_create_or_update(self, request: CreateSecurityRequest):
         return self.stub.ValidateCreateOrUpdate(request.proto)

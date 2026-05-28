@@ -18,6 +18,9 @@ import { CreateSecurityRequestProto } from '../../../fintekkers/requests/securit
 import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
 
 import EnvConfig from '../../models/utils/requestcontext';
+import { UUID } from '../../models/utils/uuid';
+import { ZonedDateTime } from '../../models/utils/datetime';
+import * as LinkCacheModule from '../../util/link-cache';
 
 class SecurityService {
   private client: SecurityClient;
@@ -49,8 +52,20 @@ class SecurityService {
     createRequest.setSecurityInput(security);
 
     const createSecurityAsync = promisify(this.client.createOrUpdate.bind(this.client));
-    const response = await createSecurityAsync(createRequest);
-    return response as CreateSecurityResponseProto;
+    const response = await createSecurityAsync(createRequest) as CreateSecurityResponseProto;
+    // Write-through to the process-wide LinkCache. Lazy-hydrate wrappers
+    // read from this cache, so a fresh persist becomes visible to subsequent
+    // accessor reads with no second RPC. See docs/adr/lazy-link-hydration.md.
+    const persisted = response.getSecurityResponse();
+    if (persisted) {
+      const uuidProto = persisted.getUuid();
+      const asOfProto = persisted.getAsOf();
+      if (uuidProto && asOfProto) {
+        const uuidKey = UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+        LinkCacheModule.SECURITY.put(uuidKey, persisted, new ZonedDateTime(asOfProto));
+      }
+    }
+    return response;
   }
 
   async searchSecurityAsOfNow(positionFilter: PositionFilter): Promise<Security[]> {

@@ -31,6 +31,7 @@ from fintekkers.services.portfolio_service.portfolio_service_pb2_grpc import (
 
 from fintekkers.wrappers.models.portfolio import Portfolio
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+from fintekkers.wrappers.util import link_cache as _link_cache
 from fintekkers.wrappers.requests.portfolio import (
     CreatePortfolioRequest,
     QueryPortfolioRequest,
@@ -93,7 +94,17 @@ class PortfolioService:
     def create_or_update(
         self, request: CreatePortfolioRequestProto
     ) -> Generator[Portfolio, None, None]:
-        return self.stub.CreateOrUpdate(request)
+        response = self.stub.CreateOrUpdate(request)
+        # Write-through to the process-wide LinkCache. portfolio_response is
+        # a repeated field on CreatePortfolioResponseProto, so populate each
+        # entry that carries the bitemporal anchor LinkCache needs.
+        if response is not None:
+            for persisted in response.portfolio_response:
+                if persisted.HasField("uuid") and persisted.HasField("as_of"):
+                    uuid_obj = ProtoSerializationUtil.deserialize(persisted.uuid).uuid
+                    as_of_dt = ProtoSerializationUtil.deserialize(persisted.as_of)
+                    _link_cache.PORTFOLIO.put(uuid_obj, persisted, as_of_dt)
+        return response
 
     def create_portfolio_by_name(self, portfolio_name: str) -> Portfolio:
         """
