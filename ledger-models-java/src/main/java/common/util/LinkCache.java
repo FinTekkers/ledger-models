@@ -40,8 +40,14 @@ import java.util.concurrent.ConcurrentMap;
  */
 public final class LinkCache<V> {
 
-    /** Default TTL for null-asOf reads. Bounds cross-process staleness. */
-    public static final Duration DEFAULT_TTL_FOR_LATEST = Duration.ofSeconds(60);
+    /**
+     * Default TTL for null-asOf reads. Bounds cross-process staleness.
+     *
+     * <p>Later Portfolio can likely be 1 day, security 1 day, transaction
+     * 1 minute, price 30 seconds — once per-entity TTLs are wired up, the
+     * shared singletons below should be constructed with those values.
+     */
+    public static final Duration DEFAULT_TTL_FOR_LATEST = Duration.ofSeconds(600);
 
     public static final LinkCache<SecurityProto>    SECURITY    = new LinkCache<>();
     public static final LinkCache<PortfolioProto>   PORTFOLIO   = new LinkCache<>();
