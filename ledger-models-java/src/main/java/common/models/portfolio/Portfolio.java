@@ -17,36 +17,26 @@ import java.util.Set;
 import java.util.UUID;
 
 /***
- * A Portfolio entity wrapper. Now supports the {@code is_link} lazy-hydrate
+ * A Portfolio entity wrapper. Supports the {@code is_link} lazy-hydrate
  * pattern (parity with {@code SecurityWrapper} / {@code TransactionWrapper}
  * in the other languages). A Portfolio constructed from a link-mode
  * {@link PortfolioProto} resolves to its full form via {@link LinkCache#PORTFOLIO}
  * + the registered {@link Fetcher} on the first non-link-safe accessor.
  *
- * <p>Two construction modes:
- * <ul>
- *   <li>{@link #Portfolio(UUID, String, ZonedDateTime)} — POJO ctor, kept for
- *       back-compat with existing tests and helpers. Never link-mode.</li>
- *   <li>{@link #Portfolio(PortfolioProto)} — proto-backed ctor. Honors the
- *       proto's {@code is_link} flag and lazy-hydrates on accessor read.</li>
- * </ul>
+ * <p>{@code proto} is the single source of truth — never null. The
+ * convenience POJO constructor builds a baseline proto inline from its args,
+ * mirroring {@link common.models.security.Security}'s POJO ctor.
  */
 public class Portfolio extends RawDataModelObject implements Comparable, IFinancialModelObject {
 
-    /**
-     * Lazy-cached portfolio name. Populated from the proto on hydration, or
-     * directly by the POJO ctor. Read through {@link #getPortfolioName()}
-     * which triggers {@link #ensureHydrated()} when needed.
-     */
-    private String portfolioName;
-
-    /** Active proto. Non-null when constructed via {@link #Portfolio(PortfolioProto)}; null otherwise. */
+    /** Active proto. Mutable: swapped on lazy hydration. Never null. */
     private PortfolioProto proto;
 
     /**
      * True iff this wrapper currently holds a fully-populated proto.
-     * Initialized to {@code true} for the POJO ctor; for the proto ctor,
-     * set to {@code !proto.getIsLink()}.
+     * Initialized to {@code !proto.getIsLink()} in every constructor.
+     * Flipped to {@code true} after {@link #ensureHydrated()} swaps in a
+     * resolved proto.
      */
     private boolean isHydrated;
 
@@ -76,11 +66,14 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
 
     // ---- Constructors ----
 
+    /**
+     * Convenience POJO constructor. Builds a baseline {@link PortfolioProto}
+     * inline so {@link #proto} is always non-null. Equivalent to
+     * {@code new Portfolio(PortfolioProto.newBuilder()...build())} with the
+     * fields these args cover.
+     */
     public Portfolio(UUID id, String portfolioName, ZonedDateTime asOf) {
-        super(id, asOf);
-        this.portfolioName = portfolioName;
-        this.proto = null;
-        this.isHydrated = true;
+        this(buildBaselineProto(id, portfolioName, asOf));
     }
 
     /** Primary proto-backed constructor. Honors link-mode for lazy hydration. */
@@ -89,10 +82,23 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
         Objects.requireNonNull(proto, "PortfolioProto must not be null");
         this.proto = proto;
         this.isHydrated = !proto.getIsLink();
-        if (this.isHydrated) {
-            this.portfolioName = proto.getPortfolioName();
+    }
+
+    private static PortfolioProto buildBaselineProto(UUID id, String portfolioName, ZonedDateTime asOf) {
+        PortfolioProto.Builder b = PortfolioProto.newBuilder()
+                .setObjectClass("Portfolio")
+                .setVersion("0.0.1")
+                .setIsLink(false);
+        if (id != null) {
+            b.setUuid(ProtoSerializationUtil.serializeUUID(id));
         }
-        // portfolioName stays null until ensureHydrated() swaps the proto.
+        if (asOf != null) {
+            b.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
+        }
+        if (portfolioName != null) {
+            b.setPortfolioName(portfolioName);
+        }
+        return b.build();
     }
 
     private static UUID extractId(PortfolioProto proto) {
@@ -117,20 +123,20 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
      * proto, this returns false (the wrapper now holds a full entity).
      */
     public boolean isLink() {
-        return proto != null && proto.getIsLink() && !isHydrated;
+        return proto.getIsLink() && !isHydrated;
     }
 
     /**
      * If this wrapper holds an unresolved link, resolve it: cache hit first;
      * on miss, call the configured {@link Fetcher}; on miss with no fetcher,
-     * throw. On success, swap the wrapper's internal proto and cache the
-     * portfolio_name field. Mirrors {@code SecurityWrapper.ensureHydrated()}.
+     * throw. On success, swap the wrapper's internal proto. Mirrors
+     * {@code SecurityWrapper.ensureHydrated()}.
      */
     private void ensureHydrated() {
         if (isHydrated) return;
 
         UUID id = getID();
-        ZonedDateTime asOf = (proto != null && proto.hasAsOf())
+        ZonedDateTime asOf = proto.hasAsOf()
                 ? ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf())
                 : null;
 
@@ -166,7 +172,6 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
     private void adoptResolvedProto(PortfolioProto resolved) {
         this.proto = resolved;
         this.isHydrated = true;
-        this.portfolioName = resolved.getPortfolioName();
     }
 
     // ---- Accessors ----
@@ -206,7 +211,13 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
 
     public String getPortfolioName() {
         ensureHydrated();
-        return portfolioName;
+        return proto.getPortfolioName();
+    }
+
+    /** Active proto. Returns the resolved form after lazy hydration. */
+    public PortfolioProto getProto() {
+        ensureHydrated();
+        return proto;
     }
 
     @Override
