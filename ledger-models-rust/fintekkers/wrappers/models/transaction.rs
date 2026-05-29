@@ -435,4 +435,46 @@ mod test {
         link_cache::transaction().evict(uuid);
         link_cache::transaction().evict(err_uuid);
     }
+
+    /// 16 threads concurrently call accessor on link-mode wrappers sharing
+    /// a UUID. Same contract as the Portfolio race test.
+    #[test]
+    fn race_concurrent_accessor_reads_on_shared_uuid() {
+        use std::thread;
+
+        let _serialize = FETCHER_TEST_LOCK.lock().expect("test lock poisoned");
+
+        let uuid = Uuid::new_v4();
+        let as_of = make_as_of(1_700_000_210);
+        let resolved = full_txn(uuid, as_of.clone(), "RACE-RESOLVED-TRADE");
+
+        set_transaction_fetcher(Arc::new(move |_uuid, _as_of| Ok(resolved.clone())));
+        link_cache::transaction().evict(uuid);
+
+        let link = link_txn(uuid, as_of.clone());
+        let threads_count = 16;
+        let handles: Vec<_> = (0..threads_count)
+            .map(|_| {
+                let link_clone = link.clone();
+                thread::spawn(move || {
+                    let w = TransactionWrapper::new(link_clone);
+                    w.trade_name().to_string()
+                })
+            })
+            .collect();
+        let mut seen_resolved = 0;
+        for h in handles {
+            let name = h.join().expect("thread panicked");
+            if name == "RACE-RESOLVED-TRADE" {
+                seen_resolved += 1;
+            }
+        }
+        assert_eq!(seen_resolved, threads_count);
+        let cached = link_cache::transaction().get(uuid, Some(&as_of));
+        assert!(cached.is_some());
+        assert_eq!(cached.unwrap().trade_name, "RACE-RESOLVED-TRADE");
+
+        clear_transaction_fetcher();
+        link_cache::transaction().evict(uuid);
+    }
 }

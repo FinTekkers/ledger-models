@@ -499,6 +499,51 @@ mod test {
         link_cache::portfolio().evict(err_uuid);
     }
 
+    /// 16 threads concurrently call accessor on link-mode wrappers sharing
+    /// a UUID. Contract: every thread observes "RACE-RESOLVED" with no
+    /// panics; the LinkCache ends on the resolved entry. Fetcher may be
+    /// called 1..N times — no per-key in-flight dedup at the wrapper level.
+    #[test]
+    fn race_concurrent_accessor_reads_on_shared_uuid() {
+        use std::thread;
+
+        let _serialize = FETCHER_TEST_LOCK.lock().expect("test lock poisoned");
+
+        let uuid = Uuid::new_v4();
+        let as_of = make_as_of(1_700_000_200);
+        let resolved = full_portfolio(uuid, as_of.clone(), "RACE-RESOLVED");
+
+        set_portfolio_fetcher(Arc::new(move |_uuid, _as_of| Ok(resolved.clone())));
+        link_cache::portfolio().evict(uuid);
+
+        let link = link_portfolio(uuid, as_of.clone());
+        let threads_count = 16;
+        let handles: Vec<_> = (0..threads_count)
+            .map(|_| {
+                let link_clone = link.clone();
+                thread::spawn(move || {
+                    let w = PortfolioWrapper::new(link_clone);
+                    let name = w.portfolio_name().to_string();
+                    name
+                })
+            })
+            .collect();
+        let mut seen_resolved = 0;
+        for h in handles {
+            let name = h.join().expect("thread panicked");
+            if name == "RACE-RESOLVED" {
+                seen_resolved += 1;
+            }
+        }
+        assert_eq!(seen_resolved, threads_count, "every thread must see RACE-RESOLVED");
+        let cached = link_cache::portfolio().get(uuid, Some(&as_of));
+        assert!(cached.is_some());
+        assert_eq!(cached.unwrap().portfolio_name, "RACE-RESOLVED");
+
+        clear_portfolio_fetcher();
+        link_cache::portfolio().evict(uuid);
+    }
+
     #[test]
     fn test_portfolio_builder() {
         let proto = PortfolioProtoBuilder::new()
