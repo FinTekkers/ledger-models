@@ -98,6 +98,8 @@ for (const t of txns) {
 
 If you reach for the lower-level `searchTransaction` (no hydration) instead, accessor reads on link-mode embedded securities throw — the error names the missing UUID and points you here.
 
+For a single one-off pre-warm (no batch context), `await security.hydrate()` resolves the wrapper against the process-wide `LinkResolver.getDefault()` and populates `LinkCache` as a side effect. Subsequent synchronous accessors on the same wrapper Just Work.
+
 ### Rust
 
 Same mental model as Java / Python — sync accessor reads consult `link_cache`, fall back to the registered fetcher on miss, and return the resolved field:
@@ -115,37 +117,48 @@ The `PortfolioWrapper` and `PriceWrapper` fetcher hooks are mechanical follow-up
 
 ## Caching: what to expect
 
-One cache sits between you and the network, and you can ignore it for correctness — it only affects performance and freshness. (A second internal cache lives inside `LinkResolver` today and is slated for consolidation into `LinkCache` — see the follow-up row in `docs/adr/lazy-link-hydration-checklist.md`.)
+One cache sits between you and the network, and you can ignore it for correctness — it only affects performance and freshness.
 
-### LinkCache (process-wide, the one that matters)
+### LinkCache (process-wide)
 
-A singleton per entity type: `LinkCache.SECURITY`, `LinkCache.PORTFOLIO`, `LinkCache.PRICE`, `LinkCache.TRANSACTION`. Lives for the lifetime of the process. Keyed on UUID, with the cached entry's as-of validated on read.
+A singleton per entity type: `LinkCache.SECURITY`, `LinkCache.PORTFOLIO`, `LinkCache.PRICE`, `LinkCache.TRANSACTION`. Lives for the lifetime of the process. Keyed on UUID, with the cached entry's as-of validated on read. Bounded LRU — capacity is per-entity (see below).
 
 **What writes to it**
 
-- Wrapper auto-hydration on a cache miss (Java + Python): after the Fetcher returns a resolved proto, it's put into the cache.
+- Wrapper auto-hydration on a cache miss: after the Fetcher returns a resolved proto, it's put into the cache. (Java + Python today; TypeScript via the async `hydrate()` method; Rust via `SecurityWrapper`'s sync accessor — Portfolio / Price wrappers are mechanical follow-ups.)
 - `LinkResolver.getSecurity/.getPortfolio/.resolveSecuritiesOn*`: every successful resolve writes through to the cache (added in v0.4.10 #237).
 - Service-client `createOrUpdate`: the just-persisted entity is mirrored into the cache (v0.4.10 #238 for Python + TS; Java equivalent lives in ledger-service's `SecurityAPIGRPCImpl` etc.).
 - `CashSecurity.USD` is primed at class load so the well-known cash singleton is always available.
 
 **What reads from it**
 
-- Every accessor that calls `ensureHydrated()` / `_ensure_hydrated()` on a link-mode wrapper. Hit → swap proto, return field. Miss → continue to the Fetcher (Java/Python) or throw (TS/Rust).
+- Every accessor that calls `ensureHydrated()` / `_ensure_hydrated()` on a link-mode wrapper. Hit → swap proto, return field. Miss → continue to the Fetcher.
 
 **Read semantics**
 
-- `cache.get(uuid, asOf)` with a **specific** `asOf` returns a hit only if the cached entry's as-of equals the requested. Two distinct versions of the same UUID never alias — bitemporal precision preserved.
-- `cache.get(uuid, null)` ("latest acceptable") returns a hit if the entry was cached recently enough — a TTL bounds cross-process staleness. Default TTL is 600 seconds; planned per-entity tuning is captured in `LinkCache.java` (Portfolio ~1 day, Security ~1 day, Transaction ~1 minute, Price ~30 seconds).
+- `cache.get(uuid, asOf)` with a **specific** `asOf` returns a hit only if the cached entry's as-of equals the requested. Two distinct versions of the same UUID never alias — bitemporal precision preserved. No TTL — history doesn't change, so a past vintage can be cached arbitrarily long.
+- `cache.get(uuid, null)` ("latest acceptable") returns a hit if the entry was cached recently enough — a TTL bounds cross-process staleness. Per-entity TTL / cap:
+
+  | Entity | TTL (null-asOf reads) | Max entries (LRU cap) |
+  |---|---|---|
+  | `SECURITY`    | 1 day    | 100,000 |
+  | `PORTFOLIO`   | 1 day    | 10,000  |
+  | `TRANSACTION` | 1 minute | 100,000 |
+  | `PRICE`       | 30 sec   | 200,000 |
+
+  Tuned for the typical access pattern of each entity (slow-churning entities get a long TTL; fast-churning ones get a short one).
 
 **Write semantics**
 
 Newest-as-of wins. A late-arriving write with an older as-of doesn't displace a fresher entry.
 
-### LinkResolver's internal LRU
+**Eviction**
 
-When you construct a `LinkResolver()`, it also keeps its own bounded LRU keyed on `(uuid, asOf)` and an in-flight dedup map so two concurrent calls for the same UUID share one RPC. Useful when you thread a single resolver across multiple batch calls in one request scope — otherwise the throwaway resolver's LRU is GC'd at function exit and only the LinkCache write-through survives.
+Bounded LRU. When a `put` causes the map to exceed `max_entries`, the least-recently-used entry is dropped. `get` bumps recency.
 
-Slated for consolidation into LinkCache (see the follow-up row in `docs/adr/lazy-link-hydration-checklist.md`); for now both exist and the resolver writes to both.
+### LinkResolver concurrency
+
+`LinkResolver` does not own its own cache — reads and writes route through `LinkCache` directly. What `LinkResolver` does own: an in-flight dedup map so N concurrent callers for the same `(uuid, asOf)` share one `GetByIds` RPC. (Rust currently lacks the in-flight dedup; same-key parallel calls hit the wire twice. Documented as a follow-up.)
 
 ---
 
@@ -230,9 +243,11 @@ let link = security::link_of(security_uuid, parent_as_of);
 
 You called a non-link-safe accessor (`getMaturityDate`, `getProductType`, etc.) on a wrapper whose underlying proto is `is_link=true`, and the cache had no entry for that UUID at the requested as-of.
 
-In Java/Python: also means no Fetcher is registered or the Fetcher returned null. Wire up the Fetcher at process startup. If the Fetcher is registered but the entity genuinely doesn't exist for that UUID, you have a data lineage problem — investigate why a link points at a non-existent record.
+In Java / Python / Rust (Security only): the default Fetcher should have auto-resolved this. If you still see the error, either you've cleared the default Fetcher (`Security.setFetcher(null)` or equivalent) or the entity genuinely doesn't exist for that UUID — that's a data lineage problem; investigate why a link points at a non-existent record.
 
-In TS/Rust: the caller is expected to pre-warm. Call `LinkResolver.resolveSecuritiesOn*` (or use the wrapper-service `searchWithSecurityAnd*` variants) before reading.
+In TypeScript: TS getters are synchronous and don't fire RPCs. Either pre-warm via the wrapper-service `searchWithSecurityAnd*` variants, call `LinkResolver.resolveSecuritiesOn*` explicitly, or `await wrapper.hydrate()` for a single one-off resolve.
+
+In Rust's `PortfolioWrapper` / `PriceWrapper`: the auto-fetch hook is a mechanical follow-up behind `SecurityWrapper` — pre-warm via `LinkResolver` until those land.
 
 ### "as_of required for link_of"
 
@@ -244,7 +259,7 @@ If you saw this before v0.4.10 #241: known bug — `Portfolio` and `Price` overr
 
 ### Subsequent reads are slower than they should be
 
-You might be constructing throwaway `LinkResolver` instances in tight loops. Each one allocates a fresh LRU and discards it. The process-wide `LinkCache` mitigates most of the cost (its writes survive the resolver's death), but if you're chaining many `search_with_*` calls in one request scope, instantiate one resolver and thread it through.
+`LinkResolver` is stateless apart from in-flight dedup — its cache lives in the process-wide `LinkCache`, so throwaway resolvers are fine. If you're seeing repeated RPCs for the same `(uuid, asOf)` across calls in one process, check that you're not evicting via `LinkCache.SECURITY.evict(...)` between reads (rare; mostly only test code does this) and that the cache TTL hasn't expired on a stream of null-asOf reads.
 
 ---
 
