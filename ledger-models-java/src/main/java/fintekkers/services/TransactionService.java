@@ -39,7 +39,8 @@ public class TransactionService {
 
     private static TransactionService buildDefault() {
         String url = System.getenv().getOrDefault("API_URL", "api.fintekkers.org");
-        int port = 8084;
+        // Port 8082 — ledger-service multiplexes Security / Portfolio / Transaction.
+        int port = 8082;
         boolean isHttp = "localhost".equals(url) || "127.0.0.1".equals(url);
         return new TransactionService(url, port, isHttp);
     }

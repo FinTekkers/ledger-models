@@ -143,8 +143,9 @@ async fn connect_default_portfolio_client(
     let endpoint = if url.contains(':') {
         url
     } else {
-        // PortfolioService default port matches Python ServiceType convention.
-        format!("{}:8081", url)
+        // PortfolioService runs on the ledger-service 8082 port (multiplexed
+        // with Security / Transaction). Matches Python EnvConfig.ServiceType.
+        format!("{}:8082", url)
     };
     let channel = tonic::transport::Channel::from_shared(endpoint)
         .map_err(|e| LinkResolverError::Malformed(e.to_string()))?

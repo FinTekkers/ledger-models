@@ -136,8 +136,9 @@ async fn connect_default_transaction_client(
     let endpoint = if url.contains(':') {
         url
     } else {
-        // TransactionService default port (Python ServiceType convention).
-        format!("{}:8084", url)
+        // TransactionService runs on the ledger-service 8082 port (multiplexed
+        // with Security / Portfolio).
+        format!("{}:8082", url)
     };
     let channel = tonic::transport::Channel::from_shared(endpoint)
         .map_err(|e| LinkResolverError::Malformed(e.to_string()))?

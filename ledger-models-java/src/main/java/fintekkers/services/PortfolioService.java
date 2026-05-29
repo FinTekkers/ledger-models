@@ -16,7 +16,10 @@ import java.util.Iterator;
 import java.util.UUID;
 
 public class PortfolioService {
-    private static PortfolioService DEFAULT_VALUATION_SERVICE_INSTANCE = new PortfolioService("api.fintekkers.org", 8080, false);
+    // Port 8082 matches Python EnvConfig.ServiceType.PORTFOLIO_SERVICE —
+    // Security / Portfolio / Transaction all multiplex on the ledger-service
+    // 8082 port in the deployed topology.
+    private static PortfolioService DEFAULT_VALUATION_SERVICE_INSTANCE = new PortfolioService("api.fintekkers.org", 8082, false);
     private final Endpoint endpoint;
 
     public PortfolioService(String url, int port, boolean isHttp) {
