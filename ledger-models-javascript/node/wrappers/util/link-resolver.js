@@ -38,10 +38,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const util_1 = require("util");
 const security_service_grpc_pb_1 = require("../../fintekkers/services/security-service/security_service_grpc_pb");
 const portfolio_service_grpc_pb_1 = require("../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb");
+const transaction_service_grpc_pb_1 = require("../../fintekkers/services/transaction-service/transaction_service_grpc_pb");
 const query_security_request_pb_1 = require("../../fintekkers/requests/security/query_security_request_pb");
 const query_portfolio_request_pb_1 = require("../../fintekkers/requests/portfolio/query_portfolio_request_pb");
+const query_transaction_request_pb_1 = require("../../fintekkers/requests/transaction/query_transaction_request_pb");
 const security_1 = __importDefault(require("../models/security/security"));
 const portfolio_1 = __importDefault(require("../models/portfolio/portfolio"));
+const transaction_1 = __importDefault(require("../models/transaction/transaction"));
 const uuid_1 = require("../models/utils/uuid");
 const requestcontext_1 = __importDefault(require("../models/utils/requestcontext"));
 const datetime_1 = require("../models/utils/datetime");
@@ -95,6 +98,7 @@ class LinkResolver {
         // same UUID receive that same promise.
         this.securityInFlight = new Map();
         this.portfolioInFlight = new Map();
+        this.transactionInFlight = new Map();
         if (opts.securityClient) {
             this.securityClient = opts.securityClient;
         }
@@ -114,6 +118,16 @@ class LinkResolver {
         }
         else {
             this.portfolioClient = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+        }
+        if (opts.transactionClient) {
+            this.transactionClient = opts.transactionClient;
+        }
+        else if (opts.apiKey) {
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(opts.apiKey);
+            this.transactionClient = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+        }
+        else {
+            this.transactionClient = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
         }
     }
     /**
@@ -136,6 +150,16 @@ class LinkResolver {
         return __awaiter(this, void 0, void 0, function* () {
             const proto = yield this.fetchPortfolioProto(uuid, asOf);
             return new portfolio_1.default(proto);
+        });
+    }
+    /**
+     * Resolve a single TransactionProto by UUID, optionally as of `asOf`.
+     * Cached + concurrent-deduped on (uuid, asOf).
+     */
+    getTransaction(uuid, asOf) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const proto = yield this.fetchTransactionProto(uuid, asOf);
+            return new transaction_1.default(proto);
         });
     }
     /**
@@ -267,6 +291,7 @@ class LinkResolver {
     clearCache() {
         this.securityInFlight.clear();
         this.portfolioInFlight.clear();
+        this.transactionInFlight.clear();
     }
     // ---------- internals ----------
     fetchSecurityProto(uuid, asOf) {
@@ -319,6 +344,31 @@ class LinkResolver {
             return promise;
         });
     }
+    fetchTransactionProto(uuid, asOf) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const uuidStr = uuid.toString();
+            const asOfZdt = asOfToZdt(asOf);
+            const cached = LinkCacheModule.TRANSACTION.get(uuidStr, asOfZdt);
+            if (cached)
+                return cached;
+            const key = `${uuidStr}@${asOfKey(asOf)}`;
+            const inFlight = this.transactionInFlight.get(key);
+            if (inFlight)
+                return inFlight;
+            const promise = this.batchFetchTransactions([uuid], asOf).then((protos) => {
+                if (protos.length === 0) {
+                    throw new Error(`Transaction not found: ${key}`);
+                }
+                const proto = protos[0];
+                LinkCacheModule.TRANSACTION.put(uuidStr, proto, asOfZdt);
+                return proto;
+            }).finally(() => {
+                this.transactionInFlight.delete(key);
+            });
+            this.transactionInFlight.set(key, promise);
+            return promise;
+        });
+    }
     batchFetchSecurities(uuids, asOf) {
         return __awaiter(this, void 0, void 0, function* () {
             if (uuids.length === 0)
@@ -333,6 +383,22 @@ class LinkResolver {
             const getByIdsAsync = (0, util_1.promisify)(this.securityClient.getByIds.bind(this.securityClient));
             const response = (yield getByIdsAsync(request));
             return response.getSecurityResponseList();
+        });
+    }
+    batchFetchTransactions(uuids, asOf) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (uuids.length === 0)
+                return [];
+            const request = new query_transaction_request_pb_1.QueryTransactionRequestProto();
+            request.setObjectClass('TransactionRequest');
+            request.setVersion('0.0.1');
+            const uuidProtos = uuids.map((u) => u.toUUIDProto());
+            request.setUuidsList(uuidProtos);
+            if (asOf)
+                request.setAsOf(asOf);
+            const getByIdsAsync = (0, util_1.promisify)(this.transactionClient.getByIds.bind(this.transactionClient));
+            const response = (yield getByIdsAsync(request));
+            return response.getTransactionResponseList();
         });
     }
     batchFetchPortfolios(uuids, asOf) {

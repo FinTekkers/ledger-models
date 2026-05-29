@@ -9,6 +9,7 @@ import Portfolio from "../portfolio/portfolio";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { Decimal } from "decimal.js";
+import LinkResolver from "../../util/link-resolver";
 interface TransactionConstructorParams {
     tradeDate: Date;
     settlementDate: Date;
@@ -31,8 +32,18 @@ declare class Transaction {
     getField(field: FieldProto): any;
     isLink(): boolean;
     /**
+     * Async hydration via `LinkResolver`. Mirrors `Security.hydrate()` and
+     * `Portfolio.hydrate()`. Returns `this` so it can be chained:
+     *
+     *   const t = await new Transaction(linkProto).hydrate();
+     *   console.log(t.getPortfolio().getPortfolioName());
+     */
+    hydrate(resolver?: LinkResolver): Promise<this>;
+    /**
      * Lazy hydration. On a link-mode proto, swap in the resolved proto from
-     * LinkCache. On cache miss, throws — caller must pre-warm via LinkResolver.
+     * LinkCache. On cache miss, throws — caller must pre-warm via
+     * `await transaction.hydrate()` or LinkResolver. Cache-only by design
+     * (sync getter API mirrors Security/Portfolio).
      * See docs/adr/lazy-link-hydration.md.
      */
     private ensureHydrated;

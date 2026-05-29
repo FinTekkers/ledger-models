@@ -1,5 +1,6 @@
 package fintekkers.services;
 
+import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.position.FieldMapEntry;
 import fintekkers.models.position.FieldProto;
 import fintekkers.models.position.PositionFilterProto;
@@ -8,8 +9,11 @@ import fintekkers.requests.portfolio.QueryPortfolioResponseProto;
 import fintekkers.services.portfolio_service.PortfolioGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import protos.serializers.util.proto.ProtoSerializationUtil;
 
+import java.time.ZonedDateTime;
 import java.util.Iterator;
+import java.util.UUID;
 
 public class PortfolioService {
     private static PortfolioService DEFAULT_VALUATION_SERVICE_INSTANCE = new PortfolioService("api.fintekkers.org", 8080, false);
@@ -37,6 +41,24 @@ public class PortfolioService {
 
     public Iterator<QueryPortfolioResponseProto> search(QueryPortfolioRequestProto requestProto) {
         return this.portfolioGrpc.search(requestProto);
+    }
+
+    /**
+     * Single-UUID resolution via the unary {@code GetByIds} RPC. Mirrors
+     * {@link SecurityService#getByUuid}. The default Portfolio fetcher in
+     * {@code common.models.portfolio.Portfolio.defaultGrpcFetcher} delegates here.
+     * Returns {@code null} when no record exists for the UUID.
+     */
+    public PortfolioProto getByUuid(UUID uuid, ZonedDateTime asOf) {
+        QueryPortfolioRequestProto.Builder reqB = QueryPortfolioRequestProto.newBuilder()
+                .setObjectClass("PortfolioRequest")
+                .setVersion("0.0.1")
+                .addUuIds(ProtoSerializationUtil.serializeUUID(uuid));
+        if (asOf != null) {
+            reqB.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
+        }
+        QueryPortfolioResponseProto resp = portfolioGrpc.getByIds(reqB.build());
+        return resp.getPortfolioResponseCount() > 0 ? resp.getPortfolioResponse(0) : null;
     }
 
     public static void main(String[] args) {

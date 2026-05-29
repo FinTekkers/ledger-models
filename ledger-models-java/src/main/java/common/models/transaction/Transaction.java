@@ -54,8 +54,44 @@ import static common.models.postion.Field.*;
  */
 public class Transaction extends RawDataModelObject implements ITransaction {
 
-    /** Original immutable baseline. */
-    private final TransactionProto proto;
+    /**
+     * Active proto. Mutable: swapped on lazy hydration when constructed from
+     * a link-mode {@link TransactionProto}. For non-link wrappers (the common
+     * case) this is set once in the constructor and never changes.
+     */
+    private TransactionProto proto;
+
+    /**
+     * True iff this wrapper holds a fully-populated proto. Initialized to
+     * {@code !proto.getIsLink()} in the constructor. Flipped to {@code true}
+     * after a successful {@link #ensureHydrated()} swaps in a resolved proto.
+     */
+    private boolean isHydrated;
+
+    // ---- Fetcher hook (parity with Security.Fetcher + Portfolio.Fetcher) ----
+
+    /**
+     * Test seam: set a fetcher that resolves a link-mode TransactionProto to
+     * its full form. Default delegates to {@link fintekkers.services.TransactionService};
+     * tests override with a fake.
+     */
+    @FunctionalInterface
+    public interface Fetcher {
+        TransactionProto fetch(UUID id, ZonedDateTime asOf);
+    }
+    private static volatile Fetcher fetcher = defaultGrpcFetcher();
+    public static void setFetcher(Fetcher f) { fetcher = f; }
+    public static Fetcher getFetcher()       { return fetcher; }
+
+    /**
+     * Default fetcher: delegates to {@link fintekkers.services.TransactionService#getByUuid}.
+     * Auto-registered as the {@link Fetcher} for typical deployments. Override
+     * with {@link #setFetcher(Fetcher)} for tests with canned protos or
+     * non-default endpoints.
+     */
+    static Fetcher defaultGrpcFetcher() {
+        return (uuid, asOf) -> fintekkers.services.TransactionService.getInstance().getByUuid(uuid, asOf);
+    }
 
     /**
      * Write buffer for in-place mutations. {@code null} until the first setter
@@ -113,6 +149,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         } else {
             this.proto = proto;
         }
+        this.isHydrated = !this.proto.getIsLink();
         // Hydrate child wrappers from the proto. Mutations after construction
         // go through addChildTransaction; serialize rebuilds from this list.
         for (TransactionProto childProto : this.proto.getChildTransactionsList()) {
@@ -387,9 +424,70 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return getID().equals(otherTransaction.getID()) && getAsOf().equals(otherTransaction.getAsOf());
     }
 
+    // ---- is_link / lazy-hydrate semantics ----
+
+    /**
+     * True iff this wrapper currently holds an unresolved link reference.
+     * Mirrors {@link Security#isLink} / {@link Portfolio#isLink}.
+     */
+    public boolean isLink() {
+        return proto.getIsLink() && !isHydrated;
+    }
+
+    /**
+     * If this wrapper holds an unresolved link, resolve it: cache hit first;
+     * on miss, call the configured {@link Fetcher}; on miss with no fetcher,
+     * throw. On success, swap the wrapper's internal proto to the resolved
+     * full TransactionProto. Mirrors {@code Security.ensureHydrated()}.
+     */
+    private void ensureHydrated() {
+        if (isHydrated) return;
+
+        UUID id = getID();
+        ZonedDateTime asOf = proto.hasAsOf()
+                ? ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf())
+                : null;
+
+        TransactionProto cached = common.util.LinkCache.TRANSACTION.get(id, asOf);
+        if (cached != null) {
+            adoptResolvedProto(cached);
+            return;
+        }
+        Fetcher f = fetcher;
+        if (f != null) {
+            TransactionProto resolved = f.fetch(id, asOf);
+            if (resolved == null) {
+                throw new IllegalStateException(
+                        "Cannot resolve link-mode Transaction uuid=" + id
+                        + " asOf=" + asOf + " — TransactionService returned no record. "
+                        + "Data lineage broken.");
+            }
+            ZonedDateTime resolvedAsOf = resolved.hasAsOf()
+                    ? ProtoSerializationUtil.deserializeTimestamp(resolved.getAsOf())
+                    : (asOf != null ? asOf : ZonedDateTime.now());
+            common.util.LinkCache.TRANSACTION.put(id, resolved, resolvedAsOf);
+            adoptResolvedProto(resolved);
+            return;
+        }
+        throw new IllegalStateException(
+                "Cannot read fields on link-mode Transaction uuid=" + id
+                + " asOf=" + asOf + " — cache miss and no Transaction.Fetcher configured. "
+                + "Pre-warm via LinkResolver or call Transaction.setFetcher(...) at startup. "
+                + "See docs/adr/lazy-link-hydration.md.");
+    }
+
+    private void adoptResolvedProto(TransactionProto resolved) {
+        this.proto = resolved;
+        this.isHydrated = true;
+        // Note: childTransactions list is built once at construction time and
+        // is not re-derived from a hydrated proto. A link-mode Transaction
+        // can't carry child transactions in its link form anyway.
+    }
+
     // ---- Field accessors (proto-backed) ---------------------------------
 
     private TransactionProto active() {
+        ensureHydrated();
         return (overlay != null) ? overlay.build() : proto;
     }
 

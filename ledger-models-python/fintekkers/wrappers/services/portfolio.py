@@ -1,4 +1,5 @@
-from typing import Generator
+from typing import Generator, Optional
+from uuid import UUID
 
 from grpc import RpcError
 from google.protobuf.any_pb2 import Any
@@ -11,6 +12,7 @@ from fintekkers.models.position.position_filter_pb2 import PositionFilterProto
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry
 from fintekkers.models.position import field_pb2
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
+from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.requests.portfolio.create_portfolio_request_pb2 import (
     CreatePortfolioRequestProto,
 )
@@ -105,6 +107,34 @@ class PortfolioService:
                     as_of_dt = ProtoSerializationUtil.deserialize(persisted.as_of)
                     _link_cache.PORTFOLIO.put(uuid_obj, persisted, as_of_dt)
         return response
+
+    def get_portfolio_by_uuid(
+        self, uuid: UUID, as_of: Optional[LocalTimestampProto] = None
+    ) -> Optional[Portfolio]:
+        """Single-UUID resolution via the unary GetByIds RPC. Matches the
+        shape of `SecurityService.get_security_by_uuid` — the default
+        portfolio fetcher delegates to this method.
+
+        Parameters:
+            uuid: the portfolio UUID
+            as_of: optional LocalTimestampProto; if set, returns the version
+                of the record at that timestamp. None means latest.
+
+        Returns:
+            Portfolio wrapper around the resolved PortfolioProto, or None
+            if no matching record exists.
+        """
+        request = QueryPortfolioRequestProto(
+            object_class="PortfolioRequest",
+            version="0.0.1",
+            uuIds=[UUIDProto(raw_uuid=uuid.bytes)],
+        )
+        if as_of is not None:
+            request.as_of.CopyFrom(as_of)
+        response = self.stub.GetByIds(request)
+        if len(response.portfolio_response) == 0:
+            return None
+        return Portfolio(response.portfolio_response[0])
 
     def create_portfolio_by_name(self, portfolio_name: str) -> Portfolio:
         """

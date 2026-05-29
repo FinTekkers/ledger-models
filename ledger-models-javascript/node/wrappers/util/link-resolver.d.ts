@@ -3,8 +3,10 @@ import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
 import { LocalTimestampProto } from '../../fintekkers/models/util/local_timestamp_pb';
 import { SecurityClient } from '../../fintekkers/services/security-service/security_service_grpc_pb';
 import { PortfolioClient } from '../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
+import { TransactionClient } from '../../fintekkers/services/transaction-service/transaction_service_grpc_pb';
 import Security from '../models/security/security';
 import Portfolio from '../models/portfolio/portfolio';
+import Transaction from '../models/transaction/transaction';
 import { UUID } from '../models/utils/uuid';
 /**
  * LinkResolver — bulk hydration of `is_link=true` entity references into
@@ -46,12 +48,15 @@ export interface LinkResolverOptions {
      */
     securityClient?: SecurityClient;
     portfolioClient?: PortfolioClient;
+    transactionClient?: TransactionClient;
 }
 declare class LinkResolver {
     private securityClient;
     private portfolioClient;
+    private transactionClient;
     private securityInFlight;
     private portfolioInFlight;
+    private transactionInFlight;
     /**
      * Process-wide singleton — lazily constructed with default options
      * (env-derived endpoint via `EnvConfig`). The wrapper `hydrate()`
@@ -80,6 +85,11 @@ declare class LinkResolver {
      */
     getPortfolio(uuid: UUID, asOf?: LocalTimestampProto): Promise<Portfolio>;
     /**
+     * Resolve a single TransactionProto by UUID, optionally as of `asOf`.
+     * Cached + concurrent-deduped on (uuid, asOf).
+     */
+    getTransaction(uuid: UUID, asOf?: LocalTimestampProto): Promise<Transaction>;
+    /**
      * Walk `items`, find the ones whose embedded security is `is_link=true`,
      * batch-fetch the unique (uuid, as_of) pairs (grouped by as_of so each
      * GetByIds RPC carries one timestamp), and mutate each item's proto in
@@ -101,7 +111,9 @@ declare class LinkResolver {
     clearCache(): void;
     private fetchSecurityProto;
     private fetchPortfolioProto;
+    private fetchTransactionProto;
     private batchFetchSecurities;
+    private batchFetchTransactions;
     private batchFetchPortfolios;
 }
 /**

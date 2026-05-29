@@ -1,9 +1,174 @@
 use crate::fintekkers::models::portfolio::PortfolioProto;
+use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 use crate::fintekkers::wrappers::util::link_cache;
-use std::sync::OnceLock;
+use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
+use std::sync::{Arc, OnceLock, RwLock};
+use uuid::Uuid;
+
+// ---------- Fetcher hook (parity with Java/Python/TS Portfolio fetchers) ----------
+
+/// Sync fetcher signature: "(uuid, as_of) → PortfolioProto". Mirrors
+/// [`crate::fintekkers::wrappers::models::security::SecurityFetchFn`].
+/// Closure-typed (rather than trait-typed) for the same reason — implementers
+/// just provide a function of this shape and we don't introduce a new
+/// interface that would track gRPC evolution.
+pub type PortfolioFetchFn = Arc<
+    dyn Fn(Uuid, Option<&LocalTimestampProto>) -> Result<PortfolioProto, LinkResolverError>
+        + Send
+        + Sync,
+>;
+
+static PORTFOLIO_FETCHER: OnceLock<RwLock<Option<PortfolioFetchFn>>> = OnceLock::new();
+
+fn portfolio_fetcher_slot() -> &'static RwLock<Option<PortfolioFetchFn>> {
+    PORTFOLIO_FETCHER.get_or_init(|| RwLock::new(None))
+}
+
+/// Register the fetcher used when a link-mode `PortfolioWrapper` misses the
+/// `LinkCache`. Called once at process start by the service-client layer;
+/// tests register a closure that returns canned protos.
+/// See `docs/adr/lazy-link-hydration.md`.
+pub fn set_portfolio_fetcher(fetcher: PortfolioFetchFn) {
+    *portfolio_fetcher_slot().write().unwrap() = Some(fetcher);
+}
+
+/// Test helper — clear any registered fetcher.
+pub fn clear_portfolio_fetcher() {
+    *portfolio_fetcher_slot().write().unwrap() = None;
+}
+
+fn current_portfolio_fetcher() -> Option<PortfolioFetchFn> {
+    {
+        let read = portfolio_fetcher_slot().read().unwrap();
+        if let Some(f) = read.as_ref() {
+            return Some(f.clone());
+        }
+    }
+    let mut write = portfolio_fetcher_slot().write().unwrap();
+    if write.is_none() {
+        *write = Some(default_portfolio_fetch_fn());
+    }
+    write.clone()
+}
+
+// ---------- Default gRPC fetcher ----------
+//
+// Same worker-thread + tokio runtime + mpsc bridge as SecurityWrapper —
+// the sync wrapper API calls into the worker, which owns an async
+// PortfolioClient and a tokio runtime.
+
+use crate::fintekkers::services::portfolio_service::portfolio_client::PortfolioClient;
+use crate::fintekkers::requests::portfolio::{
+    QueryPortfolioRequestProto, QueryPortfolioResponseProto,
+};
+use std::sync::mpsc;
+
+struct PortfolioFetchRequest {
+    uuid: Uuid,
+    as_of: Option<LocalTimestampProto>,
+    reply: mpsc::Sender<Result<PortfolioProto, LinkResolverError>>,
+}
+
+static PORTFOLIO_WORKER_TX: OnceLock<mpsc::Sender<PortfolioFetchRequest>> = OnceLock::new();
+
+fn portfolio_worker_tx() -> mpsc::Sender<PortfolioFetchRequest> {
+    PORTFOLIO_WORKER_TX
+        .get_or_init(spawn_portfolio_worker)
+        .clone()
+}
+
+fn spawn_portfolio_worker() -> mpsc::Sender<PortfolioFetchRequest> {
+    let (tx, rx) = mpsc::channel::<PortfolioFetchRequest>();
+    std::thread::Builder::new()
+        .name("portfolio-fetcher".into())
+        .spawn(move || {
+            let rt = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(1)
+                .enable_all()
+                .build()
+                .expect("failed to build default portfolio-fetcher runtime");
+            rt.block_on(async move {
+                let mut client: Option<PortfolioClient<tonic::transport::Channel>> = None;
+                while let Ok(req) = rx.recv() {
+                    let client_ref = match &mut client {
+                        Some(c) => c,
+                        None => {
+                            match connect_default_portfolio_client().await {
+                                Ok(c) => {
+                                    client = Some(c);
+                                    client.as_mut().unwrap()
+                                }
+                                Err(e) => {
+                                    let _ = req.reply.send(Err(e));
+                                    continue;
+                                }
+                            }
+                        }
+                    };
+                    let request = QueryPortfolioRequestProto {
+                        object_class: "PortfolioRequest".into(),
+                        version: "0.0.1".into(),
+                        uu_ids: vec![UuidProto { raw_uuid: req.uuid.as_bytes().to_vec() }],
+                        as_of: req.as_of,
+                        ..Default::default()
+                    };
+                    let result: Result<PortfolioProto, LinkResolverError> = client_ref
+                        .get_by_ids(request)
+                        .await
+                        .map_err(LinkResolverError::Rpc)
+                        .and_then(|resp: tonic::Response<QueryPortfolioResponseProto>| {
+                            resp.into_inner()
+                                .portfolio_response
+                                .into_iter()
+                                .next()
+                                .ok_or(LinkResolverError::NotFound {
+                                    uuid: req.uuid,
+                                    as_of_bucket: "latest".to_string(),
+                                })
+                        });
+                    let _ = req.reply.send(result);
+                }
+            });
+        })
+        .expect("failed to spawn portfolio-fetcher worker");
+    tx
+}
+
+async fn connect_default_portfolio_client(
+) -> Result<PortfolioClient<tonic::transport::Channel>, LinkResolverError> {
+    let url = std::env::var("API_URL").unwrap_or_else(|_| "http://api.fintekkers.org".to_string());
+    let endpoint = if url.contains(':') {
+        url
+    } else {
+        // PortfolioService default port matches Python ServiceType convention.
+        format!("{}:8081", url)
+    };
+    let channel = tonic::transport::Channel::from_shared(endpoint)
+        .map_err(|e| LinkResolverError::Malformed(e.to_string()))?
+        .connect()
+        .await
+        .map_err(|e| LinkResolverError::Malformed(e.to_string()))?;
+    Ok(PortfolioClient::new(channel))
+}
+
+fn default_portfolio_fetch_fn() -> PortfolioFetchFn {
+    Arc::new(|uuid, as_of| {
+        let (reply_tx, reply_rx) = mpsc::channel();
+        portfolio_worker_tx()
+            .send(PortfolioFetchRequest {
+                uuid,
+                as_of: as_of.cloned(),
+                reply: reply_tx,
+            })
+            .map_err(|e| LinkResolverError::Malformed(format!("fetcher worker gone: {}", e)))?;
+        reply_rx
+            .recv()
+            .map_err(|e| LinkResolverError::Malformed(format!("fetcher worker hung up: {}", e)))?
+    })
+}
 
 pub struct PortfolioWrapper {
     proto: PortfolioProto,
@@ -34,8 +199,12 @@ impl PortfolioWrapper {
         self.resolved.get().unwrap_or(&self.proto)
     }
 
-    /// Lazy hydration. On a link-mode proto, look up LinkCache and swap in
-    /// the resolved value. On cache miss, panics.
+    /// Lazy hydration. On a link-mode proto, look up the LinkCache first;
+    /// on a miss, fall back to the registered fetcher (see
+    /// [`set_portfolio_fetcher`]) and write through to the cache. Mirrors
+    /// `SecurityWrapper::ensure_hydrated`. Panics only when both paths are
+    /// exhausted (cache empty AND no fetcher registered), which is a
+    /// deployment bug.
     fn ensure_hydrated(&self) {
         if !self.proto.is_link {
             return;
@@ -48,14 +217,37 @@ impl PortfolioWrapper {
         let uuid_bytes: [u8; 16] = uuid_proto.raw_uuid.as_slice().try_into()
             .expect("PortfolioWrapper UUID must be 16 bytes");
         let uuid = uuid::Uuid::from_bytes(uuid_bytes);
-        let cached = link_cache::portfolio().get(uuid, self.proto.as_of.as_ref());
-        if let Some(arc) = cached {
+        let as_of = self.proto.as_of.as_ref();
+
+        // 1. Cache hit?
+        if let Some(arc) = link_cache::portfolio().get(uuid, as_of) {
             let _ = self.resolved.set((*arc).clone());
             return;
         }
+
+        // 2. Fetcher fallback.
+        if let Some(fetcher) = current_portfolio_fetcher() {
+            match fetcher(uuid, as_of) {
+                Ok(resolved) => {
+                    let resolved_as_of = resolved.as_of.clone().or_else(|| as_of.cloned());
+                    link_cache::portfolio().put(uuid, resolved.clone(), resolved_as_of);
+                    let _ = self.resolved.set(resolved);
+                    return;
+                }
+                Err(e) => panic!(
+                    "Cannot read fields on link-mode PortfolioWrapper uuid={} \
+                     — fetcher returned error: {}. See docs/adr/lazy-link-hydration.md.",
+                    uuid, e
+                ),
+            }
+        }
+
+        // 3. No cache, no fetcher.
         panic!(
             "Cannot read fields on link-mode PortfolioWrapper uuid={} \
-             — LinkCache miss. Pre-warm via LinkResolver. \
+             — LinkCache miss and no fetcher registered. \
+             Call portfolio::set_portfolio_fetcher(...) at process start, \
+             or pre-warm via LinkResolver. \
              See docs/adr/lazy-link-hydration.md.",
             uuid
         );
@@ -230,12 +422,126 @@ mod test {
         link_cache::portfolio().evict(uuid);
     }
 
+    // ---- Fetcher path (parity with SecurityWrapper's lazy_e tests) ----
+    use super::{set_portfolio_fetcher, clear_portfolio_fetcher};
+    use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
+    use std::sync::{Arc, Mutex};
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    /// Single-threaded gate for fetcher-path tests. Mirrors
+    /// `FETCHER_TEST_LOCK` in security.rs.
+    static FETCHER_TEST_LOCK: Mutex<()> = Mutex::new(());
+
     #[test]
-    #[should_panic(expected = "LinkCache miss")]
-    fn lazy_portfolio_cache_miss_panics() {
+    fn lazy_e_cache_miss_calls_fetcher_then_writes_through_then_error_panics() {
+        // Mirrors the SecurityWrapper happy-path + error-path test. Two
+        // sub-assertions in one test to avoid the global-fetcher-slot race
+        // between parallel #[test] cases. Never call clear() on
+        // link_cache::portfolio() — wipes parallel tests' entries.
+        use std::panic;
+
+        let _serialize = FETCHER_TEST_LOCK.lock().expect("test lock poisoned");
+
+        // ---- Sub-assertion 1: happy path ----
         let uuid = Uuid::new_v4();
-        let p = PortfolioWrapper::new(link_portfolio(uuid, make_as_of(1_700_000_010)));
-        let _ = p.portfolio_name();
+        let as_of = make_as_of(1_700_000_040);
+        let resolved = full_portfolio(uuid, as_of.clone(), "FROM-FETCHER");
+        let calls = Arc::new(AtomicUsize::new(0));
+        let calls_inner = calls.clone();
+        set_portfolio_fetcher(Arc::new(move |_uuid, _as_of| {
+            calls_inner.fetch_add(1, Ordering::SeqCst);
+            Ok(resolved.clone())
+        }));
+
+        let wrapper = PortfolioWrapper::new(link_portfolio(uuid, as_of.clone()));
+        assert_eq!(wrapper.portfolio_name(), "FROM-FETCHER");
+        assert_eq!(calls.load(Ordering::SeqCst), 1);
+
+        let cached = link_cache::portfolio().get(uuid, Some(&as_of));
+        assert!(cached.is_some(), "fetcher must write-through to LinkCache");
+
+        let wrapper2 = PortfolioWrapper::new(link_portfolio(uuid, as_of.clone()));
+        assert_eq!(wrapper2.portfolio_name(), "FROM-FETCHER");
+        assert_eq!(
+            calls.load(Ordering::SeqCst),
+            1,
+            "second read must hit cache, not refetch"
+        );
+
+        // ---- Sub-assertion 2: error path ----
+        set_portfolio_fetcher(Arc::new(|uuid, _as_of| {
+            Err(LinkResolverError::NotFound {
+                uuid,
+                as_of_bucket: "latest".to_string(),
+            })
+        }));
+        let err_uuid = Uuid::new_v4();
+        let wrapper_err = PortfolioWrapper::new(link_portfolio(err_uuid, make_as_of(1_700_000_050)));
+        let panic_result = panic::catch_unwind(panic::AssertUnwindSafe(|| {
+            let _ = wrapper_err.portfolio_name();
+        }));
+        assert!(panic_result.is_err(), "accessor read must panic on fetcher error");
+        let panic_msg = panic_result
+            .err()
+            .and_then(|e| {
+                e.downcast_ref::<String>().cloned().or_else(|| {
+                    e.downcast_ref::<&str>().map(|s| s.to_string())
+                })
+            })
+            .unwrap_or_default();
+        assert!(
+            panic_msg.contains("fetcher returned error"),
+            "panic message should include 'fetcher returned error', got: {panic_msg}"
+        );
+
+        clear_portfolio_fetcher();
+        link_cache::portfolio().evict(uuid);
+        link_cache::portfolio().evict(err_uuid);
+    }
+
+    /// 16 threads concurrently call accessor on link-mode wrappers sharing
+    /// a UUID. Contract: every thread observes "RACE-RESOLVED" with no
+    /// panics; the LinkCache ends on the resolved entry. Fetcher may be
+    /// called 1..N times — no per-key in-flight dedup at the wrapper level.
+    #[test]
+    fn race_concurrent_accessor_reads_on_shared_uuid() {
+        use std::thread;
+
+        let _serialize = FETCHER_TEST_LOCK.lock().expect("test lock poisoned");
+
+        let uuid = Uuid::new_v4();
+        let as_of = make_as_of(1_700_000_200);
+        let resolved = full_portfolio(uuid, as_of.clone(), "RACE-RESOLVED");
+
+        set_portfolio_fetcher(Arc::new(move |_uuid, _as_of| Ok(resolved.clone())));
+        link_cache::portfolio().evict(uuid);
+
+        let link = link_portfolio(uuid, as_of.clone());
+        let threads_count = 16;
+        let handles: Vec<_> = (0..threads_count)
+            .map(|_| {
+                let link_clone = link.clone();
+                thread::spawn(move || {
+                    let w = PortfolioWrapper::new(link_clone);
+                    let name = w.portfolio_name().to_string();
+                    name
+                })
+            })
+            .collect();
+        let mut seen_resolved = 0;
+        for h in handles {
+            let name = h.join().expect("thread panicked");
+            if name == "RACE-RESOLVED" {
+                seen_resolved += 1;
+            }
+        }
+        assert_eq!(seen_resolved, threads_count, "every thread must see RACE-RESOLVED");
+        let cached = link_cache::portfolio().get(uuid, Some(&as_of));
+        assert!(cached.is_some());
+        assert_eq!(cached.unwrap().portfolio_name, "RACE-RESOLVED");
+
+        clear_portfolio_fetcher();
+        link_cache::portfolio().evict(uuid);
     }
 
     #[test]
