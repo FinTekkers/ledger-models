@@ -99,15 +99,18 @@ def _safe_collect(generator, accessor, limit: int) -> List[UUID]:
 
 def _pg_uuids(table: str, limit: int) -> List[UUID]:
     """Direct postgres fallback. The search RPCs require filters that aren't
-    universally seeded; reading primary keys directly always works for a bench."""
+    universally seeded; reading primary keys directly always works for a bench.
+    Honors LEDGER_DB_NAME so you can point at the test tenant
+    (LEDGER_DB_NAME=ledger_test) when the prod tenant lacks seed data."""
     try:
         import psycopg2
     except ImportError:
         return []
+    db_name = os.environ.get("LEDGER_DB_NAME", "ledger")
     try:
         conn = psycopg2.connect(
             host="localhost", port=5432, user="postgres",
-            password="cejmot-gabze7-qaJdej", dbname="ledger",
+            password="cejmot-gabze7-qaJdej", dbname=db_name,
         )
         with conn:
             with conn.cursor() as cur:
