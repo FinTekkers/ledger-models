@@ -125,7 +125,7 @@ A singleton per entity type: `LinkCache.SECURITY`, `LinkCache.PORTFOLIO`, `LinkC
 
 **What writes to it**
 
-- Wrapper auto-hydration on a cache miss: after the Fetcher returns a resolved proto, it's put into the cache. (Java + Python today; TypeScript via the async `hydrate()` method; Rust via `SecurityWrapper`'s sync accessor — Portfolio / Price wrappers are mechanical follow-ups.)
+- Wrapper auto-hydration on a cache miss: after the Fetcher returns a resolved proto, it's put into the cache. Covered for **Security, Portfolio, and Transaction** in all four languages — Java / Python / Rust use sync accessors that call into a default Fetcher; TypeScript exposes an async `wrapper.hydrate(resolver?)` method that resolves through `LinkResolver.getDefault()`. Rust's `PriceWrapper` is the only remaining mechanical follow-up.
 - `LinkResolver.getSecurity/.getPortfolio/.resolveSecuritiesOn*`: every successful resolve writes through to the cache (added in v0.4.10 #237).
 - Service-client `createOrUpdate`: the just-persisted entity is mirrored into the cache (v0.4.10 #238 for Python + TS; Java equivalent lives in ledger-service's `SecurityAPIGRPCImpl` etc.).
 - `CashSecurity.USD` is primed at class load so the well-known cash singleton is always available.
@@ -243,11 +243,11 @@ let link = security::link_of(security_uuid, parent_as_of);
 
 You called a non-link-safe accessor (`getMaturityDate`, `getProductType`, etc.) on a wrapper whose underlying proto is `is_link=true`, and the cache had no entry for that UUID at the requested as-of.
 
-In Java / Python / Rust (Security only): the default Fetcher should have auto-resolved this. If you still see the error, either you've cleared the default Fetcher (`Security.setFetcher(null)` or equivalent) or the entity genuinely doesn't exist for that UUID — that's a data lineage problem; investigate why a link points at a non-existent record.
+In Java / Python / Rust — for Security, Portfolio, **and** Transaction wrappers: the default Fetcher should have auto-resolved this. If you still see the error, either you've cleared the default Fetcher (`Security.setFetcher(null)` / `set_portfolio_fetcher(None)` / equivalent) or the entity genuinely doesn't exist for that UUID — that's a data lineage problem; investigate why a link points at a non-existent record.
 
-In TypeScript: TS getters are synchronous and don't fire RPCs. Either pre-warm via the wrapper-service `searchWithSecurityAnd*` variants, call `LinkResolver.resolveSecuritiesOn*` explicitly, or `await wrapper.hydrate()` for a single one-off resolve.
+In TypeScript — for Security, Portfolio, **and** Transaction wrappers: TS getters are synchronous and don't fire RPCs. Either pre-warm via the wrapper-service `searchWithSecurityAnd*` variants, call `LinkResolver.resolveSecuritiesOn*` explicitly, or `await wrapper.hydrate()` for a single one-off resolve.
 
-In Rust's `PortfolioWrapper` / `PriceWrapper`: the auto-fetch hook is a mechanical follow-up behind `SecurityWrapper` — pre-warm via `LinkResolver` until those land.
+In Rust's `PriceWrapper`: the auto-fetch hook is a mechanical follow-up behind the other three wrappers — pre-warm via `LinkResolver` until it lands.
 
 ### "as_of required for link_of"
 
