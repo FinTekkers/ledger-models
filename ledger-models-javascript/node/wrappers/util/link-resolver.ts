@@ -2,18 +2,23 @@ import { promisify } from 'util';
 
 import { SecurityProto } from '../../fintekkers/models/security/security_pb';
 import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
+import { TransactionProto } from '../../fintekkers/models/transaction/transaction_pb';
 import { UUIDProto } from '../../fintekkers/models/util/uuid_pb';
 import { LocalTimestampProto } from '../../fintekkers/models/util/local_timestamp_pb';
 
 import { SecurityClient } from '../../fintekkers/services/security-service/security_service_grpc_pb';
 import { PortfolioClient } from '../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
+import { TransactionClient } from '../../fintekkers/services/transaction-service/transaction_service_grpc_pb';
 import { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
 import { QuerySecurityResponseProto } from '../../fintekkers/requests/security/query_security_response_pb';
 import { QueryPortfolioRequestProto } from '../../fintekkers/requests/portfolio/query_portfolio_request_pb';
 import { QueryPortfolioResponseProto } from '../../fintekkers/requests/portfolio/query_portfolio_response_pb';
+import { QueryTransactionRequestProto } from '../../fintekkers/requests/transaction/query_transaction_request_pb';
+import { QueryTransactionResponseProto } from '../../fintekkers/requests/transaction/query_transaction_response_pb';
 
 import Security from '../models/security/security';
 import Portfolio from '../models/portfolio/portfolio';
+import Transaction from '../models/transaction/transaction';
 import { UUID } from '../models/utils/uuid';
 import EnvConfig from '../models/utils/requestcontext';
 import { ZonedDateTime } from '../models/utils/datetime';
@@ -59,6 +64,7 @@ export interface LinkResolverOptions {
    */
   securityClient?: SecurityClient;
   portfolioClient?: PortfolioClient;
+  transactionClient?: TransactionClient;
 }
 
 /**
@@ -87,12 +93,14 @@ let defaultLinkResolver: LinkResolver | undefined;
 class LinkResolver {
   private securityClient: SecurityClient;
   private portfolioClient: PortfolioClient;
+  private transactionClient: TransactionClient;
 
   // Concurrent-call dedupe: a UUID currently being fetched maps to the
   // promise the *first* caller is awaiting. Subsequent callers for the
   // same UUID receive that same promise.
   private securityInFlight = new Map<string, Promise<SecurityProto>>();
   private portfolioInFlight = new Map<string, Promise<PortfolioProto>>();
+  private transactionInFlight = new Map<string, Promise<TransactionProto>>();
 
   /**
    * Process-wide singleton — lazily constructed with default options
@@ -135,6 +143,15 @@ class LinkResolver {
     } else {
       this.portfolioClient = new PortfolioClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
     }
+
+    if (opts.transactionClient) {
+      this.transactionClient = opts.transactionClient;
+    } else if (opts.apiKey) {
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(opts.apiKey);
+      this.transactionClient = new TransactionClient(EnvConfig.apiURL, credentials, { interceptors });
+    } else {
+      this.transactionClient = new TransactionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+    }
   }
 
   /**
@@ -155,6 +172,15 @@ class LinkResolver {
   async getPortfolio(uuid: UUID, asOf?: LocalTimestampProto): Promise<Portfolio> {
     const proto = await this.fetchPortfolioProto(uuid, asOf);
     return new Portfolio(proto);
+  }
+
+  /**
+   * Resolve a single TransactionProto by UUID, optionally as of `asOf`.
+   * Cached + concurrent-deduped on (uuid, asOf).
+   */
+  async getTransaction(uuid: UUID, asOf?: LocalTimestampProto): Promise<Transaction> {
+    const proto = await this.fetchTransactionProto(uuid, asOf);
+    return new Transaction(proto);
   }
 
   /**
@@ -278,6 +304,7 @@ class LinkResolver {
   clearCache(): void {
     this.securityInFlight.clear();
     this.portfolioInFlight.clear();
+    this.transactionInFlight.clear();
   }
 
   // ---------- internals ----------
@@ -332,6 +359,31 @@ class LinkResolver {
     return promise;
   }
 
+  private async fetchTransactionProto(uuid: UUID, asOf?: LocalTimestampProto): Promise<TransactionProto> {
+    const uuidStr = uuid.toString();
+    const asOfZdt = asOfToZdt(asOf);
+    const cached = LinkCacheModule.TRANSACTION.get(uuidStr, asOfZdt);
+    if (cached) return cached;
+
+    const key = `${uuidStr}@${asOfKey(asOf)}`;
+    const inFlight = this.transactionInFlight.get(key);
+    if (inFlight) return inFlight;
+
+    const promise = this.batchFetchTransactions([uuid], asOf).then((protos) => {
+      if (protos.length === 0) {
+        throw new Error(`Transaction not found: ${key}`);
+      }
+      const proto = protos[0];
+      LinkCacheModule.TRANSACTION.put(uuidStr, proto, asOfZdt);
+      return proto;
+    }).finally(() => {
+      this.transactionInFlight.delete(key);
+    });
+
+    this.transactionInFlight.set(key, promise);
+    return promise;
+  }
+
   private async batchFetchSecurities(uuids: UUID[], asOf?: LocalTimestampProto): Promise<SecurityProto[]> {
     if (uuids.length === 0) return [];
     const request = new QuerySecurityRequestProto();
@@ -344,6 +396,20 @@ class LinkResolver {
     const getByIdsAsync = promisify(this.securityClient.getByIds.bind(this.securityClient));
     const response = (await getByIdsAsync(request)) as QuerySecurityResponseProto;
     return response.getSecurityResponseList();
+  }
+
+  private async batchFetchTransactions(uuids: UUID[], asOf?: LocalTimestampProto): Promise<TransactionProto[]> {
+    if (uuids.length === 0) return [];
+    const request = new QueryTransactionRequestProto();
+    request.setObjectClass('TransactionRequest');
+    request.setVersion('0.0.1');
+    const uuidProtos: UUIDProto[] = uuids.map((u) => u.toUUIDProto());
+    request.setUuidsList(uuidProtos);
+    if (asOf) request.setAsOf(asOf);
+
+    const getByIdsAsync = promisify(this.transactionClient.getByIds.bind(this.transactionClient));
+    const response = (await getByIdsAsync(request)) as QueryTransactionResponseProto;
+    return response.getTransactionResponseList();
   }
 
   private async batchFetchPortfolios(uuids: UUID[], asOf?: LocalTimestampProto): Promise<PortfolioProto[]> {

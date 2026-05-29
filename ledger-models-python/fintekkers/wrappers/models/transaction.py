@@ -32,6 +32,26 @@ def set_transaction_fetcher(fetcher) -> None:
     _transaction_fetcher = fetcher
 
 
+def _default_transaction_fetcher(uuid_obj: UUID, as_of_dt: Optional[datetime]):
+    """Default fetcher — delegates to `TransactionService.get_transaction_by_uuid`.
+    No duplicated request-construction or stub-management; the service
+    wrapper owns that. Auto-registered at module load. Override with
+    `set_transaction_fetcher(...)` for tests (canned protos) or alternate
+    endpoints."""
+    # Lazy import to avoid a cycle at module load.
+    from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+    from fintekkers.wrappers.services.transaction import TransactionService
+
+    as_of_proto = (
+        ProtoSerializationUtil.serialize(as_of_dt) if as_of_dt is not None else None
+    )
+    txn = TransactionService().get_transaction_by_uuid(uuid_obj, as_of=as_of_proto)
+    return txn.proto if txn is not None else None
+
+
+_transaction_fetcher = _default_transaction_fetcher
+
+
 class Transaction():
     @staticmethod
     def create_from(

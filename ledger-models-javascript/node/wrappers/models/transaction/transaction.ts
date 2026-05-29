@@ -19,6 +19,7 @@ import { UUID } from "../utils/uuid";
 import { dateToLocalDateProto, localDateProtoToDate } from "../utils/date";
 import { Decimal } from "decimal.js";
 import * as LinkCacheModule from "../../util/link-cache";
+import LinkResolver from "../../util/link-resolver";
 
 interface TransactionConstructorParams {
   tradeDate: Date;
@@ -142,8 +143,31 @@ class Transaction {
   }
 
   /**
+   * Async hydration via `LinkResolver`. Mirrors `Security.hydrate()` and
+   * `Portfolio.hydrate()`. Returns `this` so it can be chained:
+   *
+   *   const t = await new Transaction(linkProto).hydrate();
+   *   console.log(t.getPortfolio().getPortfolioName());
+   */
+  async hydrate(resolver?: LinkResolver): Promise<this> {
+    if (!this.proto.getIsLink()) return this;
+    const uuidProto = this.proto.getUuid();
+    if (!uuidProto) {
+      throw new Error("Cannot hydrate a link-mode Transaction with no UUID set.");
+    }
+    const uuid = UUID.fromU8Array(uuidProto.getRawUuid_asU8());
+    const asOfProto = this.proto.getAsOf() ?? undefined;
+    const r = resolver ?? LinkResolver.getDefault();
+    const resolved = await r.getTransaction(uuid, asOfProto);
+    this.proto = resolved.proto;
+    return this;
+  }
+
+  /**
    * Lazy hydration. On a link-mode proto, swap in the resolved proto from
-   * LinkCache. On cache miss, throws — caller must pre-warm via LinkResolver.
+   * LinkCache. On cache miss, throws — caller must pre-warm via
+   * `await transaction.hydrate()` or LinkResolver. Cache-only by design
+   * (sync getter API mirrors Security/Portfolio).
    * See docs/adr/lazy-link-hydration.md.
    */
   private ensureHydrated(): void {
@@ -160,7 +184,8 @@ class Transaction {
     }
     throw new Error(
       `Cannot read fields on link-mode Transaction uuid=${uuidKey} `
-      + `— LinkCache miss. Pre-warm via LinkResolver. `
+      + `— LinkCache miss. Call \`await transaction.hydrate()\` first, `
+      + `or pre-warm via LinkResolver. `
       + `See docs/adr/lazy-link-hydration.md.`
     );
   }

@@ -4,6 +4,7 @@ from uuid import UUID
 import grpc
 from grpc import RpcError
 
+from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.requests.transaction.query_transaction_request_pb2 import (
     QueryTransactionRequestProto,
@@ -122,11 +123,24 @@ class TransactionService:
                 _link_cache.TRANSACTION.put(uuid_obj, persisted, as_of_dt)
         return response
 
-    def get_transaction_by_uuid(self, uuid: UUID) -> Optional[Transaction]:
-        """Single-UUID GetByIds convenience. Returns None if not found."""
+    def get_transaction_by_uuid(
+        self, uuid: UUID, as_of: Optional[LocalTimestampProto] = None
+    ) -> Optional[Transaction]:
+        """Single-UUID GetByIds convenience. Returns None if not found.
+
+        Parameters:
+            uuid: the transaction UUID
+            as_of: optional LocalTimestampProto; if set, returns the version
+                of the record at that timestamp. None means latest. Matches
+                the surface of `SecurityService.get_security_by_uuid` /
+                `PortfolioService.get_portfolio_by_uuid` so the default
+                transaction fetcher delegates here.
+        """
         request = QueryTransactionRequestProto(
             uuIds=[UUIDProto(raw_uuid=uuid.bytes)],
         )
+        if as_of is not None:
+            request.as_of.CopyFrom(as_of)
         response: QueryTransactionResponseProto = self.stub.GetByIds(request)
         for txn_proto in response.transaction_response:
             return Transaction(txn_proto)

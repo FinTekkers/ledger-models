@@ -36,11 +36,12 @@ public class PortfolioSerializer implements IRawDataModelObjectSerializer<Portfo
 
     @Override
     public Portfolio deserialize(PortfolioProto proto) {
-        return new Portfolio(
-                ProtoSerializationUtil.deserializeUUID(proto.getUuid()),
-                proto.getPortfolioName(),
-                ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf())
-        );
+        // Proto-backed ctor preserves link-mode for lazy hydration. A
+        // link-mode proto here means the inner `portfolio_name` field is
+        // proto3-default (""); the wrapper will fetch on first accessor
+        // read via LinkCache + the registered Portfolio.Fetcher.
+        // See docs/adr/lazy-link-hydration.md.
+        return new Portfolio(proto);
     }
 
     public PositionStatusProto serialize(PositionStatusProto status) {

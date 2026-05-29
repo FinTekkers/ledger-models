@@ -23,6 +23,25 @@ def set_portfolio_fetcher(fetcher) -> None:
     _portfolio_fetcher = fetcher
 
 
+def _default_portfolio_fetcher(uuid_obj: UUID, as_of_dt: Optional[datetime]):
+    """Default fetcher — delegates to `PortfolioService.get_portfolio_by_uuid`.
+    No duplicated request-construction or stub-management; the service
+    wrapper owns that. Auto-registered at module load. Override with
+    `set_portfolio_fetcher(...)` for tests (canned protos) or alternate
+    endpoints."""
+    # Lazy import to avoid a cycle at module load.
+    from fintekkers.wrappers.services.portfolio import PortfolioService
+
+    as_of_proto = (
+        ProtoSerializationUtil.serialize(as_of_dt) if as_of_dt is not None else None
+    )
+    portfolio = PortfolioService().get_portfolio_by_uuid(uuid_obj, as_of=as_of_proto)
+    return portfolio.proto if portfolio is not None else None
+
+
+_portfolio_fetcher = _default_portfolio_fetcher
+
+
 class Portfolio:
     def __init__(self, proto: PortfolioProto):
         self.proto: PortfolioProto = proto
