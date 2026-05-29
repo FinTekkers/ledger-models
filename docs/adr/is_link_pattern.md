@@ -160,6 +160,42 @@ Bounded LRU. When a `put` causes the map to exceed `max_entries`, the least-rece
 
 `LinkResolver` does not own its own cache — reads and writes route through `LinkCache` directly. What `LinkResolver` does own: an in-flight dedup map so N concurrent callers for the same `(uuid, asOf)` share one `GetByIds` RPC. (Rust currently lacks the in-flight dedup; same-key parallel calls hit the wire twice. Documented as a follow-up.)
 
+A 16-thread race test in each language confirms: every concurrent accessor on a link-mode wrapper sharing the same UUID observes the resolved value with no exceptions, and the `LinkCache` converges on the resolved entry. The Fetcher itself may be invoked 1..N times under contention — wrapper-level reads don't dedup in-flight (that's `LinkResolver`'s job for the batched API). See `lazy-hydrate-race.test.*` / `*LazyHydrateRaceTest.java` / `test_lazy_hydrate_races.py` for the actual assertions.
+
+---
+
+## Performance: what to expect
+
+Two perf budgets matter for different reads:
+
+### Cache-hit wrapper overhead
+
+What it costs to construct a wrapper around a link-mode proto, call an accessor, and have the `LinkCache` serve a pre-warmed entry. Measured at N=10000 in steady state on a Mac Mini M-series:
+
+| Language | per-op cost | regression-guard ceiling (+15%) |
+|---|---:|---:|
+| Rust (release) | ~0.6 µs | 0.94 µs |
+| Java (post-JIT) | ~0.8 µs | 1.22 µs |
+| TypeScript (V8) | ~2.3 µs | 2.96 µs |
+| Python | ~3.3 µs | 12.87 µs |
+
+Per-op stays near constant from N=10 to N=10000 — `LinkCache.get` is O(1) (synchronized `LinkedHashMap` accessOrder in Java, `OrderedDict.move_to_end` in Python, insertion-ordered `Map` in TS, `HashMap` + recency `VecDeque` in Rust). Java's micro-N number is JIT warmup, not pathological cost.
+
+Each language has a regression-guard test (`LazyHydratePerfGuard.java`, `test_lazy_hydrate_perf_guard.py`, `lazy-hydrate-perf-guard.test.ts`, `lazy_hydrate_perf_guard.rs`) that fails CI if per-op rises above the ceiling. Override via `LAZY_HYDRATE_PERF_CEILING_US` env var (or `-D` flag on Java) when running on slower hardware.
+
+### Cache-miss (real gRPC + DB round-trip)
+
+What a cold-cache `getByUuid` actually costs once the network and database get involved. Measured against a local ledger-service over gRPC (Python client, p50/p95 across 10 distinct UUIDs, connection warmed up):
+
+| Entity | mean | p50 | p95 |
+|---|---:|---:|---:|
+| `Portfolio.getByUuid` | 467 µs | 465 µs | 547 µs |
+| `Security.getByUuid` | 465 µs | 440 µs | 713 µs |
+
+**Bulk wins big.** Hydrating 10 portfolios via `LinkResolver.resolve_portfolios` (one batched `GetByIds` RPC) lands at 915 µs total — **~5× cheaper per op than 10 serial `getByUuid` calls** (91.5 µs/op vs 467 µs/op). The W4 batching contract pays off any time you're hydrating more than one entity in a request scope. See `test/bench/bench_e2e_db_latency.py` for the bench shape (drive it with `API_URL=localhost LEDGER_DB_NAME=ledger_test python3 -m test.bench.bench_e2e_db_latency`).
+
+> Rule of thumb: each cache-hit accessor is sub-µs to single-digit-µs; each cache-miss accessor is ~500 µs once you hit the wire. The factor between these two regimes is **~1000×**. Pre-warming via a bulk resolver before a tight read loop is almost always worth it.
+
 ---
 
 ## Common patterns
