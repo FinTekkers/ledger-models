@@ -182,3 +182,20 @@ def test_d_fetcher_returns_none_raises():
 
     with pytest.raises(RuntimeError, match="Fetcher returned"):
         wrapper.get_asset_class()
+
+
+# ---------- F. Default fetcher registered at module load ----------
+
+def test_f_default_security_fetcher_is_registered_at_module_load():
+    """Without any explicit set_security_fetcher() call at import time,
+    a default fetcher MUST already be installed so user code that constructs
+    a wrapper and reads fields Just Works against the default endpoint.
+
+    This test imports the module fresh and asserts _security_fetcher is not
+    None. The _isolate fixture restores whatever was there after the test,
+    so this assertion doesn't depend on test order."""
+    import importlib
+    import fintekkers.wrappers.models.security.security as sec_module_fresh
+    importlib.reload(sec_module_fresh)
+    assert sec_module_fresh._security_fetcher is not None
+    assert callable(sec_module_fresh._security_fetcher)

@@ -208,11 +208,18 @@ class LinkCacheTest {
     }
 
     @Test
-    void put_nullAsOf_throws() {
+    void put_nullAsOf_acceptsAsLatestEntry() {
+        // Post-W4: null asOf is allowed on put — represents a "latest at
+        // caching time" entry. Subsequent null-asOf reads within TTL hit;
+        // specific-asOf reads miss. Mirrors the Python semantic.
         LinkCache<SecurityProto> cache = new LinkCache<>();
         UUID id = UUID.randomUUID();
-        assertThrows(IllegalArgumentException.class,
-            () -> cache.put(id, secProto(id, ZonedDateTime.now()), null));
+        SecurityProto value = secProto(id, ZonedDateTime.now());
+        cache.put(id, value, null);
+        // null-asOf read within TTL: hit.
+        assertSame(value, cache.get(id, null));
+        // Specific-asOf read: miss (cached entry has no asOf to match against).
+        assertNull(cache.get(id, ZonedDateTime.now()));
     }
 
     @Test
@@ -224,5 +231,40 @@ class LinkCacheTest {
     void ctor_negativeTtl_throws() {
         assertThrows(IllegalArgumentException.class,
             () -> new LinkCache<>(Duration.ofSeconds(-1)));
+    }
+
+    // ---------- F. LRU bound (W4) ----------
+
+    @Test
+    void lru_capacity_evictsLeastRecentlyUsed() {
+        LinkCache<SecurityProto> cache =
+                new LinkCache<>(Duration.ofSeconds(60), /*maxEntries=*/3);
+        UUID u1 = UUID.randomUUID();
+        UUID u2 = UUID.randomUUID();
+        UUID u3 = UUID.randomUUID();
+        UUID u4 = UUID.randomUUID();
+        ZonedDateTime asOf = ZonedDateTime.now();
+
+        cache.put(u1, secProto(u1, asOf), asOf);
+        cache.put(u2, secProto(u2, asOf), asOf);
+        cache.put(u3, secProto(u3, asOf), asOf);
+        assertEquals(3, cache.size());
+
+        // Touch u1 → MRU.
+        assertNotNull(cache.get(u1, asOf));
+
+        // Insert u4 → evicts u2 (LRU).
+        cache.put(u4, secProto(u4, asOf), asOf);
+        assertEquals(3, cache.size());
+        assertNotNull(cache.get(u1, asOf));
+        assertNull(cache.get(u2, asOf), "u2 should have been evicted (it was LRU)");
+        assertNotNull(cache.get(u3, asOf));
+        assertNotNull(cache.get(u4, asOf));
+    }
+
+    @Test
+    void ctor_zeroMaxEntries_throws() {
+        assertThrows(IllegalArgumentException.class,
+            () -> new LinkCache<SecurityProto>(Duration.ofSeconds(60), 0));
     }
 }

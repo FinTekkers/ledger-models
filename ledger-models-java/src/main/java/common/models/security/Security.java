@@ -55,9 +55,25 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     public interface Fetcher {
         SecurityProto fetch(java.util.UUID id, java.time.ZonedDateTime asOf);
     }
-    private static volatile Fetcher fetcher;
+    private static volatile Fetcher fetcher = defaultGrpcFetcher();
     public static void setFetcher(Fetcher f) { fetcher = f; }
     public static Fetcher getFetcher()       { return fetcher; }
+
+    /**
+     * Default fetcher: delegates to {@link fintekkers.services.SecurityService}.
+     * No duplicated request-construction or stub-management here; the
+     * service class owns that. Auto-registered as the {@link Fetcher} for
+     * typical deployments. Override with {@link #setFetcher(Fetcher)} for
+     * tests (canned protos), in-process consumers (local API call instead
+     * of a self-RPC), or non-default endpoints.
+     *
+     * <p>Package-private so {@code SecurityLazyHydrateTest} can verify the
+     * default is constructible; production callers should not invoke it
+     * directly.
+     */
+    static Fetcher defaultGrpcFetcher() {
+        return (uuid, asOf) -> fintekkers.services.SecurityService.getInstance().getByUuid(uuid, asOf);
+    }
 
     /** Primary constructor — wraps a SecurityProto. */
     public Security(SecurityProto proto) {

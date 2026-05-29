@@ -31,6 +31,25 @@ def set_security_fetcher(fetcher) -> None:
     global _security_fetcher
     _security_fetcher = fetcher
 
+
+def _default_security_fetcher(uuid_obj: UUID, as_of_dt: Optional[datetime]):
+    """Default fetcher — delegates to `SecurityService.get_security_by_uuid`.
+    No duplicated request-construction or stub-management; the service
+    wrapper owns that. Auto-registered at module load. Override with
+    `set_security_fetcher(...)` for tests (canned protos) or alternate
+    endpoints."""
+    # Lazy import to avoid a cycle at module load.
+    from fintekkers.wrappers.services.security import SecurityService
+
+    as_of_proto = (
+        ProtoSerializationUtil.serialize(as_of_dt) if as_of_dt is not None else None
+    )
+    security = SecurityService().get_security_by_uuid(uuid_obj, as_of=as_of_proto)
+    return security.proto if security is not None else None
+
+
+_security_fetcher = _default_security_fetcher
+
 class IFinancialModelObject:
     def get_field(field:FieldProto) -> object:
         pass

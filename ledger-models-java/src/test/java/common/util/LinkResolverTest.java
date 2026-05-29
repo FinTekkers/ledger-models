@@ -167,7 +167,7 @@ class LinkResolverTest {
                 c.toString(), fullSecurity(c, "GOOG"));
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), 1000, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
 
         List<PriceProto> prices = List.of(
                 linkPrice(a), linkPrice(a), linkPrice(b), linkPrice(a), linkPrice(c));
@@ -191,7 +191,7 @@ class LinkResolverTest {
         Map<String, SecurityProto> store = Map.of(uuid.toString(), fullSecurity(uuid, "AAPL"));
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), 1000, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
 
         SecurityProto s1 = resolver.getSecurity(uuid);
         SecurityProto s2 = resolver.getSecurity(uuid);
@@ -202,14 +202,18 @@ class LinkResolverTest {
     }
 
     @Test
-    void cacheDisabledReRpcs() {
+    void cacheEvictForcesRefetch() {
+        // Post-W4 the resolver doesn't own its own cache (LinkCache singletons
+        // do). Evicting the entry from LinkCache between calls forces a refetch
+        // on the next get — the equivalent of the old `cacheSize=0` semantic.
         UUID uuid = UUID.randomUUID();
         Map<String, SecurityProto> store = Map.of(uuid.toString(), fullSecurity(uuid, "AAPL"));
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), /* cacheSize */ 0, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
 
         resolver.getSecurity(uuid);
+        LinkCache.SECURITY.evict(uuid);
         resolver.getSecurity(uuid);
 
         assertEquals(2, fetcher.callCount);
@@ -219,7 +223,7 @@ class LinkResolverTest {
     void nonLinkItemsPassThroughUnchanged() {
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>());
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), 1000, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
 
         SecurityProto fullSec = fullSecurity(UUID.randomUUID(), "AAPL");
         PriceProto p = PriceProto.newBuilder()
@@ -237,7 +241,7 @@ class LinkResolverTest {
     void itemsMissingSecuritySkippedCleanly() {
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>());
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), 1000, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
         PriceProto p = PriceProto.newBuilder()
                 .setObjectClass("Price")
                 .setUuid(uuidProto(UUID.randomUUID()))
@@ -256,7 +260,7 @@ class LinkResolverTest {
                 b.toString(), fullSecurity(b, "MSFT"));
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), 1000, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
 
         resolver.resolveSecuritiesOnPrices(List.of(linkPrice(a), linkPrice(b)));
         assertEquals(1, fetcher.callCount);
@@ -274,7 +278,7 @@ class LinkResolverTest {
         Map<String, SecurityProto> store = Map.of(uuid.toString(), fullSecurity(uuid, "AAPL"));
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), 1000, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
 
         resolver.resolveSecuritiesOnPrices(List.of(linkPrice(uuid)));
 
@@ -288,7 +292,7 @@ class LinkResolverTest {
         Map<String, SecurityProto> store = Map.of(uuid.toString(), fullSecurity(uuid, "AAPL"));
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), 1000, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
 
         LocalTimestampProto t1 = asOfAt(1_700_000_000L);
         resolver.resolveSecuritiesOnPrices(List.of(linkPriceWithAsOf(uuid, t1)));
@@ -303,7 +307,7 @@ class LinkResolverTest {
         Map<String, SecurityProto> store = Map.of(uuid.toString(), fullSecurity(uuid, "AAPL"));
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), 1000, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
 
         LocalTimestampProto t1 = asOfAt(1_700_000_000L);
         LocalTimestampProto t2 = asOfAt(1_800_000_000L);
@@ -322,7 +326,7 @@ class LinkResolverTest {
         Map<String, SecurityProto> store = Map.of(uuid.toString(), fullSecurity(uuid, "AAPL"));
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), 1000, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
 
         LocalTimestampProto t1a = asOfAt(1_700_000_000L);
         LocalTimestampProto t1b = asOfAt(1_700_000_000L);
@@ -340,7 +344,7 @@ class LinkResolverTest {
         Map<String, SecurityProto> store = Map.of(uuid.toString(), fullSecurity(uuid, "AAPL"));
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
         LinkResolver resolver = new LinkResolver(fetcher,
-                new RecordingPortfolioFetcher(new HashMap<>()), 1000, 0);
+                new RecordingPortfolioFetcher(new HashMap<>()));
 
         LocalTimestampProto t1 = asOfAt(1_700_000_000L);
 
@@ -372,7 +376,7 @@ class LinkResolverTest {
 
         RecordingSecurityFetcher secFetcher = new RecordingSecurityFetcher(new HashMap<>(secStore));
         RecordingPortfolioFetcher portFetcher = new RecordingPortfolioFetcher(new HashMap<>(portStore));
-        LinkResolver resolver = new LinkResolver(secFetcher, portFetcher, 1000, 0);
+        LinkResolver resolver = new LinkResolver(secFetcher, portFetcher);
 
         TransactionProto t1 = TransactionProto.newBuilder()
                 .setObjectClass("Transaction")
@@ -439,8 +443,7 @@ class LinkResolverTest {
         SecurityProto resolved = fullSecurityWithAsOf(uuid, "ACME", asOf);
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(Map.of(uuid.toString(), resolved));
         LinkResolver resolver = new LinkResolver(fetcher,
-                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); },
-                1000, 0L);
+                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); });
 
         SecurityProto out = resolver.getSecurity(uuid, asOf);
         assertEquals("ACME", out.getIssuerName());
@@ -462,7 +465,7 @@ class LinkResolverTest {
         RecordingPortfolioFetcher fetcher = new RecordingPortfolioFetcher(Map.of(uuid.toString(), resolved));
         LinkResolver resolver = new LinkResolver(
                 req -> { throw new IllegalStateException("security fetcher should not be called"); },
-                fetcher, 1000, 0L);
+                fetcher);
 
         PortfolioProto out = resolver.getPortfolio(uuid, asOf);
         assertEquals("Strategy Z", out.getPortfolioName());
@@ -483,8 +486,7 @@ class LinkResolverTest {
         SecurityProto resolved = fullSecurityWithAsOf(secUuid, "BULK", asOf);
         RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(Map.of(secUuid.toString(), resolved));
         LinkResolver resolver = new LinkResolver(fetcher,
-                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); },
-                1000, 0L);
+                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); });
 
         TransactionProto txn = TransactionProto.newBuilder()
                 .setObjectClass("Transaction").setVersion("0.0.1")

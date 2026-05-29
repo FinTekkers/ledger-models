@@ -11,33 +11,23 @@ import { UUID } from '../models/utils/uuid';
  * full entities. Implements the consumer side of the `is_link` pattern
  * documented in `docs/adr/is_link_pattern.md`.
  *
+ * W4: the resolver no longer owns its own LRU. Cache reads/writes route
+ * through the process-wide `LinkCache.SECURITY` / `LinkCache.PORTFOLIO`
+ * singletons. The resolver still does concurrent-call dedup (single
+ * in-flight RPC per (uuid, as_of)) and bulk per-bucket batching; storage
+ * and eviction live in LinkCache.
+ *
  * Two surface methods:
  *   - getSecurity(uuid) / getPortfolio(uuid): single-UUID resolution. Cached
  *     and concurrent-deduped.
  *   - resolveSecurities(items) / resolvePortfolios(items): bulk in-place
  *     mutation across a heterogeneous list of items that each have a
  *     proto-style getter+setter for the embedded entity. Collects unique
- *     link UUIDs, fires one batched GetByIds RPC, mutates each item's proto
- *     to swap the link sub-message for the resolved full entity (with
- *     is_link=false on the embedded copy).
+ *     link UUIDs, fires one batched GetByIds RPC per as_of bucket, mutates
+ *     each item's proto to swap the link sub-message for the resolved
+ *     full entity.
  *
- * Caching:
- *   - Process-level LRU keyed on UUID string. Default 1000 entries, no TTL
- *     (entries live until evicted by LRU). Long-running services that need
- *     freshness should pass `{ ttlMs: <ms> }`. Tests can disable with
- *     `{ cacheSize: 0 }`.
- *   - Concurrent same-UUID requests are deduped via an in-flight promise
- *     map — N parallel callers for the same UUID share one RPC.
- *
- * RPC choice: uses `GetByIds` (unary, UUID-keyed bulk) per the ADR. The
- * existing `SecurityService.search` (streaming) would also work but
- * requires more wrapper plumbing for batched-by-UUID semantics.
- *
- * Mutation semantic: when bulk-resolving, the embedded sub-message is
- * replaced (not the outer entity). Outer Price.proto.is_link is unchanged;
- * only the inner SecurityProto is swapped from link-stub to full entity.
- * Wrapper objects that read through the proto (`price.getSecurity()`)
- * automatically see the resolved data.
+ * RPC choice: uses `GetByIds` (unary, UUID-keyed bulk) per the ADR.
  *
  * Time-travel (`as_of`) semantic: per is_link_pattern.md addendum, when
  * a link sub-message has only `uuid` set the resolver fetches the latest
@@ -50,10 +40,6 @@ import { UUID } from '../models/utils/uuid';
 export interface LinkResolverOptions {
     /** Optional API key. If omitted, EnvConfig.apiCredentials is used. */
     apiKey?: string;
-    /** LRU max entries. Default 1000. Set to 0 to disable caching. */
-    cacheSize?: number;
-    /** Per-entry TTL in ms. Default undefined (no expiry). */
-    ttlMs?: number;
     /**
      * Test injection: clients to use instead of constructing real ones.
      * Production callers should not set these.
@@ -64,10 +50,22 @@ export interface LinkResolverOptions {
 declare class LinkResolver {
     private securityClient;
     private portfolioClient;
-    private securityCache;
-    private portfolioCache;
     private securityInFlight;
     private portfolioInFlight;
+    /**
+     * Process-wide singleton — lazily constructed with default options
+     * (env-derived endpoint via `EnvConfig`). The wrapper `hydrate()`
+     * methods reach for this when no resolver is passed explicitly, so
+     * users get auto-resolve on link-mode wrappers without threading a
+     * resolver through every call site.
+     */
+    static getDefault(): LinkResolver;
+    /**
+     * Replace the process-wide default. Call once at process start for
+     * tests with mocked clients or to point at a non-default endpoint.
+     * Pass `undefined` to clear (next `getDefault()` call rebuilds).
+     */
+    static setDefault(resolver: LinkResolver | undefined): void;
     constructor(opts?: LinkResolverOptions);
     /**
      * Resolve a single SecurityProto by UUID. If `asOf` is supplied, fetch
@@ -88,10 +86,6 @@ declare class LinkResolver {
      * place so subsequent `item.getSecurity()` calls return the full entity.
      * Returns the same array for chaining.
      *
-     * Honors per-link `as_of`: if the embedded sub-message has `as_of` set,
-     * the resolver fetches the version of the entity at that timestamp,
-     * not the latest.
-     *
      * `T` is structural: anything with a `proto` field that exposes
      * `getSecurity()` / `setSecurity()` works (Price, Transaction, etc).
      */
@@ -101,7 +95,9 @@ declare class LinkResolver {
      * Honors per-link `as_of` the same way.
      */
     resolvePortfolios<T extends ResolvablePortfolio>(items: T[]): Promise<T[]>;
-    /** Test/debug helper. Not part of the stable API. */
+    /** Test/debug helper. Clears in-flight maps; the process-wide LinkCache
+     * is left alone (tests that need to drop a specific cached entry call
+     * `LinkCache.SECURITY.evict(uuid)` directly). */
     clearCache(): void;
     private fetchSecurityProto;
     private fetchPortfolioProto;

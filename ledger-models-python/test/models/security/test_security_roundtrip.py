@@ -232,19 +232,32 @@ class TestV025LinkHelpersAndConstituents:
         assert link.is_link() is True
 
     def test_accessors_raise_on_link(self):
-        from fintekkers.wrappers.models.security.security import Security
+        # Post-W1 the default fetcher is auto-registered, so a link-mode
+        # accessor read would attempt a real RPC. To test the "no fetcher
+        # configured" error path specifically, opt out of the default for
+        # this test case.
+        from fintekkers.wrappers.models.security.security import (
+            Security,
+            set_security_fetcher,
+        )
+        from fintekkers.wrappers.models.security import security as sec_module
         from uuid import uuid4
         from datetime import datetime, timezone
 
-        link = Security(Security.link_of(
-            uuid4(), datetime(2025, 1, 1, tzinfo=timezone.utc)))
+        saved_fetcher = sec_module._security_fetcher
+        set_security_fetcher(None)
+        try:
+            link = Security(Security.link_of(
+                uuid4(), datetime(2025, 1, 1, tzinfo=timezone.utc)))
 
-        with pytest.raises(RuntimeError, match="link-mode"):
-            link.get_asset_class()
-        with pytest.raises(RuntimeError, match="link-mode"):
-            link.get_product_type_proto()
-        with pytest.raises(RuntimeError, match="link-mode"):
-            link.get_identifiers()
+            with pytest.raises(RuntimeError, match="link-mode"):
+                link.get_asset_class()
+            with pytest.raises(RuntimeError, match="link-mode"):
+                link.get_product_type_proto()
+            with pytest.raises(RuntimeError, match="link-mode"):
+                link.get_identifiers()
+        finally:
+            set_security_fetcher(saved_fetcher)
 
     def test_link_round_trips_via_serialize(self):
         from fintekkers.wrappers.models.security.security import Security

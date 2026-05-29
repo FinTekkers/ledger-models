@@ -1,12 +1,16 @@
-from typing import Generator
+from typing import Generator, Optional
 from uuid import UUID
 
 from grpc import RpcError
 from fintekkers.models.position.field_pb2 import FieldProto
+from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import IdentifierTypeProto
+from fintekkers.requests.security.query_security_request_pb2 import (
+    QuerySecurityRequestProto,
+)
 from fintekkers.requests.security.query_security_response_pb2 import (
     QuerySecurityResponseProto,
 )
@@ -99,26 +103,32 @@ class SecurityService:
     def validate_create_or_update(self, request: CreateSecurityRequest):
         return self.stub.ValidateCreateOrUpdate(request.proto)
 
-    def get_security_by_uuid(self, uuid: UUID) -> Security:
-        """
+    def get_security_by_uuid(
+        self, uuid: UUID, as_of: Optional[LocalTimestampProto] = None
+    ) -> Optional[Security]:
+        """Single-UUID resolution via the unary GetByIds RPC. Matches the
+        wire shape LinkResolver._batch_fetch_securities uses.
+
         Parameters:
-            A UUID
+            uuid: the security UUID
+            as_of: optional LocalTimestampProto; if set, returns the version
+                of the record at that timestamp. None means latest.
 
         Returns:
-            request (SecurityProto): Returns the Security proto for the UUID, or None if doesn't exist
+            Security wrapper around the resolved SecurityProto, or None if
+            no matching record exists.
         """
-        uuid_proto = UUIDProto(raw_uuid=uuid.bytes)
-
-        request: QuerySecurityRequest = QuerySecurityRequest.create_query_request(
-            {
-                FieldProto.ID: uuid_proto,
-            }
+        request = QuerySecurityRequestProto(
+            object_class="SecurityRequest",
+            version="0.0.1",
+            uuIds=[UUIDProto(raw_uuid=uuid.bytes)],
         )
-
-        securities = self.search(request)
-
-        for security in securities:
-            return security
+        if as_of is not None:
+            request.as_of.CopyFrom(as_of)
+        response = self.stub.GetByIds(request)
+        if len(response.security_response) == 0:
+            return None
+        return Security(response.security_response[0])
 
     def get_security_uuid_by_identifier(self, identifier: str, identifier_type: IdentifierTypeProto) -> UUID:
         """

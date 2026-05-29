@@ -12,10 +12,10 @@
 //!   Returns a new [`Vec`] with hydrated copies (Rust Prost messages are
 //!   value types — cheap to clone, but we don't mutate input in place).
 //!
-//! Caching:
-//!
-//! - In-process LRU keyed on `(uuid, as_of)`. Default 1000 entries, optional
-//!   TTL. `cache_size = 0` disables caching (for tests).
+//! W4: the resolver no longer owns its own LRU. Cache reads/writes route
+//! through the process-wide [`crate::fintekkers::wrappers::util::link_cache`]
+//! singletons (`link_cache::security()` / `link_cache::portfolio()`).
+//! Storage and LRU eviction live in `link_cache`.
 //!
 //! Time-travel: per the [`is_link_pattern.md`] addendum, when a link
 //! sub-message has `as_of` set the resolver fetches the version of the
@@ -34,8 +34,6 @@
 
 use async_trait::async_trait;
 use std::collections::HashMap;
-use std::sync::Mutex;
-use std::time::{Duration, Instant};
 use uuid::Uuid;
 
 use crate::fintekkers::models::portfolio::PortfolioProto;
@@ -101,96 +99,27 @@ impl From<tonic::Status> for LinkResolverError {
     }
 }
 
-/// Tiny LRU. `Mutex<LinkedHashMap>` would be ideal for true LRU semantics,
-/// but pulling in a dep for ~30 lines isn't worth it. We use a `HashMap`
-/// + a `Vec<String>` insertion-order log; on overflow we drop the oldest
-/// entries. Bumping on get is skipped — true LRU is overkill for our
-/// access pattern (post-search hydration of a fixed result set).
-struct TinyCache<V> {
-    max_size: usize,
-    ttl: Option<Duration>,
-    data: HashMap<String, (V, Instant)>,
-    order: std::collections::VecDeque<String>,
-}
-
-impl<V: Clone> TinyCache<V> {
-    fn new(max_size: usize, ttl_ms: Option<u64>) -> Self {
-        Self {
-            max_size,
-            ttl: ttl_ms.map(Duration::from_millis),
-            data: HashMap::new(),
-            order: std::collections::VecDeque::new(),
-        }
-    }
-
-    fn get(&mut self, key: &str) -> Option<V> {
-        if self.max_size == 0 {
-            return None;
-        }
-        let entry = self.data.get(key)?;
-        if let Some(ttl) = self.ttl {
-            if entry.1.elapsed() > ttl {
-                self.data.remove(key);
-                return None;
-            }
-        }
-        Some(entry.0.clone())
-    }
-
-    fn set(&mut self, key: String, value: V) {
-        if self.max_size == 0 {
-            return;
-        }
-        if !self.data.contains_key(&key) {
-            self.order.push_back(key.clone());
-        }
-        self.data.insert(key, (value, Instant::now()));
-        while self.data.len() > self.max_size {
-            if let Some(oldest) = self.order.pop_front() {
-                self.data.remove(&oldest);
-            } else {
-                break;
-            }
-        }
-    }
-
-    fn clear(&mut self) {
-        self.data.clear();
-        self.order.clear();
-    }
-}
-
 pub struct LinkResolver<S: SecurityFetcher, P: PortfolioFetcher> {
     security_fetcher: S,
     portfolio_fetcher: P,
-    security_cache: Mutex<TinyCache<SecurityProto>>,
-    portfolio_cache: Mutex<TinyCache<PortfolioProto>>,
 }
 
 impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
-    /// `cache_size = 0` disables caching. `ttl_ms = None` = no TTL.
-    pub fn new(
-        security_fetcher: S,
-        portfolio_fetcher: P,
-        cache_size: usize,
-        ttl_ms: Option<u64>,
-    ) -> Self {
+    pub fn new(security_fetcher: S, portfolio_fetcher: P) -> Self {
         Self {
             security_fetcher,
             portfolio_fetcher,
-            security_cache: Mutex::new(TinyCache::new(cache_size, ttl_ms)),
-            portfolio_cache: Mutex::new(TinyCache::new(cache_size, ttl_ms)),
         }
     }
 
     pub fn with_defaults(security_fetcher: S, portfolio_fetcher: P) -> Self {
-        Self::new(security_fetcher, portfolio_fetcher, 1000, None)
+        Self::new(security_fetcher, portfolio_fetcher)
     }
 
-    pub fn clear_cache(&self) {
-        self.security_cache.lock().unwrap().clear();
-        self.portfolio_cache.lock().unwrap().clear();
-    }
+    /// Test/debug helper. The process-wide `link_cache` is left alone (tests
+    /// that need to drop a specific cached entry call `link_cache::security().evict(uuid)`
+    /// directly). Kept for API compatibility — no internal state remains to clear.
+    pub fn clear_cache(&self) {}
 
     // ---------- single-UUID accessors ----------
 
@@ -199,10 +128,8 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
         uuid: Uuid,
         as_of: Option<LocalTimestampProto>,
     ) -> Result<SecurityProto, LinkResolverError> {
-        let key = cache_key(uuid, as_of.as_ref());
-
-        if let Some(cached) = self.security_cache.lock().unwrap().get(&key) {
-            return Ok(cached);
+        if let Some(cached) = link_cache::security().get(uuid, as_of.as_ref()) {
+            return Ok((*cached).clone());
         }
 
         let protos = self
@@ -214,8 +141,7 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
                 as_of_bucket: bucket_key(as_of.as_ref()),
             }
         })?;
-        self.security_cache.lock().unwrap().set(key, proto.clone());
-        populate_security_link_cache(&proto);
+        link_cache::security().put(uuid, proto.clone(), as_of);
         Ok(proto)
     }
 
@@ -224,9 +150,8 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
         uuid: Uuid,
         as_of: Option<LocalTimestampProto>,
     ) -> Result<PortfolioProto, LinkResolverError> {
-        let key = cache_key(uuid, as_of.as_ref());
-        if let Some(cached) = self.portfolio_cache.lock().unwrap().get(&key) {
-            return Ok(cached);
+        if let Some(cached) = link_cache::portfolio().get(uuid, as_of.as_ref()) {
+            return Ok((*cached).clone());
         }
         let protos = self
             .batch_fetch_portfolios(vec![uuid], as_of.clone())
@@ -237,8 +162,7 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
                 as_of_bucket: bucket_key(as_of.as_ref()),
             }
         })?;
-        self.portfolio_cache.lock().unwrap().set(key, proto.clone());
-        populate_portfolio_link_cache(&proto);
+        link_cache::portfolio().put(uuid, proto.clone(), as_of);
         Ok(proto)
     }
 
@@ -260,11 +184,10 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
                 if sec.is_link {
                     if let Some(uuid_proto) = sec.uuid.as_ref() {
                         if let Some(uuid) = uuid_from_proto(uuid_proto) {
-                            let key = cache_key(uuid, sec.as_of.as_ref());
                             if let Some(resolved) =
-                                self.security_cache.lock().unwrap().get(&key)
+                                link_cache::security().get(uuid, sec.as_of.as_ref())
                             {
-                                p.security = Some(resolved);
+                                p.security = Some((*resolved).clone());
                             }
                         }
                     }
@@ -288,11 +211,10 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
                 if sec.is_link {
                     if let Some(uuid_proto) = sec.uuid.as_ref() {
                         if let Some(uuid) = uuid_from_proto(uuid_proto) {
-                            let key = cache_key(uuid, sec.as_of.as_ref());
                             if let Some(resolved) =
-                                self.security_cache.lock().unwrap().get(&key)
+                                link_cache::security().get(uuid, sec.as_of.as_ref())
                             {
-                                t.security = Some(resolved);
+                                t.security = Some((*resolved).clone());
                             }
                         }
                     }
@@ -315,11 +237,10 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
                 if port.is_link {
                     if let Some(uuid_proto) = port.uuid.as_ref() {
                         if let Some(uuid) = uuid_from_proto(uuid_proto) {
-                            let key = cache_key(uuid, port.as_of.as_ref());
                             if let Some(resolved) =
-                                self.portfolio_cache.lock().unwrap().get(&key)
+                                link_cache::portfolio().get(uuid, port.as_of.as_ref())
                             {
-                                t.portfolio = Some(resolved);
+                                t.portfolio = Some((*resolved).clone());
                             }
                         }
                     }
@@ -337,8 +258,8 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
         items: &[T],
         get_sec: impl Fn(&T) -> Option<&SecurityProto>,
     ) -> Result<(), LinkResolverError> {
-        // bucket_key → (proto for the bucket's as_of, dedup map of cache_key → uuid)
-        let mut buckets: HashMap<String, (Option<LocalTimestampProto>, HashMap<String, Uuid>)> =
+        // bucket_key → (proto for the bucket's as_of, dedup map of uuid → uuid)
+        let mut buckets: HashMap<String, (Option<LocalTimestampProto>, HashMap<Uuid, Uuid>)> =
             HashMap::new();
 
         for item in items {
@@ -354,28 +275,25 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
             let Some(uuid) = uuid_from_proto(uuid_proto) else {
                 continue;
             };
-            let bk = bucket_key(sec.as_of.as_ref());
-            let ck = cache_key(uuid, sec.as_of.as_ref());
-            if self.security_cache.lock().unwrap().get(&ck).is_some() {
+            if link_cache::security().get(uuid, sec.as_of.as_ref()).is_some() {
                 continue;
             }
+            let bk = bucket_key(sec.as_of.as_ref());
             let entry = buckets
                 .entry(bk)
                 .or_insert_with(|| (sec.as_of.clone(), HashMap::new()));
-            entry.1.entry(ck).or_insert(uuid);
+            entry.1.entry(uuid).or_insert(uuid);
         }
 
-        for (bk, (as_of, uuid_map)) in buckets {
+        for (_bk, (as_of, uuid_map)) in buckets {
             let uuids: Vec<Uuid> = uuid_map.values().copied().collect();
             let fetched = self
                 .batch_fetch_securities(uuids, as_of.clone())
                 .await?;
-            let mut cache = self.security_cache.lock().unwrap();
             for proto in fetched {
                 if let Some(uuid_proto) = proto.uuid.as_ref() {
                     if let Some(uuid) = uuid_from_proto(uuid_proto) {
-                        cache.set(format!("{}@{}", uuid, bk), proto.clone());
-                        populate_security_link_cache(&proto);
+                        link_cache::security().put(uuid, proto, as_of.clone());
                     }
                 }
             }
@@ -387,7 +305,7 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
         &self,
         items: &[TransactionProto],
     ) -> Result<(), LinkResolverError> {
-        let mut buckets: HashMap<String, (Option<LocalTimestampProto>, HashMap<String, Uuid>)> =
+        let mut buckets: HashMap<String, (Option<LocalTimestampProto>, HashMap<Uuid, Uuid>)> =
             HashMap::new();
 
         for item in items {
@@ -403,28 +321,25 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
             let Some(uuid) = uuid_from_proto(uuid_proto) else {
                 continue;
             };
-            let bk = bucket_key(port.as_of.as_ref());
-            let ck = cache_key(uuid, port.as_of.as_ref());
-            if self.portfolio_cache.lock().unwrap().get(&ck).is_some() {
+            if link_cache::portfolio().get(uuid, port.as_of.as_ref()).is_some() {
                 continue;
             }
+            let bk = bucket_key(port.as_of.as_ref());
             let entry = buckets
                 .entry(bk)
                 .or_insert_with(|| (port.as_of.clone(), HashMap::new()));
-            entry.1.entry(ck).or_insert(uuid);
+            entry.1.entry(uuid).or_insert(uuid);
         }
 
-        for (bk, (as_of, uuid_map)) in buckets {
+        for (_bk, (as_of, uuid_map)) in buckets {
             let uuids: Vec<Uuid> = uuid_map.values().copied().collect();
             let fetched = self
                 .batch_fetch_portfolios(uuids, as_of.clone())
                 .await?;
-            let mut cache = self.portfolio_cache.lock().unwrap();
             for proto in fetched {
                 if let Some(uuid_proto) = proto.uuid.as_ref() {
                     if let Some(uuid) = uuid_from_proto(uuid_proto) {
-                        cache.set(format!("{}@{}", uuid, bk), proto.clone());
-                        populate_portfolio_link_cache(&proto);
+                        link_cache::portfolio().put(uuid, proto, as_of.clone());
                     }
                 }
             }
@@ -480,34 +395,9 @@ fn bucket_key(as_of: Option<&LocalTimestampProto>) -> String {
         Some(ts) => {
             let mut buf = Vec::with_capacity(ts.encoded_len());
             ts.encode(&mut buf).expect("LocalTimestampProto encode");
-            // base64 without bringing in an extra dep: hex is good enough
-            // for a deterministic cache key.
             buf.iter().map(|b| format!("{:02x}", b)).collect::<String>()
         }
     }
-}
-
-fn cache_key(uuid: Uuid, as_of: Option<&LocalTimestampProto>) -> String {
-    format!("{}@{}", uuid, bucket_key(as_of))
-}
-
-/// Mirror a freshly-fetched SecurityProto into the process-wide
-/// `link_cache::security()`. `SecurityWrapper::ensure_hydrated` consults
-/// this cache, so pre-warming via the resolver immediately benefits
-/// accessor reads with no second RPC. Skips silently when the resolved
-/// proto lacks uuid or as_of — the cache requires both for newest-wins.
-fn populate_security_link_cache(proto: &SecurityProto) {
-    let Some(uuid_proto) = proto.uuid.as_ref() else { return };
-    let Some(as_of) = proto.as_of.clone() else { return };
-    let Some(uuid) = uuid_from_proto(uuid_proto) else { return };
-    link_cache::security().put(uuid, proto.clone(), Some(as_of));
-}
-
-fn populate_portfolio_link_cache(proto: &PortfolioProto) {
-    let Some(uuid_proto) = proto.uuid.as_ref() else { return };
-    let Some(as_of) = proto.as_of.clone() else { return };
-    let Some(uuid) = uuid_from_proto(uuid_proto) else { return };
-    link_cache::portfolio().put(uuid, proto.clone(), Some(as_of));
 }
 
 fn uuid_from_proto(proto: &UuidProto) -> Option<Uuid> {
@@ -660,7 +550,6 @@ mod tests {
     fn make_resolver(
         sec_store: HashMap<String, SecurityProto>,
         port_store: HashMap<String, PortfolioProto>,
-        cache_size: usize,
     ) -> LinkResolver<RecordingSecurityFetcher, RecordingPortfolioFetcher> {
         LinkResolver::new(
             RecordingSecurityFetcher {
@@ -671,8 +560,6 @@ mod tests {
                 store: port_store,
                 log: StdMutex::new(vec![]),
             },
-            cache_size,
-            None,
         )
     }
 
@@ -685,7 +572,7 @@ mod tests {
         store.insert(a.to_string(), full_security(a, "AAPL"));
         store.insert(b.to_string(), full_security(b, "MSFT"));
         store.insert(c.to_string(), full_security(c, "GOOG"));
-        let resolver = make_resolver(store, HashMap::new(), 1000);
+        let resolver = make_resolver(store, HashMap::new());
 
         let prices = vec![
             link_price(a, None),
@@ -714,6 +601,11 @@ mod tests {
             assert!(!sec.is_link);
             assert!(["AAPL", "MSFT", "GOOG"].contains(&sec.issuer_name.as_str()));
         }
+
+        // Clean up shared LinkCache entries we created.
+        link_cache::security().evict(a);
+        link_cache::security().evict(b);
+        link_cache::security().evict(c);
     }
 
     #[tokio::test]
@@ -721,7 +613,7 @@ mod tests {
         let uuid = Uuid::new_v4();
         let mut store = HashMap::new();
         store.insert(uuid.to_string(), full_security(uuid, "AAPL"));
-        let resolver = make_resolver(store, HashMap::new(), 1000);
+        let resolver = make_resolver(store, HashMap::new());
 
         let s1 = resolver.get_security(uuid, None).await.unwrap();
         let s2 = resolver.get_security(uuid, None).await.unwrap();
@@ -729,24 +621,30 @@ mod tests {
         assert_eq!(resolver.security_fetcher.log.lock().unwrap().len(), 1);
         assert_eq!(s1.issuer_name, "AAPL");
         assert_eq!(s2.issuer_name, "AAPL");
+        link_cache::security().evict(uuid);
     }
 
     #[tokio::test]
-    async fn cache_disabled_re_rpcs() {
+    async fn cache_evict_forces_refetch() {
+        // Post-W4 the resolver no longer owns its cache. Evict the entry
+        // from link_cache::security() between calls to force a refetch —
+        // the equivalent of the old `cache_size=0` semantic.
         let uuid = Uuid::new_v4();
         let mut store = HashMap::new();
         store.insert(uuid.to_string(), full_security(uuid, "AAPL"));
-        let resolver = make_resolver(store, HashMap::new(), 0);
+        let resolver = make_resolver(store, HashMap::new());
 
         resolver.get_security(uuid, None).await.unwrap();
+        link_cache::security().evict(uuid);
         resolver.get_security(uuid, None).await.unwrap();
 
         assert_eq!(resolver.security_fetcher.log.lock().unwrap().len(), 2);
+        link_cache::security().evict(uuid);
     }
 
     #[tokio::test]
     async fn non_link_items_pass_through_unchanged() {
-        let resolver = make_resolver(HashMap::new(), HashMap::new(), 1000);
+        let resolver = make_resolver(HashMap::new(), HashMap::new());
         let p = PriceProto {
             object_class: "Price".into(),
             uuid: Some(uuid_to_proto(Uuid::new_v4())),
@@ -763,7 +661,7 @@ mod tests {
 
     #[tokio::test]
     async fn items_missing_security_skipped_cleanly() {
-        let resolver = make_resolver(HashMap::new(), HashMap::new(), 1000);
+        let resolver = make_resolver(HashMap::new(), HashMap::new());
         let p = PriceProto {
             object_class: "Price".into(),
             uuid: Some(uuid_to_proto(Uuid::new_v4())),
@@ -785,7 +683,7 @@ mod tests {
         let mut store = HashMap::new();
         store.insert(a.to_string(), full_security(a, "AAPL"));
         store.insert(b.to_string(), full_security(b, "MSFT"));
-        let resolver = make_resolver(store, HashMap::new(), 1000);
+        let resolver = make_resolver(store, HashMap::new());
 
         resolver
             .resolve_securities_on_prices(vec![link_price(a, None), link_price(b, None)])
@@ -802,6 +700,8 @@ mod tests {
             1,
             "2nd call should be all cache hits"
         );
+        link_cache::security().evict(a);
+        link_cache::security().evict(b);
     }
 
     // ---------- as_of-aware ----------
@@ -811,7 +711,7 @@ mod tests {
         let uuid = Uuid::new_v4();
         let mut store = HashMap::new();
         store.insert(uuid.to_string(), full_security(uuid, "AAPL"));
-        let resolver = make_resolver(store, HashMap::new(), 1000);
+        let resolver = make_resolver(store, HashMap::new());
 
         resolver
             .resolve_securities_on_prices(vec![link_price(uuid, None)])
@@ -821,6 +721,8 @@ mod tests {
         let log = resolver.security_fetcher.log.lock().unwrap();
         assert_eq!(log.len(), 1);
         assert_eq!(log[0].1, None);
+        drop(log);
+        link_cache::security().evict(uuid);
     }
 
     #[tokio::test]
@@ -828,7 +730,7 @@ mod tests {
         let uuid = Uuid::new_v4();
         let mut store = HashMap::new();
         store.insert(uuid.to_string(), full_security(uuid, "AAPL"));
-        let resolver = make_resolver(store, HashMap::new(), 1000);
+        let resolver = make_resolver(store, HashMap::new());
 
         let t1 = as_of_at(1_700_000_000);
         resolver
@@ -839,6 +741,8 @@ mod tests {
         let log = resolver.security_fetcher.log.lock().unwrap();
         assert_eq!(log.len(), 1);
         assert_eq!(log[0].1, Some(1_700_000_000));
+        drop(log);
+        link_cache::security().evict(uuid);
     }
 
     #[tokio::test]
@@ -846,7 +750,7 @@ mod tests {
         let uuid = Uuid::new_v4();
         let mut store = HashMap::new();
         store.insert(uuid.to_string(), full_security(uuid, "AAPL"));
-        let resolver = make_resolver(store, HashMap::new(), 1000);
+        let resolver = make_resolver(store, HashMap::new());
 
         let t1 = as_of_at(1_700_000_000);
         let t2 = as_of_at(1_800_000_000);
@@ -865,6 +769,8 @@ mod tests {
             log.iter().map(|e| e.1).collect();
         assert!(seconds.contains(&Some(1_700_000_000)));
         assert!(seconds.contains(&Some(1_800_000_000)));
+        drop(log);
+        link_cache::security().evict(uuid);
     }
 
     #[tokio::test]
@@ -872,7 +778,7 @@ mod tests {
         let uuid = Uuid::new_v4();
         let mut store = HashMap::new();
         store.insert(uuid.to_string(), full_security(uuid, "AAPL"));
-        let resolver = make_resolver(store, HashMap::new(), 1000);
+        let resolver = make_resolver(store, HashMap::new());
 
         let t_a = as_of_at(1_700_000_000);
         let t_b = as_of_at(1_700_000_000);
@@ -888,6 +794,8 @@ mod tests {
         let log = resolver.security_fetcher.log.lock().unwrap();
         assert_eq!(log.len(), 1);
         assert_eq!(log[0].0.len(), 1, "same uuid in same as_of bucket → deduped");
+        drop(log);
+        link_cache::security().evict(uuid);
     }
 
     #[tokio::test]
@@ -895,7 +803,7 @@ mod tests {
         let uuid = Uuid::new_v4();
         let mut store = HashMap::new();
         store.insert(uuid.to_string(), full_security(uuid, "AAPL"));
-        let resolver = make_resolver(store, HashMap::new(), 1000);
+        let resolver = make_resolver(store, HashMap::new());
 
         let t1 = as_of_at(1_700_000_000);
 
@@ -916,8 +824,9 @@ mod tests {
         assert_eq!(
             resolver.security_fetcher.log.lock().unwrap().len(),
             2,
-            "cache hit on (uuid, t1) — proto-equal LocalTimestampProto serializes identically"
+            "cache hit on (uuid, t1)"
         );
+        link_cache::security().evict(uuid);
     }
 
     // ---------- transaction (security + portfolio) ----------
@@ -936,7 +845,7 @@ mod tests {
         port_store.insert(port_x.to_string(), full_portfolio(port_x, "Strategy X"));
         port_store.insert(port_y.to_string(), full_portfolio(port_y, "Strategy Y"));
 
-        let resolver = make_resolver(sec_store, port_store, 1000);
+        let resolver = make_resolver(sec_store, port_store);
 
         let mk_txn = |sec_uuid: Uuid, port_uuid: Uuid| TransactionProto {
             object_class: "Transaction".into(),
@@ -984,6 +893,11 @@ mod tests {
             assert!(["Strategy X", "Strategy Y"]
                 .contains(&t.portfolio.as_ref().unwrap().portfolio_name.as_str()));
         }
+
+        link_cache::security().evict(sec_a);
+        link_cache::security().evict(sec_b);
+        link_cache::portfolio().evict(port_x);
+        link_cache::portfolio().evict(port_y);
     }
 
     // ---------- LinkCache write-through ----------
@@ -1016,8 +930,7 @@ mod tests {
     async fn get_security_populates_link_cache() {
         // Use a fresh uuid so we don't collide with other tests that touch
         // link_cache::security(). Targeted evict() at the end; never call
-        // .clear() — that wipes entries owned by tests running in parallel
-        // and causes spurious failures across the suite.
+        // .clear() — that wipes entries owned by tests running in parallel.
         let uuid = Uuid::new_v4();
         let as_of = as_of_at(1_700_000_000);
         let mut store = HashMap::new();
@@ -1025,7 +938,7 @@ mod tests {
             uuid.to_string(),
             full_security_with_as_of(uuid, "ACME", as_of.clone()),
         );
-        let resolver = make_resolver(store, HashMap::new(), 1000);
+        let resolver = make_resolver(store, HashMap::new());
 
         let out = resolver.get_security(uuid, Some(as_of.clone())).await.unwrap();
         assert_eq!(out.issuer_name, "ACME");
@@ -1038,8 +951,6 @@ mod tests {
 
     #[tokio::test]
     async fn get_portfolio_populates_link_cache() {
-        // Fresh uuid → targeted evict() at end; do not call clear().
-        // See get_security_populates_link_cache for rationale.
         let uuid = Uuid::new_v4();
         let as_of = as_of_at(1_700_000_001);
         let mut store = HashMap::new();
@@ -1047,7 +958,7 @@ mod tests {
             uuid.to_string(),
             full_portfolio_with_as_of(uuid, "Strategy Z", as_of.clone()),
         );
-        let resolver = make_resolver(HashMap::new(), store, 1000);
+        let resolver = make_resolver(HashMap::new(), store);
 
         let out = resolver.get_portfolio(uuid, Some(as_of.clone())).await.unwrap();
         assert_eq!(out.portfolio_name, "Strategy Z");
@@ -1060,8 +971,6 @@ mod tests {
 
     #[tokio::test]
     async fn bulk_resolve_securities_on_prices_populates_link_cache() {
-        // Fresh uuid → targeted evict() at end; do not call clear().
-        // See get_security_populates_link_cache for rationale.
         let uuid = Uuid::new_v4();
         let as_of = as_of_at(1_700_000_002);
         let mut store = HashMap::new();
@@ -1069,7 +978,7 @@ mod tests {
             uuid.to_string(),
             full_security_with_as_of(uuid, "BULK", as_of.clone()),
         );
-        let resolver = make_resolver(store, HashMap::new(), 1000);
+        let resolver = make_resolver(store, HashMap::new());
 
         let price = link_price(uuid, Some(as_of.clone()));
         let _ = resolver.resolve_securities_on_prices(vec![price]).await.unwrap();

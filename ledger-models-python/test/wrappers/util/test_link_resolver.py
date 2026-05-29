@@ -151,13 +151,18 @@ def test_cache_hit_skips_second_rpc():
     assert s2.issuer_name == "AAPL"
 
 
-def test_cache_disabled_re_rpcs():
+def test_cache_evict_forces_refetch():
+    """Post-W4 the resolver doesn't own its own cache (LinkCache singletons
+    do). Evicting the entry from LinkCache between calls forces a refetch
+    on the next get — the equivalent of the old `cache_size=0` semantic."""
+    from fintekkers.wrappers.util import link_cache
     uuid = uuid4()
     store = {str(uuid): _full_security(uuid, "AAPL")}
     log = _SecurityCallLog()
-    resolver = _new_resolver(store, log, cache_size=0)
+    resolver = _new_resolver(store, log)
 
     resolver.get_security(uuid)
+    link_cache.SECURITY.evict(uuid)
     resolver.get_security(uuid)
 
     assert log.count == 2

@@ -12,13 +12,17 @@
 //!   doesn't change, so a past vintage cached arbitrarily long is fine.
 //!
 //! Write semantics ([`LinkCache::put`]): newest-vintage wins. An
-//! older-vintage put does not evict a newer cached entry.
+//! older-vintage put does not evict a newer cached entry. `as_of == None`
+//! on put is allowed — represents a "latest at caching time" entry.
 //!
-//! Later Portfolio can likely be 1 day, security 1 day, transaction 1 minute,
-//! price 30 seconds — once per-entity TTLs are wired up, the shared singletons
-//! below should be constructed with those values.
+//! Eviction: bounded LRU. When `put` causes the map to exceed `max_entries`,
+//! the least-recently-used entry is removed. `get` bumps recency.
+//!
+//! Per-entity singletons are tuned for the access pattern of each entity
+//! type (Portfolio + Security change slowly so TTL is 1 day; Price +
+//! Transaction change quickly so TTL is short).
 
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 use std::sync::{Arc, Mutex, OnceLock};
 use std::time::{Duration, Instant};
 use uuid::Uuid;
@@ -30,6 +34,7 @@ use crate::fintekkers::models::transaction::TransactionProto;
 use crate::fintekkers::models::util::LocalTimestampProto;
 
 pub const DEFAULT_TTL_FOR_LATEST: Duration = Duration::from_secs(600);
+pub const DEFAULT_MAX_ENTRIES: usize = 10_000;
 
 #[derive(Debug, Clone)]
 struct CacheEntry<V> {
@@ -38,18 +43,36 @@ struct CacheEntry<V> {
     cached_at: Instant,
 }
 
+struct Inner<V> {
+    map: HashMap<Uuid, CacheEntry<V>>,
+    // Recency order: front = least recently used, back = most recently used.
+    // On get/put hit we move the entry to the back; on overflow we pop_front
+    // and drop from the map.
+    order: VecDeque<Uuid>,
+}
+
 /// Process-wide cache mapping entity UUID → resolved proto. Generic over
 /// the proto type so each entity has its own singleton.
 pub struct LinkCache<V> {
-    map: Mutex<HashMap<Uuid, CacheEntry<V>>>,
+    inner: Mutex<Inner<V>>,
     ttl_for_latest: Duration,
+    max_entries: usize,
 }
 
 impl<V> LinkCache<V> {
     pub fn new(ttl_for_latest: Duration) -> Self {
+        Self::with_capacity(ttl_for_latest, DEFAULT_MAX_ENTRIES)
+    }
+
+    pub fn with_capacity(ttl_for_latest: Duration, max_entries: usize) -> Self {
+        assert!(max_entries > 0, "max_entries must be > 0; got {}", max_entries);
         Self {
-            map: Mutex::new(HashMap::new()),
+            inner: Mutex::new(Inner {
+                map: HashMap::new(),
+                order: VecDeque::new(),
+            }),
             ttl_for_latest,
+            max_entries,
         }
     }
 
@@ -58,9 +81,9 @@ impl<V> LinkCache<V> {
         uuid: Uuid,
         requested_as_of: Option<&LocalTimestampProto>,
     ) -> Option<Arc<V>> {
-        let map = self.map.lock().unwrap();
-        let entry = map.get(&uuid)?;
-        match requested_as_of {
+        let mut inner = self.inner.lock().unwrap();
+        let entry = inner.map.get(&uuid)?;
+        let hit = match requested_as_of {
             None => {
                 if entry.cached_at.elapsed() > self.ttl_for_latest {
                     None
@@ -68,48 +91,75 @@ impl<V> LinkCache<V> {
                     Some(entry.value.clone())
                 }
             }
-            Some(req) => {
-                let cached = entry.as_of.as_ref()?;
-                if same_local_timestamp(cached, req) {
-                    Some(entry.value.clone())
-                } else {
-                    None
-                }
+            Some(req) => match entry.as_of.as_ref() {
+                Some(cached) if same_local_timestamp(cached, req) => Some(entry.value.clone()),
+                _ => None,
+            },
+        };
+        if hit.is_some() {
+            // Bump recency.
+            if let Some(pos) = inner.order.iter().position(|u| u == &uuid) {
+                inner.order.remove(pos);
             }
+            inner.order.push_back(uuid);
         }
+        hit
     }
 
     /// Newest-wins write: if a cached entry for `uuid` already has an `as_of`
-    /// strictly after the incoming one, the write is ignored.
+    /// strictly after the incoming one, the write is ignored (but recency is
+    /// still bumped — the caller saw a fresh reference).
     pub fn put(&self, uuid: Uuid, value: V, as_of: Option<LocalTimestampProto>) {
-        let mut map = self.map.lock().unwrap();
-        if let Some(existing) = map.get(&uuid) {
+        let mut inner = self.inner.lock().unwrap();
+        if let Some(existing) = inner.map.get(&uuid) {
             if let (Some(e), Some(incoming)) = (existing.as_of.as_ref(), as_of.as_ref()) {
                 if is_strictly_after(e, incoming) {
+                    // Bump recency only.
+                    if let Some(pos) = inner.order.iter().position(|u| u == &uuid) {
+                        inner.order.remove(pos);
+                    }
+                    inner.order.push_back(uuid);
                     return;
                 }
             }
         }
-        map.insert(
-            uuid,
-            CacheEntry {
-                value: Arc::new(value),
-                as_of,
-                cached_at: Instant::now(),
-            },
-        );
+        let new_entry = CacheEntry {
+            value: Arc::new(value),
+            as_of,
+            cached_at: Instant::now(),
+        };
+        if inner.map.insert(uuid, new_entry).is_some() {
+            // Existing key — remove from order before re-adding.
+            if let Some(pos) = inner.order.iter().position(|u| u == &uuid) {
+                inner.order.remove(pos);
+            }
+        }
+        inner.order.push_back(uuid);
+        while inner.map.len() > self.max_entries {
+            if let Some(oldest) = inner.order.pop_front() {
+                inner.map.remove(&oldest);
+            } else {
+                break;
+            }
+        }
     }
 
     pub fn evict(&self, uuid: Uuid) {
-        self.map.lock().unwrap().remove(&uuid);
+        let mut inner = self.inner.lock().unwrap();
+        inner.map.remove(&uuid);
+        if let Some(pos) = inner.order.iter().position(|u| u == &uuid) {
+            inner.order.remove(pos);
+        }
     }
 
     pub fn clear(&self) {
-        self.map.lock().unwrap().clear();
+        let mut inner = self.inner.lock().unwrap();
+        inner.map.clear();
+        inner.order.clear();
     }
 
     pub fn size(&self) -> usize {
-        self.map.lock().unwrap().len()
+        self.inner.lock().unwrap().map.len()
     }
 }
 
@@ -138,25 +188,31 @@ fn is_strictly_after(a: &LocalTimestampProto, b: &LocalTimestampProto) -> bool {
 }
 
 // ---- Shared singletons -----------------------------------------------------
+//
+// Per-entity TTL + cap. Tuned for typical access pattern:
+//   Portfolio / Security: 1-day TTL on null-as_of reads (entities change
+//       infrequently); large caps because the universe is large.
+//   Transaction: 1-minute TTL (high churn).
+//   Price: 30-second TTL (very high churn).
 
 pub fn security() -> &'static LinkCache<SecurityProto> {
     static C: OnceLock<LinkCache<SecurityProto>> = OnceLock::new();
-    C.get_or_init(|| LinkCache::new(DEFAULT_TTL_FOR_LATEST))
+    C.get_or_init(|| LinkCache::with_capacity(Duration::from_secs(86_400), 100_000))
 }
 
 pub fn portfolio() -> &'static LinkCache<PortfolioProto> {
     static C: OnceLock<LinkCache<PortfolioProto>> = OnceLock::new();
-    C.get_or_init(|| LinkCache::new(DEFAULT_TTL_FOR_LATEST))
+    C.get_or_init(|| LinkCache::with_capacity(Duration::from_secs(86_400), 10_000))
 }
 
 pub fn price() -> &'static LinkCache<PriceProto> {
     static C: OnceLock<LinkCache<PriceProto>> = OnceLock::new();
-    C.get_or_init(|| LinkCache::new(DEFAULT_TTL_FOR_LATEST))
+    C.get_or_init(|| LinkCache::with_capacity(Duration::from_secs(30), 200_000))
 }
 
 pub fn transaction() -> &'static LinkCache<TransactionProto> {
     static C: OnceLock<LinkCache<TransactionProto>> = OnceLock::new();
-    C.get_or_init(|| LinkCache::new(DEFAULT_TTL_FOR_LATEST))
+    C.get_or_init(|| LinkCache::with_capacity(Duration::from_secs(60), 100_000))
 }
 
 // ---- Tests -----------------------------------------------------------------
@@ -292,5 +348,53 @@ mod tests {
         assert!(price().get(uuid, Some(&make_as_of(0))).is_none());
         assert!(transaction().get(uuid, Some(&make_as_of(0))).is_none());
         security().evict(uuid);
+    }
+
+    // ---- F. Put with None as_of (post-W4) ----
+
+    #[test]
+    fn put_none_as_of_accepts_as_latest_entry() {
+        let cache: LinkCache<SecurityProto> = LinkCache::new(Duration::from_secs(60));
+        let uuid = Uuid::new_v4();
+        cache.put(uuid, make_proto("v1"), None);
+        // null-as_of read within TTL: hit.
+        assert!(cache.get(uuid, None).is_some());
+        // specific-as_of read: miss (cached entry has no as_of to match against).
+        assert!(cache.get(uuid, Some(&make_as_of(0))).is_none());
+    }
+
+    // ---- G. LRU bound (W4) ----
+
+    #[test]
+    fn lru_capacity_evicts_least_recently_used() {
+        let cache: LinkCache<SecurityProto> =
+            LinkCache::with_capacity(Duration::from_secs(60), 3);
+        let u1 = Uuid::new_v4();
+        let u2 = Uuid::new_v4();
+        let u3 = Uuid::new_v4();
+        let u4 = Uuid::new_v4();
+        let as_of = make_as_of(0);
+
+        cache.put(u1, make_proto("v1"), Some(as_of.clone()));
+        cache.put(u2, make_proto("v2"), Some(as_of.clone()));
+        cache.put(u3, make_proto("v3"), Some(as_of.clone()));
+        assert_eq!(cache.size(), 3);
+
+        // Touch u1 → MRU.
+        assert!(cache.get(u1, Some(&as_of)).is_some());
+
+        // Insert u4 → evicts u2 (LRU).
+        cache.put(u4, make_proto("v4"), Some(as_of.clone()));
+        assert_eq!(cache.size(), 3);
+        assert!(cache.get(u1, Some(&as_of)).is_some());
+        assert!(cache.get(u2, Some(&as_of)).is_none(), "u2 should have been evicted (LRU)");
+        assert!(cache.get(u3, Some(&as_of)).is_some());
+        assert!(cache.get(u4, Some(&as_of)).is_some());
+    }
+
+    #[test]
+    #[should_panic(expected = "max_entries must be > 0")]
+    fn ctor_zero_max_entries_panics() {
+        let _: LinkCache<SecurityProto> = LinkCache::with_capacity(Duration::from_secs(60), 0);
     }
 }
