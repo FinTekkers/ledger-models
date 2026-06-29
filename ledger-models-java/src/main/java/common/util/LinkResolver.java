@@ -211,58 +211,198 @@ public class LinkResolver {
         return out;
     }
 
-    /** Same shape as resolveSecuritiesOnPrices, for embedded security on Transaction. */
+    /**
+     * Hydrate the embedded security on each Transaction <b>and on every
+     * descendant {@code child_transactions[i].security}</b>, recursively.
+     *
+     * <p>Children carry their own {@code security} sub-proto. After
+     * {@code Transaction.getProto()} applies strip-on-write (Phase 2 #340)
+     * <em>every</em> nested security in the tree is rewritten to a link
+     * reference — top-level, the BUY's cash-impact WITHDRAWAL leg, the
+     * derived MATURATION, the MATURATION's DEPOSIT leg, all of it. The
+     * previous top-level-only resolver missed children, so a consumer
+     * reading {@code child.getSecurity()} got
+     * {@code Security.fromProto(linkProto)} → base {@code Security}, which
+     * blew up downstream casts (e.g. {@code TaxLotCalculator.java:61}'s
+     * {@code (BondSecurity) txn.getSecurity()} on the MATURATION child —
+     * second-brain#348).
+     *
+     * <p>Two-phase implementation: first walk the whole forest (top-level +
+     * every child) collecting link-mode SecurityProto sub-messages, bucket
+     * by {@code as_of} and fire one batched {@code GetByIds} per bucket
+     * (same dedup contract as the top-level path); then rewrite each
+     * Transaction recursively, swapping in the resolved proto wherever a
+     * link was previously sitting. Wrappers whose embedded security is
+     * already a full proto pass through unchanged.
+     */
     public List<TransactionProto> resolveSecuritiesOnTransactions(List<TransactionProto> txns) {
-        ensureSecuritiesCached(txns, TransactionProto::hasSecurity, TransactionProto::getSecurity);
+        // Phase 1: cache-warm every link-mode security in the forest.
+        List<SecurityProto> allSecurityLinks = new ArrayList<>();
+        for (TransactionProto t : txns) {
+            collectLinkSecurities(t, allSecurityLinks);
+        }
+        ensureSecurityLinksCached(allSecurityLinks);
+
+        // Phase 2: rebuild each tree, swapping link-mode → resolved.
         List<TransactionProto> out = new ArrayList<>(txns.size());
         for (TransactionProto t : txns) {
-            if (!t.hasSecurity() || !t.getSecurity().getIsLink()) {
-                out.add(t);
-                continue;
-            }
-            SecurityProto resolved = lookupResolvedSecurity(t.getSecurity());
-            if (resolved == null) {
-                out.add(t);
-            } else {
-                out.add(t.toBuilder().setSecurity(resolved).build());
-            }
+            out.add(rewriteSecuritiesRecursive(t));
         }
         return out;
     }
 
-    /** Hydrate the embedded portfolio on each Transaction. */
+    /**
+     * Hydrate the embedded portfolio on each Transaction <b>and on every
+     * descendant {@code child_transactions[i].portfolio}</b>, recursively.
+     * Same shape and rationale as
+     * {@link #resolveSecuritiesOnTransactions(List)}; the cash-leg and
+     * MATURATION children all carry their own portfolio sub-proto and the
+     * strip-on-write pass turns them all into links.
+     */
     public List<TransactionProto> resolvePortfoliosOnTransactions(List<TransactionProto> txns) {
-        ensurePortfoliosCached(txns);
+        List<PortfolioProto> allPortfolioLinks = new ArrayList<>();
+        for (TransactionProto t : txns) {
+            collectLinkPortfolios(t, allPortfolioLinks);
+        }
+        ensurePortfolioLinksCached(allPortfolioLinks);
+
         List<TransactionProto> out = new ArrayList<>(txns.size());
         for (TransactionProto t : txns) {
-            if (!t.hasPortfolio() || !t.getPortfolio().getIsLink()) {
-                out.add(t);
-                continue;
-            }
-            PortfolioProto resolved = lookupResolvedPortfolio(t.getPortfolio());
-            if (resolved == null) {
-                out.add(t);
-            } else {
-                out.add(t.toBuilder().setPortfolio(resolved).build());
-            }
+            out.add(rewritePortfoliosRecursive(t));
         }
         return out;
+    }
+
+    // ---------- recursion helpers (second-brain#348) ----------
+
+    private static void collectLinkSecurities(TransactionProto t, List<SecurityProto> sink) {
+        if (t.hasSecurity() && t.getSecurity().getIsLink()) {
+            sink.add(t.getSecurity());
+        }
+        for (TransactionProto child : t.getChildTransactionsList()) {
+            collectLinkSecurities(child, sink);
+        }
+    }
+
+    private static void collectLinkPortfolios(TransactionProto t, List<PortfolioProto> sink) {
+        if (t.hasPortfolio() && t.getPortfolio().getIsLink()) {
+            sink.add(t.getPortfolio());
+        }
+        for (TransactionProto child : t.getChildTransactionsList()) {
+            collectLinkPortfolios(child, sink);
+        }
+    }
+
+    /**
+     * Returns a TransactionProto with every link-mode {@code security}
+     * (top-level + every descendant) swapped for the resolved version
+     * sitting in {@link LinkCache#SECURITY}. Returns the input unchanged
+     * (reference-equal) if nothing in the tree needed rewriting — lets the
+     * caller's per-element identity check work.
+     */
+    private TransactionProto rewriteSecuritiesRecursive(TransactionProto t) {
+        boolean anyChildRewritten = false;
+        List<TransactionProto> rewrittenChildren = null;
+        for (int i = 0; i < t.getChildTransactionsCount(); i++) {
+            TransactionProto child = t.getChildTransactions(i);
+            TransactionProto newChild = rewriteSecuritiesRecursive(child);
+            if (newChild != child) {
+                if (rewrittenChildren == null) {
+                    rewrittenChildren = new ArrayList<>(t.getChildTransactionsList());
+                }
+                rewrittenChildren.set(i, newChild);
+                anyChildRewritten = true;
+            }
+        }
+
+        SecurityProto resolvedTop = null;
+        if (t.hasSecurity() && t.getSecurity().getIsLink()) {
+            resolvedTop = lookupResolvedSecurity(t.getSecurity());
+        }
+
+        if (resolvedTop == null && !anyChildRewritten) {
+            return t;
+        }
+
+        TransactionProto.Builder b = t.toBuilder();
+        if (resolvedTop != null) {
+            b.setSecurity(resolvedTop);
+        }
+        if (anyChildRewritten) {
+            b.clearChildTransactions();
+            for (TransactionProto c : rewrittenChildren) {
+                b.addChildTransactions(c);
+            }
+        }
+        return b.build();
+    }
+
+    private TransactionProto rewritePortfoliosRecursive(TransactionProto t) {
+        boolean anyChildRewritten = false;
+        List<TransactionProto> rewrittenChildren = null;
+        for (int i = 0; i < t.getChildTransactionsCount(); i++) {
+            TransactionProto child = t.getChildTransactions(i);
+            TransactionProto newChild = rewritePortfoliosRecursive(child);
+            if (newChild != child) {
+                if (rewrittenChildren == null) {
+                    rewrittenChildren = new ArrayList<>(t.getChildTransactionsList());
+                }
+                rewrittenChildren.set(i, newChild);
+                anyChildRewritten = true;
+            }
+        }
+
+        PortfolioProto resolvedTop = null;
+        if (t.hasPortfolio() && t.getPortfolio().getIsLink()) {
+            resolvedTop = lookupResolvedPortfolio(t.getPortfolio());
+        }
+
+        if (resolvedTop == null && !anyChildRewritten) {
+            return t;
+        }
+
+        TransactionProto.Builder b = t.toBuilder();
+        if (resolvedTop != null) {
+            b.setPortfolio(resolvedTop);
+        }
+        if (anyChildRewritten) {
+            b.clearChildTransactions();
+            for (TransactionProto c : rewrittenChildren) {
+                b.addChildTransactions(c);
+            }
+        }
+        return b.build();
     }
 
     // ---------- internals ----------
 
     /** Walk items, group link UUIDs by as_of, fire one batched GetByIds per
-     * bucket, populate {@link LinkCache#SECURITY}. */
+     * bucket, populate {@link LinkCache#SECURITY}. Used by the
+     * Price → Security path; the Transaction path
+     * collects directly into a {@link SecurityProto} list (which lets it
+     * cover {@code child_transactions[i].security} too — second-brain#348) and
+     * calls {@link #ensureSecurityLinksCached(Collection)}. */
     private <T> void ensureSecuritiesCached(
             List<T> items,
             java.util.function.Predicate<T> hasSec,
             java.util.function.Function<T, SecurityProto> getSec) {
-        // bucketKey -> uuid -> uuid (deduped) for that as_of
-        Map<String, Map<UUID, UUID>> buckets = new HashMap<>();
-        Map<String, LocalTimestampProto> bucketAsOfs = new HashMap<>();
+        List<SecurityProto> links = new ArrayList<>(items.size());
         for (T item : items) {
             if (!hasSec.test(item)) continue;
             SecurityProto sec = getSec.apply(item);
+            if (sec.getIsLink()) links.add(sec);
+        }
+        ensureSecurityLinksCached(links);
+    }
+
+    /** Bucket the given link-mode SecurityProtos by as_of, fire one batched
+     * GetByIds per bucket, populate {@link LinkCache#SECURITY}. Items that
+     * are already cached for a (uuid, as_of) are skipped. */
+    private void ensureSecurityLinksCached(Collection<SecurityProto> links) {
+        // bucketKey -> uuid -> uuid (deduped) for that as_of
+        Map<String, Map<UUID, UUID>> buckets = new HashMap<>();
+        Map<String, LocalTimestampProto> bucketAsOfs = new HashMap<>();
+        for (SecurityProto sec : links) {
             if (!sec.getIsLink()) continue;
             UUID uuid = ProtoSerializationUtil.deserializeUUID(sec.getUuid());
             LocalTimestampProto asOf = sec.hasAsOf() ? sec.getAsOf() : null;
@@ -284,13 +424,11 @@ public class LinkResolver {
         }
     }
 
-    /** Same as ensureSecuritiesCached but for Transaction.portfolio. */
-    private void ensurePortfoliosCached(List<TransactionProto> items) {
+    /** Portfolio counterpart to {@link #ensureSecurityLinksCached(Collection)}. */
+    private void ensurePortfolioLinksCached(Collection<PortfolioProto> links) {
         Map<String, Map<UUID, UUID>> buckets = new HashMap<>();
         Map<String, LocalTimestampProto> bucketAsOfs = new HashMap<>();
-        for (TransactionProto t : items) {
-            if (!t.hasPortfolio()) continue;
-            PortfolioProto port = t.getPortfolio();
+        for (PortfolioProto port : links) {
             if (!port.getIsLink()) continue;
             UUID uuid = ProtoSerializationUtil.deserializeUUID(port.getUuid());
             LocalTimestampProto asOf = port.hasAsOf() ? port.getAsOf() : null;

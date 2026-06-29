@@ -502,4 +502,385 @@ class LinkResolverTest {
         assertEquals("BULK", fromLinkCache.getIssuerName());
         LinkCache.SECURITY.clear();
     }
+
+    // ---------- second-brain#348 — child-transaction Security hydration ----------
+    //
+    // Pre-fix: resolveSecuritiesOnTransactions only walked the top-level
+    // `security` field on each TransactionProto. After Transaction.getProto()
+    // strip-on-write (Phase 2 #340) the CHILDREN (cash-impact WITHDRAWAL,
+    // derived MATURATION, MATURATION's DEPOSIT) also carried link-mode
+    // securities. Consumers reading child.getSecurity() got a base Security
+    // wrapper — broke the (BondSecurity) cast at
+    // ledger-service TaxLotCalculator.java:61 with ClassCastException, which
+    // surfaced as Phase 4's 1,209 / 6,857 Transaction.CreateOrUpdate
+    // rejections (StatusCode.UNKNOWN: Application error processing RPC).
+    //
+    // These tests pin the new contract: every link-mode security in the
+    // forest — top-level, every child, recursively — is hydrated by a single
+    // resolveSecuritiesOnTransactions call, batching across the whole tree.
+
+    private static SecurityProto fullBondSecurity(UUID uuid, String cusip) {
+        // TBILL-shape with bond_details so downstream Security.fromProto
+        // dispatches to BondSecurity (the cast site we're protecting).
+        return SecurityProto.newBuilder()
+                .setObjectClass("Security")
+                .setVersion("0.0.1")
+                .setUuid(uuidProto(uuid))
+                .setIsLink(false)
+                .setIssuerName("US TREASURY")
+                .setProductType(fintekkers.models.security.ProductTypeProto.TBILL)
+                .addIdentifiers(IdentifierProto.newBuilder()
+                        .setIdentifierType(fintekkers.models.security.IdentifierTypeProto.CUSIP)
+                        .setIdentifierValue(cusip).build())
+                .setBondDetails(fintekkers.models.security.BondDetailsProto.newBuilder()
+                        .setIssueDate(fintekkers.models.util.LocalDate.LocalDateProto.newBuilder()
+                                .setYear(2023).setMonth(5).setDay(16).build())
+                        .setDatedDate(fintekkers.models.util.LocalDate.LocalDateProto.newBuilder()
+                                .setYear(2023).setMonth(5).setDay(16).build())
+                        .setMaturityDate(fintekkers.models.util.LocalDate.LocalDateProto.newBuilder()
+                                .setYear(2023).setMonth(9).setDay(12).build())
+                        .build())
+                .build();
+    }
+
+    private static SecurityProto fullCashSecurity(UUID uuid) {
+        return SecurityProto.newBuilder()
+                .setObjectClass("Security")
+                .setVersion("0.0.1")
+                .setUuid(uuidProto(uuid))
+                .setIsLink(false)
+                .setIssuerName("USD")
+                .setProductType(fintekkers.models.security.ProductTypeProto.CURRENCY)
+                .setCashDetails(fintekkers.models.security.CashDetailsProto.newBuilder()
+                        .setCashId("USD").build())
+                .build();
+    }
+
+    /** Build a Transaction tree shaped like a SOMA Treasury BUY after
+     *  addCashImpact + addDerivedTransactions ran server-side and then
+     *  Transaction.getProto() applied strip-on-write to everything inside:
+     *
+     *      BUY (bond LINK)
+     *      ├── WITHDRAWAL (cash LINK)
+     *      └── MATURATION (bond LINK)
+     *          └── DEPOSIT (cash LINK)
+     *
+     *  This is the exact wire shape that hit
+     *  TaxLotCalculator.java:61's (BondSecurity) cast and threw
+     *  ClassCastException on the MATURATION child (second-brain#348).
+     */
+    private TransactionProto somaTreasuryChain_allLinkMode(UUID bondUuid, UUID cashUuid) {
+        SecurityProto bondLink = linkSecurity(bondUuid);
+        SecurityProto cashLink = linkSecurity(cashUuid);
+
+        TransactionProto deposit = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setSecurity(cashLink)
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.DEPOSIT)
+                .build();
+        TransactionProto maturation = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setSecurity(bondLink)
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.MATURATION)
+                .addChildTransactions(deposit)
+                .build();
+        TransactionProto withdrawal = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setSecurity(cashLink)
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.WITHDRAWAL)
+                .build();
+        return TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setSecurity(bondLink)
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.BUY)
+                .addChildTransactions(withdrawal)
+                .addChildTransactions(maturation)
+                .build();
+    }
+
+    @Test
+    void issue348_childTransactionSecurities_areHydratedByBulkResolve() {
+        LinkCache.SECURITY.clear();
+        UUID bondUuid = UUID.randomUUID();
+        UUID cashUuid = UUID.randomUUID();
+        Map<String, SecurityProto> store = Map.of(
+                bondUuid.toString(), fullBondSecurity(bondUuid, "912797GS0"),
+                cashUuid.toString(), fullCashSecurity(cashUuid));
+        RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
+        LinkResolver resolver = new LinkResolver(fetcher,
+                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); });
+
+        TransactionProto buy = somaTreasuryChain_allLinkMode(bondUuid, cashUuid);
+        List<TransactionProto> out = resolver.resolveSecuritiesOnTransactions(List.of(buy));
+
+        TransactionProto hydratedBuy = out.get(0);
+
+        // Top-level BUY: bond hydrated.
+        assertFalse(hydratedBuy.getSecurity().getIsLink(),
+                "Top-level BUY's security must be hydrated");
+        assertEquals(fintekkers.models.security.ProductTypeProto.TBILL,
+                hydratedBuy.getSecurity().getProductType(),
+                "Hydrated bond must carry a concrete productType so Security.fromProto dispatches to BondSecurity");
+
+        // Every child's security: also hydrated. This is the exact contract
+        // that was broken pre-#348.
+        assertEquals(2, hydratedBuy.getChildTransactionsCount());
+        TransactionProto withdrawal = hydratedBuy.getChildTransactions(0);
+        TransactionProto maturation = hydratedBuy.getChildTransactions(1);
+
+        assertFalse(withdrawal.getSecurity().getIsLink(),
+                "WITHDRAWAL (cash leg) security must be hydrated");
+        assertEquals(fintekkers.models.security.ProductTypeProto.CURRENCY,
+                withdrawal.getSecurity().getProductType());
+
+        assertFalse(maturation.getSecurity().getIsLink(),
+                "MATURATION child's security must be hydrated — this is the cast site that blew up #348");
+        assertEquals(fintekkers.models.security.ProductTypeProto.TBILL,
+                maturation.getSecurity().getProductType(),
+                "MATURATION child must carry TBILL productType so (BondSecurity) cast at "
+                        + "TaxLotCalculator.java:61 succeeds");
+
+        // Grandchild (MATURATION's DEPOSIT cash leg): also hydrated.
+        assertEquals(1, maturation.getChildTransactionsCount());
+        TransactionProto deposit = maturation.getChildTransactions(0);
+        assertFalse(deposit.getSecurity().getIsLink(),
+                "DEPOSIT grandchild (MATURATION's cash leg) security must be hydrated");
+        assertEquals(fintekkers.models.security.ProductTypeProto.CURRENCY,
+                deposit.getSecurity().getProductType());
+
+        LinkCache.SECURITY.clear();
+    }
+
+    @Test
+    void issue348_bulkResolve_batchesAcrossTreeInSingleRpc() {
+        LinkCache.SECURITY.clear();
+        UUID bondUuid = UUID.randomUUID();
+        UUID cashUuid = UUID.randomUUID();
+        Map<String, SecurityProto> store = Map.of(
+                bondUuid.toString(), fullBondSecurity(bondUuid, "912797GS0"),
+                cashUuid.toString(), fullCashSecurity(cashUuid));
+        RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
+        LinkResolver resolver = new LinkResolver(fetcher,
+                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); });
+
+        TransactionProto buy = somaTreasuryChain_allLinkMode(bondUuid, cashUuid);
+        // 5 link-mode security sub-protos across the tree (BUY+MATURATION on
+        // bond × 2, WITHDRAWAL+DEPOSIT on cash × 2 — wait, BUY has bondLink,
+        // WITHDRAWAL cashLink, MATURATION bondLink, DEPOSIT cashLink = 4 link
+        // refs total, but only 2 unique UUIDs). The resolver must dedupe
+        // across the forest and fire exactly one RPC.
+        resolver.resolveSecuritiesOnTransactions(List.of(buy));
+
+        assertEquals(1, fetcher.callCount,
+                "All link-mode securities in the tree should be fetched in a single batched RPC");
+        assertEquals(2, fetcher.requestedUuids.get(0).size(),
+                "Two unique UUIDs (bond + cash) requested in the batch");
+        Set<String> requested = new HashSet<>(fetcher.requestedUuids.get(0));
+        assertEquals(Set.of(bondUuid.toString(), cashUuid.toString()), requested);
+
+        LinkCache.SECURITY.clear();
+    }
+
+    @Test
+    void issue348_alreadyFullSecuritiesOnChildren_passThrough() {
+        // Defensive: if the producer happens to send a Transaction whose
+        // child carries a full inline security (no strip-on-write applied),
+        // the resolver must leave it alone and never make any RPC.
+        LinkCache.SECURITY.clear();
+        UUID bondUuid = UUID.randomUUID();
+        UUID cashUuid = UUID.randomUUID();
+        RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>());
+        LinkResolver resolver = new LinkResolver(fetcher,
+                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); });
+
+        SecurityProto fullBond = fullBondSecurity(bondUuid, "912797GS0");
+        SecurityProto fullCash = fullCashSecurity(cashUuid);
+
+        TransactionProto maturation = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setSecurity(fullBond)
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.MATURATION)
+                .build();
+        TransactionProto buy = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setSecurity(fullBond)
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.BUY)
+                .addChildTransactions(maturation)
+                .build();
+
+        List<TransactionProto> out = resolver.resolveSecuritiesOnTransactions(List.of(buy));
+
+        assertEquals(0, fetcher.callCount, "No link-mode → no RPC");
+        // Reference-identity pass-through is a perf optimization, not a
+        // contract. Assert observable: still a TBILL bond on both nodes.
+        assertEquals(fintekkers.models.security.ProductTypeProto.TBILL,
+                out.get(0).getSecurity().getProductType());
+        assertEquals(fintekkers.models.security.ProductTypeProto.TBILL,
+                out.get(0).getChildTransactions(0).getSecurity().getProductType());
+        // Cash sentinel not needed for this scenario; ensure unused fields
+        // are quiet.
+        assertEquals(0, fullCash.getIsLink() ? 1 : 0);
+
+        LinkCache.SECURITY.clear();
+    }
+
+    @Test
+    void issue348_mixedTree_someChildrenLinkSomeFull_isHandled() {
+        // Edge case: a producer that sends the parent full but children
+        // stripped (or vice-versa). The resolver must hydrate ONLY the
+        // link-mode ones.
+        LinkCache.SECURITY.clear();
+        UUID bondUuid = UUID.randomUUID();
+        UUID cashUuid = UUID.randomUUID();
+        SecurityProto fullCash = fullCashSecurity(cashUuid);
+        SecurityProto bondLink = linkSecurity(bondUuid);
+
+        Map<String, SecurityProto> store = Map.of(
+                bondUuid.toString(), fullBondSecurity(bondUuid, "912797GS0"));
+        RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
+        LinkResolver resolver = new LinkResolver(fetcher,
+                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); });
+
+        TransactionProto withdrawal = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setSecurity(fullCash)  // full
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.WITHDRAWAL)
+                .build();
+        TransactionProto maturation = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setSecurity(bondLink)  // link
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.MATURATION)
+                .build();
+        TransactionProto buy = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setSecurity(bondLink)  // link
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.BUY)
+                .addChildTransactions(withdrawal)
+                .addChildTransactions(maturation)
+                .build();
+
+        List<TransactionProto> out = resolver.resolveSecuritiesOnTransactions(List.of(buy));
+
+        assertEquals(1, fetcher.callCount, "Single RPC for the one unique link UUID");
+        assertEquals(1, fetcher.requestedUuids.get(0).size(),
+                "Only the bond UUID needs fetching — full cash sub-proto passes through");
+
+        TransactionProto h = out.get(0);
+        assertFalse(h.getSecurity().getIsLink());
+        assertEquals(fintekkers.models.security.ProductTypeProto.TBILL,
+                h.getSecurity().getProductType());
+        assertEquals(fintekkers.models.security.ProductTypeProto.CURRENCY,
+                h.getChildTransactions(0).getSecurity().getProductType());
+        assertFalse(h.getChildTransactions(1).getSecurity().getIsLink());
+        assertEquals(fintekkers.models.security.ProductTypeProto.TBILL,
+                h.getChildTransactions(1).getSecurity().getProductType());
+
+        LinkCache.SECURITY.clear();
+    }
+
+    @Test
+    void issue348_endToEnd_childMaturationGetSecurityReturnsBondSecurity_notBaseSecurity() {
+        // The whole point of this fix: after recursive hydration, wrapping
+        // the hydrated proto in a Transaction and calling getSecurity() on
+        // the MATURATION child must return a BondSecurity (not a base
+        // Security), so the (BondSecurity) cast at
+        // ledger-service TaxLotCalculator.java:61 succeeds.
+        //
+        // Pre-fix this exact call returned a base Security and threw
+        // ClassCastException at the cast site (#348 production failure).
+        LinkCache.SECURITY.clear();
+        UUID bondUuid = UUID.randomUUID();
+        UUID cashUuid = UUID.randomUUID();
+        Map<String, SecurityProto> store = Map.of(
+                bondUuid.toString(), fullBondSecurity(bondUuid, "912797GS0"),
+                cashUuid.toString(), fullCashSecurity(cashUuid));
+        RecordingSecurityFetcher fetcher = new RecordingSecurityFetcher(new HashMap<>(store));
+        LinkResolver resolver = new LinkResolver(fetcher,
+                req -> { throw new IllegalStateException("portfolio fetcher should not be called"); });
+
+        TransactionProto buyProto = somaTreasuryChain_allLinkMode(bondUuid, cashUuid);
+        TransactionProto hydrated = resolver.resolveSecuritiesOnTransactions(List.of(buyProto)).get(0);
+
+        // Wrap and traverse via the SAME path TaxLotCalculator takes.
+        common.models.transaction.Transaction buy =
+                new common.models.transaction.Transaction(hydrated);
+        assertEquals(2, buy.getChildTransactions().size());
+        common.models.transaction.Transaction maturation = buy.getChildTransactions().get(1);
+        assertEquals(fintekkers.models.transaction.TransactionTypeProto.MATURATION.name(),
+                maturation.getTransactionType().name());
+
+        // The contract-pinning assertion. This object reference must be a
+        // BondSecurity for ledger-service's `(BondSecurity) txn.getSecurity()`
+        // to work. Before the recursion fix this returned a base
+        // common.models.security.Security → ClassCastException at runtime.
+        common.models.security.Security maturationSec = maturation.getSecurity();
+        assertNotNull(maturationSec);
+        assertTrue(maturationSec instanceof common.models.security.BondSecurity,
+                "MATURATION child's getSecurity() must dispatch to BondSecurity. "
+                        + "Got: " + maturationSec.getClass().getName()
+                        + " — second-brain#348 reproduction guard.");
+
+        // And the (BondSecurity) cast must actually succeed.
+        common.models.security.BondSecurity bondCast =
+                (common.models.security.BondSecurity) maturationSec;
+        assertEquals(java.time.LocalDate.of(2023, 9, 12), bondCast.getMaturityDate());
+
+        LinkCache.SECURITY.clear();
+    }
+
+    @Test
+    void issue348_portfoliosOnChildren_areHydratedRecursively() {
+        // Portfolio counterpart: addCashImpact / addDerivedTransactions
+        // propagate parent's portfolio onto every child, and strip-on-write
+        // turns all of them into links. The recursive Portfolio hydration
+        // must mirror the Security path.
+        LinkCache.PORTFOLIO.clear();
+        UUID portUuid = UUID.randomUUID();
+        PortfolioProto fullPort = fullPortfolio(portUuid, "Federal Reserve SOMA Holdings");
+        Map<String, PortfolioProto> store = Map.of(portUuid.toString(), fullPort);
+        RecordingPortfolioFetcher fetcher = new RecordingPortfolioFetcher(new HashMap<>(store));
+        LinkResolver resolver = new LinkResolver(
+                req -> { throw new IllegalStateException("security fetcher should not be called"); },
+                fetcher);
+
+        PortfolioProto portLink = PortfolioProto.newBuilder()
+                .setUuid(uuidProto(portUuid))
+                .setIsLink(true).build();
+
+        TransactionProto maturation = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setPortfolio(portLink)
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.MATURATION)
+                .build();
+        TransactionProto buy = TransactionProto.newBuilder()
+                .setObjectClass("Transaction").setVersion("0.0.1")
+                .setUuid(uuidProto(UUID.randomUUID()))
+                .setPortfolio(portLink)
+                .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.BUY)
+                .addChildTransactions(maturation)
+                .build();
+
+        List<TransactionProto> out = resolver.resolvePortfoliosOnTransactions(List.of(buy));
+
+        assertEquals(1, fetcher.callCount, "Single batched RPC for the deduped portfolio UUID across the tree");
+        TransactionProto h = out.get(0);
+        assertFalse(h.getPortfolio().getIsLink(), "Top-level portfolio hydrated");
+        assertEquals("Federal Reserve SOMA Holdings", h.getPortfolio().getPortfolioName());
+        assertFalse(h.getChildTransactions(0).getPortfolio().getIsLink(),
+                "Child MATURATION's portfolio hydrated — recursive contract");
+        assertEquals("Federal Reserve SOMA Holdings",
+                h.getChildTransactions(0).getPortfolio().getPortfolioName());
+
+        LinkCache.PORTFOLIO.clear();
+    }
 }
