@@ -9,6 +9,7 @@ import Security from '../../models/security/security';
 // Model Utils
 import { PositionFilter } from '../../models/position/positionfilter';
 import * as dt from '../../models/utils/datetime';
+import { validateIdentifiersForCreate } from '../../models/security/identifier';
 
 // Requests & Services
 import { SecurityClient } from '../../../fintekkers/services/security-service/security_service_grpc_pb';
@@ -35,6 +36,12 @@ class SecurityService {
   }
 
   async validateCreateSecurity(security: SecurityProto): Promise<SummaryProto> {
+    // Client-side guard (#347): reject UNKNOWN_IDENTIFIER_TYPE and empty
+    // identifier values before the gRPC round-trip. Mirrors the server's
+    // validateCreateRequest reject so the dry-run RPC can't mask a request
+    // that the real createOrUpdate would also fail on.
+    validateIdentifiersForCreate(security);
+
     const createRequest = new CreateSecurityRequestProto();
     createRequest.setObjectClass('SecurityRequest');
     createRequest.setVersion('0.0.1');
@@ -46,6 +53,9 @@ class SecurityService {
   }
 
   async createSecurity(security: SecurityProto): Promise<CreateSecurityResponseProto> {
+    // Client-side guard (#347): see validateCreateSecurity above.
+    validateIdentifiersForCreate(security);
+
     const createRequest = new CreateSecurityRequestProto();
     createRequest.setObjectClass('SecurityRequest');
     createRequest.setVersion('0.0.1');

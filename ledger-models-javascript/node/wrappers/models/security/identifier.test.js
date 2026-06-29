@@ -78,15 +78,12 @@ describe('Identifier.fromName', () => {
         expect(err.message).toContain('CUSIP');
     });
     test('throws on UNKNOWN_IDENTIFIER_TYPE — sentinel is not a public name', () => {
-        // It IS a valid proto enum value, but getAllTypeNames excludes it,
-        // so fromName accepting it would be inconsistent with the dropdown
-        // contract. Guard explicitly.
-        // (Currently fromName allows it because it IS a key on
-        // IdentifierTypeProto. This test pins the EXISTING behavior so a
-        // future tightening is a deliberate choice. If the policy changes,
-        // flip this assertion.)
-        const id = identifier_1.Identifier.fromName('UNKNOWN_IDENTIFIER_TYPE', 'whatever');
-        expect(id.getIdentifierType()).toBe(identifier_type_pb_1.IdentifierTypeProto.UNKNOWN_IDENTIFIER_TYPE);
+        // The tightening anticipated by the earlier permissive test (now
+        // landed in FinTekkers/second-brain#347): the sentinel is rejected
+        // at construction time so consumer code cannot accidentally build
+        // and send a Security with the proto3-default identifier type.
+        expect(() => identifier_1.Identifier.fromName('UNKNOWN_IDENTIFIER_TYPE', 'whatever'))
+            .toThrow(/UNKNOWN_IDENTIFIER_TYPE/);
     });
 });
 describe('Identifier.getAllTypeNames', () => {

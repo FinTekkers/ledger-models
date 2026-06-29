@@ -1,5 +1,31 @@
 import { IdentifierProto } from '../../../fintekkers/models/security/identifier/identifier_pb';
 import { IdentifierTypeProto } from '../../../fintekkers/models/security/identifier/identifier_type_pb';
+import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+/**
+ * Raised when an IdentifierProto is rejected by the client-side guard
+ * before being sent to SecurityService. See FinTekkers/second-brain#347.
+ */
+export declare class IdentifierValidationError extends Error {
+    constructor(message: string);
+}
+/**
+ * Client-side guard for a single IdentifierProto. Mirrors the server's
+ * SecurityAPIGRPCImpl.validateCreateRequest reject so consumer SDKs fail
+ * fast before the gRPC round-trip. See FinTekkers/second-brain#347.
+ *
+ * Rejects:
+ *   - identifier_type == UNKNOWN_IDENTIFIER_TYPE (proto3 default — never a
+ *     real identifier; equity loaders MUST pass EXCH_TICKER / CUSIP / ...)
+ *   - identifier_value empty or whitespace-only
+ */
+export declare function validateIdentifierProto(identifier: IdentifierProto): void;
+/**
+ * Client-side guard for every identifier carried by a SecurityProto on the
+ * create/upsert path. Skips link-mode securities (is_link=true) — those carry
+ * only uuid+as_of and aren't entities being created. Throws on the first
+ * offending identifier.
+ */
+export declare function validateIdentifiersForCreate(security: SecurityProto): void;
 export declare class Identifier {
     proto: IdentifierProto;
     constructor(proto: IdentifierProto);

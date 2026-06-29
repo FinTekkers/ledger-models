@@ -19,6 +19,9 @@ from fintekkers.models.position.position_pb2 import PositionProto
 
 from fintekkers.wrappers.models.position import Position
 from fintekkers.wrappers.models.security.security import Security
+from fintekkers.wrappers.models.security.security_identifier import (
+    validate_identifiers_for_create,
+)
 from fintekkers.wrappers.requests.security import (
     QuerySecurityRequest,
     CreateSecurityRequest,
@@ -87,6 +90,10 @@ class SecurityService:
         responses.cancel()
 
     def create_or_update(self, request: CreateSecurityRequest):
+        # Client-side guard (#347): reject UNKNOWN_IDENTIFIER_TYPE and empty
+        # identifier values before the gRPC round-trip. Same rule the server's
+        # validateCreateRequest enforces.
+        validate_identifiers_for_create(request.proto.security_input)
         response = self.stub.CreateOrUpdate(request.proto)
         # Write-through: surface the just-persisted entity to lazy-hydrate
         # wrappers via the process-wide LinkCache. See
@@ -101,6 +108,10 @@ class SecurityService:
         return response
 
     def validate_create_or_update(self, request: CreateSecurityRequest):
+        # Same client-side guard (#347) as create_or_update. validate_*
+        # is the dry-run RPC; the consumer-side check is identical so the
+        # dry run can't mask a UNKNOWN_IDENTIFIER_TYPE that would later fail.
+        validate_identifiers_for_create(request.proto.security_input)
         return self.stub.ValidateCreateOrUpdate(request.proto)
 
     def get_security_by_uuid(
