@@ -39,6 +39,7 @@ exports.SecurityService = void 0;
 const util_1 = require("util");
 const security_1 = __importDefault(require("../../models/security/security"));
 const dt = __importStar(require("../../models/utils/datetime"));
+const identifier_1 = require("../../models/security/identifier");
 // Requests & Services
 const security_service_grpc_pb_1 = require("../../../fintekkers/services/security-service/security_service_grpc_pb");
 const query_security_request_pb_1 = require("../../../fintekkers/requests/security/query_security_request_pb");
@@ -59,6 +60,11 @@ class SecurityService {
     }
     validateCreateSecurity(security) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Client-side guard (#347): reject UNKNOWN_IDENTIFIER_TYPE and empty
+            // identifier values before the gRPC round-trip. Mirrors the server's
+            // validateCreateRequest reject so the dry-run RPC can't mask a request
+            // that the real createOrUpdate would also fail on.
+            (0, identifier_1.validateIdentifiersForCreate)(security);
             const createRequest = new create_security_request_pb_1.CreateSecurityRequestProto();
             createRequest.setObjectClass('SecurityRequest');
             createRequest.setVersion('0.0.1');
@@ -70,6 +76,8 @@ class SecurityService {
     }
     createSecurity(security) {
         return __awaiter(this, void 0, void 0, function* () {
+            // Client-side guard (#347): see validateCreateSecurity above.
+            (0, identifier_1.validateIdentifiersForCreate)(security);
             const createRequest = new create_security_request_pb_1.CreateSecurityRequestProto();
             createRequest.setObjectClass('SecurityRequest');
             createRequest.setVersion('0.0.1');

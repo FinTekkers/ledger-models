@@ -14,9 +14,16 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
 from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.security.security_pb2 import SecurityProto
+from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
+from fintekkers.models.security.identifier.identifier_type_pb2 import (
+    IdentifierTypeProto,
+)
 from fintekkers.models.transaction.transaction_pb2 import TransactionProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
+from fintekkers.requests.security.create_security_request_pb2 import (
+    CreateSecurityRequestProto,
+)
 from fintekkers.requests.security.create_security_response_pb2 import (
     CreateSecurityResponseProto,
 )
@@ -71,10 +78,20 @@ def test_security_create_or_update_populates_link_cache():
     svc = SecurityService()
     svc.stub = _RecordingStub(response)
 
-    # Build a minimal request-shaped object exposing the `.proto` attr.
+    # CreateSecurityRequestProto carrying a real-typed identifier so the
+    # client-side identifier guard (#347) lets the call through.
     class _ReqProto:
         def __init__(self):
-            self.proto = SecurityProto()
+            self.proto = CreateSecurityRequestProto(
+                security_input=SecurityProto(
+                    identifiers=[
+                        IdentifierProto(
+                            identifier_type=IdentifierTypeProto.EXCH_TICKER,
+                            identifier_value="ACME",
+                        )
+                    ]
+                )
+            )
     svc.create_or_update(_ReqProto())
 
     as_of_dt = ProtoSerializationUtil.deserialize(as_of)
