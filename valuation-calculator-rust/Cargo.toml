@@ -1,0 +1,17 @@
+[package]
+name = "valuation-calculator"
+version = "0.1.0"
+edition = "2021"
+authors = ["FinTekkers"]
+license = "Apache-2.0"
+description = "Bond valuation calculator: pricing, yield, duration, convexity, DV01"
+
+[dependencies]
+
+[features]
+default = []
+proto = ["ledger-models"]
+
+[dependencies.ledger-models]
+path = "../ledger-models-rust"
+optional = true
