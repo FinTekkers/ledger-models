@@ -117,7 +117,7 @@ message SecurityProto {
 
 // Bond security details: fixed-rate coupon bonds (US Treasuries, corporates, etc.)
 message BondDetailsProto {
-  fintekkers.models.util.DecimalValueProto coupon_rate = 1; // Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
+  fintekkers.models.util.DecimalValueProto coupon_rate = 1; // Percentage form: 6.0 = 6%, 0.625 = 0.625%.
   CouponTypeProto coupon_type = 2;
   CouponFrequencyProto coupon_frequency = 3;
   fintekkers.models.util.LocalDateProto dated_date = 4;
