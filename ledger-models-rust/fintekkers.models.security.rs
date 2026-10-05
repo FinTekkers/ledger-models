@@ -469,7 +469,7 @@ pub mod security_proto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BondDetailsProto {
-    /// Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
+    /// Percentage form: 6.0 = 6%, 0.625 = 0.625%.
     #[prost(message, optional, tag = "1")]
     pub coupon_rate: ::core::option::Option<super::util::DecimalValueProto>,
     #[prost(enumeration = "CouponTypeProto", tag = "2")]
