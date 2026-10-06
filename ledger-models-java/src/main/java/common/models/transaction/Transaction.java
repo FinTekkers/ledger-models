@@ -1,6 +1,7 @@
 package common.models.transaction;
 
 import common.models.RawDataModelObject;
+import common.models.errors.ModelValidationException;
 import common.models.errors.transaction.TransactionProcessingException;
 import common.models.portfolio.Portfolio;
 import common.models.postion.Field;
@@ -11,6 +12,7 @@ import common.models.security.BondSecurity;
 import common.models.security.CashSecurity;
 import common.models.security.ProductHierarchy;
 import common.models.security.Security;
+import common.models.security.SecurityRules;
 import common.models.strategy.StrategyAllocation;
 import common.models.util.persistence.IForeignKey;
 import com.google.protobuf.ByteString;
@@ -867,8 +869,9 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                 BondSecurity bond = (BondSecurity) parentTransaction.getSecurity();
                 BigDecimal faceValue = bond.getFaceValue();
                 if (faceValue == null) {
-                    throw new TransactionProcessingException(
-                            "Bond face_value is required for transaction cash impact calculation");
+                    throw new ModelValidationException(List.of(ModelValidationException.violation(
+                            SecurityRules.FACE_VALUE, bond.getID(),
+                            "Bond face_value is required for transaction cash impact calculation")));
                 }
                 BigDecimal priceScaleFactor = bond.getPriceScaleFactor();
                 BigDecimal scaledPrice = parentTransaction.getPrice().getPrice().multiply(priceScaleFactor);

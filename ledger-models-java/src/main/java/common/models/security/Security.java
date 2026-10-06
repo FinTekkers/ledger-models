@@ -144,13 +144,13 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         Objects.requireNonNull(proto, "SecurityProto must not be null");
         validateSettlementCurrency(proto);
 
-        ProductTypeProto productType = inferProductType(proto);
+        ProductTypeProto productType = SecurityRules.inferProductType(proto);
 
         if (productType == ProductTypeProto.CURRENCY) {
             return new CashSecurity(proto);
         }
         if (ProductHierarchy.isDescendantOf(productType, "BOND")) {
-            validateBondDates(proto);
+            SecurityRules.checkBondDates(proto);
             if (productType == ProductTypeProto.TIPS) {
                 return new common.models.security.bonds.TIPSBond(proto);
             }
@@ -172,36 +172,6 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     }
 
     /**
-     * Returns {@code proto.getProductType()}, or when that is UNKNOWN infers
-     * the type from the structured shape (extensions, bond_details,
-     * non_bond_details). Returns UNKNOWN when nothing identifies the type.
-     */
-    private static ProductTypeProto inferProductType(SecurityProto proto) {
-        ProductTypeProto productType = proto.getProductType();
-        SecurityProto.NonBondDetailsCase nonBondCase = proto.getNonBondDetailsCase();
-
-        if (productType == ProductTypeProto.PRODUCT_TYPE_UNKNOWN) {
-            if (proto.hasTipsExtension()) {
-                productType = ProductTypeProto.TIPS;
-            } else if (proto.hasFrnExtension()) {
-                productType = ProductTypeProto.TREASURY_FRN;
-            } else if (proto.hasMbsExtension()) {
-                productType = ProductTypeProto.MORTGAGE_BACKED;
-            } else if (proto.hasBondDetails()) {
-                productType = ProductTypeProto.TREASURY_NOTE;
-            } else if (nonBondCase != SecurityProto.NonBondDetailsCase.NONBONDDETAILS_NOT_SET) {
-                switch (nonBondCase) {
-                    case CASH_DETAILS:   productType = ProductTypeProto.CURRENCY; break;
-                    case EQUITY_DETAILS: productType = ProductTypeProto.COMMON_STOCK; break;
-                    case INDEX_DETAILS:  productType = ProductTypeProto.EQUITY_INDEX; break;
-                    default: break;
-                }
-            }
-        }
-        return productType;
-    }
-
-    /**
      * Rejects a settlement_currency that is neither a link nor a CURRENCY
      * security (LM-113). Links are UUID-only references and are not
      * type-checked. A bare legacy proto with no type and no shape fields is
@@ -211,7 +181,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         if (!proto.hasSettlementCurrency()) return;
         SecurityProto sc = proto.getSettlementCurrency();
         if (sc.getIsLink()) return;
-        ProductTypeProto t = inferProductType(sc);
+        ProductTypeProto t = SecurityRules.inferProductType(sc);
         if (t == ProductTypeProto.CURRENCY || t == ProductTypeProto.PRODUCT_TYPE_UNKNOWN) return;
         throw new IllegalArgumentException(
                 "settlement_currency must be a CURRENCY security or a link; got product_type=" + t);
@@ -233,30 +203,6 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
                 .setIsLink(true)
                 .setUuid(ProtoSerializationUtil.serializeUUID(uuid))
                 .build();
-    }
-
-    /**
-     * Carried forward from the deleted SecuritySerializer.deserialize:
-     * maturity_date must be strictly after issue_date for bond-type securities.
-     * Throws IllegalArgumentException (maps to gRPC INVALID_ARGUMENT at the
-     * service layer).
-     */
-    private static void validateBondDates(SecurityProto proto) {
-        fintekkers.models.util.LocalDate.LocalDateProto issueDate = null;
-        fintekkers.models.util.LocalDate.LocalDateProto maturityDate = null;
-        if (proto.hasBondDetails()) {
-            fintekkers.models.security.BondDetailsProto bond = proto.getBondDetails();
-            if (bond.hasIssueDate()) issueDate = bond.getIssueDate();
-            if (bond.hasMaturityDate()) maturityDate = bond.getMaturityDate();
-        }
-        if (issueDate != null && maturityDate != null) {
-            LocalDate issue = ProtoSerializationUtil.deserializeLocalDate(issueDate);
-            LocalDate maturity = ProtoSerializationUtil.deserializeLocalDate(maturityDate);
-            if (!maturity.isAfter(issue)) {
-                throw new IllegalArgumentException(
-                        "maturity_date must be after issue_date: maturity=" + maturity + ", issue=" + issue);
-            }
-        }
     }
 
     // ---- Internal helpers -----------------------------------------------

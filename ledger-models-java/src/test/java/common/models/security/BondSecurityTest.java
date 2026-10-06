@@ -4,6 +4,7 @@ import common.models.price.Price;
 import common.models.transaction.Transaction;
 import common.models.transaction.TransactionType;
 import fintekkers.models.position.PositionStatusProto;
+import fintekkers.models.security.ProductTypeProto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import testutil.DummyEquityObjects;
@@ -102,5 +103,31 @@ class BondSecurityTest {
 
         Assertions.assertEquals(original, adjusted);
         Assertions.assertEquals(10, adjusted.getYears());
+    }
+
+    /** LS-19: a bond with bond_details but no issue_date (and no explicit product_type). */
+    private static BondSecurity bondWithoutIssueDate() {
+        return (BondSecurity) Security.fromProto(SecurityRulesTest.bond(
+                UUID.randomUUID(), BigDecimal.valueOf(1000), null, LocalDate.of(2034, 1, 15)));
+    }
+
+    @Test
+    public void noIssueDate_getTenorReturnsUnknown() {
+        BondSecurity bond = bondWithoutIssueDate();
+
+        Tenor tenor = Assertions.assertDoesNotThrow(bond::getTenor);
+        Assertions.assertSame(Tenor.UNKNOWN_TENOR, tenor);
+        Assertions.assertNull(bond.getIssueDate(), "getTenor must not invent an issue_date");
+    }
+
+    @Test
+    public void noIssueDate_getProductTypeDoesNotThrow() {
+        BondSecurity bond = bondWithoutIssueDate();
+
+        ProductTypeProto productType = Assertions.assertDoesNotThrow(bond::getProductType);
+        Assertions.assertEquals(ProductTypeProto.TREASURY_NOTE, productType);
+        Assertions.assertFalse(bond.getProto().getBondDetails().hasIssueDate(),
+                "getProductType must not invent an issue_date");
+        Assertions.assertNull(bond.getIssueDate());
     }
 }

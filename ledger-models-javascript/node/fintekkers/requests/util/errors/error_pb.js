@@ -23,6 +23,8 @@ var global = (function() {
 
 var fintekkers_requests_util_errors_message_pb = require('../../../../fintekkers/requests/util/errors/message_pb.js');
 goog.object.extend(proto, fintekkers_requests_util_errors_message_pb);
+var fintekkers_requests_util_errors_field_violation_pb = require('../../../../fintekkers/requests/util/errors/field_violation_pb.js');
+goog.object.extend(proto, fintekkers_requests_util_errors_field_violation_pb);
 goog.exportSymbol('proto.fintekkers.requests.util.errors.ErrorCode', null, global);
 goog.exportSymbol('proto.fintekkers.requests.util.errors.ErrorProto', null, global);
 goog.exportSymbol('proto.fintekkers.requests.util.errors.WarningProto', null, global);
@@ -37,7 +39,7 @@ goog.exportSymbol('proto.fintekkers.requests.util.errors.WarningProto', null, gl
  * @constructor
  */
 proto.fintekkers.requests.util.errors.ErrorProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.fintekkers.requests.util.errors.ErrorProto.repeatedFields_, null);
 };
 goog.inherits(proto.fintekkers.requests.util.errors.ErrorProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -68,6 +70,13 @@ if (goog.DEBUG && !COMPILED) {
    */
   proto.fintekkers.requests.util.errors.WarningProto.displayName = 'proto.fintekkers.requests.util.errors.WarningProto';
 }
+
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.fintekkers.requests.util.errors.ErrorProto.repeatedFields_ = [3];
 
 
 
@@ -101,7 +110,9 @@ proto.fintekkers.requests.util.errors.ErrorProto.prototype.toObject = function(o
 proto.fintekkers.requests.util.errors.ErrorProto.toObject = function(includeInstance, msg) {
   var f, obj = {
     code: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    detail: (f = msg.getDetail()) && fintekkers_requests_util_errors_message_pb.Message.toObject(includeInstance, f)
+    detail: (f = msg.getDetail()) && fintekkers_requests_util_errors_message_pb.Message.toObject(includeInstance, f),
+    violationsList: jspb.Message.toObjectList(msg.getViolationsList(),
+    fintekkers_requests_util_errors_field_violation_pb.FieldViolationProto.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -147,6 +158,11 @@ proto.fintekkers.requests.util.errors.ErrorProto.deserializeBinaryFromReader = f
       reader.readMessage(value,fintekkers_requests_util_errors_message_pb.Message.deserializeBinaryFromReader);
       msg.setDetail(value);
       break;
+    case 3:
+      var value = new fintekkers_requests_util_errors_field_violation_pb.FieldViolationProto;
+      reader.readMessage(value,fintekkers_requests_util_errors_field_violation_pb.FieldViolationProto.deserializeBinaryFromReader);
+      msg.addViolations(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -189,6 +205,14 @@ proto.fintekkers.requests.util.errors.ErrorProto.serializeBinaryToWriter = funct
       2,
       f,
       fintekkers_requests_util_errors_message_pb.Message.serializeBinaryToWriter
+    );
+  }
+  f = message.getViolationsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      3,
+      f,
+      fintekkers_requests_util_errors_field_violation_pb.FieldViolationProto.serializeBinaryToWriter
     );
   }
 };
@@ -246,6 +270,44 @@ proto.fintekkers.requests.util.errors.ErrorProto.prototype.clearDetail = functio
  */
 proto.fintekkers.requests.util.errors.ErrorProto.prototype.hasDetail = function() {
   return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * repeated FieldViolationProto violations = 3;
+ * @return {!Array<!proto.fintekkers.requests.util.errors.FieldViolationProto>}
+ */
+proto.fintekkers.requests.util.errors.ErrorProto.prototype.getViolationsList = function() {
+  return /** @type{!Array<!proto.fintekkers.requests.util.errors.FieldViolationProto>} */ (
+    jspb.Message.getRepeatedWrapperField(this, fintekkers_requests_util_errors_field_violation_pb.FieldViolationProto, 3));
+};
+
+
+/**
+ * @param {!Array<!proto.fintekkers.requests.util.errors.FieldViolationProto>} value
+ * @return {!proto.fintekkers.requests.util.errors.ErrorProto} returns this
+*/
+proto.fintekkers.requests.util.errors.ErrorProto.prototype.setViolationsList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 3, value);
+};
+
+
+/**
+ * @param {!proto.fintekkers.requests.util.errors.FieldViolationProto=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.fintekkers.requests.util.errors.FieldViolationProto}
+ */
+proto.fintekkers.requests.util.errors.ErrorProto.prototype.addViolations = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 3, opt_value, proto.fintekkers.requests.util.errors.FieldViolationProto, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.fintekkers.requests.util.errors.ErrorProto} returns this
+ */
+proto.fintekkers.requests.util.errors.ErrorProto.prototype.clearViolationsList = function() {
+  return this.setViolationsList([]);
 };
 
 

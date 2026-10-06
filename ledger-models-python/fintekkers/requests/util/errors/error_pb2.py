@@ -23,19 +23,20 @@ _sym_db = _symbol_database.Default()
 
 
 from fintekkers.requests.util.errors import message_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_message__pb2
+from fintekkers.requests.util.errors import field_violation_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_field__violation__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n+fintekkers/requests/util/errors/error.proto\x12\x1f\x66intekkers.requests.util.errors\x1a-fintekkers/requests/util/errors/message.proto\"\x80\x01\n\nErrorProto\x12\x38\n\x04\x63ode\x18\x01 \x01(\x0e\x32*.fintekkers.requests.util.errors.ErrorCode\x12\x38\n\x06\x64\x65tail\x18\x02 \x01(\x0b\x32(.fintekkers.requests.util.errors.Message\"\x82\x01\n\x0cWarningProto\x12\x38\n\x04\x63ode\x18\x01 \x01(\x0e\x32*.fintekkers.requests.util.errors.ErrorCode\x12\x38\n\x06\x64\x65tail\x18\x02 \x01(\x0b\x32(.fintekkers.requests.util.errors.Message*+\n\tErrorCode\x12\x11\n\rUNKNOWN_ERROR\x10\x00\x12\x0b\n\x07WARNING\x10\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n+fintekkers/requests/util/errors/error.proto\x12\x1f\x66intekkers.requests.util.errors\x1a-fintekkers/requests/util/errors/message.proto\x1a\x35\x66intekkers/requests/util/errors/field_violation.proto\"\xca\x01\n\nErrorProto\x12\x38\n\x04\x63ode\x18\x01 \x01(\x0e\x32*.fintekkers.requests.util.errors.ErrorCode\x12\x38\n\x06\x64\x65tail\x18\x02 \x01(\x0b\x32(.fintekkers.requests.util.errors.Message\x12H\n\nviolations\x18\x03 \x03(\x0b\x32\x34.fintekkers.requests.util.errors.FieldViolationProto\"\x82\x01\n\x0cWarningProto\x12\x38\n\x04\x63ode\x18\x01 \x01(\x0e\x32*.fintekkers.requests.util.errors.ErrorCode\x12\x38\n\x06\x64\x65tail\x18\x02 \x01(\x0b\x32(.fintekkers.requests.util.errors.Message*+\n\tErrorCode\x12\x11\n\rUNKNOWN_ERROR\x10\x00\x12\x0b\n\x07WARNING\x10\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.util.errors.error_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_ERRORCODE']._serialized_start=391
-  _globals['_ERRORCODE']._serialized_end=434
-  _globals['_ERRORPROTO']._serialized_start=128
-  _globals['_ERRORPROTO']._serialized_end=256
-  _globals['_WARNINGPROTO']._serialized_start=259
-  _globals['_WARNINGPROTO']._serialized_end=389
+  _globals['_ERRORCODE']._serialized_start=520
+  _globals['_ERRORCODE']._serialized_end=563
+  _globals['_ERRORPROTO']._serialized_start=183
+  _globals['_ERRORPROTO']._serialized_end=385
+  _globals['_WARNINGPROTO']._serialized_start=388
+  _globals['_WARNINGPROTO']._serialized_end=518
 # @@protoc_insertion_point(module_scope)
