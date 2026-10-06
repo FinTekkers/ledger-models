@@ -165,6 +165,60 @@ public final class Error {
      * <code>.fintekkers.requests.util.errors.Message detail = 2;</code>
      */
     fintekkers.requests.util.errors.MessageOuterClass.MessageOrBuilder getDetailOrBuilder();
+
+    /**
+     * <pre>
+     *Field-level input problems behind this error, one per bad field, as returned by
+     *the ledger-models validators. Empty for errors that are not about bad input
+     *(e.g. state errors such as no lots to reduce).
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+     */
+    java.util.List<fintekkers.requests.util.errors.FieldViolation.FieldViolationProto> 
+        getViolationsList();
+    /**
+     * <pre>
+     *Field-level input problems behind this error, one per bad field, as returned by
+     *the ledger-models validators. Empty for errors that are not about bad input
+     *(e.g. state errors such as no lots to reduce).
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+     */
+    fintekkers.requests.util.errors.FieldViolation.FieldViolationProto getViolations(int index);
+    /**
+     * <pre>
+     *Field-level input problems behind this error, one per bad field, as returned by
+     *the ledger-models validators. Empty for errors that are not about bad input
+     *(e.g. state errors such as no lots to reduce).
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+     */
+    int getViolationsCount();
+    /**
+     * <pre>
+     *Field-level input problems behind this error, one per bad field, as returned by
+     *the ledger-models validators. Empty for errors that are not about bad input
+     *(e.g. state errors such as no lots to reduce).
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+     */
+    java.util.List<? extends fintekkers.requests.util.errors.FieldViolation.FieldViolationProtoOrBuilder> 
+        getViolationsOrBuilderList();
+    /**
+     * <pre>
+     *Field-level input problems behind this error, one per bad field, as returned by
+     *the ledger-models validators. Empty for errors that are not about bad input
+     *(e.g. state errors such as no lots to reduce).
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+     */
+    fintekkers.requests.util.errors.FieldViolation.FieldViolationProtoOrBuilder getViolationsOrBuilder(
+        int index);
   }
   /**
    * <pre>
@@ -185,6 +239,7 @@ public final class Error {
     }
     private ErrorProto() {
       code_ = 0;
+      violations_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -256,6 +311,77 @@ public final class Error {
       return detail_ == null ? fintekkers.requests.util.errors.MessageOuterClass.Message.getDefaultInstance() : detail_;
     }
 
+    public static final int VIOLATIONS_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private java.util.List<fintekkers.requests.util.errors.FieldViolation.FieldViolationProto> violations_;
+    /**
+     * <pre>
+     *Field-level input problems behind this error, one per bad field, as returned by
+     *the ledger-models validators. Empty for errors that are not about bad input
+     *(e.g. state errors such as no lots to reduce).
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+     */
+    @java.lang.Override
+    public java.util.List<fintekkers.requests.util.errors.FieldViolation.FieldViolationProto> getViolationsList() {
+      return violations_;
+    }
+    /**
+     * <pre>
+     *Field-level input problems behind this error, one per bad field, as returned by
+     *the ledger-models validators. Empty for errors that are not about bad input
+     *(e.g. state errors such as no lots to reduce).
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends fintekkers.requests.util.errors.FieldViolation.FieldViolationProtoOrBuilder> 
+        getViolationsOrBuilderList() {
+      return violations_;
+    }
+    /**
+     * <pre>
+     *Field-level input problems behind this error, one per bad field, as returned by
+     *the ledger-models validators. Empty for errors that are not about bad input
+     *(e.g. state errors such as no lots to reduce).
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+     */
+    @java.lang.Override
+    public int getViolationsCount() {
+      return violations_.size();
+    }
+    /**
+     * <pre>
+     *Field-level input problems behind this error, one per bad field, as returned by
+     *the ledger-models validators. Empty for errors that are not about bad input
+     *(e.g. state errors such as no lots to reduce).
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+     */
+    @java.lang.Override
+    public fintekkers.requests.util.errors.FieldViolation.FieldViolationProto getViolations(int index) {
+      return violations_.get(index);
+    }
+    /**
+     * <pre>
+     *Field-level input problems behind this error, one per bad field, as returned by
+     *the ledger-models validators. Empty for errors that are not about bad input
+     *(e.g. state errors such as no lots to reduce).
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+     */
+    @java.lang.Override
+    public fintekkers.requests.util.errors.FieldViolation.FieldViolationProtoOrBuilder getViolationsOrBuilder(
+        int index) {
+      return violations_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -276,6 +402,9 @@ public final class Error {
       if (detail_ != null) {
         output.writeMessage(2, getDetail());
       }
+      for (int i = 0; i < violations_.size(); i++) {
+        output.writeMessage(3, violations_.get(i));
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -292,6 +421,10 @@ public final class Error {
       if (detail_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, getDetail());
+      }
+      for (int i = 0; i < violations_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, violations_.get(i));
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -314,6 +447,8 @@ public final class Error {
         if (!getDetail()
             .equals(other.getDetail())) return false;
       }
+      if (!getViolationsList()
+          .equals(other.getViolationsList())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -330,6 +465,10 @@ public final class Error {
       if (hasDetail()) {
         hash = (37 * hash) + DETAIL_FIELD_NUMBER;
         hash = (53 * hash) + getDetail().hashCode();
+      }
+      if (getViolationsCount() > 0) {
+        hash = (37 * hash) + VIOLATIONS_FIELD_NUMBER;
+        hash = (53 * hash) + getViolationsList().hashCode();
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -471,6 +610,13 @@ public final class Error {
           detailBuilder_.dispose();
           detailBuilder_ = null;
         }
+        if (violationsBuilder_ == null) {
+          violations_ = java.util.Collections.emptyList();
+        } else {
+          violations_ = null;
+          violationsBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -497,9 +643,22 @@ public final class Error {
       @java.lang.Override
       public fintekkers.requests.util.errors.Error.ErrorProto buildPartial() {
         fintekkers.requests.util.errors.Error.ErrorProto result = new fintekkers.requests.util.errors.Error.ErrorProto(this);
+        buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartialRepeatedFields(fintekkers.requests.util.errors.Error.ErrorProto result) {
+        if (violationsBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0)) {
+            violations_ = java.util.Collections.unmodifiableList(violations_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.violations_ = violations_;
+        } else {
+          result.violations_ = violationsBuilder_.build();
+        }
       }
 
       private void buildPartial0(fintekkers.requests.util.errors.Error.ErrorProto result) {
@@ -564,6 +723,32 @@ public final class Error {
         if (other.hasDetail()) {
           mergeDetail(other.getDetail());
         }
+        if (violationsBuilder_ == null) {
+          if (!other.violations_.isEmpty()) {
+            if (violations_.isEmpty()) {
+              violations_ = other.violations_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureViolationsIsMutable();
+              violations_.addAll(other.violations_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.violations_.isEmpty()) {
+            if (violationsBuilder_.isEmpty()) {
+              violationsBuilder_.dispose();
+              violationsBuilder_ = null;
+              violations_ = other.violations_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              violationsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getViolationsFieldBuilder() : null;
+            } else {
+              violationsBuilder_.addAllMessages(other.violations_);
+            }
+          }
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -602,6 +787,19 @@ public final class Error {
                 bitField0_ |= 0x00000002;
                 break;
               } // case 18
+              case 26: {
+                fintekkers.requests.util.errors.FieldViolation.FieldViolationProto m =
+                    input.readMessage(
+                        fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.parser(),
+                        extensionRegistry);
+                if (violationsBuilder_ == null) {
+                  ensureViolationsIsMutable();
+                  violations_.add(m);
+                } else {
+                  violationsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 26
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -789,6 +987,354 @@ public final class Error {
           detail_ = null;
         }
         return detailBuilder_;
+      }
+
+      private java.util.List<fintekkers.requests.util.errors.FieldViolation.FieldViolationProto> violations_ =
+        java.util.Collections.emptyList();
+      private void ensureViolationsIsMutable() {
+        if (!((bitField0_ & 0x00000004) != 0)) {
+          violations_ = new java.util.ArrayList<fintekkers.requests.util.errors.FieldViolation.FieldViolationProto>(violations_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          fintekkers.requests.util.errors.FieldViolation.FieldViolationProto, fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.Builder, fintekkers.requests.util.errors.FieldViolation.FieldViolationProtoOrBuilder> violationsBuilder_;
+
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public java.util.List<fintekkers.requests.util.errors.FieldViolation.FieldViolationProto> getViolationsList() {
+        if (violationsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(violations_);
+        } else {
+          return violationsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public int getViolationsCount() {
+        if (violationsBuilder_ == null) {
+          return violations_.size();
+        } else {
+          return violationsBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public fintekkers.requests.util.errors.FieldViolation.FieldViolationProto getViolations(int index) {
+        if (violationsBuilder_ == null) {
+          return violations_.get(index);
+        } else {
+          return violationsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public Builder setViolations(
+          int index, fintekkers.requests.util.errors.FieldViolation.FieldViolationProto value) {
+        if (violationsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureViolationsIsMutable();
+          violations_.set(index, value);
+          onChanged();
+        } else {
+          violationsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public Builder setViolations(
+          int index, fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.Builder builderForValue) {
+        if (violationsBuilder_ == null) {
+          ensureViolationsIsMutable();
+          violations_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          violationsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public Builder addViolations(fintekkers.requests.util.errors.FieldViolation.FieldViolationProto value) {
+        if (violationsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureViolationsIsMutable();
+          violations_.add(value);
+          onChanged();
+        } else {
+          violationsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public Builder addViolations(
+          int index, fintekkers.requests.util.errors.FieldViolation.FieldViolationProto value) {
+        if (violationsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureViolationsIsMutable();
+          violations_.add(index, value);
+          onChanged();
+        } else {
+          violationsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public Builder addViolations(
+          fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.Builder builderForValue) {
+        if (violationsBuilder_ == null) {
+          ensureViolationsIsMutable();
+          violations_.add(builderForValue.build());
+          onChanged();
+        } else {
+          violationsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public Builder addViolations(
+          int index, fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.Builder builderForValue) {
+        if (violationsBuilder_ == null) {
+          ensureViolationsIsMutable();
+          violations_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          violationsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public Builder addAllViolations(
+          java.lang.Iterable<? extends fintekkers.requests.util.errors.FieldViolation.FieldViolationProto> values) {
+        if (violationsBuilder_ == null) {
+          ensureViolationsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, violations_);
+          onChanged();
+        } else {
+          violationsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public Builder clearViolations() {
+        if (violationsBuilder_ == null) {
+          violations_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          violationsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public Builder removeViolations(int index) {
+        if (violationsBuilder_ == null) {
+          ensureViolationsIsMutable();
+          violations_.remove(index);
+          onChanged();
+        } else {
+          violationsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.Builder getViolationsBuilder(
+          int index) {
+        return getViolationsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public fintekkers.requests.util.errors.FieldViolation.FieldViolationProtoOrBuilder getViolationsOrBuilder(
+          int index) {
+        if (violationsBuilder_ == null) {
+          return violations_.get(index);  } else {
+          return violationsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public java.util.List<? extends fintekkers.requests.util.errors.FieldViolation.FieldViolationProtoOrBuilder> 
+           getViolationsOrBuilderList() {
+        if (violationsBuilder_ != null) {
+          return violationsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(violations_);
+        }
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.Builder addViolationsBuilder() {
+        return getViolationsFieldBuilder().addBuilder(
+            fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.Builder addViolationsBuilder(
+          int index) {
+        return getViolationsFieldBuilder().addBuilder(
+            index, fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       *Field-level input problems behind this error, one per bad field, as returned by
+       *the ledger-models validators. Empty for errors that are not about bad input
+       *(e.g. state errors such as no lots to reduce).
+       * </pre>
+       *
+       * <code>repeated .fintekkers.requests.util.errors.FieldViolationProto violations = 3;</code>
+       */
+      public java.util.List<fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.Builder> 
+           getViolationsBuilderList() {
+        return getViolationsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          fintekkers.requests.util.errors.FieldViolation.FieldViolationProto, fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.Builder, fintekkers.requests.util.errors.FieldViolation.FieldViolationProtoOrBuilder> 
+          getViolationsFieldBuilder() {
+        if (violationsBuilder_ == null) {
+          violationsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              fintekkers.requests.util.errors.FieldViolation.FieldViolationProto, fintekkers.requests.util.errors.FieldViolation.FieldViolationProto.Builder, fintekkers.requests.util.errors.FieldViolation.FieldViolationProtoOrBuilder>(
+                  violations_,
+                  ((bitField0_ & 0x00000004) != 0),
+                  getParentForChildren(),
+                  isClean());
+          violations_ = null;
+        }
+        return violationsBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -1596,27 +2142,31 @@ public final class Error {
       "\n+fintekkers/requests/util/errors/error." +
       "proto\022\037fintekkers.requests.util.errors\032-" +
       "fintekkers/requests/util/errors/message." +
-      "proto\"\200\001\n\nErrorProto\0228\n\004code\030\001 \001(\0162*.fin" +
-      "tekkers.requests.util.errors.ErrorCode\0228" +
-      "\n\006detail\030\002 \001(\0132(.fintekkers.requests.uti" +
-      "l.errors.Message\"\202\001\n\014WarningProto\0228\n\004cod" +
-      "e\030\001 \001(\0162*.fintekkers.requests.util.error" +
-      "s.ErrorCode\0228\n\006detail\030\002 \001(\0132(.fintekkers" +
-      ".requests.util.errors.Message*+\n\tErrorCo" +
-      "de\022\021\n\rUNKNOWN_ERROR\020\000\022\013\n\007WARNING\020\001b\006prot" +
-      "o3"
+      "proto\0325fintekkers/requests/util/errors/f" +
+      "ield_violation.proto\"\312\001\n\nErrorProto\0228\n\004c" +
+      "ode\030\001 \001(\0162*.fintekkers.requests.util.err" +
+      "ors.ErrorCode\0228\n\006detail\030\002 \001(\0132(.fintekke" +
+      "rs.requests.util.errors.Message\022H\n\nviola" +
+      "tions\030\003 \003(\01324.fintekkers.requests.util.e" +
+      "rrors.FieldViolationProto\"\202\001\n\014WarningPro" +
+      "to\0228\n\004code\030\001 \001(\0162*.fintekkers.requests.u" +
+      "til.errors.ErrorCode\0228\n\006detail\030\002 \001(\0132(.f" +
+      "intekkers.requests.util.errors.Message*+" +
+      "\n\tErrorCode\022\021\n\rUNKNOWN_ERROR\020\000\022\013\n\007WARNIN" +
+      "G\020\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.requests.util.errors.MessageOuterClass.getDescriptor(),
+          fintekkers.requests.util.errors.FieldViolation.getDescriptor(),
         });
     internal_static_fintekkers_requests_util_errors_ErrorProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_util_errors_ErrorProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_util_errors_ErrorProto_descriptor,
-        new java.lang.String[] { "Code", "Detail", });
+        new java.lang.String[] { "Code", "Detail", "Violations", });
     internal_static_fintekkers_requests_util_errors_WarningProto_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_fintekkers_requests_util_errors_WarningProto_fieldAccessorTable = new
@@ -1624,6 +2174,7 @@ public final class Error {
         internal_static_fintekkers_requests_util_errors_WarningProto_descriptor,
         new java.lang.String[] { "Code", "Detail", });
     fintekkers.requests.util.errors.MessageOuterClass.getDescriptor();
+    fintekkers.requests.util.errors.FieldViolation.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

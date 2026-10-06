@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package fintekkers.requests.util.errors;
+
+import "fintekkers/models/util/uuid.proto";
+
+//One field-level input problem found by a ledger-models validator (e.g. a bond with
+//no face_value). Validators return these so a service can put them as-is into
+//ErrorProto.violations and answer with gRPC INVALID_ARGUMENT.
+//
+//Violations describe bad input only. State errors that depend on what a service
+//already holds (e.g. no lots to reduce, duplicates, permissions) never use this
+//message; services report those as FAILED_PRECONDITION or similar.
+message FieldViolationProto {
+  //Proto field path of the bad field, snake_case, relative to the top-level object
+  //that was validated. Nested fields are dot-separated, e.g. "bond_details.face_value"
+  //when validating a security, or "security.bond_details.face_value" when the same
+  //security is validated as part of a transaction.
+  string field = 1;
+
+  //UUID of the object that owns the bad field: the security for bond rules, even when
+  //the violation was found by validating a transaction. Unset if the input had no UUID.
+  fintekkers.models.util.UUIDProto object_id = 2;
+
+  //Human-readable English explanation for a developer. Not stable; do not parse it.
+  string message = 3;
+}

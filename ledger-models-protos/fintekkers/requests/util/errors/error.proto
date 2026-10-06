@@ -3,6 +3,7 @@ syntax = "proto3";
 package fintekkers.requests.util.errors;
 
 import "fintekkers/requests/util/errors/message.proto";
+import "fintekkers/requests/util/errors/field_violation.proto";
 
 //Error codes are defined to allow clients to programmatically
 //respond to issues. The bar for creating a new error code should
@@ -18,6 +19,11 @@ enum ErrorCode {
 message ErrorProto {
   ErrorCode code = 1;
   Message detail = 2;
+
+  //Field-level input problems behind this error, one per bad field, as returned by
+  //the ledger-models validators. Empty for errors that are not about bad input
+  //(e.g. state errors such as no lots to reduce).
+  repeated FieldViolationProto violations = 3;
 }
 
 //Warnings can have error codes, if it is useful in categorizing the severity of the warning.
