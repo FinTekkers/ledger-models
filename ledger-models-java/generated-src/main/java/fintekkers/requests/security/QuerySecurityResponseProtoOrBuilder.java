@@ -145,4 +145,30 @@ public interface QuerySecurityResponseProtoOrBuilder extends
    */
   fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getErrorsOrWarningsOrBuilder(
       int index);
+
+  /**
+   * <pre>
+   * Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+   * pass it back as the request's `page_token`. Empty = last page. For
+   * streaming Search, only the final message of the stream carries it.
+   * Old clients that ignore it get exactly today's results.
+   * </pre>
+   *
+   * <code>string next_page_token = 50;</code>
+   * @return The nextPageToken.
+   */
+  java.lang.String getNextPageToken();
+  /**
+   * <pre>
+   * Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+   * pass it back as the request's `page_token`. Empty = last page. For
+   * streaming Search, only the final message of the stream carries it.
+   * Old clients that ignore it get exactly today's results.
+   * </pre>
+   *
+   * <code>string next_page_token = 50;</code>
+   * @return The bytes for nextPageToken.
+   */
+  com.google.protobuf.ByteString
+      getNextPageTokenBytes();
 }

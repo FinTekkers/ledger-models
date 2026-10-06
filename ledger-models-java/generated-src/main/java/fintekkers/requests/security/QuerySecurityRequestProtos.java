@@ -33,7 +33,7 @@ public final class QuerySecurityRequestProtos {
       ".security\032!fintekkers/models/util/uuid.p" +
       "roto\032,fintekkers/models/util/local_times" +
       "tamp.proto\0320fintekkers/models/position/p" +
-      "osition_filter.proto\"\252\002\n\031QuerySecurityRe" +
+      "osition_filter.proto\"\315\002\n\031QuerySecurityRe" +
       "questProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007vers" +
       "ion\030\002 \001(\t\0220\n\005uuIds\030\025 \003(\0132!.fintekkers.mo" +
       "dels.util.UUIDProto\022N\n\025search_security_i" +
@@ -41,8 +41,8 @@ public final class QuerySecurityRequestProtos {
       "PositionFilterProto\022:\n\005as_of\030\027 \001(\0132+.fin" +
       "tekkers.models.util.LocalTimestampProto\022" +
       "\023\n\013name_filter\030\030 \001(\t\022\023\n\013lookthrough\030\031 \001(" +
-      "\010B\036B\032QuerySecurityRequestProtosP\001b\006proto" +
-      "3"
+      "\010\022\r\n\005limit\0302 \001(\005\022\022\n\npage_token\0303 \001(\tB\036B\032" +
+      "QuerySecurityRequestProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -56,7 +56,7 @@ public final class QuerySecurityRequestProtos {
     internal_static_fintekkers_requests_security_QuerySecurityRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_security_QuerySecurityRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "UuIds", "SearchSecurityInput", "AsOf", "NameFilter", "Lookthrough", });
+        new java.lang.String[] { "ObjectClass", "Version", "UuIds", "SearchSecurityInput", "AsOf", "NameFilter", "Lookthrough", "Limit", "PageToken", });
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.position.PositionFilterProtos.getDescriptor();

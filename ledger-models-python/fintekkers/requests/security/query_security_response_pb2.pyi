@@ -10,15 +10,17 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class QuerySecurityResponseProto(_message.Message):
-    __slots__ = ("object_class", "version", "query_security_input", "security_response", "errors_or_warnings")
+    __slots__ = ("object_class", "version", "query_security_input", "security_response", "errors_or_warnings", "next_page_token")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     QUERY_SECURITY_INPUT_FIELD_NUMBER: _ClassVar[int]
     SECURITY_RESPONSE_FIELD_NUMBER: _ClassVar[int]
     ERRORS_OR_WARNINGS_FIELD_NUMBER: _ClassVar[int]
+    NEXT_PAGE_TOKEN_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
     query_security_input: _query_security_request_pb2.QuerySecurityRequestProto
     security_response: _containers.RepeatedCompositeFieldContainer[_security_pb2.SecurityProto]
     errors_or_warnings: _containers.RepeatedCompositeFieldContainer[_summary_pb2.SummaryProto]
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., query_security_input: _Optional[_Union[_query_security_request_pb2.QuerySecurityRequestProto, _Mapping]] = ..., security_response: _Optional[_Iterable[_Union[_security_pb2.SecurityProto, _Mapping]]] = ..., errors_or_warnings: _Optional[_Iterable[_Union[_summary_pb2.SummaryProto, _Mapping]]] = ...) -> None: ...
+    next_page_token: str
+    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., query_security_input: _Optional[_Union[_query_security_request_pb2.QuerySecurityRequestProto, _Mapping]] = ..., security_response: _Optional[_Iterable[_Union[_security_pb2.SecurityProto, _Mapping]]] = ..., errors_or_warnings: _Optional[_Iterable[_Union[_summary_pb2.SummaryProto, _Mapping]]] = ..., next_page_token: _Optional[str] = ...) -> None: ...

@@ -131,11 +131,45 @@ public interface QueryTransactionRequestProtoOrBuilder extends
 
   /**
    * <pre>
-   *Max number of records to return
+   * Paging (see docs/adr/query_paging.md). Max records returned in this
+   * response: the page size the client asks for. Unset or 0 = no client page
+   * cap; the server keeps today's behaviour for this RPC. The server may cap
+   * `limit` and return fewer items; fewer items does not mean last page, only
+   * an empty `next_page_token` does. For streaming Search, `limit` caps the
+   * total items across the whole stream. Clients that set neither `limit` nor
+   * `page_token` get exactly today's results.
    * </pre>
    *
    * <code>int32 limit = 24;</code>
    * @return The limit.
    */
   int getLimit();
+
+  /**
+   * <pre>
+   * Paging (see docs/adr/query_paging.md). Opaque token copied from a
+   * previous response's `next_page_token`. Unset or empty = first page.
+   * Clients must not parse or build tokens; send the other request fields
+   * unchanged across pages. Clients that set neither `limit` nor
+   * `page_token` get exactly today's results.
+   * </pre>
+   *
+   * <code>string page_token = 51;</code>
+   * @return The pageToken.
+   */
+  java.lang.String getPageToken();
+  /**
+   * <pre>
+   * Paging (see docs/adr/query_paging.md). Opaque token copied from a
+   * previous response's `next_page_token`. Unset or empty = first page.
+   * Clients must not parse or build tokens; send the other request fields
+   * unchanged across pages. Clients that set neither `limit` nor
+   * `page_token` get exactly today's results.
+   * </pre>
+   *
+   * <code>string page_token = 51;</code>
+   * @return The bytes for pageToken.
+   */
+  com.google.protobuf.ByteString
+      getPageTokenBytes();
 }
