@@ -23,6 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InsecureChannelAuthError = void 0;
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const grpc = __importStar(require("@grpc/grpc-js"));
@@ -50,46 +51,76 @@ class EnvConfig {
         const base = EnvConfig.getEnvVar('API_URL', 'api.fintekkers.org');
         return /:\d+$/.test(base) ? base : base + ':8082';
     }
+    static get isLocalURL() {
+        return /^localhost|^127\.0\.0\.1/.test(this.apiURL);
+    }
     static get apiCredentials() {
-        if (/^localhost|^127\.0\.0\.1/.test(this.apiURL)) {
+        if (this.isLocalURL) {
             return grpc.credentials.createInsecure();
         }
         else {
             return grpc.credentials.createSsl();
         }
     }
+    static addApiKey(metadata, apiKey) {
+        metadata.add('x-api-key', apiKey);
+    }
     /**
-     * Returns channel credentials that inject `x-api-key: <apiKey>` into every
-     * call's metadata. Uses insecure transport for localhost, SSL otherwise.
+     * Returns SSL channel credentials combined with per-call credentials that
+     * inject `x-api-key: <apiKey>` into every call's metadata.
+     *
+     * Remote (SSL) hosts only: grpc-js cannot compose call credentials with
+     * insecure channel credentials. For localhost / 127.0.0.1 use
+     * {@link EnvConfig.getAuthenticatedClientOptions}, which sends the key via
+     * an interceptor instead.
+     *
+     * @throws {InsecureChannelAuthError} when apiURL is localhost / 127.0.0.1.
      */
+    static getAuthenticatedCredentials(apiKey) {
+        if (this.isLocalURL) {
+            throw new InsecureChannelAuthError();
+        }
+        const callCreds = grpc.credentials.createFromMetadataGenerator((_params, callback) => {
+            const metadata = new grpc.Metadata();
+            EnvConfig.addApiKey(metadata, apiKey);
+            callback(null, metadata);
+        });
+        return grpc.credentials.combineChannelCredentials(grpc.credentials.createSsl(), callCreds);
+    }
     /**
      * Returns credentials and interceptors for authenticated calls.
      * For local (insecure) channels, injects the API key via an interceptor.
-     * For remote (SSL) channels, uses combined channel + call credentials.
+     * For remote (SSL) channels, uses {@link EnvConfig.getAuthenticatedCredentials}.
      */
     static getAuthenticatedClientOptions(apiKey) {
-        const isLocal = /^localhost|^127\.0\.0\.1/.test(this.apiURL);
-        if (isLocal) {
+        if (this.isLocalURL) {
             const interceptor = (_options, nextCall) => {
                 return new grpc.InterceptingCall(nextCall(_options), {
                     start(metadata, listener, next) {
-                        metadata.add('x-api-key', apiKey);
+                        EnvConfig.addApiKey(metadata, apiKey);
                         next(metadata, listener);
                     }
                 });
             };
             return { credentials: grpc.credentials.createInsecure(), interceptors: [interceptor] };
         }
-        const callCreds = grpc.credentials.createFromMetadataGenerator((_params, callback) => {
-            const metadata = new grpc.Metadata();
-            metadata.add('x-api-key', apiKey);
-            callback(null, metadata);
-        });
         return {
-            credentials: grpc.credentials.combineChannelCredentials(grpc.credentials.createSsl(), callCreds),
+            credentials: EnvConfig.getAuthenticatedCredentials(apiKey),
             interceptors: []
         };
     }
 }
+/**
+ * Thrown by EnvConfig.getAuthenticatedCredentials when API_URL points at an
+ * insecure (local) channel. The message never includes the API key.
+ */
+class InsecureChannelAuthError extends Error {
+    constructor() {
+        super('API key auth over an insecure channel requires getAuthenticatedClientOptions()');
+        this.name = 'InsecureChannelAuthError';
+        Object.setPrototypeOf(this, InsecureChannelAuthError.prototype);
+    }
+}
+exports.InsecureChannelAuthError = InsecureChannelAuthError;
 exports.default = EnvConfig;
 //# sourceMappingURL=requestcontext.js.map
