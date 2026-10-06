@@ -1,14 +1,18 @@
 package protos.serializers;
 
+import common.models.errors.InvalidFieldException;
+import common.models.errors.transaction.TransactionProcessingException;
 import common.models.transaction.Transaction;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.transaction.TransactionProto;
+import fintekkers.models.util.LocalDate.LocalDateProto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import testutil.DummyBondObjects;
 
+import java.time.DateTimeException;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -179,6 +183,53 @@ class TransactionWrapperTest {
                         "uuid must survive the strip");
             }
         }
+    }
+
+    // ---- LM-254: unset dates -------------------------------------------
+
+    private static Transaction withRawProto(java.util.function.UnaryOperator<TransactionProto.Builder> edit) {
+        TransactionProto raw = DummyBondObjects.getDummyTransaction().getRawProto();
+        return new Transaction(edit.apply(raw.toBuilder()).build());
+    }
+
+    private static void assertTypedTradeDateError(Transaction t) {
+        Throwable e = Assertions.assertThrows(RuntimeException.class, t::getTradeDate);
+        Assertions.assertEquals("trade_date", Assertions.assertInstanceOf(InvalidFieldException.class, e).getFieldName());
+        Assertions.assertFalse(e instanceof TransactionProcessingException, "input error, not a state error");
+        Assertions.assertFalse(e instanceof IllegalArgumentException, "must not be absorbed by generic catches");
+        Assertions.assertFalse(e instanceof DateTimeException);
+    }
+
+    @Test
+    public void absentTradeDate_throwsInvalidFieldNamingTradeDate() {
+        assertTypedTradeDateError(withRawProto(TransactionProto.Builder::clearTradeDate));
+    }
+
+    @Test
+    public void allZeroTradeDate_throwsInvalidFieldNotDateTimeException() {
+        assertTypedTradeDateError(withRawProto(b -> b.setTradeDate(LocalDateProto.getDefaultInstance())));
+    }
+
+    @Test
+    public void absentOrAllZeroSettlementDate_returnsNull() {
+        Assertions.assertNull(withRawProto(TransactionProto.Builder::clearSettlementDate).getSettlementDate());
+        Assertions.assertNull(withRawProto(b -> b.setSettlementDate(LocalDateProto.getDefaultInstance()))
+                .getSettlementDate());
+    }
+
+    @Test
+    public void invalidSettlementDate_throwsInvalidFieldNamingSettlementDate() {
+        Transaction t = withRawProto(b -> b.setSettlementDate(
+                LocalDateProto.newBuilder().setYear(2024).setMonth(13).setDay(1).build()));
+        InvalidFieldException e = Assertions.assertThrows(InvalidFieldException.class, t::getSettlementDate);
+        Assertions.assertEquals("settlement_date", e.getFieldName());
+    }
+
+    @Test
+    public void toString_withUnsetTradeDate_doesNotThrow() {
+        Transaction t = withRawProto(TransactionProto.Builder::clearTradeDate);
+        String s = Assertions.assertDoesNotThrow(t::toString);
+        Assertions.assertTrue(s.contains(t.getID().toString()), s);
     }
 
     /**

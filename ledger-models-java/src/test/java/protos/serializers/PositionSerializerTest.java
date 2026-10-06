@@ -11,8 +11,11 @@ import common.models.postion.Position;
 import common.models.security.Security;
 import common.models.security.identifier.Identifier;
 import common.models.security.identifier.IdentifierType;
+import fintekkers.models.position.MeasureMapEntry;
+import fintekkers.models.position.MeasureProto;
 import fintekkers.models.position.PositionProto;
 import fintekkers.models.position.PositionStatusProto;
+import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import protos.serializers.position.PositionSerializer;
@@ -77,6 +80,53 @@ class PositionSerializerTest {
         position.setMeasureValue(Measure.UNADJUSTED_COST_BASIS, BigDecimal.TEN.multiply(transaction.getPrice().getPrice()));
 
         return position;
+    }
+
+    // ---- LM-254: absent measure means "not computable", never zero ------
+
+    private static Position measureOnlyPosition(Measure measure, BigDecimal value) {
+        Position position = new Position(Position.PositionView.DEFAULT_VIEW, Position.PositionType.TRANSACTION);
+        position.setMeasureValue(measure, value);
+        return position;
+    }
+
+    @Test
+    public void nullMeasure_isOmittedAndReadsBackAbsent() {
+        Position position = measureOnlyPosition(Measure.MARKET_VALUE, null);
+
+        PositionProto proto = Assertions.assertDoesNotThrow(() -> PositionSerializer.getInstance().serialize(position));
+
+        Assertions.assertTrue(proto.getMeasuresList().stream()
+                .noneMatch(m -> m.getMeasure() == MeasureProto.MARKET_VALUE), proto.toString());
+        Position copy = PositionSerializer.getInstance().deserialize(proto);
+        Assertions.assertNull(copy.getMeasure(Measure.MARKET_VALUE));
+    }
+
+    @Test
+    public void computedZeroMeasure_staysZero() {
+        PositionProto proto = PositionSerializer.getInstance()
+                .serialize(measureOnlyPosition(Measure.MARKET_VALUE, BigDecimal.ZERO));
+
+        Assertions.assertEquals(1, proto.getMeasuresCount());
+        Assertions.assertEquals(MeasureProto.MARKET_VALUE, proto.getMeasures(0).getMeasure());
+        Assertions.assertEquals("0", proto.getMeasures(0).getMeasureDecimalValue().getArbitraryPrecisionValue());
+        Position copy = PositionSerializer.getInstance().deserialize(proto);
+        Assertions.assertEquals(0, BigDecimal.ZERO.compareTo(copy.getMeasure(Measure.MARKET_VALUE)));
+    }
+
+    @Test
+    public void emptyDecimalMeasureEntry_deserializesAsAbsentNotZero() {
+        PositionProto proto = PositionSerializer.getInstance()
+                .serialize(measureOnlyPosition(Measure.DIRECTED_QUANTITY, BigDecimal.TEN)).toBuilder()
+                .addMeasures(MeasureMapEntry.newBuilder()
+                        .setMeasure(MeasureProto.MARKET_VALUE)
+                        .setMeasureDecimalValue(DecimalValueProto.newBuilder().setArbitraryPrecisionValue("")))
+                .build();
+
+        Position copy = Assertions.assertDoesNotThrow(() -> PositionSerializer.getInstance().deserialize(proto));
+
+        Assertions.assertNull(copy.getMeasure(Measure.MARKET_VALUE));
+        Assertions.assertEquals(BigDecimal.TEN, copy.getMeasure(Measure.DIRECTED_QUANTITY));
     }
 
     @Test

@@ -121,9 +121,9 @@ public final class SecurityRules {
         if (!proto.hasBondDetails()) return null;
         BondDetailsProto bond = proto.getBondDetails();
         if (!bond.hasIssueDate() || !bond.hasMaturityDate()) return null;
-        LocalDate issue = ProtoSerializationUtil.deserializeLocalDate(bond.getIssueDate());
-        LocalDate maturity = ProtoSerializationUtil.deserializeLocalDate(bond.getMaturityDate());
-        if (maturity.isAfter(issue)) return null;
+        LocalDate issue = ProtoSerializationUtil.deserializeOptionalLocalDate(bond.getIssueDate(), ISSUE_DATE);
+        LocalDate maturity = ProtoSerializationUtil.deserializeOptionalLocalDate(bond.getMaturityDate(), MATURITY_DATE);
+        if (issue == null || maturity == null || maturity.isAfter(issue)) return null;
         return violation(MATURITY_DATE, id,
                 "maturity_date must be after issue_date: maturity=" + maturity + ", issue=" + issue);
     }
@@ -152,8 +152,10 @@ public final class SecurityRules {
     private static boolean isSet(BondDetailsProto bond, String field) {
         switch (field) {
             case FACE_VALUE: return bond.hasFaceValue();
-            case ISSUE_DATE: return bond.hasIssueDate();
-            case MATURITY_DATE: return bond.hasMaturityDate();
+            case ISSUE_DATE:
+                return bond.hasIssueDate() && !ProtoSerializationUtil.isUnsetLocalDate(bond.getIssueDate());
+            case MATURITY_DATE:
+                return bond.hasMaturityDate() && !ProtoSerializationUtil.isUnsetLocalDate(bond.getMaturityDate());
             default: throw new IllegalStateException("No presence check for " + field);
         }
     }
