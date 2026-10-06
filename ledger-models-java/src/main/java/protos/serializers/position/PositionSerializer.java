@@ -53,11 +53,13 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
             .setPositionView(PositionViewProto.valueOf(position.getPositionView().name()));
 
         position.getMeasures().forEach(measure -> {
+            BigDecimal value = position.getMeasure(measure);
+            // Absent means "not computable" (see measure.proto): omit it, never zero-fill.
+            if (value == null) return;
             MeasureMapEntry entry = MeasureMapEntry.newBuilder()
                 .setMeasure(MeasureProto.valueOf(measure.name()))
-                .setMeasureDecimalValue(ProtoSerializationUtil.serializeBigDecimal(
-                    position.getMeasure(measure)
-                )).build();
+                .setMeasureDecimalValue(ProtoSerializationUtil.serializeBigDecimal(value))
+                .build();
             builder.addMeasures(entry);
         });
 
@@ -131,6 +133,9 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
         List<MeasureMapEntry> measuresList = proto.getMeasuresList();
 
         measuresList.forEach(measureProto -> {
+            // An entry with no value means "not computable" (see measure.proto): skip it, never read it as zero.
+            if (!measureProto.hasMeasureDecimalValue()
+                    || measureProto.getMeasureDecimalValue().getArbitraryPrecisionValue().isEmpty()) return;
             Measure measure = Measure.valueOf(measureProto.getMeasure().name());
             BigDecimal value = ProtoSerializationUtil.deserializeBigDecimal(measureProto.getMeasureDecimalValue());
 

@@ -62,7 +62,7 @@ public class TIPSBond extends BondSecurity implements IndexLinkedSecurity {
         if (!active.hasTipsExtension()) return null;
         TipsExtensionProto tips = active.getTipsExtension();
         if (!tips.hasIndexDate()) return null;
-        return ProtoSerializationUtil.deserializeLocalDate(tips.getIndexDate());
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(tips.getIndexDate(), "tips_extension.index_date");
     }
 
     public IndexTypeProto getInflationIndexType() {

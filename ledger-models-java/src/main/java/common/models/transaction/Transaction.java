@@ -1,6 +1,7 @@
 package common.models.transaction;
 
 import common.models.RawDataModelObject;
+import common.models.errors.InvalidFieldException;
 import common.models.errors.ModelValidationException;
 import common.models.errors.transaction.TransactionProcessingException;
 import common.models.portfolio.Portfolio;
@@ -443,7 +444,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                     getPortfolio().getPortfolioName(), getSecurity().getIssuer(),
                     getValidFrom().toString(), validTo,
                     getStrategyAllocation().toString());
-        } catch (NullPointerException | IllegalStateException e) {
+        } catch (NullPointerException | IllegalStateException | InvalidFieldException e) {
             // is_link-mode Security/Portfolio reads (or partially-populated proto):
             // emit a link-style summary so logs are still useful.
             TransactionProto a = active();
@@ -581,8 +582,8 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     @Override
     public LocalDate getSettlementDate() {
         TransactionProto a = active();
-        if (!a.hasSettlementDate()) return null;
-        return ProtoSerializationUtil.deserializeLocalDate(a.getSettlementDate());
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(
+                a.hasSettlementDate() ? a.getSettlementDate() : null, "settlement_date");
     }
 
     @Override
@@ -602,8 +603,8 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     @Override
     public LocalDate getTradeDate() {
         TransactionProto a = active();
-        if (!a.hasTradeDate()) return null;
-        return ProtoSerializationUtil.deserializeLocalDate(a.getTradeDate());
+        return ProtoSerializationUtil.deserializeRequiredLocalDate(
+                a.hasTradeDate() ? a.getTradeDate() : null, "trade_date");
     }
 
     @Override

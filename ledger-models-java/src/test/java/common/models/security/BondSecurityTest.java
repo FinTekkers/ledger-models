@@ -5,6 +5,8 @@ import common.models.transaction.Transaction;
 import common.models.transaction.TransactionType;
 import fintekkers.models.position.PositionStatusProto;
 import fintekkers.models.security.ProductTypeProto;
+import fintekkers.models.security.SecurityProto;
+import fintekkers.models.util.LocalDate.LocalDateProto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import testutil.DummyEquityObjects;
@@ -129,5 +131,21 @@ class BondSecurityTest {
         Assertions.assertFalse(bond.getProto().getBondDetails().hasIssueDate(),
                 "getProductType must not invent an issue_date");
         Assertions.assertNull(bond.getIssueDate());
+    }
+
+    /** LM-254: all-zero issue/maturity dates are unset, never LocalDate.of(0,0,0) or a default. */
+    @Test
+    public void allZeroIssueAndMaturityDates_deserializeAsNull() {
+        SecurityProto base = SecurityRulesTest.bond(UUID.randomUUID(), BigDecimal.valueOf(1000), null, null);
+        SecurityProto proto = base.toBuilder()
+                .setBondDetails(base.getBondDetails().toBuilder()
+                        .setIssueDate(LocalDateProto.getDefaultInstance())
+                        .setMaturityDate(LocalDateProto.getDefaultInstance()))
+                .build();
+
+        BondSecurity bond = (BondSecurity) Assertions.assertDoesNotThrow(() -> Security.fromProto(proto));
+
+        Assertions.assertNull(bond.getIssueDate());
+        Assertions.assertNull(bond.getMaturityDate());
     }
 }

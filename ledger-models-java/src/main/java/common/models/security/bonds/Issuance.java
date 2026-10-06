@@ -24,12 +24,12 @@ public class Issuance {
 
     public LocalDate getIssueDate() {
         if (!proto.hasAuctionIssueDate()) return null;
-        return ProtoSerializationUtil.deserializeLocalDate(proto.getAuctionIssueDate());
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(proto.getAuctionIssueDate(), "auction_issue_date");
     }
 
     public LocalDate getAnnouncementDate() {
         if (!proto.hasAuctionAnnouncementDate()) return null;
-        return ProtoSerializationUtil.deserializeLocalDate(proto.getAuctionAnnouncementDate());
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(proto.getAuctionAnnouncementDate(), "auction_announcement_date");
     }
 
     public BigDecimal getOriginalFaceValue() {

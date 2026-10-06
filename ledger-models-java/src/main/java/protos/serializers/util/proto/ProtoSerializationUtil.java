@@ -1,6 +1,7 @@
 package protos.serializers.util.proto;
 
 import com.google.protobuf.*;
+import common.models.errors.InvalidFieldException;
 import common.models.portfolio.Portfolio;
 import common.models.price.Price;
 import common.models.security.Security;
@@ -88,7 +89,7 @@ public class ProtoSerializationUtil {
                 return deserializeBigDecimal(decimalValueProto);
             } else if (any.is(fintekkers.models.util.LocalDate.LocalDateProto.class)) {
                 fintekkers.models.util.LocalDate.LocalDateProto localDateProto = any.unpack(fintekkers.models.util.LocalDate.LocalDateProto.class);
-                return deserializeLocalDate(localDateProto);
+                return deserializeRequiredLocalDate(localDateProto, "unknown");
             } else if (any.is(LocalTimestamp.LocalTimestampProto.class)) {
                 LocalTimestamp.LocalTimestampProto timestamp = any.unpack(LocalTimestamp.LocalTimestampProto.class);
                 return deserializeTimestamp(timestamp);
@@ -160,8 +161,52 @@ public class ProtoSerializationUtil {
         return new BigDecimal(quantity.getArbitraryPrecisionValue());
     }
 
+    /** True when the date is absent ({@code null}) or year, month and day are all 0. */
+    public static boolean isUnsetLocalDate(fintekkers.models.util.LocalDate.LocalDateProto date) {
+        return date == null || (date.getYear() == 0 && date.getMonth() == 0 && date.getDay() == 0);
+    }
+
+    /**
+     * Deserializes a required date. Never substitutes a default.
+     *
+     * @param date the proto, or {@code null} when the parent has no such field set
+     * @throws InvalidFieldException naming {@code fieldName} if the date is unset or invalid
+     */
+    public static LocalDate deserializeRequiredLocalDate(fintekkers.models.util.LocalDate.LocalDateProto date,
+                                                         String fieldName) {
+        if (isUnsetLocalDate(date)) throw InvalidFieldException.unset(fieldName);
+        return toLocalDate(date, fieldName);
+    }
+
+    /**
+     * Deserializes an optional date: unset returns {@code null}. A set but
+     * invalid date (e.g. month 13) still throws.
+     *
+     * @throws InvalidFieldException naming {@code fieldName} if the date is set but invalid
+     */
+    public static LocalDate deserializeOptionalLocalDate(fintekkers.models.util.LocalDate.LocalDateProto date,
+                                                         String fieldName) {
+        if (isUnsetLocalDate(date)) return null;
+        return toLocalDate(date, fieldName);
+    }
+
+    /**
+     * @deprecated does not know the field name; use
+     * {@link #deserializeRequiredLocalDate} or {@link #deserializeOptionalLocalDate}.
+     * @throws InvalidFieldException (field {@code unknown}) if the date is unset or invalid
+     */
+    @Deprecated
     public static LocalDate deserializeLocalDate(fintekkers.models.util.LocalDate.LocalDateProto date) {
-        return LocalDate.of(date.getYear(), date.getMonth(), date.getDay());
+        return deserializeRequiredLocalDate(date, "unknown");
+    }
+
+    private static LocalDate toLocalDate(fintekkers.models.util.LocalDate.LocalDateProto date, String fieldName) {
+        try {
+            return LocalDate.of(date.getYear(), date.getMonth(), date.getDay());
+        } catch (DateTimeException e) {
+            throw new InvalidFieldException(fieldName, "invalid date " + date.getYear() + "-"
+                    + date.getMonth() + "-" + date.getDay() + ": " + e.getMessage(), e);
+        }
     }
 
 
