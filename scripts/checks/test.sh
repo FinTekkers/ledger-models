@@ -10,6 +10,8 @@ if [ -z "${JAVA_HOME:-}" ] && command -v java >/dev/null; then
   JAVA_HOME="$(dirname "$(dirname "$(readlink -f "$(command -v java)")")")"
   export JAVA_HOME
 fi
+# Horizon runs this without rustup on PATH.
+export PATH="$HOME/.cargo/bin:$PATH"
 # No debug info or incremental cache in test builds: keeps target/ small.
 export CARGO_PROFILE_DEV_DEBUG=0 CARGO_INCREMENTAL=0
 
