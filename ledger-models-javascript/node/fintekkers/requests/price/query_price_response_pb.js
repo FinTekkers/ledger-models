@@ -93,7 +93,8 @@ proto.fintekkers.requests.price.QueryPriceResponseProto.toObject = function(incl
     queryPriceRequest: (f = msg.getQueryPriceRequest()) && fintekkers_requests_price_query_price_request_pb.QueryPriceRequestProto.toObject(includeInstance, f),
     priceResponseList: jspb.Message.toObjectList(msg.getPriceResponseList(),
     fintekkers_models_price_price_pb.PriceProto.toObject, includeInstance),
-    errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
+    errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f),
+    nextPageToken: jspb.Message.getFieldWithDefault(msg, 50, "")
   };
 
   if (includeInstance) {
@@ -152,6 +153,10 @@ proto.fintekkers.requests.price.QueryPriceResponseProto.deserializeBinaryFromRea
       var value = new fintekkers_requests_util_errors_summary_pb.SummaryProto;
       reader.readMessage(value,fintekkers_requests_util_errors_summary_pb.SummaryProto.deserializeBinaryFromReader);
       msg.setErrorsOrWarnings(value);
+      break;
+    case 50:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setNextPageToken(value);
       break;
     default:
       reader.skipField();
@@ -218,6 +223,13 @@ proto.fintekkers.requests.price.QueryPriceResponseProto.serializeBinaryToWriter 
       40,
       f,
       fintekkers_requests_util_errors_summary_pb.SummaryProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getNextPageToken();
+  if (f.length > 0) {
+    writer.writeString(
+      50,
+      f
     );
   }
 };
@@ -368,6 +380,24 @@ proto.fintekkers.requests.price.QueryPriceResponseProto.prototype.clearErrorsOrW
  */
 proto.fintekkers.requests.price.QueryPriceResponseProto.prototype.hasErrorsOrWarnings = function() {
   return jspb.Message.getField(this, 40) != null;
+};
+
+
+/**
+ * optional string next_page_token = 50;
+ * @return {string}
+ */
+proto.fintekkers.requests.price.QueryPriceResponseProto.prototype.getNextPageToken = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 50, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.fintekkers.requests.price.QueryPriceResponseProto} returns this
+ */
+proto.fintekkers.requests.price.QueryPriceResponseProto.prototype.setNextPageToken = function(value) {
+  return jspb.Message.setProto3StringField(this, 50, value);
 };
 
 

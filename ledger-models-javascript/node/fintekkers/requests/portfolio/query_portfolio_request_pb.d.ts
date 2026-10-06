@@ -30,6 +30,10 @@ export class QueryPortfolioRequestProto extends jspb.Message {
     setAsOf(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): QueryPortfolioRequestProto;
     getNameFilter(): string;
     setNameFilter(value: string): QueryPortfolioRequestProto;
+    getLimit(): number;
+    setLimit(value: number): QueryPortfolioRequestProto;
+    getPageToken(): string;
+    setPageToken(value: string): QueryPortfolioRequestProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QueryPortfolioRequestProto.AsObject;
@@ -49,5 +53,7 @@ export namespace QueryPortfolioRequestProto {
         searchPortfolioInput?: fintekkers_models_position_position_filter_pb.PositionFilterProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         nameFilter: string,
+        limit: number,
+        pageToken: string,
     }
 }

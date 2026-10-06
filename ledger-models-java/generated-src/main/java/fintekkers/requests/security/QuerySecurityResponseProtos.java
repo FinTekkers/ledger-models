@@ -34,15 +34,16 @@ public final class QuerySecurityResponseProtos {
       "ecurity.proto\0329fintekkers/requests/secur" +
       "ity/query_security_request.proto\032-fintek" +
       "kers/requests/util/errors/summary.proto\"" +
-      "\253\002\n\032QuerySecurityResponseProto\022\024\n\014object" +
+      "\304\002\n\032QuerySecurityResponseProto\022\024\n\014object" +
       "_class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022U\n\024query_s" +
       "ecurity_input\030\024 \001(\01327.fintekkers.request" +
       "s.security.QuerySecurityRequestProto\022D\n\021" +
       "security_response\030\036 \003(\0132).fintekkers.mod" +
       "els.security.SecurityProto\022I\n\022errors_or_" +
       "warnings\030( \003(\0132-.fintekkers.requests.uti" +
-      "l.errors.SummaryProtoB\037B\033QuerySecurityRe" +
-      "sponseProtosP\001b\006proto3"
+      "l.errors.SummaryProto\022\027\n\017next_page_token" +
+      "\0302 \001(\tB\037B\033QuerySecurityResponseProtosP\001b" +
+      "\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -56,7 +57,7 @@ public final class QuerySecurityResponseProtos {
     internal_static_fintekkers_requests_security_QuerySecurityResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_security_QuerySecurityResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "QuerySecurityInput", "SecurityResponse", "ErrorsOrWarnings", });
+        new java.lang.String[] { "ObjectClass", "Version", "QuerySecurityInput", "SecurityResponse", "ErrorsOrWarnings", "NextPageToken", });
     fintekkers.models.security.SecurityProtos.getDescriptor();
     fintekkers.requests.security.QuerySecurityRequestProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();

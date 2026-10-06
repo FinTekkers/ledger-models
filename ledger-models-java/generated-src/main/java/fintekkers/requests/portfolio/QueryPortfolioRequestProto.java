@@ -20,6 +20,7 @@ private static final long serialVersionUID = 0L;
     version_ = "";
     uuIds_ = java.util.Collections.emptyList();
     nameFilter_ = "";
+    pageToken_ = "";
   }
 
   @java.lang.Override
@@ -265,6 +266,82 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int LIMIT_FIELD_NUMBER = 50;
+  private int limit_ = 0;
+  /**
+   * <pre>
+   * Paging (see docs/adr/query_paging.md). Max records returned in this
+   * response: the page size the client asks for. Unset or 0 = no client page
+   * cap; the server keeps today's behaviour for this RPC. The server may cap
+   * `limit` and return fewer items; fewer items does not mean last page, only
+   * an empty `next_page_token` does. For streaming Search, `limit` caps the
+   * total items across the whole stream. Clients that set neither `limit` nor
+   * `page_token` get exactly today's results.
+   * </pre>
+   *
+   * <code>int32 limit = 50;</code>
+   * @return The limit.
+   */
+  @java.lang.Override
+  public int getLimit() {
+    return limit_;
+  }
+
+  public static final int PAGE_TOKEN_FIELD_NUMBER = 51;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object pageToken_ = "";
+  /**
+   * <pre>
+   * Paging (see docs/adr/query_paging.md). Opaque token copied from a
+   * previous response's `next_page_token`. Unset or empty = first page.
+   * Clients must not parse or build tokens; send the other request fields
+   * unchanged across pages. Clients that set neither `limit` nor
+   * `page_token` get exactly today's results.
+   * </pre>
+   *
+   * <code>string page_token = 51;</code>
+   * @return The pageToken.
+   */
+  @java.lang.Override
+  public java.lang.String getPageToken() {
+    java.lang.Object ref = pageToken_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      pageToken_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * Paging (see docs/adr/query_paging.md). Opaque token copied from a
+   * previous response's `next_page_token`. Unset or empty = first page.
+   * Clients must not parse or build tokens; send the other request fields
+   * unchanged across pages. Clients that set neither `limit` nor
+   * `page_token` get exactly today's results.
+   * </pre>
+   *
+   * <code>string page_token = 51;</code>
+   * @return The bytes for pageToken.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getPageTokenBytes() {
+    java.lang.Object ref = pageToken_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      pageToken_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -297,6 +374,12 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(nameFilter_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 24, nameFilter_);
     }
+    if (limit_ != 0) {
+      output.writeInt32(50, limit_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(pageToken_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 51, pageToken_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -326,6 +409,13 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(nameFilter_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(24, nameFilter_);
+    }
+    if (limit_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(50, limit_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(pageToken_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(51, pageToken_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -360,6 +450,10 @@ private static final long serialVersionUID = 0L;
     }
     if (!getNameFilter()
         .equals(other.getNameFilter())) return false;
+    if (getLimit()
+        != other.getLimit()) return false;
+    if (!getPageToken()
+        .equals(other.getPageToken())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -389,6 +483,10 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + NAME_FILTER_FIELD_NUMBER;
     hash = (53 * hash) + getNameFilter().hashCode();
+    hash = (37 * hash) + LIMIT_FIELD_NUMBER;
+    hash = (53 * hash) + getLimit();
+    hash = (37 * hash) + PAGE_TOKEN_FIELD_NUMBER;
+    hash = (53 * hash) + getPageToken().hashCode();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -538,6 +636,8 @@ private static final long serialVersionUID = 0L;
         asOfBuilder_ = null;
       }
       nameFilter_ = "";
+      limit_ = 0;
+      pageToken_ = "";
       return this;
     }
 
@@ -602,6 +702,12 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000020) != 0)) {
         result.nameFilter_ = nameFilter_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.limit_ = limit_;
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.pageToken_ = pageToken_;
       }
     }
 
@@ -696,6 +802,14 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000020;
         onChanged();
       }
+      if (other.getLimit() != 0) {
+        setLimit(other.getLimit());
+      }
+      if (!other.getPageToken().isEmpty()) {
+        pageToken_ = other.pageToken_;
+        bitField0_ |= 0x00000080;
+        onChanged();
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -764,6 +878,16 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000020;
               break;
             } // case 194
+            case 400: {
+              limit_ = input.readInt32();
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 400
+            case 410: {
+              pageToken_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000080;
+              break;
+            } // case 410
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1491,6 +1615,180 @@ private static final long serialVersionUID = 0L;
       checkByteStringIsUtf8(value);
       nameFilter_ = value;
       bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+
+    private int limit_ ;
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Max records returned in this
+     * response: the page size the client asks for. Unset or 0 = no client page
+     * cap; the server keeps today's behaviour for this RPC. The server may cap
+     * `limit` and return fewer items; fewer items does not mean last page, only
+     * an empty `next_page_token` does. For streaming Search, `limit` caps the
+     * total items across the whole stream. Clients that set neither `limit` nor
+     * `page_token` get exactly today's results.
+     * </pre>
+     *
+     * <code>int32 limit = 50;</code>
+     * @return The limit.
+     */
+    @java.lang.Override
+    public int getLimit() {
+      return limit_;
+    }
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Max records returned in this
+     * response: the page size the client asks for. Unset or 0 = no client page
+     * cap; the server keeps today's behaviour for this RPC. The server may cap
+     * `limit` and return fewer items; fewer items does not mean last page, only
+     * an empty `next_page_token` does. For streaming Search, `limit` caps the
+     * total items across the whole stream. Clients that set neither `limit` nor
+     * `page_token` get exactly today's results.
+     * </pre>
+     *
+     * <code>int32 limit = 50;</code>
+     * @param value The limit to set.
+     * @return This builder for chaining.
+     */
+    public Builder setLimit(int value) {
+      
+      limit_ = value;
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Max records returned in this
+     * response: the page size the client asks for. Unset or 0 = no client page
+     * cap; the server keeps today's behaviour for this RPC. The server may cap
+     * `limit` and return fewer items; fewer items does not mean last page, only
+     * an empty `next_page_token` does. For streaming Search, `limit` caps the
+     * total items across the whole stream. Clients that set neither `limit` nor
+     * `page_token` get exactly today's results.
+     * </pre>
+     *
+     * <code>int32 limit = 50;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearLimit() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      limit_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object pageToken_ = "";
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Opaque token copied from a
+     * previous response's `next_page_token`. Unset or empty = first page.
+     * Clients must not parse or build tokens; send the other request fields
+     * unchanged across pages. Clients that set neither `limit` nor
+     * `page_token` get exactly today's results.
+     * </pre>
+     *
+     * <code>string page_token = 51;</code>
+     * @return The pageToken.
+     */
+    public java.lang.String getPageToken() {
+      java.lang.Object ref = pageToken_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        pageToken_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Opaque token copied from a
+     * previous response's `next_page_token`. Unset or empty = first page.
+     * Clients must not parse or build tokens; send the other request fields
+     * unchanged across pages. Clients that set neither `limit` nor
+     * `page_token` get exactly today's results.
+     * </pre>
+     *
+     * <code>string page_token = 51;</code>
+     * @return The bytes for pageToken.
+     */
+    public com.google.protobuf.ByteString
+        getPageTokenBytes() {
+      java.lang.Object ref = pageToken_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        pageToken_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Opaque token copied from a
+     * previous response's `next_page_token`. Unset or empty = first page.
+     * Clients must not parse or build tokens; send the other request fields
+     * unchanged across pages. Clients that set neither `limit` nor
+     * `page_token` get exactly today's results.
+     * </pre>
+     *
+     * <code>string page_token = 51;</code>
+     * @param value The pageToken to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPageToken(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      pageToken_ = value;
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Opaque token copied from a
+     * previous response's `next_page_token`. Unset or empty = first page.
+     * Clients must not parse or build tokens; send the other request fields
+     * unchanged across pages. Clients that set neither `limit` nor
+     * `page_token` get exactly today's results.
+     * </pre>
+     *
+     * <code>string page_token = 51;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPageToken() {
+      pageToken_ = getDefaultInstance().getPageToken();
+      bitField0_ = (bitField0_ & ~0x00000080);
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Opaque token copied from a
+     * previous response's `next_page_token`. Unset or empty = first page.
+     * Clients must not parse or build tokens; send the other request fields
+     * unchanged across pages. Clients that set neither `limit` nor
+     * `page_token` get exactly today's results.
+     * </pre>
+     *
+     * <code>string page_token = 51;</code>
+     * @param value The bytes for pageToken to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPageTokenBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      pageToken_ = value;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }

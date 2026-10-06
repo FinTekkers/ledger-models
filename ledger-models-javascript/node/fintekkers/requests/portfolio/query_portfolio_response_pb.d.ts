@@ -22,6 +22,8 @@ export class QueryPortfolioResponseProto extends jspb.Message {
     getPortfolioResponseList(): Array<fintekkers_models_portfolio_portfolio_pb.PortfolioProto>;
     setPortfolioResponseList(value: Array<fintekkers_models_portfolio_portfolio_pb.PortfolioProto>): QueryPortfolioResponseProto;
     addPortfolioResponse(value?: fintekkers_models_portfolio_portfolio_pb.PortfolioProto, index?: number): fintekkers_models_portfolio_portfolio_pb.PortfolioProto;
+    getNextPageToken(): string;
+    setNextPageToken(value: string): QueryPortfolioResponseProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QueryPortfolioResponseProto.AsObject;
@@ -39,5 +41,6 @@ export namespace QueryPortfolioResponseProto {
         version: string,
         queryPortfolioRequest?: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto.AsObject,
         portfolioResponseList: Array<fintekkers_models_portfolio_portfolio_pb.PortfolioProto.AsObject>,
+        nextPageToken: string,
     }
 }

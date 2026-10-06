@@ -128,7 +128,8 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.toObject = function(inclu
     frequency: jspb.Message.getFieldWithDefault(msg, 24, 0),
     horizon: jspb.Message.getFieldWithDefault(msg, 25, 0),
     dateRange: (f = msg.getDateRange()) && fintekkers_models_util_date_range_pb.DateRangeProto.toObject(includeInstance, f),
-    limit: jspb.Message.getFieldWithDefault(msg, 27, 0)
+    limit: jspb.Message.getFieldWithDefault(msg, 27, 0),
+    pageToken: jspb.Message.getFieldWithDefault(msg, 51, "")
   };
 
   if (includeInstance) {
@@ -204,6 +205,10 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.deserializeBinaryFromRead
     case 27:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setLimit(value);
+      break;
+    case 51:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPageToken(value);
       break;
     default:
       reader.skipField();
@@ -298,6 +303,13 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.serializeBinaryToWriter =
   if (f !== 0) {
     writer.writeInt32(
       27,
+      f
+    );
+  }
+  f = message.getPageToken();
+  if (f.length > 0) {
+    writer.writeString(
+      51,
       f
     );
   }
@@ -558,6 +570,24 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.getLimit = func
  */
 proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.setLimit = function(value) {
   return jspb.Message.setProto3IntField(this, 27, value);
+};
+
+
+/**
+ * optional string page_token = 51;
+ * @return {string}
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.getPageToken = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 51, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.fintekkers.requests.price.QueryPriceRequestProto} returns this
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.setPageToken = function(value) {
+  return jspb.Message.setProto3StringField(this, 51, value);
 };
 
 

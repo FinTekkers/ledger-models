@@ -28,6 +28,8 @@ export class QueryTransactionResponseProto extends jspb.Message {
     clearErrorsOrWarnings(): void;
     getErrorsOrWarnings(): fintekkers_requests_util_errors_summary_pb.SummaryProto | undefined;
     setErrorsOrWarnings(value?: fintekkers_requests_util_errors_summary_pb.SummaryProto): QueryTransactionResponseProto;
+    getNextPageToken(): string;
+    setNextPageToken(value: string): QueryTransactionResponseProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QueryTransactionResponseProto.AsObject;
@@ -46,5 +48,6 @@ export namespace QueryTransactionResponseProto {
         createTransactionRequest?: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto.AsObject,
         transactionResponseList: Array<fintekkers_models_transaction_transaction_pb.TransactionProto.AsObject>,
         errorsOrWarnings?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,
+        nextPageToken: string,
     }
 }

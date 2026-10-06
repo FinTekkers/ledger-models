@@ -2,7 +2,7 @@ package common.requests;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
-import fintekkers.models.util.DateRangeProto;
+import fintekkers.models.util.DateRange.DateRangeProto;
 import fintekkers.requests.portfolio.QueryPortfolioRequestProto;
 import fintekkers.requests.portfolio.QueryPortfolioResponseProto;
 import fintekkers.requests.price.PriceHorizonProto;

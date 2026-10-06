@@ -30,6 +30,8 @@ export class QueryTransactionRequestProto extends jspb.Message {
     setAsOf(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): QueryTransactionRequestProto;
     getLimit(): number;
     setLimit(value: number): QueryTransactionRequestProto;
+    getPageToken(): string;
+    setPageToken(value: string): QueryTransactionRequestProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QueryTransactionRequestProto.AsObject;
@@ -49,5 +51,6 @@ export namespace QueryTransactionRequestProto {
         searchTransactionInput?: fintekkers_models_position_position_filter_pb.PositionFilterProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         limit: number,
+        pageToken: string,
     }
 }

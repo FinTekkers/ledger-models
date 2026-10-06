@@ -95,7 +95,9 @@ proto.fintekkers.requests.security.QuerySecurityRequestProto.toObject = function
     searchSecurityInput: (f = msg.getSearchSecurityInput()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
     asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     nameFilter: jspb.Message.getFieldWithDefault(msg, 24, ""),
-    lookthrough: jspb.Message.getBooleanFieldWithDefault(msg, 25, false)
+    lookthrough: jspb.Message.getBooleanFieldWithDefault(msg, 25, false),
+    limit: jspb.Message.getFieldWithDefault(msg, 50, 0),
+    pageToken: jspb.Message.getFieldWithDefault(msg, 51, "")
   };
 
   if (includeInstance) {
@@ -162,6 +164,14 @@ proto.fintekkers.requests.security.QuerySecurityRequestProto.deserializeBinaryFr
     case 25:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setLookthrough(value);
+      break;
+    case 50:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setLimit(value);
+      break;
+    case 51:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPageToken(value);
       break;
     default:
       reader.skipField();
@@ -241,6 +251,20 @@ proto.fintekkers.requests.security.QuerySecurityRequestProto.serializeBinaryToWr
   if (f) {
     writer.writeBool(
       25,
+      f
+    );
+  }
+  f = message.getLimit();
+  if (f !== 0) {
+    writer.writeInt32(
+      50,
+      f
+    );
+  }
+  f = message.getPageToken();
+  if (f.length > 0) {
+    writer.writeString(
+      51,
       f
     );
   }
@@ -428,6 +452,42 @@ proto.fintekkers.requests.security.QuerySecurityRequestProto.prototype.getLookth
  */
 proto.fintekkers.requests.security.QuerySecurityRequestProto.prototype.setLookthrough = function(value) {
   return jspb.Message.setProto3BooleanField(this, 25, value);
+};
+
+
+/**
+ * optional int32 limit = 50;
+ * @return {number}
+ */
+proto.fintekkers.requests.security.QuerySecurityRequestProto.prototype.getLimit = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 50, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.security.QuerySecurityRequestProto} returns this
+ */
+proto.fintekkers.requests.security.QuerySecurityRequestProto.prototype.setLimit = function(value) {
+  return jspb.Message.setProto3IntField(this, 50, value);
+};
+
+
+/**
+ * optional string page_token = 51;
+ * @return {string}
+ */
+proto.fintekkers.requests.security.QuerySecurityRequestProto.prototype.getPageToken = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 51, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.fintekkers.requests.security.QuerySecurityRequestProto} returns this
+ */
+proto.fintekkers.requests.security.QuerySecurityRequestProto.prototype.setPageToken = function(value) {
+  return jspb.Message.setProto3StringField(this, 51, value);
 };
 
 

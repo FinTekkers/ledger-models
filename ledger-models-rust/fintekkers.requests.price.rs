@@ -42,12 +42,27 @@ pub struct QueryPriceRequestProto {
     /// Optional: Used to filter the price frequency and horizon
     #[prost(enumeration = "PriceFrequencyProto", tag = "24")]
     pub frequency: i32,
+    /// Paging (see docs/adr/query_paging.md). Max records returned in this
+    /// response: the page size the client asks for. Unset or 0 = no client page
+    /// cap; the server keeps today's behaviour for this RPC. The server may cap
+    /// `limit` and return fewer items; fewer items does not mean last page, only
+    /// an empty `next_page_token` does. For streaming Search, `limit` caps the
+    /// total items across the whole stream. Clients that set neither `limit` nor
+    /// `page_token` get exactly today's results.
+    ///
     /// Maximum number of price records the server may return. If unset or < 1
     /// the server applies a default cap (typically 1000) and surfaces a warning
     /// in QueryPriceResponseProto.errors_or_warnings. Servers may also enforce
     /// a hard ceiling above which `limit` is clamped silently.
     #[prost(int32, tag = "27")]
     pub limit: i32,
+    /// Paging (see docs/adr/query_paging.md). Opaque token copied from a
+    /// previous response's `next_page_token`. Unset or empty = first page.
+    /// Clients must not parse or build tokens; send the other request fields
+    /// unchanged across pages. Clients that set neither `limit` nor
+    /// `page_token` get exactly today's results.
+    #[prost(string, tag = "51")]
+    pub page_token: ::prost::alloc::string::String,
     #[prost(oneof = "query_price_request_proto::TimeRange", tags = "25, 26")]
     pub time_range: ::core::option::Option<query_price_request_proto::TimeRange>,
 }
@@ -174,4 +189,10 @@ pub struct QueryPriceResponseProto {
     /// applied, or when other notable behavior occurred (matching QueryTransactionResponseProto).
     #[prost(message, optional, tag = "40")]
     pub errors_or_warnings: ::core::option::Option<super::util::errors::SummaryProto>,
+    /// Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+    /// pass it back as the request's `page_token`. Empty = last page. For
+    /// streaming Search, only the final message of the stream carries it.
+    /// Old clients that ignore it get exactly today's results.
+    #[prost(string, tag = "50")]
+    pub next_page_token: ::prost::alloc::string::String,
 }

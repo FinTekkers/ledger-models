@@ -27,7 +27,7 @@ from fintekkers.requests.security import query_security_request_pb2 as fintekker
 from fintekkers.requests.util.errors import summary_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n:fintekkers/requests/security/query_security_response.proto\x12\x1c\x66intekkers.requests.security\x1a)fintekkers/models/security/security.proto\x1a\x39\x66intekkers/requests/security/query_security_request.proto\x1a-fintekkers/requests/util/errors/summary.proto\"\xab\x02\n\x1aQuerySecurityResponseProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12U\n\x14query_security_input\x18\x14 \x01(\x0b\x32\x37.fintekkers.requests.security.QuerySecurityRequestProto\x12\x44\n\x11security_response\x18\x1e \x03(\x0b\x32).fintekkers.models.security.SecurityProto\x12I\n\x12\x65rrors_or_warnings\x18( \x03(\x0b\x32-.fintekkers.requests.util.errors.SummaryProtoB\x1f\x42\x1bQuerySecurityResponseProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n:fintekkers/requests/security/query_security_response.proto\x12\x1c\x66intekkers.requests.security\x1a)fintekkers/models/security/security.proto\x1a\x39\x66intekkers/requests/security/query_security_request.proto\x1a-fintekkers/requests/util/errors/summary.proto\"\xc4\x02\n\x1aQuerySecurityResponseProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12U\n\x14query_security_input\x18\x14 \x01(\x0b\x32\x37.fintekkers.requests.security.QuerySecurityRequestProto\x12\x44\n\x11security_response\x18\x1e \x03(\x0b\x32).fintekkers.models.security.SecurityProto\x12I\n\x12\x65rrors_or_warnings\x18( \x03(\x0b\x32-.fintekkers.requests.util.errors.SummaryProto\x12\x17\n\x0fnext_page_token\x18\x32 \x01(\tB\x1f\x42\x1bQuerySecurityResponseProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,5 +36,5 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\033QuerySecurityResponseProtosP\001'
   _globals['_QUERYSECURITYRESPONSEPROTO']._serialized_start=242
-  _globals['_QUERYSECURITYRESPONSEPROTO']._serialized_end=541
+  _globals['_QUERYSECURITYRESPONSEPROTO']._serialized_end=566
 # @@protoc_insertion_point(module_scope)

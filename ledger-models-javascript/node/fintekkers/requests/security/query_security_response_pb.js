@@ -94,7 +94,8 @@ proto.fintekkers.requests.security.QuerySecurityResponseProto.toObject = functio
     securityResponseList: jspb.Message.toObjectList(msg.getSecurityResponseList(),
     fintekkers_models_security_security_pb.SecurityProto.toObject, includeInstance),
     errorsOrWarningsList: jspb.Message.toObjectList(msg.getErrorsOrWarningsList(),
-    fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject, includeInstance)
+    fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject, includeInstance),
+    nextPageToken: jspb.Message.getFieldWithDefault(msg, 50, "")
   };
 
   if (includeInstance) {
@@ -153,6 +154,10 @@ proto.fintekkers.requests.security.QuerySecurityResponseProto.deserializeBinaryF
       var value = new fintekkers_requests_util_errors_summary_pb.SummaryProto;
       reader.readMessage(value,fintekkers_requests_util_errors_summary_pb.SummaryProto.deserializeBinaryFromReader);
       msg.addErrorsOrWarnings(value);
+      break;
+    case 50:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setNextPageToken(value);
       break;
     default:
       reader.skipField();
@@ -219,6 +224,13 @@ proto.fintekkers.requests.security.QuerySecurityResponseProto.serializeBinaryToW
       40,
       f,
       fintekkers_requests_util_errors_summary_pb.SummaryProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getNextPageToken();
+  if (f.length > 0) {
+    writer.writeString(
+      50,
+      f
     );
   }
 };
@@ -370,6 +382,24 @@ proto.fintekkers.requests.security.QuerySecurityResponseProto.prototype.addError
  */
 proto.fintekkers.requests.security.QuerySecurityResponseProto.prototype.clearErrorsOrWarningsList = function() {
   return this.setErrorsOrWarningsList([]);
+};
+
+
+/**
+ * optional string next_page_token = 50;
+ * @return {string}
+ */
+proto.fintekkers.requests.security.QuerySecurityResponseProto.prototype.getNextPageToken = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 50, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.fintekkers.requests.security.QuerySecurityResponseProto} returns this
+ */
+proto.fintekkers.requests.security.QuerySecurityResponseProto.prototype.setNextPageToken = function(value) {
+  return jspb.Message.setProto3StringField(this, 50, value);
 };
 
 

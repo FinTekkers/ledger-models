@@ -90,7 +90,8 @@ proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.toObject = funct
     version: jspb.Message.getFieldWithDefault(msg, 2, ""),
     queryPortfolioRequest: (f = msg.getQueryPortfolioRequest()) && fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto.toObject(includeInstance, f),
     portfolioResponseList: jspb.Message.toObjectList(msg.getPortfolioResponseList(),
-    fintekkers_models_portfolio_portfolio_pb.PortfolioProto.toObject, includeInstance)
+    fintekkers_models_portfolio_portfolio_pb.PortfolioProto.toObject, includeInstance),
+    nextPageToken: jspb.Message.getFieldWithDefault(msg, 50, "")
   };
 
   if (includeInstance) {
@@ -144,6 +145,10 @@ proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.deserializeBinar
       var value = new fintekkers_models_portfolio_portfolio_pb.PortfolioProto;
       reader.readMessage(value,fintekkers_models_portfolio_portfolio_pb.PortfolioProto.deserializeBinaryFromReader);
       msg.addPortfolioResponse(value);
+      break;
+    case 50:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setNextPageToken(value);
       break;
     default:
       reader.skipField();
@@ -202,6 +207,13 @@ proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.serializeBinaryT
       30,
       f,
       fintekkers_models_portfolio_portfolio_pb.PortfolioProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getNextPageToken();
+  if (f.length > 0) {
+    writer.writeString(
+      50,
+      f
     );
   }
 };
@@ -315,6 +327,24 @@ proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.prototype.addPor
  */
 proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.prototype.clearPortfolioResponseList = function() {
   return this.setPortfolioResponseList([]);
+};
+
+
+/**
+ * optional string next_page_token = 50;
+ * @return {string}
+ */
+proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.prototype.getNextPageToken = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 50, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto} returns this
+ */
+proto.fintekkers.requests.portfolio.QueryPortfolioResponseProto.prototype.setNextPageToken = function(value) {
+  return jspb.Message.setProto3StringField(this, 50, value);
 };
 
 

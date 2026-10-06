@@ -27,6 +27,8 @@ export class QuerySecurityResponseProto extends jspb.Message {
     getErrorsOrWarningsList(): Array<fintekkers_requests_util_errors_summary_pb.SummaryProto>;
     setErrorsOrWarningsList(value: Array<fintekkers_requests_util_errors_summary_pb.SummaryProto>): QuerySecurityResponseProto;
     addErrorsOrWarnings(value?: fintekkers_requests_util_errors_summary_pb.SummaryProto, index?: number): fintekkers_requests_util_errors_summary_pb.SummaryProto;
+    getNextPageToken(): string;
+    setNextPageToken(value: string): QuerySecurityResponseProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QuerySecurityResponseProto.AsObject;
@@ -45,5 +47,6 @@ export namespace QuerySecurityResponseProto {
         querySecurityInput?: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto.AsObject,
         securityResponseList: Array<fintekkers_models_security_security_pb.SecurityProto.AsObject>,
         errorsOrWarningsList: Array<fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject>,
+        nextPageToken: string,
     }
 }

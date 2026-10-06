@@ -94,7 +94,8 @@ proto.fintekkers.requests.transaction.QueryTransactionRequestProto.toObject = fu
     fintekkers_models_util_uuid_pb.UUIDProto.toObject, includeInstance),
     searchTransactionInput: (f = msg.getSearchTransactionInput()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
     asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-    limit: jspb.Message.getFieldWithDefault(msg, 24, 0)
+    limit: jspb.Message.getFieldWithDefault(msg, 24, 0),
+    pageToken: jspb.Message.getFieldWithDefault(msg, 51, "")
   };
 
   if (includeInstance) {
@@ -157,6 +158,10 @@ proto.fintekkers.requests.transaction.QueryTransactionRequestProto.deserializeBi
     case 24:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setLimit(value);
+      break;
+    case 51:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPageToken(value);
       break;
     default:
       reader.skipField();
@@ -229,6 +234,13 @@ proto.fintekkers.requests.transaction.QueryTransactionRequestProto.serializeBina
   if (f !== 0) {
     writer.writeInt32(
       24,
+      f
+    );
+  }
+  f = message.getPageToken();
+  if (f.length > 0) {
+    writer.writeString(
+      51,
       f
     );
   }
@@ -398,6 +410,24 @@ proto.fintekkers.requests.transaction.QueryTransactionRequestProto.prototype.get
  */
 proto.fintekkers.requests.transaction.QueryTransactionRequestProto.prototype.setLimit = function(value) {
   return jspb.Message.setProto3IntField(this, 24, value);
+};
+
+
+/**
+ * optional string page_token = 51;
+ * @return {string}
+ */
+proto.fintekkers.requests.transaction.QueryTransactionRequestProto.prototype.getPageToken = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 51, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.fintekkers.requests.transaction.QueryTransactionRequestProto} returns this
+ */
+proto.fintekkers.requests.transaction.QueryTransactionRequestProto.prototype.setPageToken = function(value) {
+  return jspb.Message.setProto3StringField(this, 51, value);
 };
 
 

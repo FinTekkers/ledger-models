@@ -93,7 +93,8 @@ proto.fintekkers.requests.transaction.QueryTransactionResponseProto.toObject = f
     createTransactionRequest: (f = msg.getCreateTransactionRequest()) && fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto.toObject(includeInstance, f),
     transactionResponseList: jspb.Message.toObjectList(msg.getTransactionResponseList(),
     fintekkers_models_transaction_transaction_pb.TransactionProto.toObject, includeInstance),
-    errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
+    errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f),
+    nextPageToken: jspb.Message.getFieldWithDefault(msg, 50, "")
   };
 
   if (includeInstance) {
@@ -152,6 +153,10 @@ proto.fintekkers.requests.transaction.QueryTransactionResponseProto.deserializeB
       var value = new fintekkers_requests_util_errors_summary_pb.SummaryProto;
       reader.readMessage(value,fintekkers_requests_util_errors_summary_pb.SummaryProto.deserializeBinaryFromReader);
       msg.setErrorsOrWarnings(value);
+      break;
+    case 50:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setNextPageToken(value);
       break;
     default:
       reader.skipField();
@@ -218,6 +223,13 @@ proto.fintekkers.requests.transaction.QueryTransactionResponseProto.serializeBin
       40,
       f,
       fintekkers_requests_util_errors_summary_pb.SummaryProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getNextPageToken();
+  if (f.length > 0) {
+    writer.writeString(
+      50,
+      f
     );
   }
 };
@@ -368,6 +380,24 @@ proto.fintekkers.requests.transaction.QueryTransactionResponseProto.prototype.cl
  */
 proto.fintekkers.requests.transaction.QueryTransactionResponseProto.prototype.hasErrorsOrWarnings = function() {
   return jspb.Message.getField(this, 40) != null;
+};
+
+
+/**
+ * optional string next_page_token = 50;
+ * @return {string}
+ */
+proto.fintekkers.requests.transaction.QueryTransactionResponseProto.prototype.getNextPageToken = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 50, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.fintekkers.requests.transaction.QueryTransactionResponseProto} returns this
+ */
+proto.fintekkers.requests.transaction.QueryTransactionResponseProto.prototype.setNextPageToken = function(value) {
+  return jspb.Message.setProto3StringField(this, 50, value);
 };
 
 
