@@ -110,6 +110,9 @@ pub mod fintekkers {
 }
 
 #[cfg(test)]
+mod query_paging_tests;
+
+#[cfg(test)]
 mod tests {
     use prost_types::Timestamp;
 

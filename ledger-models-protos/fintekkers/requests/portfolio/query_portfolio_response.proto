@@ -16,6 +16,12 @@ message QueryPortfolioResponseProto {
   portfolio.QueryPortfolioRequestProto query_portfolio_request = 20;
 
   repeated fintekkers.models.portfolio.PortfolioProto portfolio_response = 30;
+
+  // Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+  // pass it back as the request's `page_token`. Empty = last page. For
+  // streaming Search, only the final message of the stream carries it.
+  // Old clients that ignore it get exactly today's results.
+  string next_page_token = 50;
 }
 
 
