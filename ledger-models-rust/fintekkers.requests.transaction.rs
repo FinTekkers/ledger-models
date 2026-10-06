@@ -44,9 +44,22 @@ pub struct QueryTransactionRequestProto {
     /// The as of date to query the data set
     #[prost(message, optional, tag = "23")]
     pub as_of: ::core::option::Option<super::super::models::util::LocalTimestampProto>,
-    /// Max number of records to return
+    /// Paging (see docs/adr/query_paging.md). Max records returned in this
+    /// response: the page size the client asks for. Unset or 0 = no client page
+    /// cap; the server keeps today's behaviour for this RPC. The server may cap
+    /// `limit` and return fewer items; fewer items does not mean last page, only
+    /// an empty `next_page_token` does. For streaming Search, `limit` caps the
+    /// total items across the whole stream. Clients that set neither `limit` nor
+    /// `page_token` get exactly today's results.
     #[prost(int32, tag = "24")]
     pub limit: i32,
+    /// Paging (see docs/adr/query_paging.md). Opaque token copied from a
+    /// previous response's `next_page_token`. Unset or empty = first page.
+    /// Clients must not parse or build tokens; send the other request fields
+    /// unchanged across pages. Clients that set neither `limit` nor
+    /// `page_token` get exactly today's results.
+    #[prost(string, tag = "51")]
+    pub page_token: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -65,4 +78,10 @@ pub struct QueryTransactionResponseProto {
     /// contingencies.
     #[prost(message, optional, tag = "40")]
     pub errors_or_warnings: ::core::option::Option<super::util::errors::SummaryProto>,
+    /// Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+    /// pass it back as the request's `page_token`. Empty = last page. For
+    /// streaming Search, only the final message of the stream carries it.
+    /// Old clients that ignore it get exactly today's results.
+    #[prost(string, tag = "50")]
+    pub next_page_token: ::prost::alloc::string::String,
 }

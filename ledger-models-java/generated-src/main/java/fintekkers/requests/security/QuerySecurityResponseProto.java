@@ -20,6 +20,7 @@ private static final long serialVersionUID = 0L;
     version_ = "";
     securityResponse_ = java.util.Collections.emptyList();
     errorsOrWarnings_ = java.util.Collections.emptyList();
+    nextPageToken_ = "";
   }
 
   @java.lang.Override
@@ -285,6 +286,59 @@ private static final long serialVersionUID = 0L;
     return errorsOrWarnings_.get(index);
   }
 
+  public static final int NEXT_PAGE_TOKEN_FIELD_NUMBER = 50;
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object nextPageToken_ = "";
+  /**
+   * <pre>
+   * Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+   * pass it back as the request's `page_token`. Empty = last page. For
+   * streaming Search, only the final message of the stream carries it.
+   * Old clients that ignore it get exactly today's results.
+   * </pre>
+   *
+   * <code>string next_page_token = 50;</code>
+   * @return The nextPageToken.
+   */
+  @java.lang.Override
+  public java.lang.String getNextPageToken() {
+    java.lang.Object ref = nextPageToken_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      nextPageToken_ = s;
+      return s;
+    }
+  }
+  /**
+   * <pre>
+   * Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+   * pass it back as the request's `page_token`. Empty = last page. For
+   * streaming Search, only the final message of the stream carries it.
+   * Old clients that ignore it get exactly today's results.
+   * </pre>
+   *
+   * <code>string next_page_token = 50;</code>
+   * @return The bytes for nextPageToken.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+      getNextPageTokenBytes() {
+    java.lang.Object ref = nextPageToken_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      nextPageToken_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -314,6 +368,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < errorsOrWarnings_.size(); i++) {
       output.writeMessage(40, errorsOrWarnings_.get(i));
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(nextPageToken_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 50, nextPageToken_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -340,6 +397,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < errorsOrWarnings_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(40, errorsOrWarnings_.get(i));
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(nextPageToken_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(50, nextPageToken_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -369,6 +429,8 @@ private static final long serialVersionUID = 0L;
         .equals(other.getSecurityResponseList())) return false;
     if (!getErrorsOrWarningsList()
         .equals(other.getErrorsOrWarningsList())) return false;
+    if (!getNextPageToken()
+        .equals(other.getNextPageToken())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -396,6 +458,8 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + ERRORS_OR_WARNINGS_FIELD_NUMBER;
       hash = (53 * hash) + getErrorsOrWarningsList().hashCode();
     }
+    hash = (37 * hash) + NEXT_PAGE_TOKEN_FIELD_NUMBER;
+    hash = (53 * hash) + getNextPageToken().hashCode();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -546,6 +610,7 @@ private static final long serialVersionUID = 0L;
         errorsOrWarningsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000010);
+      nextPageToken_ = "";
       return this;
     }
 
@@ -611,6 +676,9 @@ private static final long serialVersionUID = 0L;
         result.querySecurityInput_ = querySecurityInputBuilder_ == null
             ? querySecurityInput_
             : querySecurityInputBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.nextPageToken_ = nextPageToken_;
       }
     }
 
@@ -723,6 +791,11 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (!other.getNextPageToken().isEmpty()) {
+        nextPageToken_ = other.nextPageToken_;
+        bitField0_ |= 0x00000020;
+        onChanged();
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -792,6 +865,11 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 322
+            case 402: {
+              nextPageToken_ = input.readStringRequireUtf8();
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 402
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1730,6 +1808,113 @@ private static final long serialVersionUID = 0L;
         errorsOrWarnings_ = null;
       }
       return errorsOrWarningsBuilder_;
+    }
+
+    private java.lang.Object nextPageToken_ = "";
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+     * pass it back as the request's `page_token`. Empty = last page. For
+     * streaming Search, only the final message of the stream carries it.
+     * Old clients that ignore it get exactly today's results.
+     * </pre>
+     *
+     * <code>string next_page_token = 50;</code>
+     * @return The nextPageToken.
+     */
+    public java.lang.String getNextPageToken() {
+      java.lang.Object ref = nextPageToken_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        nextPageToken_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+     * pass it back as the request's `page_token`. Empty = last page. For
+     * streaming Search, only the final message of the stream carries it.
+     * Old clients that ignore it get exactly today's results.
+     * </pre>
+     *
+     * <code>string next_page_token = 50;</code>
+     * @return The bytes for nextPageToken.
+     */
+    public com.google.protobuf.ByteString
+        getNextPageTokenBytes() {
+      java.lang.Object ref = nextPageToken_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        nextPageToken_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+     * pass it back as the request's `page_token`. Empty = last page. For
+     * streaming Search, only the final message of the stream carries it.
+     * Old clients that ignore it get exactly today's results.
+     * </pre>
+     *
+     * <code>string next_page_token = 50;</code>
+     * @param value The nextPageToken to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNextPageToken(
+        java.lang.String value) {
+      if (value == null) { throw new NullPointerException(); }
+      nextPageToken_ = value;
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+     * pass it back as the request's `page_token`. Empty = last page. For
+     * streaming Search, only the final message of the stream carries it.
+     * Old clients that ignore it get exactly today's results.
+     * </pre>
+     *
+     * <code>string next_page_token = 50;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearNextPageToken() {
+      nextPageToken_ = getDefaultInstance().getNextPageToken();
+      bitField0_ = (bitField0_ & ~0x00000020);
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+     * pass it back as the request's `page_token`. Empty = last page. For
+     * streaming Search, only the final message of the stream carries it.
+     * Old clients that ignore it get exactly today's results.
+     * </pre>
+     *
+     * <code>string next_page_token = 50;</code>
+     * @param value The bytes for nextPageToken to set.
+     * @return This builder for chaining.
+     */
+    public Builder setNextPageTokenBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) { throw new NullPointerException(); }
+      checkByteStringIsUtf8(value);
+      nextPageToken_ = value;
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

@@ -50,7 +50,7 @@ PRICE_HORIZON_MAX: PriceHorizonProto
 PRICE_HORIZON_YEAR_TO_DATE: PriceHorizonProto
 
 class QueryPriceRequestProto(_message.Message):
-    __slots__ = ("object_class", "version", "uuIds", "search_price_input", "as_of", "frequency", "horizon", "date_range", "limit")
+    __slots__ = ("object_class", "version", "uuIds", "search_price_input", "as_of", "frequency", "horizon", "date_range", "limit", "page_token")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     UUIDS_FIELD_NUMBER: _ClassVar[int]
@@ -60,6 +60,7 @@ class QueryPriceRequestProto(_message.Message):
     HORIZON_FIELD_NUMBER: _ClassVar[int]
     DATE_RANGE_FIELD_NUMBER: _ClassVar[int]
     LIMIT_FIELD_NUMBER: _ClassVar[int]
+    PAGE_TOKEN_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
     uuIds: _containers.RepeatedCompositeFieldContainer[_uuid_pb2.UUIDProto]
@@ -69,4 +70,5 @@ class QueryPriceRequestProto(_message.Message):
     horizon: PriceHorizonProto
     date_range: _date_range_pb2.DateRangeProto
     limit: int
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuIds: _Optional[_Iterable[_Union[_uuid_pb2.UUIDProto, _Mapping]]] = ..., search_price_input: _Optional[_Union[_position_filter_pb2.PositionFilterProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., frequency: _Optional[_Union[PriceFrequencyProto, str]] = ..., horizon: _Optional[_Union[PriceHorizonProto, str]] = ..., date_range: _Optional[_Union[_date_range_pb2.DateRangeProto, _Mapping]] = ..., limit: _Optional[int] = ...) -> None: ...
+    page_token: str
+    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuIds: _Optional[_Iterable[_Union[_uuid_pb2.UUIDProto, _Mapping]]] = ..., search_price_input: _Optional[_Union[_position_filter_pb2.PositionFilterProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., frequency: _Optional[_Union[PriceFrequencyProto, str]] = ..., horizon: _Optional[_Union[PriceHorizonProto, str]] = ..., date_range: _Optional[_Union[_date_range_pb2.DateRangeProto, _Mapping]] = ..., limit: _Optional[int] = ..., page_token: _Optional[str] = ...) -> None: ...

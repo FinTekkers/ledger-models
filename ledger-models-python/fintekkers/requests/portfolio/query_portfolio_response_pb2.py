@@ -26,7 +26,7 @@ from fintekkers.models.portfolio import portfolio_pb2 as fintekkers_dot_models_d
 from fintekkers.requests.portfolio import query_portfolio_request_pb2 as fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n<fintekkers/requests/portfolio/query_portfolio_response.proto\x12\x1d\x66intekkers.requests.portfolio\x1a+fintekkers/models/portfolio/portfolio.proto\x1a;fintekkers/requests/portfolio/query_portfolio_request.proto\"\xe9\x01\n\x1bQueryPortfolioResponseProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12Z\n\x17query_portfolio_request\x18\x14 \x01(\x0b\x32\x39.fintekkers.requests.portfolio.QueryPortfolioRequestProto\x12G\n\x12portfolio_response\x18\x1e \x03(\x0b\x32+.fintekkers.models.portfolio.PortfolioProtoB B\x1cQueryPortfolioResponseProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n<fintekkers/requests/portfolio/query_portfolio_response.proto\x12\x1d\x66intekkers.requests.portfolio\x1a+fintekkers/models/portfolio/portfolio.proto\x1a;fintekkers/requests/portfolio/query_portfolio_request.proto\"\x82\x02\n\x1bQueryPortfolioResponseProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12Z\n\x17query_portfolio_request\x18\x14 \x01(\x0b\x32\x39.fintekkers.requests.portfolio.QueryPortfolioRequestProto\x12G\n\x12portfolio_response\x18\x1e \x03(\x0b\x32+.fintekkers.models.portfolio.PortfolioProto\x12\x17\n\x0fnext_page_token\x18\x32 \x01(\tB B\x1cQueryPortfolioResponseProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,5 +35,5 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\034QueryPortfolioResponseProtosP\001'
   _globals['_QUERYPORTFOLIORESPONSEPROTO']._serialized_start=202
-  _globals['_QUERYPORTFOLIORESPONSEPROTO']._serialized_end=435
+  _globals['_QUERYPORTFOLIORESPONSEPROTO']._serialized_end=460
 # @@protoc_insertion_point(module_scope)

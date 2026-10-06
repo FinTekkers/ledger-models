@@ -33,15 +33,16 @@ public final class QueryPriceResponseProtos {
       "e\032#fintekkers/models/price/price.proto\0323" +
       "fintekkers/requests/price/query_price_re" +
       "quest.proto\032-fintekkers/requests/util/er" +
-      "rors/summary.proto\"\230\002\n\027QueryPriceRespons" +
+      "rors/summary.proto\"\261\002\n\027QueryPriceRespons" +
       "eProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007version\030" +
       "\002 \001(\t\022N\n\023query_price_request\030\024 \001(\01321.fin" +
       "tekkers.requests.price.QueryPriceRequest" +
       "Proto\022;\n\016price_response\030\036 \003(\0132#.fintekke" +
       "rs.models.price.PriceProto\022I\n\022errors_or_" +
       "warnings\030( \001(\0132-.fintekkers.requests.uti" +
-      "l.errors.SummaryProtoB\034B\030QueryPriceRespo" +
-      "nseProtosP\001b\006proto3"
+      "l.errors.SummaryProto\022\027\n\017next_page_token" +
+      "\0302 \001(\tB\034B\030QueryPriceResponseProtosP\001b\006pr" +
+      "oto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -55,7 +56,7 @@ public final class QueryPriceResponseProtos {
     internal_static_fintekkers_requests_price_QueryPriceResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_price_QueryPriceResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "QueryPriceRequest", "PriceResponse", "ErrorsOrWarnings", });
+        new java.lang.String[] { "ObjectClass", "Version", "QueryPriceRequest", "PriceResponse", "ErrorsOrWarnings", "NextPageToken", });
     fintekkers.models.price.PriceProtos.getDescriptor();
     fintekkers.requests.price.QueryPriceRequestProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();

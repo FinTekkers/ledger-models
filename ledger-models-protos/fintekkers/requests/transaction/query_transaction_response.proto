@@ -22,6 +22,12 @@ message QueryTransactionResponseProto {
   //If no errors or warnings in the response then the request was processed successfully without any
   //contingencies.
   util.errors.SummaryProto errors_or_warnings = 40;
+
+  // Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+  // pass it back as the request's `page_token`. Empty = last page. For
+  // streaming Search, only the final message of the stream carries it.
+  // Old clients that ignore it get exactly today's results.
+  string next_page_token = 50;
 }
 
 

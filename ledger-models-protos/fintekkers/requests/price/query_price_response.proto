@@ -23,4 +23,10 @@ message QueryPriceResponseProto {
   //contingencies. Servers populate this with a warning when `limit` was unset and a default cap was
   //applied, or when other notable behavior occurred (matching QueryTransactionResponseProto).
   util.errors.SummaryProto errors_or_warnings = 40;
+
+  // Paging (see docs/adr/query_paging.md). Opaque token for the next page;
+  // pass it back as the request's `page_token`. Empty = last page. For
+  // streaming Search, only the final message of the stream carries it.
+  // Old clients that ignore it get exactly today's results.
+  string next_page_token = 50;
 }

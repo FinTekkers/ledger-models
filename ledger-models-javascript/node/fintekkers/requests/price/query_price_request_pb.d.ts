@@ -43,6 +43,8 @@ export class QueryPriceRequestProto extends jspb.Message {
     setDateRange(value?: fintekkers_models_util_date_range_pb.DateRangeProto): QueryPriceRequestProto;
     getLimit(): number;
     setLimit(value: number): QueryPriceRequestProto;
+    getPageToken(): string;
+    setPageToken(value: string): QueryPriceRequestProto;
 
     getTimeRangeCase(): QueryPriceRequestProto.TimeRangeCase;
 
@@ -67,6 +69,7 @@ export namespace QueryPriceRequestProto {
         horizon: PriceHorizonProto,
         dateRange?: fintekkers_models_util_date_range_pb.DateRangeProto.AsObject,
         limit: number,
+        pageToken: string,
     }
 
     export enum TimeRangeCase {

@@ -10,7 +10,7 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class QuerySecurityRequestProto(_message.Message):
-    __slots__ = ("object_class", "version", "uuIds", "search_security_input", "as_of", "name_filter", "lookthrough")
+    __slots__ = ("object_class", "version", "uuIds", "search_security_input", "as_of", "name_filter", "lookthrough", "limit", "page_token")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     UUIDS_FIELD_NUMBER: _ClassVar[int]
@@ -18,6 +18,8 @@ class QuerySecurityRequestProto(_message.Message):
     AS_OF_FIELD_NUMBER: _ClassVar[int]
     NAME_FILTER_FIELD_NUMBER: _ClassVar[int]
     LOOKTHROUGH_FIELD_NUMBER: _ClassVar[int]
+    LIMIT_FIELD_NUMBER: _ClassVar[int]
+    PAGE_TOKEN_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
     uuIds: _containers.RepeatedCompositeFieldContainer[_uuid_pb2.UUIDProto]
@@ -25,4 +27,6 @@ class QuerySecurityRequestProto(_message.Message):
     as_of: _local_timestamp_pb2.LocalTimestampProto
     name_filter: str
     lookthrough: bool
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuIds: _Optional[_Iterable[_Union[_uuid_pb2.UUIDProto, _Mapping]]] = ..., search_security_input: _Optional[_Union[_position_filter_pb2.PositionFilterProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., name_filter: _Optional[str] = ..., lookthrough: bool = ...) -> None: ...
+    limit: int
+    page_token: str
+    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuIds: _Optional[_Iterable[_Union[_uuid_pb2.UUIDProto, _Mapping]]] = ..., search_security_input: _Optional[_Union[_position_filter_pb2.PositionFilterProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., name_filter: _Optional[str] = ..., lookthrough: bool = ..., limit: _Optional[int] = ..., page_token: _Optional[str] = ...) -> None: ...

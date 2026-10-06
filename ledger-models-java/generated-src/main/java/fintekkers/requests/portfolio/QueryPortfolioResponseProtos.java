@@ -33,13 +33,14 @@ public final class QueryPortfolioResponseProtos {
       "sts.portfolio\032+fintekkers/models/portfol" +
       "io/portfolio.proto\032;fintekkers/requests/" +
       "portfolio/query_portfolio_request.proto\"" +
-      "\351\001\n\033QueryPortfolioResponseProto\022\024\n\014objec" +
+      "\202\002\n\033QueryPortfolioResponseProto\022\024\n\014objec" +
       "t_class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022Z\n\027query_" +
       "portfolio_request\030\024 \001(\01329.fintekkers.req" +
       "uests.portfolio.QueryPortfolioRequestPro" +
       "to\022G\n\022portfolio_response\030\036 \003(\0132+.fintekk" +
-      "ers.models.portfolio.PortfolioProtoB B\034Q" +
-      "ueryPortfolioResponseProtosP\001b\006proto3"
+      "ers.models.portfolio.PortfolioProto\022\027\n\017n" +
+      "ext_page_token\0302 \001(\tB B\034QueryPortfolioRe" +
+      "sponseProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -52,7 +53,7 @@ public final class QueryPortfolioResponseProtos {
     internal_static_fintekkers_requests_portfolio_QueryPortfolioResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_portfolio_QueryPortfolioResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "QueryPortfolioRequest", "PortfolioResponse", });
+        new java.lang.String[] { "ObjectClass", "Version", "QueryPortfolioRequest", "PortfolioResponse", "NextPageToken", });
     fintekkers.models.portfolio.PortfolioProtos.getDescriptor();
     fintekkers.requests.portfolio.QueryPortfolioRequestProtos.getDescriptor();
   }
