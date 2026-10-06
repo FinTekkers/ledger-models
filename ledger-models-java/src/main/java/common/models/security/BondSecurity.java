@@ -214,7 +214,9 @@ public class BondSecurity extends Security {
 
     @Override
     public ProductTypeProto getProductType() {
-        ProductTypeProto pt = super.getProductType();
+        super.getProductType(); // hydrates a link-mode security before getProto()
+        // Same bond answer as Security.fromProto and transaction validation.
+        ProductTypeProto pt = SecurityRules.inferProductType(getProto());
         return pt == ProductTypeProto.PRODUCT_TYPE_UNKNOWN ? ProductTypeProto.TREASURY_NOTE : pt;
     }
 

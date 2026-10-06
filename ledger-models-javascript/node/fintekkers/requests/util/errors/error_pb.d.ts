@@ -6,6 +6,7 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_requests_util_errors_message_pb from "../../../../fintekkers/requests/util/errors/message_pb";
+import * as fintekkers_requests_util_errors_field_violation_pb from "../../../../fintekkers/requests/util/errors/field_violation_pb";
 
 export class ErrorProto extends jspb.Message { 
     getCode(): ErrorCode;
@@ -15,6 +16,10 @@ export class ErrorProto extends jspb.Message {
     clearDetail(): void;
     getDetail(): fintekkers_requests_util_errors_message_pb.Message | undefined;
     setDetail(value?: fintekkers_requests_util_errors_message_pb.Message): ErrorProto;
+    clearViolationsList(): void;
+    getViolationsList(): Array<fintekkers_requests_util_errors_field_violation_pb.FieldViolationProto>;
+    setViolationsList(value: Array<fintekkers_requests_util_errors_field_violation_pb.FieldViolationProto>): ErrorProto;
+    addViolations(value?: fintekkers_requests_util_errors_field_violation_pb.FieldViolationProto, index?: number): fintekkers_requests_util_errors_field_violation_pb.FieldViolationProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): ErrorProto.AsObject;
@@ -30,6 +35,7 @@ export namespace ErrorProto {
     export type AsObject = {
         code: ErrorCode,
         detail?: fintekkers_requests_util_errors_message_pb.Message.AsObject,
+        violationsList: Array<fintekkers_requests_util_errors_field_violation_pb.FieldViolationProto.AsObject>,
     }
 }
 
