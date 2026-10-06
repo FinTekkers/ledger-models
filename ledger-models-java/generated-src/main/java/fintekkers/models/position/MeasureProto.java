@@ -4,6 +4,17 @@
 package fintekkers.models.position;
 
 /**
+ * <pre>
+ * Absent versus zero: a measure that is missing from a position (no
+ * MeasureMapEntry for it, or an entry with no measure_decimal_value) means
+ * "not computable" for that position, e.g. a price or input it needs was
+ * unavailable. It is distinct from a computed 0, which is a real value and is
+ * always sent as "0".
+ * Serializers in every language must omit a measure they could not compute and
+ * never zero-fill it; deserializers must read an absent measure back as
+ * absent/null, never as 0.
+ * </pre>
+ *
  * Protobuf enum {@code fintekkers.models.position.MeasureProto}
  */
 public enum MeasureProto

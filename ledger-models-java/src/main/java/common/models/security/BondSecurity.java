@@ -147,7 +147,7 @@ public class BondSecurity extends Security {
     public LocalDate getDatedDate() {
         BondDetailsProto bd = readBondDetails();
         if (bd == null || !bd.hasDatedDate()) return null;
-        return ProtoSerializationUtil.deserializeLocalDate(bd.getDatedDate());
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(bd.getDatedDate(), "bond_details.dated_date");
     }
 
     public void setDatedDate(LocalDate datedDate) {
@@ -179,7 +179,7 @@ public class BondSecurity extends Security {
     public LocalDate getIssueDate() {
         BondDetailsProto bd = readBondDetails();
         if (bd == null || !bd.hasIssueDate()) return null;
-        return ProtoSerializationUtil.deserializeLocalDate(bd.getIssueDate());
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(bd.getIssueDate(), SecurityRules.ISSUE_DATE);
     }
 
     public void setIssueDate(LocalDate issueDate) {
@@ -195,7 +195,7 @@ public class BondSecurity extends Security {
     public LocalDate getMaturityDate() {
         BondDetailsProto bd = readBondDetails();
         if (bd == null || !bd.hasMaturityDate()) return null;
-        return ProtoSerializationUtil.deserializeLocalDate(bd.getMaturityDate());
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(bd.getMaturityDate(), SecurityRules.MATURITY_DATE);
     }
 
     public void setMaturityDate(LocalDate maturityDate) {
