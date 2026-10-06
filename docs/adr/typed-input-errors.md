@@ -61,9 +61,9 @@ Python, JS and Rust do not enforce maturity-after-issue at construction today. A
 | Binding | Typed input error | Base | Notes |
 |---|---|---|---|
 | Java | `ModelValidationException` | `IllegalArgumentException` | This item. |
-| Python | `ModelValidationError` | `ValueError` | LM-255b. |
-| JS/TS | `ModelValidationError` | `Error` | LM-255c. JS has no standard argument error; `TypeError` and `RangeError` mean something else. |
-| Rust | `Error::Validation(Vec<FieldViolationProto>)` | `utils::errors::Error` | LM-255d. Rust has no exception hierarchy; maps to `Code::InvalidArgument`. |
+| Python | `ModelValidationError` | `ValueError` | Type added by LM-258 (`fintekkers/wrappers/models/errors.py`); LM-255b adds the bond rules. |
+| JS/TS | `ModelValidationError` | `Error` | Type added by LM-258 (`node/wrappers/models/errors.ts`); LM-255c adds the bond rules. JS has no standard argument error; `TypeError` and `RangeError` mean something else. |
+| Rust | `Error::Validation(Vec<FieldViolationProto>)` | `utils::errors::Error` | Variant added by LM-258; LM-255d adds the bond rules. Rust has no exception hierarchy; maps to `Code::InvalidArgument`. |
 
 LM-254 adds an `InvalidFieldError` in Python and JS. LM-255b/c must reuse or extend it as the typed input error rather than add a second one, and must fold LM-258's T-bill coupon `validate()` into the shared rules module.
 

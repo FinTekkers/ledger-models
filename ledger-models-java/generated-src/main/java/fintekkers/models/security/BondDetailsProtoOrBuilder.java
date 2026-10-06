@@ -9,7 +9,11 @@ public interface BondDetailsProtoOrBuilder extends
 
   /**
    * <pre>
-   * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
+   * Annual coupon rate in percentage form: 6.0 = 6%, 0.625 = 0.625%.
+   * A TBILL pays no coupon: when product_type == TBILL, coupon_rate must be
+   * unset or 0. Writers enforce this through the security validators
+   * (Java SecurityRules.validate, see docs/adr/tbill_coupon_validation.md);
+   * stored rows that break it still deserialize.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -18,7 +22,11 @@ public interface BondDetailsProtoOrBuilder extends
   boolean hasCouponRate();
   /**
    * <pre>
-   * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
+   * Annual coupon rate in percentage form: 6.0 = 6%, 0.625 = 0.625%.
+   * A TBILL pays no coupon: when product_type == TBILL, coupon_rate must be
+   * unset or 0. Writers enforce this through the security validators
+   * (Java SecurityRules.validate, see docs/adr/tbill_coupon_validation.md);
+   * stored rows that break it still deserialize.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>
@@ -27,7 +35,11 @@ public interface BondDetailsProtoOrBuilder extends
   fintekkers.models.util.DecimalValue.DecimalValueProto getCouponRate();
   /**
    * <pre>
-   * Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
+   * Annual coupon rate in percentage form: 6.0 = 6%, 0.625 = 0.625%.
+   * A TBILL pays no coupon: when product_type == TBILL, coupon_rate must be
+   * unset or 0. Writers enforce this through the security validators
+   * (Java SecurityRules.validate, see docs/adr/tbill_coupon_validation.md);
+   * stored rows that break it still deserialize.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto coupon_rate = 1;</code>

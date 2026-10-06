@@ -40,6 +40,7 @@ const util_1 = require("util");
 const security_1 = __importDefault(require("../../models/security/security"));
 const dt = __importStar(require("../../models/utils/datetime"));
 const identifier_1 = require("../../models/security/identifier");
+const security_rules_1 = require("../../models/security/security_rules");
 // Requests & Services
 const security_service_grpc_pb_1 = require("../../../fintekkers/services/security-service/security_service_grpc_pb");
 const query_security_request_pb_1 = require("../../../fintekkers/requests/security/query_security_request_pb");
@@ -65,6 +66,9 @@ class SecurityService {
             // validateCreateRequest reject so the dry-run RPC can't mask a request
             // that the real createOrUpdate would also fail on.
             (0, identifier_1.validateIdentifiersForCreate)(security);
+            // Security input rules (LM-258: a TBILL has no coupon). Throws
+            // ModelValidationError before the gRPC round-trip.
+            (0, security_rules_1.requireValid)(security);
             const createRequest = new create_security_request_pb_1.CreateSecurityRequestProto();
             createRequest.setObjectClass('SecurityRequest');
             createRequest.setVersion('0.0.1');
@@ -78,6 +82,7 @@ class SecurityService {
         return __awaiter(this, void 0, void 0, function* () {
             // Client-side guard (#347): see validateCreateSecurity above.
             (0, identifier_1.validateIdentifiersForCreate)(security);
+            (0, security_rules_1.requireValid)(security);
             const createRequest = new create_security_request_pb_1.CreateSecurityRequestProto();
             createRequest.setObjectClass('SecurityRequest');
             createRequest.setVersion('0.0.1');

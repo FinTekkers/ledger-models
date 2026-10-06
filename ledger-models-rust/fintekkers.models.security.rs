@@ -469,7 +469,11 @@ pub mod security_proto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BondDetailsProto {
-    /// Expressed as a decimal fraction (0.05=5%, 0.0075=0.75%). Do NOT use percentage form (5.0 will be rejected).
+    /// Annual coupon rate in percentage form: 6.0 = 6%, 0.625 = 0.625%.
+    /// A TBILL pays no coupon: when product_type == TBILL, coupon_rate must be
+    /// unset or 0. Writers enforce this through the security validators
+    /// (Java SecurityRules.validate, see docs/adr/tbill_coupon_validation.md);
+    /// stored rows that break it still deserialize.
     #[prost(message, optional, tag = "1")]
     pub coupon_rate: ::core::option::Option<super::util::DecimalValueProto>,
     #[prost(enumeration = "CouponTypeProto", tag = "2")]
