@@ -24,6 +24,16 @@ declare class Transaction {
     proto: TransactionProto;
     constructor(protoOrParams: TransactionProto | TransactionConstructorParams);
     /**
+     * Nested Price defaults, filled once at construction (parity with Java
+     * Transaction(TransactionProto) and Python Transaction.__init__): a non-link
+     * price with no UUID (unset or empty raw_uuid) gets UUID.random(); a non-link
+     * price with no as_of gets the transaction's as_of, the same rule
+     * buildProtoFromParams uses via Price.create. Set values are never
+     * overwritten; link prices pass through as sent. Returns a clone when
+     * filling, so the caller's message is not mutated.
+     */
+    private static fillPriceDefaults;
+    /**
      * Builds a complete TransactionProto from constructor parameters
      */
     private buildProtoFromParams;

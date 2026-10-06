@@ -37,10 +37,34 @@ class Transaction {
 
   constructor(protoOrParams: TransactionProto | TransactionConstructorParams) {
     if (protoOrParams instanceof TransactionProto) {
-      this.proto = protoOrParams;
+      this.proto = Transaction.fillPriceDefaults(protoOrParams);
     } else {
       this.proto = this.buildProtoFromParams(protoOrParams);
     }
+  }
+
+  /**
+   * Nested Price defaults, filled once at construction (parity with Java
+   * Transaction(TransactionProto) and Python Transaction.__init__): a non-link
+   * price with no UUID (unset or empty raw_uuid) gets UUID.random(); a non-link
+   * price with no as_of gets the transaction's as_of, the same rule
+   * buildProtoFromParams uses via Price.create. Set values are never
+   * overwritten; link prices pass through as sent. Returns a clone when
+   * filling, so the caller's message is not mutated.
+   */
+  private static fillPriceDefaults(proto: TransactionProto): TransactionProto {
+    const price = proto.getPrice();
+    if (!price || price.getIsLink()) return proto;
+    const uuid = price.getUuid();
+    const missingUuid = !uuid || uuid.getRawUuid_asU8().length === 0;
+    const missingAsOf = !price.hasAsOf() && proto.hasAsOf();
+    if (!missingUuid && !missingAsOf) return proto;
+
+    const filled = proto.clone();
+    const filledPrice = filled.getPrice()!;
+    if (missingUuid) filledPrice.setUuid(UUID.random().toUUIDProto());
+    if (missingAsOf) filledPrice.setAsOf(filled.getAsOf()!.clone());
+    return filled;
   }
 
   /**
