@@ -1,11 +1,14 @@
 use crate::fintekkers::models::security::{IdentifierProto, IdentifierTypeProto, SecurityProto, ProductTypeProto};
 use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
+use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 use crate::fintekkers::wrappers::util::link_cache;
 use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
 use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
+use std::str::FromStr;
 use std::sync::{Arc, OnceLock, RwLock};
 use uuid::Uuid;
 
@@ -374,6 +377,61 @@ pub fn link_of_latest(uuid: Uuid) -> SecurityProto {
         uuid: Some(uuid_proto_from(uuid)),
         ..Default::default()
     }
+}
+
+/// Field path of the TBILL coupon rule's violation.
+pub const COUPON_RATE: &str = "bond_details.coupon_rate";
+
+/// Security input rules: Rust counterpart of Java's `SecurityRules.validate`
+/// (docs/adr/typed-input-errors.md). Returns every field-level violation, or
+/// an empty Vec when valid. A link security returns an empty Vec: hydrate it
+/// first. Holds the TBILL coupon rule (LM-258); LM-255d adds the bond rules
+/// Java already has. `SecurityWrapper::new` does not call this, so stored
+/// rows that break a rule still load; writers call it before saving.
+pub fn validate_security(proto: &SecurityProto) -> Vec<FieldViolationProto> {
+    if proto.is_link {
+        return Vec::new();
+    }
+    let id = object_id_of(proto);
+    tbill_coupon_violation(proto, id.as_ref()).into_iter().collect()
+}
+
+/// `Err(Error::Validation(..))` carrying every violation if
+/// [`validate_security`] finds any.
+pub fn require_valid_security(proto: &SecurityProto) -> Result<(), Error> {
+    let violations = validate_security(proto);
+    if violations.is_empty() {
+        Ok(())
+    } else {
+        Err(Error::Validation(violations))
+    }
+}
+
+/// A TBILL pays no coupon, so coupon_rate must be unset or 0. Uses the
+/// explicit product_type only. Units are not checked. A value that does not
+/// parse is skipped.
+fn tbill_coupon_violation(proto: &SecurityProto, id: Option<&UuidProto>) -> Option<FieldViolationProto> {
+    if proto.product_type != ProductTypeProto::Tbill as i32 {
+        return None;
+    }
+    let raw = &proto.bond_details.as_ref()?.coupon_rate.as_ref()?.arbitrary_precision_value;
+    if raw.is_empty() {
+        return None;
+    }
+    let coupon = Decimal::from_str(raw).or_else(|_| Decimal::from_scientific(raw)).ok()?;
+    if coupon.is_zero() {
+        return None;
+    }
+    Some(FieldViolationProto {
+        field: COUPON_RATE.to_string(),
+        object_id: id.cloned(),
+        message: format!("coupon_rate must be null or 0 for a TBILL: coupon_rate={}", raw),
+    })
+}
+
+/// The security's UUID, or None when it has none or it is not 16 bytes.
+fn object_id_of(proto: &SecurityProto) -> Option<UuidProto> {
+    proto.uuid.as_ref().filter(|u| u.raw_uuid.len() == 16).cloned()
 }
 
 raw_data_model_object_trait!(SecurityWrapper);
@@ -1107,5 +1165,83 @@ mod test {
         clear_security_fetcher();
         link_cache::security().evict(uuid);
         link_cache::security().evict(err_uuid);
+    }
+
+    // ---------- LM-258: a TBILL has no coupon ----------
+
+    const TBILL_ID: &str = "1f0e8a4c-58b1-4d0e-9a3c-7d2b6e5f4a10";
+
+    /// A security of `product_type`; `coupon` None leaves coupon_rate unset.
+    fn coupon_security(product_type: ProductTypeProto, coupon: Option<&str>) -> SecurityProto {
+        SecurityProto {
+            uuid: Some(uuid_proto_from(Uuid::parse_str(TBILL_ID).unwrap())),
+            product_type: product_type as i32,
+            bond_details: Some(BondDetailsProto {
+                coupon_rate: coupon.and_then(decimal),
+                face_value: decimal("1000"),
+                ..Default::default()
+            }),
+            ..Default::default()
+        }
+    }
+
+    fn assert_coupon_rejected(coupon: &str) {
+        let proto = coupon_security(ProductTypeProto::Tbill, Some(coupon));
+        let err = require_valid_security(&proto).expect_err("TBILL with a coupon must be rejected");
+        assert!(matches!(err, Error::Validation(_)), "expected Error::Validation, got {:?}", err);
+        let violations = err.violations();
+        assert_eq!(violations.len(), 1);
+        assert_eq!(violations[0].field, COUPON_RATE);
+        assert_eq!(violations[0].field, "bond_details.coupon_rate");
+        let object_id = violations[0].object_id.as_ref().expect("object_id must be set");
+        assert_eq!(Uuid::from_slice(&object_id.raw_uuid).unwrap().to_string(), TBILL_ID);
+        let message = err.to_string();
+        assert!(message.contains(TBILL_ID), "message should name the security id: {message}");
+        assert!(message.contains("coupon_rate"), "message should name coupon_rate: {message}");
+        let status: tonic::Status = err.into();
+        assert_eq!(status.code(), tonic::Code::InvalidArgument);
+        assert!(status.message().contains(TBILL_ID));
+    }
+
+    #[test]
+    fn tbill_with_coupon_six_is_rejected() {
+        assert_coupon_rejected("6.0");
+    }
+
+    #[test]
+    fn tbill_with_negative_coupon_is_rejected() {
+        assert_coupon_rejected("-1.0");
+    }
+
+    #[test]
+    fn tbill_with_no_coupon_message_is_accepted() {
+        let proto = coupon_security(ProductTypeProto::Tbill, None);
+        assert!(proto.bond_details.as_ref().unwrap().coupon_rate.is_none());
+        assert!(validate_security(&proto).is_empty());
+        assert!(require_valid_security(&proto).is_ok());
+    }
+
+    #[test]
+    fn tbill_with_empty_coupon_value_is_accepted() {
+        let proto = coupon_security(ProductTypeProto::Tbill, Some(""));
+        assert!(proto.bond_details.as_ref().unwrap().coupon_rate.is_some());
+        assert!(validate_security(&proto).is_empty());
+        assert!(require_valid_security(&proto).is_ok());
+    }
+
+    #[test]
+    fn tbill_with_zero_coupon_is_accepted() {
+        for zero in ["0", "0.00"] {
+            let proto = coupon_security(ProductTypeProto::Tbill, Some(zero));
+            assert!(validate_security(&proto).is_empty(), "{zero}");
+            assert!(require_valid_security(&proto).is_ok(), "{zero}");
+        }
+    }
+
+    #[test]
+    fn treasury_note_with_coupon_six_is_accepted() {
+        let proto = coupon_security(ProductTypeProto::TreasuryNote, Some("6.0"));
+        assert!(validate_security(&proto).is_empty());
+        assert!(require_valid_security(&proto).is_ok());
     }
 }

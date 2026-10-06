@@ -22,6 +22,7 @@ from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.security.security_identifier import (
     validate_identifiers_for_create,
 )
+from fintekkers.wrappers.models.security import security_rules
 from fintekkers.wrappers.requests.security import (
     QuerySecurityRequest,
     CreateSecurityRequest,
@@ -94,6 +95,9 @@ class SecurityService:
         # identifier values before the gRPC round-trip. Same rule the server's
         # validateCreateRequest enforces.
         validate_identifiers_for_create(request.proto.security_input)
+        # Security input rules (LM-258: a TBILL has no coupon). Raises
+        # ModelValidationError before the gRPC round-trip.
+        security_rules.require_valid(request.proto.security_input)
         response = self.stub.CreateOrUpdate(request.proto)
         # Write-through: surface the just-persisted entity to lazy-hydrate
         # wrappers via the process-wide LinkCache. See
@@ -112,6 +116,7 @@ class SecurityService:
         # is the dry-run RPC; the consumer-side check is identical so the
         # dry run can't mask a UNKNOWN_IDENTIFIER_TYPE that would later fail.
         validate_identifiers_for_create(request.proto.security_input)
+        security_rules.require_valid(request.proto.security_input)
         return self.stub.ValidateCreateOrUpdate(request.proto)
 
     def get_security_by_uuid(

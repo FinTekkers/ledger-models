@@ -10,6 +10,7 @@ import Security from '../../models/security/security';
 import { PositionFilter } from '../../models/position/positionfilter';
 import * as dt from '../../models/utils/datetime';
 import { validateIdentifiersForCreate } from '../../models/security/identifier';
+import { requireValid } from '../../models/security/security_rules';
 
 // Requests & Services
 import { SecurityClient } from '../../../fintekkers/services/security-service/security_service_grpc_pb';
@@ -41,6 +42,9 @@ class SecurityService {
     // validateCreateRequest reject so the dry-run RPC can't mask a request
     // that the real createOrUpdate would also fail on.
     validateIdentifiersForCreate(security);
+    // Security input rules (LM-258: a TBILL has no coupon). Throws
+    // ModelValidationError before the gRPC round-trip.
+    requireValid(security);
 
     const createRequest = new CreateSecurityRequestProto();
     createRequest.setObjectClass('SecurityRequest');
@@ -55,6 +59,7 @@ class SecurityService {
   async createSecurity(security: SecurityProto): Promise<CreateSecurityResponseProto> {
     // Client-side guard (#347): see validateCreateSecurity above.
     validateIdentifiersForCreate(security);
+    requireValid(security);
 
     const createRequest = new CreateSecurityRequestProto();
     createRequest.setObjectClass('SecurityRequest');

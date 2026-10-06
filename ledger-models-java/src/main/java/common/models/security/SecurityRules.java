@@ -7,6 +7,7 @@ import fintekkers.models.security.SecurityProto;
 import fintekkers.requests.util.errors.FieldViolation.FieldViolationProto;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ public final class SecurityRules {
     public static final String FACE_VALUE = "bond_details.face_value";
     public static final String ISSUE_DATE = "bond_details.issue_date";
     public static final String MATURITY_DATE = "bond_details.maturity_date";
+    public static final String COUPON_RATE = "bond_details.coupon_rate";
 
     private SecurityRules() {}
 
@@ -76,6 +78,10 @@ public final class SecurityRules {
      * Returns every field-level violation on this security, or an empty list
      * when it is valid. A link security returns an empty list: hydrate it
      * first to have its fields checked.
+     *
+     * <p>Not called by {@link Security#fromProto}: stored rows that break a
+     * rule (e.g. the LS-38 TBILLs with a coupon) must still load. Writers
+     * call this, or {@link #requireValid}, before saving.
      */
     public static List<FieldViolationProto> validate(SecurityProto proto) {
         Objects.requireNonNull(proto, "SecurityProto must not be null");
@@ -91,6 +97,8 @@ public final class SecurityRules {
         }
         FieldViolationProto dates = bondDatesViolation(proto, id);
         if (dates != null) out.add(dates);
+        FieldViolationProto coupon = tbillCouponViolation(proto, id);
+        if (coupon != null) out.add(coupon);
         return out;
     }
 
@@ -118,6 +126,27 @@ public final class SecurityRules {
         if (maturity.isAfter(issue)) return null;
         return violation(MATURITY_DATE, id,
                 "maturity_date must be after issue_date: maturity=" + maturity + ", issue=" + issue);
+    }
+
+    /**
+     * LM-258: a TBILL pays no coupon, so coupon_rate must be unset or 0. Uses
+     * the explicit product_type only ({@link #inferProductType} never infers
+     * TBILL). Units are not checked. A value that does not parse is skipped.
+     */
+    private static FieldViolationProto tbillCouponViolation(SecurityProto proto, UUID id) {
+        if (proto.getProductType() != ProductTypeProto.TBILL) return null;
+        if (!proto.hasBondDetails() || !proto.getBondDetails().hasCouponRate()) return null;
+        String raw = proto.getBondDetails().getCouponRate().getArbitraryPrecisionValue();
+        if (raw.isEmpty()) return null;
+        BigDecimal coupon;
+        try {
+            coupon = new BigDecimal(raw);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        if (coupon.signum() == 0) return null;
+        return violation(COUPON_RATE, id,
+                "coupon_rate must be null or 0 for a TBILL: coupon_rate=" + raw);
     }
 
     private static boolean isSet(BondDetailsProto bond, String field) {
