@@ -3,6 +3,7 @@ package protos.serializers;
 import common.models.security.BondSecurity;
 import common.models.security.CashSecurity;
 import common.models.security.Security;
+import fintekkers.models.security.EquityDetailsProto;
 import fintekkers.models.security.SecurityProto;
 import org.junit.jupiter.api.Test;
 import testutil.DummyBondObjects;
@@ -16,7 +17,8 @@ import java.util.Random;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -95,23 +97,99 @@ class SecurityWrapperTest {
 
     @Test
     public void testDeserializeSettlementCurrencyIsLinkDoesNotThrow() {
-        // Issue #93: when settlement_currency has is_link=true (UUID-only reference),
-        // Security.fromProto must not throw — it should produce null instead.
-        UUID linkUuid = UUID.randomUUID();
-        SecurityProto linkProto = SecurityProto.newBuilder()
-                .setIsLink(true)
-                .setUuid(protos.serializers.util.proto.ProtoSerializationUtil.serializeUUID(linkUuid))
+        // Issue #93 / LM-113: when settlement_currency has is_link=true (UUID-only
+        // reference), Security.fromProto must not throw, and getSettlementCurrency()
+        // returns a link-mode CashSecurity carrying that UUID — with no lookup.
+        Security.Fetcher saved = Security.getFetcher();
+        Security.setFetcher((u, t) -> { throw new AssertionError("settlement link must not be fetched"); });
+        try {
+            UUID linkUuid = new UUID(1, 1);
+            SecurityProto linkProto = SecurityProto.newBuilder()
+                    .setIsLink(true)
+                    .setUuid(protos.serializers.util.proto.ProtoSerializationUtil.serializeUUID(linkUuid))
+                    .build();
+
+            SecurityProto bondWithLink = SecurityProto.newBuilder(
+                            DummyBondObjects.getDummySecurity().getProto())
+                    .setSettlementCurrency(linkProto)
+                    .build();
+
+            Security result = assertDoesNotThrow(() -> Security.fromProto(bondWithLink),
+                    "Security.fromProto must not throw when settlement_currency.is_link=true");
+            CashSecurity sc = assertInstanceOf(CashSecurity.class, result.getSettlementCurrency());
+            assertEquals(linkUuid, sc.getID());
+            assertTrue(sc.isLink());
+
+            SecurityProto scProto = sc.getProto();
+            assertEquals(linkUuid,
+                    protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(scProto.getUuid()));
+            assertTrue(scProto.getIsLink());
+            // getCashId() reads the active proto without hydrating, so a link yields "".
+            assertEquals("", sc.getCashId());
+
+            Security reread = Security.fromProto(result.getProto());
+            assertEquals(linkUuid, reread.getSettlementCurrency().getID());
+            assertTrue(reread.getProto().getSettlementCurrency().getIsLink());
+        } finally {
+            Security.setFetcher(saved);
+        }
+    }
+
+    @Test
+    public void testSettlementCurrencyNonCashNonLinkThrows() {
+        SecurityProto bondAsSettlement = SecurityProto.newBuilder(DummyBondObjects.getDummySecurity().getProto())
+                .setSettlementCurrency(DummyBondObjects.getDummySecurity().getProto())
                 .build();
 
-        SecurityProto bondWithLink = SecurityProto.newBuilder(
-                        DummyBondObjects.getDummySecurity().getProto())
-                .setSettlementCurrency(linkProto)
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> Security.fromProto(bondAsSettlement));
+        assertTrue(ex.getMessage().contains("settlement_currency"), ex.getMessage());
+    }
+
+    @Test
+    public void testSettlementCurrencyInferredEquityThrows() {
+        // product_type UNKNOWN + equity_details infers COMMON_STOCK — still rejected.
+        SecurityProto equityShape = SecurityProto.newBuilder()
+                .setUuid(protos.serializers.util.proto.ProtoSerializationUtil.serializeUUID(UUID.randomUUID()))
+                .setEquityDetails(EquityDetailsProto.getDefaultInstance())
+                .build();
+        SecurityProto bond = SecurityProto.newBuilder(DummyBondObjects.getDummySecurity().getProto())
+                .setSettlementCurrency(equityShape)
                 .build();
 
-        Security result = assertDoesNotThrow(() -> Security.fromProto(bondWithLink),
-                "Security.fromProto must not throw when settlement_currency.is_link=true");
-        assertNull(result.getSettlementCurrency(),
-                "settlement_currency should be null when the embedded proto is a link reference");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> Security.fromProto(bond));
+        assertTrue(ex.getMessage().contains("settlement_currency"), ex.getMessage());
+    }
+
+    @Test
+    public void testSettlementCurrencyFullCashUnchanged() {
+        SecurityProto bond = SecurityProto.newBuilder(DummyBondObjects.getDummySecurity().getProto())
+                .setSettlementCurrency(CashSecurity.USD.getProto())
+                .build();
+
+        Security result = Security.fromProto(bond);
+        CashSecurity sc = assertInstanceOf(CashSecurity.class, result.getSettlementCurrency());
+        assertFalse(sc.isLink());
+        assertEquals(CashSecurity.USD.getID(), sc.getID());
+        assertEquals(CashSecurity.USD.getProto(), sc.getProto());
+    }
+
+    @Test
+    public void testSettlementCurrencyBareLegacyProtoAccepted() {
+        // No product_type and no shape fields: legacy bare proto stays accepted.
+        UUID id = UUID.randomUUID();
+        SecurityProto bare = SecurityProto.newBuilder()
+                .setUuid(protos.serializers.util.proto.ProtoSerializationUtil.serializeUUID(id))
+                .setIssuerName("USD")
+                .build();
+        SecurityProto bond = SecurityProto.newBuilder(DummyBondObjects.getDummySecurity().getProto())
+                .setSettlementCurrency(bare)
+                .build();
+
+        Security result = assertDoesNotThrow(() -> Security.fromProto(bond));
+        CashSecurity sc = assertInstanceOf(CashSecurity.class, result.getSettlementCurrency());
+        assertEquals(id, sc.getID());
     }
 
     // Issue #96: maturity_date must be strictly after issue_date for bond-type securities.

@@ -142,28 +142,9 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
      */
     public static Security fromProto(SecurityProto proto) {
         Objects.requireNonNull(proto, "SecurityProto must not be null");
+        validateSettlementCurrency(proto);
 
-        ProductTypeProto productType = proto.getProductType();
-        SecurityProto.NonBondDetailsCase nonBondCase = proto.getNonBondDetailsCase();
-
-        if (productType == ProductTypeProto.PRODUCT_TYPE_UNKNOWN) {
-            if (proto.hasTipsExtension()) {
-                productType = ProductTypeProto.TIPS;
-            } else if (proto.hasFrnExtension()) {
-                productType = ProductTypeProto.TREASURY_FRN;
-            } else if (proto.hasMbsExtension()) {
-                productType = ProductTypeProto.MORTGAGE_BACKED;
-            } else if (proto.hasBondDetails()) {
-                productType = ProductTypeProto.TREASURY_NOTE;
-            } else if (nonBondCase != SecurityProto.NonBondDetailsCase.NONBONDDETAILS_NOT_SET) {
-                switch (nonBondCase) {
-                    case CASH_DETAILS:   productType = ProductTypeProto.CURRENCY; break;
-                    case EQUITY_DETAILS: productType = ProductTypeProto.COMMON_STOCK; break;
-                    case INDEX_DETAILS:  productType = ProductTypeProto.EQUITY_INDEX; break;
-                    default: break;
-                }
-            }
-        }
+        ProductTypeProto productType = inferProductType(proto);
 
         if (productType == ProductTypeProto.CURRENCY) {
             return new CashSecurity(proto);
@@ -188,6 +169,52 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
             return new IndexSecurity(proto);
         }
         return new Security(proto);
+    }
+
+    /**
+     * Returns {@code proto.getProductType()}, or when that is UNKNOWN infers
+     * the type from the structured shape (extensions, bond_details,
+     * non_bond_details). Returns UNKNOWN when nothing identifies the type.
+     */
+    private static ProductTypeProto inferProductType(SecurityProto proto) {
+        ProductTypeProto productType = proto.getProductType();
+        SecurityProto.NonBondDetailsCase nonBondCase = proto.getNonBondDetailsCase();
+
+        if (productType == ProductTypeProto.PRODUCT_TYPE_UNKNOWN) {
+            if (proto.hasTipsExtension()) {
+                productType = ProductTypeProto.TIPS;
+            } else if (proto.hasFrnExtension()) {
+                productType = ProductTypeProto.TREASURY_FRN;
+            } else if (proto.hasMbsExtension()) {
+                productType = ProductTypeProto.MORTGAGE_BACKED;
+            } else if (proto.hasBondDetails()) {
+                productType = ProductTypeProto.TREASURY_NOTE;
+            } else if (nonBondCase != SecurityProto.NonBondDetailsCase.NONBONDDETAILS_NOT_SET) {
+                switch (nonBondCase) {
+                    case CASH_DETAILS:   productType = ProductTypeProto.CURRENCY; break;
+                    case EQUITY_DETAILS: productType = ProductTypeProto.COMMON_STOCK; break;
+                    case INDEX_DETAILS:  productType = ProductTypeProto.EQUITY_INDEX; break;
+                    default: break;
+                }
+            }
+        }
+        return productType;
+    }
+
+    /**
+     * Rejects a settlement_currency that is neither a link nor a CURRENCY
+     * security (LM-113). Links are UUID-only references and are not
+     * type-checked. A bare legacy proto with no type and no shape fields is
+     * accepted.
+     */
+    private static void validateSettlementCurrency(SecurityProto proto) {
+        if (!proto.hasSettlementCurrency()) return;
+        SecurityProto sc = proto.getSettlementCurrency();
+        if (sc.getIsLink()) return;
+        ProductTypeProto t = inferProductType(sc);
+        if (t == ProductTypeProto.CURRENCY || t == ProductTypeProto.PRODUCT_TYPE_UNKNOWN) return;
+        throw new IllegalArgumentException(
+                "settlement_currency must be a CURRENCY security or a link; got product_type=" + t);
     }
 
     public static SecurityProto linkOf(UUID uuid, ZonedDateTime asOf) {
@@ -482,10 +509,8 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         SecurityProto active = getProto();
         if (!active.hasSettlementCurrency()) return null;
         SecurityProto sc = active.getSettlementCurrency();
-        if (sc.getIsLink()) {
-            // UUID-only link reference — caller resolves via SecurityService.
-            return null;
-        }
+        // A UUID-only link becomes a link-mode CashSecurity: no lookup here;
+        // field reads hydrate lazily via LinkCache / Fetcher (LM-113).
         return new CashSecurity(sc);
     }
 
