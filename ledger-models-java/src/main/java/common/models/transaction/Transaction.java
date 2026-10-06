@@ -142,10 +142,17 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         // extractId() synthesizes one via UUID.randomUUID() and stores on
         // parent. Reflect that synthesized UUID into this.proto so
         // getProto() exposes it.
-        if (!proto.hasUuid() && this.getID() != null) {
-            this.proto = proto.toBuilder()
-                    .setUuid(ProtoSerializationUtil.serializeUUID(this.getID()))
-                    .build();
+        boolean fillTxnUuid = !proto.hasUuid() && this.getID() != null;
+        boolean fillPrice = needsPriceDefaults(proto);
+        if (fillTxnUuid || fillPrice) {
+            TransactionProto.Builder b = proto.toBuilder();
+            if (fillTxnUuid) {
+                b.setUuid(ProtoSerializationUtil.serializeUUID(this.getID()));
+            }
+            if (fillPrice) {
+                fillPriceDefaults(b);
+            }
+            this.proto = b.build();
         } else {
             this.proto = proto;
         }
@@ -232,6 +239,35 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             if (parsed != null) return parsed;
         }
         return UUID.randomUUID();
+    }
+
+    /**
+     * Nested Price defaults, filled once at construction (parity with Python
+     * {@code Transaction.__init__} and JS {@code Transaction} constructor):
+     * a non-link price with no UUID (unset or empty raw_uuid) gets a random
+     * UUID; a non-link price with no as_of gets the transaction's as_of (the
+     * rule {@code transaction.py create_from} and {@code Price.create} use).
+     * Set values are never overwritten; link prices pass through as sent.
+     */
+    private static boolean needsPriceDefaults(TransactionProto proto) {
+        if (!proto.hasPrice()) return false;
+        PriceProto price = proto.getPrice();
+        if (price.getIsLink()) return false;
+        return !hasUsableUuid(price) || (!price.hasAsOf() && proto.hasAsOf());
+    }
+
+    private static void fillPriceDefaults(TransactionProto.Builder b) {
+        PriceProto.Builder price = b.getPriceBuilder();
+        if (!hasUsableUuid(price)) {
+            price.setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()));
+        }
+        if (!price.hasAsOf() && b.hasAsOf()) {
+            price.setAsOf(b.getAsOf());
+        }
+    }
+
+    private static boolean hasUsableUuid(fintekkers.models.price.PriceProtoOrBuilder price) {
+        return price.hasUuid() && price.getUuid().getRawUuid().size() > 0;
     }
 
     private static ZonedDateTime extractAsOf(TransactionProto proto) {

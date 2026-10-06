@@ -165,6 +165,25 @@ fn default_transaction_fetch_fn() -> TransactionFetchFn {
 
 // ---------- Wrapper ----------
 
+/// Nested Price defaults, filled once at construction (parity with Java
+/// `Transaction(TransactionProto)`, Python `Transaction.__init__` and the JS
+/// `Transaction` constructor): a non-link price with no UUID (unset or empty
+/// raw_uuid) gets a random UUID; a non-link price with no as_of gets the
+/// transaction's as_of, the rule Python `create_from` and JS `Price.create`
+/// use. Set values are never overwritten; link prices pass through as sent.
+fn fill_price_defaults(mut proto: TransactionProto) -> TransactionProto {
+    let txn_as_of = proto.as_of.clone();
+    if let Some(price) = proto.price.as_mut().filter(|p| !p.is_link) {
+        if price.uuid.as_ref().map_or(true, |u| u.raw_uuid.is_empty()) {
+            price.uuid = Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() });
+        }
+        if price.as_of.is_none() {
+            price.as_of = txn_as_of;
+        }
+    }
+    proto
+}
+
 pub struct TransactionWrapper {
     proto: TransactionProto,
     /// Lazy hydration slot. Mirror of SecurityWrapper.resolved.
@@ -179,7 +198,7 @@ impl AsRef<TransactionProto> for TransactionWrapper {
 
 impl TransactionWrapper {
     pub fn new(proto: TransactionProto) -> Self {
-        TransactionWrapper { proto, resolved: OnceLock::new() }
+        TransactionWrapper { proto: fill_price_defaults(proto), resolved: OnceLock::new() }
     }
 
     /// True iff the original wrapped proto was a link reference. Mirrors
@@ -476,5 +495,123 @@ mod test {
 
         clear_transaction_fetcher();
         link_cache::transaction().evict(uuid);
+    }
+
+    // ---------- LM-253: nested Price defaults ----------
+    // Case names match Java TransactionPriceDefaultsTest, Python
+    // test_transaction_price_defaults.py and JS transaction_price_defaults.test.ts.
+
+    use crate::fintekkers::models::price::PriceProto;
+    use prost::Message;
+
+    const AS_OF_RULE: &str =
+        "price.as_of defaults to the transaction's as_of (transaction.py / Price.create)";
+
+    fn txn_as_of() -> LocalTimestampProto {
+        LocalTimestampProto {
+            timestamp: Some(Timestamp { seconds: 1_718_461_800, nanos: 0 }),
+            time_zone: "America/New_York".to_string(),
+        }
+    }
+
+    fn price_as_of() -> LocalTimestampProto {
+        LocalTimestampProto {
+            timestamp: Some(Timestamp { seconds: 1_718_377_200, nanos: 0 }),
+            time_zone: "Europe/London".to_string(),
+        }
+    }
+
+    fn price(uuid: Option<UuidProto>, as_of: Option<LocalTimestampProto>) -> PriceProto {
+        PriceProto {
+            object_class: "Price".to_string(),
+            version: "0.0.1".to_string(),
+            uuid,
+            as_of,
+            ..Default::default()
+        }
+    }
+
+    fn txn_with_price(price: PriceProto, with_txn_as_of: bool) -> TransactionProto {
+        TransactionProto {
+            object_class: "Transaction".to_string(),
+            version: "0.0.1".to_string(),
+            uuid: Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() }),
+            as_of: if with_txn_as_of { Some(txn_as_of()) } else { None },
+            price: Some(price),
+            ..Default::default()
+        }
+    }
+
+    fn price_of(txn: &TransactionWrapper) -> &PriceProto {
+        txn.as_ref().price.as_ref().unwrap()
+    }
+
+    fn price_uuid_bytes(txn: &TransactionWrapper) -> Vec<u8> {
+        price_of(txn).uuid.as_ref().map(|u| u.raw_uuid.clone()).unwrap_or_default()
+    }
+
+    #[test]
+    fn missing_price_uuid_is_filled() {
+        let txn = TransactionWrapper::new(txn_with_price(price(None, Some(price_as_of())), true));
+        assert_eq!(price_uuid_bytes(&txn).len(), 16);
+    }
+
+    #[test]
+    fn empty_raw_uuid_is_treated_as_missing() {
+        let empty = Some(UuidProto { raw_uuid: vec![] });
+        let txn = TransactionWrapper::new(txn_with_price(price(empty, Some(price_as_of())), true));
+        assert_eq!(price_uuid_bytes(&txn).len(), 16);
+    }
+
+    #[test]
+    fn price_uuid_is_assigned_once() {
+        let txn = TransactionWrapper::new(txn_with_price(price(None, Some(price_as_of())), true));
+        assert_eq!(price_uuid_bytes(&txn), price_uuid_bytes(&txn));
+        assert_eq!(price_uuid_bytes(&txn).len(), 16);
+        assert_eq!(txn.as_ref().encode_to_vec(), txn.as_ref().encode_to_vec());
+    }
+
+    #[test]
+    fn round_trip_keeps_price_uuid() {
+        let first = TransactionWrapper::new(txn_with_price(price(None, Some(price_as_of())), true));
+        let decoded = TransactionProto::decode(first.as_ref().encode_to_vec().as_slice()).unwrap();
+        let second = TransactionWrapper::new(decoded);
+        assert_eq!(price_uuid_bytes(&second).len(), 16);
+        assert_eq!(price_uuid_bytes(&second), price_uuid_bytes(&first));
+    }
+
+    #[test]
+    fn existing_price_uuid_is_kept() {
+        let existing = Uuid::new_v4().as_bytes().to_vec();
+        let p = price(Some(UuidProto { raw_uuid: existing.clone() }), Some(price_as_of()));
+        let txn = TransactionWrapper::new(txn_with_price(p, true));
+        assert_eq!(price_uuid_bytes(&txn), existing);
+    }
+
+    #[test]
+    fn missing_price_as_of_defaults_to_transaction_as_of() {
+        let txn = TransactionWrapper::new(txn_with_price(price(None, None), true));
+        assert_eq!(price_of(&txn).as_of, Some(txn_as_of()), "{}", AS_OF_RULE);
+        assert_eq!(price_of(&txn).as_of, txn.as_ref().as_of, "{}", AS_OF_RULE);
+    }
+
+    #[test]
+    fn existing_price_as_of_is_kept() {
+        let txn = TransactionWrapper::new(txn_with_price(price(None, Some(price_as_of())), true));
+        assert_eq!(price_of(&txn).as_of, Some(price_as_of()));
+    }
+
+    #[test]
+    fn no_as_of_anywhere_leaves_price_as_of_unset() {
+        let txn = TransactionWrapper::new(txn_with_price(price(None, None), false));
+        assert!(price_of(&txn).as_of.is_none());
+        assert_eq!(price_uuid_bytes(&txn).len(), 16);
+    }
+
+    #[test]
+    fn link_price_passes_through_unchanged() {
+        let link = PriceProto { is_link: true, ..Default::default() };
+        let txn = TransactionWrapper::new(txn_with_price(link.clone(), true));
+        assert_eq!(price_of(&txn), &link);
     }
 }

@@ -52,6 +52,30 @@ def _default_transaction_fetcher(uuid_obj: UUID, as_of_dt: Optional[datetime]):
 _transaction_fetcher = _default_transaction_fetcher
 
 
+def _fill_price_defaults(proto: TransactionProto) -> TransactionProto:
+    """Nested Price defaults, filled once at construction (parity with Java
+    Transaction(TransactionProto) and the JS Transaction constructor): a
+    non-link price with no UUID (unset or empty raw_uuid) gets a new UUID; a
+    non-link price with no as_of gets the transaction's as_of, the same rule
+    create_from uses. Set values are never overwritten; link prices pass
+    through as sent. Returns a copy when filling, so the caller's message is
+    not mutated, and the same object when nothing is missing."""
+    if not proto.HasField("price") or proto.price.is_link:
+        return proto
+    missing_uuid = len(proto.price.uuid.raw_uuid) == 0
+    missing_as_of = not proto.price.HasField("as_of") and proto.HasField("as_of")
+    if not missing_uuid and not missing_as_of:
+        return proto
+
+    filled = TransactionProto()
+    filled.CopyFrom(proto)
+    if missing_uuid:
+        filled.price.uuid.raw_uuid = FintekkersUuid.new_uuid().as_bytes()
+    if missing_as_of:
+        filled.price.as_of.CopyFrom(filled.as_of)
+    return filled
+
+
 class Transaction():
     @staticmethod
     def create_from(
@@ -90,7 +114,7 @@ class Transaction():
         ))
 
     def __init__(self, proto:TransactionProto):
-        self.proto:TransactionProto = proto
+        self.proto:TransactionProto = _fill_price_defaults(proto)
 
     def is_link(self) -> bool:
         """True iff this Transaction is a link reference. See
