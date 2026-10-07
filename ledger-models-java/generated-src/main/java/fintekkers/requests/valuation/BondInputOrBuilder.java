@@ -9,8 +9,10 @@ public interface BondInputOrBuilder extends
 
   /**
    * <pre>
-   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-   * coupon_type FIXED and all standard fixed-income fields populated.
+   * The bond security, with bond_details populated.
+   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+   * Not validated today: any product_type is accepted and coupon_type is
+   * ignored. Check tracked in VS-69.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -19,8 +21,10 @@ public interface BondInputOrBuilder extends
   boolean hasSecurity();
   /**
    * <pre>
-   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-   * coupon_type FIXED and all standard fixed-income fields populated.
+   * The bond security, with bond_details populated.
+   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+   * Not validated today: any product_type is accepted and coupon_type is
+   * ignored. Check tracked in VS-69.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -29,8 +33,10 @@ public interface BondInputOrBuilder extends
   fintekkers.models.security.SecurityProto getSecurity();
   /**
    * <pre>
-   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-   * coupon_type FIXED and all standard fixed-income fields populated.
+   * The bond security, with bond_details populated.
+   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+   * Not validated today: any product_type is accepted and coupon_type is
+   * ignored. Check tracked in VS-69.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>

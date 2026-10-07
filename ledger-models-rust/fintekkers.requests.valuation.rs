@@ -175,15 +175,18 @@ pub mod product_input {
 /// BondInput — valuation request for a fixed-rate bond.
 ///
 /// Static security details (coupon_rate, coupon_frequency, face_value,
-/// dated_date, maturity_date) are read from the SecurityProto.
+/// maturity_date) are read from the SecurityProto. dated_date is not read
+/// today; see VS-69.
 ///
 /// Settlement date is read from ValuationRequestProto.asof_datetime.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BondInput {
-    /// The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-    /// coupon_type FIXED and all standard fixed-income fields populated.
+    /// The bond security, with bond_details populated.
+    /// Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+    /// Not validated today: any product_type is accepted and coupon_type is
+    /// ignored. Check tracked in VS-69.
     #[prost(message, optional, tag = "1")]
     pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
     /// Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
@@ -222,7 +225,7 @@ pub struct TipsInput {
     >,
     /// Current CPI index value (e.g. 310.326). Used to compute:
     ///    index_ratio = current_cpi / base_cpi
-    ///    adjusted_principal = face_value * index_ratio
+    ///    adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
     /// The base CPI is read from security.tips_extension.base_cpi.
     #[prost(message, optional, tag = "3")]
     pub current_cpi: ::core::option::Option<
@@ -267,7 +270,8 @@ pub struct FrnInput {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct YieldCurveInput {
     /// The benchmark this curve represents (e.g. SOFR, SONIA).
-    /// Must match the FRN security's reference_rate_index — validated by the service.
+    /// Should match the FRN security's reference_rate_index.
+    /// Not validated today: the service does not read this field. Check tracked in VS-74.
     #[prost(
         enumeration = "super::super::models::security::index::IndexTypeProto",
         tag = "1"
@@ -372,6 +376,7 @@ pub struct ValuationRequestProto {
         super::super::models::position::PositionProto,
     >,
     /// The price we are going to use for the valuation.
+    /// Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
     #[prost(message, optional, tag = "22")]
     pub price_input: ::core::option::Option<super::super::models::price::PriceProto>,
     /// The asof datetime for the valuation.
@@ -386,6 +391,9 @@ pub struct ValuationRequestProto {
     /// The current reference rate observation for floating rate note (FRN) valuation.
     /// Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
     /// Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
+    /// Unit: decimal fraction (0.0533 = 5.33%).
+    /// valuation-service currently also accepts values > 1 as percent; this is a tolerance, not a second unit.
+    /// When absent, valuation-service defaults to 0.0533.
     #[prost(message, optional, tag = "25")]
     pub reference_rate_input: ::core::option::Option<
         super::super::models::price::PriceProto,

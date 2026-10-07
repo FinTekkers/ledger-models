@@ -470,6 +470,8 @@ pub mod security_proto {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BondDetailsProto {
     /// Annual coupon rate in percentage form: 6.0 = 6%, 0.625 = 0.625%.
+    /// Not a decimal fraction: valuation-service rejects values in (0, 0.1)
+    /// as decimal-fraction mistakes (send 5.0 for 5%, not 0.05).
     /// A TBILL pays no coupon: when product_type == TBILL, coupon_rate must be
     /// unset or 0. Writers enforce this through the security validators
     /// (Java SecurityRules.validate, see docs/adr/tbill_coupon_validation.md);

@@ -8,7 +8,8 @@ package fintekkers.requests.valuation;
  * ═══════════════════════════════════════════════════════════════════════════
  * BondInput — valuation request for a fixed-rate bond.
  * Static security details (coupon_rate, coupon_frequency, face_value,
- * dated_date, maturity_date) are read from the SecurityProto.
+ * maturity_date) are read from the SecurityProto. dated_date is not read
+ * today; see VS-69.
  * Settlement date is read from ValuationRequestProto.asof_datetime.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
@@ -56,8 +57,10 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.security.SecurityProto security_;
   /**
    * <pre>
-   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-   * coupon_type FIXED and all standard fixed-income fields populated.
+   * The bond security, with bond_details populated.
+   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+   * Not validated today: any product_type is accepted and coupon_type is
+   * ignored. Check tracked in VS-69.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -69,8 +72,10 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-   * coupon_type FIXED and all standard fixed-income fields populated.
+   * The bond security, with bond_details populated.
+   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+   * Not validated today: any product_type is accepted and coupon_type is
+   * ignored. Check tracked in VS-69.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -82,8 +87,10 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-   * coupon_type FIXED and all standard fixed-income fields populated.
+   * The bond security, with bond_details populated.
+   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+   * Not validated today: any product_type is accepted and coupon_type is
+   * ignored. Check tracked in VS-69.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -372,7 +379,8 @@ private static final long serialVersionUID = 0L;
    * ═══════════════════════════════════════════════════════════════════════════
    * BondInput — valuation request for a fixed-rate bond.
    * Static security details (coupon_rate, coupon_frequency, face_value,
-   * dated_date, maturity_date) are read from the SecurityProto.
+   * maturity_date) are read from the SecurityProto. dated_date is not read
+   * today; see VS-69.
    * Settlement date is read from ValuationRequestProto.asof_datetime.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
@@ -597,8 +605,10 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> securityBuilder_;
     /**
      * <pre>
-     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-     * coupon_type FIXED and all standard fixed-income fields populated.
+     * The bond security, with bond_details populated.
+     * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+     * Not validated today: any product_type is accepted and coupon_type is
+     * ignored. Check tracked in VS-69.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -609,8 +619,10 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-     * coupon_type FIXED and all standard fixed-income fields populated.
+     * The bond security, with bond_details populated.
+     * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+     * Not validated today: any product_type is accepted and coupon_type is
+     * ignored. Check tracked in VS-69.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -625,8 +637,10 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-     * coupon_type FIXED and all standard fixed-income fields populated.
+     * The bond security, with bond_details populated.
+     * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+     * Not validated today: any product_type is accepted and coupon_type is
+     * ignored. Check tracked in VS-69.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -646,8 +660,10 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-     * coupon_type FIXED and all standard fixed-income fields populated.
+     * The bond security, with bond_details populated.
+     * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+     * Not validated today: any product_type is accepted and coupon_type is
+     * ignored. Check tracked in VS-69.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -665,8 +681,10 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-     * coupon_type FIXED and all standard fixed-income fields populated.
+     * The bond security, with bond_details populated.
+     * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+     * Not validated today: any product_type is accepted and coupon_type is
+     * ignored. Check tracked in VS-69.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -689,8 +707,10 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-     * coupon_type FIXED and all standard fixed-income fields populated.
+     * The bond security, with bond_details populated.
+     * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+     * Not validated today: any product_type is accepted and coupon_type is
+     * ignored. Check tracked in VS-69.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -707,8 +727,10 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-     * coupon_type FIXED and all standard fixed-income fields populated.
+     * The bond security, with bond_details populated.
+     * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+     * Not validated today: any product_type is accepted and coupon_type is
+     * ignored. Check tracked in VS-69.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -720,8 +742,10 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-     * coupon_type FIXED and all standard fixed-income fields populated.
+     * The bond security, with bond_details populated.
+     * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+     * Not validated today: any product_type is accepted and coupon_type is
+     * ignored. Check tracked in VS-69.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -736,8 +760,10 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-     * coupon_type FIXED and all standard fixed-income fields populated.
+     * The bond security, with bond_details populated.
+     * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+     * Not validated today: any product_type is accepted and coupon_type is
+     * ignored. Check tracked in VS-69.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>

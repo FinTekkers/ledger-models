@@ -142,7 +142,7 @@ private static final long serialVersionUID = 0L;
    * <pre>
    * Current CPI index value (e.g. 310.326). Used to compute:
    *   index_ratio = current_cpi / base_cpi
-   *   adjusted_principal = face_value * index_ratio
+   *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
    * The base CPI is read from security.tips_extension.base_cpi.
    * </pre>
    *
@@ -157,7 +157,7 @@ private static final long serialVersionUID = 0L;
    * <pre>
    * Current CPI index value (e.g. 310.326). Used to compute:
    *   index_ratio = current_cpi / base_cpi
-   *   adjusted_principal = face_value * index_ratio
+   *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
    * The base CPI is read from security.tips_extension.base_cpi.
    * </pre>
    *
@@ -172,7 +172,7 @@ private static final long serialVersionUID = 0L;
    * <pre>
    * Current CPI index value (e.g. 310.326). Used to compute:
    *   index_ratio = current_cpi / base_cpi
-   *   adjusted_principal = face_value * index_ratio
+   *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
    * The base CPI is read from security.tips_extension.base_cpi.
    * </pre>
    *
@@ -937,7 +937,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = face_value * index_ratio
+     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
      * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
@@ -951,7 +951,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = face_value * index_ratio
+     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
      * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
@@ -969,7 +969,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = face_value * index_ratio
+     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
      * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
@@ -992,7 +992,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = face_value * index_ratio
+     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
      * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
@@ -1013,7 +1013,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = face_value * index_ratio
+     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
      * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
@@ -1039,7 +1039,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = face_value * index_ratio
+     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
      * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
@@ -1059,7 +1059,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = face_value * index_ratio
+     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
      * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
@@ -1074,7 +1074,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = face_value * index_ratio
+     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
      * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
@@ -1092,7 +1092,7 @@ private static final long serialVersionUID = 0L;
      * <pre>
      * Current CPI index value (e.g. 310.326). Used to compute:
      *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = face_value * index_ratio
+     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
      * The base CPI is read from security.tips_extension.base_cpi.
      * </pre>
      *
