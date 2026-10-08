@@ -10,7 +10,8 @@ public interface YieldCurveInputOrBuilder extends
   /**
    * <pre>
    * The benchmark this curve represents (e.g. SOFR, SONIA).
-   * Must match the FRN security's reference_rate_index — validated by the service.
+   * Should match the FRN security's reference_rate_index.
+   * Not validated today: the service does not read this field. Check tracked in VS-74.
    * </pre>
    *
    * <code>.fintekkers.models.security.index.IndexTypeProto index = 1;</code>
@@ -20,7 +21,8 @@ public interface YieldCurveInputOrBuilder extends
   /**
    * <pre>
    * The benchmark this curve represents (e.g. SOFR, SONIA).
-   * Must match the FRN security's reference_rate_index — validated by the service.
+   * Should match the FRN security's reference_rate_index.
+   * Not validated today: the service does not read this field. Check tracked in VS-74.
    * </pre>
    *
    * <code>.fintekkers.models.security.index.IndexTypeProto index = 1;</code>

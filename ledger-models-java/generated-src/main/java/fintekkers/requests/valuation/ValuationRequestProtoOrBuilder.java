@@ -158,6 +158,7 @@ public interface ValuationRequestProtoOrBuilder extends
   /**
    * <pre>
    *The price we are going to use for the valuation.
+   *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
@@ -167,6 +168,7 @@ public interface ValuationRequestProtoOrBuilder extends
   /**
    * <pre>
    *The price we are going to use for the valuation.
+   *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
@@ -176,6 +178,7 @@ public interface ValuationRequestProtoOrBuilder extends
   /**
    * <pre>
    *The price we are going to use for the valuation.
+   *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
@@ -244,6 +247,9 @@ public interface ValuationRequestProtoOrBuilder extends
    *The current reference rate observation for floating rate note (FRN) valuation.
    *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
    *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
+   *Unit: decimal fraction (0.0533 = 5.33%).
+   *valuation-service currently also accepts values &gt; 1 as percent; this is a tolerance, not a second unit.
+   *When absent, valuation-service defaults to 0.0533.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -255,6 +261,9 @@ public interface ValuationRequestProtoOrBuilder extends
    *The current reference rate observation for floating rate note (FRN) valuation.
    *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
    *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
+   *Unit: decimal fraction (0.0533 = 5.33%).
+   *valuation-service currently also accepts values &gt; 1 as percent; this is a tolerance, not a second unit.
+   *When absent, valuation-service defaults to 0.0533.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
@@ -266,6 +275,9 @@ public interface ValuationRequestProtoOrBuilder extends
    *The current reference rate observation for floating rate note (FRN) valuation.
    *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
    *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
+   *Unit: decimal fraction (0.0533 = 5.33%).
+   *valuation-service currently also accepts values &gt; 1 as percent; this is a tolerance, not a second unit.
+   *When absent, valuation-service defaults to 0.0533.
    * </pre>
    *
    * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>

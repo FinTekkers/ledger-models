@@ -34,13 +34,16 @@ message ProductInput {
 // BondInput — valuation request for a fixed-rate bond.
 //
 // Static security details (coupon_rate, coupon_frequency, face_value,
-// dated_date, maturity_date) are read from the SecurityProto.
+// maturity_date) are read from the SecurityProto. dated_date is not read
+// today; see VS-69.
 //
 // Settlement date is read from ValuationRequestProto.asof_datetime.
 // ═══════════════════════════════════════════════════════════════════════════
 message BondInput {
-  // The bond security. Must be ProductTypeProto.TREASURY_NOTE with
-  // coupon_type FIXED and all standard fixed-income fields populated.
+  // The bond security, with bond_details populated.
+  // Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+  // Not validated today: any product_type is accepted and coupon_type is
+  // ignored. Check tracked in VS-69.
   fintekkers.models.security.SecurityProto security = 1;
 
   // Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
@@ -73,7 +76,7 @@ message TipsInput {
 
   // Current CPI index value (e.g. 310.326). Used to compute:
   //   index_ratio = current_cpi / base_cpi
-  //   adjusted_principal = face_value * index_ratio
+  //   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
   // The base CPI is read from security.tips_extension.base_cpi.
   fintekkers.models.util.DecimalValueProto current_cpi = 3;
 }
@@ -110,7 +113,8 @@ message FrnInput {
 // ═══════════════════════════════════════════════════════════════════════════
 message YieldCurveInput {
   // The benchmark this curve represents (e.g. SOFR, SONIA).
-  // Must match the FRN security's reference_rate_index — validated by the service.
+  // Should match the FRN security's reference_rate_index.
+  // Not validated today: the service does not read this field. Check tracked in VS-74.
   fintekkers.models.security.index.IndexTypeProto index = 1;
 
   // As-of date for the curve, typically today or the most recent business day.
