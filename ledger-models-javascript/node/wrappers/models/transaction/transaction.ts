@@ -37,6 +37,11 @@ class Transaction {
 
   constructor(protoOrParams: TransactionProto | TransactionConstructorParams) {
     if (protoOrParams instanceof TransactionProto) {
+      // A non-link transaction must carry as_of (ModelValidationError naming
+      // transaction.as_of); a link stub may omit it. Never defaulted.
+      if (!protoOrParams.getIsLink()) {
+        ZonedDateTime.fromRequired(protoOrParams.getAsOf(), 'transaction.as_of');
+      }
       this.proto = Transaction.fillPriceDefaults(protoOrParams);
     } else {
       this.proto = this.buildProtoFromParams(protoOrParams);
@@ -221,9 +226,7 @@ class Transaction {
   }
 
   getAsOf(): ZonedDateTime {
-    const asOf = this.proto.getAsOf();
-    if (!asOf) throw new Error("AsOf is required");
-    return new ZonedDateTime(asOf);
+    return ZonedDateTime.fromRequired(this.proto.getAsOf(), 'transaction.as_of');
   }
 
   getPortfolio(): Portfolio {

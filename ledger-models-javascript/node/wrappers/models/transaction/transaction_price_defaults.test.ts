@@ -18,6 +18,7 @@ import Security from '../security/security';
 import Portfolio from '../portfolio/portfolio';
 import { UUID } from '../utils/uuid';
 import { Decimal } from 'decimal.js';
+import { ModelValidationError } from '../errors';
 
 const AS_OF_RULE = "price.as_of defaults to the transaction's as_of (transaction.py / Price.create)";
 
@@ -107,11 +108,17 @@ test('existing_price_as_of_is_kept', () => {
     assert.deepStrictEqual(txn.proto.getPrice()!.getAsOf()!.toObject(), PRICE_AS_OF.toObject());
 });
 
-test('no_as_of_anywhere_leaves_price_as_of_unset', () => {
-    const txn = new Transaction(txnWithPrice(price(), false));
+test('no_as_of_anywhere_is_rejected', () => {
+    // LM-272: the LS-17 shape. Rejected up front, naming the transaction
+    // field; the price is never given a default as_of.
+    const build = () => new Transaction(txnWithPrice(price(), false));
 
-    assert.strictEqual(txn.proto.getPrice()!.hasAsOf(), false);
-    assert.strictEqual(priceUuidBytes(txn).length, 16);
+    expect(build).toThrow(ModelValidationError);
+    try {
+        build();
+    } catch (e) {
+        assert.strictEqual((e as ModelValidationError).field, 'transaction.as_of');
+    }
 });
 
 test('link_price_passes_through_unchanged', () => {

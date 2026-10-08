@@ -10,9 +10,11 @@ from fintekkers.wrappers.models.security.tenor import Tenor
 
 from fintekkers.wrappers.models.transaction import TransactionType
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
+from fintekkers.wrappers.models.errors import ModelValidationError, violation
 
 from google.protobuf.timestamp_pb2 import Timestamp
 from datetime import date, datetime
+from typing import Optional
 import time
 from pytz import timezone
 
@@ -106,6 +108,28 @@ class ProtoSerializationUtil:
         )
 
     @staticmethod
+    def deserialize_required_timestamp(proto: Optional[LocalTimestampProto], field_path: str) -> datetime:
+        """Deserializes a required timestamp. Never substitutes a default
+        (second-brain#276). Pass None when the parent has no such field set.
+
+        Raises ModelValidationError naming `field_path` when unset, or
+        `field_path + ".time_zone"` when the time zone is blank."""
+        if proto is None:
+            raise ModelValidationError([violation(
+                field_path, None, f"{field_path} is required but unset")])
+        return ProtoSerializationUtil._deserialize_timestamp(proto, field_path)
+
+    @staticmethod
+    def _deserialize_timestamp(proto: LocalTimestampProto, field_path: str) -> datetime:
+        if not proto.time_zone.strip():
+            field = f"{field_path}.time_zone"
+            raise ModelValidationError([violation(
+                field, None,
+                f"{field} is required but was empty (LocalTimestampProto.time_zone is required). "
+                "See second-brain#276.")])
+        return datetime.fromtimestamp(proto.timestamp.seconds, timezone(proto.time_zone))
+
+    @staticmethod
     def deserialize(obj):
         if isinstance(obj, Any):
             #unpack a string value
@@ -115,9 +139,7 @@ class ProtoSerializationUtil:
         if isinstance(obj, LocalDateProto):
             return date(year=obj.year, month=obj.month, day=obj.day)
         if isinstance(obj, LocalTimestampProto):
-            return datetime.fromtimestamp(
-                obj.timestamp.seconds, timezone(obj.time_zone)
-            )
+            return ProtoSerializationUtil._deserialize_timestamp(obj, "local_timestamp")
         if isinstance(obj, TenorProto):
             return Tenor(obj.tenor_type, obj.term_value)
         if isinstance(obj, IdentifierProto):

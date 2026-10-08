@@ -14,6 +14,7 @@ const position_pb_1 = require("../../../fintekkers/models/position/position_pb")
 const position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 const position_1 = require("../position/position");
 const datetime_1 = require("./datetime");
+const errors_1 = require("../errors");
 const any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
 const local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
 const timestamp_pb_js_1 = require("google-protobuf/google/protobuf/timestamp_pb.js");
@@ -62,6 +63,7 @@ describe('ZonedDateTime constructor — second-brain#276', () => {
         proto.setTimestamp(ts);
         // time_zone left at the proto3 default ""
         expect(() => new datetime_1.ZonedDateTime(proto)).toThrow(/time_zone is required/);
+        expect(() => new datetime_1.ZonedDateTime(proto)).toThrow(errors_1.ModelValidationError);
     });
     test('throws when time_zone is whitespace-only', () => {
         const proto = new local_timestamp_pb_1.LocalTimestampProto();
@@ -70,6 +72,7 @@ describe('ZonedDateTime constructor — second-brain#276', () => {
         proto.setTimestamp(ts);
         proto.setTimeZone('   ');
         expect(() => new datetime_1.ZonedDateTime(proto)).toThrow(/time_zone is required/);
+        expect(() => new datetime_1.ZonedDateTime(proto)).toThrow(errors_1.ModelValidationError);
     });
     test('throws on fully-default LocalTimestampProto', () => {
         // No timestamp, no time_zone — wholly default instance.

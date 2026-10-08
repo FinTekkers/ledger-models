@@ -148,10 +148,7 @@ class Price {
         return uuid_1.UUID.fromU8Array(uuid.getRawUuid_asU8());
     }
     getAsOf() {
-        const asOf = this.proto.getAsOf();
-        if (!asOf)
-            throw new Error("AsOf is required");
-        return new datetime_1.ZonedDateTime(asOf);
+        return datetime_1.ZonedDateTime.fromRequired(this.proto.getAsOf(), 'price.as_of');
     }
     toString() {
         var _a, _b;

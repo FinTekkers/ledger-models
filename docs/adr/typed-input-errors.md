@@ -65,6 +65,24 @@ Python, JS and Rust do not enforce maturity-after-issue at construction today. A
 | JS/TS | `ModelValidationError` | `Error` | Type added by LM-258 (`node/wrappers/models/errors.ts`); LM-255c adds the bond rules. JS has no standard argument error; `TypeError` and `RangeError` mean something else. |
 | Rust | `Error::Validation(Vec<FieldViolationProto>)` | `utils::errors::Error` | Variant added by LM-258; LM-255d adds the bond rules. Rust has no exception hierarchy; maps to `Code::InvalidArgument`. |
 
+### Timestamps: unset `as_of` and blank `time_zone` (LM-272)
+
+A `LocalTimestampProto` with a blank `time_zone` is never defaulted (second-brain#276). Since LM-272 it is a typed input error in every binding, not a bare `IllegalArgumentException` (Java), pytz `UnknownTimeZoneError` (Python) or plain `Error` (JS):
+
+| Case | `field` |
+|---|---|
+| Price with no `as_of` | `price.as_of` |
+| Price `as_of` with blank zone | `price.as_of.time_zone` |
+| Non-link transaction with no `as_of` | `transaction.as_of` |
+| Transaction `as_of` with blank zone | `transaction.as_of.time_zone` |
+| Any other caller of the generic helper (e.g. `valid_from`) with a blank zone | `local_timestamp.time_zone` |
+
+- Each binding has one required-timestamp helper: Java `ProtoSerializationUtil.deserializeRequiredTimestamp(ts, fieldPath)`, Python `ProtoSerializationUtil.deserialize_required_timestamp`, Rust `ProtoSerializationUtil::deserialize_required_timestamp`, JS `ZonedDateTime.fromRequired`.
+- Java, Python and JS reject a non-link transaction with no `as_of` (or a blank zone) at construction. A link stub (`is_link=true`) may omit `as_of`. Prices are checked when `as_of` is read; a link price is resolved from the cache first.
+- Rust keeps `TransactionWrapper::new` infallible. Rust rejects the input when `PriceWrapper::try_as_of` / `TransactionWrapper::try_as_of` is called. The panicking `get_as_of` and `From<&LocalTimestampWrapper>` paths remain until a breaking-change follow-up; the existing `deserialize_timestamp` still returns `Error::DateConversion`.
+- **Python type change**: the blank-zone error moves from `UnknownTimeZoneError` (a `KeyError`) to `ModelValidationError` (a `ValueError`). Callers catching `KeyError` no longer see it.
+- A non-empty but invalid zone (e.g. `Mars/Base`) keeps its previous error in each binding.
+
 LM-254 adds an `InvalidFieldError` in Python and JS. LM-255b/c must reuse or extend it as the typed input error rather than add a second one, and must fold LM-258's T-bill coupon `validate()` into the shared rules module.
 
 ## Affected callers

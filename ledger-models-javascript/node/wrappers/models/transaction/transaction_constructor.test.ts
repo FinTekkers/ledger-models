@@ -14,6 +14,8 @@ import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type
 import { UUID } from '../utils/uuid';
 import { ZonedDateTime } from '../utils/datetime';
 import { Decimal } from 'decimal.js';
+import { ModelValidationError } from '../errors';
+import { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
 import { dummyPortfolio } from '../portfolio/portfolio.test';
 
 test('test Transaction constructor with parameters', () => {
@@ -113,3 +115,41 @@ function dummySecurity(): Security {
 function dummyTransactionType(): TransactionType {
     return new TransactionType(TransactionTypeProto.BUY);
 }
+
+// LM-272: a non-link TransactionProto with no as_of, or a blank time zone,
+// is rejected at construction with a typed error naming the field.
+function constructionError(proto: TransactionProto): unknown {
+    try {
+        new Transaction(proto);
+    } catch (e) {
+        return e;
+    }
+    throw new Error('expected new Transaction(proto) to throw');
+}
+
+test('new Transaction(proto) with no as_of throws ModelValidationError naming transaction.as_of', () => {
+    const proto = new TransactionProto()
+        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto());
+
+    const e = constructionError(proto);
+    expect(e).toBeInstanceOf(ModelValidationError);
+    expect((e as ModelValidationError).field).toBe('transaction.as_of');
+});
+
+test.each(['', '   '])('new Transaction(proto) with blank time zone %j names transaction.as_of.time_zone', (zone) => {
+    const asOf = ZonedDateTime.now().toProto().setTimeZone(zone);
+    const proto = new TransactionProto()
+        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
+        .setAsOf(asOf);
+
+    const e = constructionError(proto);
+    expect(e).toBeInstanceOf(ModelValidationError);
+    expect((e as ModelValidationError).field).toBe('transaction.as_of.time_zone');
+});
+
+test('a link-mode TransactionProto with no as_of still builds', () => {
+    const link = new TransactionProto().setIsLink(true).setUuid(UUID.random().toUUIDProto());
+
+    const txn = new Transaction(link);
+    expect(txn.proto.hasAsOf()).toBe(false);
+});

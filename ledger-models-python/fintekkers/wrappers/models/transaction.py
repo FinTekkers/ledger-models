@@ -114,7 +114,21 @@ class Transaction():
         ))
 
     def __init__(self, proto:TransactionProto):
+        # A non-link transaction must carry as_of (ModelValidationError naming
+        # transaction.as_of); a link stub may omit it. Never defaulted.
+        if not proto.is_link:
+            Transaction._as_of_of(proto)
         self.proto:TransactionProto = _fill_price_defaults(proto)
+
+    @staticmethod
+    def _as_of_of(proto: TransactionProto) -> datetime:
+        # Inline import: serialization.py imports TransactionType from this module, so top-level import would be circular
+        from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+        return ProtoSerializationUtil.deserialize_required_timestamp(
+            proto.as_of if proto.HasField("as_of") else None, "transaction.as_of")
+
+    def get_as_of(self) -> datetime:
+        return Transaction._as_of_of(self.proto)
 
     def is_link(self) -> bool:
         """True iff this Transaction is a link reference. See

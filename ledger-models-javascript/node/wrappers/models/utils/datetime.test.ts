@@ -4,6 +4,7 @@ import { PositionProto, PositionTypeProto, PositionViewProto } from '../../../fi
 import { FieldMapEntry } from '../../../fintekkers/models/position/position_util_pb';
 import { Position } from "../position/position";
 import { ZonedDateTime } from './datetime';
+import { ModelValidationError } from '../errors';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
 import {LocalTimestampProto} from "../../../fintekkers/models/util/local_timestamp_pb";
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb.js';
@@ -64,6 +65,7 @@ describe('ZonedDateTime constructor — second-brain#276', () => {
         // time_zone left at the proto3 default ""
 
         expect(() => new ZonedDateTime(proto)).toThrow(/time_zone is required/);
+        expect(() => new ZonedDateTime(proto)).toThrow(ModelValidationError);
     });
 
     test('throws when time_zone is whitespace-only', () => {
@@ -74,6 +76,7 @@ describe('ZonedDateTime constructor — second-brain#276', () => {
         proto.setTimeZone('   ');
 
         expect(() => new ZonedDateTime(proto)).toThrow(/time_zone is required/);
+        expect(() => new ZonedDateTime(proto)).toThrow(ModelValidationError);
     });
 
     test('throws on fully-default LocalTimestampProto', () => {

@@ -4,6 +4,8 @@ TransactionPriceDefaultsTest and JS transaction_price_defaults.test.ts; case
 names match across languages."""
 from datetime import datetime
 
+import pytest
+
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from fintekkers.models.price.price_pb2 import PriceProto
@@ -11,6 +13,7 @@ from fintekkers.models.transaction.transaction_pb2 import TransactionProto
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
+from fintekkers.wrappers.models.errors import ModelValidationError
 from fintekkers.wrappers.models.transaction import Transaction
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 
@@ -97,11 +100,12 @@ def test_existing_price_as_of_is_kept():
     assert txn.proto.price.as_of == PRICE_AS_OF
 
 
-def test_no_as_of_anywhere_leaves_price_as_of_unset():
-    txn = Transaction(_txn_with_price(_price(), with_txn_as_of=False))
-
-    assert not txn.proto.price.HasField("as_of")
-    assert len(txn.proto.price.uuid.raw_uuid) == 16
+def test_no_as_of_anywhere_is_rejected():
+    # LM-272: the LS-17 shape. Rejected up front, naming the transaction
+    # field; the price is never given a default as_of.
+    with pytest.raises(ModelValidationError) as e:
+        Transaction(_txn_with_price(_price(), with_txn_as_of=False))
+    assert e.value.field == "transaction.as_of"
 
 
 def test_link_price_passes_through_unchanged():

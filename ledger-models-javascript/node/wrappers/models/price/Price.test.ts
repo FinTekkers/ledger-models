@@ -1,6 +1,7 @@
 import Price from './Price';
 import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
 import { Decimal } from 'decimal.js';
+import { ModelValidationError } from '../errors';
 
 const TEST_UUID = '18e8c4e6-3da0-47c9-b26d-c5ea8b8dce95';
 
@@ -60,4 +61,33 @@ test('Price proto has all required fields set', () => {
     expect(price.proto.getAsOf()).toBeTruthy();
     expect(price.proto.getPrice()).toBeTruthy();
     expect(price.proto.getSecurity()).toBeTruthy();
+});
+
+// LM-272: no as_of, or a blank time zone, is a typed input error naming the
+// field — never defaulted.
+function thrownBy(fn: () => unknown): unknown {
+    try {
+        fn();
+    } catch (e) {
+        return e;
+    }
+    throw new Error('expected a throw');
+}
+
+test('Price.getAsOf with no as_of throws ModelValidationError naming price.as_of', () => {
+    const price = Price.fromSimple(TEST_UUID, 99.5, new Date());
+    price.proto.clearAsOf();
+
+    const e = thrownBy(() => price.getAsOf());
+    expect(e).toBeInstanceOf(ModelValidationError);
+    expect((e as ModelValidationError).field).toBe('price.as_of');
+});
+
+test.each(['', '   '])('Price.getAsOf with blank time zone %j names price.as_of.time_zone', (zone) => {
+    const price = Price.fromSimple(TEST_UUID, 99.5, new Date());
+    price.proto.getAsOf()!.setTimeZone(zone);
+
+    const e = thrownBy(() => price.getAsOf());
+    expect(e).toBeInstanceOf(ModelValidationError);
+    expect((e as ModelValidationError).field).toBe('price.as_of.time_zone');
 });

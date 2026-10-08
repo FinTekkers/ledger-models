@@ -140,7 +140,7 @@ test('TransactionService.createTransaction populates LinkCache.TRANSACTION', () 
     response.setTransactionResponse(persisted);
     const svc = new TransactionService_1.TransactionService();
     svc.client = fakeClient(response);
-    yield svc.createTransaction(new transaction_1.default(new transaction_pb_1.TransactionProto()));
+    yield svc.createTransaction(new transaction_1.default(new transaction_pb_1.TransactionProto().setAsOf(asOf)));
     const cached = LinkCacheModule.TRANSACTION.get(uuid.toString(), new datetime_1.ZonedDateTime(asOf));
     expect(cached).toBeDefined();
 }));

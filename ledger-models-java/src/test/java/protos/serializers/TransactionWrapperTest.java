@@ -126,6 +126,8 @@ class TransactionWrapperTest {
         // UUID Regression A from PR #225 — same shape for Transaction.
         TransactionProto withoutUuid = TransactionProto.newBuilder()
                 .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.BUY)
+                .setAsOf(protos.serializers.util.proto.ProtoSerializationUtil.serializeTimestamp(
+                        java.time.ZonedDateTime.now()))
                 .build();
         Assertions.assertFalse(withoutUuid.hasUuid(),
                 "precondition: input proto has no UUID");

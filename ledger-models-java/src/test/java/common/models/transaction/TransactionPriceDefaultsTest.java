@@ -1,6 +1,7 @@
 package common.models.transaction;
 
 import com.google.protobuf.ByteString;
+import common.models.errors.ModelValidationException;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.transaction.TransactionProto;
 import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
@@ -131,12 +132,13 @@ class TransactionPriceDefaultsTest {
     }
 
     @Test
-    void no_as_of_anywhere_leaves_price_as_of_unset() {
-        Transaction txn = assertDoesNotThrow(() -> new Transaction(txnWithPrice(priceBuilder(), false)));
-
-        assertFalse(txn.getRawProto().getPrice().hasAsOf());
-        assertDoesNotThrow(txn::getProto);
-        assertSixteenBytes(txn.getRawProto().getPrice());
+    void no_as_of_anywhere_is_rejected() {
+        // LM-272: the LS-17 shape. Rejected up front, naming the transaction
+        // field; the price is never given a default as_of.
+        ModelValidationException e = assertThrows(ModelValidationException.class,
+                () -> new Transaction(txnWithPrice(priceBuilder(), false)));
+        assertEquals(ModelValidationException.class, e.getClass());
+        assertEquals("transaction.as_of", e.getField());
     }
 
     @Test

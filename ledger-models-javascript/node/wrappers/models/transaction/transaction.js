@@ -56,6 +56,11 @@ const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 class Transaction {
     constructor(protoOrParams) {
         if (protoOrParams instanceof transaction_pb_1.TransactionProto) {
+            // A non-link transaction must carry as_of (ModelValidationError naming
+            // transaction.as_of); a link stub may omit it. Never defaulted.
+            if (!protoOrParams.getIsLink()) {
+                datetime_1.ZonedDateTime.fromRequired(protoOrParams.getAsOf(), 'transaction.as_of');
+            }
             this.proto = Transaction.fillPriceDefaults(protoOrParams);
         }
         else {
@@ -227,10 +232,7 @@ class Transaction {
         return uuid_1.UUID.fromU8Array(uuid.getRawUuid_asU8());
     }
     getAsOf() {
-        const asOf = this.proto.getAsOf();
-        if (!asOf)
-            throw new Error("AsOf is required");
-        return new datetime_1.ZonedDateTime(asOf);
+        return datetime_1.ZonedDateTime.fromRequired(this.proto.getAsOf(), 'transaction.as_of');
     }
     getPortfolio() {
         this.ensureHydrated();
