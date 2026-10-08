@@ -2,6 +2,7 @@ package protos.serializers.util.proto;
 
 import com.google.protobuf.*;
 import common.models.errors.InvalidFieldException;
+import common.models.errors.UnsetDecimalException;
 import common.models.portfolio.Portfolio;
 import common.models.price.Price;
 import common.models.security.Security;
@@ -154,9 +155,32 @@ public class ProtoSerializationUtil {
                 .build();
     }
 
+    /** True when the decimal is absent ({@code null}) or its {@code arbitrary_precision_value} is empty. */
+    public static boolean isUnsetDecimal(DecimalValue.DecimalValueProto value) {
+        return value == null || value.getArbitraryPrecisionValue().isEmpty();
+    }
+
+    /**
+     * Does not know the field name; prefer {@link #deserializeBigDecimal(DecimalValue.DecimalValueProto, String)}.
+     *
+     * @return {@code null} if {@code quantity} is {@code null}
+     * @throws UnsetDecimalException (field {@code unknown}) if the value is empty
+     * @throws NumberFormatException if the value is non-empty but not a valid decimal
+     */
     public static BigDecimal deserializeBigDecimal(DecimalValue.DecimalValueProto quantity) {
+        return deserializeBigDecimal(quantity, "unknown");
+    }
+
+    /**
+     * @return {@code null} if {@code quantity} is {@code null}
+     * @throws UnsetDecimalException naming {@code fieldName} if the value is empty
+     * @throws NumberFormatException if the value is non-empty but not a valid decimal
+     */
+    public static BigDecimal deserializeBigDecimal(DecimalValue.DecimalValueProto quantity, String fieldName) {
         if(quantity == null)
             return null;
+        if(isUnsetDecimal(quantity))
+            throw new UnsetDecimalException(fieldName);
 
         return new BigDecimal(quantity.getArbitraryPrecisionValue());
     }
