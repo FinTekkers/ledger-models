@@ -545,6 +545,25 @@ mod test {
     }
 
     #[test]
+    fn link_without_as_of_serializes() {
+        // LM-271: a link carries no as_of; serializing must not default it.
+        use prost::Message;
+        let uuid = Uuid::new_v4();
+        let p = PortfolioWrapper::new(PortfolioProto {
+            uuid: Some(UuidProto { raw_uuid: uuid.as_bytes().to_vec() }),
+            as_of: None,
+            is_link: true,
+            ..Default::default()
+        });
+
+        let bytes = p.as_ref().encode_to_vec();
+        let decoded = PortfolioProto::decode(bytes.as_slice()).unwrap();
+        assert!(decoded.is_link);
+        assert!(decoded.as_of.is_none());
+        assert_eq!(decoded.uuid.unwrap().raw_uuid, uuid.as_bytes().to_vec());
+    }
+
+    #[test]
     fn test_portfolio_builder() {
         let proto = PortfolioProtoBuilder::new()
             .portfolio_name("Portfolio".to_string())
