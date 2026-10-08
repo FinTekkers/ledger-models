@@ -8,6 +8,8 @@ import protos.serializers.IRawDataModelObjectSerializer;
 import protos.serializers.util.json.JsonSerializationUtil;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
+import java.time.ZonedDateTime;
+
 public class PortfolioSerializer implements IRawDataModelObjectSerializer<PortfolioProto, Portfolio> {
     private static final class InstanceHolder {
         private static final PortfolioSerializer INSTANCE = new PortfolioSerializer();
@@ -26,11 +28,20 @@ public class PortfolioSerializer implements IRawDataModelObjectSerializer<Portfo
                 .setObjectClass(Portfolio.class.getSimpleName())
                 .setVersion("0.0.1")
                 //Primary Key
-                .setUuid(ProtoSerializationUtil.serializeUUID(portfolio.getID()))
-                .setAsOf(ProtoSerializationUtil.serializeTimestamp(portfolio.getAsOf()))
-                //Biz fields
-                .setPortfolioName(portfolio.getPortfolioName());
+                .setUuid(ProtoSerializationUtil.serializeUUID(portfolio.getID()));
+        // A link may carry no as_of; never default it (LM-271).
+        ZonedDateTime asOf = portfolio.getAsOf();
+        if (asOf != null) {
+            builder.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
+        }
 
+        if (portfolio.isLink()) {
+            // Stay a link: reading the name would force hydration.
+            return builder.setIsLink(true).build();
+        }
+
+        //Biz fields
+        builder.setPortfolioName(portfolio.getPortfolioName());
         return builder.build();
     }
 

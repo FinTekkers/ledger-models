@@ -17,6 +17,7 @@ import { Decimal } from 'decimal.js';
 import { ModelValidationError } from '../errors';
 import { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
 import { dummyPortfolio } from '../portfolio/portfolio.test';
+import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
 
 test('test Transaction constructor with parameters', () => {
     testTransactionConstructor();
@@ -152,4 +153,34 @@ test('a link-mode TransactionProto with no as_of still builds', () => {
 
     const txn = new Transaction(link);
     expect(txn.proto.hasAsOf()).toBe(false);
+});
+
+// LM-271: a link portfolio with no as_of serializes, on its own and inside a
+// Transaction, and as_of stays unset (never defaulted).
+test('link portfolio with no as_of serializes', () => {
+    const uuid = UUID.random();
+    const link = new PortfolioProto();
+    link.setUuid(uuid.toUUIDProto());
+    link.setIsLink(true);
+    const portfolio = new Portfolio(link);
+
+    const copy = PortfolioProto.deserializeBinary(portfolio.proto.serializeBinary());
+    assert(copy.getIsLink());
+    assert(!copy.hasAsOf());
+
+    const transaction = new Transaction({
+        tradeDate: new Date(2024, 0, 15),
+        settlementDate: new Date(2024, 0, 17),
+        asOfDate: new Date(2024, 0, 15, 10, 30, 0),
+        price: new Decimal('100'),
+        security: dummySecurity(),
+        transactionType: dummyTransactionType(),
+        portfolio,
+        quantity: new Decimal('10'),
+    });
+    const txnCopy = TransactionProto.deserializeBinary(transaction.proto.serializeBinary());
+    const txnPortfolio = txnCopy.getPortfolio()!;
+    assert(txnPortfolio.getIsLink());
+    assert(!txnPortfolio.hasAsOf());
+    assert(UUID.fromU8Array(txnPortfolio.getUuid()!.getRawUuid_asU8()).toString() === uuid.toString());
 });
