@@ -23,6 +23,7 @@ const security_1 = __importDefault(require("../security/security"));
 const portfolio_1 = __importDefault(require("../portfolio/portfolio"));
 const uuid_1 = require("../utils/uuid");
 const decimal_js_1 = require("decimal.js");
+const errors_1 = require("../errors");
 const AS_OF_RULE = "price.as_of defaults to the transaction's as_of (transaction.py / Price.create)";
 function timestamp(seconds, timeZone) {
     return new local_timestamp_pb_1.LocalTimestampProto()
@@ -92,10 +93,17 @@ test('existing_price_as_of_is_kept', () => {
     const txn = new transaction_1.default(txnWithPrice(price().setAsOf(PRICE_AS_OF.clone())));
     assert.deepStrictEqual(txn.proto.getPrice().getAsOf().toObject(), PRICE_AS_OF.toObject());
 });
-test('no_as_of_anywhere_leaves_price_as_of_unset', () => {
-    const txn = new transaction_1.default(txnWithPrice(price(), false));
-    assert.strictEqual(txn.proto.getPrice().hasAsOf(), false);
-    assert.strictEqual(priceUuidBytes(txn).length, 16);
+test('no_as_of_anywhere_is_rejected', () => {
+    // LM-272: the LS-17 shape. Rejected up front, naming the transaction
+    // field; the price is never given a default as_of.
+    const build = () => new transaction_1.default(txnWithPrice(price(), false));
+    expect(build).toThrow(errors_1.ModelValidationError);
+    try {
+        build();
+    }
+    catch (e) {
+        assert.strictEqual(e.field, 'transaction.as_of');
+    }
 });
 test('link_price_passes_through_unchanged', () => {
     const link = new price_pb_1.PriceProto().setIsLink(true);

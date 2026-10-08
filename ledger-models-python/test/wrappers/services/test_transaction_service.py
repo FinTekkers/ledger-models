@@ -15,6 +15,7 @@ from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.transaction.transaction_pb2 import TransactionProto
+from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.requests.portfolio.query_portfolio_response_pb2 import (
     QueryPortfolioResponseProto,
@@ -66,6 +67,7 @@ def _link_txn(security_uuid: UUID, portfolio_uuid: UUID) -> TransactionProto:
         object_class="Transaction",
         version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid4().bytes),
+        as_of=LocalTimestampProto(time_zone="America/New_York"),
         is_link=False,
         security=_link_security(security_uuid),
         portfolio=_link_portfolio(portfolio_uuid),
@@ -228,6 +230,7 @@ def test_transaction_is_link_helper():
         object_class="Transaction",
         version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid4().bytes),
+        as_of=LocalTimestampProto(time_zone="America/New_York"),
         is_link=False,
     )
     assert Transaction(txn_full).is_link() is False

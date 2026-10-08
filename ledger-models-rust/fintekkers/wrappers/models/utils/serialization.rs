@@ -1,6 +1,7 @@
 use crate::fintekkers::models::util::{
     DecimalValueProto, LocalDateProto, LocalTimestampProto, UuidProto,
 };
+use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use chrono::naive::NaiveDate;
 use chrono::{DateTime, NaiveDateTime, TimeZone};
@@ -46,11 +47,44 @@ impl ProtoSerializationUtil {
         Ok(DateTime::from_utc(naive_date_time, date_timezone))
     }
 
+    /// Deserializes a required timestamp. Never substitutes a default
+    /// (second-brain#276). Unset returns `Error::Validation` naming
+    /// `field_path`; a blank time zone names `<field_path>.time_zone`.
+    /// Anything else is delegated to [`Self::deserialize_timestamp`].
+    pub fn deserialize_required_timestamp(
+        timestamp_proto: Option<&LocalTimestampProto>,
+        field_path: &str,
+    ) -> Result<DateTime<Tz>, Error> {
+        let timestamp_proto = match timestamp_proto {
+            Some(ts) => ts,
+            None => {
+                return Err(validation_error(
+                    field_path.to_string(),
+                    format!("{} is required but unset", field_path),
+                ))
+            }
+        };
+        if timestamp_proto.time_zone.trim().is_empty() {
+            let field = format!("{}.time_zone", field_path);
+            let message = format!(
+                "{} is required but was empty (LocalTimestampProto.time_zone is required). \
+                 See second-brain#276.",
+                field
+            );
+            return Err(validation_error(field, message));
+        }
+        Self::deserialize_timestamp(timestamp_proto)
+    }
+
     /// Deserializes a DecimalValueProto to a native Rust Decimal
     pub fn deserialize_decimal(decimal_proto: &DecimalValueProto) -> Result<Decimal, Error> {
         Decimal::from_str(&decimal_proto.arbitrary_precision_value)
             .map_err(|_| Error::DecimalConversion)
     }
+}
+
+fn validation_error(field: String, message: String) -> Error {
+    Error::Validation(vec![FieldViolationProto { field, object_id: None, message }])
 }
 
 #[cfg(test)]

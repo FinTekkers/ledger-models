@@ -9,6 +9,7 @@ from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
+from fintekkers.wrappers.models.errors import ModelValidationError
 from fintekkers.wrappers.models.price import Price
 from fintekkers.wrappers.models.security.security import Security
 
@@ -87,6 +88,25 @@ class TestPrice(unittest.TestCase):
         self.assertEqual(proto.is_link, False)
         self.assertEqual(proto.object_class, "PriceProto")
         self.assertEqual(proto.version, "0.0.1")
+
+    # LM-272: no as_of, or a blank time zone, is a typed input error naming
+    # the field — never defaulted.
+    def test_get_as_of_unset_raises_typed_error(self):
+        proto = PriceProto()
+        proto.CopyFrom(self.price.proto)
+        proto.ClearField("as_of")
+        with self.assertRaises(ModelValidationError) as e:
+            Price(proto).get_as_of()
+        self.assertEqual(e.exception.field, "price.as_of")
+
+    def test_get_as_of_blank_time_zone_raises_typed_error(self):
+        for zone in ("", "   "):
+            proto = PriceProto()
+            proto.CopyFrom(self.price.proto)
+            proto.as_of.time_zone = zone
+            with self.assertRaises(ModelValidationError) as e:
+                Price(proto).get_as_of()
+            self.assertEqual(e.exception.field, "price.as_of.time_zone")
 
 if __name__ == '__main__':
     unittest.main()

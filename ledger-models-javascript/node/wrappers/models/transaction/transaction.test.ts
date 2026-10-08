@@ -7,6 +7,7 @@ import { TransactionProto } from '../../../fintekkers/models/transaction/transac
 import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
 
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
+import { ZonedDateTime } from '../utils/datetime';
 
 
 test('test the transaction wrapper', () => {
@@ -24,6 +25,7 @@ function dummyTransaction() {
 
     return new Transaction(new TransactionProto()
     .setObjectClass('Transaction').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
+    .setAsOf(ZonedDateTime.now().toProto())
     .setTradeDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1))
     .setTransactionType(TransactionTypeProto.BUY)
     .setQuantity(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))

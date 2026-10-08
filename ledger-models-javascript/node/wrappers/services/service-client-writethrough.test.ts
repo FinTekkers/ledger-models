@@ -134,7 +134,7 @@ test('TransactionService.createTransaction populates LinkCache.TRANSACTION', asy
   const svc = new TransactionService();
   (svc as any).client = fakeClient(response);
 
-  await svc.createTransaction(new Transaction(new TransactionProto()));
+  await svc.createTransaction(new Transaction(new TransactionProto().setAsOf(asOf)));
 
   const cached = LinkCacheModule.TRANSACTION.get(uuid.toString(), new ZonedDateTime(asOf));
   expect(cached).toBeDefined();

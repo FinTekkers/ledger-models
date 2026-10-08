@@ -139,9 +139,7 @@ class Price {
     }
 
     getAsOf(): ZonedDateTime {
-        const asOf = this.proto.getAsOf();
-        if (!asOf) throw new Error("AsOf is required");
-        return new ZonedDateTime(asOf);
+        return ZonedDateTime.fromRequired(this.proto.getAsOf(), 'price.as_of');
     }
 
     toString(): string {

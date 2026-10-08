@@ -1,6 +1,7 @@
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import { DateTime } from 'luxon';
+import { ModelValidationError, violation } from '../errors';
 
 class ZonedDateTime {
   private proto: LocalTimestampProto;
@@ -8,7 +9,8 @@ class ZonedDateTime {
   /**
    * Wraps a LocalTimestampProto.
    *
-   * Throws if `time_zone` is empty/whitespace — luxon's DateTime would
+   * Throws ModelValidationError (field `local_timestamp.time_zone`) if
+   * `time_zone` is empty/whitespace — luxon's DateTime would
    * otherwise silently produce an invalid DateTime (isValid=false,
    * year=NaN), which propagates as silent corruption rather than a clear
    * failure. See second-brain#276 for the original report from
@@ -20,15 +22,33 @@ class ZonedDateTime {
    * substitute a default.
    */
   constructor(proto: LocalTimestampProto) {
+    this.proto = ZonedDateTime.requireTimeZone(proto, 'local_timestamp');
+  }
+
+  /**
+   * Wraps a required timestamp. Never substitutes a default
+   * (second-brain#276). Throws ModelValidationError naming `fieldPath` when
+   * `proto` is unset, or `${fieldPath}.time_zone` when the zone is blank.
+   */
+  static fromRequired(proto: LocalTimestampProto | undefined, fieldPath: string): ZonedDateTime {
+    if (!proto) {
+      throw new ModelValidationError([
+        violation(fieldPath, undefined, `${fieldPath} is required but unset`),
+      ]);
+    }
+    return new ZonedDateTime(ZonedDateTime.requireTimeZone(proto, fieldPath));
+  }
+
+  private static requireTimeZone(proto: LocalTimestampProto, fieldPath: string): LocalTimestampProto {
     const tz = proto.getTimeZone();
     if (!tz || tz.trim().length === 0) {
-      throw new Error(
-        "LocalTimestampProto.time_zone is required but was empty. "
+      const field = `${fieldPath}.time_zone`;
+      throw new ModelValidationError([violation(field, undefined,
+        `${field} is required but was empty (LocalTimestampProto.time_zone is required). `
         + "Producers must set time_zone (e.g. \"UTC\" or \"America/New_York\") "
-        + "when populating LocalTimestampProto. See second-brain#276."
-      );
+        + "when populating LocalTimestampProto. See second-brain#276.")]);
     }
-    this.proto = proto;
+    return proto;
   }
 
   getTimezone(): string {

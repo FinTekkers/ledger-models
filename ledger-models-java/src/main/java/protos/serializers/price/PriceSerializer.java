@@ -40,7 +40,10 @@ public class PriceSerializer implements IRawDataModelObjectSerializer<PriceProto
                 ProtoSerializationUtil.deserializeUUID(proto.getUuid()),
                 ProtoSerializationUtil.deserializeBigDecimal(proto.getPrice()),
                 Security.fromProto(proto.getSecurity()),
-                ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf())
+                // No is_link exemption: Transaction.getPrice resolves link
+                // prices from LinkCache before calling here.
+                ProtoSerializationUtil.deserializeRequiredTimestamp(
+                        proto.hasAsOf() ? proto.getAsOf() : null, "price.as_of")
         );
     }
 

@@ -2,6 +2,7 @@ package protos.serializers.util.proto;
 
 import com.google.protobuf.*;
 import common.models.errors.InvalidFieldException;
+import common.models.errors.ModelValidationException;
 import common.models.errors.UnsetDecimalException;
 import common.models.portfolio.Portfolio;
 import common.models.price.Price;
@@ -27,6 +28,7 @@ import protos.serializers.security.TenorSerializer;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.time.*;
+import java.util.List;
 import java.util.UUID;
 
 public class ProtoSerializationUtil {
@@ -244,33 +246,50 @@ public class ProtoSerializationUtil {
 
     /**
      * Deserialize a {@link LocalTimestamp.LocalTimestampProto} into a
+     * {@link ZonedDateTime}. Same as {@link #deserializeTimestamp(LocalTimestamp.LocalTimestampProto, String)}
+     * with the generic field path {@code local_timestamp}.
+     *
+     * @throws ModelValidationException (field {@code local_timestamp.time_zone})
+     *         if {@code ts.getTimeZone()} is null, empty, or whitespace-only.
+     * @throws java.time.DateTimeException if the time_zone string is non-empty
+     *         but not a parseable {@link ZoneId}.
+     */
+    public static ZonedDateTime deserializeTimestamp(LocalTimestamp.LocalTimestampProto ts) {
+        return deserializeTimestamp(ts, "local_timestamp");
+    }
+
+    /**
+     * Deserialize a {@link LocalTimestamp.LocalTimestampProto} into a
      * {@link ZonedDateTime}.
      *
-     * <p>Empty/blank {@code time_zone} is rejected with
-     * {@link IllegalArgumentException}. Previously this method silently
-     * returned {@code ZonedDateTime.now(UTC)}, which corrupted as-of
-     * semantics for every downstream consumer — a missing/malformed
-     * timestamp would be served as the current wall-clock time, indistinguishable
-     * from a valid record stamped right now. See FinTekkers/second-brain#276
-     * for the original report (surfaced by backend-dev-ledger during #268
-     * verification).
+     * <p>Empty/blank {@code time_zone} is rejected with a typed
+     * {@link ModelValidationException} naming {@code fieldPath + ".time_zone"}.
+     * Previously this method silently returned {@code ZonedDateTime.now(UTC)},
+     * which corrupted as-of semantics for every downstream consumer — a
+     * missing/malformed timestamp would be served as the current wall-clock
+     * time, indistinguishable from a valid record stamped right now. See
+     * FinTekkers/second-brain#276 for the original report (surfaced by
+     * backend-dev-ledger during #268 verification). Never substitutes a default.
      *
      * <p>Callers that legitimately have an optional/unset timestamp should
      * gate this call with {@code parent.hasAsOf()} (or equivalent) at the
      * call site rather than relying on the helper to substitute a default.
      *
-     * @throws IllegalArgumentException if {@code ts.getTimeZone()} is null, empty,
+     * @param fieldPath path of the timestamp field, e.g. {@code price.as_of}
+     * @throws ModelValidationException if {@code ts.getTimeZone()} is null, empty,
      *         or whitespace-only.
      * @throws java.time.DateTimeException if the time_zone string is non-empty
      *         but not a parseable {@link ZoneId}.
      */
-    public static ZonedDateTime deserializeTimestamp(LocalTimestamp.LocalTimestampProto ts) {
+    public static ZonedDateTime deserializeTimestamp(LocalTimestamp.LocalTimestampProto ts, String fieldPath) {
         String timeZone = ts.getTimeZone();
         if (timeZone == null || timeZone.isBlank()) {
-            throw new IllegalArgumentException(
-                    "LocalTimestampProto.time_zone is required but was empty. "
+            String field = fieldPath + ".time_zone";
+            throw new ModelValidationException(List.of(ModelValidationException.violation(
+                    field, null,
+                    field + " is required but was empty (LocalTimestampProto.time_zone is required). "
                     + "Producers must set time_zone (e.g. \"UTC\" or \"America/New_York\") "
-                    + "when populating LocalTimestampProto. See second-brain#276.");
+                    + "when populating LocalTimestampProto. See second-brain#276.")));
         }
 
         ZoneId zoneId = ZoneId.of(timeZone);
@@ -281,6 +300,23 @@ public class ProtoSerializationUtil {
                 .toLocalDateTime();
 
         return ZonedDateTime.of(localDateTime, zoneId);
+    }
+
+    /**
+     * Deserializes a required timestamp. Never substitutes a default.
+     *
+     * @param ts the proto, or {@code null} when the parent has no such field set
+     * @param fieldPath path of the timestamp field, e.g. {@code price.as_of}
+     * @throws ModelValidationException naming {@code fieldPath} if {@code ts} is
+     *         null, or {@code fieldPath + ".time_zone"} if its time_zone is blank
+     */
+    public static ZonedDateTime deserializeRequiredTimestamp(LocalTimestamp.LocalTimestampProto ts,
+                                                             String fieldPath) {
+        if (ts == null) {
+            throw new ModelValidationException(List.of(ModelValidationException.violation(
+                    fieldPath, null, fieldPath + " is required but unset")));
+        }
+        return deserializeTimestamp(ts, fieldPath);
     }
 
     public static LocalTimestamp.LocalTimestampProto serializeTimestamp(ZonedDateTime ts) {

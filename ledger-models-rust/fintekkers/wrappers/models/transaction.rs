@@ -2,7 +2,11 @@ use crate::fintekkers::models::transaction::TransactionProto;
 use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
 use crate::fintekkers::wrappers::models::portfolio::PortfolioWrapper;
 use crate::fintekkers::wrappers::models::security::SecurityWrapper;
+use crate::fintekkers::wrappers::models::utils::errors::Error;
+use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
+use chrono::DateTime;
+use chrono_tz::Tz;
 use crate::fintekkers::wrappers::util::link_cache;
 use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
 use std::sync::{Arc, OnceLock, RwLock};
@@ -209,6 +213,14 @@ impl TransactionWrapper {
 
     pub fn uuid_wrapper(&self) -> UUIDWrapper {
         UUIDWrapper::new(self.proto.uuid.as_ref().unwrap().clone())
+    }
+
+    /// The transaction's as_of. Unset or a blank time zone is
+    /// `Error::Validation` naming `transaction.as_of` /
+    /// `transaction.as_of.time_zone`; never defaulted. `new` stays
+    /// infallible, so this is where Rust rejects the input.
+    pub fn try_as_of(&self) -> Result<DateTime<Tz>, Error> {
+        ProtoSerializationUtil::deserialize_required_timestamp(self.proto.as_of.as_ref(), "transaction.as_of")
     }
 
     fn active(&self) -> &TransactionProto {
@@ -606,6 +618,14 @@ mod test {
         let txn = TransactionWrapper::new(txn_with_price(price(None, None), false));
         assert!(price_of(&txn).as_of.is_none());
         assert_eq!(price_uuid_bytes(&txn).len(), 16);
+    }
+
+    #[test]
+    fn try_as_of_unset_is_validation_error() {
+        let txn = TransactionWrapper::new(txn_with_price(price(None, None), false));
+        let err = txn.try_as_of().unwrap_err();
+        assert!(matches!(err, Error::Validation(_)), "expected Error::Validation, got {:?}", err);
+        assert_eq!(err.violations()[0].field, "transaction.as_of");
     }
 
     #[test]

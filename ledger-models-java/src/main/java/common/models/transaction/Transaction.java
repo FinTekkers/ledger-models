@@ -273,11 +273,18 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return price.hasUuid() && price.getUuid().getRawUuid().size() > 0;
     }
 
+    /**
+     * A non-link transaction must carry as_of (typed error naming
+     * {@code transaction.as_of}); a link stub may omit it. Never defaulted.
+     */
     private static ZonedDateTime extractAsOf(TransactionProto proto) {
         if (proto.hasAsOf()) {
-            return ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf());
+            return ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf(), "transaction.as_of");
         }
-        return null;
+        if (proto.getIsLink()) {
+            return null;
+        }
+        return ProtoSerializationUtil.deserializeRequiredTimestamp(null, "transaction.as_of");
     }
 
     private static TransactionProto buildBaselineProto(

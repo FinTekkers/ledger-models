@@ -72,8 +72,8 @@ class Price:
         return price
 
     def get_as_of(self) -> datetime:
-        as_of: LocalTimestampProto = ProtoSerializationUtil.deserialize(self.proto.as_of)
-        return as_of
+        return ProtoSerializationUtil.deserialize_required_timestamp(
+            self.proto.as_of if self.proto.HasField("as_of") else None, "price.as_of")
 
     def get_uuid(self) -> UUID:
         uuid: FintekkersUuid = ProtoSerializationUtil.deserialize(self.proto.uuid)

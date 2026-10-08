@@ -10,6 +10,9 @@ use crate::fintekkers::wrappers::models::security::{SecurityProtoBuilder, Securi
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::decimal::DecimalWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
+use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
+use chrono::DateTime;
+use chrono_tz::Tz;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 use crate::fintekkers::wrappers::util::link_cache;
 
@@ -103,6 +106,12 @@ impl PriceWrapper {
              See docs/adr/lazy-link-hydration.md.",
             uuid
         );
+    }
+
+    /// The price's as_of. Unset or a blank time zone is `Error::Validation`
+    /// naming `price.as_of` / `price.as_of.time_zone`; never defaulted.
+    pub fn try_as_of(&self) -> Result<DateTime<Tz>, Error> {
+        ProtoSerializationUtil::deserialize_required_timestamp(self.proto.as_of.as_ref(), "price.as_of")
     }
 
     pub fn security_wrapper(&self) -> SecurityWrapper {
@@ -258,7 +267,36 @@ impl PriceProtoBuilder {
 mod test {
     use rust_decimal_macros::dec;
 
-    use super::PriceProtoBuilder;
+    use super::{Error, PriceProtoBuilder};
+
+    // LM-272: unset as_of or a blank time zone is a typed validation error
+    // naming the field, not a panic or a default.
+    fn assert_validation(err: Error, field: &str) {
+        assert!(matches!(err, Error::Validation(_)), "expected Error::Validation, got {:?}", err);
+        assert_eq!(err.violations()[0].field, field);
+    }
+
+    #[test]
+    fn try_as_of_unset_is_validation_error() {
+        let mut proto = PriceProtoBuilder::new().dummy_price_wrapper(dec!(1)).proto;
+        proto.as_of = None;
+        assert_validation(PriceWrapper::new(proto).try_as_of().unwrap_err(), "price.as_of");
+    }
+
+    #[test]
+    fn try_as_of_blank_time_zone_is_validation_error() {
+        for zone in ["", "   "] {
+            let mut proto = PriceProtoBuilder::new().dummy_price_wrapper(dec!(1)).proto;
+            proto.as_of.as_mut().unwrap().time_zone = zone.to_string();
+            assert_validation(PriceWrapper::new(proto).try_as_of().unwrap_err(), "price.as_of.time_zone");
+        }
+    }
+
+    #[test]
+    fn try_as_of_valid_time_zone_deserializes() {
+        let proto = PriceProtoBuilder::new().dummy_price_wrapper(dec!(1)).proto;
+        assert!(PriceWrapper::new(proto).try_as_of().is_ok());
+    }
 
     #[test]
     fn test_proto_to_date() {
