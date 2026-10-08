@@ -2,18 +2,25 @@ package protos.serializers.util.proto;
 
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
+import common.models.errors.UnsetDecimalException;
+import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import fintekkers.models.util.LocalTimestamp;
 import fintekkers.models.util.Uuid;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -136,5 +143,100 @@ class ProtoSerializationUtilTest {
         UUID uuidCopy = ProtoSerializationUtil.deserializeUUID(protoCopy);
 
         Assertions.assertEquals(uuid_string, uuidCopy.toString());
+    }
+
+    // LM-269 — an empty DecimalValueProto raises the typed UnsetDecimalException,
+    // never a bare NumberFormatException. Valid values parse exactly as before.
+
+    private static DecimalValueProto decimal(String value) {
+        return DecimalValueProto.newBuilder().setArbitraryPrecisionValue(value).build();
+    }
+
+    private static final String[] VALID_DECIMALS = {
+            "0", "-42.75", "1E+3", "1234567890.12345678901234567890"};
+
+    @Test
+    public void deserializeBigDecimal_emptyThrowsUnsetDecimalException() {
+        UnsetDecimalException e = assertThrows(UnsetDecimalException.class,
+                () -> ProtoSerializationUtil.deserializeBigDecimal(decimal("")));
+        assertFalse(((Object) e) instanceof NumberFormatException);
+        assertTrue(e instanceof IllegalArgumentException);
+        assertEquals("unknown", e.getFieldName());
+    }
+
+    @Test
+    public void deserializeBigDecimal_defaultInstanceIsUnsetAndThrows() {
+        DecimalValueProto wireDefault = DecimalValueProto.getDefaultInstance();
+        assertTrue(ProtoSerializationUtil.isUnsetDecimal(wireDefault));
+        assertThrows(UnsetDecimalException.class,
+                () -> ProtoSerializationUtil.deserializeBigDecimal(wireDefault));
+    }
+
+    @Test
+    public void deserializeBigDecimal_fieldNameInMessage() {
+        UnsetDecimalException e = assertThrows(UnsetDecimalException.class,
+                () -> ProtoSerializationUtil.deserializeBigDecimal(decimal(""), "price"));
+        assertTrue(e.getMessage().contains("price"), e.getMessage());
+        assertEquals("price", e.getFieldName());
+    }
+
+    @Test
+    public void deserializeBigDecimal_nullReturnsNull() {
+        assertNull(ProtoSerializationUtil.deserializeBigDecimal(null));
+        assertNull(ProtoSerializationUtil.deserializeBigDecimal(null, "price"));
+    }
+
+    @Test
+    public void isUnsetDecimal_cases() {
+        assertTrue(ProtoSerializationUtil.isUnsetDecimal(null));
+        assertTrue(ProtoSerializationUtil.isUnsetDecimal(decimal("")));
+        assertFalse(ProtoSerializationUtil.isUnsetDecimal(decimal("0")));
+        assertFalse(ProtoSerializationUtil.isUnsetDecimal(decimal("-1.5")));
+        assertFalse(ProtoSerializationUtil.isUnsetDecimal(decimal("123.456")));
+    }
+
+    @Test
+    public void deserializeBigDecimal_validValuesUnchanged() {
+        for (String s : VALID_DECIMALS) {
+            // BigDecimal.equals compares scale too, so "1E+3" must stay scale -3.
+            assertEquals(new BigDecimal(s), ProtoSerializationUtil.deserializeBigDecimal(decimal(s)), s);
+        }
+    }
+
+    @Test
+    public void deserializeBigDecimal_fieldNameOverloadValidValuesUnchanged() {
+        for (String s : VALID_DECIMALS) {
+            assertEquals(new BigDecimal(s),
+                    ProtoSerializationUtil.deserializeBigDecimal(decimal(s), "price"), s);
+        }
+    }
+
+    @Test
+    public void deserializeBigDecimal_malformedStillThrowsNumberFormatException() {
+        // Only "" is unset: no trimming, so whitespace-only stays malformed.
+        for (String s : new String[]{" ", "abc"}) {
+            NumberFormatException e = assertThrows(NumberFormatException.class,
+                    () -> ProtoSerializationUtil.deserializeBigDecimal(decimal(s)), s);
+            assertFalse(((Object) e) instanceof UnsetDecimalException, s);
+        }
+    }
+
+    @Test
+    public void apiShape_guardrails() throws NoSuchMethodException {
+        Method original = ProtoSerializationUtil.class.getMethod("deserializeBigDecimal", DecimalValueProto.class);
+        assertTrue(Modifier.isPublic(original.getModifiers()));
+        assertTrue(Modifier.isStatic(original.getModifiers()));
+        assertEquals(BigDecimal.class, original.getReturnType());
+
+        Method overload = ProtoSerializationUtil.class.getMethod("deserializeBigDecimal",
+                DecimalValueProto.class, String.class);
+        assertTrue(Modifier.isPublic(overload.getModifiers()));
+        assertTrue(Modifier.isStatic(overload.getModifiers()));
+        assertEquals(BigDecimal.class, overload.getReturnType());
+
+        assertTrue(Modifier.isPublic(UnsetDecimalException.class.getModifiers()));
+        assertTrue(RuntimeException.class.isAssignableFrom(UnsetDecimalException.class));
+        assertTrue(IllegalArgumentException.class.isAssignableFrom(UnsetDecimalException.class));
+        assertFalse(NumberFormatException.class.isAssignableFrom(UnsetDecimalException.class));
     }
 }

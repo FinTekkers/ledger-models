@@ -1,12 +1,14 @@
 package protos.serializers;
 
 import common.models.errors.InvalidFieldException;
+import common.models.errors.UnsetDecimalException;
 import common.models.errors.transaction.TransactionProcessingException;
 import common.models.transaction.Transaction;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.transaction.TransactionProto;
+import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import fintekkers.models.util.LocalDate.LocalDateProto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -259,5 +261,20 @@ class TransactionWrapperTest {
         // walking the tree; the strip-recursion test above covers that path.
         Assertions.assertEquals(transaction.getChildTransactions().size(),
                 copy.getChildTransactions().size());
+    }
+
+    // LM-269: a set-but-empty quantity (hasQuantity() true) surfaces as the typed
+    // UnsetDecimalException, not a raw NumberFormatException — the LS-86 path.
+    @Test
+    public void testGetQuantity_emptyDecimalThrowsUnsetDecimalException() {
+        TransactionProto proto = DummyBondObjects.getDummyTransaction().getProto().toBuilder()
+                .setQuantity(DecimalValueProto.newBuilder().setArbitraryPrecisionValue(""))
+                .build();
+        Assertions.assertTrue(proto.hasQuantity());
+        Transaction transaction = new Transaction(proto);
+
+        UnsetDecimalException e = Assertions.assertThrows(UnsetDecimalException.class,
+                transaction::getQuantity);
+        Assertions.assertFalse(((Object) e) instanceof NumberFormatException);
     }
 }
