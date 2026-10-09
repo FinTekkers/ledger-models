@@ -1,0 +1,12 @@
+{
+  "_doc": "Shared fixture for matches(field, operator, filter, null): the row's stored value is always null. Read by the Java, JS, Python and Rust tests so the four implementations can't drift. NOT_EQUALS keeps a null only for ASSET_CLASS (LM-281); on every other field it drops the row (LM-284).",
+  "cases": [
+    { "field": "PORTFOLIO_NAME", "operator": "NOT_EQUALS", "filter": "a", "expected": false },
+    { "field": "MATURITY_DATE", "operator": "NOT_EQUALS", "filter": "2030-01-01", "expected": false },
+    { "field": "PORTFOLIO_NAME", "operator": "EQUALS", "filter": "a", "expected": false },
+    { "field": "MATURITY_DATE", "operator": "MORE_THAN", "filter": "2030-01-01", "expected": false },
+    { "field": "ASSET_CLASS", "operator": "NOT_EQUALS", "filter": "FIXED_INCOME", "expected": true },
+    { "field": "ASSET_CLASS", "operator": "EQUALS", "filter": "FIXED_INCOME", "expected": false },
+    { "field": "ASSET_CLASS", "operator": "MORE_THAN", "filter": "FIXED_INCOME", "expected": false }
+  ]
+}

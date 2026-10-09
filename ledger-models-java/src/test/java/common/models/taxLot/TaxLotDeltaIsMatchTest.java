@@ -76,4 +76,16 @@ class TaxLotDeltaIsMatchTest {
                 PositionFilter.Operator.LESS_THAN, LocalDate.of(2024, 1, 1));
         assertFalse(taxLot.isMatch(before));
     }
+
+    @Test
+    void nullCloseDateNotEqualsDoesNotMatch() {
+        // LM-284: the helper's lot has no close date, so TAX_LOT_CLOSE_DATE
+        // is null; NOT_EQUALS drops a null on any field but ASSET_CLASS.
+        TaxLotDelta taxLot = taxLotWithAssetClass("RATES");
+
+        PositionFilter filter = PositionFilter.from(Field.TAX_LOT_CLOSE_DATE,
+                PositionFilter.Operator.NOT_EQUALS, LocalDate.of(2030, 1, 1));
+
+        assertFalse(taxLot.isMatch(filter));
+    }
 }

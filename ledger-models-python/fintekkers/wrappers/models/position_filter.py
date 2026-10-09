@@ -7,8 +7,10 @@ the shared ``product_hierarchy.asset_class_matches`` rule, so a group code
 such as ``FIXED_INCOME`` matches its members and labels; every other field
 compares exactly.
 
-A ``None`` stored value never throws: ``EQUALS`` and the ordering operators
-drop the row, ``NOT_EQUALS`` keeps it. Errors raised by ``row.get_field``
+A ``None`` stored value never throws and drops the row for every operator,
+except ``ASSET_CLASS`` with ``NOT_EQUALS``, which keeps it (LM-281). The
+``None`` check in ``matches`` runs before the ``ASSET_CLASS`` branch, so it
+handles that asset-class exception itself (LM-284). Errors raised by ``row.get_field``
 propagate (a row represents an absent value by returning ``None``).
 """
 
@@ -32,7 +34,10 @@ def matches(field: int, operator: int, filter_value: Any, stored_value: Any) -> 
     values. An unknown operator matches nothing.
     """
     if stored_value is None:
-        return operator == PositionFilterOperator.NOT_EQUALS
+        return (
+            field == FieldProto.ASSET_CLASS
+            and operator == PositionFilterOperator.NOT_EQUALS
+        )
     if field == FieldProto.ASSET_CLASS and operator in (
         PositionFilterOperator.EQUALS,
         PositionFilterOperator.NOT_EQUALS,

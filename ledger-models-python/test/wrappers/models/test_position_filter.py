@@ -4,6 +4,9 @@ ASSET_CLASS EQUALS / NOT_EQUALS use the shared asset_class_matches rule;
 every other field compares exactly. A None stored value never throws.
 """
 
+import json
+from pathlib import Path
+
 from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.position.position_util_pb2 import PositionFilterOperator
 from fintekkers.models.security.security_pb2 import SecurityProto
@@ -89,6 +92,44 @@ def test_matches_other_fields_compare_exactly():
         FieldProto.MATURITY_DATE, PositionFilterOperator.MORE_THAN, 2, 1
     )
     assert not matches(FieldProto.PORTFOLIO_NAME, PositionFilterOperator.EQUALS, "a", None)
-    assert matches(
+    assert not matches(
         FieldProto.PORTFOLIO_NAME, PositionFilterOperator.NOT_EQUALS, "a", None
+    )
+
+
+# ---------- LM-284: NOT_EQUALS drops a None on fields other than ASSET_CLASS ----------
+
+
+def _null_case_rows():
+    """Cases from ledger-models-protos/fixtures/position_filter_null_cases.json,
+    shared with the Java, JS and Rust tests."""
+    for parent in Path(__file__).resolve().parents:
+        path = parent / "ledger-models-protos" / "fixtures" / "position_filter_null_cases.json"
+        if path.exists():
+            with path.open(encoding="utf-8") as f:
+                return json.load(f)["cases"]
+    raise FileNotFoundError("position_filter_null_cases.json not found above this test")
+
+
+def test_matches_null_cases_shared_fixture():
+    cases = _null_case_rows()
+    assert len(cases) >= 7
+    for case in cases:
+        field = FieldProto.Value(case["field"])
+        operator = PositionFilterOperator.Value(case["operator"])
+        assert matches(field, operator, case["filter"], None) is case["expected"], case
+
+
+class _NullFieldRow:
+    """Row whose every get_field returns None."""
+
+    def get_field(self, field):
+        return None
+
+
+def test_filter_rows_not_equals_drops_none_on_other_field():
+    rows = [_NullFieldRow()]
+    assert (
+        filter_rows(rows, [(FieldProto.PORTFOLIO_NAME, PositionFilterOperator.NOT_EQUALS, "a")])
+        == []
     )

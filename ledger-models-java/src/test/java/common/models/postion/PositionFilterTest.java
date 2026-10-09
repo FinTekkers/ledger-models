@@ -4,10 +4,20 @@ import common.models.IFinancialModelObject;
 import common.models.portfolio.Portfolio;
 import common.models.security.BondSecurity;
 import common.models.security.Security;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import testutil.DummyBondObjects;
 import testutil.DummyEquityObjects;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -196,10 +206,10 @@ class PositionFilterTest {
     }
 
     @Test
-    public void testNotEqualsKeepsNullOnOtherFields() {
-        // LM-281 ruling on the previously undecided case: null stored values
-        // never throw, and NOT_EQUALS keeps the row on every field (the same
-        // rule the ASSET_CLASS guardrail requires), instead of dropping it.
+    public void testNotEqualsDropsNullOnOtherFields() {
+        // LM-284 owner ruling: null stored values never throw, and on fields
+        // other than ASSET_CLASS NOT_EQUALS drops the row, as filter did
+        // before LM-281. Only ASSET_CLASS keeps a null under NOT_EQUALS.
         ZonedDateTime filterAsOf = ZonedDateTime.now();
         ZonedDateTime rowAsOf = filterAsOf.minusDays(1);
         LocalDate d1 = LocalDate.of(2030, 1, 1);
@@ -208,10 +218,33 @@ class PositionFilterTest {
 
         PositionFilter notEquals = new PositionFilter(filterAsOf);
         notEquals.addFilter(Field.MATURITY_DATE, PositionFilter.Operator.NOT_EQUALS, d1);
-        assertEquals(Arrays.asList(row), PositionFilter.filter(rows, notEquals));
+        assertTrue(PositionFilter.filter(rows, notEquals).isEmpty());
 
         PositionFilter equals = new PositionFilter(filterAsOf);
         equals.addFilter(Field.MATURITY_DATE, PositionFilter.Operator.EQUALS, d1);
         assertTrue(PositionFilter.filter(rows, equals).isEmpty());
+    }
+
+    // Cases come from ledger-models-protos/fixtures/position_filter_null_cases.json,
+    // shared with the JS, Python and Rust tests (LM-284).
+    @Test
+    public void testNullCasesSharedFixture() throws IOException {
+        Path path = Paths.get("..", "ledger-models-protos", "fixtures", "position_filter_null_cases.json");
+        JsonObject root;
+        try (Reader r = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            root = new Gson().fromJson(r, JsonObject.class);
+        }
+        JsonArray cases = root.getAsJsonArray("cases");
+        assertTrue(cases.size() >= 7, "fixture has too few cases");
+        for (JsonElement e : cases) {
+            JsonObject c = e.getAsJsonObject();
+            Field field = Field.valueOf(c.get("field").getAsString());
+            PositionFilter.Operator operator = PositionFilter.Operator.valueOf(c.get("operator").getAsString());
+            String filterValue = c.get("filter").getAsString();
+            boolean expected = c.get("expected").getAsBoolean();
+            assertEquals(expected,
+                    PositionFilter.matches(field, new PositionFilter.PositionComparator(operator, filterValue), null),
+                    field + " " + operator + " " + filterValue + " on null");
+        }
     }
 }

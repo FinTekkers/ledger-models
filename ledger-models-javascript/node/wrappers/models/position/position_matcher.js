@@ -9,13 +9,15 @@ const product_hierarchy_1 = require("../security/product_hierarchy");
  * ASSET_CLASS with EQUALS / NOT_EQUALS uses the shared assetClassMatches
  * rule, so a group code such as FIXED_INCOME matches its members and labels;
  * every other field compares exactly. A null or undefined stored value never
- * throws: EQUALS and the ordering operators drop the row, NOT_EQUALS keeps
- * it. An unknown operator matches nothing. Errors raised by row.getField
+ * throws and drops the row for every operator, except ASSET_CLASS with
+ * NOT_EQUALS, which keeps it (LM-281). The null check runs before the
+ * ASSET_CLASS branch, so it handles that asset-class exception itself
+ * (LM-284). An unknown operator matches nothing. Errors raised by row.getField
  * propagate (a row represents an absent value by returning null).
  */
 function matches(field, operator, filterValue, storedValue) {
     if (storedValue === null || storedValue === undefined) {
-        return operator === position_util_pb_1.PositionFilterOperator.NOT_EQUALS;
+        return field === field_pb_1.FieldProto.ASSET_CLASS && operator === position_util_pb_1.PositionFilterOperator.NOT_EQUALS;
     }
     if (field === field_pb_1.FieldProto.ASSET_CLASS &&
         (operator === position_util_pb_1.PositionFilterOperator.EQUALS ||
