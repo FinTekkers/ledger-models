@@ -175,6 +175,7 @@ fn default_transaction_fetch_fn() -> TransactionFetchFn {
 /// raw_uuid) gets a random UUID; a non-link price with no as_of gets the
 /// transaction's as_of, the rule Python `create_from` and JS `Price.create`
 /// use. Set values are never overwritten; link prices pass through as sent.
+/// The nested security has its own fill: `fill_security_defaults`.
 fn fill_price_defaults(mut proto: TransactionProto) -> TransactionProto {
     let txn_as_of = proto.as_of.clone();
     if let Some(price) = proto.price.as_mut().filter(|p| !p.is_link) {
@@ -183,6 +184,32 @@ fn fill_price_defaults(mut proto: TransactionProto) -> TransactionProto {
         }
         if price.as_of.is_none() {
             price.as_of = txn_as_of;
+        }
+    }
+    proto
+}
+
+fn missing_uuid(uuid: &Option<UuidProto>) -> bool {
+    uuid.as_ref().map_or(true, |u| u.raw_uuid.is_empty())
+}
+
+/// Nested Security defaults, filled once at construction (LM-276, parity with
+/// Java `Transaction(TransactionProto)`, Python `Transaction.__init__` and the
+/// JS `Transaction` constructor): a non-link security with no UUID (unset or
+/// empty raw_uuid) gets a random UUID, and so does its non-link
+/// settlement_currency. Without this, `security()` wraps a UUID-less proto with
+/// no stable ID. Set UUIDs are never overwritten; a link security (and anything
+/// inside it) and a link currency pass through as sent. Applies to the wrapped
+/// proto only, not to a proto hydrated later via `resolved`.
+fn fill_security_defaults(mut proto: TransactionProto) -> TransactionProto {
+    if let Some(security) = proto.security.as_mut().filter(|s| !s.is_link) {
+        if missing_uuid(&security.uuid) {
+            security.uuid = Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() });
+        }
+        if let Some(currency) = security.settlement_currency.as_mut().filter(|c| !c.is_link) {
+            if missing_uuid(&currency.uuid) {
+                currency.uuid = Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() });
+            }
         }
     }
     proto
@@ -202,7 +229,7 @@ impl AsRef<TransactionProto> for TransactionWrapper {
 
 impl TransactionWrapper {
     pub fn new(proto: TransactionProto) -> Self {
-        TransactionWrapper { proto: fill_price_defaults(proto), resolved: OnceLock::new() }
+        TransactionWrapper { proto: fill_security_defaults(fill_price_defaults(proto)), resolved: OnceLock::new() }
     }
 
     /// True iff the original wrapped proto was a link reference. Mirrors
@@ -633,5 +660,118 @@ mod test {
         let link = PriceProto { is_link: true, ..Default::default() };
         let txn = TransactionWrapper::new(txn_with_price(link.clone(), true));
         assert_eq!(price_of(&txn), &link);
+    }
+
+    // ---------- LM-276: nested Security defaults ----------
+    // Case names match Java TransactionSecurityDefaultsTest, Python
+    // test_transaction_security_defaults.py and JS
+    // transaction_security_defaults.test.ts.
+
+    fn currency(uuid: Option<UuidProto>) -> SecurityProto {
+        SecurityProto {
+            object_class: "Security".to_string(),
+            version: "0.0.1".to_string(),
+            as_of: Some(txn_as_of()),
+            uuid,
+            product_type: crate::fintekkers::models::security::ProductTypeProto::Currency as i32,
+            asset_class: "Cash".to_string(),
+            issuer_name: "US Dollar".to_string(),
+            ..Default::default()
+        }
+    }
+
+    fn bond(uuid: Option<UuidProto>, settlement_currency: Option<SecurityProto>) -> SecurityProto {
+        SecurityProto {
+            object_class: "Security".to_string(),
+            version: "0.0.1".to_string(),
+            as_of: Some(txn_as_of()),
+            uuid,
+            product_type: crate::fintekkers::models::security::ProductTypeProto::CorpBond as i32,
+            asset_class: "Fixed Income".to_string(),
+            issuer_name: "ACME Corp".to_string(),
+            settlement_currency: settlement_currency.map(Box::new),
+            ..Default::default()
+        }
+    }
+
+    fn txn_with_security(security: SecurityProto) -> TransactionProto {
+        TransactionProto {
+            object_class: "Transaction".to_string(),
+            version: "0.0.1".to_string(),
+            uuid: Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() }),
+            as_of: Some(txn_as_of()),
+            security: Some(security),
+            ..Default::default()
+        }
+    }
+
+    fn security_of(txn: &TransactionWrapper) -> &SecurityProto {
+        txn.as_ref().security.as_ref().unwrap()
+    }
+
+    fn currency_of(txn: &TransactionWrapper) -> &SecurityProto {
+        security_of(txn).settlement_currency.as_deref().unwrap()
+    }
+
+    #[test]
+    fn missing_security_uuid_is_filled_and_stable() {
+        let txn = TransactionWrapper::new(txn_with_security(bond(None, Some(currency(None)))));
+
+        let first = txn.security().unwrap().uuid_wrapper().as_uuid();
+        assert_eq!(txn.security().unwrap().uuid_wrapper().as_uuid(), first);
+        assert_eq!(txn.security().unwrap().uuid_wrapper().as_uuid(), first);
+        assert_eq!(security_of(&txn).uuid.as_ref().unwrap().raw_uuid, first.as_bytes().to_vec());
+    }
+
+    #[test]
+    fn missing_settlement_currency_uuid_is_filled_and_stable() {
+        let txn = TransactionWrapper::new(txn_with_security(bond(None, Some(currency(None)))));
+
+        let currency_id = || {
+            let security = txn.security().unwrap();
+            let currency = security.proto.settlement_currency.as_deref().unwrap().clone();
+            SecurityWrapper::new(currency).uuid_wrapper().as_uuid()
+        };
+        let first = currency_id();
+        assert_eq!(currency_id(), first);
+        assert_eq!(currency_id(), first);
+        assert_eq!(currency_of(&txn).uuid.as_ref().unwrap().raw_uuid.len(), 16);
+    }
+
+    #[test]
+    fn existing_security_uuid_is_kept() {
+        let security_id = UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() };
+        let currency_id = UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() };
+        let input = txn_with_security(bond(Some(security_id.clone()), Some(currency(Some(currency_id.clone())))));
+        let txn = TransactionWrapper::new(input.clone());
+
+        assert_eq!(security_of(&txn).uuid, Some(security_id));
+        assert_eq!(currency_of(&txn).uuid, Some(currency_id));
+        assert_eq!(txn.as_ref(), &input);
+    }
+
+    #[test]
+    fn link_security_gets_no_uuid() {
+        let link = SecurityProto {
+            is_link: true,
+            as_of: Some(txn_as_of()),
+            settlement_currency: Some(Box::new(currency(None))),
+            ..Default::default()
+        };
+        let txn = TransactionWrapper::new(txn_with_security(link.clone()));
+
+        assert_eq!(security_of(&txn), &link);
+        assert!(security_of(&txn).uuid.is_none());
+        assert!(currency_of(&txn).uuid.is_none());
+    }
+
+    #[test]
+    fn link_settlement_currency_gets_no_uuid() {
+        let link_currency = SecurityProto { is_link: true, ..Default::default() };
+        let txn = TransactionWrapper::new(txn_with_security(bond(None, Some(link_currency))));
+
+        assert_eq!(security_of(&txn).uuid.as_ref().unwrap().raw_uuid.len(), 16);
+        assert!(currency_of(&txn).is_link);
+        assert!(currency_of(&txn).uuid.is_none());
     }
 }

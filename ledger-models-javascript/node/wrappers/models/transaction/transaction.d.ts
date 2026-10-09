@@ -29,10 +29,24 @@ declare class Transaction {
      * price with no UUID (unset or empty raw_uuid) gets UUID.random(); a non-link
      * price with no as_of gets the transaction's as_of, the same rule
      * buildProtoFromParams uses via Price.create. Set values are never
-     * overwritten; link prices pass through as sent. Returns a clone when
-     * filling, so the caller's message is not mutated.
+     * overwritten; link prices pass through as sent. The nested security has
+     * its own fill: fillSecurityDefaults. Returns a clone when filling, so the
+     * caller's message is not mutated.
      */
     private static fillPriceDefaults;
+    /**
+     * Nested Security defaults, filled once at construction (LM-276, parity
+     * with Java Transaction(TransactionProto), Python Transaction.__init__ and
+     * Rust): a non-link security with no UUID (unset or empty raw_uuid) gets
+     * UUID.random(), and so does its non-link settlement_currency. Without
+     * this, getSecurity().getID() has no stable ID. Set UUIDs are never
+     * overwritten; a link security (and anything inside it) and a link
+     * currency pass through as sent. Applies to the wrapped proto only, not to
+     * a proto hydrated later. Returns a clone when filling, so the caller's
+     * message is not mutated.
+     */
+    private static fillSecurityDefaults;
+    private static hasUsableUuid;
     /**
      * Builds a complete TransactionProto from constructor parameters
      */
