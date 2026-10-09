@@ -610,7 +610,17 @@ pub struct FxSpotDetailsProto {
     #[prost(string, tag = "3")]
     pub convention: ::prost::alloc::string::String,
 }
-/// Canonical vocabulary for the asset class of a security.
+/// Asset class of a security, as a proto enum.
+///
+/// The ONE canonical asset-class vocabulary (codes and parent/child tree)
+/// is `asset_classes` in ledger-models-protos/hierarchy.json. Every value
+/// here, except UNKNOWN_ASSET_CLASS, either names a hierarchy.json code or
+/// is marked deprecated with a comment pointing at hierarchy.json (CI test:
+/// AssetClassVocabularyTest / test_asset_class_vocabulary.py). Use
+/// ProductHierarchy.assetClassMatches (asset_class_matches in Python) to
+/// filter stored values against a code; it walks the tree and resolves
+/// legacy values such as "Cash", "Equity" and "Fixed Income".
+/// See docs/adr/asset_class_vocabulary.md.
 ///
 /// Note: the SecurityProto.asset_class field is currently `string` (security.proto
 /// field 11). This enum defines the canonical values; the field type stays
@@ -635,10 +645,16 @@ pub enum AssetClassProto {
     UnknownAssetClass = 0,
     FixedIncome = 1,
     Equity = 2,
+    /// Deprecated: canonical asset-class codes live in hierarchy.json. Use the
+    /// hierarchy.json code CASH; "CASH_ASSET_CLASS" is an alias of it there.
     CashAssetClass = 3,
     /// INDEX covers reference instruments like SP500, CMT-derived treasury
     /// indices, etc. — used in market-data-inputs today. Borderline as an
     /// "asset class" in finance terminology, but matches in-use data.
+    /// Deprecated: canonical asset-class codes live in hierarchy.json, which
+    /// has no INDEX code. Indices are modelled by instrument_type
+    /// REFERENCE_INDEX plus the underlying's asset class (e.g. EQUITY_INDEX is
+    /// EQUITY). A stored "INDEX" asset class matches no filter.
     Index = 4,
     /// VOLATILITY covers volatility-class reference instruments — VIX
     /// (CBOE Volatility Index), VVIX, etc. Stored as INDEX_SECURITY at the

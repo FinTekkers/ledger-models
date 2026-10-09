@@ -1,0 +1,31 @@
+{
+  "_doc": "Shared fixture for assetClassMatches(filter, stored) / asset_class_matches. Read by the Java, JS and Python tests; all three must agree on every row. See docs/adr/asset_class_vocabulary.md for the match rule.",
+  "cases": [
+    { "filter": "FIXED_INCOME", "stored": "RATES",            "expected": true },
+    { "filter": "FIXED_INCOME", "stored": "CREDIT",           "expected": true },
+    { "filter": "FIXED_INCOME", "stored": "Fixed Income",     "expected": true },
+    { "filter": "EQUITY",       "stored": "Equity",           "expected": true },
+    { "filter": "CASH",         "stored": "Cash",             "expected": true },
+    { "filter": "EQUITY",       "stored": "RATES",            "expected": false },
+    { "filter": "EQUITY",       "stored": "NOT_AN_ASSET_CLASS", "expected": false },
+
+    { "filter": "EQUITY",       "stored": "EQUITY",           "expected": true },
+    { "filter": "EQUITY",       "stored": " equity ",         "expected": true },
+    { "filter": "CASH",         "stored": "CASH_ASSET_CLASS", "expected": true },
+    { "filter": "CASH_ASSET_CLASS", "stored": "Cash",         "expected": true },
+    { "filter": "FIXED_INCOME", "stored": "fixed-income",     "expected": true },
+    { "filter": "Fixed Income", "stored": "RATES",            "expected": true },
+    { "filter": "COMMODITY",    "stored": "METALS",           "expected": true },
+    { "filter": "RATES",        "stored": "FIXED_INCOME",     "expected": false },
+    { "filter": "RATES",        "stored": "CREDIT",           "expected": false },
+    { "filter": "INDEX",        "stored": "INDEX",            "expected": false },
+    { "filter": "UNKNOWN_ASSET_CLASS", "stored": "UNKNOWN_ASSET_CLASS", "expected": false },
+    { "filter": "EQUITY",       "stored": null,               "expected": false },
+    { "filter": "EQUITY",       "stored": "",                 "expected": false },
+    { "filter": "EQUITY",       "stored": "   ",              "expected": false },
+    { "filter": null,           "stored": "EQUITY",           "expected": false },
+    { "filter": "",             "stored": "EQUITY",           "expected": false },
+    { "filter": "constructor",  "stored": "constructor",      "expected": false },
+    { "filter": "__proto__",    "stored": "__proto__",        "expected": false }
+  ]
+}

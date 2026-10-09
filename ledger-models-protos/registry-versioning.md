@@ -22,6 +22,14 @@ The registry is loaded by every consumer language at startup (Java / Rust / Pyth
 | Change a `label` (display string) | Additive — labels are advisory, not load-bearing | none |
 | Add `index_type` field to existing leaves when the dimension lands | Additive **if defaulted** — every existing leaf gets `index_type: "single_name"` (or a documented default) without opt-in | minor |
 | Drop the `index_type` field after it's been added | Breaking | major |
+| Add an `aliases` entry to an asset class | Additive — more stored values resolve; `schema_version` minor bump | minor |
+| Remove an asset-class alias | Breaking — stored values that resolved through it stop matching filters | major |
+| Add or change an `enum_labels` label or placeholder | Additive — labels are advisory, not load-bearing | none |
+| Add the `aliases` / `enum_labels` keys themselves (`schema_version` 1.1, LM-275) | Additive — loaders that don't know them ignore them | minor |
+
+## Asset-class aliases and labels must be unambiguous
+
+`assetClassMatches` resolves a stored value by its code, label or alias, after trimming, upper-casing and turning whitespace or hyphens into `_` (see [`docs/adr/asset_class_vocabulary.md`](../docs/adr/asset_class_vocabulary.md)). **An alias or label must not resolve to two codes.** Every loader throws at load time if one does, so a clash fails CI rather than silently matching the wrong class.
 
 ## Why "reparenting" is breaking
 
