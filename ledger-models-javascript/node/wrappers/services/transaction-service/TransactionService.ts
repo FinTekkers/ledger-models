@@ -15,6 +15,7 @@ import { CreateTransactionResponseProto } from '../../../fintekkers/requests/tra
 import { QueryTransactionRequestProto } from '../../../fintekkers/requests/transaction/query_transaction_request_pb';
 import { QueryTransactionResponseProto } from '../../../fintekkers/requests/transaction/query_transaction_response_pb';
 import EnvConfig from '../../models/utils/requestcontext';
+import { Service } from '../../util/serviceaddress';
 import LinkResolver from '../../util/link-resolver';
 import * as LinkCacheModule from '../../util/link-cache';
 import { UUID } from '../../models/utils/uuid';
@@ -26,10 +27,10 @@ class TransactionService {
 
   constructor(apiKey?: string) {
     if (apiKey) {
-      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey);
-      this.client = new TransactionClient(EnvConfig.apiURL, credentials, { interceptors });
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey, Service.TRANSACTION);
+      this.client = new TransactionClient(EnvConfig.urlFor(Service.TRANSACTION), credentials, { interceptors });
     } else {
-      this.client = new TransactionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+      this.client = new TransactionClient(EnvConfig.urlFor(Service.TRANSACTION), EnvConfig.credentialsFor(Service.TRANSACTION));
     }
   }
 

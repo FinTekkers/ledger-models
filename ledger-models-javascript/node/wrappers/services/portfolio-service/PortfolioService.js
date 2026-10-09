@@ -43,18 +43,23 @@ const portfolio_service_grpc_pb_1 = require("../../../fintekkers/services/portfo
 const query_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfolio/query_portfolio_request_pb");
 const create_portfolio_request_pb_1 = require("../../../fintekkers/requests/portfolio/create_portfolio_request_pb");
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
+const serviceaddress_1 = require("../../util/serviceaddress");
 const portfolio_1 = __importDefault(require("../../models/portfolio/portfolio"));
 const uuid_1 = require("../../models/utils/uuid");
 const datetime_1 = require("../../models/utils/datetime");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
 class PortfolioService {
+    /** Read on every access, so a changed environment is picked up. */
+    static get url() {
+        return requestcontext_1.default.urlFor(serviceaddress_1.Service.PORTFOLIO);
+    }
     constructor(apiKey) {
         if (apiKey) {
-            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey);
-            this.client = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey, serviceaddress_1.Service.PORTFOLIO);
+            this.client = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.PORTFOLIO), credentials, { interceptors });
         }
         else {
-            this.client = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+            this.client = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.PORTFOLIO), requestcontext_1.default.credentialsFor(serviceaddress_1.Service.PORTFOLIO));
         }
     }
     validateCreatePortfolio(portfolio) {
@@ -121,5 +126,4 @@ class PortfolioService {
     }
 }
 exports.PortfolioService = PortfolioService;
-PortfolioService.url = requestcontext_1.default.apiURL;
 //# sourceMappingURL=PortfolioService.js.map

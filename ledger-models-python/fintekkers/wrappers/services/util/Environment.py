@@ -2,6 +2,8 @@ import grpc
 import os
 from enum import Enum
 
+from fintekkers.wrappers.services.util.service_address import Endpoint, Service, resolve
+
 # Load environment variables from .env file
 from dotenv import load_dotenv
 
@@ -9,7 +11,9 @@ load_dotenv()
 
 
 class ServiceType(Enum):
-    BROKER = "80"
+    # Values are the standard ports, as in Java ServiceAddress. The four
+    # ledger names share "8082", so Python makes them aliases of one member.
+    BROKER = "8085"
     SECURITY_SERVICE = "8082"
     LEDGER_SERVICE = "8082"
     TRANSACTION_SERVICE = "8082"
@@ -18,9 +22,20 @@ class ServiceType(Enum):
     PRICE_SERVICE = "8083"
 
 
+# ServiceType value -> the lookup's Service. All 8082 names are one member.
+_SERVICES = {
+    ServiceType.BROKER: Service.BROKER,
+    ServiceType.SECURITY_SERVICE: Service.SECURITY,
+    ServiceType.VALUATION_SERVICE: Service.VALUATION,
+    ServiceType.PRICE_SERVICE: Service.PRICE,
+}
+
+
+def _to_service(service_type: ServiceType) -> Service:
+    return _SERVICES[service_type]
+
+
 class EnvConfig:
-    default_api_url = "api.fintekkers.org"
-    
     @staticmethod
     def get_env_var(key, default=None):
         value = os.environ.get(key)
@@ -36,28 +51,24 @@ class EnvConfig:
         # return EnvConfig.get_env_var('API_KEY')
 
     @staticmethod
-    def api_url(service_type: ServiceType = None):
-        base_url = EnvConfig.get_env_var('API_URL', EnvConfig.default_api_url)
-        
-        # If running on localhost, service type must be explicitly provided
-        is_localhost = "localhost" in base_url or "127.0.0.1" in base_url
-        
+    def endpoint(service_type: ServiceType = None) -> Endpoint:
+        """Where ``service_type`` lives: BROKER_HOST, then
+        <SERVICE>_SERVICE_HOST/_PORT, then API_URL, then localhost (see
+        service_address). No service type means the broker."""
         if service_type is None:
-            if is_localhost:
-                raise ValueError(
-                    f"When running on localhost ({base_url}), service_type must be explicitly provided. "
-                    f"Available service types: {[st.name for st in ServiceType]}"
-                )
-            # Default to BROKER for non-localhost environments
             service_type = ServiceType.BROKER
-        
-        return f"{base_url}:{service_type.value}"
+        return resolve(_to_service(service_type))
+
+    @staticmethod
+    def api_url(service_type: ServiceType = None) -> str:
+        """``host:port`` of ``service_type``; the broker when omitted."""
+        return EnvConfig.endpoint(service_type).target
 
     @staticmethod
     def get_channel(service_type: ServiceType = ServiceType.BROKER) -> grpc.Channel:
-        url = EnvConfig.api_url(service_type)
+        endpoint = EnvConfig.endpoint(service_type)
 
-        if "localhost" in url or "127.0.0.1" in url:
-            return grpc.insecure_channel(url)
+        if endpoint.plaintext:
+            return grpc.insecure_channel(endpoint.target)
         else:
-            return grpc.secure_channel(url, grpc.ssl_channel_credentials())
+            return grpc.secure_channel(endpoint.target, grpc.ssl_channel_credentials())

@@ -90,11 +90,11 @@ class TransactionService:
             if e.code() == grpc.StatusCode.CANCELLED:
                 print(
                     f"Network call cancelled, likely due to a service error trying to "
-                    f"contact {EnvConfig.api_url()} ({e.details()})"
+                    f"contact {EnvConfig.api_url(ServiceType.TRANSACTION_SERVICE)} ({e.details()})"
                 )
             else:
                 print(
-                    f"Service unavailable trying to contact {EnvConfig.api_url()} "
+                    f"Service unavailable trying to contact {EnvConfig.api_url(ServiceType.TRANSACTION_SERVICE)} "
                     f"({e.details()})"
                 )
             raise e
@@ -109,7 +109,7 @@ class TransactionService:
             response = self.stub.CreateOrUpdate(request.proto)
         except RpcError as e:
             print(
-                f"Service unavailable trying to contact {EnvConfig.api_url()} "
+                f"Service unavailable trying to contact {EnvConfig.api_url(ServiceType.TRANSACTION_SERVICE)} "
                 f"({e.details()})"
             )
             raise e

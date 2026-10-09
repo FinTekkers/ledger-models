@@ -15,9 +15,17 @@ function setEnv(key: string, value: string | undefined): void {
   }
 }
 
+// Variables the lookup reads before API_URL; the host may set them.
+const SHADOWING = ['BROKER_HOST', 'LEDGER_SERVICE_HOST', 'LEDGER_SERVICE_PORT'];
+
 describe('EnvConfig.apiURL', () => {
   const original = env['API_URL'];
-  afterEach(() => setEnv('API_URL', original));
+  const saved = SHADOWING.map((k) => env[k]);
+  beforeEach(() => SHADOWING.forEach((k) => setEnv(k, undefined)));
+  afterEach(() => {
+    setEnv('API_URL', original);
+    SHADOWING.forEach((k, i) => setEnv(k, saved[i]));
+  });
 
   test('appends :8082 when API_URL has no port', () => {
     setEnv('API_URL', 'myhost.example.com');
@@ -29,9 +37,15 @@ describe('EnvConfig.apiURL', () => {
     expect(EnvConfig.apiURL).toBe('localhost:8083');
   });
 
-  test('defaults to api.fintekkers.org:8082 when unset', () => {
+  test('defaults to localhost:8082 when unset', () => {
     setEnv('API_URL', undefined);
-    expect(EnvConfig.apiURL).toBe('api.fintekkers.org:8082');
+    expect(EnvConfig.apiURL).toBe('localhost:8082');
+  });
+
+  test('is the broker when BROKER_HOST is set, whatever API_URL says', () => {
+    setEnv('API_URL', 'localhost');
+    setEnv('BROKER_HOST', '127.0.0.1:8085');
+    expect(EnvConfig.apiURL).toBe('127.0.0.1:8085');
   });
 });
 

@@ -16,6 +16,7 @@ import { CreatePriceResponseProto } from '../../../fintekkers/requests/price/cre
 import { UUID } from '../../models/utils/uuid';
 import * as dt from '../../models/utils/datetime';
 import EnvConfig from '../../models/utils/requestcontext';
+import { Service } from '../../util/serviceaddress';
 import LinkResolver from '../../util/link-resolver';
 import * as LinkCacheModule from '../../util/link-cache';
 
@@ -24,10 +25,10 @@ class PriceService {
 
   constructor(apiKey?: string) {
     if (apiKey) {
-      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey);
-      this.client = new PriceClient(EnvConfig.apiURL, credentials, { interceptors });
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey, Service.PRICE);
+      this.client = new PriceClient(EnvConfig.urlFor(Service.PRICE), credentials, { interceptors });
     } else {
-      this.client = new PriceClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+      this.client = new PriceClient(EnvConfig.urlFor(Service.PRICE), EnvConfig.credentialsFor(Service.PRICE));
     }
   }
 

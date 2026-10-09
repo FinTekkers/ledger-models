@@ -6,7 +6,8 @@ import { PositionFilter } from '../../models/position/positionfilter';
 import Portfolio from '../../models/portfolio/portfolio';
 declare class PortfolioService {
     private client;
-    static url: string;
+    /** Read on every access, so a changed environment is picked up. */
+    static get url(): string;
     constructor(apiKey?: string);
     validateCreatePortfolio(portfolio: PortfolioProto): Promise<SummaryProto>;
     createPortfolio(portfolio: PortfolioProto): Promise<CreatePortfolioResponseProto>;

@@ -57,6 +57,13 @@
       "expected": {"host": "127.0.0.1", "port": 8085, "plaintext": true}
     },
     {
+      "name": "BROKER_HOST wins over API_URL=localhost for every service, as the UI runs",
+      "step": "a",
+      "env": {"BROKER_HOST": "127.0.0.1:8085", "API_URL": "localhost"},
+      "services": ["BROKER", "SECURITY", "TRANSACTION", "PORTFOLIO", "VALUATION", "PRICE"],
+      "expected": {"host": "127.0.0.1", "port": 8085, "plaintext": true}
+    },
+    {
       "name": "empty BROKER_HOST falls through to the service host",
       "step": "b",
       "env": {"BROKER_HOST": "", "LEDGER_SERVICE_HOST": "ledger"},
@@ -160,6 +167,13 @@
       "env": {"API_URL": "http://localhost:8082"},
       "services": ["SECURITY", "TRANSACTION", "PORTFOLIO"],
       "expected": {"host": "localhost", "port": 8082, "plaintext": true}
+    },
+    {
+      "name": "API_URL with an https scheme on a remote host uses TLS",
+      "step": "c",
+      "env": {"API_URL": "https://h"},
+      "services": ["PRICE"],
+      "expected": {"host": "h", "port": 8083, "plaintext": false}
     },
     {
       "name": "nothing set: broker on localhost",

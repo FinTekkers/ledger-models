@@ -10,6 +10,9 @@ import EnvConfig, { InsecureChannelAuthError } from './requestcontext';
 
 const savedApiUrl = process.env.API_URL;
 const savedApiKey = process.env.API_KEY;
+// Variables the lookup reads before API_URL; the host may set them.
+const SHADOWING = ['BROKER_HOST', 'LEDGER_SERVICE_HOST', 'LEDGER_SERVICE_PORT'];
+const savedShadowing = SHADOWING.map((k) => process.env[k]);
 
 function restoreEnv(name: string, value: string | undefined) {
   if (value === undefined) {
@@ -22,11 +25,13 @@ function restoreEnv(name: string, value: string | undefined) {
 beforeEach(() => {
   restoreEnv('API_URL', undefined);
   restoreEnv('API_KEY', undefined);
+  SHADOWING.forEach((k) => restoreEnv(k, undefined));
 });
 
 afterEach(() => {
   restoreEnv('API_URL', savedApiUrl);
   restoreEnv('API_KEY', savedApiKey);
+  SHADOWING.forEach((k, i) => restoreEnv(k, savedShadowing[i]));
   jest.restoreAllMocks();
 });
 
@@ -41,8 +46,8 @@ describe('EnvConfig.apiURL', () => {
     expect(EnvConfig.apiURL).toBe('localhost:8082');
   });
 
-  test('defaults to api.fintekkers.org:8082 when API_URL is unset', () => {
-    expect(EnvConfig.apiURL).toBe('api.fintekkers.org:8082');
+  test('defaults to localhost:8082 when API_URL is unset', () => {
+    expect(EnvConfig.apiURL).toBe('localhost:8082');
   });
 });
 
@@ -70,7 +75,18 @@ describe('EnvConfig.apiCredentials', () => {
     expect(ssl).not.toHaveBeenCalled();
   });
 
-  test('uses SSL credentials when API_URL is unset', () => {
+  test('uses insecure credentials when API_URL is unset (localhost:8082)', () => {
+    const insecure = jest.spyOn(grpc.credentials, 'createInsecure');
+    const ssl = jest.spyOn(grpc.credentials, 'createSsl');
+
+    EnvConfig.apiCredentials;
+
+    expect(insecure).toHaveBeenCalledTimes(1);
+    expect(ssl).not.toHaveBeenCalled();
+  });
+
+  test('uses SSL credentials for a remote API_URL', () => {
+    process.env.API_URL = 'myhost.example.com';
     const insecure = jest.spyOn(grpc.credentials, 'createInsecure');
     const ssl = jest.spyOn(grpc.credentials, 'createSsl');
 
@@ -83,6 +99,7 @@ describe('EnvConfig.apiCredentials', () => {
 
 describe('EnvConfig.getAuthenticatedCredentials', () => {
   test('metadata generator injects x-api-key', () => {
+    process.env.API_URL = 'myhost.example.com';
     const generatorSpy = jest.spyOn(grpc.credentials, 'createFromMetadataGenerator');
 
     const creds = EnvConfig.getAuthenticatedCredentials('k');
@@ -92,7 +109,7 @@ describe('EnvConfig.getAuthenticatedCredentials', () => {
 
     const generator = generatorSpy.mock.calls[0][0];
     const callback = jest.fn();
-    generator({ service_url: 'https://api.fintekkers.org:8082' }, callback);
+    generator({ service_url: 'https://myhost.example.com:8082' }, callback);
 
     expect(callback).toHaveBeenCalledTimes(1);
     const [err, metadata] = callback.mock.calls[0];
@@ -129,6 +146,7 @@ describe('EnvConfig.getAuthenticatedCredentials', () => {
     ];
     const generatorSpy = jest.spyOn(grpc.credentials, 'createFromMetadataGenerator');
 
+    process.env.API_URL = 'myhost.example.com';
     EnvConfig.getAuthenticatedCredentials(secret);
     generatorSpy.mock.calls[0][0]({ service_url: '' }, () => {});
     process.env.API_URL = 'localhost:80';
@@ -155,8 +173,8 @@ describe('EnvConfig.getAuthenticatedClientOptions', () => {
     expect(interceptors).toHaveLength(1);
   });
 
-  test('uses SSL channel for api.fintekkers.org', () => {
-    process.env.API_URL = 'api.fintekkers.org';
+  test('uses SSL channel for a remote host', () => {
+    process.env.API_URL = 'myhost.example.com';
     const insecure = jest.spyOn(grpc.credentials, 'createInsecure');
     const ssl = jest.spyOn(grpc.credentials, 'createSsl');
 

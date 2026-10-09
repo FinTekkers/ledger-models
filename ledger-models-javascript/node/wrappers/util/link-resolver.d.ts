@@ -40,7 +40,7 @@ import { UUID } from '../models/utils/uuid';
  * timestamp bucket, since the request proto carries a single as_of).
  */
 export interface LinkResolverOptions {
-    /** Optional API key. If omitted, EnvConfig.apiCredentials is used. */
+    /** Optional API key. If omitted, EnvConfig.credentialsFor(service) is used. */
     apiKey?: string;
     /**
      * Test injection: clients to use instead of constructing real ones.

@@ -19,14 +19,15 @@ const position_1 = require("../../models/position/position");
 const position_service_grpc_pb_1 = require("../../../fintekkers/services/position-service/position_service_grpc_pb");
 //Utils
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
+const serviceaddress_1 = require("../../util/serviceaddress");
 class PositionService {
     constructor(apiKey) {
         if (apiKey) {
-            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey);
-            this.client = new position_service_grpc_pb_1.PositionClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey, serviceaddress_1.Service.POSITION);
+            this.client = new position_service_grpc_pb_1.PositionClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.POSITION), credentials, { interceptors });
         }
         else {
-            this.client = new position_service_grpc_pb_1.PositionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+            this.client = new position_service_grpc_pb_1.PositionClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.POSITION), requestcontext_1.default.credentialsFor(serviceaddress_1.Service.POSITION));
         }
     }
     validateRequest(positionRequest) {
