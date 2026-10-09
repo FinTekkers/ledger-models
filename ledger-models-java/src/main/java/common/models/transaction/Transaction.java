@@ -49,7 +49,9 @@ import static common.models.postion.Field.*;
  * <p>Resolver wiring (D): Java Transaction wrapper takes ONLY proto in ctor,
  * matching the Python/Rust pattern. No auto-resolve. {@link #getSecurity()}
  * returns {@code Security.fromProto(proto.getSecurity())} directly — whether
- * inline or {@code is_link}. Caller is responsible for hydrating via
+ * inline or {@code is_link}. An inline security (and its inline
+ * settlement_currency) with no UUID gets one once, at construction (LM-276),
+ * so {@code getSecurity().getID()} is stable. Caller is responsible for hydrating via
  * {@link common.util.LinkResolver#resolveSecuritiesOnTransactions(List)}
  * (and the portfolio counterpart) BEFORE wrapping. Same for Portfolio. Price
  * resolver is deferred to Phase 2.5; {@link #getPrice()} returns a Price POJO
@@ -147,13 +149,17 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         // getProto() exposes it.
         boolean fillTxnUuid = !proto.hasUuid() && this.getID() != null;
         boolean fillPrice = needsPriceDefaults(proto);
-        if (fillTxnUuid || fillPrice) {
+        boolean fillSecurity = needsSecurityDefaults(proto);
+        if (fillTxnUuid || fillPrice || fillSecurity) {
             TransactionProto.Builder b = proto.toBuilder();
             if (fillTxnUuid) {
                 b.setUuid(ProtoSerializationUtil.serializeUUID(this.getID()));
             }
             if (fillPrice) {
                 fillPriceDefaults(b);
+            }
+            if (fillSecurity) {
+                fillSecurityDefaults(b);
             }
             this.proto = b.build();
         } else {
@@ -251,6 +257,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
      * UUID; a non-link price with no as_of gets the transaction's as_of (the
      * rule {@code transaction.py create_from} and {@code Price.create} use).
      * Set values are never overwritten; link prices pass through as sent.
+     * The nested Security has its own fill: see {@link #needsSecurityDefaults}.
      */
     private static boolean needsPriceDefaults(TransactionProto proto) {
         if (!proto.hasPrice()) return false;
@@ -271,6 +278,44 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
     private static boolean hasUsableUuid(fintekkers.models.price.PriceProtoOrBuilder price) {
         return price.hasUuid() && price.getUuid().getRawUuid().size() > 0;
+    }
+
+    /**
+     * Nested Security defaults, filled once at construction (LM-276, parity
+     * with Python, JS and Rust): a non-link security with no UUID (unset or
+     * empty raw_uuid) gets a random UUID, and so does its non-link
+     * settlement_currency. Without this, every {@link #getSecurity()} call
+     * wraps a UUID-less proto and mints a new ID, and strip-on-write emits an
+     * unresolvable link. Set UUIDs are never overwritten; a link security
+     * (and anything inside it) and a link currency pass through as sent.
+     * Applies to the wrapped proto only, not to a proto hydrated later via
+     * the overlay.
+     */
+    private static boolean needsSecurityDefaults(TransactionProto proto) {
+        if (!proto.hasSecurity()) return false;
+        SecurityProto security = proto.getSecurity();
+        if (security.getIsLink()) return false;
+        if (!hasUsableUuid(security)) return true;
+        if (!security.hasSettlementCurrency()) return false;
+        SecurityProto currency = security.getSettlementCurrency();
+        return !currency.getIsLink() && !hasUsableUuid(currency);
+    }
+
+    private static void fillSecurityDefaults(TransactionProto.Builder b) {
+        SecurityProto.Builder security = b.getSecurityBuilder();
+        if (!hasUsableUuid(security)) {
+            security.setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()));
+        }
+        if (security.hasSettlementCurrency()) {
+            SecurityProto.Builder currency = security.getSettlementCurrencyBuilder();
+            if (!currency.getIsLink() && !hasUsableUuid(currency)) {
+                currency.setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()));
+            }
+        }
+    }
+
+    private static boolean hasUsableUuid(fintekkers.models.security.SecurityProtoOrBuilder security) {
+        return security.hasUuid() && security.getUuid().getRawUuid().size() > 0;
     }
 
     /**

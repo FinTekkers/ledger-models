@@ -61,7 +61,7 @@ class Transaction {
             if (!protoOrParams.getIsLink()) {
                 datetime_1.ZonedDateTime.fromRequired(protoOrParams.getAsOf(), 'transaction.as_of');
             }
-            this.proto = Transaction.fillPriceDefaults(protoOrParams);
+            this.proto = Transaction.fillSecurityDefaults(Transaction.fillPriceDefaults(protoOrParams));
         }
         else {
             this.proto = this.buildProtoFromParams(protoOrParams);
@@ -73,8 +73,9 @@ class Transaction {
      * price with no UUID (unset or empty raw_uuid) gets UUID.random(); a non-link
      * price with no as_of gets the transaction's as_of, the same rule
      * buildProtoFromParams uses via Price.create. Set values are never
-     * overwritten; link prices pass through as sent. Returns a clone when
-     * filling, so the caller's message is not mutated.
+     * overwritten; link prices pass through as sent. The nested security has
+     * its own fill: fillSecurityDefaults. Returns a clone when filling, so the
+     * caller's message is not mutated.
      */
     static fillPriceDefaults(proto) {
         const price = proto.getPrice();
@@ -92,6 +93,38 @@ class Transaction {
         if (missingAsOf)
             filledPrice.setAsOf(filled.getAsOf().clone());
         return filled;
+    }
+    /**
+     * Nested Security defaults, filled once at construction (LM-276, parity
+     * with Java Transaction(TransactionProto), Python Transaction.__init__ and
+     * Rust): a non-link security with no UUID (unset or empty raw_uuid) gets
+     * UUID.random(), and so does its non-link settlement_currency. Without
+     * this, getSecurity().getID() has no stable ID. Set UUIDs are never
+     * overwritten; a link security (and anything inside it) and a link
+     * currency pass through as sent. Applies to the wrapped proto only, not to
+     * a proto hydrated later. Returns a clone when filling, so the caller's
+     * message is not mutated.
+     */
+    static fillSecurityDefaults(proto) {
+        const security = proto.getSecurity();
+        if (!security || security.getIsLink())
+            return proto;
+        const missingSecurityUuid = !Transaction.hasUsableUuid(security);
+        const currency = security.getSettlementCurrency();
+        const missingCurrencyUuid = !!currency && !currency.getIsLink() && !Transaction.hasUsableUuid(currency);
+        if (!missingSecurityUuid && !missingCurrencyUuid)
+            return proto;
+        const filled = proto.clone();
+        const filledSecurity = filled.getSecurity();
+        if (missingSecurityUuid)
+            filledSecurity.setUuid(uuid_1.UUID.random().toUUIDProto());
+        if (missingCurrencyUuid)
+            filledSecurity.getSettlementCurrency().setUuid(uuid_1.UUID.random().toUUIDProto());
+        return filled;
+    }
+    static hasUsableUuid(security) {
+        const uuid = security.getUuid();
+        return !!uuid && uuid.getRawUuid_asU8().length > 0;
     }
     /**
      * Builds a complete TransactionProto from constructor parameters

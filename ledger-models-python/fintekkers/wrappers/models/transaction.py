@@ -58,8 +58,9 @@ def _fill_price_defaults(proto: TransactionProto) -> TransactionProto:
     non-link price with no UUID (unset or empty raw_uuid) gets a new UUID; a
     non-link price with no as_of gets the transaction's as_of, the same rule
     create_from uses. Set values are never overwritten; link prices pass
-    through as sent. Returns a copy when filling, so the caller's message is
-    not mutated, and the same object when nothing is missing."""
+    through as sent. The nested security has its own fill:
+    _fill_security_defaults. Returns a copy when filling, so the caller's
+    message is not mutated, and the same object when nothing is missing."""
     if not proto.HasField("price") or proto.price.is_link:
         return proto
     missing_uuid = len(proto.price.uuid.raw_uuid) == 0
@@ -73,6 +74,37 @@ def _fill_price_defaults(proto: TransactionProto) -> TransactionProto:
         filled.price.uuid.raw_uuid = FintekkersUuid.new_uuid().as_bytes()
     if missing_as_of:
         filled.price.as_of.CopyFrom(filled.as_of)
+    return filled
+
+
+def _fill_security_defaults(proto: TransactionProto) -> TransactionProto:
+    """Nested Security defaults, filled once at construction (LM-276, parity
+    with Java Transaction(TransactionProto), JS and Rust): a non-link security
+    with no UUID (unset or empty raw_uuid) gets a new UUID, and so does its
+    non-link settlement_currency. Without this, each Security wrapper over the
+    proto has no stable ID. Set UUIDs are never overwritten; a link security
+    (and anything inside it) and a link currency pass through as sent. Applies
+    to the wrapped proto only, not to a proto hydrated later. Returns a copy
+    when filling, so the caller's message is not mutated, and the same object
+    when nothing is missing."""
+    if not proto.HasField("security") or proto.security.is_link:
+        return proto
+    missing_security = len(proto.security.uuid.raw_uuid) == 0
+    currency = proto.security.settlement_currency
+    missing_currency = (
+        proto.security.HasField("settlement_currency")
+        and not currency.is_link
+        and len(currency.uuid.raw_uuid) == 0
+    )
+    if not missing_security and not missing_currency:
+        return proto
+
+    filled = TransactionProto()
+    filled.CopyFrom(proto)
+    if missing_security:
+        filled.security.uuid.raw_uuid = FintekkersUuid.new_uuid().as_bytes()
+    if missing_currency:
+        filled.security.settlement_currency.uuid.raw_uuid = FintekkersUuid.new_uuid().as_bytes()
     return filled
 
 
@@ -118,7 +150,7 @@ class Transaction():
         # transaction.as_of); a link stub may omit it. Never defaulted.
         if not proto.is_link:
             Transaction._as_of_of(proto)
-        self.proto:TransactionProto = _fill_price_defaults(proto)
+        self.proto:TransactionProto = _fill_security_defaults(_fill_price_defaults(proto))
 
     @staticmethod
     def _as_of_of(proto: TransactionProto) -> datetime:
