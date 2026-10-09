@@ -21,6 +21,12 @@ bash .github/scripts/ban-broad-except.sh
 echo "== hierarchy mirrors"
 ./sync-hierarchy-mirrors.sh
 
+echo "== no api.fintekkers.org default"
+# The host is switched off; clients find services via BROKER_HOST and
+# friends (LM-278). Python and JS paths join this list in LM-278b.
+# `set -e` ignores a `!` command, hence the explicit exit.
+! git grep -n 'api\.fintekkers\.org' -- ledger-models-java/src/main ledger-models-rust/fintekkers || exit 1
+
 echo "== python"
 (
   cd ledger-models-python

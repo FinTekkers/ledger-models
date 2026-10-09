@@ -1,0 +1,207 @@
+{
+  "_comment": "Service-address lookup cases shared by every language's tests (LM-278). Order: (a) BROKER_HOST, (b) <SVC>_SERVICE_HOST/_PORT, (c) API_URL, (d) localhost. Each case's env is the whole environment; services lists every service the expectation applies to. plaintext is true only for localhost / 127.0.0.1.",
+  "standard_ports": {
+    "BROKER": 8085,
+    "LEDGER": 8082,
+    "VALUATION": 8080,
+    "PRICE": 8083
+  },
+  "cases": [
+    {
+      "name": "BROKER_HOST with a port routes every service to the broker",
+      "step": "a",
+      "env": {"BROKER_HOST": "h:9000"},
+      "services": ["BROKER", "SECURITY", "TRANSACTION", "PORTFOLIO", "VALUATION", "PRICE"],
+      "expected": {"host": "h", "port": 9000, "plaintext": false}
+    },
+    {
+      "name": "BROKER_HOST without a port uses the broker port",
+      "step": "a",
+      "env": {"BROKER_HOST": "h"},
+      "services": ["BROKER", "SECURITY", "VALUATION"],
+      "expected": {"host": "h", "port": 8085, "plaintext": false}
+    },
+    {
+      "name": "BROKER_HOST on loopback is plaintext",
+      "step": "a",
+      "env": {"BROKER_HOST": "127.0.0.1:8085"},
+      "services": ["SECURITY", "TRANSACTION", "PORTFOLIO"],
+      "expected": {"host": "127.0.0.1", "port": 8085, "plaintext": true}
+    },
+    {
+      "name": "BROKER_HOST on a remote host on 443 uses TLS",
+      "step": "a",
+      "env": {"BROKER_HOST": "broker.example:443"},
+      "services": ["SECURITY"],
+      "expected": {"host": "broker.example", "port": 443, "plaintext": false}
+    },
+    {
+      "name": "BROKER_HOST wins over LEDGER_SERVICE_HOST",
+      "step": "a",
+      "env": {"BROKER_HOST": "127.0.0.1:8085", "LEDGER_SERVICE_HOST": "ledger", "LEDGER_SERVICE_PORT": "9082"},
+      "services": ["SECURITY"],
+      "expected": {"host": "127.0.0.1", "port": 8085, "plaintext": true}
+    },
+    {
+      "name": "BROKER_HOST wins over VALUATION_SERVICE_HOST",
+      "step": "a",
+      "env": {"BROKER_HOST": "127.0.0.1:8085", "VALUATION_SERVICE_HOST": "valuation", "VALUATION_SERVICE_PORT": "8090"},
+      "services": ["VALUATION"],
+      "expected": {"host": "127.0.0.1", "port": 8085, "plaintext": true}
+    },
+    {
+      "name": "BROKER_HOST wins over API_URL",
+      "step": "a",
+      "env": {"BROKER_HOST": "127.0.0.1:8085", "API_URL": "other"},
+      "services": ["PORTFOLIO"],
+      "expected": {"host": "127.0.0.1", "port": 8085, "plaintext": true}
+    },
+    {
+      "name": "empty BROKER_HOST falls through to the service host",
+      "step": "b",
+      "env": {"BROKER_HOST": "", "LEDGER_SERVICE_HOST": "ledger"},
+      "services": ["SECURITY"],
+      "expected": {"host": "ledger", "port": 8082, "plaintext": false}
+    },
+    {
+      "name": "LEDGER_SERVICE_HOST and LEDGER_SERVICE_PORT serve security, transaction and portfolio",
+      "step": "b",
+      "env": {"LEDGER_SERVICE_HOST": "127.0.0.1", "LEDGER_SERVICE_PORT": "9082"},
+      "services": ["SECURITY", "TRANSACTION", "PORTFOLIO"],
+      "expected": {"host": "127.0.0.1", "port": 9082, "plaintext": true}
+    },
+    {
+      "name": "LEDGER_SERVICE_HOST alone uses the ledger port",
+      "step": "b",
+      "env": {"LEDGER_SERVICE_HOST": "ledger"},
+      "services": ["SECURITY", "TRANSACTION", "PORTFOLIO"],
+      "expected": {"host": "ledger", "port": 8082, "plaintext": false}
+    },
+    {
+      "name": "LEDGER_SERVICE_PORT alone is ignored",
+      "step": "d",
+      "env": {"LEDGER_SERVICE_PORT": "9082"},
+      "services": ["SECURITY"],
+      "expected": {"host": "localhost", "port": 8082, "plaintext": true}
+    },
+    {
+      "name": "VALUATION_SERVICE_HOST does not affect security",
+      "step": "d",
+      "env": {"VALUATION_SERVICE_HOST": "valuation", "VALUATION_SERVICE_PORT": "8090"},
+      "services": ["SECURITY"],
+      "expected": {"host": "localhost", "port": 8082, "plaintext": true}
+    },
+    {
+      "name": "VALUATION_SERVICE_HOST and VALUATION_SERVICE_PORT serve valuation",
+      "step": "b",
+      "env": {"VALUATION_SERVICE_HOST": "127.0.0.1", "VALUATION_SERVICE_PORT": "8090"},
+      "services": ["VALUATION"],
+      "expected": {"host": "127.0.0.1", "port": 8090, "plaintext": true}
+    },
+    {
+      "name": "PRICE_SERVICE_HOST serves price",
+      "step": "b",
+      "env": {"PRICE_SERVICE_HOST": "price"},
+      "services": ["PRICE"],
+      "expected": {"host": "price", "port": 8083, "plaintext": false}
+    },
+    {
+      "name": "BROKER_SERVICE_HOST serves the broker itself",
+      "step": "b",
+      "env": {"BROKER_SERVICE_HOST": "broker", "BROKER_SERVICE_PORT": "9085"},
+      "services": ["BROKER"],
+      "expected": {"host": "broker", "port": 9085, "plaintext": false}
+    },
+    {
+      "name": "the service host shadows API_URL",
+      "step": "b",
+      "env": {"LEDGER_SERVICE_HOST": "ledger", "API_URL": "other"},
+      "services": ["SECURITY"],
+      "expected": {"host": "ledger", "port": 8082, "plaintext": false}
+    },
+    {
+      "name": "API_URL=localhost gives the broker its standard port",
+      "step": "c",
+      "env": {"API_URL": "localhost"},
+      "services": ["BROKER"],
+      "expected": {"host": "localhost", "port": 8085, "plaintext": true}
+    },
+    {
+      "name": "API_URL=localhost gives ledger services the ledger port",
+      "step": "c",
+      "env": {"API_URL": "localhost"},
+      "services": ["SECURITY", "TRANSACTION", "PORTFOLIO"],
+      "expected": {"host": "localhost", "port": 8082, "plaintext": true}
+    },
+    {
+      "name": "API_URL=localhost gives valuation the valuation port",
+      "step": "c",
+      "env": {"API_URL": "localhost"},
+      "services": ["VALUATION"],
+      "expected": {"host": "localhost", "port": 8080, "plaintext": true}
+    },
+    {
+      "name": "API_URL=localhost gives price the price port",
+      "step": "c",
+      "env": {"API_URL": "localhost"},
+      "services": ["PRICE"],
+      "expected": {"host": "localhost", "port": 8083, "plaintext": true}
+    },
+    {
+      "name": "API_URL with a port keeps it",
+      "step": "c",
+      "env": {"API_URL": "host:9999"},
+      "services": ["SECURITY", "VALUATION"],
+      "expected": {"host": "host", "port": 9999, "plaintext": false}
+    },
+    {
+      "name": "API_URL with a scheme, as Rust users set it today",
+      "step": "c",
+      "env": {"API_URL": "http://localhost:8082"},
+      "services": ["SECURITY", "TRANSACTION", "PORTFOLIO"],
+      "expected": {"host": "localhost", "port": 8082, "plaintext": true}
+    },
+    {
+      "name": "nothing set: broker on localhost",
+      "step": "d",
+      "env": {},
+      "services": ["BROKER"],
+      "expected": {"host": "localhost", "port": 8085, "plaintext": true}
+    },
+    {
+      "name": "nothing set: ledger services on localhost",
+      "step": "d",
+      "env": {},
+      "services": ["SECURITY", "TRANSACTION", "PORTFOLIO"],
+      "expected": {"host": "localhost", "port": 8082, "plaintext": true}
+    },
+    {
+      "name": "nothing set: valuation on localhost",
+      "step": "d",
+      "env": {},
+      "services": ["VALUATION"],
+      "expected": {"host": "localhost", "port": 8080, "plaintext": true}
+    },
+    {
+      "name": "nothing set: price on localhost",
+      "step": "d",
+      "env": {},
+      "services": ["PRICE"],
+      "expected": {"host": "localhost", "port": 8083, "plaintext": true}
+    },
+    {
+      "name": "BROKER_HOST with a bad port is an error naming the variable",
+      "step": "a",
+      "env": {"BROKER_HOST": "h:abc"},
+      "services": ["SECURITY"],
+      "error": "BROKER_HOST"
+    },
+    {
+      "name": "LEDGER_SERVICE_PORT that is not a number is an error naming the variable",
+      "step": "b",
+      "env": {"LEDGER_SERVICE_HOST": "ledger", "LEDGER_SERVICE_PORT": "abc"},
+      "services": ["SECURITY"],
+      "error": "LEDGER_SERVICE_PORT"
+    }
+  ]
+}

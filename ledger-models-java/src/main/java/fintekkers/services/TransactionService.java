@@ -10,22 +10,23 @@ import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * Thin gRPC client wrapper around the TransactionService stub. Mirrors the
  * shape of {@link SecurityService} / {@link PortfolioService}.
  *
- * <p>Default endpoint reads {@code API_URL} (default
- * {@code api.fintekkers.org}) with port {@code 8084}, matching the Python
- * {@code EnvConfig + ServiceType.TRANSACTION_SERVICE} convention.
+ * <p>The default endpoint comes from {@link ServiceAddress}: the broker when
+ * {@code BROKER_HOST} is set, else {@code LEDGER_SERVICE_HOST/_PORT}, else
+ * {@code API_URL}, else {@code localhost}, on the ledger port.
  *
- * <p>Single shared instance behind {@link #getInstance()}; the underlying
- * gRPC channel is expensive to construct and intended to be reused for the
- * process lifetime.
+ * <p>Single shared instance behind {@link #getInstance()}, built on first
+ * use; the underlying gRPC channel is expensive to construct and intended to
+ * be reused for the process lifetime.
  */
 public class TransactionService {
 
-    private static final TransactionService DEFAULT_INSTANCE = buildDefault();
+    private static volatile TransactionService defaultInstance;
     private final Endpoint endpoint;
     private final TransactionGrpc.TransactionBlockingStub stub;
 
@@ -37,15 +38,24 @@ public class TransactionService {
         this.endpoint = new Endpoint(url, port, isHttp);
     }
 
-    private static TransactionService buildDefault() {
-        String url = System.getenv().getOrDefault("API_URL", "api.fintekkers.org");
-        int port = 8084;
-        boolean isHttp = "localhost".equals(url) || "127.0.0.1".equals(url);
-        return new TransactionService(url, port, isHttp);
+    static TransactionService fromEnv(Function<String, String> env) {
+        Endpoint e = ServiceAddress.resolve(ServiceAddress.Service.TRANSACTION, env);
+        return new TransactionService(e.url(), e.port(), e.isHttp());
     }
 
+    /** Built on first call; see {@link SecurityService#getInstance()}. */
     public static TransactionService getInstance() {
-        return DEFAULT_INSTANCE;
+        TransactionService instance = defaultInstance;
+        if (instance == null) {
+            synchronized (TransactionService.class) {
+                instance = defaultInstance;
+                if (instance == null) {
+                    instance = fromEnv(System::getenv);
+                    defaultInstance = instance;
+                }
+            }
+        }
+        return instance;
     }
 
     public Endpoint getEndpoint() {

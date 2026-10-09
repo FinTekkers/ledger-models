@@ -20,9 +20,10 @@ import protos.serializers.util.proto.ProtoSerializationUtil;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.function.Function;
 
 public class ValuationService {
-    private static ValuationService DEFAULT_VALUATION_SERVICE_INSTANCE = new ValuationService("api.fintekkers.org", 8080, false);
+    private static volatile ValuationService defaultInstance;
     private final Endpoint endpoint;
 
     public ValuationService(String url, int port, boolean isHttp) {
@@ -39,8 +40,24 @@ public class ValuationService {
         return endpoint;
     }
 
+    static ValuationService fromEnv(Function<String, String> env) {
+        Endpoint e = ServiceAddress.resolve(ServiceAddress.Service.VALUATION, env);
+        return new ValuationService(e.url(), e.port(), e.isHttp());
+    }
+
+    /** Built on first call from {@link ServiceAddress}; see {@link SecurityService#getInstance()}. */
     public static ValuationService getInstance() {
-        return DEFAULT_VALUATION_SERVICE_INSTANCE;
+        ValuationService instance = defaultInstance;
+        if (instance == null) {
+            synchronized (ValuationService.class) {
+                instance = defaultInstance;
+                if (instance == null) {
+                    instance = fromEnv(System::getenv);
+                    defaultInstance = instance;
+                }
+            }
+        }
+        return instance;
     }
 
     private ValuationGrpc.ValuationBlockingStub valuationGrpc;

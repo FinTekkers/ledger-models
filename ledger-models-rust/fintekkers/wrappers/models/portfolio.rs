@@ -5,6 +5,9 @@ use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 use crate::fintekkers::wrappers::util::link_cache;
 use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
+use crate::fintekkers::wrappers::util::service_address::{
+    self, Service, ServiceAddress, ServiceAddressError,
+};
 use std::sync::{Arc, OnceLock, RwLock};
 use uuid::Uuid;
 
@@ -137,16 +140,22 @@ fn spawn_portfolio_worker() -> mpsc::Sender<PortfolioFetchRequest> {
     tx
 }
 
+/// Where the default portfolio client connects: the broker when `BROKER_HOST`
+/// is set, else `LEDGER_SERVICE_HOST/_PORT`, else `API_URL`, else
+/// `localhost`, on the ledger port. `env` is a variable lookup, so tests
+/// can check this without touching the process environment.
+pub(crate) fn default_portfolio_endpoint_with(
+    env: impl Fn(&str) -> Option<String>,
+) -> Result<ServiceAddress, ServiceAddressError> {
+    service_address::resolve_with(Service::Portfolio, env)
+}
+
 async fn connect_default_portfolio_client(
 ) -> Result<PortfolioClient<tonic::transport::Channel>, LinkResolverError> {
-    let url = std::env::var("API_URL").unwrap_or_else(|_| "http://api.fintekkers.org".to_string());
-    let endpoint = if url.contains(':') {
-        url
-    } else {
-        // PortfolioService default port matches Python ServiceType convention.
-        format!("{}:8081", url)
-    };
-    let channel = tonic::transport::Channel::from_shared(endpoint)
+    let address = default_portfolio_endpoint_with(|name| std::env::var(name).ok())
+        .map_err(|e| LinkResolverError::Malformed(e.to_string()))?;
+    let channel = address
+        .endpoint()
         .map_err(|e| LinkResolverError::Malformed(e.to_string()))?
         .connect()
         .await

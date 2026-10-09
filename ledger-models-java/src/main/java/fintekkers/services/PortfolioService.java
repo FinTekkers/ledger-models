@@ -14,9 +14,10 @@ import protos.serializers.util.proto.ProtoSerializationUtil;
 import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class PortfolioService {
-    private static PortfolioService DEFAULT_VALUATION_SERVICE_INSTANCE = new PortfolioService("api.fintekkers.org", 8080, false);
+    private static volatile PortfolioService defaultInstance;
     private final Endpoint endpoint;
 
     public PortfolioService(String url, int port, boolean isHttp) {
@@ -33,8 +34,24 @@ public class PortfolioService {
         return endpoint;
     }
 
+    static PortfolioService fromEnv(Function<String, String> env) {
+        Endpoint e = ServiceAddress.resolve(ServiceAddress.Service.PORTFOLIO, env);
+        return new PortfolioService(e.url(), e.port(), e.isHttp());
+    }
+
+    /** Built on first call from {@link ServiceAddress}; see {@link SecurityService#getInstance()}. */
     public static PortfolioService getInstance() {
-        return DEFAULT_VALUATION_SERVICE_INSTANCE;
+        PortfolioService instance = defaultInstance;
+        if (instance == null) {
+            synchronized (PortfolioService.class) {
+                instance = defaultInstance;
+                if (instance == null) {
+                    instance = fromEnv(System::getenv);
+                    defaultInstance = instance;
+                }
+            }
+        }
+        return instance;
     }
 
     private PortfolioGrpc.PortfolioBlockingStub portfolioGrpc;
