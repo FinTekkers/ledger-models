@@ -263,26 +263,7 @@ public class TaxLotDelta extends RawDataModelObject implements IFinancialModelOb
             Field field = entry.getKey();
             PositionFilter.PositionComparator comparator = entry.getValue();
 
-            Object comparatorValue = comparator.getValue();
-            PositionFilter.Operator operator = comparator.getOperator();
-
-            int compareResult = ((Comparable)getField(field)).compareTo(comparatorValue);
-
-            if(operator.equals(PositionFilter.Operator.EQUALS))
-                isMatch = isMatch && compareResult == 0;
-            else if(operator.equals(PositionFilter.Operator.LESS_THAN_OR_EQUALS))
-                isMatch = isMatch && compareResult <= 0;
-            else if(operator.equals(PositionFilter.Operator.LESS_THAN))
-                isMatch = isMatch && compareResult < 0;
-            else if(operator.equals(PositionFilter.Operator.MORE_THAN_OR_EQUALS))
-                isMatch = isMatch && compareResult >= 0;
-            else if(operator.equals(PositionFilter.Operator.MORE_THAN))
-                isMatch = isMatch && compareResult > 0;
-            else if(operator.equals(PositionFilter.Operator.NOT_EQUALS))
-                isMatch = isMatch && compareResult != 0;
-            else {
-                throw new RuntimeException(String.format("Operator not supported in filters: %s", operator.name()));
-            }
+            isMatch = isMatch && PositionFilter.matches(field, comparator, getField(field));
         }
 
         return isMatch;

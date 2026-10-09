@@ -9,7 +9,9 @@ import testutil.DummyBondObjects;
 import testutil.DummyEquityObjects;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,5 +83,135 @@ class PositionFilterTest {
                 null);
         securities = PositionFilter.filter(securities, filter);
         assertEquals(1, securities.size());
+    }
+
+    private static Position positionWith(Field field, Object value, ZonedDateTime asOf) {
+        Position position = new Position(Position.PositionType.TRANSACTION);
+        position.setAsOfDate(asOf);
+        position.setFieldValue(field, value);
+        return position;
+    }
+
+    private static PositionFilter assetClassFilter(PositionFilter.Operator operator, ZonedDateTime asOf) {
+        PositionFilter filter = new PositionFilter(asOf);
+        filter.addFilter(Field.ASSET_CLASS, operator, "FIXED_INCOME");
+        return filter;
+    }
+
+    @Test
+    public void testAssetClassEqualsMatchesGroupMembers() {
+        ZonedDateTime filterAsOf = ZonedDateTime.now();
+        ZonedDateTime rowAsOf = filterAsOf.minusDays(1);
+        Position rates = positionWith(Field.ASSET_CLASS, "RATES", rowAsOf);
+        Position credit = positionWith(Field.ASSET_CLASS, "CREDIT", rowAsOf);
+        Position fixedIncome = positionWith(Field.ASSET_CLASS, "Fixed Income", rowAsOf);
+        Position equity = positionWith(Field.ASSET_CLASS, "EQUITY", rowAsOf);
+        List<Position> rows = new ArrayList<>(Arrays.asList(rates, credit, fixedIncome, equity));
+
+        List<Position> result = PositionFilter.filter(rows, assetClassFilter(PositionFilter.Operator.EQUALS, filterAsOf));
+
+        assertEquals(Arrays.asList(rates, credit, fixedIncome), result);
+    }
+
+    @Test
+    public void testAssetClassNotEqualsKeepsOnlyNonMembers() {
+        ZonedDateTime filterAsOf = ZonedDateTime.now();
+        ZonedDateTime rowAsOf = filterAsOf.minusDays(1);
+        Position rates = positionWith(Field.ASSET_CLASS, "RATES", rowAsOf);
+        Position credit = positionWith(Field.ASSET_CLASS, "CREDIT", rowAsOf);
+        Position fixedIncome = positionWith(Field.ASSET_CLASS, "Fixed Income", rowAsOf);
+        Position equity = positionWith(Field.ASSET_CLASS, "EQUITY", rowAsOf);
+        List<Position> rows = new ArrayList<>(Arrays.asList(rates, credit, fixedIncome, equity));
+
+        List<Position> result = PositionFilter.filter(rows, assetClassFilter(PositionFilter.Operator.NOT_EQUALS, filterAsOf));
+
+        assertEquals(Arrays.asList(equity), result);
+    }
+
+    @Test
+    public void testAssetClassNullEmptyUnknownNeverThrow() {
+        ZonedDateTime filterAsOf = ZonedDateTime.now();
+        ZonedDateTime rowAsOf = filterAsOf.minusDays(1);
+        Position nullRow = positionWith(Field.ASSET_CLASS, null, rowAsOf);
+        Position emptyRow = positionWith(Field.ASSET_CLASS, "", rowAsOf);
+        Position unknownRow = positionWith(Field.ASSET_CLASS, "NOT_A_CLASS", rowAsOf);
+        List<Position> rows = new ArrayList<>(Arrays.asList(nullRow, emptyRow, unknownRow));
+
+        List<Position> equalsResult = assertDoesNotThrow(
+                () -> PositionFilter.filter(rows, assetClassFilter(PositionFilter.Operator.EQUALS, filterAsOf)));
+        assertTrue(equalsResult.isEmpty());
+
+        List<Position> notEqualsResult = assertDoesNotThrow(
+                () -> PositionFilter.filter(rows, assetClassFilter(PositionFilter.Operator.NOT_EQUALS, filterAsOf)));
+        assertEquals(Arrays.asList(nullRow, emptyRow, unknownRow), notEqualsResult);
+    }
+
+    @Test
+    public void testNonAssetClassEqualsAndNotEquals() {
+        ZonedDateTime filterAsOf = ZonedDateTime.now();
+        ZonedDateTime rowAsOf = filterAsOf.minusDays(1);
+        LocalDate d1 = LocalDate.of(2030, 1, 1);
+        LocalDate d2 = LocalDate.of(2032, 5, 16);
+        Position a = positionWith(Field.MATURITY_DATE, d1, rowAsOf);
+        Position b = positionWith(Field.MATURITY_DATE, d2, rowAsOf);
+        Position c = positionWith(Field.MATURITY_DATE, d2, rowAsOf);
+        List<Position> rows = new ArrayList<>(Arrays.asList(a, b, c));
+
+        PositionFilter equals = new PositionFilter(filterAsOf);
+        equals.addFilter(Field.MATURITY_DATE, PositionFilter.Operator.EQUALS, d2);
+        assertEquals(Arrays.asList(b, c), PositionFilter.filter(rows, equals));
+
+        PositionFilter notEquals = new PositionFilter(filterAsOf);
+        notEquals.addFilter(Field.MATURITY_DATE, PositionFilter.Operator.NOT_EQUALS, d2);
+        assertEquals(Arrays.asList(a), PositionFilter.filter(rows, notEquals));
+    }
+
+    @Test
+    public void testOrderingOperators() {
+        ZonedDateTime filterAsOf = ZonedDateTime.now();
+        ZonedDateTime rowAsOf = filterAsOf.minusDays(1);
+        LocalDate d1 = LocalDate.of(2030, 1, 1);
+        LocalDate d2 = LocalDate.of(2031, 6, 15);
+        LocalDate d3 = LocalDate.of(2032, 12, 31);
+        Position below = positionWith(Field.MATURITY_DATE, d1, rowAsOf);
+        Position equal = positionWith(Field.MATURITY_DATE, d2, rowAsOf);
+        Position above = positionWith(Field.MATURITY_DATE, d3, rowAsOf);
+        List<Position> rows = new ArrayList<>(Arrays.asList(below, equal, above));
+
+        PositionFilter moreThan = new PositionFilter(filterAsOf);
+        moreThan.addFilter(Field.MATURITY_DATE, PositionFilter.Operator.MORE_THAN, d2);
+        assertEquals(Arrays.asList(above), PositionFilter.filter(rows, moreThan));
+
+        PositionFilter moreThanOrEquals = new PositionFilter(filterAsOf);
+        moreThanOrEquals.addFilter(Field.MATURITY_DATE, PositionFilter.Operator.MORE_THAN_OR_EQUALS, d2);
+        assertEquals(Arrays.asList(equal, above), PositionFilter.filter(rows, moreThanOrEquals));
+
+        PositionFilter lessThan = new PositionFilter(filterAsOf);
+        lessThan.addFilter(Field.MATURITY_DATE, PositionFilter.Operator.LESS_THAN, d2);
+        assertEquals(Arrays.asList(below), PositionFilter.filter(rows, lessThan));
+
+        PositionFilter lessThanOrEquals = new PositionFilter(filterAsOf);
+        lessThanOrEquals.addFilter(Field.MATURITY_DATE, PositionFilter.Operator.LESS_THAN_OR_EQUALS, d2);
+        assertEquals(Arrays.asList(below, equal), PositionFilter.filter(rows, lessThanOrEquals));
+    }
+
+    @Test
+    public void testNotEqualsKeepsNullOnOtherFields() {
+        // LM-281 ruling on the previously undecided case: null stored values
+        // never throw, and NOT_EQUALS keeps the row on every field (the same
+        // rule the ASSET_CLASS guardrail requires), instead of dropping it.
+        ZonedDateTime filterAsOf = ZonedDateTime.now();
+        ZonedDateTime rowAsOf = filterAsOf.minusDays(1);
+        LocalDate d1 = LocalDate.of(2030, 1, 1);
+        Position row = positionWith(Field.MATURITY_DATE, null, rowAsOf);
+        List<Position> rows = new ArrayList<>(Arrays.asList(row));
+
+        PositionFilter notEquals = new PositionFilter(filterAsOf);
+        notEquals.addFilter(Field.MATURITY_DATE, PositionFilter.Operator.NOT_EQUALS, d1);
+        assertEquals(Arrays.asList(row), PositionFilter.filter(rows, notEquals));
+
+        PositionFilter equals = new PositionFilter(filterAsOf);
+        equals.addFilter(Field.MATURITY_DATE, PositionFilter.Operator.EQUALS, d1);
+        assertTrue(PositionFilter.filter(rows, equals).isEmpty());
     }
 }

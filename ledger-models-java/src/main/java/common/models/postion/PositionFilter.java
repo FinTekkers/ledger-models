@@ -2,6 +2,7 @@ package common.models.postion;
 
 import common.models.IFinancialModelObject;
 import common.models.portfolio.Portfolio;
+import common.models.security.ProductHierarchy;
 import common.models.security.Security;
 
 import java.time.LocalDate;
@@ -58,6 +59,64 @@ public class PositionFilter {
         return this.filters;
     }
 
+    /**
+     * Single-field evaluator shared by {@link #filter} and the {@code isMatch}
+     * methods on Transaction and TaxLotDelta (LM-281).
+     *
+     * <p>{@code ASSET_CLASS} with {@code EQUALS} / {@code NOT_EQUALS} uses the
+     * shared rule {@link ProductHierarchy#assetClassMatches}, so a group code
+     * such as {@code FIXED_INCOME} matches its members and labels. All other
+     * fields and operators compare with {@code compareTo} exactly as before,
+     * plus the previously missing {@code NOT_EQUALS} branch.
+     *
+     * <p>A null stored value never throws: {@code EQUALS} and the ordering
+     * operators drop the row, {@code NOT_EQUALS} keeps it. For {@link #filter}
+     * this narrows the old early return (which dropped nulls for every
+     * operator); for {@code isMatch} this replaces the old
+     * {@code NullPointerException} on null fields.
+     *
+     * @param field the filtered field
+     * @param comparator the operator and filter value
+     * @param storedValue the row's value for the field, may be null
+     * @return true iff the row's value satisfies the comparator
+     */
+    public static boolean matches(Field field, PositionComparator comparator, Object storedValue) {
+        Operator operator = comparator.getOperator();
+        Object filterValue = comparator.getValue();
+
+        if(storedValue == null) {
+            return Operator.NOT_EQUALS.equals(operator);
+        }
+
+        if(Field.ASSET_CLASS.equals(field) &&
+                (Operator.EQUALS.equals(operator) || Operator.NOT_EQUALS.equals(operator))) {
+            boolean equals = ProductHierarchy.assetClassMatches((String) filterValue, (String) storedValue);
+            return Operator.EQUALS.equals(operator) ? equals : !equals;
+        }
+
+        int compareResult = ((Comparable) storedValue).compareTo(filterValue);
+
+        if((Operator.EQUALS.equals(operator) ||
+                Operator.MORE_THAN_OR_EQUALS.equals(operator) ||
+                Operator.LESS_THAN_OR_EQUALS.equals(operator)) &&
+            compareResult == 0) {
+            return true;
+        } else if((Operator.MORE_THAN.equals(operator) ||
+                Operator.MORE_THAN_OR_EQUALS.equals(operator)) &&
+                compareResult > 0) {
+            return true;
+        } else if((Operator.LESS_THAN.equals(operator) ||
+                Operator.LESS_THAN_OR_EQUALS.equals(operator)) &&
+                compareResult < 0) {
+            return true;
+        } else if(Operator.NOT_EQUALS.equals(operator) &&
+                compareResult != 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static <Type extends IFinancialModelObject> List<Type> filter(List<Type> dataObjects, PositionFilter filter) {
         final HashMap<Field, PositionComparator> filters = filter.getFilters();
         final List<Type> output = new ArrayList<>();
@@ -65,33 +124,14 @@ public class PositionFilter {
         for(Type dataObject : dataObjects) {
             boolean include = true;
             for(Field field : filters.keySet()) {
-                Comparable value = (Comparable) dataObject.getField(field);
+                Object value = dataObject.getField(field);
 
                 PositionComparator comparator = filters.get(field);
 
-                if(value == null && comparator.value != null) {
+                if(!matches(field, comparator, value)) {
                     include = false;
                     break;
                 }
-
-                int compareResult = value.compareTo(comparator.value);
-
-                if((Operator.EQUALS.equals(comparator.operator) ||
-                        Operator.MORE_THAN_OR_EQUALS.equals(comparator.operator) ||
-                        Operator.LESS_THAN_OR_EQUALS.equals(comparator.operator)) &&
-                    compareResult == 0) {
-                    continue;
-                } else if((Operator.MORE_THAN.equals(comparator.operator) ||
-                        Operator.MORE_THAN_OR_EQUALS.equals(comparator.operator)) &&
-                        compareResult > 0) {
-                    continue;
-                } else if((Operator.LESS_THAN.equals(comparator.operator) ||
-                        Operator.LESS_THAN_OR_EQUALS.equals(comparator.operator)) &&
-                        compareResult < 0) {
-                    continue;
-                }
-
-                include = false;
             }
 
             //Check the asOf
