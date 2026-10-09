@@ -157,9 +157,9 @@ class PriceService:
                     yield Price(price_proto)
         except RpcError as e:
             if e.code() == grpc.StatusCode.CANCELLED:
-                print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url()} ({e.details()})")
+                print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url(ServiceType.PRICE_SERVICE)} ({e.details()})")
             else:
-                print(f"Service unavailable trying to contact {EnvConfig.api_url()} ({e.details()})")
+                print(f"Service unavailable trying to contact {EnvConfig.api_url(ServiceType.PRICE_SERVICE)} ({e.details()})")
             raise e
 
         # This will send the cancel message to the server to kill the connection
@@ -173,9 +173,9 @@ class PriceService:
             response = self.stub.CreateOrUpdate(request.proto)
         except RpcError as e:
             if e.code() == grpc.StatusCode.CANCELLED:
-                print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url()} ({e.details()})")
+                print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url(ServiceType.PRICE_SERVICE)} ({e.details()})")
             else:
-                print(f"Service unavailable trying to contact {EnvConfig.api_url()} ({e.details()})")
+                print(f"Service unavailable trying to contact {EnvConfig.api_url(ServiceType.PRICE_SERVICE)} ({e.details()})")
             raise e
         # Write-through to LinkCache. price_response is a repeated field on
         # CreatePriceResponseProto.
@@ -217,9 +217,9 @@ class PriceService:
                 return Price(price)
         except RpcError as e:
             if e.code() == grpc.StatusCode.CANCELLED:
-                print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url()} ({e.details()})")
+                print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url(ServiceType.PRICE_SERVICE)} ({e.details()})")
             else:
-                print(f"Service unavailable trying to contact {EnvConfig.api_url()} ({e.details()})")
+                print(f"Service unavailable trying to contact {EnvConfig.api_url(ServiceType.PRICE_SERVICE)} ({e.details()})")
             raise e
         
     def list_ids(self) -> list[UUID]:
@@ -244,7 +244,7 @@ class PriceService:
             return ids
         except RpcError as e:
             if e.code() == grpc.StatusCode.CANCELLED:
-                print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url()} ({e.details()})")
+                print(f"Network call cancelled, likely due to a service error trying to contact {EnvConfig.api_url(ServiceType.PRICE_SERVICE)} ({e.details()})")
             else:
                 print(f"Service unavailable trying to contact {EnvConfig.api_url(ServiceType.PRICE_SERVICE)} ({e.details()})")
             raise e

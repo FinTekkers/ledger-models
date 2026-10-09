@@ -10,6 +10,7 @@ import { PositionClient } from '../../../fintekkers/services/position-service/po
 
 //Utils
 import EnvConfig from '../../models/utils/requestcontext';
+import { Service } from '../../util/serviceaddress';
 import { QueryPositionRequest } from '../../requests/position/QueryPositionRequest';
 import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
@@ -18,10 +19,10 @@ class PositionService {
 
   constructor(apiKey?: string) {
     if (apiKey) {
-      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey);
-      this.client = new PositionClient(EnvConfig.apiURL, credentials, { interceptors });
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey, Service.POSITION);
+      this.client = new PositionClient(EnvConfig.urlFor(Service.POSITION), credentials, { interceptors });
     } else {
-      this.client = new PositionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+      this.client = new PositionClient(EnvConfig.urlFor(Service.POSITION), EnvConfig.credentialsFor(Service.POSITION));
     }
   }
 

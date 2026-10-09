@@ -14,6 +14,7 @@ import { QueryPortfolioResponseProto } from '../../../fintekkers/requests/portfo
 import { CreatePortfolioRequestProto } from '../../../fintekkers/requests/portfolio/create_portfolio_request_pb';
 import { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portfolio/create_portfolio_response_pb';
 import EnvConfig from '../../models/utils/requestcontext';
+import { Service } from '../../util/serviceaddress';
 import { PositionFilter } from '../../models/position/positionfilter';
 import Portfolio from '../../models/portfolio/portfolio';
 import { UUID } from '../../models/utils/uuid';
@@ -23,14 +24,17 @@ import * as LinkCacheModule from '../../util/link-cache';
 class PortfolioService {
   private client: PortfolioClient;
 
-  static url: string = EnvConfig.apiURL;
+  /** Read on every access, so a changed environment is picked up. */
+  static get url(): string {
+    return EnvConfig.urlFor(Service.PORTFOLIO);
+  }
 
   constructor(apiKey?: string) {
     if (apiKey) {
-      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey);
-      this.client = new PortfolioClient(EnvConfig.apiURL, credentials, { interceptors });
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey, Service.PORTFOLIO);
+      this.client = new PortfolioClient(EnvConfig.urlFor(Service.PORTFOLIO), credentials, { interceptors });
     } else {
-      this.client = new PortfolioClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+      this.client = new PortfolioClient(EnvConfig.urlFor(Service.PORTFOLIO), EnvConfig.credentialsFor(Service.PORTFOLIO));
     }
   }
 

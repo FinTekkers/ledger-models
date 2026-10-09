@@ -47,6 +47,7 @@ const portfolio_1 = __importDefault(require("../models/portfolio/portfolio"));
 const transaction_1 = __importDefault(require("../models/transaction/transaction"));
 const uuid_1 = require("../models/utils/uuid");
 const requestcontext_1 = __importDefault(require("../models/utils/requestcontext"));
+const serviceaddress_1 = require("./serviceaddress");
 const datetime_1 = require("../models/utils/datetime");
 const LinkCacheModule = __importStar(require("./link-cache"));
 /**
@@ -103,31 +104,31 @@ class LinkResolver {
             this.securityClient = opts.securityClient;
         }
         else if (opts.apiKey) {
-            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(opts.apiKey);
-            this.securityClient = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(opts.apiKey, serviceaddress_1.Service.SECURITY);
+            this.securityClient = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.SECURITY), credentials, { interceptors });
         }
         else {
-            this.securityClient = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+            this.securityClient = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.SECURITY), requestcontext_1.default.credentialsFor(serviceaddress_1.Service.SECURITY));
         }
         if (opts.portfolioClient) {
             this.portfolioClient = opts.portfolioClient;
         }
         else if (opts.apiKey) {
-            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(opts.apiKey);
-            this.portfolioClient = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(opts.apiKey, serviceaddress_1.Service.PORTFOLIO);
+            this.portfolioClient = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.PORTFOLIO), credentials, { interceptors });
         }
         else {
-            this.portfolioClient = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+            this.portfolioClient = new portfolio_service_grpc_pb_1.PortfolioClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.PORTFOLIO), requestcontext_1.default.credentialsFor(serviceaddress_1.Service.PORTFOLIO));
         }
         if (opts.transactionClient) {
             this.transactionClient = opts.transactionClient;
         }
         else if (opts.apiKey) {
-            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(opts.apiKey);
-            this.transactionClient = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(opts.apiKey, serviceaddress_1.Service.TRANSACTION);
+            this.transactionClient = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.TRANSACTION), credentials, { interceptors });
         }
         else {
-            this.transactionClient = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+            this.transactionClient = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.TRANSACTION), requestcontext_1.default.credentialsFor(serviceaddress_1.Service.TRANSACTION));
         }
     }
     /**

@@ -20,6 +20,7 @@ import { CreateSecurityRequestProto } from '../../../fintekkers/requests/securit
 import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
 
 import EnvConfig from '../../models/utils/requestcontext';
+import { Service } from '../../util/serviceaddress';
 import { UUID } from '../../models/utils/uuid';
 import { ZonedDateTime } from '../../models/utils/datetime';
 import * as LinkCacheModule from '../../util/link-cache';
@@ -29,10 +30,10 @@ class SecurityService {
 
   constructor(apiKey?: string) {
     if (apiKey) {
-      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey);
-      this.client = new SecurityClient(EnvConfig.apiURL, credentials, { interceptors });
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(apiKey, Service.SECURITY);
+      this.client = new SecurityClient(EnvConfig.urlFor(Service.SECURITY), credentials, { interceptors });
     } else {
-      this.client = new SecurityClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+      this.client = new SecurityClient(EnvConfig.urlFor(Service.SECURITY), EnvConfig.credentialsFor(Service.SECURITY));
     }
   }
 

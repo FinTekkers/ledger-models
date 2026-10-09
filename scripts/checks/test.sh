@@ -23,9 +23,15 @@ echo "== hierarchy mirrors"
 
 echo "== no api.fintekkers.org default"
 # The host is switched off; clients find services via BROKER_HOST and
-# friends (LM-278). Python and JS paths join this list in LM-278b.
-# `set -e` ignores a `!` command, hence the explicit exit.
-! git grep -n 'api\.fintekkers\.org' -- ledger-models-java/src/main ledger-models-rust/fintekkers || exit 1
+# friends (LM-278, LM-287). Docs, JS test files, source maps and lines that
+# are only a comment don't count.
+if git grep -n 'api\.fintekkers\.org' -- \
+    ledger-models-java/src/main ledger-models-rust/fintekkers \
+    ledger-models-javascript ledger-models-python \
+    ':(exclude)*.md' ':(exclude)*.test.*' ':(exclude)*.map' ':(exclude)**/node_modules/**' \
+  | grep -vE '^[^:]+:[0-9]+:[[:space:]]*(//|/?\*|#)'; then
+  exit 1
+fi
 
 echo "== python"
 (

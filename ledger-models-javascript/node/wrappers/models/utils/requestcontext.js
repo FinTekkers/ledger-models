@@ -27,35 +27,34 @@ exports.InsecureChannelAuthError = void 0;
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const grpc = __importStar(require("@grpc/grpc-js"));
+const serviceaddress_1 = require("../../util/serviceaddress");
 class EnvConfig {
-    static getEnvVar(key, defaultValue) {
-        const value = process.env[key];
-        if (value === undefined) {
-            if (defaultValue === undefined) {
-                throw new Error(`Environment variable ${key} is not set.`);
-            }
-            return defaultValue;
-        }
-        return value;
-    }
     static get apiKey() {
         return process.env['API_KEY'];
     }
     /**
-     * Returns the URL for the backend GRPC service. It will default to
-     * api.fintekkers.org:8082 if the environment variable is not set. If
-     * API_URL already includes a port (e.g. localhost:8083), it is used as-is;
-     * otherwise :8082 is appended for backward compatibility.
+     * Returns the `host:port` of the ledger service, found the same way as
+     * every other service: `BROKER_HOST`, then `LEDGER_SERVICE_HOST`/`_PORT`,
+     * then `API_URL` (with :8082 unless it carries a port), then
+     * localhost:8082. Clients should prefer {@link EnvConfig.urlFor}.
      */
     static get apiURL() {
-        const base = EnvConfig.getEnvVar('API_URL', 'api.fintekkers.org');
-        return /:\d+$/.test(base) ? base : base + ':8082';
+        return EnvConfig.urlFor(serviceaddress_1.Service.SECURITY);
     }
-    static get isLocalURL() {
-        return /^localhost|^127\.0\.0\.1/.test(this.apiURL);
+    /** Returns the `host:port` a client for `service` connects to. */
+    static urlFor(service) {
+        return (0, serviceaddress_1.target)((0, serviceaddress_1.resolve)(service));
     }
+    static isPlaintext(service) {
+        return (0, serviceaddress_1.resolve)(service).plaintext;
+    }
+    /** Channel credentials for {@link EnvConfig.apiURL}. */
     static get apiCredentials() {
-        if (this.isLocalURL) {
+        return EnvConfig.credentialsFor(serviceaddress_1.Service.SECURITY);
+    }
+    /** Insecure credentials for a loopback address, SSL otherwise. */
+    static credentialsFor(service) {
+        if (EnvConfig.isPlaintext(service)) {
             return grpc.credentials.createInsecure();
         }
         else {
@@ -74,10 +73,11 @@ class EnvConfig {
      * {@link EnvConfig.getAuthenticatedClientOptions}, which sends the key via
      * an interceptor instead.
      *
-     * @throws {InsecureChannelAuthError} when apiURL is localhost / 127.0.0.1.
+     * @throws {InsecureChannelAuthError} when the address of `service` is
+     * localhost / 127.0.0.1.
      */
-    static getAuthenticatedCredentials(apiKey) {
-        if (this.isLocalURL) {
+    static getAuthenticatedCredentials(apiKey, service = serviceaddress_1.Service.SECURITY) {
+        if (EnvConfig.isPlaintext(service)) {
             throw new InsecureChannelAuthError();
         }
         const callCreds = grpc.credentials.createFromMetadataGenerator((_params, callback) => {
@@ -88,12 +88,12 @@ class EnvConfig {
         return grpc.credentials.combineChannelCredentials(grpc.credentials.createSsl(), callCreds);
     }
     /**
-     * Returns credentials and interceptors for authenticated calls.
+     * Returns credentials and interceptors for authenticated calls to `service`.
      * For local (insecure) channels, injects the API key via an interceptor.
      * For remote (SSL) channels, uses {@link EnvConfig.getAuthenticatedCredentials}.
      */
-    static getAuthenticatedClientOptions(apiKey) {
-        if (this.isLocalURL) {
+    static getAuthenticatedClientOptions(apiKey, service = serviceaddress_1.Service.SECURITY) {
+        if (EnvConfig.isPlaintext(service)) {
             const interceptor = (_options, nextCall) => {
                 return new grpc.InterceptingCall(nextCall(_options), {
                     start(metadata, listener, next) {
@@ -105,14 +105,14 @@ class EnvConfig {
             return { credentials: grpc.credentials.createInsecure(), interceptors: [interceptor] };
         }
         return {
-            credentials: EnvConfig.getAuthenticatedCredentials(apiKey),
+            credentials: EnvConfig.getAuthenticatedCredentials(apiKey, service),
             interceptors: []
         };
     }
 }
 /**
- * Thrown by EnvConfig.getAuthenticatedCredentials when API_URL points at an
- * insecure (local) channel. The message never includes the API key.
+ * Thrown by EnvConfig.getAuthenticatedCredentials when the service address is
+ * an insecure (local) channel. The message never includes the API key.
  */
 class InsecureChannelAuthError extends Error {
     constructor() {

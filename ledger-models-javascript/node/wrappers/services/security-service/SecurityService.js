@@ -46,17 +46,18 @@ const security_service_grpc_pb_1 = require("../../../fintekkers/services/securit
 const query_security_request_pb_1 = require("../../../fintekkers/requests/security/query_security_request_pb");
 const create_security_request_pb_1 = require("../../../fintekkers/requests/security/create_security_request_pb");
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
+const serviceaddress_1 = require("../../util/serviceaddress");
 const uuid_1 = require("../../models/utils/uuid");
 const datetime_1 = require("../../models/utils/datetime");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
 class SecurityService {
     constructor(apiKey) {
         if (apiKey) {
-            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey);
-            this.client = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey, serviceaddress_1.Service.SECURITY);
+            this.client = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.SECURITY), credentials, { interceptors });
         }
         else {
-            this.client = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+            this.client = new security_service_grpc_pb_1.SecurityClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.SECURITY), requestcontext_1.default.credentialsFor(serviceaddress_1.Service.SECURITY));
         }
     }
     validateCreateSecurity(security) {

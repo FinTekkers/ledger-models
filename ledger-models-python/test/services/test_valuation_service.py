@@ -25,7 +25,6 @@ from fintekkers.wrappers.services.valuation import ValuationService
 from fintekkers.wrappers.services.security import SecurityService
 from fintekkers.wrappers.services.price import PriceService
 from fintekkers.wrappers.requests.security import QuerySecurityRequest
-from fintekkers.wrappers.services.util.Environment import EnvConfig
 
 from fintekkers.models.price.price_pb2 import PriceProto
 
@@ -174,8 +173,6 @@ def get_position():
     return position
 
 def get_security_for_valuation_test():
-    EnvConfig.default_api_url = "localhost"
-    
     # Get a test security (USD cash)
     security_service = SecurityService()
 
@@ -194,8 +191,6 @@ def get_security_for_valuation_test():
 @pytest.mark.integration
 def test_valuation_error_handling():
     """Test error handling in valuation service"""
-    EnvConfig.default_api_url = "localhost"
-    
     valuation_service = ValuationService()
     security:Security = get_security_for_valuation_test()
 

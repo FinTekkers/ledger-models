@@ -2,7 +2,7 @@
 /**
  * Unit tests for Issue #114: each wrapper service hands the generated gRPC
  * client the authenticated credentials when given an apiKey, and
- * EnvConfig.apiCredentials otherwise.
+ * EnvConfig.credentialsFor(service) otherwise, for its own service (LM-287).
  *
  * The generated *_grpc_pb clients are mocked, so no channel is opened.
  */
@@ -50,6 +50,7 @@ jest.mock('../../fintekkers/services/transaction-service/transaction_service_grp
 }));
 const grpc = __importStar(require("@grpc/grpc-js"));
 const requestcontext_1 = __importDefault(require("../models/utils/requestcontext"));
+const serviceaddress_1 = require("../util/serviceaddress");
 const portfolio_service_grpc_pb_1 = require("../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb");
 const position_service_grpc_pb_1 = require("../../fintekkers/services/position-service/position_service_grpc_pb");
 const price_service_grpc_pb_1 = require("../../fintekkers/services/price-service/price_service_grpc_pb");
@@ -61,11 +62,11 @@ const PriceService_1 = require("./price-service/PriceService");
 const SecurityService_1 = require("./security-service/SecurityService");
 const TransactionService_1 = require("./transaction-service/TransactionService");
 const cases = [
-    ['PortfolioService', PortfolioService_1.PortfolioService, portfolio_service_grpc_pb_1.PortfolioClient],
-    ['PositionService', PositionService_1.PositionService, position_service_grpc_pb_1.PositionClient],
-    ['PriceService', PriceService_1.PriceService, price_service_grpc_pb_1.PriceClient],
-    ['SecurityService', SecurityService_1.SecurityService, security_service_grpc_pb_1.SecurityClient],
-    ['TransactionService', TransactionService_1.TransactionService, transaction_service_grpc_pb_1.TransactionClient],
+    ['PortfolioService', PortfolioService_1.PortfolioService, portfolio_service_grpc_pb_1.PortfolioClient, serviceaddress_1.Service.PORTFOLIO],
+    ['PositionService', PositionService_1.PositionService, position_service_grpc_pb_1.PositionClient, serviceaddress_1.Service.POSITION],
+    ['PriceService', PriceService_1.PriceService, price_service_grpc_pb_1.PriceClient, serviceaddress_1.Service.PRICE],
+    ['SecurityService', SecurityService_1.SecurityService, security_service_grpc_pb_1.SecurityClient, serviceaddress_1.Service.SECURITY],
+    ['TransactionService', TransactionService_1.TransactionService, transaction_service_grpc_pb_1.TransactionClient, serviceaddress_1.Service.TRANSACTION],
 ];
 beforeEach(() => {
     jest.clearAllMocks();
@@ -73,7 +74,7 @@ beforeEach(() => {
 afterEach(() => {
     jest.restoreAllMocks();
 });
-describe.each(cases)('%s', (_name, Service, Client) => {
+describe.each(cases)('%s', (_name, Service, Client, service) => {
     const ClientMock = Client;
     test('with apiKey, client gets the authenticated credentials', () => {
         const sentinel = {
@@ -84,18 +85,19 @@ describe.each(cases)('%s', (_name, Service, Client) => {
             .spyOn(requestcontext_1.default, 'getAuthenticatedClientOptions')
             .mockReturnValue(sentinel);
         new Service('k');
-        expect(authSpy).toHaveBeenCalledWith('k');
+        expect(authSpy).toHaveBeenCalledWith('k', service);
         expect(ClientMock).toHaveBeenCalledTimes(1);
-        expect(ClientMock).toHaveBeenCalledWith(requestcontext_1.default.apiURL, sentinel.credentials, { interceptors: sentinel.interceptors });
+        expect(ClientMock).toHaveBeenCalledWith(requestcontext_1.default.urlFor(service), sentinel.credentials, { interceptors: sentinel.interceptors });
     });
-    test('zero-arg constructor constructs with EnvConfig.apiCredentials', () => {
+    test('zero-arg constructor constructs with EnvConfig.credentialsFor(service)', () => {
         const plain = grpc.credentials.createInsecure();
-        jest.spyOn(requestcontext_1.default, 'apiCredentials', 'get').mockReturnValue(plain);
+        const credsSpy = jest.spyOn(requestcontext_1.default, 'credentialsFor').mockReturnValue(plain);
         const authSpy = jest.spyOn(requestcontext_1.default, 'getAuthenticatedClientOptions');
         expect(new Service()).toBeDefined();
         expect(authSpy).not.toHaveBeenCalled();
+        expect(credsSpy).toHaveBeenCalledWith(service);
         expect(ClientMock).toHaveBeenCalledTimes(1);
-        expect(ClientMock).toHaveBeenCalledWith(requestcontext_1.default.apiURL, plain);
+        expect(ClientMock).toHaveBeenCalledWith(requestcontext_1.default.urlFor(service), plain);
     });
 });
 //# sourceMappingURL=apikey.credentials.test.js.map

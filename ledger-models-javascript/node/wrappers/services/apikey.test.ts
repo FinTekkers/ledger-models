@@ -12,7 +12,7 @@ import { SecurityService } from './security-service/SecurityService';
 import { TransactionService } from './transaction-service/TransactionService';
 
 // No server connection is made in constructors — gRPC connects lazily.
-// API_URL is not set so it defaults to api.fintekkers.org:8082.
+// Addresses come from the environment (BROKER_HOST, API_URL, else localhost).
 
 describe('PortfolioService', () => {
   test('zero-arg constructor succeeds', () => {

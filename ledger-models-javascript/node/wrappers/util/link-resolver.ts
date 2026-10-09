@@ -21,6 +21,7 @@ import Portfolio from '../models/portfolio/portfolio';
 import Transaction from '../models/transaction/transaction';
 import { UUID } from '../models/utils/uuid';
 import EnvConfig from '../models/utils/requestcontext';
+import { Service } from './serviceaddress';
 import { ZonedDateTime } from '../models/utils/datetime';
 import * as LinkCacheModule from './link-cache';
 
@@ -56,7 +57,7 @@ import * as LinkCacheModule from './link-cache';
  * timestamp bucket, since the request proto carries a single as_of).
  */
 export interface LinkResolverOptions {
-  /** Optional API key. If omitted, EnvConfig.apiCredentials is used. */
+  /** Optional API key. If omitted, EnvConfig.credentialsFor(service) is used. */
   apiKey?: string;
   /**
    * Test injection: clients to use instead of constructing real ones.
@@ -129,28 +130,28 @@ class LinkResolver {
     if (opts.securityClient) {
       this.securityClient = opts.securityClient;
     } else if (opts.apiKey) {
-      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(opts.apiKey);
-      this.securityClient = new SecurityClient(EnvConfig.apiURL, credentials, { interceptors });
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(opts.apiKey, Service.SECURITY);
+      this.securityClient = new SecurityClient(EnvConfig.urlFor(Service.SECURITY), credentials, { interceptors });
     } else {
-      this.securityClient = new SecurityClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+      this.securityClient = new SecurityClient(EnvConfig.urlFor(Service.SECURITY), EnvConfig.credentialsFor(Service.SECURITY));
     }
 
     if (opts.portfolioClient) {
       this.portfolioClient = opts.portfolioClient;
     } else if (opts.apiKey) {
-      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(opts.apiKey);
-      this.portfolioClient = new PortfolioClient(EnvConfig.apiURL, credentials, { interceptors });
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(opts.apiKey, Service.PORTFOLIO);
+      this.portfolioClient = new PortfolioClient(EnvConfig.urlFor(Service.PORTFOLIO), credentials, { interceptors });
     } else {
-      this.portfolioClient = new PortfolioClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+      this.portfolioClient = new PortfolioClient(EnvConfig.urlFor(Service.PORTFOLIO), EnvConfig.credentialsFor(Service.PORTFOLIO));
     }
 
     if (opts.transactionClient) {
       this.transactionClient = opts.transactionClient;
     } else if (opts.apiKey) {
-      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(opts.apiKey);
-      this.transactionClient = new TransactionClient(EnvConfig.apiURL, credentials, { interceptors });
+      const { credentials, interceptors } = EnvConfig.getAuthenticatedClientOptions(opts.apiKey, Service.TRANSACTION);
+      this.transactionClient = new TransactionClient(EnvConfig.urlFor(Service.TRANSACTION), credentials, { interceptors });
     } else {
-      this.transactionClient = new TransactionClient(EnvConfig.apiURL, EnvConfig.apiCredentials);
+      this.transactionClient = new TransactionClient(EnvConfig.urlFor(Service.TRANSACTION), EnvConfig.credentialsFor(Service.TRANSACTION));
     }
   }
 

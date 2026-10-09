@@ -46,16 +46,17 @@ const create_price_request_pb_1 = require("../../../fintekkers/requests/price/cr
 const uuid_1 = require("../../models/utils/uuid");
 const dt = __importStar(require("../../models/utils/datetime"));
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
+const serviceaddress_1 = require("../../util/serviceaddress");
 const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
 class PriceService {
     constructor(apiKey) {
         if (apiKey) {
-            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey);
-            this.client = new price_service_grpc_pb_1.PriceClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey, serviceaddress_1.Service.PRICE);
+            this.client = new price_service_grpc_pb_1.PriceClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.PRICE), credentials, { interceptors });
         }
         else {
-            this.client = new price_service_grpc_pb_1.PriceClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+            this.client = new price_service_grpc_pb_1.PriceClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.PRICE), requestcontext_1.default.credentialsFor(serviceaddress_1.Service.PRICE));
         }
     }
     close() {

@@ -45,6 +45,7 @@ const transaction_service_grpc_pb_1 = require("../../../fintekkers/services/tran
 const create_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/create_transaction_request_pb");
 const query_transaction_request_pb_1 = require("../../../fintekkers/requests/transaction/query_transaction_request_pb");
 const requestcontext_1 = __importDefault(require("../../models/utils/requestcontext"));
+const serviceaddress_1 = require("../../util/serviceaddress");
 const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
 const uuid_1 = require("../../models/utils/uuid");
@@ -52,11 +53,11 @@ const datetime_1 = require("../../models/utils/datetime");
 class TransactionService {
     constructor(apiKey) {
         if (apiKey) {
-            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey);
-            this.client = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.apiURL, credentials, { interceptors });
+            const { credentials, interceptors } = requestcontext_1.default.getAuthenticatedClientOptions(apiKey, serviceaddress_1.Service.TRANSACTION);
+            this.client = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.TRANSACTION), credentials, { interceptors });
         }
         else {
-            this.client = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.apiURL, requestcontext_1.default.apiCredentials);
+            this.client = new transaction_service_grpc_pb_1.TransactionClient(requestcontext_1.default.urlFor(serviceaddress_1.Service.TRANSACTION), requestcontext_1.default.credentialsFor(serviceaddress_1.Service.TRANSACTION));
         }
     }
     validateCreateTransaction(transaction) {

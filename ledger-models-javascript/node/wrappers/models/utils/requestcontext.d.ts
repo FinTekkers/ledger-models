@@ -1,16 +1,21 @@
 import * as grpc from '@grpc/grpc-js';
+import { Service } from '../../util/serviceaddress';
 declare class EnvConfig {
-    private static getEnvVar;
     static get apiKey(): string | undefined;
     /**
-     * Returns the URL for the backend GRPC service. It will default to
-     * api.fintekkers.org:8082 if the environment variable is not set. If
-     * API_URL already includes a port (e.g. localhost:8083), it is used as-is;
-     * otherwise :8082 is appended for backward compatibility.
+     * Returns the `host:port` of the ledger service, found the same way as
+     * every other service: `BROKER_HOST`, then `LEDGER_SERVICE_HOST`/`_PORT`,
+     * then `API_URL` (with :8082 unless it carries a port), then
+     * localhost:8082. Clients should prefer {@link EnvConfig.urlFor}.
      */
     static get apiURL(): string;
-    private static get isLocalURL();
+    /** Returns the `host:port` a client for `service` connects to. */
+    static urlFor(service: Service): string;
+    private static isPlaintext;
+    /** Channel credentials for {@link EnvConfig.apiURL}. */
     static get apiCredentials(): grpc.ChannelCredentials;
+    /** Insecure credentials for a loopback address, SSL otherwise. */
+    static credentialsFor(service: Service): grpc.ChannelCredentials;
     private static addApiKey;
     /**
      * Returns SSL channel credentials combined with per-call credentials that
@@ -21,22 +26,23 @@ declare class EnvConfig {
      * {@link EnvConfig.getAuthenticatedClientOptions}, which sends the key via
      * an interceptor instead.
      *
-     * @throws {InsecureChannelAuthError} when apiURL is localhost / 127.0.0.1.
+     * @throws {InsecureChannelAuthError} when the address of `service` is
+     * localhost / 127.0.0.1.
      */
-    static getAuthenticatedCredentials(apiKey: string): grpc.ChannelCredentials;
+    static getAuthenticatedCredentials(apiKey: string, service?: Service): grpc.ChannelCredentials;
     /**
-     * Returns credentials and interceptors for authenticated calls.
+     * Returns credentials and interceptors for authenticated calls to `service`.
      * For local (insecure) channels, injects the API key via an interceptor.
      * For remote (SSL) channels, uses {@link EnvConfig.getAuthenticatedCredentials}.
      */
-    static getAuthenticatedClientOptions(apiKey: string): {
+    static getAuthenticatedClientOptions(apiKey: string, service?: Service): {
         credentials: grpc.ChannelCredentials;
         interceptors: grpc.Interceptor[];
     };
 }
 /**
- * Thrown by EnvConfig.getAuthenticatedCredentials when API_URL points at an
- * insecure (local) channel. The message never includes the API key.
+ * Thrown by EnvConfig.getAuthenticatedCredentials when the service address is
+ * an insecure (local) channel. The message never includes the API key.
  */
 export declare class InsecureChannelAuthError extends Error {
     constructor();

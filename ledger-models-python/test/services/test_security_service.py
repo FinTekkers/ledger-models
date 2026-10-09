@@ -26,11 +26,9 @@ def test_get_usd_cash_security():
     assert "USD" == security.get_description()
     assert IdentifierTypeProto.CASH == security.get_identifiers()[0].get_identifier_type()
 
-from fintekkers.wrappers.services.util.Environment import EnvConfig
 
 @pytest.mark.integration
 def test_get_fields():
-    EnvConfig.default_api_url = "localhost"
     svc = SecurityService()
     fields = svc.get_fields()
     assert len(fields) > 5
@@ -40,7 +38,6 @@ from fintekkers.models.position.field_pb2 import FieldProto
 
 @pytest.mark.integration
 def test_get_field_values():
-    EnvConfig.default_api_url = "localhost"
     svc = SecurityService()
     values:list[object] = svc.get_field_values(FieldProto.ASSET_CLASS)
 
@@ -50,7 +47,6 @@ def test_get_field_values():
 
 @pytest.mark.integration
 def test_get_field_values_adjusted_tenor():
-    EnvConfig.default_api_url = "localhost"
     svc = SecurityService()
     values:list[Tenor] = svc.get_field_values(FieldProto.ADJUSTED_TENOR)
 
