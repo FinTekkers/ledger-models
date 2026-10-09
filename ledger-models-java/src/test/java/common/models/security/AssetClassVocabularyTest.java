@@ -257,4 +257,70 @@ class AssetClassVocabularyTest {
         Descriptors.FieldDescriptor assetClass = SecurityProto.getDescriptor().findFieldByName("asset_class");
         assertEquals(Descriptors.FieldDescriptor.Type.STRING, assetClass.getType());
     }
+
+    // ---------- LM-282: instrument-type code labels ----------
+    // Cases come from ledger-models-protos/fixtures/instrument_type_labels.json,
+    // shared with the JS, Python and Rust tests.
+
+    private static List<String> fixtureList(String key) throws IOException {
+        JsonObject root = readJson(PROTOS.resolve("fixtures/instrument_type_labels.json"));
+        List<String> out = new ArrayList<>();
+        for (JsonElement e : root.getAsJsonArray(key)) out.add(e.getAsString());
+        return out;
+    }
+
+    @Test
+    void allInstrumentTypesAreTheFixtureCodesInOrder() throws IOException {
+        assertEquals(Arrays.asList("CASH", "DERIVATIVE", "REFERENCE_INDEX"), fixtureList("codes"));
+        assertEquals(fixtureList("codes"), ProductHierarchy.allInstrumentTypes());
+    }
+
+    @Test
+    void hierarchyInstrumentTypesIsAMapOfLabelsInFixtureOrder() throws IOException {
+        JsonElement it = readJson(PROTOS.resolve("hierarchy.json")).get("instrument_types");
+        assertTrue(it.isJsonObject(), "instrument_types should be an object, was " + it);
+        List<String> keys = new ArrayList<>();
+        for (Map.Entry<String, JsonElement> e : it.getAsJsonObject().entrySet()) {
+            keys.add(e.getKey());
+            assertTrue(e.getValue().isJsonObject(), e.getKey() + " should map to an object");
+            JsonObject body = e.getValue().getAsJsonObject();
+            assertEquals(Collections.singleton("label"), body.keySet(), e.getKey() + " keys");
+            assertNonEmpty(stringOrNull(body, "label"), "instrument_types." + e.getKey() + ".label");
+        }
+        assertEquals(fixtureList("codes"), keys);
+    }
+
+    @Test
+    void instrumentTypeCodeLabelOfKnownAndUnknownCodes() throws IOException {
+        for (String code : fixtureList("codes")) {
+            assertNonEmpty(ProductHierarchy.instrumentTypeCodeLabelOf(code), "label of code " + code);
+        }
+        for (String code : fixtureList("unknown")) {
+            assertNull(ProductHierarchy.instrumentTypeCodeLabelOf(code), "label of unknown '" + code + "'");
+        }
+        assertNull(ProductHierarchy.instrumentTypeCodeLabelOf(null));
+    }
+
+    @Test
+    void codeLabelEqualsEnumLabel() throws IOException {
+        for (String code : fixtureList("codes")) {
+            InstrumentTypeProto v = InstrumentTypeProto.valueOf("INSTRUMENT_TYPE_" + code);
+            assertEquals(ProductHierarchy.labelOf(v), ProductHierarchy.instrumentTypeCodeLabelOf(code), code);
+        }
+    }
+
+    @Test
+    void instrumentTypeLabelsAreWrittenOnlyInInstrumentTypes() throws IOException {
+        JsonObject enumLabels = readJson(PROTOS.resolve("hierarchy.json"))
+                .getAsJsonObject("enum_labels").getAsJsonObject("InstrumentTypeProto");
+        assertEquals(Collections.singleton("INSTRUMENT_TYPE_UNKNOWN"), enumLabels.keySet());
+        JsonObject fixture = readJson(PROTOS.resolve("fixtures/instrument_type_labels.json"));
+        assertFalse(fixture.has("label") || fixture.has("labels"), "fixture must not copy labels");
+    }
+
+    @Test
+    void unknownInstrumentTypeKeepsItsLabel() {
+        assertEquals("Unknown", ProductHierarchy.labelOf(InstrumentTypeProto.INSTRUMENT_TYPE_UNKNOWN));
+        assertNull(ProductHierarchy.labelOf((InstrumentTypeProto) null));
+    }
 }

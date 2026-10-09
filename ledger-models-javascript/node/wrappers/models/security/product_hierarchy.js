@@ -28,7 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.allInstrumentTypes = exports.allAssetClasses = exports.activeProductTypes = exports.allProductTypes = exports.assetClassProtoLabelOf = exports.productTypeLabelOf = exports.instrumentTypeLabelOf = exports.identifierTypePlaceholderOf = exports.identifierTypeLabelOf = exports.assetClassMatches = exports.resolveAssetClass = exports.buildAssetClassLookup = exports.assetClassLabelOf = exports.isAssetClassDescendantOf = exports.assetClassDescendantsOf = exports.assetClassParentOf = exports.instrumentTypeOf = exports.assetClassOf = exports.labelOf = exports.isDescendantOf = exports.descendantsOf = exports.parentOf = void 0;
+exports.allInstrumentTypes = exports.allAssetClasses = exports.activeProductTypes = exports.allProductTypes = exports.assetClassProtoLabelOf = exports.productTypeLabelOf = exports.instrumentTypeLabelOf = exports.instrumentTypeCodeLabelOf = exports.identifierTypePlaceholderOf = exports.identifierTypeLabelOf = exports.assetClassMatches = exports.resolveAssetClass = exports.buildAssetClassLookup = exports.assetClassLabelOf = exports.isAssetClassDescendantOf = exports.assetClassDescendantsOf = exports.assetClassParentOf = exports.instrumentTypeOf = exports.assetClassOf = exports.labelOf = exports.isDescendantOf = exports.descendantsOf = exports.parentOf = void 0;
 // hierarchy.json is bundled into the npm package via the package's `files`
 // list (see package.json). Bundlers handle this `import` at build time
 // (TypeScript's resolveJsonModule is enabled).
@@ -40,6 +40,14 @@ const product_type_pb_1 = require("../../../fintekkers/models/security/product_t
 const registry = hierarchy_json_1.default;
 function hasOwn(o, key) {
     return o !== undefined && Object.prototype.hasOwnProperty.call(o, key);
+}
+/** Prefix that turns an instrument-type code into its InstrumentTypeProto value name. */
+const INSTRUMENT_TYPE_PREFIX = 'INSTRUMENT_TYPE_';
+// Every instrument_types code needs an INSTRUMENT_TYPE_<CODE> enum value.
+for (const code of Object.keys(registry.instrument_types)) {
+    if (!hasOwn(instrument_type_pb_1.InstrumentTypeProto, INSTRUMENT_TYPE_PREFIX + code)) {
+        throw new Error(`hierarchy.json instrument_types: no InstrumentTypeProto value for '${code}'`);
+    }
 }
 // ---------- product_type tree ----------
 /** Parent product_type node (abstract or leaf). null for top-level nodes;
@@ -228,10 +236,31 @@ function identifierTypePlaceholderOf(v) {
     return (_b = (_a = enumEntry('IdentifierTypeProto', enumValueName(identifier_type_pb_1.IdentifierTypeProto, v))) === null || _a === void 0 ? void 0 : _a.placeholder) !== null && _b !== void 0 ? _b : null;
 }
 exports.identifierTypePlaceholderOf = identifierTypePlaceholderOf;
-/** Display label for an InstrumentTypeProto value, or null if unknown. */
+/** Instrument-type code for an enum value name (INSTRUMENT_TYPE_CASH -> CASH), or null. */
+function instrumentTypeCode(valueName) {
+    return valueName.startsWith(INSTRUMENT_TYPE_PREFIX)
+        ? valueName.slice(INSTRUMENT_TYPE_PREFIX.length)
+        : null;
+}
+/** Display label for an instrument-type code from allInstrumentTypes()
+ * (e.g. CASH -> "Cash"). null for null/undefined or an unknown code; the match
+ * is exact. */
+function instrumentTypeCodeLabelOf(code) {
+    var _a;
+    if (typeof code !== 'string' || !hasOwn(registry.instrument_types, code))
+        return null;
+    return (_a = registry.instrument_types[code].label) !== null && _a !== void 0 ? _a : null;
+}
+exports.instrumentTypeCodeLabelOf = instrumentTypeCodeLabelOf;
+/** Display label for an InstrumentTypeProto value: the instrument_types label
+ * of its code (INSTRUMENT_TYPE_CASH -> CASH -> "Cash"), else enum_labels
+ * (e.g. INSTRUMENT_TYPE_UNKNOWN). null if unknown. */
 function instrumentTypeLabelOf(v) {
-    var _a, _b;
-    return (_b = (_a = enumEntry('InstrumentTypeProto', enumValueName(instrument_type_pb_1.InstrumentTypeProto, v))) === null || _a === void 0 ? void 0 : _a.label) !== null && _b !== void 0 ? _b : null;
+    var _a, _b, _c;
+    const name = enumValueName(instrument_type_pb_1.InstrumentTypeProto, v);
+    if (name === null)
+        return null;
+    return (_c = (_a = instrumentTypeCodeLabelOf(instrumentTypeCode(name))) !== null && _a !== void 0 ? _a : (_b = enumEntry('InstrumentTypeProto', name)) === null || _b === void 0 ? void 0 : _b.label) !== null && _c !== void 0 ? _c : null;
 }
 exports.instrumentTypeLabelOf = instrumentTypeLabelOf;
 /** Display label for a ProductTypeProto value: the product_types label, else
@@ -276,7 +305,7 @@ function allAssetClasses() {
 }
 exports.allAssetClasses = allAssetClasses;
 function allInstrumentTypes() {
-    return [...registry.instrument_types];
+    return Object.keys(registry.instrument_types);
 }
 exports.allInstrumentTypes = allInstrumentTypes;
 //# sourceMappingURL=product_hierarchy.js.map

@@ -71,7 +71,13 @@ export declare function identifierTypeLabelOf(v: IdentifierTypeProto): string | 
 /** Input placeholder (e.g. "e.g. US0378331005") for an IdentifierTypeProto
  * value, or null if unknown. */
 export declare function identifierTypePlaceholderOf(v: IdentifierTypeProto): string | null;
-/** Display label for an InstrumentTypeProto value, or null if unknown. */
+/** Display label for an instrument-type code from allInstrumentTypes()
+ * (e.g. CASH -> "Cash"). null for null/undefined or an unknown code; the match
+ * is exact. */
+export declare function instrumentTypeCodeLabelOf(code: string | null | undefined): string | null;
+/** Display label for an InstrumentTypeProto value: the instrument_types label
+ * of its code (INSTRUMENT_TYPE_CASH -> CASH -> "Cash"), else enum_labels
+ * (e.g. INSTRUMENT_TYPE_UNKNOWN). null if unknown. */
 export declare function instrumentTypeLabelOf(v: InstrumentTypeProto): string | null;
 /** Display label for a ProductTypeProto value: the product_types label, else
  * enum_labels (e.g. PRODUCT_TYPE_UNKNOWN). null if unknown. */

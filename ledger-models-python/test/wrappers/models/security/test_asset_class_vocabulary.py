@@ -192,3 +192,60 @@ def test_unknown_enum_numbers_return_none():
     assert PH.instrument_type_label_of(9999) is None
     assert PH.product_type_label_of(9999) is None
     assert PH.asset_class_proto_label_of(9999) is None
+
+
+# ---------- LM-282: instrument-type code labels ----------
+# Cases come from ledger-models-protos/fixtures/instrument_type_labels.json,
+# shared with the Java, JS and Rust tests.
+
+
+def _instrument_type_fixture():
+    with (PROTOS / "fixtures" / "instrument_type_labels.json").open(encoding="utf-8") as f:
+        return json.load(f)
+
+
+def test_all_instrument_types_are_the_fixture_codes_in_order():
+    codes = _instrument_type_fixture()["codes"]
+    assert codes == ["CASH", "DERIVATIVE", "REFERENCE_INDEX"]
+    assert PH.all_instrument_types() == codes
+
+
+def test_hierarchy_instrument_types_is_a_map_of_labels_in_fixture_order():
+    its = _hierarchy()["instrument_types"]
+    assert isinstance(its, dict)
+    for code, body in its.items():
+        assert isinstance(body, dict) and set(body) == {"label"}, code
+        assert isinstance(body["label"], str) and body["label"].strip(), code
+    assert list(its) == _instrument_type_fixture()["codes"]
+
+
+def test_instrument_type_code_label_of_known_and_unknown_codes():
+    fixture = _instrument_type_fixture()
+    for code in fixture["codes"]:
+        label = PH.instrument_type_code_label_of(code)
+        assert label and label.strip(), code
+    for code in fixture["unknown"]:
+        assert PH.instrument_type_code_label_of(code) is None, repr(code)
+    assert PH.instrument_type_code_label_of(None) is None
+
+
+def test_code_label_equals_enum_label():
+    for code in _instrument_type_fixture()["codes"]:
+        v = InstrumentTypeProto.Value("INSTRUMENT_TYPE_" + code)
+        assert PH.instrument_type_code_label_of(code) == PH.instrument_type_label_of(v), code
+
+
+def test_instrument_type_labels_are_written_only_in_instrument_types():
+    enum_labels = _hierarchy()["enum_labels"]["InstrumentTypeProto"]
+    assert set(enum_labels) == {"INSTRUMENT_TYPE_UNKNOWN"}
+    fixture = _instrument_type_fixture()
+    assert "label" not in fixture and "labels" not in fixture
+
+
+def test_unknown_instrument_type_keeps_its_label():
+    assert PH.instrument_type_label_of(InstrumentTypeProto.INSTRUMENT_TYPE_UNKNOWN) == "Unknown"
+
+
+def test_instrument_type_code_without_enum_value_fails_at_load():
+    with pytest.raises(ValueError, match="BOGUS"):
+        PH._check_instrument_types({"instrument_types": {"CASH": {"label": "Cash"}, "BOGUS": {"label": "x"}}})

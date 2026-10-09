@@ -1,0 +1,5 @@
+{
+  "_doc": "Shared fixture for allInstrumentTypes() / instrumentTypeCodeLabelOf(code). Read by the Java, JS, Python and Rust tests. codes: the instrument-type codes in hierarchy.json order. unknown: inputs that are not codes and must get no label. Labels are deliberately absent: hierarchy.json is the only place they are written.",
+  "codes": ["CASH", "DERIVATIVE", "REFERENCE_INDEX"],
+  "unknown": ["FOO", "", "cash", " CASH", "Cash", "INSTRUMENT_TYPE_CASH", "UNKNOWN", "__proto__", "toString", "constructor"]
+}

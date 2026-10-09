@@ -24,11 +24,18 @@
 //! Plus per-leaf classification lookups: [`asset_class_of`],
 //! [`instrument_type_of`], [`label_of`].
 //!
+//! Instrument types: [`all_instrument_types`] lists the codes in file order;
+//! [`instrument_type_code_label_of`] and [`instrument_type_label_of`] give
+//! their display labels, read from `instrument_types` (LM-282).
+//!
 //! `index_type_of` is intentionally absent — that dimension is deferred per
 //! the M1 descope.
 
+use crate::fintekkers::models::security::InstrumentTypeProto;
+use serde::de::{Deserializer, MapAccess, Visitor};
 use serde::Deserialize;
 use std::collections::HashMap;
+use std::fmt;
 use std::sync::OnceLock;
 
 const HIERARCHY_JSON: &str = include_str!("../../../hierarchy.json");
@@ -60,16 +67,80 @@ pub struct AssetClassEntry {
 }
 
 #[derive(Debug, Deserialize)]
+struct InstrumentTypeEntry {
+    #[serde(default)]
+    label: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct EnumLabelEntry {
+    #[serde(default)]
+    label: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
 struct Registry {
     product_types: HashMap<String, ProductTypeEntry>,
     asset_classes: HashMap<String, AssetClassEntry>,
-    instrument_types: Vec<String>,
+    /// Code -> entry, in file order (a HashMap would lose it).
+    #[serde(deserialize_with = "ordered_map")]
+    instrument_types: Vec<(String, InstrumentTypeEntry)>,
+    /// Codes of `instrument_types`, in file order; filled after parsing.
+    #[serde(skip)]
+    instrument_type_codes: Vec<String>,
+    #[serde(default)]
+    enum_labels: HashMap<String, HashMap<String, EnumLabelEntry>>,
+}
+
+/// Deserializes a JSON object into its entries in file order, without
+/// serde_json's `preserve_order` feature (which would change map order for
+/// every crate that depends on serde_json).
+fn ordered_map<'de, D, V>(deserializer: D) -> Result<Vec<(String, V)>, D::Error>
+where
+    D: Deserializer<'de>,
+    V: Deserialize<'de>,
+{
+    struct OrderedMap<V>(std::marker::PhantomData<V>);
+
+    impl<'de, V: Deserialize<'de>> Visitor<'de> for OrderedMap<V> {
+        type Value = Vec<(String, V)>;
+
+        fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            f.write_str("a map")
+        }
+
+        fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<Self::Value, A::Error> {
+            let mut out = Vec::new();
+            while let Some(entry) = map.next_entry()? {
+                out.push(entry);
+            }
+            Ok(out)
+        }
+    }
+
+    deserializer.deserialize_map(OrderedMap(std::marker::PhantomData))
+}
+
+/// Prefix that turns an instrument-type code into its InstrumentTypeProto value name.
+const INSTRUMENT_TYPE_PREFIX: &str = "INSTRUMENT_TYPE_";
+
+/// Every instrument_types code needs an INSTRUMENT_TYPE_<CODE> enum value.
+fn check_instrument_types(codes: &[String]) {
+    for code in codes {
+        if InstrumentTypeProto::from_str_name(&format!("{INSTRUMENT_TYPE_PREFIX}{code}")).is_none() {
+            panic!("hierarchy.json instrument_types: no InstrumentTypeProto value for '{code}'");
+        }
+    }
 }
 
 fn registry() -> &'static Registry {
     static REGISTRY: OnceLock<Registry> = OnceLock::new();
     REGISTRY.get_or_init(|| {
-        serde_json::from_str(HIERARCHY_JSON).expect("hierarchy.json failed to parse")
+        let mut r: Registry =
+            serde_json::from_str(HIERARCHY_JSON).expect("hierarchy.json failed to parse");
+        r.instrument_type_codes = r.instrument_types.iter().map(|(code, _)| code.clone()).collect();
+        check_instrument_types(&r.instrument_type_codes);
+        r
     })
 }
 
@@ -281,6 +352,39 @@ pub fn asset_class_matches(filter_code: Option<&str>, stored_value: Option<&str>
     }
 }
 
+// ---------- instrument-type labels ----------
+
+/// Instrument-type code for an enum value name (INSTRUMENT_TYPE_CASH -> CASH).
+fn instrument_type_code(value_name: &str) -> Option<&str> {
+    value_name.strip_prefix(INSTRUMENT_TYPE_PREFIX)
+}
+
+/// Display label for an instrument-type code from [`all_instrument_types`]
+/// (e.g. CASH -> "Cash"). `None` for an unknown code; the match is exact.
+pub fn instrument_type_code_label_of(code: &str) -> Option<String> {
+    registry()
+        .instrument_types
+        .iter()
+        .find(|(c, _)| c == code)
+        .and_then(|(_, e)| e.label.clone())
+}
+
+/// Display label for an InstrumentTypeProto value: the instrument_types label
+/// of its code (INSTRUMENT_TYPE_CASH -> CASH -> "Cash"), else enum_labels
+/// (e.g. INSTRUMENT_TYPE_UNKNOWN).
+pub fn instrument_type_label_of(v: InstrumentTypeProto) -> Option<String> {
+    let name = v.as_str_name();
+    instrument_type_code(name)
+        .and_then(instrument_type_code_label_of)
+        .or_else(|| {
+            registry()
+                .enum_labels
+                .get("InstrumentTypeProto")
+                .and_then(|values| values.get(name))
+                .and_then(|e| e.label.clone())
+        })
+}
+
 // ---------- introspection ----------
 
 pub fn all_product_types() -> Vec<String> {
@@ -307,7 +411,7 @@ pub fn all_asset_classes() -> Vec<String> {
 }
 
 pub fn all_instrument_types() -> &'static [String] {
-    &registry().instrument_types
+    &registry().instrument_type_codes
 }
 
 #[cfg(test)]
@@ -375,11 +479,80 @@ mod test {
 
     #[test]
     fn instrument_types_are_three() {
-        let its = all_instrument_types();
-        assert_eq!(its.len(), 3);
-        assert!(its.iter().any(|s| s == "CASH"));
-        assert!(its.iter().any(|s| s == "DERIVATIVE"));
-        assert!(its.iter().any(|s| s == "REFERENCE_INDEX"));
+        assert_eq!(all_instrument_types(), ["CASH", "DERIVATIVE", "REFERENCE_INDEX"]);
+    }
+
+    // LM-282: cases come from ledger-models-protos/fixtures/instrument_type_labels.json,
+    // shared with the Java, JS and Python tests.
+    fn instrument_type_fixture(key: &str) -> Vec<String> {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../ledger-models-protos/fixtures/instrument_type_labels.json"
+        );
+        let text =
+            std::fs::read_to_string(path).expect("read shared instrument_type_labels.json fixture");
+        let root: serde_json::Value = serde_json::from_str(&text).expect("parse fixture");
+        root.get(key)
+            .and_then(|v| v.as_array())
+            .unwrap_or_else(|| panic!("fixture has {key}"))
+            .iter()
+            .map(|v| v.as_str().expect("fixture entries are strings").to_string())
+            .collect()
+    }
+
+    #[test]
+    fn all_instrument_types_are_the_fixture_codes_in_order() {
+        let codes = instrument_type_fixture("codes");
+        assert_eq!(codes, ["CASH", "DERIVATIVE", "REFERENCE_INDEX"]);
+        assert_eq!(all_instrument_types(), codes.as_slice());
+    }
+
+    #[test]
+    fn instrument_type_code_label_of_known_and_unknown_codes() {
+        for code in instrument_type_fixture("codes") {
+            let label = instrument_type_code_label_of(&code);
+            assert!(
+                label.as_deref().is_some_and(|l| !l.trim().is_empty()),
+                "{code} has no label"
+            );
+        }
+        for code in instrument_type_fixture("unknown") {
+            assert_eq!(instrument_type_code_label_of(&code), None, "{code:?}");
+        }
+    }
+
+    #[test]
+    fn code_label_equals_enum_label() {
+        for code in instrument_type_fixture("codes") {
+            let v = InstrumentTypeProto::from_str_name(&format!("INSTRUMENT_TYPE_{code}"))
+                .unwrap_or_else(|| panic!("no enum value for {code}"));
+            assert_eq!(instrument_type_code_label_of(&code), instrument_type_label_of(v), "{code}");
+        }
+    }
+
+    #[test]
+    fn every_instrument_type_enum_value_has_a_label() {
+        for n in 0.. {
+            let Some(v) = InstrumentTypeProto::from_i32(n) else { break };
+            let label = instrument_type_label_of(v);
+            assert!(
+                label.as_deref().is_some_and(|l| !l.trim().is_empty()),
+                "{} has no label",
+                v.as_str_name()
+            );
+        }
+        assert_eq!(
+            instrument_type_label_of(InstrumentTypeProto::InstrumentTypeUnknown).as_deref(),
+            Some("Unknown")
+        );
+        // Rust has no UNRECOGNIZED variant: an out-of-range number has no enum value at all.
+        assert!(InstrumentTypeProto::from_i32(9999).is_none());
+    }
+
+    #[test]
+    #[should_panic(expected = "BOGUS")]
+    fn instrument_type_code_without_enum_value_fails_at_load() {
+        check_instrument_types(&["CASH".to_string(), "BOGUS".to_string()]);
     }
 
     #[test]

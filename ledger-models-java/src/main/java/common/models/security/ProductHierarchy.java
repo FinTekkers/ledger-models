@@ -3,7 +3,6 @@ package common.models.security;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonArray;
 import fintekkers.models.security.AssetClassProto;
 import fintekkers.models.security.IdentifierTypeProto;
 import fintekkers.models.security.InstrumentTypeProto;
@@ -111,6 +110,10 @@ public final class ProductHierarchy {
     private static final Map<String, ProductTypeEntry> PRODUCT_TYPES;
     private static final Map<String, AssetClassEntry> ASSET_CLASSES;
     private static final List<String> INSTRUMENT_TYPES;
+    /** Instrument-type code → label, from instrument_types. */
+    private static final Map<String, String> INSTRUMENT_TYPE_LABELS;
+    /** Prefix that turns an instrument-type code into its InstrumentTypeProto value name. */
+    private static final String INSTRUMENT_TYPE_PREFIX = "INSTRUMENT_TYPE_";
     /** Normalised asset-class code, label or alias → code. Built from asset_classes only. */
     private static final Map<String, String> ASSET_CLASS_LOOKUP;
     /** Runs of whitespace or hyphens; declared before the static block that uses it. */
@@ -176,10 +179,22 @@ public final class ProductHierarchy {
             }
             ENUM_LABELS = Collections.unmodifiableMap(enumLabels);
 
-            JsonArray it = root.getAsJsonArray("instrument_types");
-            String[] arr = new String[it.size()];
-            for (int i = 0; i < it.size(); i++) arr[i] = it.get(i).getAsString();
-            INSTRUMENT_TYPES = Collections.unmodifiableList(java.util.Arrays.asList(arr));
+            // JsonObject keeps file order, so INSTRUMENT_TYPES does too.
+            Map<String, String> instrumentTypeLabels = new java.util.LinkedHashMap<>();
+            JsonObject it = root.getAsJsonObject("instrument_types");
+            for (Map.Entry<String, JsonElement> e : it.entrySet()) {
+                String code = e.getKey();
+                try {
+                    InstrumentTypeProto.valueOf(INSTRUMENT_TYPE_PREFIX + code);
+                } catch (IllegalArgumentException ex) {
+                    throw new IllegalStateException(
+                            "hierarchy.json instrument_types: no InstrumentTypeProto value for '" + code + "'", ex);
+                }
+                JsonObject body = e.getValue().getAsJsonObject();
+                instrumentTypeLabels.put(code, body.has("label") ? body.get("label").getAsString() : null);
+            }
+            INSTRUMENT_TYPE_LABELS = Collections.unmodifiableMap(instrumentTypeLabels);
+            INSTRUMENT_TYPES = Collections.unmodifiableList(new java.util.ArrayList<>(instrumentTypeLabels.keySet()));
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load hierarchy.json", e);
         }
@@ -393,10 +408,29 @@ public final class ProductHierarchy {
         return l == null ? null : l.placeholder;
     }
 
-    /** Display label for an instrument type, or null for null / UNRECOGNIZED. */
+    /**
+     * Display label for an instrument type: the instrument_types label of its
+     * code (INSTRUMENT_TYPE_CASH → CASH → "Cash"), else enum_labels (e.g.
+     * INSTRUMENT_TYPE_UNKNOWN). Null for null / UNRECOGNIZED.
+     */
     public static String labelOf(InstrumentTypeProto v) {
         if (v == null || v == InstrumentTypeProto.UNRECOGNIZED) return null;
-        return enumLabelOf("InstrumentTypeProto", v.name());
+        String label = instrumentTypeCodeLabelOf(instrumentTypeCode(v));
+        return label != null ? label : enumLabelOf("InstrumentTypeProto", v.name());
+    }
+
+    /**
+     * Display label for an instrument-type code from {@link #allInstrumentTypes()}
+     * (e.g. CASH → "Cash"). Null for null or an unknown code; the match is exact.
+     */
+    public static String instrumentTypeCodeLabelOf(String code) {
+        return code == null ? null : INSTRUMENT_TYPE_LABELS.get(code);
+    }
+
+    /** Instrument-type code for an enum value (INSTRUMENT_TYPE_CASH → CASH); null when it has no prefix. */
+    private static String instrumentTypeCode(InstrumentTypeProto v) {
+        String name = v.name();
+        return name.startsWith(INSTRUMENT_TYPE_PREFIX) ? name.substring(INSTRUMENT_TYPE_PREFIX.length()) : null;
     }
 
     /**
