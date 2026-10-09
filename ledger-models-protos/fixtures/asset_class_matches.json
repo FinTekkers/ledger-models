@@ -1,5 +1,5 @@
 {
-  "_doc": "Shared fixture for assetClassMatches(filter, stored) / asset_class_matches. Read by the Java, JS and Python tests; all three must agree on every row. See docs/adr/asset_class_vocabulary.md for the match rule.",
+  "_doc": "Shared fixture for assetClassMatches(filter, stored) / asset_class_matches. Read by the Java, JS, Python and Rust tests; all four must agree on every row. See docs/adr/asset_class_vocabulary.md for the match rule.",
   "cases": [
     { "filter": "FIXED_INCOME", "stored": "RATES",            "expected": true },
     { "filter": "FIXED_INCOME", "stored": "CREDIT",           "expected": true },

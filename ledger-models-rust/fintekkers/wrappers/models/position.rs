@@ -1,8 +1,9 @@
 use crate::fintekkers::models::portfolio::PortfolioProto;
 use crate::fintekkers::models::position::{
-    field_map_entry, FieldMapEntry, FieldProto, MeasureMapEntry, MeasureProto, PositionFilterProto,
-    PositionProto,
+    field_map_entry, FieldMapEntry, FieldProto, MeasureMapEntry, MeasureProto, PositionFilterOperator,
+    PositionFilterProto, PositionProto,
 };
+use crate::fintekkers::wrappers::models::product_hierarchy;
 use crate::fintekkers::models::price::PriceProto;
 use crate::fintekkers::models::security::{IdentifierProto, SecurityProto, TenorProto};
 use crate::fintekkers::models::strategy::StrategyProto;
@@ -450,6 +451,82 @@ impl PositionFilter {
             .map_err(|_| "Failed to decode LocalTimestampProto")?;
         ProtoSerializationUtil::deserialize_timestamp(&timestamp_proto)
             .map_err(|_| "Failed to convert LocalTimestampProto to DateTime")
+    }
+
+    /// Single-field evaluator (LM-281): `ASSET_CLASS` with `EQUALS` /
+    /// `NOT_EQUALS` uses the shared [`product_hierarchy::asset_class_matches`]
+    /// rule; every other field compares strings exactly. A missing stored
+    /// value never throws: `EQUALS` and the ordering operators drop the row,
+    /// `NOT_EQUALS` keeps it — the same rule as Java's
+    /// `PositionFilter.matches`.
+    pub fn matches(
+        field: FieldProto,
+        operator: PositionFilterOperator,
+        filter_value: &str,
+        stored_value: Option<&str>,
+    ) -> bool {
+        if field == FieldProto::AssetClass
+            && (operator == PositionFilterOperator::Equals
+                || operator == PositionFilterOperator::NotEquals)
+        {
+            let equals =
+                product_hierarchy::asset_class_matches(Some(filter_value), stored_value);
+            return if operator == PositionFilterOperator::Equals {
+                equals
+            } else {
+                !equals
+            };
+        }
+        match stored_value {
+            None => operator == PositionFilterOperator::NotEquals,
+            Some(stored) => match operator {
+                PositionFilterOperator::Equals => stored == filter_value,
+                PositionFilterOperator::NotEquals => stored != filter_value,
+                PositionFilterOperator::LessThan => stored < filter_value,
+                PositionFilterOperator::LessThanOrEquals => stored <= filter_value,
+                PositionFilterOperator::MoreThan => stored > filter_value,
+                PositionFilterOperator::MoreThanOrEquals => stored >= filter_value,
+                PositionFilterOperator::UnknownOperator => false,
+            },
+        }
+    }
+
+    fn entry_matches(position: &Position, entry: &FieldMapEntry) -> bool {
+        let field = match FieldProto::from_i32(entry.field) {
+            Some(f) => f,
+            None => return false,
+        };
+        let operator = match PositionFilterOperator::from_i32(entry.operator) {
+            Some(o) => o,
+            None => return false,
+        };
+        let filter_value = match &entry.field_map_value_one_of {
+            Some(field_map_entry::FieldMapValueOneOf::StringValue(s)) => s,
+            _ => return false,
+        };
+        let stored = position
+            .position_proto
+            .fields
+            .iter()
+            .find(|f| f.field == field as i32)
+            .and_then(|f| match &f.field_map_value_one_of {
+                Some(field_map_entry::FieldMapValueOneOf::StringValue(s)) => Some(s.as_str()),
+                _ => None,
+            });
+        Self::matches(field, operator, filter_value, stored)
+    }
+
+    /// Keep the positions matching every entry of `filter` (AND semantics,
+    /// input order preserved). Only string-valued filter entries are
+    /// evaluated; anything else matches nothing.
+    pub fn filter_positions<'a>(
+        positions: &'a [Position],
+        filter: &PositionFilter,
+    ) -> Vec<&'a Position> {
+        positions
+            .iter()
+            .filter(|p| filter.get_filters().iter().all(|e| Self::entry_matches(p, e)))
+            .collect()
     }
 }
 
@@ -1086,6 +1163,152 @@ mod test {
         assert!(position.get_field_display(date_field).is_ok());
         assert!(position.get_field_display(enum_field).is_ok());
         assert!(position.get_field_display(timestamp_field).is_ok());
+    }
+
+    // Helper: a position carrying a single ASSET_CLASS string field.
+    fn position_with_asset_class(value: &str) -> Position {
+        Position::new(PositionProto {
+            object_class: "Position".to_string(),
+            version: "0.0.1".to_string(),
+            position_view: 0,
+            position_type: 0,
+            measures: vec![],
+            reporting_currency: None,
+            fields: vec![create_string_field_entry(FieldProto::AssetClass, value)],
+        })
+    }
+
+    // Helper: read the ASSET_CLASS string back out of a position.
+    fn asset_class_of(position: &Position) -> String {
+        position
+            .get_field_value(FieldProto::AssetClass)
+            .unwrap()
+            .downcast_ref::<String>()
+            .unwrap()
+            .clone()
+    }
+
+    // Helper: a one-entry ASSET_CLASS filter for FIXED_INCOME.
+    fn asset_class_filter(operator: PositionFilterOperator) -> PositionFilter {
+        PositionFilter::new(PositionFilterProto {
+            object_class: "PositionFilter".to_string(),
+            version: "0.0.1".to_string(),
+            filters: vec![FieldMapEntry {
+                field: FieldProto::AssetClass as i32,
+                operator: operator as i32,
+                field_map_value_one_of: Some(field_map_entry::FieldMapValueOneOf::StringValue(
+                    "FIXED_INCOME".to_string(),
+                )),
+            }],
+        })
+    }
+
+    #[test]
+    fn filter_positions_asset_class_equals_matches_group_members() {
+        let positions = ["RATES", "CREDIT", "Fixed Income", "EQUITY"]
+            .iter()
+            .map(|v| position_with_asset_class(v))
+            .collect::<Vec<_>>();
+
+        let result = PositionFilter::filter_positions(
+            &positions,
+            &asset_class_filter(PositionFilterOperator::Equals),
+        );
+        let kept = result.iter().map(|p| asset_class_of(p)).collect::<Vec<_>>();
+
+        assert_eq!(kept, vec!["RATES", "CREDIT", "Fixed Income"].iter().map(|s| s.to_string()).collect::<Vec<_>>());
+    }
+
+    #[test]
+    fn filter_positions_asset_class_not_equals_keeps_only_non_members() {
+        let positions = ["RATES", "CREDIT", "Fixed Income", "EQUITY"]
+            .iter()
+            .map(|v| position_with_asset_class(v))
+            .collect::<Vec<_>>();
+
+        let result = PositionFilter::filter_positions(
+            &positions,
+            &asset_class_filter(PositionFilterOperator::NotEquals),
+        );
+        let kept = result.iter().map(|p| asset_class_of(p)).collect::<Vec<_>>();
+
+        assert_eq!(kept, vec!["EQUITY".to_string()]);
+    }
+
+    #[test]
+    fn filter_positions_asset_class_missing_empty_unknown() {
+        let missing = Position::new(PositionProto {
+            object_class: "Position".to_string(),
+            version: "0.0.1".to_string(),
+            position_view: 0,
+            position_type: 0,
+            measures: vec![],
+            reporting_currency: None,
+            fields: vec![],
+        });
+        let positions = vec![
+            missing,
+            position_with_asset_class(""),
+            position_with_asset_class("NOT_A_CLASS"),
+        ];
+
+        let equals = PositionFilter::filter_positions(
+            &positions,
+            &asset_class_filter(PositionFilterOperator::Equals),
+        );
+        assert!(equals.is_empty());
+
+        let not_equals = PositionFilter::filter_positions(
+            &positions,
+            &asset_class_filter(PositionFilterOperator::NotEquals),
+        );
+        assert_eq!(not_equals.len(), 3);
+    }
+
+    #[test]
+    fn matches_other_fields_compare_exactly() {
+        assert!(PositionFilter::matches(
+            FieldProto::PortfolioName,
+            PositionFilterOperator::Equals,
+            "a",
+            Some("a")
+        ));
+        assert!(!PositionFilter::matches(
+            FieldProto::PortfolioName,
+            PositionFilterOperator::Equals,
+            "a",
+            Some("b")
+        ));
+        assert!(PositionFilter::matches(
+            FieldProto::PortfolioName,
+            PositionFilterOperator::NotEquals,
+            "a",
+            Some("b")
+        ));
+        assert!(!PositionFilter::matches(
+            FieldProto::PortfolioName,
+            PositionFilterOperator::NotEquals,
+            "a",
+            Some("a")
+        ));
+        assert!(PositionFilter::matches(
+            FieldProto::PortfolioName,
+            PositionFilterOperator::MoreThan,
+            "a",
+            Some("b")
+        ));
+        assert!(!PositionFilter::matches(
+            FieldProto::PortfolioName,
+            PositionFilterOperator::Equals,
+            "a",
+            None
+        ));
+        assert!(PositionFilter::matches(
+            FieldProto::PortfolioName,
+            PositionFilterOperator::NotEquals,
+            "a",
+            None
+        ));
     }
 }
 

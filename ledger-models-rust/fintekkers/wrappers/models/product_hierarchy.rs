@@ -55,6 +55,8 @@ pub struct AssetClassEntry {
     pub parent: Option<String>,
     #[serde(default)]
     pub label: Option<String>,
+    #[serde(default)]
+    pub aliases: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -199,6 +201,86 @@ pub fn asset_class_label_of(node: &str) -> Option<String> {
         .and_then(|e| e.label.clone())
 }
 
+fn normalise_asset_class(value: &str) -> String {
+    // Mirror of Java's normaliseAssetClass: trim, upper-case, and turn each
+    // run of whitespace or hyphens into `_`.
+    let upper = value.trim().to_uppercase();
+    let mut out = String::with_capacity(upper.len());
+    let mut in_gap = false;
+    for c in upper.chars() {
+        if c.is_whitespace() || c == '-' {
+            if !in_gap {
+                out.push('_');
+                in_gap = true;
+            }
+        } else {
+            out.push(c);
+            in_gap = false;
+        }
+    }
+    out
+}
+
+/// Normalised code / label / alias -> code, built from `asset_classes` only.
+/// Panics if two codes claim the same key, so an ambiguous label or alias
+/// fails at load time.
+fn build_asset_class_lookup(classes: &HashMap<String, AssetClassEntry>) -> HashMap<String, String> {
+    let mut lookup = HashMap::new();
+    for (code, entry) in classes {
+        let mut keys: Vec<&str> = vec![code.as_str()];
+        if let Some(label) = &entry.label {
+            keys.push(label.as_str());
+        }
+        for alias in &entry.aliases {
+            keys.push(alias.as_str());
+        }
+        for key in keys {
+            let n = normalise_asset_class(key);
+            if n.is_empty() {
+                continue;
+            }
+            if let Some(prev) = lookup.insert(n, code.clone()) {
+                if prev != *code {
+                    panic!(
+                        "hierarchy.json asset_classes: '{key}' resolves to both {prev} and {code}"
+                    );
+                }
+            }
+        }
+    }
+    lookup
+}
+
+fn asset_class_lookup() -> &'static HashMap<String, String> {
+    static LOOKUP: OnceLock<HashMap<String, String>> = OnceLock::new();
+    LOOKUP.get_or_init(|| build_asset_class_lookup(&registry().asset_classes))
+}
+
+/// Resolve a stored or user-supplied asset-class value to its
+/// hierarchy.json code. An exact code wins; otherwise the value is
+/// normalised (trimmed, upper-cased, runs of whitespace or hyphens turned
+/// into `_`) and matched against every code, label and alias.
+/// `None` for `None`, blank or unknown values.
+pub fn resolve_asset_class(value: Option<&str>) -> Option<String> {
+    let v = value?;
+    let r = registry();
+    if r.asset_classes.contains_key(v) {
+        return Some(v.to_string());
+    }
+    asset_class_lookup().get(&normalise_asset_class(v)).cloned()
+}
+
+/// True iff `stored_value` falls under `filter_code`: both resolve (see
+/// [`resolve_asset_class`]) and the stored code equals the filter code or
+/// descends from it. FIXED_INCOME matches RATES, CREDIT and "Fixed Income";
+/// EQUITY does not match RATES; unknown values match nothing.
+pub fn asset_class_matches(filter_code: Option<&str>, stored_value: Option<&str>) -> bool {
+    match (resolve_asset_class(filter_code), resolve_asset_class(stored_value)) {
+        (Some(f), Some(s)) => f == s || is_asset_class_descendant_of(&s, &f),
+        _ => false,
+    }
+}
+
 // ---------- introspection ----------
 
 pub fn all_product_types() -> Vec<String> {
@@ -298,5 +380,112 @@ mod test {
         assert!(its.iter().any(|s| s == "CASH"));
         assert!(its.iter().any(|s| s == "DERIVATIVE"));
         assert!(its.iter().any(|s| s == "REFERENCE_INDEX"));
+    }
+
+    #[test]
+    fn asset_class_matches_shared_fixture() {
+        // LM-281: reads the canonical fixture directly (not a copy), like the
+        // Java, JS and Python tests, so the four implementations can't drift.
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../ledger-models-protos/fixtures/asset_class_matches.json"
+        );
+        let text =
+            std::fs::read_to_string(path).expect("read shared asset_class_matches.json fixture");
+        let root: serde_json::Value = serde_json::from_str(&text).expect("parse fixture");
+        let cases = root
+            .get("cases")
+            .and_then(|c| c.as_array())
+            .expect("fixture has cases");
+        assert!(!cases.is_empty(), "fixture has no cases");
+        for case in cases {
+            let filter = case.get("filter").and_then(|v| v.as_str());
+            let stored = case.get("stored").and_then(|v| v.as_str());
+            let expected = case
+                .get("expected")
+                .and_then(|v| v.as_bool())
+                .expect("case has expected");
+            assert_eq!(
+                asset_class_matches(filter, stored),
+                expected,
+                "asset_class_matches({filter:?}, {stored:?})"
+            );
+        }
+    }
+
+    #[test]
+    fn resolve_asset_class_handles_codes_labels_and_aliases() {
+        assert_eq!(resolve_asset_class(Some("RATES")), Some("RATES".to_string()));
+        assert_eq!(
+            resolve_asset_class(Some("Fixed Income")),
+            Some("FIXED_INCOME".to_string())
+        );
+        assert_eq!(
+            resolve_asset_class(Some("fixed-income")),
+            Some("FIXED_INCOME".to_string())
+        );
+        assert_eq!(
+            resolve_asset_class(Some("CASH_ASSET_CLASS")),
+            Some("CASH".to_string())
+        );
+        assert_eq!(
+            resolve_asset_class(Some(" equity ")),
+            Some("EQUITY".to_string())
+        );
+        assert_eq!(resolve_asset_class(Some("NOT_AN_ASSET_CLASS")), None);
+        assert_eq!(resolve_asset_class(Some("")), None);
+        assert_eq!(resolve_asset_class(Some("   ")), None);
+        assert_eq!(resolve_asset_class(None), None);
+    }
+
+    #[test]
+    fn every_hierarchy_entry_matches_its_parent_label_and_aliases() {
+        for code in all_asset_classes() {
+            let entry = registry()
+                .asset_classes
+                .get(&code)
+                .expect("code from all_asset_classes");
+            if let Some(parent) = &entry.parent {
+                assert!(
+                    asset_class_matches(Some(parent), Some(&code)),
+                    "{parent} should match {code}"
+                );
+            }
+            if let Some(label) = &entry.label {
+                assert!(
+                    asset_class_matches(Some(&code), Some(label)),
+                    "{code} should match its label"
+                );
+            }
+            for alias in &entry.aliases {
+                assert!(
+                    asset_class_matches(Some(&code), Some(alias)),
+                    "{code} should match alias {alias}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "resolves to both")]
+    fn ambiguous_label_fails_at_load() {
+        let mut classes = HashMap::new();
+        classes.insert(
+            "A".to_string(),
+            AssetClassEntry {
+                parent: None,
+                label: Some("Shared".to_string()),
+                aliases: vec![],
+            },
+        );
+        classes.insert(
+            "B".to_string(),
+            AssetClassEntry {
+                parent: None,
+                label: Some("shared".to_string()),
+                aliases: vec![],
+            },
+        );
+        let _ = build_asset_class_lookup(&classes);
     }
 }
