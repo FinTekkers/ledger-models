@@ -11,22 +11,23 @@ import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * Thin gRPC client wrapper around the SecurityService stub. Mirrors the
  * shape of {@link PortfolioService} / {@link ValuationService}.
  *
- * <p>Default endpoint reads {@code API_URL} (default
- * {@code api.fintekkers.org}) with port {@code 8082}, matching the Python
- * {@code EnvConfig + ServiceType.SECURITY_SERVICE} convention.
+ * <p>The default endpoint comes from {@link ServiceAddress}: the broker when
+ * {@code BROKER_HOST} is set, else {@code LEDGER_SERVICE_HOST/_PORT}, else
+ * {@code API_URL}, else {@code localhost}, on the ledger port.
  *
- * <p>Single shared instance behind {@link #getInstance()}; the underlying
- * gRPC channel is expensive to construct and intended to be reused for the
- * process lifetime.
+ * <p>Single shared instance behind {@link #getInstance()}, built on first
+ * use; the underlying gRPC channel is expensive to construct and intended to
+ * be reused for the process lifetime.
  */
 public class SecurityService {
 
-    private static final SecurityService DEFAULT_INSTANCE = buildDefault();
+    private static volatile SecurityService defaultInstance;
     private final Endpoint endpoint;
     private final SecurityGrpc.SecurityBlockingStub stub;
 
@@ -38,15 +39,28 @@ public class SecurityService {
         this.endpoint = new Endpoint(url, port, isHttp);
     }
 
-    private static SecurityService buildDefault() {
-        String url = System.getenv().getOrDefault("API_URL", "api.fintekkers.org");
-        int port = 8082;
-        boolean isHttp = "localhost".equals(url) || "127.0.0.1".equals(url);
-        return new SecurityService(url, port, isHttp);
+    static SecurityService fromEnv(Function<String, String> env) {
+        Endpoint e = ServiceAddress.resolve(ServiceAddress.Service.SECURITY, env);
+        return new SecurityService(e.url(), e.port(), e.isHttp());
     }
 
+    /**
+     * Built on first call, not at class load, so a bad environment value
+     * fails every call with the message naming the variable and does not
+     * block the explicit constructor.
+     */
     public static SecurityService getInstance() {
-        return DEFAULT_INSTANCE;
+        SecurityService instance = defaultInstance;
+        if (instance == null) {
+            synchronized (SecurityService.class) {
+                instance = defaultInstance;
+                if (instance == null) {
+                    instance = fromEnv(System::getenv);
+                    defaultInstance = instance;
+                }
+            }
+        }
+        return instance;
     }
 
     public Endpoint getEndpoint() {

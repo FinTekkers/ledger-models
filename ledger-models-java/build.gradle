@@ -99,7 +99,34 @@ javadoc {
 
 //Required for JUnit5
 test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'broker-env', 'bad-env'
+    }
+    finalizedBy 'brokerEnvTest', 'badEnvTest'
+}
+
+// The default service instances (SecurityService.getInstance() etc.) read
+// the process environment once per JVM, and Java cannot set environment
+// variables at runtime. So the tests that check what those defaults resolve
+// to run in their own JVMs, each with a fixed environment, after `test`.
+tasks.register('brokerEnvTest', Test) {
+    description = 'Default clients with only BROKER_HOST set target the broker.'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'broker-env'
+    }
+    environment 'BROKER_HOST', '127.0.0.1:18085'
+}
+
+tasks.register('badEnvTest', Test) {
+    description = 'A malformed BROKER_HOST fails getInstance() by name and leaves explicit constructors working.'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'bad-env'
+    }
+    environment 'BROKER_HOST', '127.0.0.1:notaport'
 }
 
 publishing {
