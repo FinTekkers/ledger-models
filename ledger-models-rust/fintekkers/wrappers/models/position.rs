@@ -456,9 +456,11 @@ impl PositionFilter {
     /// Single-field evaluator (LM-281): `ASSET_CLASS` with `EQUALS` /
     /// `NOT_EQUALS` uses the shared [`product_hierarchy::asset_class_matches`]
     /// rule; every other field compares strings exactly. A missing stored
-    /// value never throws: `EQUALS` and the ordering operators drop the row,
-    /// `NOT_EQUALS` keeps it — the same rule as Java's
-    /// `PositionFilter.matches`.
+    /// value never throws and drops the row for every operator, except
+    /// `ASSET_CLASS` with `NOT_EQUALS`, which keeps it — the same rule as
+    /// Java's `PositionFilter.matches`. Here the `ASSET_CLASS` branch runs
+    /// first and handles its own missing value, so the `None` arm below only
+    /// sees other fields (LM-284).
     pub fn matches(
         field: FieldProto,
         operator: PositionFilterOperator,
@@ -478,7 +480,7 @@ impl PositionFilter {
             };
         }
         match stored_value {
-            None => operator == PositionFilterOperator::NotEquals,
+            None => false,
             Some(stored) => match operator {
                 PositionFilterOperator::Equals => stored == filter_value,
                 PositionFilterOperator::NotEquals => stored != filter_value,
@@ -1303,12 +1305,75 @@ mod test {
             "a",
             None
         ));
-        assert!(PositionFilter::matches(
+        assert!(!PositionFilter::matches(
             FieldProto::PortfolioName,
             PositionFilterOperator::NotEquals,
             "a",
             None
         ));
+    }
+
+    #[test]
+    fn null_cases_shared_fixture() {
+        // Shared with the Java, JS and Python tests (LM-284).
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../ledger-models-protos/fixtures/position_filter_null_cases.json"
+        );
+        let text = std::fs::read_to_string(path)
+            .expect("read shared position_filter_null_cases.json fixture");
+        let root: serde_json::Value = serde_json::from_str(&text).expect("parse fixture");
+        let cases = root
+            .get("cases")
+            .and_then(|c| c.as_array())
+            .expect("fixture has cases");
+        assert!(cases.len() >= 7, "fixture has too few cases");
+        for case in cases {
+            let field_name = case.get("field").and_then(|v| v.as_str()).unwrap();
+            let operator_name = case.get("operator").and_then(|v| v.as_str()).unwrap();
+            let field = FieldProto::from_str_name(field_name).expect("known field");
+            let operator =
+                PositionFilterOperator::from_str_name(operator_name).expect("known operator");
+            let filter = case.get("filter").and_then(|v| v.as_str()).unwrap();
+            let expected = case
+                .get("expected")
+                .and_then(|v| v.as_bool())
+                .expect("case has expected");
+            assert_eq!(
+                PositionFilter::matches(field, operator, filter, None),
+                expected,
+                "{} {} {:?} on null",
+                field_name,
+                operator_name,
+                filter
+            );
+        }
+    }
+
+    #[test]
+    fn filter_positions_not_equals_drops_missing_other_field() {
+        let missing = Position::new(PositionProto {
+            object_class: "Position".to_string(),
+            version: "0.0.1".to_string(),
+            position_view: 0,
+            position_type: 0,
+            measures: vec![],
+            reporting_currency: None,
+            fields: vec![],
+        });
+        let positions = vec![missing];
+        let filter = PositionFilter::new(PositionFilterProto {
+            object_class: "PositionFilter".to_string(),
+            version: "0.0.1".to_string(),
+            filters: vec![FieldMapEntry {
+                field: FieldProto::PortfolioName as i32,
+                operator: PositionFilterOperator::NotEquals as i32,
+                field_map_value_one_of: Some(field_map_entry::FieldMapValueOneOf::StringValue(
+                    "a".to_string(),
+                )),
+            }],
+        });
+        assert!(PositionFilter::filter_positions(&positions, &filter).is_empty());
     }
 }
 

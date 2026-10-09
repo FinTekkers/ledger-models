@@ -69,10 +69,11 @@ public class PositionFilter {
      * fields and operators compare with {@code compareTo} exactly as before,
      * plus the previously missing {@code NOT_EQUALS} branch.
      *
-     * <p>A null stored value never throws: {@code EQUALS} and the ordering
-     * operators drop the row, {@code NOT_EQUALS} keeps it. For {@link #filter}
-     * this narrows the old early return (which dropped nulls for every
-     * operator); for {@code isMatch} this replaces the old
+     * <p>A null stored value never throws and drops the row for every operator,
+     * except {@code ASSET_CLASS} with {@code NOT_EQUALS}, which keeps it
+     * (LM-281). The null check below runs before the {@code ASSET_CLASS}
+     * branch, so that asset-class exception is handled in the null check
+     * itself (LM-284). For {@code isMatch} this replaces the old
      * {@code NullPointerException} on null fields.
      *
      * @param field the filtered field
@@ -85,7 +86,7 @@ public class PositionFilter {
         Object filterValue = comparator.getValue();
 
         if(storedValue == null) {
-            return Operator.NOT_EQUALS.equals(operator);
+            return Field.ASSET_CLASS.equals(field) && Operator.NOT_EQUALS.equals(operator);
         }
 
         if(Field.ASSET_CLASS.equals(field) &&

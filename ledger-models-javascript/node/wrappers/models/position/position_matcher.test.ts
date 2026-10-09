@@ -4,11 +4,27 @@
  * ASSET_CLASS EQUALS / NOT_EQUALS use the shared assetClassMatches rule;
  * every other field compares exactly. A null stored value never throws.
  */
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { PositionFilterOperator } from '../../../fintekkers/models/position/position_util_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import Security from '../security/security';
 import { FilterableRow, FilterSpec, filterRows, matches } from './position_matcher';
+
+const PROTOS = path.resolve(__dirname, '../../../../../ledger-models-protos');
+
+interface NullCase {
+  field: string;
+  operator: string;
+  filter: string;
+  expected: boolean;
+}
+
+const nullCases: NullCase[] = JSON.parse(
+  fs.readFileSync(path.join(PROTOS, 'fixtures/position_filter_null_cases.json'), 'utf-8'),
+).cases;
 
 function securityRow(assetClass: string): Security {
   const proto = new SecurityProto();
@@ -61,7 +77,29 @@ describe('position_matcher', () => {
     expect(matches(FieldProto.MATURITY_DATE, PositionFilterOperator.MORE_THAN, 1, 2)).toBe(true);
     expect(matches(FieldProto.MATURITY_DATE, PositionFilterOperator.MORE_THAN, 2, 1)).toBe(false);
     expect(matches(FieldProto.PORTFOLIO_NAME, PositionFilterOperator.EQUALS, 'a', null)).toBe(false);
-    expect(matches(FieldProto.PORTFOLIO_NAME, PositionFilterOperator.NOT_EQUALS, 'a', null)).toBe(true);
+    expect(matches(FieldProto.PORTFOLIO_NAME, PositionFilterOperator.NOT_EQUALS, 'a', null)).toBe(false);
+  });
+
+  // LM-284: NOT_EQUALS drops a null on every field but ASSET_CLASS. Cases
+  // come from ledger-models-protos/fixtures/position_filter_null_cases.json,
+  // shared with the Java, Python and Rust tests.
+  test('the shared null-cases fixture has its cases', () => {
+    expect(nullCases.length).toBeGreaterThanOrEqual(7);
+  });
+
+  test.each(nullCases)('$field $operator $filter on null -> $expected', (c) => {
+    const field = FieldProto[c.field as keyof typeof FieldProto];
+    const operator = PositionFilterOperator[c.operator as keyof typeof PositionFilterOperator];
+    expect(field).toBeDefined();
+    expect(operator).toBeDefined();
+    expect(matches(field, operator, c.filter, null)).toBe(c.expected);
+  });
+
+  test('filterRows NOT_EQUALS drops a row with a null on another field', () => {
+    const filters: FilterSpec[] = [
+      { field: FieldProto.PORTFOLIO_NAME, operator: PositionFilterOperator.NOT_EQUALS, value: 'a' },
+    ];
+    expect(filterRows([stubRow(null)], filters)).toEqual([]);
   });
 });
 
@@ -92,5 +130,14 @@ describe('the published (compiled) position_matcher.js', () => {
     const rows = ['RATES', 'EQUITY'].map(securityRow);
     const kept = compiled.filterRows(rows, assetClassFilter(PositionFilterOperator.EQUALS));
     expect(assetClasses(kept)).toEqual(['RATES']);
+  });
+
+  test('has the LM-284 null rule', () => {
+    expect(
+      compiled.matches(FieldProto.PORTFOLIO_NAME, PositionFilterOperator.NOT_EQUALS, 'a', null),
+    ).toBe(false);
+    expect(
+      compiled.matches(FieldProto.ASSET_CLASS, PositionFilterOperator.NOT_EQUALS, 'FIXED_INCOME', null),
+    ).toBe(true);
   });
 });

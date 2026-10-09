@@ -4,6 +4,8 @@ import common.models.postion.Field;
 import common.models.postion.PositionFilter;
 import common.models.price.Price;
 import common.models.security.Security;
+import common.models.security.identifier.Identifier;
+import common.models.security.identifier.IdentifierType;
 import fintekkers.models.security.SecurityProto;
 import org.junit.jupiter.api.Test;
 import protos.serializers.util.proto.ProtoSerializationUtil;
@@ -76,5 +78,17 @@ class TransactionIsMatchTest {
         PositionFilter before = PositionFilter.from(Field.TRADE_DATE,
                 PositionFilter.Operator.MORE_THAN, LocalDate.of(2024, 12, 31));
         assertFalse(txn.isMatch(before));
+    }
+
+    @Test
+    void nullIdentifierNotEqualsDoesNotMatch() {
+        // LM-284: the helper's security has no identifiers, so IDENTIFIER is
+        // null; NOT_EQUALS drops a null on any field but ASSET_CLASS.
+        Transaction txn = txnWithAssetClass("RATES");
+
+        PositionFilter filter = PositionFilter.from(Field.IDENTIFIER,
+                PositionFilter.Operator.NOT_EQUALS, new Identifier(IdentifierType.CUSIP, "X"));
+
+        assertFalse(txn.isMatch(filter));
     }
 }
