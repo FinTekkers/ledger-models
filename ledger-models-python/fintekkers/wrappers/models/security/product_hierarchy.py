@@ -12,6 +12,13 @@ Two trees are exposed:
 Plus per-leaf classification lookups: asset_class_of, instrument_type_of,
 label_of.
 
+asset_classes is the one canonical asset-class vocabulary.
+asset_class_matches filters stored asset-class values (codes, labels such as
+"Fixed Income", or aliases such as "CASH_ASSET_CLASS") against a code, walking
+the tree. The *_label_of / identifier_type_placeholder_of helpers give display
+strings for every value of the enums the UI shows. See
+docs/adr/asset_class_vocabulary.md.
+
 `index_type_of` is intentionally absent — that dimension is deferred per
 the M1 descope.
 
@@ -25,10 +32,18 @@ and then use this module's helpers to walk the tree.
 from __future__ import annotations
 
 import json
+import re
 from functools import lru_cache
 from importlib import resources
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+from fintekkers.models.security.asset_class_pb2 import AssetClassProto
+from fintekkers.models.security.identifier.identifier_type_pb2 import (
+    IdentifierTypeProto,
+)
+from fintekkers.models.security.instrument_type_pb2 import InstrumentTypeProto
+from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 
 
 def _load_registry() -> Dict[str, Any]:
@@ -170,6 +185,119 @@ def is_asset_class_descendant_of(node: str, ancestor: str) -> bool:
 def asset_class_label_of(node: str) -> Optional[str]:
     entry = _asset_classes().get(node)
     return entry.get("label") if entry else None
+
+
+_SEPARATORS = re.compile(r"[\s-]+")
+
+
+def _normalise_asset_class(value: str) -> str:
+    return _SEPARATORS.sub("_", value.strip().upper())
+
+
+def _build_asset_class_lookup(classes: Dict[str, Dict[str, Any]]) -> Dict[str, str]:
+    """Normalised code / label / alias -> code. Raises ValueError if two codes
+    claim the same key, so an ambiguous label or alias fails at load time."""
+    lookup: Dict[str, str] = {}
+    for code, entry in classes.items():
+        keys = [code]
+        if entry.get("label"):
+            keys.append(entry["label"])
+        keys.extend(entry.get("aliases", []))
+        for key in keys:
+            n = _normalise_asset_class(key)
+            if not n:
+                continue
+            prev = lookup.setdefault(n, code)
+            if prev != code:
+                raise ValueError(
+                    f"hierarchy.json asset_classes: {key!r} resolves to both "
+                    f"{prev} and {code}"
+                )
+    return lookup
+
+
+@lru_cache(maxsize=1)
+def _asset_class_lookup() -> Dict[str, str]:
+    return _build_asset_class_lookup(_asset_classes())
+
+
+def resolve_asset_class(value: Optional[str]) -> Optional[str]:
+    """Resolve a stored or user-supplied asset-class value to its hierarchy.json
+    code. An exact code wins; otherwise the value is normalised (stripped,
+    upper-cased, runs of whitespace or hyphens turned into ``_``) and matched
+    against every code, label and alias. None for None, blank or unknown."""
+    if value is None:
+        return None
+    if value in _asset_classes():
+        return value
+    return _asset_class_lookup().get(_normalise_asset_class(value))
+
+
+def asset_class_matches(filter_code: Optional[str], stored_value: Optional[str]) -> bool:
+    """True iff stored_value falls under filter_code: both resolve (see
+    resolve_asset_class) and the stored code equals the filter code or
+    descends from it. FIXED_INCOME matches RATES, CREDIT and "Fixed Income";
+    EQUITY does not match RATES; unknown values match nothing."""
+    f = resolve_asset_class(filter_code)
+    s = resolve_asset_class(stored_value)
+    if f is None or s is None:
+        return False
+    return f == s or is_asset_class_descendant_of(s, f)
+
+
+# ---------- enum labels ----------
+
+
+def _enum_entry(enum_name: str, value_name: str) -> Dict[str, Any]:
+    return _registry().get("enum_labels", {}).get(enum_name, {}).get(value_name, {})
+
+
+def _value_name(enum: Any, v: int) -> Optional[str]:
+    try:
+        return enum.Name(v)
+    except ValueError:  # unknown number
+        return None
+
+
+def identifier_type_label_of(v: int) -> Optional[str]:
+    """Display label for an IdentifierTypeProto value, or None if unknown."""
+    name = _value_name(IdentifierTypeProto, v)
+    return _enum_entry("IdentifierTypeProto", name).get("label") if name else None
+
+
+def identifier_type_placeholder_of(v: int) -> Optional[str]:
+    """Input placeholder (e.g. "e.g. US0378331005") for an IdentifierTypeProto
+    value, or None if unknown."""
+    name = _value_name(IdentifierTypeProto, v)
+    return _enum_entry("IdentifierTypeProto", name).get("placeholder") if name else None
+
+
+def instrument_type_label_of(v: int) -> Optional[str]:
+    """Display label for an InstrumentTypeProto value, or None if unknown."""
+    name = _value_name(InstrumentTypeProto, v)
+    return _enum_entry("InstrumentTypeProto", name).get("label") if name else None
+
+
+def product_type_label_of(v: int) -> Optional[str]:
+    """Display label for a ProductTypeProto value: the product_types label,
+    else enum_labels (e.g. PRODUCT_TYPE_UNKNOWN). None if unknown."""
+    name = _value_name(ProductTypeProto, v)
+    if name is None:
+        return None
+    return label_of(name) or _enum_entry("ProductTypeProto", name).get("label")
+
+
+def asset_class_proto_label_of(v: int) -> Optional[str]:
+    """Display label for an AssetClassProto value: the label of the
+    hierarchy.json code it resolves to (CASH_ASSET_CLASS -> "Cash"), else
+    enum_labels (e.g. INDEX). None if unknown."""
+    name = _value_name(AssetClassProto, v)
+    if name is None:
+        return None
+    code = resolve_asset_class(name)
+    if code is not None:
+        return asset_class_label_of(code)
+    return _enum_entry("AssetClassProto", name).get("label")
 
 
 # ---------- introspection ----------
