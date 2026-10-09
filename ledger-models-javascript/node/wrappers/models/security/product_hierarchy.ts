@@ -48,6 +48,10 @@ interface AssetClassEntry {
   aliases?: string[];
 }
 
+interface InstrumentTypeEntry {
+  label?: string;
+}
+
 interface EnumLabelEntry {
   label?: string;
   placeholder?: string;
@@ -56,7 +60,7 @@ interface EnumLabelEntry {
 interface Registry {
   product_types: Record<string, ProductTypeEntry>;
   asset_classes: Record<string, AssetClassEntry>;
-  instrument_types: string[];
+  instrument_types: Record<string, InstrumentTypeEntry>;
   enum_labels?: Record<string, Record<string, EnumLabelEntry>>;
 }
 
@@ -64,6 +68,16 @@ const registry: Registry = hierarchy as Registry;
 
 function hasOwn(o: object | undefined, key: string): boolean {
   return o !== undefined && Object.prototype.hasOwnProperty.call(o, key);
+}
+
+/** Prefix that turns an instrument-type code into its InstrumentTypeProto value name. */
+const INSTRUMENT_TYPE_PREFIX = 'INSTRUMENT_TYPE_';
+
+// Every instrument_types code needs an INSTRUMENT_TYPE_<CODE> enum value.
+for (const code of Object.keys(registry.instrument_types)) {
+  if (!hasOwn(InstrumentTypeProto, INSTRUMENT_TYPE_PREFIX + code)) {
+    throw new Error(`hierarchy.json instrument_types: no InstrumentTypeProto value for '${code}'`);
+  }
 }
 
 // ---------- product_type tree ----------
@@ -240,9 +254,28 @@ export function identifierTypePlaceholderOf(v: IdentifierTypeProto): string | nu
   return enumEntry('IdentifierTypeProto', enumValueName(IdentifierTypeProto, v))?.placeholder ?? null;
 }
 
-/** Display label for an InstrumentTypeProto value, or null if unknown. */
+/** Instrument-type code for an enum value name (INSTRUMENT_TYPE_CASH -> CASH), or null. */
+function instrumentTypeCode(valueName: string): string | null {
+  return valueName.startsWith(INSTRUMENT_TYPE_PREFIX)
+    ? valueName.slice(INSTRUMENT_TYPE_PREFIX.length)
+    : null;
+}
+
+/** Display label for an instrument-type code from allInstrumentTypes()
+ * (e.g. CASH -> "Cash"). null for null/undefined or an unknown code; the match
+ * is exact. */
+export function instrumentTypeCodeLabelOf(code: string | null | undefined): string | null {
+  if (typeof code !== 'string' || !hasOwn(registry.instrument_types, code)) return null;
+  return registry.instrument_types[code].label ?? null;
+}
+
+/** Display label for an InstrumentTypeProto value: the instrument_types label
+ * of its code (INSTRUMENT_TYPE_CASH -> CASH -> "Cash"), else enum_labels
+ * (e.g. INSTRUMENT_TYPE_UNKNOWN). null if unknown. */
 export function instrumentTypeLabelOf(v: InstrumentTypeProto): string | null {
-  return enumEntry('InstrumentTypeProto', enumValueName(InstrumentTypeProto, v))?.label ?? null;
+  const name = enumValueName(InstrumentTypeProto, v);
+  if (name === null) return null;
+  return instrumentTypeCodeLabelOf(instrumentTypeCode(name)) ?? enumEntry('InstrumentTypeProto', name)?.label ?? null;
 }
 
 /** Display label for a ProductTypeProto value: the product_types label, else
@@ -283,5 +316,5 @@ export function allAssetClasses(): string[] {
 }
 
 export function allInstrumentTypes(): string[] {
-  return [...registry.instrument_types];
+  return Object.keys(registry.instrument_types);
 }

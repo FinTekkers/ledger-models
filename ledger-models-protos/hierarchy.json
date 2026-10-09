@@ -1,6 +1,6 @@
 {
-  "schema_version": "1.1",
-  "_doc": "Single source of truth for the FinTekkers product hierarchy. See ../docs/product-hierarchy.md for narrative description, hierarchy-examples.md for worked examples, and registry-versioning.md for compatibility rules. Each leaf product_type carries (asset_class, instrument_type). Abstract nodes carry only hierarchy. status=active entries must have a matching ProductTypeProto enum value (CI-enforced). status=planned entries are aspirational and not yet wired into the proto enum. NOTE: M1 ships a 3-dimensional registry (productType + asset_class + instrument_type). The 4th dimension (index_type — single_name vs index) is intentionally deferred and will be added in a future milestone. Option strategy leaves (butterfly, vertical spread, calendar spread, condor, straddle, ...) are also intentionally absent — strategies are derived from the legs field on SecurityProto, not from a productType enum value. asset_classes is the one canonical asset-class vocabulary (codes and tree); an entry's optional aliases list names legacy values that resolve to it. enum_labels holds display labels (and identifier-type input placeholders) for proto enum values with no entry elsewhere, keyed by proto enum name then value name. See ../docs/adr/asset_class_vocabulary.md.",
+  "schema_version": "1.2",
+  "_doc": "Single source of truth for the FinTekkers product hierarchy. See ../docs/product-hierarchy.md for narrative description, hierarchy-examples.md for worked examples, and registry-versioning.md for compatibility rules. Each leaf product_type carries (asset_class, instrument_type). Abstract nodes carry only hierarchy. status=active entries must have a matching ProductTypeProto enum value (CI-enforced). status=planned entries are aspirational and not yet wired into the proto enum. NOTE: M1 ships a 3-dimensional registry (productType + asset_class + instrument_type). The 4th dimension (index_type — single_name vs index) is intentionally deferred and will be added in a future milestone. Option strategy leaves (butterfly, vertical spread, calendar spread, condor, straddle, ...) are also intentionally absent — strategies are derived from the legs field on SecurityProto, not from a productType enum value. asset_classes is the one canonical asset-class vocabulary (codes and tree); an entry's optional aliases list names legacy values that resolve to it. instrument_types maps each instrument-type code to {label}, in display order; every code must have a matching INSTRUMENT_TYPE_<CODE> InstrumentTypeProto value (checked at load), and that enum value takes its label from here. enum_labels holds display labels (and identifier-type input placeholders) for proto enum values with no entry elsewhere, keyed by proto enum name then value name. See ../docs/adr/asset_class_vocabulary.md.",
 
   "product_types": {
     "BOND": { "parent": null, "abstract": true, "label": "Bond" },
@@ -127,7 +127,11 @@
     "ALTERNATIVE":  { "parent": null,           "label": "Alternative" }
   },
 
-  "instrument_types": ["CASH", "DERIVATIVE", "REFERENCE_INDEX"],
+  "instrument_types": {
+    "CASH":            { "label": "Cash" },
+    "DERIVATIVE":      { "label": "Derivative" },
+    "REFERENCE_INDEX": { "label": "Reference Index" }
+  },
 
   "enum_labels": {
     "IdentifierTypeProto": {
@@ -142,10 +146,7 @@
       "CASH":                    { "label": "Currency Code",     "placeholder": "e.g. USD" }
     },
     "InstrumentTypeProto": {
-      "INSTRUMENT_TYPE_UNKNOWN":         { "label": "Unknown" },
-      "INSTRUMENT_TYPE_CASH":            { "label": "Cash" },
-      "INSTRUMENT_TYPE_DERIVATIVE":      { "label": "Derivative" },
-      "INSTRUMENT_TYPE_REFERENCE_INDEX": { "label": "Reference Index" }
+      "INSTRUMENT_TYPE_UNKNOWN": { "label": "Unknown" }
     },
     "ProductTypeProto": {
       "PRODUCT_TYPE_UNKNOWN": { "label": "Unknown" }

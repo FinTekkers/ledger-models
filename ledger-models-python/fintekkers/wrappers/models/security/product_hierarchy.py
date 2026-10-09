@@ -72,9 +72,25 @@ def _load_registry() -> Dict[str, Any]:
     )
 
 
+_INSTRUMENT_TYPE_PREFIX = "INSTRUMENT_TYPE_"
+
+
+def _check_instrument_types(registry: Dict[str, Any]) -> None:
+    """Every instrument_types code needs an INSTRUMENT_TYPE_<CODE> enum value."""
+    for code in registry["instrument_types"]:
+        try:
+            InstrumentTypeProto.Value(_INSTRUMENT_TYPE_PREFIX + code)
+        except ValueError:
+            raise ValueError(
+                f"hierarchy.json instrument_types: no InstrumentTypeProto value for '{code}'"
+            ) from None
+
+
 @lru_cache(maxsize=1)
 def _registry() -> Dict[str, Any]:
-    return _load_registry()
+    registry = _load_registry()
+    _check_instrument_types(registry)
+    return registry
 
 
 def _product_types() -> Dict[str, Dict[str, Any]]:
@@ -272,10 +288,30 @@ def identifier_type_placeholder_of(v: int) -> Optional[str]:
     return _enum_entry("IdentifierTypeProto", name).get("placeholder") if name else None
 
 
+def _instrument_type_code(value_name: str) -> Optional[str]:
+    """Instrument-type code for an enum value name (INSTRUMENT_TYPE_CASH -> CASH)."""
+    if value_name.startswith(_INSTRUMENT_TYPE_PREFIX):
+        return value_name[len(_INSTRUMENT_TYPE_PREFIX):]
+    return None
+
+
+def instrument_type_code_label_of(code: Optional[str]) -> Optional[str]:
+    """Display label for an instrument-type code from all_instrument_types()
+    (e.g. CASH -> "Cash"). None for None or an unknown code; the match is exact."""
+    entry = _registry()["instrument_types"].get(code) if isinstance(code, str) else None
+    return entry.get("label") if entry else None
+
+
 def instrument_type_label_of(v: int) -> Optional[str]:
-    """Display label for an InstrumentTypeProto value, or None if unknown."""
+    """Display label for an InstrumentTypeProto value: the instrument_types
+    label of its code (INSTRUMENT_TYPE_CASH -> CASH -> "Cash"), else
+    enum_labels (e.g. INSTRUMENT_TYPE_UNKNOWN). None if unknown."""
     name = _value_name(InstrumentTypeProto, v)
-    return _enum_entry("InstrumentTypeProto", name).get("label") if name else None
+    if name is None:
+        return None
+    return instrument_type_code_label_of(_instrument_type_code(name)) or _enum_entry(
+        "InstrumentTypeProto", name
+    ).get("label")
 
 
 def product_type_label_of(v: int) -> Optional[str]:

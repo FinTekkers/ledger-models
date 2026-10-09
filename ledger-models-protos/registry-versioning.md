@@ -26,6 +26,8 @@ The registry is loaded by every consumer language at startup (Java / Rust / Pyth
 | Remove an asset-class alias | Breaking — stored values that resolved through it stop matching filters | major |
 | Add or change an `enum_labels` label or placeholder | Additive — labels are advisory, not load-bearing | none |
 | Add the `aliases` / `enum_labels` keys themselves (`schema_version` 1.1, LM-275) | Additive — loaders that don't know them ignore them | minor |
+| Change `instrument_types` from a list of codes to a map of code → `{ "label": ... }` (`schema_version` 1.2, LM-282) | Breaking for anything that reads the raw `instrument_types` key; `allInstrumentTypes` / `instrumentTypeLabelOf` keep their signatures and results. Read codes and labels through the helpers (`allInstrumentTypes`, `instrumentTypeCodeLabelOf`) | patch (helpers unchanged) |
+| Add an instrument type | Needs a matching `INSTRUMENT_TYPE_<CODE>` `InstrumentTypeProto` value; every loader fails at load if it is missing | minor |
 
 ## Asset-class aliases and labels must be unambiguous
 

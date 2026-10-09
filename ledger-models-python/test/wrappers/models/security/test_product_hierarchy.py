@@ -94,4 +94,4 @@ def test_label_returns_human_readable_string():
 
 def test_instrument_types_are_three_known_values():
     its = PH.all_instrument_types()
-    assert sorted(its) == ["CASH", "DERIVATIVE", "REFERENCE_INDEX"]
+    assert its == ["CASH", "DERIVATIVE", "REFERENCE_INDEX"]

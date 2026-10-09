@@ -39,6 +39,8 @@ const instrument_type_pb_1 = require("../../../fintekkers/models/security/instru
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const PROTOS = path.resolve(__dirname, '../../../../../ledger-models-protos');
 const rows = JSON.parse(fs.readFileSync(path.join(PROTOS, 'fixtures/asset_class_matches.json'), 'utf-8')).cases;
+// LM-282: instrument-type code labels, shared with the Java, Python and Rust tests.
+const instrumentTypeFixture = JSON.parse(fs.readFileSync(path.join(PROTOS, 'fixtures/instrument_type_labels.json'), 'utf-8'));
 const hierarchy = JSON.parse(fs.readFileSync(path.join(PROTOS, 'hierarchy.json'), 'utf-8'));
 describe('assetClassMatches shared fixture', () => {
     test.each(rows)('assetClassMatches($filter, $stored) === $expected', ({ filter, stored, expected }) => {
@@ -141,6 +143,39 @@ describe('the published (compiled) product_hierarchy.js', () => {
         expect(compiled.instrumentTypeLabelOf(instrument_type_pb_1.InstrumentTypeProto.INSTRUMENT_TYPE_CASH)).toBeTruthy();
         expect(compiled.productTypeLabelOf(product_type_pb_1.ProductTypeProto.TBILL)).toBe('Treasury Bill');
         expect(compiled.assetClassProtoLabelOf(asset_class_pb_1.AssetClassProto.CASH_ASSET_CLASS)).toBe('Cash');
+    });
+    test('instrument-type code labels match the .ts results', () => {
+        expect(compiled.allInstrumentTypes()).toEqual((0, product_hierarchy_1.allInstrumentTypes)());
+        for (const code of [...instrumentTypeFixture.codes, ...instrumentTypeFixture.unknown]) {
+            expect([code, compiled.instrumentTypeCodeLabelOf(code)]).toEqual([code, (0, product_hierarchy_1.instrumentTypeCodeLabelOf)(code)]);
+        }
+    });
+});
+describe('LM-282: instrument-type code labels', () => {
+    test('allInstrumentTypes() is the fixture codes, in order', () => {
+        expect(instrumentTypeFixture.codes).toEqual(['CASH', 'DERIVATIVE', 'REFERENCE_INDEX']);
+        expect((0, product_hierarchy_1.allInstrumentTypes)()).toEqual(instrumentTypeFixture.codes);
+    });
+    test('every code has a label; unknown codes and prototype keys get null', () => {
+        var _a;
+        for (const code of instrumentTypeFixture.codes) {
+            expect([code, ((_a = (0, product_hierarchy_1.instrumentTypeCodeLabelOf)(code)) !== null && _a !== void 0 ? _a : '').trim().length > 0]).toEqual([code, true]);
+        }
+        for (const code of [...instrumentTypeFixture.unknown, '__proto__', 'toString', 'constructor']) {
+            expect([code, (0, product_hierarchy_1.instrumentTypeCodeLabelOf)(code)]).toEqual([code, null]);
+        }
+        expect((0, product_hierarchy_1.instrumentTypeCodeLabelOf)(null)).toBeNull();
+        expect((0, product_hierarchy_1.instrumentTypeCodeLabelOf)(undefined)).toBeNull();
+    });
+    test('each code label equals instrumentTypeLabelOf(INSTRUMENT_TYPE_<CODE>)', () => {
+        for (const code of instrumentTypeFixture.codes) {
+            const v = instrument_type_pb_1.InstrumentTypeProto[`INSTRUMENT_TYPE_${code}`];
+            expect(v).toBeDefined();
+            expect([code, (0, product_hierarchy_1.instrumentTypeCodeLabelOf)(code)]).toEqual([code, (0, product_hierarchy_1.instrumentTypeLabelOf)(v)]);
+        }
+    });
+    test('INSTRUMENT_TYPE_UNKNOWN keeps its label', () => {
+        expect((0, product_hierarchy_1.instrumentTypeLabelOf)(instrument_type_pb_1.InstrumentTypeProto.INSTRUMENT_TYPE_UNKNOWN)).toBe('Unknown');
     });
 });
 //# sourceMappingURL=asset_class_vocabulary.test.js.map

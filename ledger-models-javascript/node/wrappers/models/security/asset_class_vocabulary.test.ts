@@ -9,11 +9,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import {
+  allInstrumentTypes,
   assetClassMatches,
   assetClassProtoLabelOf,
   buildAssetClassLookup,
   identifierTypeLabelOf,
   identifierTypePlaceholderOf,
+  instrumentTypeCodeLabelOf,
   instrumentTypeLabelOf,
   productTypeLabelOf,
 } from './product_hierarchy';
@@ -33,6 +35,11 @@ interface FixtureRow {
 const rows: FixtureRow[] = JSON.parse(
   fs.readFileSync(path.join(PROTOS, 'fixtures/asset_class_matches.json'), 'utf-8'),
 ).cases;
+
+// LM-282: instrument-type code labels, shared with the Java, Python and Rust tests.
+const instrumentTypeFixture: { codes: string[]; unknown: string[] } = JSON.parse(
+  fs.readFileSync(path.join(PROTOS, 'fixtures/instrument_type_labels.json'), 'utf-8'),
+);
 
 const hierarchy = JSON.parse(fs.readFileSync(path.join(PROTOS, 'hierarchy.json'), 'utf-8'));
 
@@ -148,5 +155,42 @@ describe('the published (compiled) product_hierarchy.js', () => {
     expect(compiled.instrumentTypeLabelOf(InstrumentTypeProto.INSTRUMENT_TYPE_CASH)).toBeTruthy();
     expect(compiled.productTypeLabelOf(ProductTypeProto.TBILL)).toBe('Treasury Bill');
     expect(compiled.assetClassProtoLabelOf(AssetClassProto.CASH_ASSET_CLASS)).toBe('Cash');
+  });
+
+  test('instrument-type code labels match the .ts results', () => {
+    expect(compiled.allInstrumentTypes()).toEqual(allInstrumentTypes());
+    for (const code of [...instrumentTypeFixture.codes, ...instrumentTypeFixture.unknown]) {
+      expect([code, compiled.instrumentTypeCodeLabelOf(code)]).toEqual([code, instrumentTypeCodeLabelOf(code)]);
+    }
+  });
+});
+
+describe('LM-282: instrument-type code labels', () => {
+  test('allInstrumentTypes() is the fixture codes, in order', () => {
+    expect(instrumentTypeFixture.codes).toEqual(['CASH', 'DERIVATIVE', 'REFERENCE_INDEX']);
+    expect(allInstrumentTypes()).toEqual(instrumentTypeFixture.codes);
+  });
+
+  test('every code has a label; unknown codes and prototype keys get null', () => {
+    for (const code of instrumentTypeFixture.codes) {
+      expect([code, (instrumentTypeCodeLabelOf(code) ?? '').trim().length > 0]).toEqual([code, true]);
+    }
+    for (const code of [...instrumentTypeFixture.unknown, '__proto__', 'toString', 'constructor']) {
+      expect([code, instrumentTypeCodeLabelOf(code)]).toEqual([code, null]);
+    }
+    expect(instrumentTypeCodeLabelOf(null)).toBeNull();
+    expect(instrumentTypeCodeLabelOf(undefined)).toBeNull();
+  });
+
+  test('each code label equals instrumentTypeLabelOf(INSTRUMENT_TYPE_<CODE>)', () => {
+    for (const code of instrumentTypeFixture.codes) {
+      const v = (InstrumentTypeProto as unknown as Record<string, InstrumentTypeProto>)[`INSTRUMENT_TYPE_${code}`];
+      expect(v).toBeDefined();
+      expect([code, instrumentTypeCodeLabelOf(code)]).toEqual([code, instrumentTypeLabelOf(v)]);
+    }
+  });
+
+  test('INSTRUMENT_TYPE_UNKNOWN keeps its label', () => {
+    expect(instrumentTypeLabelOf(InstrumentTypeProto.INSTRUMENT_TYPE_UNKNOWN)).toBe('Unknown');
   });
 });

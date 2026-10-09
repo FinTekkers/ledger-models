@@ -55,29 +55,34 @@ Lookup order:
 | Enum | Label source |
 | --- | --- |
 | `IdentifierTypeProto` | `enum_labels.IdentifierTypeProto` (label and placeholder) |
-| `InstrumentTypeProto` | `enum_labels.InstrumentTypeProto` |
+| `InstrumentTypeProto` | `instrument_types[code].label`, where `code` is the value name without `INSTRUMENT_TYPE_` (LM-282), else `enum_labels.InstrumentTypeProto` (`INSTRUMENT_TYPE_UNKNOWN`) |
 | `ProductTypeProto` | `product_types[name].label`, else `enum_labels.ProductTypeProto` (`PRODUCT_TYPE_UNKNOWN`) |
 | `AssetClassProto` | label of the code the name resolves to (`CASH_ASSET_CLASS` → `Cash`), else `enum_labels.AssetClassProto` (`UNKNOWN_ASSET_CLASS`, `INDEX`) |
 
 A test per language loops over every value of the generated enums (not over `enum_labels`) and fails on any missing label or identifier-type placeholder, so a new enum value without a label fails CI.
 
+### Instrument-type code labels (LM-282)
+
+`instrument_types` is a map from code to `{ "label": ... }`, the same shape as `asset_classes`, in display order. `allInstrumentTypes()` returns its keys in file order (`CASH`, `DERIVATIVE`, `REFERENCE_INDEX`), and the code-label helper below labels each one, so a consumer such as ui-service's Instrument Type dropdown never maps codes to enum names itself. These labels are written only here: `enum_labels.InstrumentTypeProto` keeps just `INSTRUMENT_TYPE_UNKNOWN`, which is not a code. Every code must have an `INSTRUMENT_TYPE_<CODE>` enum value; each loader fails at load if one does not. The shared test fixture is `ledger-models-protos/fixtures/instrument_type_labels.json`.
+
 The seed labels and placeholders are ledger-models' own. ui-service's current strings are not in this repo; the ui-service follow-up should compare them and change `enum_labels` here if they differ (labels are advisory, so that is a non-breaking change).
 
 ### Function names per language
 
-| Purpose | Java (`common.models.security.ProductHierarchy`) | JS/TS (`node/wrappers/models/security/product_hierarchy`) | Python (`fintekkers.wrappers.models.security.product_hierarchy`) |
-| --- | --- | --- | --- |
-| Resolve to a code | `resolveAssetClass(String)` → `Optional<String>` | `resolveAssetClass(value)` → `string \| null` | `resolve_asset_class(value)` → `Optional[str]` |
-| Match | `assetClassMatches(filterCode, storedValue)` | `assetClassMatches(filterCode, storedValue)` | `asset_class_matches(filter_code, stored_value)` |
-| Identifier-type label | `labelOf(IdentifierTypeProto)` | `identifierTypeLabelOf(v)` | `identifier_type_label_of(v)` |
-| Identifier-type placeholder | `placeholderOf(IdentifierTypeProto)` | `identifierTypePlaceholderOf(v)` | `identifier_type_placeholder_of(v)` |
-| Instrument-type label | `labelOf(InstrumentTypeProto)` | `instrumentTypeLabelOf(v)` | `instrument_type_label_of(v)` |
-| Product-type label | `labelOf(ProductTypeProto)` | `productTypeLabelOf(v)` | `product_type_label_of(v)` |
-| Asset-class enum label | `labelOf(AssetClassProto)` | `assetClassProtoLabelOf(v)` | `asset_class_proto_label_of(v)` |
+| Purpose | Java (`common.models.security.ProductHierarchy`) | JS/TS (`node/wrappers/models/security/product_hierarchy`) | Python (`fintekkers.wrappers.models.security.product_hierarchy`) | Rust (`wrappers::models::product_hierarchy`) |
+| --- | --- | --- | --- | --- |
+| Resolve to a code | `resolveAssetClass(String)` → `Optional<String>` | `resolveAssetClass(value)` → `string \| null` | `resolve_asset_class(value)` → `Optional[str]` | `resolve_asset_class(Option<&str>)` → `Option<String>` |
+| Match | `assetClassMatches(filterCode, storedValue)` | `assetClassMatches(filterCode, storedValue)` | `asset_class_matches(filter_code, stored_value)` | `asset_class_matches(filter_code, stored_value)` |
+| Identifier-type label | `labelOf(IdentifierTypeProto)` | `identifierTypeLabelOf(v)` | `identifier_type_label_of(v)` | — |
+| Identifier-type placeholder | `placeholderOf(IdentifierTypeProto)` | `identifierTypePlaceholderOf(v)` | `identifier_type_placeholder_of(v)` | — |
+| Instrument-type label | `labelOf(InstrumentTypeProto)` | `instrumentTypeLabelOf(v)` | `instrument_type_label_of(v)` | `instrument_type_label_of(InstrumentTypeProto)` → `Option<String>` |
+| Instrument-type code label | `instrumentTypeCodeLabelOf(String)` | `instrumentTypeCodeLabelOf(code)` | `instrument_type_code_label_of(code)` | `instrument_type_code_label_of(&str)` → `Option<String>` |
+| Product-type label | `labelOf(ProductTypeProto)` | `productTypeLabelOf(v)` | `product_type_label_of(v)` | — |
+| Asset-class enum label | `labelOf(AssetClassProto)` | `assetClassProtoLabelOf(v)` | `asset_class_proto_label_of(v)` | — |
 
 Java uses overloads; JS and Python enums are plain numbers, so each enum gets its own function name. An unknown value (Java `UNRECOGNIZED` or `null`, an out-of-range number in JS or Python) returns `null` / `None` and never throws. The existing Java `labelOf(String)` is unchanged and still takes a productType node.
 
-A Rust helper is a follow-up item. Rust's `Registry` ignores the new keys, so it keeps loading the file unchanged.
+The other Rust label helpers (marked —) are a follow-up item. Rust reads `enum_labels` only for the instrument-type label.
 
 ## Alternatives considered
 
@@ -87,5 +92,6 @@ A Rust helper is a follow-up item. Rust's `Registry` ignores the new keys, so it
 ## Consequences
 
 - `schema_version` goes from `1.0` to `1.1`; both new keys are additive (see `registry-versioning.md`).
+- LM-282: `schema_version` goes to `1.2`. `instrument_types` changes from a list to a map, which breaks anything that reads the raw key; the helpers keep their signatures and results.
 - Java callers of `CASH_ASSET_CLASS` or `INDEX` get deprecation warnings, not errors. Wire format and field numbers are unchanged.
 - ui-service and the other services can drop their hard-coded lists and labels after bumping to this release. That switch is follow-up work in their repos.
