@@ -259,6 +259,10 @@ private static final long serialVersionUID = 0L;
   public static final int PRICE_FIELD_NUMBER = 10;
   private fintekkers.models.util.DecimalValue.DecimalValueProto price_;
   /**
+   * <pre>
+   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
    * @return Whether the price field is set.
    */
@@ -267,6 +271,10 @@ private static final long serialVersionUID = 0L;
     return price_ != null;
   }
   /**
+   * <pre>
+   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
    * @return The price.
    */
@@ -275,6 +283,10 @@ private static final long serialVersionUID = 0L;
     return price_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : price_;
   }
   /**
+   * <pre>
+   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
    */
   @java.lang.Override
@@ -1643,6 +1655,10 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> priceBuilder_;
     /**
+     * <pre>
+     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
      * @return Whether the price field is set.
      */
@@ -1650,6 +1666,10 @@ private static final long serialVersionUID = 0L;
       return ((bitField0_ & 0x00000080) != 0);
     }
     /**
+     * <pre>
+     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
      * @return The price.
      */
@@ -1661,6 +1681,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
      */
     public Builder setPrice(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
@@ -1677,6 +1701,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
      */
     public Builder setPrice(
@@ -1691,6 +1719,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
      */
     public Builder mergePrice(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
@@ -1710,6 +1742,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
      */
     public Builder clearPrice() {
@@ -1723,6 +1759,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
      */
     public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getPriceBuilder() {
@@ -1731,6 +1771,10 @@ private static final long serialVersionUID = 0L;
       return getPriceFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
      */
     public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPriceOrBuilder() {
@@ -1742,6 +1786,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * </pre>
+     *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<

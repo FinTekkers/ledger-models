@@ -1,4 +1,5 @@
 use crate::fintekkers::models::position::MeasureProto;
+use crate::fintekkers::models::util::UuidProto;
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::wrappers::models::utils::date::ParseError;
 use tonic::{Code, Status};
@@ -33,6 +34,12 @@ impl Error {
             _ => &[],
         }
     }
+}
+
+/// The `object_id` for a violation: the object's UUID, or None when it has
+/// none or it is not 16 bytes. Shared by the `validate_*` rules.
+pub(crate) fn object_id_of(uuid: Option<&UuidProto>) -> Option<UuidProto> {
+    uuid.filter(|u| u.raw_uuid.len() == 16).cloned()
 }
 
 /// Joins violations as `<field>: <message> (id <uuid>)`, separated by `; `,

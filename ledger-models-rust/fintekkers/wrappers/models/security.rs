@@ -2,7 +2,7 @@ use crate::fintekkers::models::security::{IdentifierProto, IdentifierTypeProto, 
 use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
-use crate::fintekkers::wrappers::models::utils::errors::Error;
+use crate::fintekkers::wrappers::models::utils::errors::{object_id_of, Error};
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 use crate::fintekkers::wrappers::util::link_cache;
 use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
@@ -401,7 +401,7 @@ pub fn validate_security(proto: &SecurityProto) -> Vec<FieldViolationProto> {
     if proto.is_link {
         return Vec::new();
     }
-    let id = object_id_of(proto);
+    let id = object_id_of(proto.uuid.as_ref());
     tbill_coupon_violation(proto, id.as_ref()).into_iter().collect()
 }
 
@@ -436,11 +436,6 @@ fn tbill_coupon_violation(proto: &SecurityProto, id: Option<&UuidProto>) -> Opti
         object_id: id.cloned(),
         message: format!("coupon_rate must be null or 0 for a TBILL: coupon_rate={}", raw),
     })
-}
-
-/// The security's UUID, or None when it has none or it is not 16 bytes.
-fn object_id_of(proto: &SecurityProto) -> Option<UuidProto> {
-    proto.uuid.as_ref().filter(|u| u.raw_uuid.len() == 16).cloned()
 }
 
 raw_data_model_object_trait!(SecurityWrapper);
