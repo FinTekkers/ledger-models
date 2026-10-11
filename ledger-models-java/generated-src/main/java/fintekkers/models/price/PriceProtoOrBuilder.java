@@ -115,16 +115,28 @@ public interface PriceProtoOrBuilder extends
   fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder getValidToOrBuilder();
 
   /**
+   * <pre>
+   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
    * @return Whether the price field is set.
    */
   boolean hasPrice();
   /**
+   * <pre>
+   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
    * @return The price.
    */
   fintekkers.models.util.DecimalValue.DecimalValueProto getPrice();
   /**
+   * <pre>
+   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * </pre>
+   *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
    */
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPriceOrBuilder();

@@ -2,14 +2,15 @@ use std::hash::{Hash, Hasher};
 use std::sync::OnceLock;
 use rust_decimal::Decimal;
 
-use crate::fintekkers::models::price::PriceProto;
+use crate::fintekkers::models::price::{PriceProto, PriceTypeProto};
 use crate::fintekkers::models::security::SecurityProto;
 use crate::fintekkers::models::util::DecimalValueProto;
+use crate::fintekkers::requests::util::errors::FieldViolationProto;
 
 use crate::fintekkers::wrappers::models::security::{SecurityProtoBuilder, SecurityWrapper};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::decimal::DecimalWrapper;
-use crate::fintekkers::wrappers::models::utils::errors::Error;
+use crate::fintekkers::wrappers::models::utils::errors::{object_id_of, Error};
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 use chrono::DateTime;
 use chrono_tz::Tz;
@@ -141,6 +142,52 @@ impl PartialEq for PriceWrapper {
     }
 }
 impl Eq for PriceWrapper {}
+
+// ---------- Price input rules (LM-289) ----------
+
+pub const SECURITY_FIELD: &str = "security";
+pub const PRICE_FIELD: &str = "price";
+pub const PRICE_TYPE_FIELD: &str = "price_type";
+
+/// Price input rules: Rust counterpart of Java's PriceRules
+/// (docs/adr/typed-input-errors.md). Returns every field-level violation, or
+/// an empty Vec when valid. Three rules, in this order: `security` has a
+/// non-empty UUID, `price` has a non-empty arbitrary_precision_value (zero is
+/// valid, see the PriceProto comment), and `price_type` is not
+/// UNKNOWN_PRICE_TYPE. The price value is not parsed. A link price is not
+/// skipped: hydrate it first. `PriceWrapper::new` does not call this.
+pub fn validate_price(proto: &PriceProto) -> Vec<FieldViolationProto> {
+    let id = object_id_of(proto.uuid.as_ref());
+    let violation = |field: &str, message: &str| FieldViolationProto {
+        field: field.to_string(),
+        object_id: id.clone(),
+        message: message.to_string(),
+    };
+    let mut out = Vec::new();
+    let security_uuid = proto.security.as_ref().and_then(|s| s.uuid.as_ref());
+    if security_uuid.map_or(true, |u| u.raw_uuid.is_empty()) {
+        out.push(violation(SECURITY_FIELD, "security with a non-empty uuid is required"));
+    }
+    if proto.price.as_ref().map_or(true, |p| p.arbitrary_precision_value.is_empty()) {
+        out.push(violation(PRICE_FIELD, "price is required"));
+    }
+    // Raw number, so an unrecognised value is not rejected.
+    if proto.price_type == PriceTypeProto::UnknownPriceType as i32 {
+        out.push(violation(PRICE_TYPE_FIELD, "price_type must not be UNKNOWN_PRICE_TYPE"));
+    }
+    out
+}
+
+/// `Err(Error::Validation(..))` carrying every violation if
+/// [`validate_price`] finds any.
+pub fn require_valid_price(proto: &PriceProto) -> Result<(), Error> {
+    let violations = validate_price(proto);
+    if violations.is_empty() {
+        Ok(())
+    } else {
+        Err(Error::Validation(violations))
+    }
+}
 
 pub struct PriceProtoBuilder {
     as_of: LocalTimestampWrapper,
@@ -383,5 +430,140 @@ mod test {
         let uuid = Uuid::new_v4();
         let p = PriceWrapper::new(lh_link_price(uuid, lh_make_as_of(1_700_000_010)));
         let _ = p.security_wrapper();
+    }
+
+    // ---- Price input rules (LM-289). The same table runs in Java, Python and JS. ----
+
+    use super::{require_valid_price, validate_price};
+    use crate::fintekkers::models::price::PriceTypeProto;
+
+    fn rules_valid(price_id: Uuid) -> PriceProto {
+        PriceProto {
+            uuid: Some(UuidProto { raw_uuid: price_id.as_bytes().to_vec() }),
+            security: Some(SecurityProto {
+                uuid: Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() }),
+                ..Default::default()
+            }),
+            price: Some(DecimalValueProto { arbitrary_precision_value: "100.25".to_string() }),
+            price_type: PriceTypeProto::Percentage as i32,
+            ..Default::default()
+        }
+    }
+
+    fn rules_fields(proto: &PriceProto) -> Vec<String> {
+        validate_price(proto).into_iter().map(|v| v.field).collect()
+    }
+
+    #[test]
+    fn rules_security_absent_one_violation_on_security() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.security = None;
+        assert_eq!(rules_fields(&p), vec!["security"]);
+    }
+
+    #[test]
+    fn rules_security_uuid_empty_one_violation_on_security() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.security.as_mut().unwrap().uuid = Some(UuidProto { raw_uuid: vec![] });
+        assert_eq!(rules_fields(&p), vec!["security"]);
+    }
+
+    #[test]
+    fn rules_security_uuid_unset_one_violation_on_security() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.security.as_mut().unwrap().uuid = None;
+        assert_eq!(rules_fields(&p), vec!["security"]);
+    }
+
+    #[test]
+    fn rules_price_absent_one_violation_on_price() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price = None;
+        assert_eq!(rules_fields(&p), vec!["price"]);
+    }
+
+    #[test]
+    fn rules_price_empty_one_violation_on_price() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price = Some(DecimalValueProto { arbitrary_precision_value: String::new() });
+        assert_eq!(rules_fields(&p), vec!["price"]);
+    }
+
+    #[test]
+    fn rules_price_zero_is_valid() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price = Some(DecimalValueProto { arbitrary_precision_value: "0".to_string() });
+        assert!(rules_fields(&p).is_empty());
+    }
+
+    #[test]
+    fn rules_price_value_is_not_checked() {
+        for value in ["-1", "abc"] {
+            let mut p = rules_valid(Uuid::new_v4());
+            p.price = Some(DecimalValueProto { arbitrary_precision_value: value.to_string() });
+            assert!(rules_fields(&p).is_empty(), "{}", value);
+        }
+    }
+
+    #[test]
+    fn rules_unknown_price_type_one_violation_on_price_type() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price_type = PriceTypeProto::UnknownPriceType as i32;
+        assert_eq!(rules_fields(&p), vec!["price_type"]);
+    }
+
+    #[test]
+    fn rules_unrecognised_price_type_is_valid() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price_type = 99;
+        assert!(rules_fields(&p).is_empty());
+    }
+
+    #[test]
+    fn rules_all_three_problems_three_violations_in_field_order() {
+        let price_id = Uuid::new_v4();
+        let mut p = rules_valid(price_id);
+        p.security = None;
+        p.price = None;
+        p.price_type = PriceTypeProto::UnknownPriceType as i32;
+        let violations = validate_price(&p);
+        let fields: Vec<&str> = violations.iter().map(|v| v.field.as_str()).collect();
+        assert_eq!(fields, vec!["security", "price", "price_type"]);
+        for v in &violations {
+            assert_eq!(v.object_id.as_ref().unwrap().raw_uuid, price_id.as_bytes().to_vec());
+        }
+    }
+
+    #[test]
+    fn rules_every_known_price_type_is_valid() {
+        // prost 0.11 enums have no iterator: walk the raw numbers.
+        let values: Vec<PriceTypeProto> = (0..256).filter_map(PriceTypeProto::from_i32).collect();
+        assert!(values.contains(&PriceTypeProto::Percentage));
+        for value in values {
+            if value == PriceTypeProto::UnknownPriceType {
+                continue;
+            }
+            let mut p = rules_valid(Uuid::new_v4());
+            p.price_type = value as i32;
+            assert!(rules_fields(&p).is_empty(), "{}", value.as_str_name());
+        }
+    }
+
+    #[test]
+    fn rules_empty_proto_three_violations() {
+        let violations = validate_price(&PriceProto::default());
+        let fields: Vec<&str> = violations.iter().map(|v| v.field.as_str()).collect();
+        assert_eq!(fields, vec!["security", "price", "price_type"]);
+        assert!(violations[0].object_id.is_none());
+    }
+
+    #[test]
+    fn rules_require_valid_returns_validation_error_carrying_violations() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price = None;
+        let err = require_valid_price(&p).unwrap_err();
+        assert!(matches!(err, Error::Validation(_)), "expected Error::Validation, got {:?}", err);
+        assert_eq!(err.violations(), validate_price(&p).as_slice());
+        assert!(require_valid_price(&rules_valid(Uuid::new_v4())).is_ok());
     }
 }

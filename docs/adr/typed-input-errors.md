@@ -83,6 +83,24 @@ A `LocalTimestampProto` with a blank `time_zone` is never defaulted (second-brai
 - **Python type change**: the blank-zone error moves from `UnknownTimeZoneError` (a `KeyError`) to `ModelValidationError` (a `ValueError`). Callers catching `KeyError` no longer see it.
 - A non-empty but invalid zone (e.g. `Mars/Base`) keeps its previous error in each binding.
 
+### Price rules (LM-289)
+
+One shared `PriceProto` validator in every binding, so price services return its list as-is instead of copying the rules:
+
+| Binding | Validate | Raise |
+|---|---|---|
+| Java | `common.models.price.PriceRules.validate` | `PriceRules.requireValid` |
+| Python | `fintekkers.wrappers.models.price_rules.validate` | `price_rules.require_valid` |
+| JS/TS | `wrappers/models/price/price_rules` `validate` | `requireValid` |
+| Rust | `wrappers::models::price::validate_price` | `require_valid_price` |
+
+- Exactly three rules, always reported in this order: `security` must be set with a non-empty `uuid.raw_uuid`; `price` must be set with a non-empty `arbitrary_precision_value`; `price_type` must not be `UNKNOWN_PRICE_TYPE`. Field paths are relative to the price; `object_id` is the price's UUID when it is 16 bytes.
+- **Zero is valid.** The `PriceProto.price` comment is the spec: absent or empty is invalid, `"0"` is a valid price. The value is not parsed, so negative or unparseable strings are not rejected here.
+- Only `UNKNOWN_PRICE_TYPE` (raw value 0) is rejected. An unrecognised enum number is not.
+- **Never throws on bad input.** Java, Python and JS check a `null` / `None` / `undefined` proto as an empty `PriceProto` (three violations), unlike `SecurityRules`, which requires a non-null proto. Only the raise functions throw.
+- **Links are not skipped**, unlike the security rules: a link price has no security or price, so validate it after hydrating.
+- Rust's `object_id_of` helper is now one `pub(crate)` function in `utils::errors`, shared by `validate_security` and `validate_price`.
+
 LM-254 adds an `InvalidFieldError` in Python and JS. LM-255b/c must reuse or extend it as the typed input error rather than add a second one, and must fold LM-258's T-bill coupon `validate()` into the shared rules module.
 
 ## Affected callers
