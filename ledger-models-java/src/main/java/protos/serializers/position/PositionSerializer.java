@@ -135,7 +135,7 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
         measuresList.forEach(measureProto -> {
             // An entry with no value means "not computable" (see measure.proto): skip it, never read it as zero.
             if (!measureProto.hasMeasureDecimalValue()
-                    || measureProto.getMeasureDecimalValue().getArbitraryPrecisionValue().isEmpty()) return;
+                    || ProtoSerializationUtil.isUnsetDecimal(measureProto.getMeasureDecimalValue())) return;
             Measure measure = Measure.valueOf(measureProto.getMeasure().name());
             BigDecimal value = ProtoSerializationUtil.deserializeBigDecimal(measureProto.getMeasureDecimalValue());
 

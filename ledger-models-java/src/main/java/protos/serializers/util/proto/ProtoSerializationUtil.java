@@ -1,6 +1,7 @@
 package protos.serializers.util.proto;
 
 import com.google.protobuf.*;
+import common.models.errors.InvalidDecimalException;
 import common.models.errors.InvalidFieldException;
 import common.models.errors.ModelValidationException;
 import common.models.errors.UnsetDecimalException;
@@ -151,40 +152,39 @@ public class ProtoSerializationUtil {
         return new UUID(firstLong, secondLong);
     }
 
+    /**
+     * Writes both forms until LM-295: the compact {@code unscaled_value} +
+     * {@code scale} and the canonical plain string (LM-294). A negative scale
+     * becomes scale 0.
+     *
+     * @throws InvalidDecimalException if the value is over 4096 digits or scale 4096
+     */
     public static DecimalValue.DecimalValueProto serializeBigDecimal(BigDecimal quantity) {
-        return DecimalValue.DecimalValueProto.newBuilder()
-                .setArbitraryPrecisionValue(quantity.toString())
-                .build();
+        return DecimalCodec.encode(quantity);
     }
 
-    /** True when the decimal is absent ({@code null}) or its {@code arbitrary_precision_value} is empty. */
+    /** True when the decimal is absent ({@code null}) or neither its compact form nor its string is set. */
     public static boolean isUnsetDecimal(DecimalValue.DecimalValueProto value) {
-        return value == null || value.getArbitraryPrecisionValue().isEmpty();
+        return DecimalCodec.isUnset(value);
     }
 
     /**
-     * Does not know the field name; prefer {@link #deserializeBigDecimal(DecimalValue.DecimalValueProto, String)}.
+     * The one public decode (LM-307 API): takes only the proto. The compact
+     * form wins when set; a string-only proto still decodes, logging one
+     * deprecation warning per process. Callers that know the field name it in
+     * their own error.
      *
      * @return {@code null} if {@code quantity} is {@code null}
-     * @throws UnsetDecimalException (field {@code unknown}) if the value is empty
-     * @throws NumberFormatException if the value is non-empty but not a valid decimal
+     * @throws UnsetDecimalException (field {@code unknown}) if neither form is set
+     * @throws InvalidDecimalException if the value is malformed or over a cap; never rounded
      */
     public static BigDecimal deserializeBigDecimal(DecimalValue.DecimalValueProto quantity) {
-        return deserializeBigDecimal(quantity, "unknown");
-    }
-
-    /**
-     * @return {@code null} if {@code quantity} is {@code null}
-     * @throws UnsetDecimalException naming {@code fieldName} if the value is empty
-     * @throws NumberFormatException if the value is non-empty but not a valid decimal
-     */
-    public static BigDecimal deserializeBigDecimal(DecimalValue.DecimalValueProto quantity, String fieldName) {
         if(quantity == null)
             return null;
         if(isUnsetDecimal(quantity))
-            throw new UnsetDecimalException(fieldName);
+            throw new UnsetDecimalException("unknown");
 
-        return new BigDecimal(quantity.getArbitraryPrecisionValue());
+        return DecimalCodec.decode(quantity);
     }
 
     /** True when the date is absent ({@code null}) or year, month and day are all 0. */

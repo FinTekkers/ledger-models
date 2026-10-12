@@ -2,6 +2,7 @@ package protos.serializers.util.proto;
 
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
+import common.models.errors.InvalidDecimalException;
 import common.models.errors.UnsetDecimalException;
 import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import fintekkers.models.util.LocalTimestamp;
@@ -173,17 +174,8 @@ class ProtoSerializationUtilTest {
     }
 
     @Test
-    public void deserializeBigDecimal_fieldNameInMessage() {
-        UnsetDecimalException e = assertThrows(UnsetDecimalException.class,
-                () -> ProtoSerializationUtil.deserializeBigDecimal(decimal(""), "price"));
-        assertTrue(e.getMessage().contains("price"), e.getMessage());
-        assertEquals("price", e.getFieldName());
-    }
-
-    @Test
     public void deserializeBigDecimal_nullReturnsNull() {
         assertNull(ProtoSerializationUtil.deserializeBigDecimal(null));
-        assertNull(ProtoSerializationUtil.deserializeBigDecimal(null, "price"));
     }
 
     @Test
@@ -198,24 +190,19 @@ class ProtoSerializationUtilTest {
     @Test
     public void deserializeBigDecimal_validValuesUnchanged() {
         for (String s : VALID_DECIMALS) {
-            // BigDecimal.equals compares scale too, so "1E+3" must stay scale -3.
-            assertEquals(new BigDecimal(s), ProtoSerializationUtil.deserializeBigDecimal(decimal(s)), s);
+            // BigDecimal.equals compares scale too. A negative scale becomes 0
+            // (LM-294), so "1E+3" reads as 1000 at scale 0, as in every language.
+            BigDecimal expected = new BigDecimal(s);
+            if (expected.scale() < 0) expected = expected.setScale(0);
+            assertEquals(expected, ProtoSerializationUtil.deserializeBigDecimal(decimal(s)), s);
         }
     }
 
     @Test
-    public void deserializeBigDecimal_fieldNameOverloadValidValuesUnchanged() {
-        for (String s : VALID_DECIMALS) {
-            assertEquals(new BigDecimal(s),
-                    ProtoSerializationUtil.deserializeBigDecimal(decimal(s), "price"), s);
-        }
-    }
-
-    @Test
-    public void deserializeBigDecimal_malformedStillThrowsNumberFormatException() {
+    public void deserializeBigDecimal_malformedThrowsInvalidDecimalException() {
         // Only "" is unset: no trimming, so whitespace-only stays malformed.
         for (String s : new String[]{" ", "abc"}) {
-            NumberFormatException e = assertThrows(NumberFormatException.class,
+            InvalidDecimalException e = assertThrows(InvalidDecimalException.class,
                     () -> ProtoSerializationUtil.deserializeBigDecimal(decimal(s)), s);
             assertFalse(((Object) e) instanceof UnsetDecimalException, s);
         }
@@ -228,11 +215,9 @@ class ProtoSerializationUtilTest {
         assertTrue(Modifier.isStatic(original.getModifiers()));
         assertEquals(BigDecimal.class, original.getReturnType());
 
-        Method overload = ProtoSerializationUtil.class.getMethod("deserializeBigDecimal",
-                DecimalValueProto.class, String.class);
-        assertTrue(Modifier.isPublic(overload.getModifiers()));
-        assertTrue(Modifier.isStatic(overload.getModifiers()));
-        assertEquals(BigDecimal.class, overload.getReturnType());
+        // LM-307 API: the field-name overload is gone.
+        assertThrows(NoSuchMethodException.class, () -> ProtoSerializationUtil.class.getMethod(
+                "deserializeBigDecimal", DecimalValueProto.class, String.class));
 
         assertTrue(Modifier.isPublic(UnsetDecimalException.class.getModifiers()));
         assertTrue(RuntimeException.class.isAssignableFrom(UnsetDecimalException.class));

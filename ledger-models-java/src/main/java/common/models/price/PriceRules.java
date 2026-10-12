@@ -40,7 +40,7 @@ public final class PriceRules {
         if (!p.hasSecurity() || !p.getSecurity().hasUuid() || p.getSecurity().getUuid().getRawUuid().isEmpty()) {
             out.add(violation(SECURITY, id, "security with a non-empty uuid is required"));
         }
-        if (!p.hasPrice() || p.getPrice().getArbitraryPrecisionValue().isEmpty()) {
+        if (!p.hasPrice() || ProtoSerializationUtil.isUnsetDecimal(p.getPrice())) {
             out.add(violation(PRICE, id, "price is required"));
         }
         // Raw number, so an unrecognised value (Java's UNRECOGNIZED) is not rejected.

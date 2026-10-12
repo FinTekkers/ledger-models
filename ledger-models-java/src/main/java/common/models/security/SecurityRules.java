@@ -136,17 +136,16 @@ public final class SecurityRules {
     private static FieldViolationProto tbillCouponViolation(SecurityProto proto, UUID id) {
         if (proto.getProductType() != ProductTypeProto.TBILL) return null;
         if (!proto.hasBondDetails() || !proto.getBondDetails().hasCouponRate()) return null;
-        String raw = proto.getBondDetails().getCouponRate().getArbitraryPrecisionValue();
-        if (raw.isEmpty()) return null;
+        if (ProtoSerializationUtil.isUnsetDecimal(proto.getBondDetails().getCouponRate())) return null;
         BigDecimal coupon;
         try {
-            coupon = new BigDecimal(raw);
-        } catch (NumberFormatException e) {
+            coupon = ProtoSerializationUtil.deserializeBigDecimal(proto.getBondDetails().getCouponRate());
+        } catch (IllegalArgumentException e) {
             return null;
         }
         if (coupon.signum() == 0) return null;
         return violation(COUPON_RATE, id,
-                "coupon_rate must be null or 0 for a TBILL: coupon_rate=" + raw);
+                "coupon_rate must be null or 0 for a TBILL: coupon_rate=" + coupon.toPlainString());
     }
 
     private static boolean isSet(BondDetailsProto bond, String field) {
