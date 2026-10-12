@@ -35,6 +35,12 @@ export interface ObjectTyped {
 export type Version = [number, number, number];
 /** The ObjectTypeProto value an object_class string stands for, or OBJECT_TYPE_UNKNOWN. */
 export declare function fromLegacy(objectClass: string): ObjectTypeProto;
+/**
+ * The ObjectTypeProto value named for a message type, or OBJECT_TYPE_UNKNOWN.
+ * Uses the enum's naming rule: `QuerySecurityRequestProto` ->
+ * OBJECT_TYPE_QUERY_SECURITY_REQUEST.
+ */
+export declare function ownType(messageName: string): ObjectTypeProto;
 /** '1.2.3' -> [1, 2, 3]; null unless exactly three decimal uint32 parts. */
 export declare function parseVersion(version: string): Version | null;
 /**

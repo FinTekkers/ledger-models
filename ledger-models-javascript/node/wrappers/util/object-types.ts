@@ -53,10 +53,54 @@ function buildLegacyMap(): Map<string, ObjectTypeProto> {
 
 const LEGACY = buildLegacyMap();
 const warned = new Set<string>();
+const UNKNOWN_NAME = Object.keys(ObjectTypeProto)
+  .find((name) => ObjectTypeProto[name as keyof typeof ObjectTypeProto] === ObjectTypeProto.OBJECT_TYPE_UNKNOWN) as string;
+const PREFIX = UNKNOWN_NAME.slice(0, -'UNKNOWN'.length);
+const CAMEL_BOUNDARY = /(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/g;
+const ownTypes = new WeakMap<object, ObjectTypeProto>();
 
 /** The ObjectTypeProto value an object_class string stands for, or OBJECT_TYPE_UNKNOWN. */
 export function fromLegacy(objectClass: string): ObjectTypeProto {
   return LEGACY.get(objectClass) ?? ObjectTypeProto.OBJECT_TYPE_UNKNOWN;
+}
+
+/**
+ * The ObjectTypeProto value named for a message type, or OBJECT_TYPE_UNKNOWN.
+ * Uses the enum's naming rule: `QuerySecurityRequestProto` ->
+ * OBJECT_TYPE_QUERY_SECURITY_REQUEST.
+ */
+export function ownType(messageName: string): ObjectTypeProto {
+  const base = messageName.endsWith('Proto') ? messageName.slice(0, -'Proto'.length) : messageName;
+  const name = PREFIX + base.replace(CAMEL_BOUNDARY, '_').toUpperCase();
+  return Object.prototype.hasOwnProperty.call(ObjectTypeProto, name)
+    ? ObjectTypeProto[name as keyof typeof ObjectTypeProto]
+    : ObjectTypeProto.OBJECT_TYPE_UNKNOWN;
+}
+
+/**
+ * The generated class name of `message`. google-protobuf's classes are
+ * anonymous functions, but each generated module exports its classes under
+ * the global `proto` namespace by full name, so search that.
+ */
+function messageName(ctor: object, namespace: unknown, depth = 0): string | undefined {
+  if (typeof namespace !== 'object' || namespace === null || depth > 8) return undefined;
+  for (const [key, value] of Object.entries(namespace)) {
+    if (value === ctor) return key;
+    const found = messageName(ctor, value, depth + 1);
+    if (found !== undefined) return found;
+  }
+  return undefined;
+}
+
+function ownTypeOf(message: ObjectTyped): ObjectTypeProto {
+  const ctor = message.constructor;
+  let type = ownTypes.get(ctor);
+  if (type === undefined) {
+    const name = messageName(ctor, (globalThis as { proto?: unknown }).proto);
+    type = name === undefined ? ObjectTypeProto.OBJECT_TYPE_UNKNOWN : ownType(name);
+    ownTypes.set(ctor, type);
+  }
+  return type;
 }
 
 /** '1.2.3' -> [1, 2, 3]; null unless exactly three decimal uint32 parts. */
@@ -107,6 +151,12 @@ function decode(message: ObjectTyped): { objectType: ObjectTypeProto; version: V
     objectType = fromLegacy(objectClass);
     if (objectType === ObjectTypeProto.OBJECT_TYPE_UNKNOWN) {
       problems.push(' (unknown object_class, using OBJECT_TYPE_UNKNOWN)');
+    } else {
+      // Some strings were written on more than one message type (e.g.
+      // 'SecurityRequest' on the create and query requests): the message's
+      // own type wins over the value the string sits on.
+      const own = ownTypeOf(message);
+      if (own !== ObjectTypeProto.OBJECT_TYPE_UNKNOWN) objectType = own;
     }
   }
   if (version.every((p) => p === 0) && versionString) {

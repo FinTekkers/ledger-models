@@ -10,6 +10,7 @@ import fintekkers.models.util.ObjectTypeProtos;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,6 +49,9 @@ public final class ObjectTypes {
     private static final long UINT32_MAX = 0xFFFFFFFFL;
 
     private static final Map<String, ObjectTypeProto> LEGACY = legacyMap();
+    private static final String PREFIX = ObjectTypeProto.OBJECT_TYPE_UNKNOWN.name()
+            .substring(0, ObjectTypeProto.OBJECT_TYPE_UNKNOWN.name().length() - "UNKNOWN".length());
+    private static final Pattern CAMEL_BOUNDARY = Pattern.compile("(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
     private static final Set<String> WARNED = ConcurrentHashMap.newKeySet();
 
     /** major.minor.patch, each a uint32 held in an int as protobuf does. */
@@ -103,6 +107,19 @@ public final class ObjectTypes {
     /** The ObjectTypeProto value an object_class string stands for, or OBJECT_TYPE_UNKNOWN. */
     public static ObjectTypeProto fromLegacy(String objectClass) {
         return LEGACY.getOrDefault(objectClass, ObjectTypeProto.OBJECT_TYPE_UNKNOWN);
+    }
+
+    /**
+     * The ObjectTypeProto value named for a message type, or OBJECT_TYPE_UNKNOWN. Uses the
+     * enum's naming rule: {@code QuerySecurityRequestProto} to OBJECT_TYPE_QUERY_SECURITY_REQUEST.
+     */
+    public static ObjectTypeProto ownType(String messageName) {
+        String base = messageName.endsWith("Proto")
+                ? messageName.substring(0, messageName.length() - "Proto".length())
+                : messageName;
+        String snake = CAMEL_BOUNDARY.matcher(base).replaceAll("_").toUpperCase(Locale.ROOT);
+        EnumValueDescriptor value = ObjectTypeProto.getDescriptor().findValueByName(PREFIX + snake);
+        return value == null ? ObjectTypeProto.OBJECT_TYPE_UNKNOWN : ObjectTypeProto.valueOf(value);
     }
 
     /** "1.2.3" to 1/2/3; null unless exactly three decimal uint32 parts. */
@@ -203,6 +220,14 @@ public final class ObjectTypes {
             type = fromLegacy(objectClass);
             if (type == ObjectTypeProto.OBJECT_TYPE_UNKNOWN) {
                 problems.append(" (unknown object_class, using OBJECT_TYPE_UNKNOWN)");
+            } else {
+                // Some strings were written on more than one message type (e.g.
+                // "SecurityRequest" on the create and query requests): the
+                // message's own type wins over the value the string sits on.
+                ObjectTypeProto own = ownType(d.getName());
+                if (own != ObjectTypeProto.OBJECT_TYPE_UNKNOWN) {
+                    type = own;
+                }
             }
         }
         if (version.isZero() && !versionString.isEmpty()) {

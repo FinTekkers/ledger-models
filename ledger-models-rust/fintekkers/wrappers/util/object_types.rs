@@ -76,10 +76,13 @@ object_typed! {
     crate::fintekkers::models::strategy::StrategyProto => "StrategyProto",
     crate::fintekkers::models::strategy::StrategyAllocationProto => "StrategyAllocationProto",
     crate::fintekkers::models::transaction::TransactionProto => "TransactionProto",
+    crate::fintekkers::requests::portfolio::CreatePortfolioRequestProto => "CreatePortfolioRequestProto",
     crate::fintekkers::requests::portfolio::QueryPortfolioRequestProto => "QueryPortfolioRequestProto",
     crate::fintekkers::requests::price::CreatePriceRequestProto => "CreatePriceRequestProto",
     crate::fintekkers::requests::price::QueryPriceRequestProto => "QueryPriceRequestProto",
+    crate::fintekkers::requests::security::CreateSecurityRequestProto => "CreateSecurityRequestProto",
     crate::fintekkers::requests::security::QuerySecurityRequestProto => "QuerySecurityRequestProto",
+    crate::fintekkers::requests::transaction::CreateTransactionRequestProto => "CreateTransactionRequestProto",
     crate::fintekkers::requests::transaction::QueryTransactionRequestProto => "QueryTransactionRequestProto",
 }
 
@@ -114,6 +117,27 @@ fn warned() -> &'static Mutex<HashSet<(String, String)>> {
 /// The ObjectTypeProto value an object_class string stands for, or `ObjectTypeUnknown`.
 pub fn from_legacy(object_class: &str) -> ObjectTypeProto {
     legacy_map().get(object_class).copied().unwrap_or(ObjectTypeProto::ObjectTypeUnknown)
+}
+
+/// The ObjectTypeProto value named for a message type, or `ObjectTypeUnknown`.
+/// Uses the enum's naming rule: `QuerySecurityRequestProto` ->
+/// OBJECT_TYPE_QUERY_SECURITY_REQUEST.
+pub fn own_type(message_name: &str) -> ObjectTypeProto {
+    let base = message_name.strip_suffix("Proto").unwrap_or(message_name);
+    let unknown = ObjectTypeProto::ObjectTypeUnknown.as_str_name();
+    let mut name = unknown[..unknown.len() - "UNKNOWN".len()].to_string();
+    let chars: Vec<char> = base.chars().collect();
+    for (i, &c) in chars.iter().enumerate() {
+        if i > 0 && c.is_ascii_uppercase() {
+            let prev = chars[i - 1];
+            let next_lower = chars.get(i + 1).map_or(false, |n| n.is_ascii_lowercase());
+            if prev.is_ascii_lowercase() || prev.is_ascii_digit() || (prev.is_ascii_uppercase() && next_lower) {
+                name.push('_');
+            }
+        }
+        name.push(c.to_ascii_uppercase());
+    }
+    ObjectTypeProto::from_str_name(&name).unwrap_or(ObjectTypeProto::ObjectTypeUnknown)
 }
 
 /// "1.2.3" -> (1, 2, 3); None unless exactly three decimal uint32 parts.
@@ -184,6 +208,14 @@ fn decode<M: ObjectTyped + ?Sized>(message: &M) -> (i32, Version) {
         object_type = from_legacy(message.legacy_object_class()) as i32;
         if object_type == ObjectTypeProto::ObjectTypeUnknown as i32 {
             problems.push_str(" (unknown object_class, using OBJECT_TYPE_UNKNOWN)");
+        } else {
+            // Some strings were written on more than one message type (e.g.
+            // "SecurityRequest" on the create and query requests): the
+            // message's own type wins over the value the string sits on.
+            let own = own_type(message.message_name());
+            if own != ObjectTypeProto::ObjectTypeUnknown {
+                object_type = own as i32;
+            }
         }
     }
     if version == (0, 0, 0) && !message.legacy_version().is_empty() {
@@ -439,13 +471,22 @@ mod tests {
                 "fintekkers.models.strategy.StrategyProto" => check_case::<StrategyProto>(c),
                 "fintekkers.models.strategy.StrategyAllocationProto" => check_case::<StrategyAllocationProto>(c),
                 "fintekkers.models.transaction.TransactionProto" => check_case::<TransactionProto>(c),
+                "fintekkers.requests.portfolio.CreatePortfolioRequestProto" => {
+                    check_case::<crate::fintekkers::requests::portfolio::CreatePortfolioRequestProto>(c)
+                }
                 "fintekkers.requests.portfolio.QueryPortfolioRequestProto" => {
                     check_case::<QueryPortfolioRequestProto>(c)
                 }
                 "fintekkers.requests.price.CreatePriceRequestProto" => check_case::<CreatePriceRequestProto>(c),
                 "fintekkers.requests.price.QueryPriceRequestProto" => check_case::<QueryPriceRequestProto>(c),
+                "fintekkers.requests.security.CreateSecurityRequestProto" => {
+                    check_case::<crate::fintekkers::requests::security::CreateSecurityRequestProto>(c)
+                }
                 "fintekkers.requests.security.QuerySecurityRequestProto" => {
                     check_case::<QuerySecurityRequestProto>(c)
+                }
+                "fintekkers.requests.transaction.CreateTransactionRequestProto" => {
+                    check_case::<crate::fintekkers::requests::transaction::CreateTransactionRequestProto>(c)
                 }
                 "fintekkers.requests.transaction.QueryTransactionRequestProto" => {
                     check_case::<QueryTransactionRequestProto>(c)

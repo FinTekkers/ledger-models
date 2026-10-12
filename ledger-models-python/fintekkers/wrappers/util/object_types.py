@@ -36,6 +36,8 @@ def _legacy_map() -> Dict[str, int]:
 
 
 _LEGACY = _legacy_map()
+_PREFIX = ObjectTypeProto.Name(ObjectTypeProto.OBJECT_TYPE_UNKNOWN)[: -len("UNKNOWN")]
+_CAMEL_BOUNDARY = re.compile(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])")
 _warned = set()
 _warned_lock = threading.Lock()
 
@@ -43,6 +45,18 @@ _warned_lock = threading.Lock()
 def from_legacy(object_class: str) -> int:
     """The ObjectTypeProto value an object_class string stands for, or OBJECT_TYPE_UNKNOWN."""
     return _LEGACY.get(object_class, ObjectTypeProto.OBJECT_TYPE_UNKNOWN)
+
+
+def own_type(message_name: str) -> int:
+    """The ObjectTypeProto value named for a message type, or OBJECT_TYPE_UNKNOWN.
+
+    Uses the enum's naming rule: `QuerySecurityRequestProto` ->
+    OBJECT_TYPE_QUERY_SECURITY_REQUEST.
+    """
+    base = message_name[: -len("Proto")] if message_name.endswith("Proto") else message_name
+    snake = _CAMEL_BOUNDARY.sub("_", base).upper()
+    value = ObjectTypeProto.DESCRIPTOR.values_by_name.get(_PREFIX + snake)
+    return value.number if value is not None else ObjectTypeProto.OBJECT_TYPE_UNKNOWN
 
 
 def parse_version(version: str) -> Optional[Version]:
@@ -100,6 +114,13 @@ def _fallback(message) -> Tuple[int, Version]:
         object_type = from_legacy(message.object_class)
         if object_type == ObjectTypeProto.OBJECT_TYPE_UNKNOWN:
             problems.append(" (unknown object_class, using OBJECT_TYPE_UNKNOWN)")
+        else:
+            # Some strings were written on more than one message type (e.g.
+            # "SecurityRequest" on the create and query requests): the
+            # message's own type wins over the value the string sits on.
+            own = own_type(message.DESCRIPTOR.name)
+            if own != ObjectTypeProto.OBJECT_TYPE_UNKNOWN:
+                object_type = own
 
     if version == (0, 0, 0) and message.version:
         used_strings = True

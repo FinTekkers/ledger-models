@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetWarningsForTests = exports.upgrade = exports.readVersion = exports.readType = exports.stamp = exports.parseVersion = exports.fromLegacy = void 0;
+exports.resetWarningsForTests = exports.upgrade = exports.readVersion = exports.readType = exports.stamp = exports.parseVersion = exports.ownType = exports.fromLegacy = void 0;
 /**
  * Compact object type and version (LM-297), stage 1: write both forms, read the new one.
  *
@@ -37,12 +37,57 @@ function buildLegacyMap() {
 }
 const LEGACY = buildLegacyMap();
 const warned = new Set();
+const UNKNOWN_NAME = Object.keys(object_type_pb_1.ObjectTypeProto)
+    .find((name) => object_type_pb_1.ObjectTypeProto[name] === object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_UNKNOWN);
+const PREFIX = UNKNOWN_NAME.slice(0, -'UNKNOWN'.length);
+const CAMEL_BOUNDARY = /(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/g;
+const ownTypes = new WeakMap();
 /** The ObjectTypeProto value an object_class string stands for, or OBJECT_TYPE_UNKNOWN. */
 function fromLegacy(objectClass) {
     var _a;
     return (_a = LEGACY.get(objectClass)) !== null && _a !== void 0 ? _a : object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_UNKNOWN;
 }
 exports.fromLegacy = fromLegacy;
+/**
+ * The ObjectTypeProto value named for a message type, or OBJECT_TYPE_UNKNOWN.
+ * Uses the enum's naming rule: `QuerySecurityRequestProto` ->
+ * OBJECT_TYPE_QUERY_SECURITY_REQUEST.
+ */
+function ownType(messageName) {
+    const base = messageName.endsWith('Proto') ? messageName.slice(0, -'Proto'.length) : messageName;
+    const name = PREFIX + base.replace(CAMEL_BOUNDARY, '_').toUpperCase();
+    return Object.prototype.hasOwnProperty.call(object_type_pb_1.ObjectTypeProto, name)
+        ? object_type_pb_1.ObjectTypeProto[name]
+        : object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_UNKNOWN;
+}
+exports.ownType = ownType;
+/**
+ * The generated class name of `message`. google-protobuf's classes are
+ * anonymous functions, but each generated module exports its classes under
+ * the global `proto` namespace by full name, so search that.
+ */
+function messageName(ctor, namespace, depth = 0) {
+    if (typeof namespace !== 'object' || namespace === null || depth > 8)
+        return undefined;
+    for (const [key, value] of Object.entries(namespace)) {
+        if (value === ctor)
+            return key;
+        const found = messageName(ctor, value, depth + 1);
+        if (found !== undefined)
+            return found;
+    }
+    return undefined;
+}
+function ownTypeOf(message) {
+    const ctor = message.constructor;
+    let type = ownTypes.get(ctor);
+    if (type === undefined) {
+        const name = messageName(ctor, globalThis.proto);
+        type = name === undefined ? object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_UNKNOWN : ownType(name);
+        ownTypes.set(ctor, type);
+    }
+    return type;
+}
 /** '1.2.3' -> [1, 2, 3]; null unless exactly three decimal uint32 parts. */
 function parseVersion(version) {
     if (!VERSION_PATTERN.test(version))
@@ -90,6 +135,14 @@ function decode(message) {
         objectType = fromLegacy(objectClass);
         if (objectType === object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_UNKNOWN) {
             problems.push(' (unknown object_class, using OBJECT_TYPE_UNKNOWN)');
+        }
+        else {
+            // Some strings were written on more than one message type (e.g.
+            // 'SecurityRequest' on the create and query requests): the message's
+            // own type wins over the value the string sits on.
+            const own = ownTypeOf(message);
+            if (own !== object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_UNKNOWN)
+                objectType = own;
         }
     }
     if (version.every((p) => p === 0) && versionString) {

@@ -281,6 +281,91 @@
       }
     },
     {
+      "name": "js-CreateSecurityRequestProto",
+      "source": "js node/wrappers/services/security-service/SecurityService.ts:59 SecurityService.createSecurity",
+      "message": "fintekkers.requests.security.CreateSecurityRequestProto",
+      "object_class": "SecurityRequest",
+      "version": "0.0.1",
+      "bytes": "Cg9TZWN1cml0eVJlcXVlc3QSBTAuMC4xogFvCghTZWN1cml0eRIFMC4wLjEqEgoQREHT3qzbTl+lpia0VqLheDIXCgwIooWx1gYQk/rJuwISB0V0Yy9VVENCFwoMCKKFsdYGEPKLz7sCEgdFdGMvVVRDWgdVbmtub3duYg1Vbmtub3duIElzc3Vl",
+      "expect": {
+        "object_type": "OBJECT_TYPE_CREATE_SECURITY_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-CreatePriceRequestProto",
+      "source": "js node/wrappers/services/price-service/PriceService.ts:54 PriceService.createOrUpdate",
+      "message": "fintekkers.requests.price.CreatePriceRequestProto",
+      "object_class": "PriceRequest",
+      "version": "0.0.1",
+      "bytes": "CgxQcmljZVJlcXVlc3QSBTAuMC4xogFRCgpQcmljZVByb3RvEgUwLjAuMSoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFY",
+      "expect": {
+        "object_type": "OBJECT_TYPE_CREATE_PRICE_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-CreatePortfolioRequestProto",
+      "source": "js node/wrappers/services/portfolio-service/PortfolioService.ts:49 PortfolioService.createPortfolio",
+      "message": "fintekkers.requests.portfolio.CreatePortfolioRequestProto",
+      "object_class": "PortfolioRequest",
+      "version": "0.0.1",
+      "bytes": "ChBQb3J0Zm9saW9SZXF1ZXN0EgUwLjAuMaIBRQoJUG9ydGZvbGlvEgUwLjAuMSoSChBz6RW4bCpGBoMoVb3TITsUMhQKABIQQW1lcmljYS9OZXdfWW9ya1IHRml4dHVyZQ==",
+      "expect": {
+        "object_type": "OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-CreateTransactionRequestProto",
+      "source": "js node/wrappers/services/transaction-service/TransactionService.ts:48 TransactionService.createTransaction",
+      "message": "fintekkers.requests.transaction.CreateTransactionRequestProto",
+      "object_class": "TransactionRequest",
+      "version": "0.0.1",
+      "bytes": "ChJUcmFuc2FjdGlvblJlcXVlc3QSBTAuMC4xogGoAQoLVHJhbnNhY3Rpb24qEgoQWGc78guWSM+T5zN8QH3hxDIaCgYImK/PrAYSEEFtZXJpY2EvTmV3X1lvcmtgAWoFUgMxMDByOioSChDBnJqPbARGvIbTwgWcnr9MMhoKBgiYr8+sBhIQQW1lcmljYS9OZXdfWW9ya1IIUgYtMTAwLjB6BwjoDxABGAKCAQcI6A8QARgEyAEC0gENTm8gdHJhZGUgbmFtZQ==",
+      "expect": {
+        "object_type": "OBJECT_TYPE_CREATE_TRANSACTION_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-QueryTransactionRequestProto-SecurityRequest",
+      "source": "js node/wrappers/services/transaction-service/TransactionService.ts:70 TransactionService.searchTransaction",
+      "message": "fintekkers.requests.transaction.QueryTransactionRequestProto",
+      "object_class": "SecurityRequest",
+      "version": "0.0.1",
+      "bytes": "Cg9TZWN1cml0eVJlcXVlc3QSBTAuMC4xsgEAugEaCgYIgOLPqgYSEEFtZXJpY2EvTmV3X1lvcmvAAWQ=",
+      "expect": {
+        "object_type": "OBJECT_TYPE_QUERY_TRANSACTION_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
       "name": "unknown-object-class",
       "source": "derived from python-PriceProto: object_class not on any enum value",
       "message": "fintekkers.models.price.PriceProto",
