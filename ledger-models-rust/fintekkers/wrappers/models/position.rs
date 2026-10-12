@@ -340,12 +340,8 @@ impl Position {
             .measure_decimal_value
             .as_ref()
             .ok_or("Measure decimal value is required")?;
-        ProtoSerializationUtil::deserialize_decimal_in(
-            decimal_proto,
-            "MeasureMapEntry",
-            "measure_decimal_value",
-        )
-        .map_err(|_| "Failed to convert DecimalValueProto to Decimal")
+        ProtoSerializationUtil::deserialize_decimal(decimal_proto)
+            .map_err(|_| "Failed to convert DecimalValueProto to Decimal")
     }
 }
 

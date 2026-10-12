@@ -15,14 +15,14 @@
       "stored_string": "4.500",
       "unscaled": "4500",
       "scale": 3,
-      "read_by": "ProtoSerializationUtil::deserialize_decimal_in"
+      "read_by": "ProtoSerializationUtil::deserialize_decimal"
     },
     {
       "path": "security.bond_details.face_value",
       "stored_string": "1000",
       "unscaled": "1000",
       "scale": 0,
-      "read_by": "ProtoSerializationUtil::deserialize_decimal_in"
+      "read_by": "ProtoSerializationUtil::deserialize_decimal"
     },
     {
       "path": "security.mbs_extension.wac",

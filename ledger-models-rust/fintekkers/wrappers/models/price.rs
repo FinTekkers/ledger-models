@@ -127,7 +127,7 @@ impl PriceWrapper {
                 message: "price is required but unset".to_string(),
             }])
         })?;
-        ProtoSerializationUtil::deserialize_decimal_in(price, "PriceProto", PRICE_FIELD)
+        ProtoSerializationUtil::deserialize_decimal(price).map_err(|e| e.in_field(PRICE_FIELD))
     }
 
     pub fn security_wrapper(&self) -> SecurityWrapper {
@@ -688,7 +688,7 @@ mod test {
 
     // ---- LM-294: compact decimal form ----
 
-    use crate::fintekkers::wrappers::models::utils::decimal::{decimal_proto, recorded_warnings};
+    use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
     use rust_decimal::Decimal;
 
     #[test]
@@ -709,19 +709,11 @@ mod test {
     }
 
     #[test]
-    fn try_price_reads_legacy_string_and_warns_naming_price_proto() {
+    fn try_price_reads_legacy_string() {
         let mut p = rules_valid(Uuid::new_v4());
         p.price = Some(legacy_decimal_proto("1.50"));
         let value = PriceWrapper::new(p).try_price().unwrap();
         assert_eq!(value.to_string(), "1.50");
-        // Other tests may also read legacy prices in parallel, so this checks
-        // containment, not a count.
-        let warned = recorded_warnings()
-            .lock()
-            .unwrap()
-            .iter()
-            .any(|l| l.contains("PriceProto.price") && l.contains("arbitrary_precision_value"));
-        assert!(warned, "{:?}", recorded_warnings().lock().unwrap());
     }
 
     #[test]

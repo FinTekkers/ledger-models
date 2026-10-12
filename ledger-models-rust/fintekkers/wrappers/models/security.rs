@@ -424,7 +424,7 @@ fn tbill_coupon_violation(proto: &SecurityProto, id: Option<&UuidProto>) -> Opti
     }
     let raw = proto.bond_details.as_ref()?.coupon_rate.as_ref()?;
     // Unset (both forms empty) and unparseable values are skipped.
-    let coupon = decimal::decode_decimal(raw, "SecurityProto", COUPON_RATE).ok()?;
+    let coupon = decimal::decode_decimal(raw).ok()?;
     if coupon.is_zero() {
         return None;
     }

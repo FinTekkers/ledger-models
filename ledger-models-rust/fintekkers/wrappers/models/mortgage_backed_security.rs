@@ -56,7 +56,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.wac.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.wac").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn wam(&self) -> i32 {
@@ -72,7 +72,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.pass_through_rate.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.pass_through_rate").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn current_factor(&self) -> Option<Decimal> {
@@ -80,7 +80,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.current_factor.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.current_factor").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn original_face_value(&self) -> Option<Decimal> {
@@ -88,7 +88,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.original_face_value.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.original_face_value").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn current_upb(&self) -> Option<Decimal> {
@@ -96,7 +96,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.current_upb.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.current_upb").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn psa_speed(&self) -> Option<Decimal> {
@@ -104,7 +104,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.psa_speed.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.psa_speed").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn from_pricer_inputs(

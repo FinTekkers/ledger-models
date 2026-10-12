@@ -39,7 +39,7 @@ impl TIPSBond {
             .tips_extension
             .as_ref()
             .and_then(|t| t.base_cpi.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "tips_extension.base_cpi").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn index_date(&self) -> Option<NaiveDate> {
