@@ -15,7 +15,8 @@ use crate::fintekkers::models::security::{
     BondDetailsProto, CouponFrequencyProto, CouponTypeProto, MbsExtensionProto, ProductTypeProto,
     SecurityProto,
 };
-use crate::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
+use crate::fintekkers::models::util::LocalDateProto;
+use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 
@@ -55,7 +56,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.wac.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.wac").ok())
     }
 
     pub fn wam(&self) -> i32 {
@@ -71,7 +72,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.pass_through_rate.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.pass_through_rate").ok())
     }
 
     pub fn current_factor(&self) -> Option<Decimal> {
@@ -79,7 +80,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.current_factor.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.current_factor").ok())
     }
 
     pub fn original_face_value(&self) -> Option<Decimal> {
@@ -87,7 +88,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.original_face_value.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.original_face_value").ok())
     }
 
     pub fn current_upb(&self) -> Option<Decimal> {
@@ -95,7 +96,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.current_upb.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.current_upb").ok())
     }
 
     pub fn psa_speed(&self) -> Option<Decimal> {
@@ -103,7 +104,7 @@ impl MortgageBackedSecurity {
             .mbs_extension
             .as_ref()
             .and_then(|m| m.psa_speed.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "mbs_extension.psa_speed").ok())
     }
 
     pub fn from_pricer_inputs(
@@ -126,10 +127,10 @@ impl MortgageBackedSecurity {
         SecurityProto {
             product_type: ProductTypeProto::MortgageBacked as i32,
             bond_details: Some(BondDetailsProto {
-                coupon_rate: Some(decimal_proto(coupon_rate)),
+                coupon_rate: Some(decimal_proto(&coupon_rate)),
                 coupon_type: coupon_type as i32,
                 coupon_frequency: coupon_frequency as i32,
-                face_value: Some(decimal_proto(face_value)),
+                face_value: Some(decimal_proto(&face_value)),
                 issue_date: Some(date_proto(issue_date)),
                 dated_date: None,
                 maturity_date: Some(date_proto(maturity_date)),
@@ -138,22 +139,16 @@ impl MortgageBackedSecurity {
             mbs_extension: Some(MbsExtensionProto {
                 pool_number,
                 agency: agency as i32,
-                wac: Some(decimal_proto(wac)),
+                wac: Some(decimal_proto(&wac)),
                 wam,
-                pass_through_rate: Some(decimal_proto(pass_through_rate)),
-                current_factor: Some(decimal_proto(current_factor)),
-                original_face_value: Some(decimal_proto(original_face_value)),
-                current_upb: Some(decimal_proto(current_upb)),
-                psa_speed: Some(decimal_proto(psa_speed)),
+                pass_through_rate: Some(decimal_proto(&pass_through_rate)),
+                current_factor: Some(decimal_proto(&current_factor)),
+                original_face_value: Some(decimal_proto(&original_face_value)),
+                current_upb: Some(decimal_proto(&current_upb)),
+                psa_speed: Some(decimal_proto(&psa_speed)),
             }),
             ..Default::default()
         }
-    }
-}
-
-fn decimal_proto(d: Decimal) -> DecimalValueProto {
-    DecimalValueProto {
-        arbitrary_precision_value: d.to_string(),
     }
 }
 

@@ -52,6 +52,11 @@ iana-time-zone = "0.1.53" #Used to get the IANA formatted timezone across operat
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
+# DecimalValueProto compact form (LM-294, docs/adr/compact_decimal.md):
+# arbitrary-size unscaled values, and the once-per-type deprecation warning.
+num-bigint = "0.4"
+log = "0.4"
+
 [dependencies.uuid]
 version = "1.3.0"
 features = [
@@ -59,3 +64,9 @@ features = [
     #    "v7",
     #    "js",
 ]
+
+[dev-dependencies]
+# The last published release, so tests prove it still reads bytes this
+# version writes (LM-294). Also writes the legacy fixtures
+# (examples/gen_legacy_decimal_fixtures.rs).
+ledger_models_v0433 = { package = "ledger-models", version = "=0.4.33" }

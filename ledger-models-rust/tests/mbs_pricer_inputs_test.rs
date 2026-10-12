@@ -1,3 +1,5 @@
+#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
+
 //! Integration tests for the `from_pricer_inputs` builder on
 //! `MortgageBackedSecurity`.
 //!

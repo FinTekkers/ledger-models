@@ -14,14 +14,34 @@ pub struct UuidProto {
     #[prost(bytes = "vec", tag = "1")]
     pub raw_uuid: ::prost::alloc::vec::Vec<u8>,
 }
-///   uint32 scale = 1;
+/// An exact decimal: value = unscaled_value x 10^-scale. See
+/// docs/adr/compact_decimal.md.
+///
+/// Presence rule: a non-empty unscaled_value means the compact form (11, 12)
+/// is set, and it wins over arbitrary_precision_value. Zero is the single byte
+/// 0x00, so a set zero is never empty. When unscaled_value is empty, readers
+/// fall back to arbitrary_precision_value. When both are empty the decimal is
+/// unset.
+///
+/// Stage 1 (LM-294): writers set both forms. Stage 2 (LM-295) stops writing
+/// arbitrary_precision_value. Stage 3 (LM-296) deletes it.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DecimalValueProto {
-    /// This is a string representation of a float number.
-    /// This will be deprecated in the future for a more space efficient approach
+    /// Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
+    /// when unscaled_value is empty. Writers keep setting it alongside 11 and 12
+    /// until LM-295.
+    #[deprecated]
     #[prost(string, tag = "10")]
     pub arbitrary_precision_value: ::prost::alloc::string::String,
+    /// The unscaled integer in minimal two's-complement big-endian form, of any
+    /// size. Zero is 0x00. Non-empty means the compact form is set.
+    #[prost(bytes = "vec", tag = "11")]
+    pub unscaled_value: ::prost::alloc::vec::Vec<u8>,
+    /// The number of digits after the decimal point. Never negative: an exponent
+    /// such as 1E+3 is stored as unscaled 1000, scale 0.
+    #[prost(uint32, tag = "12")]
+    pub scale: u32,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
