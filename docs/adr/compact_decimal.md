@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted for Rust (LM-294). Java, Python and JS follow in LM-294b, LM-294c and LM-294d, using the same fixtures. This is stage 1 of 3: LM-295 stops writing the string, and LM-296 deletes it.
+Accepted for Rust (LM-294). Java and JS follow in LM-294b and LM-294d, and Python in LM-305, using the same fixtures. This is stage 1 of 3: LM-295 stops writing the string, and LM-296 deletes it.
 
 ## Context
 
@@ -62,13 +62,13 @@ No binary floating point on any encode or decode path. A value that cannot be re
 
 ### Errors
 
-Bad input uses the existing typed input error (docs/adr/typed-input-errors.md). In Rust that is `Error::Validation`. Decoding is one plain call, `ProtoSerializationUtil::deserialize_decimal(&d)`, with no message-type or field arguments (LM-307). Its error names no field; a caller that wants one adds it while handling the error: `deserialize_decimal(&d).map_err(|e| e.in_field("price"))`. `TryFrom<DecimalWrapper> for Decimal` keeps returning `Error::DecimalConversion` for its existing callers.
+Bad input uses the existing typed input error (docs/adr/typed-input-errors.md). In Rust that is `Error::Validation`. Decoding is one plain call, `ProtoSerializationUtil::deserialize_decimal(&d)`, with no message-type or field arguments (LM-307). Its error names no field; a caller that wants one adds it while handling the error: `deserialize_decimal(&d).map_err(|e| e.in_field("price"))`. `TryFrom<DecimalWrapper> for Decimal` keeps returning `Error::DecimalConversion` for its existing callers. Python matches it (LM-305): `decode_decimal(proto)` takes only the proto and returns an exact `decimal.Decimal` whose exponent is `-scale`; `encode_decimal(value)` takes a `Decimal` or `int` and raises `TypeError` for `float`. Errors are `ModelValidationError`, naming `unscaled_value`, `scale` or `arbitrary_precision_value` but not the parent field.
 
 ### Deprecation
 
-- Field 10 carries `[deprecated = true]`. Generated code marks it: `#[deprecated]` in Rust, `@Deprecated` in Java, JSDoc `@deprecated` in JS. Python's generator emits nothing, so LM-294c adds a `DeprecationWarning` by hand.
+- Field 10 carries `[deprecated = true]`. Generated code marks it: `#[deprecated]` in Rust, `@Deprecated` in Java, JSDoc `@deprecated` in JS. Python's generator emits nothing, so LM-305 adds `legacy_string(proto)` in `fintekkers.wrappers.models.util.decimal`, which raises a `DeprecationWarning` on every call. The generated `.arbitrary_precision_value` attribute itself does not warn.
 - Each language has one codec, the only code allowed to touch field 10.
-- A fallback read of field 10 logs one deprecation warning per process (LM-307). The guard is process-wide and thread-safe, with no per-type or per-call-site key, so the warning names no message type or field. Rust does this now; Java, Python and JS follow in LM-304, LM-305 and LM-306. In Rust it goes through the `log` crate: a service sees it only if it installs a logger (`tracing` consumers bridge `log`).
+- A fallback read of field 10 logs one deprecation warning per process (LM-307). The guard is process-wide and thread-safe, with no per-type or per-call-site key, so the warning names no message type or field. Rust does this now; Java, Python and JS follow in LM-304, LM-305 and LM-306. In Rust it goes through the `log` crate: a service sees it only if it installs a logger (`tracing` consumers bridge `log`). In Python it is one `WARNING` on the `fintekkers.decimal` logger, naming `DecimalValueProto.arbitrary_precision_value`.
 
 ### Stages
 

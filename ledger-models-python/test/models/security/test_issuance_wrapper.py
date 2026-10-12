@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 import datetime
+from decimal import Decimal
 import time
 from fintekkers.models.security.bond.issuance_pb2 import IssuanceProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
@@ -31,11 +32,11 @@ class Testing(unittest.TestCase):
                 ),
                 version="0.0.1",
                 auction_announcement_date=ProtoSerializationUtil.serialize(tmp_date),
-                total_accepted=ProtoSerializationUtil.serialize(100000000.00),
+                total_accepted=ProtoSerializationUtil.serialize(Decimal("100000000.00")),
                 post_auction_outstanding_quantity=ProtoSerializationUtil.serialize(
-                    900000000.00
+                    Decimal("900000000.00")
                 ),
-                mature_security_amount=ProtoSerializationUtil.serialize(1000000000.00),
+                mature_security_amount=ProtoSerializationUtil.serialize(Decimal("1000000000.00")),
             )
             issuance_protos.append(issuance_proto)
 

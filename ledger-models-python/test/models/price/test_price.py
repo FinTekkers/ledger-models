@@ -1,5 +1,6 @@
 import unittest
 from datetime import datetime
+from decimal import Decimal
 from uuid import UUID
 from google.protobuf.timestamp_pb2 import Timestamp
 from fintekkers.models.price.price_pb2 import PriceProto
@@ -40,7 +41,7 @@ class TestPrice(unittest.TestCase):
         self.test_timestamp.GetCurrentTime()
         
         # Create test price value
-        self.test_price_value = 100.50
+        self.test_price_value = Decimal("100.50")
         
         # Create a test price instance
         self.price = Price.create_price(
@@ -59,7 +60,7 @@ class TestPrice(unittest.TestCase):
     def test_get_price(self):
         """Test getting price value"""
         price_value = self.price.get_price()
-        self.assertIsInstance(price_value, float)
+        self.assertIsInstance(price_value, Decimal)
         self.assertEqual(price_value, self.test_price_value)
 
     def test_get_as_of(self):

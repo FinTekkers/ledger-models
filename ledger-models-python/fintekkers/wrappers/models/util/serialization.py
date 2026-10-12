@@ -5,6 +5,7 @@ from fintekkers.models.util.local_date_pb2 import LocalDateProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
+from fintekkers.wrappers.models.util.decimal import decode_decimal, encode_decimal
 from fintekkers.wrappers.models.security.security_identifier import Identifier
 from fintekkers.wrappers.models.security.tenor import Tenor
 
@@ -14,6 +15,7 @@ from fintekkers.wrappers.models.errors import ModelValidationError, violation
 
 from google.protobuf.timestamp_pb2 import Timestamp
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Optional
 import time
 from pytz import timezone
@@ -97,9 +99,11 @@ class ProtoSerializationUtil:
             return LocalTimestampProto(timestamp=timestamp, time_zone=time_zone)
         if isinstance(obj, Identifier) or isinstance(obj, TransactionType):
             return obj.proto
-        if isinstance(obj, float) or isinstance(obj, int):
-            return DecimalValueProto(arbitrary_precision_value=str(obj))
-        
+        if isinstance(obj, (Decimal, int, float)):
+            # Both decimal forms (LM-305). bool and float raise TypeError:
+            # a float cannot hold an exact decimal.
+            return encode_decimal(obj)
+
         if isinstance(obj, str):
             return StringValue(value=obj)
 
@@ -145,8 +149,7 @@ class ProtoSerializationUtil:
         if isinstance(obj, IdentifierProto):
             return Identifier(obj)
         if isinstance(obj, DecimalValueProto):
-            obj: DecimalValueProto
-            return float(obj.arbitrary_precision_value)
+            return decode_decimal(obj)
         if (
             hasattr(obj, "enum_name")
             and getattr(obj, "enum_name") == "TRANSACTION_TYPE"

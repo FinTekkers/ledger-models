@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 from fintekkers.models.position.field_pb2 import FieldProto
 
 from fintekkers.models.position.position_status_pb2 import PositionStatusProto
@@ -12,7 +13,7 @@ from fintekkers.wrappers.requests.transaction import CreateTransactionRequest, Q
 
 def test_create_transaction_request():
     request = CreateTransactionRequest.create_transaction_request(
-        None, None, date.today(), date.today(), PositionStatusProto.HYPOTHETICAL, TransactionTypeProto.SELL, 50.0, 1
+        None, None, date.today(), date.today(), PositionStatusProto.HYPOTHETICAL, TransactionTypeProto.SELL, Decimal("50.0"), 1
     )
 
     proto:CreateTransactionRequestProto = request.proto

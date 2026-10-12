@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import Optional
 from uuid import UUID
 
@@ -68,9 +69,9 @@ class Price:
         _link_cache.PRICE.put(uuid_obj, resolved, resolved_as_of)
         self.proto = resolved
 
-    def get_price(self) -> float:
+    def get_price(self) -> Decimal:
         self._ensure_hydrated()
-        price:float = ProtoSerializationUtil.deserialize(self.proto.price)
+        price: Decimal = ProtoSerializationUtil.deserialize(self.proto.price)
         return price
 
     def get_as_of(self) -> datetime:
@@ -83,7 +84,7 @@ class Price:
 
 
     @staticmethod
-    def create_price(security:Security, price: float, as_of_date:Timestamp):
+    def create_price(security:Security, price: "Decimal | int", as_of_date:Timestamp):
         uuid_value = FintekkersUuid.new_uuid().as_uuid()
 
         price = stamp(PriceProto(

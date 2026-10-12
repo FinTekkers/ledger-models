@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Optional
 from uuid import UUID
 
@@ -19,7 +20,7 @@ from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
 from fintekkers.wrappers.util.object_types import stamp
-from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
+from fintekkers.wrappers.models.util.decimal import encode_decimal
 
 from fintekkers.wrappers.util import link_cache as _link_cache
 
@@ -117,7 +118,7 @@ class Transaction():
         trade_date:date=date.today(), settlement_date:date=date.today(), \
         position_status:PositionStatusProto=PositionStatusProto.INTENDED, \
         transaction_type:TransactionTypeProto=TransactionTypeProto.BUY, \
-        price:float=-100.00, quantity=100,
+        price:Decimal=Decimal("-100.00"), quantity:Decimal=Decimal(100),
         as_of:datetime=datetime.now()):
 
         # Inline import: serialization.py imports TransactionType from this module, so top-level import would be circular
@@ -134,11 +135,11 @@ class Transaction():
             price=PriceProto(
                 uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
                 as_of=as_of_proto,
-                price=DecimalValueProto(arbitrary_precision_value=f"{price}"),
+                price=encode_decimal(price),
                 security=security
             ),
             transaction_type=transaction_type,
-            quantity=DecimalValueProto(arbitrary_precision_value=f"{quantity}"),
+            quantity=encode_decimal(quantity),
             trade_date=LocalDateProto(year=trade_date.year, month=trade_date.month, day=trade_date.day),
             settlement_date=LocalDateProto(year=settlement_date.year, month=settlement_date.month, day=settlement_date.day),
             uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),

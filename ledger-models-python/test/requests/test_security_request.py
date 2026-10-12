@@ -1,3 +1,4 @@
+from decimal import Decimal
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import IdentifierTypeProto
 
@@ -22,9 +23,9 @@ def test_create_security_request():
         cusip="TEST_CUSIP", 
         cash_security=USD,
         product_type=TREASURY_NOTE,
-        coupon_rate=0.05,
+        coupon_rate=Decimal("0.05"),
         spread=None, 
-        face_value=1000.0
+        face_value=Decimal("1000.0")
     )
 
     proto:CreateSecurityRequestProto = request.proto
