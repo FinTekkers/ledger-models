@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 from google.protobuf.any_pb2 import Any
 
 from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
@@ -25,7 +26,7 @@ class CreateTransactionRequest():
         trade_date:date=date.today(), settlement_date:date=date.today(), \
         position_status:PositionStatusProto=PositionStatusProto.INTENDED, \
         transaction_type:TransactionTypeProto=TransactionTypeProto.BUY, \
-        price:float=-100.00, quantity=100, as_of=datetime.now()
+        price:Decimal=Decimal("-100.00"), quantity:Decimal=Decimal(100), as_of=datetime.now()
     ):
         '''
             Creates a request to create a transaction
@@ -36,7 +37,7 @@ class CreateTransactionRequest():
                         settlement_date (date): Settlement date of the trade
                         position_status (PositionStatusProto) The position status of the transaction, will default to INTENDED
                         transaction_type (TransactionTypeProto): The type of transaction, will default to BUY
-                        price (float): Will default to 100 if not provided
+                        price (Decimal): Will default to -100.00 if not provided; a float raises TypeError
 
                 Returns:
                         request (CreateTransactionRequest): A request wrapper, with the fields attached. It assumes that all filters are an equals operation

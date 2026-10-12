@@ -8,6 +8,7 @@ import logging
 import pkgutil
 import uuid
 from datetime import date, datetime
+from decimal import Decimal
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -174,16 +175,16 @@ SECURITY = SecurityProto(issuer_name="X")
 
 # (name, build the message, ObjectTypeProto value, object_class, version)
 LIBRARY_WRITERS = [
-    ("Price.create_price", lambda: Price.create_price(Security(SECURITY), 1.0, Timestamp()).proto,
+    ("Price.create_price", lambda: Price.create_price(Security(SECURITY), Decimal("1.0"), Timestamp()).proto,
      "OBJECT_TYPE_PRICE", "PriceProto", "0.0.1"),
     ("Portfolio.create_portfolio", lambda: Portfolio.create_portfolio("P").proto,
      "OBJECT_TYPE_PORTFOLIO", "Portfolio", "0.0.1"),
     ("Transaction.create_from", lambda: Transaction.create_from(trade_date=date(2024, 1, 2), settlement_date=date(2024, 1, 4)).proto,
      "OBJECT_TYPE_TRANSACTION", "Transaction", ""),
-    ("CreatePriceRequest", lambda: CreatePriceRequest.create_or_update_request(SECURITY, 1.0, datetime(2024, 1, 2)).proto,
+    ("CreatePriceRequest", lambda: CreatePriceRequest.create_or_update_request(SECURITY, Decimal("1.0"), datetime(2024, 1, 2)).proto,
      "OBJECT_TYPE_CREATE_PRICE_REQUEST", "CreatePriceRequestProto", "0.0.1"),
     ("CreatePriceRequest.create_price_input",
-     lambda: CreatePriceRequest.create_or_update_request(SECURITY, 1.0, datetime(2024, 1, 2)).proto.create_price_input,
+     lambda: CreatePriceRequest.create_or_update_request(SECURITY, Decimal("1.0"), datetime(2024, 1, 2)).proto.create_price_input,
      "OBJECT_TYPE_PRICE", "PriceProto", "0.0.1"),
     ("CreateSecurityRequest issuance",
      lambda: CreateSecurityRequest.create_ust_security_request(

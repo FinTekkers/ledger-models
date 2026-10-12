@@ -1,4 +1,5 @@
 import time
+from decimal import Decimal
 from datetime import date, datetime
 from uuid import UUID
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
@@ -46,14 +47,14 @@ class CreatePriceRequest:
     @staticmethod
     def create_price_request(
         security: SecurityProto,
-        price: float = 0.0,
+        price: "Decimal | int" = Decimal(0),
     ):
         """
         Creates a request to create a price for the current asOf date with the provided price
 
             Parameters:
                     Security: the Security Proto for this price
-                    price: the float value of the price
+                    price: the price as a Decimal or int (a float raises TypeError)
 
             Returns:
                     request (CreatePriceRequest): A request wrapper, with the fields attached
@@ -63,7 +64,7 @@ class CreatePriceRequest:
     @staticmethod
     def create_or_update_request(
         security,
-        price: float,
+        price: "Decimal | int",
         as_of_date: datetime = None,
         price_uuid: UUID = None,
     ):
@@ -71,7 +72,7 @@ class CreatePriceRequest:
 
         Parameters:
             security: SecurityProto (or Security wrapper) for this price.
-            price: float price value.
+            price: Decimal or int price value (a float raises TypeError).
             as_of_date: datetime for the price observation; defaults to now.
             price_uuid: deterministic UUID for idempotency; defaults to uuid4().
         """

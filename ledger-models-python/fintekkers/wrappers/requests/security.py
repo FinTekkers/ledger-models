@@ -1,5 +1,6 @@
 import time
 from datetime import date, datetime
+from decimal import Decimal
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from google.protobuf.any_pb2 import Any
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -49,14 +50,14 @@ class CreateSecurityRequest:
         cusip: str,
         cash_security: SecurityProto,
         product_type: ProductTypeProto = ProductTypeProto.TREASURY_NOTE,
-        coupon_rate: float = 0.0,
-        spread: float = 0.0,
-        face_value: float = 0.0,
+        coupon_rate: "Decimal | int" = Decimal(0),
+        spread: "Decimal | int" = Decimal(0),
+        face_value: "Decimal | int" = Decimal(0),
         issue_date: date = date.today(),
         dated_date: date = date.today(),
         maturity_date: date = date.today(),
-        post_auction_outstanding_quantity: float = 0.0,
-        auction_total_accepted: float = 0.0,
+        post_auction_outstanding_quantity: "Decimal | int" = Decimal(0),
+        auction_total_accepted: "Decimal | int" = Decimal(0),
         auction_announcement_date: date = None,
     ):
         """

@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from decimal import Decimal
 
 from fintekkers.models.position.position_status_pb2 import PositionStatusProto
 from fintekkers.models.transaction.transaction_pb2 import TransactionProto
@@ -13,7 +14,7 @@ def test_create_from_produces_valid_proto():
         settlement_date=date(2024, 6, 17),
         position_status=PositionStatusProto.INTENDED,
         transaction_type=TransactionTypeProto.BUY,
-        price=99.5,
+        price=Decimal("99.5"),
         quantity=1000,
         as_of=datetime(2024, 6, 15, 10, 30, 0),
     )

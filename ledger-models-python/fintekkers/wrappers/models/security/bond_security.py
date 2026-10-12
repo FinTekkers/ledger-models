@@ -19,6 +19,7 @@ from fintekkers.models.security.security_pb2 import (
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.models.util.local_date_pb2 import LocalDateProto
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
+from fintekkers.wrappers.models.util.decimal import encode_decimal
 from fintekkers.wrappers.models.issues.issuance import Issuance
 from fintekkers.wrappers.models.security.security import Security
 
@@ -28,7 +29,7 @@ def _local_date(d: date) -> LocalDateProto:
 
 
 def _decimal_value(dec: Decimal) -> DecimalValueProto:
-    return DecimalValueProto(arbitrary_precision_value=str(dec))
+    return encode_decimal(dec)
 
 
 class BondSecurity(Security):

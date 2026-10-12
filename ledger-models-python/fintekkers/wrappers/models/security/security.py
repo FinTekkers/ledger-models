@@ -10,6 +10,7 @@ from fintekkers.models.position.measure_pb2 import MeasureProto
 
 from uuid import UUID
 from datetime import datetime, timezone
+from decimal import Decimal
 from typing import Optional
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.wrappers.models.security.security_identifier import Identifier
@@ -263,7 +264,7 @@ class Security():
         self._ensure_hydrated()
         return ProtoSerializationUtil.deserialize(self.proto.tenor)
 
-    def get_face_value(self) -> float:
+    def get_face_value(self) -> Decimal:
         self._ensure_hydrated()
         bond = self._get_bond_like_details()
         if bond is None or not bond.HasField('face_value'):

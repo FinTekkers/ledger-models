@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 import grpc
 from grpc import RpcError
 from fintekkers.models.position.measure_pb2 import MeasureProto
@@ -92,7 +93,7 @@ class ValuationService:
                 print(f"Service unavailable trying to contact {EnvConfig.api_url(ServiceType.VALUATION_SERVICE)} ({e.details()})")
             raise e
 
-    def get_measure_result(self, response: ValuationResponseProto, measure: MeasureProto) -> float:
+    def get_measure_result(self, response: ValuationResponseProto, measure: MeasureProto) -> Decimal:
         """
         Extracts a specific measure result from the valuation response.
         
@@ -101,7 +102,7 @@ class ValuationService:
             measure: The measure to extract
             
         Returns:
-            The measure value as a float
+            The measure value as an exact Decimal
             
         Raises:
             ValueError: If the measure is not found in the response

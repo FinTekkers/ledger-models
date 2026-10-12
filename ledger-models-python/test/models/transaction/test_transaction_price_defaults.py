@@ -3,6 +3,7 @@
 TransactionPriceDefaultsTest and JS transaction_price_defaults.test.ts; case
 names match across languages."""
 from datetime import datetime
+from decimal import Decimal
 
 import pytest
 
@@ -117,7 +118,7 @@ def test_link_price_passes_through_unchanged():
 
 
 def test_factory_path_fills_price_uuid_and_as_of():
-    txn = Transaction.create_from(price=99.5, as_of=datetime(2024, 6, 15, 10, 30, 0))
+    txn = Transaction.create_from(price=Decimal("99.5"), as_of=datetime(2024, 6, 15, 10, 30, 0))
 
     assert len(txn.proto.price.uuid.raw_uuid) == 16
     assert txn.proto.price.as_of == txn.proto.as_of, AS_OF_RULE
