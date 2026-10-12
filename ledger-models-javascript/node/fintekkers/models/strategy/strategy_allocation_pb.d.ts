@@ -9,6 +9,7 @@ import * as fintekkers_models_strategy_strategy_pb from "../../../fintekkers/mod
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_util_decimal_value_pb from "../../../fintekkers/models/util/decimal_value_pb";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class MapFieldEntry extends jspb.Message { 
 
@@ -44,6 +45,14 @@ export class StrategyAllocationProto extends jspb.Message {
     setObjectClass(value: string): StrategyAllocationProto;
     getVersion(): string;
     setVersion(value: string): StrategyAllocationProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): StrategyAllocationProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): StrategyAllocationProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): StrategyAllocationProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): StrategyAllocationProto;
 
     hasUuid(): boolean;
     clearUuid(): void;
@@ -75,6 +84,10 @@ export namespace StrategyAllocationProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         uuid?: fintekkers_models_util_uuid_pb.UUIDProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         isLink: boolean,

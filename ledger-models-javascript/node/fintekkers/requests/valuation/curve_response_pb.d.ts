@@ -9,6 +9,7 @@ import * as fintekkers_models_util_decimal_value_pb from "../../../fintekkers/mo
 import * as fintekkers_models_position_measure_pb from "../../../fintekkers/models/position/measure_pb";
 import * as fintekkers_requests_valuation_curve_request_pb from "../../../fintekkers/requests/valuation/curve_request_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class CurvePointProto extends jspb.Message { 
 
@@ -69,6 +70,14 @@ export class CurveResponseProto extends jspb.Message {
     setObjectClass(value: string): CurveResponseProto;
     getVersion(): string;
     setVersion(value: string): CurveResponseProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CurveResponseProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): CurveResponseProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): CurveResponseProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): CurveResponseProto;
 
     hasCurveRequest(): boolean;
     clearCurveRequest(): void;
@@ -98,6 +107,10 @@ export namespace CurveResponseProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         curveRequest?: fintekkers_requests_valuation_curve_request_pb.CurveRequestProto.AsObject,
         curveResultsList: Array<CurveResultProto.AsObject>,
         summary?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,

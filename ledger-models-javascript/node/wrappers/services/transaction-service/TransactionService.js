@@ -50,6 +50,8 @@ const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
 const uuid_1 = require("../../models/utils/uuid");
 const datetime_1 = require("../../models/utils/datetime");
+const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
+const object_types_1 = require("../../util/object-types");
 class TransactionService {
     constructor(apiKey) {
         if (apiKey) {
@@ -63,8 +65,7 @@ class TransactionService {
     validateCreateTransaction(transaction) {
         return __awaiter(this, void 0, void 0, function* () {
             const createRequest = new create_transaction_request_pb_1.CreateTransactionRequestProto();
-            createRequest.setObjectClass('TransactionRequest');
-            createRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
             createRequest.setCreateTransactionInput(transaction.proto);
             const validateCreateOrUpdateAsync = (0, util_1.promisify)(this.client.validateCreateOrUpdate.bind(this.client));
             const response = yield validateCreateOrUpdateAsync(createRequest);
@@ -74,8 +75,7 @@ class TransactionService {
     createTransaction(transaction) {
         return __awaiter(this, void 0, void 0, function* () {
             const createRequest = new create_transaction_request_pb_1.CreateTransactionRequestProto();
-            createRequest.setObjectClass('TransactionRequest');
-            createRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
             createRequest.setCreateTransactionInput(transaction.proto);
             const createTransactionAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
             const response = yield createTransactionAsync(createRequest);
@@ -94,8 +94,7 @@ class TransactionService {
     }
     searchTransaction(asOf, positionFilter, maxResults = 100) {
         const searchRequest = new query_transaction_request_pb_1.QueryTransactionRequestProto();
-        searchRequest.setObjectClass('SecurityRequest');
-        searchRequest.setVersion('0.0.1');
+        (0, object_types_1.stamp)(searchRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, 'SecurityRequest', '0.0.1');
         searchRequest.setAsOf(asOf);
         searchRequest.setSearchTransactionInput(positionFilter.toProto());
         searchRequest.setLimit(maxResults);

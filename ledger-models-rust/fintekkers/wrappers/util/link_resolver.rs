@@ -42,6 +42,7 @@ use crate::fintekkers::models::security::SecurityProto;
 use crate::fintekkers::models::transaction::TransactionProto;
 use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
 use crate::fintekkers::wrappers::util::link_cache;
+use crate::fintekkers::wrappers::util::object_types;
 use crate::fintekkers::requests::portfolio::{
     QueryPortfolioRequestProto, QueryPortfolioResponseProto,
 };
@@ -355,13 +356,7 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
         if uuids.is_empty() {
             return Ok(vec![]);
         }
-        let request = QuerySecurityRequestProto {
-            object_class: "SecurityRequest".into(),
-            version: "0.0.1".into(),
-            uu_ids: uuids.into_iter().map(uuid_to_proto).collect(),
-            as_of,
-            ..Default::default()
-        };
+        let request = object_types::query_security_request(uuids.into_iter().map(uuid_to_proto).collect(), as_of);
         let response = self.security_fetcher.get_by_ids(request).await?;
         Ok(response.security_response)
     }
@@ -374,13 +369,7 @@ impl<S: SecurityFetcher, P: PortfolioFetcher> LinkResolver<S, P> {
         if uuids.is_empty() {
             return Ok(vec![]);
         }
-        let request = QueryPortfolioRequestProto {
-            object_class: "PortfolioRequest".into(),
-            version: "0.0.1".into(),
-            uu_ids: uuids.into_iter().map(uuid_to_proto).collect(),
-            as_of,
-            ..Default::default()
-        };
+        let request = object_types::query_portfolio_request(uuids.into_iter().map(uuid_to_proto).collect(), as_of);
         let response = self.portfolio_fetcher.get_by_ids(request).await?;
         Ok(response.portfolio_response)
     }

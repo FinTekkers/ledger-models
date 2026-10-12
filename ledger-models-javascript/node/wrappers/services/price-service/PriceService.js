@@ -49,6 +49,8 @@ const requestcontext_1 = __importDefault(require("../../models/utils/requestcont
 const serviceaddress_1 = require("../../util/serviceaddress");
 const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
+const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
+const object_types_1 = require("../../util/object-types");
 class PriceService {
     constructor(apiKey) {
         if (apiKey) {
@@ -66,8 +68,7 @@ class PriceService {
         return __awaiter(this, void 0, void 0, function* () {
             const priceProto = price instanceof Price_1.default ? price.proto : price;
             const createRequest = new create_price_request_pb_1.CreatePriceRequestProto();
-            createRequest.setObjectClass('PriceRequest');
-            createRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, 'PriceRequest', '0.0.1');
             createRequest.setCreatePriceInput(priceProto);
             const validateAsync = (0, util_1.promisify)(this.client.validateCreateOrUpdate.bind(this.client));
             const response = yield validateAsync(createRequest);
@@ -78,8 +79,7 @@ class PriceService {
         return __awaiter(this, void 0, void 0, function* () {
             const priceProto = price instanceof Price_1.default ? price.proto : price;
             const createRequest = new create_price_request_pb_1.CreatePriceRequestProto();
-            createRequest.setObjectClass('PriceRequest');
-            createRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, 'PriceRequest', '0.0.1');
             createRequest.setCreatePriceInput(priceProto);
             const createAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
             const response = yield createAsync(createRequest);
@@ -107,8 +107,7 @@ class PriceService {
     search(asOf, positionFilter) {
         return __awaiter(this, void 0, void 0, function* () {
             const searchRequest = new query_price_request_pb_1.QueryPriceRequestProto();
-            searchRequest.setObjectClass('PriceRequest');
-            searchRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(searchRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_PRICE_REQUEST, 'PriceRequest', '0.0.1');
             searchRequest.setAsOf(asOf);
             searchRequest.setSearchPriceInput(positionFilter.toProto());
             const tmpClient = this.client;

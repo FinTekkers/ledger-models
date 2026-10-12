@@ -7,6 +7,8 @@ const positionfilter_1 = require("../../models/position/positionfilter");
 const operation_pb_1 = require("../../../fintekkers/requests/util/operation_pb");
 //Requests
 const query_position_request_pb_1 = require("../../../fintekkers/requests/position/query_position_request_pb");
+const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
+const object_types_1 = require("../../util/object-types");
 class QueryPositionRequest {
     static fromAsOf(fields, measures, asOf) {
         return new QueryPositionRequest(new positionfilter_1.PositionFilter(), position_pb_1.PositionTypeProto.TRANSACTION, position_pb_1.PositionViewProto.DEFAULT_VIEW, fields, measures, asOf);
@@ -23,9 +25,8 @@ class QueryPositionRequest {
         this.asOf = asOf;
     }
     toProto() {
-        const proto = new query_position_request_pb_1.QueryPositionRequestProto()
+        const proto = (0, object_types_1.stamp)(new query_position_request_pb_1.QueryPositionRequestProto(), object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_POSITION_REQUEST, '', '1.0.0')
             .setAsOf(this.asOf.toProto())
-            .setVersion("1.0.0")
             .setPositionType(this.positionType)
             .setPositionView(this.positionView)
             .setFieldsList(this.fields)

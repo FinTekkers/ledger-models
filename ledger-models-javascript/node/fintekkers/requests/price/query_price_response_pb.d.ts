@@ -8,12 +8,21 @@ import * as jspb from "google-protobuf";
 import * as fintekkers_models_price_price_pb from "../../../fintekkers/models/price/price_pb";
 import * as fintekkers_requests_price_query_price_request_pb from "../../../fintekkers/requests/price/query_price_request_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class QueryPriceResponseProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): QueryPriceResponseProto;
     getVersion(): string;
     setVersion(value: string): QueryPriceResponseProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): QueryPriceResponseProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): QueryPriceResponseProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): QueryPriceResponseProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): QueryPriceResponseProto;
 
     hasQueryPriceRequest(): boolean;
     clearQueryPriceRequest(): void;
@@ -45,6 +54,10 @@ export namespace QueryPriceResponseProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         queryPriceRequest?: fintekkers_requests_price_query_price_request_pb.QueryPriceRequestProto.AsObject,
         priceResponseList: Array<fintekkers_models_price_price_pb.PriceProto.AsObject>,
         errorsOrWarnings?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,

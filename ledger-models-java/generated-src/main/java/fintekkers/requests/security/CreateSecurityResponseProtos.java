@@ -34,15 +34,20 @@ public final class CreateSecurityResponseProtos {
       "security.proto\032:fintekkers/requests/secu" +
       "rity/create_security_request.proto\032-fint" +
       "ekkers/requests/util/errors/summary.prot" +
-      "o\"\251\002\n\033CreateSecurityResponseProto\022\024\n\014obj" +
-      "ect_class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022R\n\020secu" +
-      "rity_request\030\024 \001(\01328.fintekkers.requests" +
-      ".security.CreateSecurityRequestProto\022D\n\021" +
-      "security_response\030\036 \001(\0132).fintekkers.mod" +
-      "els.security.SecurityProto\022I\n\022errors_or_" +
-      "warnings\030( \001(\0132-.fintekkers.requests.uti" +
-      "l.errors.SummaryProtoB B\034CreateSecurityR" +
-      "esponseProtosP\001b\006proto3"
+      "o\032(fintekkers/models/util/object_type.pr" +
+      "oto\"\270\003\n\033CreateSecurityResponseProto\022\030\n\014o" +
+      "bject_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002" +
+      "\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fintekkers.mo" +
+      "dels.util.ObjectTypeProto\022\026\n\rversion_maj" +
+      "or\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rver" +
+      "sion_patch\030\354\007 \001(\r\022R\n\020security_request\030\024 " +
+      "\001(\01328.fintekkers.requests.security.Creat" +
+      "eSecurityRequestProto\022D\n\021security_respon" +
+      "se\030\036 \001(\0132).fintekkers.models.security.Se" +
+      "curityProto\022I\n\022errors_or_warnings\030( \001(\0132" +
+      "-.fintekkers.requests.util.errors.Summar" +
+      "yProtoB B\034CreateSecurityResponseProtosP\001" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -50,16 +55,18 @@ public final class CreateSecurityResponseProtos {
           fintekkers.models.security.SecurityProtos.getDescriptor(),
           fintekkers.requests.security.CreateSecurityRequestProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_security_CreateSecurityResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_security_CreateSecurityResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_security_CreateSecurityResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "SecurityRequest", "SecurityResponse", "ErrorsOrWarnings", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "SecurityRequest", "SecurityResponse", "ErrorsOrWarnings", });
     fintekkers.models.security.SecurityProtos.getDescriptor();
     fintekkers.requests.security.CreateSecurityRequestProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

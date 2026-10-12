@@ -1,0 +1,607 @@
+{
+  "_comment": [
+    "LM-297 shared fixture: strings-only messages as stored today, and how a reader translates them.",
+    "Rows with a language prefix are real bytes captured from that language's writer before LM-297 (source names the write site).",
+    "Other rows are derived from python-PriceProto by changing object_class / version or setting the compact fields (fields 1001-1004).",
+    "expect.object_type is an ObjectTypeProto value name; expect.version is [major, minor, patch];",
+    "expect.warns says whether decoding logs one fallback warning (decoding the same strings again logs nothing more).",
+    "Every language decodes each row, checks expect, then upgrades it and checks fields 1001-1004 are written and fields 1-2 unchanged."
+  ],
+  "cases": [
+    {
+      "name": "python-PriceProto",
+      "source": "python fintekkers/wrappers/models/price.py:92 Price.create_price",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "0.0.1",
+      "bytes": "CgpQcmljZVByb3RvEgUwLjAuMSoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFY",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "python-PortfolioProto",
+      "source": "python fintekkers/wrappers/models/portfolio.py:113 Portfolio.create_portfolio",
+      "message": "fintekkers.models.portfolio.PortfolioProto",
+      "object_class": "Portfolio",
+      "version": "0.0.1",
+      "bytes": "CglQb3J0Zm9saW8SBTAuMC4xKhIKEHPpFbhsKkYGgyhVvdMhOxQyFAoAEhBBbWVyaWNhL05ld19Zb3JrUgdGaXh0dXJl",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PORTFOLIO",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "python-TransactionProto",
+      "source": "python fintekkers/wrappers/models/transaction.py:129 Transaction.create_from",
+      "message": "fintekkers.models.transaction.TransactionProto",
+      "object_class": "Transaction",
+      "version": "",
+      "bytes": "CgtUcmFuc2FjdGlvbioSChBYZzvyC5ZIz5PnM3xAfeHEMhoKBgiYr8+sBhIQQW1lcmljYS9OZXdfWW9ya2ABagVSAzEwMHI6KhIKEMGcmo9sBEa8htPCBZyev0wyGgoGCJivz6wGEhBBbWVyaWNhL05ld19Zb3JrUghSBi0xMDAuMHoHCOgPEAEYAoIBBwjoDxABGATIAQLSAQ1ObyB0cmFkZSBuYW1l",
+      "expect": {
+        "object_type": "OBJECT_TYPE_TRANSACTION",
+        "version": [
+          0,
+          0,
+          0
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "python-CreatePriceRequestProto",
+      "source": "python fintekkers/wrappers/requests/price.py:87 CreatePriceRequest.create_or_update_request",
+      "message": "fintekkers.requests.price.CreatePriceRequestProto",
+      "object_class": "CreatePriceRequestProto",
+      "version": "0.0.1",
+      "bytes": "ChdDcmVhdGVQcmljZVJlcXVlc3RQcm90bxIFMC4wLjGiAW0KClByaWNlUHJvdG8SBTAuMC4xKhIKEAAAAAAAAAAAAAAAAAAAAAcyGgoGCJivz6wGEhBBbWVyaWNhL05ld19Zb3JrQhoKBgiYr8+sBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFY",
+      "expect": {
+        "object_type": "OBJECT_TYPE_CREATE_PRICE_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "python-QueryPortfolioRequestProto",
+      "source": "python fintekkers/wrappers/services/portfolio.py:128 PortfolioService.get_portfolio_by_uuid",
+      "message": "fintekkers.requests.portfolio.QueryPortfolioRequestProto",
+      "object_class": "PortfolioRequest",
+      "version": "0.0.1",
+      "bytes": "ChBQb3J0Zm9saW9SZXF1ZXN0EgUwLjAuMaoBEgoQAAAAAAAAAAAAAAAAAAAACA==",
+      "expect": {
+        "object_type": "OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "python-QuerySecurityRequestProto",
+      "source": "python fintekkers/wrappers/services/security.py:138 SecurityService.get_security_by_uuid",
+      "message": "fintekkers.requests.security.QuerySecurityRequestProto",
+      "object_class": "SecurityRequest",
+      "version": "0.0.1",
+      "bytes": "Cg9TZWN1cml0eVJlcXVlc3QSBTAuMC4xqgESChAAAAAAAAAAAAAAAAAAAAAJ",
+      "expect": {
+        "object_type": "OBJECT_TYPE_QUERY_SECURITY_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "java-IdentifierProto",
+      "source": "java protos/serializers/security/IdentifierSerializer.java:32 IdentifierSerializer.serialize",
+      "message": "fintekkers.models.security.IdentifierProto",
+      "object_class": "Identifier",
+      "version": "0.0.1",
+      "bytes": "CgpJZGVudGlmaWVyEgUwLjAuMSoJOTEyNzk2WUI5MAM=",
+      "expect": {
+        "object_type": "OBJECT_TYPE_IDENTIFIER",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "java-TenorProto",
+      "source": "java protos/serializers/security/TenorSerializer.java:39 TenorSerializer.serialize",
+      "message": "fintekkers.models.security.TenorProto",
+      "object_class": "Tenor",
+      "version": "0.0.1",
+      "bytes": "CgVUZW5vchIFMC4wLjEqAjFZMAI=",
+      "expect": {
+        "object_type": "OBJECT_TYPE_TENOR",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "java-PositionProto",
+      "source": "java protos/serializers/position/PositionSerializer.java:49 PositionSerializer.serialize",
+      "message": "fintekkers.models.position.PositionProto",
+      "object_class": "Position",
+      "version": "0.0.1",
+      "bytes": "CghQb3NpdGlvbhIFMC4wLjFQAVgB",
+      "expect": {
+        "object_type": "OBJECT_TYPE_POSITION",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "java-PriceProto",
+      "source": "java protos/serializers/price/PriceSerializer.java:24 PriceSerializer.serialize",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "Price",
+      "version": "0.0.1",
+      "bytes": "CgVQcmljZRIFMC4wLjEqEgoQAAAAAAAAAAAAAAAAAAAACzIaCgYImK/PrAYSEEFtZXJpY2EvTmV3X1lvcmtSBFICMTBa4gEqEgoQ9tyfecVURG68BDU+4tH+OjIXCgwIirn2vwUQzurenwESB0V0Yy9VVENQFGIMZHVtbXkgaXNzdWVyaoQBKhIKEAAAAAAAAAABAAAAAAAAAAEyHwoLCICZ9PuN/////wESEEFtZXJpY2EvTmV3X1lvcmtQKFoEQ2FzaGIDVVNE0gIaCgpJZGVudGlmaWVyEgUwLjAuMSoDVVNEMDLSAhoKCklkZW50aWZpZXISBTAuMC4xKgNVU0QwMuoMBQoDVVNE0gIbCgpJZGVudGlmaWVyEgUwLjAuMSoEVFNMQTAB",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "java-StrategyProto",
+      "source": "java common/models/strategy/Strategy.java:66 Strategy(UUID, String, Strategy, ZonedDateTime)",
+      "message": "fintekkers.models.strategy.StrategyProto",
+      "object_class": "Strategy",
+      "version": "0.0.1",
+      "bytes": "CghTdHJhdGVneRIFMC4wLjEqEgoQAAAAAAAAAAAAAAAAAAAADDIaCgYImK/PrAYSEEFtZXJpY2EvTmV3X1lvcmtSB0ZpeHR1cmU=",
+      "expect": {
+        "object_type": "OBJECT_TYPE_STRATEGY",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "java-StrategyAllocationProto",
+      "source": "java common/models/strategy/StrategyAllocation.java:61 StrategyAllocation(UUID, ZonedDateTime)",
+      "message": "fintekkers.models.strategy.StrategyAllocationProto",
+      "object_class": "StrategyAllocation",
+      "version": "0.0.1",
+      "bytes": "ChJTdHJhdGVneUFsbG9jYXRpb24SBTAuMC4xKhIKEAAAAAAAAAAAAAAAAAAAAA0yGgoGCJivz6wGEhBBbWVyaWNhL05ld19Zb3Jr",
+      "expect": {
+        "object_type": "OBJECT_TYPE_STRATEGY_ALLOCATION",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-PositionFilterProto",
+      "source": "js node/wrappers/models/position/positionfilter.ts:76 PositionFilter.toProto",
+      "message": "fintekkers.models.position.PositionFilterProto",
+      "object_class": "PositionFilter",
+      "version": "0.0.1",
+      "bytes": "Cg5Qb3NpdGlvbkZpbHRlchIFMC4wLjE=",
+      "expect": {
+        "object_type": "OBJECT_TYPE_POSITION_FILTER",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-QueryTransactionRequestProto",
+      "source": "js node/wrappers/util/link-resolver.ts:405 LinkResolver.batchFetchTransactions",
+      "message": "fintekkers.requests.transaction.QueryTransactionRequestProto",
+      "object_class": "TransactionRequest",
+      "version": "0.0.1",
+      "bytes": "ChJUcmFuc2FjdGlvblJlcXVlc3QSBTAuMC4xqgESChAAAAAAAAAAAAAAAAAAAAAK",
+      "expect": {
+        "object_type": "OBJECT_TYPE_QUERY_TRANSACTION_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-QueryPriceRequestProto",
+      "source": "js node/wrappers/services/price-service/PriceService.ts:84 PriceService.search",
+      "message": "fintekkers.requests.price.QueryPriceRequestProto",
+      "object_class": "PriceRequest",
+      "version": "0.0.1",
+      "bytes": "CgxQcmljZVJlcXVlc3QSBTAuMC4xsgEXCg5Qb3NpdGlvbkZpbHRlchIFMC4wLjG6ARoKBgjou9CsBhIQQW1lcmljYS9OZXdfWW9yaw==",
+      "expect": {
+        "object_type": "OBJECT_TYPE_QUERY_PRICE_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "rust-SecurityProto",
+      "source": "rust fintekkers/wrappers/models/security.rs:473 SecurityProtoBuilder::new().build()",
+      "message": "fintekkers.models.security.SecurityProto",
+      "object_class": "Security",
+      "version": "0.0.1",
+      "bytes": "CghTZWN1cml0eRIFMC4wLjEqEgoQREHT3qzbTl+lpia0VqLheDIXCgwIooWx1gYQk/rJuwISB0V0Yy9VVENCFwoMCKKFsdYGEPKLz7sCEgdFdGMvVVRDWgdVbmtub3duYg1Vbmtub3duIElzc3Vl",
+      "expect": {
+        "object_type": "OBJECT_TYPE_SECURITY",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-CreateSecurityRequestProto",
+      "source": "js node/wrappers/services/security-service/SecurityService.ts:59 SecurityService.createSecurity",
+      "message": "fintekkers.requests.security.CreateSecurityRequestProto",
+      "object_class": "SecurityRequest",
+      "version": "0.0.1",
+      "bytes": "Cg9TZWN1cml0eVJlcXVlc3QSBTAuMC4xogFvCghTZWN1cml0eRIFMC4wLjEqEgoQREHT3qzbTl+lpia0VqLheDIXCgwIooWx1gYQk/rJuwISB0V0Yy9VVENCFwoMCKKFsdYGEPKLz7sCEgdFdGMvVVRDWgdVbmtub3duYg1Vbmtub3duIElzc3Vl",
+      "expect": {
+        "object_type": "OBJECT_TYPE_CREATE_SECURITY_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-CreatePriceRequestProto",
+      "source": "js node/wrappers/services/price-service/PriceService.ts:54 PriceService.createOrUpdate",
+      "message": "fintekkers.requests.price.CreatePriceRequestProto",
+      "object_class": "PriceRequest",
+      "version": "0.0.1",
+      "bytes": "CgxQcmljZVJlcXVlc3QSBTAuMC4xogFRCgpQcmljZVByb3RvEgUwLjAuMSoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFY",
+      "expect": {
+        "object_type": "OBJECT_TYPE_CREATE_PRICE_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-CreatePortfolioRequestProto",
+      "source": "js node/wrappers/services/portfolio-service/PortfolioService.ts:49 PortfolioService.createPortfolio",
+      "message": "fintekkers.requests.portfolio.CreatePortfolioRequestProto",
+      "object_class": "PortfolioRequest",
+      "version": "0.0.1",
+      "bytes": "ChBQb3J0Zm9saW9SZXF1ZXN0EgUwLjAuMaIBRQoJUG9ydGZvbGlvEgUwLjAuMSoSChBz6RW4bCpGBoMoVb3TITsUMhQKABIQQW1lcmljYS9OZXdfWW9ya1IHRml4dHVyZQ==",
+      "expect": {
+        "object_type": "OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-CreateTransactionRequestProto",
+      "source": "js node/wrappers/services/transaction-service/TransactionService.ts:48 TransactionService.createTransaction",
+      "message": "fintekkers.requests.transaction.CreateTransactionRequestProto",
+      "object_class": "TransactionRequest",
+      "version": "0.0.1",
+      "bytes": "ChJUcmFuc2FjdGlvblJlcXVlc3QSBTAuMC4xogGoAQoLVHJhbnNhY3Rpb24qEgoQWGc78guWSM+T5zN8QH3hxDIaCgYImK/PrAYSEEFtZXJpY2EvTmV3X1lvcmtgAWoFUgMxMDByOioSChDBnJqPbARGvIbTwgWcnr9MMhoKBgiYr8+sBhIQQW1lcmljYS9OZXdfWW9ya1IIUgYtMTAwLjB6BwjoDxABGAKCAQcI6A8QARgEyAEC0gENTm8gdHJhZGUgbmFtZQ==",
+      "expect": {
+        "object_type": "OBJECT_TYPE_CREATE_TRANSACTION_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "js-QueryTransactionRequestProto-SecurityRequest",
+      "source": "js node/wrappers/services/transaction-service/TransactionService.ts:70 TransactionService.searchTransaction",
+      "message": "fintekkers.requests.transaction.QueryTransactionRequestProto",
+      "object_class": "SecurityRequest",
+      "version": "0.0.1",
+      "bytes": "Cg9TZWN1cml0eVJlcXVlc3QSBTAuMC4xsgEAugEaCgYIgOLPqgYSEEFtZXJpY2EvTmV3X1lvcmvAAWQ=",
+      "expect": {
+        "object_type": "OBJECT_TYPE_QUERY_TRANSACTION_REQUEST",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "unknown-object-class",
+      "source": "derived from python-PriceProto: object_class not on any enum value",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "ValuationRequest",
+      "version": "0.0.1",
+      "bytes": "ChBWYWx1YXRpb25SZXF1ZXN0EgUwLjAuMSoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFY",
+      "expect": {
+        "object_type": "OBJECT_TYPE_UNKNOWN",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "empty-strings",
+      "source": "derived from python-PriceProto: both strings empty (proto3 default): nothing to fall back to, no warning",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "",
+      "version": "",
+      "bytes": "KhIKELwcAmF/i07en1jdleLOWGkyGgoGCIDiz6oGEhBBbWVyaWNhL05ld19Zb3JrUgdSBTEwMS41WgNiAVg=",
+      "expect": {
+        "object_type": "OBJECT_TYPE_UNKNOWN",
+        "version": [
+          0,
+          0,
+          0
+        ],
+        "warns": false
+      }
+    },
+    {
+      "name": "empty-object-class",
+      "source": "derived from python-PriceProto: empty object_class gives UNKNOWN silently; the version string still falls back and warns",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "",
+      "version": "0.0.1",
+      "bytes": "EgUwLjAuMSoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFY",
+      "expect": {
+        "object_type": "OBJECT_TYPE_UNKNOWN",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "malformed-version-1",
+      "source": "derived from python-PriceProto: version '1.2' is not three uint32 parts",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "1.2",
+      "bytes": "CgpQcmljZVByb3RvEgMxLjIqEgoQvBwCYX+LTt6fWN2V4s5YaTIaCgYIgOLPqgYSEEFtZXJpY2EvTmV3X1lvcmtSB1IFMTAxLjVaA2IBWA==",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          0
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "malformed-version-2",
+      "source": "derived from python-PriceProto: version '1.2.3.4' is not three uint32 parts",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "1.2.3.4",
+      "bytes": "CgpQcmljZVByb3RvEgcxLjIuMy40KhIKELwcAmF/i07en1jdleLOWGkyGgoGCIDiz6oGEhBBbWVyaWNhL05ld19Zb3JrUgdSBTEwMS41WgNiAVg=",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          0
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "malformed-version-3",
+      "source": "derived from python-PriceProto: version 'a.b.c' is not three uint32 parts",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "a.b.c",
+      "bytes": "CgpQcmljZVByb3RvEgVhLmIuYyoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFY",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          0
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "malformed-version-4",
+      "source": "derived from python-PriceProto: version '-1.0.0' is not three uint32 parts",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "-1.0.0",
+      "bytes": "CgpQcmljZVByb3RvEgYtMS4wLjAqEgoQvBwCYX+LTt6fWN2V4s5YaTIaCgYIgOLPqgYSEEFtZXJpY2EvTmV3X1lvcmtSB1IFMTAxLjVaA2IBWA==",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          0
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "malformed-version-5",
+      "source": "derived from python-PriceProto: version '4294967296.0.0' is not three uint32 parts",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "4294967296.0.0",
+      "bytes": "CgpQcmljZVByb3RvEg40Mjk0OTY3Mjk2LjAuMCoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFY",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          0
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "malformed-version-6",
+      "source": "derived from python-PriceProto: version ' 0.0.1' is not three uint32 parts",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": " 0.0.1",
+      "bytes": "CgpQcmljZVByb3RvEgYgMC4wLjEqEgoQvBwCYX+LTt6fWN2V4s5YaTIaCgYIgOLPqgYSEEFtZXJpY2EvTmV3X1lvcmtSB1IFMTAxLjVaA2IBWA==",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          0
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "empty-version",
+      "source": "derived from python-PriceProto: empty version gives 0.0.0 silently; object_class still falls back and warns",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "",
+      "bytes": "CgpQcmljZVByb3RvKhIKELwcAmF/i07en1jdleLOWGkyGgoGCIDiz6oGEhBBbWVyaWNhL05ld19Zb3JrUgdSBTEwMS41WgNiAVg=",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          0
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "max-version",
+      "source": "derived from python-PriceProto: largest uint32 parts parse",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "4294967295.0.7",
+      "bytes": "CgpQcmljZVByb3RvEg40Mjk0OTY3Mjk1LjAuNyoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFY",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          4294967295,
+          0,
+          7
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "per-field-type-fallback",
+      "source": "derived from python-PriceProto: object_type unset but version_patch set: type falls back to the string, version uses the new fields",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "9.9.9",
+      "bytes": "CgpQcmljZVByb3RvEgU5LjkuOSoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFY4D4B",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "per-field-version-fallback",
+      "source": "derived from python-PriceProto: object_type set but version fields unset: version falls back to the string",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "0.0.1",
+      "bytes": "CgpQcmljZVByb3RvEgUwLjAuMSoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFYyD4L",
+      "expect": {
+        "object_type": "OBJECT_TYPE_PRICE",
+        "version": [
+          0,
+          0,
+          1
+        ],
+        "warns": true
+      }
+    },
+    {
+      "name": "new-fields-win",
+      "source": "derived from python-PriceProto: new fields disagree with the strings: the new fields win and nothing warns",
+      "message": "fintekkers.models.price.PriceProto",
+      "object_class": "PriceProto",
+      "version": "0.0.1",
+      "bytes": "CgpQcmljZVByb3RvEgUwLjAuMSoSChC8HAJhf4tO3p9Y3ZXizlhpMhoKBgiA4s+qBhIQQW1lcmljYS9OZXdfWW9ya1IHUgUxMDEuNVoDYgFYyD4P0D4C",
+      "expect": {
+        "object_type": "OBJECT_TYPE_TENOR",
+        "version": [
+          2,
+          0,
+          0
+        ],
+        "warns": false
+      }
+    }
+  ]
+}

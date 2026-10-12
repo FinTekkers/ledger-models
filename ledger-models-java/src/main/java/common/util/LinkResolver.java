@@ -1,5 +1,6 @@
 package common.util;
 
+import fintekkers.models.util.ObjectTypeProto;
 import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.transaction.TransactionProto;
@@ -464,9 +465,7 @@ public class LinkResolver {
 
     private List<SecurityProto> batchFetchSecurities(Collection<UUID> uuids, LocalTimestampProto asOf) {
         if (uuids.isEmpty()) return List.of();
-        QuerySecurityRequestProto.Builder b = QuerySecurityRequestProto.newBuilder()
-                .setObjectClass("SecurityRequest")
-                .setVersion("0.0.1");
+        QuerySecurityRequestProto.Builder b = ObjectTypes.stamp(QuerySecurityRequestProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, "SecurityRequest", "0.0.1");
         for (UUID u : uuids) b.addUuIds(ProtoSerializationUtil.serializeUUID(u));
         if (asOf != null) b.setAsOf(asOf);
         QuerySecurityResponseProto response = securityFetcher.getByIds(b.build());
@@ -475,9 +474,7 @@ public class LinkResolver {
 
     private List<PortfolioProto> batchFetchPortfolios(Collection<UUID> uuids, LocalTimestampProto asOf) {
         if (uuids.isEmpty()) return List.of();
-        QueryPortfolioRequestProto.Builder b = QueryPortfolioRequestProto.newBuilder()
-                .setObjectClass("PortfolioRequest")
-                .setVersion("0.0.1");
+        QueryPortfolioRequestProto.Builder b = ObjectTypes.stamp(QueryPortfolioRequestProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, "PortfolioRequest", "0.0.1");
         for (UUID u : uuids) b.addUuIds(ProtoSerializationUtil.serializeUUID(u));
         if (asOf != null) b.setAsOf(asOf);
         QueryPortfolioResponseProto response = portfolioFetcher.getByIds(b.build());

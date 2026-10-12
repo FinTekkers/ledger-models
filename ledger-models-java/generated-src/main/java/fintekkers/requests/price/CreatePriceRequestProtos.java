@@ -30,25 +30,31 @@ public final class CreatePriceRequestProtos {
     java.lang.String[] descriptorData = {
       "\n4fintekkers/requests/price/create_price" +
       "_request.proto\022\031fintekkers.requests.pric" +
-      "e\032#fintekkers/models/price/price.proto\"\201" +
-      "\001\n\027CreatePriceRequestProto\022\024\n\014object_cla" +
-      "ss\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022?\n\022create_pric" +
-      "e_input\030\024 \001(\0132#.fintekkers.models.price." +
-      "PriceProtoB\034B\030CreatePriceRequestProtosP\001" +
-      "b\006proto3"
+      "e\032#fintekkers/models/price/price.proto\032(" +
+      "fintekkers/models/util/object_type.proto" +
+      "\"\220\002\n\027CreatePriceRequestProto\022\030\n\014object_c" +
+      "lass\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013o" +
+      "bject_type\030\351\007 \001(\0162\'.fintekkers.models.ut" +
+      "il.ObjectTypeProto\022\026\n\rversion_major\030\352\007 \001" +
+      "(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversion_pa" +
+      "tch\030\354\007 \001(\r\022?\n\022create_price_input\030\024 \001(\0132#" +
+      ".fintekkers.models.price.PriceProtoB\034B\030C" +
+      "reatePriceRequestProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.price.PriceProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_price_CreatePriceRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_price_CreatePriceRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_price_CreatePriceRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "CreatePriceInput", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "CreatePriceInput", });
     fintekkers.models.price.PriceProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -6,12 +6,21 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_position_field_pb from "../../../fintekkers/models/position/field_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class GetFieldsResponseProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): GetFieldsResponseProto;
     getVersion(): string;
     setVersion(value: string): GetFieldsResponseProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): GetFieldsResponseProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): GetFieldsResponseProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): GetFieldsResponseProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): GetFieldsResponseProto;
     clearFieldsList(): void;
     getFieldsList(): Array<fintekkers_models_position_field_pb.FieldProto>;
     setFieldsList(value: Array<fintekkers_models_position_field_pb.FieldProto>): GetFieldsResponseProto;
@@ -31,6 +40,10 @@ export namespace GetFieldsResponseProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         fieldsList: Array<fintekkers_models_position_field_pb.FieldProto>,
     }
 }

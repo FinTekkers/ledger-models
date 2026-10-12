@@ -6,6 +6,8 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 from fintekkers.wrappers.util import link_cache as _link_cache
@@ -105,15 +107,13 @@ class Portfolio:
     @staticmethod
     def create_portfolio(portfolio_name: str):
         uuid_value = FintekkersUuid.new_uuid().as_uuid()
-        portfolio = PortfolioProto(
+        portfolio = stamp(PortfolioProto(
             as_of=LocalTimestampProto(
                 timestamp=Timestamp(), time_zone="America/New_York"
             ),
             is_link=False,
-            object_class="Portfolio",
             portfolio_name=portfolio_name,
             uuid=UUIDProto(raw_uuid=uuid_value.bytes),
-            version="0.0.1",
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_PORTFOLIO, "Portfolio", "0.0.1")
 
         return Portfolio(portfolio)

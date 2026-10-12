@@ -699,6 +699,7 @@ mod test {
             object_class: "PositionFilter".to_string(),
             version: "0.0.1".to_string(),
             filters: vec![field_entry],
+            ..Default::default()
         };
 
         // Create PositionFilter
@@ -728,6 +729,7 @@ mod test {
             measures: vec![],
             reporting_currency: None,
             fields: vec![field_entry.clone()],
+            ..Default::default()
         };
 
         let position = Position::new(position_proto);
@@ -772,6 +774,7 @@ mod test {
                 security_id_entry.clone(),
                 portfolio_id_entry.clone(),
             ],
+            ..Default::default()
         };
 
         let position = Position::new(position_proto);
@@ -811,6 +814,7 @@ mod test {
                 maturity_date_entry.clone(),
                 settlement_date_entry.clone(),
             ],
+            ..Default::default()
         };
 
         let position = Position::new(position_proto);
@@ -846,6 +850,7 @@ mod test {
             measures: vec![],
             reporting_currency: None,
             fields: vec![as_of_entry.clone()],
+            ..Default::default()
         };
 
         let position = Position::new(position_proto);
@@ -886,6 +891,7 @@ mod test {
             measures: vec![],
             reporting_currency: None,
             fields: vec![transaction_type_entry.clone()],
+            ..Default::default()
         };
 
         let position = Position::new(position_proto);
@@ -915,6 +921,7 @@ mod test {
             measures: vec![directed_quantity.clone(), market_value.clone()],
             reporting_currency: None,
             fields: vec![],
+            ..Default::default()
         };
 
         let position = Position::new(position_proto);
@@ -951,6 +958,7 @@ mod test {
             measures: vec![measure1],
             reporting_currency: None,
             fields: vec![field1, field2],
+            ..Default::default()
         };
 
         let position = Position::new(position_proto);
@@ -978,6 +986,7 @@ mod test {
             measures: vec![measure1],
             reporting_currency: None,
             fields: vec![field1, field2],
+            ..Default::default()
         };
 
         let position = Position::new(position_proto);
@@ -1001,6 +1010,7 @@ mod test {
             measures: vec![],
             reporting_currency: None,
             fields: vec![],
+            ..Default::default()
         };
 
         let position = Position::new(position_proto);
@@ -1024,6 +1034,7 @@ mod test {
             object_class: "PositionFilter".to_string(),
             version: "0.0.1".to_string(),
             filters: vec![field_entry],
+            ..Default::default()
         });
 
         let uuid = filter.get_uuid(FieldProto::SecurityId).unwrap();
@@ -1036,6 +1047,7 @@ mod test {
             object_class: "PositionFilter".to_string(),
             version: "0.0.1".to_string(),
             filters: vec![],
+            ..Default::default()
         });
 
         let result = filter.get_uuid(FieldProto::SecurityId);
@@ -1050,6 +1062,7 @@ mod test {
             object_class: "PositionFilter".to_string(),
             version: "0.0.1".to_string(),
             filters: vec![field_entry],
+            ..Default::default()
         });
 
         let value = filter.get_string(FieldProto::AssetClass).unwrap();
@@ -1063,6 +1076,7 @@ mod test {
             object_class: "PositionFilter".to_string(),
             version: "0.0.1".to_string(),
             filters: vec![field_entry],
+            ..Default::default()
         });
 
         let date = filter.get_date(FieldProto::MaturityDate).unwrap();
@@ -1078,6 +1092,7 @@ mod test {
             object_class: "PositionFilter".to_string(),
             version: "0.0.1".to_string(),
             filters: vec![field_entry],
+            ..Default::default()
         });
 
         let value = filter.get_enum_value(FieldProto::TransactionType).unwrap();
@@ -1095,6 +1110,7 @@ mod test {
             object_class: "PositionFilter".to_string(),
             version: "0.0.1".to_string(),
             filters: vec![uuid_entry, string_entry, date_entry],
+            ..Default::default()
         });
 
         // All three should be extractable
@@ -1138,6 +1154,7 @@ mod test {
                 enum_field.clone(),
                 timestamp_field.clone(),
             ],
+            ..Default::default()
         };
 
         let position = Position::new(position_proto);
@@ -1175,6 +1192,7 @@ mod test {
             measures: vec![],
             reporting_currency: None,
             fields: vec![create_string_field_entry(FieldProto::AssetClass, value)],
+            ..Default::default()
         })
     }
 
@@ -1200,6 +1218,7 @@ mod test {
                     "FIXED_INCOME".to_string(),
                 )),
             }],
+            ..Default::default()
         })
     }
 
@@ -1245,6 +1264,7 @@ mod test {
             measures: vec![],
             reporting_currency: None,
             fields: vec![],
+            ..Default::default()
         });
         let positions = vec![
             missing,
@@ -1358,6 +1378,7 @@ mod test {
             measures: vec![],
             reporting_currency: None,
             fields: vec![],
+            ..Default::default()
         });
         let positions = vec![missing];
         let filter = PositionFilter::new(PositionFilterProto {
@@ -1370,6 +1391,7 @@ mod test {
                     "a".to_string(),
                 )),
             }],
+            ..Default::default()
         });
         assert!(PositionFilter::filter_positions(&positions, &filter).is_empty());
     }

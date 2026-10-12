@@ -10,6 +10,7 @@ import * as fintekkers_models_price_price_pb from "../../../fintekkers/models/pr
 import * as fintekkers_models_util_decimal_value_pb from "../../../fintekkers/models/util/decimal_value_pb";
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_position_measure_pb from "../../../fintekkers/models/position/measure_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class CurveInputProto extends jspb.Message { 
 
@@ -57,6 +58,14 @@ export class CurveRequestProto extends jspb.Message {
     setObjectClass(value: string): CurveRequestProto;
     getVersion(): string;
     setVersion(value: string): CurveRequestProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CurveRequestProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): CurveRequestProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): CurveRequestProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): CurveRequestProto;
 
     hasAsofDatetime(): boolean;
     clearAsofDatetime(): void;
@@ -91,6 +100,10 @@ export namespace CurveRequestProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         asofDatetime?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         curveTypesList: Array<fintekkers_models_position_measure_pb.MeasureProto>,
         curveInputsList: Array<CurveInputProto.AsObject>,

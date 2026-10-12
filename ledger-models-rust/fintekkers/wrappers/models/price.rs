@@ -4,6 +4,7 @@ use rust_decimal::Decimal;
 
 use crate::fintekkers::models::price::{PriceProto, PriceTypeProto};
 use crate::fintekkers::models::security::SecurityProto;
+use crate::fintekkers::models::util::ObjectTypeProto;
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::requests::util::errors::{ErrorProto, Message as ErrorMessage};
 
@@ -16,6 +17,7 @@ use chrono::DateTime;
 use chrono_tz::Tz;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 use crate::fintekkers::wrappers::util::link_cache;
+use crate::fintekkers::wrappers::util::object_types;
 
 //Imports below are for RawDataModelObject related macro. IDE might not complain if you remove
 //them but will fail at compile time
@@ -314,13 +316,11 @@ impl PriceProtoBuilder {
             None => None
         };
 
-        Ok(PriceProto {
+        let proto = PriceProto {
             as_of: Some(self.as_of.into()),
             valid_from: Some(self.valid_from.into()),
             valid_to,
 
-            object_class: self.object_class,
-            version: self.version,
             is_link: self.is_link,
 
             uuid: Some(self.uuid.into()),
@@ -329,7 +329,9 @@ impl PriceProtoBuilder {
                 self.security.unwrap()
             ),
             price_type: 0,
-        })
+            ..Default::default()
+        };
+        object_types::stamp_str(proto, ObjectTypeProto::ObjectTypePrice, &self.object_class, &self.version)
     }
 
     pub fn dummy_price_wrapper(&self, price_decimal: Decimal) -> PriceWrapper {

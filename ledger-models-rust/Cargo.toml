@@ -17,7 +17,7 @@ license = "Apache-2.0"
 description = "A comprehensive model library for financial products (securities, prices, transactions, etc). Protobuf used for serialization, with language-specific implementations"
 readme = "README.md" # It is used at https://crates.io/crates/publish
 repository = "https://github.com/fintekkers/ledger-models"
-include = ["Cargo.toml", "**/*.rs", "ledger_models_file_descriptor_set_v_todo.bin", "catalog/*.json", "hierarchy.json"]
+include = ["Cargo.toml", "**/*.rs", "ledger_models_file_descriptor_set_v_todo.bin", "catalog/*.json", "hierarchy.json", "fintekkers/wrappers/util/*.json"]
 
 [[bin]]
 name = "gen"
@@ -32,7 +32,6 @@ prost = "0.11.2"
 prost-types = "0.11.2"
 tonic-build = "0.9.0"
 walkdir = "2"
-
 # LinkResolver (consumer-side is_link hydration). tokio is already in
 # the dep tree transitively via tonic; making it explicit + adding
 # async-trait documents the requirement and lets us define the
@@ -54,6 +53,7 @@ serde_json = "1"
 
 # DecimalValueProto compact form (LM-294, docs/adr/compact_decimal.md):
 # arbitrary-size unscaled values, and the once-per-process deprecation warning.
+# log also carries the object_class / version fallback warnings (LM-297).
 num-bigint = "0.4"
 log = "0.4"
 

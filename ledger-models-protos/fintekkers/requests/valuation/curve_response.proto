@@ -6,6 +6,7 @@ import "fintekkers/models/util/decimal_value.proto";
 import "fintekkers/models/position/measure.proto";
 import "fintekkers/requests/valuation/curve_request.proto";
 import "fintekkers/requests/util/errors/summary.proto";
+import "fintekkers/models/util/object_type.proto";
 
 option java_multiple_files = true;
 
@@ -31,8 +32,13 @@ message CurveResultProto {
 
 // Response from a curve construction request.
 message CurveResponseProto {
-  string object_class = 1;
-  string version = 2;
+  string object_class = 1 [deprecated = true];
+  string version = 2 [deprecated = true];
+  // Compact form of object_class / version (LM-297). Writers set both in stage 1.
+  fintekkers.models.util.ObjectTypeProto object_type = 1001;
+  uint32 version_major = 1002;
+  uint32 version_minor = 1003;
+  uint32 version_patch = 1004;
 
   // The original request, echoed back for correlation.
   CurveRequestProto curve_request = 10;

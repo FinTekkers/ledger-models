@@ -1,5 +1,7 @@
 package protos.serializers.portfolio;
 
+import fintekkers.models.util.ObjectTypeProto;
+import common.util.ObjectTypes;
 import com.google.gson.Gson;
 import common.models.portfolio.Portfolio;
 import fintekkers.models.portfolio.PortfolioProto;
@@ -24,9 +26,7 @@ public class PortfolioSerializer implements IRawDataModelObjectSerializer<Portfo
 
     @Override
     public PortfolioProto serialize(Portfolio portfolio) {
-        PortfolioProto.Builder builder = PortfolioProto.newBuilder()
-                .setObjectClass(Portfolio.class.getSimpleName())
-                .setVersion("0.0.1")
+        PortfolioProto.Builder builder = ObjectTypes.stamp(PortfolioProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PORTFOLIO, Portfolio.class.getSimpleName(), "0.0.1")
                 //Primary Key
                 .setUuid(ProtoSerializationUtil.serializeUUID(portfolio.getID()));
         // A link may carry no as_of; never default it (LM-271).

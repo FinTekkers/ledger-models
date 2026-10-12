@@ -6,6 +6,8 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
@@ -84,16 +86,14 @@ class Price:
     def create_price(security:Security, price: float, as_of_date:Timestamp):
         uuid_value = FintekkersUuid.new_uuid().as_uuid()
 
-        price = PriceProto(
+        price = stamp(PriceProto(
             as_of=LocalTimestampProto(
                 timestamp=as_of_date, time_zone="America/New_York"
             ),
             is_link=False,
-            object_class="PriceProto",
             uuid=UUIDProto(raw_uuid=uuid_value.bytes),
             price=ProtoSerializationUtil.serialize(price),
             security=security.proto,
-            version="0.0.1",
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_PRICE, "PriceProto", "0.0.1")
 
         return Price(price)

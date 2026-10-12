@@ -1,11 +1,17 @@
 syntax = "proto3";
 
 package fintekkers.models.util.lock;
+import "fintekkers/models/util/object_type.proto";
 
 //The definition of a partition
 message NodePartition {
-  string object_class = 1;
-  string version = 2;
+  string object_class = 1 [deprecated = true];
+  string version = 2 [deprecated = true];
+  // Compact form of object_class / version (LM-297). Writers set both in stage 1.
+  fintekkers.models.util.ObjectTypeProto object_type = 1001;
+  uint32 version_major = 1002;
+  uint32 version_minor = 1003;
+  uint32 version_patch = 1004;
 
   //The unique id that identifies a partition. For example a namespace with two
   //partitions may have one partition with value 0, and another with value 1

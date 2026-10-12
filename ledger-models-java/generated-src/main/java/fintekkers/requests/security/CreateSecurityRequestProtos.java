@@ -31,24 +31,31 @@ public final class CreateSecurityRequestProtos {
       "\n:fintekkers/requests/security/create_se" +
       "curity_request.proto\022\034fintekkers.request" +
       "s.security\032)fintekkers/models/security/s" +
-      "ecurity.proto\"\206\001\n\032CreateSecurityRequestP" +
-      "roto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007version\030\002 " +
-      "\001(\t\022A\n\016security_input\030\024 \001(\0132).fintekkers" +
-      ".models.security.SecurityProtoB\037B\033Create" +
-      "SecurityRequestProtosP\001b\006proto3"
+      "ecurity.proto\032(fintekkers/models/util/ob" +
+      "ject_type.proto\"\225\002\n\032CreateSecurityReques" +
+      "tProto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007vers" +
+      "ion\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fi" +
+      "ntekkers.models.util.ObjectTypeProto\022\026\n\r" +
+      "version_major\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007" +
+      " \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022A\n\016security" +
+      "_input\030\024 \001(\0132).fintekkers.models.securit" +
+      "y.SecurityProtoB\037B\033CreateSecurityRequest" +
+      "ProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.security.SecurityProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_security_CreateSecurityRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_security_CreateSecurityRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_security_CreateSecurityRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "SecurityInput", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "SecurityInput", });
     fintekkers.models.security.SecurityProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

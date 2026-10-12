@@ -1,5 +1,7 @@
 package fintekkers.services;
 
+import fintekkers.models.util.ObjectTypeProto;
+import common.util.ObjectTypes;
 import fintekkers.models.position.MeasureMapEntry;
 import fintekkers.models.position.MeasureProto;
 import fintekkers.models.position.PositionProto;
@@ -81,11 +83,10 @@ public class ValuationService {
                 .setCashDetails(CashDetailsProto.newBuilder().setCashId("USD").build())
                 .build();
 
-        SecurityProto equitySecurity = SecurityProto.newBuilder()
+        SecurityProto equitySecurity = ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY, "Security", "")
                 .setAsOf(asOf)
                 .setProductType(ProductTypeProto.COMMON_STOCK)
                 .setAssetClass("Equity")
-                .setObjectClass("Security")
                 .setIsLink(false)
                 .setIssuerName("ACME LLC")
                 .setSettlementCurrency(usd).setQuantityType(SecurityQuantityTypeProto.UNITS).build();

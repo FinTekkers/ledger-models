@@ -6,12 +6,21 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_price_price_pb from "../../../fintekkers/models/price/price_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class CreatePriceRequestProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): CreatePriceRequestProto;
     getVersion(): string;
     setVersion(value: string): CreatePriceRequestProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CreatePriceRequestProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): CreatePriceRequestProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): CreatePriceRequestProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): CreatePriceRequestProto;
 
     hasCreatePriceInput(): boolean;
     clearCreatePriceInput(): void;
@@ -32,6 +41,10 @@ export namespace CreatePriceRequestProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         createPriceInput?: fintekkers_models_price_price_pb.PriceProto.AsObject,
     }
 }

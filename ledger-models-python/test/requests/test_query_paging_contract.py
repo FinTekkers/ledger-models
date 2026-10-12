@@ -126,12 +126,17 @@ def test_response_fields_numbers_and_types(entity):
     assert_plain_scalar(fields["next_page_token"], 50, FieldDescriptor.TYPE_STRING)
 
 
+# The compact object_class / version block (LM-297) sits at 1001-1004, above paging.
+COMPACT_OBJECT_TYPE_FIELDS = {"object_type", "version_major", "version_minor", "version_patch"}
+
+
 @pytest.mark.parametrize("entity", ENTITIES)
 def test_new_fields_sit_above_existing_numbers(entity):
     message, limit_number = REQUESTS[entity]
-    new_request = {"page_token"} | ({"limit"} if limit_number == 50 else set())
+    new_request = {"page_token"} | ({"limit"} if limit_number == 50 else set()) | COMPACT_OBJECT_TYPE_FIELDS
+    new_response = {"next_page_token"} | COMPACT_OBJECT_TYPE_FIELDS
     old_request = [f.number for f in message.DESCRIPTOR.fields if f.name not in new_request]
-    old_response = [f.number for f in RESPONSES[entity].DESCRIPTOR.fields if f.name != "next_page_token"]
+    old_response = [f.number for f in RESPONSES[entity].DESCRIPTOR.fields if f.name not in new_response]
 
     assert max(old_request) < 50
     assert max(old_response) < 50

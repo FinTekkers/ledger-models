@@ -7,12 +7,21 @@
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_transaction_transaction_pb from "../../../fintekkers/models/transaction/transaction_pb";
 import * as fintekkers_requests_transaction_create_transaction_request_pb from "../../../fintekkers/requests/transaction/create_transaction_request_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class CreateTransactionResponseProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): CreateTransactionResponseProto;
     getVersion(): string;
     setVersion(value: string): CreateTransactionResponseProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CreateTransactionResponseProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): CreateTransactionResponseProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): CreateTransactionResponseProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): CreateTransactionResponseProto;
 
     hasCreateTransactionRequest(): boolean;
     clearCreateTransactionRequest(): void;
@@ -38,6 +47,10 @@ export namespace CreateTransactionResponseProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         createTransactionRequest?: fintekkers_requests_transaction_create_transaction_request_pb.CreateTransactionRequestProto.AsObject,
         transactionResponse?: fintekkers_models_transaction_transaction_pb.TransactionProto.AsObject,
     }

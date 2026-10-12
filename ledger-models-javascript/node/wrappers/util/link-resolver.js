@@ -50,6 +50,8 @@ const requestcontext_1 = __importDefault(require("../models/utils/requestcontext
 const serviceaddress_1 = require("./serviceaddress");
 const datetime_1 = require("../models/utils/datetime");
 const LinkCacheModule = __importStar(require("./link-cache"));
+const object_type_pb_1 = require("../../fintekkers/models/util/object_type_pb");
+const object_types_1 = require("./object-types");
 /**
  * Stable serialization of a LocalTimestampProto for use in in-flight dedup
  * keys and as_of-bucket grouping. Uses the proto's binary form (Uint8Array
@@ -375,8 +377,7 @@ class LinkResolver {
             if (uuids.length === 0)
                 return [];
             const request = new query_security_request_pb_1.QuerySecurityRequestProto();
-            request.setObjectClass('SecurityRequest');
-            request.setVersion('0.0.1');
+            (0, object_types_1.stamp)(request, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, 'SecurityRequest', '0.0.1');
             const uuidProtos = uuids.map((u) => u.toUUIDProto());
             request.setUuidsList(uuidProtos);
             if (asOf)
@@ -391,8 +392,7 @@ class LinkResolver {
             if (uuids.length === 0)
                 return [];
             const request = new query_transaction_request_pb_1.QueryTransactionRequestProto();
-            request.setObjectClass('TransactionRequest');
-            request.setVersion('0.0.1');
+            (0, object_types_1.stamp)(request, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
             const uuidProtos = uuids.map((u) => u.toUUIDProto());
             request.setUuidsList(uuidProtos);
             if (asOf)
@@ -407,8 +407,7 @@ class LinkResolver {
             if (uuids.length === 0)
                 return [];
             const request = new query_portfolio_request_pb_1.QueryPortfolioRequestProto();
-            request.setObjectClass('PortfolioRequest');
-            request.setVersion('0.0.1');
+            (0, object_types_1.stamp)(request, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
             const uuidProtos = uuids.map((u) => u.toUUIDProto());
             request.setUuidsList(uuidProtos);
             if (asOf)

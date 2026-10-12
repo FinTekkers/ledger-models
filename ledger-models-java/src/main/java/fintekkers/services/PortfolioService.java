@@ -1,5 +1,7 @@
 package fintekkers.services;
 
+import fintekkers.models.util.ObjectTypeProto;
+import common.util.ObjectTypes;
 import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.position.FieldMapEntry;
 import fintekkers.models.position.FieldProto;
@@ -67,9 +69,7 @@ public class PortfolioService {
      * Returns {@code null} when no record exists for the UUID.
      */
     public PortfolioProto getByUuid(UUID uuid, ZonedDateTime asOf) {
-        QueryPortfolioRequestProto.Builder reqB = QueryPortfolioRequestProto.newBuilder()
-                .setObjectClass("PortfolioRequest")
-                .setVersion("0.0.1")
+        QueryPortfolioRequestProto.Builder reqB = ObjectTypes.stamp(QueryPortfolioRequestProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, "PortfolioRequest", "0.0.1")
                 .addUuIds(ProtoSerializationUtil.serializeUUID(uuid));
         if (asOf != null) {
             reqB.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));

@@ -482,6 +482,7 @@ mod tests {
             object_class: "PositionFilter".to_string(),
             version: "0.0.1".to_string(),
             filters: entries,
+            ..Default::default()
         })
     }
 

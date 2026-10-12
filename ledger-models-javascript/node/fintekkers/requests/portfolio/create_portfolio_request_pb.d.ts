@@ -6,12 +6,21 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_portfolio_portfolio_pb from "../../../fintekkers/models/portfolio/portfolio_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class CreatePortfolioRequestProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): CreatePortfolioRequestProto;
     getVersion(): string;
     setVersion(value: string): CreatePortfolioRequestProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CreatePortfolioRequestProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): CreatePortfolioRequestProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): CreatePortfolioRequestProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): CreatePortfolioRequestProto;
 
     hasCreatePortfolioInput(): boolean;
     clearCreatePortfolioInput(): void;
@@ -32,6 +41,10 @@ export namespace CreatePortfolioRequestProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         createPortfolioInput?: fintekkers_models_portfolio_portfolio_pb.PortfolioProto.AsObject,
     }
 }
