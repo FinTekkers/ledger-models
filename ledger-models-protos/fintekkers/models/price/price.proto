@@ -34,7 +34,7 @@ message PriceProto {
   util.LocalTimestampProto valid_from = 8;
   util.LocalTimestampProto valid_to = 9;
 
-  // Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+  // Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
   fintekkers.models.util.DecimalValueProto price = 10;
   fintekkers.models.security.SecurityProto security = 11;
   PriceTypeProto price_type = 12;

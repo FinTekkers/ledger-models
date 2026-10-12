@@ -72,7 +72,17 @@ pub struct QueryPriceRequestProto {
     >,
     #[prost(message, optional, tag = "23")]
     pub as_of: ::core::option::Option<super::super::models::util::LocalTimestampProto>,
-    /// Optional: Used to filter the price frequency and horizon
+    /// Optional downsampling, applied after the `horizon` or `date_range`
+    /// filter. The server returns the latest price per security per bucket.
+    /// Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+    /// half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+    /// which are inclusive at both ends. Buckets per value:
+    /// - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+    /// - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+    /// - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+    /// - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+    /// - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+    /// - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
     #[prost(enumeration = "PriceFrequencyProto", tag = "24")]
     pub frequency: i32,
     /// Paging (see docs/adr/query_paging.md). Max records returned in this
@@ -96,11 +106,13 @@ pub struct QueryPriceRequestProto {
     /// `page_token` get exactly today's results.
     #[prost(string, tag = "51")]
     pub page_token: ::prost::alloc::string::String,
+    /// `horizon` windows are defined on PriceHorizonProto.
     #[prost(oneof = "query_price_request_proto::TimeRange", tags = "25, 26")]
     pub time_range: ::core::option::Option<query_price_request_proto::TimeRange>,
 }
 /// Nested message and enum types in `QueryPriceRequestProto`.
 pub mod query_price_request_proto {
+    /// `horizon` windows are defined on PriceHorizonProto.
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum TimeRange {
@@ -110,18 +122,24 @@ pub mod query_price_request_proto {
         DateRange(super::super::super::models::util::DateRangeProto),
     }
 }
+/// How QueryPriceRequestProto.frequency downsamples prices. Each bucket is
+/// half-open, `[bucket start, next bucket start)`, with boundaries in UTC. The
+/// server returns the latest price per security per bucket. See the
+/// `frequency` field for the full rule.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum PriceFrequencyProto {
+    /// No downsampling: every price in the time range is returned.
     PriceFrequencyUnspecified = 0,
+    /// One bucket per ISO week, starting Monday 00:00 UTC.
     PriceFrequencyWeekly = 10,
+    /// One bucket per UTC day, starting 00:00 UTC.
     PriceFrequencyDaily = 20,
+    /// One bucket per UTC hour, starting at :00 minutes.
     PriceFrequencyHourly = 30,
+    /// One bucket per UTC minute, starting at :00 seconds.
     PriceFrequencyMinute = 40,
-    /// PRICE_FREQUENCY_SECOND = 50;
-    /// PRICE_FREQUENCY_MILLISECOND = 60;
-    /// PRICE_FREQUENCY_MICROSECOND = 70;
-    /// PRICE_FREQUENCY_NANOSECOND = 80;
+    /// No downsampling: every price in the time range is returned.
     PriceFrequencyEveryTick = 90,
 }
 impl PriceFrequencyProto {
@@ -154,18 +172,53 @@ impl PriceFrequencyProto {
         }
     }
 }
+/// The time window QueryPriceRequestProto.horizon selects. Every window ends
+/// at the anchor: the request's `as_of` if set, else the server's now. Both
+/// ends of the window are inclusive.
+///
+/// Fixed-day horizons step back a whole number of 24-hour periods from the
+/// anchor instant. Calendar horizons step back in calendar months or years on
+/// the anchor's date in UTC (not in `as_of.time_zone`), keeping the anchor's
+/// time of day. When the target month has no such day (e.g. 31 March back one
+/// month, or 29 February back one year) the start clamps to that month's last
+/// day.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum PriceHorizonProto {
+    /// No horizon filter: the window ends at the anchor (`as_of`, else now),
+    /// inclusive, and has no lower bound. Labelled calendar only nominally,
+    /// since no calendar step applies.
     PriceHorizonUnspecified = 0,
+    /// fixed-day: from anchor - 24h to the anchor (`as_of`, else now),
+    /// inclusive at both ends.
     PriceHorizon1Day = 1,
+    /// fixed-day: from anchor - 5 x 24h to the anchor (`as_of`, else now),
+    /// inclusive at both ends.
     PriceHorizon5Days = 2,
+    /// fixed-day: from anchor - 7 x 24h to the anchor (`as_of`, else now),
+    /// inclusive at both ends.
     PriceHorizon1Week = 3,
+    /// calendar: from the same UTC day-of-month one month before the anchor
+    /// (`as_of`, else now) to the anchor, clamped to month end, inclusive at
+    /// both ends.
     PriceHorizon1Month = 4,
+    /// calendar: from the same UTC day-of-month six months before the anchor
+    /// (`as_of`, else now) to the anchor, clamped to month end, inclusive at
+    /// both ends.
     PriceHorizon6Months = 5,
+    /// calendar: from the same UTC date one year before the anchor (`as_of`,
+    /// else now) to the anchor; 29 February clamps to 28 February. Inclusive
+    /// at both ends.
     PriceHorizon1Year = 6,
+    /// calendar: from the same UTC date five years before the anchor (`as_of`,
+    /// else now) to the anchor; 29 February clamps to 28 February. Inclusive
+    /// at both ends.
     PriceHorizon5Year = 7,
+    /// calendar: no lower bound; every price up to the anchor (`as_of`, else
+    /// now), inclusive.
     PriceHorizonMax = 8,
+    /// calendar: from 1 January 00:00 UTC of the anchor's UTC year to the
+    /// anchor (`as_of`, else now), inclusive at both ends.
     PriceHorizonYearToDate = 9,
 }
 impl PriceHorizonProto {

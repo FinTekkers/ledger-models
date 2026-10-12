@@ -14,7 +14,8 @@ use crate::fintekkers::models::security::{
     BondDetailsProto, CouponFrequencyProto, CouponTypeProto, ProductTypeProto, SecurityProto,
     TipsExtensionProto,
 };
-use crate::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
+use crate::fintekkers::models::util::LocalDateProto;
+use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 
@@ -71,28 +72,22 @@ impl TIPSBond {
         SecurityProto {
             product_type: ProductTypeProto::Tips as i32,
             bond_details: Some(BondDetailsProto {
-                coupon_rate: Some(decimal_proto(coupon_rate)),
+                coupon_rate: Some(decimal_proto(&coupon_rate)),
                 coupon_type: coupon_type as i32,
                 coupon_frequency: coupon_frequency as i32,
-                face_value: Some(decimal_proto(face_value)),
+                face_value: Some(decimal_proto(&face_value)),
                 issue_date: Some(date_proto(issue_date)),
                 dated_date: None,
                 maturity_date: Some(date_proto(maturity_date)),
                 issuance_info: vec![],
             }),
             tips_extension: Some(TipsExtensionProto {
-                base_cpi: Some(decimal_proto(base_cpi)),
+                base_cpi: Some(decimal_proto(&base_cpi)),
                 index_date: Some(date_proto(index_date)),
                 inflation_index_type: inflation_index_type as i32,
             }),
             ..Default::default()
         }
-    }
-}
-
-fn decimal_proto(d: Decimal) -> DecimalValueProto {
-    DecimalValueProto {
-        arbitrary_precision_value: d.to_string(),
     }
 }
 

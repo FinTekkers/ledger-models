@@ -20,29 +20,65 @@ public final class DecimalValue {
 
     /**
      * <pre>
-     *This is a string representation of a float number.
-     *This will be deprecated in the future for a more space efficient approach
+     * Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
+     * when unscaled_value is empty. Writers keep setting it alongside 11 and 12
+     * until LM-295.
      * </pre>
      *
-     * <code>string arbitrary_precision_value = 10;</code>
+     * <code>string arbitrary_precision_value = 10 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DecimalValueProto.arbitrary_precision_value is deprecated.
+     *     See fintekkers/models/util/decimal_value.proto;l=22
      * @return The arbitraryPrecisionValue.
      */
-    java.lang.String getArbitraryPrecisionValue();
+    @java.lang.Deprecated java.lang.String getArbitraryPrecisionValue();
     /**
      * <pre>
-     *This is a string representation of a float number.
-     *This will be deprecated in the future for a more space efficient approach
+     * Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
+     * when unscaled_value is empty. Writers keep setting it alongside 11 and 12
+     * until LM-295.
      * </pre>
      *
-     * <code>string arbitrary_precision_value = 10;</code>
+     * <code>string arbitrary_precision_value = 10 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DecimalValueProto.arbitrary_precision_value is deprecated.
+     *     See fintekkers/models/util/decimal_value.proto;l=22
      * @return The bytes for arbitraryPrecisionValue.
      */
-    com.google.protobuf.ByteString
+    @java.lang.Deprecated com.google.protobuf.ByteString
         getArbitraryPrecisionValueBytes();
+
+    /**
+     * <pre>
+     * The unscaled integer in minimal two's-complement big-endian form, of any
+     * size. Zero is 0x00. Non-empty means the compact form is set.
+     * </pre>
+     *
+     * <code>bytes unscaled_value = 11;</code>
+     * @return The unscaledValue.
+     */
+    com.google.protobuf.ByteString getUnscaledValue();
+
+    /**
+     * <pre>
+     * The number of digits after the decimal point. Never negative: an exponent
+     * such as 1E+3 is stored as unscaled 1000, scale 0.
+     * </pre>
+     *
+     * <code>uint32 scale = 12;</code>
+     * @return The scale.
+     */
+    int getScale();
   }
   /**
    * <pre>
-   *  uint32 scale = 1;
+   * An exact decimal: value = unscaled_value x 10^-scale. See
+   * docs/adr/compact_decimal.md.
+   * Presence rule: a non-empty unscaled_value means the compact form (11, 12)
+   * is set, and it wins over arbitrary_precision_value. Zero is the single byte
+   * 0x00, so a set zero is never empty. When unscaled_value is empty, readers
+   * fall back to arbitrary_precision_value. When both are empty the decimal is
+   * unset.
+   * Stage 1 (LM-294): writers set both forms. Stage 2 (LM-295) stops writing
+   * arbitrary_precision_value. Stage 3 (LM-296) deletes it.
    * </pre>
    *
    * Protobuf type {@code fintekkers.models.util.DecimalValueProto}
@@ -58,6 +94,7 @@ public final class DecimalValue {
     }
     private DecimalValueProto() {
       arbitraryPrecisionValue_ = "";
+      unscaledValue_ = com.google.protobuf.ByteString.EMPTY;
     }
 
     @java.lang.Override
@@ -90,15 +127,18 @@ public final class DecimalValue {
     private volatile java.lang.Object arbitraryPrecisionValue_ = "";
     /**
      * <pre>
-     *This is a string representation of a float number.
-     *This will be deprecated in the future for a more space efficient approach
+     * Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
+     * when unscaled_value is empty. Writers keep setting it alongside 11 and 12
+     * until LM-295.
      * </pre>
      *
-     * <code>string arbitrary_precision_value = 10;</code>
+     * <code>string arbitrary_precision_value = 10 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DecimalValueProto.arbitrary_precision_value is deprecated.
+     *     See fintekkers/models/util/decimal_value.proto;l=22
      * @return The arbitraryPrecisionValue.
      */
     @java.lang.Override
-    public java.lang.String getArbitraryPrecisionValue() {
+    @java.lang.Deprecated public java.lang.String getArbitraryPrecisionValue() {
       java.lang.Object ref = arbitraryPrecisionValue_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
@@ -112,15 +152,18 @@ public final class DecimalValue {
     }
     /**
      * <pre>
-     *This is a string representation of a float number.
-     *This will be deprecated in the future for a more space efficient approach
+     * Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
+     * when unscaled_value is empty. Writers keep setting it alongside 11 and 12
+     * until LM-295.
      * </pre>
      *
-     * <code>string arbitrary_precision_value = 10;</code>
+     * <code>string arbitrary_precision_value = 10 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DecimalValueProto.arbitrary_precision_value is deprecated.
+     *     See fintekkers/models/util/decimal_value.proto;l=22
      * @return The bytes for arbitraryPrecisionValue.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString
+    @java.lang.Deprecated public com.google.protobuf.ByteString
         getArbitraryPrecisionValueBytes() {
       java.lang.Object ref = arbitraryPrecisionValue_;
       if (ref instanceof java.lang.String) {
@@ -132,6 +175,38 @@ public final class DecimalValue {
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
+    }
+
+    public static final int UNSCALED_VALUE_FIELD_NUMBER = 11;
+    private com.google.protobuf.ByteString unscaledValue_ = com.google.protobuf.ByteString.EMPTY;
+    /**
+     * <pre>
+     * The unscaled integer in minimal two's-complement big-endian form, of any
+     * size. Zero is 0x00. Non-empty means the compact form is set.
+     * </pre>
+     *
+     * <code>bytes unscaled_value = 11;</code>
+     * @return The unscaledValue.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getUnscaledValue() {
+      return unscaledValue_;
+    }
+
+    public static final int SCALE_FIELD_NUMBER = 12;
+    private int scale_ = 0;
+    /**
+     * <pre>
+     * The number of digits after the decimal point. Never negative: an exponent
+     * such as 1E+3 is stored as unscaled 1000, scale 0.
+     * </pre>
+     *
+     * <code>uint32 scale = 12;</code>
+     * @return The scale.
+     */
+    @java.lang.Override
+    public int getScale() {
+      return scale_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -151,6 +226,12 @@ public final class DecimalValue {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(arbitraryPrecisionValue_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 10, arbitraryPrecisionValue_);
       }
+      if (!unscaledValue_.isEmpty()) {
+        output.writeBytes(11, unscaledValue_);
+      }
+      if (scale_ != 0) {
+        output.writeUInt32(12, scale_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -162,6 +243,14 @@ public final class DecimalValue {
       size = 0;
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(arbitraryPrecisionValue_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, arbitraryPrecisionValue_);
+      }
+      if (!unscaledValue_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(11, unscaledValue_);
+      }
+      if (scale_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(12, scale_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -180,6 +269,10 @@ public final class DecimalValue {
 
       if (!getArbitraryPrecisionValue()
           .equals(other.getArbitraryPrecisionValue())) return false;
+      if (!getUnscaledValue()
+          .equals(other.getUnscaledValue())) return false;
+      if (getScale()
+          != other.getScale()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -193,6 +286,10 @@ public final class DecimalValue {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + ARBITRARY_PRECISION_VALUE_FIELD_NUMBER;
       hash = (53 * hash) + getArbitraryPrecisionValue().hashCode();
+      hash = (37 * hash) + UNSCALED_VALUE_FIELD_NUMBER;
+      hash = (53 * hash) + getUnscaledValue().hashCode();
+      hash = (37 * hash) + SCALE_FIELD_NUMBER;
+      hash = (53 * hash) + getScale();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -290,7 +387,15 @@ public final class DecimalValue {
     }
     /**
      * <pre>
-     *  uint32 scale = 1;
+     * An exact decimal: value = unscaled_value x 10^-scale. See
+     * docs/adr/compact_decimal.md.
+     * Presence rule: a non-empty unscaled_value means the compact form (11, 12)
+     * is set, and it wins over arbitrary_precision_value. Zero is the single byte
+     * 0x00, so a set zero is never empty. When unscaled_value is empty, readers
+     * fall back to arbitrary_precision_value. When both are empty the decimal is
+     * unset.
+     * Stage 1 (LM-294): writers set both forms. Stage 2 (LM-295) stops writing
+     * arbitrary_precision_value. Stage 3 (LM-296) deletes it.
      * </pre>
      *
      * Protobuf type {@code fintekkers.models.util.DecimalValueProto}
@@ -327,6 +432,8 @@ public final class DecimalValue {
         super.clear();
         bitField0_ = 0;
         arbitraryPrecisionValue_ = "";
+        unscaledValue_ = com.google.protobuf.ByteString.EMPTY;
+        scale_ = 0;
         return this;
       }
 
@@ -362,6 +469,12 @@ public final class DecimalValue {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.arbitraryPrecisionValue_ = arbitraryPrecisionValue_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.unscaledValue_ = unscaledValue_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.scale_ = scale_;
         }
       }
 
@@ -414,6 +527,12 @@ public final class DecimalValue {
           bitField0_ |= 0x00000001;
           onChanged();
         }
+        if (other.getUnscaledValue() != com.google.protobuf.ByteString.EMPTY) {
+          setUnscaledValue(other.getUnscaledValue());
+        }
+        if (other.getScale() != 0) {
+          setScale(other.getScale());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -445,6 +564,16 @@ public final class DecimalValue {
                 bitField0_ |= 0x00000001;
                 break;
               } // case 82
+              case 90: {
+                unscaledValue_ = input.readBytes();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 90
+              case 96: {
+                scale_ = input.readUInt32();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 96
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -465,14 +594,17 @@ public final class DecimalValue {
       private java.lang.Object arbitraryPrecisionValue_ = "";
       /**
        * <pre>
-       *This is a string representation of a float number.
-       *This will be deprecated in the future for a more space efficient approach
+       * Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
+       * when unscaled_value is empty. Writers keep setting it alongside 11 and 12
+       * until LM-295.
        * </pre>
        *
-       * <code>string arbitrary_precision_value = 10;</code>
+       * <code>string arbitrary_precision_value = 10 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DecimalValueProto.arbitrary_precision_value is deprecated.
+       *     See fintekkers/models/util/decimal_value.proto;l=22
        * @return The arbitraryPrecisionValue.
        */
-      public java.lang.String getArbitraryPrecisionValue() {
+      @java.lang.Deprecated public java.lang.String getArbitraryPrecisionValue() {
         java.lang.Object ref = arbitraryPrecisionValue_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
@@ -486,14 +618,17 @@ public final class DecimalValue {
       }
       /**
        * <pre>
-       *This is a string representation of a float number.
-       *This will be deprecated in the future for a more space efficient approach
+       * Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
+       * when unscaled_value is empty. Writers keep setting it alongside 11 and 12
+       * until LM-295.
        * </pre>
        *
-       * <code>string arbitrary_precision_value = 10;</code>
+       * <code>string arbitrary_precision_value = 10 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DecimalValueProto.arbitrary_precision_value is deprecated.
+       *     See fintekkers/models/util/decimal_value.proto;l=22
        * @return The bytes for arbitraryPrecisionValue.
        */
-      public com.google.protobuf.ByteString
+      @java.lang.Deprecated public com.google.protobuf.ByteString
           getArbitraryPrecisionValueBytes() {
         java.lang.Object ref = arbitraryPrecisionValue_;
         if (ref instanceof String) {
@@ -508,15 +643,18 @@ public final class DecimalValue {
       }
       /**
        * <pre>
-       *This is a string representation of a float number.
-       *This will be deprecated in the future for a more space efficient approach
+       * Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
+       * when unscaled_value is empty. Writers keep setting it alongside 11 and 12
+       * until LM-295.
        * </pre>
        *
-       * <code>string arbitrary_precision_value = 10;</code>
+       * <code>string arbitrary_precision_value = 10 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DecimalValueProto.arbitrary_precision_value is deprecated.
+       *     See fintekkers/models/util/decimal_value.proto;l=22
        * @param value The arbitraryPrecisionValue to set.
        * @return This builder for chaining.
        */
-      public Builder setArbitraryPrecisionValue(
+      @java.lang.Deprecated public Builder setArbitraryPrecisionValue(
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         arbitraryPrecisionValue_ = value;
@@ -526,14 +664,17 @@ public final class DecimalValue {
       }
       /**
        * <pre>
-       *This is a string representation of a float number.
-       *This will be deprecated in the future for a more space efficient approach
+       * Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
+       * when unscaled_value is empty. Writers keep setting it alongside 11 and 12
+       * until LM-295.
        * </pre>
        *
-       * <code>string arbitrary_precision_value = 10;</code>
+       * <code>string arbitrary_precision_value = 10 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DecimalValueProto.arbitrary_precision_value is deprecated.
+       *     See fintekkers/models/util/decimal_value.proto;l=22
        * @return This builder for chaining.
        */
-      public Builder clearArbitraryPrecisionValue() {
+      @java.lang.Deprecated public Builder clearArbitraryPrecisionValue() {
         arbitraryPrecisionValue_ = getDefaultInstance().getArbitraryPrecisionValue();
         bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
@@ -541,20 +682,117 @@ public final class DecimalValue {
       }
       /**
        * <pre>
-       *This is a string representation of a float number.
-       *This will be deprecated in the future for a more space efficient approach
+       * Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
+       * when unscaled_value is empty. Writers keep setting it alongside 11 and 12
+       * until LM-295.
        * </pre>
        *
-       * <code>string arbitrary_precision_value = 10;</code>
+       * <code>string arbitrary_precision_value = 10 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DecimalValueProto.arbitrary_precision_value is deprecated.
+       *     See fintekkers/models/util/decimal_value.proto;l=22
        * @param value The bytes for arbitraryPrecisionValue to set.
        * @return This builder for chaining.
        */
-      public Builder setArbitraryPrecisionValueBytes(
+      @java.lang.Deprecated public Builder setArbitraryPrecisionValueBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         arbitraryPrecisionValue_ = value;
         bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString unscaledValue_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <pre>
+       * The unscaled integer in minimal two's-complement big-endian form, of any
+       * size. Zero is 0x00. Non-empty means the compact form is set.
+       * </pre>
+       *
+       * <code>bytes unscaled_value = 11;</code>
+       * @return The unscaledValue.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString getUnscaledValue() {
+        return unscaledValue_;
+      }
+      /**
+       * <pre>
+       * The unscaled integer in minimal two's-complement big-endian form, of any
+       * size. Zero is 0x00. Non-empty means the compact form is set.
+       * </pre>
+       *
+       * <code>bytes unscaled_value = 11;</code>
+       * @param value The unscaledValue to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnscaledValue(com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        unscaledValue_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The unscaled integer in minimal two's-complement big-endian form, of any
+       * size. Zero is 0x00. Non-empty means the compact form is set.
+       * </pre>
+       *
+       * <code>bytes unscaled_value = 11;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUnscaledValue() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        unscaledValue_ = getDefaultInstance().getUnscaledValue();
+        onChanged();
+        return this;
+      }
+
+      private int scale_ ;
+      /**
+       * <pre>
+       * The number of digits after the decimal point. Never negative: an exponent
+       * such as 1E+3 is stored as unscaled 1000, scale 0.
+       * </pre>
+       *
+       * <code>uint32 scale = 12;</code>
+       * @return The scale.
+       */
+      @java.lang.Override
+      public int getScale() {
+        return scale_;
+      }
+      /**
+       * <pre>
+       * The number of digits after the decimal point. Never negative: an exponent
+       * such as 1E+3 is stored as unscaled 1000, scale 0.
+       * </pre>
+       *
+       * <code>uint32 scale = 12;</code>
+       * @param value The scale to set.
+       * @return This builder for chaining.
+       */
+      public Builder setScale(int value) {
+        
+        scale_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The number of digits after the decimal point. Never negative: an exponent
+       * such as 1E+3 is stored as unscaled 1000, scale 0.
+       * </pre>
+       *
+       * <code>uint32 scale = 12;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearScale() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        scale_ = 0;
         onChanged();
         return this;
       }
@@ -637,9 +875,10 @@ public final class DecimalValue {
   static {
     java.lang.String[] descriptorData = {
       "\n*fintekkers/models/util/decimal_value.p" +
-      "roto\022\026fintekkers.models.util\"6\n\021DecimalV" +
-      "alueProto\022!\n\031arbitrary_precision_value\030\n" +
-      " \001(\tb\006proto3"
+      "roto\022\026fintekkers.models.util\"m\n\021DecimalV" +
+      "alueProto\022%\n\031arbitrary_precision_value\030\n" +
+      " \001(\tB\002\030\001\022\026\n\016unscaled_value\030\013 \001(\014\022\r\n\005scal" +
+      "e\030\014 \001(\rJ\004\010\001\020\002J\004\010\003\020\004b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -650,7 +889,7 @@ public final class DecimalValue {
     internal_static_fintekkers_models_util_DecimalValueProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_util_DecimalValueProto_descriptor,
-        new java.lang.String[] { "ArbitraryPrecisionValue", });
+        new java.lang.String[] { "ArbitraryPrecisionValue", "UnscaledValue", "Scale", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

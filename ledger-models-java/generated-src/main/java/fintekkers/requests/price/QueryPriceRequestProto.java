@@ -96,7 +96,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>string object_class = 1 [deprecated = true];</code>
    * @deprecated fintekkers.requests.price.QueryPriceRequestProto.object_class is deprecated.
-   *     See fintekkers/requests/price/query_price_request.proto;l=41
+   *     See fintekkers/requests/price/query_price_request.proto;l=88
    * @return The objectClass.
    */
   @java.lang.Override
@@ -115,7 +115,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>string object_class = 1 [deprecated = true];</code>
    * @deprecated fintekkers.requests.price.QueryPriceRequestProto.object_class is deprecated.
-   *     See fintekkers/requests/price/query_price_request.proto;l=41
+   *     See fintekkers/requests/price/query_price_request.proto;l=88
    * @return The bytes for objectClass.
    */
   @java.lang.Override
@@ -139,7 +139,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>string version = 2 [deprecated = true];</code>
    * @deprecated fintekkers.requests.price.QueryPriceRequestProto.version is deprecated.
-   *     See fintekkers/requests/price/query_price_request.proto;l=42
+   *     See fintekkers/requests/price/query_price_request.proto;l=89
    * @return The version.
    */
   @java.lang.Override
@@ -158,7 +158,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>string version = 2 [deprecated = true];</code>
    * @deprecated fintekkers.requests.price.QueryPriceRequestProto.version is deprecated.
-   *     See fintekkers/requests/price/query_price_request.proto;l=42
+   *     See fintekkers/requests/price/query_price_request.proto;l=89
    * @return The bytes for version.
    */
   @java.lang.Override
@@ -332,7 +332,17 @@ private static final long serialVersionUID = 0L;
   private int frequency_ = 0;
   /**
    * <pre>
-   * Optional: Used to filter the price frequency and horizon
+   * Optional downsampling, applied after the `horizon` or `date_range`
+   * filter. The server returns the latest price per security per bucket.
+   * Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+   * half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+   * which are inclusive at both ends. Buckets per value:
+   * - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+   * - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+   * - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+   * - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+   * - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+   * - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
    * </pre>
    *
    * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
@@ -343,7 +353,17 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Optional: Used to filter the price frequency and horizon
+   * Optional downsampling, applied after the `horizon` or `date_range`
+   * filter. The server returns the latest price per security per bucket.
+   * Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+   * half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+   * which are inclusive at both ends. Buckets per value:
+   * - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+   * - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+   * - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+   * - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+   * - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+   * - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
    * </pre>
    *
    * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
@@ -1247,7 +1267,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string object_class = 1 [deprecated = true];</code>
      * @deprecated fintekkers.requests.price.QueryPriceRequestProto.object_class is deprecated.
-     *     See fintekkers/requests/price/query_price_request.proto;l=41
+     *     See fintekkers/requests/price/query_price_request.proto;l=88
      * @return The objectClass.
      */
     @java.lang.Deprecated public java.lang.String getObjectClass() {
@@ -1265,7 +1285,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string object_class = 1 [deprecated = true];</code>
      * @deprecated fintekkers.requests.price.QueryPriceRequestProto.object_class is deprecated.
-     *     See fintekkers/requests/price/query_price_request.proto;l=41
+     *     See fintekkers/requests/price/query_price_request.proto;l=88
      * @return The bytes for objectClass.
      */
     @java.lang.Deprecated public com.google.protobuf.ByteString
@@ -1284,7 +1304,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string object_class = 1 [deprecated = true];</code>
      * @deprecated fintekkers.requests.price.QueryPriceRequestProto.object_class is deprecated.
-     *     See fintekkers/requests/price/query_price_request.proto;l=41
+     *     See fintekkers/requests/price/query_price_request.proto;l=88
      * @param value The objectClass to set.
      * @return This builder for chaining.
      */
@@ -1299,7 +1319,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string object_class = 1 [deprecated = true];</code>
      * @deprecated fintekkers.requests.price.QueryPriceRequestProto.object_class is deprecated.
-     *     See fintekkers/requests/price/query_price_request.proto;l=41
+     *     See fintekkers/requests/price/query_price_request.proto;l=88
      * @return This builder for chaining.
      */
     @java.lang.Deprecated public Builder clearObjectClass() {
@@ -1311,7 +1331,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string object_class = 1 [deprecated = true];</code>
      * @deprecated fintekkers.requests.price.QueryPriceRequestProto.object_class is deprecated.
-     *     See fintekkers/requests/price/query_price_request.proto;l=41
+     *     See fintekkers/requests/price/query_price_request.proto;l=88
      * @param value The bytes for objectClass to set.
      * @return This builder for chaining.
      */
@@ -1329,7 +1349,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string version = 2 [deprecated = true];</code>
      * @deprecated fintekkers.requests.price.QueryPriceRequestProto.version is deprecated.
-     *     See fintekkers/requests/price/query_price_request.proto;l=42
+     *     See fintekkers/requests/price/query_price_request.proto;l=89
      * @return The version.
      */
     @java.lang.Deprecated public java.lang.String getVersion() {
@@ -1347,7 +1367,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string version = 2 [deprecated = true];</code>
      * @deprecated fintekkers.requests.price.QueryPriceRequestProto.version is deprecated.
-     *     See fintekkers/requests/price/query_price_request.proto;l=42
+     *     See fintekkers/requests/price/query_price_request.proto;l=89
      * @return The bytes for version.
      */
     @java.lang.Deprecated public com.google.protobuf.ByteString
@@ -1366,7 +1386,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string version = 2 [deprecated = true];</code>
      * @deprecated fintekkers.requests.price.QueryPriceRequestProto.version is deprecated.
-     *     See fintekkers/requests/price/query_price_request.proto;l=42
+     *     See fintekkers/requests/price/query_price_request.proto;l=89
      * @param value The version to set.
      * @return This builder for chaining.
      */
@@ -1381,7 +1401,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string version = 2 [deprecated = true];</code>
      * @deprecated fintekkers.requests.price.QueryPriceRequestProto.version is deprecated.
-     *     See fintekkers/requests/price/query_price_request.proto;l=42
+     *     See fintekkers/requests/price/query_price_request.proto;l=89
      * @return This builder for chaining.
      */
     @java.lang.Deprecated public Builder clearVersion() {
@@ -1393,7 +1413,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string version = 2 [deprecated = true];</code>
      * @deprecated fintekkers.requests.price.QueryPriceRequestProto.version is deprecated.
-     *     See fintekkers/requests/price/query_price_request.proto;l=42
+     *     See fintekkers/requests/price/query_price_request.proto;l=89
      * @param value The bytes for version to set.
      * @return This builder for chaining.
      */
@@ -2057,7 +2077,17 @@ private static final long serialVersionUID = 0L;
     private int frequency_ = 0;
     /**
      * <pre>
-     * Optional: Used to filter the price frequency and horizon
+     * Optional downsampling, applied after the `horizon` or `date_range`
+     * filter. The server returns the latest price per security per bucket.
+     * Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+     * half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+     * which are inclusive at both ends. Buckets per value:
+     * - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+     * - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+     * - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+     * - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+     * - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+     * - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
      * </pre>
      *
      * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
@@ -2068,7 +2098,17 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Optional: Used to filter the price frequency and horizon
+     * Optional downsampling, applied after the `horizon` or `date_range`
+     * filter. The server returns the latest price per security per bucket.
+     * Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+     * half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+     * which are inclusive at both ends. Buckets per value:
+     * - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+     * - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+     * - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+     * - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+     * - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+     * - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
      * </pre>
      *
      * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
@@ -2083,7 +2123,17 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Optional: Used to filter the price frequency and horizon
+     * Optional downsampling, applied after the `horizon` or `date_range`
+     * filter. The server returns the latest price per security per bucket.
+     * Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+     * half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+     * which are inclusive at both ends. Buckets per value:
+     * - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+     * - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+     * - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+     * - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+     * - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+     * - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
      * </pre>
      *
      * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
@@ -2096,7 +2146,17 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Optional: Used to filter the price frequency and horizon
+     * Optional downsampling, applied after the `horizon` or `date_range`
+     * filter. The server returns the latest price per security per bucket.
+     * Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+     * half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+     * which are inclusive at both ends. Buckets per value:
+     * - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+     * - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+     * - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+     * - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+     * - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+     * - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
      * </pre>
      *
      * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
@@ -2114,7 +2174,17 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Optional: Used to filter the price frequency and horizon
+     * Optional downsampling, applied after the `horizon` or `date_range`
+     * filter. The server returns the latest price per security per bucket.
+     * Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+     * half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+     * which are inclusive at both ends. Buckets per value:
+     * - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+     * - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+     * - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+     * - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+     * - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+     * - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
      * </pre>
      *
      * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>

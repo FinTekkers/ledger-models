@@ -4,7 +4,8 @@ use rust_decimal::Decimal;
 use crate::fintekkers::models::security::{
     BondDetailsProto, CouponFrequencyProto, CouponTypeProto, ProductTypeProto, SecurityProto,
 };
-use crate::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
+use crate::fintekkers::models::util::LocalDateProto;
+use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
 // security_type wrapper deleted in M1; use ProductTypeProto directly or ProductHierarchy helper.
 use crate::fintekkers::wrappers::models::issuance::Issuance;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
@@ -85,10 +86,10 @@ impl BondSecurity {
         SecurityProto {
             product_type: ProductTypeProto::TreasuryNote as i32,
             bond_details: Some(BondDetailsProto {
-                coupon_rate: Some(decimal_proto(coupon_rate)),
+                coupon_rate: Some(decimal_proto(&coupon_rate)),
                 coupon_type: coupon_type as i32,
                 coupon_frequency: coupon_frequency as i32,
-                face_value: Some(decimal_proto(face_value)),
+                face_value: Some(decimal_proto(&face_value)),
                 issue_date: Some(date_proto(issue_date)),
                 dated_date: None,
                 maturity_date: Some(date_proto(maturity_date)),
@@ -96,12 +97,6 @@ impl BondSecurity {
             }),
             ..Default::default()
         }
-    }
-}
-
-fn decimal_proto(d: Decimal) -> DecimalValueProto {
-    DecimalValueProto {
-        arbitrary_precision_value: d.to_string(),
     }
 }
 
@@ -171,9 +166,7 @@ mod tests {
     }
 
     fn decimal(s: &str) -> Option<DecimalValueProto> {
-        Some(DecimalValueProto {
-            arbitrary_precision_value: s.to_string(),
-        })
+        Some(crate::fintekkers::wrappers::models::utils::decimal::legacy_decimal_proto(s))
     }
 
     fn bond_proto(

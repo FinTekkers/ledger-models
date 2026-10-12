@@ -34,6 +34,29 @@ impl Error {
             _ => &[],
         }
     }
+
+    /// Labels a `Validation` error with the field the caller decoded it from,
+    /// e.g. `deserialize_decimal(p).map_err(|e| e.in_field("price"))`. Every
+    /// violation is prefixed: an empty field becomes `name`, a field `f`
+    /// becomes `name.f`. Other variants are returned unchanged.
+    pub fn in_field(self, name: &str) -> Error {
+        match self {
+            Error::Validation(violations) => Error::Validation(
+                violations
+                    .into_iter()
+                    .map(|mut v| {
+                        v.field = if v.field.is_empty() {
+                            name.to_string()
+                        } else {
+                            format!("{}.{}", name, v.field)
+                        };
+                        v
+                    })
+                    .collect(),
+            ),
+            other => other,
+        }
+    }
 }
 
 /// The `object_id` for a violation: the object's UUID, or None when it has
@@ -43,7 +66,8 @@ pub(crate) fn object_id_of(uuid: Option<&UuidProto>) -> Option<UuidProto> {
 }
 
 /// Joins violations as `<field>: <message> (id <uuid>)`, separated by `; `,
-/// the same shape as Java's ModelValidationException message.
+/// the same shape as Java's ModelValidationException message. A violation
+/// with no field (an unlabelled decode error) is `<message> (id <uuid>)`.
 fn describe_violations(violations: &[FieldViolationProto]) -> String {
     violations
         .iter()
@@ -54,7 +78,11 @@ fn describe_violations(violations: &[FieldViolationProto]) -> String {
                 .and_then(|u| uuid::Uuid::from_slice(&u.raw_uuid).ok())
                 .map(|u| u.to_string())
                 .unwrap_or_else(|| "null".to_string());
-            format!("{}: {} (id {})", v.field, v.message, id)
+            if v.field.is_empty() {
+                format!("{} (id {})", v.message, id)
+            } else {
+                format!("{}: {} (id {})", v.field, v.message, id)
+            }
         })
         .collect::<Vec<_>>()
         .join("; ")

@@ -2,12 +2,12 @@ use crate::fintekkers::models::util::{
     DecimalValueProto, LocalDateProto, LocalTimestampProto, UuidProto,
 };
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
+use crate::fintekkers::wrappers::models::utils::decimal;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use chrono::naive::NaiveDate;
 use chrono::{DateTime, NaiveDateTime, TimeZone};
 use chrono_tz::Tz;
 use rust_decimal::Decimal;
-use std::str::FromStr;
 use uuid::Uuid;
 
 /// Utility for serializing and deserializing between protobuf types and native Rust types
@@ -76,10 +76,14 @@ impl ProtoSerializationUtil {
         Self::deserialize_timestamp(timestamp_proto)
     }
 
-    /// Deserializes a DecimalValueProto to a native Rust Decimal
+    /// Deserializes a DecimalValueProto to a native Rust Decimal. The compact
+    /// form wins; the deprecated string is the fallback and logs one warning
+    /// per process. Unset, malformed, or not exactly representable as a Rust
+    /// Decimal is `Error::Validation`, never rounded. The error names no
+    /// field: a caller that wants one adds it with `Error::in_field`, e.g.
+    /// `deserialize_decimal(p).map_err(|e| e.in_field("price"))`.
     pub fn deserialize_decimal(decimal_proto: &DecimalValueProto) -> Result<Decimal, Error> {
-        Decimal::from_str(&decimal_proto.arbitrary_precision_value)
-            .map_err(|_| Error::DecimalConversion)
+        decimal::decode_decimal(decimal_proto)?.to_rust_decimal()
     }
 }
 
@@ -162,5 +166,60 @@ mod tests {
             "Unparseable time_zone must surface as Err(DateConversion). Got: {:?}",
             result
         );
+    }
+
+    // ---- LM-307: one plain decimal call ----
+
+    use crate::fintekkers::wrappers::models::utils::decimal::legacy_decimal_proto;
+    use std::str::FromStr;
+
+    #[test]
+    fn deserialize_decimal_is_one_plain_call() {
+        // Compact form: unscaled 150 (0x0096), scale 2.
+        let compact = DecimalValueProto { unscaled_value: vec![0x00, 0x96], scale: 2, ..Default::default() };
+        let d = ProtoSerializationUtil::deserialize_decimal(&compact).unwrap();
+        assert_eq!(d, Decimal::new(150, 2));
+        assert_eq!(d.scale(), 2);
+
+        // String only (written before v0.4.34), 28 fractional digits.
+        let legacy = legacy_decimal_proto("0.1234567890123456789012345678");
+        let d = ProtoSerializationUtil::deserialize_decimal(&legacy).unwrap();
+        assert_eq!(d, Decimal::from_str("0.1234567890123456789012345678").unwrap());
+        assert_eq!(d, Decimal::from_i128_with_scale(1_234_567_890_123_456_789_012_345_678, 28));
+        assert_eq!(d.scale(), 28);
+    }
+
+    #[test]
+    fn invalid_decimal_is_typed_err_and_in_field_labels_it() {
+        let inputs = [
+            legacy_decimal_proto("NaN"),
+            // 29 fractional digits: over Rust Decimal's scale 28, so an error,
+            // not rounded.
+            legacy_decimal_proto("0.12345678901234567890123456789"),
+            DecimalValueProto::default(),
+        ];
+        for input in &inputs {
+            let err = ProtoSerializationUtil::deserialize_decimal(input).unwrap_err();
+            assert!(matches!(err, Error::Validation(_)), "expected Validation, got {:?}", err);
+            let unlabelled = err.to_string();
+            assert!(unlabelled.starts_with("decimal"), "{}", unlabelled);
+
+            let labelled = err.in_field("price");
+            assert_eq!(labelled.violations()[0].field, "price");
+            let message = labelled.to_string();
+            assert!(message.starts_with("price: decimal"), "{}", message);
+        }
+    }
+
+    #[test]
+    fn in_field_prefixes_every_violation() {
+        let err = Error::Validation(vec![
+            FieldViolationProto { field: String::new(), object_id: None, message: "a".to_string() },
+            FieldViolationProto { field: "coupon_rate".to_string(), object_id: None, message: "b".to_string() },
+        ])
+        .in_field("bond_details");
+        let fields: Vec<&str> = err.violations().iter().map(|v| v.field.as_str()).collect();
+        assert_eq!(fields, ["bond_details", "bond_details.coupon_rate"]);
+        assert_eq!(err.to_string(), "bond_details: a (id null); bond_details.coupon_rate: b (id null)");
     }
 }

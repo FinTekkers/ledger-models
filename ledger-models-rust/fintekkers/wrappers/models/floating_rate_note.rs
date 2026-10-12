@@ -12,7 +12,8 @@ use crate::fintekkers::models::security::{
     BondDetailsProto, CouponFrequencyProto, CouponTypeProto, FrnExtensionProto,
     ProductTypeProto, SecurityProto,
 };
-use crate::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
+use crate::fintekkers::models::util::LocalDateProto;
+use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 
@@ -69,28 +70,22 @@ impl FloatingRateNote {
         SecurityProto {
             product_type: ProductTypeProto::TreasuryFrn as i32,
             bond_details: Some(BondDetailsProto {
-                coupon_rate: Some(decimal_proto(coupon_rate)),
+                coupon_rate: Some(decimal_proto(&coupon_rate)),
                 coupon_type: coupon_type as i32,
                 coupon_frequency: coupon_frequency as i32,
-                face_value: Some(decimal_proto(face_value)),
+                face_value: Some(decimal_proto(&face_value)),
                 issue_date: Some(date_proto(issue_date)),
                 dated_date: None,
                 maturity_date: Some(date_proto(maturity_date)),
                 issuance_info: vec![],
             }),
             frn_extension: Some(FrnExtensionProto {
-                spread: Some(decimal_proto(spread)),
+                spread: Some(decimal_proto(&spread)),
                 reference_rate_index: reference_rate_index as i32,
                 reset_frequency: reset_frequency as i32,
             }),
             ..Default::default()
         }
-    }
-}
-
-fn decimal_proto(d: Decimal) -> DecimalValueProto {
-    DecimalValueProto {
-        arbitrary_precision_value: d.to_string(),
     }
 }
 

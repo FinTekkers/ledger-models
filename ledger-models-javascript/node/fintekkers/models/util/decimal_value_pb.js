@@ -75,7 +75,9 @@ proto.fintekkers.models.util.DecimalValueProto.prototype.toObject = function(opt
  */
 proto.fintekkers.models.util.DecimalValueProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    arbitraryPrecisionValue: jspb.Message.getFieldWithDefault(msg, 10, "")
+    arbitraryPrecisionValue: jspb.Message.getFieldWithDefault(msg, 10, ""),
+    unscaledValue: msg.getUnscaledValue_asB64(),
+    scale: jspb.Message.getFieldWithDefault(msg, 12, 0)
   };
 
   if (includeInstance) {
@@ -116,6 +118,14 @@ proto.fintekkers.models.util.DecimalValueProto.deserializeBinaryFromReader = fun
       var value = /** @type {string} */ (reader.readString());
       msg.setArbitraryPrecisionValue(value);
       break;
+    case 11:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setUnscaledValue(value);
+      break;
+    case 12:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setScale(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -152,6 +162,20 @@ proto.fintekkers.models.util.DecimalValueProto.serializeBinaryToWriter = functio
       f
     );
   }
+  f = message.getUnscaledValue_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      11,
+      f
+    );
+  }
+  f = message.getScale();
+  if (f !== 0) {
+    writer.writeUint32(
+      12,
+      f
+    );
+  }
 };
 
 
@@ -170,6 +194,66 @@ proto.fintekkers.models.util.DecimalValueProto.prototype.getArbitraryPrecisionVa
  */
 proto.fintekkers.models.util.DecimalValueProto.prototype.setArbitraryPrecisionValue = function(value) {
   return jspb.Message.setProto3StringField(this, 10, value);
+};
+
+
+/**
+ * optional bytes unscaled_value = 11;
+ * @return {!(string|Uint8Array)}
+ */
+proto.fintekkers.models.util.DecimalValueProto.prototype.getUnscaledValue = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 11, ""));
+};
+
+
+/**
+ * optional bytes unscaled_value = 11;
+ * This is a type-conversion wrapper around `getUnscaledValue()`
+ * @return {string}
+ */
+proto.fintekkers.models.util.DecimalValueProto.prototype.getUnscaledValue_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getUnscaledValue()));
+};
+
+
+/**
+ * optional bytes unscaled_value = 11;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getUnscaledValue()`
+ * @return {!Uint8Array}
+ */
+proto.fintekkers.models.util.DecimalValueProto.prototype.getUnscaledValue_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getUnscaledValue()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.fintekkers.models.util.DecimalValueProto} returns this
+ */
+proto.fintekkers.models.util.DecimalValueProto.prototype.setUnscaledValue = function(value) {
+  return jspb.Message.setProto3BytesField(this, 11, value);
+};
+
+
+/**
+ * optional uint32 scale = 12;
+ * @return {number}
+ */
+proto.fintekkers.models.util.DecimalValueProto.prototype.getScale = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.models.util.DecimalValueProto} returns this
+ */
+proto.fintekkers.models.util.DecimalValueProto.prototype.setScale = function(value) {
+  return jspb.Message.setProto3IntField(this, 12, value);
 };
 
 

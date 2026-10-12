@@ -4,13 +4,13 @@ use rust_decimal::Decimal;
 
 use crate::fintekkers::models::price::{PriceProto, PriceTypeProto};
 use crate::fintekkers::models::security::SecurityProto;
-use crate::fintekkers::models::util::{DecimalValueProto, ObjectTypeProto};
+use crate::fintekkers::models::util::ObjectTypeProto;
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::requests::util::errors::{ErrorProto, Message as ErrorMessage};
 
 use crate::fintekkers::wrappers::models::security::{SecurityProtoBuilder, SecurityWrapper};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
-use crate::fintekkers::wrappers::models::utils::decimal::DecimalWrapper;
+use crate::fintekkers::wrappers::models::utils::decimal::{is_unset_decimal, DecimalWrapper};
 use crate::fintekkers::wrappers::models::utils::errors::{object_id_of, Error};
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 use chrono::DateTime;
@@ -117,6 +117,21 @@ impl PriceWrapper {
         ProtoSerializationUtil::deserialize_required_timestamp(self.proto.as_of.as_ref(), "price.as_of")
     }
 
+    /// The price value. Reads the compact form, or falls back to the
+    /// deprecated string (logging a warning once). Unset, malformed or not
+    /// exactly representable is `Error::Validation` naming `price`.
+    pub fn try_price(&self) -> Result<Decimal, Error> {
+        self.ensure_hydrated();
+        let price = self.active().price.as_ref().ok_or_else(|| {
+            Error::Validation(vec![FieldViolationProto {
+                field: PRICE_FIELD.to_string(),
+                object_id: object_id_of(self.proto.uuid.as_ref()),
+                message: "price is required but unset".to_string(),
+            }])
+        })?;
+        ProtoSerializationUtil::deserialize_decimal(price).map_err(|e| e.in_field(PRICE_FIELD))
+    }
+
     pub fn security_wrapper(&self) -> SecurityWrapper {
         self.ensure_hydrated();
         let security_proto = self.active().security.clone().unwrap();
@@ -154,8 +169,8 @@ pub const PRICE_TYPE_FIELD: &str = "price_type";
 /// Price input rules: Rust counterpart of Java's PriceRules
 /// (docs/adr/typed-input-errors.md). Returns every field-level violation, or
 /// an empty Vec when valid. Three rules, in this order: `security` has a
-/// non-empty UUID, `price` has a non-empty arbitrary_precision_value (zero is
-/// valid, see the PriceProto comment), and `price_type` is not
+/// non-empty UUID, `price` has either decimal form set (zero is valid, see
+/// the PriceProto comment), and `price_type` is not
 /// UNKNOWN_PRICE_TYPE. The price value is not parsed. A link price is not
 /// skipped: hydrate it first. `PriceWrapper::new` does not call this.
 pub fn validate_price(proto: &PriceProto) -> Vec<FieldViolationProto> {
@@ -170,7 +185,7 @@ pub fn validate_price(proto: &PriceProto) -> Vec<FieldViolationProto> {
     if security_uuid.map_or(true, |u| u.raw_uuid.is_empty()) {
         out.push(violation(SECURITY_FIELD, "security with a non-empty uuid is required"));
     }
-    if proto.price.as_ref().map_or(true, |p| p.arbitrary_precision_value.is_empty()) {
+    if proto.price.as_ref().map_or(true, is_unset_decimal) {
         out.push(violation(PRICE_FIELD, "price is required"));
     }
     // Raw number, so an unrecognised value is not rejected.
@@ -309,9 +324,7 @@ impl PriceProtoBuilder {
             is_link: self.is_link,
 
             uuid: Some(self.uuid.into()),
-            price: Some(DecimalValueProto {
-                arbitrary_precision_value: self.price.unwrap().to_string()
-            }),
+            price: Some(self.price.unwrap().into()),
             security: Some(
                 self.security.unwrap()
             ),
@@ -374,6 +387,7 @@ mod test {
     }
 
     #[test]
+    #[allow(deprecated)]
     fn test_proto_to_date() {
         let number = dec!(-1.23);
 
@@ -385,6 +399,9 @@ mod test {
         let price_str = price.arbitrary_precision_value;
 
         assert_eq!(price_str, number.to_string());
+        // Stage 1: the builder writes the compact form too.
+        assert_eq!(price.unscaled_value, vec![0x85]);
+        assert_eq!(price.scale, 2);
     }
 
     #[test]
@@ -403,6 +420,7 @@ mod test {
     use crate::fintekkers::models::price::PriceProto;
     use crate::fintekkers::models::security::SecurityProto;
     use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto, DecimalValueProto};
+    use crate::fintekkers::wrappers::models::utils::decimal::legacy_decimal_proto;
     use prost_types::Timestamp;
     use uuid::Uuid;
 
@@ -420,9 +438,7 @@ mod test {
             uuid: Some(UuidProto { raw_uuid: uuid.as_bytes().to_vec() }),
             as_of: Some(as_of),
             is_link: false,
-            price: Some(DecimalValueProto {
-                arbitrary_precision_value: value.to_string(),
-            }),
+            price: Some(legacy_decimal_proto(value)),
             security: Some(SecurityProto { is_link: false, ..Default::default() }),
             ..Default::default()
         }
@@ -472,7 +488,7 @@ mod test {
                 uuid: Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() }),
                 ..Default::default()
             }),
-            price: Some(DecimalValueProto { arbitrary_precision_value: "100.25".to_string() }),
+            price: Some(legacy_decimal_proto("100.25")),
             price_type: PriceTypeProto::Percentage as i32,
             ..Default::default()
         }
@@ -513,14 +529,14 @@ mod test {
     #[test]
     fn rules_price_empty_one_violation_on_price() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(DecimalValueProto { arbitrary_precision_value: String::new() });
+        p.price = Some(DecimalValueProto::default());
         assert_eq!(rules_fields(&p), vec!["price"]);
     }
 
     #[test]
     fn rules_price_zero_is_valid() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(DecimalValueProto { arbitrary_precision_value: "0".to_string() });
+        p.price = Some(legacy_decimal_proto("0"));
         assert!(rules_fields(&p).is_empty());
     }
 
@@ -528,7 +544,7 @@ mod test {
     fn rules_price_value_is_not_checked() {
         for value in ["-1", "abc"] {
             let mut p = rules_valid(Uuid::new_v4());
-            p.price = Some(DecimalValueProto { arbitrary_precision_value: value.to_string() });
+            p.price = Some(legacy_decimal_proto(value));
             assert!(rules_fields(&p).is_empty(), "{}", value);
         }
     }
@@ -610,7 +626,7 @@ mod test {
     fn required_valid_values_have_no_errors() {
         for value in ["1.5", "0", "-1"] {
             let mut p = rules_valid(Uuid::new_v4());
-            p.price = Some(DecimalValueProto { arbitrary_precision_value: value.to_string() });
+            p.price = Some(legacy_decimal_proto(value));
             assert!(validate_price_required_fields(&p).is_empty(), "{}", value);
         }
     }
@@ -620,7 +636,7 @@ mod test {
         let mut unset = rules_valid(Uuid::new_v4());
         unset.price = None;
         let mut empty = rules_valid(Uuid::new_v4());
-        empty.price = Some(DecimalValueProto { arbitrary_precision_value: String::new() });
+        empty.price = Some(DecimalValueProto::default());
         for p in [unset, empty] {
             let messages = required_messages(&validate_price_required_fields(&p));
             assert_eq!(messages.len(), 1, "{:?}", messages);
@@ -670,5 +686,53 @@ mod test {
         let mut p = rules_valid(Uuid::new_v4());
         p.price_type = PriceTypeProto::UnknownPriceType as i32;
         assert!(validate_price_required_fields(&p).is_empty());
+    }
+
+    // ---- LM-294: compact decimal form ----
+
+    use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
+    use rust_decimal::Decimal;
+
+    #[test]
+    fn compact_only_price_passes_and_both_forms_empty_fails() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price = Some(DecimalValueProto {
+            unscaled_value: vec![0x00],
+            scale: 0,
+            ..Default::default()
+        });
+        assert!(validate_price_required_fields(&p).is_empty());
+        assert!(require_valid_price(&p).is_ok());
+
+        p.price = Some(DecimalValueProto::default());
+        let errors = validate_price_required_fields(&p);
+        assert_eq!(errors.len(), 1);
+        assert_eq!(errors[0].violations[0].field, "price");
+    }
+
+    #[test]
+    fn try_price_reads_legacy_string() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price = Some(legacy_decimal_proto("1.50"));
+        let value = PriceWrapper::new(p).try_price().unwrap();
+        assert_eq!(value.to_string(), "1.50");
+    }
+
+    #[test]
+    fn try_price_errors_name_price() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price = Some(legacy_decimal_proto("NaN"));
+        let err = PriceWrapper::new(p.clone()).try_price().unwrap_err();
+        assert_eq!(err.violations()[0].field, "price");
+        p.price = None;
+        let err = PriceWrapper::new(p).try_price().unwrap_err();
+        assert_eq!(err.violations()[0].field, "price");
+    }
+
+    #[test]
+    fn try_price_reads_compact_form() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price = Some(decimal_proto(&Decimal::new(-12345, 2)));
+        assert_eq!(PriceWrapper::new(p).try_price().unwrap(), Decimal::new(-12345, 2));
     }
 }

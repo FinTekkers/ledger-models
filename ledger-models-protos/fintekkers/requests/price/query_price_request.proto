@@ -12,29 +12,76 @@ option java_multiple_files = true;
 
 option java_outer_classname = "QueryPriceRequestProtos";
 
+// How QueryPriceRequestProto.frequency downsamples prices. Each bucket is
+// half-open, `[bucket start, next bucket start)`, with boundaries in UTC. The
+// server returns the latest price per security per bucket. See the
+// `frequency` field for the full rule.
 enum PriceFrequencyProto {
+    // No downsampling: every price in the time range is returned.
     PRICE_FREQUENCY_UNSPECIFIED = 0;
+    // One bucket per ISO week, starting Monday 00:00 UTC.
     PRICE_FREQUENCY_WEEKLY = 10;
+    // One bucket per UTC day, starting 00:00 UTC.
     PRICE_FREQUENCY_DAILY = 20;
+    // One bucket per UTC hour, starting at :00 minutes.
     PRICE_FREQUENCY_HOURLY = 30;
+    // One bucket per UTC minute, starting at :00 seconds.
     PRICE_FREQUENCY_MINUTE = 40;
+
     // PRICE_FREQUENCY_SECOND = 50;
     // PRICE_FREQUENCY_MILLISECOND = 60;
     // PRICE_FREQUENCY_MICROSECOND = 70;
     // PRICE_FREQUENCY_NANOSECOND = 80;
+
+    // No downsampling: every price in the time range is returned.
     PRICE_FREQUENCY_EVERY_TICK = 90;
 }
 
+// The time window QueryPriceRequestProto.horizon selects. Every window ends
+// at the anchor: the request's `as_of` if set, else the server's now. Both
+// ends of the window are inclusive.
+//
+// Fixed-day horizons step back a whole number of 24-hour periods from the
+// anchor instant. Calendar horizons step back in calendar months or years on
+// the anchor's date in UTC (not in `as_of.time_zone`), keeping the anchor's
+// time of day. When the target month has no such day (e.g. 31 March back one
+// month, or 29 February back one year) the start clamps to that month's last
+// day.
 enum PriceHorizonProto {
+    // No horizon filter: the window ends at the anchor (`as_of`, else now),
+    // inclusive, and has no lower bound. Labelled calendar only nominally,
+    // since no calendar step applies.
     PRICE_HORIZON_UNSPECIFIED = 0;
+    // fixed-day: from anchor - 24h to the anchor (`as_of`, else now),
+    // inclusive at both ends.
     PRICE_HORIZON_1_DAY = 1;
+    // fixed-day: from anchor - 5 x 24h to the anchor (`as_of`, else now),
+    // inclusive at both ends.
     PRICE_HORIZON_5_DAYS = 2;
+    // fixed-day: from anchor - 7 x 24h to the anchor (`as_of`, else now),
+    // inclusive at both ends.
     PRICE_HORIZON_1_WEEK = 3;
+    // calendar: from the same UTC day-of-month one month before the anchor
+    // (`as_of`, else now) to the anchor, clamped to month end, inclusive at
+    // both ends.
     PRICE_HORIZON_1_MONTH = 4;
+    // calendar: from the same UTC day-of-month six months before the anchor
+    // (`as_of`, else now) to the anchor, clamped to month end, inclusive at
+    // both ends.
     PRICE_HORIZON_6_MONTHS = 5;
+    // calendar: from the same UTC date one year before the anchor (`as_of`,
+    // else now) to the anchor; 29 February clamps to 28 February. Inclusive
+    // at both ends.
     PRICE_HORIZON_1_YEAR = 6;
+    // calendar: from the same UTC date five years before the anchor (`as_of`,
+    // else now) to the anchor; 29 February clamps to 28 February. Inclusive
+    // at both ends.
     PRICE_HORIZON_5_YEAR = 7;
+    // calendar: no lower bound; every price up to the anchor (`as_of`, else
+    // now), inclusive.
     PRICE_HORIZON_MAX = 8;
+    // calendar: from 1 January 00:00 UTC of the anchor's UTC year to the
+    // anchor (`as_of`, else now), inclusive at both ends.
     PRICE_HORIZON_YEAR_TO_DATE = 9;
 }
 
@@ -52,9 +99,20 @@ message QueryPriceRequestProto {
   fintekkers.models.position.PositionFilterProto search_price_input = 22;
   fintekkers.models.util.LocalTimestampProto as_of = 23;
 
-  // Optional: Used to filter the price frequency and horizon
+  // Optional downsampling, applied after the `horizon` or `date_range`
+  // filter. The server returns the latest price per security per bucket.
+  // Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+  // half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+  // which are inclusive at both ends. Buckets per value:
+  // - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+  // - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+  // - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+  // - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+  // - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+  // - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
   PriceFrequencyProto frequency = 24;
 
+  // `horizon` windows are defined on PriceHorizonProto.
   oneof time_range{
      PriceHorizonProto horizon = 25;
      fintekkers.models.util.DateRangeProto date_range = 26;

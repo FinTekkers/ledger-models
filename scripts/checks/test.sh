@@ -76,6 +76,14 @@ echo "== rust"
   cargo rustc --lib --quiet -- -D deprecated
   cargo test --lib --quiet
 )
+# One deprecation warning per process (LM-307): its own test binary, so its
+# own process. Named, not a bare `cargo test`.
+(cd ledger-models-rust && cargo test --test decimal_deprecation_warning_test --quiet)
+
+echo "== rust clippy"
+# Enforces the #![deny(clippy::unwrap_used, ...)] no-panic rules in
+# position_filter_parser.rs (LM-299). Warnings elsewhere don't fail it.
+(cd ledger-models-rust && cargo clippy --lib --quiet)
 
 echo "== java"
 (cd ledger-models-java && ./gradlew test --quiet --no-daemon --console=plain)

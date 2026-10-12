@@ -552,7 +552,7 @@ impl TryFrom<Vec<u8>> for PositionFilterProto {
 mod test {
     use super::*;
     use crate::fintekkers::models::position::{field_map_entry, PositionFilterOperator};
-    use crate::fintekkers::models::util::DecimalValueProto;
+    use crate::fintekkers::wrappers::models::utils::decimal::legacy_decimal_proto;
     use crate::fintekkers::models::util::UuidProto;
     use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
     use chrono::naive::NaiveDate;
@@ -662,9 +662,7 @@ mod test {
     fn create_measure_entry(measure: MeasureProto, value: &str) -> MeasureMapEntry {
         MeasureMapEntry {
             measure: measure as i32,
-            measure_decimal_value: Some(DecimalValueProto {
-                arbitrary_precision_value: value.to_string(),
-            }),
+            measure_decimal_value: Some(legacy_decimal_proto(value)),
         }
     }
 

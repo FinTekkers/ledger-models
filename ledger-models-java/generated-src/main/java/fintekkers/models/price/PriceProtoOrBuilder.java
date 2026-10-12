@@ -161,7 +161,7 @@ public interface PriceProtoOrBuilder extends
 
   /**
    * <pre>
-   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -170,7 +170,7 @@ public interface PriceProtoOrBuilder extends
   boolean hasPrice();
   /**
    * <pre>
-   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -179,7 +179,7 @@ public interface PriceProtoOrBuilder extends
   fintekkers.models.util.DecimalValue.DecimalValueProto getPrice();
   /**
    * <pre>
-   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>

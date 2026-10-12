@@ -68,7 +68,7 @@ pub struct PriceProto {
     pub valid_from: ::core::option::Option<super::util::LocalTimestampProto>,
     #[prost(message, optional, tag = "9")]
     pub valid_to: ::core::option::Option<super::util::LocalTimestampProto>,
-    /// Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+    /// Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
     #[prost(message, optional, tag = "10")]
     pub price: ::core::option::Option<super::util::DecimalValueProto>,
     #[prost(message, optional, tag = "11")]

@@ -4,47 +4,114 @@
 package fintekkers.requests.price;
 
 /**
+ * <pre>
+ * The time window QueryPriceRequestProto.horizon selects. Every window ends
+ * at the anchor: the request's `as_of` if set, else the server's now. Both
+ * ends of the window are inclusive.
+ * Fixed-day horizons step back a whole number of 24-hour periods from the
+ * anchor instant. Calendar horizons step back in calendar months or years on
+ * the anchor's date in UTC (not in `as_of.time_zone`), keeping the anchor's
+ * time of day. When the target month has no such day (e.g. 31 March back one
+ * month, or 29 February back one year) the start clamps to that month's last
+ * day.
+ * </pre>
+ *
  * Protobuf enum {@code fintekkers.requests.price.PriceHorizonProto}
  */
 public enum PriceHorizonProto
     implements com.google.protobuf.ProtocolMessageEnum {
   /**
+   * <pre>
+   * No horizon filter: the window ends at the anchor (`as_of`, else now),
+   * inclusive, and has no lower bound. Labelled calendar only nominally,
+   * since no calendar step applies.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_UNSPECIFIED = 0;</code>
    */
   PRICE_HORIZON_UNSPECIFIED(0),
   /**
+   * <pre>
+   * fixed-day: from anchor - 24h to the anchor (`as_of`, else now),
+   * inclusive at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_1_DAY = 1;</code>
    */
   PRICE_HORIZON_1_DAY(1),
   /**
+   * <pre>
+   * fixed-day: from anchor - 5 x 24h to the anchor (`as_of`, else now),
+   * inclusive at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_5_DAYS = 2;</code>
    */
   PRICE_HORIZON_5_DAYS(2),
   /**
+   * <pre>
+   * fixed-day: from anchor - 7 x 24h to the anchor (`as_of`, else now),
+   * inclusive at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_1_WEEK = 3;</code>
    */
   PRICE_HORIZON_1_WEEK(3),
   /**
+   * <pre>
+   * calendar: from the same UTC day-of-month one month before the anchor
+   * (`as_of`, else now) to the anchor, clamped to month end, inclusive at
+   * both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_1_MONTH = 4;</code>
    */
   PRICE_HORIZON_1_MONTH(4),
   /**
+   * <pre>
+   * calendar: from the same UTC day-of-month six months before the anchor
+   * (`as_of`, else now) to the anchor, clamped to month end, inclusive at
+   * both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_6_MONTHS = 5;</code>
    */
   PRICE_HORIZON_6_MONTHS(5),
   /**
+   * <pre>
+   * calendar: from the same UTC date one year before the anchor (`as_of`,
+   * else now) to the anchor; 29 February clamps to 28 February. Inclusive
+   * at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_1_YEAR = 6;</code>
    */
   PRICE_HORIZON_1_YEAR(6),
   /**
+   * <pre>
+   * calendar: from the same UTC date five years before the anchor (`as_of`,
+   * else now) to the anchor; 29 February clamps to 28 February. Inclusive
+   * at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_5_YEAR = 7;</code>
    */
   PRICE_HORIZON_5_YEAR(7),
   /**
+   * <pre>
+   * calendar: no lower bound; every price up to the anchor (`as_of`, else
+   * now), inclusive.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_MAX = 8;</code>
    */
   PRICE_HORIZON_MAX(8),
   /**
+   * <pre>
+   * calendar: from 1 January 00:00 UTC of the anchor's UTC year to the
+   * anchor (`as_of`, else now), inclusive at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_YEAR_TO_DATE = 9;</code>
    */
   PRICE_HORIZON_YEAR_TO_DATE(9),
@@ -52,42 +119,97 @@ public enum PriceHorizonProto
   ;
 
   /**
+   * <pre>
+   * No horizon filter: the window ends at the anchor (`as_of`, else now),
+   * inclusive, and has no lower bound. Labelled calendar only nominally,
+   * since no calendar step applies.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_UNSPECIFIED = 0;</code>
    */
   public static final int PRICE_HORIZON_UNSPECIFIED_VALUE = 0;
   /**
+   * <pre>
+   * fixed-day: from anchor - 24h to the anchor (`as_of`, else now),
+   * inclusive at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_1_DAY = 1;</code>
    */
   public static final int PRICE_HORIZON_1_DAY_VALUE = 1;
   /**
+   * <pre>
+   * fixed-day: from anchor - 5 x 24h to the anchor (`as_of`, else now),
+   * inclusive at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_5_DAYS = 2;</code>
    */
   public static final int PRICE_HORIZON_5_DAYS_VALUE = 2;
   /**
+   * <pre>
+   * fixed-day: from anchor - 7 x 24h to the anchor (`as_of`, else now),
+   * inclusive at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_1_WEEK = 3;</code>
    */
   public static final int PRICE_HORIZON_1_WEEK_VALUE = 3;
   /**
+   * <pre>
+   * calendar: from the same UTC day-of-month one month before the anchor
+   * (`as_of`, else now) to the anchor, clamped to month end, inclusive at
+   * both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_1_MONTH = 4;</code>
    */
   public static final int PRICE_HORIZON_1_MONTH_VALUE = 4;
   /**
+   * <pre>
+   * calendar: from the same UTC day-of-month six months before the anchor
+   * (`as_of`, else now) to the anchor, clamped to month end, inclusive at
+   * both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_6_MONTHS = 5;</code>
    */
   public static final int PRICE_HORIZON_6_MONTHS_VALUE = 5;
   /**
+   * <pre>
+   * calendar: from the same UTC date one year before the anchor (`as_of`,
+   * else now) to the anchor; 29 February clamps to 28 February. Inclusive
+   * at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_1_YEAR = 6;</code>
    */
   public static final int PRICE_HORIZON_1_YEAR_VALUE = 6;
   /**
+   * <pre>
+   * calendar: from the same UTC date five years before the anchor (`as_of`,
+   * else now) to the anchor; 29 February clamps to 28 February. Inclusive
+   * at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_5_YEAR = 7;</code>
    */
   public static final int PRICE_HORIZON_5_YEAR_VALUE = 7;
   /**
+   * <pre>
+   * calendar: no lower bound; every price up to the anchor (`as_of`, else
+   * now), inclusive.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_MAX = 8;</code>
    */
   public static final int PRICE_HORIZON_MAX_VALUE = 8;
   /**
+   * <pre>
+   * calendar: from 1 January 00:00 UTC of the anchor's UTC year to the
+   * anchor (`as_of`, else now), inclusive at both ends.
+   * </pre>
+   *
    * <code>PRICE_HORIZON_YEAR_TO_DATE = 9;</code>
    */
   public static final int PRICE_HORIZON_YEAR_TO_DATE_VALUE = 9;

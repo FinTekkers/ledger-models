@@ -1,3 +1,5 @@
+#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
+
 //! Step 3 tests — FrnInput / ProductInput proto round-trips.
 //!
 //! For each new message type: construct → encode to bytes → decode → verify all fields match.
@@ -12,6 +14,7 @@ use prost::Message;
 fn decimal(value: &str) -> DecimalValueProto {
     DecimalValueProto {
         arbitrary_precision_value: value.to_string(),
+        ..Default::default()
     }
 }
 

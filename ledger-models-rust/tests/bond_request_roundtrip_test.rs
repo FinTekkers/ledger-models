@@ -1,3 +1,5 @@
+#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
+
 //! Step 3 tests — BondInput / ProductInput proto round-trips.
 //!
 //! For each new message type: construct → encode to bytes → decode → verify all fields match.
@@ -14,7 +16,7 @@ use ledger_models::fintekkers::requests::valuation::{
 use prost::Message;
 
 fn decimal(value: &str) -> DecimalValueProto {
-    DecimalValueProto { arbitrary_precision_value: value.to_string() }
+    DecimalValueProto { arbitrary_precision_value: value.to_string(), ..Default::default() }
 }
 
 fn date(year: u32, month: u32, day: u32) -> LocalDateProto {

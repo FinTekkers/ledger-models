@@ -328,7 +328,7 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.util.DecimalValue.DecimalValueProto price_;
   /**
    * <pre>
-   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -340,7 +340,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -352,7 +352,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+   * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -2004,7 +2004,7 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> priceBuilder_;
     /**
      * <pre>
-     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -2015,7 +2015,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -2030,7 +2030,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -2050,7 +2050,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -2068,7 +2068,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -2091,7 +2091,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -2108,7 +2108,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -2120,7 +2120,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
@@ -2135,7 +2135,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Required. Absent, or an empty arbitrary_precision_value, is invalid. Zero ("0") is a valid price.
+     * Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
