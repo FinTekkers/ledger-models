@@ -60,7 +60,7 @@ async function testEnumSerialization(): Promise<boolean> {
     position.getMeasures().forEach(measureMapEntry => {
         measureMapEntry.getMeasure().toString();
     });
-    expect(position.getMeasureValue(MeasureProto.DIRECTED_QUANTITY)).toBe(1.55);
+    expect(position.getMeasureValue(MeasureProto.DIRECTED_QUANTITY).toString()).toBe("1.55");
 
     return true;
 }
@@ -174,7 +174,7 @@ async function testSerialization(): Promise<boolean> {
 
     expect(position.getFieldValue(FieldProto.POSITION_STATUS).toString()).toBe("EXECUTED");
 
-    expect(position.getMeasureValue(MeasureProto.DIRECTED_QUANTITY)).toBe(1);
+    expect(position.getMeasureValue(MeasureProto.DIRECTED_QUANTITY).toString()).toBe("1");
 
     let price: PriceProto = position.getFieldValue(FieldProto.PRICE);
     expect(price.getPrice()?.getArbitraryPrecisionValue()).toBe("1.0");

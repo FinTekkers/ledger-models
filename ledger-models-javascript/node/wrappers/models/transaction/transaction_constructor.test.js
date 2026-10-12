@@ -9,6 +9,7 @@ const transaction_type_1 = require("./transaction_type");
 const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
 const position_status_pb_1 = require("../../../fintekkers/models/position/position_status_pb");
 const security_1 = __importDefault(require("../security/security"));
+const portfolio_1 = __importDefault(require("../portfolio/portfolio"));
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
@@ -21,6 +22,7 @@ const decimal_js_1 = require("decimal.js");
 const errors_1 = require("../errors");
 const transaction_pb_1 = require("../../../fintekkers/models/transaction/transaction_pb");
 const portfolio_test_1 = require("../portfolio/portfolio.test");
+const portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
 test('test Transaction constructor with parameters', () => {
     testTransactionConstructor();
 });
@@ -135,5 +137,32 @@ test('a link-mode TransactionProto with no as_of still builds', () => {
     const link = new transaction_pb_1.TransactionProto().setIsLink(true).setUuid(uuid_1.UUID.random().toUUIDProto());
     const txn = new transaction_1.default(link);
     expect(txn.proto.hasAsOf()).toBe(false);
+});
+// LM-271: a link portfolio with no as_of serializes, on its own and inside a
+// Transaction, and as_of stays unset (never defaulted).
+test('link portfolio with no as_of serializes', () => {
+    const uuid = uuid_1.UUID.random();
+    const link = new portfolio_pb_1.PortfolioProto();
+    link.setUuid(uuid.toUUIDProto());
+    link.setIsLink(true);
+    const portfolio = new portfolio_1.default(link);
+    const copy = portfolio_pb_1.PortfolioProto.deserializeBinary(portfolio.proto.serializeBinary());
+    assert(copy.getIsLink());
+    assert(!copy.hasAsOf());
+    const transaction = new transaction_1.default({
+        tradeDate: new Date(2024, 0, 15),
+        settlementDate: new Date(2024, 0, 17),
+        asOfDate: new Date(2024, 0, 15, 10, 30, 0),
+        price: new decimal_js_1.Decimal('100'),
+        security: dummySecurity(),
+        transactionType: dummyTransactionType(),
+        portfolio,
+        quantity: new decimal_js_1.Decimal('10'),
+    });
+    const txnCopy = transaction_pb_1.TransactionProto.deserializeBinary(transaction.proto.serializeBinary());
+    const txnPortfolio = txnCopy.getPortfolio();
+    assert(txnPortfolio.getIsLink());
+    assert(!txnPortfolio.hasAsOf());
+    assert(uuid_1.UUID.fromU8Array(txnPortfolio.getUuid().getRawUuid_asU8()).toString() === uuid.toString());
 });
 //# sourceMappingURL=transaction_constructor.test.js.map

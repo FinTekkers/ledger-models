@@ -54,7 +54,7 @@ export class Position {
     return this.getField(new FieldMapEntry().setField(field));
   }
 
-  public getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Identifier | Portfolio | UUID | Date | ZonedDateTime | number | PriceProto | Tenor {
+  public getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Identifier | Portfolio | UUID | Date | ZonedDateTime | Decimal | PriceProto | Tenor {
     for (const tmpField of this.proto.getFieldsList()) {
       if (tmpField.getField() === fieldToGet.getField()) {
 
@@ -113,7 +113,7 @@ export class Position {
           return new Portfolio(unpackedValue);
         }
 
-        return ProtoSerializationUtil.deserialize(unpackedValue) as string | number | Identifier | Date | ZonedDateTime | UUID | ProtoEnum | Security | Tenor | Portfolio | PriceProto;
+        return ProtoSerializationUtil.deserialize(unpackedValue) as string | Decimal | Identifier | Date | ZonedDateTime | UUID | ProtoEnum | Security | Tenor | Portfolio | PriceProto;
       }
     }
 

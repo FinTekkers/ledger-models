@@ -60,5 +60,13 @@ echo "== javascript"
 (
   cd ledger-models-javascript
   npm ci --ignore-scripts --no-audit --no-fund
+  # npm publish ships the committed .js with no build step, and jest loads
+  # the .js before the .ts: the committed output must match tsc (LM-306).
+  npx tsc -p tsconfig.json
+  if [ -n "$(git status --porcelain -- .)" ]; then
+    echo "Committed JS is out of date with tsc output. Run 'npx tsc -p tsconfig.json' in ledger-models-javascript and commit:"
+    git status --porcelain -- .
+    exit 1
+  fi
   npm test --silent
 )

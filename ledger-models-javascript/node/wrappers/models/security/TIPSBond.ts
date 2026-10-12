@@ -8,6 +8,7 @@ import { ProductTypeProto } from '../../../fintekkers/models/security/product_ty
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 import { dateToLocalDateProto, localDateProtoToDate } from '../utils/date';
 import { Decimal } from 'decimal.js';
+import { decodeDecimal, toDecimalJs, withField } from '../utils/decimal';
 
 /**
  * TIPS-specific accessors layered on top of BondSecurity. The inflation
@@ -28,7 +29,7 @@ class TIPSBond extends BondSecurity {
     const ext = this.getTipsExtension();
     const v = ext ? ext.getBaseCpi() : undefined;
     if (!v) return null;
-    return new Decimal(v.getArbitraryPrecisionValue());
+    return toDecimalJs(withField('tips_extension.base_cpi', () => decodeDecimal(v)));
   }
 
   /** Reference date for the base CPI fixing. */

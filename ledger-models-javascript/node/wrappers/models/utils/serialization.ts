@@ -9,6 +9,9 @@ import { ProtoEnum } from "./protoEnum";
 import { UUID } from "./uuid";
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 import { Identifier } from "../security/identifier";
+import { Decimal } from "decimal.js";
+import { ModelValidationError, violation } from "../errors";
+import { decodeDecimal, encodeDecimal, fromDecimalJs, toDecimalJs } from "./decimal";
 
 export class ProtoSerializationUtil {
   static serialize(obj: any): UUIDProto | LocalDateProto | LocalTimestampProto | DecimalValueProto | StringValue | IdentifierProto { //}: UUIDProto | LocalDateProto | LocalTimestampProto | DecimalValueProto | StringValue {
@@ -24,8 +27,16 @@ export class ProtoSerializationUtil {
     if (obj instanceof ZonedDateTime) {
       return obj.toProto();
     }
+    if (obj instanceof Decimal) {
+      return encodeDecimal(fromDecimalJs(obj));
+    }
     if (typeof obj === "number") {
-      return new DecimalValueProto().setArbitraryPrecisionValue(obj.toString());
+      // Lossless (LM-306): only a safe integer is exact as a JS number.
+      if (!Number.isSafeInteger(obj)) {
+        throw new ModelValidationError([violation('', undefined,
+          `decimal ${obj} is not a safe integer: pass a Decimal for an exact value`)]);
+      }
+      return encodeDecimal({ unscaled: BigInt(obj), scale: 0 });
     }
     if (obj instanceof String) {
       return new StringValue().setValue(obj.toString());
@@ -37,7 +48,7 @@ export class ProtoSerializationUtil {
     throw new Error(`Could not serialize object of type ${typeof obj}. Value: ${obj}`);
   }
 
-  static deserialize(obj: any): UUID | Date | ZonedDateTime | Identifier | string | number | ProtoEnum | StrategyAllocationProto { //}: UUID | Date | ZonedDateTime | number | string {
+  static deserialize(obj: any): UUID | Date | ZonedDateTime | Identifier | string | Decimal | ProtoEnum | StrategyAllocationProto { //}: UUID | Date | ZonedDateTime | number | string {
     if (obj instanceof UUIDProto) {
       return UUID.fromU8Array(obj.getRawUuid_asU8());
     }
@@ -53,7 +64,7 @@ export class ProtoSerializationUtil {
       return new Identifier(obj);
     }
     if (obj instanceof DecimalValueProto) {
-      return parseFloat(obj.getArbitraryPrecisionValue());
+      return toDecimalJs(decodeDecimal(obj));
     }
     if (obj instanceof StringValue) {
       return obj.toString();

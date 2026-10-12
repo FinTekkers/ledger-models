@@ -60,7 +60,7 @@ function testEnumSerialization() {
         position.getMeasures().forEach(measureMapEntry => {
             measureMapEntry.getMeasure().toString();
         });
-        expect(position.getMeasureValue(measure_pb_1.MeasureProto.DIRECTED_QUANTITY)).toBe(1.55);
+        expect(position.getMeasureValue(measure_pb_1.MeasureProto.DIRECTED_QUANTITY).toString()).toBe("1.55");
         return true;
     });
 }
@@ -152,7 +152,7 @@ function testSerialization() {
         let positionID = position.getFieldValue(field_pb_1.FieldProto.ID);
         expect(positionID.toString()).toBe(id.toString());
         expect(position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS).toString()).toBe("EXECUTED");
-        expect(position.getMeasureValue(measure_pb_1.MeasureProto.DIRECTED_QUANTITY)).toBe(1);
+        expect(position.getMeasureValue(measure_pb_1.MeasureProto.DIRECTED_QUANTITY).toString()).toBe("1");
         let price = position.getFieldValue(field_pb_1.FieldProto.PRICE);
         expect((_a = price.getPrice()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue()).toBe("1.0");
         let tenor = position.getFieldValue(field_pb_1.FieldProto.TENOR);

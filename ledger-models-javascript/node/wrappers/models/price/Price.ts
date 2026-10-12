@@ -7,6 +7,7 @@ import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { Decimal } from "decimal.js";
 import * as LinkCacheModule from "../../util/link-cache";
+import { decodeDecimal, encodeDecimal, fromDecimalJs, isUnsetDecimal, parseDecimalString, toCanonicalString, toDecimalJs, withField } from "../utils/decimal";
 
 class Price {
     proto: PriceProto;
@@ -31,8 +32,7 @@ class Price {
         date: Date,
         priceType: PriceTypeProto = PriceTypeProto.PERCENTAGE
     ): Price {
-        const decimalValueProto = new DecimalValueProto();
-        decimalValueProto.setArbitraryPrecisionValue(price.toString());
+        const decimalValueProto = encodeDecimal(parseDecimalString(price.toString()));
 
         const securityProto = new SecurityProto();
         securityProto.setUuid(new UUID(UUID.fromString(securityId)).toUUIDProto());
@@ -54,8 +54,7 @@ class Price {
      * Factory method to create a Price from a Decimal value, Security, and ZonedDateTime
      */
     static create(price: Decimal, security: Security, asOf: ZonedDateTime): Price {
-        const decimalValueProto = new DecimalValueProto();
-        decimalValueProto.setArbitraryPrecisionValue(price.toString());
+        const decimalValueProto = encodeDecimal(fromDecimalJs(price));
 
         const priceProto = new PriceProto();
         priceProto.setPrice(decimalValueProto);
@@ -116,7 +115,7 @@ class Price {
         this.ensureHydrated();
         const priceValue = this.proto.getPrice();
         if (!priceValue) throw new Error("Price value is required");
-        return new Decimal(priceValue.getArbitraryPrecisionValue());
+        return toDecimalJs(withField('price', () => decodeDecimal(priceValue)));
     }
 
     getPriceType(): PriceTypeProto {
@@ -143,12 +142,22 @@ class Price {
     }
 
     toString(): string {
-        const priceStr = this.proto.getPrice()?.getArbitraryPrecisionValue() ?? 'N/A';
+        const priceStr = priceDisplay(this.proto.getPrice());
         return `Price[${priceStr}, securityId=${this.getSecurityID().toString()}]`;
     }
 
     equals(other: Price): boolean {
         return this.getID().equals(other.getID());
+    }
+}
+
+/** The canonical string of a price, keeping its scale, or 'N/A' when unset or unreadable. */
+function priceDisplay(p: DecimalValueProto | undefined): string {
+    if (!p || isUnsetDecimal(p)) return 'N/A';
+    try {
+        return toCanonicalString(decodeDecimal(p));
+    } catch (e) {
+        return 'N/A';
     }
 }
 

@@ -9,7 +9,8 @@ import { ProtoEnum } from "./protoEnum";
 import { UUID } from "./uuid";
 import { StringValue } from 'google-protobuf/google/protobuf/wrappers_pb';
 import { Identifier } from "../security/identifier";
+import { Decimal } from "decimal.js";
 export declare class ProtoSerializationUtil {
     static serialize(obj: any): UUIDProto | LocalDateProto | LocalTimestampProto | DecimalValueProto | StringValue | IdentifierProto;
-    static deserialize(obj: any): UUID | Date | ZonedDateTime | Identifier | string | number | ProtoEnum | StrategyAllocationProto;
+    static deserialize(obj: any): UUID | Date | ZonedDateTime | Identifier | string | Decimal | ProtoEnum | StrategyAllocationProto;
 }

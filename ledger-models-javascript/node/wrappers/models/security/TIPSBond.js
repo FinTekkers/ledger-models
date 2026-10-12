@@ -28,7 +28,7 @@ const security_pb_1 = require("../../../fintekkers/models/security/security_pb")
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const index_type_pb_1 = require("../../../fintekkers/models/security/index/index_type_pb");
 const date_1 = require("../utils/date");
-const decimal_js_1 = require("decimal.js");
+const decimal_1 = require("../utils/decimal");
 /**
  * TIPS-specific accessors layered on top of BondSecurity. The inflation
  * fields live in the parallel tips_extension sub-message; bond_details
@@ -48,7 +48,7 @@ class TIPSBond extends BondSecurity_1.default {
         const v = ext ? ext.getBaseCpi() : undefined;
         if (!v)
             return null;
-        return new decimal_js_1.Decimal(v.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('tips_extension.base_cpi', () => (0, decimal_1.decodeDecimal)(v)));
     }
     /** Reference date for the base CPI fixing. */
     getIndexDate() {

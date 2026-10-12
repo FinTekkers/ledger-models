@@ -20,6 +20,7 @@ import { UUID } from "../utils/uuid";
 import { dateToLocalDateProto, localDateProtoToDate } from "../utils/date";
 import { Decimal } from "decimal.js";
 import * as LinkCacheModule from "../../util/link-cache";
+import { decodeDecimal, encodeDecimal, fromDecimalJs, isUnsetDecimal, toDecimalJs, withField } from "../utils/decimal";
 import LinkResolver from "../../util/link-resolver";
 
 interface TransactionConstructorParams {
@@ -132,9 +133,7 @@ class Transaction {
     transactionProto.setPortfolio(params.portfolio.proto);
 
     // Convert quantity to DecimalValueProto
-    const quantityDecimal = new DecimalValueProto();
-    quantityDecimal.setArbitraryPrecisionValue(params.quantity.toString());
-    transactionProto.setQuantity(quantityDecimal);
+    transactionProto.setQuantity(encodeDecimal(fromDecimalJs(params.quantity)));
 
     // Create and set an empty StrategyAllocationProto
     const strategyAllocationProto = new StrategyAllocationProto();
@@ -294,7 +293,7 @@ class Transaction {
     this.ensureHydrated();
     const quantity = this.proto.getQuantity();
     if (!quantity) throw new Error("Quantity is required");
-    return new Decimal(quantity.getArbitraryPrecisionValue());
+    return toDecimalJs(withField('quantity', () => decodeDecimal(quantity)));
   }
 
   getIssuerName(): string {
@@ -416,7 +415,7 @@ class Transaction {
         if (!faceValue) throw new Error("Face value is required for bond cash impact calculation");
 
         const priceProto = parentTransaction.getPrice();
-        const priceValue = new Decimal(priceProto.getPrice()?.getArbitraryPrecisionValue() || '0');
+        const priceValue = priceOrZero(priceProto.getPrice());
         const scaledPrice = priceValue.mul(priceScaleFactor);
 
         const quantity = parentTransaction.getQuantity();
@@ -427,7 +426,7 @@ class Transaction {
     } else {
       // For other securities: quantity * price
       const priceProto = parentTransaction.getPrice();
-      const priceValue = new Decimal(priceProto.getPrice()?.getArbitraryPrecisionValue() || '0');
+      const priceValue = priceOrZero(priceProto.getPrice());
       bookAmount = parentTransaction.getQuantity().mul(priceValue);
     }
 
@@ -485,7 +484,7 @@ class Transaction {
 
     // Get price as Decimal
     const priceProto = transaction.getPrice();
-    const priceValue = new Decimal(priceProto.getPrice()?.getArbitraryPrecisionValue() || '0');
+    const priceValue = priceOrZero(priceProto.getPrice());
 
     // Get asOf ZonedDateTime
     const asOf = transaction.getAsOf();
@@ -558,6 +557,16 @@ class Transaction {
       Transaction.createCashTransaction(cashSecurity, transaction);
     }
   }
+}
+
+/**
+ * The price value, or 0 when the price is unset (kept from before LM-306 for
+ * the derived cash and maturation transactions only: unset is not zero
+ * elsewhere).
+ */
+function priceOrZero(p: DecimalValueProto | undefined): Decimal {
+  if (!p || isUnsetDecimal(p)) return new Decimal(0);
+  return toDecimalJs(withField('price.price', () => decodeDecimal(p)));
 }
 
 export default Transaction;

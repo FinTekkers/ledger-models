@@ -54,6 +54,6 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
             }
         }
     }
-    expect(results[0]['outstandingAmount']).toBeGreaterThan(0);
+    expect(results[0]['outstandingAmount'].greaterThan(0)).toBe(true);
 }), 90000);
 //# sourceMappingURL=security.maturityLadder.test.js.map

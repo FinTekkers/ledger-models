@@ -14,6 +14,7 @@ import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon
 import { Decimal } from 'decimal.js';
 import { isDescendantOf } from './product_hierarchy';
 import Issuance from './Issuance';
+import { decodeDecimal, encodeDecimal, fromDecimalJs, toDecimalJs, withField } from '../utils/decimal';
 
 /**
  * Inputs required to mint a SecurityProto for the bond pricer. Shared by
@@ -28,9 +29,9 @@ export interface BondPricerInputs {
   maturityDate: Date;
 }
 
-/** Build a DecimalValueProto from a Decimal. */
+/** Build a DecimalValueProto from a Decimal, in both forms (LM-306). */
 export function decimalToProto(v: Decimal): DecimalValueProto {
-  return new DecimalValueProto().setArbitraryPrecisionValue(v.toString());
+  return encodeDecimal(fromDecimalJs(v));
 }
 
 /**
@@ -118,14 +119,14 @@ class BondSecurity extends Security {
     const bond = this.getBondLikeDetails();
     const rate = bond ? bond.getCouponRate() : undefined;
     if (!rate) return null;
-    return new Decimal(rate.getArbitraryPrecisionValue());
+    return toDecimalJs(withField('bond_details.coupon_rate', () => decodeDecimal(rate)));
   }
 
   getFaceValue(): Decimal | null {
     const bond = this.getBondLikeDetails();
     const faceValue = bond ? bond.getFaceValue() : undefined;
     if (!faceValue) return null;
-    return new Decimal(faceValue.getArbitraryPrecisionValue());
+    return toDecimalJs(withField('bond_details.face_value', () => decodeDecimal(faceValue)));
   }
 
   getCouponType(): CouponType {

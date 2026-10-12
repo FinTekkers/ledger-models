@@ -28,13 +28,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const price_pb_1 = require("../../../fintekkers/models/price/price_pb");
 const price_type_pb_1 = require("../../../fintekkers/models/price/price_type_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const security_1 = __importDefault(require("../security/security"));
 const datetime_1 = require("../utils/datetime");
 const uuid_1 = require("../utils/uuid");
 const decimal_js_1 = require("decimal.js");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
+const decimal_1 = require("../utils/decimal");
 class Price {
     constructor(proto) {
         this.proto = proto;
@@ -50,8 +50,7 @@ class Price {
      * @param priceType - Optional price type, defaults to PERCENTAGE
      */
     static fromSimple(securityId, price, date, priceType = price_type_pb_1.PriceTypeProto.PERCENTAGE) {
-        const decimalValueProto = new decimal_value_pb_1.DecimalValueProto();
-        decimalValueProto.setArbitraryPrecisionValue(price.toString());
+        const decimalValueProto = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(price.toString()));
         const securityProto = new security_pb_1.SecurityProto();
         securityProto.setUuid(new uuid_1.UUID(uuid_1.UUID.fromString(securityId)).toUUIDProto());
         securityProto.setIsLink(true);
@@ -69,8 +68,7 @@ class Price {
      * Factory method to create a Price from a Decimal value, Security, and ZonedDateTime
      */
     static create(price, security, asOf) {
-        const decimalValueProto = new decimal_value_pb_1.DecimalValueProto();
-        decimalValueProto.setArbitraryPrecisionValue(price.toString());
+        const decimalValueProto = (0, decimal_1.encodeDecimal)((0, decimal_1.fromDecimalJs)(price));
         const priceProto = new price_pb_1.PriceProto();
         priceProto.setPrice(decimalValueProto);
         priceProto.setObjectClass('Price');
@@ -126,7 +124,7 @@ class Price {
         const priceValue = this.proto.getPrice();
         if (!priceValue)
             throw new Error("Price value is required");
-        return new decimal_js_1.Decimal(priceValue.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('price', () => (0, decimal_1.decodeDecimal)(priceValue)));
     }
     getPriceType() {
         this.ensureHydrated();
@@ -151,12 +149,22 @@ class Price {
         return datetime_1.ZonedDateTime.fromRequired(this.proto.getAsOf(), 'price.as_of');
     }
     toString() {
-        var _a, _b;
-        const priceStr = (_b = (_a = this.proto.getPrice()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue()) !== null && _b !== void 0 ? _b : 'N/A';
+        const priceStr = priceDisplay(this.proto.getPrice());
         return `Price[${priceStr}, securityId=${this.getSecurityID().toString()}]`;
     }
     equals(other) {
         return this.getID().equals(other.getID());
+    }
+}
+/** The canonical string of a price, keeping its scale, or 'N/A' when unset or unreadable. */
+function priceDisplay(p) {
+    if (!p || (0, decimal_1.isUnsetDecimal)(p))
+        return 'N/A';
+    try {
+        return (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(p));
+    }
+    catch (e) {
+        return 'N/A';
     }
 }
 exports.default = Price;

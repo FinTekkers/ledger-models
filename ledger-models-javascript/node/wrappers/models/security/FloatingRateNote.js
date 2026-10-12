@@ -28,7 +28,7 @@ const security_pb_1 = require("../../../fintekkers/models/security/security_pb")
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const index_type_pb_1 = require("../../../fintekkers/models/security/index/index_type_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
-const decimal_js_1 = require("decimal.js");
+const decimal_1 = require("../utils/decimal");
 /**
  * FRN-specific accessors layered on top of BondSecurity. The floating-rate
  * fields live in the parallel frn_extension sub-message; bond_details
@@ -48,7 +48,7 @@ class FloatingRateNote extends BondSecurity_1.default {
         const v = ext ? ext.getSpread() : undefined;
         if (!v)
             return null;
-        return new decimal_js_1.Decimal(v.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('frn_extension.spread', () => (0, decimal_1.decodeDecimal)(v)));
     }
     /** Which index the coupon resets off (SOFR on a US TREASURY_FRN). */
     getReferenceRateIndex() {
