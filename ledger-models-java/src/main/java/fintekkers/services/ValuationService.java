@@ -118,7 +118,7 @@ public class ValuationService {
         System.out.println("*************************************************************************************");
 
         DecimalValue.DecimalValueProto oneHundred = ProtoSerializationUtil.serializeBigDecimal(BigDecimal.valueOf(-100));
-        System.out.println(oneHundred.getArbitraryPrecisionValue());
+        System.out.println(ProtoSerializationUtil.deserializeBigDecimal(oneHundred));
 
         System.out.println(result);
 
