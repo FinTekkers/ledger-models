@@ -6,6 +6,7 @@ use crate::fintekkers::models::price::{PriceProto, PriceTypeProto};
 use crate::fintekkers::models::security::SecurityProto;
 use crate::fintekkers::models::util::DecimalValueProto;
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
+use crate::fintekkers::requests::util::errors::{ErrorProto, Message as ErrorMessage};
 
 use crate::fintekkers::wrappers::models::security::{SecurityProtoBuilder, SecurityWrapper};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
@@ -187,6 +188,32 @@ pub fn require_valid_price(proto: &PriceProto) -> Result<(), Error> {
     } else {
         Err(Error::Validation(violations))
     }
+}
+
+/// Required-field rules only (LM-290): `security` and `price`, the same
+/// rules as [`validate_price`] minus `price_type`. Returns one `ErrorProto`
+/// per failed rule, or an empty Vec when valid. Zero and negative prices are
+/// valid; the value is not parsed.
+///
+/// Use [`validate_price`] when you want field violations and the
+/// `price_type` rule; use this when you want `ErrorProto`s for the required
+/// fields only. Each error carries its `FieldViolationProto` in `violations`.
+/// `code` is left at its default (no invalid-argument code exists).
+/// `message_for_user` repeats the developer text and is not curated.
+/// Pure: no I/O, no logging, no panics.
+pub fn validate_price_required_fields(proto: &PriceProto) -> Vec<ErrorProto> {
+    validate_price(proto)
+        .into_iter()
+        .filter(|v| v.field == PRICE_FIELD || v.field == SECURITY_FIELD)
+        .map(|v| ErrorProto {
+            detail: Some(ErrorMessage {
+                message_for_user: v.message.clone(),
+                message_for_developer: v.message.clone(),
+            }),
+            violations: vec![v],
+            ..Default::default()
+        })
+        .collect()
 }
 
 pub struct PriceProtoBuilder {
@@ -434,7 +461,7 @@ mod test {
 
     // ---- Price input rules (LM-289). The same table runs in Java, Python and JS. ----
 
-    use super::{require_valid_price, validate_price};
+    use super::{require_valid_price, validate_price, validate_price_required_fields};
     use crate::fintekkers::models::price::PriceTypeProto;
 
     fn rules_valid(price_id: Uuid) -> PriceProto {
@@ -565,5 +592,82 @@ mod test {
         assert!(matches!(err, Error::Validation(_)), "expected Error::Validation, got {:?}", err);
         assert_eq!(err.violations(), validate_price(&p).as_slice());
         assert!(require_valid_price(&rules_valid(Uuid::new_v4())).is_ok());
+    }
+
+    // ---- Required-field rules (LM-290) ----
+
+    use crate::fintekkers::requests::util::errors::ErrorProto;
+
+    fn required_messages(errors: &[ErrorProto]) -> Vec<String> {
+        errors.iter().map(|e| {
+            assert!(e.detail.is_some(), "detail must be set: {:?}", e);
+            e.detail.as_ref().map_or(String::new(), |d| d.message_for_developer.clone())
+        }).collect()
+    }
+
+    #[test]
+    fn required_valid_values_have_no_errors() {
+        for value in ["1.5", "0", "-1"] {
+            let mut p = rules_valid(Uuid::new_v4());
+            p.price = Some(DecimalValueProto { arbitrary_precision_value: value.to_string() });
+            assert!(validate_price_required_fields(&p).is_empty(), "{}", value);
+        }
+    }
+
+    #[test]
+    fn required_price_missing_one_error_naming_price() {
+        let mut unset = rules_valid(Uuid::new_v4());
+        unset.price = None;
+        let mut empty = rules_valid(Uuid::new_v4());
+        empty.price = Some(DecimalValueProto { arbitrary_precision_value: String::new() });
+        for p in [unset, empty] {
+            let messages = required_messages(&validate_price_required_fields(&p));
+            assert_eq!(messages.len(), 1, "{:?}", messages);
+            assert!(messages[0].contains("price"), "{}", messages[0]);
+            assert!(!messages[0].contains("security"), "{}", messages[0]);
+        }
+    }
+
+    #[test]
+    fn required_security_missing_one_error_naming_security() {
+        let mut unset = rules_valid(Uuid::new_v4());
+        unset.security = None;
+        let mut empty = rules_valid(Uuid::new_v4());
+        empty.security.as_mut().unwrap().uuid = Some(UuidProto { raw_uuid: vec![] });
+        for p in [unset, empty] {
+            let messages = required_messages(&validate_price_required_fields(&p));
+            assert_eq!(messages.len(), 1, "{:?}", messages);
+            assert!(messages[0].contains("security"), "{}", messages[0]);
+        }
+    }
+
+    fn assert_names_price_and_security(errors: &[ErrorProto]) {
+        let messages = required_messages(errors);
+        assert_eq!(messages.len(), 2, "{:?}", messages);
+        assert!(messages.iter().any(|m| m.contains("price") && !m.contains("security")), "{:?}", messages);
+        assert!(messages.iter().any(|m| m.contains("security")), "{:?}", messages);
+        assert!(messages.iter().all(|m| !m.contains("price_type")), "{:?}", messages);
+    }
+
+    #[test]
+    fn required_both_missing_two_errors() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price = None;
+        p.security = None;
+        assert_names_price_and_security(&validate_price_required_fields(&p));
+    }
+
+    #[test]
+    fn required_all_unset_default_proto() {
+        // validate_price returns three violations here; price_type must be filtered out.
+        assert_eq!(validate_price(&PriceProto::default()).len(), 3);
+        assert_names_price_and_security(&validate_price_required_fields(&PriceProto::default()));
+    }
+
+    #[test]
+    fn required_ignores_price_type() {
+        let mut p = rules_valid(Uuid::new_v4());
+        p.price_type = PriceTypeProto::UnknownPriceType as i32;
+        assert!(validate_price_required_fields(&p).is_empty());
     }
 }
