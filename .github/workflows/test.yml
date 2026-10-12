@@ -49,6 +49,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+          components: clippy
 
       - name: Materialize hierarchy.json mirror (cargo include_str! target)
         run: ./sync-hierarchy-mirrors.sh
@@ -56,6 +57,12 @@ jobs:
       - name: cargo test --lib
         working-directory: ledger-models-rust
         run: cargo test --lib --quiet
+
+      # Enforces the #![deny(clippy::unwrap_used, ...)] no-panic rules in
+      # position_filter_parser.rs (LM-299).
+      - name: cargo clippy --lib
+        working-directory: ledger-models-rust
+        run: cargo clippy --lib --quiet
 
   java:
     name: java (gradle test)
