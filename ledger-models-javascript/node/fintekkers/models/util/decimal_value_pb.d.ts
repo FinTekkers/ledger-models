@@ -9,6 +9,12 @@ import * as jspb from "google-protobuf";
 export class DecimalValueProto extends jspb.Message { 
     getArbitraryPrecisionValue(): string;
     setArbitraryPrecisionValue(value: string): DecimalValueProto;
+    getUnscaledValue(): Uint8Array | string;
+    getUnscaledValue_asU8(): Uint8Array;
+    getUnscaledValue_asB64(): string;
+    setUnscaledValue(value: Uint8Array | string): DecimalValueProto;
+    getScale(): number;
+    setScale(value: number): DecimalValueProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): DecimalValueProto.AsObject;
@@ -23,5 +29,7 @@ export class DecimalValueProto extends jspb.Message {
 export namespace DecimalValueProto {
     export type AsObject = {
         arbitraryPrecisionValue: string,
+        unscaledValue: Uint8Array | string,
+        scale: number,
     }
 }

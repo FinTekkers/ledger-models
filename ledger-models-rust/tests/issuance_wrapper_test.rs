@@ -1,3 +1,5 @@
+#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
+
 //! Tests for the `Issuance` wrapper.
 //!
 //! Construct an `IssuanceProto` with all 8 wrapped fields set, wrap it,
@@ -13,6 +15,7 @@ use rust_decimal_macros::dec;
 fn decimal(value: &str) -> DecimalValueProto {
     DecimalValueProto {
         arbitrary_precision_value: value.to_string(),
+        ..Default::default()
     }
 }
 

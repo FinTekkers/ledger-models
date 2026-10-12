@@ -1,3 +1,5 @@
+#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
+
 //! Round-trip tests for CurveInputProto fields and the
 //! CurveRequestProto.forward_term_years field.
 
@@ -9,6 +11,7 @@ use prost::Message;
 fn decimal(value: &str) -> DecimalValueProto {
     DecimalValueProto {
         arbitrary_precision_value: value.to_string(),
+        ..Default::default()
     }
 }
 
