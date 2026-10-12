@@ -35,16 +35,21 @@ public final class ValuationResponseProtos {
       "tion/cashflow.proto\0325fintekkers/requests" +
       "/valuation/valuation_request.proto\032-fint" +
       "ekkers/requests/util/errors/summary.prot" +
-      "o\"\325\002\n\026ValuationResponseProto\022\024\n\014object_c" +
-      "lass\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022O\n\021valuation" +
-      "_request\030\024 \001(\01324.fintekkers.requests.val" +
-      "uation.ValuationRequestProto\022D\n\017measure_" +
-      "results\030\036 \003(\0132+.fintekkers.models.positi" +
-      "on.MeasureMapEntry\022>\n\007summary\030( \001(\0132-.fi" +
-      "ntekkers.requests.util.errors.SummaryPro" +
-      "to\022=\n\tcashflows\0302 \003(\0132*.fintekkers.model" +
-      "s.valuation.CashflowProtoB\033B\027ValuationRe" +
-      "sponseProtosP\001b\006proto3"
+      "o\032(fintekkers/models/util/object_type.pr" +
+      "oto\"\344\003\n\026ValuationResponseProto\022\030\n\014object" +
+      "_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n" +
+      "\013object_type\030\351\007 \001(\0162\'.fintekkers.models." +
+      "util.ObjectTypeProto\022\026\n\rversion_major\030\352\007" +
+      " \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversion_" +
+      "patch\030\354\007 \001(\r\022O\n\021valuation_request\030\024 \001(\0132" +
+      "4.fintekkers.requests.valuation.Valuatio" +
+      "nRequestProto\022D\n\017measure_results\030\036 \003(\0132+" +
+      ".fintekkers.models.position.MeasureMapEn" +
+      "try\022>\n\007summary\030( \001(\0132-.fintekkers.reques" +
+      "ts.util.errors.SummaryProto\022=\n\tcashflows" +
+      "\0302 \003(\0132*.fintekkers.models.valuation.Cas" +
+      "hflowProtoB\033B\027ValuationResponseProtosP\001b" +
+      "\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -53,17 +58,19 @@ public final class ValuationResponseProtos {
           fintekkers.models.valuation.CashflowProtos.getDescriptor(),
           fintekkers.requests.valuation.ValuationRequestProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_valuation_ValuationResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_valuation_ValuationResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_ValuationResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ValuationRequest", "MeasureResults", "Summary", "Cashflows", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "ValuationRequest", "MeasureResults", "Summary", "Cashflows", });
     fintekkers.models.position.PositionUtilProtos.getDescriptor();
     fintekkers.models.valuation.CashflowProtos.getDescriptor();
     fintekkers.requests.valuation.ValuationRequestProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

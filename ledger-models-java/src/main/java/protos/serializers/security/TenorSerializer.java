@@ -1,5 +1,7 @@
 package protos.serializers.security;
 
+import fintekkers.models.util.ObjectTypeProto;
+import common.util.ObjectTypes;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -35,9 +37,7 @@ public class TenorSerializer implements IRawDataModelObjectSerializer<TenorProto
             tenorTypeProto = TenorTypeProto.UNKNOWN_TENOR_TYPE;
         }
 
-        TenorProto.Builder builder = TenorProto.newBuilder()
-                .setObjectClass(tenor.getClass().getSimpleName())
-                .setVersion("0.0.1")
+        TenorProto.Builder builder = ObjectTypes.stamp(TenorProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_TENOR, tenor.getClass().getSimpleName(), "0.0.1")
                 .setTenorType(tenorTypeProto);
 //                .setTermValue(tenor.getTenorDescription());
 

@@ -1,5 +1,7 @@
 package protos.serializers.security;
 
+import fintekkers.models.util.ObjectTypeProto;
+import common.util.ObjectTypes;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -28,9 +30,7 @@ public class IdentifierSerializer implements IRawDataModelObjectSerializer<Ident
     public IdentifierProto serialize(Identifier identifier) {
         IdentifierTypeProto identifierTypeProto = IdentifierTypeProto.valueOf(identifier.getIdentifierType().name());
 
-        IdentifierProto.Builder builder = IdentifierProto.newBuilder()
-                .setObjectClass(identifier.getClass().getSimpleName())
-                .setVersion("0.0.1")
+        IdentifierProto.Builder builder = ObjectTypes.stamp(IdentifierProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_IDENTIFIER, identifier.getClass().getSimpleName(), "0.0.1")
 
                 .setIdentifierType(identifierTypeProto)
                 .setIdentifierValue(identifier.getIdentifier());

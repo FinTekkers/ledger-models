@@ -29,6 +29,8 @@ var fintekkers_models_position_position_filter_pb = require('../../../fintekkers
 goog.object.extend(proto, fintekkers_models_position_position_filter_pb);
 var fintekkers_models_util_date_range_pb = require('../../../fintekkers/models/util/date_range_pb.js');
 goog.object.extend(proto, fintekkers_models_util_date_range_pb);
+var fintekkers_models_util_object_type_pb = require('../../../fintekkers/models/util/object_type_pb.js');
+goog.object.extend(proto, fintekkers_models_util_object_type_pb);
 goog.exportSymbol('proto.fintekkers.requests.price.PriceFrequencyProto', null, global);
 goog.exportSymbol('proto.fintekkers.requests.price.PriceHorizonProto', null, global);
 goog.exportSymbol('proto.fintekkers.requests.price.QueryPriceRequestProto', null, global);
@@ -44,7 +46,7 @@ goog.exportSymbol('proto.fintekkers.requests.price.QueryPriceRequestProto.TimeRa
  * @constructor
  */
 proto.fintekkers.requests.price.QueryPriceRequestProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.fintekkers.requests.price.QueryPriceRequestProto.repeatedFields_, proto.fintekkers.requests.price.QueryPriceRequestProto.oneofGroups_);
+  jspb.Message.initialize(this, opt_data, 0, 500, proto.fintekkers.requests.price.QueryPriceRequestProto.repeatedFields_, proto.fintekkers.requests.price.QueryPriceRequestProto.oneofGroups_);
 };
 goog.inherits(proto.fintekkers.requests.price.QueryPriceRequestProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -121,6 +123,10 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.toObject = function(inclu
   var f, obj = {
     objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
     version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    objectType: jspb.Message.getFieldWithDefault(msg, 1001, 0),
+    versionMajor: jspb.Message.getFieldWithDefault(msg, 1002, 0),
+    versionMinor: jspb.Message.getFieldWithDefault(msg, 1003, 0),
+    versionPatch: jspb.Message.getFieldWithDefault(msg, 1004, 0),
     uuidsList: jspb.Message.toObjectList(msg.getUuidsList(),
     fintekkers_models_util_uuid_pb.UUIDProto.toObject, includeInstance),
     searchPriceInput: (f = msg.getSearchPriceInput()) && fintekkers_models_position_position_filter_pb.PositionFilterProto.toObject(includeInstance, f),
@@ -173,6 +179,22 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.deserializeBinaryFromRead
     case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
+      break;
+    case 1001:
+      var value = /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (reader.readEnum());
+      msg.setObjectType(value);
+      break;
+    case 1002:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMajor(value);
+      break;
+    case 1003:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMinor(value);
+      break;
+    case 1004:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionPatch(value);
       break;
     case 21:
       var value = new fintekkers_models_util_uuid_pb.UUIDProto;
@@ -250,6 +272,34 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.serializeBinaryToWriter =
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getObjectType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1001,
+      f
+    );
+  }
+  f = message.getVersionMajor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1002,
+      f
+    );
+  }
+  f = message.getVersionMinor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1003,
+      f
+    );
+  }
+  f = message.getVersionPatch();
+  if (f !== 0) {
+    writer.writeUint32(
+      1004,
       f
     );
   }
@@ -349,6 +399,78 @@ proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.getVersion = fu
  */
 proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.setVersion = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional fintekkers.models.util.ObjectTypeProto object_type = 1001;
+ * @return {!proto.fintekkers.models.util.ObjectTypeProto}
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.getObjectType = function() {
+  return /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (jspb.Message.getFieldWithDefault(this, 1001, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.util.ObjectTypeProto} value
+ * @return {!proto.fintekkers.requests.price.QueryPriceRequestProto} returns this
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.setObjectType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1001, value);
+};
+
+
+/**
+ * optional uint32 version_major = 1002;
+ * @return {number}
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.getVersionMajor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1002, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.price.QueryPriceRequestProto} returns this
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.setVersionMajor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1002, value);
+};
+
+
+/**
+ * optional uint32 version_minor = 1003;
+ * @return {number}
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.getVersionMinor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1003, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.price.QueryPriceRequestProto} returns this
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.setVersionMinor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1003, value);
+};
+
+
+/**
+ * optional uint32 version_patch = 1004;
+ * @return {number}
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.getVersionPatch = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1004, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.price.QueryPriceRequestProto} returns this
+ */
+proto.fintekkers.requests.price.QueryPriceRequestProto.prototype.setVersionPatch = function(value) {
+  return jspb.Message.setProto3IntField(this, 1004, value);
 };
 
 

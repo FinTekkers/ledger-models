@@ -20,6 +20,8 @@ import LinkResolver from '../../util/link-resolver';
 import * as LinkCacheModule from '../../util/link-cache';
 import { UUID } from '../../models/utils/uuid';
 import { ZonedDateTime } from '../../models/utils/datetime';
+import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
+import { stamp } from '../../util/object-types';
 
 
 class TransactionService {
@@ -36,8 +38,7 @@ class TransactionService {
 
   async validateCreateTransaction(transaction: Transaction): Promise<SummaryProto> {
     const createRequest = new CreateTransactionRequestProto();
-    createRequest.setObjectClass('TransactionRequest');
-    createRequest.setVersion('0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
     createRequest.setCreateTransactionInput(transaction.proto);
 
     const validateCreateOrUpdateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
@@ -47,8 +48,7 @@ class TransactionService {
 
   async createTransaction(transaction: Transaction): Promise<CreateTransactionResponseProto> {
     const createRequest = new CreateTransactionRequestProto();
-    createRequest.setObjectClass('TransactionRequest');
-    createRequest.setVersion('0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
     createRequest.setCreateTransactionInput(transaction.proto);
 
     const createTransactionAsync = promisify(this.client.createOrUpdate.bind(this.client));
@@ -69,8 +69,7 @@ class TransactionService {
   searchTransaction(asOf: LocalTimestampProto, positionFilter: PositionFilter, maxResults: number = 100):
     Promise<Transaction[]> {
     const searchRequest = new QueryTransactionRequestProto();
-    searchRequest.setObjectClass('SecurityRequest');
-    searchRequest.setVersion('0.0.1');
+    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, 'SecurityRequest', '0.0.1');
     searchRequest.setAsOf(asOf);
 
     searchRequest.setSearchTransactionInput(positionFilter.toProto());

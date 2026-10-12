@@ -36,22 +36,26 @@ public final class QueryPositionRequestProtos {
       "position.proto\0320fintekkers/models/positi" +
       "on/position_filter.proto\032,fintekkers/mod" +
       "els/util/local_timestamp.proto\032(fintekke" +
-      "rs/requests/util/operation.proto\"\223\004\n\031Que" +
-      "ryPositionRequestProto\022\024\n\014object_class\030\001" +
-      " \001(\t\022\017\n\007version\030\002 \001(\t\022K\n\016operation_type\030" +
-      "\n \001(\01623.fintekkers.requests.util.Request" +
-      "OperationTypeProto\022D\n\rposition_type\030\024 \001(" +
-      "\0162-.fintekkers.models.position.PositionT" +
-      "ypeProto\022D\n\rposition_view\030\025 \001(\0162-.fintek" +
-      "kers.models.position.PositionViewProto\0226" +
-      "\n\006fields\030\036 \003(\0162&.fintekkers.models.posit" +
-      "ion.FieldProto\022:\n\010measures\030\037 \003(\0162(.finte" +
-      "kkers.models.position.MeasureProto\022F\n\rfi" +
-      "lter_fields\030  \001(\0132/.fintekkers.models.po" +
-      "sition.PositionFilterProto\022:\n\005as_of\030! \001(" +
-      "\0132+.fintekkers.models.util.LocalTimestam" +
-      "pProtoB\036B\032QueryPositionRequestProtosP\001b\006" +
-      "proto3"
+      "rs/requests/util/operation.proto\032(fintek" +
+      "kers/models/util/object_type.proto\"\242\005\n\031Q" +
+      "ueryPositionRequestProto\022\030\n\014object_class" +
+      "\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013objec" +
+      "t_type\030\351\007 \001(\0162\'.fintekkers.models.util.O" +
+      "bjectTypeProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026" +
+      "\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030" +
+      "\354\007 \001(\r\022K\n\016operation_type\030\n \001(\01623.fintekk" +
+      "ers.requests.util.RequestOperationTypePr" +
+      "oto\022D\n\rposition_type\030\024 \001(\0162-.fintekkers." +
+      "models.position.PositionTypeProto\022D\n\rpos" +
+      "ition_view\030\025 \001(\0162-.fintekkers.models.pos" +
+      "ition.PositionViewProto\0226\n\006fields\030\036 \003(\0162" +
+      "&.fintekkers.models.position.FieldProto\022" +
+      ":\n\010measures\030\037 \003(\0162(.fintekkers.models.po" +
+      "sition.MeasureProto\022F\n\rfilter_fields\030  \001" +
+      "(\0132/.fintekkers.models.position.Position" +
+      "FilterProto\022:\n\005as_of\030! \001(\0132+.fintekkers." +
+      "models.util.LocalTimestampProtoB\036B\032Query" +
+      "PositionRequestProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -62,19 +66,21 @@ public final class QueryPositionRequestProtos {
           fintekkers.models.position.PositionFilterProtos.getDescriptor(),
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.requests.util.Operation.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_position_QueryPositionRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_position_QueryPositionRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_position_QueryPositionRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "OperationType", "PositionType", "PositionView", "Fields", "Measures", "FilterFields", "AsOf", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "OperationType", "PositionType", "PositionView", "Fields", "Measures", "FilterFields", "AsOf", });
     fintekkers.models.position.FieldProtos.getDescriptor();
     fintekkers.models.position.MeasureProtos.getDescriptor();
     fintekkers.models.position.PositionProtos.getDescriptor();
     fintekkers.models.position.PositionFilterProtos.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.requests.util.Operation.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

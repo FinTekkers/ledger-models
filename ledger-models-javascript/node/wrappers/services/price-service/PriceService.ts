@@ -19,6 +19,8 @@ import EnvConfig from '../../models/utils/requestcontext';
 import { Service } from '../../util/serviceaddress';
 import LinkResolver from '../../util/link-resolver';
 import * as LinkCacheModule from '../../util/link-cache';
+import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
+import { stamp } from '../../util/object-types';
 
 class PriceService {
   private client: PriceClient;
@@ -40,8 +42,7 @@ class PriceService {
     const priceProto = price instanceof Price ? price.proto : price;
 
     const createRequest = new CreatePriceRequestProto();
-    createRequest.setObjectClass('PriceRequest');
-    createRequest.setVersion('0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, 'PriceRequest', '0.0.1');
     createRequest.setCreatePriceInput(priceProto);
 
     const validateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
@@ -53,8 +54,7 @@ class PriceService {
     const priceProto = price instanceof Price ? price.proto : price;
 
     const createRequest = new CreatePriceRequestProto();
-    createRequest.setObjectClass('PriceRequest');
-    createRequest.setVersion('0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, 'PriceRequest', '0.0.1');
     createRequest.setCreatePriceInput(priceProto);
 
     const createAsync = promisify(this.client.createOrUpdate.bind(this.client));
@@ -81,8 +81,7 @@ class PriceService {
    */
   async search(asOf: LocalTimestampProto, positionFilter: PositionFilter): Promise<Price[]> {
     const searchRequest = new QueryPriceRequestProto();
-    searchRequest.setObjectClass('PriceRequest');
-    searchRequest.setVersion('0.0.1');
+    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_PRICE_REQUEST, 'PriceRequest', '0.0.1');
     searchRequest.setAsOf(asOf);
     searchRequest.setSearchPriceInput(positionFilter.toProto());
 

@@ -1,5 +1,7 @@
 package fintekkers.services;
 
+import fintekkers.models.util.ObjectTypeProto;
+import common.util.ObjectTypes;
 import fintekkers.models.transaction.TransactionProto;
 import fintekkers.requests.transaction.QueryTransactionRequestProto;
 import fintekkers.requests.transaction.QueryTransactionResponseProto;
@@ -73,9 +75,7 @@ public class TransactionService {
      * delegates to.
      */
     public TransactionProto getByUuid(UUID uuid, ZonedDateTime asOf) {
-        QueryTransactionRequestProto.Builder reqB = QueryTransactionRequestProto.newBuilder()
-                .setObjectClass("TransactionRequest")
-                .setVersion("0.0.1")
+        QueryTransactionRequestProto.Builder reqB = ObjectTypes.stamp(QueryTransactionRequestProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, "TransactionRequest", "0.0.1")
                 .addUuIds(ProtoSerializationUtil.serializeUUID(uuid));
         if (asOf != null) {
             reqB.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));

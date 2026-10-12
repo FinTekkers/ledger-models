@@ -40,23 +40,28 @@ public final class CurveRequestProtos {
       "to\032*fintekkers/models/util/decimal_value" +
       ".proto\032,fintekkers/models/util/local_tim" +
       "estamp.proto\032(fintekkers/models/position" +
-      "/measure.proto\"\374\001\n\017CurveInputProto\022;\n\010se" +
-      "curity\030\001 \001(\0132).fintekkers.models.securit" +
-      "y.SecurityProto\0222\n\005price\030\002 \001(\0132#.fintekk" +
-      "ers.models.price.PriceProto\0228\n\005tenor\030\004 \001" +
-      "(\0132).fintekkers.models.util.DecimalValue" +
-      "Proto\022>\n\013clean_price\030\005 \001(\0132).fintekkers." +
-      "models.util.DecimalValueProto\"\340\002\n\021CurveR" +
-      "equestProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007ver" +
-      "sion\030\002 \001(\t\022B\n\rasof_datetime\030\n \001(\0132+.fint" +
-      "ekkers.models.util.LocalTimestampProto\022=" +
-      "\n\013curve_types\030\024 \003(\0162(.fintekkers.models." +
-      "position.MeasureProto\022D\n\014curve_inputs\030\036 " +
-      "\003(\0132..fintekkers.requests.valuation.Curv" +
-      "eInputProto\022?\n\014tenor_points\030( \003(\0132).fint" +
-      "ekkers.models.util.DecimalValueProto\022\032\n\022" +
-      "forward_term_years\0302 \001(\rB\026B\022CurveRequest" +
-      "ProtosP\001b\006proto3"
+      "/measure.proto\032(fintekkers/models/util/o" +
+      "bject_type.proto\"\374\001\n\017CurveInputProto\022;\n\010" +
+      "security\030\001 \001(\0132).fintekkers.models.secur" +
+      "ity.SecurityProto\0222\n\005price\030\002 \001(\0132#.finte" +
+      "kkers.models.price.PriceProto\0228\n\005tenor\030\004" +
+      " \001(\0132).fintekkers.models.util.DecimalVal" +
+      "ueProto\022>\n\013clean_price\030\005 \001(\0132).fintekker" +
+      "s.models.util.DecimalValueProto\"\357\003\n\021Curv" +
+      "eRequestProto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022" +
+      "\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001" +
+      "(\0162\'.fintekkers.models.util.ObjectTypePr" +
+      "oto\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversion_m" +
+      "inor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022B\n\ra" +
+      "sof_datetime\030\n \001(\0132+.fintekkers.models.u" +
+      "til.LocalTimestampProto\022=\n\013curve_types\030\024" +
+      " \003(\0162(.fintekkers.models.position.Measur" +
+      "eProto\022D\n\014curve_inputs\030\036 \003(\0132..fintekker" +
+      "s.requests.valuation.CurveInputProto\022?\n\014" +
+      "tenor_points\030( \003(\0132).fintekkers.models.u" +
+      "til.DecimalValueProto\022\032\n\022forward_term_ye" +
+      "ars\0302 \001(\rB\026B\022CurveRequestProtosP\001b\006proto" +
+      "3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -66,6 +71,7 @@ public final class CurveRequestProtos {
           fintekkers.models.util.DecimalValue.getDescriptor(),
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.models.position.MeasureProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_valuation_CurveInputProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -78,12 +84,13 @@ public final class CurveRequestProtos {
     internal_static_fintekkers_requests_valuation_CurveRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_CurveRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "AsofDatetime", "CurveTypes", "CurveInputs", "TenorPoints", "ForwardTermYears", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "AsofDatetime", "CurveTypes", "CurveInputs", "TenorPoints", "ForwardTermYears", });
     fintekkers.models.security.SecurityProtos.getDescriptor();
     fintekkers.models.price.PriceProtos.getDescriptor();
     fintekkers.models.util.DecimalValue.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.position.MeasureProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

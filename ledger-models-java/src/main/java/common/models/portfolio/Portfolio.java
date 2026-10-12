@@ -1,5 +1,7 @@
 package common.models.portfolio;
 
+import fintekkers.models.util.ObjectTypeProto;
+import common.util.ObjectTypes;
 import common.models.IFinancialModelObject;
 import common.models.RawDataModelObject;
 import common.models.postion.Field;
@@ -85,9 +87,7 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
     }
 
     private static PortfolioProto buildBaselineProto(UUID id, String portfolioName, ZonedDateTime asOf) {
-        PortfolioProto.Builder b = PortfolioProto.newBuilder()
-                .setObjectClass("Portfolio")
-                .setVersion("0.0.1")
+        PortfolioProto.Builder b = ObjectTypes.stamp(PortfolioProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PORTFOLIO, "Portfolio", "0.0.1")
                 .setIsLink(false);
         if (id != null) {
             b.setUuid(ProtoSerializationUtil.serializeUUID(id));

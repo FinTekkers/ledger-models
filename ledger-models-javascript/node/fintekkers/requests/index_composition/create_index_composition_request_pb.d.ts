@@ -7,12 +7,21 @@
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_security_index_composition_pb from "../../../fintekkers/models/security/index_composition_pb";
 import * as fintekkers_requests_util_operation_pb from "../../../fintekkers/requests/util/operation_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class CreateIndexCompositionRequestProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): CreateIndexCompositionRequestProto;
     getVersion(): string;
     setVersion(value: string): CreateIndexCompositionRequestProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CreateIndexCompositionRequestProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): CreateIndexCompositionRequestProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): CreateIndexCompositionRequestProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): CreateIndexCompositionRequestProto;
     getOperationType(): fintekkers_requests_util_operation_pb.RequestOperationTypeProto;
     setOperationType(value: fintekkers_requests_util_operation_pb.RequestOperationTypeProto): CreateIndexCompositionRequestProto;
 
@@ -35,6 +44,10 @@ export namespace CreateIndexCompositionRequestProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         operationType: fintekkers_requests_util_operation_pb.RequestOperationTypeProto,
         createIndexCompositionInput?: fintekkers_models_security_index_composition_pb.IndexCompositionProto.AsObject,
     }
@@ -45,6 +58,14 @@ export class CreateIndexCompositionResponseProto extends jspb.Message {
     setObjectClass(value: string): CreateIndexCompositionResponseProto;
     getVersion(): string;
     setVersion(value: string): CreateIndexCompositionResponseProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CreateIndexCompositionResponseProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): CreateIndexCompositionResponseProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): CreateIndexCompositionResponseProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): CreateIndexCompositionResponseProto;
     getOperationType(): fintekkers_requests_util_operation_pb.RequestOperationTypeProto;
     setOperationType(value: fintekkers_requests_util_operation_pb.RequestOperationTypeProto): CreateIndexCompositionResponseProto;
 
@@ -72,6 +93,10 @@ export namespace CreateIndexCompositionResponseProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         operationType: fintekkers_requests_util_operation_pb.RequestOperationTypeProto,
         createIndexCompositionRequest?: CreateIndexCompositionRequestProto.AsObject,
         indexCompositionResponse?: fintekkers_models_security_index_composition_pb.IndexCompositionProto.AsObject,

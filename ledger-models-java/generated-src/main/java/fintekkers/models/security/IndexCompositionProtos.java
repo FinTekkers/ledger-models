@@ -40,29 +40,33 @@ public final class IndexCompositionProtos {
       "proto\032,fintekkers/models/util/local_time" +
       "stamp.proto\032!fintekkers/models/util/uuid" +
       ".proto\032)fintekkers/models/security/secur" +
-      "ity.proto\"\331\004\n\025IndexCompositionProto\022\024\n\014o" +
-      "bject_class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022/\n\004uu" +
-      "id\030\005 \001(\0132!.fintekkers.models.util.UUIDPr" +
-      "oto\022:\n\005as_of\030\006 \001(\0132+.fintekkers.models.u" +
-      "til.LocalTimestampProto\022\017\n\007is_link\030\007 \001(\010" +
-      "\022?\n\nvalid_from\030\010 \001(\0132+.fintekkers.models" +
-      ".util.LocalTimestampProto\022=\n\010valid_to\030\t " +
+      "ity.proto\032(fintekkers/models/util/object" +
+      "_type.proto\"\350\005\n\025IndexCompositionProto\022\030\n" +
+      "\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\t" +
+      "B\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fintekkers." +
+      "models.util.ObjectTypeProto\022\026\n\rversion_m" +
+      "ajor\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rv" +
+      "ersion_patch\030\354\007 \001(\r\022/\n\004uuid\030\005 \001(\0132!.fint" +
+      "ekkers.models.util.UUIDProto\022:\n\005as_of\030\006 " +
       "\001(\0132+.fintekkers.models.util.LocalTimest" +
-      "ampProto\022A\n\016index_security\030\n \001(\0132).finte" +
-      "kkers.models.security.SecurityProto\022>\n\016e" +
-      "ffective_date\030\013 \001(\0132&.fintekkers.models." +
-      "util.LocalDateProto\022G\n\014constituents\030\024 \003(" +
-      "\01321.fintekkers.models.security.IndexCons" +
-      "tituentProto\022@\n\rindex_divisor\030\025 \001(\0132).fi" +
-      "ntekkers.models.util.DecimalValueProto\022\r" +
-      "\n\005notes\030\037 \001(\t\"\345\001\n\025IndexConstituentProto\022" +
-      ";\n\010security\030\001 \001(\0132).fintekkers.models.se" +
-      "curity.SecurityProto\0229\n\006weight\030\002 \001(\0132).f" +
-      "intekkers.models.util.DecimalValueProto\022" +
-      "B\n\017shares_in_index\030\003 \001(\0132).fintekkers.mo" +
-      "dels.util.DecimalValueProto\022\020\n\010currency\030" +
-      "\005 \001(\tB\032B\026IndexCompositionProtosP\001b\006proto" +
-      "3"
+      "ampProto\022\017\n\007is_link\030\007 \001(\010\022?\n\nvalid_from\030" +
+      "\010 \001(\0132+.fintekkers.models.util.LocalTime" +
+      "stampProto\022=\n\010valid_to\030\t \001(\0132+.fintekker" +
+      "s.models.util.LocalTimestampProto\022A\n\016ind" +
+      "ex_security\030\n \001(\0132).fintekkers.models.se" +
+      "curity.SecurityProto\022>\n\016effective_date\030\013" +
+      " \001(\0132&.fintekkers.models.util.LocalDateP" +
+      "roto\022G\n\014constituents\030\024 \003(\01321.fintekkers." +
+      "models.security.IndexConstituentProto\022@\n" +
+      "\rindex_divisor\030\025 \001(\0132).fintekkers.models" +
+      ".util.DecimalValueProto\022\r\n\005notes\030\037 \001(\t\"\345" +
+      "\001\n\025IndexConstituentProto\022;\n\010security\030\001 \001" +
+      "(\0132).fintekkers.models.security.Security" +
+      "Proto\0229\n\006weight\030\002 \001(\0132).fintekkers.model" +
+      "s.util.DecimalValueProto\022B\n\017shares_in_in" +
+      "dex\030\003 \001(\0132).fintekkers.models.util.Decim" +
+      "alValueProto\022\020\n\010currency\030\005 \001(\tB\032B\026IndexC" +
+      "ompositionProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -72,13 +76,14 @@ public final class IndexCompositionProtos {
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.models.util.Uuid.getDescriptor(),
           fintekkers.models.security.SecurityProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_security_IndexCompositionProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_security_IndexCompositionProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_security_IndexCompositionProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "IndexSecurity", "EffectiveDate", "Constituents", "IndexDivisor", "Notes", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "IndexSecurity", "EffectiveDate", "Constituents", "IndexDivisor", "Notes", });
     internal_static_fintekkers_models_security_IndexConstituentProto_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_fintekkers_models_security_IndexConstituentProto_fieldAccessorTable = new
@@ -90,6 +95,7 @@ public final class IndexCompositionProtos {
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.security.SecurityProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

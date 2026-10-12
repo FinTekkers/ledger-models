@@ -11,6 +11,7 @@ fn ident(ty: IdentifierTypeProto, value: &str) -> IdentifierProto {
         version: "0.0.1".to_string(),
         identifier_value: value.to_string(),
         identifier_type: ty as i32,
+        ..Default::default()
     }
 }
 

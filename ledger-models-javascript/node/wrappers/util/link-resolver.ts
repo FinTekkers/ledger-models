@@ -24,6 +24,8 @@ import EnvConfig from '../models/utils/requestcontext';
 import { Service } from './serviceaddress';
 import { ZonedDateTime } from '../models/utils/datetime';
 import * as LinkCacheModule from './link-cache';
+import { ObjectTypeProto } from '../../fintekkers/models/util/object_type_pb';
+import { stamp } from './object-types';
 
 /**
  * LinkResolver — bulk hydration of `is_link=true` entity references into
@@ -388,8 +390,7 @@ class LinkResolver {
   private async batchFetchSecurities(uuids: UUID[], asOf?: LocalTimestampProto): Promise<SecurityProto[]> {
     if (uuids.length === 0) return [];
     const request = new QuerySecurityRequestProto();
-    request.setObjectClass('SecurityRequest');
-    request.setVersion('0.0.1');
+    stamp(request, ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, 'SecurityRequest', '0.0.1');
     const uuidProtos: UUIDProto[] = uuids.map((u) => u.toUUIDProto());
     request.setUuidsList(uuidProtos);
     if (asOf) request.setAsOf(asOf);
@@ -402,8 +403,7 @@ class LinkResolver {
   private async batchFetchTransactions(uuids: UUID[], asOf?: LocalTimestampProto): Promise<TransactionProto[]> {
     if (uuids.length === 0) return [];
     const request = new QueryTransactionRequestProto();
-    request.setObjectClass('TransactionRequest');
-    request.setVersion('0.0.1');
+    stamp(request, ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
     const uuidProtos: UUIDProto[] = uuids.map((u) => u.toUUIDProto());
     request.setUuidsList(uuidProtos);
     if (asOf) request.setAsOf(asOf);
@@ -416,8 +416,7 @@ class LinkResolver {
   private async batchFetchPortfolios(uuids: UUID[], asOf?: LocalTimestampProto): Promise<PortfolioProto[]> {
     if (uuids.length === 0) return [];
     const request = new QueryPortfolioRequestProto();
-    request.setObjectClass('PortfolioRequest');
-    request.setVersion('0.0.1');
+    stamp(request, ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
     const uuidProtos: UUIDProto[] = uuids.map((u) => u.toUUIDProto());
     request.setUuidsList(uuidProtos);
     if (asOf) request.setAsOf(asOf);

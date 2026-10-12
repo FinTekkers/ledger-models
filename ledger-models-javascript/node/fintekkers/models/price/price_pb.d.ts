@@ -10,12 +10,21 @@ import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_security_security_pb from "../../../fintekkers/models/security/security_pb";
 import * as fintekkers_models_price_price_type_pb from "../../../fintekkers/models/price/price_type_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class PriceProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): PriceProto;
     getVersion(): string;
     setVersion(value: string): PriceProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): PriceProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): PriceProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): PriceProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): PriceProto;
 
     hasUuid(): boolean;
     clearUuid(): void;
@@ -65,6 +74,10 @@ export namespace PriceProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         uuid?: fintekkers_models_util_uuid_pb.UUIDProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         isLink: boolean,

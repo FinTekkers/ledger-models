@@ -23,6 +23,8 @@ from fintekkers.models.security.product_type_pb2 import (
 from fintekkers.models.util.date_range_pb2 import DateRangeProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 
 from fintekkers.models.security.bond.issuance_pb2 import IssuanceProto
 
@@ -83,19 +85,15 @@ class CreatePriceRequest:
 
         as_of_proto: LocalTimestampProto = ProtoSerializationUtil.serialize(as_of_date)
 
-        proto: CreatePriceRequestProto = CreatePriceRequestProto(
-            object_class="CreatePriceRequestProto",
-            version="0.0.1",
-            create_price_input=PriceProto(
-                object_class="PriceProto",
-                version="0.0.1",
+        proto: CreatePriceRequestProto = stamp(CreatePriceRequestProto(
+            create_price_input=stamp(PriceProto(
                 uuid=UUIDProto(raw_uuid=price_uuid.bytes),
                 as_of=as_of_proto,
                 valid_from=as_of_proto,
                 price=ProtoSerializationUtil.serialize(price),
                 security=security_proto,
-            ),
-        )
+            ), ObjectTypeProto.OBJECT_TYPE_PRICE, "PriceProto", "0.0.1"),
+        ), ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, "CreatePriceRequestProto", "0.0.1")
 
         return CreatePriceRequest(proto=proto)
 

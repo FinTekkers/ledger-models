@@ -48,6 +48,8 @@ const portfolio_1 = __importDefault(require("../../models/portfolio/portfolio"))
 const uuid_1 = require("../../models/utils/uuid");
 const datetime_1 = require("../../models/utils/datetime");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
+const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
+const object_types_1 = require("../../util/object-types");
 class PortfolioService {
     /** Read on every access, so a changed environment is picked up. */
     static get url() {
@@ -65,8 +67,7 @@ class PortfolioService {
     validateCreatePortfolio(portfolio) {
         return __awaiter(this, void 0, void 0, function* () {
             const createRequest = new create_portfolio_request_pb_1.CreatePortfolioRequestProto();
-            createRequest.setObjectClass('PortfolioRequest');
-            createRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
             createRequest.setCreatePortfolioInput(portfolio);
             const validateCreateOrUpdateAsync = (0, util_1.promisify)(this.client.validateCreateOrUpdate.bind(this.client));
             const response = yield validateCreateOrUpdateAsync(createRequest);
@@ -76,8 +77,7 @@ class PortfolioService {
     createPortfolio(portfolio) {
         return __awaiter(this, void 0, void 0, function* () {
             const createRequest = new create_portfolio_request_pb_1.CreatePortfolioRequestProto();
-            createRequest.setObjectClass('PortfolioRequest');
-            createRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
             createRequest.setCreatePortfolioInput(portfolio);
             const createPortfolioAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
             const response = yield createPortfolioAsync(createRequest);
@@ -96,8 +96,7 @@ class PortfolioService {
     searchPortfolio(asOf, positionFilter) {
         return __awaiter(this, void 0, void 0, function* () {
             const searchRequest = new query_portfolio_request_pb_1.QueryPortfolioRequestProto();
-            searchRequest.setObjectClass('PortfolioRequest');
-            searchRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(searchRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
             searchRequest.setAsOf(asOf);
             searchRequest.setSearchPortfolioInput(positionFilter.toProto());
             const tmpClient = this.client;

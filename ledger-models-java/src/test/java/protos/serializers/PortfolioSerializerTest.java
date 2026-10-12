@@ -74,6 +74,9 @@ class PortfolioSerializerTest {
         PortfolioProto golden = PortfolioProto.newBuilder()
                 .setObjectClass("Portfolio")
                 .setVersion("0.0.1")
+                // Compact form of the two strings (LM-297).
+                .setObjectType(fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_PORTFOLIO)
+                .setVersionPatch(1)
                 .setUuid(ProtoSerializationUtil.serializeUUID(id))
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(AS_OF))
                 .setPortfolioName("name")

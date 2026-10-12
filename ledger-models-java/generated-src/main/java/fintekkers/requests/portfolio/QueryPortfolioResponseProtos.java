@@ -32,30 +32,37 @@ public final class QueryPortfolioResponseProtos {
       "rtfolio_response.proto\022\035fintekkers.reque" +
       "sts.portfolio\032+fintekkers/models/portfol" +
       "io/portfolio.proto\032;fintekkers/requests/" +
-      "portfolio/query_portfolio_request.proto\"" +
-      "\202\002\n\033QueryPortfolioResponseProto\022\024\n\014objec" +
-      "t_class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022Z\n\027query_" +
-      "portfolio_request\030\024 \001(\01329.fintekkers.req" +
-      "uests.portfolio.QueryPortfolioRequestPro" +
-      "to\022G\n\022portfolio_response\030\036 \003(\0132+.fintekk" +
-      "ers.models.portfolio.PortfolioProto\022\027\n\017n" +
-      "ext_page_token\0302 \001(\tB B\034QueryPortfolioRe" +
-      "sponseProtosP\001b\006proto3"
+      "portfolio/query_portfolio_request.proto\032" +
+      "(fintekkers/models/util/object_type.prot" +
+      "o\"\221\003\n\033QueryPortfolioResponseProto\022\030\n\014obj" +
+      "ect_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001" +
+      "\022=\n\013object_type\030\351\007 \001(\0162\'.fintekkers.mode" +
+      "ls.util.ObjectTypeProto\022\026\n\rversion_major" +
+      "\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversi" +
+      "on_patch\030\354\007 \001(\r\022Z\n\027query_portfolio_reque" +
+      "st\030\024 \001(\01329.fintekkers.requests.portfolio" +
+      ".QueryPortfolioRequestProto\022G\n\022portfolio" +
+      "_response\030\036 \003(\0132+.fintekkers.models.port" +
+      "folio.PortfolioProto\022\027\n\017next_page_token\030" +
+      "2 \001(\tB B\034QueryPortfolioResponseProtosP\001b" +
+      "\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.portfolio.PortfolioProtos.getDescriptor(),
           fintekkers.requests.portfolio.QueryPortfolioRequestProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_portfolio_QueryPortfolioResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_portfolio_QueryPortfolioResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_portfolio_QueryPortfolioResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "QueryPortfolioRequest", "PortfolioResponse", "NextPageToken", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "QueryPortfolioRequest", "PortfolioResponse", "NextPageToken", });
     fintekkers.models.portfolio.PortfolioProtos.getDescriptor();
     fintekkers.requests.portfolio.QueryPortfolioRequestProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

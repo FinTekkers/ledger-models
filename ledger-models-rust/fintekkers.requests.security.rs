@@ -10,10 +10,21 @@
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateSecurityRequestProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     /// A fully formed security object to be created or updated. Validations may be applied
     /// before creating. For example creating an equity security with bond fields may be invalid and
     /// therefore rejected.
@@ -25,10 +36,21 @@ pub struct CreateSecurityRequestProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateSecurityResponseProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     /// The input that was provided for this request.
     #[prost(message, optional, tag = "20")]
     pub security_request: ::core::option::Option<CreateSecurityRequestProto>,
@@ -45,30 +67,63 @@ pub struct CreateSecurityResponseProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetFieldValuesRequestProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     #[prost(enumeration = "super::super::models::position::FieldProto", tag = "10")]
     pub field: i32,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetFieldValuesResponseProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     #[prost(message, repeated, tag = "10")]
     pub values: ::prost::alloc::vec::Vec<::prost_types::Any>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetFieldsResponseProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     #[prost(
         enumeration = "super::super::models::position::FieldProto",
         repeated,
@@ -80,10 +135,21 @@ pub struct GetFieldsResponseProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct QuerySecurityRequestProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     /// The list of UUIds to return
     #[prost(message, repeated, tag = "21")]
     pub uu_ids: ::prost::alloc::vec::Vec<super::super::models::util::UuidProto>,
@@ -125,10 +191,21 @@ pub struct QuerySecurityRequestProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct QuerySecurityResponseProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     /// The input that was provided for this request.
     #[prost(message, optional, tag = "20")]
     pub query_security_input: ::core::option::Option<QuerySecurityRequestProto>,

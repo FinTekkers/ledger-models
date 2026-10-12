@@ -1,6 +1,7 @@
 from fintekkers.models.security import security_pb2 as _security_pb2
 from fintekkers.requests.security import query_security_request_pb2 as _query_security_request_pb2
 from fintekkers.requests.util.errors import summary_pb2 as _summary_pb2
+from fintekkers.models.util import object_type_pb2 as _object_type_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
@@ -10,17 +11,25 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class QuerySecurityResponseProto(_message.Message):
-    __slots__ = ("object_class", "version", "query_security_input", "security_response", "errors_or_warnings", "next_page_token")
+    __slots__ = ("object_class", "version", "object_type", "version_major", "version_minor", "version_patch", "query_security_input", "security_response", "errors_or_warnings", "next_page_token")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
+    OBJECT_TYPE_FIELD_NUMBER: _ClassVar[int]
+    VERSION_MAJOR_FIELD_NUMBER: _ClassVar[int]
+    VERSION_MINOR_FIELD_NUMBER: _ClassVar[int]
+    VERSION_PATCH_FIELD_NUMBER: _ClassVar[int]
     QUERY_SECURITY_INPUT_FIELD_NUMBER: _ClassVar[int]
     SECURITY_RESPONSE_FIELD_NUMBER: _ClassVar[int]
     ERRORS_OR_WARNINGS_FIELD_NUMBER: _ClassVar[int]
     NEXT_PAGE_TOKEN_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
+    object_type: _object_type_pb2.ObjectTypeProto
+    version_major: int
+    version_minor: int
+    version_patch: int
     query_security_input: _query_security_request_pb2.QuerySecurityRequestProto
     security_response: _containers.RepeatedCompositeFieldContainer[_security_pb2.SecurityProto]
     errors_or_warnings: _containers.RepeatedCompositeFieldContainer[_summary_pb2.SummaryProto]
     next_page_token: str
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., query_security_input: _Optional[_Union[_query_security_request_pb2.QuerySecurityRequestProto, _Mapping]] = ..., security_response: _Optional[_Iterable[_Union[_security_pb2.SecurityProto, _Mapping]]] = ..., errors_or_warnings: _Optional[_Iterable[_Union[_summary_pb2.SummaryProto, _Mapping]]] = ..., next_page_token: _Optional[str] = ...) -> None: ...
+    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version_major: _Optional[int] = ..., version_minor: _Optional[int] = ..., version_patch: _Optional[int] = ..., query_security_input: _Optional[_Union[_query_security_request_pb2.QuerySecurityRequestProto, _Mapping]] = ..., security_response: _Optional[_Iterable[_Union[_security_pb2.SecurityProto, _Mapping]]] = ..., errors_or_warnings: _Optional[_Iterable[_Union[_summary_pb2.SummaryProto, _Mapping]]] = ..., next_page_token: _Optional[str] = ...) -> None: ...

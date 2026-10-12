@@ -4,6 +4,8 @@ exports.PositionFilter = void 0;
 const position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 const serialization_util_1 = require("../utils/serialization.util");
 const position_filter_pb_1 = require("../../../fintekkers/models/position/position_filter_pb");
+const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
+const object_types_1 = require("../../util/object-types");
 class PositionFilter {
     constructor() {
         this.filters = [];
@@ -66,8 +68,7 @@ class PositionFilter {
     }
     toProto() {
         const positionFilterProto = new position_filter_pb_1.PositionFilterProto();
-        positionFilterProto.setObjectClass('PositionFilter');
-        positionFilterProto.setVersion('0.0.1');
+        (0, object_types_1.stamp)(positionFilterProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER, 'PositionFilter', '0.0.1');
         positionFilterProto.setFiltersList(this.filters);
         return positionFilterProto;
     }

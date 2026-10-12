@@ -2,6 +2,7 @@ from fintekkers.models.util import uuid_pb2 as _uuid_pb2
 from fintekkers.models.util import local_timestamp_pb2 as _local_timestamp_pb2
 from fintekkers.models.position import position_filter_pb2 as _position_filter_pb2
 from fintekkers.models.util import date_range_pb2 as _date_range_pb2
+from fintekkers.models.util import object_type_pb2 as _object_type_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
@@ -50,9 +51,13 @@ PRICE_HORIZON_MAX: PriceHorizonProto
 PRICE_HORIZON_YEAR_TO_DATE: PriceHorizonProto
 
 class QueryPriceRequestProto(_message.Message):
-    __slots__ = ("object_class", "version", "uuIds", "search_price_input", "as_of", "frequency", "horizon", "date_range", "limit", "page_token")
+    __slots__ = ("object_class", "version", "object_type", "version_major", "version_minor", "version_patch", "uuIds", "search_price_input", "as_of", "frequency", "horizon", "date_range", "limit", "page_token")
     OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
+    OBJECT_TYPE_FIELD_NUMBER: _ClassVar[int]
+    VERSION_MAJOR_FIELD_NUMBER: _ClassVar[int]
+    VERSION_MINOR_FIELD_NUMBER: _ClassVar[int]
+    VERSION_PATCH_FIELD_NUMBER: _ClassVar[int]
     UUIDS_FIELD_NUMBER: _ClassVar[int]
     SEARCH_PRICE_INPUT_FIELD_NUMBER: _ClassVar[int]
     AS_OF_FIELD_NUMBER: _ClassVar[int]
@@ -63,6 +68,10 @@ class QueryPriceRequestProto(_message.Message):
     PAGE_TOKEN_FIELD_NUMBER: _ClassVar[int]
     object_class: str
     version: str
+    object_type: _object_type_pb2.ObjectTypeProto
+    version_major: int
+    version_minor: int
+    version_patch: int
     uuIds: _containers.RepeatedCompositeFieldContainer[_uuid_pb2.UUIDProto]
     search_price_input: _position_filter_pb2.PositionFilterProto
     as_of: _local_timestamp_pb2.LocalTimestampProto
@@ -71,4 +80,4 @@ class QueryPriceRequestProto(_message.Message):
     date_range: _date_range_pb2.DateRangeProto
     limit: int
     page_token: str
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., uuIds: _Optional[_Iterable[_Union[_uuid_pb2.UUIDProto, _Mapping]]] = ..., search_price_input: _Optional[_Union[_position_filter_pb2.PositionFilterProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., frequency: _Optional[_Union[PriceFrequencyProto, str]] = ..., horizon: _Optional[_Union[PriceHorizonProto, str]] = ..., date_range: _Optional[_Union[_date_range_pb2.DateRangeProto, _Mapping]] = ..., limit: _Optional[int] = ..., page_token: _Optional[str] = ...) -> None: ...
+    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version_major: _Optional[int] = ..., version_minor: _Optional[int] = ..., version_patch: _Optional[int] = ..., uuIds: _Optional[_Iterable[_Union[_uuid_pb2.UUIDProto, _Mapping]]] = ..., search_price_input: _Optional[_Union[_position_filter_pb2.PositionFilterProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., frequency: _Optional[_Union[PriceFrequencyProto, str]] = ..., horizon: _Optional[_Union[PriceHorizonProto, str]] = ..., date_range: _Optional[_Union[_date_range_pb2.DateRangeProto, _Mapping]] = ..., limit: _Optional[int] = ..., page_token: _Optional[str] = ...) -> None: ...

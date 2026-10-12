@@ -53,6 +53,8 @@ const date_1 = require("../utils/date");
 const decimal_js_1 = require("decimal.js");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
 const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
+const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
+const object_types_1 = require("../../util/object-types");
 class Transaction {
     constructor(protoOrParams) {
         if (protoOrParams instanceof transaction_pb_1.TransactionProto) {
@@ -131,8 +133,7 @@ class Transaction {
      */
     buildProtoFromParams(params) {
         const transactionProto = new transaction_pb_1.TransactionProto();
-        transactionProto.setObjectClass('Transaction');
-        transactionProto.setVersion('0.0.1');
+        (0, object_types_1.stamp)(transactionProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_TRANSACTION, 'Transaction', '0.0.1');
         transactionProto.setUuid(uuid_1.UUID.random().toUUIDProto());
         // Convert asOfDate to ZonedDateTime and set on transaction
         const asOfZonedDateTime = datetime_1.ZonedDateTime.from(params.asOfDate);
@@ -153,8 +154,7 @@ class Transaction {
         transactionProto.setQuantity(quantityDecimal);
         // Create and set an empty StrategyAllocationProto
         const strategyAllocationProto = new strategy_allocation_pb_1.StrategyAllocationProto();
-        strategyAllocationProto.setObjectClass('StrategyAllocation');
-        strategyAllocationProto.setVersion('0.0.1');
+        (0, object_types_1.stamp)(strategyAllocationProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_STRATEGY_ALLOCATION, 'StrategyAllocation', '0.0.1');
         transactionProto.setStrategyAllocation(strategyAllocationProto);
         // Set default position status
         transactionProto.setPositionStatus(position_status_pb_1.PositionStatusProto.EXECUTED);

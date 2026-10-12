@@ -17,6 +17,8 @@ from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.util.local_date_pb2 import LocalDateProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 
 from fintekkers.wrappers.util import link_cache as _link_cache
@@ -122,11 +124,10 @@ class Transaction():
         from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
         as_of_proto = ProtoSerializationUtil.serialize(as_of)
 
-        return Transaction(proto=TransactionProto(
+        return Transaction(proto=stamp(TransactionProto(
             as_of=as_of_proto,
             is_cancelled=False,
             is_link=False,
-            object_class="Transaction",
             portfolio=portfolio,
             security=security,
             position_status=position_status,
@@ -143,7 +144,7 @@ class Transaction():
             uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
             trade_name="No trade name",
             strategy_allocation=None
-        ))
+        ), ObjectTypeProto.OBJECT_TYPE_TRANSACTION, "Transaction", ""))
 
     def __init__(self, proto:TransactionProto):
         # A non-link transaction must carry as_of (ModelValidationError naming

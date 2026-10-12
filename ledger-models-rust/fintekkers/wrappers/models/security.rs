@@ -1,5 +1,5 @@
 use crate::fintekkers::models::security::{IdentifierProto, IdentifierTypeProto, SecurityProto, ProductTypeProto};
-use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
+use crate::fintekkers::models::util::{LocalTimestampProto, ObjectTypeProto, UuidProto};
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::decimal;
@@ -79,9 +79,8 @@ fn current_security_fetcher() -> Option<SecurityFetchFn> {
 // on the runtime itself.
 
 use crate::fintekkers::services::security_service::security_client::SecurityClient;
-use crate::fintekkers::requests::security::{
-    QuerySecurityRequestProto, QuerySecurityResponseProto,
-};
+use crate::fintekkers::requests::security::QuerySecurityResponseProto;
+use crate::fintekkers::wrappers::util::object_types;
 use std::sync::mpsc;
 
 struct FetchRequest {
@@ -126,13 +125,10 @@ fn spawn_security_worker() -> mpsc::Sender<FetchRequest> {
                             }
                         }
                     };
-                    let request = QuerySecurityRequestProto {
-                        object_class: "SecurityRequest".into(),
-                        version: "0.0.1".into(),
-                        uu_ids: vec![UuidProto { raw_uuid: req.uuid.as_bytes().to_vec() }],
-                        as_of: req.as_of,
-                        ..Default::default()
-                    };
+                    let request = object_types::query_security_request(
+                        vec![UuidProto { raw_uuid: req.uuid.as_bytes().to_vec() }],
+                        req.as_of,
+                    );
                     let result: Result<SecurityProto, LinkResolverError> = client_ref
                         .get_by_ids(request)
                         .await
@@ -540,13 +536,11 @@ impl SecurityProtoBuilder {
             None => None,
         };
 
-        Ok(SecurityProto {
+        let proto = SecurityProto {
             as_of: Some(self.as_of.into()),
             valid_from: Some(self.valid_from.into()),
             valid_to,
 
-            object_class: self.object_class,
-            version: self.version,
             is_link: self.is_link,
 
             uuid: Some(self.uuid.into()),
@@ -581,7 +575,9 @@ impl SecurityProtoBuilder {
             frn_extension: None,
             mbs_extension: None,
             non_bond_details: None,
-        })
+            ..Default::default()
+        };
+        object_types::stamp_str(proto, ObjectTypeProto::ObjectTypeSecurity, &self.object_class, &self.version)
     }
 }
 

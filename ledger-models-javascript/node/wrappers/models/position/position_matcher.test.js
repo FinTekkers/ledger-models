@@ -125,3 +125,4 @@ describe('the published (compiled) position_matcher.js', () => {
         expect(compiled.matches(field_pb_1.FieldProto.ASSET_CLASS, position_util_pb_1.PositionFilterOperator.NOT_EQUALS, 'FIXED_INCOME', null)).toBe(true);
     });
 });
+//# sourceMappingURL=position_matcher.test.js.map

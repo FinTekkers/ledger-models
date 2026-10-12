@@ -23,9 +23,10 @@ _sym_db = _symbol_database.Default()
 
 
 from fintekkers.models.security import security_pb2 as fintekkers_dot_models_dot_security_dot_security__pb2
+from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n:fintekkers/requests/security/create_security_request.proto\x12\x1c\x66intekkers.requests.security\x1a)fintekkers/models/security/security.proto\"\x86\x01\n\x1a\x43reateSecurityRequestProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x41\n\x0esecurity_input\x18\x14 \x01(\x0b\x32).fintekkers.models.security.SecurityProtoB\x1f\x42\x1b\x43reateSecurityRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n:fintekkers/requests/security/create_security_request.proto\x12\x1c\x66intekkers.requests.security\x1a)fintekkers/models/security/security.proto\x1a(fintekkers/models/util/object_type.proto\"\x95\x02\n\x1a\x43reateSecurityRequestProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12\x41\n\x0esecurity_input\x18\x14 \x01(\x0b\x32).fintekkers.models.security.SecurityProtoB\x1f\x42\x1b\x43reateSecurityRequestProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,6 +34,10 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.securit
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\033CreateSecurityRequestProtosP\001'
-  _globals['_CREATESECURITYREQUESTPROTO']._serialized_start=136
-  _globals['_CREATESECURITYREQUESTPROTO']._serialized_end=270
+  _globals['_CREATESECURITYREQUESTPROTO'].fields_by_name['object_class']._loaded_options = None
+  _globals['_CREATESECURITYREQUESTPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
+  _globals['_CREATESECURITYREQUESTPROTO'].fields_by_name['version']._loaded_options = None
+  _globals['_CREATESECURITYREQUESTPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
+  _globals['_CREATESECURITYREQUESTPROTO']._serialized_start=178
+  _globals['_CREATESECURITYREQUESTPROTO']._serialized_end=455
 # @@protoc_insertion_point(module_scope)

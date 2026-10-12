@@ -26,9 +26,10 @@ from fintekkers.models.strategy import strategy_pb2 as fintekkers_dot_models_dot
 from fintekkers.models.util import local_timestamp_pb2 as fintekkers_dot_models_dot_util_dot_local__timestamp__pb2
 from fintekkers.models.util import decimal_value_pb2 as fintekkers_dot_models_dot_util_dot_decimal__value__pb2
 from fintekkers.models.util import uuid_pb2 as fintekkers_dot_models_dot_util_dot_uuid__pb2
+from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n4fintekkers/models/strategy/strategy_allocation.proto\x12\x1a\x66intekkers.models.strategy\x1a)fintekkers/models/strategy/strategy.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a*fintekkers/models/util/decimal_value.proto\x1a!fintekkers/models/util/uuid.proto\"\x81\x01\n\rMapFieldEntry\x12\x36\n\x03key\x18\x01 \x01(\x0b\x32).fintekkers.models.strategy.StrategyProto\x12\x38\n\x05value\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\xfe\x01\n\x17StrategyAllocationProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12/\n\x04uuid\x18\x05 \x01(\x0b\x32!.fintekkers.models.util.UUIDProto\x12:\n\x05\x61s_of\x18\x06 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x0f\n\x07is_link\x18\x07 \x01(\x08\x12>\n\x0b\x61llocations\x18\n \x03(\x0b\x32).fintekkers.models.strategy.MapFieldEntryB\x1c\x42\x18StrategyAllocationProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n4fintekkers/models/strategy/strategy_allocation.proto\x12\x1a\x66intekkers.models.strategy\x1a)fintekkers/models/strategy/strategy.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a*fintekkers/models/util/decimal_value.proto\x1a!fintekkers/models/util/uuid.proto\x1a(fintekkers/models/util/object_type.proto\"\x81\x01\n\rMapFieldEntry\x12\x36\n\x03key\x18\x01 \x01(\x0b\x32).fintekkers.models.strategy.StrategyProto\x12\x38\n\x05value\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\x8d\x03\n\x17StrategyAllocationProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12/\n\x04uuid\x18\x05 \x01(\x0b\x32!.fintekkers.models.util.UUIDProto\x12:\n\x05\x61s_of\x18\x06 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x0f\n\x07is_link\x18\x07 \x01(\x08\x12>\n\x0b\x61llocations\x18\n \x03(\x0b\x32).fintekkers.models.strategy.MapFieldEntryB\x1c\x42\x18StrategyAllocationProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,8 +37,12 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.strategy.
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\030StrategyAllocationProtosP\001'
-  _globals['_MAPFIELDENTRY']._serialized_start=253
-  _globals['_MAPFIELDENTRY']._serialized_end=382
-  _globals['_STRATEGYALLOCATIONPROTO']._serialized_start=385
-  _globals['_STRATEGYALLOCATIONPROTO']._serialized_end=639
+  _globals['_STRATEGYALLOCATIONPROTO'].fields_by_name['object_class']._loaded_options = None
+  _globals['_STRATEGYALLOCATIONPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
+  _globals['_STRATEGYALLOCATIONPROTO'].fields_by_name['version']._loaded_options = None
+  _globals['_STRATEGYALLOCATIONPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
+  _globals['_MAPFIELDENTRY']._serialized_start=295
+  _globals['_MAPFIELDENTRY']._serialized_end=424
+  _globals['_STRATEGYALLOCATIONPROTO']._serialized_start=427
+  _globals['_STRATEGYALLOCATIONPROTO']._serialized_end=824
 # @@protoc_insertion_point(module_scope)

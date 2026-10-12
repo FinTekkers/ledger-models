@@ -95,10 +95,21 @@ impl AuctionTypeProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct IssuanceProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     /// Primary Key not needed currently as these will be stored on the security object
     ///    fintekkers.models.util.UUIDProto uuid = 5;
     ///

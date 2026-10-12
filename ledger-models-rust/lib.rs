@@ -137,6 +137,7 @@ mod tests {
             portfolio_name: String::from("PortfolioName"),
             is_link: false,
             uuid: None,
+            ..Default::default()
         };
 
         assert_eq!(portfolio.portfolio_name, String::from("PortfolioName"))

@@ -1,5 +1,5 @@
 use crate::fintekkers::models::portfolio::PortfolioProto;
-use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
+use crate::fintekkers::models::util::{LocalTimestampProto, ObjectTypeProto, UuidProto};
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
@@ -64,9 +64,8 @@ fn current_portfolio_fetcher() -> Option<PortfolioFetchFn> {
 // PortfolioClient and a tokio runtime.
 
 use crate::fintekkers::services::portfolio_service::portfolio_client::PortfolioClient;
-use crate::fintekkers::requests::portfolio::{
-    QueryPortfolioRequestProto, QueryPortfolioResponseProto,
-};
+use crate::fintekkers::requests::portfolio::QueryPortfolioResponseProto;
+use crate::fintekkers::wrappers::util::object_types;
 use std::sync::mpsc;
 
 struct PortfolioFetchRequest {
@@ -111,13 +110,10 @@ fn spawn_portfolio_worker() -> mpsc::Sender<PortfolioFetchRequest> {
                             }
                         }
                     };
-                    let request = QueryPortfolioRequestProto {
-                        object_class: "PortfolioRequest".into(),
-                        version: "0.0.1".into(),
-                        uu_ids: vec![UuidProto { raw_uuid: req.uuid.as_bytes().to_vec() }],
-                        as_of: req.as_of,
-                        ..Default::default()
-                    };
+                    let request = object_types::query_portfolio_request(
+                        vec![UuidProto { raw_uuid: req.uuid.as_bytes().to_vec() }],
+                        req.as_of,
+                    );
                     let result: Result<PortfolioProto, LinkResolverError> = client_ref
                         .get_by_ids(request)
                         .await
@@ -346,18 +342,18 @@ impl PortfolioProtoBuilder {
             None => None
         };
 
-        Ok(PortfolioProto {
+        let proto = PortfolioProto {
             as_of: Some(self.as_of.into()),
             valid_from: Some(self.valid_from.into()),
             valid_to,
 
-            object_class: self.object_class,
-            version: self.version,
             is_link: self.is_link,
 
             uuid: Some(self.uuid.into()),
             portfolio_name: self.portfolio_name,
-        })
+            ..Default::default()
+        };
+        object_types::stamp_str(proto, ObjectTypeProto::ObjectTypePortfolio, &self.object_class, &self.version)
     }
 }
 
@@ -377,6 +373,7 @@ mod test {
             uuid: None,
             is_link: false,
             portfolio_name: "Dummy Name".to_string(),
+            ..Default::default()
         });
 
         assert_eq!(portfolio.portfolio_name(), "Dummy Name");

@@ -29,6 +29,8 @@ var fintekkers_models_security_index_composition_pb = require('../../../fintekke
 goog.object.extend(proto, fintekkers_models_security_index_composition_pb);
 var fintekkers_requests_util_operation_pb = require('../../../fintekkers/requests/util/operation_pb.js');
 goog.object.extend(proto, fintekkers_requests_util_operation_pb);
+var fintekkers_models_util_object_type_pb = require('../../../fintekkers/models/util/object_type_pb.js');
+goog.object.extend(proto, fintekkers_models_util_object_type_pb);
 goog.exportSymbol('proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto', null, global);
 goog.exportSymbol('proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto', null, global);
 /**
@@ -42,7 +44,7 @@ goog.exportSymbol('proto.fintekkers.requests.index_composition.GetIndexCompositi
  * @constructor
  */
 proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, 500, null, null);
 };
 goog.inherits(proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -63,7 +65,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, 500, null, null);
 };
 goog.inherits(proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -107,6 +109,10 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.toOb
   var f, obj = {
     objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
     version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    objectType: jspb.Message.getFieldWithDefault(msg, 1001, 0),
+    versionMajor: jspb.Message.getFieldWithDefault(msg, 1002, 0),
+    versionMinor: jspb.Message.getFieldWithDefault(msg, 1003, 0),
+    versionPatch: jspb.Message.getFieldWithDefault(msg, 1004, 0),
     indexUuid: (f = msg.getIndexUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
     asOfDate: (f = msg.getAsOfDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
   };
@@ -152,6 +158,22 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.dese
     case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
+      break;
+    case 1001:
+      var value = /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (reader.readEnum());
+      msg.setObjectType(value);
+      break;
+    case 1002:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMajor(value);
+      break;
+    case 1003:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMinor(value);
+      break;
+    case 1004:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionPatch(value);
       break;
     case 10:
       var value = new fintekkers_models_util_uuid_pb.UUIDProto;
@@ -203,6 +225,34 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.seri
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getObjectType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1001,
+      f
+    );
+  }
+  f = message.getVersionMajor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1002,
+      f
+    );
+  }
+  f = message.getVersionMinor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1003,
+      f
+    );
+  }
+  f = message.getVersionPatch();
+  if (f !== 0) {
+    writer.writeUint32(
+      1004,
       f
     );
   }
@@ -258,6 +308,78 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prot
  */
 proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prototype.setVersion = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional fintekkers.models.util.ObjectTypeProto object_type = 1001;
+ * @return {!proto.fintekkers.models.util.ObjectTypeProto}
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prototype.getObjectType = function() {
+  return /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (jspb.Message.getFieldWithDefault(this, 1001, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.util.ObjectTypeProto} value
+ * @return {!proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto} returns this
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prototype.setObjectType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1001, value);
+};
+
+
+/**
+ * optional uint32 version_major = 1002;
+ * @return {number}
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prototype.getVersionMajor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1002, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto} returns this
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prototype.setVersionMajor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1002, value);
+};
+
+
+/**
+ * optional uint32 version_minor = 1003;
+ * @return {number}
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prototype.getVersionMinor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1003, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto} returns this
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prototype.setVersionMinor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1003, value);
+};
+
+
+/**
+ * optional uint32 version_patch = 1004;
+ * @return {number}
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prototype.getVersionPatch = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1004, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto} returns this
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionRequestProto.prototype.setVersionPatch = function(value) {
+  return jspb.Message.setProto3IntField(this, 1004, value);
 };
 
 
@@ -369,6 +491,10 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.toO
   var f, obj = {
     objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
     version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    objectType: jspb.Message.getFieldWithDefault(msg, 1001, 0),
+    versionMajor: jspb.Message.getFieldWithDefault(msg, 1002, 0),
+    versionMinor: jspb.Message.getFieldWithDefault(msg, 1003, 0),
+    versionPatch: jspb.Message.getFieldWithDefault(msg, 1004, 0),
     operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
     composition: (f = msg.getComposition()) && fintekkers_models_security_index_composition_pb.IndexCompositionProto.toObject(includeInstance, f),
     resolvedEffectiveDate: (f = msg.getResolvedEffectiveDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
@@ -415,6 +541,22 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.des
     case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
+      break;
+    case 1001:
+      var value = /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (reader.readEnum());
+      msg.setObjectType(value);
+      break;
+    case 1002:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMajor(value);
+      break;
+    case 1003:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMinor(value);
+      break;
+    case 1004:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionPatch(value);
       break;
     case 10:
       var value = /** @type {!proto.fintekkers.requests.util.RequestOperationTypeProto} */ (reader.readEnum());
@@ -470,6 +612,34 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.ser
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getObjectType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1001,
+      f
+    );
+  }
+  f = message.getVersionMajor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1002,
+      f
+    );
+  }
+  f = message.getVersionMinor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1003,
+      f
+    );
+  }
+  f = message.getVersionPatch();
+  if (f !== 0) {
+    writer.writeUint32(
+      1004,
       f
     );
   }
@@ -532,6 +702,78 @@ proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.pro
  */
 proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.prototype.setVersion = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional fintekkers.models.util.ObjectTypeProto object_type = 1001;
+ * @return {!proto.fintekkers.models.util.ObjectTypeProto}
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.prototype.getObjectType = function() {
+  return /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (jspb.Message.getFieldWithDefault(this, 1001, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.util.ObjectTypeProto} value
+ * @return {!proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto} returns this
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.prototype.setObjectType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1001, value);
+};
+
+
+/**
+ * optional uint32 version_major = 1002;
+ * @return {number}
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.prototype.getVersionMajor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1002, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto} returns this
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.prototype.setVersionMajor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1002, value);
+};
+
+
+/**
+ * optional uint32 version_minor = 1003;
+ * @return {number}
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.prototype.getVersionMinor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1003, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto} returns this
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.prototype.setVersionMinor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1003, value);
+};
+
+
+/**
+ * optional uint32 version_patch = 1004;
+ * @return {number}
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.prototype.getVersionPatch = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1004, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto} returns this
+ */
+proto.fintekkers.requests.index_composition.GetIndexCompositionResponseProto.prototype.setVersionPatch = function(value) {
+  return jspb.Message.setProto3IntField(this, 1004, value);
 };
 
 

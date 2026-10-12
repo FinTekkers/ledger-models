@@ -31,24 +31,30 @@ public final class PositionFilterProtos {
       "\n0fintekkers/models/position/position_fi" +
       "lter.proto\022\032fintekkers.models.position\032." +
       "fintekkers/models/position/position_util" +
-      ".proto\"x\n\023PositionFilterProto\022\024\n\014object_" +
-      "class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022:\n\007filters\030" +
-      "\025 \003(\0132).fintekkers.models.position.Field" +
-      "MapEntryB\030B\024PositionFilterProtosP\001b\006prot" +
-      "o3"
+      ".proto\032(fintekkers/models/util/object_ty" +
+      "pe.proto\"\207\002\n\023PositionFilterProto\022\030\n\014obje" +
+      "ct_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022" +
+      "=\n\013object_type\030\351\007 \001(\0162\'.fintekkers.model" +
+      "s.util.ObjectTypeProto\022\026\n\rversion_major\030" +
+      "\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversio" +
+      "n_patch\030\354\007 \001(\r\022:\n\007filters\030\025 \003(\0132).fintek" +
+      "kers.models.position.FieldMapEntryB\030B\024Po" +
+      "sitionFilterProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.position.PositionUtilProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_position_PositionFilterProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_position_PositionFilterProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_position_PositionFilterProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Filters", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Filters", });
     fintekkers.models.position.PositionUtilProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

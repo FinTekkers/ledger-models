@@ -8,28 +8,73 @@ public interface CreateIndexCompositionRequestProtoOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string object_class = 1;</code>
+   * <code>string object_class = 1 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.index_composition.CreateIndexCompositionRequestProto.object_class is deprecated.
+   *     See fintekkers/requests/index_composition/create_index_composition_request.proto;l=15
    * @return The objectClass.
    */
-  java.lang.String getObjectClass();
+  @java.lang.Deprecated java.lang.String getObjectClass();
   /**
-   * <code>string object_class = 1;</code>
+   * <code>string object_class = 1 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.index_composition.CreateIndexCompositionRequestProto.object_class is deprecated.
+   *     See fintekkers/requests/index_composition/create_index_composition_request.proto;l=15
    * @return The bytes for objectClass.
    */
-  com.google.protobuf.ByteString
+  @java.lang.Deprecated com.google.protobuf.ByteString
       getObjectClassBytes();
 
   /**
-   * <code>string version = 2;</code>
+   * <code>string version = 2 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.index_composition.CreateIndexCompositionRequestProto.version is deprecated.
+   *     See fintekkers/requests/index_composition/create_index_composition_request.proto;l=16
    * @return The version.
    */
-  java.lang.String getVersion();
+  @java.lang.Deprecated java.lang.String getVersion();
   /**
-   * <code>string version = 2;</code>
+   * <code>string version = 2 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.index_composition.CreateIndexCompositionRequestProto.version is deprecated.
+   *     See fintekkers/requests/index_composition/create_index_composition_request.proto;l=16
    * @return The bytes for version.
    */
-  com.google.protobuf.ByteString
+  @java.lang.Deprecated com.google.protobuf.ByteString
       getVersionBytes();
+
+  /**
+   * <pre>
+   * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+   * @return The enum numeric value on the wire for objectType.
+   */
+  int getObjectTypeValue();
+  /**
+   * <pre>
+   * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+   * @return The objectType.
+   */
+  fintekkers.models.util.ObjectTypeProto getObjectType();
+
+  /**
+   * <code>uint32 version_major = 1002;</code>
+   * @return The versionMajor.
+   */
+  int getVersionMajor();
+
+  /**
+   * <code>uint32 version_minor = 1003;</code>
+   * @return The versionMinor.
+   */
+  int getVersionMinor();
+
+  /**
+   * <code>uint32 version_patch = 1004;</code>
+   * @return The versionPatch.
+   */
+  int getVersionPatch();
 
   /**
    * <code>.fintekkers.requests.util.RequestOperationTypeProto operation_type = 10;</code>

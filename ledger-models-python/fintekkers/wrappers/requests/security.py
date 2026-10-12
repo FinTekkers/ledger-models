@@ -26,6 +26,8 @@ from fintekkers.models.security.product_type_pb2 import (
 )
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 
 from fintekkers.models.security.bond.issuance_pb2 import IssuanceProto
 
@@ -105,12 +107,11 @@ class CreateSecurityRequest:
         issuance_list = []
 
         if auction_announcement_date is not None:
-            issuance = IssuanceProto(
+            issuance = stamp(IssuanceProto(
                 as_of=LocalTimestampProto(
                     time_zone="America/New_York",
                     timestamp=Timestamp(seconds=timstamp_seconds, nanos=0),
                 ),
-                version="0.0.1",
                 auction_announcement_date=ProtoSerializationUtil.serialize(
                     auction_announcement_date
                 ),
@@ -118,7 +119,7 @@ class CreateSecurityRequest:
                 post_auction_outstanding_quantity=ProtoSerializationUtil.serialize(
                     post_auction_outstanding_quantity
                 ),
-            )
+            ), ObjectTypeProto.OBJECT_TYPE_ISSUANCE, "", "0.0.1")
             issuance_list.append(issuance)
 
         coupon_rate_proto = ProtoSerializationUtil.serialize(coupon_rate)

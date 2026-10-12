@@ -10,12 +10,21 @@ import * as fintekkers_models_util_local_date_pb from "../../../fintekkers/model
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_security_security_pb from "../../../fintekkers/models/security/security_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class IndexCompositionProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): IndexCompositionProto;
     getVersion(): string;
     setVersion(value: string): IndexCompositionProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): IndexCompositionProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): IndexCompositionProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): IndexCompositionProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): IndexCompositionProto;
 
     hasUuid(): boolean;
     clearUuid(): void;
@@ -74,6 +83,10 @@ export namespace IndexCompositionProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         uuid?: fintekkers_models_util_uuid_pb.UUIDProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         isLink: boolean,

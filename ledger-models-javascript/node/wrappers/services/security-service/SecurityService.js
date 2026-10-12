@@ -50,6 +50,8 @@ const serviceaddress_1 = require("../../util/serviceaddress");
 const uuid_1 = require("../../models/utils/uuid");
 const datetime_1 = require("../../models/utils/datetime");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
+const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
+const object_types_1 = require("../../util/object-types");
 class SecurityService {
     constructor(apiKey) {
         if (apiKey) {
@@ -71,8 +73,7 @@ class SecurityService {
             // ModelValidationError before the gRPC round-trip.
             (0, security_rules_1.requireValid)(security);
             const createRequest = new create_security_request_pb_1.CreateSecurityRequestProto();
-            createRequest.setObjectClass('SecurityRequest');
-            createRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_REQUEST, 'SecurityRequest', '0.0.1');
             createRequest.setSecurityInput(security);
             const validateCreateOrUpdateAsync = (0, util_1.promisify)(this.client.validateCreateOrUpdate.bind(this.client));
             const response = yield validateCreateOrUpdateAsync(createRequest);
@@ -85,8 +86,7 @@ class SecurityService {
             (0, identifier_1.validateIdentifiersForCreate)(security);
             (0, security_rules_1.requireValid)(security);
             const createRequest = new create_security_request_pb_1.CreateSecurityRequestProto();
-            createRequest.setObjectClass('SecurityRequest');
-            createRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_REQUEST, 'SecurityRequest', '0.0.1');
             createRequest.setSecurityInput(security);
             const createSecurityAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
             const response = yield createSecurityAsync(createRequest);
@@ -114,8 +114,7 @@ class SecurityService {
     searchSecurity(asOf, positionFilter) {
         return __awaiter(this, void 0, void 0, function* () {
             const searchRequest = new query_security_request_pb_1.QuerySecurityRequestProto();
-            searchRequest.setObjectClass('SecurityRequest');
-            searchRequest.setVersion('0.0.1');
+            (0, object_types_1.stamp)(searchRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, 'SecurityRequest', '0.0.1');
             searchRequest.setAsOf(asOf);
             searchRequest.setSearchSecurityInput(positionFilter.toProto());
             const tmpClient = this.client;

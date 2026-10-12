@@ -33,29 +33,35 @@ public final class CreatePortfolioResponseProtos {
       "ests.portfolio\032+fintekkers/models/portfo" +
       "lio/portfolio.proto\032<fintekkers/requests" +
       "/portfolio/create_portfolio_request.prot" +
-      "o\"\354\001\n\034CreatePortfolioResponseProto\022\024\n\014ob" +
-      "ject_class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022\\\n\030cre" +
-      "ate_portfolio_request\030\024 \001(\0132:.fintekkers" +
-      ".requests.portfolio.CreatePortfolioReque" +
-      "stProto\022G\n\022portfolio_response\030\036 \003(\0132+.fi" +
-      "ntekkers.models.portfolio.PortfolioProto" +
-      "B!B\035CreatePortfolioResponseProtosP\001b\006pro" +
-      "to3"
+      "o\032(fintekkers/models/util/object_type.pr" +
+      "oto\"\373\002\n\034CreatePortfolioResponseProto\022\030\n\014" +
+      "object_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB" +
+      "\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fintekkers.m" +
+      "odels.util.ObjectTypeProto\022\026\n\rversion_ma" +
+      "jor\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rve" +
+      "rsion_patch\030\354\007 \001(\r\022\\\n\030create_portfolio_r" +
+      "equest\030\024 \001(\0132:.fintekkers.requests.portf" +
+      "olio.CreatePortfolioRequestProto\022G\n\022port" +
+      "folio_response\030\036 \003(\0132+.fintekkers.models" +
+      ".portfolio.PortfolioProtoB!B\035CreatePortf" +
+      "olioResponseProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.portfolio.PortfolioProtos.getDescriptor(),
           fintekkers.requests.portfolio.CreatePortfolioRequestProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_portfolio_CreatePortfolioResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_portfolio_CreatePortfolioResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_portfolio_CreatePortfolioResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "CreatePortfolioRequest", "PortfolioResponse", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "CreatePortfolioRequest", "PortfolioResponse", });
     fintekkers.models.portfolio.PortfolioProtos.getDescriptor();
     fintekkers.requests.portfolio.CreatePortfolioRequestProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)
