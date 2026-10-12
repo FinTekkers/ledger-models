@@ -3,6 +3,8 @@ import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { pack } from '../utils/serialization.util';
 import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
 import { Identifier } from '../security/identifier';
+import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
+import { stamp } from '../../util/object-types';
 
 export class PositionFilter {
     filters: FieldMapEntry[];
@@ -73,8 +75,7 @@ export class PositionFilter {
 
     toProto(): PositionFilterProto {
         const positionFilterProto = new PositionFilterProto();
-        positionFilterProto.setObjectClass('PositionFilter');
-        positionFilterProto.setVersion('0.0.1');
+        stamp(positionFilterProto, ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER, 'PositionFilter', '0.0.1');
         positionFilterProto.setFiltersList(this.filters);
 
         return positionFilterProto;

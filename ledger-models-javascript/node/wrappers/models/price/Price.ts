@@ -7,6 +7,8 @@ import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { Decimal } from "decimal.js";
 import * as LinkCacheModule from "../../util/link-cache";
+import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
+import { stamp } from '../../util/object-types';
 
 class Price {
     proto: PriceProto;
@@ -39,8 +41,7 @@ class Price {
         securityProto.setIsLink(true);
 
         const priceProto = new PriceProto();
-        priceProto.setObjectClass('Price');
-        priceProto.setVersion('0.0.1');
+        stamp(priceProto, ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1');
         priceProto.setUuid(UUID.random().toUUIDProto());
         priceProto.setAsOf(ZonedDateTime.from(date).toProto());
         priceProto.setPrice(decimalValueProto);
@@ -59,8 +60,7 @@ class Price {
 
         const priceProto = new PriceProto();
         priceProto.setPrice(decimalValueProto);
-        priceProto.setObjectClass('Price');
-        priceProto.setVersion('0.0.1');
+        stamp(priceProto, ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1');
         priceProto.setAsOf(asOf.toProto());
         priceProto.setUuid(UUID.random().toUUIDProto());
         priceProto.setSecurity(security.proto);

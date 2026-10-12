@@ -21,6 +21,8 @@ import { dateToLocalDateProto, localDateProtoToDate } from "../utils/date";
 import { Decimal } from "decimal.js";
 import * as LinkCacheModule from "../../util/link-cache";
 import LinkResolver from "../../util/link-resolver";
+import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
+import { stamp } from '../../util/object-types';
 
 interface TransactionConstructorParams {
   tradeDate: Date;
@@ -110,8 +112,7 @@ class Transaction {
    */
   private buildProtoFromParams(params: TransactionConstructorParams): TransactionProto {
     const transactionProto = new TransactionProto();
-    transactionProto.setObjectClass('Transaction');
-    transactionProto.setVersion('0.0.1');
+    stamp(transactionProto, ObjectTypeProto.OBJECT_TYPE_TRANSACTION, 'Transaction', '0.0.1');
     transactionProto.setUuid(UUID.random().toUUIDProto());
 
     // Convert asOfDate to ZonedDateTime and set on transaction
@@ -138,8 +139,7 @@ class Transaction {
 
     // Create and set an empty StrategyAllocationProto
     const strategyAllocationProto = new StrategyAllocationProto();
-    strategyAllocationProto.setObjectClass('StrategyAllocation');
-    strategyAllocationProto.setVersion('0.0.1');
+    stamp(strategyAllocationProto, ObjectTypeProto.OBJECT_TYPE_STRATEGY_ALLOCATION, 'StrategyAllocation', '0.0.1');
     transactionProto.setStrategyAllocation(strategyAllocationProto);
 
     // Set default position status

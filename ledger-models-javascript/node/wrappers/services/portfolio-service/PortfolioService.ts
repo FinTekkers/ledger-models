@@ -20,6 +20,8 @@ import Portfolio from '../../models/portfolio/portfolio';
 import { UUID } from '../../models/utils/uuid';
 import { ZonedDateTime } from '../../models/utils/datetime';
 import * as LinkCacheModule from '../../util/link-cache';
+import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
+import { stamp } from '../../util/object-types';
 
 class PortfolioService {
   private client: PortfolioClient;
@@ -40,8 +42,7 @@ class PortfolioService {
 
   async validateCreatePortfolio(portfolio: PortfolioProto): Promise<SummaryProto> {
     const createRequest = new CreatePortfolioRequestProto();
-    createRequest.setObjectClass('PortfolioRequest');
-    createRequest.setVersion('0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
     createRequest.setCreatePortfolioInput(portfolio);
 
     const validateCreateOrUpdateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
@@ -51,8 +52,7 @@ class PortfolioService {
 
   async createPortfolio(portfolio: PortfolioProto): Promise<CreatePortfolioResponseProto> {
     const createRequest = new CreatePortfolioRequestProto();
-    createRequest.setObjectClass('PortfolioRequest');
-    createRequest.setVersion('0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
     createRequest.setCreatePortfolioInput(portfolio);
 
     const createPortfolioAsync = promisify(this.client.createOrUpdate.bind(this.client));
@@ -72,8 +72,7 @@ class PortfolioService {
   async searchPortfolio(asOf: LocalTimestampProto,
     positionFilter: PositionFilter): Promise<Portfolio[]> {
     const searchRequest = new QueryPortfolioRequestProto();
-    searchRequest.setObjectClass('PortfolioRequest');
-    searchRequest.setVersion('0.0.1');
+    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
     searchRequest.setAsOf(asOf);
 
     searchRequest.setSearchPortfolioInput(positionFilter.toProto());

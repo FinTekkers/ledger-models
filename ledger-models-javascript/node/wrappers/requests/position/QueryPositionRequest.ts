@@ -8,6 +8,8 @@ import { RequestOperationTypeProto } from "../../../fintekkers/requests/util/ope
 
 //Requests
 import { QueryPositionRequestProto } from "../../../fintekkers/requests/position/query_position_request_pb";
+import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
+import { stamp } from '../../util/object-types';
 
 export class QueryPositionRequest {
     private filter: PositionFilter;
@@ -43,9 +45,8 @@ export class QueryPositionRequest {
     }
 
     public toProto(): QueryPositionRequestProto {
-        const proto = new QueryPositionRequestProto()
+        const proto = stamp(new QueryPositionRequestProto(), ObjectTypeProto.OBJECT_TYPE_QUERY_POSITION_REQUEST, '', '1.0.0')
             .setAsOf(this.asOf.toProto())
-            .setVersion("1.0.0")
             .setPositionType(this.positionType)
             .setPositionView(this.positionView)
             .setFieldsList(this.fields)

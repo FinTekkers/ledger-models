@@ -35,6 +35,8 @@ const datetime_1 = require("../utils/datetime");
 const uuid_1 = require("../utils/uuid");
 const decimal_js_1 = require("decimal.js");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
+const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
+const object_types_1 = require("../../util/object-types");
 class Price {
     constructor(proto) {
         this.proto = proto;
@@ -56,8 +58,7 @@ class Price {
         securityProto.setUuid(new uuid_1.UUID(uuid_1.UUID.fromString(securityId)).toUUIDProto());
         securityProto.setIsLink(true);
         const priceProto = new price_pb_1.PriceProto();
-        priceProto.setObjectClass('Price');
-        priceProto.setVersion('0.0.1');
+        (0, object_types_1.stamp)(priceProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1');
         priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
         priceProto.setAsOf(datetime_1.ZonedDateTime.from(date).toProto());
         priceProto.setPrice(decimalValueProto);
@@ -73,8 +74,7 @@ class Price {
         decimalValueProto.setArbitraryPrecisionValue(price.toString());
         const priceProto = new price_pb_1.PriceProto();
         priceProto.setPrice(decimalValueProto);
-        priceProto.setObjectClass('Price');
-        priceProto.setVersion('0.0.1');
+        (0, object_types_1.stamp)(priceProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1');
         priceProto.setAsOf(asOf.toProto());
         priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
         priceProto.setSecurity(security.proto);
