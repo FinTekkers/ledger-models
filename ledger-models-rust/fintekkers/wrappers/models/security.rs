@@ -2,6 +2,7 @@ use crate::fintekkers::models::security::{IdentifierProto, IdentifierTypeProto, 
 use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
+use crate::fintekkers::wrappers::models::utils::decimal;
 use crate::fintekkers::wrappers::models::utils::errors::{object_id_of, Error};
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 use crate::fintekkers::wrappers::util::link_cache;
@@ -10,8 +11,6 @@ use crate::fintekkers::wrappers::util::service_address::{
     self, Service, ServiceAddress, ServiceAddressError,
 };
 use chrono::{DateTime, Utc};
-use rust_decimal::Decimal;
-use std::str::FromStr;
 use std::sync::{Arc, OnceLock, RwLock};
 use uuid::Uuid;
 
@@ -423,18 +422,16 @@ fn tbill_coupon_violation(proto: &SecurityProto, id: Option<&UuidProto>) -> Opti
     if proto.product_type != ProductTypeProto::Tbill as i32 {
         return None;
     }
-    let raw = &proto.bond_details.as_ref()?.coupon_rate.as_ref()?.arbitrary_precision_value;
-    if raw.is_empty() {
-        return None;
-    }
-    let coupon = Decimal::from_str(raw).or_else(|_| Decimal::from_scientific(raw)).ok()?;
+    let raw = proto.bond_details.as_ref()?.coupon_rate.as_ref()?;
+    // Unset (both forms empty) and unparseable values are skipped.
+    let coupon = decimal::decode_decimal(raw, "SecurityProto", COUPON_RATE).ok()?;
     if coupon.is_zero() {
         return None;
     }
     Some(FieldViolationProto {
         field: COUPON_RATE.to_string(),
         object_id: id.cloned(),
-        message: format!("coupon_rate must be null or 0 for a TBILL: coupon_rate={}", raw),
+        message: format!("coupon_rate must be null or 0 for a TBILL: coupon_rate={}", coupon),
     })
 }
 
@@ -590,6 +587,7 @@ impl SecurityProtoBuilder {
 
 #[cfg(test)]
 mod test {
+    #![allow(deprecated)] // Tests read the legacy string field directly.
     use super::*;
     use crate::fintekkers::models::security::security_proto::NonBondDetails;
     use crate::fintekkers::models::security::{
@@ -602,9 +600,7 @@ mod test {
     use crate::fintekkers::models::util::LocalDateProto;
 
     fn decimal(value: &str) -> Option<DecimalValueProto> {
-        Some(DecimalValueProto {
-            arbitrary_precision_value: value.to_string(),
-        })
+        Some(crate::fintekkers::wrappers::models::utils::decimal::legacy_decimal_proto(value))
     }
 
     fn date(year: u32, month: u32, day: u32) -> Option<LocalDateProto> {

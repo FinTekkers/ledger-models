@@ -2,12 +2,12 @@ use crate::fintekkers::models::util::{
     DecimalValueProto, LocalDateProto, LocalTimestampProto, UuidProto,
 };
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
+use crate::fintekkers::wrappers::models::utils::decimal;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use chrono::naive::NaiveDate;
 use chrono::{DateTime, NaiveDateTime, TimeZone};
 use chrono_tz::Tz;
 use rust_decimal::Decimal;
-use std::str::FromStr;
 use uuid::Uuid;
 
 /// Utility for serializing and deserializing between protobuf types and native Rust types
@@ -76,10 +76,25 @@ impl ProtoSerializationUtil {
         Self::deserialize_timestamp(timestamp_proto)
     }
 
-    /// Deserializes a DecimalValueProto to a native Rust Decimal
+    /// Deserializes a DecimalValueProto to a native Rust Decimal. Any failure
+    /// is `Error::DecimalConversion`, as before LM-294. Prefer
+    /// [`Self::deserialize_decimal_in`], which names the field.
     pub fn deserialize_decimal(decimal_proto: &DecimalValueProto) -> Result<Decimal, Error> {
-        Decimal::from_str(&decimal_proto.arbitrary_precision_value)
+        Self::deserialize_decimal_in(decimal_proto, "DecimalValueProto", "DecimalValueProto")
             .map_err(|_| Error::DecimalConversion)
+    }
+
+    /// Deserializes a DecimalValueProto held at `field` of `message_type`
+    /// (e.g. `PriceProto`, `price`). The compact form wins; the deprecated
+    /// string is the fallback and logs a warning once per `message_type`.
+    /// Unset, malformed, or not exactly representable as a Rust Decimal is
+    /// `Error::Validation` naming `field`. Never rounded.
+    pub fn deserialize_decimal_in(
+        decimal_proto: &DecimalValueProto,
+        message_type: &'static str,
+        field: &str,
+    ) -> Result<Decimal, Error> {
+        decimal::decode_decimal(decimal_proto, message_type, field)?.to_rust_decimal(field)
     }
 }
 

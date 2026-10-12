@@ -1,3 +1,5 @@
+#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
+
 //! LM-290: `validate_price_required_fields` is reachable through the public
 //! crate path, as a downstream service (price-service-rust) would call it.
 
@@ -14,7 +16,7 @@ fn valid_price() -> PriceProto {
             uuid: Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() }),
             ..Default::default()
         }),
-        price: Some(DecimalValueProto { arbitrary_precision_value: "1.5".to_string() }),
+        price: Some(DecimalValueProto { arbitrary_precision_value: "1.5".to_string(), ..Default::default() }),
         ..Default::default()
     }
 }
