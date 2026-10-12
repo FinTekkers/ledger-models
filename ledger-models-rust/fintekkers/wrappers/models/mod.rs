@@ -7,6 +7,7 @@ pub mod issuance;
 pub mod mortgage_backed_security;
 pub mod portfolio;
 pub mod position;
+pub mod position_filter_parser;
 pub mod price;
 pub mod product_hierarchy;
 pub mod raw_datamodel_object;
