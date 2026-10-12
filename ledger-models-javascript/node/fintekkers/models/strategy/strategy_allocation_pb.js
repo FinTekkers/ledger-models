@@ -29,6 +29,8 @@ var fintekkers_models_util_decimal_value_pb = require('../../../fintekkers/model
 goog.object.extend(proto, fintekkers_models_util_decimal_value_pb);
 var fintekkers_models_util_uuid_pb = require('../../../fintekkers/models/util/uuid_pb.js');
 goog.object.extend(proto, fintekkers_models_util_uuid_pb);
+var fintekkers_models_util_object_type_pb = require('../../../fintekkers/models/util/object_type_pb.js');
+goog.object.extend(proto, fintekkers_models_util_object_type_pb);
 goog.exportSymbol('proto.fintekkers.models.strategy.MapFieldEntry', null, global);
 goog.exportSymbol('proto.fintekkers.models.strategy.StrategyAllocationProto', null, global);
 /**
@@ -63,7 +65,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.fintekkers.models.strategy.StrategyAllocationProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.fintekkers.models.strategy.StrategyAllocationProto.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, 500, proto.fintekkers.models.strategy.StrategyAllocationProto.repeatedFields_, null);
 };
 goog.inherits(proto.fintekkers.models.strategy.StrategyAllocationProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -316,6 +318,10 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.toObject = function(inc
   var f, obj = {
     objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
     version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    objectType: jspb.Message.getFieldWithDefault(msg, 1001, 0),
+    versionMajor: jspb.Message.getFieldWithDefault(msg, 1002, 0),
+    versionMinor: jspb.Message.getFieldWithDefault(msg, 1003, 0),
+    versionPatch: jspb.Message.getFieldWithDefault(msg, 1004, 0),
     uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
     asOf: (f = msg.getAsOf()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
@@ -364,6 +370,22 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.deserializeBinaryFromRe
     case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
+      break;
+    case 1001:
+      var value = /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (reader.readEnum());
+      msg.setObjectType(value);
+      break;
+    case 1002:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMajor(value);
+      break;
+    case 1003:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMinor(value);
+      break;
+    case 1004:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionPatch(value);
       break;
     case 5:
       var value = new fintekkers_models_util_uuid_pb.UUIDProto;
@@ -424,6 +446,34 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.serializeBinaryToWriter
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getObjectType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1001,
+      f
+    );
+  }
+  f = message.getVersionMajor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1002,
+      f
+    );
+  }
+  f = message.getVersionMinor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1003,
+      f
+    );
+  }
+  f = message.getVersionPatch();
+  if (f !== 0) {
+    writer.writeUint32(
+      1004,
       f
     );
   }
@@ -494,6 +544,78 @@ proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.getVersion = 
  */
 proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.setVersion = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional fintekkers.models.util.ObjectTypeProto object_type = 1001;
+ * @return {!proto.fintekkers.models.util.ObjectTypeProto}
+ */
+proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.getObjectType = function() {
+  return /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (jspb.Message.getFieldWithDefault(this, 1001, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.util.ObjectTypeProto} value
+ * @return {!proto.fintekkers.models.strategy.StrategyAllocationProto} returns this
+ */
+proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.setObjectType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1001, value);
+};
+
+
+/**
+ * optional uint32 version_major = 1002;
+ * @return {number}
+ */
+proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.getVersionMajor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1002, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.models.strategy.StrategyAllocationProto} returns this
+ */
+proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.setVersionMajor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1002, value);
+};
+
+
+/**
+ * optional uint32 version_minor = 1003;
+ * @return {number}
+ */
+proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.getVersionMinor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1003, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.models.strategy.StrategyAllocationProto} returns this
+ */
+proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.setVersionMinor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1003, value);
+};
+
+
+/**
+ * optional uint32 version_patch = 1004;
+ * @return {number}
+ */
+proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.getVersionPatch = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1004, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.models.strategy.StrategyAllocationProto} returns this
+ */
+proto.fintekkers.models.strategy.StrategyAllocationProto.prototype.setVersionPatch = function(value) {
+  return jspb.Message.setProto3IntField(this, 1004, value);
 };
 
 

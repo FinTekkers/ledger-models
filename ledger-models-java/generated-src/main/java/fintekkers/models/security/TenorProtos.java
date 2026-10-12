@@ -30,24 +30,31 @@ public final class TenorProtos {
     java.lang.String[] descriptorData = {
       "\n&fintekkers/models/security/tenor.proto" +
       "\022\032fintekkers.models.security\032+fintekkers" +
-      "/models/security/tenor_type.proto\"\207\001\n\nTe" +
-      "norProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007versio" +
-      "n\030\002 \001(\t\022\022\n\nterm_value\030\005 \001(\t\022>\n\ntenor_typ" +
-      "e\030\006 \001(\0162*.fintekkers.models.security.Ten" +
-      "orTypeProtoB\017B\013TenorProtosP\001b\006proto3"
+      "/models/security/tenor_type.proto\032(finte" +
+      "kkers/models/util/object_type.proto\"\226\002\n\n" +
+      "TenorProto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007" +
+      "version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\0162" +
+      "\'.fintekkers.models.util.ObjectTypeProto" +
+      "\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversion_mino" +
+      "r\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022\022\n\nterm" +
+      "_value\030\005 \001(\t\022>\n\ntenor_type\030\006 \001(\0162*.finte" +
+      "kkers.models.security.TenorTypeProtoB\017B\013" +
+      "TenorProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.security.TenorTypeProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_security_TenorProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_security_TenorProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_security_TenorProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "TermValue", "TenorType", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "TermValue", "TenorType", });
     fintekkers.models.security.TenorTypeProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

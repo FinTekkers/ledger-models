@@ -23,9 +23,10 @@ _sym_db = _symbol_database.Default()
 
 
 from fintekkers.models.price import price_pb2 as fintekkers_dot_models_dot_price_dot_price__pb2
+from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n4fintekkers/requests/price/create_price_request.proto\x12\x19\x66intekkers.requests.price\x1a#fintekkers/models/price/price.proto\"\x81\x01\n\x17\x43reatePriceRequestProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12?\n\x12\x63reate_price_input\x18\x14 \x01(\x0b\x32#.fintekkers.models.price.PriceProtoB\x1c\x42\x18\x43reatePriceRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n4fintekkers/requests/price/create_price_request.proto\x12\x19\x66intekkers.requests.price\x1a#fintekkers/models/price/price.proto\x1a(fintekkers/models/util/object_type.proto\"\x90\x02\n\x17\x43reatePriceRequestProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12?\n\x12\x63reate_price_input\x18\x14 \x01(\x0b\x32#.fintekkers.models.price.PriceProtoB\x1c\x42\x18\x43reatePriceRequestProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,6 +34,10 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.price.c
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\030CreatePriceRequestProtosP\001'
-  _globals['_CREATEPRICEREQUESTPROTO']._serialized_start=121
-  _globals['_CREATEPRICEREQUESTPROTO']._serialized_end=250
+  _globals['_CREATEPRICEREQUESTPROTO'].fields_by_name['object_class']._loaded_options = None
+  _globals['_CREATEPRICEREQUESTPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
+  _globals['_CREATEPRICEREQUESTPROTO'].fields_by_name['version']._loaded_options = None
+  _globals['_CREATEPRICEREQUESTPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
+  _globals['_CREATEPRICEREQUESTPROTO']._serialized_start=163
+  _globals['_CREATEPRICEREQUESTPROTO']._serialized_end=435
 # @@protoc_insertion_point(module_scope)

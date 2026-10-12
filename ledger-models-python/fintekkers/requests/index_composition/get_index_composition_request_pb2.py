@@ -26,9 +26,10 @@ from fintekkers.models.util import uuid_pb2 as fintekkers_dot_models_dot_util_do
 from fintekkers.models.util import local_date_pb2 as fintekkers_dot_models_dot_util_dot_local__date__pb2
 from fintekkers.models.security import index_composition_pb2 as fintekkers_dot_models_dot_security_dot_index__composition__pb2
 from fintekkers.requests.util import operation_pb2 as fintekkers_dot_requests_dot_util_dot_operation__pb2
+from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\nIfintekkers/requests/index_composition/get_index_composition_request.proto\x12%fintekkers.requests.index_composition\x1a!fintekkers/models/util/uuid.proto\x1a\'fintekkers/models/util/local_date.proto\x1a\x32\x66intekkers/models/security/index_composition.proto\x1a(fintekkers/requests/util/operation.proto\"\xbb\x01\n\x1fGetIndexCompositionRequestProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x35\n\nindex_uuid\x18\n \x01(\x0b\x32!.fintekkers.models.util.UUIDProto\x12:\n\nas_of_date\x18\x0b \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\"\xa7\x02\n GetIndexCompositionResponseProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12K\n\x0eoperation_type\x18\n \x01(\x0e\x32\x33.fintekkers.requests.util.RequestOperationTypeProto\x12\x46\n\x0b\x63omposition\x18\x14 \x01(\x0b\x32\x31.fintekkers.models.security.IndexCompositionProto\x12G\n\x17resolved_effective_date\x18\x15 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProtoB$B GetIndexCompositionRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\nIfintekkers/requests/index_composition/get_index_composition_request.proto\x12%fintekkers.requests.index_composition\x1a!fintekkers/models/util/uuid.proto\x1a\'fintekkers/models/util/local_date.proto\x1a\x32\x66intekkers/models/security/index_composition.proto\x1a(fintekkers/requests/util/operation.proto\x1a(fintekkers/models/util/object_type.proto\"\xca\x02\n\x1fGetIndexCompositionRequestProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12\x35\n\nindex_uuid\x18\n \x01(\x0b\x32!.fintekkers.models.util.UUIDProto\x12:\n\nas_of_date\x18\x0b \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\"\xb6\x03\n GetIndexCompositionResponseProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12K\n\x0eoperation_type\x18\n \x01(\x0e\x32\x33.fintekkers.requests.util.RequestOperationTypeProto\x12\x46\n\x0b\x63omposition\x18\x14 \x01(\x0b\x32\x31.fintekkers.models.security.IndexCompositionProto\x12G\n\x17resolved_effective_date\x18\x15 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProtoB$B GetIndexCompositionRequestProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,8 +37,16 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.index_c
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B GetIndexCompositionRequestProtosP\001'
-  _globals['_GETINDEXCOMPOSITIONREQUESTPROTO']._serialized_start=287
-  _globals['_GETINDEXCOMPOSITIONREQUESTPROTO']._serialized_end=474
-  _globals['_GETINDEXCOMPOSITIONRESPONSEPROTO']._serialized_start=477
-  _globals['_GETINDEXCOMPOSITIONRESPONSEPROTO']._serialized_end=772
+  _globals['_GETINDEXCOMPOSITIONREQUESTPROTO'].fields_by_name['object_class']._loaded_options = None
+  _globals['_GETINDEXCOMPOSITIONREQUESTPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
+  _globals['_GETINDEXCOMPOSITIONREQUESTPROTO'].fields_by_name['version']._loaded_options = None
+  _globals['_GETINDEXCOMPOSITIONREQUESTPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
+  _globals['_GETINDEXCOMPOSITIONRESPONSEPROTO'].fields_by_name['object_class']._loaded_options = None
+  _globals['_GETINDEXCOMPOSITIONRESPONSEPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
+  _globals['_GETINDEXCOMPOSITIONRESPONSEPROTO'].fields_by_name['version']._loaded_options = None
+  _globals['_GETINDEXCOMPOSITIONRESPONSEPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
+  _globals['_GETINDEXCOMPOSITIONREQUESTPROTO']._serialized_start=329
+  _globals['_GETINDEXCOMPOSITIONREQUESTPROTO']._serialized_end=659
+  _globals['_GETINDEXCOMPOSITIONRESPONSEPROTO']._serialized_start=662
+  _globals['_GETINDEXCOMPOSITIONRESPONSEPROTO']._serialized_end=1100
 # @@protoc_insertion_point(module_scope)

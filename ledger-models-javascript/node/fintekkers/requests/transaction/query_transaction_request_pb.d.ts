@@ -8,12 +8,21 @@ import * as jspb from "google-protobuf";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_position_position_filter_pb from "../../../fintekkers/models/position/position_filter_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class QueryTransactionRequestProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): QueryTransactionRequestProto;
     getVersion(): string;
     setVersion(value: string): QueryTransactionRequestProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): QueryTransactionRequestProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): QueryTransactionRequestProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): QueryTransactionRequestProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): QueryTransactionRequestProto;
     clearUuidsList(): void;
     getUuidsList(): Array<fintekkers_models_util_uuid_pb.UUIDProto>;
     setUuidsList(value: Array<fintekkers_models_util_uuid_pb.UUIDProto>): QueryTransactionRequestProto;
@@ -47,6 +56,10 @@ export namespace QueryTransactionRequestProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         uuidsList: Array<fintekkers_models_util_uuid_pb.UUIDProto.AsObject>,
         searchTransactionInput?: fintekkers_models_position_position_filter_pb.PositionFilterProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,

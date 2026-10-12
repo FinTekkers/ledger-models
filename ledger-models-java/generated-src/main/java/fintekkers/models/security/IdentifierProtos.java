@@ -31,25 +31,31 @@ public final class IdentifierProtos {
       "\n6fintekkers/models/security/identifier/" +
       "identifier.proto\022\032fintekkers.models.secu" +
       "rity\032;fintekkers/models/security/identif" +
-      "ier/identifier_type.proto\"\234\001\n\017Identifier" +
-      "Proto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007version\030\002" +
-      " \001(\t\022\030\n\020identifier_value\030\005 \001(\t\022H\n\017identi" +
-      "fier_type\030\006 \001(\0162/.fintekkers.models.secu" +
-      "rity.IdentifierTypeProtoB\024B\020IdentifierPr" +
-      "otosP\001b\006proto3"
+      "ier/identifier_type.proto\032(fintekkers/mo" +
+      "dels/util/object_type.proto\"\253\002\n\017Identifi" +
+      "erProto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007ver" +
+      "sion\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.f" +
+      "intekkers.models.util.ObjectTypeProto\022\026\n" +
+      "\rversion_major\030\352\007 \001(\r\022\026\n\rversion_minor\030\353" +
+      "\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022\030\n\020identif" +
+      "ier_value\030\005 \001(\t\022H\n\017identifier_type\030\006 \001(\016" +
+      "2/.fintekkers.models.security.Identifier" +
+      "TypeProtoB\024B\020IdentifierProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.security.IdentifierTypeProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_security_IdentifierProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_security_IdentifierProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_security_IdentifierProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "IdentifierValue", "IdentifierType", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "IdentifierValue", "IdentifierType", });
     fintekkers.models.security.IdentifierTypeProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

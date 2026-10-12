@@ -357,6 +357,7 @@ impl PortfolioProtoBuilder {
 
             uuid: Some(self.uuid.into()),
             portfolio_name: self.portfolio_name,
+            ..Default::default()
         })
     }
 }
@@ -377,6 +378,7 @@ mod test {
             uuid: None,
             is_link: false,
             portfolio_name: "Dummy Name".to_string(),
+            ..Default::default()
         });
 
         assert_eq!(portfolio.portfolio_name(), "Dummy Name");

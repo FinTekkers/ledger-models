@@ -30,11 +30,22 @@
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ApiKey {
     /// Will be "API_Key"
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
     /// In format 1.0.0
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     /// Identify is a unique identifier for the user. Initially this can be email.
     /// Over time this can evolve to be a uuid which would represent an organization, organizational unit, or user
     #[prost(string, tag = "3")]

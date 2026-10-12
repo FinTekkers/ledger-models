@@ -23,9 +23,10 @@ _sym_db = _symbol_database.Default()
 
 
 from fintekkers.models.util import uuid_pb2 as fintekkers_dot_models_dot_util_dot_uuid__pb2
+from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n-fintekkers/requests/util/delete_request.proto\x12\x18\x66intekkers.requests.util\x1a!fintekkers/models/util/uuid.proto\"\x9b\x01\n\x13\x41\x66\x66\x65\x63tedEntityProto\x12>\n\x0b\x65ntity_type\x18\x01 \x01(\x0e\x32).fintekkers.requests.util.EntityTypeProto\x12/\n\x04uuid\x18\x02 \x01(\x0b\x32!.fintekkers.models.util.UUIDProto\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\"\xdd\x01\n\x12\x44\x65leteRequestProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12/\n\x04uuid\x18\n \x01(\x0b\x32!.fintekkers.models.util.UUIDProto\x12>\n\x0b\x65ntity_type\x18\x0b \x01(\x0e\x32).fintekkers.requests.util.EntityTypeProto\x12\x0f\n\x07\x64ry_run\x18\x14 \x01(\x08\x12\x0f\n\x07\x63\x61scade\x18\x15 \x01(\x08\x12\r\n\x05\x66orce\x18\x16 \x01(\x08\"\x99\x02\n\x13\x44\x65leteResponseProto\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x44\n\x0e\x64\x65lete_request\x18\n \x01(\x0b\x32,.fintekkers.requests.util.DeleteRequestProto\x12\x0f\n\x07success\x18\x14 \x01(\x08\x12\x13\n\x0bwas_dry_run\x18\x15 \x01(\x08\x12\x13\n\x0btotal_count\x18\x16 \x01(\x05\x12H\n\x11\x61\x66\x66\x65\x63ted_entities\x18\x1e \x03(\x0b\x32-.fintekkers.requests.util.AffectedEntityProto\x12\x10\n\x08warnings\x18( \x03(\t*l\n\x0f\x45ntityTypeProto\x12\x12\n\x0eUNKNOWN_ENTITY\x10\x00\x12\x0c\n\x08SECURITY\x10\x01\x12\r\n\tPORTFOLIO\x10\x02\x12\x0f\n\x0bTRANSACTION\x10\x03\x12\t\n\x05PRICE\x10\x04\x12\x0c\n\x08POSITION\x10\x05\x42\x17\x42\x13\x44\x65leteRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n-fintekkers/requests/util/delete_request.proto\x12\x18\x66intekkers.requests.util\x1a!fintekkers/models/util/uuid.proto\x1a(fintekkers/models/util/object_type.proto\"\x9b\x01\n\x13\x41\x66\x66\x65\x63tedEntityProto\x12>\n\x0b\x65ntity_type\x18\x01 \x01(\x0e\x32).fintekkers.requests.util.EntityTypeProto\x12/\n\x04uuid\x18\x02 \x01(\x0b\x32!.fintekkers.models.util.UUIDProto\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\"\xec\x02\n\x12\x44\x65leteRequestProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12/\n\x04uuid\x18\n \x01(\x0b\x32!.fintekkers.models.util.UUIDProto\x12>\n\x0b\x65ntity_type\x18\x0b \x01(\x0e\x32).fintekkers.requests.util.EntityTypeProto\x12\x0f\n\x07\x64ry_run\x18\x14 \x01(\x08\x12\x0f\n\x07\x63\x61scade\x18\x15 \x01(\x08\x12\r\n\x05\x66orce\x18\x16 \x01(\x08\"\xa8\x03\n\x13\x44\x65leteResponseProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12\x44\n\x0e\x64\x65lete_request\x18\n \x01(\x0b\x32,.fintekkers.requests.util.DeleteRequestProto\x12\x0f\n\x07success\x18\x14 \x01(\x08\x12\x13\n\x0bwas_dry_run\x18\x15 \x01(\x08\x12\x13\n\x0btotal_count\x18\x16 \x01(\x05\x12H\n\x11\x61\x66\x66\x65\x63ted_entities\x18\x1e \x03(\x0b\x32-.fintekkers.requests.util.AffectedEntityProto\x12\x10\n\x08warnings\x18( \x03(\t*l\n\x0f\x45ntityTypeProto\x12\x12\n\x0eUNKNOWN_ENTITY\x10\x00\x12\x0c\n\x08SECURITY\x10\x01\x12\r\n\tPORTFOLIO\x10\x02\x12\x0f\n\x0bTRANSACTION\x10\x03\x12\t\n\x05PRICE\x10\x04\x12\x0c\n\x08POSITION\x10\x05\x42\x17\x42\x13\x44\x65leteRequestProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,12 +34,20 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.util.de
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\023DeleteRequestProtosP\001'
-  _globals['_ENTITYTYPEPROTO']._serialized_start=776
-  _globals['_ENTITYTYPEPROTO']._serialized_end=884
-  _globals['_AFFECTEDENTITYPROTO']._serialized_start=111
-  _globals['_AFFECTEDENTITYPROTO']._serialized_end=266
-  _globals['_DELETEREQUESTPROTO']._serialized_start=269
-  _globals['_DELETEREQUESTPROTO']._serialized_end=490
-  _globals['_DELETERESPONSEPROTO']._serialized_start=493
-  _globals['_DELETERESPONSEPROTO']._serialized_end=774
+  _globals['_DELETEREQUESTPROTO'].fields_by_name['object_class']._loaded_options = None
+  _globals['_DELETEREQUESTPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
+  _globals['_DELETEREQUESTPROTO'].fields_by_name['version']._loaded_options = None
+  _globals['_DELETEREQUESTPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
+  _globals['_DELETERESPONSEPROTO'].fields_by_name['object_class']._loaded_options = None
+  _globals['_DELETERESPONSEPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
+  _globals['_DELETERESPONSEPROTO'].fields_by_name['version']._loaded_options = None
+  _globals['_DELETERESPONSEPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
+  _globals['_ENTITYTYPEPROTO']._serialized_start=1104
+  _globals['_ENTITYTYPEPROTO']._serialized_end=1212
+  _globals['_AFFECTEDENTITYPROTO']._serialized_start=153
+  _globals['_AFFECTEDENTITYPROTO']._serialized_end=308
+  _globals['_DELETEREQUESTPROTO']._serialized_start=311
+  _globals['_DELETEREQUESTPROTO']._serialized_end=675
+  _globals['_DELETERESPONSEPROTO']._serialized_start=678
+  _globals['_DELETERESPONSEPROTO']._serialized_end=1102
 # @@protoc_insertion_point(module_scope)

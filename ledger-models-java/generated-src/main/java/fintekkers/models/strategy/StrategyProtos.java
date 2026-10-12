@@ -31,33 +31,39 @@ public final class StrategyProtos {
       "\n)fintekkers/models/strategy/strategy.pr" +
       "oto\022\032fintekkers.models.strategy\032,fintekk" +
       "ers/models/util/local_timestamp.proto\032!f" +
-      "intekkers/models/util/uuid.proto\"\206\003\n\rStr" +
-      "ategyProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007vers" +
-      "ion\030\002 \001(\t\022/\n\004uuid\030\005 \001(\0132!.fintekkers.mod" +
-      "els.util.UUIDProto\022:\n\005as_of\030\006 \001(\0132+.fint" +
-      "ekkers.models.util.LocalTimestampProto\022\017" +
-      "\n\007is_link\030\007 \001(\010\022?\n\nvalid_from\030\010 \001(\0132+.fi" +
-      "ntekkers.models.util.LocalTimestampProto" +
-      "\022=\n\010valid_to\030\t \001(\0132+.fintekkers.models.u" +
-      "til.LocalTimestampProto\022\025\n\rstrategy_name" +
-      "\030\n \001(\t\0229\n\006parent\030\013 \001(\0132).fintekkers.mode" +
-      "ls.strategy.StrategyProtoB\022B\016StrategyPro" +
-      "tosP\001b\006proto3"
+      "intekkers/models/util/uuid.proto\032(fintek" +
+      "kers/models/util/object_type.proto\"\225\004\n\rS" +
+      "trategyProto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023" +
+      "\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(" +
+      "\0162\'.fintekkers.models.util.ObjectTypePro" +
+      "to\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversion_mi" +
+      "nor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022/\n\004uu" +
+      "id\030\005 \001(\0132!.fintekkers.models.util.UUIDPr" +
+      "oto\022:\n\005as_of\030\006 \001(\0132+.fintekkers.models.u" +
+      "til.LocalTimestampProto\022\017\n\007is_link\030\007 \001(\010" +
+      "\022?\n\nvalid_from\030\010 \001(\0132+.fintekkers.models" +
+      ".util.LocalTimestampProto\022=\n\010valid_to\030\t " +
+      "\001(\0132+.fintekkers.models.util.LocalTimest" +
+      "ampProto\022\025\n\rstrategy_name\030\n \001(\t\0229\n\006paren" +
+      "t\030\013 \001(\0132).fintekkers.models.strategy.Str" +
+      "ategyProtoB\022B\016StrategyProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.models.util.Uuid.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_strategy_StrategyProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_strategy_StrategyProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_strategy_StrategyProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "StrategyName", "Parent", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "StrategyName", "Parent", });
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.util.Uuid.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -6,12 +6,21 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class DateRangeProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): DateRangeProto;
     getVersion(): string;
     setVersion(value: string): DateRangeProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): DateRangeProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): DateRangeProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): DateRangeProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): DateRangeProto;
 
     hasStart(): boolean;
     clearStart(): void;
@@ -37,6 +46,10 @@ export namespace DateRangeProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         start?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         end?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
     }

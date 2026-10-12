@@ -6,12 +6,21 @@
 
 import * as jspb from "google-protobuf";
 import * as google_protobuf_any_pb from "google-protobuf/google/protobuf/any_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class GetFieldValuesResponseProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): GetFieldValuesResponseProto;
     getVersion(): string;
     setVersion(value: string): GetFieldValuesResponseProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): GetFieldValuesResponseProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): GetFieldValuesResponseProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): GetFieldValuesResponseProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): GetFieldValuesResponseProto;
     clearValuesList(): void;
     getValuesList(): Array<google_protobuf_any_pb.Any>;
     setValuesList(value: Array<google_protobuf_any_pb.Any>): GetFieldValuesResponseProto;
@@ -31,6 +40,10 @@ export namespace GetFieldValuesResponseProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         valuesList: Array<google_protobuf_any_pb.Any.AsObject>,
     }
 }

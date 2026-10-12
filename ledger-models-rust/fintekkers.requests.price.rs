@@ -1,10 +1,21 @@
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreatePriceRequestProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     #[prost(message, optional, tag = "20")]
     pub create_price_input: ::core::option::Option<
         super::super::models::price::PriceProto,
@@ -13,10 +24,21 @@ pub struct CreatePriceRequestProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreatePriceResponseProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     #[prost(message, optional, tag = "20")]
     pub create_price_request: ::core::option::Option<CreatePriceRequestProto>,
     #[prost(message, repeated, tag = "30")]
@@ -27,10 +49,21 @@ pub struct CreatePriceResponseProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct QueryPriceRequestProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     #[prost(message, repeated, tag = "21")]
     pub uu_ids: ::prost::alloc::vec::Vec<super::super::models::util::UuidProto>,
     #[prost(message, optional, tag = "22")]
@@ -174,10 +207,21 @@ impl PriceHorizonProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct QueryPriceResponseProto {
+    #[deprecated]
     #[prost(string, tag = "1")]
     pub object_class: ::prost::alloc::string::String,
+    #[deprecated]
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
+    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    pub object_type: i32,
+    #[prost(uint32, tag = "1002")]
+    pub version_major: u32,
+    #[prost(uint32, tag = "1003")]
+    pub version_minor: u32,
+    #[prost(uint32, tag = "1004")]
+    pub version_patch: u32,
     #[prost(message, optional, tag = "20")]
     pub query_price_request: ::core::option::Option<QueryPriceRequestProto>,
     #[prost(message, repeated, tag = "30")]

@@ -30,24 +30,31 @@ public final class GetFieldValuesResponseProtos {
     java.lang.String[] descriptorData = {
       "\n<fintekkers/requests/security/get_field" +
       "_values_response.proto\022\034fintekkers.reque" +
-      "sts.security\032\031google/protobuf/any.proto\"" +
-      "j\n\033GetFieldValuesResponseProto\022\024\n\014object" +
-      "_class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022$\n\006values\030" +
-      "\n \003(\0132\024.google.protobuf.AnyB B\034GetFieldV" +
-      "aluesResponseProtosP\001b\006proto3"
+      "sts.security\032\031google/protobuf/any.proto\032" +
+      "(fintekkers/models/util/object_type.prot" +
+      "o\"\371\001\n\033GetFieldValuesResponseProto\022\030\n\014obj" +
+      "ect_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001" +
+      "\022=\n\013object_type\030\351\007 \001(\0162\'.fintekkers.mode" +
+      "ls.util.ObjectTypeProto\022\026\n\rversion_major" +
+      "\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversi" +
+      "on_patch\030\354\007 \001(\r\022$\n\006values\030\n \003(\0132\024.google" +
+      ".protobuf.AnyB B\034GetFieldValuesResponseP" +
+      "rotosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           com.google.protobuf.AnyProto.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_security_GetFieldValuesResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_security_GetFieldValuesResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_security_GetFieldValuesResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Values", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Values", });
     com.google.protobuf.AnyProto.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -34,29 +34,34 @@ public final class IssuanceProtos {
       "on_type.proto\032*fintekkers/models/util/de" +
       "cimal_value.proto\032\'fintekkers/models/uti" +
       "l/local_date.proto\032,fintekkers/models/ut" +
-      "il/local_timestamp.proto\"\315\006\n\rIssuancePro" +
-      "to\022\024\n\014object_class\030\001 \001(\t\022\017\n\007version\030\002 \001(" +
-      "\t\022:\n\005as_of\030\006 \001(\0132+.fintekkers.models.uti" +
-      "l.LocalTimestampProto\022?\n\nvalid_from\030\010 \001(" +
+      "il/local_timestamp.proto\032(fintekkers/mod" +
+      "els/util/object_type.proto\"\334\007\n\rIssuanceP" +
+      "roto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007versio" +
+      "n\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fint" +
+      "ekkers.models.util.ObjectTypeProto\022\026\n\rve" +
+      "rsion_major\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001" +
+      "(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022:\n\005as_of\030\006 \001(" +
       "\0132+.fintekkers.models.util.LocalTimestam" +
-      "pProto\022=\n\010valid_to\030\t \001(\0132+.fintekkers.mo" +
-      "dels.util.LocalTimestampProto\022I\n\031auction" +
-      "_announcement_date\030\024 \001(\0132&.fintekkers.mo" +
-      "dels.util.LocalDateProto\022B\n\022auction_issu" +
-      "e_date\030\025 \001(\0132&.fintekkers.models.util.Lo" +
-      "calDateProto\022T\n!post_auction_outstanding" +
-      "_quantity\030\026 \001(\0132).fintekkers.models.util" +
-      ".DecimalValueProto\022J\n\027auction_offering_a" +
-      "mount\030\027 \001(\0132).fintekkers.models.util.Dec" +
-      "imalValueProto\022G\n\014auction_type\030\030 \001(\01621.f" +
-      "intekkers.models.security.bond.AuctionTy" +
-      "peProto\022Q\n\036price_for_single_price_auctio" +
-      "n\030\031 \001(\0132).fintekkers.models.util.Decimal" +
-      "ValueProto\022A\n\016total_accepted\030\032 \001(\0132).fin" +
-      "tekkers.models.util.DecimalValueProto\022I\n" +
-      "\026mature_security_amount\030\033 \001(\0132).fintekke" +
-      "rs.models.util.DecimalValueProtoB\022B\016Issu" +
-      "anceProtosP\001b\006proto3"
+      "pProto\022?\n\nvalid_from\030\010 \001(\0132+.fintekkers." +
+      "models.util.LocalTimestampProto\022=\n\010valid" +
+      "_to\030\t \001(\0132+.fintekkers.models.util.Local" +
+      "TimestampProto\022I\n\031auction_announcement_d" +
+      "ate\030\024 \001(\0132&.fintekkers.models.util.Local" +
+      "DateProto\022B\n\022auction_issue_date\030\025 \001(\0132&." +
+      "fintekkers.models.util.LocalDateProto\022T\n" +
+      "!post_auction_outstanding_quantity\030\026 \001(\013" +
+      "2).fintekkers.models.util.DecimalValuePr" +
+      "oto\022J\n\027auction_offering_amount\030\027 \001(\0132).f" +
+      "intekkers.models.util.DecimalValueProto\022" +
+      "G\n\014auction_type\030\030 \001(\01621.fintekkers.model" +
+      "s.security.bond.AuctionTypeProto\022Q\n\036pric" +
+      "e_for_single_price_auction\030\031 \001(\0132).finte" +
+      "kkers.models.util.DecimalValueProto\022A\n\016t" +
+      "otal_accepted\030\032 \001(\0132).fintekkers.models." +
+      "util.DecimalValueProto\022I\n\026mature_securit" +
+      "y_amount\030\033 \001(\0132).fintekkers.models.util." +
+      "DecimalValueProtoB\022B\016IssuanceProtosP\001b\006p" +
+      "roto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -65,17 +70,19 @@ public final class IssuanceProtos {
           fintekkers.models.util.DecimalValue.getDescriptor(),
           fintekkers.models.util.LocalDate.getDescriptor(),
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_security_bond_IssuanceProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_security_bond_IssuanceProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_security_bond_IssuanceProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "AsOf", "ValidFrom", "ValidTo", "AuctionAnnouncementDate", "AuctionIssueDate", "PostAuctionOutstandingQuantity", "AuctionOfferingAmount", "AuctionType", "PriceForSinglePriceAuction", "TotalAccepted", "MatureSecurityAmount", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "AsOf", "ValidFrom", "ValidTo", "AuctionAnnouncementDate", "AuctionIssueDate", "PostAuctionOutstandingQuantity", "AuctionOfferingAmount", "AuctionType", "PriceForSinglePriceAuction", "TotalAccepted", "MatureSecurityAmount", });
     fintekkers.models.security.bond.AuctionTypeProtos.getDescriptor();
     fintekkers.models.util.DecimalValue.getDescriptor();
     fintekkers.models.util.LocalDate.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -9,12 +9,21 @@ import * as fintekkers_models_security_bond_auction_type_pb from "../../../../fi
 import * as fintekkers_models_util_decimal_value_pb from "../../../../fintekkers/models/util/decimal_value_pb";
 import * as fintekkers_models_util_local_date_pb from "../../../../fintekkers/models/util/local_date_pb";
 import * as fintekkers_models_util_local_timestamp_pb from "../../../../fintekkers/models/util/local_timestamp_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../../fintekkers/models/util/object_type_pb";
 
 export class IssuanceProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): IssuanceProto;
     getVersion(): string;
     setVersion(value: string): IssuanceProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): IssuanceProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): IssuanceProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): IssuanceProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): IssuanceProto;
 
     hasAsOf(): boolean;
     clearAsOf(): void;
@@ -82,6 +91,10 @@ export namespace IssuanceProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         validFrom?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         validTo?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,

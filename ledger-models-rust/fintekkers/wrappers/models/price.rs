@@ -317,6 +317,7 @@ impl PriceProtoBuilder {
                 self.security.unwrap()
             ),
             price_type: 0,
+            ..Default::default()
         })
     }
 

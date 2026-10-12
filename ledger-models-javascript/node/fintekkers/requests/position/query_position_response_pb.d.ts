@@ -7,12 +7,21 @@
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_position_position_pb from "../../../fintekkers/models/position/position_pb";
 import * as fintekkers_requests_position_query_position_request_pb from "../../../fintekkers/requests/position/query_position_request_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class QueryPositionResponseProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): QueryPositionResponseProto;
     getVersion(): string;
     setVersion(value: string): QueryPositionResponseProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): QueryPositionResponseProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): QueryPositionResponseProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): QueryPositionResponseProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): QueryPositionResponseProto;
 
     hasPositionRequest(): boolean;
     clearPositionRequest(): void;
@@ -39,6 +48,10 @@ export namespace QueryPositionResponseProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         positionRequest?: fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto.AsObject,
         reportingCurrency: string,
         positionsList: Array<fintekkers_models_position_position_pb.PositionProto.AsObject>,

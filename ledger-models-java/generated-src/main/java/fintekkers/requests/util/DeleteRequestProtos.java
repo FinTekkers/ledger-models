@@ -40,32 +40,42 @@ public final class DeleteRequestProtos {
     java.lang.String[] descriptorData = {
       "\n-fintekkers/requests/util/delete_reques" +
       "t.proto\022\030fintekkers.requests.util\032!finte" +
-      "kkers/models/util/uuid.proto\"\233\001\n\023Affecte" +
-      "dEntityProto\022>\n\013entity_type\030\001 \001(\0162).fint" +
-      "ekkers.requests.util.EntityTypeProto\022/\n\004" +
-      "uuid\030\002 \001(\0132!.fintekkers.models.util.UUID" +
-      "Proto\022\023\n\013description\030\003 \001(\t\"\335\001\n\022DeleteReq" +
-      "uestProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007versi" +
-      "on\030\002 \001(\t\022/\n\004uuid\030\n \001(\0132!.fintekkers.mode" +
-      "ls.util.UUIDProto\022>\n\013entity_type\030\013 \001(\0162)" +
-      ".fintekkers.requests.util.EntityTypeProt" +
-      "o\022\017\n\007dry_run\030\024 \001(\010\022\017\n\007cascade\030\025 \001(\010\022\r\n\005f" +
-      "orce\030\026 \001(\010\"\231\002\n\023DeleteResponseProto\022\024\n\014ob" +
-      "ject_class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022D\n\016del" +
-      "ete_request\030\n \001(\0132,.fintekkers.requests." +
-      "util.DeleteRequestProto\022\017\n\007success\030\024 \001(\010" +
-      "\022\023\n\013was_dry_run\030\025 \001(\010\022\023\n\013total_count\030\026 \001" +
-      "(\005\022H\n\021affected_entities\030\036 \003(\0132-.fintekke" +
-      "rs.requests.util.AffectedEntityProto\022\020\n\010" +
-      "warnings\030( \003(\t*l\n\017EntityTypeProto\022\022\n\016UNK" +
-      "NOWN_ENTITY\020\000\022\014\n\010SECURITY\020\001\022\r\n\tPORTFOLIO" +
-      "\020\002\022\017\n\013TRANSACTION\020\003\022\t\n\005PRICE\020\004\022\014\n\010POSITI" +
-      "ON\020\005B\027B\023DeleteRequestProtosP\001b\006proto3"
+      "kkers/models/util/uuid.proto\032(fintekkers" +
+      "/models/util/object_type.proto\"\233\001\n\023Affec" +
+      "tedEntityProto\022>\n\013entity_type\030\001 \001(\0162).fi" +
+      "ntekkers.requests.util.EntityTypeProto\022/" +
+      "\n\004uuid\030\002 \001(\0132!.fintekkers.models.util.UU" +
+      "IDProto\022\023\n\013description\030\003 \001(\t\"\354\002\n\022DeleteR" +
+      "equestProto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n" +
+      "\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\016" +
+      "2\'.fintekkers.models.util.ObjectTypeProt" +
+      "o\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversion_min" +
+      "or\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022/\n\004uui" +
+      "d\030\n \001(\0132!.fintekkers.models.util.UUIDPro" +
+      "to\022>\n\013entity_type\030\013 \001(\0162).fintekkers.req" +
+      "uests.util.EntityTypeProto\022\017\n\007dry_run\030\024 " +
+      "\001(\010\022\017\n\007cascade\030\025 \001(\010\022\r\n\005force\030\026 \001(\010\"\250\003\n\023" +
+      "DeleteResponseProto\022\030\n\014object_class\030\001 \001(" +
+      "\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_typ" +
+      "e\030\351\007 \001(\0162\'.fintekkers.models.util.Object" +
+      "TypeProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rver" +
+      "sion_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(" +
+      "\r\022D\n\016delete_request\030\n \001(\0132,.fintekkers.r" +
+      "equests.util.DeleteRequestProto\022\017\n\007succe" +
+      "ss\030\024 \001(\010\022\023\n\013was_dry_run\030\025 \001(\010\022\023\n\013total_c" +
+      "ount\030\026 \001(\005\022H\n\021affected_entities\030\036 \003(\0132-." +
+      "fintekkers.requests.util.AffectedEntityP" +
+      "roto\022\020\n\010warnings\030( \003(\t*l\n\017EntityTypeProt" +
+      "o\022\022\n\016UNKNOWN_ENTITY\020\000\022\014\n\010SECURITY\020\001\022\r\n\tP" +
+      "ORTFOLIO\020\002\022\017\n\013TRANSACTION\020\003\022\t\n\005PRICE\020\004\022\014" +
+      "\n\010POSITION\020\005B\027B\023DeleteRequestProtosP\001b\006p" +
+      "roto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.util.Uuid.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_util_AffectedEntityProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -78,14 +88,15 @@ public final class DeleteRequestProtos {
     internal_static_fintekkers_requests_util_DeleteRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_util_DeleteRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Uuid", "EntityType", "DryRun", "Cascade", "Force", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Uuid", "EntityType", "DryRun", "Cascade", "Force", });
     internal_static_fintekkers_requests_util_DeleteResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_fintekkers_requests_util_DeleteResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_util_DeleteResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "DeleteRequest", "Success", "WasDryRun", "TotalCount", "AffectedEntities", "Warnings", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "DeleteRequest", "Success", "WasDryRun", "TotalCount", "AffectedEntities", "Warnings", });
     fintekkers.models.util.Uuid.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

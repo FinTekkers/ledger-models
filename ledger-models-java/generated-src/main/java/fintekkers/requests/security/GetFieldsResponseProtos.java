@@ -31,24 +31,30 @@ public final class GetFieldsResponseProtos {
       "\n6fintekkers/requests/security/get_field" +
       "s_response.proto\022\034fintekkers.requests.se" +
       "curity\032&fintekkers/models/position/field" +
-      ".proto\"w\n\026GetFieldsResponseProto\022\024\n\014obje" +
-      "ct_class\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\0226\n\006field" +
-      "s\030\n \003(\0162&.fintekkers.models.position.Fie" +
-      "ldProtoB\033B\027GetFieldsResponseProtosP\001b\006pr" +
-      "oto3"
+      ".proto\032(fintekkers/models/util/object_ty" +
+      "pe.proto\"\206\002\n\026GetFieldsResponseProto\022\030\n\014o" +
+      "bject_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002" +
+      "\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fintekkers.mo" +
+      "dels.util.ObjectTypeProto\022\026\n\rversion_maj" +
+      "or\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rver" +
+      "sion_patch\030\354\007 \001(\r\0226\n\006fields\030\n \003(\0162&.fint" +
+      "ekkers.models.position.FieldProtoB\033B\027Get" +
+      "FieldsResponseProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.position.FieldProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_security_GetFieldsResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_security_GetFieldsResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_security_GetFieldsResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Fields", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Fields", });
     fintekkers.models.position.FieldProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

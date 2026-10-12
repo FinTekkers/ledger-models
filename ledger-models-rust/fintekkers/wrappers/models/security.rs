@@ -584,6 +584,7 @@ impl SecurityProtoBuilder {
             frn_extension: None,
             mbs_extension: None,
             non_bond_details: None,
+            ..Default::default()
         })
     }
 }

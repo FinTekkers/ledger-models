@@ -19,28 +19,73 @@ public final class NodePartitionOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodePartition.object_class is deprecated.
+     *     See fintekkers/models/util/lock/node_partition.proto;l=7
      * @return The objectClass.
      */
-    java.lang.String getObjectClass();
+    @java.lang.Deprecated java.lang.String getObjectClass();
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodePartition.object_class is deprecated.
+     *     See fintekkers/models/util/lock/node_partition.proto;l=7
      * @return The bytes for objectClass.
      */
-    com.google.protobuf.ByteString
+    @java.lang.Deprecated com.google.protobuf.ByteString
         getObjectClassBytes();
 
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodePartition.version is deprecated.
+     *     See fintekkers/models/util/lock/node_partition.proto;l=8
      * @return The version.
      */
-    java.lang.String getVersion();
+    @java.lang.Deprecated java.lang.String getVersion();
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodePartition.version is deprecated.
+     *     See fintekkers/models/util/lock/node_partition.proto;l=8
      * @return The bytes for version.
      */
-    com.google.protobuf.ByteString
+    @java.lang.Deprecated com.google.protobuf.ByteString
         getVersionBytes();
+
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The enum numeric value on the wire for objectType.
+     */
+    int getObjectTypeValue();
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The objectType.
+     */
+    fintekkers.models.util.ObjectTypeProto getObjectType();
+
+    /**
+     * <code>uint32 version_major = 1002;</code>
+     * @return The versionMajor.
+     */
+    int getVersionMajor();
+
+    /**
+     * <code>uint32 version_minor = 1003;</code>
+     * @return The versionMinor.
+     */
+    int getVersionMinor();
+
+    /**
+     * <code>uint32 version_patch = 1004;</code>
+     * @return The versionPatch.
+     */
+    int getVersionPatch();
 
     /**
      * <pre>
@@ -100,6 +145,7 @@ public final class NodePartitionOuterClass {
     private NodePartition() {
       objectClass_ = "";
       version_ = "";
+      objectType_ = 0;
       namespace_ = "";
     }
 
@@ -132,11 +178,13 @@ public final class NodePartitionOuterClass {
     @SuppressWarnings("serial")
     private volatile java.lang.Object objectClass_ = "";
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodePartition.object_class is deprecated.
+     *     See fintekkers/models/util/lock/node_partition.proto;l=7
      * @return The objectClass.
      */
     @java.lang.Override
-    public java.lang.String getObjectClass() {
+    @java.lang.Deprecated public java.lang.String getObjectClass() {
       java.lang.Object ref = objectClass_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
@@ -149,11 +197,13 @@ public final class NodePartitionOuterClass {
       }
     }
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodePartition.object_class is deprecated.
+     *     See fintekkers/models/util/lock/node_partition.proto;l=7
      * @return The bytes for objectClass.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString
+    @java.lang.Deprecated public com.google.protobuf.ByteString
         getObjectClassBytes() {
       java.lang.Object ref = objectClass_;
       if (ref instanceof java.lang.String) {
@@ -171,11 +221,13 @@ public final class NodePartitionOuterClass {
     @SuppressWarnings("serial")
     private volatile java.lang.Object version_ = "";
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodePartition.version is deprecated.
+     *     See fintekkers/models/util/lock/node_partition.proto;l=8
      * @return The version.
      */
     @java.lang.Override
-    public java.lang.String getVersion() {
+    @java.lang.Deprecated public java.lang.String getVersion() {
       java.lang.Object ref = version_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
@@ -188,11 +240,13 @@ public final class NodePartitionOuterClass {
       }
     }
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodePartition.version is deprecated.
+     *     See fintekkers/models/util/lock/node_partition.proto;l=8
      * @return The bytes for version.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString
+    @java.lang.Deprecated public com.google.protobuf.ByteString
         getVersionBytes() {
       java.lang.Object ref = version_;
       if (ref instanceof java.lang.String) {
@@ -204,6 +258,65 @@ public final class NodePartitionOuterClass {
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
+    }
+
+    public static final int OBJECT_TYPE_FIELD_NUMBER = 1001;
+    private int objectType_ = 0;
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The enum numeric value on the wire for objectType.
+     */
+    @java.lang.Override public int getObjectTypeValue() {
+      return objectType_;
+    }
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The objectType.
+     */
+    @java.lang.Override public fintekkers.models.util.ObjectTypeProto getObjectType() {
+      fintekkers.models.util.ObjectTypeProto result = fintekkers.models.util.ObjectTypeProto.forNumber(objectType_);
+      return result == null ? fintekkers.models.util.ObjectTypeProto.UNRECOGNIZED : result;
+    }
+
+    public static final int VERSION_MAJOR_FIELD_NUMBER = 1002;
+    private int versionMajor_ = 0;
+    /**
+     * <code>uint32 version_major = 1002;</code>
+     * @return The versionMajor.
+     */
+    @java.lang.Override
+    public int getVersionMajor() {
+      return versionMajor_;
+    }
+
+    public static final int VERSION_MINOR_FIELD_NUMBER = 1003;
+    private int versionMinor_ = 0;
+    /**
+     * <code>uint32 version_minor = 1003;</code>
+     * @return The versionMinor.
+     */
+    @java.lang.Override
+    public int getVersionMinor() {
+      return versionMinor_;
+    }
+
+    public static final int VERSION_PATCH_FIELD_NUMBER = 1004;
+    private int versionPatch_ = 0;
+    /**
+     * <code>uint32 version_patch = 1004;</code>
+     * @return The versionPatch.
+     */
+    @java.lang.Override
+    public int getVersionPatch() {
+      return versionPatch_;
     }
 
     public static final int PARTITION_FIELD_NUMBER = 3;
@@ -303,6 +416,18 @@ public final class NodePartitionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(namespace_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, namespace_);
       }
+      if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
+        output.writeEnum(1001, objectType_);
+      }
+      if (versionMajor_ != 0) {
+        output.writeUInt32(1002, versionMajor_);
+      }
+      if (versionMinor_ != 0) {
+        output.writeUInt32(1003, versionMinor_);
+      }
+      if (versionPatch_ != 0) {
+        output.writeUInt32(1004, versionPatch_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -325,6 +450,22 @@ public final class NodePartitionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(namespace_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, namespace_);
       }
+      if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(1001, objectType_);
+      }
+      if (versionMajor_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1002, versionMajor_);
+      }
+      if (versionMinor_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1003, versionMinor_);
+      }
+      if (versionPatch_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1004, versionPatch_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -344,6 +485,13 @@ public final class NodePartitionOuterClass {
           .equals(other.getObjectClass())) return false;
       if (!getVersion()
           .equals(other.getVersion())) return false;
+      if (objectType_ != other.objectType_) return false;
+      if (getVersionMajor()
+          != other.getVersionMajor()) return false;
+      if (getVersionMinor()
+          != other.getVersionMinor()) return false;
+      if (getVersionPatch()
+          != other.getVersionPatch()) return false;
       if (getPartition()
           != other.getPartition()) return false;
       if (!getNamespace()
@@ -363,6 +511,14 @@ public final class NodePartitionOuterClass {
       hash = (53 * hash) + getObjectClass().hashCode();
       hash = (37 * hash) + VERSION_FIELD_NUMBER;
       hash = (53 * hash) + getVersion().hashCode();
+      hash = (37 * hash) + OBJECT_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + objectType_;
+      hash = (37 * hash) + VERSION_MAJOR_FIELD_NUMBER;
+      hash = (53 * hash) + getVersionMajor();
+      hash = (37 * hash) + VERSION_MINOR_FIELD_NUMBER;
+      hash = (53 * hash) + getVersionMinor();
+      hash = (37 * hash) + VERSION_PATCH_FIELD_NUMBER;
+      hash = (53 * hash) + getVersionPatch();
       hash = (37 * hash) + PARTITION_FIELD_NUMBER;
       hash = (53 * hash) + getPartition();
       hash = (37 * hash) + NAMESPACE_FIELD_NUMBER;
@@ -502,6 +658,10 @@ public final class NodePartitionOuterClass {
         bitField0_ = 0;
         objectClass_ = "";
         version_ = "";
+        objectType_ = 0;
+        versionMajor_ = 0;
+        versionMinor_ = 0;
+        versionPatch_ = 0;
         partition_ = 0;
         namespace_ = "";
         return this;
@@ -544,9 +704,21 @@ public final class NodePartitionOuterClass {
           result.version_ = version_;
         }
         if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.partition_ = partition_;
+          result.objectType_ = objectType_;
         }
         if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.versionMajor_ = versionMajor_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.versionMinor_ = versionMinor_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.versionPatch_ = versionPatch_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.partition_ = partition_;
+        }
+        if (((from_bitField0_ & 0x00000080) != 0)) {
           result.namespace_ = namespace_;
         }
       }
@@ -605,12 +777,24 @@ public final class NodePartitionOuterClass {
           bitField0_ |= 0x00000002;
           onChanged();
         }
+        if (other.objectType_ != 0) {
+          setObjectTypeValue(other.getObjectTypeValue());
+        }
+        if (other.getVersionMajor() != 0) {
+          setVersionMajor(other.getVersionMajor());
+        }
+        if (other.getVersionMinor() != 0) {
+          setVersionMinor(other.getVersionMinor());
+        }
+        if (other.getVersionPatch() != 0) {
+          setVersionPatch(other.getVersionPatch());
+        }
         if (other.getPartition() != 0) {
           setPartition(other.getPartition());
         }
         if (!other.getNamespace().isEmpty()) {
           namespace_ = other.namespace_;
-          bitField0_ |= 0x00000008;
+          bitField0_ |= 0x00000080;
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -651,14 +835,34 @@ public final class NodePartitionOuterClass {
               } // case 18
               case 24: {
                 partition_ = input.readInt32();
-                bitField0_ |= 0x00000004;
+                bitField0_ |= 0x00000040;
                 break;
               } // case 24
               case 34: {
                 namespace_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000008;
+                bitField0_ |= 0x00000080;
                 break;
               } // case 34
+              case 8008: {
+                objectType_ = input.readEnum();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 8008
+              case 8016: {
+                versionMajor_ = input.readUInt32();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 8016
+              case 8024: {
+                versionMinor_ = input.readUInt32();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 8024
+              case 8032: {
+                versionPatch_ = input.readUInt32();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 8032
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -678,10 +882,12 @@ public final class NodePartitionOuterClass {
 
       private java.lang.Object objectClass_ = "";
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodePartition.object_class is deprecated.
+       *     See fintekkers/models/util/lock/node_partition.proto;l=7
        * @return The objectClass.
        */
-      public java.lang.String getObjectClass() {
+      @java.lang.Deprecated public java.lang.String getObjectClass() {
         java.lang.Object ref = objectClass_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
@@ -694,10 +900,12 @@ public final class NodePartitionOuterClass {
         }
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodePartition.object_class is deprecated.
+       *     See fintekkers/models/util/lock/node_partition.proto;l=7
        * @return The bytes for objectClass.
        */
-      public com.google.protobuf.ByteString
+      @java.lang.Deprecated public com.google.protobuf.ByteString
           getObjectClassBytes() {
         java.lang.Object ref = objectClass_;
         if (ref instanceof String) {
@@ -711,11 +919,13 @@ public final class NodePartitionOuterClass {
         }
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodePartition.object_class is deprecated.
+       *     See fintekkers/models/util/lock/node_partition.proto;l=7
        * @param value The objectClass to set.
        * @return This builder for chaining.
        */
-      public Builder setObjectClass(
+      @java.lang.Deprecated public Builder setObjectClass(
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         objectClass_ = value;
@@ -724,21 +934,25 @@ public final class NodePartitionOuterClass {
         return this;
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodePartition.object_class is deprecated.
+       *     See fintekkers/models/util/lock/node_partition.proto;l=7
        * @return This builder for chaining.
        */
-      public Builder clearObjectClass() {
+      @java.lang.Deprecated public Builder clearObjectClass() {
         objectClass_ = getDefaultInstance().getObjectClass();
         bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodePartition.object_class is deprecated.
+       *     See fintekkers/models/util/lock/node_partition.proto;l=7
        * @param value The bytes for objectClass to set.
        * @return This builder for chaining.
        */
-      public Builder setObjectClassBytes(
+      @java.lang.Deprecated public Builder setObjectClassBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
@@ -750,10 +964,12 @@ public final class NodePartitionOuterClass {
 
       private java.lang.Object version_ = "";
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodePartition.version is deprecated.
+       *     See fintekkers/models/util/lock/node_partition.proto;l=8
        * @return The version.
        */
-      public java.lang.String getVersion() {
+      @java.lang.Deprecated public java.lang.String getVersion() {
         java.lang.Object ref = version_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
@@ -766,10 +982,12 @@ public final class NodePartitionOuterClass {
         }
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodePartition.version is deprecated.
+       *     See fintekkers/models/util/lock/node_partition.proto;l=8
        * @return The bytes for version.
        */
-      public com.google.protobuf.ByteString
+      @java.lang.Deprecated public com.google.protobuf.ByteString
           getVersionBytes() {
         java.lang.Object ref = version_;
         if (ref instanceof String) {
@@ -783,11 +1001,13 @@ public final class NodePartitionOuterClass {
         }
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodePartition.version is deprecated.
+       *     See fintekkers/models/util/lock/node_partition.proto;l=8
        * @param value The version to set.
        * @return This builder for chaining.
        */
-      public Builder setVersion(
+      @java.lang.Deprecated public Builder setVersion(
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         version_ = value;
@@ -796,26 +1016,199 @@ public final class NodePartitionOuterClass {
         return this;
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodePartition.version is deprecated.
+       *     See fintekkers/models/util/lock/node_partition.proto;l=8
        * @return This builder for chaining.
        */
-      public Builder clearVersion() {
+      @java.lang.Deprecated public Builder clearVersion() {
         version_ = getDefaultInstance().getVersion();
         bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodePartition.version is deprecated.
+       *     See fintekkers/models/util/lock/node_partition.proto;l=8
        * @param value The bytes for version to set.
        * @return This builder for chaining.
        */
-      public Builder setVersionBytes(
+      @java.lang.Deprecated public Builder setVersionBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         version_ = value;
         bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private int objectType_ = 0;
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @return The enum numeric value on the wire for objectType.
+       */
+      @java.lang.Override public int getObjectTypeValue() {
+        return objectType_;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @param value The enum numeric value on the wire for objectType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setObjectTypeValue(int value) {
+        objectType_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @return The objectType.
+       */
+      @java.lang.Override
+      public fintekkers.models.util.ObjectTypeProto getObjectType() {
+        fintekkers.models.util.ObjectTypeProto result = fintekkers.models.util.ObjectTypeProto.forNumber(objectType_);
+        return result == null ? fintekkers.models.util.ObjectTypeProto.UNRECOGNIZED : result;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @param value The objectType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setObjectType(fintekkers.models.util.ObjectTypeProto value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        objectType_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearObjectType() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        objectType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int versionMajor_ ;
+      /**
+       * <code>uint32 version_major = 1002;</code>
+       * @return The versionMajor.
+       */
+      @java.lang.Override
+      public int getVersionMajor() {
+        return versionMajor_;
+      }
+      /**
+       * <code>uint32 version_major = 1002;</code>
+       * @param value The versionMajor to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersionMajor(int value) {
+        
+        versionMajor_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 version_major = 1002;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersionMajor() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        versionMajor_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int versionMinor_ ;
+      /**
+       * <code>uint32 version_minor = 1003;</code>
+       * @return The versionMinor.
+       */
+      @java.lang.Override
+      public int getVersionMinor() {
+        return versionMinor_;
+      }
+      /**
+       * <code>uint32 version_minor = 1003;</code>
+       * @param value The versionMinor to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersionMinor(int value) {
+        
+        versionMinor_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 version_minor = 1003;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersionMinor() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        versionMinor_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int versionPatch_ ;
+      /**
+       * <code>uint32 version_patch = 1004;</code>
+       * @return The versionPatch.
+       */
+      @java.lang.Override
+      public int getVersionPatch() {
+        return versionPatch_;
+      }
+      /**
+       * <code>uint32 version_patch = 1004;</code>
+       * @param value The versionPatch to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersionPatch(int value) {
+        
+        versionPatch_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 version_patch = 1004;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersionPatch() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        versionPatch_ = 0;
         onChanged();
         return this;
       }
@@ -855,7 +1248,7 @@ public final class NodePartitionOuterClass {
       public Builder setPartition(int value) {
         
         partition_ = value;
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -873,7 +1266,7 @@ public final class NodePartitionOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearPartition() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000040);
         partition_ = 0;
         onChanged();
         return this;
@@ -940,7 +1333,7 @@ public final class NodePartitionOuterClass {
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         namespace_ = value;
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -956,7 +1349,7 @@ public final class NodePartitionOuterClass {
        */
       public Builder clearNamespace() {
         namespace_ = getDefaultInstance().getNamespace();
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000080);
         onChanged();
         return this;
       }
@@ -976,7 +1369,7 @@ public final class NodePartitionOuterClass {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         namespace_ = value;
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -1059,21 +1452,28 @@ public final class NodePartitionOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n0fintekkers/models/util/lock/node_parti" +
-      "tion.proto\022\033fintekkers.models.util.lock\"" +
-      "\\\n\rNodePartition\022\024\n\014object_class\030\001 \001(\t\022\017" +
-      "\n\007version\030\002 \001(\t\022\021\n\tpartition\030\003 \001(\005\022\021\n\tna" +
-      "mespace\030\004 \001(\tb\006proto3"
+      "tion.proto\022\033fintekkers.models.util.lock\032" +
+      "(fintekkers/models/util/object_type.prot" +
+      "o\"\353\001\n\rNodePartition\022\030\n\014object_class\030\001 \001(" +
+      "\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_typ" +
+      "e\030\351\007 \001(\0162\'.fintekkers.models.util.Object" +
+      "TypeProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rver" +
+      "sion_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(" +
+      "\r\022\021\n\tpartition\030\003 \001(\005\022\021\n\tnamespace\030\004 \001(\tb" +
+      "\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_util_lock_NodePartition_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_util_lock_NodePartition_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_util_lock_NodePartition_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Partition", "Namespace", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Partition", "Namespace", });
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

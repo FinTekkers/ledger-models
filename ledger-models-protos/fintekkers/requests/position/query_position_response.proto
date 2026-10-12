@@ -4,14 +4,20 @@ package fintekkers.requests.position;
 
 import "fintekkers/models/position/position.proto";
 import "fintekkers/requests/position/query_position_request.proto";
+import "fintekkers/models/util/object_type.proto";
 
 option java_multiple_files = true;
 
 option java_outer_classname = "QueryPositionResponseProtos";
 
 message QueryPositionResponseProto {
-  string object_class = 1;
-  string version = 2;
+  string object_class = 1 [deprecated = true];
+  string version = 2 [deprecated = true];
+  // Compact form of object_class / version (LM-297). Writers set both in stage 1.
+  fintekkers.models.util.ObjectTypeProto object_type = 1001;
+  uint32 version_major = 1002;
+  uint32 version_minor = 1003;
+  uint32 version_patch = 1004;
 
   position.QueryPositionRequestProto position_request = 11;
 

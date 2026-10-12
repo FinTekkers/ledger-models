@@ -31,31 +31,38 @@ public final class PortfolioProtos {
       "\n+fintekkers/models/portfolio/portfolio." +
       "proto\022\033fintekkers.models.portfolio\032,fint" +
       "ekkers/models/util/local_timestamp.proto" +
-      "\032!fintekkers/models/util/uuid.proto\"\315\002\n\016" +
-      "PortfolioProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007" +
-      "version\030\002 \001(\t\022/\n\004uuid\030\005 \001(\0132!.fintekkers" +
-      ".models.util.UUIDProto\022:\n\005as_of\030\006 \001(\0132+." +
-      "fintekkers.models.util.LocalTimestampPro" +
-      "to\022\017\n\007is_link\030\007 \001(\010\022?\n\nvalid_from\030\010 \001(\0132" +
-      "+.fintekkers.models.util.LocalTimestampP" +
-      "roto\022=\n\010valid_to\030\t \001(\0132+.fintekkers.mode" +
-      "ls.util.LocalTimestampProto\022\026\n\016portfolio" +
-      "_name\030\n \001(\tB\023B\017PortfolioProtosP\001b\006proto3"
+      "\032!fintekkers/models/util/uuid.proto\032(fin" +
+      "tekkers/models/util/object_type.proto\"\334\003" +
+      "\n\016PortfolioProto\022\030\n\014object_class\030\001 \001(\tB\002" +
+      "\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351" +
+      "\007 \001(\0162\'.fintekkers.models.util.ObjectTyp" +
+      "eProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversio" +
+      "n_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022/" +
+      "\n\004uuid\030\005 \001(\0132!.fintekkers.models.util.UU" +
+      "IDProto\022:\n\005as_of\030\006 \001(\0132+.fintekkers.mode" +
+      "ls.util.LocalTimestampProto\022\017\n\007is_link\030\007" +
+      " \001(\010\022?\n\nvalid_from\030\010 \001(\0132+.fintekkers.mo" +
+      "dels.util.LocalTimestampProto\022=\n\010valid_t" +
+      "o\030\t \001(\0132+.fintekkers.models.util.LocalTi" +
+      "mestampProto\022\026\n\016portfolio_name\030\n \001(\tB\023B\017" +
+      "PortfolioProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.models.util.Uuid.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_portfolio_PortfolioProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_portfolio_PortfolioProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_portfolio_PortfolioProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "PortfolioName", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "PortfolioName", });
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.util.Uuid.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

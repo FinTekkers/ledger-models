@@ -22,15 +22,20 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
+from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n0fintekkers/models/util/lock/node_partition.proto\x12\x1b\x66intekkers.models.util.lock\"\\\n\rNodePartition\x12\x14\n\x0cobject_class\x18\x01 \x01(\t\x12\x0f\n\x07version\x18\x02 \x01(\t\x12\x11\n\tpartition\x18\x03 \x01(\x05\x12\x11\n\tnamespace\x18\x04 \x01(\tb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n0fintekkers/models/util/lock/node_partition.proto\x12\x1b\x66intekkers.models.util.lock\x1a(fintekkers/models/util/object_type.proto\"\xeb\x01\n\rNodePartition\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12\x11\n\tpartition\x18\x03 \x01(\x05\x12\x11\n\tnamespace\x18\x04 \x01(\tb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.util.lock.node_partition_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_NODEPARTITION']._serialized_start=81
-  _globals['_NODEPARTITION']._serialized_end=173
+  _globals['_NODEPARTITION'].fields_by_name['object_class']._loaded_options = None
+  _globals['_NODEPARTITION'].fields_by_name['object_class']._serialized_options = b'\030\001'
+  _globals['_NODEPARTITION'].fields_by_name['version']._loaded_options = None
+  _globals['_NODEPARTITION'].fields_by_name['version']._serialized_options = b'\030\001'
+  _globals['_NODEPARTITION']._serialized_start=124
+  _globals['_NODEPARTITION']._serialized_end=359
 # @@protoc_insertion_point(module_scope)

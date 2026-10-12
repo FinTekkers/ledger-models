@@ -1,0 +1,109 @@
+// source: fintekkers/models/util/object_type.proto
+/**
+ * @fileoverview
+ * @enhanceable
+ * @suppress {missingRequire} reports error on implicit type usages.
+ * @suppress {messageConventions} JS Compiler reports an error if a variable or
+ *     field starts with 'MSG_' and isn't a translatable message.
+ * @public
+ */
+// GENERATED CODE -- DO NOT EDIT!
+/* eslint-disable */
+// @ts-nocheck
+
+var jspb = require('google-protobuf');
+var goog = jspb;
+var global = (function() {
+  if (this) { return this; }
+  if (typeof window !== 'undefined') { return window; }
+  if (typeof global !== 'undefined') { return global; }
+  if (typeof self !== 'undefined') { return self; }
+  return Function('return this')();
+}.call(null));
+
+var google_protobuf_descriptor_pb = require('google-protobuf/google/protobuf/descriptor_pb.js');
+goog.object.extend(proto, google_protobuf_descriptor_pb);
+goog.exportSymbol('proto.fintekkers.models.util.ObjectTypeProto', null, global);
+goog.exportSymbol('proto.fintekkers.models.util.legacyObjectClassList', null, global);
+/**
+ * @enum {number}
+ */
+proto.fintekkers.models.util.ObjectTypeProto = {
+  OBJECT_TYPE_UNKNOWN: 0,
+  OBJECT_TYPE_API_KEY: 1,
+  OBJECT_TYPE_DATE_RANGE: 2,
+  OBJECT_TYPE_IDENTIFIER: 3,
+  OBJECT_TYPE_INDEX_COMPOSITION: 4,
+  OBJECT_TYPE_ISSUANCE: 5,
+  OBJECT_TYPE_NODE_PARTITION: 6,
+  OBJECT_TYPE_NODE_STATE: 7,
+  OBJECT_TYPE_PORTFOLIO: 8,
+  OBJECT_TYPE_POSITION: 9,
+  OBJECT_TYPE_POSITION_FILTER: 10,
+  OBJECT_TYPE_PRICE: 11,
+  OBJECT_TYPE_SECURITY: 12,
+  OBJECT_TYPE_STRATEGY: 13,
+  OBJECT_TYPE_STRATEGY_ALLOCATION: 14,
+  OBJECT_TYPE_TENOR: 15,
+  OBJECT_TYPE_TRANSACTION: 16,
+  OBJECT_TYPE_CREATE_INDEX_COMPOSITION_REQUEST: 101,
+  OBJECT_TYPE_CREATE_INDEX_COMPOSITION_RESPONSE: 102,
+  OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST: 103,
+  OBJECT_TYPE_CREATE_PORTFOLIO_RESPONSE: 104,
+  OBJECT_TYPE_CREATE_PRICE_REQUEST: 105,
+  OBJECT_TYPE_CREATE_PRICE_RESPONSE: 106,
+  OBJECT_TYPE_CREATE_SECURITY_REQUEST: 107,
+  OBJECT_TYPE_CREATE_SECURITY_RESPONSE: 108,
+  OBJECT_TYPE_CREATE_TRANSACTION_REQUEST: 109,
+  OBJECT_TYPE_CREATE_TRANSACTION_RESPONSE: 110,
+  OBJECT_TYPE_CURVE_REQUEST: 111,
+  OBJECT_TYPE_CURVE_RESPONSE: 112,
+  OBJECT_TYPE_DELETE_REQUEST: 113,
+  OBJECT_TYPE_DELETE_RESPONSE: 114,
+  OBJECT_TYPE_GET_FIELDS_RESPONSE: 115,
+  OBJECT_TYPE_GET_FIELD_VALUES_REQUEST: 116,
+  OBJECT_TYPE_GET_FIELD_VALUES_RESPONSE: 117,
+  OBJECT_TYPE_GET_INDEX_COMPOSITION_REQUEST: 118,
+  OBJECT_TYPE_GET_INDEX_COMPOSITION_RESPONSE: 119,
+  OBJECT_TYPE_LOCK_REQUEST: 120,
+  OBJECT_TYPE_LOCK_RESPONSE: 121,
+  OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST: 122,
+  OBJECT_TYPE_QUERY_PORTFOLIO_RESPONSE: 123,
+  OBJECT_TYPE_QUERY_POSITION_REQUEST: 124,
+  OBJECT_TYPE_QUERY_POSITION_RESPONSE: 125,
+  OBJECT_TYPE_QUERY_PRICE_REQUEST: 126,
+  OBJECT_TYPE_QUERY_PRICE_RESPONSE: 127,
+  OBJECT_TYPE_QUERY_SECURITY_REQUEST: 128,
+  OBJECT_TYPE_QUERY_SECURITY_RESPONSE: 129,
+  OBJECT_TYPE_QUERY_TRANSACTION_REQUEST: 130,
+  OBJECT_TYPE_QUERY_TRANSACTION_RESPONSE: 131,
+  OBJECT_TYPE_VALUATION_REQUEST: 132,
+  OBJECT_TYPE_VALUATION_RESPONSE: 133
+};
+
+
+/**
+ * A tuple of {field number, class constructor} for the extension
+ * field named `legacyObjectClassList`.
+ * @type {!jspb.ExtensionFieldInfo<!Array<string>>}
+ */
+proto.fintekkers.models.util.legacyObjectClassList = new jspb.ExtensionFieldInfo(
+    50001,
+    {legacyObjectClassList: 0},
+    null,
+     /** @type {?function((boolean|undefined),!jspb.Message=): !Object} */ (
+         null),
+    1);
+
+google_protobuf_descriptor_pb.EnumValueOptions.extensionsBinary[50001] = new jspb.ExtensionFieldBinaryInfo(
+    proto.fintekkers.models.util.legacyObjectClassList,
+    jspb.BinaryReader.prototype.readString,
+    jspb.BinaryWriter.prototype.writeRepeatedString,
+    undefined,
+    undefined,
+    false);
+// This registers the extension field with the extended class, so that
+// toObject() will function correctly.
+google_protobuf_descriptor_pb.EnumValueOptions.extensions[50001] = proto.fintekkers.models.util.legacyObjectClassList;
+
+goog.object.extend(exports, proto.fintekkers.models.util);

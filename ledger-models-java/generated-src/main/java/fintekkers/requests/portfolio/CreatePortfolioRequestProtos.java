@@ -31,25 +31,31 @@ public final class CreatePortfolioRequestProtos {
       "\n<fintekkers/requests/portfolio/create_p" +
       "ortfolio_request.proto\022\035fintekkers.reque" +
       "sts.portfolio\032+fintekkers/models/portfol" +
-      "io/portfolio.proto\"\221\001\n\033CreatePortfolioRe" +
-      "questProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007vers" +
-      "ion\030\002 \001(\t\022K\n\026create_portfolio_input\030\024 \001(" +
-      "\0132+.fintekkers.models.portfolio.Portfoli" +
-      "oProtoB B\034CreatePortfolioRequestProtosP\001" +
-      "b\006proto3"
+      "io/portfolio.proto\032(fintekkers/models/ut" +
+      "il/object_type.proto\"\240\002\n\033CreatePortfolio" +
+      "RequestProto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023" +
+      "\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(" +
+      "\0162\'.fintekkers.models.util.ObjectTypePro" +
+      "to\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversion_mi" +
+      "nor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022K\n\026cr" +
+      "eate_portfolio_input\030\024 \001(\0132+.fintekkers." +
+      "models.portfolio.PortfolioProtoB B\034Creat" +
+      "ePortfolioRequestProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.portfolio.PortfolioProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_portfolio_CreatePortfolioRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_portfolio_CreatePortfolioRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_portfolio_CreatePortfolioRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "CreatePortfolioInput", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "CreatePortfolioInput", });
     fintekkers.models.portfolio.PortfolioProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

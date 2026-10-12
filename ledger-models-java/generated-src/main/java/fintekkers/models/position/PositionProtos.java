@@ -32,36 +32,43 @@ public final class PositionProtos {
       "oto\022\032fintekkers.models.position\032.fintekk" +
       "ers/models/position/position_util.proto\032" +
       ")fintekkers/models/security/security.pro" +
-      "to\"\203\003\n\rPositionProto\022\024\n\014object_class\030\001 \001" +
-      "(\t\022\017\n\007version\030\002 \001(\t\022D\n\rposition_view\030\n \001" +
-      "(\0162-.fintekkers.models.position.Position" +
-      "ViewProto\022D\n\rposition_type\030\013 \001(\0162-.finte" +
-      "kkers.models.position.PositionTypeProto\022" +
-      "=\n\010measures\030\024 \003(\0132+.fintekkers.models.po" +
-      "sition.MeasureMapEntry\0229\n\006fields\030\025 \003(\0132)" +
-      ".fintekkers.models.position.FieldMapEntr" +
-      "y\022E\n\022reporting_currency\030\026 \001(\0132).fintekke" +
-      "rs.models.security.SecurityProto*S\n\021Posi" +
-      "tionViewProto\022\031\n\025UNKNOWN_POSITION_VIEW\020\000" +
-      "\022\020\n\014DEFAULT_VIEW\020\001\022\021\n\rSTRATEGY_VIEW\020\002*L\n" +
-      "\021PositionTypeProto\022\031\n\025UNKNOWN_POSITION_T" +
-      "YPE\020\000\022\017\n\013TRANSACTION\020\001\022\013\n\007TAX_LOT\020\002B\022B\016P" +
-      "ositionProtosP\001b\006proto3"
+      "to\032(fintekkers/models/util/object_type.p" +
+      "roto\"\222\004\n\rPositionProto\022\030\n\014object_class\030\001" +
+      " \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_" +
+      "type\030\351\007 \001(\0162\'.fintekkers.models.util.Obj" +
+      "ectTypeProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\r" +
+      "version_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007" +
+      " \001(\r\022D\n\rposition_view\030\n \001(\0162-.fintekkers" +
+      ".models.position.PositionViewProto\022D\n\rpo" +
+      "sition_type\030\013 \001(\0162-.fintekkers.models.po" +
+      "sition.PositionTypeProto\022=\n\010measures\030\024 \003" +
+      "(\0132+.fintekkers.models.position.MeasureM" +
+      "apEntry\0229\n\006fields\030\025 \003(\0132).fintekkers.mod" +
+      "els.position.FieldMapEntry\022E\n\022reporting_" +
+      "currency\030\026 \001(\0132).fintekkers.models.secur" +
+      "ity.SecurityProto*S\n\021PositionViewProto\022\031" +
+      "\n\025UNKNOWN_POSITION_VIEW\020\000\022\020\n\014DEFAULT_VIE" +
+      "W\020\001\022\021\n\rSTRATEGY_VIEW\020\002*L\n\021PositionTypePr" +
+      "oto\022\031\n\025UNKNOWN_POSITION_TYPE\020\000\022\017\n\013TRANSA" +
+      "CTION\020\001\022\013\n\007TAX_LOT\020\002B\022B\016PositionProtosP\001" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.position.PositionUtilProtos.getDescriptor(),
           fintekkers.models.security.SecurityProtos.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_position_PositionProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_position_PositionProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_position_PositionProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "PositionView", "PositionType", "Measures", "Fields", "ReportingCurrency", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "PositionView", "PositionType", "Measures", "Fields", "ReportingCurrency", });
     fintekkers.models.position.PositionUtilProtos.getDescriptor();
     fintekkers.models.security.SecurityProtos.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

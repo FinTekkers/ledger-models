@@ -29,6 +29,8 @@ var fintekkers_requests_valuation_curve_request_pb = require('../../../fintekker
 goog.object.extend(proto, fintekkers_requests_valuation_curve_request_pb);
 var fintekkers_requests_util_errors_summary_pb = require('../../../fintekkers/requests/util/errors/summary_pb.js');
 goog.object.extend(proto, fintekkers_requests_util_errors_summary_pb);
+var fintekkers_models_util_object_type_pb = require('../../../fintekkers/models/util/object_type_pb.js');
+goog.object.extend(proto, fintekkers_models_util_object_type_pb);
 goog.exportSymbol('proto.fintekkers.requests.valuation.CurvePointProto', null, global);
 goog.exportSymbol('proto.fintekkers.requests.valuation.CurveResponseProto', null, global);
 goog.exportSymbol('proto.fintekkers.requests.valuation.CurveResultProto', null, global);
@@ -85,7 +87,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.fintekkers.requests.valuation.CurveResponseProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.fintekkers.requests.valuation.CurveResponseProto.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, 500, proto.fintekkers.requests.valuation.CurveResponseProto.repeatedFields_, null);
 };
 goog.inherits(proto.fintekkers.requests.valuation.CurveResponseProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -528,6 +530,10 @@ proto.fintekkers.requests.valuation.CurveResponseProto.toObject = function(inclu
   var f, obj = {
     objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
     version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    objectType: jspb.Message.getFieldWithDefault(msg, 1001, 0),
+    versionMajor: jspb.Message.getFieldWithDefault(msg, 1002, 0),
+    versionMinor: jspb.Message.getFieldWithDefault(msg, 1003, 0),
+    versionPatch: jspb.Message.getFieldWithDefault(msg, 1004, 0),
     curveRequest: (f = msg.getCurveRequest()) && fintekkers_requests_valuation_curve_request_pb.CurveRequestProto.toObject(includeInstance, f),
     curveResultsList: jspb.Message.toObjectList(msg.getCurveResultsList(),
     proto.fintekkers.requests.valuation.CurveResultProto.toObject, includeInstance),
@@ -575,6 +581,22 @@ proto.fintekkers.requests.valuation.CurveResponseProto.deserializeBinaryFromRead
     case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
+      break;
+    case 1001:
+      var value = /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (reader.readEnum());
+      msg.setObjectType(value);
+      break;
+    case 1002:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMajor(value);
+      break;
+    case 1003:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMinor(value);
+      break;
+    case 1004:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionPatch(value);
       break;
     case 10:
       var value = new fintekkers_requests_valuation_curve_request_pb.CurveRequestProto;
@@ -631,6 +653,34 @@ proto.fintekkers.requests.valuation.CurveResponseProto.serializeBinaryToWriter =
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getObjectType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1001,
+      f
+    );
+  }
+  f = message.getVersionMajor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1002,
+      f
+    );
+  }
+  f = message.getVersionMinor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1003,
+      f
+    );
+  }
+  f = message.getVersionPatch();
+  if (f !== 0) {
+    writer.writeUint32(
+      1004,
       f
     );
   }
@@ -694,6 +744,78 @@ proto.fintekkers.requests.valuation.CurveResponseProto.prototype.getVersion = fu
  */
 proto.fintekkers.requests.valuation.CurveResponseProto.prototype.setVersion = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional fintekkers.models.util.ObjectTypeProto object_type = 1001;
+ * @return {!proto.fintekkers.models.util.ObjectTypeProto}
+ */
+proto.fintekkers.requests.valuation.CurveResponseProto.prototype.getObjectType = function() {
+  return /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (jspb.Message.getFieldWithDefault(this, 1001, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.util.ObjectTypeProto} value
+ * @return {!proto.fintekkers.requests.valuation.CurveResponseProto} returns this
+ */
+proto.fintekkers.requests.valuation.CurveResponseProto.prototype.setObjectType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1001, value);
+};
+
+
+/**
+ * optional uint32 version_major = 1002;
+ * @return {number}
+ */
+proto.fintekkers.requests.valuation.CurveResponseProto.prototype.getVersionMajor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1002, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.valuation.CurveResponseProto} returns this
+ */
+proto.fintekkers.requests.valuation.CurveResponseProto.prototype.setVersionMajor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1002, value);
+};
+
+
+/**
+ * optional uint32 version_minor = 1003;
+ * @return {number}
+ */
+proto.fintekkers.requests.valuation.CurveResponseProto.prototype.getVersionMinor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1003, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.valuation.CurveResponseProto} returns this
+ */
+proto.fintekkers.requests.valuation.CurveResponseProto.prototype.setVersionMinor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1003, value);
+};
+
+
+/**
+ * optional uint32 version_patch = 1004;
+ * @return {number}
+ */
+proto.fintekkers.requests.valuation.CurveResponseProto.prototype.getVersionPatch = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1004, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.valuation.CurveResponseProto} returns this
+ */
+proto.fintekkers.requests.valuation.CurveResponseProto.prototype.setVersionPatch = function(value) {
+  return jspb.Message.setProto3IntField(this, 1004, value);
 };
 
 

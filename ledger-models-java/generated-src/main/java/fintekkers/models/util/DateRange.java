@@ -19,28 +19,73 @@ public final class DateRange {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DateRangeProto.object_class is deprecated.
+     *     See fintekkers/models/util/date_range.proto;l=7
      * @return The objectClass.
      */
-    java.lang.String getObjectClass();
+    @java.lang.Deprecated java.lang.String getObjectClass();
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DateRangeProto.object_class is deprecated.
+     *     See fintekkers/models/util/date_range.proto;l=7
      * @return The bytes for objectClass.
      */
-    com.google.protobuf.ByteString
+    @java.lang.Deprecated com.google.protobuf.ByteString
         getObjectClassBytes();
 
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DateRangeProto.version is deprecated.
+     *     See fintekkers/models/util/date_range.proto;l=8
      * @return The version.
      */
-    java.lang.String getVersion();
+    @java.lang.Deprecated java.lang.String getVersion();
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DateRangeProto.version is deprecated.
+     *     See fintekkers/models/util/date_range.proto;l=8
      * @return The bytes for version.
      */
-    com.google.protobuf.ByteString
+    @java.lang.Deprecated com.google.protobuf.ByteString
         getVersionBytes();
+
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The enum numeric value on the wire for objectType.
+     */
+    int getObjectTypeValue();
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The objectType.
+     */
+    fintekkers.models.util.ObjectTypeProto getObjectType();
+
+    /**
+     * <code>uint32 version_major = 1002;</code>
+     * @return The versionMajor.
+     */
+    int getVersionMajor();
+
+    /**
+     * <code>uint32 version_minor = 1003;</code>
+     * @return The versionMinor.
+     */
+    int getVersionMinor();
+
+    /**
+     * <code>uint32 version_patch = 1004;</code>
+     * @return The versionPatch.
+     */
+    int getVersionPatch();
 
     /**
      * <pre>
@@ -99,6 +144,7 @@ public final class DateRange {
     private DateRangeProto() {
       objectClass_ = "";
       version_ = "";
+      objectType_ = 0;
     }
 
     @java.lang.Override
@@ -130,11 +176,13 @@ public final class DateRange {
     @SuppressWarnings("serial")
     private volatile java.lang.Object objectClass_ = "";
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DateRangeProto.object_class is deprecated.
+     *     See fintekkers/models/util/date_range.proto;l=7
      * @return The objectClass.
      */
     @java.lang.Override
-    public java.lang.String getObjectClass() {
+    @java.lang.Deprecated public java.lang.String getObjectClass() {
       java.lang.Object ref = objectClass_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
@@ -147,11 +195,13 @@ public final class DateRange {
       }
     }
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DateRangeProto.object_class is deprecated.
+     *     See fintekkers/models/util/date_range.proto;l=7
      * @return The bytes for objectClass.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString
+    @java.lang.Deprecated public com.google.protobuf.ByteString
         getObjectClassBytes() {
       java.lang.Object ref = objectClass_;
       if (ref instanceof java.lang.String) {
@@ -169,11 +219,13 @@ public final class DateRange {
     @SuppressWarnings("serial")
     private volatile java.lang.Object version_ = "";
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DateRangeProto.version is deprecated.
+     *     See fintekkers/models/util/date_range.proto;l=8
      * @return The version.
      */
     @java.lang.Override
-    public java.lang.String getVersion() {
+    @java.lang.Deprecated public java.lang.String getVersion() {
       java.lang.Object ref = version_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
@@ -186,11 +238,13 @@ public final class DateRange {
       }
     }
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.DateRangeProto.version is deprecated.
+     *     See fintekkers/models/util/date_range.proto;l=8
      * @return The bytes for version.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString
+    @java.lang.Deprecated public com.google.protobuf.ByteString
         getVersionBytes() {
       java.lang.Object ref = version_;
       if (ref instanceof java.lang.String) {
@@ -202,6 +256,65 @@ public final class DateRange {
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
+    }
+
+    public static final int OBJECT_TYPE_FIELD_NUMBER = 1001;
+    private int objectType_ = 0;
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The enum numeric value on the wire for objectType.
+     */
+    @java.lang.Override public int getObjectTypeValue() {
+      return objectType_;
+    }
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The objectType.
+     */
+    @java.lang.Override public fintekkers.models.util.ObjectTypeProto getObjectType() {
+      fintekkers.models.util.ObjectTypeProto result = fintekkers.models.util.ObjectTypeProto.forNumber(objectType_);
+      return result == null ? fintekkers.models.util.ObjectTypeProto.UNRECOGNIZED : result;
+    }
+
+    public static final int VERSION_MAJOR_FIELD_NUMBER = 1002;
+    private int versionMajor_ = 0;
+    /**
+     * <code>uint32 version_major = 1002;</code>
+     * @return The versionMajor.
+     */
+    @java.lang.Override
+    public int getVersionMajor() {
+      return versionMajor_;
+    }
+
+    public static final int VERSION_MINOR_FIELD_NUMBER = 1003;
+    private int versionMinor_ = 0;
+    /**
+     * <code>uint32 version_minor = 1003;</code>
+     * @return The versionMinor.
+     */
+    @java.lang.Override
+    public int getVersionMinor() {
+      return versionMinor_;
+    }
+
+    public static final int VERSION_PATCH_FIELD_NUMBER = 1004;
+    private int versionPatch_ = 0;
+    /**
+     * <code>uint32 version_patch = 1004;</code>
+     * @return The versionPatch.
+     */
+    @java.lang.Override
+    public int getVersionPatch() {
+      return versionPatch_;
     }
 
     public static final int START_FIELD_NUMBER = 10;
@@ -294,6 +407,18 @@ public final class DateRange {
       if (end_ != null) {
         output.writeMessage(11, getEnd());
       }
+      if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
+        output.writeEnum(1001, objectType_);
+      }
+      if (versionMajor_ != 0) {
+        output.writeUInt32(1002, versionMajor_);
+      }
+      if (versionMinor_ != 0) {
+        output.writeUInt32(1003, versionMinor_);
+      }
+      if (versionPatch_ != 0) {
+        output.writeUInt32(1004, versionPatch_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -317,6 +442,22 @@ public final class DateRange {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(11, getEnd());
       }
+      if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(1001, objectType_);
+      }
+      if (versionMajor_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1002, versionMajor_);
+      }
+      if (versionMinor_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1003, versionMinor_);
+      }
+      if (versionPatch_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1004, versionPatch_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -336,6 +477,13 @@ public final class DateRange {
           .equals(other.getObjectClass())) return false;
       if (!getVersion()
           .equals(other.getVersion())) return false;
+      if (objectType_ != other.objectType_) return false;
+      if (getVersionMajor()
+          != other.getVersionMajor()) return false;
+      if (getVersionMinor()
+          != other.getVersionMinor()) return false;
+      if (getVersionPatch()
+          != other.getVersionPatch()) return false;
       if (hasStart() != other.hasStart()) return false;
       if (hasStart()) {
         if (!getStart()
@@ -361,6 +509,14 @@ public final class DateRange {
       hash = (53 * hash) + getObjectClass().hashCode();
       hash = (37 * hash) + VERSION_FIELD_NUMBER;
       hash = (53 * hash) + getVersion().hashCode();
+      hash = (37 * hash) + OBJECT_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + objectType_;
+      hash = (37 * hash) + VERSION_MAJOR_FIELD_NUMBER;
+      hash = (53 * hash) + getVersionMajor();
+      hash = (37 * hash) + VERSION_MINOR_FIELD_NUMBER;
+      hash = (53 * hash) + getVersionMinor();
+      hash = (37 * hash) + VERSION_PATCH_FIELD_NUMBER;
+      hash = (53 * hash) + getVersionPatch();
       if (hasStart()) {
         hash = (37 * hash) + START_FIELD_NUMBER;
         hash = (53 * hash) + getStart().hashCode();
@@ -500,6 +656,10 @@ public final class DateRange {
         bitField0_ = 0;
         objectClass_ = "";
         version_ = "";
+        objectType_ = 0;
+        versionMajor_ = 0;
+        versionMinor_ = 0;
+        versionPatch_ = 0;
         start_ = null;
         if (startBuilder_ != null) {
           startBuilder_.dispose();
@@ -550,11 +710,23 @@ public final class DateRange {
           result.version_ = version_;
         }
         if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.objectType_ = objectType_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.versionMajor_ = versionMajor_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.versionMinor_ = versionMinor_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.versionPatch_ = versionPatch_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
           result.start_ = startBuilder_ == null
               ? start_
               : startBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
+        if (((from_bitField0_ & 0x00000080) != 0)) {
           result.end_ = endBuilder_ == null
               ? end_
               : endBuilder_.build();
@@ -615,6 +787,18 @@ public final class DateRange {
           bitField0_ |= 0x00000002;
           onChanged();
         }
+        if (other.objectType_ != 0) {
+          setObjectTypeValue(other.getObjectTypeValue());
+        }
+        if (other.getVersionMajor() != 0) {
+          setVersionMajor(other.getVersionMajor());
+        }
+        if (other.getVersionMinor() != 0) {
+          setVersionMinor(other.getVersionMinor());
+        }
+        if (other.getVersionPatch() != 0) {
+          setVersionPatch(other.getVersionPatch());
+        }
         if (other.hasStart()) {
           mergeStart(other.getStart());
         }
@@ -661,16 +845,36 @@ public final class DateRange {
                 input.readMessage(
                     getStartFieldBuilder().getBuilder(),
                     extensionRegistry);
-                bitField0_ |= 0x00000004;
+                bitField0_ |= 0x00000040;
                 break;
               } // case 82
               case 90: {
                 input.readMessage(
                     getEndFieldBuilder().getBuilder(),
                     extensionRegistry);
-                bitField0_ |= 0x00000008;
+                bitField0_ |= 0x00000080;
                 break;
               } // case 90
+              case 8008: {
+                objectType_ = input.readEnum();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 8008
+              case 8016: {
+                versionMajor_ = input.readUInt32();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 8016
+              case 8024: {
+                versionMinor_ = input.readUInt32();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 8024
+              case 8032: {
+                versionPatch_ = input.readUInt32();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 8032
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -690,10 +894,12 @@ public final class DateRange {
 
       private java.lang.Object objectClass_ = "";
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DateRangeProto.object_class is deprecated.
+       *     See fintekkers/models/util/date_range.proto;l=7
        * @return The objectClass.
        */
-      public java.lang.String getObjectClass() {
+      @java.lang.Deprecated public java.lang.String getObjectClass() {
         java.lang.Object ref = objectClass_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
@@ -706,10 +912,12 @@ public final class DateRange {
         }
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DateRangeProto.object_class is deprecated.
+       *     See fintekkers/models/util/date_range.proto;l=7
        * @return The bytes for objectClass.
        */
-      public com.google.protobuf.ByteString
+      @java.lang.Deprecated public com.google.protobuf.ByteString
           getObjectClassBytes() {
         java.lang.Object ref = objectClass_;
         if (ref instanceof String) {
@@ -723,11 +931,13 @@ public final class DateRange {
         }
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DateRangeProto.object_class is deprecated.
+       *     See fintekkers/models/util/date_range.proto;l=7
        * @param value The objectClass to set.
        * @return This builder for chaining.
        */
-      public Builder setObjectClass(
+      @java.lang.Deprecated public Builder setObjectClass(
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         objectClass_ = value;
@@ -736,21 +946,25 @@ public final class DateRange {
         return this;
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DateRangeProto.object_class is deprecated.
+       *     See fintekkers/models/util/date_range.proto;l=7
        * @return This builder for chaining.
        */
-      public Builder clearObjectClass() {
+      @java.lang.Deprecated public Builder clearObjectClass() {
         objectClass_ = getDefaultInstance().getObjectClass();
         bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DateRangeProto.object_class is deprecated.
+       *     See fintekkers/models/util/date_range.proto;l=7
        * @param value The bytes for objectClass to set.
        * @return This builder for chaining.
        */
-      public Builder setObjectClassBytes(
+      @java.lang.Deprecated public Builder setObjectClassBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
@@ -762,10 +976,12 @@ public final class DateRange {
 
       private java.lang.Object version_ = "";
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DateRangeProto.version is deprecated.
+       *     See fintekkers/models/util/date_range.proto;l=8
        * @return The version.
        */
-      public java.lang.String getVersion() {
+      @java.lang.Deprecated public java.lang.String getVersion() {
         java.lang.Object ref = version_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
@@ -778,10 +994,12 @@ public final class DateRange {
         }
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DateRangeProto.version is deprecated.
+       *     See fintekkers/models/util/date_range.proto;l=8
        * @return The bytes for version.
        */
-      public com.google.protobuf.ByteString
+      @java.lang.Deprecated public com.google.protobuf.ByteString
           getVersionBytes() {
         java.lang.Object ref = version_;
         if (ref instanceof String) {
@@ -795,11 +1013,13 @@ public final class DateRange {
         }
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DateRangeProto.version is deprecated.
+       *     See fintekkers/models/util/date_range.proto;l=8
        * @param value The version to set.
        * @return This builder for chaining.
        */
-      public Builder setVersion(
+      @java.lang.Deprecated public Builder setVersion(
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         version_ = value;
@@ -808,26 +1028,199 @@ public final class DateRange {
         return this;
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DateRangeProto.version is deprecated.
+       *     See fintekkers/models/util/date_range.proto;l=8
        * @return This builder for chaining.
        */
-      public Builder clearVersion() {
+      @java.lang.Deprecated public Builder clearVersion() {
         version_ = getDefaultInstance().getVersion();
         bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.DateRangeProto.version is deprecated.
+       *     See fintekkers/models/util/date_range.proto;l=8
        * @param value The bytes for version to set.
        * @return This builder for chaining.
        */
-      public Builder setVersionBytes(
+      @java.lang.Deprecated public Builder setVersionBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         version_ = value;
         bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private int objectType_ = 0;
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @return The enum numeric value on the wire for objectType.
+       */
+      @java.lang.Override public int getObjectTypeValue() {
+        return objectType_;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @param value The enum numeric value on the wire for objectType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setObjectTypeValue(int value) {
+        objectType_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @return The objectType.
+       */
+      @java.lang.Override
+      public fintekkers.models.util.ObjectTypeProto getObjectType() {
+        fintekkers.models.util.ObjectTypeProto result = fintekkers.models.util.ObjectTypeProto.forNumber(objectType_);
+        return result == null ? fintekkers.models.util.ObjectTypeProto.UNRECOGNIZED : result;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @param value The objectType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setObjectType(fintekkers.models.util.ObjectTypeProto value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        objectType_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearObjectType() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        objectType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int versionMajor_ ;
+      /**
+       * <code>uint32 version_major = 1002;</code>
+       * @return The versionMajor.
+       */
+      @java.lang.Override
+      public int getVersionMajor() {
+        return versionMajor_;
+      }
+      /**
+       * <code>uint32 version_major = 1002;</code>
+       * @param value The versionMajor to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersionMajor(int value) {
+        
+        versionMajor_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 version_major = 1002;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersionMajor() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        versionMajor_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int versionMinor_ ;
+      /**
+       * <code>uint32 version_minor = 1003;</code>
+       * @return The versionMinor.
+       */
+      @java.lang.Override
+      public int getVersionMinor() {
+        return versionMinor_;
+      }
+      /**
+       * <code>uint32 version_minor = 1003;</code>
+       * @param value The versionMinor to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersionMinor(int value) {
+        
+        versionMinor_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 version_minor = 1003;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersionMinor() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        versionMinor_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int versionPatch_ ;
+      /**
+       * <code>uint32 version_patch = 1004;</code>
+       * @return The versionPatch.
+       */
+      @java.lang.Override
+      public int getVersionPatch() {
+        return versionPatch_;
+      }
+      /**
+       * <code>uint32 version_patch = 1004;</code>
+       * @param value The versionPatch to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersionPatch(int value) {
+        
+        versionPatch_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 version_patch = 1004;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersionPatch() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        versionPatch_ = 0;
         onChanged();
         return this;
       }
@@ -844,7 +1237,7 @@ public final class DateRange {
        * @return Whether the start field is set.
        */
       public boolean hasStart() {
-        return ((bitField0_ & 0x00000004) != 0);
+        return ((bitField0_ & 0x00000040) != 0);
       }
       /**
        * <pre>
@@ -877,7 +1270,7 @@ public final class DateRange {
         } else {
           startBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -895,7 +1288,7 @@ public final class DateRange {
         } else {
           startBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -908,7 +1301,7 @@ public final class DateRange {
        */
       public Builder mergeStart(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
         if (startBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) != 0) &&
+          if (((bitField0_ & 0x00000040) != 0) &&
             start_ != null &&
             start_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
             getStartBuilder().mergeFrom(value);
@@ -918,7 +1311,7 @@ public final class DateRange {
         } else {
           startBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -930,7 +1323,7 @@ public final class DateRange {
        * <code>.fintekkers.models.util.LocalTimestampProto start = 10;</code>
        */
       public Builder clearStart() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000040);
         start_ = null;
         if (startBuilder_ != null) {
           startBuilder_.dispose();
@@ -947,7 +1340,7 @@ public final class DateRange {
        * <code>.fintekkers.models.util.LocalTimestampProto start = 10;</code>
        */
       public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getStartBuilder() {
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000040;
         onChanged();
         return getStartFieldBuilder().getBuilder();
       }
@@ -995,7 +1388,7 @@ public final class DateRange {
        * @return Whether the end field is set.
        */
       public boolean hasEnd() {
-        return ((bitField0_ & 0x00000008) != 0);
+        return ((bitField0_ & 0x00000080) != 0);
       }
       /**
        * <code>.fintekkers.models.util.LocalTimestampProto end = 11;</code>
@@ -1020,7 +1413,7 @@ public final class DateRange {
         } else {
           endBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -1034,7 +1427,7 @@ public final class DateRange {
         } else {
           endBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -1043,7 +1436,7 @@ public final class DateRange {
        */
       public Builder mergeEnd(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
         if (endBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) != 0) &&
+          if (((bitField0_ & 0x00000080) != 0) &&
             end_ != null &&
             end_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
             getEndBuilder().mergeFrom(value);
@@ -1053,7 +1446,7 @@ public final class DateRange {
         } else {
           endBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -1061,7 +1454,7 @@ public final class DateRange {
        * <code>.fintekkers.models.util.LocalTimestampProto end = 11;</code>
        */
       public Builder clearEnd() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000080);
         end_ = null;
         if (endBuilder_ != null) {
           endBuilder_.dispose();
@@ -1074,7 +1467,7 @@ public final class DateRange {
        * <code>.fintekkers.models.util.LocalTimestampProto end = 11;</code>
        */
       public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getEndBuilder() {
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000080;
         onChanged();
         return getEndFieldBuilder().getBuilder();
       }
@@ -1185,25 +1578,31 @@ public final class DateRange {
     java.lang.String[] descriptorData = {
       "\n\'fintekkers/models/util/date_range.prot" +
       "o\022\026fintekkers.models.util\032,fintekkers/mo" +
-      "dels/util/local_timestamp.proto\"\255\001\n\016Date" +
-      "RangeProto\022\024\n\014object_class\030\001 \001(\t\022\017\n\007vers" +
-      "ion\030\002 \001(\t\022:\n\005start\030\n \001(\0132+.fintekkers.mo" +
-      "dels.util.LocalTimestampProto\0228\n\003end\030\013 \001" +
-      "(\0132+.fintekkers.models.util.LocalTimesta" +
-      "mpProtob\006proto3"
+      "dels/util/local_timestamp.proto\032(fintekk" +
+      "ers/models/util/object_type.proto\"\274\002\n\016Da" +
+      "teRangeProto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023" +
+      "\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(" +
+      "\0162\'.fintekkers.models.util.ObjectTypePro" +
+      "to\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversion_mi" +
+      "nor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022:\n\005st" +
+      "art\030\n \001(\0132+.fintekkers.models.util.Local" +
+      "TimestampProto\0228\n\003end\030\013 \001(\0132+.fintekkers" +
+      ".models.util.LocalTimestampProtob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_util_DateRangeProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_util_DateRangeProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_util_DateRangeProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Start", "End", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Start", "End", });
     fintekkers.models.util.LocalTimestamp.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

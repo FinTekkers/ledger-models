@@ -19,28 +19,73 @@ public final class NodeStateOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodeState.object_class is deprecated.
+     *     See fintekkers/models/util/lock/node_state.proto;l=10
      * @return The objectClass.
      */
-    java.lang.String getObjectClass();
+    @java.lang.Deprecated java.lang.String getObjectClass();
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodeState.object_class is deprecated.
+     *     See fintekkers/models/util/lock/node_state.proto;l=10
      * @return The bytes for objectClass.
      */
-    com.google.protobuf.ByteString
+    @java.lang.Deprecated com.google.protobuf.ByteString
         getObjectClassBytes();
 
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodeState.version is deprecated.
+     *     See fintekkers/models/util/lock/node_state.proto;l=11
      * @return The version.
      */
-    java.lang.String getVersion();
+    @java.lang.Deprecated java.lang.String getVersion();
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodeState.version is deprecated.
+     *     See fintekkers/models/util/lock/node_state.proto;l=11
      * @return The bytes for version.
      */
-    com.google.protobuf.ByteString
+    @java.lang.Deprecated com.google.protobuf.ByteString
         getVersionBytes();
+
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The enum numeric value on the wire for objectType.
+     */
+    int getObjectTypeValue();
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The objectType.
+     */
+    fintekkers.models.util.ObjectTypeProto getObjectType();
+
+    /**
+     * <code>uint32 version_major = 1002;</code>
+     * @return The versionMajor.
+     */
+    int getVersionMajor();
+
+    /**
+     * <code>uint32 version_minor = 1003;</code>
+     * @return The versionMinor.
+     */
+    int getVersionMinor();
+
+    /**
+     * <code>uint32 version_patch = 1004;</code>
+     * @return The versionPatch.
+     */
+    int getVersionPatch();
 
     /**
      * <pre>
@@ -151,6 +196,7 @@ public final class NodeStateOuterClass {
     private NodeState() {
       objectClass_ = "";
       version_ = "";
+      objectType_ = 0;
     }
 
     @java.lang.Override
@@ -182,11 +228,13 @@ public final class NodeStateOuterClass {
     @SuppressWarnings("serial")
     private volatile java.lang.Object objectClass_ = "";
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodeState.object_class is deprecated.
+     *     See fintekkers/models/util/lock/node_state.proto;l=10
      * @return The objectClass.
      */
     @java.lang.Override
-    public java.lang.String getObjectClass() {
+    @java.lang.Deprecated public java.lang.String getObjectClass() {
       java.lang.Object ref = objectClass_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
@@ -199,11 +247,13 @@ public final class NodeStateOuterClass {
       }
     }
     /**
-     * <code>string object_class = 1;</code>
+     * <code>string object_class = 1 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodeState.object_class is deprecated.
+     *     See fintekkers/models/util/lock/node_state.proto;l=10
      * @return The bytes for objectClass.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString
+    @java.lang.Deprecated public com.google.protobuf.ByteString
         getObjectClassBytes() {
       java.lang.Object ref = objectClass_;
       if (ref instanceof java.lang.String) {
@@ -221,11 +271,13 @@ public final class NodeStateOuterClass {
     @SuppressWarnings("serial")
     private volatile java.lang.Object version_ = "";
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodeState.version is deprecated.
+     *     See fintekkers/models/util/lock/node_state.proto;l=11
      * @return The version.
      */
     @java.lang.Override
-    public java.lang.String getVersion() {
+    @java.lang.Deprecated public java.lang.String getVersion() {
       java.lang.Object ref = version_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
@@ -238,11 +290,13 @@ public final class NodeStateOuterClass {
       }
     }
     /**
-     * <code>string version = 2;</code>
+     * <code>string version = 2 [deprecated = true];</code>
+     * @deprecated fintekkers.models.util.lock.NodeState.version is deprecated.
+     *     See fintekkers/models/util/lock/node_state.proto;l=11
      * @return The bytes for version.
      */
     @java.lang.Override
-    public com.google.protobuf.ByteString
+    @java.lang.Deprecated public com.google.protobuf.ByteString
         getVersionBytes() {
       java.lang.Object ref = version_;
       if (ref instanceof java.lang.String) {
@@ -254,6 +308,65 @@ public final class NodeStateOuterClass {
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
+    }
+
+    public static final int OBJECT_TYPE_FIELD_NUMBER = 1001;
+    private int objectType_ = 0;
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The enum numeric value on the wire for objectType.
+     */
+    @java.lang.Override public int getObjectTypeValue() {
+      return objectType_;
+    }
+    /**
+     * <pre>
+     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * @return The objectType.
+     */
+    @java.lang.Override public fintekkers.models.util.ObjectTypeProto getObjectType() {
+      fintekkers.models.util.ObjectTypeProto result = fintekkers.models.util.ObjectTypeProto.forNumber(objectType_);
+      return result == null ? fintekkers.models.util.ObjectTypeProto.UNRECOGNIZED : result;
+    }
+
+    public static final int VERSION_MAJOR_FIELD_NUMBER = 1002;
+    private int versionMajor_ = 0;
+    /**
+     * <code>uint32 version_major = 1002;</code>
+     * @return The versionMajor.
+     */
+    @java.lang.Override
+    public int getVersionMajor() {
+      return versionMajor_;
+    }
+
+    public static final int VERSION_MINOR_FIELD_NUMBER = 1003;
+    private int versionMinor_ = 0;
+    /**
+     * <code>uint32 version_minor = 1003;</code>
+     * @return The versionMinor.
+     */
+    @java.lang.Override
+    public int getVersionMinor() {
+      return versionMinor_;
+    }
+
+    public static final int VERSION_PATCH_FIELD_NUMBER = 1004;
+    private int versionPatch_ = 0;
+    /**
+     * <code>uint32 version_patch = 1004;</code>
+     * @return The versionPatch.
+     */
+    @java.lang.Override
+    public int getVersionPatch() {
+      return versionPatch_;
     }
 
     public static final int PARTITION_FIELD_NUMBER = 5;
@@ -420,6 +533,18 @@ public final class NodeStateOuterClass {
       if (isExpired_ != false) {
         output.writeBool(8, isExpired_);
       }
+      if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
+        output.writeEnum(1001, objectType_);
+      }
+      if (versionMajor_ != 0) {
+        output.writeUInt32(1002, versionMajor_);
+      }
+      if (versionMinor_ != 0) {
+        output.writeUInt32(1003, versionMinor_);
+      }
+      if (versionPatch_ != 0) {
+        output.writeUInt32(1004, versionPatch_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -451,6 +576,22 @@ public final class NodeStateOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(8, isExpired_);
       }
+      if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(1001, objectType_);
+      }
+      if (versionMajor_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1002, versionMajor_);
+      }
+      if (versionMinor_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1003, versionMinor_);
+      }
+      if (versionPatch_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1004, versionPatch_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -470,6 +611,13 @@ public final class NodeStateOuterClass {
           .equals(other.getObjectClass())) return false;
       if (!getVersion()
           .equals(other.getVersion())) return false;
+      if (objectType_ != other.objectType_) return false;
+      if (getVersionMajor()
+          != other.getVersionMajor()) return false;
+      if (getVersionMinor()
+          != other.getVersionMinor()) return false;
+      if (getVersionPatch()
+          != other.getVersionPatch()) return false;
       if (hasPartition() != other.hasPartition()) return false;
       if (hasPartition()) {
         if (!getPartition()
@@ -502,6 +650,14 @@ public final class NodeStateOuterClass {
       hash = (53 * hash) + getObjectClass().hashCode();
       hash = (37 * hash) + VERSION_FIELD_NUMBER;
       hash = (53 * hash) + getVersion().hashCode();
+      hash = (37 * hash) + OBJECT_TYPE_FIELD_NUMBER;
+      hash = (53 * hash) + objectType_;
+      hash = (37 * hash) + VERSION_MAJOR_FIELD_NUMBER;
+      hash = (53 * hash) + getVersionMajor();
+      hash = (37 * hash) + VERSION_MINOR_FIELD_NUMBER;
+      hash = (53 * hash) + getVersionMinor();
+      hash = (37 * hash) + VERSION_PATCH_FIELD_NUMBER;
+      hash = (53 * hash) + getVersionPatch();
       if (hasPartition()) {
         hash = (37 * hash) + PARTITION_FIELD_NUMBER;
         hash = (53 * hash) + getPartition().hashCode();
@@ -648,6 +804,10 @@ public final class NodeStateOuterClass {
         bitField0_ = 0;
         objectClass_ = "";
         version_ = "";
+        objectType_ = 0;
+        versionMajor_ = 0;
+        versionMinor_ = 0;
+        versionPatch_ = 0;
         partition_ = null;
         if (partitionBuilder_ != null) {
           partitionBuilder_.dispose();
@@ -704,21 +864,33 @@ public final class NodeStateOuterClass {
           result.version_ = version_;
         }
         if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.objectType_ = objectType_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.versionMajor_ = versionMajor_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.versionMinor_ = versionMinor_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.versionPatch_ = versionPatch_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
           result.partition_ = partitionBuilder_ == null
               ? partition_
               : partitionBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
+        if (((from_bitField0_ & 0x00000080) != 0)) {
           result.endPoint_ = endPointBuilder_ == null
               ? endPoint_
               : endPointBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000010) != 0)) {
+        if (((from_bitField0_ & 0x00000100) != 0)) {
           result.lastSeen_ = lastSeenBuilder_ == null
               ? lastSeen_
               : lastSeenBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000020) != 0)) {
+        if (((from_bitField0_ & 0x00000200) != 0)) {
           result.isExpired_ = isExpired_;
         }
       }
@@ -777,6 +949,18 @@ public final class NodeStateOuterClass {
           bitField0_ |= 0x00000002;
           onChanged();
         }
+        if (other.objectType_ != 0) {
+          setObjectTypeValue(other.getObjectTypeValue());
+        }
+        if (other.getVersionMajor() != 0) {
+          setVersionMajor(other.getVersionMajor());
+        }
+        if (other.getVersionMinor() != 0) {
+          setVersionMinor(other.getVersionMinor());
+        }
+        if (other.getVersionPatch() != 0) {
+          setVersionPatch(other.getVersionPatch());
+        }
         if (other.hasPartition()) {
           mergePartition(other.getPartition());
         }
@@ -829,28 +1013,48 @@ public final class NodeStateOuterClass {
                 input.readMessage(
                     getPartitionFieldBuilder().getBuilder(),
                     extensionRegistry);
-                bitField0_ |= 0x00000004;
+                bitField0_ |= 0x00000040;
                 break;
               } // case 42
               case 50: {
                 input.readMessage(
                     getEndPointFieldBuilder().getBuilder(),
                     extensionRegistry);
-                bitField0_ |= 0x00000008;
+                bitField0_ |= 0x00000080;
                 break;
               } // case 50
               case 58: {
                 input.readMessage(
                     getLastSeenFieldBuilder().getBuilder(),
                     extensionRegistry);
-                bitField0_ |= 0x00000010;
+                bitField0_ |= 0x00000100;
                 break;
               } // case 58
               case 64: {
                 isExpired_ = input.readBool();
-                bitField0_ |= 0x00000020;
+                bitField0_ |= 0x00000200;
                 break;
               } // case 64
+              case 8008: {
+                objectType_ = input.readEnum();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 8008
+              case 8016: {
+                versionMajor_ = input.readUInt32();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 8016
+              case 8024: {
+                versionMinor_ = input.readUInt32();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 8024
+              case 8032: {
+                versionPatch_ = input.readUInt32();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 8032
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -870,10 +1074,12 @@ public final class NodeStateOuterClass {
 
       private java.lang.Object objectClass_ = "";
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodeState.object_class is deprecated.
+       *     See fintekkers/models/util/lock/node_state.proto;l=10
        * @return The objectClass.
        */
-      public java.lang.String getObjectClass() {
+      @java.lang.Deprecated public java.lang.String getObjectClass() {
         java.lang.Object ref = objectClass_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
@@ -886,10 +1092,12 @@ public final class NodeStateOuterClass {
         }
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodeState.object_class is deprecated.
+       *     See fintekkers/models/util/lock/node_state.proto;l=10
        * @return The bytes for objectClass.
        */
-      public com.google.protobuf.ByteString
+      @java.lang.Deprecated public com.google.protobuf.ByteString
           getObjectClassBytes() {
         java.lang.Object ref = objectClass_;
         if (ref instanceof String) {
@@ -903,11 +1111,13 @@ public final class NodeStateOuterClass {
         }
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodeState.object_class is deprecated.
+       *     See fintekkers/models/util/lock/node_state.proto;l=10
        * @param value The objectClass to set.
        * @return This builder for chaining.
        */
-      public Builder setObjectClass(
+      @java.lang.Deprecated public Builder setObjectClass(
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         objectClass_ = value;
@@ -916,21 +1126,25 @@ public final class NodeStateOuterClass {
         return this;
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodeState.object_class is deprecated.
+       *     See fintekkers/models/util/lock/node_state.proto;l=10
        * @return This builder for chaining.
        */
-      public Builder clearObjectClass() {
+      @java.lang.Deprecated public Builder clearObjectClass() {
         objectClass_ = getDefaultInstance().getObjectClass();
         bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
       /**
-       * <code>string object_class = 1;</code>
+       * <code>string object_class = 1 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodeState.object_class is deprecated.
+       *     See fintekkers/models/util/lock/node_state.proto;l=10
        * @param value The bytes for objectClass to set.
        * @return This builder for chaining.
        */
-      public Builder setObjectClassBytes(
+      @java.lang.Deprecated public Builder setObjectClassBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
@@ -942,10 +1156,12 @@ public final class NodeStateOuterClass {
 
       private java.lang.Object version_ = "";
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodeState.version is deprecated.
+       *     See fintekkers/models/util/lock/node_state.proto;l=11
        * @return The version.
        */
-      public java.lang.String getVersion() {
+      @java.lang.Deprecated public java.lang.String getVersion() {
         java.lang.Object ref = version_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
@@ -958,10 +1174,12 @@ public final class NodeStateOuterClass {
         }
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodeState.version is deprecated.
+       *     See fintekkers/models/util/lock/node_state.proto;l=11
        * @return The bytes for version.
        */
-      public com.google.protobuf.ByteString
+      @java.lang.Deprecated public com.google.protobuf.ByteString
           getVersionBytes() {
         java.lang.Object ref = version_;
         if (ref instanceof String) {
@@ -975,11 +1193,13 @@ public final class NodeStateOuterClass {
         }
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodeState.version is deprecated.
+       *     See fintekkers/models/util/lock/node_state.proto;l=11
        * @param value The version to set.
        * @return This builder for chaining.
        */
-      public Builder setVersion(
+      @java.lang.Deprecated public Builder setVersion(
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         version_ = value;
@@ -988,26 +1208,199 @@ public final class NodeStateOuterClass {
         return this;
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodeState.version is deprecated.
+       *     See fintekkers/models/util/lock/node_state.proto;l=11
        * @return This builder for chaining.
        */
-      public Builder clearVersion() {
+      @java.lang.Deprecated public Builder clearVersion() {
         version_ = getDefaultInstance().getVersion();
         bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
       /**
-       * <code>string version = 2;</code>
+       * <code>string version = 2 [deprecated = true];</code>
+       * @deprecated fintekkers.models.util.lock.NodeState.version is deprecated.
+       *     See fintekkers/models/util/lock/node_state.proto;l=11
        * @param value The bytes for version to set.
        * @return This builder for chaining.
        */
-      public Builder setVersionBytes(
+      @java.lang.Deprecated public Builder setVersionBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         version_ = value;
         bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private int objectType_ = 0;
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @return The enum numeric value on the wire for objectType.
+       */
+      @java.lang.Override public int getObjectTypeValue() {
+        return objectType_;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @param value The enum numeric value on the wire for objectType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setObjectTypeValue(int value) {
+        objectType_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @return The objectType.
+       */
+      @java.lang.Override
+      public fintekkers.models.util.ObjectTypeProto getObjectType() {
+        fintekkers.models.util.ObjectTypeProto result = fintekkers.models.util.ObjectTypeProto.forNumber(objectType_);
+        return result == null ? fintekkers.models.util.ObjectTypeProto.UNRECOGNIZED : result;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @param value The objectType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setObjectType(fintekkers.models.util.ObjectTypeProto value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        objectType_ = value.getNumber();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearObjectType() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        objectType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int versionMajor_ ;
+      /**
+       * <code>uint32 version_major = 1002;</code>
+       * @return The versionMajor.
+       */
+      @java.lang.Override
+      public int getVersionMajor() {
+        return versionMajor_;
+      }
+      /**
+       * <code>uint32 version_major = 1002;</code>
+       * @param value The versionMajor to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersionMajor(int value) {
+        
+        versionMajor_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 version_major = 1002;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersionMajor() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        versionMajor_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int versionMinor_ ;
+      /**
+       * <code>uint32 version_minor = 1003;</code>
+       * @return The versionMinor.
+       */
+      @java.lang.Override
+      public int getVersionMinor() {
+        return versionMinor_;
+      }
+      /**
+       * <code>uint32 version_minor = 1003;</code>
+       * @param value The versionMinor to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersionMinor(int value) {
+        
+        versionMinor_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 version_minor = 1003;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersionMinor() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        versionMinor_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int versionPatch_ ;
+      /**
+       * <code>uint32 version_patch = 1004;</code>
+       * @return The versionPatch.
+       */
+      @java.lang.Override
+      public int getVersionPatch() {
+        return versionPatch_;
+      }
+      /**
+       * <code>uint32 version_patch = 1004;</code>
+       * @param value The versionPatch to set.
+       * @return This builder for chaining.
+       */
+      public Builder setVersionPatch(int value) {
+        
+        versionPatch_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>uint32 version_patch = 1004;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearVersionPatch() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        versionPatch_ = 0;
         onChanged();
         return this;
       }
@@ -1024,7 +1417,7 @@ public final class NodeStateOuterClass {
        * @return Whether the partition field is set.
        */
       public boolean hasPartition() {
-        return ((bitField0_ & 0x00000004) != 0);
+        return ((bitField0_ & 0x00000040) != 0);
       }
       /**
        * <pre>
@@ -1057,7 +1450,7 @@ public final class NodeStateOuterClass {
         } else {
           partitionBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -1075,7 +1468,7 @@ public final class NodeStateOuterClass {
         } else {
           partitionBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -1088,7 +1481,7 @@ public final class NodeStateOuterClass {
        */
       public Builder mergePartition(fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition value) {
         if (partitionBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) != 0) &&
+          if (((bitField0_ & 0x00000040) != 0) &&
             partition_ != null &&
             partition_ != fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.getDefaultInstance()) {
             getPartitionBuilder().mergeFrom(value);
@@ -1098,7 +1491,7 @@ public final class NodeStateOuterClass {
         } else {
           partitionBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000040;
         onChanged();
         return this;
       }
@@ -1110,7 +1503,7 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.lock.NodePartition partition = 5;</code>
        */
       public Builder clearPartition() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000040);
         partition_ = null;
         if (partitionBuilder_ != null) {
           partitionBuilder_.dispose();
@@ -1127,7 +1520,7 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.lock.NodePartition partition = 5;</code>
        */
       public fintekkers.models.util.lock.NodePartitionOuterClass.NodePartition.Builder getPartitionBuilder() {
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000040;
         onChanged();
         return getPartitionFieldBuilder().getBuilder();
       }
@@ -1179,7 +1572,7 @@ public final class NodeStateOuterClass {
        * @return Whether the endPoint field is set.
        */
       public boolean hasEndPoint() {
-        return ((bitField0_ & 0x00000008) != 0);
+        return ((bitField0_ & 0x00000080) != 0);
       }
       /**
        * <pre>
@@ -1212,7 +1605,7 @@ public final class NodeStateOuterClass {
         } else {
           endPointBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -1230,7 +1623,7 @@ public final class NodeStateOuterClass {
         } else {
           endPointBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -1243,7 +1636,7 @@ public final class NodeStateOuterClass {
        */
       public Builder mergeEndPoint(fintekkers.models.util.EndpointOuterClass.Endpoint value) {
         if (endPointBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) != 0) &&
+          if (((bitField0_ & 0x00000080) != 0) &&
             endPoint_ != null &&
             endPoint_ != fintekkers.models.util.EndpointOuterClass.Endpoint.getDefaultInstance()) {
             getEndPointBuilder().mergeFrom(value);
@@ -1253,7 +1646,7 @@ public final class NodeStateOuterClass {
         } else {
           endPointBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000080;
         onChanged();
         return this;
       }
@@ -1265,7 +1658,7 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.Endpoint end_point = 6;</code>
        */
       public Builder clearEndPoint() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000080);
         endPoint_ = null;
         if (endPointBuilder_ != null) {
           endPointBuilder_.dispose();
@@ -1282,7 +1675,7 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.Endpoint end_point = 6;</code>
        */
       public fintekkers.models.util.EndpointOuterClass.Endpoint.Builder getEndPointBuilder() {
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000080;
         onChanged();
         return getEndPointFieldBuilder().getBuilder();
       }
@@ -1335,7 +1728,7 @@ public final class NodeStateOuterClass {
        * @return Whether the lastSeen field is set.
        */
       public boolean hasLastSeen() {
-        return ((bitField0_ & 0x00000010) != 0);
+        return ((bitField0_ & 0x00000100) != 0);
       }
       /**
        * <pre>
@@ -1370,7 +1763,7 @@ public final class NodeStateOuterClass {
         } else {
           lastSeenBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
@@ -1389,7 +1782,7 @@ public final class NodeStateOuterClass {
         } else {
           lastSeenBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
@@ -1403,7 +1796,7 @@ public final class NodeStateOuterClass {
        */
       public Builder mergeLastSeen(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
         if (lastSeenBuilder_ == null) {
-          if (((bitField0_ & 0x00000010) != 0) &&
+          if (((bitField0_ & 0x00000100) != 0) &&
             lastSeen_ != null &&
             lastSeen_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
             getLastSeenBuilder().mergeFrom(value);
@@ -1413,7 +1806,7 @@ public final class NodeStateOuterClass {
         } else {
           lastSeenBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000100;
         onChanged();
         return this;
       }
@@ -1426,7 +1819,7 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.LocalTimestampProto last_seen = 7;</code>
        */
       public Builder clearLastSeen() {
-        bitField0_ = (bitField0_ & ~0x00000010);
+        bitField0_ = (bitField0_ & ~0x00000100);
         lastSeen_ = null;
         if (lastSeenBuilder_ != null) {
           lastSeenBuilder_.dispose();
@@ -1444,7 +1837,7 @@ public final class NodeStateOuterClass {
        * <code>.fintekkers.models.util.LocalTimestampProto last_seen = 7;</code>
        */
       public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getLastSeenBuilder() {
-        bitField0_ |= 0x00000010;
+        bitField0_ |= 0x00000100;
         onChanged();
         return getLastSeenFieldBuilder().getBuilder();
       }
@@ -1511,7 +1904,7 @@ public final class NodeStateOuterClass {
       public Builder setIsExpired(boolean value) {
         
         isExpired_ = value;
-        bitField0_ |= 0x00000020;
+        bitField0_ |= 0x00000200;
         onChanged();
         return this;
       }
@@ -1524,7 +1917,7 @@ public final class NodeStateOuterClass {
        * @return This builder for chaining.
        */
       public Builder clearIsExpired() {
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000200);
         isExpired_ = false;
         onChanged();
         return this;
@@ -1612,13 +2005,18 @@ public final class NodeStateOuterClass {
       "tekkers/models/util/local_timestamp.prot" +
       "o\032%fintekkers/models/util/endpoint.proto" +
       "\0320fintekkers/models/util/lock/node_parti" +
-      "tion.proto\"\372\001\n\tNodeState\022\024\n\014object_class" +
-      "\030\001 \001(\t\022\017\n\007version\030\002 \001(\t\022=\n\tpartition\030\005 \001" +
-      "(\0132*.fintekkers.models.util.lock.NodePar" +
-      "tition\0223\n\tend_point\030\006 \001(\0132 .fintekkers.m" +
-      "odels.util.Endpoint\022>\n\tlast_seen\030\007 \001(\0132+" +
-      ".fintekkers.models.util.LocalTimestampPr" +
-      "oto\022\022\n\nis_expired\030\010 \001(\010b\006proto3"
+      "tion.proto\032(fintekkers/models/util/objec" +
+      "t_type.proto\"\211\003\n\tNodeState\022\030\n\014object_cla" +
+      "ss\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013obj" +
+      "ect_type\030\351\007 \001(\0162\'.fintekkers.models.util" +
+      ".ObjectTypeProto\022\026\n\rversion_major\030\352\007 \001(\r" +
+      "\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversion_patc" +
+      "h\030\354\007 \001(\r\022=\n\tpartition\030\005 \001(\0132*.fintekkers" +
+      ".models.util.lock.NodePartition\0223\n\tend_p" +
+      "oint\030\006 \001(\0132 .fintekkers.models.util.Endp" +
+      "oint\022>\n\tlast_seen\030\007 \001(\0132+.fintekkers.mod" +
+      "els.util.LocalTimestampProto\022\022\n\nis_expir" +
+      "ed\030\010 \001(\010b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1626,16 +2024,18 @@ public final class NodeStateOuterClass {
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.models.util.EndpointOuterClass.getDescriptor(),
           fintekkers.models.util.lock.NodePartitionOuterClass.getDescriptor(),
+          fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_util_lock_NodeState_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_util_lock_NodeState_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_util_lock_NodeState_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "Partition", "EndPoint", "LastSeen", "IsExpired", });
+        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Partition", "EndPoint", "LastSeen", "IsExpired", });
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.util.EndpointOuterClass.getDescriptor();
     fintekkers.models.util.lock.NodePartitionOuterClass.getDescriptor();
+    fintekkers.models.util.ObjectTypeProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

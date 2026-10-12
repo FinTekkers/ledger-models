@@ -12,12 +12,21 @@ import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/
 import * as fintekkers_requests_util_operation_pb from "../../../fintekkers/requests/util/operation_pb";
 import * as fintekkers_models_position_measure_pb from "../../../fintekkers/models/position/measure_pb";
 import * as fintekkers_requests_valuation_product_inputs_pb from "../../../fintekkers/requests/valuation/product_inputs_pb";
+import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 
 export class ValuationRequestProto extends jspb.Message { 
     getObjectClass(): string;
     setObjectClass(value: string): ValuationRequestProto;
     getVersion(): string;
     setVersion(value: string): ValuationRequestProto;
+    getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
+    setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): ValuationRequestProto;
+    getVersionMajor(): number;
+    setVersionMajor(value: number): ValuationRequestProto;
+    getVersionMinor(): number;
+    setVersionMinor(value: number): ValuationRequestProto;
+    getVersionPatch(): number;
+    setVersionPatch(value: number): ValuationRequestProto;
     getOperationType(): fintekkers_requests_util_operation_pb.RequestOperationTypeProto;
     setOperationType(value: fintekkers_requests_util_operation_pb.RequestOperationTypeProto): ValuationRequestProto;
     clearMeasuresList(): void;
@@ -74,6 +83,10 @@ export namespace ValuationRequestProto {
     export type AsObject = {
         objectClass: string,
         version: string,
+        objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
+        versionMajor: number,
+        versionMinor: number,
+        versionPatch: number,
         operationType: fintekkers_requests_util_operation_pb.RequestOperationTypeProto,
         measuresList: Array<fintekkers_models_position_measure_pb.MeasureProto>,
         securityInput?: fintekkers_models_security_security_pb.SecurityProto.AsObject,

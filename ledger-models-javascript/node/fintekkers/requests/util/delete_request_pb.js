@@ -23,6 +23,8 @@ var global = (function() {
 
 var fintekkers_models_util_uuid_pb = require('../../../fintekkers/models/util/uuid_pb.js');
 goog.object.extend(proto, fintekkers_models_util_uuid_pb);
+var fintekkers_models_util_object_type_pb = require('../../../fintekkers/models/util/object_type_pb.js');
+goog.object.extend(proto, fintekkers_models_util_object_type_pb);
 goog.exportSymbol('proto.fintekkers.requests.util.AffectedEntityProto', null, global);
 goog.exportSymbol('proto.fintekkers.requests.util.DeleteRequestProto', null, global);
 goog.exportSymbol('proto.fintekkers.requests.util.DeleteResponseProto', null, global);
@@ -59,7 +61,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.fintekkers.requests.util.DeleteRequestProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, 500, null, null);
 };
 goog.inherits(proto.fintekkers.requests.util.DeleteRequestProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -80,7 +82,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.fintekkers.requests.util.DeleteResponseProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, proto.fintekkers.requests.util.DeleteResponseProto.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, 500, proto.fintekkers.requests.util.DeleteResponseProto.repeatedFields_, null);
 };
 goog.inherits(proto.fintekkers.requests.util.DeleteResponseProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -335,6 +337,10 @@ proto.fintekkers.requests.util.DeleteRequestProto.toObject = function(includeIns
   var f, obj = {
     objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
     version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    objectType: jspb.Message.getFieldWithDefault(msg, 1001, 0),
+    versionMajor: jspb.Message.getFieldWithDefault(msg, 1002, 0),
+    versionMinor: jspb.Message.getFieldWithDefault(msg, 1003, 0),
+    versionPatch: jspb.Message.getFieldWithDefault(msg, 1004, 0),
     uuid: (f = msg.getUuid()) && fintekkers_models_util_uuid_pb.UUIDProto.toObject(includeInstance, f),
     entityType: jspb.Message.getFieldWithDefault(msg, 11, 0),
     dryRun: jspb.Message.getBooleanFieldWithDefault(msg, 20, false),
@@ -383,6 +389,22 @@ proto.fintekkers.requests.util.DeleteRequestProto.deserializeBinaryFromReader = 
     case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
+      break;
+    case 1001:
+      var value = /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (reader.readEnum());
+      msg.setObjectType(value);
+      break;
+    case 1002:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMajor(value);
+      break;
+    case 1003:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMinor(value);
+      break;
+    case 1004:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionPatch(value);
       break;
     case 10:
       var value = new fintekkers_models_util_uuid_pb.UUIDProto;
@@ -445,6 +467,34 @@ proto.fintekkers.requests.util.DeleteRequestProto.serializeBinaryToWriter = func
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getObjectType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1001,
+      f
+    );
+  }
+  f = message.getVersionMajor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1002,
+      f
+    );
+  }
+  f = message.getVersionMinor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1003,
+      f
+    );
+  }
+  f = message.getVersionPatch();
+  if (f !== 0) {
+    writer.writeUint32(
+      1004,
       f
     );
   }
@@ -520,6 +570,78 @@ proto.fintekkers.requests.util.DeleteRequestProto.prototype.getVersion = functio
  */
 proto.fintekkers.requests.util.DeleteRequestProto.prototype.setVersion = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional fintekkers.models.util.ObjectTypeProto object_type = 1001;
+ * @return {!proto.fintekkers.models.util.ObjectTypeProto}
+ */
+proto.fintekkers.requests.util.DeleteRequestProto.prototype.getObjectType = function() {
+  return /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (jspb.Message.getFieldWithDefault(this, 1001, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.util.ObjectTypeProto} value
+ * @return {!proto.fintekkers.requests.util.DeleteRequestProto} returns this
+ */
+proto.fintekkers.requests.util.DeleteRequestProto.prototype.setObjectType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1001, value);
+};
+
+
+/**
+ * optional uint32 version_major = 1002;
+ * @return {number}
+ */
+proto.fintekkers.requests.util.DeleteRequestProto.prototype.getVersionMajor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1002, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.util.DeleteRequestProto} returns this
+ */
+proto.fintekkers.requests.util.DeleteRequestProto.prototype.setVersionMajor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1002, value);
+};
+
+
+/**
+ * optional uint32 version_minor = 1003;
+ * @return {number}
+ */
+proto.fintekkers.requests.util.DeleteRequestProto.prototype.getVersionMinor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1003, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.util.DeleteRequestProto} returns this
+ */
+proto.fintekkers.requests.util.DeleteRequestProto.prototype.setVersionMinor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1003, value);
+};
+
+
+/**
+ * optional uint32 version_patch = 1004;
+ * @return {number}
+ */
+proto.fintekkers.requests.util.DeleteRequestProto.prototype.getVersionPatch = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1004, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.util.DeleteRequestProto} returns this
+ */
+proto.fintekkers.requests.util.DeleteRequestProto.prototype.setVersionPatch = function(value) {
+  return jspb.Message.setProto3IntField(this, 1004, value);
 };
 
 
@@ -673,6 +795,10 @@ proto.fintekkers.requests.util.DeleteResponseProto.toObject = function(includeIn
   var f, obj = {
     objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
     version: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    objectType: jspb.Message.getFieldWithDefault(msg, 1001, 0),
+    versionMajor: jspb.Message.getFieldWithDefault(msg, 1002, 0),
+    versionMinor: jspb.Message.getFieldWithDefault(msg, 1003, 0),
+    versionPatch: jspb.Message.getFieldWithDefault(msg, 1004, 0),
     deleteRequest: (f = msg.getDeleteRequest()) && proto.fintekkers.requests.util.DeleteRequestProto.toObject(includeInstance, f),
     success: jspb.Message.getBooleanFieldWithDefault(msg, 20, false),
     wasDryRun: jspb.Message.getBooleanFieldWithDefault(msg, 21, false),
@@ -723,6 +849,22 @@ proto.fintekkers.requests.util.DeleteResponseProto.deserializeBinaryFromReader =
     case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.setVersion(value);
+      break;
+    case 1001:
+      var value = /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (reader.readEnum());
+      msg.setObjectType(value);
+      break;
+    case 1002:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMajor(value);
+      break;
+    case 1003:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionMinor(value);
+      break;
+    case 1004:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setVersionPatch(value);
       break;
     case 10:
       var value = new proto.fintekkers.requests.util.DeleteRequestProto;
@@ -790,6 +932,34 @@ proto.fintekkers.requests.util.DeleteResponseProto.serializeBinaryToWriter = fun
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getObjectType();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      1001,
+      f
+    );
+  }
+  f = message.getVersionMajor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1002,
+      f
+    );
+  }
+  f = message.getVersionMinor();
+  if (f !== 0) {
+    writer.writeUint32(
+      1003,
+      f
+    );
+  }
+  f = message.getVersionPatch();
+  if (f !== 0) {
+    writer.writeUint32(
+      1004,
       f
     );
   }
@@ -873,6 +1043,78 @@ proto.fintekkers.requests.util.DeleteResponseProto.prototype.getVersion = functi
  */
 proto.fintekkers.requests.util.DeleteResponseProto.prototype.setVersion = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional fintekkers.models.util.ObjectTypeProto object_type = 1001;
+ * @return {!proto.fintekkers.models.util.ObjectTypeProto}
+ */
+proto.fintekkers.requests.util.DeleteResponseProto.prototype.getObjectType = function() {
+  return /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (jspb.Message.getFieldWithDefault(this, 1001, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.util.ObjectTypeProto} value
+ * @return {!proto.fintekkers.requests.util.DeleteResponseProto} returns this
+ */
+proto.fintekkers.requests.util.DeleteResponseProto.prototype.setObjectType = function(value) {
+  return jspb.Message.setProto3EnumField(this, 1001, value);
+};
+
+
+/**
+ * optional uint32 version_major = 1002;
+ * @return {number}
+ */
+proto.fintekkers.requests.util.DeleteResponseProto.prototype.getVersionMajor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1002, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.util.DeleteResponseProto} returns this
+ */
+proto.fintekkers.requests.util.DeleteResponseProto.prototype.setVersionMajor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1002, value);
+};
+
+
+/**
+ * optional uint32 version_minor = 1003;
+ * @return {number}
+ */
+proto.fintekkers.requests.util.DeleteResponseProto.prototype.getVersionMinor = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1003, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.util.DeleteResponseProto} returns this
+ */
+proto.fintekkers.requests.util.DeleteResponseProto.prototype.setVersionMinor = function(value) {
+  return jspb.Message.setProto3IntField(this, 1003, value);
+};
+
+
+/**
+ * optional uint32 version_patch = 1004;
+ * @return {number}
+ */
+proto.fintekkers.requests.util.DeleteResponseProto.prototype.getVersionPatch = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1004, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.util.DeleteResponseProto} returns this
+ */
+proto.fintekkers.requests.util.DeleteResponseProto.prototype.setVersionPatch = function(value) {
+  return jspb.Message.setProto3IntField(this, 1004, value);
 };
 
 
