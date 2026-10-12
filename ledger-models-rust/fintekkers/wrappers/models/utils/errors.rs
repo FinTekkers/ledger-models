@@ -118,3 +118,20 @@ impl From<Error> for Status {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn violation(message: &str) -> FieldViolationProto {
+        FieldViolationProto { field: String::new(), object_id: None, message: message.to_string() }
+    }
+
+    /// Display joins the violations, so callers need no formatter of their
+    /// own (LM-312). The `(id null)` suffix matches Java's message.
+    #[test]
+    fn display_joins_violations() {
+        let err = Error::Validation(vec![violation("a"), violation("b")]);
+        assert_eq!(err.to_string(), "a (id null); b (id null)");
+    }
+}

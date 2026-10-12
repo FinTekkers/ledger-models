@@ -75,6 +75,16 @@ echo "== rust"
   # the one place allowed to touch the deprecated fields (LM-297, R15).
   cargo rustc --lib --quiet -- -D deprecated
   cargo test --lib --quiet
+  # The test-utils helpers (LM-312): their unit tests, and the consumer-side
+  # tests that need the feature.
+  cargo test --lib --features test-utils --quiet
+  cargo test --features test-utils --test decimal_test_utils_test --quiet
+  # Default features never pull in the test-utils dependencies.
+  default_deps="$(cargo tree -e normal --prefix none)"
+  if grep -q '^prost-reflect ' <<<"$default_deps"; then
+    echo "prost-reflect is in the default build: keep it behind the test-utils feature" >&2
+    exit 1
+  fi
 )
 # One deprecation warning per process (LM-307): its own test binary, so its
 # own process. Named, not a bare `cargo test`.
@@ -83,7 +93,7 @@ echo "== rust"
 echo "== rust clippy"
 # Enforces the #![deny(clippy::unwrap_used, ...)] no-panic rules in
 # position_filter_parser.rs (LM-299). Warnings elsewhere don't fail it.
-(cd ledger-models-rust && cargo clippy --lib --quiet)
+(cd ledger-models-rust && cargo clippy --lib --quiet && cargo clippy --lib --features test-utils --quiet)
 
 echo "== java"
 (cd ledger-models-java && ./gradlew test --quiet --no-daemon --console=plain)
