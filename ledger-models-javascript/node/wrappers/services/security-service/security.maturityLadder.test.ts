@@ -8,6 +8,7 @@ import { SecurityService } from './SecurityService';
 import { PositionFilter } from '../../models/position/positionfilter';
 import Security from '../../models/security/security';
 import { ProtoSerializationUtil } from '../../models/utils/serialization';
+import Decimal from 'decimal.js';
 
 test('test the api.fintekkers.org security service by creating a maturity ladder for the US government', async () => {
     //Get list of all securities from the US government, with a maturity data beyond today's date
@@ -37,7 +38,7 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
             } else if (!issuance.getPostAuctionOutstandingQuantity() && maturityYear <= 2009) {
                 //Swallow this data gap. It's old and we don't mind
             } else {
-                let postAuctionQuantity: number = ProtoSerializationUtil.deserialize(issuance.getPostAuctionOutstandingQuantity()) as number;
+                let postAuctionQuantity: Decimal = ProtoSerializationUtil.deserialize(issuance.getPostAuctionOutstandingQuantity()) as Decimal;
                 const identifiers = security.getIdentifiers();
                 let id: string = identifiers.length > 0 ? identifiers[0].getIdentifierValue() : security.getID().toString();
 
@@ -52,6 +53,6 @@ test('test the api.fintekkers.org security service by creating a maturity ladder
         }
     }
 
-    expect(results[0]['outstandingAmount']).toBeGreaterThan(0);
+    expect(results[0]['outstandingAmount'].greaterThan(0)).toBe(true);
 }, 90000);
 

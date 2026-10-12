@@ -3,6 +3,7 @@ import { AuctionTypeProto } from "../../../fintekkers/models/security/bond/aucti
 import { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value_pb";
 import { localDateProtoToDate } from "../utils/date";
 import Decimal from "decimal.js";
+import { decodeDecimal, isUnsetDecimal, toDecimalJs } from "../utils/decimal";
 
 /**
  * Typed wrapper around a single IssuanceProto. Returns null for unset
@@ -20,8 +21,8 @@ class Issuance {
   }
 
   private static _toDecimal(value: DecimalValueProto | undefined): Decimal | null {
-    if (!value) return null;
-    return new Decimal(value.getArbitraryPrecisionValue());
+    if (!value || isUnsetDecimal(value)) return null;
+    return toDecimalJs(decodeDecimal(value));
   }
 
   /** Auction issue (settlement) date. Null if unset. */

@@ -1,9 +1,9 @@
-import Decimal from 'decimal.js';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 import { ModelValidationError, violation } from '../errors';
 import { UUID } from '../utils/uuid';
+import { decodeDecimal, isUnsetDecimal, toCanonicalString, CompactDecimal } from '../utils/decimal';
 
 /**
  * Security input rules: JS counterpart of Java's SecurityRules
@@ -42,17 +42,17 @@ export function requireValid(proto: SecurityProto): void {
  */
 function tbillCouponViolation(proto: SecurityProto, id: UUID | undefined): FieldViolationProto | undefined {
     if (proto.getProductType() !== ProductTypeProto.TBILL) return undefined;
-    const raw = proto.getBondDetails()?.getCouponRate()?.getArbitraryPrecisionValue();
-    if (!raw) return undefined;
-    let coupon: Decimal;
+    const raw = proto.getBondDetails()?.getCouponRate();
+    if (!raw || isUnsetDecimal(raw)) return undefined;
+    let coupon: CompactDecimal;
     try {
-        coupon = new Decimal(raw);
+        coupon = decodeDecimal(raw);
     } catch (e) {
-        // decimal.js throws "[DecimalError] Invalid argument" on unparseable input.
-        return undefined;
+        if (e instanceof ModelValidationError) return undefined;
+        throw e;
     }
-    if (!coupon.isFinite() || coupon.isZero()) return undefined;
-    return violation(COUPON_RATE, id, `coupon_rate must be null or 0 for a TBILL: coupon_rate=${raw}`);
+    if (coupon.unscaled === BigInt(0)) return undefined;
+    return violation(COUPON_RATE, id, `coupon_rate must be null or 0 for a TBILL: coupon_rate=${toCanonicalString(coupon)}`);
 }
 
 /** The security's UUID, or undefined when it has none or it is not 16 bytes. */

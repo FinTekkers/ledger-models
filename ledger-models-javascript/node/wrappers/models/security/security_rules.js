@@ -1,13 +1,10 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.requireValid = exports.validate = exports.COUPON_RATE = void 0;
-const decimal_js_1 = __importDefault(require("decimal.js"));
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const errors_1 = require("../errors");
 const uuid_1 = require("../utils/uuid");
+const decimal_1 = require("../utils/decimal");
 /**
  * Security input rules: JS counterpart of Java's SecurityRules
  * (docs/adr/typed-input-errors.md). Pure: proto in, violations out.
@@ -45,23 +42,24 @@ exports.requireValid = requireValid;
  * parse is skipped.
  */
 function tbillCouponViolation(proto, id) {
-    var _a, _b;
+    var _a;
     if (proto.getProductType() !== product_type_pb_1.ProductTypeProto.TBILL)
         return undefined;
-    const raw = (_b = (_a = proto.getBondDetails()) === null || _a === void 0 ? void 0 : _a.getCouponRate()) === null || _b === void 0 ? void 0 : _b.getArbitraryPrecisionValue();
-    if (!raw)
+    const raw = (_a = proto.getBondDetails()) === null || _a === void 0 ? void 0 : _a.getCouponRate();
+    if (!raw || (0, decimal_1.isUnsetDecimal)(raw))
         return undefined;
     let coupon;
     try {
-        coupon = new decimal_js_1.default(raw);
+        coupon = (0, decimal_1.decodeDecimal)(raw);
     }
     catch (e) {
-        // decimal.js throws "[DecimalError] Invalid argument" on unparseable input.
-        return undefined;
+        if (e instanceof errors_1.ModelValidationError)
+            return undefined;
+        throw e;
     }
-    if (!coupon.isFinite() || coupon.isZero())
+    if (coupon.unscaled === BigInt(0))
         return undefined;
-    return (0, errors_1.violation)(exports.COUPON_RATE, id, `coupon_rate must be null or 0 for a TBILL: coupon_rate=${raw}`);
+    return (0, errors_1.violation)(exports.COUPON_RATE, id, `coupon_rate must be null or 0 for a TBILL: coupon_rate=${(0, decimal_1.toCanonicalString)(coupon)}`);
 }
 /** The security's UUID, or undefined when it has none or it is not 16 bytes. */
 function objectIdOf(proto) {

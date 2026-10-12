@@ -20,7 +20,7 @@ export interface BondPricerInputs {
     issueDate: Date;
     maturityDate: Date;
 }
-/** Build a DecimalValueProto from a Decimal. */
+/** Build a DecimalValueProto from a Decimal, in both forms (LM-306). */
 export declare function decimalToProto(v: Decimal): DecimalValueProto;
 /**
  * Build a populated BondDetailsProto from BondPricerInputs. Shared helper

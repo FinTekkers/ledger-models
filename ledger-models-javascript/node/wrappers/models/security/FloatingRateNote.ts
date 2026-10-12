@@ -8,6 +8,7 @@ import { ProductTypeProto } from '../../../fintekkers/models/security/product_ty
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { Decimal } from 'decimal.js';
+import { decodeDecimal, toDecimalJs, withField } from '../utils/decimal';
 
 /**
  * FRN-specific accessors layered on top of BondSecurity. The floating-rate
@@ -28,7 +29,7 @@ class FloatingRateNote extends BondSecurity {
     const ext = this.getFrnExtension();
     const v = ext ? ext.getSpread() : undefined;
     if (!v) return null;
-    return new Decimal(v.getArbitraryPrecisionValue());
+    return toDecimalJs(withField('frn_extension.spread', () => decodeDecimal(v)));
   }
 
   /** Which index the coupon resets off (SOFR on a US TREASURY_FRN). */

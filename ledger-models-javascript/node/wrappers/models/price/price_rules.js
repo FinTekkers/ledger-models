@@ -5,13 +5,14 @@ const price_pb_1 = require("../../../fintekkers/models/price/price_pb");
 const price_type_pb_1 = require("../../../fintekkers/models/price/price_type_pb");
 const errors_1 = require("../errors");
 const uuid_1 = require("../utils/uuid");
+const decimal_1 = require("../utils/decimal");
 /**
  * Price input rules (LM-289): JS counterpart of Java's PriceRules
  * (docs/adr/typed-input-errors.md). Pure: proto in, violations out.
  *
  * Three rules, checked in this order: `security` has a non-empty UUID,
- * `price` has a non-empty arbitrary_precision_value (zero is valid, see the
- * PriceProto comment), and `price_type` is not UNKNOWN_PRICE_TYPE. The price
+ * `price` has either decimal form set (zero is valid, see the PriceProto
+ * comment), and `price_type` is not UNKNOWN_PRICE_TYPE. The price
  * value is not parsed. Never throws on bad or unset input; null or undefined
  * is checked as an empty PriceProto. Unlike security_rules, a link price is
  * not skipped: hydrate it first. The Price wrapper does not call these rules.
@@ -21,14 +22,15 @@ exports.PRICE = 'price';
 exports.PRICE_TYPE = 'price_type';
 /** Returns every field-level violation on this price, or an empty array when it is valid. */
 function validate(proto) {
-    var _a, _b, _c;
+    var _a, _b;
     const p = proto !== null && proto !== void 0 ? proto : new price_pb_1.PriceProto();
     const id = objectIdOf(p);
     const out = [];
     if (!((_b = (_a = p.getSecurity()) === null || _a === void 0 ? void 0 : _a.getUuid()) === null || _b === void 0 ? void 0 : _b.getRawUuid_asU8().length)) {
         out.push((0, errors_1.violation)(exports.SECURITY, id, 'security with a non-empty uuid is required'));
     }
-    if (!((_c = p.getPrice()) === null || _c === void 0 ? void 0 : _c.getArbitraryPrecisionValue())) {
+    const price = p.getPrice();
+    if (!price || (0, decimal_1.isUnsetDecimal)(price)) {
         out.push((0, errors_1.violation)(exports.PRICE, id, 'price is required'));
     }
     if (p.getPriceType() === price_type_pb_1.PriceTypeProto.UNKNOWN_PRICE_TYPE) {

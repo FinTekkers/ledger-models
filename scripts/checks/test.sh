@@ -90,7 +90,20 @@ echo "== java"
 
 echo "== javascript"
 (
+  # tsc imports the git-ignored hierarchy.json mirror; the publish workflows
+  # create it the same way before building.
+  ./sync-hierarchy-mirrors.sh
   cd ledger-models-javascript
   npm ci --ignore-scripts --no-audit --no-fund
+  # npm publish ships the committed .js with no build step, and jest loads
+  # the .js before the .ts: the committed output must match tsc (LM-306).
+  # The mirrored hierarchy.json is a build artifact, never committed.
+  npx tsc -p tsconfig.json
+  stale="$(git status --porcelain --untracked-files=all -- . ':(exclude)hierarchy.json')"
+  if [ -n "$stale" ]; then
+    echo "Committed JS is out of date with tsc output. Run 'npx tsc -p tsconfig.json' in ledger-models-javascript and commit:"
+    echo "$stale"
+    exit 1
+  fi
   npm test --silent
 )

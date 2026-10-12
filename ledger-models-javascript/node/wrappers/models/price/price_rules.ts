@@ -3,14 +3,15 @@ import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
 import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 import { ModelValidationError, violation } from '../errors';
 import { UUID } from '../utils/uuid';
+import { isUnsetDecimal } from '../utils/decimal';
 
 /**
  * Price input rules (LM-289): JS counterpart of Java's PriceRules
  * (docs/adr/typed-input-errors.md). Pure: proto in, violations out.
  *
  * Three rules, checked in this order: `security` has a non-empty UUID,
- * `price` has a non-empty arbitrary_precision_value (zero is valid, see the
- * PriceProto comment), and `price_type` is not UNKNOWN_PRICE_TYPE. The price
+ * `price` has either decimal form set (zero is valid, see the PriceProto
+ * comment), and `price_type` is not UNKNOWN_PRICE_TYPE. The price
  * value is not parsed. Never throws on bad or unset input; null or undefined
  * is checked as an empty PriceProto. Unlike security_rules, a link price is
  * not skipped: hydrate it first. The Price wrapper does not call these rules.
@@ -28,7 +29,8 @@ export function validate(proto: PriceProto | null | undefined): FieldViolationPr
     if (!p.getSecurity()?.getUuid()?.getRawUuid_asU8().length) {
         out.push(violation(SECURITY, id, 'security with a non-empty uuid is required'));
     }
-    if (!p.getPrice()?.getArbitraryPrecisionValue()) {
+    const price = p.getPrice();
+    if (!price || isUnsetDecimal(price)) {
         out.push(violation(PRICE, id, 'price is required'));
     }
     if (p.getPriceType() === PriceTypeProto.UNKNOWN_PRICE_TYPE) {

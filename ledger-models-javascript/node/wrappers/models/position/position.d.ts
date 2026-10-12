@@ -23,7 +23,7 @@ export declare class Position {
      */
     static fromJSON(json: any): Position;
     getFieldValue(field: FieldProto): any;
-    getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Identifier | Portfolio | UUID | Date | ZonedDateTime | number | PriceProto | Tenor;
+    getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Identifier | Portfolio | UUID | Date | ZonedDateTime | Decimal | PriceProto | Tenor;
     getMeasureValue(measure: MeasureProto): Decimal;
     private getMeasure;
     getFieldDisplay(fieldToGet: FieldMapEntry): string;

@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const date_1 = require("../utils/date");
-const decimal_js_1 = __importDefault(require("decimal.js"));
+const decimal_1 = require("../utils/decimal");
 /**
  * Typed wrapper around a single IssuanceProto. Returns null for unset
  * sub-messages and Decimal/Date for populated ones — callers no longer
@@ -18,9 +15,9 @@ class Issuance {
         this.proto = proto;
     }
     static _toDecimal(value) {
-        if (!value)
+        if (!value || (0, decimal_1.isUnsetDecimal)(value))
             return null;
-        return new decimal_js_1.default(value.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.decodeDecimal)(value));
     }
     /** Auction issue (settlement) date. Null if unset. */
     getIssueDate() {

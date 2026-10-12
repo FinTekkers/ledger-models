@@ -27,7 +27,7 @@ const BondSecurity_1 = __importStar(require("./BondSecurity"));
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const agency_pb_1 = require("../../../fintekkers/models/security/bond/agency_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
-const decimal_js_1 = require("decimal.js");
+const decimal_1 = require("../utils/decimal");
 /**
  * MBS-specific accessors layered on top of BondSecurity. Pool-level fields
  * (agency, WAC, WAM, pass-through rate, factors, balances, PSA) live in
@@ -58,7 +58,7 @@ class MortgageBackedSecurity extends BondSecurity_1.default {
         const v = ext ? ext.getWac() : undefined;
         if (!v)
             return null;
-        return new decimal_js_1.Decimal(v.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('mbs_extension.wac', () => (0, decimal_1.decodeDecimal)(v)));
     }
     /** Weighted Average Maturity, in months. */
     getWam() {
@@ -71,7 +71,7 @@ class MortgageBackedSecurity extends BondSecurity_1.default {
         const v = ext ? ext.getPassThroughRate() : undefined;
         if (!v)
             return null;
-        return new decimal_js_1.Decimal(v.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('mbs_extension.pass_through_rate', () => (0, decimal_1.decodeDecimal)(v)));
     }
     /** Current pool factor (remaining UPB / original face). */
     getCurrentFactor() {
@@ -79,7 +79,7 @@ class MortgageBackedSecurity extends BondSecurity_1.default {
         const v = ext ? ext.getCurrentFactor() : undefined;
         if (!v)
             return null;
-        return new decimal_js_1.Decimal(v.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('mbs_extension.current_factor', () => (0, decimal_1.decodeDecimal)(v)));
     }
     /** Original face value at issuance. */
     getOriginalFaceValue() {
@@ -87,7 +87,7 @@ class MortgageBackedSecurity extends BondSecurity_1.default {
         const v = ext ? ext.getOriginalFaceValue() : undefined;
         if (!v)
             return null;
-        return new decimal_js_1.Decimal(v.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('mbs_extension.original_face_value', () => (0, decimal_1.decodeDecimal)(v)));
     }
     /** Current Unpaid Principal Balance. */
     getCurrentUpb() {
@@ -95,7 +95,7 @@ class MortgageBackedSecurity extends BondSecurity_1.default {
         const v = ext ? ext.getCurrentUpb() : undefined;
         if (!v)
             return null;
-        return new decimal_js_1.Decimal(v.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('mbs_extension.current_upb', () => (0, decimal_1.decodeDecimal)(v)));
     }
     /** PSA prepayment speed assumption. */
     getPsaSpeed() {
@@ -103,7 +103,7 @@ class MortgageBackedSecurity extends BondSecurity_1.default {
         const v = ext ? ext.getPsaSpeed() : undefined;
         if (!v)
             return null;
-        return new decimal_js_1.Decimal(v.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('mbs_extension.psa_speed', () => (0, decimal_1.decodeDecimal)(v)));
     }
     /**
      * Build a fresh SecurityProto for an agency MBS pass-through. product_type

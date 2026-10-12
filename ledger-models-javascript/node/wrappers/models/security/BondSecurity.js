@@ -7,7 +7,6 @@ exports.buildBondDetails = exports.decimalToProto = void 0;
 const security_1 = __importDefault(require("./security"));
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const date_1 = require("../utils/date");
 const coupon_frequency_1 = require("./coupon_frequency");
 const coupon_type_1 = require("./coupon_type");
@@ -16,9 +15,10 @@ const tenor_type_pb_1 = require("../../../fintekkers/models/security/tenor_type_
 const decimal_js_1 = require("decimal.js");
 const product_hierarchy_1 = require("./product_hierarchy");
 const Issuance_1 = __importDefault(require("./Issuance"));
-/** Build a DecimalValueProto from a Decimal. */
+const decimal_1 = require("../utils/decimal");
+/** Build a DecimalValueProto from a Decimal, in both forms (LM-306). */
 function decimalToProto(v) {
-    return new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue(v.toString());
+    return (0, decimal_1.encodeDecimal)((0, decimal_1.fromDecimalJs)(v));
 }
 exports.decimalToProto = decimalToProto;
 /**
@@ -99,14 +99,14 @@ class BondSecurity extends security_1.default {
         const rate = bond ? bond.getCouponRate() : undefined;
         if (!rate)
             return null;
-        return new decimal_js_1.Decimal(rate.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('bond_details.coupon_rate', () => (0, decimal_1.decodeDecimal)(rate)));
     }
     getFaceValue() {
         const bond = this.getBondLikeDetails();
         const faceValue = bond ? bond.getFaceValue() : undefined;
         if (!faceValue)
             return null;
-        return new decimal_js_1.Decimal(faceValue.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('bond_details.face_value', () => (0, decimal_1.decodeDecimal)(faceValue)));
     }
     getCouponType() {
         const bond = this.getBondLikeDetails();

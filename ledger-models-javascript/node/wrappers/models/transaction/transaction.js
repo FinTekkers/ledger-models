@@ -41,7 +41,6 @@ const strategy_allocation_pb_1 = require("../../../fintekkers/models/strategy/st
 const transaction_pb_1 = require("../../../fintekkers/models/transaction/transaction_pb");
 const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 const position_status_pb_1 = require("../../../fintekkers/models/position/position_status_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const security_1 = __importDefault(require("../security/security"));
 const portfolio_1 = __importDefault(require("../portfolio/portfolio"));
 const Price_1 = __importDefault(require("../price/Price"));
@@ -52,6 +51,7 @@ const uuid_1 = require("../utils/uuid");
 const date_1 = require("../utils/date");
 const decimal_js_1 = require("decimal.js");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
+const decimal_1 = require("../utils/decimal");
 const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
 const object_types_1 = require("../../util/object-types");
@@ -149,9 +149,7 @@ class Transaction {
         transactionProto.setTransactionType(params.transactionType.proto);
         transactionProto.setPortfolio(params.portfolio.proto);
         // Convert quantity to DecimalValueProto
-        const quantityDecimal = new decimal_value_pb_1.DecimalValueProto();
-        quantityDecimal.setArbitraryPrecisionValue(params.quantity.toString());
-        transactionProto.setQuantity(quantityDecimal);
+        transactionProto.setQuantity((0, decimal_1.encodeDecimal)((0, decimal_1.fromDecimalJs)(params.quantity)));
         // Create and set an empty StrategyAllocationProto
         const strategyAllocationProto = new strategy_allocation_pb_1.StrategyAllocationProto();
         (0, object_types_1.stamp)(strategyAllocationProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_STRATEGY_ALLOCATION, 'StrategyAllocation', '0.0.1');
@@ -300,7 +298,7 @@ class Transaction {
         const quantity = this.proto.getQuantity();
         if (!quantity)
             throw new Error("Quantity is required");
-        return new decimal_js_1.Decimal(quantity.getArbitraryPrecisionValue());
+        return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('quantity', () => (0, decimal_1.decodeDecimal)(quantity)));
     }
     getIssuerName() {
         return this.getSecurity().getIssuerName();
@@ -376,7 +374,6 @@ class Transaction {
      * @returns The created cash transaction
      */
     static createCashTransaction(cashSecurity, parentTransaction) {
-        var _a, _b;
         // Determine transaction type based on parent
         let cashTransactionType;
         const parentType = parentTransaction.getTransactionType().proto;
@@ -410,7 +407,7 @@ class Transaction {
                 if (!faceValue)
                     throw new Error("Face value is required for bond cash impact calculation");
                 const priceProto = parentTransaction.getPrice();
-                const priceValue = new decimal_js_1.Decimal(((_a = priceProto.getPrice()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue()) || '0');
+                const priceValue = priceOrZero(priceProto.getPrice());
                 const scaledPrice = priceValue.mul(priceScaleFactor);
                 const quantity = parentTransaction.getQuantity();
                 const numberBondUnits = quantity.div(faceValue);
@@ -420,7 +417,7 @@ class Transaction {
         else {
             // For other securities: quantity * price
             const priceProto = parentTransaction.getPrice();
-            const priceValue = new decimal_js_1.Decimal(((_b = priceProto.getPrice()) === null || _b === void 0 ? void 0 : _b.getArbitraryPrecisionValue()) || '0');
+            const priceValue = priceOrZero(priceProto.getPrice());
             bookAmount = parentTransaction.getQuantity().mul(priceValue);
         }
         // Get asOf ZonedDateTime
@@ -457,7 +454,6 @@ class Transaction {
      * @param cashSecurity - The cash security to use for the cash impact
      */
     static addMaturationTransaction(transaction, transactionType, cashSecurity) {
-        var _a;
         // Lazy import to avoid circular dependency
         const BondSecurity = require('../security/BondSecurity').default;
         // Cast security to BondSecurity
@@ -471,7 +467,7 @@ class Transaction {
         settlementDate.setDate(settlementDate.getDate() + 2);
         // Get price as Decimal
         const priceProto = transaction.getPrice();
-        const priceValue = new decimal_js_1.Decimal(((_a = priceProto.getPrice()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue()) || '0');
+        const priceValue = priceOrZero(priceProto.getPrice());
         // Get asOf ZonedDateTime
         const asOf = transaction.getAsOf();
         // Create maturation transaction
@@ -533,6 +529,16 @@ class Transaction {
             Transaction.createCashTransaction(cashSecurity, transaction);
         }
     }
+}
+/**
+ * The price value, or 0 when the price is unset (kept from before LM-306 for
+ * the derived cash and maturation transactions only: unset is not zero
+ * elsewhere).
+ */
+function priceOrZero(p) {
+    if (!p || (0, decimal_1.isUnsetDecimal)(p))
+        return new decimal_js_1.Decimal(0);
+    return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('price.price', () => (0, decimal_1.decodeDecimal)(p)));
 }
 exports.default = Transaction;
 // private static Transaction createCashTransaction(CashSecurity cashSecurity, Transaction parentTransaction) {

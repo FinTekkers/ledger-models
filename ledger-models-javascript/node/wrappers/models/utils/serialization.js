@@ -12,6 +12,9 @@ const protoEnum_1 = require("./protoEnum");
 const uuid_1 = require("./uuid");
 const wrappers_pb_1 = require("google-protobuf/google/protobuf/wrappers_pb");
 const identifier_1 = require("../security/identifier");
+const decimal_js_1 = require("decimal.js");
+const errors_1 = require("../errors");
+const decimal_1 = require("./decimal");
 class ProtoSerializationUtil {
     static serialize(obj) {
         if (obj instanceof uuid_1.UUID) {
@@ -26,8 +29,15 @@ class ProtoSerializationUtil {
         if (obj instanceof datetime_1.ZonedDateTime) {
             return obj.toProto();
         }
+        if (obj instanceof decimal_js_1.Decimal) {
+            return (0, decimal_1.encodeDecimal)((0, decimal_1.fromDecimalJs)(obj));
+        }
         if (typeof obj === "number") {
-            return new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue(obj.toString());
+            // Lossless (LM-306): only a safe integer is exact as a JS number.
+            if (!Number.isSafeInteger(obj)) {
+                throw new errors_1.ModelValidationError([(0, errors_1.violation)('', undefined, `decimal ${obj} is not a safe integer: pass a Decimal for an exact value`)]);
+            }
+            return (0, decimal_1.encodeDecimal)({ unscaled: BigInt(obj), scale: 0 });
         }
         if (obj instanceof String) {
             return new wrappers_pb_1.StringValue().setValue(obj.toString());
@@ -53,7 +63,7 @@ class ProtoSerializationUtil {
             return new identifier_1.Identifier(obj);
         }
         if (obj instanceof decimal_value_pb_1.DecimalValueProto) {
-            return parseFloat(obj.getArbitraryPrecisionValue());
+            return (0, decimal_1.toDecimalJs)((0, decimal_1.decodeDecimal)(obj));
         }
         if (obj instanceof wrappers_pb_1.StringValue) {
             return obj.toString();
