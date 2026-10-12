@@ -61,9 +61,8 @@ fn current_transaction_fetcher() -> Option<TransactionFetchFn> {
 // ---------- Default gRPC fetcher ----------
 
 use crate::fintekkers::services::transaction_service::transaction_client::TransactionClient;
-use crate::fintekkers::requests::transaction::{
-    QueryTransactionRequestProto, QueryTransactionResponseProto,
-};
+use crate::fintekkers::requests::transaction::QueryTransactionResponseProto;
+use crate::fintekkers::wrappers::util::object_types;
 use std::sync::mpsc;
 
 struct TransactionFetchRequest {
@@ -108,13 +107,10 @@ fn spawn_transaction_worker() -> mpsc::Sender<TransactionFetchRequest> {
                             }
                         }
                     };
-                    let request = QueryTransactionRequestProto {
-                        object_class: "TransactionRequest".into(),
-                        version: "0.0.1".into(),
-                        uu_ids: vec![UuidProto { raw_uuid: req.uuid.as_bytes().to_vec() }],
-                        as_of: req.as_of,
-                        ..Default::default()
-                    };
+                    let request = object_types::query_transaction_request(
+                        vec![UuidProto { raw_uuid: req.uuid.as_bytes().to_vec() }],
+                        req.as_of,
+                    );
                     let result: Result<TransactionProto, LinkResolverError> = client_ref
                         .get_by_ids(request)
                         .await

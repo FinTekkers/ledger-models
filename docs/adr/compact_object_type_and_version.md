@@ -2,10 +2,9 @@
 
 ## Status
 
-Accepted (LM-297), stage 1, part 1: the proto change, regenerated bindings,
-and descriptor and old-reader tests. Writers in each language start setting
-the new fields in follow-up parts (Java and Python, then JS and Rust). Stage 2
-stops the string writes. Stage 3 deletes the strings. This is the same staging
+Accepted (LM-297), stage 1: the proto change and regenerated bindings, plus
+an `ObjectTypes` helper in each language. Library writers set both forms and
+readers translate the strings-only form. Stage 2 stops the string writes. Stage 3 deletes the strings. This is the same staging
 as the compact decimals (LM-294 → LM-295 → LM-296).
 
 ## Context
@@ -57,8 +56,9 @@ code reads `object_class`.
    - Each language builds its string-to-enum map from the generated
      descriptor, never from a hand-written list of names.
    - JS (`google-protobuf`) and Rust (`prost`) can't read custom options at
-     runtime. Their parts generate a mirror of the map from the descriptor, with
-     a drift check.
+     runtime. `scripts/gen-object-type-legacy-map.py` writes a mirror of the map
+     for each, from the Python descriptor. `scripts/checks/test.sh` runs it with
+     `--check` and fails on drift.
    - 50001 is in the in-house extension range (50000–99999).
 5. **Each string sits on exactly one value.** Some strings were written on
    more than one message type. The string is attached to the query request,
@@ -73,10 +73,26 @@ code reads `object_class`.
    and decode to `OBJECT_TYPE_UNKNOWN`. The descriptor test
    (`test_object_type_descriptor.py`, `LIBRARY_WRITTEN_STRINGS`) names the
    write site of every attached string.
-6. **Reading (follow-up parts):** readers use the new fields first and fall
-   back to the strings field by field. An unknown string gives `UNKNOWN`. A
-   malformed version gives `0.0.0`. Both log one warning per message type and
-   never throw.
+6. **Writing and reading go through one helper per language:**
+
+   | Language | Helper | Warning sink |
+   | --- | --- | --- |
+   | Java | `common.util.ObjectTypes` | `java.util.logging` |
+   | Python | `fintekkers.wrappers.util.object_types` | `logging` |
+   | JS | `node/wrappers/util/object-types.ts` | `console.warn` |
+   | Rust | `fintekkers::wrappers::util::object_types` | the `log` crate |
+
+   - `stamp` sets the strings and the new fields together. Library code writes
+     `object_class` nowhere else. `scripts/checks/test.sh` checks this with a
+     grep for Java, Python and JS, and with `-D deprecated` for Rust.
+   - Readers (`read_type` / `read_version`, or `upgrade`) use the new fields
+     first and fall back to the strings field by field. An unknown string gives
+     `UNKNOWN`. A malformed version gives `0.0.0`. A fallback logs one warning
+     per distinct pair of strings and never throws. Empty strings are the proto3
+     default, so they fall back silently.
+   - `test-fixtures/object-type-legacy.json` holds strings-only bytes from
+     today's writers, plus malformed and per-field rows. All four languages
+     decode it.
 
 ## Consequences
 
@@ -92,7 +108,10 @@ code reads `object_class`.
   (Java), `price-service-rust`, `valuation-service` and `broker-service`
   (Rust), and `ui-service` (JS).
 - **Rust struct literals** that list every field now need the new fields or
-  `..Default::default()`.
+  `..Default::default()`. The Rust builders (`PriceProtoBuilder`,
+  `PortfolioProtoBuilder`, `SecurityProtoBuilder`) now return a `Validation`
+  error on `version` when the version string is not empty or `MAJOR.MINOR.PATCH`.
+  The Rust crate gains a `log` dependency.
 - **A new message with `object_class`** fails the descriptor test until it gets
   the four fields and an enum value.
 - **Rollback after release:** remove the fields, add `reserved 1001 to 1004;` to

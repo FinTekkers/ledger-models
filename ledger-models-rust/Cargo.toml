@@ -17,7 +17,7 @@ license = "Apache-2.0"
 description = "A comprehensive model library for financial products (securities, prices, transactions, etc). Protobuf used for serialization, with language-specific implementations"
 readme = "README.md" # It is used at https://crates.io/crates/publish
 repository = "https://github.com/fintekkers/ledger-models"
-include = ["Cargo.toml", "**/*.rs", "ledger_models_file_descriptor_set_v_todo.bin", "catalog/*.json", "hierarchy.json"]
+include = ["Cargo.toml", "**/*.rs", "ledger_models_file_descriptor_set_v_todo.bin", "catalog/*.json", "hierarchy.json", "fintekkers/wrappers/util/*.json"]
 
 [[bin]]
 name = "gen"
@@ -32,6 +32,9 @@ prost = "0.11.2"
 prost-types = "0.11.2"
 tonic-build = "0.9.0"
 walkdir = "2"
+# Fallback warnings when a message is read from its deprecated object_class /
+# version strings (LM-297). Consumers pick the logger.
+log = "0.4"
 
 # LinkResolver (consumer-side is_link hydration). tokio is already in
 # the dep tree transitively via tonic; making it explicit + adding
