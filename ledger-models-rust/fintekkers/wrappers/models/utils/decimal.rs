@@ -18,6 +18,7 @@
 use crate::fintekkers::models::util::DecimalValueProto;
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
+use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 
 use num_bigint::{BigInt, Sign};
 use rust_decimal::Decimal;
@@ -249,6 +250,17 @@ pub fn decimal_proto(d: &Decimal) -> DecimalValueProto {
 pub fn reencode_decimal(p: &mut DecimalValueProto) -> Result<(), Error> {
     *p = encode_decimal(&decode_decimal(p)?);
     Ok(())
+}
+
+/// Decodes a required decimal field (LM-312). `None`, or a value that does
+/// not decode, is `Error::Validation` whose violation field is `field`, e.g.
+/// `price: decimal is required but unset (id null)`. Callers map the error
+/// to their own gRPC status.
+pub fn require_decimal(p: &Option<DecimalValueProto>, field: &str) -> Result<Decimal, Error> {
+    match p {
+        None => Err(invalid("decimal is required but unset".to_string()).in_field(field)),
+        Some(p) => ProtoSerializationUtil::deserialize_decimal(p).map_err(|e| e.in_field(field)),
+    }
 }
 
 impl CompactDecimal {
@@ -702,6 +714,34 @@ mod test {
             assert_eq!(read, d, "{}", s);
             assert_eq!(read.scale(), d.scale(), "{}", s);
             assert_eq!(read.to_string(), s, "{}", s);
+        }
+    }
+
+    // ---- require_decimal (LM-312) ----
+
+    #[test]
+    fn require_decimal_none_names_field() {
+        let err = require_decimal(&None, "price").unwrap_err();
+        assert!(matches!(err, Error::Validation(_)), "expected Validation, got {:?}", err);
+        assert_eq!(err.violations()[0].field, "price");
+        assert!(err.to_string().contains("price"), "{}", err);
+    }
+
+    #[test]
+    fn require_decimal_undecodable_names_field() {
+        let err = require_decimal(&Some(legacy_decimal_proto("NaN")), "price").unwrap_err();
+        assert!(matches!(err, Error::Validation(_)), "expected Validation, got {:?}", err);
+        assert_eq!(err.violations()[0].field, "price");
+        assert!(err.to_string().contains("price"), "{}", err);
+    }
+
+    #[test]
+    fn require_decimal_reads_both_forms() {
+        let compact = DecimalValueProto { unscaled_value: vec![0x00, 0x96], scale: 2, ..Default::default() };
+        for p in [legacy_decimal_proto("1.50"), compact] {
+            let d = require_decimal(&Some(p.clone()), "price").unwrap();
+            assert_eq!(d.scale(), 2, "{:?}", p);
+            assert_eq!(d.to_string(), "1.50", "{:?}", p);
         }
     }
 
