@@ -60,10 +60,10 @@ fn read_security(sec: &SecurityProto, path: &str) -> Decimal {
     let mbs = MortgageBackedSecurity::from_proto(sec.clone()).unwrap();
     let bond = sec.bond_details.as_ref().unwrap();
     let read = match path {
-        "bond_details.coupon_rate" => ProtoSerializationUtil::deserialize_decimal_in(
-            bond.coupon_rate.as_ref().unwrap(), "SecurityProto", path).ok(),
-        "bond_details.face_value" => ProtoSerializationUtil::deserialize_decimal_in(
-            bond.face_value.as_ref().unwrap(), "SecurityProto", path).ok(),
+        "bond_details.coupon_rate" => ProtoSerializationUtil::deserialize_decimal(
+            bond.coupon_rate.as_ref().unwrap()).ok(),
+        "bond_details.face_value" => ProtoSerializationUtil::deserialize_decimal(
+            bond.face_value.as_ref().unwrap()).ok(),
         "mbs_extension.wac" => mbs.wac(),
         "mbs_extension.pass_through_rate" => mbs.pass_through_rate(),
         "mbs_extension.current_factor" => mbs.current_factor(),
@@ -103,11 +103,11 @@ fn assert_resaved(decimals: Vec<(String, &mut DecimalValueProto)>, expected: &[(
     for (path, d) in decimals {
         assert!(d.unscaled_value.is_empty(), "{}: fixture must be string-only", path);
         let want = &expected.iter().find(|(p, _)| *p == path).unwrap_or_else(|| panic!("{} in json", path)).1;
-        reencode_decimal(d, "Lm294LegacyFixtureProto", &path).unwrap();
+        reencode_decimal(d).unwrap();
         assert!(!d.unscaled_value.is_empty(), "{}: compact form written", path);
         assert!(!d.arbitrary_precision_value.is_empty(), "{}: field 10 still written", path);
-        let compact = decode_decimal(d, "Lm294LegacyFixtureProto", &path).unwrap();
-        let value = compact.to_rust_decimal(&path).unwrap();
+        let compact = decode_decimal(d).unwrap();
+        let value = compact.to_rust_decimal().unwrap();
         assert_eq!(value, *want, "{}", path);
         assert_eq!(value.scale(), want.scale(), "{}", path);
         assert_eq!(Decimal::from_str(&d.arbitrary_precision_value).unwrap(), *want, "{}", path);
@@ -166,8 +166,8 @@ fn legacy_transaction_decodes_and_resaves_both_forms() {
 
     // quantity was stored as the exponent string "1E+3".
     assert_eq!(proto.quantity.as_ref().unwrap().arbitrary_precision_value, "1E+3");
-    let quantity = ProtoSerializationUtil::deserialize_decimal_in(
-        proto.quantity.as_ref().unwrap(), "TransactionProto", "quantity").unwrap();
+    let quantity = ProtoSerializationUtil::deserialize_decimal(
+        proto.quantity.as_ref().unwrap()).unwrap();
     assert_eq!(quantity, expected[0].1);
     assert_eq!(quantity.scale(), 0);
     let price = PriceWrapper::new(proto.price.clone().unwrap()).try_price().unwrap();

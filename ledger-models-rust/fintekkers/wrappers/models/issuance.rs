@@ -41,35 +41,35 @@ impl Issuance {
         self.proto
             .auction_offering_amount
             .as_ref()
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "IssuanceProto", "auction_offering_amount").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn total_accepted(&self) -> Option<Decimal> {
         self.proto
             .total_accepted
             .as_ref()
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "IssuanceProto", "total_accepted").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn post_auction_outstanding_quantity(&self) -> Option<Decimal> {
         self.proto
             .post_auction_outstanding_quantity
             .as_ref()
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "IssuanceProto", "post_auction_outstanding_quantity").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn mature_security_amount(&self) -> Option<Decimal> {
         self.proto
             .mature_security_amount
             .as_ref()
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "IssuanceProto", "mature_security_amount").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn price_for_single_price_auction(&self) -> Option<Decimal> {
         self.proto
             .price_for_single_price_auction
             .as_ref()
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "IssuanceProto", "price_for_single_price_auction").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn auction_type(&self) -> AuctionTypeProto {

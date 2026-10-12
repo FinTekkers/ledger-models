@@ -4,11 +4,12 @@
 //! two's-complement big-endian integer of any size. A non-empty
 //! unscaled_value means the compact form is set and it wins. Otherwise the
 //! deprecated `arbitrary_precision_value` string is read, with a warning
-//! logged once per process per message type.
+//! logged once per process (LM-307).
 //!
 //! Lossless: no binary floating point on any path. A value that cannot be
-//! represented exactly is a typed `Error::Validation` naming the field, never
-//! rounded.
+//! represented exactly is a typed `Error::Validation`, never rounded. The
+//! codec does not know which field it is decoding: a caller that wants the
+//! field named labels the error with `Error::in_field`.
 //!
 //! Stage 1: writers set both forms, so readers on older ledger-models keep
 //! working. This module is the only code allowed to touch the deprecated
@@ -20,9 +21,8 @@ use crate::fintekkers::wrappers::models::utils::errors::Error;
 
 use num_bigint::{BigInt, Sign};
 use rust_decimal::Decimal;
-use std::collections::HashSet;
 use std::fmt;
-use std::sync::{Mutex, OnceLock};
+use std::sync::Once;
 
 /// Most decimal digits allowed in the unscaled value, and the largest scale.
 /// The same in every language (see the ADR). Stops input such as
@@ -48,9 +48,11 @@ pub struct CompactDecimal {
     pub scale: u32,
 }
 
-fn invalid(field: &str, message: String) -> Error {
+/// An unlabelled `Error::Validation`: `field` is empty until a caller adds
+/// it with `Error::in_field`.
+fn invalid(message: String) -> Error {
     Error::Validation(vec![FieldViolationProto {
-        field: field.to_string(),
+        field: String::new(),
         object_id: None,
         message,
     }])
@@ -62,9 +64,9 @@ fn invalid(field: &str, message: String) -> Error {
 /// whitespace, no `NaN` or `Infinity`. The exponent is folded into the scale;
 /// a negative scale becomes scale 0 (`1E+3` is unscaled 1000, scale 0).
 /// Anything else, or a result over `MAX_DIGITS` / `MAX_SCALE`, is
-/// `Error::Validation` naming `field`.
-pub fn parse_decimal_str(s: &str, field: &str) -> Result<CompactDecimal, Error> {
-    let not_a_decimal = || invalid(field, format!("{} is not a finite decimal: {:?}", field, preview(s)));
+/// `Error::Validation`.
+pub fn parse_decimal_str(s: &str) -> Result<CompactDecimal, Error> {
+    let not_a_decimal = || invalid(format!("decimal is not a finite decimal: {:?}", preview(s)));
     let bytes = s.as_bytes();
     let mut i = 0;
     let negative = match bytes.first() {
@@ -119,7 +121,7 @@ pub fn parse_decimal_str(s: &str, field: &str) -> Result<CompactDecimal, Error> 
         }
         // Any exponent this long is far past the caps below.
         if exp_digits.len() > 12 {
-            return Err(over_cap(field, s));
+            return Err(over_cap(s));
         }
         let magnitude: i64 = if exp_digits.is_empty() {
             0
@@ -139,13 +141,13 @@ pub fn parse_decimal_str(s: &str, field: &str) -> Result<CompactDecimal, Error> 
         // Zero keeps its scale (`0.00` is scale 2); `0E+3` is scale 0.
         let scale = scale.max(0);
         if scale > MAX_SCALE as i64 {
-            return Err(over_cap(field, s));
+            return Err(over_cap(s));
         }
         return Ok(CompactDecimal { unscaled: BigInt::from(0), scale: scale as u32 });
     }
     let zeros_to_append = if scale < 0 { -scale } else { 0 };
     if scale > MAX_SCALE as i64 || significant.len() as i64 + zeros_to_append > MAX_DIGITS as i64 {
-        return Err(over_cap(field, s));
+        return Err(over_cap(s));
     }
     let mut text = String::with_capacity(significant.len() + zeros_to_append as usize + 1);
     if negative {
@@ -157,12 +159,10 @@ pub fn parse_decimal_str(s: &str, field: &str) -> Result<CompactDecimal, Error> 
     Ok(CompactDecimal { unscaled, scale: scale.max(0) as u32 })
 }
 
-fn over_cap(field: &str, s: &str) -> Error {
+fn over_cap(s: &str) -> Error {
     invalid(
-        field,
         format!(
-            "{} is over the limit of {} digits or scale {}: {:?}",
-            field,
+            "decimal is over the limit of {} digits or scale {}: {:?}",
             MAX_DIGITS,
             MAX_SCALE,
             preview(s)
@@ -185,19 +185,17 @@ pub fn is_unset_decimal(p: &DecimalValueProto) -> bool {
 /// Decodes the compact form (fields 11 and 12). Rejects a scale over
 /// `MAX_SCALE`, bytes over `MAX_UNSCALED_BYTES` or more than `MAX_DIGITS`
 /// digits, before any large allocation.
-pub fn decode_compact(unscaled_value: &[u8], scale: u32, field: &str) -> Result<CompactDecimal, Error> {
+pub fn decode_compact(unscaled_value: &[u8], scale: u32) -> Result<CompactDecimal, Error> {
     if scale > MAX_SCALE {
-        return Err(invalid(
-            field,
-            format!("{} has scale {}, over the limit of {}", field, scale, MAX_SCALE),
-        ));
+        return Err(invalid(format!(
+            "decimal has scale {}, over the limit of {}",
+            scale, MAX_SCALE
+        )));
     }
     if unscaled_value.len() > MAX_UNSCALED_BYTES {
         return Err(invalid(
-            field,
             format!(
-                "{} has a {}-byte unscaled_value, over the limit of {} bytes",
-                field,
+                "decimal has a {}-byte unscaled_value, over the limit of {} bytes",
                 unscaled_value.len(),
                 MAX_UNSCALED_BYTES
             ),
@@ -205,10 +203,7 @@ pub fn decode_compact(unscaled_value: &[u8], scale: u32, field: &str) -> Result<
     }
     let unscaled = BigInt::from_signed_bytes_be(unscaled_value);
     if digit_count(&unscaled) > MAX_DIGITS {
-        return Err(invalid(
-            field,
-            format!("{} has more than {} digits", field, MAX_DIGITS),
-        ));
+        return Err(invalid(format!("decimal has more than {} digits", MAX_DIGITS)));
     }
     Ok(CompactDecimal { unscaled, scale })
 }
@@ -219,25 +214,18 @@ fn digit_count(n: &BigInt) -> usize {
 
 /// Decodes a `DecimalValueProto`. The compact form wins when set. Otherwise
 /// falls back to the deprecated string and logs a deprecation warning, once
-/// per process per `message_type`. Both forms empty is `Error::Validation`
-/// naming `field`; so is a malformed or over-cap value.
-///
-/// `message_type` is the proto holding the decimal, e.g. `PriceProto`;
-/// `field` its path, e.g. `price`.
+/// per process. Both forms empty is `Error::Validation`; so is a malformed
+/// or over-cap value.
 #[allow(deprecated)]
-pub fn decode_decimal(
-    p: &DecimalValueProto,
-    message_type: &'static str,
-    field: &str,
-) -> Result<CompactDecimal, Error> {
+pub fn decode_decimal(p: &DecimalValueProto) -> Result<CompactDecimal, Error> {
     if !p.unscaled_value.is_empty() {
-        return decode_compact(&p.unscaled_value, p.scale, field);
+        return decode_compact(&p.unscaled_value, p.scale);
     }
     if p.arbitrary_precision_value.is_empty() {
-        return Err(invalid(field, format!("{} is required but unset", field)));
+        return Err(invalid("decimal is required but unset".to_string()));
     }
-    emit_deprecation(message_type, field);
-    parse_decimal_str(&p.arbitrary_precision_value, field)
+    emit_deprecation();
+    parse_decimal_str(&p.arbitrary_precision_value)
 }
 
 /// Encodes both forms (stage 1): fields 11 and 12, plus the canonical string
@@ -258,12 +246,8 @@ pub fn decimal_proto(d: &Decimal) -> DecimalValueProto {
 
 /// Rewrites `p` in both forms (stage 1), decoding it first. Used when
 /// re-saving a message loaded from older bytes.
-pub fn reencode_decimal(
-    p: &mut DecimalValueProto,
-    message_type: &'static str,
-    field: &str,
-) -> Result<(), Error> {
-    *p = encode_decimal(&decode_decimal(p, message_type, field)?);
+pub fn reencode_decimal(p: &mut DecimalValueProto) -> Result<(), Error> {
+    *p = encode_decimal(&decode_decimal(p)?);
     Ok(())
 }
 
@@ -297,27 +281,21 @@ impl CompactDecimal {
     }
 
     /// Converts to `rust_decimal::Decimal`, keeping the scale. A scale over 28
-    /// or a magnitude over 96 bits is `Error::Validation` naming `field`;
-    /// never rounded.
-    pub fn to_rust_decimal(&self, field: &str) -> Result<Decimal, Error> {
+    /// or a magnitude over 96 bits is `Error::Validation`; never rounded.
+    pub fn to_rust_decimal(&self) -> Result<Decimal, Error> {
         if self.scale > RUST_DECIMAL_MAX_SCALE {
-            return Err(invalid(
-                field,
-                format!(
-                    "{} has scale {}; Rust Decimal holds at most {}",
-                    field, self.scale, RUST_DECIMAL_MAX_SCALE
-                ),
-            ));
+            return Err(invalid(format!(
+                "decimal has scale {}; Rust Decimal holds at most {}",
+                self.scale, RUST_DECIMAL_MAX_SCALE
+            )));
         }
         if self.unscaled.magnitude().bits() > RUST_DECIMAL_MAX_BITS {
             return Err(invalid(
-                field,
-                format!("{} needs more than 96 bits; too large for Rust Decimal", field),
+                "decimal needs more than 96 bits; too large for Rust Decimal".to_string(),
             ));
         }
-        let mantissa = i128::try_from(&self.unscaled).map_err(|_| {
-            invalid(field, format!("{} is too large for Rust Decimal", field))
-        })?;
+        let mantissa = i128::try_from(&self.unscaled)
+            .map_err(|_| invalid("decimal is too large for Rust Decimal".to_string()))?;
         Ok(Decimal::from_i128_with_scale(mantissa, self.scale))
     }
 }
@@ -334,37 +312,22 @@ impl fmt::Display for CompactDecimal {
     }
 }
 
-// ---- Deprecation warning: once per process per message type ----
+// ---- Deprecation warning: once per process ----
 
-fn warned_types() -> &'static Mutex<HashSet<&'static str>> {
-    static WARNED: OnceLock<Mutex<HashSet<&'static str>>> = OnceLock::new();
-    WARNED.get_or_init(|| Mutex::new(HashSet::new()))
-}
+/// Process-wide and thread-safe, with no key (LM-307): the first fallback
+/// read of the deprecated string warns, every later one is silent.
+static DEPRECATION_WARNING: Once = Once::new();
 
-#[cfg(test)]
-pub(crate) fn recorded_warnings() -> &'static Mutex<Vec<String>> {
-    static RECORDED: OnceLock<Mutex<Vec<String>>> = OnceLock::new();
-    RECORDED.get_or_init(|| Mutex::new(Vec::new()))
-}
-
-/// Logs that a decimal in `message_type` was read from the deprecated string,
-/// the first time only for each `message_type`.
-fn emit_deprecation(message_type: &'static str, field: &str) {
-    let first = warned_types()
-        .lock()
-        .unwrap_or_else(|e| e.into_inner())
-        .insert(message_type);
-    if !first {
-        return;
-    }
-    let message = format!(
-        "DecimalValueProto in {}.{} read from deprecated arbitrary_precision_value; \
-         writer predates ledger-models {}",
-        message_type, field, FIRST_COMPACT_RELEASE
-    );
-    log::warn!("{}", message);
-    #[cfg(test)]
-    recorded_warnings().lock().unwrap_or_else(|e| e.into_inner()).push(message);
+/// Logs that a decimal was read from the deprecated string, the first time
+/// only in this process. Tested in tests/decimal_deprecation_warning_test.rs.
+fn emit_deprecation() {
+    DEPRECATION_WARNING.call_once(|| {
+        log::warn!(
+            "DecimalValueProto read from deprecated arbitrary_precision_value; \
+             writer predates ledger-models {}",
+            FIRST_COMPACT_RELEASE
+        );
+    });
 }
 
 // ---- DecimalWrapper ----
@@ -390,7 +353,7 @@ impl From<&str> for DecimalWrapper {
     /// kept as the string only, so reading it later is the error.
     #[allow(deprecated)]
     fn from(value: &str) -> Self {
-        let proto = match parse_decimal_str(value, "DecimalValueProto") {
+        let proto = match parse_decimal_str(value) {
             Ok(v) => encode_decimal(&v),
             Err(_) => DecimalValueProto {
                 arbitrary_precision_value: value.to_owned(),
@@ -422,9 +385,12 @@ impl From<DecimalWrapper> for DecimalValueProto {
 impl TryFrom<DecimalWrapper> for Decimal {
     type Error = Error;
 
+    /// Keeps `Error::DecimalConversion`, as before LM-294, for existing
+    /// callers of this conversion. `ProtoSerializationUtil::deserialize_decimal`
+    /// is the typed path: it returns `Error::Validation` (LM-307).
     fn try_from(value: DecimalWrapper) -> Result<Self, Error> {
-        decode_decimal(&value.proto, "DecimalValueProto", "DecimalValueProto")
-            .and_then(|v| v.to_rust_decimal("DecimalValueProto"))
+        decode_decimal(&value.proto)
+            .and_then(|v| v.to_rust_decimal())
             .map_err(|_| Error::DecimalConversion)
     }
 }
@@ -435,7 +401,7 @@ impl fmt::Display for DecimalWrapper {
     #[allow(deprecated)]
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
         if !self.proto.unscaled_value.is_empty() {
-            if let Ok(v) = decode_compact(&self.proto.unscaled_value, self.proto.scale, "DecimalValueProto") {
+            if let Ok(v) = decode_compact(&self.proto.unscaled_value, self.proto.scale) {
                 return fmt.write_str(&v.to_canonical_string());
             }
         }
@@ -483,8 +449,12 @@ mod test {
         case[key].as_str().unwrap_or_else(|| panic!("{} in {}", key, case))
     }
 
+    /// The codec's errors are unlabelled; a caller labels them with
+    /// `Error::in_field`.
     fn assert_validation_on(err: Error, field: &str) {
         assert!(matches!(err, Error::Validation(_)), "expected Validation, got {:?}", err);
+        assert_eq!(err.violations()[0].field, "", "{:?}", err);
+        let err = err.in_field(field);
         assert_eq!(err.violations()[0].field, field, "{:?}", err);
     }
 
@@ -496,7 +466,7 @@ mod test {
         assert!(cases.len() >= 12, "fixture has too few cases");
         for case in &cases {
             let name = str_of(case, "name");
-            let parsed = parse_decimal_str(str_of(case, "string"), "price").expect(name);
+            let parsed = parse_decimal_str(str_of(case, "string")).expect(name);
             let expected_unscaled = BigInt::from_signed_bytes_be(&unhex(str_of(case, "unscaled_hex")));
             let expected_scale = case["scale"].as_u64().unwrap() as u32;
             assert_eq!(parsed.unscaled, expected_unscaled, "{}", name);
@@ -510,7 +480,7 @@ mod test {
 
             // Decode the fixture's wire bytes through the compact form only.
             let decoded = DecimalValueProto::decode(unhex(str_of(case, "wire_hex")).as_slice()).unwrap();
-            let compact = decode_decimal(&decoded, "Lm294FixtureTestProto", "price").expect(name);
+            let compact = decode_decimal(&decoded).expect(name);
             assert_eq!(compact, CompactDecimal { unscaled: expected_unscaled, scale: expected_scale }, "{}", name);
         }
     }
@@ -528,10 +498,10 @@ mod test {
         let cases = cases("string_errors");
         assert!(cases.len() >= 4);
         for case in &cases {
-            let err = parse_decimal_str(str_of(case, "string"), "price").expect_err(str_of(case, "name"));
+            let err = parse_decimal_str(str_of(case, "string")).expect_err(str_of(case, "name"));
             assert_validation_on(err, "price");
             // The same through the full decode path.
-            let err = decode_decimal(&legacy_decimal_proto(str_of(case, "string")), "Lm294FixtureTestProto", "price")
+            let err = decode_decimal(&legacy_decimal_proto(str_of(case, "string")))
                 .expect_err(str_of(case, "name"));
             assert_validation_on(err, "price");
         }
@@ -552,7 +522,7 @@ mod test {
                 scale: case["scale"].as_u64().unwrap() as u32,
                 ..Default::default()
             };
-            let err = decode_decimal(&proto, "Lm294FixtureTestProto", "price").expect_err(name);
+            let err = decode_decimal(&proto).expect_err(name);
             assert_validation_on(err, "price");
         }
     }
@@ -561,37 +531,15 @@ mod test {
 
     #[test]
     fn exponent_strings_translate() {
-        let v = decode_decimal(&legacy_decimal_proto("1E+3"), "Lm294FixtureTestProto", "price").unwrap();
+        let v = decode_decimal(&legacy_decimal_proto("1E+3")).unwrap();
         assert_eq!(v, CompactDecimal { unscaled: BigInt::from(1000), scale: 0 });
-        let v = decode_decimal(&legacy_decimal_proto("1.5E-3"), "Lm294FixtureTestProto", "price").unwrap();
+        let v = decode_decimal(&legacy_decimal_proto("1.5E-3")).unwrap();
         assert_eq!(v, CompactDecimal { unscaled: BigInt::from(15), scale: 4 });
     }
 
     // ---- Metric 3: deprecation ----
-
-    #[test]
-    fn string_fallback_warns_exactly_once_per_type() {
-        let proto = legacy_decimal_proto("1.50");
-        decode_decimal(&proto, "Lm294WarnOnceTestProto", "price").unwrap();
-        decode_decimal(&proto, "Lm294WarnOnceTestProto", "price").unwrap();
-        let lines: Vec<String> = recorded_warnings()
-            .lock()
-            .unwrap()
-            .iter()
-            .filter(|l| l.contains("Lm294WarnOnceTestProto"))
-            .cloned()
-            .collect();
-        assert_eq!(lines.len(), 1, "{:?}", lines);
-        assert!(lines[0].contains("Lm294WarnOnceTestProto.price"), "{}", lines[0]);
-        assert!(lines[0].contains("arbitrary_precision_value"), "{}", lines[0]);
-    }
-
-    #[test]
-    fn compact_read_does_not_warn() {
-        decode_decimal(&decimal_proto(&Decimal::from(7)), "Lm294NoWarnTestProto", "price").unwrap();
-        let warned = recorded_warnings().lock().unwrap().iter().any(|l| l.contains("Lm294NoWarnTestProto"));
-        assert!(!warned);
-    }
+    // One warning per process, so it is tested in its own process:
+    // tests/decimal_deprecation_warning_test.rs (LM-307).
 
     #[test]
     fn string_field_is_deprecated_and_codec_is_the_allowed_reader() {
@@ -623,7 +571,7 @@ mod test {
     fn non_finite_and_malformed_strings_name_the_field() {
         let long_non_ascii = format!("1E+{}{}", "9".repeat(60), "é".repeat(40));
         for s in ["abc", "NaN", "Infinity", "-Infinity", "1E+5000", " 1", "1.2.3", "1e", ".", long_non_ascii.as_str()] {
-            let err = decode_decimal(&legacy_decimal_proto(s), "Lm294FixtureTestProto", "price").expect_err(s);
+            let err = decode_decimal(&legacy_decimal_proto(s)).expect_err(s);
             assert_validation_on(err, "price");
         }
     }
@@ -631,15 +579,15 @@ mod test {
     #[test]
     fn too_big_for_rust_decimal_is_an_error_not_rounded() {
         let scale_29 = CompactDecimal { unscaled: BigInt::from(1), scale: 29 };
-        assert_validation_on(scale_29.to_rust_decimal("price").unwrap_err(), "price");
+        assert_validation_on(scale_29.to_rust_decimal().unwrap_err(), "price");
         let bits_97 = CompactDecimal { unscaled: BigInt::from(1) << 96usize, scale: 0 };
-        assert_validation_on(bits_97.to_rust_decimal("price").unwrap_err(), "price");
+        assert_validation_on(bits_97.to_rust_decimal().unwrap_err(), "price");
         let neg_bits_97 = CompactDecimal { unscaled: -(BigInt::from(1) << 96usize), scale: 0 };
-        assert_validation_on(neg_bits_97.to_rust_decimal("price").unwrap_err(), "price");
+        assert_validation_on(neg_bits_97.to_rust_decimal().unwrap_err(), "price");
 
         // The limits themselves convert exactly.
         let max = CompactDecimal { unscaled: (BigInt::from(1) << 96usize) - 1, scale: 28 };
-        let d = max.to_rust_decimal("price").unwrap();
+        let d = max.to_rust_decimal().unwrap();
         assert_eq!(CompactDecimal::from(&d), max);
     }
 
@@ -651,17 +599,17 @@ mod test {
             unscaled_value: vec![0x00, 0x96],
             scale: 2,
         };
-        let v = decode_decimal(&proto, "Lm294FixtureTestProto", "price").unwrap();
+        let v = decode_decimal(&proto).unwrap();
         assert_eq!(v.to_canonical_string(), "1.50");
         // Even when the string is garbage.
         #[allow(deprecated)]
         let proto = DecimalValueProto { arbitrary_precision_value: "NaN".to_string(), ..proto };
-        assert!(decode_decimal(&proto, "Lm294FixtureTestProto", "price").is_ok());
+        assert!(decode_decimal(&proto).is_ok());
     }
 
     #[test]
     fn unset_is_an_error_naming_the_field() {
-        let err = decode_decimal(&DecimalValueProto::default(), "Lm294FixtureTestProto", "price").unwrap_err();
+        let err = decode_decimal(&DecimalValueProto::default()).unwrap_err();
         assert_validation_on(err, "price");
         assert!(is_unset_decimal(&DecimalValueProto::default()));
         // Zero in compact form is set.
@@ -681,19 +629,19 @@ mod test {
             CompactDecimal { unscaled: BigInt::from(-1), scale: 40 },
         ] {
             let bytes = encode_decimal(&v).encode_to_vec();
-            let back = decode_decimal(&DecimalValueProto::decode(bytes.as_slice()).unwrap(), "Lm294FixtureTestProto", "price").unwrap();
+            let back = decode_decimal(&DecimalValueProto::decode(bytes.as_slice()).unwrap()).unwrap();
             assert_eq!(back, v);
             // The string written alongside parses back to the same value.
-            assert_eq!(parse_decimal_str(&v.to_canonical_string(), "price").unwrap(), v);
+            assert_eq!(parse_decimal_str(&v.to_canonical_string()).unwrap(), v);
         }
     }
 
     #[test]
     fn non_minimal_bytes_decode_and_reencode_minimal() {
-        let v = decode_compact(&[0x00, 0x00, 0x01], 0, "price").unwrap();
+        let v = decode_compact(&[0x00, 0x00, 0x01], 0).unwrap();
         assert_eq!(v.unscaled, BigInt::from(1));
         assert_eq!(encode_decimal(&v).unscaled_value, vec![0x01]);
-        let v = decode_compact(&[0xff, 0xff], 0, "price").unwrap();
+        let v = decode_compact(&[0xff, 0xff], 0).unwrap();
         assert_eq!(v.unscaled, BigInt::from(-1));
         assert_eq!(encode_decimal(&v).unscaled_value, vec![0xff]);
     }

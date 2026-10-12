@@ -58,6 +58,12 @@ jobs:
         working-directory: ledger-models-rust
         run: cargo test --lib --quiet
 
+      # One deprecation warning per process (LM-307): its own test binary,
+      # so its own process.
+      - name: cargo test --test decimal_deprecation_warning_test
+        working-directory: ledger-models-rust
+        run: cargo test --test decimal_deprecation_warning_test --quiet
+
       # Enforces the #![deny(clippy::unwrap_used, ...)] no-panic rules in
       # position_filter_parser.rs (LM-299).
       - name: cargo clippy --lib

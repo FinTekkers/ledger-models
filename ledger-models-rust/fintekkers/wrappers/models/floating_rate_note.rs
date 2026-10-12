@@ -37,7 +37,7 @@ impl FloatingRateNote {
             .frn_extension
             .as_ref()
             .and_then(|f| f.spread.as_ref())
-            .and_then(|d| ProtoSerializationUtil::deserialize_decimal_in(d, "SecurityProto", "frn_extension.spread").ok())
+            .and_then(|d| ProtoSerializationUtil::deserialize_decimal(d).ok())
     }
 
     pub fn reference_rate_index(&self) -> IndexTypeProto {

@@ -53,7 +53,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
 # DecimalValueProto compact form (LM-294, docs/adr/compact_decimal.md):
-# arbitrary-size unscaled values, and the once-per-type deprecation warning.
+# arbitrary-size unscaled values, and the once-per-process deprecation warning.
 num-bigint = "0.4"
 log = "0.4"
 

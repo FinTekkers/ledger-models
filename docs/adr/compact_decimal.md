@@ -62,13 +62,13 @@ No binary floating point on any encode or decode path. A value that cannot be re
 
 ### Errors
 
-Bad input uses the existing typed input error (docs/adr/typed-input-errors.md). In Rust that is `Error::Validation` with a `FieldViolationProto` naming the field, e.g. `price`. `ProtoSerializationUtil::deserialize_decimal` keeps returning `Error::DecimalConversion` for existing callers; `deserialize_decimal_in` names the field.
+Bad input uses the existing typed input error (docs/adr/typed-input-errors.md). In Rust that is `Error::Validation`. Decoding is one plain call, `ProtoSerializationUtil::deserialize_decimal(&d)`, with no message-type or field arguments (LM-307). Its error names no field; a caller that wants one adds it while handling the error: `deserialize_decimal(&d).map_err(|e| e.in_field("price"))`. `TryFrom<DecimalWrapper> for Decimal` keeps returning `Error::DecimalConversion` for its existing callers.
 
 ### Deprecation
 
 - Field 10 carries `[deprecated = true]`. Generated code marks it: `#[deprecated]` in Rust, `@Deprecated` in Java, JSDoc `@deprecated` in JS. Python's generator emits nothing, so LM-294c adds a `DeprecationWarning` by hand.
 - Each language has one codec, the only code allowed to touch field 10.
-- A fallback read of field 10 logs a deprecation warning naming the message type and field, at most once per process per message type. In Rust it goes through the `log` crate: a service sees it only if it installs a logger (`tracing` consumers bridge `log`).
+- A fallback read of field 10 logs one deprecation warning per process (LM-307). The guard is process-wide and thread-safe, with no per-type or per-call-site key, so the warning names no message type or field. Rust does this now; Java, Python and JS follow in LM-304, LM-305 and LM-306. In Rust it goes through the `log` crate: a service sees it only if it installs a logger (`tracing` consumers bridge `log`).
 
 ### Stages
 
@@ -83,6 +83,6 @@ Bad input uses the existing typed input error (docs/adr/typed-input-errors.md). 
 
 ## Consequences
 
-- Rust struct literals `DecimalValueProto { arbitrary_precision_value: .. }` no longer compile without `..Default::default()`, and reading the field warns under `#[deprecated]`. Consumers built with `-D warnings` must use the codec (`decimal_proto`, `deserialize_decimal_in`) or add `#[allow(deprecated)]`.
+- Rust struct literals `DecimalValueProto { arbitrary_precision_value: .. }` no longer compile without `..Default::default()`, and reading the field warns under `#[deprecated]`. Consumers built with `-D warnings` must use the codec (`decimal_proto`, `deserialize_decimal`) or add `#[allow(deprecated)]`.
 - `DecimalWrapper`'s `Display` prints the canonical string when the compact form is set, so `1E+3` now prints `1000`. Other values print as before.
 - The Rust tests pin ledger-models `=0.4.33` as a dev-dependency to prove old readers decode new bytes.
