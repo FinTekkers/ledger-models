@@ -87,7 +87,17 @@ public interface QueryPriceRequestProtoOrBuilder extends
 
   /**
    * <pre>
-   * Optional: Used to filter the price frequency and horizon
+   * Optional downsampling, applied after the `horizon` or `date_range`
+   * filter. The server returns the latest price per security per bucket.
+   * Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+   * half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+   * which are inclusive at both ends. Buckets per value:
+   * - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+   * - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+   * - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+   * - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+   * - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+   * - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
    * </pre>
    *
    * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>
@@ -96,7 +106,17 @@ public interface QueryPriceRequestProtoOrBuilder extends
   int getFrequencyValue();
   /**
    * <pre>
-   * Optional: Used to filter the price frequency and horizon
+   * Optional downsampling, applied after the `horizon` or `date_range`
+   * filter. The server returns the latest price per security per bucket.
+   * Bucket boundaries are UTC, whatever `as_of.time_zone` says. Buckets are
+   * half-open, `[bucket start, next bucket start)`, unlike horizon windows,
+   * which are inclusive at both ends. Buckets per value:
+   * - PRICE_FREQUENCY_UNSPECIFIED: no bucketing; every price is returned.
+   * - PRICE_FREQUENCY_WEEKLY: ISO week starting Monday 00:00 UTC.
+   * - PRICE_FREQUENCY_DAILY: calendar day starting 00:00 UTC.
+   * - PRICE_FREQUENCY_HOURLY: hour starting at :00 minutes, UTC.
+   * - PRICE_FREQUENCY_MINUTE: minute starting at :00 seconds, UTC.
+   * - PRICE_FREQUENCY_EVERY_TICK: no bucketing; every price is returned.
    * </pre>
    *
    * <code>.fintekkers.requests.price.PriceFrequencyProto frequency = 24;</code>

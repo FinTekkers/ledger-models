@@ -4,36 +4,60 @@
 package fintekkers.requests.price;
 
 /**
+ * <pre>
+ * How QueryPriceRequestProto.frequency downsamples prices. Each bucket is
+ * half-open, `[bucket start, next bucket start)`, with boundaries in UTC. The
+ * server returns the latest price per security per bucket. See the
+ * `frequency` field for the full rule.
+ * </pre>
+ *
  * Protobuf enum {@code fintekkers.requests.price.PriceFrequencyProto}
  */
 public enum PriceFrequencyProto
     implements com.google.protobuf.ProtocolMessageEnum {
   /**
+   * <pre>
+   * No downsampling: every price in the time range is returned.
+   * </pre>
+   *
    * <code>PRICE_FREQUENCY_UNSPECIFIED = 0;</code>
    */
   PRICE_FREQUENCY_UNSPECIFIED(0),
   /**
+   * <pre>
+   * One bucket per ISO week, starting Monday 00:00 UTC.
+   * </pre>
+   *
    * <code>PRICE_FREQUENCY_WEEKLY = 10;</code>
    */
   PRICE_FREQUENCY_WEEKLY(10),
   /**
+   * <pre>
+   * One bucket per UTC day, starting 00:00 UTC.
+   * </pre>
+   *
    * <code>PRICE_FREQUENCY_DAILY = 20;</code>
    */
   PRICE_FREQUENCY_DAILY(20),
   /**
+   * <pre>
+   * One bucket per UTC hour, starting at :00 minutes.
+   * </pre>
+   *
    * <code>PRICE_FREQUENCY_HOURLY = 30;</code>
    */
   PRICE_FREQUENCY_HOURLY(30),
   /**
+   * <pre>
+   * One bucket per UTC minute, starting at :00 seconds.
+   * </pre>
+   *
    * <code>PRICE_FREQUENCY_MINUTE = 40;</code>
    */
   PRICE_FREQUENCY_MINUTE(40),
   /**
    * <pre>
-   * PRICE_FREQUENCY_SECOND = 50;
-   * PRICE_FREQUENCY_MILLISECOND = 60;
-   * PRICE_FREQUENCY_MICROSECOND = 70;
-   * PRICE_FREQUENCY_NANOSECOND = 80;
+   * No downsampling: every price in the time range is returned.
    * </pre>
    *
    * <code>PRICE_FREQUENCY_EVERY_TICK = 90;</code>
@@ -43,31 +67,48 @@ public enum PriceFrequencyProto
   ;
 
   /**
+   * <pre>
+   * No downsampling: every price in the time range is returned.
+   * </pre>
+   *
    * <code>PRICE_FREQUENCY_UNSPECIFIED = 0;</code>
    */
   public static final int PRICE_FREQUENCY_UNSPECIFIED_VALUE = 0;
   /**
+   * <pre>
+   * One bucket per ISO week, starting Monday 00:00 UTC.
+   * </pre>
+   *
    * <code>PRICE_FREQUENCY_WEEKLY = 10;</code>
    */
   public static final int PRICE_FREQUENCY_WEEKLY_VALUE = 10;
   /**
+   * <pre>
+   * One bucket per UTC day, starting 00:00 UTC.
+   * </pre>
+   *
    * <code>PRICE_FREQUENCY_DAILY = 20;</code>
    */
   public static final int PRICE_FREQUENCY_DAILY_VALUE = 20;
   /**
+   * <pre>
+   * One bucket per UTC hour, starting at :00 minutes.
+   * </pre>
+   *
    * <code>PRICE_FREQUENCY_HOURLY = 30;</code>
    */
   public static final int PRICE_FREQUENCY_HOURLY_VALUE = 30;
   /**
+   * <pre>
+   * One bucket per UTC minute, starting at :00 seconds.
+   * </pre>
+   *
    * <code>PRICE_FREQUENCY_MINUTE = 40;</code>
    */
   public static final int PRICE_FREQUENCY_MINUTE_VALUE = 40;
   /**
    * <pre>
-   * PRICE_FREQUENCY_SECOND = 50;
-   * PRICE_FREQUENCY_MILLISECOND = 60;
-   * PRICE_FREQUENCY_MICROSECOND = 70;
-   * PRICE_FREQUENCY_NANOSECOND = 80;
+   * No downsampling: every price in the time range is returned.
    * </pre>
    *
    * <code>PRICE_FREQUENCY_EVERY_TICK = 90;</code>
