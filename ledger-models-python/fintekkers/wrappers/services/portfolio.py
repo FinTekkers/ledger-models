@@ -13,6 +13,8 @@ from fintekkers.models.position.position_util_pb2 import FieldMapEntry
 from fintekkers.models.position import field_pb2
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.requests.portfolio.create_portfolio_request_pb2 import (
     CreatePortfolioRequestProto,
 )
@@ -124,11 +126,9 @@ class PortfolioService:
             Portfolio wrapper around the resolved PortfolioProto, or None
             if no matching record exists.
         """
-        request = QueryPortfolioRequestProto(
-            object_class="PortfolioRequest",
-            version="0.0.1",
+        request = stamp(QueryPortfolioRequestProto(
             uuIds=[UUIDProto(raw_uuid=uuid.bytes)],
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, "PortfolioRequest", "0.0.1")
         if as_of is not None:
             request.as_of.CopyFrom(as_of)
         response = self.stub.GetByIds(request)

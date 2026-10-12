@@ -5,6 +5,8 @@ from grpc import RpcError
 from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import IdentifierTypeProto
@@ -134,11 +136,9 @@ class SecurityService:
             Security wrapper around the resolved SecurityProto, or None if
             no matching record exists.
         """
-        request = QuerySecurityRequestProto(
-            object_class="SecurityRequest",
-            version="0.0.1",
+        request = stamp(QuerySecurityRequestProto(
             uuIds=[UUIDProto(raw_uuid=uuid.bytes)],
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, "SecurityRequest", "0.0.1")
         if as_of is not None:
             request.as_of.CopyFrom(as_of)
         response = self.stub.GetByIds(request)

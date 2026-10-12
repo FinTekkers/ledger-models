@@ -1,5 +1,7 @@
 package common.models.transaction;
 
+import fintekkers.models.util.ObjectTypeProto;
+import common.util.ObjectTypes;
 import common.models.RawDataModelObject;
 import common.models.errors.InvalidFieldException;
 import common.models.errors.ModelValidationException;
@@ -336,9 +338,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             UUID id, Portfolio portfolio, Price price, LocalDate tradeDate, LocalDate settlementDate,
             BigDecimal quantity, Security security, TransactionType transactionType,
             StrategyAllocation strategy, ZonedDateTime asOf, String tradeName, PositionStatusProto status) {
-        TransactionProto.Builder b = TransactionProto.newBuilder()
-                .setObjectClass(Transaction.class.getSimpleName())
-                .setVersion("0.0.1");
+        TransactionProto.Builder b = ObjectTypes.stamp(TransactionProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_TRANSACTION, Transaction.class.getSimpleName(), "0.0.1");
         if (id != null) b.setUuid(ProtoSerializationUtil.serializeUUID(id));
         if (asOf != null) b.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
         if (portfolio != null) b.setPortfolio(PortfolioSerializer.getInstance().serialize(portfolio));

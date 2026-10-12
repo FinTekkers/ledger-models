@@ -1,5 +1,7 @@
 package protos.serializers.position;
 
+import fintekkers.models.util.ObjectTypeProto;
+import common.util.ObjectTypes;
 import com.google.gson.*;
 import com.google.protobuf.Any;
 import com.google.protobuf.GeneratedMessageV3;
@@ -45,9 +47,7 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
 
     @Override
     public PositionProto serialize(Position position) {
-        PositionProto.Builder builder = PositionProto.newBuilder()
-            .setObjectClass(Position.class.getSimpleName())
-            .setVersion("0.0.1")
+        PositionProto.Builder builder = ObjectTypes.stamp(PositionProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_POSITION, Position.class.getSimpleName(), "0.0.1")
             //Primary Key
             .setPositionType(PositionTypeProto.valueOf(position.getPositionType().name()))
             .setPositionView(PositionViewProto.valueOf(position.getPositionView().name()));

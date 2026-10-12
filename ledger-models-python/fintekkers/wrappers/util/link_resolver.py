@@ -50,6 +50,8 @@ from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.requests.portfolio.query_portfolio_request_pb2 import (
     QueryPortfolioRequestProto,
 )
@@ -332,11 +334,9 @@ class LinkResolver:
     ) -> list[SecurityProto]:
         if not uuids:
             return []
-        request = QuerySecurityRequestProto(
-            object_class="SecurityRequest",
-            version="0.0.1",
+        request = stamp(QuerySecurityRequestProto(
             uuIds=[UUIDProto(raw_uuid=u.bytes) for u in uuids],
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, "SecurityRequest", "0.0.1")
         if as_of is not None:
             request.as_of.CopyFrom(as_of)
         response = self._security_stub.GetByIds(request)
@@ -347,11 +347,9 @@ class LinkResolver:
     ) -> list[PortfolioProto]:
         if not uuids:
             return []
-        request = QueryPortfolioRequestProto(
-            object_class="PortfolioRequest",
-            version="0.0.1",
+        request = stamp(QueryPortfolioRequestProto(
             uuIds=[UUIDProto(raw_uuid=u.bytes) for u in uuids],
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, "PortfolioRequest", "0.0.1")
         if as_of is not None:
             request.as_of.CopyFrom(as_of)
         response = self._portfolio_stub.GetByIds(request)
