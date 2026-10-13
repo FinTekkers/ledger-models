@@ -79,6 +79,8 @@ echo "== rust"
   # tests that need the feature.
   cargo test --lib --features test-utils --quiet
   cargo test --features test-utils --test decimal_test_utils_test --quiet
+  # CurvePointProto from_tenor / to_tenor (LM-313).
+  cargo test --features test-utils --test curve_response_roundtrip_test --quiet
   # Default features never pull in the test-utils dependencies.
   default_deps="$(cargo tree -e normal --prefix none)"
   if grep -q '^prost-reflect ' <<<"$default_deps"; then

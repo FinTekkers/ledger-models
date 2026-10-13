@@ -13,12 +13,31 @@ option java_multiple_files = true;
 option java_outer_classname = "CurveResponseProtos";
 
 // A single point on the yield curve: a tenor and its corresponding yield.
+// Par and spot points carry `tenor`. Forward points carry the forward period
+// in `from_tenor` / `to_tenor` (LM-313, docs/adr/forward_curve_tenor_range.md).
 message CurvePointProto {
   // The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+  // This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+  // FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+  // A from-to label such as "1-2" in its string form is legacy, written before
+  // LM-313, and goes away with LM-295.
   fintekkers.models.util.DecimalValueProto tenor = 1;
 
   // The yield at this tenor point (decimal, 0-1 scale; e.g. 0.045 = 4.50%).
   fintekkers.models.util.DecimalValueProto yield = 2;
+
+  // Start of the forward period, in decimal years from the as-of date
+  // (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+  // unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+  // period), so test presence of the message, not a non-zero value.
+  fintekkers.models.util.DecimalValueProto from_tenor = 3;
+
+  // End of the forward period, in decimal years from the as-of date. Set only
+  // on FORWARD_YIELD points, always together with from_tenor, and greater than
+  // it. The yield is the forward rate from from_tenor to to_tenor. When
+  // CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+  // from_tenor + T.
+  fintekkers.models.util.DecimalValueProto to_tenor = 4;
 }
 
 // The computed yield curve for a single curve type (par, spot, or forward).
@@ -26,7 +45,8 @@ message CurveResultProto {
   // Which curve type this result represents (PAR_YIELD, SPOT_YIELD, or FORWARD_YIELD).
   fintekkers.models.position.MeasureProto curve_type = 1;
 
-  // The curve points, ordered by ascending tenor.
+  // The curve points: par and spot points ordered by ascending tenor, forward
+  // points by ascending from_tenor.
   repeated CurvePointProto points = 2;
 }
 

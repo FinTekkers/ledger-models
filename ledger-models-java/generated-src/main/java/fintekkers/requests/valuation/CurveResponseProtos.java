@@ -45,25 +45,29 @@ public final class CurveResponseProtos {
       "ure.proto\0321fintekkers/requests/valuation" +
       "/curve_request.proto\032-fintekkers/request" +
       "s/util/errors/summary.proto\032(fintekkers/" +
-      "models/util/object_type.proto\"\205\001\n\017CurveP" +
+      "models/util/object_type.proto\"\201\002\n\017CurveP" +
       "ointProto\0228\n\005tenor\030\001 \001(\0132).fintekkers.mo" +
       "dels.util.DecimalValueProto\0228\n\005yield\030\002 \001" +
       "(\0132).fintekkers.models.util.DecimalValue" +
-      "Proto\"\220\001\n\020CurveResultProto\022<\n\ncurve_type" +
-      "\030\001 \001(\0162(.fintekkers.models.position.Meas" +
-      "ureProto\022>\n\006points\030\002 \003(\0132..fintekkers.re" +
-      "quests.valuation.CurvePointProto\"\233\003\n\022Cur" +
-      "veResponseProto\022\030\n\014object_class\030\001 \001(\tB\002\030" +
-      "\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007" +
-      " \001(\0162\'.fintekkers.models.util.ObjectType" +
-      "Proto\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversion" +
-      "_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022G\n" +
-      "\rcurve_request\030\n \001(\01320.fintekkers.reques" +
-      "ts.valuation.CurveRequestProto\022F\n\rcurve_" +
-      "results\030\024 \003(\0132/.fintekkers.requests.valu" +
-      "ation.CurveResultProto\022>\n\007summary\030\036 \001(\0132" +
-      "-.fintekkers.requests.util.errors.Summar" +
-      "yProtoB\027B\023CurveResponseProtosP\001b\006proto3"
+      "Proto\022=\n\nfrom_tenor\030\003 \001(\0132).fintekkers.m" +
+      "odels.util.DecimalValueProto\022;\n\010to_tenor" +
+      "\030\004 \001(\0132).fintekkers.models.util.DecimalV" +
+      "alueProto\"\220\001\n\020CurveResultProto\022<\n\ncurve_" +
+      "type\030\001 \001(\0162(.fintekkers.models.position." +
+      "MeasureProto\022>\n\006points\030\002 \003(\0132..fintekker" +
+      "s.requests.valuation.CurvePointProto\"\233\003\n" +
+      "\022CurveResponseProto\022\030\n\014object_class\030\001 \001(" +
+      "\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_typ" +
+      "e\030\351\007 \001(\0162\'.fintekkers.models.util.Object" +
+      "TypeProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rver" +
+      "sion_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(" +
+      "\r\022G\n\rcurve_request\030\n \001(\01320.fintekkers.re" +
+      "quests.valuation.CurveRequestProto\022F\n\rcu" +
+      "rve_results\030\024 \003(\0132/.fintekkers.requests." +
+      "valuation.CurveResultProto\022>\n\007summary\030\036 " +
+      "\001(\0132-.fintekkers.requests.util.errors.Su" +
+      "mmaryProtoB\027B\023CurveResponseProtosP\001b\006pro" +
+      "to3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -79,7 +83,7 @@ public final class CurveResponseProtos {
     internal_static_fintekkers_requests_valuation_CurvePointProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_CurvePointProto_descriptor,
-        new java.lang.String[] { "Tenor", "Yield", });
+        new java.lang.String[] { "Tenor", "Yield", "FromTenor", "ToTenor", });
     internal_static_fintekkers_requests_valuation_CurveResultProto_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_fintekkers_requests_valuation_CurveResultProto_fieldAccessorTable = new

@@ -109,15 +109,36 @@ pub struct CurveRequestProto {
     pub forward_term_years: u32,
 }
 /// A single point on the yield curve: a tenor and its corresponding yield.
+/// Par and spot points carry `tenor`. Forward points carry the forward period
+/// in `from_tenor` / `to_tenor` (LM-313, docs/adr/forward_curve_tenor_range.md).
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CurvePointProto {
     /// The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+    /// This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+    /// FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+    /// A from-to label such as "1-2" in its string form is legacy, written before
+    /// LM-313, and goes away with LM-295.
     #[prost(message, optional, tag = "1")]
     pub tenor: ::core::option::Option<super::super::models::util::DecimalValueProto>,
     /// The yield at this tenor point (decimal, 0-1 scale; e.g. 0.045 = 4.50%).
     #[prost(message, optional, tag = "2")]
     pub r#yield: ::core::option::Option<super::super::models::util::DecimalValueProto>,
+    /// Start of the forward period, in decimal years from the as-of date
+    /// (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+    /// unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+    /// period), so test presence of the message, not a non-zero value.
+    #[prost(message, optional, tag = "3")]
+    pub from_tenor: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
+    >,
+    /// End of the forward period, in decimal years from the as-of date. Set only
+    /// on FORWARD_YIELD points, always together with from_tenor, and greater than
+    /// it. The yield is the forward rate from from_tenor to to_tenor. When
+    /// CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+    /// from_tenor + T.
+    #[prost(message, optional, tag = "4")]
+    pub to_tenor: ::core::option::Option<super::super::models::util::DecimalValueProto>,
 }
 /// The computed yield curve for a single curve type (par, spot, or forward).
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -126,7 +147,8 @@ pub struct CurveResultProto {
     /// Which curve type this result represents (PAR_YIELD, SPOT_YIELD, or FORWARD_YIELD).
     #[prost(enumeration = "super::super::models::position::MeasureProto", tag = "1")]
     pub curve_type: i32,
-    /// The curve points, ordered by ascending tenor.
+    /// The curve points: par and spot points ordered by ascending tenor, forward
+    /// points by ascending from_tenor.
     #[prost(message, repeated, tag = "2")]
     pub points: ::prost::alloc::vec::Vec<CurvePointProto>,
 }

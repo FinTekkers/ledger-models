@@ -80,6 +80,10 @@ features = [
 name = "decimal_test_utils_test"
 required-features = ["test-utils"]
 
+[[test]]
+name = "curve_response_roundtrip_test"
+required-features = ["test-utils"]
+
 [dev-dependencies]
 # The last published release, so tests prove it still reads bytes this
 # version writes (LM-294). Also writes the legacy fixtures
