@@ -68,7 +68,7 @@ class PositionFilter {
     }
     toProto() {
         const positionFilterProto = new position_filter_pb_1.PositionFilterProto();
-        (0, object_types_1.stamp)(positionFilterProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER, 'PositionFilter', '0.0.1');
+        (0, object_types_1.stamp)(positionFilterProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER);
         positionFilterProto.setFiltersList(this.filters);
         return positionFilterProto;
     }

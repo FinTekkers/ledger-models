@@ -58,15 +58,11 @@ function getSecurityUuidWithPrices() {
     return __awaiter(this, void 0, void 0, function* () {
         const client = new price_service_grpc_pb_1.PriceClient(PRICE_SERVICE_URL, grpc.credentials.createInsecure());
         const listRequest = new query_price_request_pb_1.QueryPriceRequestProto();
-        listRequest.setObjectClass('PriceRequest');
-        listRequest.setVersion('0.0.1');
         const listIdsAsync = (0, util_1.promisify)(client.listIds.bind(client));
         const listResponse = yield listIdsAsync(listRequest);
         const priceUuids = listResponse.getPriceResponseList();
         expect(priceUuids.length).toBeGreaterThan(0);
         const getRequest = new query_price_request_pb_1.QueryPriceRequestProto();
-        getRequest.setObjectClass('PriceRequest');
-        getRequest.setVersion('0.0.1');
         getRequest.setUuidsList([priceUuids[0].getUuid()]);
         const getByIdsAsync = (0, util_1.promisify)(client.getByIds.bind(client));
         const getResponse = yield getByIdsAsync(getRequest);
@@ -95,8 +91,8 @@ test('createOrUpdate accepts a Price wrapper object', () => __awaiter(void 0, vo
     const price = Price_1.default.fromSimple(securityUuid.toString(), 98.75, new Date());
     const response = yield priceService.createOrUpdate(price);
     expect(response).toBeTruthy();
-    expect(response.getObjectClass()).toBeTruthy();
-    console.log(`createOrUpdate (wrapper) response: ${response.getObjectClass()}`);
+    expect(response.getObjectType()).toBeTruthy();
+    console.log(`createOrUpdate (wrapper) response: ${response.getObjectType()}`);
     // Verify via search
     const results = yield priceService.searchBySecurityId(securityUuid.toString());
     const values = results.map(p => p.getPrice().toString());

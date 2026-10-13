@@ -18,8 +18,6 @@ function testSerialization() {
 }
 function dummyPortfolio() {
     const portfolioProto = new portfolio_pb_1.PortfolioProto();
-    portfolioProto.setObjectClass('Portfolio');
-    portfolioProto.setVersion('0.0.1');
     portfolioProto.setUuid(uuid_1.UUID.random().toUUIDProto());
     portfolioProto.setPortfolioName('Test Portfolio');
     portfolioProto.setAsOf(datetime_1.ZonedDateTime.now().toProto());

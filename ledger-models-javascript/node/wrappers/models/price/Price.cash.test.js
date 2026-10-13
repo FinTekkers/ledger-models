@@ -11,27 +11,26 @@ const product_type_pb_1 = require("../../../fintekkers/models/security/product_t
 const uuid_1 = require("../utils/uuid");
 const datetime_1 = require("../utils/datetime");
 const decimal_js_1 = require("decimal.js");
+const decimal_1 = require("../utils/decimal");
 test('test Price getCashPrice', () => {
     testGetCashPrice();
 });
 function testGetCashPrice() {
-    var _a, _b;
+    var _a;
     const cashSecurity = createDummyCashSecurity();
     const asOf = datetime_1.ZonedDateTime.now();
     const cashPrice = Price_1.default.getCashPrice(cashSecurity, asOf);
     // Cash price should be 1.0 (Decimal normalizes to '1')
-    const priceValue = (_a = cashPrice.proto.getPrice()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue();
+    const priceValue = (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(cashPrice.proto.getPrice()));
     const priceDecimal = new decimal_js_1.Decimal(priceValue || '0');
     assert(priceDecimal.equals(new decimal_js_1.Decimal('1.0')), `Expected cash price 1.0, got ${priceValue}`);
     // Security should match
     assert(cashPrice.proto.getSecurity() === cashSecurity.proto, 'Security should match');
     // AsOf should match
-    assert(((_b = cashPrice.proto.getAsOf()) === null || _b === void 0 ? void 0 : _b.getTimeZone()) === asOf.toProto().getTimeZone(), 'AsOf timezone should match');
+    assert(((_a = cashPrice.proto.getAsOf()) === null || _a === void 0 ? void 0 : _a.getTimeZone()) === asOf.toProto().getTimeZone(), 'AsOf timezone should match');
 }
 function createDummyCashSecurity() {
     const securityProto = new security_pb_1.SecurityProto();
-    securityProto.setObjectClass('Security');
-    securityProto.setVersion('0.0.1');
     securityProto.setUuid(uuid_1.UUID.random().toUUIDProto());
     securityProto.setProductType(product_type_pb_1.ProductTypeProto.CURRENCY);
     securityProto.setAsOf(datetime_1.ZonedDateTime.now().toProto());

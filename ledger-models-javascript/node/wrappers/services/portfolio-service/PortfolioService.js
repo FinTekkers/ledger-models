@@ -67,7 +67,7 @@ class PortfolioService {
     validateCreatePortfolio(portfolio) {
         return __awaiter(this, void 0, void 0, function* () {
             const createRequest = new create_portfolio_request_pb_1.CreatePortfolioRequestProto();
-            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST);
             createRequest.setCreatePortfolioInput(portfolio);
             const validateCreateOrUpdateAsync = (0, util_1.promisify)(this.client.validateCreateOrUpdate.bind(this.client));
             const response = yield validateCreateOrUpdateAsync(createRequest);
@@ -77,7 +77,7 @@ class PortfolioService {
     createPortfolio(portfolio) {
         return __awaiter(this, void 0, void 0, function* () {
             const createRequest = new create_portfolio_request_pb_1.CreatePortfolioRequestProto();
-            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST);
             createRequest.setCreatePortfolioInput(portfolio);
             const createPortfolioAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
             const response = yield createPortfolioAsync(createRequest);
@@ -96,7 +96,7 @@ class PortfolioService {
     searchPortfolio(asOf, positionFilter) {
         return __awaiter(this, void 0, void 0, function* () {
             const searchRequest = new query_portfolio_request_pb_1.QueryPortfolioRequestProto();
-            (0, object_types_1.stamp)(searchRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
+            (0, object_types_1.stamp)(searchRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST);
             searchRequest.setAsOf(asOf);
             searchRequest.setSearchPortfolioInput(positionFilter.toProto());
             const tmpClient = this.client;

@@ -11,8 +11,6 @@ const index_type_pb_1 = require("../../../fintekkers/models/security/index/index
 const uuid_1 = require("../utils/uuid");
 test('Security.create routes CPI_SERIES to IndexSecurity', () => {
     const proto = new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.CPI_SERIES)
         .setAssetClass('Index');
@@ -23,8 +21,6 @@ test('Security.create routes CPI_SERIES to IndexSecurity', () => {
 });
 test('Security.create routes SOFR_SERIES to IndexSecurity', () => {
     const proto = new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.SOFR_SERIES)
         .setAssetClass('Index');
@@ -37,8 +33,6 @@ test('IndexSecurity.getIndexType returns UNKNOWN when index_details is unset', (
     // Force-construct without populating index_details so we exercise the
     // null-safe branch in the getter.
     const proto = new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.CPI_SERIES)
         .setAssetClass('Index');
@@ -47,8 +41,6 @@ test('IndexSecurity.getIndexType returns UNKNOWN when index_details is unset', (
 });
 test('IndexSecurity extends Security (not BondSecurity)', () => {
     const proto = new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.EQUITY_INDEX);
     proto.setIndexDetails(new security_pb_1.IndexDetailsProto().setIndexType(index_type_pb_1.IndexTypeProto.US_TREASURY));

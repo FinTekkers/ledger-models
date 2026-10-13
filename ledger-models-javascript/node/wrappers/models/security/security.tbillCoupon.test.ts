@@ -18,7 +18,7 @@ function decimal(value: string): DecimalValueProto {
 /** A security of `productType`; `coupon` undefined leaves coupon_rate unset. */
 function security(productType: ProductTypeProto, coupon?: string): SecurityProto {
     const bond = new BondDetailsProto().setFaceValue(decimal('1000'));
-    if (coupon !== undefined) bond.setCouponRate(decimal(coupon));
+    if (coupon !== undefined) bond.setCouponRate(coupon === '' ? new DecimalValueProto() : decimal(coupon));
     return new SecurityProto()
         .setUuid(new UUID(UUID.fromString(SECURITY_ID)).toUUIDProto())
         .setProductType(productType)

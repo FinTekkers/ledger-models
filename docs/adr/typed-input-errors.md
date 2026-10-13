@@ -94,7 +94,7 @@ One shared `PriceProto` validator in every binding, so price services return its
 | JS/TS | `wrappers/models/price/price_rules` `validate` | `requireValid` |
 | Rust | `wrappers::models::price::validate_price` | `require_valid_price` |
 
-- Exactly three rules, always reported in this order: `security` must be set with a non-empty `uuid.raw_uuid`; `price` must be set with a non-empty `arbitrary_precision_value`; `price_type` must not be `UNKNOWN_PRICE_TYPE`. Field paths are relative to the price; `object_id` is the price's UUID when it is 16 bytes.
+- Exactly three rules, always reported in this order: `security` must be set with a non-empty `uuid.raw_uuid`; `price` must be set with a non-empty `unscaled_value` (the decimal string before LM-318); `price_type` must not be `UNKNOWN_PRICE_TYPE`. Field paths are relative to the price; `object_id` is the price's UUID when it is 16 bytes.
 - **Zero is valid.** The `PriceProto.price` comment is the spec: absent or empty is invalid, `"0"` is a valid price. The value is not parsed, so negative or unparseable strings are not rejected here.
 - Only `UNKNOWN_PRICE_TYPE` (raw value 0) is rejected. An unrecognised enum number is not.
 - **Never throws on bad input.** Java, Python and JS check a `null` / `None` / `undefined` proto as an empty `PriceProto` (three violations), unlike `SecurityRules`, which requires a non-null proto. Only the raise functions throw.

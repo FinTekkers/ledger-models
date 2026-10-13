@@ -7,11 +7,11 @@ const assert = require("assert");
 const BondSecurity_1 = __importDefault(require("./BondSecurity"));
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 const uuid_1 = require("../utils/uuid");
 const datetime_1 = require("../utils/datetime");
 const decimal_js_1 = require("decimal.js");
+const decimal_1 = require("../utils/decimal");
 test('test BondSecurity getPriceScaleFactor', () => {
     testGetPriceScaleFactor();
 });
@@ -23,13 +23,11 @@ function testGetPriceScaleFactor() {
 }
 function createDummyBondSecurity() {
     const securityProto = new security_pb_1.SecurityProto();
-    securityProto.setObjectClass('Security');
-    securityProto.setVersion('0.0.1');
     securityProto.setUuid(uuid_1.UUID.random().toUUIDProto());
     securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
     securityProto.setAsOf(datetime_1.ZonedDateTime.now().toProto());
     const bond = new security_pb_1.BondDetailsProto();
-    bond.setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
+    bond.setFaceValue((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('1000.00')));
     bond.setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     bond.setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(1).setDay(1));
     securityProto.setBondDetails(bond);

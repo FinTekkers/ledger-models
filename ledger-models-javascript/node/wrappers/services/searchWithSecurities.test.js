@@ -43,9 +43,9 @@ const positionfilter_1 = require("../models/position/positionfilter");
 const dt = __importStar(require("../models/utils/datetime"));
 const security_pb_1 = require("../../fintekkers/models/security/security_pb");
 const price_pb_1 = require("../../fintekkers/models/price/price_pb");
-const decimal_value_pb_1 = require("../../fintekkers/models/util/decimal_value_pb");
 const identifier_pb_1 = require("../../fintekkers/models/security/identifier/identifier_pb");
 const query_security_response_pb_1 = require("../../fintekkers/requests/security/query_security_response_pb");
+const decimal_1 = require("../models/utils/decimal");
 /**
  * End-to-end test: priceService.searchWithSecurities resolves all link
  * securities embedded in the returned Prices via a single batched
@@ -53,8 +53,6 @@ const query_security_response_pb_1 = require("../../fintekkers/requests/security
  */
 function fullSecurity(uuid, issuerName) {
     const proto = new security_pb_1.SecurityProto();
-    proto.setObjectClass('Security');
-    proto.setVersion('0.0.1');
     proto.setUuid(uuid.toUUIDProto());
     proto.setIsLink(false);
     proto.setIssuerName(issuerName);
@@ -68,12 +66,9 @@ function linkPriceProto(securityUuid, priceValue) {
     linkSec.setUuid(securityUuid.toUUIDProto());
     linkSec.setIsLink(true);
     const priceProto = new price_pb_1.PriceProto();
-    priceProto.setObjectClass('Price');
-    priceProto.setVersion('0.0.1');
     priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
     priceProto.setSecurity(linkSec);
-    const dv = new decimal_value_pb_1.DecimalValueProto();
-    dv.setArbitraryPrecisionValue(priceValue);
+    const dv = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(priceValue));
     priceProto.setPrice(dv);
     return priceProto;
 }

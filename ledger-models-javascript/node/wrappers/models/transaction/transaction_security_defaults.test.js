@@ -22,8 +22,6 @@ const AS_OF = new local_timestamp_pb_1.LocalTimestampProto()
     .setTimeZone('America/New_York');
 function currency() {
     return new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setAsOf(AS_OF.clone())
         .setProductType(product_type_pb_1.ProductTypeProto.CURRENCY)
         .setAssetClass('Cash')
@@ -31,8 +29,6 @@ function currency() {
 }
 function bond() {
     return new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setAsOf(AS_OF.clone())
         .setProductType(product_type_pb_1.ProductTypeProto.CORP_BOND)
         .setAssetClass('Fixed Income')
@@ -41,8 +37,6 @@ function bond() {
 }
 function txnWithSecurity(security) {
     return new transaction_pb_1.TransactionProto()
-        .setObjectClass('Transaction')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setAsOf(AS_OF.clone())
         .setSecurity(security);

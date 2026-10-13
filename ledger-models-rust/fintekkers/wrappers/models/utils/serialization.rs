@@ -76,9 +76,8 @@ impl ProtoSerializationUtil {
         Self::deserialize_timestamp(timestamp_proto)
     }
 
-    /// Deserializes a DecimalValueProto to a native Rust Decimal. The compact
-    /// form wins; the deprecated string is the fallback and logs one warning
-    /// per process. Unset, malformed, or not exactly representable as a Rust
+    /// Deserializes a DecimalValueProto to a native Rust Decimal. Unset,
+    /// malformed, or not exactly representable as a Rust
     /// Decimal is `Error::Validation`, never rounded. The error names no
     /// field: a caller that wants one adds it with `Error::in_field`, e.g.
     /// `deserialize_decimal(p).map_err(|e| e.in_field("price"))`.

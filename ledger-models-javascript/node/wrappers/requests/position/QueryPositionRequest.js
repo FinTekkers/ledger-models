@@ -25,7 +25,7 @@ class QueryPositionRequest {
         this.asOf = asOf;
     }
     toProto() {
-        const proto = (0, object_types_1.stamp)(new query_position_request_pb_1.QueryPositionRequestProto(), object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_POSITION_REQUEST, '', '1.0.0')
+        const proto = (0, object_types_1.stamp)(new query_position_request_pb_1.QueryPositionRequestProto(), object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_POSITION_REQUEST)
             .setAsOf(this.asOf.toProto())
             .setPositionType(this.positionType)
             .setPositionView(this.positionView)

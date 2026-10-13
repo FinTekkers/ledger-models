@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const uuid_1 = require("../utils/uuid");
 const any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const position_pb_1 = require("../../../fintekkers/models/position/position_pb");
 const position_util_pb_1 = require("../../../fintekkers/models/position/position_util_pb");
 const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
@@ -26,6 +25,7 @@ const price_pb_1 = require("../../../fintekkers/models/price/price_pb");
 const tenor_pb_1 = require("../../../fintekkers/models/security/tenor_pb");
 const tenor_type_pb_1 = require("../../../fintekkers/models/security/tenor_type_pb");
 const term_1 = require("../security/term");
+const decimal_1 = require("../utils/decimal");
 test('test the enum Serialization', () => __awaiter(void 0, void 0, void 0, function* () {
     let isTrue = yield testEnumSerialization();
     expect(isTrue).toBe(true);
@@ -48,7 +48,7 @@ function testEnumSerialization() {
         positionProto.setFieldsList([
             new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.POSITION_STATUS).setEnumValue(position_status_pb_1.PositionStatusProto.EXECUTED)
         ]);
-        let measureValue = new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue("1.55");
+        let measureValue = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)("1.55"));
         positionProto.setMeasuresList([
             new position_util_pb_1.MeasureMapEntry().setMeasure(measure_pb_1.MeasureProto.DIRECTED_QUANTITY).setMeasureDecimalValue(measureValue)
         ]);
@@ -132,7 +132,6 @@ function testAdjustedTenorSerialization() {
     });
 }
 function testSerialization() {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         let { position, tradeDate, security, portfolio, productType, id } = getPosition(false);
         let tradeDatePosition = position.getFieldValue(field_pb_1.FieldProto.TRADE_DATE);
@@ -154,7 +153,7 @@ function testSerialization() {
         expect(position.getFieldValue(field_pb_1.FieldProto.POSITION_STATUS).toString()).toBe("EXECUTED");
         expect(position.getMeasureValue(measure_pb_1.MeasureProto.DIRECTED_QUANTITY).toString()).toBe("1");
         let price = position.getFieldValue(field_pb_1.FieldProto.PRICE);
-        expect((_a = price.getPrice()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue()).toBe("1.0");
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(price.getPrice()))).toBe("1.0");
         let tenor = position.getFieldValue(field_pb_1.FieldProto.TENOR);
         expect(tenor.getTenorDescription()).toBe("3M");
         return true;
@@ -174,7 +173,7 @@ function getPosition(includeUnknownEnumValue) {
     let productType = "Test product type";
     let id = new uuid_1.UUID(uuid_1.UUID.random().toBytes());
     let price = new price_pb_1.PriceProto()
-        .setPrice(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue("1.0"))
+        .setPrice((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)("1.0")))
         .setUuid(id.toUUIDProto())
         .setSecurity(security);
     let tenor = new tenor_pb_1.TenorProto()
@@ -182,7 +181,7 @@ function getPosition(includeUnknownEnumValue) {
         .setTermValue("3M");
     ;
     let measure = measure_pb_1.MeasureProto.DIRECTED_QUANTITY;
-    let measureValue = new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue("1.0");
+    let measureValue = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)("1.0"));
     const tradeDatePacked = new any_pb_1.Any();
     tradeDatePacked.setTypeUrl(`DUMMYTYPE_DATE`);
     tradeDatePacked.setValue(date_1.LocalDate.from(tradeDate).toProto().serializeBinary());

@@ -8,11 +8,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const product_inputs_pb_1 = require("./product_inputs_pb");
 const valuation_request_pb_1 = require("./valuation_request_pb");
 const index_type_pb_1 = require("../../../fintekkers/models/security/index/index_type_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
+const decimal_1 = require("../../../wrappers/models/utils/decimal");
 function decimal(value) {
-    const d = new decimal_value_pb_1.DecimalValueProto();
-    d.setArbitraryPrecisionValue(value);
+    const d = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(value));
     return d;
 }
 function date(year, month, day) {
@@ -47,8 +46,8 @@ describe('CurvePoint round-trip', () => {
         original.setTenor(decimal('2.0'));
         original.setRate(decimal('0.0470'));
         const parsed = product_inputs_pb_1.CurvePoint.deserializeBinary(original.serializeBinary());
-        expect(parsed.getTenor().getArbitraryPrecisionValue()).toBe('2.0');
-        expect(parsed.getRate().getArbitraryPrecisionValue()).toBe('0.0470');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getTenor()))).toBe('2.0');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getRate()))).toBe('0.0470');
     });
 });
 describe('YieldCurveInput round-trip', () => {
@@ -67,13 +66,13 @@ describe('YieldCurveInput round-trip', () => {
         const expectedTenors = ['0.25', '0.5', '1.0', '2.0', '5.0'];
         const parsed = product_inputs_pb_1.YieldCurveInput.deserializeBinary(sofrCurve().serializeBinary());
         parsed.getPointsList().forEach((pt, i) => {
-            expect(pt.getTenor().getArbitraryPrecisionValue()).toBe(expectedTenors[i]);
+            expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(pt.getTenor()))).toBe(expectedTenors[i]);
         });
     });
     test('first and last point rates survive', () => {
         const parsed = product_inputs_pb_1.YieldCurveInput.deserializeBinary(sofrCurve().serializeBinary());
-        expect(parsed.getPointsList()[0].getRate().getArbitraryPrecisionValue()).toBe('0.0530');
-        expect(parsed.getPointsList()[4].getRate().getArbitraryPrecisionValue()).toBe('0.0430');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getPointsList()[0].getRate()))).toBe('0.0530');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getPointsList()[4].getRate()))).toBe('0.0430');
     });
 });
 describe('FrnInput round-trip', () => {
@@ -82,7 +81,7 @@ describe('FrnInput round-trip', () => {
         original.setCleanPrice(decimal('99.75'));
         original.setCurve(sofrCurve());
         const parsed = product_inputs_pb_1.FrnInput.deserializeBinary(original.serializeBinary());
-        expect(parsed.getCleanPrice().getArbitraryPrecisionValue()).toBe('99.75');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getCleanPrice()))).toBe('99.75');
         expect(parsed.getCurve().getIndex()).toBe(index_type_pb_1.IndexTypeProto.SOFR);
         expect(parsed.getCurve().getPointsList()).toHaveLength(5);
     });
@@ -96,7 +95,7 @@ describe('ProductInput round-trip', () => {
         original.setFrn(frn);
         const parsed = product_inputs_pb_1.ProductInput.deserializeBinary(original.serializeBinary());
         expect(parsed.getInputCase()).toBe(product_inputs_pb_1.ProductInput.InputCase.FRN);
-        expect(parsed.getFrn().getCleanPrice().getArbitraryPrecisionValue()).toBe('99.875');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getFrn().getCleanPrice()))).toBe('99.875');
         expect(parsed.getFrn().getCurve().getIndex()).toBe(index_type_pb_1.IndexTypeProto.SOFR);
     });
 });
@@ -108,21 +107,15 @@ describe('ValuationRequestProto backward compatibility', () => {
         const pi = new product_inputs_pb_1.ProductInput();
         pi.setFrn(frn);
         const original = new valuation_request_pb_1.ValuationRequestProto();
-        original.setObjectClass('ValuationRequest');
-        original.setVersion('0.0.1');
         original.setProductInput(pi);
         const parsed = valuation_request_pb_1.ValuationRequestProto.deserializeBinary(original.serializeBinary());
-        expect(parsed.getObjectClass()).toBe('ValuationRequest');
         expect(parsed.hasProductInput()).toBe(true);
         expect(parsed.getProductInput().getInputCase()).toBe(product_inputs_pb_1.ProductInput.InputCase.FRN);
-        expect(parsed.getProductInput().getFrn().getCleanPrice().getArbitraryPrecisionValue()).toBe('100.25');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getProductInput().getFrn().getCleanPrice()))).toBe('100.25');
     });
     test('request without product_input is unaffected', () => {
         const original = new valuation_request_pb_1.ValuationRequestProto();
-        original.setObjectClass('ValuationRequest');
-        original.setVersion('0.0.1');
         const parsed = valuation_request_pb_1.ValuationRequestProto.deserializeBinary(original.serializeBinary());
-        expect(parsed.getObjectClass()).toBe('ValuationRequest');
         expect(parsed.hasProductInput()).toBe(false);
     });
 });

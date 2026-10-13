@@ -44,8 +44,8 @@ log_start="$(wc -l < "$LEDGER_SERVICE_LOG")"
 echo "== Security/CreateOrUpdate (bond, linked settlement currency)"
 create_req="$(cat <<JSON
 {
-  "object_class":"CreateSecurityRequest",
-  "version":"0.0.1",
+  "object_type":"OBJECT_TYPE_CREATE_SECURITY_REQUEST",
+  "version":{"patch":1},
   "security_input":{
     "product_type":"TREASURY_NOTE",
     "issuer_name":"Test Corp",
@@ -55,10 +55,10 @@ create_req="$(cat <<JSON
       "is_link":true
     },
     "bond_details":{
-      "coupon_rate":{"arbitrary_precision_value":"0.05"},
+      "coupon_rate":{"unscaled_value":"BQ==","scale":2},
       "coupon_type":"FIXED",
       "coupon_frequency":"SEMIANNUALLY",
-      "face_value":{"arbitrary_precision_value":"1000"},
+      "face_value":{"unscaled_value":"A+g=","scale":0},
       "issue_date":{"year":2020,"month":1,"day":1},
       "maturity_date":{"year":2030,"month":12,"day":31}
     }
@@ -88,7 +88,7 @@ if [ "$cce" != "0" ]; then
 fi
 
 echo "== Security/GetByIds"
-get_resp="$(grpcurl -plaintext -d "{\"object_class\":\"QuerySecurityRequest\",\"version\":\"0.0.1\",\"uuIds\":[{\"raw_uuid\":\"$bond_uuid\"}]}" \
+get_resp="$(grpcurl -plaintext -d "{\"object_type\":\"OBJECT_TYPE_QUERY_SECURITY_REQUEST\",\"version\":{\"patch\":1},\"uuIds\":[{\"raw_uuid\":\"$bond_uuid\"}]}" \
   "$TARGET" fintekkers.services.security_service.Security/GetByIds)"
 echo "$get_resp"
 got_sc="$(echo "$get_resp" | jq -r \

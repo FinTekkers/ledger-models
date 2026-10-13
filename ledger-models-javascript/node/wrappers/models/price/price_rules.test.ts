@@ -55,15 +55,19 @@ describe('price_rules.validate', () => {
     });
 
     test('empty price gives one violation on price', () => {
-        expect(fields(valid().setPrice(decimal('')))).toEqual(['price']);
+        expect(fields(valid().setPrice(new DecimalValueProto()))).toEqual(['price']);
     });
 
     test('zero price is valid', () => {
         expect(fields(valid().setPrice(decimal('0')))).toEqual([]);
     });
 
-    test.each(['-1', 'abc'])('price value %s is not checked', value => {
-        expect(fields(valid().setPrice(decimal(value)))).toEqual([]);
+    test.each([
+        ['negative', decimal('-1')],
+        // Over the scale cap: set, but it does not decode.
+        ['over_cap', new DecimalValueProto().setUnscaledValue(new Uint8Array([1])).setScale(5000)],
+    ])('price value %s is not checked', (_name, value) => {
+        expect(fields(valid().setPrice(value))).toEqual([]);
     });
 
     test('UNKNOWN_PRICE_TYPE gives one violation on price_type', () => {

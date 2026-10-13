@@ -35,7 +35,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Models
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
@@ -47,6 +46,7 @@ const SecurityService_1 = require("./SecurityService");
 const positionfilter_1 = require("../../models/position/positionfilter");
 const issuance_pb_1 = require("../../../fintekkers/models/security/bond/issuance_pb");
 const serialization_1 = require("../../models/utils/serialization");
+const decimal_1 = require("../../models/utils/decimal");
 test('test creating a security against the api.fintekkers.org security service', () => __awaiter(void 0, void 0, void 0, function* () {
     const isTrue = yield testSecurity();
     expect(isTrue).toBe(true);
@@ -62,8 +62,6 @@ function testSecurity() {
             return securities[0];
         });
         const security = new security_pb_1.SecurityProto();
-        security.setObjectClass('Security');
-        security.setVersion('0.0.1');
         security.setUuid(id_proto);
         security.setSettlementCurrency(usd_security.proto);
         security.setAsOf(now.toProto());
@@ -72,11 +70,9 @@ function testSecurity() {
         const bond = new security_pb_1.BondDetailsProto();
         bond.setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
         bond.setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED);
-        const faceValue = new decimal_value_pb_1.DecimalValueProto();
-        faceValue.setArbitraryPrecisionValue('1000.00');
+        const faceValue = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('1000.00'));
         bond.setFaceValue(faceValue);
-        const couponRate = new decimal_value_pb_1.DecimalValueProto();
-        couponRate.setArbitraryPrecisionValue('0.05');
+        const couponRate = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('0.05'));
         bond.setCouponRate(couponRate); // Fixed a typo here. It was security.setFaceValue(couponRate);
         const issueDate = new local_date_pb_1.LocalDateProto();
         issueDate.setYear(2023);

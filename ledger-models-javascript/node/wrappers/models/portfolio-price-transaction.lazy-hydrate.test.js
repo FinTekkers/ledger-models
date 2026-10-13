@@ -36,10 +36,10 @@ const datetime_1 = require("./utils/datetime");
 const portfolio_pb_1 = require("../../fintekkers/models/portfolio/portfolio_pb");
 const price_pb_1 = require("../../fintekkers/models/price/price_pb");
 const transaction_pb_1 = require("../../fintekkers/models/transaction/transaction_pb");
-const decimal_value_pb_1 = require("../../fintekkers/models/util/decimal_value_pb");
 const local_timestamp_pb_1 = require("../../fintekkers/models/util/local_timestamp_pb");
 const timestamp_pb_1 = require("google-protobuf/google/protobuf/timestamp_pb");
 const LinkCache = __importStar(require("../util/link-cache"));
+const decimal_1 = require("./utils/decimal");
 function makeAsOf(epochSeconds = 1700000000) {
     const ts = new timestamp_pb_1.Timestamp();
     ts.setSeconds(epochSeconds);
@@ -76,8 +76,7 @@ function fullPriceProto(uuid, asOf, value) {
     p.setUuid(uuid.toUUIDProto());
     p.setAsOf(asOf.toProto());
     p.setIsLink(false);
-    const dv = new decimal_value_pb_1.DecimalValueProto();
-    dv.setArbitraryPrecisionValue(value);
+    const dv = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(value));
     p.setPrice(dv);
     return p;
 }

@@ -117,9 +117,8 @@ impl PriceWrapper {
         ProtoSerializationUtil::deserialize_required_timestamp(self.proto.as_of.as_ref(), "price.as_of")
     }
 
-    /// The price value. Reads the compact form, or falls back to the
-    /// deprecated string (logging a warning once). Unset, malformed or not
-    /// exactly representable is `Error::Validation` naming `price`.
+    /// The price value. Unset, malformed or not exactly representable is
+    /// `Error::Validation` naming `price`.
     pub fn try_price(&self) -> Result<Decimal, Error> {
         self.ensure_hydrated();
         let price = self.active().price.as_ref().ok_or_else(|| {
@@ -693,7 +692,7 @@ mod test {
     }
 
     #[test]
-    fn try_price_reads_legacy_string() {
+    fn try_price_reads_a_decimal_built_from_a_string() {
         let mut p = rules_valid(Uuid::new_v4());
         p.price = Some(decimal_proto_str("1.50"));
         let value = PriceWrapper::new(p).try_price().unwrap();

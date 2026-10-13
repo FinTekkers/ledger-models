@@ -12,6 +12,7 @@ const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_typ
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const agency_pb_1 = require("../../../fintekkers/models/security/bond/agency_pb");
 const decimal_js_1 = require("decimal.js");
+const decimal_1 = require("../utils/decimal");
 function makeDate(y, m, d) {
     const date = new Date(y, m - 1, d);
     date.setHours(0, 0, 0, 0);
@@ -27,7 +28,6 @@ const baseInputs = {
 };
 const mbsInputs = Object.assign(Object.assign({}, baseInputs), { poolNumber: 'FN AS1234', agency: agency_pb_1.AgencyProto.FNMA, wac: new decimal_js_1.Decimal('0.045'), wam: 358, passThroughRate: new decimal_js_1.Decimal('0.04'), currentFactor: new decimal_js_1.Decimal('0.95'), originalFaceValue: new decimal_js_1.Decimal('250000000'), currentUpb: new decimal_js_1.Decimal('237500000'), psaSpeed: new decimal_js_1.Decimal('150') });
 test('MortgageBackedSecurity.fromPricerInputs populates bond_details and mbs_extension', () => {
-    var _a, _b, _c, _d, _e, _f;
     const proto = MortgageBackedSecurity_1.default.fromPricerInputs(mbsInputs);
     expect(proto.getProductType()).toBe(product_type_pb_1.ProductTypeProto.MORTGAGE_BACKED);
     expect(proto.hasBondDetails()).toBe(true);
@@ -35,16 +35,15 @@ test('MortgageBackedSecurity.fromPricerInputs populates bond_details and mbs_ext
     const ext = proto.getMbsExtension();
     expect(ext.getPoolNumber()).toBe('FN AS1234');
     expect(ext.getAgency()).toBe(agency_pb_1.AgencyProto.FNMA);
-    expect((_a = ext.getWac()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue()).toBe('0.045');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getWac()))).toBe('0.045');
     expect(ext.getWam()).toBe(358);
-    expect((_b = ext.getPassThroughRate()) === null || _b === void 0 ? void 0 : _b.getArbitraryPrecisionValue()).toBe('0.04');
-    expect((_c = ext.getCurrentFactor()) === null || _c === void 0 ? void 0 : _c.getArbitraryPrecisionValue()).toBe('0.95');
-    expect((_d = ext.getOriginalFaceValue()) === null || _d === void 0 ? void 0 : _d.getArbitraryPrecisionValue()).toBe('250000000');
-    expect((_e = ext.getCurrentUpb()) === null || _e === void 0 ? void 0 : _e.getArbitraryPrecisionValue()).toBe('237500000');
-    expect((_f = ext.getPsaSpeed()) === null || _f === void 0 ? void 0 : _f.getArbitraryPrecisionValue()).toBe('150');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getPassThroughRate()))).toBe('0.04');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getCurrentFactor()))).toBe('0.95');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getOriginalFaceValue()))).toBe('250000000');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getCurrentUpb()))).toBe('237500000');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getPsaSpeed()))).toBe('150');
 });
 test('MortgageBackedSecurity round-trips via serializeBinary / deserializeBinary preserving all 9 mbs fields', () => {
-    var _a, _b, _c, _d, _e, _f;
     const proto = MortgageBackedSecurity_1.default.fromPricerInputs(mbsInputs);
     const bytes = proto.serializeBinary();
     const round = security_pb_1.SecurityProto.deserializeBinary(bytes);
@@ -54,13 +53,13 @@ test('MortgageBackedSecurity round-trips via serializeBinary / deserializeBinary
     const ext = round.getMbsExtension();
     expect(ext.getPoolNumber()).toBe('FN AS1234');
     expect(ext.getAgency()).toBe(agency_pb_1.AgencyProto.FNMA);
-    expect((_a = ext.getWac()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue()).toBe('0.045');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getWac()))).toBe('0.045');
     expect(ext.getWam()).toBe(358);
-    expect((_b = ext.getPassThroughRate()) === null || _b === void 0 ? void 0 : _b.getArbitraryPrecisionValue()).toBe('0.04');
-    expect((_c = ext.getCurrentFactor()) === null || _c === void 0 ? void 0 : _c.getArbitraryPrecisionValue()).toBe('0.95');
-    expect((_d = ext.getOriginalFaceValue()) === null || _d === void 0 ? void 0 : _d.getArbitraryPrecisionValue()).toBe('250000000');
-    expect((_e = ext.getCurrentUpb()) === null || _e === void 0 ? void 0 : _e.getArbitraryPrecisionValue()).toBe('237500000');
-    expect((_f = ext.getPsaSpeed()) === null || _f === void 0 ? void 0 : _f.getArbitraryPrecisionValue()).toBe('150');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getPassThroughRate()))).toBe('0.04');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getCurrentFactor()))).toBe('0.95');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getOriginalFaceValue()))).toBe('250000000');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getCurrentUpb()))).toBe('237500000');
+    expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(ext.getPsaSpeed()))).toBe('150');
 });
 test('MortgageBackedSecurity wraps via Security.create factory dispatch', () => {
     const proto = MortgageBackedSecurity_1.default.fromPricerInputs(mbsInputs);

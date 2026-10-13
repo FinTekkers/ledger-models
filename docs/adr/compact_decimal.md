@@ -2,6 +2,8 @@
 
 ## Status
 
+**Superseded by LM-318** for the string field: see the section at the end. The compact form is unchanged.
+
 Accepted for Rust (LM-294). Java and JS follow in LM-294b and LM-294d, and Python in LM-305, using the same fixtures. This is stage 1 of 3: LM-295 stops writing the string, and LM-296 deletes it.
 
 ## Context
@@ -86,3 +88,25 @@ Bad input uses the existing typed input error (docs/adr/typed-input-errors.md). 
 - Rust struct literals `DecimalValueProto { arbitrary_precision_value: .. }` no longer compile without `..Default::default()`, and reading the field warns under `#[deprecated]`. Consumers built with `-D warnings` must use the codec (`decimal_proto`, `deserialize_decimal`) or add `#[allow(deprecated)]`.
 - `DecimalWrapper`'s `Display` prints the canonical string when the compact form is set, so `1E+3` now prints `1000`. Other values print as before.
 - The Rust tests pin ledger-models `=0.4.33` as a dev-dependency to prove old readers decode new bytes.
+
+## Superseded by LM-318: the string is deleted in place
+
+LM-318 replaced LM-295 and LM-296 with one breaking release, together with
+the object type and version cutover (docs/adr/compact_object_type_and_version.md).
+
+- `DecimalValueProto` is `bytes unscaled_value = 11; uint32 scale = 12` and
+  nothing else. Field 10 is deleted with no `reserved` line.
+- Every codec drops the string read, the string write and the LM-307
+  deprecation warning. A non-empty `unscaled_value` means set; an empty one
+  means unset, and a required decimal that is unset is the typed
+  required-field error (Rust `decimal is required but unset`, Java
+  `UnsetDecimalException`). Compact zero (`0x00`) is still set.
+- **Bytes written by earlier releases are not readable as values.** A
+  decimal with only field 10 parses, with field 10 as an unknown field, and
+  reads as unset: the typed error, never `0`. Each language has a test that
+  decodes `52 03 31 2e 35` ("1.5" as field 10).
+- The `legacy_v0433` decimal fixtures, their generator and the `=0.4.33`
+  dev-dependency are deleted. `decimal_compact.json`'s `wire_hex` holds
+  fields 11 and 12 only.
+- `scripts/checks/proto-shape.sh` fails if a `.proto`, library code or
+  generated code in any language names `arbitrary_precision_value`.

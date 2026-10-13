@@ -23,8 +23,6 @@ test('test the date time', () => __awaiter(void 0, void 0, void 0, function* () 
     nowPacked.setValue(nowProto.serializeBinary());
     const position = new position_pb_1.PositionProto();
     // Set properties
-    position.setObjectClass(' MyClass');
-    position.setVersion('1.0');
     position.setPositionView(position_pb_1.PositionViewProto.DEFAULT_VIEW);
     position.setPositionType(position_pb_1.PositionTypeProto.TRANSACTION);
     // Add fields

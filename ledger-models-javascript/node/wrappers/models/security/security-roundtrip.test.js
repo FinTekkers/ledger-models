@@ -20,10 +20,10 @@ const security_quantity_type_pb_1 = require("../../../fintekkers/models/security
 const identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
 const identifier_type_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_type_pb");
 const index_type_pb_1 = require("../../../fintekkers/models/security/index/index_type_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
+const decimal_1 = require("../utils/decimal");
 function makeDecimal(value) {
-    return new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue(value);
+    return (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(value));
 }
 function makeDate(year, month, day) {
     return new local_date_pb_1.LocalDateProto().setYear(year).setMonth(month).setDay(day);
@@ -34,8 +34,6 @@ function makeIdentifier(type, value) {
 describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () => {
     test('BOND_SECURITY: all bond fields survive round-trip', () => {
         const original = new security_pb_2.SecurityProto();
-        original.setObjectClass('Security');
-        original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
         original.setAssetClass('Fixed Income');
         original.setIssuerName('US Treasury');
@@ -59,10 +57,10 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getDescription()).toBe('UST 5% 2030');
         expect(parsed.getQuantityType()).toBe(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE);
         const parsedBond = parsed.getBondDetails();
-        expect(parsedBond.getCouponRate().getArbitraryPrecisionValue()).toBe('5.0');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsedBond.getCouponRate()))).toBe('5.0');
         expect(parsedBond.getCouponType()).toBe(coupon_type_pb_1.CouponTypeProto.FIXED);
         expect(parsedBond.getCouponFrequency()).toBe(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
-        expect(parsedBond.getFaceValue().getArbitraryPrecisionValue()).toBe('1000');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsedBond.getFaceValue()))).toBe('1000');
         expect(parsedBond.getIssueDate().getYear()).toBe(2020);
         expect(parsedBond.getDatedDate().getMonth()).toBe(1);
         expect(parsedBond.getMaturityDate().getYear()).toBe(2030);
@@ -73,8 +71,6 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
     });
     test('TIPS: bond fields + base_cpi + inflation_index_type survive round-trip', () => {
         const original = new security_pb_2.SecurityProto();
-        original.setObjectClass('Security');
-        original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.TIPS);
         original.setAssetClass('Fixed Income');
         original.setIssuerName('US Treasury');
@@ -93,19 +89,17 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const parsed = security_pb_2.SecurityProto.deserializeBinary(bytes);
         expect(parsed.getProductType()).toBe(product_type_pb_1.ProductTypeProto.TIPS);
         const parsedBond = parsed.getBondDetails();
-        expect(parsedBond.getCouponRate().getArbitraryPrecisionValue()).toBe('0.625');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsedBond.getCouponRate()))).toBe('0.625');
         expect(parsedBond.getCouponType()).toBe(coupon_type_pb_1.CouponTypeProto.FIXED);
         expect(parsedBond.getCouponFrequency()).toBe(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY);
-        expect(parsedBond.getFaceValue().getArbitraryPrecisionValue()).toBe('1000');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsedBond.getFaceValue()))).toBe('1000');
         expect(parsedBond.getMaturityDate().getYear()).toBe(2030);
         const parsedTips = parsed.getTipsExtension();
-        expect(parsedTips.getBaseCpi().getArbitraryPrecisionValue()).toBe('256.394');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsedTips.getBaseCpi()))).toBe('256.394');
         expect(parsedTips.getInflationIndexType()).toBe(index_type_pb_1.IndexTypeProto.CPI_U);
     });
     test('FRN: spread + reference_rate_index + reset_frequency survive round-trip', () => {
         const original = new security_pb_2.SecurityProto();
-        original.setObjectClass('Security');
-        original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_FRN);
         original.setAssetClass('Fixed Income');
         original.setIssuerName('US Treasury');
@@ -126,16 +120,14 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         const parsedBond = parsed.getBondDetails();
         expect(parsedBond.getCouponType()).toBe(coupon_type_pb_1.CouponTypeProto.FLOAT);
         expect(parsedBond.getCouponFrequency()).toBe(coupon_frequency_pb_1.CouponFrequencyProto.QUARTERLY);
-        expect(parsedBond.getFaceValue().getArbitraryPrecisionValue()).toBe('100');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsedBond.getFaceValue()))).toBe('100');
         expect(parsedBond.getMaturityDate().getYear()).toBe(2028);
         const parsedFrn = parsed.getFrnExtension();
-        expect(parsedFrn.getSpread().getArbitraryPrecisionValue()).toBe('50');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsedFrn.getSpread()))).toBe('50');
         expect(parsedFrn.getReferenceRateIndex()).toBe(index_type_pb_1.IndexTypeProto.T_BILL_13_WEEK);
     });
     test('EQUITY_SECURITY: identifier + asset_class survive round-trip', () => {
         const original = new security_pb_2.SecurityProto();
-        original.setObjectClass('Security');
-        original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.COMMON_STOCK);
         original.setAssetClass('Equity');
         original.setIssuerName('Apple Inc.');
@@ -154,8 +146,6 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
     });
     test('CASH_SECURITY: cash_id + settlement fields survive round-trip', () => {
         const original = new security_pb_2.SecurityProto();
-        original.setObjectClass('Security');
-        original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.CURRENCY);
         original.setAssetClass('Cash');
         original.setIssuerName('Federal Reserve');
@@ -174,8 +164,6 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
     });
     test('INDEX_SECURITY: index_type + inflation_index_type survive round-trip', () => {
         const original = new security_pb_2.SecurityProto();
-        original.setObjectClass('Security');
-        original.setVersion('0.0.1');
         original.setProductType(product_type_pb_1.ProductTypeProto.EQUITY_INDEX);
         original.setAssetClass('Index');
         original.setIssuerName('Bureau of Labor Statistics');

@@ -57,7 +57,7 @@ class Price {
         securityProto.setUuid(new uuid_1.UUID(uuid_1.UUID.fromString(securityId)).toUUIDProto());
         securityProto.setIsLink(true);
         const priceProto = new price_pb_1.PriceProto();
-        (0, object_types_1.stamp)(priceProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1');
+        (0, object_types_1.stamp)(priceProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_PRICE);
         priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
         priceProto.setAsOf(datetime_1.ZonedDateTime.from(date).toProto());
         priceProto.setPrice(decimalValueProto);
@@ -72,7 +72,7 @@ class Price {
         const decimalValueProto = (0, decimal_1.encodeDecimal)((0, decimal_1.fromDecimalJs)(price));
         const priceProto = new price_pb_1.PriceProto();
         priceProto.setPrice(decimalValueProto);
-        (0, object_types_1.stamp)(priceProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1');
+        (0, object_types_1.stamp)(priceProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_PRICE);
         priceProto.setAsOf(asOf.toProto());
         priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
         priceProto.setSecurity(security.proto);

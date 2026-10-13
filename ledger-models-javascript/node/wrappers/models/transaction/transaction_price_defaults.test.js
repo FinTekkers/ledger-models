@@ -15,7 +15,6 @@ const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/tr
 const price_pb_1 = require("../../../fintekkers/models/price/price_pb");
 const portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
 const uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
 const timestamp_pb_1 = require("google-protobuf/google/protobuf/timestamp_pb");
@@ -24,6 +23,7 @@ const portfolio_1 = __importDefault(require("../portfolio/portfolio"));
 const uuid_1 = require("../utils/uuid");
 const decimal_js_1 = require("decimal.js");
 const errors_1 = require("../errors");
+const decimal_1 = require("../utils/decimal");
 const AS_OF_RULE = "price.as_of defaults to the transaction's as_of (transaction.py / Price.create)";
 function timestamp(seconds, timeZone) {
     return new local_timestamp_pb_1.LocalTimestampProto()
@@ -34,14 +34,10 @@ const TXN_AS_OF = timestamp(1718461800, 'America/New_York');
 const PRICE_AS_OF = timestamp(1718377200, 'Europe/London');
 function price() {
     return new price_pb_1.PriceProto()
-        .setObjectClass('Price')
-        .setVersion('0.0.1')
-        .setPrice(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('99.5'));
+        .setPrice((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('99.5')));
 }
 function txnWithPrice(priceProto, withTxnAsOf = true) {
     const proto = new transaction_pb_1.TransactionProto()
-        .setObjectClass('Transaction')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setPrice(priceProto);
     if (withTxnAsOf)
@@ -113,14 +109,10 @@ test('link_price_passes_through_unchanged', () => {
 });
 test('factory_path_fills_price_uuid_and_as_of', () => {
     const security = security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setAssetClass('Equity')
         .setIssuerName('Test Issuer'));
     const portfolio = new portfolio_1.default(new portfolio_pb_1.PortfolioProto()
-        .setObjectClass('Portfolio')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setPortfolioName('Test Portfolio'));
     const txn = new transaction_1.default({

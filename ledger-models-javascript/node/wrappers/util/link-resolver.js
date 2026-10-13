@@ -377,7 +377,7 @@ class LinkResolver {
             if (uuids.length === 0)
                 return [];
             const request = new query_security_request_pb_1.QuerySecurityRequestProto();
-            (0, object_types_1.stamp)(request, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, 'SecurityRequest', '0.0.1');
+            (0, object_types_1.stamp)(request, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST);
             const uuidProtos = uuids.map((u) => u.toUUIDProto());
             request.setUuidsList(uuidProtos);
             if (asOf)
@@ -392,7 +392,7 @@ class LinkResolver {
             if (uuids.length === 0)
                 return [];
             const request = new query_transaction_request_pb_1.QueryTransactionRequestProto();
-            (0, object_types_1.stamp)(request, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
+            (0, object_types_1.stamp)(request, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST);
             const uuidProtos = uuids.map((u) => u.toUUIDProto());
             request.setUuidsList(uuidProtos);
             if (asOf)
@@ -407,7 +407,7 @@ class LinkResolver {
             if (uuids.length === 0)
                 return [];
             const request = new query_portfolio_request_pb_1.QueryPortfolioRequestProto();
-            (0, object_types_1.stamp)(request, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
+            (0, object_types_1.stamp)(request, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST);
             const uuidProtos = uuids.map((u) => u.toUUIDProto());
             request.setUuidsList(uuidProtos);
             if (asOf)

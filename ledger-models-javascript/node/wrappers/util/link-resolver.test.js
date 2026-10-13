@@ -41,7 +41,6 @@ const uuid_1 = require("../models/utils/uuid");
 const LinkCacheModuleTop = __importStar(require("./link-cache"));
 const security_pb_1 = require("../../fintekkers/models/security/security_pb");
 const price_pb_1 = require("../../fintekkers/models/price/price_pb");
-const decimal_value_pb_1 = require("../../fintekkers/models/util/decimal_value_pb");
 const identifier_pb_1 = require("../../fintekkers/models/security/identifier/identifier_pb");
 const local_timestamp_pb_1 = require("../../fintekkers/models/util/local_timestamp_pb");
 const timestamp_pb_1 = require("google-protobuf/google/protobuf/timestamp_pb");
@@ -111,8 +110,6 @@ function makeAsOf(epochSeconds) {
 }
 function fullSecurity(uuid, issuerName) {
     const proto = new security_pb_1.SecurityProto();
-    proto.setObjectClass('Security');
-    proto.setVersion('0.0.1');
     proto.setUuid(uuid.toUUIDProto());
     proto.setIsLink(false);
     proto.setIssuerName(issuerName);
@@ -128,12 +125,9 @@ function linkPrice(securityUuid, priceValue, asOf) {
     if (asOf)
         linkSec.setAsOf(asOf);
     const priceProto = new price_pb_1.PriceProto();
-    priceProto.setObjectClass('Price');
-    priceProto.setVersion('0.0.1');
     priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
     priceProto.setSecurity(linkSec);
-    const dv = new decimal_value_pb_1.DecimalValueProto();
-    dv.setArbitraryPrecisionValue(priceValue);
+    const dv = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(priceValue));
     priceProto.setPrice(dv);
     return new Price_1.default(priceProto);
 }
@@ -240,11 +234,9 @@ describe('LinkResolver', () => {
         // Build a Price whose embedded Security is NOT a link (full entity).
         const fullSec = fullSecurity(uuid_1.UUID.random(), 'AAPL');
         const priceProto = new price_pb_1.PriceProto();
-        priceProto.setObjectClass('Price');
         priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
         priceProto.setSecurity(fullSec);
-        const dv = new decimal_value_pb_1.DecimalValueProto();
-        dv.setArbitraryPrecisionValue('100');
+        const dv = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('100'));
         priceProto.setPrice(dv);
         const price = new Price_1.default(priceProto);
         yield resolver.resolveSecurities([price]);
@@ -258,11 +250,9 @@ describe('LinkResolver', () => {
             portfolioClient: mockPortfolioClient(new Map(), newCallLog()),
         });
         const priceProto = new price_pb_1.PriceProto();
-        priceProto.setObjectClass('Price');
         priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
         // No security set on this price.
-        const dv = new decimal_value_pb_1.DecimalValueProto();
-        dv.setArbitraryPrecisionValue('100');
+        const dv = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('100'));
         priceProto.setPrice(dv);
         const price = new Price_1.default(priceProto);
         yield resolver.resolveSecurities([price]);
@@ -382,6 +372,7 @@ describe('LinkResolver', () => {
 });
 const LinkCacheModule = __importStar(require("./link-cache"));
 const datetime_1 = require("../models/utils/datetime");
+const decimal_1 = require("../models/utils/decimal");
 describe('LinkResolver write-through to LinkCache', () => {
     beforeEach(() => {
         LinkCacheModule.SECURITY.clear();

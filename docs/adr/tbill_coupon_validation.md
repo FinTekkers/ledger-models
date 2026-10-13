@@ -16,7 +16,7 @@ The `coupon_rate` comment on `main` also said "decimal fraction (0.05 = 5%)" and
 
 When `product_type == TBILL`, `bond_details.coupon_rate` must be unset or 0.
 
-- Unset means either no `coupon_rate` message, or one whose `arbitrary_precision_value` is empty.
+- Unset means either no `coupon_rate` message, or one whose `unscaled_value` is empty (the decimal string was deleted by LM-318).
 - 0 is compared numerically (`0`, `0.00` pass). Any other value, positive or negative, is rejected.
 - Only the explicit `product_type` counts. `inferProductType` never infers `TBILL`.
 - Link securities (`is_link=true`) are skipped, like every other security rule: hydrate first.

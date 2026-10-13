@@ -65,7 +65,7 @@ class TransactionService {
     validateCreateTransaction(transaction) {
         return __awaiter(this, void 0, void 0, function* () {
             const createRequest = new create_transaction_request_pb_1.CreateTransactionRequestProto();
-            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST);
             createRequest.setCreateTransactionInput(transaction.proto);
             const validateCreateOrUpdateAsync = (0, util_1.promisify)(this.client.validateCreateOrUpdate.bind(this.client));
             const response = yield validateCreateOrUpdateAsync(createRequest);
@@ -75,7 +75,7 @@ class TransactionService {
     createTransaction(transaction) {
         return __awaiter(this, void 0, void 0, function* () {
             const createRequest = new create_transaction_request_pb_1.CreateTransactionRequestProto();
-            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST);
             createRequest.setCreateTransactionInput(transaction.proto);
             const createTransactionAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
             const response = yield createTransactionAsync(createRequest);
@@ -94,7 +94,7 @@ class TransactionService {
     }
     searchTransaction(asOf, positionFilter, maxResults = 100) {
         const searchRequest = new query_transaction_request_pb_1.QueryTransactionRequestProto();
-        (0, object_types_1.stamp)(searchRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, 'SecurityRequest', '0.0.1');
+        (0, object_types_1.stamp)(searchRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST);
         searchRequest.setAsOf(asOf);
         searchRequest.setSearchTransactionInput(positionFilter.toProto());
         searchRequest.setLimit(maxResults);

@@ -56,8 +56,8 @@ private static final long serialVersionUID = 0L;
    * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
    * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
    * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-   * A from-to label such as "1-2" in its string form is legacy, written before
-   * LM-313, and goes away with LM-295.
+   * A from-to label such as "1-2" was written in the decimal string form
+   * before LM-313; LM-318 deleted that form.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -72,8 +72,8 @@ private static final long serialVersionUID = 0L;
    * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
    * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
    * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-   * A from-to label such as "1-2" in its string form is legacy, written before
-   * LM-313, and goes away with LM-295.
+   * A from-to label such as "1-2" was written in the decimal string form
+   * before LM-313; LM-318 deleted that form.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -88,8 +88,8 @@ private static final long serialVersionUID = 0L;
    * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
    * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
    * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-   * A from-to label such as "1-2" in its string form is legacy, written before
-   * LM-313, and goes away with LM-295.
+   * A from-to label such as "1-2" was written in the decimal string form
+   * before LM-313; LM-318 deleted that form.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -692,8 +692,8 @@ private static final long serialVersionUID = 0L;
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
      * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
      * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-     * A from-to label such as "1-2" in its string form is legacy, written before
-     * LM-313, and goes away with LM-295.
+     * A from-to label such as "1-2" was written in the decimal string form
+     * before LM-313; LM-318 deleted that form.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -707,8 +707,8 @@ private static final long serialVersionUID = 0L;
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
      * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
      * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-     * A from-to label such as "1-2" in its string form is legacy, written before
-     * LM-313, and goes away with LM-295.
+     * A from-to label such as "1-2" was written in the decimal string form
+     * before LM-313; LM-318 deleted that form.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -726,8 +726,8 @@ private static final long serialVersionUID = 0L;
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
      * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
      * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-     * A from-to label such as "1-2" in its string form is legacy, written before
-     * LM-313, and goes away with LM-295.
+     * A from-to label such as "1-2" was written in the decimal string form
+     * before LM-313; LM-318 deleted that form.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -750,8 +750,8 @@ private static final long serialVersionUID = 0L;
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
      * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
      * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-     * A from-to label such as "1-2" in its string form is legacy, written before
-     * LM-313, and goes away with LM-295.
+     * A from-to label such as "1-2" was written in the decimal string form
+     * before LM-313; LM-318 deleted that form.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -772,8 +772,8 @@ private static final long serialVersionUID = 0L;
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
      * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
      * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-     * A from-to label such as "1-2" in its string form is legacy, written before
-     * LM-313, and goes away with LM-295.
+     * A from-to label such as "1-2" was written in the decimal string form
+     * before LM-313; LM-318 deleted that form.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -799,8 +799,8 @@ private static final long serialVersionUID = 0L;
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
      * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
      * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-     * A from-to label such as "1-2" in its string form is legacy, written before
-     * LM-313, and goes away with LM-295.
+     * A from-to label such as "1-2" was written in the decimal string form
+     * before LM-313; LM-318 deleted that form.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -820,8 +820,8 @@ private static final long serialVersionUID = 0L;
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
      * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
      * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-     * A from-to label such as "1-2" in its string form is legacy, written before
-     * LM-313, and goes away with LM-295.
+     * A from-to label such as "1-2" was written in the decimal string form
+     * before LM-313; LM-318 deleted that form.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -836,8 +836,8 @@ private static final long serialVersionUID = 0L;
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
      * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
      * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-     * A from-to label such as "1-2" in its string form is legacy, written before
-     * LM-313, and goes away with LM-295.
+     * A from-to label such as "1-2" was written in the decimal string form
+     * before LM-313; LM-318 deleted that form.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -855,8 +855,8 @@ private static final long serialVersionUID = 0L;
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
      * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
      * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-     * A from-to label such as "1-2" in its string form is legacy, written before
-     * LM-313, and goes away with LM-295.
+     * A from-to label such as "1-2" was written in the decimal string form
+     * before LM-313; LM-318 deleted that form.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
