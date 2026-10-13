@@ -270,7 +270,7 @@ class TransactionWrapperTest {
     @Test
     public void testGetQuantity_emptyDecimalThrowsUnsetDecimalException() {
         TransactionProto proto = DummyBondObjects.getDummyTransaction().getProto().toBuilder()
-                .setQuantity(DecimalValueProto.newBuilder().setArbitraryPrecisionValue(""))
+                .setQuantity(DecimalValueProto.newBuilder())
                 .build();
         Assertions.assertTrue(proto.hasQuantity());
         Transaction transaction = new Transaction(proto);

@@ -79,7 +79,7 @@ public class SecurityService {
      * {@code Security.defaultGrpcFetcher} delegates to.
      */
     public SecurityProto getByUuid(UUID uuid, ZonedDateTime asOf) {
-        QuerySecurityRequestProto.Builder reqB = ObjectTypes.stamp(QuerySecurityRequestProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, "SecurityRequest", "0.0.1")
+        QuerySecurityRequestProto.Builder reqB = ObjectTypes.stamp(QuerySecurityRequestProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST)
                 .addUuIds(ProtoSerializationUtil.serializeUUID(uuid));
         if (asOf != null) {
             reqB.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));

@@ -2,6 +2,8 @@ import Price from './Price';
 import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
 import { Decimal } from 'decimal.js';
 import { ModelValidationError } from '../errors';
+import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
+import { readVersion } from '../../util/object-types';
 
 const TEST_UUID = '18e8c4e6-3da0-47c9-b26d-c5ea8b8dce95';
 
@@ -55,8 +57,8 @@ test('Price proto has all required fields set', () => {
     const date = new Date();
     const price = Price.fromSimple(TEST_UUID, 50.0, date);
 
-    expect(price.proto.getObjectClass()).toBe('Price');
-    expect(price.proto.getVersion()).toBe('0.0.1');
+    expect(price.proto.getObjectType()).toBe(ObjectTypeProto.OBJECT_TYPE_PRICE);
+    expect(readVersion(price.proto)).toEqual([0, 0, 1]);
     expect(price.proto.getUuid()).toBeTruthy();
     expect(price.proto.getAsOf()).toBeTruthy();
     expect(price.proto.getPrice()).toBeTruthy();

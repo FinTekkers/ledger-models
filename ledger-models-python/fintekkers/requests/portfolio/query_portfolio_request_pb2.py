@@ -26,9 +26,10 @@ from fintekkers.models.util import uuid_pb2 as fintekkers_dot_models_dot_util_do
 from fintekkers.models.util import local_timestamp_pb2 as fintekkers_dot_models_dot_util_dot_local__timestamp__pb2
 from fintekkers.models.position import position_filter_pb2 as fintekkers_dot_models_dot_position_dot_position__filter__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n;fintekkers/requests/portfolio/query_portfolio_request.proto\x12\x1d\x66intekkers.requests.portfolio\x1a!fintekkers/models/util/uuid.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a\x30\x66intekkers/models/position/position_filter.proto\x1a(fintekkers/models/util/object_type.proto\"\xc9\x03\n\x1aQueryPortfolioRequestProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12\x30\n\x05uuIds\x18\x15 \x03(\x0b\x32!.fintekkers.models.util.UUIDProto\x12O\n\x16search_portfolio_input\x18\x16 \x01(\x0b\x32/.fintekkers.models.position.PositionFilterProto\x12:\n\x05\x61s_of\x18\x17 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x13\n\x0bname_filter\x18\x18 \x01(\t\x12\r\n\x05limit\x18\x32 \x01(\x05\x12\x12\n\npage_token\x18\x33 \x01(\tB\x1f\x42\x1bQueryPortfolioRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n;fintekkers/requests/portfolio/query_portfolio_request.proto\x12\x1d\x66intekkers.requests.portfolio\x1a!fintekkers/models/util/uuid.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a\x30\x66intekkers/models/position/position_filter.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\x88\x03\n\x1aQueryPortfolioRequestProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12\x30\n\x05uuIds\x18\x15 \x03(\x0b\x32!.fintekkers.models.util.UUIDProto\x12O\n\x16search_portfolio_input\x18\x16 \x01(\x0b\x32/.fintekkers.models.position.PositionFilterProto\x12:\n\x05\x61s_of\x18\x17 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x13\n\x0bname_filter\x18\x18 \x01(\t\x12\r\n\x05limit\x18\x32 \x01(\x05\x12\x12\n\npage_token\x18\x33 \x01(\tB\x1f\x42\x1bQueryPortfolioRequestProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,10 +37,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.portfol
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\033QueryPortfolioRequestProtosP\001'
-  _globals['_QUERYPORTFOLIOREQUESTPROTO'].fields_by_name['object_class']._loaded_options = None
-  _globals['_QUERYPORTFOLIOREQUESTPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_QUERYPORTFOLIOREQUESTPROTO'].fields_by_name['version']._loaded_options = None
-  _globals['_QUERYPORTFOLIOREQUESTPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_QUERYPORTFOLIOREQUESTPROTO']._serialized_start=268
-  _globals['_QUERYPORTFOLIOREQUESTPROTO']._serialized_end=725
+  _globals['_QUERYPORTFOLIOREQUESTPROTO']._serialized_start=306
+  _globals['_QUERYPORTFOLIOREQUESTPROTO']._serialized_end=698
 # @@protoc_insertion_point(module_scope)

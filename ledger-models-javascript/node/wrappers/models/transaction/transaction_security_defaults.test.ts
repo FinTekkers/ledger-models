@@ -19,8 +19,6 @@ const AS_OF = new LocalTimestampProto()
 
 function currency(): SecurityProto {
     return new SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setAsOf(AS_OF.clone())
         .setProductType(ProductTypeProto.CURRENCY)
         .setAssetClass('Cash')
@@ -29,8 +27,6 @@ function currency(): SecurityProto {
 
 function bond(): SecurityProto {
     return new SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setAsOf(AS_OF.clone())
         .setProductType(ProductTypeProto.CORP_BOND)
         .setAssetClass('Fixed Income')
@@ -40,8 +36,6 @@ function bond(): SecurityProto {
 
 function txnWithSecurity(security: SecurityProto): TransactionProto {
     return new TransactionProto()
-        .setObjectClass('Transaction')
-        .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
         .setAsOf(AS_OF.clone())
         .setSecurity(security);

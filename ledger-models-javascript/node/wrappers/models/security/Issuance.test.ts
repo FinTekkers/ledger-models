@@ -4,16 +4,17 @@ import { AuctionTypeProto } from '../../../fintekkers/models/security/bond/aucti
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import Decimal from 'decimal.js';
+import { encodeDecimal, parseDecimalString } from '../utils/decimal';
 
 function buildProto(): IssuanceProto {
   const p = new IssuanceProto();
   p.setAuctionIssueDate(new LocalDateProto().setYear(2023).setMonth(2).setDay(15));
   p.setAuctionAnnouncementDate(new LocalDateProto().setYear(2023).setMonth(2).setDay(8));
-  p.setAuctionOfferingAmount(new DecimalValueProto().setArbitraryPrecisionValue('45000000000'));
-  p.setTotalAccepted(new DecimalValueProto().setArbitraryPrecisionValue('44999500000'));
-  p.setPostAuctionOutstandingQuantity(new DecimalValueProto().setArbitraryPrecisionValue('44999500000'));
-  p.setMatureSecurityAmount(new DecimalValueProto().setArbitraryPrecisionValue('0'));
-  p.setPriceForSinglePriceAuction(new DecimalValueProto().setArbitraryPrecisionValue('99.875'));
+  p.setAuctionOfferingAmount(encodeDecimal(parseDecimalString('45000000000')));
+  p.setTotalAccepted(encodeDecimal(parseDecimalString('44999500000')));
+  p.setPostAuctionOutstandingQuantity(encodeDecimal(parseDecimalString('44999500000')));
+  p.setMatureSecurityAmount(encodeDecimal(parseDecimalString('0')));
+  p.setPriceForSinglePriceAuction(encodeDecimal(parseDecimalString('99.875')));
   p.setAuctionType(AuctionTypeProto.SINGLE_PRICE);
   return p;
 }

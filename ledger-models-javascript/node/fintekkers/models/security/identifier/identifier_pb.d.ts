@@ -7,20 +7,16 @@
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_security_identifier_identifier_type_pb from "../../../../fintekkers/models/security/identifier/identifier_type_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../../fintekkers/models/util/version_pb";
 
 export class IdentifierProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): IdentifierProto;
-    getVersion(): string;
-    setVersion(value: string): IdentifierProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): IdentifierProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): IdentifierProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): IdentifierProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): IdentifierProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): IdentifierProto;
     getIdentifierValue(): string;
     setIdentifierValue(value: string): IdentifierProto;
     getIdentifierType(): fintekkers_models_security_identifier_identifier_type_pb.IdentifierTypeProto;
@@ -38,12 +34,8 @@ export class IdentifierProto extends jspb.Message {
 
 export namespace IdentifierProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         identifierValue: string,
         identifierType: fintekkers_models_security_identifier_identifier_type_pb.IdentifierTypeProto,
     }

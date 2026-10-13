@@ -6,20 +6,16 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_util_object_type_pb from "../../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../../fintekkers/models/util/version_pb";
 
 export class API_Key extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): API_Key;
-    getVersion(): string;
-    setVersion(value: string): API_Key;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): API_Key;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): API_Key;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): API_Key;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): API_Key;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): API_Key;
     getIdentity(): string;
     setIdentity(value: string): API_Key;
     getKey(): string;
@@ -37,12 +33,8 @@ export class API_Key extends jspb.Message {
 
 export namespace API_Key {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         identity: string,
         key: string,
     }

@@ -9,19 +9,15 @@ import "fintekkers/models/util/uuid.proto";
 import "fintekkers/models/security/security.proto";
 import "fintekkers/models/price/price_type.proto";
 import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
 
 option java_multiple_files = true;
 
 option java_outer_classname = "PriceProtos";
 
 message PriceProto {
-  string object_class = 1 [deprecated = true];
-  string version = 2 [deprecated = true];
-  // Compact form of object_class / version (LM-297). Writers set both in stage 1.
-  fintekkers.models.util.ObjectTypeProto object_type = 1001;
-  uint32 version_major = 1002;
-  uint32 version_minor = 1003;
-  uint32 version_patch = 1004;
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
 
   //Primary Key
   fintekkers.models.util.UUIDProto uuid = 5;
@@ -34,7 +30,7 @@ message PriceProto {
   util.LocalTimestampProto valid_from = 8;
   util.LocalTimestampProto valid_to = 9;
 
-  // Required. Invalid when absent, or when neither unscaled_value nor arbitrary_precision_value is set. Zero is valid.
+  // Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
   fintekkers.models.util.DecimalValueProto price = 10;
   fintekkers.models.security.SecurityProto security = 11;
   PriceTypeProto price_type = 12;

@@ -35,20 +35,20 @@ public final class QueryTransactionResponseProtos {
       "/requests/transaction/query_transaction_" +
       "request.proto\032-fintekkers/requests/util/" +
       "errors/summary.proto\032(fintekkers/models/" +
-      "util/object_type.proto\"\353\003\n\035QueryTransact" +
-      "ionResponseProto\022\030\n\014object_class\030\001 \001(\tB\002" +
-      "\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351" +
-      "\007 \001(\0162\'.fintekkers.models.util.ObjectTyp" +
-      "eProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversio" +
-      "n_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022a" +
-      "\n\032create_transaction_request\030\024 \001(\0132=.fin" +
-      "tekkers.requests.transaction.QueryTransa" +
-      "ctionRequestProto\022M\n\024transaction_respons" +
-      "e\030\036 \003(\0132/.fintekkers.models.transaction." +
-      "TransactionProto\022I\n\022errors_or_warnings\030(" +
-      " \001(\0132-.fintekkers.requests.util.errors.S" +
-      "ummaryProto\022\027\n\017next_page_token\0302 \001(\tB\"B\036" +
-      "QueryTransactionResponseProtosP\001b\006proto3"
+      "util/object_type.proto\032$fintekkers/model" +
+      "s/util/version.proto\"\252\003\n\035QueryTransactio" +
+      "nResponseProto\022<\n\013object_type\030\001 \001(\0162\'.fi" +
+      "ntekkers.models.util.ObjectTypeProto\0225\n\007" +
+      "version\030\002 \001(\0132$.fintekkers.models.util.V" +
+      "ersionProto\022a\n\032create_transaction_reques" +
+      "t\030\024 \001(\0132=.fintekkers.requests.transactio" +
+      "n.QueryTransactionRequestProto\022M\n\024transa" +
+      "ction_response\030\036 \003(\0132/.fintekkers.models" +
+      ".transaction.TransactionProto\022I\n\022errors_" +
+      "or_warnings\030( \001(\0132-.fintekkers.requests." +
+      "util.errors.SummaryProto\022\027\n\017next_page_to" +
+      "ken\0302 \001(\tB\"B\036QueryTransactionResponsePro" +
+      "tosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -57,17 +57,19 @@ public final class QueryTransactionResponseProtos {
           fintekkers.requests.transaction.QueryTransactionRequestProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_transaction_QueryTransactionResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_transaction_QueryTransactionResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_transaction_QueryTransactionResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "CreateTransactionRequest", "TransactionResponse", "ErrorsOrWarnings", "NextPageToken", });
+        new java.lang.String[] { "ObjectType", "Version", "CreateTransactionRequest", "TransactionResponse", "ErrorsOrWarnings", "NextPageToken", });
     fintekkers.models.transaction.TransactionProtos.getDescriptor();
     fintekkers.requests.transaction.QueryTransactionRequestProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

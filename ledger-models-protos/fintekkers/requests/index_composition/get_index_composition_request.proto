@@ -7,6 +7,7 @@ import "fintekkers/models/util/local_date.proto";
 import "fintekkers/models/security/index_composition.proto";
 import "fintekkers/requests/util/operation.proto";
 import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
 
 option java_multiple_files = true;
 
@@ -15,13 +16,8 @@ option java_outer_classname = "GetIndexCompositionRequestProtos";
 // Request to retrieve the index composition active on a given date.
 // Returns the most recent IndexCompositionProto where effective_date <= as_of_date.
 message GetIndexCompositionRequestProto {
-  string object_class = 1 [deprecated = true];
-  string version      = 2 [deprecated = true];
-  // Compact form of object_class / version (LM-297). Writers set both in stage 1.
-  fintekkers.models.util.ObjectTypeProto object_type = 1001;
-  uint32 version_major = 1002;
-  uint32 version_minor = 1003;
-  uint32 version_patch = 1004;
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
 
   // UUID of the index security (EQUITY_INDEX_SECURITY).
   fintekkers.models.util.UUIDProto index_uuid = 10;
@@ -32,13 +28,8 @@ message GetIndexCompositionRequestProto {
 }
 
 message GetIndexCompositionResponseProto {
-  string object_class = 1 [deprecated = true];
-  string version      = 2 [deprecated = true];
-  // Compact form of object_class / version (LM-297). Writers set both in stage 1.
-  fintekkers.models.util.ObjectTypeProto object_type = 1001;
-  uint32 version_major = 1002;
-  uint32 version_minor = 1003;
-  uint32 version_patch = 1004;
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
 
   fintekkers.requests.util.RequestOperationTypeProto operation_type = 10;
 

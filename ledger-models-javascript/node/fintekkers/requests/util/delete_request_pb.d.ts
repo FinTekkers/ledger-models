@@ -7,6 +7,7 @@
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class AffectedEntityProto extends jspb.Message { 
     getEntityType(): EntityTypeProto;
@@ -38,18 +39,13 @@ export namespace AffectedEntityProto {
 }
 
 export class DeleteRequestProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): DeleteRequestProto;
-    getVersion(): string;
-    setVersion(value: string): DeleteRequestProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): DeleteRequestProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): DeleteRequestProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): DeleteRequestProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): DeleteRequestProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): DeleteRequestProto;
 
     hasUuid(): boolean;
     clearUuid(): void;
@@ -76,12 +72,8 @@ export class DeleteRequestProto extends jspb.Message {
 
 export namespace DeleteRequestProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         uuid?: fintekkers_models_util_uuid_pb.UUIDProto.AsObject,
         entityType: EntityTypeProto,
         dryRun: boolean,
@@ -91,18 +83,13 @@ export namespace DeleteRequestProto {
 }
 
 export class DeleteResponseProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): DeleteResponseProto;
-    getVersion(): string;
-    setVersion(value: string): DeleteResponseProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): DeleteResponseProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): DeleteResponseProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): DeleteResponseProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): DeleteResponseProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): DeleteResponseProto;
 
     hasDeleteRequest(): boolean;
     clearDeleteRequest(): void;
@@ -135,12 +122,8 @@ export class DeleteResponseProto extends jspb.Message {
 
 export namespace DeleteResponseProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         deleteRequest?: DeleteRequestProto.AsObject,
         success: boolean,
         wasDryRun: boolean,

@@ -34,18 +34,18 @@ public final class LockResponseProtos {
       "te.proto\0320fintekkers/requests/util/lock/" +
       "lock_request.proto\032-fintekkers/requests/" +
       "util/errors/summary.proto\032(fintekkers/mo" +
-      "dels/util/object_type.proto\"\236\003\n\021LockResp" +
-      "onseProto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007v" +
-      "ersion\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'" +
-      ".fintekkers.models.util.ObjectTypeProto\022" +
-      "\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversion_minor" +
-      "\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022I\n\020get_l" +
-      "ock_request\030\003 \001(\0132/.fintekkers.requests." +
-      "util.lock.LockRequestProto\022=\n\rlock_respo" +
-      "nse\030\004 \001(\0132&.fintekkers.models.util.lock." +
-      "NodeState\022I\n\022errors_or_warnings\030( \001(\0132-." +
-      "fintekkers.requests.util.errors.SummaryP" +
-      "rotoB\026B\022LockResponseProtosP\001b\006proto3"
+      "dels/util/object_type.proto\032$fintekkers/" +
+      "models/util/version.proto\"\335\002\n\021LockRespon" +
+      "seProto\022<\n\013object_type\030\001 \001(\0162\'.fintekker" +
+      "s.models.util.ObjectTypeProto\0225\n\007version" +
+      "\030\002 \001(\0132$.fintekkers.models.util.VersionP" +
+      "roto\022I\n\020get_lock_request\030\003 \001(\0132/.fintekk" +
+      "ers.requests.util.lock.LockRequestProto\022" +
+      "=\n\rlock_response\030\004 \001(\0132&.fintekkers.mode" +
+      "ls.util.lock.NodeState\022I\n\022errors_or_warn" +
+      "ings\030( \001(\0132-.fintekkers.requests.util.er" +
+      "rors.SummaryProtoB\026B\022LockResponseProtosP" +
+      "\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -54,17 +54,19 @@ public final class LockResponseProtos {
           fintekkers.requests.util.lock.LockRequestProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_util_lock_LockResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_util_lock_LockResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_util_lock_LockResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "GetLockRequest", "LockResponse", "ErrorsOrWarnings", });
+        new java.lang.String[] { "ObjectType", "Version", "GetLockRequest", "LockResponse", "ErrorsOrWarnings", });
     fintekkers.models.util.lock.NodeStateOuterClass.getDescriptor();
     fintekkers.requests.util.lock.LockRequestProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

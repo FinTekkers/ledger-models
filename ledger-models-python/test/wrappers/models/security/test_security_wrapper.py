@@ -19,8 +19,6 @@ def test_security_wrapper():
     )
 
     proto = SecurityProto(
-        object_class="Security",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=b"\xb6H\x9du\x91,@\x9b\xa9 \xe4:\x83\xd5#B"),
         as_of=as_of,
         product_type=ProductTypeProto.TREASURY_NOTE,
@@ -28,8 +26,6 @@ def test_security_wrapper():
         issuer_name="US Government",
         identifiers=[
             IdentifierProto(
-                object_class="Identifier",
-                version="0.0.1",
                 identifier_type=IdentifierTypeProto.CUSIP,
                 identifier_value="912796Y29",
             ),

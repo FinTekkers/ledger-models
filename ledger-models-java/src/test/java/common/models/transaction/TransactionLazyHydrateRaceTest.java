@@ -41,8 +41,6 @@ class TransactionLazyHydrateRaceTest {
         UUIDProto uuidProto = ProtoSerializationUtil.serializeUUID(uuid);
 
         TransactionProto resolved = TransactionProto.newBuilder()
-                .setObjectClass("Transaction")
-                .setVersion("0.0.1")
                 .setUuid(uuidProto)
                 .setAsOf(asOfProto)
                 .setIsLink(false)

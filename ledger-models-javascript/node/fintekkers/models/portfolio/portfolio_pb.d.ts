@@ -8,20 +8,16 @@ import * as jspb from "google-protobuf";
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class PortfolioProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): PortfolioProto;
-    getVersion(): string;
-    setVersion(value: string): PortfolioProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): PortfolioProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): PortfolioProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): PortfolioProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): PortfolioProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): PortfolioProto;
 
     hasUuid(): boolean;
     clearUuid(): void;
@@ -59,12 +55,8 @@ export class PortfolioProto extends jspb.Message {
 
 export namespace PortfolioProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         uuid?: fintekkers_models_util_uuid_pb.UUIDProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         isLink: boolean,

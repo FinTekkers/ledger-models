@@ -25,9 +25,10 @@ _sym_db = _symbol_database.Default()
 from fintekkers.models.util.lock import node_partition_pb2 as fintekkers_dot_models_dot_util_dot_lock_dot_node__partition__pb2
 from fintekkers.models.util import endpoint_pb2 as fintekkers_dot_models_dot_util_dot_endpoint__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n0fintekkers/requests/util/lock/lock_request.proto\x12\x1d\x66intekkers.requests.util.lock\x1a\x30\x66intekkers/models/util/lock/node_partition.proto\x1a%fintekkers/models/util/endpoint.proto\x1a(fintekkers/models/util/object_type.proto\"\xc0\x02\n\x10LockRequestProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12\x42\n\x0enode_partition\x18\x0b \x01(\x0b\x32*.fintekkers.models.util.lock.NodePartition\x12\x32\n\x08\x65ndpoint\x18\x0c \x01(\x0b\x32 .fintekkers.models.util.EndpointB\x15\x42\x11LockRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n0fintekkers/requests/util/lock/lock_request.proto\x12\x1d\x66intekkers.requests.util.lock\x1a\x30\x66intekkers/models/util/lock/node_partition.proto\x1a%fintekkers/models/util/endpoint.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xff\x01\n\x10LockRequestProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12\x42\n\x0enode_partition\x18\x0b \x01(\x0b\x32*.fintekkers.models.util.lock.NodePartition\x12\x32\n\x08\x65ndpoint\x18\x0c \x01(\x0b\x32 .fintekkers.models.util.EndpointB\x15\x42\x11LockRequestProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,10 +36,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.util.lo
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\021LockRequestProtosP\001'
-  _globals['_LOCKREQUESTPROTO'].fields_by_name['object_class']._loaded_options = None
-  _globals['_LOCKREQUESTPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_LOCKREQUESTPROTO'].fields_by_name['version']._loaded_options = None
-  _globals['_LOCKREQUESTPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_LOCKREQUESTPROTO']._serialized_start=215
-  _globals['_LOCKREQUESTPROTO']._serialized_end=535
+  _globals['_LOCKREQUESTPROTO']._serialized_start=253
+  _globals['_LOCKREQUESTPROTO']._serialized_end=508
 # @@protoc_insertion_point(module_scope)

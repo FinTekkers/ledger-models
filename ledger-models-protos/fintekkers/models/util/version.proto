@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package fintekkers.models.util;
+
+option java_multiple_files = true;
+
+option java_outer_classname = "VersionProtos";
+
+// The schema version of the message that carries it, as field 2 (LM-318).
+// Not the library release: writers set 0.0.1. See
+// docs/adr/compact_object_type_and_version.md.
+message VersionProto {
+  uint32 major = 1;
+  uint32 minor = 2;
+  uint32 patch = 3;
+}

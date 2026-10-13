@@ -47,7 +47,7 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
 
     @Override
     public PositionProto serialize(Position position) {
-        PositionProto.Builder builder = ObjectTypes.stamp(PositionProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_POSITION, Position.class.getSimpleName(), "0.0.1")
+        PositionProto.Builder builder = ObjectTypes.stamp(PositionProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_POSITION)
             //Primary Key
             .setPositionType(PositionTypeProto.valueOf(position.getPositionType().name()))
             .setPositionView(PositionViewProto.valueOf(position.getPositionView().name()));

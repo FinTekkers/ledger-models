@@ -18,6 +18,7 @@ import { ModelValidationError } from '../errors';
 import { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
 import { dummyPortfolio } from '../portfolio/portfolio.test';
 import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
+import { decodeDecimal, encodeDecimal, parseDecimalString, toCanonicalString } from '../utils/decimal';
 
 test('test Transaction constructor with parameters', () => {
     testTransactionConstructor();
@@ -71,7 +72,7 @@ function testTransactionConstructor(): void {
 
     // getPrice() - should return PriceProto with correct price value
     const priceProto = transaction.getPrice();
-    const priceValue = priceProto.getPrice()?.getArbitraryPrecisionValue();
+    const priceValue = toCanonicalString(decodeDecimal(priceProto.getPrice()!));
     assert(priceValue === '100.5', `Expected price '100.5', got '${priceValue}'`);
 
     // getSecurity() - should return Security matching input security
@@ -95,15 +96,13 @@ function testTransactionConstructor(): void {
 
 function dummySecurity(): Security {
     const bond = new BondDetailsProto()
-        .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-        .setCouponRate(new DecimalValueProto().setArbitraryPrecisionValue('0.05'))
+        .setFaceValue(encodeDecimal(parseDecimalString('1000.00')))
+        .setCouponRate(encodeDecimal(parseDecimalString('0.05')))
         .setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(CouponTypeProto.FIXED)
         .setMaturityDate(new LocalDateProto().setYear(2026).setMonth(1).setDay(1))
         .setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     return Security.create(new SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
         .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
         .setAssetClass("Bond")
@@ -130,7 +129,7 @@ function constructionError(proto: TransactionProto): unknown {
 
 test('new Transaction(proto) with no as_of throws ModelValidationError naming transaction.as_of', () => {
     const proto = new TransactionProto()
-        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto());
+        .setUuid(UUID.random().toUUIDProto());
 
     const e = constructionError(proto);
     expect(e).toBeInstanceOf(ModelValidationError);
@@ -140,7 +139,7 @@ test('new Transaction(proto) with no as_of throws ModelValidationError naming tr
 test.each(['', '   '])('new Transaction(proto) with blank time zone %j names transaction.as_of.time_zone', (zone) => {
     const asOf = ZonedDateTime.now().toProto().setTimeZone(zone);
     const proto = new TransactionProto()
-        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(UUID.random().toUUIDProto())
+        .setUuid(UUID.random().toUUIDProto())
         .setAsOf(asOf);
 
     const e = constructionError(proto);

@@ -23,6 +23,7 @@ import testutil.DummyEquityObjects;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import testutil.Decimals;
 
 class PositionSerializerTest {
     @Test
@@ -109,7 +110,7 @@ class PositionSerializerTest {
 
         Assertions.assertEquals(1, proto.getMeasuresCount());
         Assertions.assertEquals(MeasureProto.MARKET_VALUE, proto.getMeasures(0).getMeasure());
-        Assertions.assertEquals("0", proto.getMeasures(0).getMeasureDecimalValue().getArbitraryPrecisionValue());
+        Assertions.assertEquals("0", Decimals.text(proto.getMeasures(0).getMeasureDecimalValue()));
         Position copy = PositionSerializer.getInstance().deserialize(proto);
         Assertions.assertEquals(0, BigDecimal.ZERO.compareTo(copy.getMeasure(Measure.MARKET_VALUE)));
     }
@@ -120,7 +121,7 @@ class PositionSerializerTest {
                 .serialize(measureOnlyPosition(Measure.DIRECTED_QUANTITY, BigDecimal.TEN)).toBuilder()
                 .addMeasures(MeasureMapEntry.newBuilder()
                         .setMeasure(MeasureProto.MARKET_VALUE)
-                        .setMeasureDecimalValue(DecimalValueProto.newBuilder().setArbitraryPrecisionValue("")))
+                        .setMeasureDecimalValue(DecimalValueProto.newBuilder()))
                 .build();
 
         Position copy = Assertions.assertDoesNotThrow(() -> PositionSerializer.getInstance().deserialize(proto));

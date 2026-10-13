@@ -114,6 +114,6 @@ class Portfolio:
             is_link=False,
             portfolio_name=portfolio_name,
             uuid=UUIDProto(raw_uuid=uuid_value.bytes),
-        ), ObjectTypeProto.OBJECT_TYPE_PORTFOLIO, "Portfolio", "0.0.1")
+        ), ObjectTypeProto.OBJECT_TYPE_PORTFOLIO)
 
         return Portfolio(portfolio)

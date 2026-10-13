@@ -2,7 +2,7 @@ package common.models.errors;
 
 /**
  * Typed input error raised when a {@code DecimalValueProto} is set but its
- * {@code arbitrary_precision_value} is empty, so there is no number to parse.
+ * {@code unscaled_value} is empty, so there is no number to read.
  * Services map it to gRPC INVALID_ARGUMENT.
  *
  * <p>Deliberately an {@link IllegalArgumentException} and not a
@@ -22,7 +22,7 @@ public class UnsetDecimalException extends IllegalArgumentException {
      *                  {@code unknown} when the caller did not supply one
      */
     public UnsetDecimalException(String fieldName) {
-        super(fieldName + ": decimal value is unset (empty arbitrary_precision_value)");
+        super(fieldName + ": decimal value is unset (empty unscaled_value)");
         this.fieldName = fieldName;
     }
 

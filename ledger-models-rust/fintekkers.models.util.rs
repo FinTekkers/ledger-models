@@ -14,7 +14,7 @@ pub struct UuidProto {
     #[prost(bytes = "vec", tag = "1")]
     pub raw_uuid: ::prost::alloc::vec::Vec<u8>,
 }
-/// One value per message type that carries object_class. The name is the
+/// One value per message type that carries object_type. The name is the
 /// message name without its `Proto` suffix, in SCREAMING_SNAKE, prefixed
 /// OBJECT_TYPE_. Models use 1-99 and requests 101+.
 ///
@@ -296,28 +296,33 @@ impl ObjectTypeProto {
         }
     }
 }
+/// The schema version of the message that carries it, as field 2 (LM-318).
+/// Not the library release: writers set 0.0.1. See
+/// docs/adr/compact_object_type_and_version.md.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VersionProto {
+    #[prost(uint32, tag = "1")]
+    pub major: u32,
+    #[prost(uint32, tag = "2")]
+    pub minor: u32,
+    #[prost(uint32, tag = "3")]
+    pub patch: u32,
+}
 /// An exact decimal: value = unscaled_value x 10^-scale. See
 /// docs/adr/compact_decimal.md.
 ///
-/// Presence rule: a non-empty unscaled_value means the compact form (11, 12)
-/// is set, and it wins over arbitrary_precision_value. Zero is the single byte
-/// 0x00, so a set zero is never empty. When unscaled_value is empty, readers
-/// fall back to arbitrary_precision_value. When both are empty the decimal is
-/// unset.
+/// Presence rule: a non-empty unscaled_value means the decimal is set. Zero
+/// is the single byte 0x00, so a set zero is never empty. An empty
+/// unscaled_value means the decimal is unset.
 ///
-/// Stage 1 (LM-294): writers set both forms. Stage 2 (LM-295) stops writing
-/// arbitrary_precision_value. Stage 3 (LM-296) deletes it.
+/// LM-318 deleted the old decimal string, field 10, in place,
+/// with no reserved line: bytes written before it are not readable.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DecimalValueProto {
-    /// Deprecated (LM-294). A decimal string such as "1.50" or "1E+3". Read only
-    /// when unscaled_value is empty. Writers keep setting it alongside 11 and 12
-    /// until LM-295.
-    #[deprecated]
-    #[prost(string, tag = "10")]
-    pub arbitrary_precision_value: ::prost::alloc::string::String,
     /// The unscaled integer in minimal two's-complement big-endian form, of any
-    /// size. Zero is 0x00. Non-empty means the compact form is set.
+    /// size. Zero is 0x00. Non-empty means the decimal is set.
     #[prost(bytes = "vec", tag = "11")]
     pub unscaled_value: ::prost::alloc::vec::Vec<u8>,
     /// The number of digits after the decimal point. Never negative: an exponent
@@ -348,21 +353,10 @@ pub struct CurrencyProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DateRangeProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<VersionProto>,
     /// Date Ranges are inclusive of the start and end dates
     #[prost(message, optional, tag = "10")]
     pub start: ::core::option::Option<LocalTimestampProto>,

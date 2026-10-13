@@ -22,10 +22,9 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
-from google.protobuf import descriptor_pb2 as google_dot_protobuf_dot_descriptor__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n(fintekkers/models/util/object_type.proto\x12\x16\x66intekkers.models.util\x1a google/protobuf/descriptor.proto*\xb7\x10\n\x0fObjectTypeProto\x12\x17\n\x13OBJECT_TYPE_UNKNOWN\x10\x00\x12\x17\n\x13OBJECT_TYPE_API_KEY\x10\x01\x12\x1a\n\x16OBJECT_TYPE_DATE_RANGE\x10\x02\x12*\n\x16OBJECT_TYPE_IDENTIFIER\x10\x03\x1a\x0e\x8a\xb5\x18\nIdentifier\x12!\n\x1dOBJECT_TYPE_INDEX_COMPOSITION\x10\x04\x12\x18\n\x14OBJECT_TYPE_ISSUANCE\x10\x05\x12\x1e\n\x1aOBJECT_TYPE_NODE_PARTITION\x10\x06\x12\x1a\n\x16OBJECT_TYPE_NODE_STATE\x10\x07\x12(\n\x15OBJECT_TYPE_PORTFOLIO\x10\x08\x1a\r\x8a\xb5\x18\tPortfolio\x12&\n\x14OBJECT_TYPE_POSITION\x10\t\x1a\x0c\x8a\xb5\x18\x08Position\x12\x33\n\x1bOBJECT_TYPE_POSITION_FILTER\x10\n\x1a\x12\x8a\xb5\x18\x0ePositionFilter\x12.\n\x11OBJECT_TYPE_PRICE\x10\x0b\x1a\x17\x8a\xb5\x18\x05Price\x8a\xb5\x18\nPriceProto\x12&\n\x14OBJECT_TYPE_SECURITY\x10\x0c\x1a\x0c\x8a\xb5\x18\x08Security\x12&\n\x14OBJECT_TYPE_STRATEGY\x10\r\x1a\x0c\x8a\xb5\x18\x08Strategy\x12;\n\x1fOBJECT_TYPE_STRATEGY_ALLOCATION\x10\x0e\x1a\x16\x8a\xb5\x18\x12StrategyAllocation\x12 \n\x11OBJECT_TYPE_TENOR\x10\x0f\x1a\t\x8a\xb5\x18\x05Tenor\x12,\n\x17OBJECT_TYPE_TRANSACTION\x10\x10\x1a\x0f\x8a\xb5\x18\x0bTransaction\x12\x30\n,OBJECT_TYPE_CREATE_INDEX_COMPOSITION_REQUEST\x10\x65\x12\x31\n-OBJECT_TYPE_CREATE_INDEX_COMPOSITION_RESPONSE\x10\x66\x12(\n$OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST\x10g\x12)\n%OBJECT_TYPE_CREATE_PORTFOLIO_RESPONSE\x10h\x12\x41\n OBJECT_TYPE_CREATE_PRICE_REQUEST\x10i\x1a\x1b\x8a\xb5\x18\x17\x43reatePriceRequestProto\x12%\n!OBJECT_TYPE_CREATE_PRICE_RESPONSE\x10j\x12\'\n#OBJECT_TYPE_CREATE_SECURITY_REQUEST\x10k\x12(\n$OBJECT_TYPE_CREATE_SECURITY_RESPONSE\x10l\x12*\n&OBJECT_TYPE_CREATE_TRANSACTION_REQUEST\x10m\x12+\n\'OBJECT_TYPE_CREATE_TRANSACTION_RESPONSE\x10n\x12\x1d\n\x19OBJECT_TYPE_CURVE_REQUEST\x10o\x12\x1e\n\x1aOBJECT_TYPE_CURVE_RESPONSE\x10p\x12\x1e\n\x1aOBJECT_TYPE_DELETE_REQUEST\x10q\x12\x1f\n\x1bOBJECT_TYPE_DELETE_RESPONSE\x10r\x12#\n\x1fOBJECT_TYPE_GET_FIELDS_RESPONSE\x10s\x12(\n$OBJECT_TYPE_GET_FIELD_VALUES_REQUEST\x10t\x12)\n%OBJECT_TYPE_GET_FIELD_VALUES_RESPONSE\x10u\x12-\n)OBJECT_TYPE_GET_INDEX_COMPOSITION_REQUEST\x10v\x12.\n*OBJECT_TYPE_GET_INDEX_COMPOSITION_RESPONSE\x10w\x12\x1c\n\x18OBJECT_TYPE_LOCK_REQUEST\x10x\x12\x1d\n\x19OBJECT_TYPE_LOCK_RESPONSE\x10y\x12=\n#OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST\x10z\x1a\x14\x8a\xb5\x18\x10PortfolioRequest\x12(\n$OBJECT_TYPE_QUERY_PORTFOLIO_RESPONSE\x10{\x12&\n\"OBJECT_TYPE_QUERY_POSITION_REQUEST\x10|\x12\'\n#OBJECT_TYPE_QUERY_POSITION_RESPONSE\x10}\x12\x35\n\x1fOBJECT_TYPE_QUERY_PRICE_REQUEST\x10~\x1a\x10\x8a\xb5\x18\x0cPriceRequest\x12$\n OBJECT_TYPE_QUERY_PRICE_RESPONSE\x10\x7f\x12<\n\"OBJECT_TYPE_QUERY_SECURITY_REQUEST\x10\x80\x01\x1a\x13\x8a\xb5\x18\x0fSecurityRequest\x12(\n#OBJECT_TYPE_QUERY_SECURITY_RESPONSE\x10\x81\x01\x12\x42\n%OBJECT_TYPE_QUERY_TRANSACTION_REQUEST\x10\x82\x01\x1a\x16\x8a\xb5\x18\x12TransactionRequest\x12+\n&OBJECT_TYPE_QUERY_TRANSACTION_RESPONSE\x10\x83\x01\x12\"\n\x1dOBJECT_TYPE_VALUATION_REQUEST\x10\x84\x01\x12#\n\x1eOBJECT_TYPE_VALUATION_RESPONSE\x10\x85\x01:@\n\x13legacy_object_class\x12!.google.protobuf.EnumValueOptions\x18\xd1\x86\x03 \x03(\tB\x14\x42\x10ObjectTypeProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n(fintekkers/models/util/object_type.proto\x12\x16\x66intekkers.models.util*\x9b\x0e\n\x0fObjectTypeProto\x12\x17\n\x13OBJECT_TYPE_UNKNOWN\x10\x00\x12\x17\n\x13OBJECT_TYPE_API_KEY\x10\x01\x12\x1a\n\x16OBJECT_TYPE_DATE_RANGE\x10\x02\x12\x1a\n\x16OBJECT_TYPE_IDENTIFIER\x10\x03\x12!\n\x1dOBJECT_TYPE_INDEX_COMPOSITION\x10\x04\x12\x18\n\x14OBJECT_TYPE_ISSUANCE\x10\x05\x12\x1e\n\x1aOBJECT_TYPE_NODE_PARTITION\x10\x06\x12\x1a\n\x16OBJECT_TYPE_NODE_STATE\x10\x07\x12\x19\n\x15OBJECT_TYPE_PORTFOLIO\x10\x08\x12\x18\n\x14OBJECT_TYPE_POSITION\x10\t\x12\x1f\n\x1bOBJECT_TYPE_POSITION_FILTER\x10\n\x12\x15\n\x11OBJECT_TYPE_PRICE\x10\x0b\x12\x18\n\x14OBJECT_TYPE_SECURITY\x10\x0c\x12\x18\n\x14OBJECT_TYPE_STRATEGY\x10\r\x12#\n\x1fOBJECT_TYPE_STRATEGY_ALLOCATION\x10\x0e\x12\x15\n\x11OBJECT_TYPE_TENOR\x10\x0f\x12\x1b\n\x17OBJECT_TYPE_TRANSACTION\x10\x10\x12\x30\n,OBJECT_TYPE_CREATE_INDEX_COMPOSITION_REQUEST\x10\x65\x12\x31\n-OBJECT_TYPE_CREATE_INDEX_COMPOSITION_RESPONSE\x10\x66\x12(\n$OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST\x10g\x12)\n%OBJECT_TYPE_CREATE_PORTFOLIO_RESPONSE\x10h\x12$\n OBJECT_TYPE_CREATE_PRICE_REQUEST\x10i\x12%\n!OBJECT_TYPE_CREATE_PRICE_RESPONSE\x10j\x12\'\n#OBJECT_TYPE_CREATE_SECURITY_REQUEST\x10k\x12(\n$OBJECT_TYPE_CREATE_SECURITY_RESPONSE\x10l\x12*\n&OBJECT_TYPE_CREATE_TRANSACTION_REQUEST\x10m\x12+\n\'OBJECT_TYPE_CREATE_TRANSACTION_RESPONSE\x10n\x12\x1d\n\x19OBJECT_TYPE_CURVE_REQUEST\x10o\x12\x1e\n\x1aOBJECT_TYPE_CURVE_RESPONSE\x10p\x12\x1e\n\x1aOBJECT_TYPE_DELETE_REQUEST\x10q\x12\x1f\n\x1bOBJECT_TYPE_DELETE_RESPONSE\x10r\x12#\n\x1fOBJECT_TYPE_GET_FIELDS_RESPONSE\x10s\x12(\n$OBJECT_TYPE_GET_FIELD_VALUES_REQUEST\x10t\x12)\n%OBJECT_TYPE_GET_FIELD_VALUES_RESPONSE\x10u\x12-\n)OBJECT_TYPE_GET_INDEX_COMPOSITION_REQUEST\x10v\x12.\n*OBJECT_TYPE_GET_INDEX_COMPOSITION_RESPONSE\x10w\x12\x1c\n\x18OBJECT_TYPE_LOCK_REQUEST\x10x\x12\x1d\n\x19OBJECT_TYPE_LOCK_RESPONSE\x10y\x12\'\n#OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST\x10z\x12(\n$OBJECT_TYPE_QUERY_PORTFOLIO_RESPONSE\x10{\x12&\n\"OBJECT_TYPE_QUERY_POSITION_REQUEST\x10|\x12\'\n#OBJECT_TYPE_QUERY_POSITION_RESPONSE\x10}\x12#\n\x1fOBJECT_TYPE_QUERY_PRICE_REQUEST\x10~\x12$\n OBJECT_TYPE_QUERY_PRICE_RESPONSE\x10\x7f\x12\'\n\"OBJECT_TYPE_QUERY_SECURITY_REQUEST\x10\x80\x01\x12(\n#OBJECT_TYPE_QUERY_SECURITY_RESPONSE\x10\x81\x01\x12*\n%OBJECT_TYPE_QUERY_TRANSACTION_REQUEST\x10\x82\x01\x12+\n&OBJECT_TYPE_QUERY_TRANSACTION_RESPONSE\x10\x83\x01\x12\"\n\x1dOBJECT_TYPE_VALUATION_REQUEST\x10\x84\x01\x12#\n\x1eOBJECT_TYPE_VALUATION_RESPONSE\x10\x85\x01\x42\x14\x42\x10ObjectTypeProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,36 +32,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.util.obje
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\020ObjectTypeProtosP\001'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_IDENTIFIER"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_IDENTIFIER"]._serialized_options = b'\212\265\030\nIdentifier'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_PORTFOLIO"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_PORTFOLIO"]._serialized_options = b'\212\265\030\tPortfolio'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_POSITION"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_POSITION"]._serialized_options = b'\212\265\030\010Position'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_POSITION_FILTER"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_POSITION_FILTER"]._serialized_options = b'\212\265\030\016PositionFilter'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_PRICE"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_PRICE"]._serialized_options = b'\212\265\030\005Price\212\265\030\nPriceProto'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_SECURITY"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_SECURITY"]._serialized_options = b'\212\265\030\010Security'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_STRATEGY"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_STRATEGY"]._serialized_options = b'\212\265\030\010Strategy'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_STRATEGY_ALLOCATION"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_STRATEGY_ALLOCATION"]._serialized_options = b'\212\265\030\022StrategyAllocation'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_TENOR"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_TENOR"]._serialized_options = b'\212\265\030\005Tenor'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_TRANSACTION"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_TRANSACTION"]._serialized_options = b'\212\265\030\013Transaction'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_CREATE_PRICE_REQUEST"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_CREATE_PRICE_REQUEST"]._serialized_options = b'\212\265\030\027CreatePriceRequestProto'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST"]._serialized_options = b'\212\265\030\020PortfolioRequest'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_QUERY_PRICE_REQUEST"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_QUERY_PRICE_REQUEST"]._serialized_options = b'\212\265\030\014PriceRequest'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_QUERY_SECURITY_REQUEST"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_QUERY_SECURITY_REQUEST"]._serialized_options = b'\212\265\030\017SecurityRequest'
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_QUERY_TRANSACTION_REQUEST"]._loaded_options = None
-  _globals['_OBJECTTYPEPROTO'].values_by_name["OBJECT_TYPE_QUERY_TRANSACTION_REQUEST"]._serialized_options = b'\212\265\030\022TransactionRequest'
-  _globals['_OBJECTTYPEPROTO']._serialized_start=103
-  _globals['_OBJECTTYPEPROTO']._serialized_end=2206
+  _globals['_OBJECTTYPEPROTO']._serialized_start=69
+  _globals['_OBJECTTYPEPROTO']._serialized_end=1888
 # @@protoc_insertion_point(module_scope)

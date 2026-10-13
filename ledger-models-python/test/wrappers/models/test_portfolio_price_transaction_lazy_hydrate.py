@@ -7,6 +7,7 @@ behavior, asOf semantics, resolve failure)."""
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from decimal import Decimal
 from uuid import UUID, uuid4
 
 import pytest
@@ -18,7 +19,6 @@ from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.transaction.transaction_pb2 import TransactionProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
-from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 
 from fintekkers.wrappers.models.portfolio import Portfolio, set_portfolio_fetcher
 from fintekkers.wrappers.models.price import Price, set_price_fetcher
@@ -28,6 +28,7 @@ from fintekkers.wrappers.models import price as price_module
 from fintekkers.wrappers.models import transaction as transaction_module
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 from fintekkers.wrappers.util import link_cache
+from fintekkers.wrappers.models.util.decimal import encode_decimal
 
 
 def _as_of(epoch_seconds: int) -> LocalTimestampProto:
@@ -56,7 +57,7 @@ def _full_price(uuid_obj: UUID, as_of: LocalTimestampProto, value: str) -> Price
         uuid=UUIDProto(raw_uuid=uuid_obj.bytes),
         as_of=as_of,
         is_link=False,
-        price=DecimalValueProto(arbitrary_precision_value=value),
+        price=encode_decimal(Decimal(value)),
     )
 
 

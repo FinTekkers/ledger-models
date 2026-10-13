@@ -7,11 +7,12 @@ import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value
 import { ModelValidationError } from '../errors';
 import { UUID } from '../utils/uuid';
 import { COUPON_RATE, requireValid, validate } from './security_rules';
+import { encodeDecimal, parseDecimalString } from '../utils/decimal';
 
 const SECURITY_ID = '1f0e8a4c-58b1-4d0e-9a3c-7d2b6e5f4a10';
 
 function decimal(value: string): DecimalValueProto {
-    return new DecimalValueProto().setArbitraryPrecisionValue(value);
+    return encodeDecimal(parseDecimalString(value));
 }
 
 /** A security of `productType`; `coupon` undefined leaves coupon_rate unset. */

@@ -19,8 +19,6 @@ function testSerialization(): void {
 
 export function dummyPortfolio(): Portfolio {
     const portfolioProto = new PortfolioProto();
-    portfolioProto.setObjectClass('Portfolio');
-    portfolioProto.setVersion('0.0.1');
     portfolioProto.setUuid(UUID.random().toUUIDProto());
     portfolioProto.setPortfolioName('Test Portfolio');
     portfolioProto.setAsOf(ZonedDateTime.now().toProto());

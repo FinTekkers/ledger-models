@@ -16,6 +16,7 @@ from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.wrappers.models.security.mortgage_backed_security import (
     MortgageBackedSecurity,
 )
+from fintekkers.wrappers.models.util.decimal import decode_decimal
 
 
 _FACE = Decimal("1000.00")
@@ -63,8 +64,8 @@ def test_mbs_from_pricer_inputs_populates_bond_details_and_mbs_extension():
     bd = proto.bond_details
     assert bd.coupon_type == CouponTypeProto.FIXED
     assert bd.coupon_frequency == CouponFrequencyProto.MONTHLY
-    assert bd.coupon_rate.arbitrary_precision_value == str(_COUPON)
-    assert bd.face_value.arbitrary_precision_value == str(_FACE)
+    assert format(decode_decimal(bd.coupon_rate), "f") == str(_COUPON)
+    assert format(decode_decimal(bd.face_value), "f") == str(_FACE)
     assert (bd.issue_date.year, bd.issue_date.month, bd.issue_date.day) == (
         _ISSUE.year,
         _ISSUE.month,
@@ -80,13 +81,13 @@ def test_mbs_from_pricer_inputs_populates_bond_details_and_mbs_extension():
     ext = proto.mbs_extension
     assert ext.pool_number == _POOL_NUMBER
     assert ext.agency == _AGENCY
-    assert ext.wac.arbitrary_precision_value == str(_WAC)
+    assert format(decode_decimal(ext.wac), "f") == str(_WAC)
     assert ext.wam == _WAM
-    assert ext.pass_through_rate.arbitrary_precision_value == str(_PASS_THROUGH_RATE)
-    assert ext.current_factor.arbitrary_precision_value == str(_CURRENT_FACTOR)
-    assert ext.original_face_value.arbitrary_precision_value == str(_ORIGINAL_FACE_VALUE)
-    assert ext.current_upb.arbitrary_precision_value == str(_CURRENT_UPB)
-    assert ext.psa_speed.arbitrary_precision_value == str(_PSA_SPEED)
+    assert format(decode_decimal(ext.pass_through_rate), "f") == str(_PASS_THROUGH_RATE)
+    assert format(decode_decimal(ext.current_factor), "f") == str(_CURRENT_FACTOR)
+    assert format(decode_decimal(ext.original_face_value), "f") == str(_ORIGINAL_FACE_VALUE)
+    assert format(decode_decimal(ext.current_upb), "f") == str(_CURRENT_UPB)
+    assert format(decode_decimal(ext.psa_speed), "f") == str(_PSA_SPEED)
 
     # No TIPS / FRN extensions on an MBS.
     assert not proto.HasField("tips_extension")

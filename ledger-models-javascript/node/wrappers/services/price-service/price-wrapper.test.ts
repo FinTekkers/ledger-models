@@ -26,8 +26,6 @@ async function getSecurityUuidWithPrices(): Promise<{ uuid: UUID; client: PriceC
   const client = new PriceClient(PRICE_SERVICE_URL, grpc.credentials.createInsecure());
 
   const listRequest = new QueryPriceRequestProto();
-  listRequest.setObjectClass('PriceRequest');
-  listRequest.setVersion('0.0.1');
 
   const listIdsAsync = promisify(client.listIds.bind(client));
   const listResponse = await listIdsAsync(listRequest) as QueryPriceResponseProto;
@@ -35,8 +33,6 @@ async function getSecurityUuidWithPrices(): Promise<{ uuid: UUID; client: PriceC
   expect(priceUuids.length).toBeGreaterThan(0);
 
   const getRequest = new QueryPriceRequestProto();
-  getRequest.setObjectClass('PriceRequest');
-  getRequest.setVersion('0.0.1');
   getRequest.setUuidsList([priceUuids[0].getUuid()!]);
 
   const getByIdsAsync = promisify(client.getByIds.bind(client));
@@ -74,8 +70,8 @@ test('createOrUpdate accepts a Price wrapper object', async () => {
   const response = await priceService.createOrUpdate(price);
 
   expect(response).toBeTruthy();
-  expect(response.getObjectClass()).toBeTruthy();
-  console.log(`createOrUpdate (wrapper) response: ${response.getObjectClass()}`);
+  expect(response.getObjectType()).toBeTruthy();
+  console.log(`createOrUpdate (wrapper) response: ${response.getObjectType()}`);
 
   // Verify via search
   const results = await priceService.searchBySecurityId(securityUuid.toString());

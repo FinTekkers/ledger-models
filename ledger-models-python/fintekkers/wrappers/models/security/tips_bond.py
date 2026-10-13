@@ -23,6 +23,7 @@ from fintekkers.wrappers.models.security.bond_security import (
     _decimal_value,
     _local_date,
 )
+from fintekkers.wrappers.models.util.decimal import decode_decimal, is_decimal_set
 
 
 class TIPSBond(BondSecurity):
@@ -35,10 +36,9 @@ class TIPSBond(BondSecurity):
         ext = self.proto.tips_extension
         if not ext.HasField("base_cpi"):
             return None
-        value = ext.base_cpi.arbitrary_precision_value
-        if value == "":
+        if not is_decimal_set(ext.base_cpi):
             return None
-        return Decimal(value)
+        return decode_decimal(ext.base_cpi)
 
     def get_index_date(self) -> Optional[date]:
         self._ensure_hydrated()

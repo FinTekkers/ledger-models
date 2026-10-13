@@ -237,8 +237,6 @@ pub struct PriceProtoBuilder {
     valid_from: LocalTimestampWrapper,
     valid_to: Option<LocalTimestampWrapper>,
 
-    object_class: String,
-    version: String,
     is_link: bool,
 
     uuid: UUIDWrapper,
@@ -253,10 +251,6 @@ impl PriceProtoBuilder {
             valid_from: LocalTimestampWrapper::now(),
             valid_to: None,
 
-            //This is currently hardcoded, this will change in future versions
-            object_class: "Price".to_string(),
-            //The version is hardcoded, this will change in future versions
-            version: "0.0.1".to_string(),
             is_link: false,
 
             uuid: UUIDWrapper::new_random(),
@@ -277,16 +271,6 @@ impl PriceProtoBuilder {
 
     pub fn valid_to(mut self, valid_to: LocalTimestampWrapper) -> Self {
         self.valid_to = valid_to.into();
-        self
-    }
-
-    pub fn object_class(mut self, object_class: String) -> Self {
-        self.object_class = object_class;
-        self
-    }
-
-    pub fn version(mut self, version: String) -> Self {
-        self.version = version;
         self
     }
 
@@ -331,7 +315,7 @@ impl PriceProtoBuilder {
             price_type: 0,
             ..Default::default()
         };
-        object_types::stamp_str(proto, ObjectTypeProto::ObjectTypePrice, &self.object_class, &self.version)
+        Ok(object_types::stamp(proto, ObjectTypeProto::ObjectTypePrice))
     }
 
     pub fn dummy_price_wrapper(&self, price_decimal: Decimal) -> PriceWrapper {
@@ -356,6 +340,7 @@ mod test {
     use rust_decimal_macros::dec;
 
     use super::{Error, PriceProtoBuilder};
+    use crate::fintekkers::wrappers::models::utils::decimal::decode_decimal;
 
     // LM-272: unset as_of or a blank time zone is a typed validation error
     // naming the field, not a panic or a default.
@@ -387,7 +372,6 @@ mod test {
     }
 
     #[test]
-    #[allow(deprecated)]
     fn test_proto_to_date() {
         let number = dec!(-1.23);
 
@@ -396,22 +380,21 @@ mod test {
             .proto;
 
         let price = price_proto.price.unwrap();
-        let price_str = price.arbitrary_precision_value;
+        let price_str = decode_decimal(&price).unwrap().to_string();
 
         assert_eq!(price_str, number.to_string());
-        // Stage 1: the builder writes the compact form too.
         assert_eq!(price.unscaled_value, vec![0x85]);
         assert_eq!(price.scale, 2);
     }
 
     #[test]
-    fn test_price_builder_object_class_is_price() {
+    fn test_price_builder_object_type_is_price() {
         let number = dec!(100.0);
         let price_proto = PriceProtoBuilder::new()
             .dummy_price_wrapper(number)
             .proto;
 
-        assert_eq!(price_proto.object_class, "Price");
+        assert_eq!(price_proto.object_type(), crate::fintekkers::models::util::ObjectTypeProto::ObjectTypePrice);
     }
 
     // ---- Lazy hydrate (FinTekkers/second-brain — lazy-link-hydration ADR) ----
@@ -420,7 +403,7 @@ mod test {
     use crate::fintekkers::models::price::PriceProto;
     use crate::fintekkers::models::security::SecurityProto;
     use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto, DecimalValueProto};
-    use crate::fintekkers::wrappers::models::utils::decimal::legacy_decimal_proto;
+    use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto_str;
     use prost_types::Timestamp;
     use uuid::Uuid;
 
@@ -433,12 +416,10 @@ mod test {
 
     fn lh_full_price(uuid: Uuid, as_of: LocalTimestampProto, value: &str) -> PriceProto {
         PriceProto {
-            object_class: "Price".to_string(),
-            version: "0.0.1".to_string(),
             uuid: Some(UuidProto { raw_uuid: uuid.as_bytes().to_vec() }),
             as_of: Some(as_of),
             is_link: false,
-            price: Some(legacy_decimal_proto(value)),
+            price: Some(decimal_proto_str(value)),
             security: Some(SecurityProto { is_link: false, ..Default::default() }),
             ..Default::default()
         }
@@ -488,7 +469,7 @@ mod test {
                 uuid: Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() }),
                 ..Default::default()
             }),
-            price: Some(legacy_decimal_proto("100.25")),
+            price: Some(decimal_proto_str("100.25")),
             price_type: PriceTypeProto::Percentage as i32,
             ..Default::default()
         }
@@ -536,16 +517,17 @@ mod test {
     #[test]
     fn rules_price_zero_is_valid() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(legacy_decimal_proto("0"));
+        p.price = Some(decimal_proto_str("0"));
         assert!(rules_fields(&p).is_empty());
     }
 
     #[test]
     fn rules_price_value_is_not_checked() {
-        for value in ["-1", "abc"] {
+        let over_cap = DecimalValueProto { unscaled_value: vec![0x01], scale: 4097 };
+        for value in [decimal_proto_str("-1"), over_cap] {
             let mut p = rules_valid(Uuid::new_v4());
-            p.price = Some(legacy_decimal_proto(value));
-            assert!(rules_fields(&p).is_empty(), "{}", value);
+            p.price = Some(value.clone());
+            assert!(rules_fields(&p).is_empty(), "{:?}", value);
         }
     }
 
@@ -626,7 +608,7 @@ mod test {
     fn required_valid_values_have_no_errors() {
         for value in ["1.5", "0", "-1"] {
             let mut p = rules_valid(Uuid::new_v4());
-            p.price = Some(legacy_decimal_proto(value));
+            p.price = Some(decimal_proto_str(value));
             assert!(validate_price_required_fields(&p).is_empty(), "{}", value);
         }
     }
@@ -713,7 +695,7 @@ mod test {
     #[test]
     fn try_price_reads_legacy_string() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(legacy_decimal_proto("1.50"));
+        p.price = Some(decimal_proto_str("1.50"));
         let value = PriceWrapper::new(p).try_price().unwrap();
         assert_eq!(value.to_string(), "1.50");
     }
@@ -721,7 +703,7 @@ mod test {
     #[test]
     fn try_price_errors_name_price() {
         let mut p = rules_valid(Uuid::new_v4());
-        p.price = Some(legacy_decimal_proto("NaN"));
+        p.price = Some(DecimalValueProto { unscaled_value: vec![0x01], scale: 4097 });
         let err = PriceWrapper::new(p.clone()).try_price().unwrap_err();
         assert_eq!(err.violations()[0].field, "price");
         p.price = None;

@@ -19,6 +19,7 @@ import Portfolio from '../portfolio/portfolio';
 import { UUID } from '../utils/uuid';
 import { Decimal } from 'decimal.js';
 import { ModelValidationError } from '../errors';
+import { encodeDecimal, parseDecimalString } from '../utils/decimal';
 
 const AS_OF_RULE = "price.as_of defaults to the transaction's as_of (transaction.py / Price.create)";
 
@@ -33,15 +34,11 @@ const PRICE_AS_OF = timestamp(1718377200, 'Europe/London');
 
 function price(): PriceProto {
     return new PriceProto()
-        .setObjectClass('Price')
-        .setVersion('0.0.1')
-        .setPrice(new DecimalValueProto().setArbitraryPrecisionValue('99.5'));
+        .setPrice(encodeDecimal(parseDecimalString('99.5')));
 }
 
 function txnWithPrice(priceProto: PriceProto, withTxnAsOf: boolean = true): TransactionProto {
     const proto = new TransactionProto()
-        .setObjectClass('Transaction')
-        .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
         .setPrice(priceProto);
     if (withTxnAsOf) proto.setAsOf(TXN_AS_OF.clone());
@@ -131,14 +128,10 @@ test('link_price_passes_through_unchanged', () => {
 
 test('factory_path_fills_price_uuid_and_as_of', () => {
     const security = Security.create(new SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
         .setAssetClass('Equity')
         .setIssuerName('Test Issuer'));
     const portfolio = new Portfolio(new PortfolioProto()
-        .setObjectClass('Portfolio')
-        .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
         .setPortfolioName('Test Portfolio'));
     const txn = new Transaction({

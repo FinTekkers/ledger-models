@@ -24,6 +24,7 @@ from fintekkers.wrappers.models.security.bond_security import (
     _decimal_value,
     _local_date,
 )
+from fintekkers.wrappers.models.util.decimal import decode_decimal, is_decimal_set
 
 
 class MortgageBackedSecurity(BondSecurity):
@@ -48,10 +49,9 @@ class MortgageBackedSecurity(BondSecurity):
         ext = self.proto.mbs_extension
         if not ext.HasField("wac"):
             return None
-        value = ext.wac.arbitrary_precision_value
-        if value == "":
+        if not is_decimal_set(ext.wac):
             return None
-        return Decimal(value)
+        return decode_decimal(ext.wac)
 
     def get_wam(self) -> int:
         self._ensure_hydrated()
@@ -66,10 +66,9 @@ class MortgageBackedSecurity(BondSecurity):
         ext = self.proto.mbs_extension
         if not ext.HasField("pass_through_rate"):
             return None
-        value = ext.pass_through_rate.arbitrary_precision_value
-        if value == "":
+        if not is_decimal_set(ext.pass_through_rate):
             return None
-        return Decimal(value)
+        return decode_decimal(ext.pass_through_rate)
 
     def get_current_factor(self) -> Optional[Decimal]:
         self._ensure_hydrated()
@@ -78,10 +77,9 @@ class MortgageBackedSecurity(BondSecurity):
         ext = self.proto.mbs_extension
         if not ext.HasField("current_factor"):
             return None
-        value = ext.current_factor.arbitrary_precision_value
-        if value == "":
+        if not is_decimal_set(ext.current_factor):
             return None
-        return Decimal(value)
+        return decode_decimal(ext.current_factor)
 
     def get_original_face_value(self) -> Optional[Decimal]:
         self._ensure_hydrated()
@@ -90,10 +88,9 @@ class MortgageBackedSecurity(BondSecurity):
         ext = self.proto.mbs_extension
         if not ext.HasField("original_face_value"):
             return None
-        value = ext.original_face_value.arbitrary_precision_value
-        if value == "":
+        if not is_decimal_set(ext.original_face_value):
             return None
-        return Decimal(value)
+        return decode_decimal(ext.original_face_value)
 
     def get_current_upb(self) -> Optional[Decimal]:
         self._ensure_hydrated()
@@ -102,10 +99,9 @@ class MortgageBackedSecurity(BondSecurity):
         ext = self.proto.mbs_extension
         if not ext.HasField("current_upb"):
             return None
-        value = ext.current_upb.arbitrary_precision_value
-        if value == "":
+        if not is_decimal_set(ext.current_upb):
             return None
-        return Decimal(value)
+        return decode_decimal(ext.current_upb)
 
     def get_psa_speed(self) -> Optional[Decimal]:
         self._ensure_hydrated()
@@ -114,10 +110,9 @@ class MortgageBackedSecurity(BondSecurity):
         ext = self.proto.mbs_extension
         if not ext.HasField("psa_speed"):
             return None
-        value = ext.psa_speed.arbitrary_precision_value
-        if value == "":
+        if not is_decimal_set(ext.psa_speed):
             return None
-        return Decimal(value)
+        return decode_decimal(ext.psa_speed)
 
     @staticmethod
     def from_pricer_inputs(

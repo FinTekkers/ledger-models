@@ -1,4 +1,3 @@
-#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
 
 //! Integration tests for the `from_pricer_inputs` builder on
 //! `MortgageBackedSecurity`.
@@ -7,6 +6,9 @@
 //! has the expected `bond_details` and `mbs_extension` fields populated.
 //! Then encode → decode → re-wrap to confirm the proto round-trips and the
 //! wrapper re-reads what was written via every typed accessor.
+
+mod common;
+use common::Canonical;
 
 use chrono::NaiveDate;
 use prost::Message;
@@ -51,11 +53,11 @@ fn mbs_from_pricer_inputs_populates_bond_details_and_mbs_extension() {
 
     let bond = proto.bond_details.as_ref().expect("bond_details set");
     assert_eq!(
-        bond.face_value.as_ref().unwrap().arbitrary_precision_value,
+        bond.face_value.as_ref().unwrap().canonical(),
         "250000000"
     );
     assert_eq!(
-        bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value,
+        bond.coupon_rate.as_ref().unwrap().canonical(),
         "0.04"
     );
     assert_eq!(bond.coupon_type, CouponTypeProto::Fixed as i32);
@@ -69,7 +71,7 @@ fn mbs_from_pricer_inputs_populates_bond_details_and_mbs_extension() {
     assert_eq!(mbs.pool_number, "FN AS1234");
     assert_eq!(mbs.agency, AgencyProto::Fnma as i32);
     assert_eq!(
-        mbs.wac.as_ref().unwrap().arbitrary_precision_value,
+        mbs.wac.as_ref().unwrap().canonical(),
         "0.045"
     );
     assert_eq!(mbs.wam, 358);
@@ -77,32 +79,32 @@ fn mbs_from_pricer_inputs_populates_bond_details_and_mbs_extension() {
         mbs.pass_through_rate
             .as_ref()
             .unwrap()
-            .arbitrary_precision_value,
+            .canonical(),
         "0.04"
     );
     assert_eq!(
         mbs.current_factor
             .as_ref()
             .unwrap()
-            .arbitrary_precision_value,
+            .canonical(),
         "0.95"
     );
     assert_eq!(
         mbs.original_face_value
             .as_ref()
             .unwrap()
-            .arbitrary_precision_value,
+            .canonical(),
         "250000000"
     );
     assert_eq!(
         mbs.current_upb
             .as_ref()
             .unwrap()
-            .arbitrary_precision_value,
+            .canonical(),
         "237500000"
     );
     assert_eq!(
-        mbs.psa_speed.as_ref().unwrap().arbitrary_precision_value,
+        mbs.psa_speed.as_ref().unwrap().canonical(),
         "150"
     );
 

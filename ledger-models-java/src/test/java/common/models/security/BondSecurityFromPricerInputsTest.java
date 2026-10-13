@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,9 +29,9 @@ class BondSecurityFromPricerInputsTest {
         assertEquals(ProductTypeProto.TREASURY_NOTE, proto.getProductType());
         assertTrue(proto.hasBondDetails(), "bond_details must be populated");
         assertEquals(FACE.toPlainString(),
-                proto.getBondDetails().getFaceValue().getArbitraryPrecisionValue());
+                Decimals.text(proto.getBondDetails().getFaceValue()));
         assertEquals(COUPON.toPlainString(),
-                proto.getBondDetails().getCouponRate().getArbitraryPrecisionValue());
+                Decimals.text(proto.getBondDetails().getCouponRate()));
         assertEquals(CouponTypeProto.FIXED, proto.getBondDetails().getCouponType());
         assertEquals(CouponFrequencyProto.SEMIANNUALLY, proto.getBondDetails().getCouponFrequency());
         assertEquals(ISSUE.getYear(), proto.getBondDetails().getIssueDate().getYear());
@@ -49,8 +50,8 @@ class BondSecurityFromPricerInputsTest {
         assertEquals(original, decoded);
         assertEquals(ProductTypeProto.TREASURY_NOTE, decoded.getProductType());
         assertEquals(FACE.toPlainString(),
-                decoded.getBondDetails().getFaceValue().getArbitraryPrecisionValue());
+                Decimals.text(decoded.getBondDetails().getFaceValue()));
         assertEquals(COUPON.toPlainString(),
-                decoded.getBondDetails().getCouponRate().getArbitraryPrecisionValue());
+                Decimals.text(decoded.getBondDetails().getCouponRate()));
     }
 }

@@ -100,8 +100,6 @@ class LinkResolverTest {
 
     private static SecurityProto fullSecurity(UUID uuid, String issuer) {
         return SecurityProto.newBuilder()
-                .setObjectClass("Security")
-                .setVersion("0.0.1")
                 .setUuid(uuidProto(uuid))
                 .setIsLink(false)
                 .setIssuerName(issuer)
@@ -111,8 +109,6 @@ class LinkResolverTest {
 
     private static PortfolioProto fullPortfolio(UUID uuid, String name) {
         return PortfolioProto.newBuilder()
-                .setObjectClass("Portfolio")
-                .setVersion("0.0.1")
                 .setUuid(uuidProto(uuid))
                 .setIsLink(false)
                 .setPortfolioName(name)
@@ -133,8 +129,6 @@ class LinkResolverTest {
 
     private static PriceProto linkPrice(UUID securityUuid) {
         return PriceProto.newBuilder()
-                .setObjectClass("Price")
-                .setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(linkSecurity(securityUuid))
                 .build();
@@ -142,8 +136,6 @@ class LinkResolverTest {
 
     private static PriceProto linkPriceWithAsOf(UUID securityUuid, LocalTimestampProto asOf) {
         return PriceProto.newBuilder()
-                .setObjectClass("Price")
-                .setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(linkSecurityWithAsOf(securityUuid, asOf))
                 .build();
@@ -227,7 +219,6 @@ class LinkResolverTest {
 
         SecurityProto fullSec = fullSecurity(UUID.randomUUID(), "AAPL");
         PriceProto p = PriceProto.newBuilder()
-                .setObjectClass("Price")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(fullSec)
                 .build();
@@ -243,7 +234,6 @@ class LinkResolverTest {
         LinkResolver resolver = new LinkResolver(fetcher,
                 new RecordingPortfolioFetcher(new HashMap<>()));
         PriceProto p = PriceProto.newBuilder()
-                .setObjectClass("Price")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .build();
         // No security set on this Price.
@@ -379,19 +369,16 @@ class LinkResolverTest {
         LinkResolver resolver = new LinkResolver(secFetcher, portFetcher);
 
         TransactionProto t1 = TransactionProto.newBuilder()
-                .setObjectClass("Transaction")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(linkSecurity(secA))
                 .setPortfolio(PortfolioProto.newBuilder().setUuid(uuidProto(portX)).setIsLink(true).build())
                 .build();
         TransactionProto t2 = TransactionProto.newBuilder()
-                .setObjectClass("Transaction")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(linkSecurity(secB))
                 .setPortfolio(PortfolioProto.newBuilder().setUuid(uuidProto(portY)).setIsLink(true).build())
                 .build();
         TransactionProto t3 = TransactionProto.newBuilder()
-                .setObjectClass("Transaction")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(linkSecurity(secA))
                 .setPortfolio(PortfolioProto.newBuilder().setUuid(uuidProto(portX)).setIsLink(true).build())
@@ -415,8 +402,6 @@ class LinkResolverTest {
 
     private static SecurityProto fullSecurityWithAsOf(UUID uuid, String issuer, LocalTimestampProto asOf) {
         return SecurityProto.newBuilder()
-                .setObjectClass("Security")
-                .setVersion("0.0.1")
                 .setUuid(uuidProto(uuid))
                 .setAsOf(asOf)
                 .setIsLink(false)
@@ -426,8 +411,6 @@ class LinkResolverTest {
 
     private static PortfolioProto fullPortfolioWithAsOf(UUID uuid, String name, LocalTimestampProto asOf) {
         return PortfolioProto.newBuilder()
-                .setObjectClass("Portfolio")
-                .setVersion("0.0.1")
                 .setUuid(uuidProto(uuid))
                 .setAsOf(asOf)
                 .setIsLink(false)
@@ -489,7 +472,6 @@ class LinkResolverTest {
                 req -> { throw new IllegalStateException("portfolio fetcher should not be called"); });
 
         TransactionProto txn = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(linkSecurityWithAsOf(secUuid, asOf))
                 .build();
@@ -523,8 +505,6 @@ class LinkResolverTest {
         // TBILL-shape with bond_details so downstream Security.fromProto
         // dispatches to BondSecurity (the cast site we're protecting).
         return SecurityProto.newBuilder()
-                .setObjectClass("Security")
-                .setVersion("0.0.1")
                 .setUuid(uuidProto(uuid))
                 .setIsLink(false)
                 .setIssuerName("US TREASURY")
@@ -545,8 +525,6 @@ class LinkResolverTest {
 
     private static SecurityProto fullCashSecurity(UUID uuid) {
         return SecurityProto.newBuilder()
-                .setObjectClass("Security")
-                .setVersion("0.0.1")
                 .setUuid(uuidProto(uuid))
                 .setIsLink(false)
                 .setIssuerName("USD")
@@ -574,14 +552,12 @@ class LinkResolverTest {
         SecurityProto cashLink = linkSecurity(cashUuid);
 
         TransactionProto deposit = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setAsOf(asOfAt(1_700_000_000L))
                 .setSecurity(cashLink)
                 .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.DEPOSIT)
                 .build();
         TransactionProto maturation = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setAsOf(asOfAt(1_700_000_000L))
                 .setSecurity(bondLink)
@@ -589,14 +565,12 @@ class LinkResolverTest {
                 .addChildTransactions(deposit)
                 .build();
         TransactionProto withdrawal = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setAsOf(asOfAt(1_700_000_000L))
                 .setSecurity(cashLink)
                 .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.WITHDRAWAL)
                 .build();
         return TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setAsOf(asOfAt(1_700_000_000L))
                 .setSecurity(bondLink)
@@ -705,13 +679,11 @@ class LinkResolverTest {
         SecurityProto fullCash = fullCashSecurity(cashUuid);
 
         TransactionProto maturation = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(fullBond)
                 .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.MATURATION)
                 .build();
         TransactionProto buy = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(fullBond)
                 .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.BUY)
@@ -752,19 +724,16 @@ class LinkResolverTest {
                 req -> { throw new IllegalStateException("portfolio fetcher should not be called"); });
 
         TransactionProto withdrawal = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(fullCash)  // full
                 .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.WITHDRAWAL)
                 .build();
         TransactionProto maturation = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(bondLink)  // link
                 .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.MATURATION)
                 .build();
         TransactionProto buy = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setSecurity(bondLink)  // link
                 .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.BUY)
@@ -861,13 +830,11 @@ class LinkResolverTest {
                 .setIsLink(true).build();
 
         TransactionProto maturation = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setPortfolio(portLink)
                 .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.MATURATION)
                 .build();
         TransactionProto buy = TransactionProto.newBuilder()
-                .setObjectClass("Transaction").setVersion("0.0.1")
                 .setUuid(uuidProto(UUID.randomUUID()))
                 .setPortfolio(portLink)
                 .setTransactionType(fintekkers.models.transaction.TransactionTypeProto.BUY)

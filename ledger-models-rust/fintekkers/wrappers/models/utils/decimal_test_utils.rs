@@ -4,19 +4,18 @@
 //! `features = ["test-utils"]` under `[dev-dependencies]`. These are for
 //! tests, so bad input panics with a message instead of returning an error.
 //!
-//! - Builders: `string_only`, `compact_only` and `both_forms` build one
-//!   decimal in a stated form; `form_of` and `value_and_scale` read it back.
+//! - `compact_only` builds a decimal from a string; `value_and_scale` reads
+//!   it back.
 //! - `find_decimals` lists every `DecimalValueProto` inside a message, with
 //!   its path, by walking the message through reflection over the embedded
 //!   descriptor set. It never parses `{:?}` output.
-//! - `rewrite_decimals` returns a copy of a message with every decimal in
-//!   one form, keeping each value and scale.
+//!
+//! LM-318 deleted the decimal string form, and with it `string_only`,
+//! `both_forms`, `form_of`, `rewrite_decimals` and `DecimalForm`.
 
 use crate::fintekkers::models::util::DecimalValueProto;
 use crate::fintekkers::proto::LEDGER_MODELS_PROTO_FILE_DESCRIPTOR_SET;
-use crate::fintekkers::wrappers::models::utils::decimal::{
-    decode_decimal, encode_decimal, is_unset_decimal, parse_decimal_str, CompactDecimal,
-};
+use crate::fintekkers::wrappers::models::utils::decimal::{encode_decimal, parse_decimal_str};
 
 use num_bigint::BigInt;
 use prost::Message;
@@ -25,69 +24,10 @@ use std::sync::OnceLock;
 
 const DECIMAL_FULL_NAME: &str = "fintekkers.models.util.DecimalValueProto";
 
-/// Which of the two `DecimalValueProto` forms are set.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum DecimalForm {
-    /// Only the deprecated `arbitrary_precision_value` string (field 10), as
-    /// written before v0.4.34.
-    StringOnly,
-    /// Only `unscaled_value` and `scale` (fields 11 and 12).
-    CompactOnly,
-    /// Both, as `encode_decimal` writes them (stage 1).
-    Both,
-}
-
-fn parse(s: &str) -> CompactDecimal {
-    parse_decimal_str(s).unwrap_or_else(|e| panic!("not a decimal: {:?}: {}", s, e))
-}
-
-/// `v` written in `form`. The string form is the canonical string.
-#[allow(deprecated)]
-fn in_form(v: &CompactDecimal, form: DecimalForm) -> DecimalValueProto {
-    let both = encode_decimal(v);
-    match form {
-        DecimalForm::StringOnly => DecimalValueProto {
-            arbitrary_precision_value: both.arbitrary_precision_value,
-            ..Default::default()
-        },
-        DecimalForm::CompactOnly => DecimalValueProto {
-            unscaled_value: both.unscaled_value,
-            scale: both.scale,
-            ..Default::default()
-        },
-        DecimalForm::Both => both,
-    }
-}
-
-/// `s` in the deprecated string field only, kept as written (`1E+3` stays
-/// `1E+3`). Panics when `s` is not a decimal.
-#[allow(deprecated)]
-pub fn string_only(s: &str) -> DecimalValueProto {
-    parse(s);
-    DecimalValueProto { arbitrary_precision_value: s.to_string(), ..Default::default() }
-}
-
-/// `s` in the compact form only: `1.50` is unscaled 150, scale 2. Panics when
-/// `s` is not a decimal.
+/// `s` in the compact form: `1.50` is unscaled 150, scale 2. Panics when `s`
+/// is not a decimal.
 pub fn compact_only(s: &str) -> DecimalValueProto {
-    in_form(&parse(s), DecimalForm::CompactOnly)
-}
-
-/// `s` in both forms, as `encode_decimal` writes it. Panics when `s` is not a
-/// decimal.
-pub fn both_forms(s: &str) -> DecimalValueProto {
-    in_form(&parse(s), DecimalForm::Both)
-}
-
-/// The form `d` is in, or `None` when neither form is set.
-#[allow(deprecated)]
-pub fn form_of(d: &DecimalValueProto) -> Option<DecimalForm> {
-    match (!d.arbitrary_precision_value.is_empty(), !d.unscaled_value.is_empty()) {
-        (true, false) => Some(DecimalForm::StringOnly),
-        (false, true) => Some(DecimalForm::CompactOnly),
-        (true, true) => Some(DecimalForm::Both),
-        (false, false) => None,
-    }
+    encode_decimal(&parse_decimal_str(s).unwrap_or_else(|e| panic!("not a decimal: {:?}: {}", s, e)))
 }
 
 /// The compact form as `(unscaled, scale)`, or `None` when it is unset.
@@ -192,39 +132,6 @@ pub fn find_decimals<M: Message>(msg: &M) -> Vec<(String, DecimalValueProto)> {
     out
 }
 
-fn rewrite_message(msg: &mut DynamicMessage, form: DecimalForm) {
-    for (_, value) in msg.fields_mut() {
-        rewrite_value(value, form);
-    }
-}
-
-fn rewrite_value(value: &mut Value, form: DecimalForm) {
-    match value {
-        Value::Message(m) if is_decimal(m) => {
-            let d: DecimalValueProto = m.transcode_to().expect("DecimalValueProto transcodes");
-            if is_unset_decimal(&d) {
-                return;
-            }
-            let v = decode_decimal(&d).unwrap_or_else(|e| panic!("decimal {:?} does not decode: {}", d, e));
-            *m = DynamicMessage::decode(m.descriptor(), in_form(&v, form).encode_to_vec().as_slice())
-                .expect("DecimalValueProto decodes");
-        }
-        Value::Message(m) => rewrite_message(m, form),
-        Value::List(items) => items.iter_mut().for_each(|item| rewrite_value(item, form)),
-        Value::Map(entries) => entries.values_mut().for_each(|item| rewrite_value(item, form)),
-        _ => {}
-    }
-}
-
-/// A copy of `msg` with every set decimal rewritten in `form`, keeping its
-/// value and scale. Unset decimals are left as they are. Panics on a decimal
-/// that does not decode, and on the types `find_decimals` rejects.
-pub fn rewrite_decimals<M: Message + Default>(msg: &M, form: DecimalForm) -> M {
-    let mut dynamic = to_dynamic(msg);
-    rewrite_message(&mut dynamic, form);
-    dynamic.transcode_to().expect("rewritten message decodes")
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -249,7 +156,7 @@ mod tests {
     fn a_lone_decimal_is_not_walked_into() {
         // The walk starts at the message's fields, so a decimal's own fields
         // (bytes, uint32, string) are never listed.
-        assert!(find_decimals(&both_forms("1.50")).is_empty());
+        assert!(find_decimals(&compact_only("1.50")).is_empty());
     }
 
     #[test]

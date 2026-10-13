@@ -34,19 +34,19 @@ public final class QueryTransactionRequestProtos {
       "il/uuid.proto\032,fintekkers/models/util/lo" +
       "cal_timestamp.proto\0320fintekkers/models/p" +
       "osition/position_filter.proto\032(fintekker" +
-      "s/models/util/object_type.proto\"\270\003\n\034Quer" +
-      "yTransactionRequestProto\022\030\n\014object_class" +
-      "\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013objec" +
-      "t_type\030\351\007 \001(\0162\'.fintekkers.models.util.O" +
-      "bjectTypeProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026" +
-      "\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030" +
-      "\354\007 \001(\r\0220\n\005uuIds\030\025 \003(\0132!.fintekkers.model" +
-      "s.util.UUIDProto\022Q\n\030search_transaction_i" +
-      "nput\030\026 \001(\0132/.fintekkers.models.position." +
-      "PositionFilterProto\022:\n\005as_of\030\027 \001(\0132+.fin" +
-      "tekkers.models.util.LocalTimestampProto\022" +
-      "\r\n\005limit\030\030 \001(\005\022\022\n\npage_token\0303 \001(\tB!B\035Qu" +
-      "eryTransactionRequestProtosP\001b\006proto3"
+      "s/models/util/object_type.proto\032$fintekk" +
+      "ers/models/util/version.proto\"\367\002\n\034QueryT" +
+      "ransactionRequestProto\022<\n\013object_type\030\001 " +
+      "\001(\0162\'.fintekkers.models.util.ObjectTypeP" +
+      "roto\0225\n\007version\030\002 \001(\0132$.fintekkers.model" +
+      "s.util.VersionProto\0220\n\005uuIds\030\025 \003(\0132!.fin" +
+      "tekkers.models.util.UUIDProto\022Q\n\030search_" +
+      "transaction_input\030\026 \001(\0132/.fintekkers.mod" +
+      "els.position.PositionFilterProto\022:\n\005as_o" +
+      "f\030\027 \001(\0132+.fintekkers.models.util.LocalTi" +
+      "mestampProto\022\r\n\005limit\030\030 \001(\005\022\022\n\npage_toke" +
+      "n\0303 \001(\tB!B\035QueryTransactionRequestProtos" +
+      "P\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -55,17 +55,19 @@ public final class QueryTransactionRequestProtos {
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.models.position.PositionFilterProtos.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_transaction_QueryTransactionRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_transaction_QueryTransactionRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_transaction_QueryTransactionRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "UuIds", "SearchTransactionInput", "AsOf", "Limit", "PageToken", });
+        new java.lang.String[] { "ObjectType", "Version", "UuIds", "SearchTransactionInput", "AsOf", "Limit", "PageToken", });
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.position.PositionFilterProtos.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

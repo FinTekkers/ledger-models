@@ -27,9 +27,10 @@ from fintekkers.models.valuation import cashflow_pb2 as fintekkers_dot_models_do
 from fintekkers.requests.valuation import valuation_request_pb2 as fintekkers_dot_requests_dot_valuation_dot_valuation__request__pb2
 from fintekkers.requests.util.errors import summary_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n6fintekkers/requests/valuation/valuation_response.proto\x12\x1d\x66intekkers.requests.valuation\x1a.fintekkers/models/position/position_util.proto\x1a*fintekkers/models/valuation/cashflow.proto\x1a\x35\x66intekkers/requests/valuation/valuation_request.proto\x1a-fintekkers/requests/util/errors/summary.proto\x1a(fintekkers/models/util/object_type.proto\"\xe4\x03\n\x16ValuationResponseProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12O\n\x11valuation_request\x18\x14 \x01(\x0b\x32\x34.fintekkers.requests.valuation.ValuationRequestProto\x12\x44\n\x0fmeasure_results\x18\x1e \x03(\x0b\x32+.fintekkers.models.position.MeasureMapEntry\x12>\n\x07summary\x18( \x01(\x0b\x32-.fintekkers.requests.util.errors.SummaryProto\x12=\n\tcashflows\x18\x32 \x03(\x0b\x32*.fintekkers.models.valuation.CashflowProtoB\x1b\x42\x17ValuationResponseProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n6fintekkers/requests/valuation/valuation_response.proto\x12\x1d\x66intekkers.requests.valuation\x1a.fintekkers/models/position/position_util.proto\x1a*fintekkers/models/valuation/cashflow.proto\x1a\x35\x66intekkers/requests/valuation/valuation_request.proto\x1a-fintekkers/requests/util/errors/summary.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xa3\x03\n\x16ValuationResponseProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12O\n\x11valuation_request\x18\x14 \x01(\x0b\x32\x34.fintekkers.requests.valuation.ValuationRequestProto\x12\x44\n\x0fmeasure_results\x18\x1e \x03(\x0b\x32+.fintekkers.models.position.MeasureMapEntry\x12>\n\x07summary\x18( \x01(\x0b\x32-.fintekkers.requests.util.errors.SummaryProto\x12=\n\tcashflows\x18\x32 \x03(\x0b\x32*.fintekkers.models.valuation.CashflowProtoB\x1b\x42\x17ValuationResponseProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -37,10 +38,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.valuati
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\027ValuationResponseProtosP\001'
-  _globals['_VALUATIONRESPONSEPROTO'].fields_by_name['object_class']._loaded_options = None
-  _globals['_VALUATIONRESPONSEPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_VALUATIONRESPONSEPROTO'].fields_by_name['version']._loaded_options = None
-  _globals['_VALUATIONRESPONSEPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_VALUATIONRESPONSEPROTO']._serialized_start=326
-  _globals['_VALUATIONRESPONSEPROTO']._serialized_end=810
+  _globals['_VALUATIONRESPONSEPROTO']._serialized_start=364
+  _globals['_VALUATIONRESPONSEPROTO']._serialized_end=783
 # @@protoc_insertion_point(module_scope)

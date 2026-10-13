@@ -75,7 +75,6 @@ proto.fintekkers.models.util.DecimalValueProto.prototype.toObject = function(opt
  */
 proto.fintekkers.models.util.DecimalValueProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    arbitraryPrecisionValue: jspb.Message.getFieldWithDefault(msg, 10, ""),
     unscaledValue: msg.getUnscaledValue_asB64(),
     scale: jspb.Message.getFieldWithDefault(msg, 12, 0)
   };
@@ -114,10 +113,6 @@ proto.fintekkers.models.util.DecimalValueProto.deserializeBinaryFromReader = fun
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 10:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setArbitraryPrecisionValue(value);
-      break;
     case 11:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setUnscaledValue(value);
@@ -155,13 +150,6 @@ proto.fintekkers.models.util.DecimalValueProto.prototype.serializeBinary = funct
  */
 proto.fintekkers.models.util.DecimalValueProto.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getArbitraryPrecisionValue();
-  if (f.length > 0) {
-    writer.writeString(
-      10,
-      f
-    );
-  }
   f = message.getUnscaledValue_asU8();
   if (f.length > 0) {
     writer.writeBytes(
@@ -176,24 +164,6 @@ proto.fintekkers.models.util.DecimalValueProto.serializeBinaryToWriter = functio
       f
     );
   }
-};
-
-
-/**
- * optional string arbitrary_precision_value = 10;
- * @return {string}
- */
-proto.fintekkers.models.util.DecimalValueProto.prototype.getArbitraryPrecisionValue = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.fintekkers.models.util.DecimalValueProto} returns this
- */
-proto.fintekkers.models.util.DecimalValueProto.prototype.setArbitraryPrecisionValue = function(value) {
-  return jspb.Message.setProto3StringField(this, 10, value);
 };
 
 

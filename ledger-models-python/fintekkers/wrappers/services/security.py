@@ -138,7 +138,7 @@ class SecurityService:
         """
         request = stamp(QuerySecurityRequestProto(
             uuIds=[UUIDProto(raw_uuid=uuid.bytes)],
-        ), ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, "SecurityRequest", "0.0.1")
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST)
         if as_of is not None:
             request.as_of.CopyFrom(as_of)
         response = self.stub.GetByIds(request)

@@ -1,13 +1,15 @@
-#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
 
 //! Step 3 tests — BondInput / ProductInput proto round-trips.
 //!
 //! For each new message type: construct → encode to bytes → decode → verify all fields match.
 
+mod common;
+use common::{decimal, Canonical};
+
 use ledger_models::fintekkers::models::security::{
     BondDetailsProto, CouponFrequencyProto, CouponTypeProto, SecurityProto, ProductTypeProto,
 };
-use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
+use ledger_models::fintekkers::models::util::LocalDateProto;
 use ledger_models::fintekkers::models::security::index::IndexTypeProto;
 use ledger_models::fintekkers::requests::valuation::{
     product_input, BondInput, ProductInput, SecurityBasedCurveInput, SecurityCurvePoint,
@@ -15,9 +17,6 @@ use ledger_models::fintekkers::requests::valuation::{
 };
 use prost::Message;
 
-fn decimal(value: &str) -> DecimalValueProto {
-    DecimalValueProto { arbitrary_precision_value: value.to_string(), ..Default::default() }
-}
 
 fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
     LocalDateProto { year, month, day }
@@ -94,7 +93,7 @@ fn bond_input_clean_price_survives_roundtrip() {
 
     match parsed.input.unwrap() {
         product_input::Input::Bond(b) => {
-            assert_eq!(b.clean_price.unwrap().arbitrary_precision_value, "98.50");
+            assert_eq!(b.clean_price.unwrap().canonical(), "98.50");
         }
         other => panic!("Expected Bond variant, got {:?}", other),
     }
@@ -120,8 +119,8 @@ fn bond_input_security_fields_survive_roundtrip() {
             let bond = sec.bond_details.unwrap();
             assert_eq!(bond.coupon_type(), CouponTypeProto::Fixed);
             assert_eq!(bond.coupon_frequency(), CouponFrequencyProto::Semiannually);
-            assert_eq!(bond.coupon_rate.unwrap().arbitrary_precision_value, "4.5");
-            assert_eq!(bond.face_value.unwrap().arbitrary_precision_value, "1000");
+            assert_eq!(bond.coupon_rate.unwrap().canonical(), "4.5");
+            assert_eq!(bond.face_value.unwrap().canonical(), "1000");
             let mat = bond.maturity_date.unwrap();
             assert_eq!(mat.year, 2030);
             assert_eq!(mat.month, 11);
@@ -146,14 +145,14 @@ fn bond_input_with_benchmark_curve_survives_roundtrip() {
 
     match parsed.input.unwrap() {
         product_input::Input::Bond(b) => {
-            assert_eq!(b.clean_price.unwrap().arbitrary_precision_value, "99.75");
+            assert_eq!(b.clean_price.unwrap().canonical(), "99.75");
             let curve = b.benchmark_curve.unwrap();
             assert_eq!(curve.index(), IndexTypeProto::UsTreasury);
             assert_eq!(curve.points.len(), 5);
             let mid_sec = curve.points[2].security.as_ref().unwrap();
             assert_eq!(
                 mid_sec.bond_details.as_ref().unwrap()
-                    .coupon_rate.as_ref().unwrap().arbitrary_precision_value,
+                    .coupon_rate.as_ref().unwrap().canonical(),
                 "4.00"
             );
         }
@@ -169,8 +168,6 @@ fn valuation_request_with_bond_product_input_survives_roundtrip() {
         benchmark_curve: None,
     };
     let original = ValuationRequestProto {
-        object_class: "ValuationRequest".into(),
-        version: "0.0.1".into(),
         product_input: Some(ProductInput {
             input: Some(product_input::Input::Bond(bond)),
         }),
@@ -179,11 +176,10 @@ fn valuation_request_with_bond_product_input_survives_roundtrip() {
 
     let parsed = roundtrip_valuation_request(&original);
 
-    assert_eq!(parsed.object_class, "ValuationRequest");
     let pi = parsed.product_input.unwrap();
     match pi.input.unwrap() {
         product_input::Input::Bond(b) => {
-            assert_eq!(b.clean_price.unwrap().arbitrary_precision_value, "98.50");
+            assert_eq!(b.clean_price.unwrap().canonical(), "98.50");
         }
         other => panic!("Expected Bond variant, got {:?}", other),
     }

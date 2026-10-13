@@ -5,6 +5,7 @@ from typing import Optional
 from fintekkers.models.security.bond.issuance_pb2 import IssuanceProto
 from fintekkers.models.security.bond.auction_type_pb2 import AuctionTypeProto
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+from fintekkers.wrappers.models.util.decimal import decode_decimal, is_decimal_set
 
 
 class Issuance:
@@ -53,10 +54,9 @@ class Issuance:
         if not self.proto.HasField(field_name):
             return None
         dec_proto = getattr(self.proto, field_name)
-        value = dec_proto.arbitrary_precision_value
-        if value == "":
+        if not is_decimal_set(dec_proto):
             return None
-        return Decimal(value)
+        return decode_decimal(dec_proto)
 
 
 class IssuanceHistory:
@@ -97,7 +97,7 @@ class IssuanceHistory:
 
             if (
                 issue.mature_security_amount is not None
-                and issue.mature_security_amount.arbitrary_precision_value != ""
+                and is_decimal_set(issue.mature_security_amount)
             ):
                 mature_security_amount: float = ProtoSerializationUtil.deserialize(
                     issue.mature_security_amount
@@ -105,7 +105,7 @@ class IssuanceHistory:
 
             if (
                 issue.total_accepted is not None
-                and issue.total_accepted.arbitrary_precision_value != ""
+                and is_decimal_set(issue.total_accepted)
             ):
                 total_accepted: float = ProtoSerializationUtil.deserialize(
                     issue.total_accepted
@@ -113,8 +113,7 @@ class IssuanceHistory:
 
             if (
                 issue.post_auction_outstanding_quantity is not None
-                and issue.post_auction_outstanding_quantity.arbitrary_precision_value
-                != ""
+                and is_decimal_set(issue.post_auction_outstanding_quantity)
             ):
                 post_auction_outstanding_quantity: float = (
                     ProtoSerializationUtil.deserialize(

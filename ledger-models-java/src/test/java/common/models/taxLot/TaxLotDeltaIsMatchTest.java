@@ -28,8 +28,6 @@ class TaxLotDeltaIsMatchTest {
 
     private static TaxLotDelta taxLotWithAssetClass(String assetClass) {
         SecurityProto securityProto = SecurityProto.newBuilder()
-                .setObjectClass("Security")
-                .setVersion("0.0.1")
                 .setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()))
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(ZonedDateTime.now()))
                 .setIssuerName("Test Issuer")

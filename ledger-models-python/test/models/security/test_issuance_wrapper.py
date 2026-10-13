@@ -30,7 +30,6 @@ class Testing(unittest.TestCase):
                     time_zone="America/New_York",
                     timestamp=Timestamp(seconds=timstamp_seconds, nanos=0),
                 ),
-                version="0.0.1",
                 auction_announcement_date=ProtoSerializationUtil.serialize(tmp_date),
                 total_accepted=ProtoSerializationUtil.serialize(Decimal("100000000.00")),
                 post_auction_outstanding_quantity=ProtoSerializationUtil.serialize(

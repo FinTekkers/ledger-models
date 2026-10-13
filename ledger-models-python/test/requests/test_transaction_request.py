@@ -10,6 +10,7 @@ from fintekkers.requests.transaction.create_transaction_request_pb2 import Creat
 from fintekkers.requests.transaction.query_transaction_request_pb2 import QueryTransactionRequestProto
 
 from fintekkers.wrappers.requests.transaction import CreateTransactionRequest, QueryTransactionRequest
+from fintekkers.wrappers.models.util.decimal import decode_decimal
 
 def test_create_transaction_request():
     request = CreateTransactionRequest.create_transaction_request(
@@ -20,8 +21,8 @@ def test_create_transaction_request():
 
     assert proto.create_transaction_input.position_status == PositionStatusProto.HYPOTHETICAL
     assert proto.create_transaction_input.transaction_type == TransactionTypeProto.SELL
-    assert proto.create_transaction_input.quantity.arbitrary_precision_value == "1"
-    assert proto.create_transaction_input.price.price.arbitrary_precision_value == "50.0"
+    assert format(decode_decimal(proto.create_transaction_input.quantity), "f") == "1"
+    assert format(decode_decimal(proto.create_transaction_input.price.price), "f") == "50.0"
     
 
 def test_query_transaction_request():

@@ -62,8 +62,6 @@ class PortfolioLazyHydrateRaceTest {
         UUIDProto uuidProto = ProtoSerializationUtil.serializeUUID(uuid);
 
         PortfolioProto resolved = PortfolioProto.newBuilder()
-                .setObjectClass("Portfolio")
-                .setVersion("0.0.1")
                 .setUuid(uuidProto)
                 .setAsOf(asOfProto)
                 .setIsLink(false)

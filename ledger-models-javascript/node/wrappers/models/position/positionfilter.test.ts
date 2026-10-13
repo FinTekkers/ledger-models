@@ -8,6 +8,7 @@ import { IdentifierTypeProto } from '../../../fintekkers/models/security/identif
 import { unpack } from '../utils/serialization.util';
 import { Any } from 'google-protobuf/google/protobuf/any_pb';
 import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
+import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
 
 test('test PositionFilter.addEqualsStringFilter adds string filter', () => {
     testAddEqualsStringFilter();
@@ -145,8 +146,8 @@ function testToProto(): void {
 
     const proto = filter.toProto();
     assert(proto !== null && proto !== undefined, 'Should return a PositionFilterProto');
-    assert(proto.getObjectClass() === 'PositionFilter', 'Object class should be "PositionFilter"');
-    assert(proto.getVersion() === '0.0.1', 'Version should be "0.0.1"');
+    assert(proto.getObjectType() === ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER, 'Object type should be OBJECT_TYPE_POSITION_FILTER');
+    assert(proto.getVersion()?.getPatch() === 1, 'Version should be 0.0.1');
 
     const filtersList = proto.getFiltersList();
     assert(filtersList.length === 2, 'Should have two filters in proto');

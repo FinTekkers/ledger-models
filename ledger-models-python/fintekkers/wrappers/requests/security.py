@@ -120,7 +120,7 @@ class CreateSecurityRequest:
                 post_auction_outstanding_quantity=ProtoSerializationUtil.serialize(
                     post_auction_outstanding_quantity
                 ),
-            ), ObjectTypeProto.OBJECT_TYPE_ISSUANCE, "", "0.0.1")
+            ), ObjectTypeProto.OBJECT_TYPE_ISSUANCE)
             issuance_list.append(issuance)
 
         coupon_rate_proto = ProtoSerializationUtil.serialize(coupon_rate)

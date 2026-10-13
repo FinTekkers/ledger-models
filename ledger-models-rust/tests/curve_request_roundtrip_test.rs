@@ -1,19 +1,15 @@
-#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
 
 //! Round-trip tests for CurveInputProto fields and the
 //! CurveRequestProto.forward_term_years field.
 
+mod common;
+use common::{decimal, Canonical};
+
 use ledger_models::fintekkers::models::security::{BondDetailsProto, SecurityProto, ProductTypeProto};
-use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
+use ledger_models::fintekkers::models::util::LocalDateProto;
 use ledger_models::fintekkers::requests::valuation::{CurveInputProto, CurveRequestProto};
 use prost::Message;
 
-fn decimal(value: &str) -> DecimalValueProto {
-    DecimalValueProto {
-        arbitrary_precision_value: value.to_string(),
-        ..Default::default()
-    }
-}
 
 fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
     LocalDateProto { year, month, day }
@@ -50,13 +46,13 @@ fn curve_input_tenor_and_clean_price_survive_roundtrip() {
         .tenor
         .as_ref()
         .expect("tenor should round-trip");
-    assert_eq!(parsed_tenor.arbitrary_precision_value, "10.0");
+    assert_eq!(parsed_tenor.canonical(), "10.0");
 
     let parsed_clean_price = parsed
         .clean_price
         .as_ref()
         .expect("clean_price should round-trip");
-    assert_eq!(parsed_clean_price.arbitrary_precision_value, "99.50");
+    assert_eq!(parsed_clean_price.canonical(), "99.50");
 
     let parsed_sec = parsed.security.as_ref().expect("security should round-trip");
     assert_eq!(parsed_sec.product_type, ProductTypeProto::TreasuryNote as i32);
@@ -102,7 +98,7 @@ fn curve_input_synthetic_cmt_shape_survives_roundtrip() {
     let parsed = roundtrip(&original);
     assert!(parsed.security.is_none());
     assert_eq!(
-        parsed.tenor.as_ref().unwrap().arbitrary_precision_value,
+        parsed.tenor.as_ref().unwrap().canonical(),
         "0.5"
     );
     assert!(parsed.clean_price.is_none());

@@ -8,20 +8,16 @@ import * as jspb from "google-protobuf";
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class StrategyProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): StrategyProto;
-    getVersion(): string;
-    setVersion(value: string): StrategyProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): StrategyProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): StrategyProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): StrategyProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): StrategyProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): StrategyProto;
 
     hasUuid(): boolean;
     clearUuid(): void;
@@ -64,12 +60,8 @@ export class StrategyProto extends jspb.Message {
 
 export namespace StrategyProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         uuid?: fintekkers_models_util_uuid_pb.UUIDProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         isLink: boolean,

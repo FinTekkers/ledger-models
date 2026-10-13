@@ -93,8 +93,6 @@ function makeAsOf(epochSeconds: number): LocalTimestampProto {
 
 function fullSecurity(uuid: UUID, issuerName: string): SecurityProto {
   const proto = new SecurityProto();
-  proto.setObjectClass('Security');
-  proto.setVersion('0.0.1');
   proto.setUuid(uuid.toUUIDProto());
   proto.setIsLink(false);
   proto.setIssuerName(issuerName);
@@ -111,12 +109,9 @@ function linkPrice(securityUuid: UUID, priceValue: string, asOf?: LocalTimestamp
   if (asOf) linkSec.setAsOf(asOf);
 
   const priceProto = new PriceProto();
-  priceProto.setObjectClass('Price');
-  priceProto.setVersion('0.0.1');
   priceProto.setUuid(UUID.random().toUUIDProto());
   priceProto.setSecurity(linkSec);
-  const dv = new DecimalValueProto();
-  dv.setArbitraryPrecisionValue(priceValue);
+  const dv = encodeDecimal(parseDecimalString(priceValue));
   priceProto.setPrice(dv);
   return new Price(priceProto);
 }
@@ -244,11 +239,9 @@ describe('LinkResolver', () => {
     // Build a Price whose embedded Security is NOT a link (full entity).
     const fullSec = fullSecurity(UUID.random(), 'AAPL');
     const priceProto = new PriceProto();
-    priceProto.setObjectClass('Price');
     priceProto.setUuid(UUID.random().toUUIDProto());
     priceProto.setSecurity(fullSec);
-    const dv = new DecimalValueProto();
-    dv.setArbitraryPrecisionValue('100');
+    const dv = encodeDecimal(parseDecimalString('100'));
     priceProto.setPrice(dv);
     const price = new Price(priceProto);
 
@@ -266,11 +259,9 @@ describe('LinkResolver', () => {
     });
 
     const priceProto = new PriceProto();
-    priceProto.setObjectClass('Price');
     priceProto.setUuid(UUID.random().toUUIDProto());
     // No security set on this price.
-    const dv = new DecimalValueProto();
-    dv.setArbitraryPrecisionValue('100');
+    const dv = encodeDecimal(parseDecimalString('100'));
     priceProto.setPrice(dv);
     const price = new Price(priceProto);
 
@@ -415,6 +406,7 @@ describe('LinkResolver', () => {
 
 import * as LinkCacheModule from './link-cache';
 import { ZonedDateTime } from '../models/utils/datetime';
+import { encodeDecimal, parseDecimalString } from '../models/utils/decimal';
 
 describe('LinkResolver write-through to LinkCache', () => {
   beforeEach(() => {

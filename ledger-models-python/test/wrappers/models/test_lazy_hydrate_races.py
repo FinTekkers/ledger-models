@@ -59,8 +59,6 @@ def test_portfolio_concurrent_accessor_reads_on_shared_uuid_succeed():
     as_of_proto = _as_of()
     uuid_proto = UUIDProto(raw_uuid=uuid.bytes)
     resolved = PortfolioProto(
-        object_class="Portfolio",
-        version="0.0.1",
         uuid=uuid_proto,
         as_of=as_of_proto,
         is_link=False,
@@ -106,8 +104,6 @@ def test_transaction_concurrent_accessor_reads_on_shared_uuid_succeed():
     as_of_proto = _as_of()
     uuid_proto = UUIDProto(raw_uuid=uuid.bytes)
     resolved = TransactionProto(
-        object_class="Transaction",
-        version="0.0.1",
         uuid=uuid_proto,
         as_of=as_of_proto,
         is_link=False,

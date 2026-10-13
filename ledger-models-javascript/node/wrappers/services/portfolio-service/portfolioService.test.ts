@@ -19,8 +19,6 @@ test('test creating a portfolio against the api.fintekkers.org portfolio service
   const portfolioService = new PortfolioService();
 
   const portfolio = new PortfolioProto();
-  portfolio.setObjectClass('Portfolio');
-  portfolio.setVersion('0.0.1');
   portfolio.setUuid(id_proto);
   portfolio.setPortfolioName('TEST PORTFOLIO');
   portfolio.setAsOf(now.toProto());

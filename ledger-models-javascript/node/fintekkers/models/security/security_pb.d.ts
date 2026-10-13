@@ -19,20 +19,16 @@ import * as fintekkers_models_security_coupon_frequency_pb from "../../../fintek
 import * as fintekkers_models_security_coupon_type_pb from "../../../fintekkers/models/security/coupon_type_pb";
 import * as fintekkers_models_security_index_index_type_pb from "../../../fintekkers/models/security/index/index_type_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class SecurityProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): SecurityProto;
-    getVersion(): string;
-    setVersion(value: string): SecurityProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): SecurityProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): SecurityProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): SecurityProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): SecurityProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): SecurityProto;
 
     hasUuid(): boolean;
     clearUuid(): void;
@@ -135,12 +131,8 @@ export class SecurityProto extends jspb.Message {
 
 export namespace SecurityProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         uuid?: fintekkers_models_util_uuid_pb.UUIDProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         isLink: boolean,

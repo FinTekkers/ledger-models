@@ -69,7 +69,7 @@ public class PortfolioService {
      * Returns {@code null} when no record exists for the UUID.
      */
     public PortfolioProto getByUuid(UUID uuid, ZonedDateTime asOf) {
-        QueryPortfolioRequestProto.Builder reqB = ObjectTypes.stamp(QueryPortfolioRequestProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, "PortfolioRequest", "0.0.1")
+        QueryPortfolioRequestProto.Builder reqB = ObjectTypes.stamp(QueryPortfolioRequestProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST)
                 .addUuIds(ProtoSerializationUtil.serializeUUID(uuid));
         if (asOf != null) {
             reqB.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));

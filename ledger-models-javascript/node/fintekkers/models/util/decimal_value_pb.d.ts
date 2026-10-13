@@ -7,10 +7,6 @@
 import * as jspb from "google-protobuf";
 
 export class DecimalValueProto extends jspb.Message { 
-    /** @deprecated Use decodeDecimal / encodeDecimal from wrappers/models/utils/decimal (LM-294). */
-    getArbitraryPrecisionValue(): string;
-    /** @deprecated Use decodeDecimal / encodeDecimal from wrappers/models/utils/decimal (LM-294). */
-    setArbitraryPrecisionValue(value: string): DecimalValueProto;
     getUnscaledValue(): Uint8Array | string;
     getUnscaledValue_asU8(): Uint8Array;
     getUnscaledValue_asB64(): string;
@@ -30,7 +26,6 @@ export class DecimalValueProto extends jspb.Message {
 
 export namespace DecimalValueProto {
     export type AsObject = {
-        arbitraryPrecisionValue: string,
         unscaledValue: Uint8Array | string,
         scale: number,
     }

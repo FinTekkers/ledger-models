@@ -43,15 +43,11 @@ function checkUUID() {
 
 function checkStrategyAllocationProtoDeserialize(): void {
     const proto = new StrategyAllocationProto();
-    proto.setObjectClass('StrategyAllocation');
-    proto.setVersion('0.0.1');
     proto.setIsLink(false);
 
     const deserialized = ProtoSerializationUtil.deserialize(proto) as StrategyAllocationProto;
 
     assert.strictEqual(deserialized, proto, 'deserialize returns same StrategyAllocationProto instance');
-    assert.equal(deserialized.getObjectClass(), 'StrategyAllocation');
-    assert.equal(deserialized.getVersion(), '0.0.1');
     assert.equal(deserialized.getIsLink(), false);
 }
 

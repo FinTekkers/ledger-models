@@ -43,8 +43,6 @@ class TransactionSecurityDefaultsTest {
 
     private static SecurityProto.Builder currencyBuilder() {
         return SecurityProto.newBuilder()
-                .setObjectClass("Security")
-                .setVersion("0.0.1")
                 .setAsOf(AS_OF)
                 .setProductType(ProductTypeProto.CURRENCY)
                 .setAssetClass("Cash")
@@ -54,8 +52,6 @@ class TransactionSecurityDefaultsTest {
     /** LS-17's payload shape: an inline CORP_BOND with no uuid, as_of set. */
     private static SecurityProto.Builder bondBuilder() {
         return SecurityProto.newBuilder()
-                .setObjectClass("Security")
-                .setVersion("0.0.1")
                 .setAsOf(AS_OF)
                 .setProductType(ProductTypeProto.CORP_BOND)
                 .setAssetClass("Fixed Income")
@@ -72,8 +68,6 @@ class TransactionSecurityDefaultsTest {
 
     private static TransactionProto txnWithSecurity(SecurityProto.Builder security) {
         return TransactionProto.newBuilder()
-                .setObjectClass("Transaction")
-                .setVersion("0.0.1")
                 .setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()))
                 .setAsOf(AS_OF)
                 .setSecurity(security)

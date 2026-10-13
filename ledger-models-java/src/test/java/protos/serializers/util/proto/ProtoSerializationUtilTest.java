@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.UUID;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -149,8 +150,9 @@ class ProtoSerializationUtilTest {
     // LM-269 — an empty DecimalValueProto raises the typed UnsetDecimalException,
     // never a bare NumberFormatException. Valid values parse exactly as before.
 
+    /** The decimal for {@code value}; "" is an empty (unset) decimal. */
     private static DecimalValueProto decimal(String value) {
-        return DecimalValueProto.newBuilder().setArbitraryPrecisionValue(value).build();
+        return value.isEmpty() ? DecimalValueProto.getDefaultInstance() : Decimals.decimal(value);
     }
 
     private static final String[] VALID_DECIMALS = {
@@ -200,12 +202,12 @@ class ProtoSerializationUtilTest {
 
     @Test
     public void deserializeBigDecimal_malformedThrowsInvalidDecimalException() {
-        // Only "" is unset: no trimming, so whitespace-only stays malformed.
-        for (String s : new String[]{" ", "abc"}) {
-            InvalidDecimalException e = assertThrows(InvalidDecimalException.class,
-                    () -> ProtoSerializationUtil.deserializeBigDecimal(decimal(s)), s);
-            assertFalse(((Object) e) instanceof UnsetDecimalException, s);
-        }
+        // A set but undecodable decimal (scale over the cap) is not "unset".
+        DecimalValueProto overCap = DecimalValueProto.newBuilder()
+                .setUnscaledValue(ByteString.copyFrom(new byte[]{1})).setScale(5000).build();
+        InvalidDecimalException e = assertThrows(InvalidDecimalException.class,
+                () -> ProtoSerializationUtil.deserializeBigDecimal(overCap));
+        assertFalse(((Object) e) instanceof UnsetDecimalException);
     }
 
     @Test

@@ -32,30 +32,31 @@ public final class GetFieldValuesRequestProtos {
       "_values_request.proto\022\034fintekkers.reques" +
       "ts.security\032&fintekkers/models/position/" +
       "field.proto\032(fintekkers/models/util/obje" +
-      "ct_type.proto\"\211\002\n\032GetFieldValuesRequestP" +
-      "roto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007versio" +
-      "n\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fint" +
-      "ekkers.models.util.ObjectTypeProto\022\026\n\rve" +
-      "rsion_major\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001" +
-      "(\r\022\026\n\rversion_patch\030\354\007 \001(\r\0225\n\005field\030\n \001(" +
-      "\0162&.fintekkers.models.position.FieldProt" +
-      "oB\037B\033GetFieldValuesRequestProtosP\001b\006prot" +
-      "o3"
+      "ct_type.proto\032$fintekkers/models/util/ve" +
+      "rsion.proto\"\310\001\n\032GetFieldValuesRequestPro" +
+      "to\022<\n\013object_type\030\001 \001(\0162\'.fintekkers.mod" +
+      "els.util.ObjectTypeProto\0225\n\007version\030\002 \001(" +
+      "\0132$.fintekkers.models.util.VersionProto\022" +
+      "5\n\005field\030\n \001(\0162&.fintekkers.models.posit" +
+      "ion.FieldProtoB\037B\033GetFieldValuesRequestP" +
+      "rotosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.position.FieldProtos.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_security_GetFieldValuesRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_security_GetFieldValuesRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_security_GetFieldValuesRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Field", });
+        new java.lang.String[] { "ObjectType", "Version", "Field", });
     fintekkers.models.position.FieldProtos.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

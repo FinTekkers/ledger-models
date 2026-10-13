@@ -16,20 +16,16 @@ import * as fintekkers_models_price_price_pb from "../../../fintekkers/models/pr
 import * as fintekkers_models_position_position_status_pb from "../../../fintekkers/models/position/position_status_pb";
 import * as fintekkers_models_transaction_transaction_type_pb from "../../../fintekkers/models/transaction/transaction_type_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class TransactionProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): TransactionProto;
-    getVersion(): string;
-    setVersion(value: string): TransactionProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): TransactionProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): TransactionProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): TransactionProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): TransactionProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): TransactionProto;
 
     hasUuid(): boolean;
     clearUuid(): void;
@@ -112,12 +108,8 @@ export class TransactionProto extends jspb.Message {
 
 export namespace TransactionProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         uuid?: fintekkers_models_util_uuid_pb.UUIDProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         isLink: boolean,

@@ -2,6 +2,7 @@ package common.requests;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
+import common.util.ObjectTypes;
 import fintekkers.models.util.DateRange.DateRangeProto;
 import fintekkers.requests.portfolio.QueryPortfolioRequestProto;
 import fintekkers.requests.portfolio.QueryPortfolioResponseProto;
@@ -14,7 +15,6 @@ import fintekkers.requests.transaction.QueryTransactionRequestProto;
 import fintekkers.requests.transaction.QueryTransactionResponseProto;
 import org.junit.jupiter.api.Test;
 
-import java.util.HexFormat;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,20 +27,16 @@ class QueryPagingTest {
 
     // Serialized with the bindings on main (0a0c9657), before the paging fields existed.
     // Command: see ledger-models-python/test/requests/test_query_paging.py.
-    private static final String OLD_PRICE_REQUEST_HEX = "0a0c5072696365526571756573741205302e302e31c80106";
-    private static final String OLD_TRANSACTION_REQUEST_HEX =
-            "0a125472616e73616374696f6e526571756573741205302e302e31c00164";
-
     private static final String FIELD_LIMIT = "limit";
     private static final String FIELD_PAGE_TOKEN = "page_token";
     private static final String FIELD_NEXT_PAGE_TOKEN = "next_page_token";
 
     private static List<Message> oldRequests() {
         return List.of(
-                QuerySecurityRequestProto.newBuilder().setObjectClass("Request").setVersion("0.0.1").build(),
-                QueryTransactionRequestProto.newBuilder().setObjectClass("Request").setVersion("0.0.1").build(),
-                QueryPortfolioRequestProto.newBuilder().setObjectClass("Request").setVersion("0.0.1").build(),
-                QueryPriceRequestProto.newBuilder().setObjectClass("Request").setVersion("0.0.1").build());
+                QuerySecurityRequestProto.newBuilder().build(),
+                QueryTransactionRequestProto.newBuilder().build(),
+                QueryPortfolioRequestProto.newBuilder().build(),
+                QueryPriceRequestProto.newBuilder().build());
     }
 
     private static List<Message> pagedRequests() {
@@ -79,27 +75,6 @@ class QueryPagingTest {
         assertEquals("", QueryTransactionResponseProto.parseFrom(new byte[0]).getNextPageToken());
         assertEquals("", QueryPortfolioResponseProto.parseFrom(new byte[0]).getNextPageToken());
         assertEquals("", QueryPriceResponseProto.parseFrom(new byte[0]).getNextPageToken());
-    }
-
-    @Test
-    void oldPriceRequestBytesDecode() throws Exception {
-        QueryPriceRequestProto parsed = QueryPriceRequestProto.parseFrom(HexFormat.of().parseHex(OLD_PRICE_REQUEST_HEX));
-
-        assertEquals("PriceRequest", parsed.getObjectClass());
-        assertEquals(QueryPriceRequestProto.TimeRangeCase.HORIZON, parsed.getTimeRangeCase());
-        assertEquals(PriceHorizonProto.PRICE_HORIZON_1_YEAR, parsed.getHorizon());
-        assertEquals(0, parsed.getLimit());
-        assertEquals("", parsed.getPageToken());
-    }
-
-    @Test
-    void oldTransactionRequestBytesDecode() throws Exception {
-        QueryTransactionRequestProto parsed =
-                QueryTransactionRequestProto.parseFrom(HexFormat.of().parseHex(OLD_TRANSACTION_REQUEST_HEX));
-
-        assertEquals("TransactionRequest", parsed.getObjectClass());
-        assertEquals(100, parsed.getLimit());
-        assertEquals("", parsed.getPageToken());
     }
 
     @Test
@@ -143,13 +118,13 @@ class QueryPagingTest {
     @Test
     void pricePageTokenRoundTripsWithDateRange() throws Exception {
         QueryPriceRequestProto request = QueryPriceRequestProto.newBuilder()
-                .setDateRange(DateRangeProto.newBuilder().setVersion("0.0.1")).setPageToken("opaque-abc").setLimit(10)
+                .setDateRange(DateRangeProto.newBuilder().setVersion(ObjectTypes.SCHEMA_VERSION)).setPageToken("opaque-abc").setLimit(10)
                 .build();
 
         QueryPriceRequestProto parsed = QueryPriceRequestProto.parseFrom(request.toByteArray());
 
         assertEquals(QueryPriceRequestProto.TimeRangeCase.DATE_RANGE, parsed.getTimeRangeCase());
-        assertEquals("0.0.1", parsed.getDateRange().getVersion());
+        assertEquals(ObjectTypes.SCHEMA_VERSION, parsed.getDateRange().getVersion());
         assertEquals("opaque-abc", parsed.getPageToken());
         assertEquals(10, parsed.getLimit());
     }

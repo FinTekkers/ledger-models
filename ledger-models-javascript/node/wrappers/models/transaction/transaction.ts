@@ -113,7 +113,7 @@ class Transaction {
    */
   private buildProtoFromParams(params: TransactionConstructorParams): TransactionProto {
     const transactionProto = new TransactionProto();
-    stamp(transactionProto, ObjectTypeProto.OBJECT_TYPE_TRANSACTION, 'Transaction', '0.0.1');
+    stamp(transactionProto, ObjectTypeProto.OBJECT_TYPE_TRANSACTION);
     transactionProto.setUuid(UUID.random().toUUIDProto());
 
     // Convert asOfDate to ZonedDateTime and set on transaction
@@ -138,7 +138,7 @@ class Transaction {
 
     // Create and set an empty StrategyAllocationProto
     const strategyAllocationProto = new StrategyAllocationProto();
-    stamp(strategyAllocationProto, ObjectTypeProto.OBJECT_TYPE_STRATEGY_ALLOCATION, 'StrategyAllocation', '0.0.1');
+    stamp(strategyAllocationProto, ObjectTypeProto.OBJECT_TYPE_STRATEGY_ALLOCATION);
     transactionProto.setStrategyAllocation(strategyAllocationProto);
 
     // Set default position status

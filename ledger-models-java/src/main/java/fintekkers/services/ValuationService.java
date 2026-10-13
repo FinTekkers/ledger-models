@@ -83,7 +83,7 @@ public class ValuationService {
                 .setCashDetails(CashDetailsProto.newBuilder().setCashId("USD").build())
                 .build();
 
-        SecurityProto equitySecurity = ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY, "Security", "")
+        SecurityProto equitySecurity = ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY)
                 .setAsOf(asOf)
                 .setProductType(ProductTypeProto.COMMON_STOCK)
                 .setAssetClass("Equity")

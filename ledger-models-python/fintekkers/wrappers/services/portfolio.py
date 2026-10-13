@@ -128,7 +128,7 @@ class PortfolioService:
         """
         request = stamp(QueryPortfolioRequestProto(
             uuIds=[UUIDProto(raw_uuid=uuid.bytes)],
-        ), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, "PortfolioRequest", "0.0.1")
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST)
         if as_of is not None:
             request.as_of.CopyFrom(as_of)
         response = self.stub.GetByIds(request)

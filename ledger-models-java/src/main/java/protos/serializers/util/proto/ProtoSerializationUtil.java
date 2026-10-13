@@ -153,8 +153,7 @@ public class ProtoSerializationUtil {
     }
 
     /**
-     * Writes both forms until LM-295: the compact {@code unscaled_value} +
-     * {@code scale} and the canonical plain string (LM-294). A negative scale
+     * Writes {@code unscaled_value} + {@code scale} (LM-294). A negative scale
      * becomes scale 0.
      *
      * @throws InvalidDecimalException if the value is over 4096 digits or scale 4096
@@ -163,19 +162,17 @@ public class ProtoSerializationUtil {
         return DecimalCodec.encode(quantity);
     }
 
-    /** True when the decimal is absent ({@code null}) or neither its compact form nor its string is set. */
+    /** True when the decimal is absent ({@code null}) or its unscaled_value is empty. */
     public static boolean isUnsetDecimal(DecimalValue.DecimalValueProto value) {
         return DecimalCodec.isUnset(value);
     }
 
     /**
-     * The one public decode (LM-307 API): takes only the proto. The compact
-     * form wins when set; a string-only proto still decodes, logging one
-     * deprecation warning per process. Callers that know the field name it in
-     * their own error.
+     * The one public decode (LM-307 API): takes only the proto. Callers that
+     * know the field name it in their own error.
      *
      * @return {@code null} if {@code quantity} is {@code null}
-     * @throws UnsetDecimalException (field {@code unknown}) if neither form is set
+     * @throws UnsetDecimalException (field {@code unknown}) if unscaled_value is empty
      * @throws InvalidDecimalException if the value is malformed or over a cap; never rounded
      */
     public static BigDecimal deserializeBigDecimal(DecimalValue.DecimalValueProto quantity) {

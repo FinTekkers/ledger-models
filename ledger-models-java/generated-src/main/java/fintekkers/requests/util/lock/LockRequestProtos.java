@@ -33,16 +33,15 @@ public final class LockRequestProtos {
       "k\0320fintekkers/models/util/lock/node_part" +
       "ition.proto\032%fintekkers/models/util/endp" +
       "oint.proto\032(fintekkers/models/util/objec" +
-      "t_type.proto\"\300\002\n\020LockRequestProto\022\030\n\014obj" +
-      "ect_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001" +
-      "\022=\n\013object_type\030\351\007 \001(\0162\'.fintekkers.mode" +
-      "ls.util.ObjectTypeProto\022\026\n\rversion_major" +
-      "\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversi" +
-      "on_patch\030\354\007 \001(\r\022B\n\016node_partition\030\013 \001(\0132" +
-      "*.fintekkers.models.util.lock.NodePartit" +
-      "ion\0222\n\010endpoint\030\014 \001(\0132 .fintekkers.model" +
-      "s.util.EndpointB\025B\021LockRequestProtosP\001b\006" +
-      "proto3"
+      "t_type.proto\032$fintekkers/models/util/ver" +
+      "sion.proto\"\377\001\n\020LockRequestProto\022<\n\013objec" +
+      "t_type\030\001 \001(\0162\'.fintekkers.models.util.Ob" +
+      "jectTypeProto\0225\n\007version\030\002 \001(\0132$.fintekk" +
+      "ers.models.util.VersionProto\022B\n\016node_par" +
+      "tition\030\013 \001(\0132*.fintekkers.models.util.lo" +
+      "ck.NodePartition\0222\n\010endpoint\030\014 \001(\0132 .fin" +
+      "tekkers.models.util.EndpointB\025B\021LockRequ" +
+      "estProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -50,16 +49,18 @@ public final class LockRequestProtos {
           fintekkers.models.util.lock.NodePartitionOuterClass.getDescriptor(),
           fintekkers.models.util.EndpointOuterClass.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_util_lock_LockRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_util_lock_LockRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_util_lock_LockRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "NodePartition", "Endpoint", });
+        new java.lang.String[] { "ObjectType", "Version", "NodePartition", "Endpoint", });
     fintekkers.models.util.lock.NodePartitionOuterClass.getDescriptor();
     fintekkers.models.util.EndpointOuterClass.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

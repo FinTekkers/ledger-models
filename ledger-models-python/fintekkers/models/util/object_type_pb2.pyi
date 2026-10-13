@@ -1,4 +1,3 @@
-from google.protobuf import descriptor_pb2 as _descriptor_pb2
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from typing import ClassVar as _ClassVar
@@ -107,5 +106,3 @@ OBJECT_TYPE_QUERY_TRANSACTION_REQUEST: ObjectTypeProto
 OBJECT_TYPE_QUERY_TRANSACTION_RESPONSE: ObjectTypeProto
 OBJECT_TYPE_VALUATION_REQUEST: ObjectTypeProto
 OBJECT_TYPE_VALUATION_RESPONSE: ObjectTypeProto
-LEGACY_OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
-legacy_object_class: _descriptor.FieldDescriptor

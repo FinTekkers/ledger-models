@@ -8,12 +8,13 @@ import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
 import { ModelValidationError } from '../errors';
 import { UUID } from '../utils/uuid';
 import { requireValid, validate } from './price_rules';
+import { encodeDecimal, parseDecimalString } from '../utils/decimal';
 
 const PRICE_ID = '6a1d2c3e-4b5f-4a6d-8e7f-9a0b1c2d3e4f';
 const SECURITY_ID = '1f0e8a4c-58b1-4d0e-9a3c-7d2b6e5f4a10';
 
 function decimal(value: string): DecimalValueProto {
-    return new DecimalValueProto().setArbitraryPrecisionValue(value);
+    return encodeDecimal(parseDecimalString(value));
 }
 
 /** A price that passes every rule. */

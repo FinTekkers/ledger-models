@@ -1,5 +1,6 @@
 package common.models.price;
 
+import com.google.protobuf.ByteString;
 import common.models.errors.ModelValidationException;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.price.PriceTypeProto;
@@ -13,6 +14,7 @@ import protos.serializers.util.proto.ProtoSerializationUtil;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +29,7 @@ class PriceRulesTest {
                 .setUuid(ProtoSerializationUtil.serializeUUID(PRICE_ID))
                 .setSecurity(SecurityProto.newBuilder()
                         .setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID())))
-                .setPrice(DecimalValueProto.newBuilder().setArbitraryPrecisionValue("100.25"))
+                .setPrice(Decimals.decimal("100.25"))
                 .setPriceType(PriceTypeProto.PERCENTAGE);
     }
 
@@ -59,21 +61,23 @@ class PriceRulesTest {
 
     @Test
     void priceEmpty_oneViolationOnPrice() {
-        PriceProto p = valid().setPrice(DecimalValueProto.newBuilder().setArbitraryPrecisionValue("")).build();
+        PriceProto p = valid().setPrice(DecimalValueProto.newBuilder()).build();
         assertEquals(List.of("price"), fields(PriceRules.validate(p)));
     }
 
     @Test
     void priceZero_isValid() {
-        PriceProto p = valid().setPrice(DecimalValueProto.newBuilder().setArbitraryPrecisionValue("0")).build();
+        PriceProto p = valid().setPrice(Decimals.decimal("0")).build();
         assertEquals(List.of(), PriceRules.validate(p));
     }
 
     @Test
     void priceValueIsNotChecked() {
-        for (String value : List.of("-1", "abc")) {
-            PriceProto p = valid().setPrice(DecimalValueProto.newBuilder().setArbitraryPrecisionValue(value)).build();
-            assertEquals(List.of(), PriceRules.validate(p), value);
+        DecimalValueProto overCap = DecimalValueProto.newBuilder()
+                .setUnscaledValue(ByteString.copyFrom(new byte[]{1})).setScale(5000).build();
+        for (DecimalValueProto value : List.of(Decimals.decimal("-1"), overCap)) {
+            PriceProto p = valid().setPrice(value).build();
+            assertEquals(List.of(), PriceRules.validate(p), value.toString());
         }
     }
 

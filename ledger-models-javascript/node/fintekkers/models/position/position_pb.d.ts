@@ -8,20 +8,16 @@ import * as jspb from "google-protobuf";
 import * as fintekkers_models_position_position_util_pb from "../../../fintekkers/models/position/position_util_pb";
 import * as fintekkers_models_security_security_pb from "../../../fintekkers/models/security/security_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class PositionProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): PositionProto;
-    getVersion(): string;
-    setVersion(value: string): PositionProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): PositionProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): PositionProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): PositionProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): PositionProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): PositionProto;
     getPositionView(): PositionViewProto;
     setPositionView(value: PositionViewProto): PositionProto;
     getPositionType(): PositionTypeProto;
@@ -52,12 +48,8 @@ export class PositionProto extends jspb.Message {
 
 export namespace PositionProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         positionView: PositionViewProto,
         positionType: PositionTypeProto,
         measuresList: Array<fintekkers_models_position_position_util_pb.MeasureMapEntry.AsObject>,

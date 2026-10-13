@@ -8,20 +8,16 @@ import * as jspb from "google-protobuf";
 import * as fintekkers_models_portfolio_portfolio_pb from "../../../fintekkers/models/portfolio/portfolio_pb";
 import * as fintekkers_requests_portfolio_create_portfolio_request_pb from "../../../fintekkers/requests/portfolio/create_portfolio_request_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class CreatePortfolioResponseProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): CreatePortfolioResponseProto;
-    getVersion(): string;
-    setVersion(value: string): CreatePortfolioResponseProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CreatePortfolioResponseProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): CreatePortfolioResponseProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): CreatePortfolioResponseProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): CreatePortfolioResponseProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): CreatePortfolioResponseProto;
 
     hasCreatePortfolioRequest(): boolean;
     clearCreatePortfolioRequest(): void;
@@ -44,12 +40,8 @@ export class CreatePortfolioResponseProto extends jspb.Message {
 
 export namespace CreatePortfolioResponseProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         createPortfolioRequest?: fintekkers_requests_portfolio_create_portfolio_request_pb.CreatePortfolioRequestProto.AsObject,
         portfolioResponseList: Array<fintekkers_models_portfolio_portfolio_pb.PortfolioProto.AsObject>,
     }

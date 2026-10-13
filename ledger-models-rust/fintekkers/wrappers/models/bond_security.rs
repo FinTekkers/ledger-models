@@ -166,7 +166,7 @@ mod tests {
     }
 
     fn decimal(s: &str) -> Option<DecimalValueProto> {
-        Some(crate::fintekkers::wrappers::models::utils::decimal::legacy_decimal_proto(s))
+        Some(crate::fintekkers::wrappers::models::utils::decimal::decimal_proto_str(s))
     }
 
     fn bond_proto(

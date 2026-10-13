@@ -35,36 +35,35 @@ public final class QueryPriceRequestProtos {
       "o\0320fintekkers/models/position/position_f" +
       "ilter.proto\032\'fintekkers/models/util/date" +
       "_range.proto\032(fintekkers/models/util/obj" +
-      "ect_type.proto\"\374\004\n\026QueryPriceRequestProt" +
-      "o\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002" +
-      " \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fintekk" +
-      "ers.models.util.ObjectTypeProto\022\026\n\rversi" +
-      "on_major\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022" +
-      "\026\n\rversion_patch\030\354\007 \001(\r\0220\n\005uuIds\030\025 \003(\0132!" +
-      ".fintekkers.models.util.UUIDProto\022K\n\022sea" +
-      "rch_price_input\030\026 \001(\0132/.fintekkers.model" +
-      "s.position.PositionFilterProto\022:\n\005as_of\030" +
-      "\027 \001(\0132+.fintekkers.models.util.LocalTime" +
-      "stampProto\022A\n\tfrequency\030\030 \001(\0162..fintekke" +
-      "rs.requests.price.PriceFrequencyProto\022?\n" +
-      "\007horizon\030\031 \001(\0162,.fintekkers.requests.pri" +
-      "ce.PriceHorizonProtoH\000\022<\n\ndate_range\030\032 \001" +
-      "(\0132&.fintekkers.models.util.DateRangePro" +
-      "toH\000\022\r\n\005limit\030\033 \001(\005\022\022\n\npage_token\0303 \001(\tB" +
-      "\014\n\ntime_range*\305\001\n\023PriceFrequencyProto\022\037\n" +
-      "\033PRICE_FREQUENCY_UNSPECIFIED\020\000\022\032\n\026PRICE_" +
-      "FREQUENCY_WEEKLY\020\n\022\031\n\025PRICE_FREQUENCY_DA" +
-      "ILY\020\024\022\032\n\026PRICE_FREQUENCY_HOURLY\020\036\022\032\n\026PRI" +
-      "CE_FREQUENCY_MINUTE\020(\022\036\n\032PRICE_FREQUENCY" +
-      "_EVERY_TICK\020Z*\241\002\n\021PriceHorizonProto\022\035\n\031P" +
-      "RICE_HORIZON_UNSPECIFIED\020\000\022\027\n\023PRICE_HORI" +
-      "ZON_1_DAY\020\001\022\030\n\024PRICE_HORIZON_5_DAYS\020\002\022\030\n" +
-      "\024PRICE_HORIZON_1_WEEK\020\003\022\031\n\025PRICE_HORIZON" +
-      "_1_MONTH\020\004\022\032\n\026PRICE_HORIZON_6_MONTHS\020\005\022\030" +
-      "\n\024PRICE_HORIZON_1_YEAR\020\006\022\030\n\024PRICE_HORIZO" +
-      "N_5_YEAR\020\007\022\025\n\021PRICE_HORIZON_MAX\020\010\022\036\n\032PRI" +
-      "CE_HORIZON_YEAR_TO_DATE\020\tB\033B\027QueryPriceR" +
-      "equestProtosP\001b\006proto3"
+      "ect_type.proto\032$fintekkers/models/util/v" +
+      "ersion.proto\"\273\004\n\026QueryPriceRequestProto\022" +
+      "<\n\013object_type\030\001 \001(\0162\'.fintekkers.models" +
+      ".util.ObjectTypeProto\0225\n\007version\030\002 \001(\0132$" +
+      ".fintekkers.models.util.VersionProto\0220\n\005" +
+      "uuIds\030\025 \003(\0132!.fintekkers.models.util.UUI" +
+      "DProto\022K\n\022search_price_input\030\026 \001(\0132/.fin" +
+      "tekkers.models.position.PositionFilterPr" +
+      "oto\022:\n\005as_of\030\027 \001(\0132+.fintekkers.models.u" +
+      "til.LocalTimestampProto\022A\n\tfrequency\030\030 \001" +
+      "(\0162..fintekkers.requests.price.PriceFreq" +
+      "uencyProto\022?\n\007horizon\030\031 \001(\0162,.fintekkers" +
+      ".requests.price.PriceHorizonProtoH\000\022<\n\nd" +
+      "ate_range\030\032 \001(\0132&.fintekkers.models.util" +
+      ".DateRangeProtoH\000\022\r\n\005limit\030\033 \001(\005\022\022\n\npage" +
+      "_token\0303 \001(\tB\014\n\ntime_range*\305\001\n\023PriceFreq" +
+      "uencyProto\022\037\n\033PRICE_FREQUENCY_UNSPECIFIE" +
+      "D\020\000\022\032\n\026PRICE_FREQUENCY_WEEKLY\020\n\022\031\n\025PRICE" +
+      "_FREQUENCY_DAILY\020\024\022\032\n\026PRICE_FREQUENCY_HO" +
+      "URLY\020\036\022\032\n\026PRICE_FREQUENCY_MINUTE\020(\022\036\n\032PR" +
+      "ICE_FREQUENCY_EVERY_TICK\020Z*\241\002\n\021PriceHori" +
+      "zonProto\022\035\n\031PRICE_HORIZON_UNSPECIFIED\020\000\022" +
+      "\027\n\023PRICE_HORIZON_1_DAY\020\001\022\030\n\024PRICE_HORIZO" +
+      "N_5_DAYS\020\002\022\030\n\024PRICE_HORIZON_1_WEEK\020\003\022\031\n\025" +
+      "PRICE_HORIZON_1_MONTH\020\004\022\032\n\026PRICE_HORIZON" +
+      "_6_MONTHS\020\005\022\030\n\024PRICE_HORIZON_1_YEAR\020\006\022\030\n" +
+      "\024PRICE_HORIZON_5_YEAR\020\007\022\025\n\021PRICE_HORIZON" +
+      "_MAX\020\010\022\036\n\032PRICE_HORIZON_YEAR_TO_DATE\020\tB\033" +
+      "B\027QueryPriceRequestProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -74,18 +73,20 @@ public final class QueryPriceRequestProtos {
           fintekkers.models.position.PositionFilterProtos.getDescriptor(),
           fintekkers.models.util.DateRange.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_price_QueryPriceRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_price_QueryPriceRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_price_QueryPriceRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "UuIds", "SearchPriceInput", "AsOf", "Frequency", "Horizon", "DateRange", "Limit", "PageToken", "TimeRange", });
+        new java.lang.String[] { "ObjectType", "Version", "UuIds", "SearchPriceInput", "AsOf", "Frequency", "Horizon", "DateRange", "Limit", "PageToken", "TimeRange", });
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.position.PositionFilterProtos.getDescriptor();
     fintekkers.models.util.DateRange.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

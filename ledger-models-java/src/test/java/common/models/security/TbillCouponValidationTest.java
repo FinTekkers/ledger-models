@@ -11,6 +11,7 @@ import protos.serializers.util.proto.ProtoSerializationUtil;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,8 +34,9 @@ class TbillCouponValidationTest {
                 .build();
     }
 
+    /** The decimal for {@code value}; "" is an empty (unset) decimal. */
     private static DecimalValueProto decimal(String value) {
-        return DecimalValueProto.newBuilder().setArbitraryPrecisionValue(value).build();
+        return value.isEmpty() ? DecimalValueProto.getDefaultInstance() : Decimals.decimal(value);
     }
 
     private static void assertRejected(String coupon) {

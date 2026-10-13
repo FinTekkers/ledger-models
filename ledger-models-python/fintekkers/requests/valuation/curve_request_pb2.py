@@ -28,9 +28,10 @@ from fintekkers.models.util import decimal_value_pb2 as fintekkers_dot_models_do
 from fintekkers.models.util import local_timestamp_pb2 as fintekkers_dot_models_dot_util_dot_local__timestamp__pb2
 from fintekkers.models.position import measure_pb2 as fintekkers_dot_models_dot_position_dot_measure__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n1fintekkers/requests/valuation/curve_request.proto\x12\x1d\x66intekkers.requests.valuation\x1a)fintekkers/models/security/security.proto\x1a#fintekkers/models/price/price.proto\x1a*fintekkers/models/util/decimal_value.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a(fintekkers/models/position/measure.proto\x1a(fintekkers/models/util/object_type.proto\"\xfc\x01\n\x0f\x43urveInputProto\x12;\n\x08security\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12\x32\n\x05price\x18\x02 \x01(\x0b\x32#.fintekkers.models.price.PriceProto\x12\x38\n\x05tenor\x18\x04 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12>\n\x0b\x63lean_price\x18\x05 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\xef\x03\n\x11\x43urveRequestProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12\x42\n\rasof_datetime\x18\n \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12=\n\x0b\x63urve_types\x18\x14 \x03(\x0e\x32(.fintekkers.models.position.MeasureProto\x12\x44\n\x0c\x63urve_inputs\x18\x1e \x03(\x0b\x32..fintekkers.requests.valuation.CurveInputProto\x12?\n\x0ctenor_points\x18( \x03(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12\x1a\n\x12\x66orward_term_years\x18\x32 \x01(\rB\x16\x42\x12\x43urveRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n1fintekkers/requests/valuation/curve_request.proto\x12\x1d\x66intekkers.requests.valuation\x1a)fintekkers/models/security/security.proto\x1a#fintekkers/models/price/price.proto\x1a*fintekkers/models/util/decimal_value.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a(fintekkers/models/position/measure.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xfc\x01\n\x0f\x43urveInputProto\x12;\n\x08security\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12\x32\n\x05price\x18\x02 \x01(\x0b\x32#.fintekkers.models.price.PriceProto\x12\x38\n\x05tenor\x18\x04 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12>\n\x0b\x63lean_price\x18\x05 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\xae\x03\n\x11\x43urveRequestProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12\x42\n\rasof_datetime\x18\n \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12=\n\x0b\x63urve_types\x18\x14 \x03(\x0e\x32(.fintekkers.models.position.MeasureProto\x12\x44\n\x0c\x63urve_inputs\x18\x1e \x03(\x0b\x32..fintekkers.requests.valuation.CurveInputProto\x12?\n\x0ctenor_points\x18( \x03(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12\x1a\n\x12\x66orward_term_years\x18\x32 \x01(\rB\x16\x42\x12\x43urveRequestProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -38,12 +39,8 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.valuati
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\022CurveRequestProtosP\001'
-  _globals['_CURVEREQUESTPROTO'].fields_by_name['object_class']._loaded_options = None
-  _globals['_CURVEREQUESTPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_CURVEREQUESTPROTO'].fields_by_name['version']._loaded_options = None
-  _globals['_CURVEREQUESTPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_CURVEINPUTPROTO']._serialized_start=339
-  _globals['_CURVEINPUTPROTO']._serialized_end=591
-  _globals['_CURVEREQUESTPROTO']._serialized_start=594
-  _globals['_CURVEREQUESTPROTO']._serialized_end=1089
+  _globals['_CURVEINPUTPROTO']._serialized_start=377
+  _globals['_CURVEINPUTPROTO']._serialized_end=629
+  _globals['_CURVEREQUESTPROTO']._serialized_start=632
+  _globals['_CURVEREQUESTPROTO']._serialized_end=1062
 # @@protoc_insertion_point(module_scope)

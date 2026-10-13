@@ -30,7 +30,7 @@ public class IdentifierSerializer implements IRawDataModelObjectSerializer<Ident
     public IdentifierProto serialize(Identifier identifier) {
         IdentifierTypeProto identifierTypeProto = IdentifierTypeProto.valueOf(identifier.getIdentifierType().name());
 
-        IdentifierProto.Builder builder = ObjectTypes.stamp(IdentifierProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_IDENTIFIER, identifier.getClass().getSimpleName(), "0.0.1")
+        IdentifierProto.Builder builder = ObjectTypes.stamp(IdentifierProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_IDENTIFIER)
 
                 .setIdentifierType(identifierTypeProto)
                 .setIdentifierValue(identifier.getIdentifier());

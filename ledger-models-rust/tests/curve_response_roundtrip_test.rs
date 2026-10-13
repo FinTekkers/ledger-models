@@ -6,7 +6,7 @@ use ledger_models::fintekkers::models::util::DecimalValueProto;
 use ledger_models::fintekkers::proto::LEDGER_MODELS_PROTO_FILE_DESCRIPTOR_SET;
 use ledger_models::fintekkers::requests::valuation::CurvePointProto;
 use ledger_models::fintekkers::wrappers::models::utils::decimal::{decode_decimal, is_unset_decimal};
-use ledger_models::fintekkers::wrappers::models::utils::decimal_test_utils::{compact_only, form_of, DecimalForm};
+use ledger_models::fintekkers::wrappers::models::utils::decimal_test_utils::compact_only;
 use prost::Message;
 use prost_reflect::{DescriptorPool, Kind};
 use rust_decimal::Decimal;
@@ -36,10 +36,6 @@ fn forward_point_tenor_range_survives_roundtrip() {
 
     let from = parsed.from_tenor.as_ref().expect("from_tenor should round-trip");
     let to = parsed.to_tenor.as_ref().expect("to_tenor should round-trip");
-    // Compact form only: the values survive without the deprecated string
-    // form that LM-295 stops writing.
-    assert_eq!(form_of(from), Some(DecimalForm::CompactOnly));
-    assert_eq!(form_of(to), Some(DecimalForm::CompactOnly));
     assert_eq!(value_of(from), Decimal::from(1));
     assert_eq!(value_of(to), Decimal::from(2));
 }
@@ -51,7 +47,6 @@ fn zero_from_tenor_is_set_not_unset() {
 
     let from = parsed.from_tenor.as_ref().expect("a zero from_tenor is still present");
     assert!(!is_unset_decimal(from), "a zero from_tenor must not read as unset");
-    assert_eq!(form_of(from), Some(DecimalForm::CompactOnly));
     assert_eq!(value_of(from), Decimal::ZERO);
     assert_eq!(value_of(parsed.to_tenor.as_ref().expect("to_tenor")), Decimal::from(1));
 }

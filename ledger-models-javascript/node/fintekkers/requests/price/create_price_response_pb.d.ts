@@ -8,20 +8,16 @@ import * as jspb from "google-protobuf";
 import * as fintekkers_models_price_price_pb from "../../../fintekkers/models/price/price_pb";
 import * as fintekkers_requests_price_create_price_request_pb from "../../../fintekkers/requests/price/create_price_request_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class CreatePriceResponseProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): CreatePriceResponseProto;
-    getVersion(): string;
-    setVersion(value: string): CreatePriceResponseProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CreatePriceResponseProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): CreatePriceResponseProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): CreatePriceResponseProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): CreatePriceResponseProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): CreatePriceResponseProto;
 
     hasCreatePriceRequest(): boolean;
     clearCreatePriceRequest(): void;
@@ -44,12 +40,8 @@ export class CreatePriceResponseProto extends jspb.Message {
 
 export namespace CreatePriceResponseProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         createPriceRequest?: fintekkers_requests_price_create_price_request_pb.CreatePriceRequestProto.AsObject,
         priceResponseList: Array<fintekkers_models_price_price_pb.PriceProto.AsObject>,
     }

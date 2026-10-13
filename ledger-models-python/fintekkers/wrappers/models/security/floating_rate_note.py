@@ -22,6 +22,7 @@ from fintekkers.wrappers.models.security.bond_security import (
     _decimal_value,
     _local_date,
 )
+from fintekkers.wrappers.models.util.decimal import decode_decimal, is_decimal_set
 
 
 class FloatingRateNote(BondSecurity):
@@ -34,10 +35,9 @@ class FloatingRateNote(BondSecurity):
         ext = self.proto.frn_extension
         if not ext.HasField("spread"):
             return None
-        value = ext.spread.arbitrary_precision_value
-        if value == "":
+        if not is_decimal_set(ext.spread):
             return None
-        return Decimal(value)
+        return decode_decimal(ext.spread)
 
     def get_reference_rate_index(self) -> IndexTypeProto:
         self._ensure_hydrated()

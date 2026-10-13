@@ -59,7 +59,7 @@ public class StrategyAllocation extends RawDataModelObject {
         if (asOf == null) {
             throw new IllegalArgumentException("StrategyAllocation.asOf is required");
         }
-        return ObjectTypes.stamp(StrategyAllocationProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_STRATEGY_ALLOCATION, StrategyAllocation.class.getSimpleName(), "0.0.1")
+        return ObjectTypes.stamp(StrategyAllocationProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_STRATEGY_ALLOCATION)
                 .setUuid(ProtoSerializationUtil.serializeUUID(id))
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf))
                 .build();

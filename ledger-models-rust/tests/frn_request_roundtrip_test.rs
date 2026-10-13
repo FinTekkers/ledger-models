@@ -1,22 +1,18 @@
-#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
 
 //! Step 3 tests — FrnInput / ProductInput proto round-trips.
 //!
 //! For each new message type: construct → encode to bytes → decode → verify all fields match.
 
+mod common;
+use common::{decimal, Canonical};
+
 use ledger_models::fintekkers::requests::valuation::{
     product_input, CurvePoint, FrnInput, ProductInput, ValuationRequestProto, YieldCurveInput,
 };
 use ledger_models::fintekkers::models::security::index::IndexTypeProto;
-use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
+use ledger_models::fintekkers::models::util::LocalDateProto;
 use prost::Message;
 
-fn decimal(value: &str) -> DecimalValueProto {
-    DecimalValueProto {
-        arbitrary_precision_value: value.to_string(),
-        ..Default::default()
-    }
-}
 
 fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
     LocalDateProto { year, month, day }
@@ -58,8 +54,8 @@ fn curve_point_fields_survive_roundtrip() {
     original.encode(&mut buf).expect("encode failed");
     let parsed = CurvePoint::decode(&buf[..]).expect("decode failed");
 
-    assert_eq!(parsed.tenor.unwrap().arbitrary_precision_value, "2.0");
-    assert_eq!(parsed.rate.unwrap().arbitrary_precision_value, "0.0470");
+    assert_eq!(parsed.tenor.unwrap().canonical(), "2.0");
+    assert_eq!(parsed.rate.unwrap().canonical(), "0.0470");
 }
 
 #[test]
@@ -74,10 +70,10 @@ fn yield_curve_input_all_fields_survive_roundtrip() {
     assert_eq!(parsed.reference_date.as_ref().unwrap().month, 1);
     assert_eq!(parsed.reference_date.as_ref().unwrap().day, 31);
     assert_eq!(parsed.points.len(), 5);
-    assert_eq!(parsed.points[0].tenor.as_ref().unwrap().arbitrary_precision_value, "0.25");
-    assert_eq!(parsed.points[0].rate.as_ref().unwrap().arbitrary_precision_value, "0.0530");
-    assert_eq!(parsed.points[4].tenor.as_ref().unwrap().arbitrary_precision_value, "5.0");
-    assert_eq!(parsed.points[4].rate.as_ref().unwrap().arbitrary_precision_value, "0.0430");
+    assert_eq!(parsed.points[0].tenor.as_ref().unwrap().canonical(), "0.25");
+    assert_eq!(parsed.points[0].rate.as_ref().unwrap().canonical(), "0.0530");
+    assert_eq!(parsed.points[4].tenor.as_ref().unwrap().canonical(), "5.0");
+    assert_eq!(parsed.points[4].rate.as_ref().unwrap().canonical(), "0.0430");
 }
 
 #[test]
@@ -90,7 +86,7 @@ fn yield_curve_point_order_preserved_roundtrip() {
 
     for (i, expected_tenor) in tenors.iter().enumerate() {
         assert_eq!(
-            parsed.points[i].tenor.as_ref().unwrap().arbitrary_precision_value,
+            parsed.points[i].tenor.as_ref().unwrap().canonical(),
             *expected_tenor,
         );
     }
@@ -108,7 +104,7 @@ fn frn_input_all_fields_survive_roundtrip() {
     original.encode(&mut buf).expect("encode failed");
     let parsed = FrnInput::decode(&buf[..]).expect("decode failed");
 
-    assert_eq!(parsed.clean_price.unwrap().arbitrary_precision_value, "99.75");
+    assert_eq!(parsed.clean_price.unwrap().canonical(), "99.75");
     let curve = parsed.curve.unwrap();
     assert_eq!(curve.index, IndexTypeProto::Sofr as i32);
     assert_eq!(curve.points.len(), 5);
@@ -129,7 +125,7 @@ fn product_input_frn_variant_survives_roundtrip() {
 
     match parsed.input.unwrap() {
         product_input::Input::Frn(f) => {
-            assert_eq!(f.clean_price.unwrap().arbitrary_precision_value, "99.875");
+            assert_eq!(f.clean_price.unwrap().canonical(), "99.875");
             assert_eq!(f.curve.unwrap().index, IndexTypeProto::Sofr as i32);
         }
         other => panic!("Expected Frn variant, got {:?}", other),
@@ -144,8 +140,6 @@ fn valuation_request_product_input_field_survives_roundtrip() {
         ..Default::default()
     };
     let original = ValuationRequestProto {
-        object_class: "ValuationRequest".into(),
-        version: "0.0.1".into(),
         product_input: Some(ProductInput {
             input: Some(product_input::Input::Frn(frn)),
         }),
@@ -154,11 +148,10 @@ fn valuation_request_product_input_field_survives_roundtrip() {
 
     let parsed = roundtrip_valuation_request(&original);
 
-    assert_eq!(parsed.object_class, "ValuationRequest");
     let pi = parsed.product_input.unwrap();
     match pi.input.unwrap() {
         product_input::Input::Frn(f) => {
-            assert_eq!(f.clean_price.unwrap().arbitrary_precision_value, "100.25");
+            assert_eq!(f.clean_price.unwrap().canonical(), "100.25");
         }
         other => panic!("Expected Frn variant, got {:?}", other),
     }
@@ -168,15 +161,12 @@ fn valuation_request_product_input_field_survives_roundtrip() {
 fn valuation_request_without_product_input_unaffected() {
     // Existing callers that don't set product_input must still round-trip cleanly.
     let original = ValuationRequestProto {
-        object_class: "ValuationRequest".into(),
-        version: "0.0.1".into(),
         product_input: None,
         ..Default::default()
     };
 
     let parsed = roundtrip_valuation_request(&original);
 
-    assert_eq!(parsed.object_class, "ValuationRequest");
     assert!(parsed.product_input.is_none());
 }
 

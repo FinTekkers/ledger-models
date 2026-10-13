@@ -487,8 +487,6 @@ mod tests {
 
     fn full_security(uuid: Uuid, name: &str) -> SecurityProto {
         SecurityProto {
-            object_class: "Security".into(),
-            version: "0.0.1".into(),
             uuid: Some(uuid_to_proto(uuid)),
             is_link: false,
             issuer_name: name.into(),
@@ -498,8 +496,6 @@ mod tests {
 
     fn full_portfolio(uuid: Uuid, name: &str) -> PortfolioProto {
         PortfolioProto {
-            object_class: "Portfolio".into(),
-            version: "0.0.1".into(),
             uuid: Some(uuid_to_proto(uuid)),
             is_link: false,
             portfolio_name: name.into(),
@@ -518,8 +514,6 @@ mod tests {
 
     fn link_price(security_uuid: Uuid, as_of: Option<LocalTimestampProto>) -> PriceProto {
         PriceProto {
-            object_class: "Price".into(),
-            version: "0.0.1".into(),
             uuid: Some(uuid_to_proto(Uuid::new_v4())),
             security: Some(link_security(security_uuid, as_of)),
             ..Default::default()
@@ -635,7 +629,6 @@ mod tests {
     async fn non_link_items_pass_through_unchanged() {
         let resolver = make_resolver(HashMap::new(), HashMap::new());
         let p = PriceProto {
-            object_class: "Price".into(),
             uuid: Some(uuid_to_proto(Uuid::new_v4())),
             security: Some(full_security(Uuid::new_v4(), "AAPL")),
             ..Default::default()
@@ -652,7 +645,6 @@ mod tests {
     async fn items_missing_security_skipped_cleanly() {
         let resolver = make_resolver(HashMap::new(), HashMap::new());
         let p = PriceProto {
-            object_class: "Price".into(),
             uuid: Some(uuid_to_proto(Uuid::new_v4())),
             security: None,
             ..Default::default()
@@ -837,7 +829,6 @@ mod tests {
         let resolver = make_resolver(sec_store, port_store);
 
         let mk_txn = |sec_uuid: Uuid, port_uuid: Uuid| TransactionProto {
-            object_class: "Transaction".into(),
             uuid: Some(uuid_to_proto(Uuid::new_v4())),
             security: Some(link_security(sec_uuid, None)),
             portfolio: Some(PortfolioProto {
@@ -893,8 +884,6 @@ mod tests {
 
     fn full_security_with_as_of(uuid: Uuid, name: &str, as_of: LocalTimestampProto) -> SecurityProto {
         SecurityProto {
-            object_class: "Security".into(),
-            version: "0.0.1".into(),
             uuid: Some(uuid_to_proto(uuid)),
             as_of: Some(as_of),
             is_link: false,
@@ -905,8 +894,6 @@ mod tests {
 
     fn full_portfolio_with_as_of(uuid: Uuid, name: &str, as_of: LocalTimestampProto) -> PortfolioProto {
         PortfolioProto {
-            object_class: "Portfolio".into(),
-            version: "0.0.1".into(),
             uuid: Some(uuid_to_proto(uuid)),
             as_of: Some(as_of),
             is_link: false,

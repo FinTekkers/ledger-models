@@ -17,8 +17,6 @@ test('test the date time', async () => {
     const position = new PositionProto();
 
     // Set properties
-    position.setObjectClass(' MyClass');
-    position.setVersion('1.0');
     position.setPositionView(PositionViewProto.DEFAULT_VIEW);
     position.setPositionType(PositionTypeProto.TRANSACTION);
 

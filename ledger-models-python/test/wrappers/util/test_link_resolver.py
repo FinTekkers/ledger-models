@@ -61,8 +61,6 @@ class _MockSecurityStub:
 
 def _full_security(uuid_obj: UUID, issuer_name: str) -> SecurityProto:
     return SecurityProto(
-        object_class="Security",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid_obj.bytes),
         is_link=False,
         issuer_name=issuer_name,
@@ -79,8 +77,6 @@ def _link_price(security_uuid: UUID, price_value: str, as_of: Optional[LocalTime
         link_sec.as_of.CopyFrom(as_of)
 
     proto = PriceProto(
-        object_class="Price",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid4().bytes),
         security=link_sec,
     )
@@ -175,8 +171,6 @@ def test_non_link_items_pass_through_unchanged():
 
     full_sec = _full_security(uuid4(), "AAPL")
     proto = PriceProto(
-        object_class="Price",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid4().bytes),
         security=full_sec,
     )
@@ -192,8 +186,6 @@ def test_items_missing_security_skipped_cleanly():
     resolver = _new_resolver({}, log)
 
     proto = PriceProto(
-        object_class="Price",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid4().bytes),
         # no security set
     )

@@ -64,7 +64,7 @@ public class Strategy extends RawDataModelObject {
         if (asOf == null) {
             throw new IllegalArgumentException("Strategy.asOf is required");
         }
-        StrategyProto.Builder b = ObjectTypes.stamp(StrategyProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_STRATEGY, Strategy.class.getSimpleName(), "0.0.1")
+        StrategyProto.Builder b = ObjectTypes.stamp(StrategyProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_STRATEGY)
                 .setUuid(ProtoSerializationUtil.serializeUUID(id))
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf))
                 .setStrategyName(strategyName);

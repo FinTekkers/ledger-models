@@ -17,7 +17,7 @@ license = "Apache-2.0"
 description = "A comprehensive model library for financial products (securities, prices, transactions, etc). Protobuf used for serialization, with language-specific implementations"
 readme = "README.md" # It is used at https://crates.io/crates/publish
 repository = "https://github.com/fintekkers/ledger-models"
-include = ["Cargo.toml", "**/*.rs", "ledger_models_file_descriptor_set_v_todo.bin", "catalog/*.json", "hierarchy.json", "fintekkers/wrappers/util/*.json"]
+include = ["Cargo.toml", "**/*.rs", "ledger_models_file_descriptor_set_v_todo.bin", "catalog/*.json", "hierarchy.json"]
 
 [[bin]]
 name = "gen"
@@ -52,10 +52,8 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
 # DecimalValueProto compact form (LM-294, docs/adr/compact_decimal.md):
-# arbitrary-size unscaled values, and the once-per-process deprecation warning.
-# log also carries the object_class / version fallback warnings (LM-297).
+# arbitrary-size unscaled values.
 num-bigint = "0.4"
-log = "0.4"
 
 # Only with the test-utils feature: the decimal finder walks any message by
 # reflection (LM-312, docs/adr/rust_decimal_helpers.md). Must stay on the
@@ -83,9 +81,3 @@ required-features = ["test-utils"]
 [[test]]
 name = "curve_response_roundtrip_test"
 required-features = ["test-utils"]
-
-[dev-dependencies]
-# The last published release, so tests prove it still reads bytes this
-# version writes (LM-294). Also writes the legacy fixtures
-# (examples/gen_legacy_decimal_fixtures.rs).
-ledger_models_v0433 = { package = "ledger-models", version = "=0.4.33" }

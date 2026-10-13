@@ -40,21 +40,20 @@ public final class StrategyAllocationProtos {
       "stamp.proto\032*fintekkers/models/util/deci" +
       "mal_value.proto\032!fintekkers/models/util/" +
       "uuid.proto\032(fintekkers/models/util/objec" +
-      "t_type.proto\"\201\001\n\rMapFieldEntry\0226\n\003key\030\001 " +
-      "\001(\0132).fintekkers.models.strategy.Strateg" +
-      "yProto\0228\n\005value\030\002 \001(\0132).fintekkers.model" +
-      "s.util.DecimalValueProto\"\215\003\n\027StrategyAll" +
-      "ocationProto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023" +
-      "\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(" +
-      "\0162\'.fintekkers.models.util.ObjectTypePro" +
-      "to\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversion_mi" +
-      "nor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022/\n\004uu" +
-      "id\030\005 \001(\0132!.fintekkers.models.util.UUIDPr" +
-      "oto\022:\n\005as_of\030\006 \001(\0132+.fintekkers.models.u" +
-      "til.LocalTimestampProto\022\017\n\007is_link\030\007 \001(\010" +
-      "\022>\n\013allocations\030\n \003(\0132).fintekkers.model" +
-      "s.strategy.MapFieldEntryB\034B\030StrategyAllo" +
-      "cationProtosP\001b\006proto3"
+      "t_type.proto\032$fintekkers/models/util/ver" +
+      "sion.proto\"\201\001\n\rMapFieldEntry\0226\n\003key\030\001 \001(" +
+      "\0132).fintekkers.models.strategy.StrategyP" +
+      "roto\0228\n\005value\030\002 \001(\0132).fintekkers.models." +
+      "util.DecimalValueProto\"\314\002\n\027StrategyAlloc" +
+      "ationProto\022<\n\013object_type\030\001 \001(\0162\'.fintek" +
+      "kers.models.util.ObjectTypeProto\0225\n\007vers" +
+      "ion\030\002 \001(\0132$.fintekkers.models.util.Versi" +
+      "onProto\022/\n\004uuid\030\005 \001(\0132!.fintekkers.model" +
+      "s.util.UUIDProto\022:\n\005as_of\030\006 \001(\0132+.fintek" +
+      "kers.models.util.LocalTimestampProto\022\017\n\007" +
+      "is_link\030\007 \001(\010\022>\n\013allocations\030\n \003(\0132).fin" +
+      "tekkers.models.strategy.MapFieldEntryB\034B" +
+      "\030StrategyAllocationProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -64,6 +63,7 @@ public final class StrategyAllocationProtos {
           fintekkers.models.util.DecimalValue.getDescriptor(),
           fintekkers.models.util.Uuid.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_strategy_MapFieldEntry_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -76,12 +76,13 @@ public final class StrategyAllocationProtos {
     internal_static_fintekkers_models_strategy_StrategyAllocationProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_strategy_StrategyAllocationProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Uuid", "AsOf", "IsLink", "Allocations", });
+        new java.lang.String[] { "ObjectType", "Version", "Uuid", "AsOf", "IsLink", "Allocations", });
     fintekkers.models.strategy.StrategyProtos.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.util.DecimalValue.getDescriptor();
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

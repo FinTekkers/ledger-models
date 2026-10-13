@@ -1,4 +1,3 @@
-#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
 
 //! Integration tests for the `from_pricer_inputs` builders on
 //! `BondSecurity`, `TIPSBond`, and `FloatingRateNote`.
@@ -7,6 +6,9 @@
 //! `SecurityProto` has the expected `bond_details` and (when applicable)
 //! extension fields populated. Then encode → decode → re-wrap to confirm
 //! the proto round-trips and the wrappers re-read what was written.
+
+mod common;
+use common::Canonical;
 
 use chrono::NaiveDate;
 use prost::Message;
@@ -45,11 +47,11 @@ fn bond_from_pricer_inputs_populates_bond_details() {
     assert_eq!(proto.product_type, ProductTypeProto::TreasuryNote as i32);
     let bond = proto.bond_details.as_ref().expect("bond_details set");
     assert_eq!(
-        bond.face_value.as_ref().unwrap().arbitrary_precision_value,
+        bond.face_value.as_ref().unwrap().canonical(),
         "1000"
     );
     assert_eq!(
-        bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value,
+        bond.coupon_rate.as_ref().unwrap().canonical(),
         "0.05"
     );
     assert_eq!(bond.coupon_type, CouponTypeProto::Fixed as i32);
@@ -102,12 +104,12 @@ fn tips_from_pricer_inputs_populates_bond_and_tips_extension() {
     assert_eq!(proto.product_type, ProductTypeProto::Tips as i32);
     let bond = proto.bond_details.as_ref().expect("bond_details set");
     assert_eq!(
-        bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value,
+        bond.coupon_rate.as_ref().unwrap().canonical(),
         "0.00625"
     );
     let tips = proto.tips_extension.as_ref().expect("tips_extension set");
     assert_eq!(
-        tips.base_cpi.as_ref().unwrap().arbitrary_precision_value,
+        tips.base_cpi.as_ref().unwrap().canonical(),
         "256.394"
     );
     assert_eq!(tips.inflation_index_type, IndexTypeProto::CpiU as i32);
@@ -158,7 +160,7 @@ fn frn_from_pricer_inputs_populates_bond_and_frn_extension() {
     assert_eq!(bond.coupon_type, CouponTypeProto::Float as i32);
     let frn = proto.frn_extension.as_ref().expect("frn_extension set");
     assert_eq!(
-        frn.spread.as_ref().unwrap().arbitrary_precision_value,
+        frn.spread.as_ref().unwrap().canonical(),
         "0.0050"
     );
     assert_eq!(frn.reference_rate_index, IndexTypeProto::TBill13Week as i32);

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -21,7 +22,7 @@ class IssuanceWrapperTest {
     }
 
     private static DecimalValueProto decimal(String v) {
-        return DecimalValueProto.newBuilder().setArbitraryPrecisionValue(v).build();
+        return Decimals.decimal(v);
     }
 
     @Test

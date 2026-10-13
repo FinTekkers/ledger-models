@@ -8,20 +8,16 @@ import * as jspb from "google-protobuf";
 import * as fintekkers_models_portfolio_portfolio_pb from "../../../fintekkers/models/portfolio/portfolio_pb";
 import * as fintekkers_requests_portfolio_query_portfolio_request_pb from "../../../fintekkers/requests/portfolio/query_portfolio_request_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class QueryPortfolioResponseProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): QueryPortfolioResponseProto;
-    getVersion(): string;
-    setVersion(value: string): QueryPortfolioResponseProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): QueryPortfolioResponseProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): QueryPortfolioResponseProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): QueryPortfolioResponseProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): QueryPortfolioResponseProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): QueryPortfolioResponseProto;
 
     hasQueryPortfolioRequest(): boolean;
     clearQueryPortfolioRequest(): void;
@@ -46,12 +42,8 @@ export class QueryPortfolioResponseProto extends jspb.Message {
 
 export namespace QueryPortfolioResponseProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         queryPortfolioRequest?: fintekkers_requests_portfolio_query_portfolio_request_pb.QueryPortfolioRequestProto.AsObject,
         portfolioResponseList: Array<fintekkers_models_portfolio_portfolio_pb.PortfolioProto.AsObject>,
         nextPageToken: string,

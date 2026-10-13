@@ -3,6 +3,8 @@ ISSUE #7: SecurityProto round-trip serialization tests for all 6 security types.
 
 For each type: construct → serialize to bytes → deserialize → verify all fields match.
 """
+from decimal import Decimal
+
 import pytest
 from fintekkers.models.security import security_pb2
 from fintekkers.models.security import product_type_pb2
@@ -12,10 +14,11 @@ from fintekkers.models.security import security_quantity_type_pb2
 from fintekkers.models.security.identifier import identifier_pb2, identifier_type_pb2
 from fintekkers.models.security.index import index_type_pb2
 from fintekkers.models.util import decimal_value_pb2, local_date_pb2
+from fintekkers.wrappers.models.util.decimal import decode_decimal, encode_decimal
 
 
 def _decimal(value: str) -> decimal_value_pb2.DecimalValueProto:
-    return decimal_value_pb2.DecimalValueProto(arbitrary_precision_value=value)
+    return encode_decimal(Decimal(value))
 
 
 def _date(year: int, month: int, day: int) -> local_date_pb2.LocalDateProto:
@@ -54,8 +57,6 @@ class TestSecurityProtoRoundTrip:
             maturity_date=_date(2030, 1, 15),
         )
         original = security_pb2.SecurityProto(
-            object_class="Security",
-            version="0.0.1",
             product_type=product_type_pb2.TREASURY_NOTE,
             asset_class="Fixed Income",
             issuer_name="US Treasury",
@@ -71,9 +72,9 @@ class TestSecurityProtoRoundTrip:
         assert parsed.asset_class == "Fixed Income"
         assert parsed.issuer_name == "US Treasury"
         assert parsed.description == "UST 5% 2030"
-        assert parsed.bond_details.coupon_rate.arbitrary_precision_value == "5.0"
+        assert format(decode_decimal(parsed.bond_details.coupon_rate), "f") == "5.0"
         assert parsed.bond_details.coupon_type == coupon_type_pb2.FIXED
-        assert parsed.bond_details.face_value.arbitrary_precision_value == "1000"
+        assert format(decode_decimal(parsed.bond_details.face_value), "f") == "1000"
         assert parsed.bond_details.issue_date.year == 2020
         assert parsed.bond_details.maturity_date.year == 2030
         assert parsed.identifiers[0].identifier_value == "912828ZT0"
@@ -99,9 +100,9 @@ class TestSecurityProtoRoundTrip:
         parsed = _roundtrip(original)
 
         assert parsed.product_type == product_type_pb2.TIPS
-        assert parsed.bond_details.coupon_rate.arbitrary_precision_value == "0.625"
-        assert parsed.bond_details.face_value.arbitrary_precision_value == "1000"
-        assert parsed.tips_extension.base_cpi.arbitrary_precision_value == "256.394"
+        assert format(decode_decimal(parsed.bond_details.coupon_rate), "f") == "0.625"
+        assert format(decode_decimal(parsed.bond_details.face_value), "f") == "1000"
+        assert format(decode_decimal(parsed.tips_extension.base_cpi), "f") == "256.394"
         assert parsed.tips_extension.inflation_index_type == index_type_pb2.CPI_U
 
     def test_frn_security(self):
@@ -127,7 +128,7 @@ class TestSecurityProtoRoundTrip:
         assert parsed.product_type == product_type_pb2.TREASURY_FRN
         assert parsed.bond_details.coupon_type == coupon_type_pb2.FLOAT
         assert parsed.bond_details.maturity_date.year == 2028
-        assert parsed.frn_extension.spread.arbitrary_precision_value == "50"
+        assert format(decode_decimal(parsed.frn_extension.spread), "f") == "50"
         assert parsed.frn_extension.reference_rate_index == index_type_pb2.T_BILL_13_WEEK
         assert parsed.frn_extension.reset_frequency == coupon_frequency_pb2.QUARTERLY
 

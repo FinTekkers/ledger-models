@@ -1,5 +1,6 @@
 """LM-289: the shared price rule set. The same table runs in Java, Rust and JS."""
 
+from decimal import Decimal
 import uuid
 
 import pytest
@@ -11,6 +12,7 @@ from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.wrappers.models import price_rules
 from fintekkers.wrappers.models.errors import ModelValidationError
+from fintekkers.wrappers.models.util.decimal import encode_decimal
 
 PRICE_ID = uuid.uuid4()
 
@@ -20,7 +22,7 @@ def _valid() -> PriceProto:
     return PriceProto(
         uuid=UUIDProto(raw_uuid=PRICE_ID.bytes),
         security=SecurityProto(uuid=UUIDProto(raw_uuid=uuid.uuid4().bytes)),
-        price=DecimalValueProto(arbitrary_precision_value="100.25"),
+        price=encode_decimal(Decimal("100.25")),
         price_type=PriceTypeProto.PERCENTAGE,
     )
 
@@ -57,20 +59,25 @@ def test_price_absent_one_violation_on_price():
 
 def test_price_empty_one_violation_on_price():
     p = _valid()
-    p.price.arbitrary_precision_value = ""
+    p.price.Clear()
+    assert p.HasField("price")
     assert _fields(p) == ["price"]
 
 
 def test_price_zero_is_valid():
     p = _valid()
-    p.price.arbitrary_precision_value = "0"
+    p.price.CopyFrom(encode_decimal(Decimal("0")))
     assert _fields(p) == []
 
 
-@pytest.mark.parametrize("value", ["-1", "abc"])
+@pytest.mark.parametrize("value", [
+    encode_decimal(Decimal("-1")),
+    # Over the scale cap: set, but it does not decode.
+    DecimalValueProto(unscaled_value=b"\x01", scale=5000),
+], ids=["negative", "over_cap"])
 def test_price_value_is_not_checked(value):
     p = _valid()
-    p.price.arbitrary_precision_value = value
+    p.price.CopyFrom(value)
     assert _fields(p) == []
 
 

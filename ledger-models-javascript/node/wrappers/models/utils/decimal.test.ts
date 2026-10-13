@@ -5,15 +5,14 @@ import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value
 import { ModelValidationError } from '../errors';
 import { ProtoSerializationUtil } from './serialization';
 import {
-    CompactDecimal,
     MAX_DIGITS,
     MAX_SCALE,
     MAX_UNSCALED_BYTES,
     decodeDecimal,
     encodeDecimal,
     fromDecimalJs,
+    isUnsetDecimal,
     parseDecimalString,
-    setDecimalLogger,
     toCanonicalString,
     withField,
 } from './decimal';
@@ -45,11 +44,6 @@ function expectInvalid(fn: () => unknown): void {
     expect(fn).toThrow(ModelValidationError);
 }
 
-beforeAll(() => {
-    // String-only decodes below would warn once; keep the test output quiet.
-    setDecimalLogger({ warn: jest.fn() });
-});
-
 describe('metric 1: shared fixture', () => {
     test('fixture limits match the codec', () => {
         expect(FIXTURE.limits).toEqual({
@@ -76,7 +70,6 @@ describe('metric 1: shared fixture', () => {
     const stringErrors: [string, string][] = FIXTURE.string_errors.map((c: { name: string; string: string }) => [c.name, c.string]);
     test.each(stringErrors)('string error %s is a ModelValidationError', (_name, s) => {
         expectInvalid(() => parseDecimalString(s));
-        expectInvalid(() => decodeDecimal(new DecimalValueProto().setArbitraryPrecisionValue(s)));
     });
 
     const decodeErrors: [string, any][] = FIXTURE.decode_errors.map((c: any) => [c.name, c]);
@@ -112,28 +105,23 @@ describe('metric 1: shared fixture', () => {
         }
     });
 
-    test('compact form wins over a conflicting string and does not warn', () => {
-        jest.isolateModules(() => {
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const codec = require('./decimal');
-            const warn = jest.fn();
-            codec.setDecimalLogger({ warn });
-            const proto = new DecimalValueProto()
-                .setArbitraryPrecisionValue('9')
-                .setUnscaledValue(unhex('0096'))
-                .setScale(2);
-            expect(codec.toCanonicalString(codec.decodeDecimal(proto))).toBe('1.50');
-            expect(warn).not.toHaveBeenCalled();
-        });
-    });
-
     test('negative zero from decimal.js encodes to 0x00 at scale 0', () => {
         const v = fromDecimalJs(new Decimal('-0'));
         expect(v).toEqual({ unscaled: BigInt(0), scale: 0 });
         const proto = encodeDecimal(v);
         expect(hex(proto.getUnscaledValue_asU8())).toBe('00');
         expect(proto.getScale()).toBe(0);
-        expect(proto.getArbitraryPrecisionValue()).toBe('0');
+    });
+
+    test('a string-only decimal from old bytes is unset (LM-318)', () => {
+        // 0x52 = field 10, length-delimited: "1.5" as a v0.4.33 writer stored
+        // it. LM-318 deleted field 10, so the decimal is unset.
+        const old = DecimalValueProto.deserializeBinary(new Uint8Array([0x52, 0x03, 0x31, 0x2e, 0x35]));
+        expect(isUnsetDecimal(old)).toBe(true);
+        expect(() => decodeDecimal(old)).toThrow(ModelValidationError);
+        expect(() => decodeDecimal(old)).toThrow('decimal is required but unset');
+        // Compact zero is still set.
+        expect(isUnsetDecimal(encodeDecimal(parseDecimalString('0')))).toBe(false);
     });
 });
 
@@ -159,55 +147,6 @@ describe('metric 3: decodeDecimal takes the proto only', () => {
             expect(e).toBeInstanceOf(ModelValidationError);
             expect((e as ModelValidationError).field).toBe('price');
         }
-    });
-});
-
-describe('metric 4: one deprecation warning per process', () => {
-    test('a compact-only decode does not warn', () => {
-        jest.isolateModules(() => {
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const codec = require('./decimal');
-            const warn = jest.fn();
-            codec.setDecimalLogger({ warn });
-            for (const c of CASES) codec.decodeDecimal(compactOnly(c));
-            expect(warn).toHaveBeenCalledTimes(0);
-        });
-    });
-
-    test('three string-only prices read through the Price wrapper warn exactly once', () => {
-        jest.isolateModules(() => {
-            // The same isolated registry: Price loads this codec instance.
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const codec = require('./decimal');
-            const warn = jest.fn();
-            codec.setDecimalLogger({ warn });
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const { PriceProto } = require('../../../fintekkers/models/price/price_pb');
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const Price = require('../price/Price').default;
-            const values = ['100.25', '-0.50', '1E+3'];
-            const read = values.map(s => new Price(
-                new PriceProto().setPrice(new DecimalValueProto().setArbitraryPrecisionValue(s))).getPrice());
-            expect(read.map((d: Decimal) => d.toString())).toEqual(['100.25', '-0.5', '1000']);
-            expect(warn).toHaveBeenCalledTimes(1);
-            expect(warn.mock.calls[0][0]).toContain('arbitrary_precision_value');
-        });
-    });
-});
-
-describe('metric 5: writers set both forms', () => {
-    test.each(CASES.map(c => [c.name, c] as [string, Case]))('%s: both forms are set and decode equal', (_name, c) => {
-        const proto = encodeDecimal(parseDecimalString(c.string));
-        expect(proto.getArbitraryPrecisionValue()).toBe(c.canonical);
-        expect(proto.getUnscaledValue_asU8().length).toBeGreaterThan(0);
-
-        const stringOnly = new DecimalValueProto().setArbitraryPrecisionValue(proto.getArbitraryPrecisionValue());
-        const compact = new DecimalValueProto()
-            .setUnscaledValue(proto.getUnscaledValue_asU8())
-            .setScale(proto.getScale());
-        const expected: CompactDecimal = { unscaled: expectedUnscaled(c.unscaled_hex), scale: c.scale };
-        expect(decodeDecimal(stringOnly)).toEqual(expected);
-        expect(decodeDecimal(compact)).toEqual(expected);
     });
 });
 
@@ -247,14 +186,13 @@ describe('guardrail: lossless', () => {
         expectInvalid(() => ProtoSerializationUtil.serialize(0.1));
         expectInvalid(() => ProtoSerializationUtil.serialize(2 ** 53));
         const proto = ProtoSerializationUtil.serialize(42) as DecimalValueProto;
-        expect(proto.getArbitraryPrecisionValue()).toBe('42');
         expect(hex(proto.getUnscaledValue_asU8())).toBe('2a');
         expect(proto.getScale()).toBe(0);
     });
 
-    test('serialize(Decimal) writes both forms; deserialize returns a Decimal', () => {
+    test('serialize(Decimal) writes the compact form; deserialize returns a Decimal', () => {
         const proto = ProtoSerializationUtil.serialize(new Decimal('-123.45')) as DecimalValueProto;
-        expect(proto.getArbitraryPrecisionValue()).toBe('-123.45');
+        expect(toCanonicalString(decodeDecimal(proto))).toBe('-123.45');
         expect(hex(proto.getUnscaledValue_asU8())).toBe('cfc7');
 
         const big = CASES.find(c => c.name === 'two_pow_127')!;

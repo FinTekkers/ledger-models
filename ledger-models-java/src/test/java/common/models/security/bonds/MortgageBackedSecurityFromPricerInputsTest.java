@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,25 +47,25 @@ class MortgageBackedSecurityFromPricerInputsTest {
         assertTrue(proto.hasMbsExtension(), "mbs_extension must be populated");
 
         assertEquals(FACE.toPlainString(),
-                proto.getBondDetails().getFaceValue().getArbitraryPrecisionValue());
+                Decimals.text(proto.getBondDetails().getFaceValue()));
         assertEquals(COUPON.toPlainString(),
-                proto.getBondDetails().getCouponRate().getArbitraryPrecisionValue());
+                Decimals.text(proto.getBondDetails().getCouponRate()));
 
         assertEquals(POOL_NUMBER, proto.getMbsExtension().getPoolNumber());
         assertEquals(AGENCY, proto.getMbsExtension().getAgency());
         assertEquals(WAC.toPlainString(),
-                proto.getMbsExtension().getWac().getArbitraryPrecisionValue());
+                Decimals.text(proto.getMbsExtension().getWac()));
         assertEquals(WAM, proto.getMbsExtension().getWam());
         assertEquals(PASS_THROUGH_RATE.toPlainString(),
-                proto.getMbsExtension().getPassThroughRate().getArbitraryPrecisionValue());
+                Decimals.text(proto.getMbsExtension().getPassThroughRate()));
         assertEquals(CURRENT_FACTOR.toPlainString(),
-                proto.getMbsExtension().getCurrentFactor().getArbitraryPrecisionValue());
+                Decimals.text(proto.getMbsExtension().getCurrentFactor()));
         assertEquals(ORIGINAL_FACE_VALUE.toPlainString(),
-                proto.getMbsExtension().getOriginalFaceValue().getArbitraryPrecisionValue());
+                Decimals.text(proto.getMbsExtension().getOriginalFaceValue()));
         assertEquals(CURRENT_UPB.toPlainString(),
-                proto.getMbsExtension().getCurrentUpb().getArbitraryPrecisionValue());
+                Decimals.text(proto.getMbsExtension().getCurrentUpb()));
         assertEquals(PSA_SPEED.toPlainString(),
-                proto.getMbsExtension().getPsaSpeed().getArbitraryPrecisionValue());
+                Decimals.text(proto.getMbsExtension().getPsaSpeed()));
     }
 
     @Test

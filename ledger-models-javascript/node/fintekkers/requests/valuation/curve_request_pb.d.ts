@@ -11,6 +11,7 @@ import * as fintekkers_models_util_decimal_value_pb from "../../../fintekkers/mo
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_position_measure_pb from "../../../fintekkers/models/position/measure_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class CurveInputProto extends jspb.Message { 
 
@@ -54,18 +55,13 @@ export namespace CurveInputProto {
 }
 
 export class CurveRequestProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): CurveRequestProto;
-    getVersion(): string;
-    setVersion(value: string): CurveRequestProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CurveRequestProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): CurveRequestProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): CurveRequestProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): CurveRequestProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): CurveRequestProto;
 
     hasAsofDatetime(): boolean;
     clearAsofDatetime(): void;
@@ -98,12 +94,8 @@ export class CurveRequestProto extends jspb.Message {
 
 export namespace CurveRequestProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         asofDatetime?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         curveTypesList: Array<fintekkers_models_position_measure_pb.MeasureProto>,
         curveInputsList: Array<CurveInputProto.AsObject>,

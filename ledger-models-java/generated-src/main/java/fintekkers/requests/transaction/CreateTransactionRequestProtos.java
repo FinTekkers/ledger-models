@@ -32,31 +32,32 @@ public final class CreateTransactionRequestProtos {
       "_transaction_request.proto\022\037fintekkers.r" +
       "equests.transaction\032/fintekkers/models/t" +
       "ransaction/transaction.proto\032(fintekkers" +
-      "/models/util/object_type.proto\"\250\002\n\035Creat" +
-      "eTransactionRequestProto\022\030\n\014object_class" +
-      "\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013objec" +
-      "t_type\030\351\007 \001(\0162\'.fintekkers.models.util.O" +
-      "bjectTypeProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026" +
-      "\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030" +
-      "\354\007 \001(\r\022Q\n\030create_transaction_input\030\024 \001(\013" +
-      "2/.fintekkers.models.transaction.Transac" +
-      "tionProtoB\"B\036CreateTransactionRequestPro" +
-      "tosP\001b\006proto3"
+      "/models/util/object_type.proto\032$fintekke" +
+      "rs/models/util/version.proto\"\347\001\n\035CreateT" +
+      "ransactionRequestProto\022<\n\013object_type\030\001 " +
+      "\001(\0162\'.fintekkers.models.util.ObjectTypeP" +
+      "roto\0225\n\007version\030\002 \001(\0132$.fintekkers.model" +
+      "s.util.VersionProto\022Q\n\030create_transactio" +
+      "n_input\030\024 \001(\0132/.fintekkers.models.transa" +
+      "ction.TransactionProtoB\"B\036CreateTransact" +
+      "ionRequestProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.transaction.TransactionProtos.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_transaction_CreateTransactionRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_transaction_CreateTransactionRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_transaction_CreateTransactionRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "CreateTransactionInput", });
+        new java.lang.String[] { "ObjectType", "Version", "CreateTransactionInput", });
     fintekkers.models.transaction.TransactionProtos.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -22,8 +22,6 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private ValuationRequestProto() {
-    objectClass_ = "";
-    version_ = "";
     objectType_ = 0;
     operationType_ = 0;
     measures_ = java.util.Collections.emptyList();
@@ -54,111 +52,17 @@ private static final long serialVersionUID = 0L;
             fintekkers.requests.valuation.ValuationRequestProto.class, fintekkers.requests.valuation.ValuationRequestProto.Builder.class);
   }
 
-  public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object objectClass_ = "";
-  /**
-   * <code>string object_class = 1 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.object_class is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=22
-   * @return The objectClass.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public java.lang.String getObjectClass() {
-    java.lang.Object ref = objectClass_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      objectClass_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string object_class = 1 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.object_class is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=22
-   * @return The bytes for objectClass.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public com.google.protobuf.ByteString
-      getObjectClassBytes() {
-    java.lang.Object ref = objectClass_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      objectClass_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int VERSION_FIELD_NUMBER = 2;
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object version_ = "";
-  /**
-   * <code>string version = 2 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.version is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=23
-   * @return The version.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public java.lang.String getVersion() {
-    java.lang.Object ref = version_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = 
-          (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      version_ = s;
-      return s;
-    }
-  }
-  /**
-   * <code>string version = 2 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.version is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=23
-   * @return The bytes for version.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public com.google.protobuf.ByteString
-      getVersionBytes() {
-    java.lang.Object ref = version_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b = 
-          com.google.protobuf.ByteString.copyFromUtf8(
-              (java.lang.String) ref);
-      version_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int OBJECT_TYPE_FIELD_NUMBER = 1001;
+  public static final int OBJECT_TYPE_FIELD_NUMBER = 1;
   private int objectType_ = 0;
   /**
-   * <pre>
-   * Compact form of object_class / version (LM-297). Writers set both in stage 1.
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+   * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
    * @return The enum numeric value on the wire for objectType.
    */
   @java.lang.Override public int getObjectTypeValue() {
     return objectType_;
   }
   /**
-   * <pre>
-   * Compact form of object_class / version (LM-297). Writers set both in stage 1.
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+   * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
    * @return The objectType.
    */
   @java.lang.Override public fintekkers.models.util.ObjectTypeProto getObjectType() {
@@ -166,37 +70,30 @@ private static final long serialVersionUID = 0L;
     return result == null ? fintekkers.models.util.ObjectTypeProto.UNRECOGNIZED : result;
   }
 
-  public static final int VERSION_MAJOR_FIELD_NUMBER = 1002;
-  private int versionMajor_ = 0;
+  public static final int VERSION_FIELD_NUMBER = 2;
+  private fintekkers.models.util.VersionProto version_;
   /**
-   * <code>uint32 version_major = 1002;</code>
-   * @return The versionMajor.
+   * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+   * @return Whether the version field is set.
    */
   @java.lang.Override
-  public int getVersionMajor() {
-    return versionMajor_;
+  public boolean hasVersion() {
+    return version_ != null;
   }
-
-  public static final int VERSION_MINOR_FIELD_NUMBER = 1003;
-  private int versionMinor_ = 0;
   /**
-   * <code>uint32 version_minor = 1003;</code>
-   * @return The versionMinor.
+   * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+   * @return The version.
    */
   @java.lang.Override
-  public int getVersionMinor() {
-    return versionMinor_;
+  public fintekkers.models.util.VersionProto getVersion() {
+    return version_ == null ? fintekkers.models.util.VersionProto.getDefaultInstance() : version_;
   }
-
-  public static final int VERSION_PATCH_FIELD_NUMBER = 1004;
-  private int versionPatch_ = 0;
   /**
-   * <code>uint32 version_patch = 1004;</code>
-   * @return The versionPatch.
+   * <code>.fintekkers.models.util.VersionProto version = 2;</code>
    */
   @java.lang.Override
-  public int getVersionPatch() {
-    return versionPatch_;
+  public fintekkers.models.util.VersionProtoOrBuilder getVersionOrBuilder() {
+    return version_ == null ? fintekkers.models.util.VersionProto.getDefaultInstance() : version_;
   }
 
   public static final int OPERATION_TYPE_FIELD_NUMBER = 10;
@@ -616,11 +513,11 @@ private static final long serialVersionUID = 0L;
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
     getSerializedSize();
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
+    if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
+      output.writeEnum(1, objectType_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
+    if (version_ != null) {
+      output.writeMessage(2, getVersion());
     }
     if (operationType_ != fintekkers.requests.util.RequestOperationTypeProto.UNKNOWN_OPERATION.getNumber()) {
       output.writeEnum(10, operationType_);
@@ -653,18 +550,6 @@ private static final long serialVersionUID = 0L;
     if (productInput_ != null) {
       output.writeMessage(70, getProductInput());
     }
-    if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
-      output.writeEnum(1001, objectType_);
-    }
-    if (versionMajor_ != 0) {
-      output.writeUInt32(1002, versionMajor_);
-    }
-    if (versionMinor_ != 0) {
-      output.writeUInt32(1003, versionMinor_);
-    }
-    if (versionPatch_ != 0) {
-      output.writeUInt32(1004, versionPatch_);
-    }
     getUnknownFields().writeTo(output);
   }
 
@@ -674,11 +559,13 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
+    if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(1, objectType_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
+    if (version_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(2, getVersion());
     }
     if (operationType_ != fintekkers.requests.util.RequestOperationTypeProto.UNKNOWN_OPERATION.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
@@ -724,22 +611,6 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(70, getProductInput());
     }
-    if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(1001, objectType_);
-    }
-    if (versionMajor_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeUInt32Size(1002, versionMajor_);
-    }
-    if (versionMinor_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeUInt32Size(1003, versionMinor_);
-    }
-    if (versionPatch_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeUInt32Size(1004, versionPatch_);
-    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -755,17 +626,12 @@ private static final long serialVersionUID = 0L;
     }
     fintekkers.requests.valuation.ValuationRequestProto other = (fintekkers.requests.valuation.ValuationRequestProto) obj;
 
-    if (!getObjectClass()
-        .equals(other.getObjectClass())) return false;
-    if (!getVersion()
-        .equals(other.getVersion())) return false;
     if (objectType_ != other.objectType_) return false;
-    if (getVersionMajor()
-        != other.getVersionMajor()) return false;
-    if (getVersionMinor()
-        != other.getVersionMinor()) return false;
-    if (getVersionPatch()
-        != other.getVersionPatch()) return false;
+    if (hasVersion() != other.hasVersion()) return false;
+    if (hasVersion()) {
+      if (!getVersion()
+          .equals(other.getVersion())) return false;
+    }
     if (operationType_ != other.operationType_) return false;
     if (!measures_.equals(other.measures_)) return false;
     if (hasSecurityInput() != other.hasSecurityInput()) return false;
@@ -814,18 +680,12 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + OBJECT_CLASS_FIELD_NUMBER;
-    hash = (53 * hash) + getObjectClass().hashCode();
-    hash = (37 * hash) + VERSION_FIELD_NUMBER;
-    hash = (53 * hash) + getVersion().hashCode();
     hash = (37 * hash) + OBJECT_TYPE_FIELD_NUMBER;
     hash = (53 * hash) + objectType_;
-    hash = (37 * hash) + VERSION_MAJOR_FIELD_NUMBER;
-    hash = (53 * hash) + getVersionMajor();
-    hash = (37 * hash) + VERSION_MINOR_FIELD_NUMBER;
-    hash = (53 * hash) + getVersionMinor();
-    hash = (37 * hash) + VERSION_PATCH_FIELD_NUMBER;
-    hash = (53 * hash) + getVersionPatch();
+    if (hasVersion()) {
+      hash = (37 * hash) + VERSION_FIELD_NUMBER;
+      hash = (53 * hash) + getVersion().hashCode();
+    }
     hash = (37 * hash) + OPERATION_TYPE_FIELD_NUMBER;
     hash = (53 * hash) + operationType_;
     if (getMeasuresCount() > 0) {
@@ -995,15 +855,15 @@ private static final long serialVersionUID = 0L;
     public Builder clear() {
       super.clear();
       bitField0_ = 0;
-      objectClass_ = "";
-      version_ = "";
       objectType_ = 0;
-      versionMajor_ = 0;
-      versionMinor_ = 0;
-      versionPatch_ = 0;
+      version_ = null;
+      if (versionBuilder_ != null) {
+        versionBuilder_.dispose();
+        versionBuilder_ = null;
+      }
       operationType_ = 0;
       measures_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000008);
       securityInput_ = null;
       if (securityInputBuilder_ != null) {
         securityInputBuilder_.dispose();
@@ -1072,9 +932,9 @@ private static final long serialVersionUID = 0L;
     }
 
     private void buildPartialRepeatedFields(fintekkers.requests.valuation.ValuationRequestProto result) {
-      if (((bitField0_ & 0x00000080) != 0)) {
+      if (((bitField0_ & 0x00000008) != 0)) {
         measures_ = java.util.Collections.unmodifiableList(measures_);
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000008);
       }
       result.measures_ = measures_;
     }
@@ -1082,57 +942,47 @@ private static final long serialVersionUID = 0L;
     private void buildPartial0(fintekkers.requests.valuation.ValuationRequestProto result) {
       int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
-        result.objectClass_ = objectClass_;
-      }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.version_ = version_;
-      }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
         result.objectType_ = objectType_;
       }
-      if (((from_bitField0_ & 0x00000008) != 0)) {
-        result.versionMajor_ = versionMajor_;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.version_ = versionBuilder_ == null
+            ? version_
+            : versionBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00000010) != 0)) {
-        result.versionMinor_ = versionMinor_;
-      }
-      if (((from_bitField0_ & 0x00000020) != 0)) {
-        result.versionPatch_ = versionPatch_;
-      }
-      if (((from_bitField0_ & 0x00000040) != 0)) {
+      if (((from_bitField0_ & 0x00000004) != 0)) {
         result.operationType_ = operationType_;
       }
-      if (((from_bitField0_ & 0x00000100) != 0)) {
+      if (((from_bitField0_ & 0x00000010) != 0)) {
         result.securityInput_ = securityInputBuilder_ == null
             ? securityInput_
             : securityInputBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00000200) != 0)) {
+      if (((from_bitField0_ & 0x00000020) != 0)) {
         result.positionInput_ = positionInputBuilder_ == null
             ? positionInput_
             : positionInputBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00000400) != 0)) {
+      if (((from_bitField0_ & 0x00000040) != 0)) {
         result.priceInput_ = priceInputBuilder_ == null
             ? priceInput_
             : priceInputBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00000800) != 0)) {
+      if (((from_bitField0_ & 0x00000080) != 0)) {
         result.asofDatetime_ = asofDatetimeBuilder_ == null
             ? asofDatetime_
             : asofDatetimeBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00001000) != 0)) {
+      if (((from_bitField0_ & 0x00000100) != 0)) {
         result.cpiPriceInput_ = cpiPriceInputBuilder_ == null
             ? cpiPriceInput_
             : cpiPriceInputBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00002000) != 0)) {
+      if (((from_bitField0_ & 0x00000200) != 0)) {
         result.referenceRateInput_ = referenceRateInputBuilder_ == null
             ? referenceRateInput_
             : referenceRateInputBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00004000) != 0)) {
+      if (((from_bitField0_ & 0x00000400) != 0)) {
         result.productInput_ = productInputBuilder_ == null
             ? productInput_
             : productInputBuilder_.build();
@@ -1183,27 +1033,11 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(fintekkers.requests.valuation.ValuationRequestProto other) {
       if (other == fintekkers.requests.valuation.ValuationRequestProto.getDefaultInstance()) return this;
-      if (!other.getObjectClass().isEmpty()) {
-        objectClass_ = other.objectClass_;
-        bitField0_ |= 0x00000001;
-        onChanged();
-      }
-      if (!other.getVersion().isEmpty()) {
-        version_ = other.version_;
-        bitField0_ |= 0x00000002;
-        onChanged();
-      }
       if (other.objectType_ != 0) {
         setObjectTypeValue(other.getObjectTypeValue());
       }
-      if (other.getVersionMajor() != 0) {
-        setVersionMajor(other.getVersionMajor());
-      }
-      if (other.getVersionMinor() != 0) {
-        setVersionMinor(other.getVersionMinor());
-      }
-      if (other.getVersionPatch() != 0) {
-        setVersionPatch(other.getVersionPatch());
+      if (other.hasVersion()) {
+        mergeVersion(other.getVersion());
       }
       if (other.operationType_ != 0) {
         setOperationTypeValue(other.getOperationTypeValue());
@@ -1211,7 +1045,7 @@ private static final long serialVersionUID = 0L;
       if (!other.measures_.isEmpty()) {
         if (measures_.isEmpty()) {
           measures_ = other.measures_;
-          bitField0_ = (bitField0_ & ~0x00000080);
+          bitField0_ = (bitField0_ & ~0x00000008);
         } else {
           ensureMeasuresIsMutable();
           measures_.addAll(other.measures_);
@@ -1265,61 +1099,63 @@ private static final long serialVersionUID = 0L;
             case 0:
               done = true;
               break;
-            case 10: {
-              objectClass_ = input.readStringRequireUtf8();
+            case 8: {
+              objectType_ = input.readEnum();
               bitField0_ |= 0x00000001;
               break;
-            } // case 10
+            } // case 8
             case 18: {
-              version_ = input.readStringRequireUtf8();
+              input.readMessage(
+                  getVersionFieldBuilder().getBuilder(),
+                  extensionRegistry);
               bitField0_ |= 0x00000002;
               break;
             } // case 18
             case 80: {
               operationType_ = input.readEnum();
-              bitField0_ |= 0x00000040;
+              bitField0_ |= 0x00000004;
               break;
             } // case 80
             case 162: {
               input.readMessage(
                   getSecurityInputFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000100;
+              bitField0_ |= 0x00000010;
               break;
             } // case 162
             case 170: {
               input.readMessage(
                   getPositionInputFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000200;
+              bitField0_ |= 0x00000020;
               break;
             } // case 170
             case 178: {
               input.readMessage(
                   getPriceInputFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000400;
+              bitField0_ |= 0x00000040;
               break;
             } // case 178
             case 186: {
               input.readMessage(
                   getAsofDatetimeFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000800;
+              bitField0_ |= 0x00000080;
               break;
             } // case 186
             case 194: {
               input.readMessage(
                   getCpiPriceInputFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00001000;
+              bitField0_ |= 0x00000100;
               break;
             } // case 194
             case 202: {
               input.readMessage(
                   getReferenceRateInputFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00002000;
+              bitField0_ |= 0x00000200;
               break;
             } // case 202
             case 240: {
@@ -1343,29 +1179,9 @@ private static final long serialVersionUID = 0L;
               input.readMessage(
                   getProductInputFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00004000;
+              bitField0_ |= 0x00000400;
               break;
             } // case 562
-            case 8008: {
-              objectType_ = input.readEnum();
-              bitField0_ |= 0x00000004;
-              break;
-            } // case 8008
-            case 8016: {
-              versionMajor_ = input.readUInt32();
-              bitField0_ |= 0x00000008;
-              break;
-            } // case 8016
-            case 8024: {
-              versionMinor_ = input.readUInt32();
-              bitField0_ |= 0x00000010;
-              break;
-            } // case 8024
-            case 8032: {
-              versionPatch_ = input.readUInt32();
-              bitField0_ |= 0x00000020;
-              break;
-            } // case 8032
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1383,203 +1199,27 @@ private static final long serialVersionUID = 0L;
     }
     private int bitField0_;
 
-    private java.lang.Object objectClass_ = "";
-    /**
-     * <code>string object_class = 1 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.object_class is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=22
-     * @return The objectClass.
-     */
-    @java.lang.Deprecated public java.lang.String getObjectClass() {
-      java.lang.Object ref = objectClass_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        objectClass_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string object_class = 1 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.object_class is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=22
-     * @return The bytes for objectClass.
-     */
-    @java.lang.Deprecated public com.google.protobuf.ByteString
-        getObjectClassBytes() {
-      java.lang.Object ref = objectClass_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        objectClass_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string object_class = 1 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.object_class is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=22
-     * @param value The objectClass to set.
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated public Builder setObjectClass(
-        java.lang.String value) {
-      if (value == null) { throw new NullPointerException(); }
-      objectClass_ = value;
-      bitField0_ |= 0x00000001;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string object_class = 1 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.object_class is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=22
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated public Builder clearObjectClass() {
-      objectClass_ = getDefaultInstance().getObjectClass();
-      bitField0_ = (bitField0_ & ~0x00000001);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string object_class = 1 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.object_class is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=22
-     * @param value The bytes for objectClass to set.
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated public Builder setObjectClassBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) { throw new NullPointerException(); }
-      checkByteStringIsUtf8(value);
-      objectClass_ = value;
-      bitField0_ |= 0x00000001;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object version_ = "";
-    /**
-     * <code>string version = 2 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.version is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=23
-     * @return The version.
-     */
-    @java.lang.Deprecated public java.lang.String getVersion() {
-      java.lang.Object ref = version_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs =
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        version_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     * <code>string version = 2 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.version is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=23
-     * @return The bytes for version.
-     */
-    @java.lang.Deprecated public com.google.protobuf.ByteString
-        getVersionBytes() {
-      java.lang.Object ref = version_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        version_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     * <code>string version = 2 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.version is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=23
-     * @param value The version to set.
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated public Builder setVersion(
-        java.lang.String value) {
-      if (value == null) { throw new NullPointerException(); }
-      version_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string version = 2 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.version is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=23
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated public Builder clearVersion() {
-      version_ = getDefaultInstance().getVersion();
-      bitField0_ = (bitField0_ & ~0x00000002);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>string version = 2 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.version is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=23
-     * @param value The bytes for version to set.
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated public Builder setVersionBytes(
-        com.google.protobuf.ByteString value) {
-      if (value == null) { throw new NullPointerException(); }
-      checkByteStringIsUtf8(value);
-      version_ = value;
-      bitField0_ |= 0x00000002;
-      onChanged();
-      return this;
-    }
-
     private int objectType_ = 0;
     /**
-     * <pre>
-     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
      * @return The enum numeric value on the wire for objectType.
      */
     @java.lang.Override public int getObjectTypeValue() {
       return objectType_;
     }
     /**
-     * <pre>
-     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
      * @param value The enum numeric value on the wire for objectType to set.
      * @return This builder for chaining.
      */
     public Builder setObjectTypeValue(int value) {
       objectType_ = value;
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
     /**
-     * <pre>
-     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
      * @return The objectType.
      */
     @java.lang.Override
@@ -1588,11 +1228,7 @@ private static final long serialVersionUID = 0L;
       return result == null ? fintekkers.models.util.ObjectTypeProto.UNRECOGNIZED : result;
     }
     /**
-     * <pre>
-     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
      * @param value The objectType to set.
      * @return This builder for chaining.
      */
@@ -1600,120 +1236,139 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000001;
       objectType_ = value.getNumber();
       onChanged();
       return this;
     }
     /**
-     * <pre>
-     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
      * @return This builder for chaining.
      */
     public Builder clearObjectType() {
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000001);
       objectType_ = 0;
       onChanged();
       return this;
     }
 
-    private int versionMajor_ ;
+    private fintekkers.models.util.VersionProto version_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.VersionProto, fintekkers.models.util.VersionProto.Builder, fintekkers.models.util.VersionProtoOrBuilder> versionBuilder_;
     /**
-     * <code>uint32 version_major = 1002;</code>
-     * @return The versionMajor.
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+     * @return Whether the version field is set.
      */
-    @java.lang.Override
-    public int getVersionMajor() {
-      return versionMajor_;
+    public boolean hasVersion() {
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
-     * <code>uint32 version_major = 1002;</code>
-     * @param value The versionMajor to set.
-     * @return This builder for chaining.
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+     * @return The version.
      */
-    public Builder setVersionMajor(int value) {
-      
-      versionMajor_ = value;
-      bitField0_ |= 0x00000008;
+    public fintekkers.models.util.VersionProto getVersion() {
+      if (versionBuilder_ == null) {
+        return version_ == null ? fintekkers.models.util.VersionProto.getDefaultInstance() : version_;
+      } else {
+        return versionBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+     */
+    public Builder setVersion(fintekkers.models.util.VersionProto value) {
+      if (versionBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        version_ = value;
+      } else {
+        versionBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
     /**
-     * <code>uint32 version_major = 1002;</code>
-     * @return This builder for chaining.
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
      */
-    public Builder clearVersionMajor() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      versionMajor_ = 0;
-      onChanged();
-      return this;
-    }
-
-    private int versionMinor_ ;
-    /**
-     * <code>uint32 version_minor = 1003;</code>
-     * @return The versionMinor.
-     */
-    @java.lang.Override
-    public int getVersionMinor() {
-      return versionMinor_;
-    }
-    /**
-     * <code>uint32 version_minor = 1003;</code>
-     * @param value The versionMinor to set.
-     * @return This builder for chaining.
-     */
-    public Builder setVersionMinor(int value) {
-      
-      versionMinor_ = value;
-      bitField0_ |= 0x00000010;
+    public Builder setVersion(
+        fintekkers.models.util.VersionProto.Builder builderForValue) {
+      if (versionBuilder_ == null) {
+        version_ = builderForValue.build();
+      } else {
+        versionBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
     /**
-     * <code>uint32 version_minor = 1003;</code>
-     * @return This builder for chaining.
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
      */
-    public Builder clearVersionMinor() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      versionMinor_ = 0;
-      onChanged();
-      return this;
-    }
-
-    private int versionPatch_ ;
-    /**
-     * <code>uint32 version_patch = 1004;</code>
-     * @return The versionPatch.
-     */
-    @java.lang.Override
-    public int getVersionPatch() {
-      return versionPatch_;
-    }
-    /**
-     * <code>uint32 version_patch = 1004;</code>
-     * @param value The versionPatch to set.
-     * @return This builder for chaining.
-     */
-    public Builder setVersionPatch(int value) {
-      
-      versionPatch_ = value;
-      bitField0_ |= 0x00000020;
+    public Builder mergeVersion(fintekkers.models.util.VersionProto value) {
+      if (versionBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0) &&
+          version_ != null &&
+          version_ != fintekkers.models.util.VersionProto.getDefaultInstance()) {
+          getVersionBuilder().mergeFrom(value);
+        } else {
+          version_ = value;
+        }
+      } else {
+        versionBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
     /**
-     * <code>uint32 version_patch = 1004;</code>
-     * @return This builder for chaining.
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
      */
-    public Builder clearVersionPatch() {
-      bitField0_ = (bitField0_ & ~0x00000020);
-      versionPatch_ = 0;
+    public Builder clearVersion() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      version_ = null;
+      if (versionBuilder_ != null) {
+        versionBuilder_.dispose();
+        versionBuilder_ = null;
+      }
       onChanged();
       return this;
+    }
+    /**
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+     */
+    public fintekkers.models.util.VersionProto.Builder getVersionBuilder() {
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return getVersionFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+     */
+    public fintekkers.models.util.VersionProtoOrBuilder getVersionOrBuilder() {
+      if (versionBuilder_ != null) {
+        return versionBuilder_.getMessageOrBuilder();
+      } else {
+        return version_ == null ?
+            fintekkers.models.util.VersionProto.getDefaultInstance() : version_;
+      }
+    }
+    /**
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.VersionProto, fintekkers.models.util.VersionProto.Builder, fintekkers.models.util.VersionProtoOrBuilder> 
+        getVersionFieldBuilder() {
+      if (versionBuilder_ == null) {
+        versionBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.VersionProto, fintekkers.models.util.VersionProto.Builder, fintekkers.models.util.VersionProtoOrBuilder>(
+                getVersion(),
+                getParentForChildren(),
+                isClean());
+        version_ = null;
+      }
+      return versionBuilder_;
     }
 
     private int operationType_ = 0;
@@ -1741,7 +1396,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder setOperationTypeValue(int value) {
       operationType_ = value;
-      bitField0_ |= 0x00000040;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1773,7 +1428,7 @@ private static final long serialVersionUID = 0L;
       if (value == null) {
         throw new NullPointerException();
       }
-      bitField0_ |= 0x00000040;
+      bitField0_ |= 0x00000004;
       operationType_ = value.getNumber();
       onChanged();
       return this;
@@ -1788,7 +1443,7 @@ private static final long serialVersionUID = 0L;
      * @return This builder for chaining.
      */
     public Builder clearOperationType() {
-      bitField0_ = (bitField0_ & ~0x00000040);
+      bitField0_ = (bitField0_ & ~0x00000004);
       operationType_ = 0;
       onChanged();
       return this;
@@ -1797,9 +1452,9 @@ private static final long serialVersionUID = 0L;
     private java.util.List<java.lang.Integer> measures_ =
       java.util.Collections.emptyList();
     private void ensureMeasuresIsMutable() {
-      if (!((bitField0_ & 0x00000080) != 0)) {
+      if (!((bitField0_ & 0x00000008) != 0)) {
         measures_ = new java.util.ArrayList<java.lang.Integer>(measures_);
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000008;
       }
     }
     /**
@@ -1903,7 +1558,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder clearMeasures() {
       measures_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000008);
       onChanged();
       return this;
     }
@@ -1994,7 +1649,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the securityInput field is set.
      */
     public boolean hasSecurityInput() {
-      return ((bitField0_ & 0x00000100) != 0);
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      * <pre>
@@ -2027,7 +1682,7 @@ private static final long serialVersionUID = 0L;
       } else {
         securityInputBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -2045,7 +1700,7 @@ private static final long serialVersionUID = 0L;
       } else {
         securityInputBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -2058,7 +1713,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeSecurityInput(fintekkers.models.security.SecurityProto value) {
       if (securityInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000100) != 0) &&
+        if (((bitField0_ & 0x00000010) != 0) &&
           securityInput_ != null &&
           securityInput_ != fintekkers.models.security.SecurityProto.getDefaultInstance()) {
           getSecurityInputBuilder().mergeFrom(value);
@@ -2068,7 +1723,7 @@ private static final long serialVersionUID = 0L;
       } else {
         securityInputBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -2080,7 +1735,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
      */
     public Builder clearSecurityInput() {
-      bitField0_ = (bitField0_ & ~0x00000100);
+      bitField0_ = (bitField0_ & ~0x00000010);
       securityInput_ = null;
       if (securityInputBuilder_ != null) {
         securityInputBuilder_.dispose();
@@ -2097,7 +1752,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
      */
     public fintekkers.models.security.SecurityProto.Builder getSecurityInputBuilder() {
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000010;
       onChanged();
       return getSecurityInputFieldBuilder().getBuilder();
     }
@@ -2149,7 +1804,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the positionInput field is set.
      */
     public boolean hasPositionInput() {
-      return ((bitField0_ & 0x00000200) != 0);
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      * <pre>
@@ -2182,7 +1837,7 @@ private static final long serialVersionUID = 0L;
       } else {
         positionInputBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000200;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -2200,7 +1855,7 @@ private static final long serialVersionUID = 0L;
       } else {
         positionInputBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000200;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -2213,7 +1868,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergePositionInput(fintekkers.models.position.PositionProto value) {
       if (positionInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000200) != 0) &&
+        if (((bitField0_ & 0x00000020) != 0) &&
           positionInput_ != null &&
           positionInput_ != fintekkers.models.position.PositionProto.getDefaultInstance()) {
           getPositionInputBuilder().mergeFrom(value);
@@ -2223,7 +1878,7 @@ private static final long serialVersionUID = 0L;
       } else {
         positionInputBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000200;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -2235,7 +1890,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.position.PositionProto position_input = 21;</code>
      */
     public Builder clearPositionInput() {
-      bitField0_ = (bitField0_ & ~0x00000200);
+      bitField0_ = (bitField0_ & ~0x00000020);
       positionInput_ = null;
       if (positionInputBuilder_ != null) {
         positionInputBuilder_.dispose();
@@ -2252,7 +1907,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.position.PositionProto position_input = 21;</code>
      */
     public fintekkers.models.position.PositionProto.Builder getPositionInputBuilder() {
-      bitField0_ |= 0x00000200;
+      bitField0_ |= 0x00000020;
       onChanged();
       return getPositionInputFieldBuilder().getBuilder();
     }
@@ -2305,7 +1960,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the priceInput field is set.
      */
     public boolean hasPriceInput() {
-      return ((bitField0_ & 0x00000400) != 0);
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      * <pre>
@@ -2340,7 +1995,7 @@ private static final long serialVersionUID = 0L;
       } else {
         priceInputBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -2359,7 +2014,7 @@ private static final long serialVersionUID = 0L;
       } else {
         priceInputBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -2373,7 +2028,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergePriceInput(fintekkers.models.price.PriceProto value) {
       if (priceInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000400) != 0) &&
+        if (((bitField0_ & 0x00000040) != 0) &&
           priceInput_ != null &&
           priceInput_ != fintekkers.models.price.PriceProto.getDefaultInstance()) {
           getPriceInputBuilder().mergeFrom(value);
@@ -2383,7 +2038,7 @@ private static final long serialVersionUID = 0L;
       } else {
         priceInputBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -2396,7 +2051,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      */
     public Builder clearPriceInput() {
-      bitField0_ = (bitField0_ & ~0x00000400);
+      bitField0_ = (bitField0_ & ~0x00000040);
       priceInput_ = null;
       if (priceInputBuilder_ != null) {
         priceInputBuilder_.dispose();
@@ -2414,7 +2069,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
      */
     public fintekkers.models.price.PriceProto.Builder getPriceInputBuilder() {
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000040;
       onChanged();
       return getPriceInputFieldBuilder().getBuilder();
     }
@@ -2468,7 +2123,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the asofDatetime field is set.
      */
     public boolean hasAsofDatetime() {
-      return ((bitField0_ & 0x00000800) != 0);
+      return ((bitField0_ & 0x00000080) != 0);
     }
     /**
      * <pre>
@@ -2501,7 +2156,7 @@ private static final long serialVersionUID = 0L;
       } else {
         asofDatetimeBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000800;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -2519,7 +2174,7 @@ private static final long serialVersionUID = 0L;
       } else {
         asofDatetimeBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000800;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -2532,7 +2187,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeAsofDatetime(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
       if (asofDatetimeBuilder_ == null) {
-        if (((bitField0_ & 0x00000800) != 0) &&
+        if (((bitField0_ & 0x00000080) != 0) &&
           asofDatetime_ != null &&
           asofDatetime_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
           getAsofDatetimeBuilder().mergeFrom(value);
@@ -2542,7 +2197,7 @@ private static final long serialVersionUID = 0L;
       } else {
         asofDatetimeBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000800;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -2554,7 +2209,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
      */
     public Builder clearAsofDatetime() {
-      bitField0_ = (bitField0_ & ~0x00000800);
+      bitField0_ = (bitField0_ & ~0x00000080);
       asofDatetime_ = null;
       if (asofDatetimeBuilder_ != null) {
         asofDatetimeBuilder_.dispose();
@@ -2571,7 +2226,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getAsofDatetimeBuilder() {
-      bitField0_ |= 0x00000800;
+      bitField0_ |= 0x00000080;
       onChanged();
       return getAsofDatetimeFieldBuilder().getBuilder();
     }
@@ -2624,7 +2279,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the cpiPriceInput field is set.
      */
     public boolean hasCpiPriceInput() {
-      return ((bitField0_ & 0x00001000) != 0);
+      return ((bitField0_ & 0x00000100) != 0);
     }
     /**
      * <pre>
@@ -2659,7 +2314,7 @@ private static final long serialVersionUID = 0L;
       } else {
         cpiPriceInputBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00001000;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2678,7 +2333,7 @@ private static final long serialVersionUID = 0L;
       } else {
         cpiPriceInputBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00001000;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2692,7 +2347,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeCpiPriceInput(fintekkers.models.price.PriceProto value) {
       if (cpiPriceInputBuilder_ == null) {
-        if (((bitField0_ & 0x00001000) != 0) &&
+        if (((bitField0_ & 0x00000100) != 0) &&
           cpiPriceInput_ != null &&
           cpiPriceInput_ != fintekkers.models.price.PriceProto.getDefaultInstance()) {
           getCpiPriceInputBuilder().mergeFrom(value);
@@ -2702,7 +2357,7 @@ private static final long serialVersionUID = 0L;
       } else {
         cpiPriceInputBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00001000;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2715,7 +2370,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
      */
     public Builder clearCpiPriceInput() {
-      bitField0_ = (bitField0_ & ~0x00001000);
+      bitField0_ = (bitField0_ & ~0x00000100);
       cpiPriceInput_ = null;
       if (cpiPriceInputBuilder_ != null) {
         cpiPriceInputBuilder_.dispose();
@@ -2733,7 +2388,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
      */
     public fintekkers.models.price.PriceProto.Builder getCpiPriceInputBuilder() {
-      bitField0_ |= 0x00001000;
+      bitField0_ |= 0x00000100;
       onChanged();
       return getCpiPriceInputFieldBuilder().getBuilder();
     }
@@ -2792,7 +2447,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the referenceRateInput field is set.
      */
     public boolean hasReferenceRateInput() {
-      return ((bitField0_ & 0x00002000) != 0);
+      return ((bitField0_ & 0x00000200) != 0);
     }
     /**
      * <pre>
@@ -2835,7 +2490,7 @@ private static final long serialVersionUID = 0L;
       } else {
         referenceRateInputBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00002000;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -2858,7 +2513,7 @@ private static final long serialVersionUID = 0L;
       } else {
         referenceRateInputBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00002000;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -2876,7 +2531,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeReferenceRateInput(fintekkers.models.price.PriceProto value) {
       if (referenceRateInputBuilder_ == null) {
-        if (((bitField0_ & 0x00002000) != 0) &&
+        if (((bitField0_ & 0x00000200) != 0) &&
           referenceRateInput_ != null &&
           referenceRateInput_ != fintekkers.models.price.PriceProto.getDefaultInstance()) {
           getReferenceRateInputBuilder().mergeFrom(value);
@@ -2886,7 +2541,7 @@ private static final long serialVersionUID = 0L;
       } else {
         referenceRateInputBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00002000;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -2903,7 +2558,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
      */
     public Builder clearReferenceRateInput() {
-      bitField0_ = (bitField0_ & ~0x00002000);
+      bitField0_ = (bitField0_ & ~0x00000200);
       referenceRateInput_ = null;
       if (referenceRateInputBuilder_ != null) {
         referenceRateInputBuilder_.dispose();
@@ -2925,7 +2580,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
      */
     public fintekkers.models.price.PriceProto.Builder getReferenceRateInputBuilder() {
-      bitField0_ |= 0x00002000;
+      bitField0_ |= 0x00000200;
       onChanged();
       return getReferenceRateInputFieldBuilder().getBuilder();
     }
@@ -2990,7 +2645,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the productInput field is set.
      */
     public boolean hasProductInput() {
-      return ((bitField0_ & 0x00004000) != 0);
+      return ((bitField0_ & 0x00000400) != 0);
     }
     /**
      * <pre>
@@ -3029,7 +2684,7 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00004000;
+      bitField0_ |= 0x00000400;
       onChanged();
       return this;
     }
@@ -3050,7 +2705,7 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00004000;
+      bitField0_ |= 0x00000400;
       onChanged();
       return this;
     }
@@ -3066,7 +2721,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeProductInput(fintekkers.requests.valuation.ProductInput value) {
       if (productInputBuilder_ == null) {
-        if (((bitField0_ & 0x00004000) != 0) &&
+        if (((bitField0_ & 0x00000400) != 0) &&
           productInput_ != null &&
           productInput_ != fintekkers.requests.valuation.ProductInput.getDefaultInstance()) {
           getProductInputBuilder().mergeFrom(value);
@@ -3076,7 +2731,7 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00004000;
+      bitField0_ |= 0x00000400;
       onChanged();
       return this;
     }
@@ -3091,7 +2746,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
      */
     public Builder clearProductInput() {
-      bitField0_ = (bitField0_ & ~0x00004000);
+      bitField0_ = (bitField0_ & ~0x00000400);
       productInput_ = null;
       if (productInputBuilder_ != null) {
         productInputBuilder_.dispose();
@@ -3111,7 +2766,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
      */
     public fintekkers.requests.valuation.ProductInput.Builder getProductInputBuilder() {
-      bitField0_ |= 0x00004000;
+      bitField0_ |= 0x00000400;
       onChanged();
       return getProductInputFieldBuilder().getBuilder();
     }

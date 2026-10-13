@@ -34,20 +34,19 @@ public final class QueryPortfolioRequestProtos {
       "d.proto\032,fintekkers/models/util/local_ti" +
       "mestamp.proto\0320fintekkers/models/positio" +
       "n/position_filter.proto\032(fintekkers/mode" +
-      "ls/util/object_type.proto\"\311\003\n\032QueryPortf" +
-      "olioRequestProto\022\030\n\014object_class\030\001 \001(\tB\002" +
-      "\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351" +
-      "\007 \001(\0162\'.fintekkers.models.util.ObjectTyp" +
-      "eProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversio" +
-      "n_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\0220" +
-      "\n\005uuIds\030\025 \003(\0132!.fintekkers.models.util.U" +
-      "UIDProto\022O\n\026search_portfolio_input\030\026 \001(\013" +
-      "2/.fintekkers.models.position.PositionFi" +
-      "lterProto\022:\n\005as_of\030\027 \001(\0132+.fintekkers.mo" +
-      "dels.util.LocalTimestampProto\022\023\n\013name_fi" +
-      "lter\030\030 \001(\t\022\r\n\005limit\0302 \001(\005\022\022\n\npage_token\030" +
-      "3 \001(\tB\037B\033QueryPortfolioRequestProtosP\001b\006" +
-      "proto3"
+      "ls/util/object_type.proto\032$fintekkers/mo" +
+      "dels/util/version.proto\"\210\003\n\032QueryPortfol" +
+      "ioRequestProto\022<\n\013object_type\030\001 \001(\0162\'.fi" +
+      "ntekkers.models.util.ObjectTypeProto\0225\n\007" +
+      "version\030\002 \001(\0132$.fintekkers.models.util.V" +
+      "ersionProto\0220\n\005uuIds\030\025 \003(\0132!.fintekkers." +
+      "models.util.UUIDProto\022O\n\026search_portfoli" +
+      "o_input\030\026 \001(\0132/.fintekkers.models.positi" +
+      "on.PositionFilterProto\022:\n\005as_of\030\027 \001(\0132+." +
+      "fintekkers.models.util.LocalTimestampPro" +
+      "to\022\023\n\013name_filter\030\030 \001(\t\022\r\n\005limit\0302 \001(\005\022\022" +
+      "\n\npage_token\0303 \001(\tB\037B\033QueryPortfolioRequ" +
+      "estProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -56,17 +55,19 @@ public final class QueryPortfolioRequestProtos {
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.models.position.PositionFilterProtos.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_portfolio_QueryPortfolioRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_portfolio_QueryPortfolioRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_portfolio_QueryPortfolioRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "UuIds", "SearchPortfolioInput", "AsOf", "NameFilter", "Limit", "PageToken", });
+        new java.lang.String[] { "ObjectType", "Version", "UuIds", "SearchPortfolioInput", "AsOf", "NameFilter", "Limit", "PageToken", });
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.position.PositionFilterProtos.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -87,7 +87,7 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
     }
 
     private static PortfolioProto buildBaselineProto(UUID id, String portfolioName, ZonedDateTime asOf) {
-        PortfolioProto.Builder b = ObjectTypes.stamp(PortfolioProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PORTFOLIO, "Portfolio", "0.0.1")
+        PortfolioProto.Builder b = ObjectTypes.stamp(PortfolioProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PORTFOLIO)
                 .setIsLink(false);
         if (id != null) {
             b.setUuid(ProtoSerializationUtil.serializeUUID(id));

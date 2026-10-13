@@ -4,21 +4,10 @@
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateIndexCompositionRequestProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::super::models::util::VersionProto>,
     #[prost(enumeration = "super::util::RequestOperationTypeProto", tag = "10")]
     pub operation_type: i32,
     /// The composition to store.
@@ -30,21 +19,10 @@ pub struct CreateIndexCompositionRequestProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CreateIndexCompositionResponseProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::super::models::util::VersionProto>,
     #[prost(enumeration = "super::util::RequestOperationTypeProto", tag = "10")]
     pub operation_type: i32,
     /// Echo of the request that produced this response.
@@ -63,21 +41,10 @@ pub struct CreateIndexCompositionResponseProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetIndexCompositionRequestProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::super::models::util::VersionProto>,
     /// UUID of the index security (EQUITY_INDEX_SECURITY).
     #[prost(message, optional, tag = "10")]
     pub index_uuid: ::core::option::Option<super::super::models::util::UuidProto>,
@@ -89,21 +56,10 @@ pub struct GetIndexCompositionRequestProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetIndexCompositionResponseProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::super::models::util::VersionProto>,
     #[prost(enumeration = "super::util::RequestOperationTypeProto", tag = "10")]
     pub operation_type: i32,
     /// The resolved composition. Absent if no composition exists for as_of_date.

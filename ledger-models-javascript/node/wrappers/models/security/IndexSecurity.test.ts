@@ -7,8 +7,6 @@ import { UUID } from '../utils/uuid';
 
 test('Security.create routes CPI_SERIES to IndexSecurity', () => {
   const proto = new SecurityProto()
-    .setObjectClass('Security')
-    .setVersion('0.0.1')
     .setUuid(UUID.random().toUUIDProto())
     .setProductType(ProductTypeProto.CPI_SERIES)
     .setAssetClass('Index');
@@ -21,8 +19,6 @@ test('Security.create routes CPI_SERIES to IndexSecurity', () => {
 
 test('Security.create routes SOFR_SERIES to IndexSecurity', () => {
   const proto = new SecurityProto()
-    .setObjectClass('Security')
-    .setVersion('0.0.1')
     .setUuid(UUID.random().toUUIDProto())
     .setProductType(ProductTypeProto.SOFR_SERIES)
     .setAssetClass('Index');
@@ -37,8 +33,6 @@ test('IndexSecurity.getIndexType returns UNKNOWN when index_details is unset', (
   // Force-construct without populating index_details so we exercise the
   // null-safe branch in the getter.
   const proto = new SecurityProto()
-    .setObjectClass('Security')
-    .setVersion('0.0.1')
     .setUuid(UUID.random().toUUIDProto())
     .setProductType(ProductTypeProto.CPI_SERIES)
     .setAssetClass('Index');
@@ -48,8 +42,6 @@ test('IndexSecurity.getIndexType returns UNKNOWN when index_details is unset', (
 
 test('IndexSecurity extends Security (not BondSecurity)', () => {
   const proto = new SecurityProto()
-    .setObjectClass('Security')
-    .setVersion('0.0.1')
     .setUuid(UUID.random().toUUIDProto())
     .setProductType(ProductTypeProto.EQUITY_INDEX);
   proto.setIndexDetails(new IndexDetailsProto().setIndexType(IndexTypeProto.US_TREASURY));

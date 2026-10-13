@@ -7,20 +7,16 @@
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_position_position_util_pb from "../../../fintekkers/models/position/position_util_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class PositionFilterProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): PositionFilterProto;
-    getVersion(): string;
-    setVersion(value: string): PositionFilterProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): PositionFilterProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): PositionFilterProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): PositionFilterProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): PositionFilterProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): PositionFilterProto;
     clearFiltersList(): void;
     getFiltersList(): Array<fintekkers_models_position_position_util_pb.FieldMapEntry>;
     setFiltersList(value: Array<fintekkers_models_position_position_util_pb.FieldMapEntry>): PositionFilterProto;
@@ -38,12 +34,8 @@ export class PositionFilterProto extends jspb.Message {
 
 export namespace PositionFilterProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         filtersList: Array<fintekkers_models_position_position_util_pb.FieldMapEntry.AsObject>,
     }
 }

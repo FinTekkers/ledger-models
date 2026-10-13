@@ -6,6 +6,7 @@ import { ProductTypeProto } from "../../../fintekkers/models/security/product_ty
 import { UUID } from '../utils/uuid';
 import { ZonedDateTime } from '../utils/datetime';
 import { Decimal } from 'decimal.js';
+import { decodeDecimal, toCanonicalString } from '../utils/decimal';
 
 test('test Price getCashPrice', () => {
     testGetCashPrice();
@@ -18,7 +19,7 @@ function testGetCashPrice(): void {
     const cashPrice = Price.getCashPrice(cashSecurity, asOf);
 
     // Cash price should be 1.0 (Decimal normalizes to '1')
-    const priceValue = cashPrice.proto.getPrice()?.getArbitraryPrecisionValue();
+    const priceValue = toCanonicalString(decodeDecimal(cashPrice.proto.getPrice()!));
     const priceDecimal = new Decimal(priceValue || '0');
     assert(priceDecimal.equals(new Decimal('1.0')), `Expected cash price 1.0, got ${priceValue}`);
 
@@ -31,8 +32,6 @@ function testGetCashPrice(): void {
 
 function createDummyCashSecurity(): Security {
     const securityProto = new SecurityProto();
-    securityProto.setObjectClass('Security');
-    securityProto.setVersion('0.0.1');
     securityProto.setUuid(UUID.random().toUUIDProto());
     securityProto.setProductType(ProductTypeProto.CURRENCY);
     securityProto.setAsOf(ZonedDateTime.now().toProto());

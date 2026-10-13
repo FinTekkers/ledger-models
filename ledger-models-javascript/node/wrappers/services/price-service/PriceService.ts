@@ -42,7 +42,7 @@ class PriceService {
     const priceProto = price instanceof Price ? price.proto : price;
 
     const createRequest = new CreatePriceRequestProto();
-    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, 'PriceRequest', '0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST);
     createRequest.setCreatePriceInput(priceProto);
 
     const validateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
@@ -54,7 +54,7 @@ class PriceService {
     const priceProto = price instanceof Price ? price.proto : price;
 
     const createRequest = new CreatePriceRequestProto();
-    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, 'PriceRequest', '0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST);
     createRequest.setCreatePriceInput(priceProto);
 
     const createAsync = promisify(this.client.createOrUpdate.bind(this.client));
@@ -81,7 +81,7 @@ class PriceService {
    */
   async search(asOf: LocalTimestampProto, positionFilter: PositionFilter): Promise<Price[]> {
     const searchRequest = new QueryPriceRequestProto();
-    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_PRICE_REQUEST, 'PriceRequest', '0.0.1');
+    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_PRICE_REQUEST);
     searchRequest.setAsOf(asOf);
     searchRequest.setSearchPriceInput(positionFilter.toProto());
 

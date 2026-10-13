@@ -32,29 +32,31 @@ public final class PositionFilterProtos {
       "lter.proto\022\032fintekkers.models.position\032." +
       "fintekkers/models/position/position_util" +
       ".proto\032(fintekkers/models/util/object_ty" +
-      "pe.proto\"\207\002\n\023PositionFilterProto\022\030\n\014obje" +
-      "ct_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022" +
-      "=\n\013object_type\030\351\007 \001(\0162\'.fintekkers.model" +
-      "s.util.ObjectTypeProto\022\026\n\rversion_major\030" +
-      "\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversio" +
-      "n_patch\030\354\007 \001(\r\022:\n\007filters\030\025 \003(\0132).fintek" +
-      "kers.models.position.FieldMapEntryB\030B\024Po" +
-      "sitionFilterProtosP\001b\006proto3"
+      "pe.proto\032$fintekkers/models/util/version" +
+      ".proto\"\306\001\n\023PositionFilterProto\022<\n\013object" +
+      "_type\030\001 \001(\0162\'.fintekkers.models.util.Obj" +
+      "ectTypeProto\0225\n\007version\030\002 \001(\0132$.fintekke" +
+      "rs.models.util.VersionProto\022:\n\007filters\030\025" +
+      " \003(\0132).fintekkers.models.position.FieldM" +
+      "apEntryB\030B\024PositionFilterProtosP\001b\006proto" +
+      "3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.position.PositionUtilProtos.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_position_PositionFilterProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_position_PositionFilterProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_position_PositionFilterProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Filters", });
+        new java.lang.String[] { "ObjectType", "Version", "Filters", });
     fintekkers.models.position.PositionUtilProtos.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

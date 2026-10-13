@@ -25,9 +25,10 @@ _sym_db = _symbol_database.Default()
 from fintekkers.models.transaction import transaction_pb2 as fintekkers_dot_models_dot_transaction_dot_transaction__pb2
 from fintekkers.requests.transaction import create_transaction_request_pb2 as fintekkers_dot_requests_dot_transaction_dot_create__transaction__request__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\nAfintekkers/requests/transaction/create_transaction_response.proto\x12\x1f\x66intekkers.requests.transaction\x1a/fintekkers/models/transaction/transaction.proto\x1a@fintekkers/requests/transaction/create_transaction_request.proto\x1a(fintekkers/models/util/object_type.proto\"\x89\x03\n\x1e\x43reateTransactionResponseProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12\x62\n\x1a\x63reate_transaction_request\x18\x14 \x01(\x0b\x32>.fintekkers.requests.transaction.CreateTransactionRequestProto\x12M\n\x14transaction_response\x18\x1e \x01(\x0b\x32/.fintekkers.models.transaction.TransactionProtoB#B\x1f\x43reateTransactionResponseProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\nAfintekkers/requests/transaction/create_transaction_response.proto\x12\x1f\x66intekkers.requests.transaction\x1a/fintekkers/models/transaction/transaction.proto\x1a@fintekkers/requests/transaction/create_transaction_request.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xc8\x02\n\x1e\x43reateTransactionResponseProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12\x62\n\x1a\x63reate_transaction_request\x18\x14 \x01(\x0b\x32>.fintekkers.requests.transaction.CreateTransactionRequestProto\x12M\n\x14transaction_response\x18\x1e \x01(\x0b\x32/.fintekkers.models.transaction.TransactionProtoB#B\x1f\x43reateTransactionResponseProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,10 +36,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.transac
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\037CreateTransactionResponseProtosP\001'
-  _globals['_CREATETRANSACTIONRESPONSEPROTO'].fields_by_name['object_class']._loaded_options = None
-  _globals['_CREATETRANSACTIONRESPONSEPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_CREATETRANSACTIONRESPONSEPROTO'].fields_by_name['version']._loaded_options = None
-  _globals['_CREATETRANSACTIONRESPONSEPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_CREATETRANSACTIONRESPONSEPROTO']._serialized_start=260
-  _globals['_CREATETRANSACTIONRESPONSEPROTO']._serialized_end=653
+  _globals['_CREATETRANSACTIONRESPONSEPROTO']._serialized_start=298
+  _globals['_CREATETRANSACTIONRESPONSEPROTO']._serialized_end=626
 # @@protoc_insertion_point(module_scope)

@@ -215,13 +215,6 @@ if ! $PROTOC \
     JS_COMPILE_OK=false
 fi
 
-# Mark the deprecated decimal string accessors (LM-294, LM-306):
-# protoc-gen-ts does not emit @deprecated. awk, not `sed i\`, for BSD/GNU
-# portability. decimal.typings.test.ts fails if this stops matching.
-DECIMAL_DTS="$JS_OUT/fintekkers/models/util/decimal_value_pb.d.ts"
-awk '/^ *(get|set)ArbitraryPrecisionValue\(/ { match($0, /^ */); print substr($0, 1, RLENGTH) "/** @deprecated Use decodeDecimal / encodeDecimal from wrappers/models/utils/decimal (LM-294). */" } { print }' \
-    "$DECIMAL_DTS" > "$DECIMAL_DTS.tmp" && mv "$DECIMAL_DTS.tmp" "$DECIMAL_DTS"
-
 cd "$REPO_ROOT"
 
 # Compile TypeScript wrappers

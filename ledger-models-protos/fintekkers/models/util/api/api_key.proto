@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package fintekkers.models.util.api;
 import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
 /*
 
 TODO: Need to decide how to add API key to requests:
@@ -33,15 +34,10 @@ I'm favoring option 1, but will think on it.
 */
 message API_Key {
   //Will be "API_Key"
-  string object_class = 1 [deprecated = true];
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
 
   //In format 1.0.0
-  string version = 2 [deprecated = true];
-  // Compact form of object_class / version (LM-297). Writers set both in stage 1.
-  fintekkers.models.util.ObjectTypeProto object_type = 1001;
-  uint32 version_major = 1002;
-  uint32 version_minor = 1003;
-  uint32 version_patch = 1004;
+  fintekkers.models.util.VersionProto version = 2;
 
   //Identify is a unique identifier for the user. Initially this can be email.
   //Over time this can evolve to be a uuid which would represent an organization, organizational unit, or user

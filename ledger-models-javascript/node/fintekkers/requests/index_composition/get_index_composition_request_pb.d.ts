@@ -10,20 +10,16 @@ import * as fintekkers_models_util_local_date_pb from "../../../fintekkers/model
 import * as fintekkers_models_security_index_composition_pb from "../../../fintekkers/models/security/index_composition_pb";
 import * as fintekkers_requests_util_operation_pb from "../../../fintekkers/requests/util/operation_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class GetIndexCompositionRequestProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): GetIndexCompositionRequestProto;
-    getVersion(): string;
-    setVersion(value: string): GetIndexCompositionRequestProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): GetIndexCompositionRequestProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): GetIndexCompositionRequestProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): GetIndexCompositionRequestProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): GetIndexCompositionRequestProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): GetIndexCompositionRequestProto;
 
     hasIndexUuid(): boolean;
     clearIndexUuid(): void;
@@ -47,30 +43,21 @@ export class GetIndexCompositionRequestProto extends jspb.Message {
 
 export namespace GetIndexCompositionRequestProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         indexUuid?: fintekkers_models_util_uuid_pb.UUIDProto.AsObject,
         asOfDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
     }
 }
 
 export class GetIndexCompositionResponseProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): GetIndexCompositionResponseProto;
-    getVersion(): string;
-    setVersion(value: string): GetIndexCompositionResponseProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): GetIndexCompositionResponseProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): GetIndexCompositionResponseProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): GetIndexCompositionResponseProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): GetIndexCompositionResponseProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): GetIndexCompositionResponseProto;
     getOperationType(): fintekkers_requests_util_operation_pb.RequestOperationTypeProto;
     setOperationType(value: fintekkers_requests_util_operation_pb.RequestOperationTypeProto): GetIndexCompositionResponseProto;
 
@@ -96,12 +83,8 @@ export class GetIndexCompositionResponseProto extends jspb.Message {
 
 export namespace GetIndexCompositionResponseProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         operationType: fintekkers_requests_util_operation_pb.RequestOperationTypeProto,
         composition?: fintekkers_models_security_index_composition_pb.IndexCompositionProto.AsObject,
         resolvedEffectiveDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,

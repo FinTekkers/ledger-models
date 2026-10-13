@@ -12,6 +12,7 @@ from fintekkers.models.security import coupon_frequency_pb2 as _coupon_frequency
 from fintekkers.models.security import coupon_type_pb2 as _coupon_type_pb2
 from fintekkers.models.security.index import index_type_pb2 as _index_type_pb2
 from fintekkers.models.util import object_type_pb2 as _object_type_pb2
+from fintekkers.models.util import version_pb2 as _version_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
@@ -21,13 +22,9 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class SecurityProto(_message.Message):
-    __slots__ = ("object_class", "version", "object_type", "version_major", "version_minor", "version_patch", "uuid", "as_of", "is_link", "valid_from", "valid_to", "product_type", "instrument_type", "legs", "asset_class", "issuer_name", "settlement_currency", "quantity_type", "description", "identifiers", "bond_details", "tips_extension", "frn_extension", "index_details", "equity_details", "cash_details", "fx_spot_details", "mbs_extension")
-    OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
-    VERSION_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("object_type", "version", "uuid", "as_of", "is_link", "valid_from", "valid_to", "product_type", "instrument_type", "legs", "asset_class", "issuer_name", "settlement_currency", "quantity_type", "description", "identifiers", "bond_details", "tips_extension", "frn_extension", "index_details", "equity_details", "cash_details", "fx_spot_details", "mbs_extension")
     OBJECT_TYPE_FIELD_NUMBER: _ClassVar[int]
-    VERSION_MAJOR_FIELD_NUMBER: _ClassVar[int]
-    VERSION_MINOR_FIELD_NUMBER: _ClassVar[int]
-    VERSION_PATCH_FIELD_NUMBER: _ClassVar[int]
+    VERSION_FIELD_NUMBER: _ClassVar[int]
     UUID_FIELD_NUMBER: _ClassVar[int]
     AS_OF_FIELD_NUMBER: _ClassVar[int]
     IS_LINK_FIELD_NUMBER: _ClassVar[int]
@@ -50,12 +47,8 @@ class SecurityProto(_message.Message):
     CASH_DETAILS_FIELD_NUMBER: _ClassVar[int]
     FX_SPOT_DETAILS_FIELD_NUMBER: _ClassVar[int]
     MBS_EXTENSION_FIELD_NUMBER: _ClassVar[int]
-    object_class: str
-    version: str
     object_type: _object_type_pb2.ObjectTypeProto
-    version_major: int
-    version_minor: int
-    version_patch: int
+    version: _version_pb2.VersionProto
     uuid: _uuid_pb2.UUIDProto
     as_of: _local_timestamp_pb2.LocalTimestampProto
     is_link: bool
@@ -78,7 +71,7 @@ class SecurityProto(_message.Message):
     cash_details: CashDetailsProto
     fx_spot_details: FxSpotDetailsProto
     mbs_extension: MbsExtensionProto
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version_major: _Optional[int] = ..., version_minor: _Optional[int] = ..., version_patch: _Optional[int] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., product_type: _Optional[_Union[_product_type_pb2.ProductTypeProto, str]] = ..., instrument_type: _Optional[_Union[_instrument_type_pb2.InstrumentTypeProto, str]] = ..., legs: _Optional[_Iterable[_Union[SecurityProto, _Mapping]]] = ..., asset_class: _Optional[str] = ..., issuer_name: _Optional[str] = ..., settlement_currency: _Optional[_Union[SecurityProto, _Mapping]] = ..., quantity_type: _Optional[_Union[_security_quantity_type_pb2.SecurityQuantityTypeProto, str]] = ..., description: _Optional[str] = ..., identifiers: _Optional[_Iterable[_Union[_identifier_pb2.IdentifierProto, _Mapping]]] = ..., bond_details: _Optional[_Union[BondDetailsProto, _Mapping]] = ..., tips_extension: _Optional[_Union[TipsExtensionProto, _Mapping]] = ..., frn_extension: _Optional[_Union[FrnExtensionProto, _Mapping]] = ..., index_details: _Optional[_Union[IndexDetailsProto, _Mapping]] = ..., equity_details: _Optional[_Union[EquityDetailsProto, _Mapping]] = ..., cash_details: _Optional[_Union[CashDetailsProto, _Mapping]] = ..., fx_spot_details: _Optional[_Union[FxSpotDetailsProto, _Mapping]] = ..., mbs_extension: _Optional[_Union[MbsExtensionProto, _Mapping]] = ...) -> None: ...
+    def __init__(self, object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version: _Optional[_Union[_version_pb2.VersionProto, _Mapping]] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., product_type: _Optional[_Union[_product_type_pb2.ProductTypeProto, str]] = ..., instrument_type: _Optional[_Union[_instrument_type_pb2.InstrumentTypeProto, str]] = ..., legs: _Optional[_Iterable[_Union[SecurityProto, _Mapping]]] = ..., asset_class: _Optional[str] = ..., issuer_name: _Optional[str] = ..., settlement_currency: _Optional[_Union[SecurityProto, _Mapping]] = ..., quantity_type: _Optional[_Union[_security_quantity_type_pb2.SecurityQuantityTypeProto, str]] = ..., description: _Optional[str] = ..., identifiers: _Optional[_Iterable[_Union[_identifier_pb2.IdentifierProto, _Mapping]]] = ..., bond_details: _Optional[_Union[BondDetailsProto, _Mapping]] = ..., tips_extension: _Optional[_Union[TipsExtensionProto, _Mapping]] = ..., frn_extension: _Optional[_Union[FrnExtensionProto, _Mapping]] = ..., index_details: _Optional[_Union[IndexDetailsProto, _Mapping]] = ..., equity_details: _Optional[_Union[EquityDetailsProto, _Mapping]] = ..., cash_details: _Optional[_Union[CashDetailsProto, _Mapping]] = ..., fx_spot_details: _Optional[_Union[FxSpotDetailsProto, _Mapping]] = ..., mbs_extension: _Optional[_Union[MbsExtensionProto, _Mapping]] = ...) -> None: ...
 
 class BondDetailsProto(_message.Message):
     __slots__ = ("coupon_rate", "coupon_type", "coupon_frequency", "dated_date", "face_value", "issue_date", "maturity_date", "issuance_info")

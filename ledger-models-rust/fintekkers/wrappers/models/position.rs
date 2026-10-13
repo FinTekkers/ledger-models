@@ -552,7 +552,7 @@ impl TryFrom<Vec<u8>> for PositionFilterProto {
 mod test {
     use super::*;
     use crate::fintekkers::models::position::{field_map_entry, PositionFilterOperator};
-    use crate::fintekkers::wrappers::models::utils::decimal::legacy_decimal_proto;
+    use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto_str;
     use crate::fintekkers::models::util::UuidProto;
     use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
     use chrono::naive::NaiveDate;
@@ -662,7 +662,7 @@ mod test {
     fn create_measure_entry(measure: MeasureProto, value: &str) -> MeasureMapEntry {
         MeasureMapEntry {
             measure: measure as i32,
-            measure_decimal_value: Some(legacy_decimal_proto(value)),
+            measure_decimal_value: Some(decimal_proto_str(value)),
         }
     }
 
@@ -696,8 +696,6 @@ mod test {
 
         // Create PositionFilterProto with the filter
         let filter_proto = PositionFilterProto {
-            object_class: "PositionFilter".to_string(),
-            version: "0.0.1".to_string(),
             filters: vec![field_entry],
             ..Default::default()
         };
@@ -713,8 +711,6 @@ mod test {
 
         // Verify we can get the proto back
         let retrieved_proto = position_filter.to_proto();
-        assert_eq!(retrieved_proto.object_class, "PositionFilter");
-        assert_eq!(retrieved_proto.version, "0.0.1");
         assert_eq!(retrieved_proto.filters.len(), 1);
     }
 
@@ -722,8 +718,6 @@ mod test {
     fn test_position_with_string_field() {
         let field_entry = create_string_field_entry(FieldProto::PortfolioName, "Test Portfolio");
         let position_proto = PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![],
@@ -763,8 +757,6 @@ mod test {
         );
 
         let position_proto = PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![],
@@ -803,8 +795,6 @@ mod test {
             create_date_field_entry(FieldProto::SettlementDate, 2023, 10, 17);
 
         let position_proto = PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![],
@@ -843,8 +833,6 @@ mod test {
         let as_of_entry = create_timestamp_field_entry();
 
         let position_proto = PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![],
@@ -884,8 +872,6 @@ mod test {
         let transaction_type_entry = create_enum_field_entry(FieldProto::TransactionType, 1);
 
         let position_proto = PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![],
@@ -914,8 +900,6 @@ mod test {
         let market_value = create_measure_entry(MeasureProto::MarketValue, "50000.75");
 
         let position_proto = PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![directed_quantity.clone(), market_value.clone()],
@@ -951,8 +935,6 @@ mod test {
         let measure1 = create_measure_entry(MeasureProto::DirectedQuantity, "100.0");
 
         let position_proto = PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![measure1],
@@ -979,8 +961,6 @@ mod test {
         let measure1 = create_measure_entry(MeasureProto::DirectedQuantity, "100.50");
 
         let position_proto = PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![measure1],
@@ -1003,8 +983,6 @@ mod test {
     #[test]
     fn test_position_field_not_found() {
         let position_proto = PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![],
@@ -1031,8 +1009,6 @@ mod test {
         let uuid_str = "550e8400-e29b-41d4-a716-446655440000";
         let field_entry = create_uuid_field_entry(FieldProto::SecurityId, uuid_str);
         let filter = PositionFilter::new(PositionFilterProto {
-            object_class: "PositionFilter".to_string(),
-            version: "0.0.1".to_string(),
             filters: vec![field_entry],
             ..Default::default()
         });
@@ -1044,8 +1020,6 @@ mod test {
     #[test]
     fn test_position_filter_get_uuid_not_found() {
         let filter = PositionFilter::new(PositionFilterProto {
-            object_class: "PositionFilter".to_string(),
-            version: "0.0.1".to_string(),
             filters: vec![],
             ..Default::default()
         });
@@ -1059,8 +1033,6 @@ mod test {
     fn test_position_filter_get_string() {
         let field_entry = create_string_field_entry(FieldProto::AssetClass, "Fixed Income");
         let filter = PositionFilter::new(PositionFilterProto {
-            object_class: "PositionFilter".to_string(),
-            version: "0.0.1".to_string(),
             filters: vec![field_entry],
             ..Default::default()
         });
@@ -1073,8 +1045,6 @@ mod test {
     fn test_position_filter_get_date() {
         let field_entry = create_date_field_entry(FieldProto::MaturityDate, 2030, 6, 15);
         let filter = PositionFilter::new(PositionFilterProto {
-            object_class: "PositionFilter".to_string(),
-            version: "0.0.1".to_string(),
             filters: vec![field_entry],
             ..Default::default()
         });
@@ -1089,8 +1059,6 @@ mod test {
     fn test_position_filter_get_enum_value() {
         let field_entry = create_enum_field_entry(FieldProto::TransactionType, 1); // BUY
         let filter = PositionFilter::new(PositionFilterProto {
-            object_class: "PositionFilter".to_string(),
-            version: "0.0.1".to_string(),
             filters: vec![field_entry],
             ..Default::default()
         });
@@ -1107,8 +1075,6 @@ mod test {
         let date_entry = create_date_field_entry(FieldProto::MaturityDate, 2030, 1, 15);
 
         let filter = PositionFilter::new(PositionFilterProto {
-            object_class: "PositionFilter".to_string(),
-            version: "0.0.1".to_string(),
             filters: vec![uuid_entry, string_entry, date_entry],
             ..Default::default()
         });
@@ -1138,8 +1104,6 @@ mod test {
         let timestamp_field = create_timestamp_field_entry();
 
         let position_proto = PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![
@@ -1185,8 +1149,6 @@ mod test {
     // Helper: a position carrying a single ASSET_CLASS string field.
     fn position_with_asset_class(value: &str) -> Position {
         Position::new(PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![],
@@ -1209,8 +1171,6 @@ mod test {
     // Helper: a one-entry ASSET_CLASS filter for FIXED_INCOME.
     fn asset_class_filter(operator: PositionFilterOperator) -> PositionFilter {
         PositionFilter::new(PositionFilterProto {
-            object_class: "PositionFilter".to_string(),
-            version: "0.0.1".to_string(),
             filters: vec![FieldMapEntry {
                 field: FieldProto::AssetClass as i32,
                 operator: operator as i32,
@@ -1257,8 +1217,6 @@ mod test {
     #[test]
     fn filter_positions_asset_class_missing_empty_unknown() {
         let missing = Position::new(PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![],
@@ -1371,8 +1329,6 @@ mod test {
     #[test]
     fn filter_positions_not_equals_drops_missing_other_field() {
         let missing = Position::new(PositionProto {
-            object_class: "Position".to_string(),
-            version: "0.0.1".to_string(),
             position_view: 0,
             position_type: 0,
             measures: vec![],
@@ -1382,8 +1338,6 @@ mod test {
         });
         let positions = vec![missing];
         let filter = PositionFilter::new(PositionFilterProto {
-            object_class: "PositionFilter".to_string(),
-            version: "0.0.1".to_string(),
             filters: vec![FieldMapEntry {
                 field: FieldProto::PortfolioName as i32,
                 operator: PositionFilterOperator::NotEquals as i32,

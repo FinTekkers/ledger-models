@@ -6,8 +6,6 @@ import fintekkers.models.util.DecimalValue.DecimalValueProto;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
 
 /**
  * Codec for {@code DecimalValueProto} (LM-294, docs/adr/compact_decimal.md).
@@ -15,18 +13,14 @@ import java.util.logging.Logger;
  *
  * <p>value = unscaled_value x 10^-scale, where unscaled_value is a minimal
  * two's-complement big-endian integer of any size. A non-empty unscaled_value
- * means the compact form is set and it wins. Otherwise the deprecated
- * {@code arbitrary_precision_value} string is read, with a warning logged once
- * per process (LM-307).
+ * means the decimal is set; empty means unset. The old string form, field 10,
+ * was deleted by LM-318.
  *
  * <p>Lossless: no binary floating point on any path. A value that cannot be
  * represented exactly is an {@link InvalidDecimalException}, never rounded.
  *
- * <p>Stage 1: writers set both forms, so readers on older ledger-models keep
- * working. This class is the only code allowed to touch the deprecated string
- * field. Package-private: callers use {@link ProtoSerializationUtil}.
+ * <p>Package-private: callers use {@link ProtoSerializationUtil}.
  */
-@SuppressWarnings("deprecation") // The one place that reads and writes field 10.
 final class DecimalCodec {
 
     /** Most decimal digits in the unscaled value, and the largest scale. Same in every language. */
@@ -35,21 +29,14 @@ final class DecimalCodec {
     /** A minimal unscaled_value longer than this always has more than MAX_DIGITS digits. */
     static final int MAX_UNSCALED_BYTES = 1702;
 
-    /** The library release that first writes the compact form. */
-    private static final String FIRST_COMPACT_RELEASE = "v0.4.34";
-
     /** The smallest magnitude with MAX_DIGITS + 1 digits. */
     private static final BigInteger DIGITS_LIMIT = BigInteger.TEN.pow(MAX_DIGITS);
-
-    private static final Logger LOG = Logger.getLogger(DecimalCodec.class.getName());
-    private static final AtomicBoolean WARNED = new AtomicBoolean(false);
 
     private DecimalCodec() {}
 
     /**
-     * Encodes both forms (stage 1): fields 11 and 12, plus the canonical plain
-     * string in field 10 for readers on ledger-models older than v0.4.34. A
-     * negative scale becomes scale 0 ({@code 1E+3} is unscaled 1000).
+     * Encodes fields 11 and 12. A negative scale becomes scale 0 ({@code 1E+3}
+     * is unscaled 1000).
      *
      * @throws InvalidDecimalException if the value is over the digit or scale cap
      */
@@ -65,33 +52,26 @@ final class DecimalCodec {
             throw overCap(value.toString());
         }
         return DecimalValueProto.newBuilder()
-                .setArbitraryPrecisionValue(value.toPlainString())
                 .setUnscaledValue(ByteString.copyFrom(value.unscaledValue().toByteArray()))
                 .setScale(value.scale())
                 .build();
     }
 
     /**
-     * Decodes a {@code DecimalValueProto}. The compact form wins when set.
-     * Otherwise falls back to the deprecated string and logs a deprecation
-     * warning, once per process.
+     * Decodes a {@code DecimalValueProto}.
      *
-     * @throws InvalidDecimalException if both forms are empty, or the value is malformed or over a cap
+     * @throws InvalidDecimalException if unscaled_value is empty, or the value is over a cap
      */
     static BigDecimal decode(DecimalValueProto p) {
-        if (!p.getUnscaledValue().isEmpty()) {
-            return decodeCompact(p.getUnscaledValue(), Integer.toUnsignedLong(p.getScale()));
-        }
-        if (p.getArbitraryPrecisionValue().isEmpty()) {
+        if (p.getUnscaledValue().isEmpty()) {
             throw new InvalidDecimalException("decimal is required but unset");
         }
-        warnOnce();
-        return parseStrict(p.getArbitraryPrecisionValue());
+        return decodeCompact(p.getUnscaledValue(), Integer.toUnsignedLong(p.getScale()));
     }
 
-    /** True when the proto is {@code null} or neither form is set. */
+    /** True when the proto is {@code null} or its unscaled_value is empty. */
     static boolean isUnset(DecimalValueProto p) {
-        return p == null || (p.getUnscaledValue().isEmpty() && p.getArbitraryPrecisionValue().isEmpty());
+        return p == null || p.getUnscaledValue().isEmpty();
     }
 
     /**
@@ -115,7 +95,7 @@ final class DecimalCodec {
     }
 
     /**
-     * Parses a decimal string, as written to {@code arbitrary_precision_value}.
+     * Parses a decimal string such as {@code 1.50} or {@code 1E+3}.
      *
      * <p>Grammar: {@code [+-]? (digits [. digits?] | . digits) ([eE] [+-]? digits)?}.
      * No whitespace, no {@code NaN} or {@code Infinity}. The exponent is folded
@@ -178,19 +158,6 @@ final class DecimalCodec {
         text.append(significant);
         for (long z = 0; z < zerosToAppend; z++) text.append('0');
         return new BigDecimal(new BigInteger(text.toString()), (int) Math.max(scale, 0));
-    }
-
-    /** Logs that a decimal was read from the deprecated string, the first time only in this process. */
-    private static void warnOnce() {
-        if (WARNED.compareAndSet(false, true)) {
-            LOG.warning("DecimalValueProto read from deprecated arbitrary_precision_value; "
-                    + "writer predates ledger-models " + FIRST_COMPACT_RELEASE);
-        }
-    }
-
-    /** Tests only: lets a test see the first warning again. */
-    static void resetDeprecationWarningForTest() {
-        WARNED.set(false);
     }
 
     private static boolean isDigit(char c) {

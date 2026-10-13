@@ -35,8 +35,6 @@ from fintekkers.wrappers.util.link_resolver import LinkResolver
 
 def _full_security(uuid_obj: UUID, name: str) -> SecurityProto:
     return SecurityProto(
-        object_class="Security",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid_obj.bytes),
         is_link=False,
         issuer_name=name,
@@ -46,8 +44,6 @@ def _full_security(uuid_obj: UUID, name: str) -> SecurityProto:
 
 def _full_portfolio(uuid_obj: UUID, name: str) -> PortfolioProto:
     return PortfolioProto(
-        object_class="Portfolio",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid_obj.bytes),
         is_link=False,
         portfolio_name=name,
@@ -64,8 +60,6 @@ def _link_portfolio(uuid_obj: UUID) -> PortfolioProto:
 
 def _link_txn(security_uuid: UUID, portfolio_uuid: UUID) -> TransactionProto:
     return TransactionProto(
-        object_class="Transaction",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid4().bytes),
         as_of=LocalTimestampProto(time_zone="America/New_York"),
         is_link=False,
@@ -217,8 +211,6 @@ def test_search_with_security_and_portfolio_shared_resolver_across_calls():
 
 def test_transaction_is_link_helper():
     txn_link = TransactionProto(
-        object_class="Transaction",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid4().bytes),
         is_link=True,
     )
@@ -227,8 +219,6 @@ def test_transaction_is_link_helper():
     assert Transaction(txn_link).is_link() is True
 
     txn_full = TransactionProto(
-        object_class="Transaction",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=uuid4().bytes),
         as_of=LocalTimestampProto(time_zone="America/New_York"),
         is_link=False,

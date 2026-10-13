@@ -15,6 +15,7 @@ from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.wrappers.models.security.bond_security import BondSecurity
 from fintekkers.wrappers.models.security.floating_rate_note import FloatingRateNote
 from fintekkers.wrappers.models.security.tips_bond import TIPSBond
+from fintekkers.wrappers.models.util.decimal import decode_decimal
 
 
 _FACE = Decimal("1000.00")
@@ -28,8 +29,8 @@ def _assert_bond_details_match(proto: SecurityProto) -> None:
     bd = proto.bond_details
     assert bd.coupon_type == CouponTypeProto.FIXED
     assert bd.coupon_frequency == CouponFrequencyProto.SEMIANNUALLY
-    assert bd.coupon_rate.arbitrary_precision_value == str(_COUPON)
-    assert bd.face_value.arbitrary_precision_value == str(_FACE)
+    assert format(decode_decimal(bd.coupon_rate), "f") == str(_COUPON)
+    assert format(decode_decimal(bd.face_value), "f") == str(_FACE)
     assert (bd.issue_date.year, bd.issue_date.month, bd.issue_date.day) == (
         _ISSUE.year,
         _ISSUE.month,
@@ -81,7 +82,7 @@ def test_tips_bond_from_pricer_inputs():
     _assert_bond_details_match(proto)
     assert proto.HasField("tips_extension")
     ext = proto.tips_extension
-    assert ext.base_cpi.arbitrary_precision_value == str(base_cpi)
+    assert format(decode_decimal(ext.base_cpi), "f") == str(base_cpi)
     assert (ext.index_date.year, ext.index_date.month, ext.index_date.day) == (
         index_date.year,
         index_date.month,
@@ -120,12 +121,12 @@ def test_floating_rate_note_from_pricer_inputs():
     bd = proto.bond_details
     assert bd.coupon_type == CouponTypeProto.FLOAT
     assert bd.coupon_frequency == CouponFrequencyProto.QUARTERLY
-    assert bd.coupon_rate.arbitrary_precision_value == str(_COUPON)
-    assert bd.face_value.arbitrary_precision_value == str(_FACE)
+    assert format(decode_decimal(bd.coupon_rate), "f") == str(_COUPON)
+    assert format(decode_decimal(bd.face_value), "f") == str(_FACE)
 
     assert proto.HasField("frn_extension")
     ext = proto.frn_extension
-    assert ext.spread.arbitrary_precision_value == str(spread)
+    assert format(decode_decimal(ext.spread), "f") == str(spread)
     assert ext.reference_rate_index == IndexTypeProto.SOFR
     assert ext.reset_frequency == CouponFrequencyProto.QUARTERLY
 
