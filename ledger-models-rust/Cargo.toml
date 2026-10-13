@@ -81,3 +81,7 @@ required-features = ["test-utils"]
 [[test]]
 name = "curve_response_roundtrip_test"
 required-features = ["test-utils"]
+
+[[test]]
+name = "object_type_coverage_test"
+required-features = ["test-utils"]

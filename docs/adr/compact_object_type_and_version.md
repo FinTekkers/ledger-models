@@ -159,3 +159,43 @@ coordinated cutover: (1) the box's stored data is wiped, (2) this release,
   merge base that no item allowed.
 - **Release:** a breaking bump (`0.5.0` or `1.0.0`, the owner's ruling), not
   the usual patch.
+
+## LM-320: own-type helpers
+
+LM-318's `stamp(message, type)` needs the caller to pick the value, and Rust
+implemented `ObjectTyped` for only 18 of the 49 messages. Rust's orphan rule
+stops a service adding the rest, so services could not stamp responses.
+
+- **One table per language** maps each of the 49 messages to its own
+  `ObjectTypeProto` value, using the generated enum, never a hand-written
+  name. Nothing on the wire changes: the bytes equal `stamp(message, <its
+  value>)`.
+- **Helpers (additive; `stamp`, `readType` / `read_type`, `readVersion` /
+  `read_version` are unchanged):**
+
+  | Language | Own type | Stamp with own type |
+  | --- | --- | --- |
+  | Rust | `OwnObjectType::OBJECT_TYPE`, `own_type_by_full_name(&str)` | `stamp_own(message)` |
+  | Java | `ObjectTypes.ownType(Descriptor)` | `ObjectTypes.stampOwn(builder)` |
+  | Python | `object_types.own_type(message)` | `object_types.stamp_own(message)` |
+  | JS | `ownType(message)`, `OWN_TYPE_NAMES` | `stampOwn(message)` |
+
+  Rust's `own_type_by_full_name` and JS's `OWN_TYPE_NAMES` take the proto
+  full name (`fintekkers.requests.price.CreatePriceResponseProto`), not the
+  Rust path or JS class. Java, Python and JS raise a typed error
+  (`IllegalArgumentException`, `ValueError`, `Error`) for a message with no
+  own value; in Rust it does not compile.
+- **Rust:** each `object_typed!` row (`Type = "full.Name" => Variant`)
+  implements `ObjectTyped` and `OwnObjectType` and adds the
+  `own_type_by_full_name` arm, so they cannot drift. With `test-utils`,
+  `own_type_stampers()` stamps a default instance of every row. The
+  `fintekkers.models.util.api` module (`ApiKey`) is now exported so it can
+  have a row.
+- **Coverage tests** (`object_type_coverage_test.rs`,
+  `ObjectTypeCoverageTest`, `test_object_type_coverage.py`,
+  `object-type-coverage.test.ts`) walk
+  `ledger-models-rust/ledger_models_file_descriptor_set_v_todo.bin` for every
+  message whose field 1 is `ObjectTypeProto`. They fail when one has no table
+  entry, or when stamping it does not give the value the enum naming rule
+  gives and version `0.0.1`. A new message with `object_type` needs a row in
+  all four tables; a message with no enum value needs a new value first.

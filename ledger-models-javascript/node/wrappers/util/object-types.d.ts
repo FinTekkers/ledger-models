@@ -3,10 +3,10 @@
  *
  * Every message that names its type carries `ObjectTypeProto object_type = 1`
  * and `VersionProto version = 2`. Writers call `stamp`, which sets the type and
- * `SCHEMA_VERSION`. Readers call `readType` / `readVersion`. The old
- * `object_class` / `version` strings were replaced in place by LM-318: bytes
- * written before it are not readable. See
- * docs/adr/compact_object_type_and_version.md.
+ * `SCHEMA_VERSION`; `stampOwn` passes the message's own type (LM-320). Readers
+ * call `readType` / `readVersion`. The old `object_class` / `version` strings
+ * were replaced in place by LM-318: bytes written before it are not readable.
+ * See docs/adr/compact_object_type_and_version.md.
  */
 import { ObjectTypeProto } from '../../fintekkers/models/util/object_type_pb';
 import { VersionProto } from '../../fintekkers/models/util/version_pb';
@@ -27,6 +27,16 @@ export declare const SCHEMA_VERSION: Version;
  * `objectType` is the message's own ObjectTypeProto value.
  */
 export declare function stamp<T extends ObjectTyped>(message: T, objectType: ObjectTypeProto): T;
+/** Each message with object_type, by proto full name, to its own ObjectTypeProto value. */
+export declare const OWN_TYPE_NAMES: ReadonlyMap<string, ObjectTypeProto>;
+/** The message's own ObjectTypeProto value, or undefined when its class has none. */
+export declare function ownType(message: object): ObjectTypeProto | undefined;
+/**
+ * `stamp` with the message's own ObjectTypeProto value (LM-320); returns it.
+ * Throws an Error when its class has no own value. Generated classes are
+ * anonymous at runtime, so the error names the class only when it has a name.
+ */
+export declare function stampOwn<T extends ObjectTyped>(message: T): T;
 /**
  * The message's ObjectTypeProto value; OBJECT_TYPE_UNKNOWN when unset. A value
  * added after this build is returned as its number.

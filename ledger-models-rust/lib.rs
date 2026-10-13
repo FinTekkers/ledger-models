@@ -38,6 +38,9 @@ pub mod fintekkers {
         pub mod util {
             include!("fintekkers.models.util.rs");
 
+            pub mod api {
+                include!("fintekkers.models.util.api.rs");
+            }
             pub mod lock {
                 include!("fintekkers.models.util.lock.rs");
             }
