@@ -10,14 +10,14 @@ public interface CurveResponseProtoOrBuilder extends
   /**
    * <code>string object_class = 1 [deprecated = true];</code>
    * @deprecated fintekkers.requests.valuation.CurveResponseProto.object_class is deprecated.
-   *     See fintekkers/requests/valuation/curve_response.proto;l=34
+   *     See fintekkers/requests/valuation/curve_response.proto;l=54
    * @return The objectClass.
    */
   @java.lang.Deprecated java.lang.String getObjectClass();
   /**
    * <code>string object_class = 1 [deprecated = true];</code>
    * @deprecated fintekkers.requests.valuation.CurveResponseProto.object_class is deprecated.
-   *     See fintekkers/requests/valuation/curve_response.proto;l=34
+   *     See fintekkers/requests/valuation/curve_response.proto;l=54
    * @return The bytes for objectClass.
    */
   @java.lang.Deprecated com.google.protobuf.ByteString
@@ -26,14 +26,14 @@ public interface CurveResponseProtoOrBuilder extends
   /**
    * <code>string version = 2 [deprecated = true];</code>
    * @deprecated fintekkers.requests.valuation.CurveResponseProto.version is deprecated.
-   *     See fintekkers/requests/valuation/curve_response.proto;l=35
+   *     See fintekkers/requests/valuation/curve_response.proto;l=55
    * @return The version.
    */
   @java.lang.Deprecated java.lang.String getVersion();
   /**
    * <code>string version = 2 [deprecated = true];</code>
    * @deprecated fintekkers.requests.valuation.CurveResponseProto.version is deprecated.
-   *     See fintekkers/requests/valuation/curve_response.proto;l=35
+   *     See fintekkers/requests/valuation/curve_response.proto;l=55
    * @return The bytes for version.
    */
   @java.lang.Deprecated com.google.protobuf.ByteString

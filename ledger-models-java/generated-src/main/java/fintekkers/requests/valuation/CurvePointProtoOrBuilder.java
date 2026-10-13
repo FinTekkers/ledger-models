@@ -10,6 +10,10 @@ public interface CurvePointProtoOrBuilder extends
   /**
    * <pre>
    * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+   * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+   * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+   * A from-to label such as "1-2" in its string form is legacy, written before
+   * LM-313, and goes away with LM-295.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -19,6 +23,10 @@ public interface CurvePointProtoOrBuilder extends
   /**
    * <pre>
    * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+   * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+   * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+   * A from-to label such as "1-2" in its string form is legacy, written before
+   * LM-313, and goes away with LM-295.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -28,6 +36,10 @@ public interface CurvePointProtoOrBuilder extends
   /**
    * <pre>
    * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+   * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+   * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+   * A from-to label such as "1-2" in its string form is legacy, written before
+   * LM-313, and goes away with LM-295.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -60,4 +72,79 @@ public interface CurvePointProtoOrBuilder extends
    * <code>.fintekkers.models.util.DecimalValueProto yield = 2;</code>
    */
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getYieldOrBuilder();
+
+  /**
+   * <pre>
+   * Start of the forward period, in decimal years from the as-of date
+   * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+   * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+   * period), so test presence of the message, not a non-zero value.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+   * @return Whether the fromTenor field is set.
+   */
+  boolean hasFromTenor();
+  /**
+   * <pre>
+   * Start of the forward period, in decimal years from the as-of date
+   * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+   * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+   * period), so test presence of the message, not a non-zero value.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+   * @return The fromTenor.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getFromTenor();
+  /**
+   * <pre>
+   * Start of the forward period, in decimal years from the as-of date
+   * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+   * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+   * period), so test presence of the message, not a non-zero value.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getFromTenorOrBuilder();
+
+  /**
+   * <pre>
+   * End of the forward period, in decimal years from the as-of date. Set only
+   * on FORWARD_YIELD points, always together with from_tenor, and greater than
+   * it. The yield is the forward rate from from_tenor to to_tenor. When
+   * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+   * from_tenor + T.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+   * @return Whether the toTenor field is set.
+   */
+  boolean hasToTenor();
+  /**
+   * <pre>
+   * End of the forward period, in decimal years from the as-of date. Set only
+   * on FORWARD_YIELD points, always together with from_tenor, and greater than
+   * it. The yield is the forward rate from from_tenor to to_tenor. When
+   * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+   * from_tenor + T.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+   * @return The toTenor.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getToTenor();
+  /**
+   * <pre>
+   * End of the forward period, in decimal years from the as-of date. Set only
+   * on FORWARD_YIELD points, always together with from_tenor, and greater than
+   * it. The yield is the forward rate from from_tenor to to_tenor. When
+   * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+   * from_tenor + T.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getToTenorOrBuilder();
 }

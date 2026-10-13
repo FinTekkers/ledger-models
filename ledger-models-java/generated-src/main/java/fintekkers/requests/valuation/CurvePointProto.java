@@ -6,6 +6,8 @@ package fintekkers.requests.valuation;
 /**
  * <pre>
  * A single point on the yield curve: a tenor and its corresponding yield.
+ * Par and spot points carry `tenor`. Forward points carry the forward period
+ * in `from_tenor` / `to_tenor` (LM-313, docs/adr/forward_curve_tenor_range.md).
  * </pre>
  *
  * Protobuf type {@code fintekkers.requests.valuation.CurvePointProto}
@@ -52,6 +54,10 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+   * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+   * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+   * A from-to label such as "1-2" in its string form is legacy, written before
+   * LM-313, and goes away with LM-295.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -64,6 +70,10 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+   * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+   * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+   * A from-to label such as "1-2" in its string form is legacy, written before
+   * LM-313, and goes away with LM-295.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -76,6 +86,10 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+   * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+   * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+   * A from-to label such as "1-2" in its string form is legacy, written before
+   * LM-313, and goes away with LM-295.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -123,6 +137,103 @@ private static final long serialVersionUID = 0L;
     return yield_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : yield_;
   }
 
+  public static final int FROM_TENOR_FIELD_NUMBER = 3;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto fromTenor_;
+  /**
+   * <pre>
+   * Start of the forward period, in decimal years from the as-of date
+   * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+   * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+   * period), so test presence of the message, not a non-zero value.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+   * @return Whether the fromTenor field is set.
+   */
+  @java.lang.Override
+  public boolean hasFromTenor() {
+    return fromTenor_ != null;
+  }
+  /**
+   * <pre>
+   * Start of the forward period, in decimal years from the as-of date
+   * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+   * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+   * period), so test presence of the message, not a non-zero value.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+   * @return The fromTenor.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getFromTenor() {
+    return fromTenor_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : fromTenor_;
+  }
+  /**
+   * <pre>
+   * Start of the forward period, in decimal years from the as-of date
+   * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+   * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+   * period), so test presence of the message, not a non-zero value.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getFromTenorOrBuilder() {
+    return fromTenor_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : fromTenor_;
+  }
+
+  public static final int TO_TENOR_FIELD_NUMBER = 4;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto toTenor_;
+  /**
+   * <pre>
+   * End of the forward period, in decimal years from the as-of date. Set only
+   * on FORWARD_YIELD points, always together with from_tenor, and greater than
+   * it. The yield is the forward rate from from_tenor to to_tenor. When
+   * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+   * from_tenor + T.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+   * @return Whether the toTenor field is set.
+   */
+  @java.lang.Override
+  public boolean hasToTenor() {
+    return toTenor_ != null;
+  }
+  /**
+   * <pre>
+   * End of the forward period, in decimal years from the as-of date. Set only
+   * on FORWARD_YIELD points, always together with from_tenor, and greater than
+   * it. The yield is the forward rate from from_tenor to to_tenor. When
+   * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+   * from_tenor + T.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+   * @return The toTenor.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getToTenor() {
+    return toTenor_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : toTenor_;
+  }
+  /**
+   * <pre>
+   * End of the forward period, in decimal years from the as-of date. Set only
+   * on FORWARD_YIELD points, always together with from_tenor, and greater than
+   * it. The yield is the forward rate from from_tenor to to_tenor. When
+   * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+   * from_tenor + T.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getToTenorOrBuilder() {
+    return toTenor_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : toTenor_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -143,6 +254,12 @@ private static final long serialVersionUID = 0L;
     if (yield_ != null) {
       output.writeMessage(2, getYield());
     }
+    if (fromTenor_ != null) {
+      output.writeMessage(3, getFromTenor());
+    }
+    if (toTenor_ != null) {
+      output.writeMessage(4, getToTenor());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -159,6 +276,14 @@ private static final long serialVersionUID = 0L;
     if (yield_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(2, getYield());
+    }
+    if (fromTenor_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(3, getFromTenor());
+    }
+    if (toTenor_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(4, getToTenor());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -185,6 +310,16 @@ private static final long serialVersionUID = 0L;
       if (!getYield()
           .equals(other.getYield())) return false;
     }
+    if (hasFromTenor() != other.hasFromTenor()) return false;
+    if (hasFromTenor()) {
+      if (!getFromTenor()
+          .equals(other.getFromTenor())) return false;
+    }
+    if (hasToTenor() != other.hasToTenor()) return false;
+    if (hasToTenor()) {
+      if (!getToTenor()
+          .equals(other.getToTenor())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -203,6 +338,14 @@ private static final long serialVersionUID = 0L;
     if (hasYield()) {
       hash = (37 * hash) + YIELD_FIELD_NUMBER;
       hash = (53 * hash) + getYield().hashCode();
+    }
+    if (hasFromTenor()) {
+      hash = (37 * hash) + FROM_TENOR_FIELD_NUMBER;
+      hash = (53 * hash) + getFromTenor().hashCode();
+    }
+    if (hasToTenor()) {
+      hash = (37 * hash) + TO_TENOR_FIELD_NUMBER;
+      hash = (53 * hash) + getToTenor().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -302,6 +445,8 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * A single point on the yield curve: a tenor and its corresponding yield.
+   * Par and spot points carry `tenor`. Forward points carry the forward period
+   * in `from_tenor` / `to_tenor` (LM-313, docs/adr/forward_curve_tenor_range.md).
    * </pre>
    *
    * Protobuf type {@code fintekkers.requests.valuation.CurvePointProto}
@@ -347,6 +492,16 @@ private static final long serialVersionUID = 0L;
         yieldBuilder_.dispose();
         yieldBuilder_ = null;
       }
+      fromTenor_ = null;
+      if (fromTenorBuilder_ != null) {
+        fromTenorBuilder_.dispose();
+        fromTenorBuilder_ = null;
+      }
+      toTenor_ = null;
+      if (toTenorBuilder_ != null) {
+        toTenorBuilder_.dispose();
+        toTenorBuilder_ = null;
+      }
       return this;
     }
 
@@ -389,6 +544,16 @@ private static final long serialVersionUID = 0L;
         result.yield_ = yieldBuilder_ == null
             ? yield_
             : yieldBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.fromTenor_ = fromTenorBuilder_ == null
+            ? fromTenor_
+            : fromTenorBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.toTenor_ = toTenorBuilder_ == null
+            ? toTenor_
+            : toTenorBuilder_.build();
       }
     }
 
@@ -442,6 +607,12 @@ private static final long serialVersionUID = 0L;
       if (other.hasYield()) {
         mergeYield(other.getYield());
       }
+      if (other.hasFromTenor()) {
+        mergeFromTenor(other.getFromTenor());
+      }
+      if (other.hasToTenor()) {
+        mergeToTenor(other.getToTenor());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -482,6 +653,20 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000002;
               break;
             } // case 18
+            case 26: {
+              input.readMessage(
+                  getFromTenorFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000004;
+              break;
+            } // case 26
+            case 34: {
+              input.readMessage(
+                  getToTenorFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 34
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -505,6 +690,10 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+     * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+     * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+     * A from-to label such as "1-2" in its string form is legacy, written before
+     * LM-313, and goes away with LM-295.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -516,6 +705,10 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+     * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+     * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+     * A from-to label such as "1-2" in its string form is legacy, written before
+     * LM-313, and goes away with LM-295.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -531,6 +724,10 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+     * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+     * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+     * A from-to label such as "1-2" in its string form is legacy, written before
+     * LM-313, and goes away with LM-295.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -551,6 +748,10 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+     * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+     * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+     * A from-to label such as "1-2" in its string form is legacy, written before
+     * LM-313, and goes away with LM-295.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -569,6 +770,10 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+     * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+     * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+     * A from-to label such as "1-2" in its string form is legacy, written before
+     * LM-313, and goes away with LM-295.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -592,6 +797,10 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+     * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+     * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+     * A from-to label such as "1-2" in its string form is legacy, written before
+     * LM-313, and goes away with LM-295.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -609,6 +818,10 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+     * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+     * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+     * A from-to label such as "1-2" in its string form is legacy, written before
+     * LM-313, and goes away with LM-295.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -621,6 +834,10 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+     * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+     * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+     * A from-to label such as "1-2" in its string form is legacy, written before
+     * LM-313, and goes away with LM-295.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -636,6 +853,10 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
+     * This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
+     * FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
+     * A from-to label such as "1-2" in its string form is legacy, written before
+     * LM-313, and goes away with LM-295.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto tenor = 1;</code>
@@ -807,6 +1028,379 @@ private static final long serialVersionUID = 0L;
         yield_ = null;
       }
       return yieldBuilder_;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto fromTenor_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> fromTenorBuilder_;
+    /**
+     * <pre>
+     * Start of the forward period, in decimal years from the as-of date
+     * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+     * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+     * period), so test presence of the message, not a non-zero value.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+     * @return Whether the fromTenor field is set.
+     */
+    public boolean hasFromTenor() {
+      return ((bitField0_ & 0x00000004) != 0);
+    }
+    /**
+     * <pre>
+     * Start of the forward period, in decimal years from the as-of date
+     * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+     * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+     * period), so test presence of the message, not a non-zero value.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+     * @return The fromTenor.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getFromTenor() {
+      if (fromTenorBuilder_ == null) {
+        return fromTenor_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : fromTenor_;
+      } else {
+        return fromTenorBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Start of the forward period, in decimal years from the as-of date
+     * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+     * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+     * period), so test presence of the message, not a non-zero value.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+     */
+    public Builder setFromTenor(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (fromTenorBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        fromTenor_ = value;
+      } else {
+        fromTenorBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Start of the forward period, in decimal years from the as-of date
+     * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+     * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+     * period), so test presence of the message, not a non-zero value.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+     */
+    public Builder setFromTenor(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (fromTenorBuilder_ == null) {
+        fromTenor_ = builderForValue.build();
+      } else {
+        fromTenorBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Start of the forward period, in decimal years from the as-of date
+     * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+     * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+     * period), so test presence of the message, not a non-zero value.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+     */
+    public Builder mergeFromTenor(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (fromTenorBuilder_ == null) {
+        if (((bitField0_ & 0x00000004) != 0) &&
+          fromTenor_ != null &&
+          fromTenor_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getFromTenorBuilder().mergeFrom(value);
+        } else {
+          fromTenor_ = value;
+        }
+      } else {
+        fromTenorBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Start of the forward period, in decimal years from the as-of date
+     * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+     * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+     * period), so test presence of the message, not a non-zero value.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+     */
+    public Builder clearFromTenor() {
+      bitField0_ = (bitField0_ & ~0x00000004);
+      fromTenor_ = null;
+      if (fromTenorBuilder_ != null) {
+        fromTenorBuilder_.dispose();
+        fromTenorBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Start of the forward period, in decimal years from the as-of date
+     * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+     * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+     * period), so test presence of the message, not a non-zero value.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getFromTenorBuilder() {
+      bitField0_ |= 0x00000004;
+      onChanged();
+      return getFromTenorFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Start of the forward period, in decimal years from the as-of date
+     * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+     * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+     * period), so test presence of the message, not a non-zero value.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getFromTenorOrBuilder() {
+      if (fromTenorBuilder_ != null) {
+        return fromTenorBuilder_.getMessageOrBuilder();
+      } else {
+        return fromTenor_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : fromTenor_;
+      }
+    }
+    /**
+     * <pre>
+     * Start of the forward period, in decimal years from the as-of date
+     * (e.g. 0 = today, 1.0 = one year out). Set only on FORWARD_YIELD points;
+     * unset on PAR_YIELD and SPOT_YIELD points. 0 is a valid value (the first
+     * period), so test presence of the message, not a non-zero value.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto from_tenor = 3;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getFromTenorFieldBuilder() {
+      if (fromTenorBuilder_ == null) {
+        fromTenorBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getFromTenor(),
+                getParentForChildren(),
+                isClean());
+        fromTenor_ = null;
+      }
+      return fromTenorBuilder_;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto toTenor_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> toTenorBuilder_;
+    /**
+     * <pre>
+     * End of the forward period, in decimal years from the as-of date. Set only
+     * on FORWARD_YIELD points, always together with from_tenor, and greater than
+     * it. The yield is the forward rate from from_tenor to to_tenor. When
+     * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+     * from_tenor + T.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+     * @return Whether the toTenor field is set.
+     */
+    public boolean hasToTenor() {
+      return ((bitField0_ & 0x00000008) != 0);
+    }
+    /**
+     * <pre>
+     * End of the forward period, in decimal years from the as-of date. Set only
+     * on FORWARD_YIELD points, always together with from_tenor, and greater than
+     * it. The yield is the forward rate from from_tenor to to_tenor. When
+     * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+     * from_tenor + T.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+     * @return The toTenor.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getToTenor() {
+      if (toTenorBuilder_ == null) {
+        return toTenor_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : toTenor_;
+      } else {
+        return toTenorBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * End of the forward period, in decimal years from the as-of date. Set only
+     * on FORWARD_YIELD points, always together with from_tenor, and greater than
+     * it. The yield is the forward rate from from_tenor to to_tenor. When
+     * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+     * from_tenor + T.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+     */
+    public Builder setToTenor(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (toTenorBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        toTenor_ = value;
+      } else {
+        toTenorBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * End of the forward period, in decimal years from the as-of date. Set only
+     * on FORWARD_YIELD points, always together with from_tenor, and greater than
+     * it. The yield is the forward rate from from_tenor to to_tenor. When
+     * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+     * from_tenor + T.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+     */
+    public Builder setToTenor(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (toTenorBuilder_ == null) {
+        toTenor_ = builderForValue.build();
+      } else {
+        toTenorBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * End of the forward period, in decimal years from the as-of date. Set only
+     * on FORWARD_YIELD points, always together with from_tenor, and greater than
+     * it. The yield is the forward rate from from_tenor to to_tenor. When
+     * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+     * from_tenor + T.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+     */
+    public Builder mergeToTenor(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (toTenorBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0) &&
+          toTenor_ != null &&
+          toTenor_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getToTenorBuilder().mergeFrom(value);
+        } else {
+          toTenor_ = value;
+        }
+      } else {
+        toTenorBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * End of the forward period, in decimal years from the as-of date. Set only
+     * on FORWARD_YIELD points, always together with from_tenor, and greater than
+     * it. The yield is the forward rate from from_tenor to to_tenor. When
+     * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+     * from_tenor + T.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+     */
+    public Builder clearToTenor() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      toTenor_ = null;
+      if (toTenorBuilder_ != null) {
+        toTenorBuilder_.dispose();
+        toTenorBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * End of the forward period, in decimal years from the as-of date. Set only
+     * on FORWARD_YIELD points, always together with from_tenor, and greater than
+     * it. The yield is the forward rate from from_tenor to to_tenor. When
+     * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+     * from_tenor + T.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getToTenorBuilder() {
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return getToTenorFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * End of the forward period, in decimal years from the as-of date. Set only
+     * on FORWARD_YIELD points, always together with from_tenor, and greater than
+     * it. The yield is the forward rate from from_tenor to to_tenor. When
+     * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+     * from_tenor + T.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getToTenorOrBuilder() {
+      if (toTenorBuilder_ != null) {
+        return toTenorBuilder_.getMessageOrBuilder();
+      } else {
+        return toTenor_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : toTenor_;
+      }
+    }
+    /**
+     * <pre>
+     * End of the forward period, in decimal years from the as-of date. Set only
+     * on FORWARD_YIELD points, always together with from_tenor, and greater than
+     * it. The yield is the forward rate from from_tenor to to_tenor. When
+     * CurveRequestProto.forward_term_years is T (1 when unset), to_tenor =
+     * from_tenor + T.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto to_tenor = 4;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getToTenorFieldBuilder() {
+      if (toTenorBuilder_ == null) {
+        toTenorBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getToTenor(),
+                getParentForChildren(),
+                isClean());
+        toTenor_ = null;
+      }
+      return toTenorBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

@@ -23,6 +23,16 @@ export class CurvePointProto extends jspb.Message {
     getYield(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
     setYield(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): CurvePointProto;
 
+    hasFromTenor(): boolean;
+    clearFromTenor(): void;
+    getFromTenor(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setFromTenor(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): CurvePointProto;
+
+    hasToTenor(): boolean;
+    clearToTenor(): void;
+    getToTenor(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setToTenor(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): CurvePointProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): CurvePointProto.AsObject;
     static toObject(includeInstance: boolean, msg: CurvePointProto): CurvePointProto.AsObject;
@@ -37,6 +47,8 @@ export namespace CurvePointProto {
     export type AsObject = {
         tenor?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         yield?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        fromTenor?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        toTenor?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }
 

@@ -28,7 +28,8 @@ public interface CurveResultProtoOrBuilder extends
 
   /**
    * <pre>
-   * The curve points, ordered by ascending tenor.
+   * The curve points: par and spot points ordered by ascending tenor, forward
+   * points by ascending from_tenor.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -37,7 +38,8 @@ public interface CurveResultProtoOrBuilder extends
       getPointsList();
   /**
    * <pre>
-   * The curve points, ordered by ascending tenor.
+   * The curve points: par and spot points ordered by ascending tenor, forward
+   * points by ascending from_tenor.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -45,7 +47,8 @@ public interface CurveResultProtoOrBuilder extends
   fintekkers.requests.valuation.CurvePointProto getPoints(int index);
   /**
    * <pre>
-   * The curve points, ordered by ascending tenor.
+   * The curve points: par and spot points ordered by ascending tenor, forward
+   * points by ascending from_tenor.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -53,7 +56,8 @@ public interface CurveResultProtoOrBuilder extends
   int getPointsCount();
   /**
    * <pre>
-   * The curve points, ordered by ascending tenor.
+   * The curve points: par and spot points ordered by ascending tenor, forward
+   * points by ascending from_tenor.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -62,7 +66,8 @@ public interface CurveResultProtoOrBuilder extends
       getPointsOrBuilderList();
   /**
    * <pre>
-   * The curve points, ordered by ascending tenor.
+   * The curve points: par and spot points ordered by ascending tenor, forward
+   * points by ascending from_tenor.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>

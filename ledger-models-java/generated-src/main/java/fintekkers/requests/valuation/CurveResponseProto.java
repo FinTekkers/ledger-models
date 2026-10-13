@@ -57,7 +57,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>string object_class = 1 [deprecated = true];</code>
    * @deprecated fintekkers.requests.valuation.CurveResponseProto.object_class is deprecated.
-   *     See fintekkers/requests/valuation/curve_response.proto;l=34
+   *     See fintekkers/requests/valuation/curve_response.proto;l=54
    * @return The objectClass.
    */
   @java.lang.Override
@@ -76,7 +76,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>string object_class = 1 [deprecated = true];</code>
    * @deprecated fintekkers.requests.valuation.CurveResponseProto.object_class is deprecated.
-   *     See fintekkers/requests/valuation/curve_response.proto;l=34
+   *     See fintekkers/requests/valuation/curve_response.proto;l=54
    * @return The bytes for objectClass.
    */
   @java.lang.Override
@@ -100,7 +100,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>string version = 2 [deprecated = true];</code>
    * @deprecated fintekkers.requests.valuation.CurveResponseProto.version is deprecated.
-   *     See fintekkers/requests/valuation/curve_response.proto;l=35
+   *     See fintekkers/requests/valuation/curve_response.proto;l=55
    * @return The version.
    */
   @java.lang.Override
@@ -119,7 +119,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <code>string version = 2 [deprecated = true];</code>
    * @deprecated fintekkers.requests.valuation.CurveResponseProto.version is deprecated.
-   *     See fintekkers/requests/valuation/curve_response.proto;l=35
+   *     See fintekkers/requests/valuation/curve_response.proto;l=55
    * @return The bytes for version.
    */
   @java.lang.Override
@@ -935,7 +935,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string object_class = 1 [deprecated = true];</code>
      * @deprecated fintekkers.requests.valuation.CurveResponseProto.object_class is deprecated.
-     *     See fintekkers/requests/valuation/curve_response.proto;l=34
+     *     See fintekkers/requests/valuation/curve_response.proto;l=54
      * @return The objectClass.
      */
     @java.lang.Deprecated public java.lang.String getObjectClass() {
@@ -953,7 +953,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string object_class = 1 [deprecated = true];</code>
      * @deprecated fintekkers.requests.valuation.CurveResponseProto.object_class is deprecated.
-     *     See fintekkers/requests/valuation/curve_response.proto;l=34
+     *     See fintekkers/requests/valuation/curve_response.proto;l=54
      * @return The bytes for objectClass.
      */
     @java.lang.Deprecated public com.google.protobuf.ByteString
@@ -972,7 +972,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string object_class = 1 [deprecated = true];</code>
      * @deprecated fintekkers.requests.valuation.CurveResponseProto.object_class is deprecated.
-     *     See fintekkers/requests/valuation/curve_response.proto;l=34
+     *     See fintekkers/requests/valuation/curve_response.proto;l=54
      * @param value The objectClass to set.
      * @return This builder for chaining.
      */
@@ -987,7 +987,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string object_class = 1 [deprecated = true];</code>
      * @deprecated fintekkers.requests.valuation.CurveResponseProto.object_class is deprecated.
-     *     See fintekkers/requests/valuation/curve_response.proto;l=34
+     *     See fintekkers/requests/valuation/curve_response.proto;l=54
      * @return This builder for chaining.
      */
     @java.lang.Deprecated public Builder clearObjectClass() {
@@ -999,7 +999,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string object_class = 1 [deprecated = true];</code>
      * @deprecated fintekkers.requests.valuation.CurveResponseProto.object_class is deprecated.
-     *     See fintekkers/requests/valuation/curve_response.proto;l=34
+     *     See fintekkers/requests/valuation/curve_response.proto;l=54
      * @param value The bytes for objectClass to set.
      * @return This builder for chaining.
      */
@@ -1017,7 +1017,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string version = 2 [deprecated = true];</code>
      * @deprecated fintekkers.requests.valuation.CurveResponseProto.version is deprecated.
-     *     See fintekkers/requests/valuation/curve_response.proto;l=35
+     *     See fintekkers/requests/valuation/curve_response.proto;l=55
      * @return The version.
      */
     @java.lang.Deprecated public java.lang.String getVersion() {
@@ -1035,7 +1035,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string version = 2 [deprecated = true];</code>
      * @deprecated fintekkers.requests.valuation.CurveResponseProto.version is deprecated.
-     *     See fintekkers/requests/valuation/curve_response.proto;l=35
+     *     See fintekkers/requests/valuation/curve_response.proto;l=55
      * @return The bytes for version.
      */
     @java.lang.Deprecated public com.google.protobuf.ByteString
@@ -1054,7 +1054,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string version = 2 [deprecated = true];</code>
      * @deprecated fintekkers.requests.valuation.CurveResponseProto.version is deprecated.
-     *     See fintekkers/requests/valuation/curve_response.proto;l=35
+     *     See fintekkers/requests/valuation/curve_response.proto;l=55
      * @param value The version to set.
      * @return This builder for chaining.
      */
@@ -1069,7 +1069,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string version = 2 [deprecated = true];</code>
      * @deprecated fintekkers.requests.valuation.CurveResponseProto.version is deprecated.
-     *     See fintekkers/requests/valuation/curve_response.proto;l=35
+     *     See fintekkers/requests/valuation/curve_response.proto;l=55
      * @return This builder for chaining.
      */
     @java.lang.Deprecated public Builder clearVersion() {
@@ -1081,7 +1081,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <code>string version = 2 [deprecated = true];</code>
      * @deprecated fintekkers.requests.valuation.CurveResponseProto.version is deprecated.
-     *     See fintekkers/requests/valuation/curve_response.proto;l=35
+     *     See fintekkers/requests/valuation/curve_response.proto;l=55
      * @param value The bytes for version to set.
      * @return This builder for chaining.
      */

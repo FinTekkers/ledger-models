@@ -80,7 +80,8 @@ private static final long serialVersionUID = 0L;
   private java.util.List<fintekkers.requests.valuation.CurvePointProto> points_;
   /**
    * <pre>
-   * The curve points, ordered by ascending tenor.
+   * The curve points: par and spot points ordered by ascending tenor, forward
+   * points by ascending from_tenor.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -91,7 +92,8 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The curve points, ordered by ascending tenor.
+   * The curve points: par and spot points ordered by ascending tenor, forward
+   * points by ascending from_tenor.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -103,7 +105,8 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The curve points, ordered by ascending tenor.
+   * The curve points: par and spot points ordered by ascending tenor, forward
+   * points by ascending from_tenor.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -114,7 +117,8 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The curve points, ordered by ascending tenor.
+   * The curve points: par and spot points ordered by ascending tenor, forward
+   * points by ascending from_tenor.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -125,7 +129,8 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The curve points, ordered by ascending tenor.
+   * The curve points: par and spot points ordered by ascending tenor, forward
+   * points by ascending from_tenor.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -621,7 +626,8 @@ private static final long serialVersionUID = 0L;
 
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -635,7 +641,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -649,7 +656,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -663,7 +671,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -684,7 +693,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -702,7 +712,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -722,7 +733,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -743,7 +755,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -761,7 +774,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -779,7 +793,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -798,7 +813,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -815,7 +831,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -832,7 +849,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -843,7 +861,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -857,7 +876,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -872,7 +892,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -883,7 +904,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>
@@ -895,7 +917,8 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The curve points, ordered by ascending tenor.
+     * The curve points: par and spot points ordered by ascending tenor, forward
+     * points by ascending from_tenor.
      * </pre>
      *
      * <code>repeated .fintekkers.requests.valuation.CurvePointProto points = 2;</code>

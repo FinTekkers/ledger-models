@@ -29,7 +29,7 @@ from fintekkers.requests.util.errors import summary_pb2 as fintekkers_dot_reques
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n2fintekkers/requests/valuation/curve_response.proto\x12\x1d\x66intekkers.requests.valuation\x1a*fintekkers/models/util/decimal_value.proto\x1a(fintekkers/models/position/measure.proto\x1a\x31\x66intekkers/requests/valuation/curve_request.proto\x1a-fintekkers/requests/util/errors/summary.proto\x1a(fintekkers/models/util/object_type.proto\"\x85\x01\n\x0f\x43urvePointProto\x12\x38\n\x05tenor\x18\x01 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12\x38\n\x05yield\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\x90\x01\n\x10\x43urveResultProto\x12<\n\ncurve_type\x18\x01 \x01(\x0e\x32(.fintekkers.models.position.MeasureProto\x12>\n\x06points\x18\x02 \x03(\x0b\x32..fintekkers.requests.valuation.CurvePointProto\"\x9b\x03\n\x12\x43urveResponseProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12G\n\rcurve_request\x18\n \x01(\x0b\x32\x30.fintekkers.requests.valuation.CurveRequestProto\x12\x46\n\rcurve_results\x18\x14 \x03(\x0b\x32/.fintekkers.requests.valuation.CurveResultProto\x12>\n\x07summary\x18\x1e \x01(\x0b\x32-.fintekkers.requests.util.errors.SummaryProtoB\x17\x42\x13\x43urveResponseProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n2fintekkers/requests/valuation/curve_response.proto\x12\x1d\x66intekkers.requests.valuation\x1a*fintekkers/models/util/decimal_value.proto\x1a(fintekkers/models/position/measure.proto\x1a\x31\x66intekkers/requests/valuation/curve_request.proto\x1a-fintekkers/requests/util/errors/summary.proto\x1a(fintekkers/models/util/object_type.proto\"\x81\x02\n\x0f\x43urvePointProto\x12\x38\n\x05tenor\x18\x01 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12\x38\n\x05yield\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12=\n\nfrom_tenor\x18\x03 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12;\n\x08to_tenor\x18\x04 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\x90\x01\n\x10\x43urveResultProto\x12<\n\ncurve_type\x18\x01 \x01(\x0e\x32(.fintekkers.models.position.MeasureProto\x12>\n\x06points\x18\x02 \x03(\x0b\x32..fintekkers.requests.valuation.CurvePointProto\"\x9b\x03\n\x12\x43urveResponseProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12G\n\rcurve_request\x18\n \x01(\x0b\x32\x30.fintekkers.requests.valuation.CurveRequestProto\x12\x46\n\rcurve_results\x18\x14 \x03(\x0b\x32/.fintekkers.requests.valuation.CurveResultProto\x12>\n\x07summary\x18\x1e \x01(\x0b\x32-.fintekkers.requests.util.errors.SummaryProtoB\x17\x42\x13\x43urveResponseProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -42,9 +42,9 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_CURVERESPONSEPROTO'].fields_by_name['version']._loaded_options = None
   _globals['_CURVERESPONSEPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
   _globals['_CURVEPOINTPROTO']._serialized_start=312
-  _globals['_CURVEPOINTPROTO']._serialized_end=445
-  _globals['_CURVERESULTPROTO']._serialized_start=448
-  _globals['_CURVERESULTPROTO']._serialized_end=592
-  _globals['_CURVERESPONSEPROTO']._serialized_start=595
-  _globals['_CURVERESPONSEPROTO']._serialized_end=1006
+  _globals['_CURVEPOINTPROTO']._serialized_end=569
+  _globals['_CURVERESULTPROTO']._serialized_start=572
+  _globals['_CURVERESULTPROTO']._serialized_end=716
+  _globals['_CURVERESPONSEPROTO']._serialized_start=719
+  _globals['_CURVERESPONSEPROTO']._serialized_end=1130
 # @@protoc_insertion_point(module_scope)

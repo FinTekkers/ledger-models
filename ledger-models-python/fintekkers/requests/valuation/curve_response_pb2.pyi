@@ -12,11 +12,15 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class CurvePointProto(_message.Message):
-    __slots__ = ("tenor",)
+    __slots__ = ("tenor", "from_tenor", "to_tenor")
     TENOR_FIELD_NUMBER: _ClassVar[int]
     YIELD_FIELD_NUMBER: _ClassVar[int]
+    FROM_TENOR_FIELD_NUMBER: _ClassVar[int]
+    TO_TENOR_FIELD_NUMBER: _ClassVar[int]
     tenor: _decimal_value_pb2.DecimalValueProto
-    def __init__(self, tenor: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., **kwargs) -> None: ...
+    from_tenor: _decimal_value_pb2.DecimalValueProto
+    to_tenor: _decimal_value_pb2.DecimalValueProto
+    def __init__(self, tenor: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., from_tenor: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., to_tenor: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., **kwargs) -> None: ...
 
 class CurveResultProto(_message.Message):
     __slots__ = ("curve_type", "points")
