@@ -2,9 +2,10 @@
 //!
 //! Every message that names its type carries `ObjectTypeProto object_type = 1`
 //! and `VersionProto version = 2`. Writers call [`stamp`], which sets the type
-//! and [`SCHEMA_VERSION`]. Readers call [`read_type`] / [`read_version`]. The
-//! old `object_class` / `version` strings were replaced in place by LM-318:
-//! bytes written before it are not readable. See
+//! and [`SCHEMA_VERSION`]; [`stamp_own`] passes the message's own type
+//! (LM-320). Readers call [`read_type`] / [`read_version`]. The old
+//! `object_class` / `version` strings were replaced in place by LM-318: bytes
+//! written before it are not readable. See
 //! docs/adr/compact_object_type_and_version.md.
 
 use crate::fintekkers::models::util::{LocalTimestampProto, ObjectTypeProto, UuidProto, VersionProto};
@@ -27,36 +28,113 @@ pub trait ObjectTyped {
     fn set_version_proto(&mut self, version: Option<VersionProto>);
 }
 
+/// The message's own ObjectTypeProto value (LM-320), for [`stamp_own`].
+/// Every generated message that carries `object_type` implements it.
+pub trait OwnObjectType: ObjectTyped {
+    const OBJECT_TYPE: ObjectTypeProto;
+}
+
+/// Reads back what [`stamp_own`] wrote on a default instance: (type, version).
+#[cfg(feature = "test-utils")]
+pub type OwnTypeStamper = fn() -> (ObjectTypeProto, Option<Version>);
+
+// One row per message with `object_type`: Rust type = proto full name =>
+// its own ObjectTypeProto variant. A row implements ObjectTyped and
+// OwnObjectType and adds the full name to own_type_by_full_name, so the three
+// cannot drift. tests/object_type_coverage_test.rs fails when a message in
+// the descriptor set has no row.
 macro_rules! object_typed {
-    ($($ty:path),* $(,)?) => {$(
-        impl ObjectTyped for $ty {
-            fn raw_object_type(&self) -> i32 { self.object_type }
-            fn version_proto(&self) -> Option<&VersionProto> { self.version.as_ref() }
-            fn set_raw_object_type(&mut self, object_type: i32) { self.object_type = object_type; }
-            fn set_version_proto(&mut self, version: Option<VersionProto>) { self.version = version; }
+    ($($ty:path = $full_name:literal => $own:ident),* $(,)?) => {
+        $(
+            impl ObjectTyped for $ty {
+                fn raw_object_type(&self) -> i32 { self.object_type }
+                fn version_proto(&self) -> Option<&VersionProto> { self.version.as_ref() }
+                fn set_raw_object_type(&mut self, object_type: i32) { self.object_type = object_type; }
+                fn set_version_proto(&mut self, version: Option<VersionProto>) { self.version = version; }
+            }
+
+            impl OwnObjectType for $ty {
+                const OBJECT_TYPE: ObjectTypeProto = ObjectTypeProto::$own;
+            }
+        )*
+
+        /// The own ObjectTypeProto value of the message with this proto full
+        /// name (e.g. `fintekkers.requests.price.CreatePriceResponseProto`,
+        /// not the Rust path), or None when it carries no `object_type`.
+        pub fn own_type_by_full_name(full_name: &str) -> Option<ObjectTypeProto> {
+            match full_name {
+                $($full_name => Some(ObjectTypeProto::$own),)*
+                _ => None,
+            }
         }
-    )*};
+
+        /// Test helper (`test-utils` feature): one entry per row, keyed by
+        /// proto full name. Each stamps a default instance with [`stamp_own`]
+        /// and reads back its type and version.
+        #[cfg(feature = "test-utils")]
+        pub fn own_type_stampers() -> Vec<(&'static str, OwnTypeStamper)> {
+            vec![$((
+                $full_name,
+                (|| {
+                    let message = stamp_own(<$ty as Default>::default());
+                    (read_type(&message), read_version(&message))
+                }) as OwnTypeStamper,
+            )),*]
+        }
+    };
 }
 
 object_typed! {
-    crate::fintekkers::models::portfolio::PortfolioProto,
-    crate::fintekkers::models::position::PositionProto,
-    crate::fintekkers::models::position::PositionFilterProto,
-    crate::fintekkers::models::price::PriceProto,
-    crate::fintekkers::models::security::IdentifierProto,
-    crate::fintekkers::models::security::SecurityProto,
-    crate::fintekkers::models::security::TenorProto,
-    crate::fintekkers::models::strategy::StrategyProto,
-    crate::fintekkers::models::strategy::StrategyAllocationProto,
-    crate::fintekkers::models::transaction::TransactionProto,
-    crate::fintekkers::requests::portfolio::CreatePortfolioRequestProto,
-    crate::fintekkers::requests::portfolio::QueryPortfolioRequestProto,
-    crate::fintekkers::requests::price::CreatePriceRequestProto,
-    crate::fintekkers::requests::price::QueryPriceRequestProto,
-    crate::fintekkers::requests::security::CreateSecurityRequestProto,
-    crate::fintekkers::requests::security::QuerySecurityRequestProto,
-    crate::fintekkers::requests::transaction::CreateTransactionRequestProto,
-    crate::fintekkers::requests::transaction::QueryTransactionRequestProto,
+    crate::fintekkers::models::portfolio::PortfolioProto = "fintekkers.models.portfolio.PortfolioProto" => ObjectTypePortfolio,
+    crate::fintekkers::models::position::PositionProto = "fintekkers.models.position.PositionProto" => ObjectTypePosition,
+    crate::fintekkers::models::position::PositionFilterProto = "fintekkers.models.position.PositionFilterProto" => ObjectTypePositionFilter,
+    crate::fintekkers::models::price::PriceProto = "fintekkers.models.price.PriceProto" => ObjectTypePrice,
+    crate::fintekkers::models::security::IdentifierProto = "fintekkers.models.security.IdentifierProto" => ObjectTypeIdentifier,
+    crate::fintekkers::models::security::SecurityProto = "fintekkers.models.security.SecurityProto" => ObjectTypeSecurity,
+    crate::fintekkers::models::security::TenorProto = "fintekkers.models.security.TenorProto" => ObjectTypeTenor,
+    crate::fintekkers::models::strategy::StrategyProto = "fintekkers.models.strategy.StrategyProto" => ObjectTypeStrategy,
+    crate::fintekkers::models::strategy::StrategyAllocationProto = "fintekkers.models.strategy.StrategyAllocationProto" => ObjectTypeStrategyAllocation,
+    crate::fintekkers::models::transaction::TransactionProto = "fintekkers.models.transaction.TransactionProto" => ObjectTypeTransaction,
+    crate::fintekkers::requests::portfolio::CreatePortfolioRequestProto = "fintekkers.requests.portfolio.CreatePortfolioRequestProto" => ObjectTypeCreatePortfolioRequest,
+    crate::fintekkers::requests::portfolio::QueryPortfolioRequestProto = "fintekkers.requests.portfolio.QueryPortfolioRequestProto" => ObjectTypeQueryPortfolioRequest,
+    crate::fintekkers::requests::price::CreatePriceRequestProto = "fintekkers.requests.price.CreatePriceRequestProto" => ObjectTypeCreatePriceRequest,
+    crate::fintekkers::requests::price::QueryPriceRequestProto = "fintekkers.requests.price.QueryPriceRequestProto" => ObjectTypeQueryPriceRequest,
+    crate::fintekkers::requests::security::CreateSecurityRequestProto = "fintekkers.requests.security.CreateSecurityRequestProto" => ObjectTypeCreateSecurityRequest,
+    crate::fintekkers::requests::security::QuerySecurityRequestProto = "fintekkers.requests.security.QuerySecurityRequestProto" => ObjectTypeQuerySecurityRequest,
+    crate::fintekkers::requests::transaction::CreateTransactionRequestProto = "fintekkers.requests.transaction.CreateTransactionRequestProto" => ObjectTypeCreateTransactionRequest,
+    crate::fintekkers::requests::transaction::QueryTransactionRequestProto = "fintekkers.requests.transaction.QueryTransactionRequestProto" => ObjectTypeQueryTransactionRequest,
+    // LM-320: the rest of the messages with object_type.
+    crate::fintekkers::models::security::bond::IssuanceProto = "fintekkers.models.security.bond.IssuanceProto" => ObjectTypeIssuance,
+    crate::fintekkers::models::security::IndexCompositionProto = "fintekkers.models.security.IndexCompositionProto" => ObjectTypeIndexComposition,
+    crate::fintekkers::models::util::DateRangeProto = "fintekkers.models.util.DateRangeProto" => ObjectTypeDateRange,
+    crate::fintekkers::models::util::api::ApiKey = "fintekkers.models.util.api.API_Key" => ObjectTypeApiKey,
+    crate::fintekkers::models::util::lock::NodeState = "fintekkers.models.util.lock.NodeState" => ObjectTypeNodeState,
+    crate::fintekkers::models::util::lock::NodePartition = "fintekkers.models.util.lock.NodePartition" => ObjectTypeNodePartition,
+    crate::fintekkers::requests::index_composition::CreateIndexCompositionRequestProto = "fintekkers.requests.index_composition.CreateIndexCompositionRequestProto" => ObjectTypeCreateIndexCompositionRequest,
+    crate::fintekkers::requests::index_composition::CreateIndexCompositionResponseProto = "fintekkers.requests.index_composition.CreateIndexCompositionResponseProto" => ObjectTypeCreateIndexCompositionResponse,
+    crate::fintekkers::requests::index_composition::GetIndexCompositionRequestProto = "fintekkers.requests.index_composition.GetIndexCompositionRequestProto" => ObjectTypeGetIndexCompositionRequest,
+    crate::fintekkers::requests::index_composition::GetIndexCompositionResponseProto = "fintekkers.requests.index_composition.GetIndexCompositionResponseProto" => ObjectTypeGetIndexCompositionResponse,
+    crate::fintekkers::requests::portfolio::CreatePortfolioResponseProto = "fintekkers.requests.portfolio.CreatePortfolioResponseProto" => ObjectTypeCreatePortfolioResponse,
+    crate::fintekkers::requests::portfolio::QueryPortfolioResponseProto = "fintekkers.requests.portfolio.QueryPortfolioResponseProto" => ObjectTypeQueryPortfolioResponse,
+    crate::fintekkers::requests::position::QueryPositionRequestProto = "fintekkers.requests.position.QueryPositionRequestProto" => ObjectTypeQueryPositionRequest,
+    crate::fintekkers::requests::position::QueryPositionResponseProto = "fintekkers.requests.position.QueryPositionResponseProto" => ObjectTypeQueryPositionResponse,
+    crate::fintekkers::requests::price::CreatePriceResponseProto = "fintekkers.requests.price.CreatePriceResponseProto" => ObjectTypeCreatePriceResponse,
+    crate::fintekkers::requests::price::QueryPriceResponseProto = "fintekkers.requests.price.QueryPriceResponseProto" => ObjectTypeQueryPriceResponse,
+    crate::fintekkers::requests::security::CreateSecurityResponseProto = "fintekkers.requests.security.CreateSecurityResponseProto" => ObjectTypeCreateSecurityResponse,
+    crate::fintekkers::requests::security::QuerySecurityResponseProto = "fintekkers.requests.security.QuerySecurityResponseProto" => ObjectTypeQuerySecurityResponse,
+    crate::fintekkers::requests::security::GetFieldsResponseProto = "fintekkers.requests.security.GetFieldsResponseProto" => ObjectTypeGetFieldsResponse,
+    crate::fintekkers::requests::security::GetFieldValuesRequestProto = "fintekkers.requests.security.GetFieldValuesRequestProto" => ObjectTypeGetFieldValuesRequest,
+    crate::fintekkers::requests::security::GetFieldValuesResponseProto = "fintekkers.requests.security.GetFieldValuesResponseProto" => ObjectTypeGetFieldValuesResponse,
+    crate::fintekkers::requests::transaction::CreateTransactionResponseProto = "fintekkers.requests.transaction.CreateTransactionResponseProto" => ObjectTypeCreateTransactionResponse,
+    crate::fintekkers::requests::transaction::QueryTransactionResponseProto = "fintekkers.requests.transaction.QueryTransactionResponseProto" => ObjectTypeQueryTransactionResponse,
+    crate::fintekkers::requests::util::DeleteRequestProto = "fintekkers.requests.util.DeleteRequestProto" => ObjectTypeDeleteRequest,
+    crate::fintekkers::requests::util::DeleteResponseProto = "fintekkers.requests.util.DeleteResponseProto" => ObjectTypeDeleteResponse,
+    crate::fintekkers::requests::util::lock::LockRequestProto = "fintekkers.requests.util.lock.LockRequestProto" => ObjectTypeLockRequest,
+    crate::fintekkers::requests::util::lock::LockResponseProto = "fintekkers.requests.util.lock.LockResponseProto" => ObjectTypeLockResponse,
+    crate::fintekkers::requests::valuation::ValuationRequestProto = "fintekkers.requests.valuation.ValuationRequestProto" => ObjectTypeValuationRequest,
+    crate::fintekkers::requests::valuation::ValuationResponseProto = "fintekkers.requests.valuation.ValuationResponseProto" => ObjectTypeValuationResponse,
+    crate::fintekkers::requests::valuation::CurveRequestProto = "fintekkers.requests.valuation.CurveRequestProto" => ObjectTypeCurveRequest,
+    crate::fintekkers::requests::valuation::CurveResponseProto = "fintekkers.requests.valuation.CurveResponseProto" => ObjectTypeCurveResponse,
 }
 
 /// Sets `object_type` and `version` ([`SCHEMA_VERSION`]) on `message`; returns it.
@@ -66,6 +144,11 @@ pub fn stamp<M: ObjectTyped>(mut message: M, object_type: ObjectTypeProto) -> M 
     message.set_raw_object_type(object_type as i32);
     message.set_version_proto(Some(VersionProto { major, minor, patch }));
     message
+}
+
+/// [`stamp`] with the message's own ObjectTypeProto value (LM-320).
+pub fn stamp_own<M: OwnObjectType>(message: M) -> M {
+    stamp(message, M::OBJECT_TYPE)
 }
 
 /// The message's ObjectTypeProto value. Unset, or a number newer than this
@@ -85,7 +168,7 @@ pub(crate) fn query_security_request(
     as_of: Option<LocalTimestampProto>,
 ) -> QuerySecurityRequestProto {
     let request = QuerySecurityRequestProto { uu_ids, as_of, ..Default::default() };
-    stamp(request, ObjectTypeProto::ObjectTypeQuerySecurityRequest)
+    stamp_own(request)
 }
 
 /// The by-id lookup request the link resolvers send to the portfolio service.
@@ -94,7 +177,7 @@ pub(crate) fn query_portfolio_request(
     as_of: Option<LocalTimestampProto>,
 ) -> QueryPortfolioRequestProto {
     let request = QueryPortfolioRequestProto { uu_ids, as_of, ..Default::default() };
-    stamp(request, ObjectTypeProto::ObjectTypeQueryPortfolioRequest)
+    stamp_own(request)
 }
 
 /// The by-id lookup request the link resolvers send to the transaction service.
@@ -103,7 +186,7 @@ pub(crate) fn query_transaction_request(
     as_of: Option<LocalTimestampProto>,
 ) -> QueryTransactionRequestProto {
     let request = QueryTransactionRequestProto { uu_ids, as_of, ..Default::default() };
-    stamp(request, ObjectTypeProto::ObjectTypeQueryTransactionRequest)
+    stamp_own(request)
 }
 
 #[cfg(test)]
