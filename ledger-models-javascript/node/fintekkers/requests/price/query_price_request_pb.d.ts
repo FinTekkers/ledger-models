@@ -10,20 +10,16 @@ import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/
 import * as fintekkers_models_position_position_filter_pb from "../../../fintekkers/models/position/position_filter_pb";
 import * as fintekkers_models_util_date_range_pb from "../../../fintekkers/models/util/date_range_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class QueryPriceRequestProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): QueryPriceRequestProto;
-    getVersion(): string;
-    setVersion(value: string): QueryPriceRequestProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): QueryPriceRequestProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): QueryPriceRequestProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): QueryPriceRequestProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): QueryPriceRequestProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): QueryPriceRequestProto;
     clearUuidsList(): void;
     getUuidsList(): Array<fintekkers_models_util_uuid_pb.UUIDProto>;
     setUuidsList(value: Array<fintekkers_models_util_uuid_pb.UUIDProto>): QueryPriceRequestProto;
@@ -69,12 +65,8 @@ export class QueryPriceRequestProto extends jspb.Message {
 
 export namespace QueryPriceRequestProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         uuidsList: Array<fintekkers_models_util_uuid_pb.UUIDProto.AsObject>,
         searchPriceInput?: fintekkers_models_position_position_filter_pb.PositionFilterProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,

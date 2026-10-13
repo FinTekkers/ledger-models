@@ -8,20 +8,16 @@ import * as jspb from "google-protobuf";
 import * as fintekkers_models_util_lock_node_partition_pb from "../../../../fintekkers/models/util/lock/node_partition_pb";
 import * as fintekkers_models_util_endpoint_pb from "../../../../fintekkers/models/util/endpoint_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../../fintekkers/models/util/version_pb";
 
 export class LockRequestProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): LockRequestProto;
-    getVersion(): string;
-    setVersion(value: string): LockRequestProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): LockRequestProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): LockRequestProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): LockRequestProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): LockRequestProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): LockRequestProto;
 
     hasNodePartition(): boolean;
     clearNodePartition(): void;
@@ -45,12 +41,8 @@ export class LockRequestProto extends jspb.Message {
 
 export namespace LockRequestProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         nodePartition?: fintekkers_models_util_lock_node_partition_pb.NodePartition.AsObject,
         endpoint?: fintekkers_models_util_endpoint_pb.Endpoint.AsObject,
     }

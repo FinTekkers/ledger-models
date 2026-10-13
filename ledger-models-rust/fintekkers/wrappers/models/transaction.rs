@@ -370,8 +370,6 @@ mod test {
 
     fn full_txn(uuid: Uuid, as_of: LocalTimestampProto, trade_name: &str) -> TransactionProto {
         TransactionProto {
-            object_class: "Transaction".to_string(),
-            version: "0.0.1".to_string(),
             uuid: Some(UuidProto { raw_uuid: uuid.as_bytes().to_vec() }),
             as_of: Some(as_of),
             is_link: false,
@@ -567,8 +565,6 @@ mod test {
 
     fn price(uuid: Option<UuidProto>, as_of: Option<LocalTimestampProto>) -> PriceProto {
         PriceProto {
-            object_class: "Price".to_string(),
-            version: "0.0.1".to_string(),
             uuid,
             as_of,
             ..Default::default()
@@ -577,8 +573,6 @@ mod test {
 
     fn txn_with_price(price: PriceProto, with_txn_as_of: bool) -> TransactionProto {
         TransactionProto {
-            object_class: "Transaction".to_string(),
-            version: "0.0.1".to_string(),
             uuid: Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() }),
             as_of: if with_txn_as_of { Some(txn_as_of()) } else { None },
             price: Some(price),
@@ -674,8 +668,6 @@ mod test {
 
     fn currency(uuid: Option<UuidProto>) -> SecurityProto {
         SecurityProto {
-            object_class: "Security".to_string(),
-            version: "0.0.1".to_string(),
             as_of: Some(txn_as_of()),
             uuid,
             product_type: crate::fintekkers::models::security::ProductTypeProto::Currency as i32,
@@ -687,8 +679,6 @@ mod test {
 
     fn bond(uuid: Option<UuidProto>, settlement_currency: Option<SecurityProto>) -> SecurityProto {
         SecurityProto {
-            object_class: "Security".to_string(),
-            version: "0.0.1".to_string(),
             as_of: Some(txn_as_of()),
             uuid,
             product_type: crate::fintekkers::models::security::ProductTypeProto::CorpBond as i32,
@@ -701,8 +691,6 @@ mod test {
 
     fn txn_with_security(security: SecurityProto) -> TransactionProto {
         TransactionProto {
-            object_class: "Transaction".to_string(),
-            version: "0.0.1".to_string(),
             uuid: Some(UuidProto { raw_uuid: Uuid::new_v4().as_bytes().to_vec() }),
             as_of: Some(txn_as_of()),
             security: Some(security),

@@ -25,9 +25,10 @@ _sym_db = _symbol_database.Default()
 from fintekkers.models.portfolio import portfolio_pb2 as fintekkers_dot_models_dot_portfolio_dot_portfolio__pb2
 from fintekkers.requests.portfolio import query_portfolio_request_pb2 as fintekkers_dot_requests_dot_portfolio_dot_query__portfolio__request__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n<fintekkers/requests/portfolio/query_portfolio_response.proto\x12\x1d\x66intekkers.requests.portfolio\x1a+fintekkers/models/portfolio/portfolio.proto\x1a;fintekkers/requests/portfolio/query_portfolio_request.proto\x1a(fintekkers/models/util/object_type.proto\"\x91\x03\n\x1bQueryPortfolioResponseProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12Z\n\x17query_portfolio_request\x18\x14 \x01(\x0b\x32\x39.fintekkers.requests.portfolio.QueryPortfolioRequestProto\x12G\n\x12portfolio_response\x18\x1e \x03(\x0b\x32+.fintekkers.models.portfolio.PortfolioProto\x12\x17\n\x0fnext_page_token\x18\x32 \x01(\tB B\x1cQueryPortfolioResponseProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n<fintekkers/requests/portfolio/query_portfolio_response.proto\x12\x1d\x66intekkers.requests.portfolio\x1a+fintekkers/models/portfolio/portfolio.proto\x1a;fintekkers/requests/portfolio/query_portfolio_request.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xd0\x02\n\x1bQueryPortfolioResponseProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12Z\n\x17query_portfolio_request\x18\x14 \x01(\x0b\x32\x39.fintekkers.requests.portfolio.QueryPortfolioRequestProto\x12G\n\x12portfolio_response\x18\x1e \x03(\x0b\x32+.fintekkers.models.portfolio.PortfolioProto\x12\x17\n\x0fnext_page_token\x18\x32 \x01(\tB B\x1cQueryPortfolioResponseProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,10 +36,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.portfol
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\034QueryPortfolioResponseProtosP\001'
-  _globals['_QUERYPORTFOLIORESPONSEPROTO'].fields_by_name['object_class']._loaded_options = None
-  _globals['_QUERYPORTFOLIORESPONSEPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_QUERYPORTFOLIORESPONSEPROTO'].fields_by_name['version']._loaded_options = None
-  _globals['_QUERYPORTFOLIORESPONSEPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_QUERYPORTFOLIORESPONSEPROTO']._serialized_start=244
-  _globals['_QUERYPORTFOLIORESPONSEPROTO']._serialized_end=645
+  _globals['_QUERYPORTFOLIORESPONSEPROTO']._serialized_start=282
+  _globals['_QUERYPORTFOLIORESPONSEPROTO']._serialized_end=618
 # @@protoc_insertion_point(module_scope)

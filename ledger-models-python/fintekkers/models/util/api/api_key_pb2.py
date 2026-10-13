@@ -23,19 +23,16 @@ _sym_db = _symbol_database.Default()
 
 
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n(fintekkers/models/util/api/api_key.proto\x12\x1a\x66intekkers.models.util.api\x1a(fintekkers/models/util/object_type.proto\"\xde\x01\n\x07\x41PI_Key\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12\x10\n\x08identity\x18\x03 \x01(\t\x12\x0b\n\x03key\x18\x04 \x01(\tb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n(fintekkers/models/util/api/api_key.proto\x12\x1a\x66intekkers.models.util.api\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\x9d\x01\n\x07\x41PI_Key\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12\x10\n\x08identity\x18\x03 \x01(\t\x12\x0b\n\x03key\x18\x04 \x01(\tb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.util.api.api_key_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_API_KEY'].fields_by_name['object_class']._loaded_options = None
-  _globals['_API_KEY'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_API_KEY'].fields_by_name['version']._loaded_options = None
-  _globals['_API_KEY'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_API_KEY']._serialized_start=115
-  _globals['_API_KEY']._serialized_end=337
+  _globals['_API_KEY']._serialized_start=153
+  _globals['_API_KEY']._serialized_end=310
 # @@protoc_insertion_point(module_scope)

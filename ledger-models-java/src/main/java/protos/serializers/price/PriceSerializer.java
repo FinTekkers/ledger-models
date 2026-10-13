@@ -22,7 +22,7 @@ public class PriceSerializer implements IRawDataModelObjectSerializer<PriceProto
 
     @Override
     public PriceProto serialize(Price price) {
-        PriceProto.Builder builder = ObjectTypes.stamp(PriceProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PRICE, Price.class.getSimpleName(), "0.0.1")
+        PriceProto.Builder builder = ObjectTypes.stamp(PriceProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PRICE)
                 //Primary Key
                 .setUuid(ProtoSerializationUtil.serializeUUID(price.getID()))
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(price.getAsOf()))

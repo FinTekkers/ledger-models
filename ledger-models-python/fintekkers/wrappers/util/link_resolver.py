@@ -336,7 +336,7 @@ class LinkResolver:
             return []
         request = stamp(QuerySecurityRequestProto(
             uuIds=[UUIDProto(raw_uuid=u.bytes) for u in uuids],
-        ), ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, "SecurityRequest", "0.0.1")
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST)
         if as_of is not None:
             request.as_of.CopyFrom(as_of)
         response = self._security_stub.GetByIds(request)
@@ -349,7 +349,7 @@ class LinkResolver:
             return []
         request = stamp(QueryPortfolioRequestProto(
             uuIds=[UUIDProto(raw_uuid=u.bytes) for u in uuids],
-        ), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, "PortfolioRequest", "0.0.1")
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST)
         if as_of is not None:
             request.as_of.CopyFrom(as_of)
         response = self._portfolio_stub.GetByIds(request)

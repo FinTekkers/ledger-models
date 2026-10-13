@@ -11,12 +11,12 @@ from google.protobuf.timestamp_pb2 import Timestamp
 
 from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.transaction.transaction_pb2 import TransactionProto
-from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.wrappers.models.errors import ModelValidationError
 from fintekkers.wrappers.models.transaction import Transaction
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
+from fintekkers.wrappers.models.util.decimal import encode_decimal
 
 AS_OF_RULE = "price.as_of defaults to the transaction's as_of (transaction.py / Price.create)"
 
@@ -26,17 +26,13 @@ PRICE_AS_OF = LocalTimestampProto(timestamp=Timestamp(seconds=1718377200), time_
 
 def _price(**kwargs) -> PriceProto:
     return PriceProto(
-        object_class="Price",
-        version="0.0.1",
-        price=DecimalValueProto(arbitrary_precision_value="99.5"),
+        price=encode_decimal(Decimal("99.5")),
         **kwargs,
     )
 
 
 def _txn_with_price(price: PriceProto, with_txn_as_of: bool = True) -> TransactionProto:
     proto = TransactionProto(
-        object_class="Transaction",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
         price=price,
     )

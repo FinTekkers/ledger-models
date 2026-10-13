@@ -46,8 +46,6 @@ test('test creating a portfolio against the api.fintekkers.org portfolio service
     const now = dt.ZonedDateTime.now();
     const portfolioService = new PortfolioService_1.PortfolioService();
     const portfolio = new portfolio_pb_1.PortfolioProto();
-    portfolio.setObjectClass('Portfolio');
-    portfolio.setVersion('0.0.1');
     portfolio.setUuid(id_proto);
     portfolio.setPortfolioName('TEST PORTFOLIO');
     portfolio.setAsOf(now.toProto());

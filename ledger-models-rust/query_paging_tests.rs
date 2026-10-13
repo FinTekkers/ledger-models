@@ -17,19 +17,6 @@ use crate::fintekkers::requests::transaction::{
     QueryTransactionRequestProto, QueryTransactionResponseProto,
 };
 
-// Serialized with the bindings on main (0a0c9657), before the paging fields
-// existed. Command: see ledger-models-python/test/requests/test_query_paging.py.
-const OLD_PRICE_REQUEST_HEX: &str = "0a0c5072696365526571756573741205302e302e31c80106";
-const OLD_TRANSACTION_REQUEST_HEX: &str =
-    "0a125472616e73616374696f6e526571756573741205302e302e31c00164";
-
-fn from_hex(hex: &str) -> Vec<u8> {
-    (0..hex.len())
-        .step_by(2)
-        .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).unwrap())
-        .collect()
-}
-
 fn round_trip<M: Message + Default>(message: &M) -> M {
     M::decode(message.encode_to_vec().as_slice()).unwrap()
 }
@@ -49,8 +36,6 @@ fn old_request_reads_defaults() {
     macro_rules! check {
         ($request:ident, $response:ident) => {
             let old = $request {
-                object_class: "Request".into(),
-                version: "0.0.1".into(),
                 ..Default::default()
             };
             let parsed = round_trip(&old);
@@ -60,29 +45,6 @@ fn old_request_reads_defaults() {
         };
     }
     for_each_entity!(check);
-}
-
-#[test]
-fn old_price_request_bytes_decode() {
-    let parsed = QueryPriceRequestProto::decode(from_hex(OLD_PRICE_REQUEST_HEX).as_slice()).unwrap();
-
-    assert_eq!(parsed.object_class, "PriceRequest");
-    assert_eq!(
-        parsed.time_range,
-        Some(TimeRange::Horizon(PriceHorizonProto::PriceHorizon1Year as i32))
-    );
-    assert_eq!(parsed.limit, 0);
-    assert_eq!(parsed.page_token, "");
-}
-
-#[test]
-fn old_transaction_request_bytes_decode() {
-    let parsed =
-        QueryTransactionRequestProto::decode(from_hex(OLD_TRANSACTION_REQUEST_HEX).as_slice()).unwrap();
-
-    assert_eq!(parsed.object_class, "TransactionRequest");
-    assert_eq!(parsed.limit, 100);
-    assert_eq!(parsed.page_token, "");
 }
 
 #[test]
@@ -113,11 +75,9 @@ fn empty_next_page_token_encodes_as_unset() {
     macro_rules! check {
         ($request:ident, $response:ident) => {
             let unset = $response {
-                version: "0.0.1".into(),
                 ..Default::default()
             };
             let empty = $response {
-                version: "0.0.1".into(),
                 next_page_token: String::new(),
                 ..Default::default()
             };
@@ -147,7 +107,6 @@ fn price_page_token_round_trips_with_horizon() {
 #[test]
 fn price_page_token_round_trips_with_date_range() {
     let date_range = TimeRange::DateRange(DateRangeProto {
-        version: "0.0.1".into(),
         ..Default::default()
     });
     let request = QueryPriceRequestProto {

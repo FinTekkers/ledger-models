@@ -24,15 +24,13 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n*fintekkers/models/util/decimal_value.proto\x12\x16\x66intekkers.models.util\"m\n\x11\x44\x65\x63imalValueProto\x12%\n\x19\x61rbitrary_precision_value\x18\n \x01(\tB\x02\x18\x01\x12\x16\n\x0eunscaled_value\x18\x0b \x01(\x0c\x12\r\n\x05scale\x18\x0c \x01(\rJ\x04\x08\x01\x10\x02J\x04\x08\x03\x10\x04\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n*fintekkers/models/util/decimal_value.proto\x12\x16\x66intekkers.models.util\"F\n\x11\x44\x65\x63imalValueProto\x12\x16\n\x0eunscaled_value\x18\x0b \x01(\x0c\x12\r\n\x05scale\x18\x0c \x01(\rJ\x04\x08\x01\x10\x02J\x04\x08\x03\x10\x04\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.util.decimal_value_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_DECIMALVALUEPROTO'].fields_by_name['arbitrary_precision_value']._loaded_options = None
-  _globals['_DECIMALVALUEPROTO'].fields_by_name['arbitrary_precision_value']._serialized_options = b'\030\001'
   _globals['_DECIMALVALUEPROTO']._serialized_start=70
-  _globals['_DECIMALVALUEPROTO']._serialized_end=179
+  _globals['_DECIMALVALUEPROTO']._serialized_end=140
 # @@protoc_insertion_point(module_scope)

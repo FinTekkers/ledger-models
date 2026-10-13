@@ -14,7 +14,6 @@ import pytest
 
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.models.security.security_pb2 import BondDetailsProto, SecurityProto
-from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.requests.security.create_security_request_pb2 import (
     CreateSecurityRequestProto,
@@ -26,15 +25,19 @@ from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 from fintekkers.wrappers.requests.security import CreateSecurityRequest
 from fintekkers.wrappers.services.security import SecurityService
+from fintekkers.wrappers.models.util.decimal import encode_decimal
 
 SECURITY_ID = UUID("1f0e8a4c-58b1-4d0e-9a3c-7d2b6e5f4a10")
 
 
 def _security(product_type: int, coupon: Optional[str]) -> SecurityProto:
-    """A security of `product_type`. `coupon` None leaves coupon_rate unset."""
-    bond = BondDetailsProto(face_value=DecimalValueProto(arbitrary_precision_value="1000"))
-    if coupon is not None:
-        bond.coupon_rate.CopyFrom(DecimalValueProto(arbitrary_precision_value=coupon))
+    """A security of `product_type`. `coupon` None leaves coupon_rate unset;
+    "" sets it to an empty decimal."""
+    bond = BondDetailsProto(face_value=encode_decimal(Decimal("1000")))
+    if coupon == "":
+        bond.coupon_rate.SetInParent()
+    elif coupon is not None:
+        bond.coupon_rate.CopyFrom(encode_decimal(Decimal(coupon)))
     return SecurityProto(
         uuid=UUIDProto(raw_uuid=SECURITY_ID.bytes),
         product_type=product_type,

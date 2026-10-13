@@ -86,7 +86,7 @@ class DecimalCodecFixtureTest {
             assertArrayEquals(wire, encoded.toByteArray(), name);
             assertArrayEquals(hex(c.get("unscaled_hex").getAsString()), encoded.getUnscaledValue().toByteArray(), name);
             assertEquals(c.get("scale").getAsInt(), encoded.getScale(), name);
-            assertEquals(c.get("canonical").getAsString(), encoded.getArbitraryPrecisionValue(), name);
+            assertEquals(c.get("canonical").getAsString(), ProtoSerializationUtil.deserializeBigDecimal(encoded).toPlainString(), name);
             // Parsing the fixture bytes and writing them again changes nothing.
             assertArrayEquals(wire, DecimalValueProto.parseFrom(wire).toByteArray(), name);
         }
@@ -103,51 +103,27 @@ class DecimalCodecFixtureTest {
             DecimalValueProto wire = DecimalValueProto.parseFrom(hex(c.get("wire_hex").getAsString()));
 
             assertEquals(want, ProtoSerializationUtil.deserializeBigDecimal(wire), name);
-            DecimalValueProto compactOnly = wire.toBuilder().clearArbitraryPrecisionValue().build();
-            assertEquals(want, ProtoSerializationUtil.deserializeBigDecimal(compactOnly), name);
-            assertEquals(want.scale(), ProtoSerializationUtil.deserializeBigDecimal(compactOnly).scale(), name);
+            assertEquals(want.scale(), ProtoSerializationUtil.deserializeBigDecimal(wire).scale(), name);
         }
     }
 
     @Test
-    public void compactFormWinsWhenBothAreSet() {
-        DecimalValueProto both = DecimalValueProto.newBuilder()
-                .setArbitraryPrecisionValue("999")
-                .setUnscaledValue(ByteString.copyFrom(new byte[]{0x00, (byte) 0x96}))
-                .setScale(2)
-                .build();
-        assertEquals(new BigDecimal("1.50"), ProtoSerializationUtil.deserializeBigDecimal(both));
-        // Even when the string is garbage.
-        DecimalValueProto garbage = both.toBuilder().setArbitraryPrecisionValue("NaN").build();
-        assertEquals(new BigDecimal("1.50"), ProtoSerializationUtil.deserializeBigDecimal(garbage));
+    public void aStringOnlyDecimalFromOldBytesIsUnset() throws Exception {
+        // A v0.4.33 writer stored 1.5 as field 10 only (0x52 = field 10,
+        // length-delimited). LM-318 deleted field 10, so it parses as an
+        // unknown field: the decimal is unset and reading it is the typed error.
+        DecimalValueProto old = DecimalValueProto.parseFrom(new byte[]{0x52, 0x03, '1', '.', '5'});
+        assertTrue(ProtoSerializationUtil.isUnsetDecimal(old));
+        assertThrows(common.models.errors.UnsetDecimalException.class, () -> ProtoSerializationUtil.deserializeBigDecimal(old));
+        assertThrows(InvalidDecimalException.class, () -> DecimalCodec.decode(old));
     }
 
     @Test
     public void compactZeroIsSet() {
-        DecimalValueProto zero = ProtoSerializationUtil.serializeBigDecimal(BigDecimal.ZERO)
-                .toBuilder().clearArbitraryPrecisionValue().build();
+        DecimalValueProto zero = ProtoSerializationUtil.serializeBigDecimal(BigDecimal.ZERO);
+        assertArrayEquals(new byte[]{0x00}, zero.getUnscaledValue().toByteArray());
         assertFalse(ProtoSerializationUtil.isUnsetDecimal(zero));
         assertEquals(BigDecimal.ZERO, ProtoSerializationUtil.deserializeBigDecimal(zero));
-    }
-
-    // ---- Metric 5: write both until LM-295 ----
-
-    @Test
-    public void everyFixtureValueWritesBothFormsThatDecodeEqual() {
-        for (JsonElement e : section("cases")) {
-            JsonObject c = e.getAsJsonObject();
-            String name = c.get("name").getAsString();
-            BigDecimal want = expectedValue(c);
-            DecimalValueProto both = ProtoSerializationUtil.serializeBigDecimal(want);
-
-            assertFalse(both.getArbitraryPrecisionValue().isEmpty(), name);
-            assertFalse(both.getUnscaledValue().isEmpty(), name);
-
-            DecimalValueProto stringOnly = both.toBuilder().clearUnscaledValue().clearScale().build();
-            DecimalValueProto compactOnly = both.toBuilder().clearArbitraryPrecisionValue().build();
-            assertEquals(want, ProtoSerializationUtil.deserializeBigDecimal(stringOnly), name);
-            assertEquals(want, ProtoSerializationUtil.deserializeBigDecimal(compactOnly), name);
-        }
     }
 
     // ---- Guardrail 1: lossless, errors never rounded ----
@@ -157,10 +133,8 @@ class DecimalCodecFixtureTest {
         for (JsonElement e : section("string_errors")) {
             JsonObject c = e.getAsJsonObject();
             String name = c.get("name").getAsString();
-            DecimalValueProto legacy = DecimalValueProto.newBuilder()
-                    .setArbitraryPrecisionValue(c.get("string").getAsString()).build();
             Throwable t = assertThrows(Throwable.class,
-                    () -> ProtoSerializationUtil.deserializeBigDecimal(legacy), name);
+                    () -> DecimalCodec.parseStrict(c.get("string").getAsString()), name);
             assertEquals(InvalidDecimalException.class, t.getClass(), name + ": " + t);
         }
     }
@@ -201,7 +175,7 @@ class DecimalCodecFixtureTest {
         BigDecimal maxDigits = new BigDecimal(BigInteger.TEN.pow(DecimalCodec.MAX_DIGITS).subtract(BigInteger.ONE));
         DecimalValueProto p = ProtoSerializationUtil.serializeBigDecimal(maxDigits);
         assertTrue(p.getUnscaledValue().size() <= DecimalCodec.MAX_UNSCALED_BYTES);
-        assertEquals(maxDigits, ProtoSerializationUtil.deserializeBigDecimal(p.toBuilder().clearArbitraryPrecisionValue().build()));
+        assertEquals(maxDigits, ProtoSerializationUtil.deserializeBigDecimal(p));
         BigDecimal maxScale = BigDecimal.valueOf(1, (int) DecimalCodec.MAX_SCALE);
         assertEquals(maxScale, ProtoSerializationUtil.deserializeBigDecimal(ProtoSerializationUtil.serializeBigDecimal(maxScale)));
     }

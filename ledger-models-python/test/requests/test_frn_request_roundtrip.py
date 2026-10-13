@@ -3,15 +3,18 @@ Step 3 tests — FrnInput / ProductInput proto round-trips.
 
 For each new message type: construct → serialize to bytes → deserialize → verify all fields match.
 """
+from decimal import Decimal
+
 import pytest
 from fintekkers.requests.valuation import product_inputs_pb2
 from fintekkers.requests.valuation import valuation_request_pb2
 from fintekkers.models.security.index import index_type_pb2
 from fintekkers.models.util import decimal_value_pb2, local_date_pb2
+from fintekkers.wrappers.models.util.decimal import decode_decimal, encode_decimal
 
 
 def _decimal(value: str) -> decimal_value_pb2.DecimalValueProto:
-    return decimal_value_pb2.DecimalValueProto(arbitrary_precision_value=value)
+    return encode_decimal(Decimal(value))
 
 
 def _date(year: int, month: int, day: int) -> local_date_pb2.LocalDateProto:
@@ -63,8 +66,8 @@ class TestCurvePointRoundTrip:
         parsed = product_inputs_pb2.CurvePoint()
         parsed.ParseFromString(data)
 
-        assert parsed.tenor.arbitrary_precision_value == "2.0"
-        assert parsed.rate.arbitrary_precision_value == "0.0470"
+        assert format(decode_decimal(parsed.tenor), "f") == "2.0"
+        assert format(decode_decimal(parsed.rate), "f") == "0.0470"
 
 
 class TestYieldCurveInputRoundTrip:
@@ -83,12 +86,12 @@ class TestYieldCurveInputRoundTrip:
         expected_tenors = ["0.25", "0.5", "1.0", "2.0", "5.0"]
         parsed = _roundtrip_curve(_sofr_curve())
         for i, tenor in enumerate(expected_tenors):
-            assert parsed.points[i].tenor.arbitrary_precision_value == tenor
+            assert format(decode_decimal(parsed.points[i].tenor), "f") == tenor
 
     def test_first_and_last_point_rates(self):
         parsed = _roundtrip_curve(_sofr_curve())
-        assert parsed.points[0].rate.arbitrary_precision_value == "0.0530"
-        assert parsed.points[4].rate.arbitrary_precision_value == "0.0430"
+        assert format(decode_decimal(parsed.points[0].rate), "f") == "0.0530"
+        assert format(decode_decimal(parsed.points[4].rate), "f") == "0.0430"
 
 
 class TestFrnInputRoundTrip:
@@ -98,7 +101,7 @@ class TestFrnInputRoundTrip:
             curve=_sofr_curve(),
         )
         parsed = _roundtrip_frn(original)
-        assert parsed.clean_price.arbitrary_precision_value == "99.75"
+        assert format(decode_decimal(parsed.clean_price), "f") == "99.75"
 
     def test_curve_survives(self):
         original = product_inputs_pb2.FrnInput(
@@ -120,7 +123,7 @@ class TestProductInputRoundTrip:
         parsed = _roundtrip_product_input(original)
 
         assert parsed.HasField("frn")
-        assert parsed.frn.clean_price.arbitrary_precision_value == "99.875"
+        assert format(decode_decimal(parsed.frn.clean_price), "f") == "99.875"
         assert parsed.frn.curve.index == index_type_pb2.SOFR
 
     def test_frn_is_only_set_variant(self):
@@ -138,28 +141,22 @@ class TestValuationRequestBackwardCompatibility:
             curve=_sofr_curve(),
         )
         original = valuation_request_pb2.ValuationRequestProto(
-            object_class="ValuationRequest",
-            version="0.0.1",
             product_input=product_inputs_pb2.ProductInput(frn=frn),
         )
         data = original.SerializeToString()
         parsed = valuation_request_pb2.ValuationRequestProto()
         parsed.ParseFromString(data)
 
-        assert parsed.object_class == "ValuationRequest"
         assert parsed.product_input.HasField("frn")
-        assert parsed.product_input.frn.clean_price.arbitrary_precision_value == "100.25"
+        assert format(decode_decimal(parsed.product_input.frn.clean_price), "f") == "100.25"
 
     def test_request_without_product_input_unaffected(self):
         original = valuation_request_pb2.ValuationRequestProto(
-            object_class="ValuationRequest",
-            version="0.0.1",
         )
         data = original.SerializeToString()
         parsed = valuation_request_pb2.ValuationRequestProto()
         parsed.ParseFromString(data)
 
-        assert parsed.object_class == "ValuationRequest"
         assert not parsed.HasField("product_input")
 
 

@@ -1,3 +1,4 @@
+from decimal import Decimal
 import pytest
 from datetime import datetime
 from fintekkers.models.position.measure_pb2 import (
@@ -13,7 +14,6 @@ from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry, MeasureMapEntry
 from fintekkers.models.position.position_pb2 import PositionProto
 from fintekkers.models.security.security_pb2 import SecurityProto
-from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.requests.util.operation_pb2 import CREATE, VALIDATE
 from fintekkers.requests.price.query_price_request_pb2 import PRICE_HORIZON_1_DAY
 
@@ -29,6 +29,7 @@ from fintekkers.wrappers.requests.security import QuerySecurityRequest
 from fintekkers.models.price.price_pb2 import PriceProto
 
 import grpc
+from fintekkers.wrappers.models.util.decimal import encode_decimal
 
 
 @pytest.mark.integration
@@ -118,12 +119,12 @@ def test_valuation_with_security_and_price():
     security:Security = Security(SecurityProto(
         product_type=ProductTypeProto.TREASURY_NOTE,
         bond_details=BondDetailsProto(
-            coupon_rate=DecimalValueProto(arbitrary_precision_value="0.0"),
+            coupon_rate=encode_decimal(Decimal("0.0")),
             coupon_frequency=CouponFrequencyProto.NO_COUPON,
             coupon_type=CouponTypeProto.ZERO,
             maturity_date=LocalDateProto(year=2025, month=12, day=31),
             issue_date=LocalDateProto(year=2024, month=1, day=1),
-            face_value=DecimalValueProto(arbitrary_precision_value="1000.0"),
+            face_value=encode_decimal(Decimal("1000.0")),
         ),
         as_of=ProtoSerializationUtil.serialize(datetime(2024, 1, 1)),
         identifiers=[IdentifierProto(
@@ -138,7 +139,7 @@ def test_valuation_with_security_and_price():
     face_value:float = security.get_face_value()
 
     price = "90" if face_value == 100.0 else "900"
-    price = Price(proto=PriceProto(price=DecimalValueProto(arbitrary_precision_value=price)))
+    price = Price(proto=PriceProto(price=encode_decimal(Decimal(price))))
 
     position = get_position()
 
@@ -168,7 +169,7 @@ def test_valuation_with_security_and_price():
             raise e
 
 def get_position():
-    a: MeasureMapEntry = MeasureMapEntry(measure=MeasureProto.DIRECTED_QUANTITY, measure_decimal_value=DecimalValueProto(arbitrary_precision_value="100.0"))
+    a: MeasureMapEntry = MeasureMapEntry(measure=MeasureProto.DIRECTED_QUANTITY, measure_decimal_value=encode_decimal(Decimal("100.0")))
     position = Position(positionProto=PositionProto(measures=[a]))
     return position
 

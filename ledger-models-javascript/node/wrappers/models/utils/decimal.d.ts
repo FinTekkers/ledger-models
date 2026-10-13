@@ -7,19 +7,14 @@ import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value
  *
  * value = unscaled x 10^-scale, where `unscaled_value` (field 11) is a minimal
  * two's-complement big-endian integer of any size and `scale` is field 12. A
- * non-empty `unscaled_value` means the compact form is set and it wins.
- * Otherwise the deprecated `arbitrary_precision_value` string (field 10) is
- * read, with a warning logged once per process (LM-307).
+ * non-empty `unscaled_value` means the decimal is set; empty means unset. The
+ * old string form, field 10, was deleted by LM-318.
  *
  * Lossless: no binary floating point on any path (no JS `number` value, no
  * `parseFloat`). A value that cannot be represented exactly is a
  * `ModelValidationError`, never rounded. The codec does not know which field
  * it is decoding: a caller that wants the field named wraps the call in
  * `withField`.
- *
- * Stage 1 (until LM-295): writers set both forms, so readers on older
- * ledger-models keep working. This module is the only code allowed to touch
- * the deprecated string field.
  */
 /**
  * Most decimal digits allowed in the unscaled value, and the largest scale.
@@ -37,19 +32,13 @@ export interface CompactDecimal {
     unscaled: bigint;
     scale: number;
 }
-/** Where the once-per-process deprecation warning goes. Defaults to `console`. */
-export interface DecimalLogger {
-    warn(message: string): void;
-}
-/** Sends the deprecation warning to `l` from now on. Tests use it to spy. */
-export declare function setDecimalLogger(l: DecimalLogger): void;
 /**
  * Runs `fn`, labelling any ModelValidationError it throws with `field` (for
  * example `price`). Violations that already name a field get it as a prefix.
  */
 export declare function withField<T>(field: string, fn: () => T): T;
 /**
- * Parses a decimal string, as written to `arbitrary_precision_value`.
+ * Parses a decimal string such as `1.50` or `1E+3`.
  *
  * Grammar: `[+-]? (digits [. digits?] | . digits) ([eE] [+-]? digits)?`. No
  * whitespace, no `NaN` or `Infinity`. The exponent is folded into the scale;
@@ -60,25 +49,17 @@ export declare function withField<T>(field: string, fn: () => T): T;
 export declare function parseDecimalString(s: string): CompactDecimal;
 /** Plain notation, never an exponent, keeping trailing zeros: unscaled 150 scale 2 is `1.50`. */
 export declare function toCanonicalString(v: CompactDecimal): string;
-/** True when neither form is set: `unscaled_value` and `arbitrary_precision_value` are both empty. */
+/** True when `unscaled_value` is empty. A set zero is the byte 0x00. */
 export declare function isUnsetDecimal(p: DecimalValueProto): boolean;
 /**
- * Decodes a `DecimalValueProto`. The compact form wins when set. Otherwise
- * falls back to the deprecated string and logs a deprecation warning, once
- * per process. Both forms empty is a ModelValidationError; so is a malformed
- * or over-cap value. Takes the proto only (owner ruling, 12 Oct): label
- * errors with `withField`.
+ * Decodes a `DecimalValueProto`. An empty `unscaled_value` ("decimal is
+ * required but unset") or an over-cap value is a ModelValidationError. Takes
+ * the proto only (owner ruling, 12 Oct): label errors with `withField`.
  */
 export declare function decodeDecimal(p: DecimalValueProto): CompactDecimal;
-/**
- * Encodes both forms (stage 1): fields 11 and 12, plus the canonical string
- * in field 10 for readers on ledger-models older than v0.4.34.
- */
+/** Encodes fields 11 and 12. */
 export declare function encodeDecimal(v: CompactDecimal): DecimalValueProto;
-/**
- * `p` rewritten in both forms (stage 1), keeping its value and scale. Used
- * when re-saving a message loaded from older bytes.
- */
+/** `p` rewritten with minimal unscaled bytes, keeping its value and scale. */
 export declare function reencodeDecimal(p: DecimalValueProto): DecimalValueProto;
 /**
  * The value as a decimal.js `Decimal`, built from the canonical string. The

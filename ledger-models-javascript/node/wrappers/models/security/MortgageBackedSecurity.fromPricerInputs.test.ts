@@ -7,6 +7,7 @@ import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { AgencyProto } from '../../../fintekkers/models/security/bond/agency_pb';
 import { Decimal } from 'decimal.js';
+import { decodeDecimal, toCanonicalString } from '../utils/decimal';
 
 function makeDate(y: number, m: number, d: number): Date {
   const date = new Date(y, m - 1, d);
@@ -45,13 +46,13 @@ test('MortgageBackedSecurity.fromPricerInputs populates bond_details and mbs_ext
   const ext = proto.getMbsExtension()!;
   expect(ext.getPoolNumber()).toBe('FN AS1234');
   expect(ext.getAgency()).toBe(AgencyProto.FNMA);
-  expect(ext.getWac()?.getArbitraryPrecisionValue()).toBe('0.045');
+  expect(toCanonicalString(decodeDecimal(ext.getWac()!))).toBe('0.045');
   expect(ext.getWam()).toBe(358);
-  expect(ext.getPassThroughRate()?.getArbitraryPrecisionValue()).toBe('0.04');
-  expect(ext.getCurrentFactor()?.getArbitraryPrecisionValue()).toBe('0.95');
-  expect(ext.getOriginalFaceValue()?.getArbitraryPrecisionValue()).toBe('250000000');
-  expect(ext.getCurrentUpb()?.getArbitraryPrecisionValue()).toBe('237500000');
-  expect(ext.getPsaSpeed()?.getArbitraryPrecisionValue()).toBe('150');
+  expect(toCanonicalString(decodeDecimal(ext.getPassThroughRate()!))).toBe('0.04');
+  expect(toCanonicalString(decodeDecimal(ext.getCurrentFactor()!))).toBe('0.95');
+  expect(toCanonicalString(decodeDecimal(ext.getOriginalFaceValue()!))).toBe('250000000');
+  expect(toCanonicalString(decodeDecimal(ext.getCurrentUpb()!))).toBe('237500000');
+  expect(toCanonicalString(decodeDecimal(ext.getPsaSpeed()!))).toBe('150');
 });
 
 test('MortgageBackedSecurity round-trips via serializeBinary / deserializeBinary preserving all 9 mbs fields', () => {
@@ -66,13 +67,13 @@ test('MortgageBackedSecurity round-trips via serializeBinary / deserializeBinary
   const ext = round.getMbsExtension()!;
   expect(ext.getPoolNumber()).toBe('FN AS1234');
   expect(ext.getAgency()).toBe(AgencyProto.FNMA);
-  expect(ext.getWac()?.getArbitraryPrecisionValue()).toBe('0.045');
+  expect(toCanonicalString(decodeDecimal(ext.getWac()!))).toBe('0.045');
   expect(ext.getWam()).toBe(358);
-  expect(ext.getPassThroughRate()?.getArbitraryPrecisionValue()).toBe('0.04');
-  expect(ext.getCurrentFactor()?.getArbitraryPrecisionValue()).toBe('0.95');
-  expect(ext.getOriginalFaceValue()?.getArbitraryPrecisionValue()).toBe('250000000');
-  expect(ext.getCurrentUpb()?.getArbitraryPrecisionValue()).toBe('237500000');
-  expect(ext.getPsaSpeed()?.getArbitraryPrecisionValue()).toBe('150');
+  expect(toCanonicalString(decodeDecimal(ext.getPassThroughRate()!))).toBe('0.04');
+  expect(toCanonicalString(decodeDecimal(ext.getCurrentFactor()!))).toBe('0.95');
+  expect(toCanonicalString(decodeDecimal(ext.getOriginalFaceValue()!))).toBe('250000000');
+  expect(toCanonicalString(decodeDecimal(ext.getCurrentUpb()!))).toBe('237500000');
+  expect(toCanonicalString(decodeDecimal(ext.getPsaSpeed()!))).toBe('150');
 });
 
 test('MortgageBackedSecurity wraps via Security.create factory dispatch', () => {

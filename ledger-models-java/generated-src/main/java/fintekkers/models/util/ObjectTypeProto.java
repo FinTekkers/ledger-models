@@ -5,7 +5,7 @@ package fintekkers.models.util;
 
 /**
  * <pre>
- * One value per message type that carries object_class. The name is the
+ * One value per message type that carries object_type. The name is the
  * message name without its `Proto` suffix, in SCREAMING_SNAKE, prefixed
  * OBJECT_TYPE_. Models use 1-99 and requests 101+.
  * Numbers are append-only: never renumber or reuse a value. A removed value
@@ -33,7 +33,7 @@ public enum ObjectTypeProto
    */
   OBJECT_TYPE_DATE_RANGE(2),
   /**
-   * <code>OBJECT_TYPE_IDENTIFIER = 3 [(.fintekkers.models.util.legacy_object_class) = "Identifier"];</code>
+   * <code>OBJECT_TYPE_IDENTIFIER = 3;</code>
    */
   OBJECT_TYPE_IDENTIFIER(3),
   /**
@@ -53,39 +53,39 @@ public enum ObjectTypeProto
    */
   OBJECT_TYPE_NODE_STATE(7),
   /**
-   * <code>OBJECT_TYPE_PORTFOLIO = 8 [(.fintekkers.models.util.legacy_object_class) = "Portfolio"];</code>
+   * <code>OBJECT_TYPE_PORTFOLIO = 8;</code>
    */
   OBJECT_TYPE_PORTFOLIO(8),
   /**
-   * <code>OBJECT_TYPE_POSITION = 9 [(.fintekkers.models.util.legacy_object_class) = "Position"];</code>
+   * <code>OBJECT_TYPE_POSITION = 9;</code>
    */
   OBJECT_TYPE_POSITION(9),
   /**
-   * <code>OBJECT_TYPE_POSITION_FILTER = 10 [(.fintekkers.models.util.legacy_object_class) = "PositionFilter"];</code>
+   * <code>OBJECT_TYPE_POSITION_FILTER = 10;</code>
    */
   OBJECT_TYPE_POSITION_FILTER(10),
   /**
-   * <code>OBJECT_TYPE_PRICE = 11 [(.fintekkers.models.util.legacy_object_class) = "Price", (.fintekkers.models.util.legacy_object_class) = "PriceProto"];</code>
+   * <code>OBJECT_TYPE_PRICE = 11;</code>
    */
   OBJECT_TYPE_PRICE(11),
   /**
-   * <code>OBJECT_TYPE_SECURITY = 12 [(.fintekkers.models.util.legacy_object_class) = "Security"];</code>
+   * <code>OBJECT_TYPE_SECURITY = 12;</code>
    */
   OBJECT_TYPE_SECURITY(12),
   /**
-   * <code>OBJECT_TYPE_STRATEGY = 13 [(.fintekkers.models.util.legacy_object_class) = "Strategy"];</code>
+   * <code>OBJECT_TYPE_STRATEGY = 13;</code>
    */
   OBJECT_TYPE_STRATEGY(13),
   /**
-   * <code>OBJECT_TYPE_STRATEGY_ALLOCATION = 14 [(.fintekkers.models.util.legacy_object_class) = "StrategyAllocation"];</code>
+   * <code>OBJECT_TYPE_STRATEGY_ALLOCATION = 14;</code>
    */
   OBJECT_TYPE_STRATEGY_ALLOCATION(14),
   /**
-   * <code>OBJECT_TYPE_TENOR = 15 [(.fintekkers.models.util.legacy_object_class) = "Tenor"];</code>
+   * <code>OBJECT_TYPE_TENOR = 15;</code>
    */
   OBJECT_TYPE_TENOR(15),
   /**
-   * <code>OBJECT_TYPE_TRANSACTION = 16 [(.fintekkers.models.util.legacy_object_class) = "Transaction"];</code>
+   * <code>OBJECT_TYPE_TRANSACTION = 16;</code>
    */
   OBJECT_TYPE_TRANSACTION(16),
   /**
@@ -109,7 +109,7 @@ public enum ObjectTypeProto
    */
   OBJECT_TYPE_CREATE_PORTFOLIO_RESPONSE(104),
   /**
-   * <code>OBJECT_TYPE_CREATE_PRICE_REQUEST = 105 [(.fintekkers.models.util.legacy_object_class) = "CreatePriceRequestProto"];</code>
+   * <code>OBJECT_TYPE_CREATE_PRICE_REQUEST = 105;</code>
    */
   OBJECT_TYPE_CREATE_PRICE_REQUEST(105),
   /**
@@ -177,7 +177,7 @@ public enum ObjectTypeProto
    */
   OBJECT_TYPE_LOCK_RESPONSE(121),
   /**
-   * <code>OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST = 122 [(.fintekkers.models.util.legacy_object_class) = "PortfolioRequest"];</code>
+   * <code>OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST = 122;</code>
    */
   OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST(122),
   /**
@@ -193,7 +193,7 @@ public enum ObjectTypeProto
    */
   OBJECT_TYPE_QUERY_POSITION_RESPONSE(125),
   /**
-   * <code>OBJECT_TYPE_QUERY_PRICE_REQUEST = 126 [(.fintekkers.models.util.legacy_object_class) = "PriceRequest"];</code>
+   * <code>OBJECT_TYPE_QUERY_PRICE_REQUEST = 126;</code>
    */
   OBJECT_TYPE_QUERY_PRICE_REQUEST(126),
   /**
@@ -201,7 +201,7 @@ public enum ObjectTypeProto
    */
   OBJECT_TYPE_QUERY_PRICE_RESPONSE(127),
   /**
-   * <code>OBJECT_TYPE_QUERY_SECURITY_REQUEST = 128 [(.fintekkers.models.util.legacy_object_class) = "SecurityRequest"];</code>
+   * <code>OBJECT_TYPE_QUERY_SECURITY_REQUEST = 128;</code>
    */
   OBJECT_TYPE_QUERY_SECURITY_REQUEST(128),
   /**
@@ -209,7 +209,7 @@ public enum ObjectTypeProto
    */
   OBJECT_TYPE_QUERY_SECURITY_RESPONSE(129),
   /**
-   * <code>OBJECT_TYPE_QUERY_TRANSACTION_REQUEST = 130 [(.fintekkers.models.util.legacy_object_class) = "TransactionRequest"];</code>
+   * <code>OBJECT_TYPE_QUERY_TRANSACTION_REQUEST = 130;</code>
    */
   OBJECT_TYPE_QUERY_TRANSACTION_REQUEST(130),
   /**
@@ -244,7 +244,7 @@ public enum ObjectTypeProto
    */
   public static final int OBJECT_TYPE_DATE_RANGE_VALUE = 2;
   /**
-   * <code>OBJECT_TYPE_IDENTIFIER = 3 [(.fintekkers.models.util.legacy_object_class) = "Identifier"];</code>
+   * <code>OBJECT_TYPE_IDENTIFIER = 3;</code>
    */
   public static final int OBJECT_TYPE_IDENTIFIER_VALUE = 3;
   /**
@@ -264,39 +264,39 @@ public enum ObjectTypeProto
    */
   public static final int OBJECT_TYPE_NODE_STATE_VALUE = 7;
   /**
-   * <code>OBJECT_TYPE_PORTFOLIO = 8 [(.fintekkers.models.util.legacy_object_class) = "Portfolio"];</code>
+   * <code>OBJECT_TYPE_PORTFOLIO = 8;</code>
    */
   public static final int OBJECT_TYPE_PORTFOLIO_VALUE = 8;
   /**
-   * <code>OBJECT_TYPE_POSITION = 9 [(.fintekkers.models.util.legacy_object_class) = "Position"];</code>
+   * <code>OBJECT_TYPE_POSITION = 9;</code>
    */
   public static final int OBJECT_TYPE_POSITION_VALUE = 9;
   /**
-   * <code>OBJECT_TYPE_POSITION_FILTER = 10 [(.fintekkers.models.util.legacy_object_class) = "PositionFilter"];</code>
+   * <code>OBJECT_TYPE_POSITION_FILTER = 10;</code>
    */
   public static final int OBJECT_TYPE_POSITION_FILTER_VALUE = 10;
   /**
-   * <code>OBJECT_TYPE_PRICE = 11 [(.fintekkers.models.util.legacy_object_class) = "Price", (.fintekkers.models.util.legacy_object_class) = "PriceProto"];</code>
+   * <code>OBJECT_TYPE_PRICE = 11;</code>
    */
   public static final int OBJECT_TYPE_PRICE_VALUE = 11;
   /**
-   * <code>OBJECT_TYPE_SECURITY = 12 [(.fintekkers.models.util.legacy_object_class) = "Security"];</code>
+   * <code>OBJECT_TYPE_SECURITY = 12;</code>
    */
   public static final int OBJECT_TYPE_SECURITY_VALUE = 12;
   /**
-   * <code>OBJECT_TYPE_STRATEGY = 13 [(.fintekkers.models.util.legacy_object_class) = "Strategy"];</code>
+   * <code>OBJECT_TYPE_STRATEGY = 13;</code>
    */
   public static final int OBJECT_TYPE_STRATEGY_VALUE = 13;
   /**
-   * <code>OBJECT_TYPE_STRATEGY_ALLOCATION = 14 [(.fintekkers.models.util.legacy_object_class) = "StrategyAllocation"];</code>
+   * <code>OBJECT_TYPE_STRATEGY_ALLOCATION = 14;</code>
    */
   public static final int OBJECT_TYPE_STRATEGY_ALLOCATION_VALUE = 14;
   /**
-   * <code>OBJECT_TYPE_TENOR = 15 [(.fintekkers.models.util.legacy_object_class) = "Tenor"];</code>
+   * <code>OBJECT_TYPE_TENOR = 15;</code>
    */
   public static final int OBJECT_TYPE_TENOR_VALUE = 15;
   /**
-   * <code>OBJECT_TYPE_TRANSACTION = 16 [(.fintekkers.models.util.legacy_object_class) = "Transaction"];</code>
+   * <code>OBJECT_TYPE_TRANSACTION = 16;</code>
    */
   public static final int OBJECT_TYPE_TRANSACTION_VALUE = 16;
   /**
@@ -320,7 +320,7 @@ public enum ObjectTypeProto
    */
   public static final int OBJECT_TYPE_CREATE_PORTFOLIO_RESPONSE_VALUE = 104;
   /**
-   * <code>OBJECT_TYPE_CREATE_PRICE_REQUEST = 105 [(.fintekkers.models.util.legacy_object_class) = "CreatePriceRequestProto"];</code>
+   * <code>OBJECT_TYPE_CREATE_PRICE_REQUEST = 105;</code>
    */
   public static final int OBJECT_TYPE_CREATE_PRICE_REQUEST_VALUE = 105;
   /**
@@ -388,7 +388,7 @@ public enum ObjectTypeProto
    */
   public static final int OBJECT_TYPE_LOCK_RESPONSE_VALUE = 121;
   /**
-   * <code>OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST = 122 [(.fintekkers.models.util.legacy_object_class) = "PortfolioRequest"];</code>
+   * <code>OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST = 122;</code>
    */
   public static final int OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST_VALUE = 122;
   /**
@@ -404,7 +404,7 @@ public enum ObjectTypeProto
    */
   public static final int OBJECT_TYPE_QUERY_POSITION_RESPONSE_VALUE = 125;
   /**
-   * <code>OBJECT_TYPE_QUERY_PRICE_REQUEST = 126 [(.fintekkers.models.util.legacy_object_class) = "PriceRequest"];</code>
+   * <code>OBJECT_TYPE_QUERY_PRICE_REQUEST = 126;</code>
    */
   public static final int OBJECT_TYPE_QUERY_PRICE_REQUEST_VALUE = 126;
   /**
@@ -412,7 +412,7 @@ public enum ObjectTypeProto
    */
   public static final int OBJECT_TYPE_QUERY_PRICE_RESPONSE_VALUE = 127;
   /**
-   * <code>OBJECT_TYPE_QUERY_SECURITY_REQUEST = 128 [(.fintekkers.models.util.legacy_object_class) = "SecurityRequest"];</code>
+   * <code>OBJECT_TYPE_QUERY_SECURITY_REQUEST = 128;</code>
    */
   public static final int OBJECT_TYPE_QUERY_SECURITY_REQUEST_VALUE = 128;
   /**
@@ -420,7 +420,7 @@ public enum ObjectTypeProto
    */
   public static final int OBJECT_TYPE_QUERY_SECURITY_RESPONSE_VALUE = 129;
   /**
-   * <code>OBJECT_TYPE_QUERY_TRANSACTION_REQUEST = 130 [(.fintekkers.models.util.legacy_object_class) = "TransactionRequest"];</code>
+   * <code>OBJECT_TYPE_QUERY_TRANSACTION_REQUEST = 130;</code>
    */
   public static final int OBJECT_TYPE_QUERY_TRANSACTION_REQUEST_VALUE = 130;
   /**

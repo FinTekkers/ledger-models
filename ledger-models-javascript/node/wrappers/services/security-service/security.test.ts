@@ -17,6 +17,7 @@ import { SecurityService } from './SecurityService';
 import { PositionFilter } from '../../models/position/positionfilter';
 import { IssuanceProto } from '../../../fintekkers/models/security/bond/issuance_pb';
 import { ProtoSerializationUtil } from '../../models/utils/serialization';
+import { encodeDecimal, parseDecimalString } from '../../models/utils/decimal';
 
 test('test creating a security against the api.fintekkers.org security service', async () => {
   const isTrue = await testSecurity();
@@ -36,8 +37,6 @@ async function testSecurity(): Promise<boolean> {
     });
 
   const security = new SecurityProto();
-  security.setObjectClass('Security');
-  security.setVersion('0.0.1');
   security.setUuid(id_proto);
   security.setSettlementCurrency(usd_security.proto);
   security.setAsOf(now.toProto());
@@ -48,12 +47,10 @@ async function testSecurity(): Promise<boolean> {
   bond.setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY);
   bond.setCouponType(CouponTypeProto.FIXED);
 
-  const faceValue = new DecimalValueProto();
-  faceValue.setArbitraryPrecisionValue('1000.00');
+  const faceValue = encodeDecimal(parseDecimalString('1000.00'));
   bond.setFaceValue(faceValue);
 
-  const couponRate = new DecimalValueProto();
-  couponRate.setArbitraryPrecisionValue('0.05');
+  const couponRate = encodeDecimal(parseDecimalString('0.05'));
   bond.setCouponRate(couponRate); // Fixed a typo here. It was security.setFaceValue(couponRate);
 
   const issueDate = new LocalDateProto();

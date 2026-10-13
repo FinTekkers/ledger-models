@@ -53,21 +53,10 @@ pub struct CurveInputProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CurveRequestProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::super::models::util::VersionProto>,
     /// The as-of datetime for the curve construction. **Required** — the server
     /// returns InvalidArgument if missing. This drives the effective tenor of
     /// every input bond (`maturity_date - asof_datetime`) when `CurveInputProto.tenor`
@@ -117,8 +106,8 @@ pub struct CurvePointProto {
     /// The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
     /// This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
     /// FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-    /// A from-to label such as "1-2" in its string form is legacy, written before
-    /// LM-313, and goes away with LM-295.
+    /// A from-to label such as "1-2" was written in the decimal string form
+    /// before LM-313; LM-318 deleted that form.
     #[prost(message, optional, tag = "1")]
     pub tenor: ::core::option::Option<super::super::models::util::DecimalValueProto>,
     /// The yield at this tenor point (decimal, 0-1 scale; e.g. 0.045 = 4.50%).
@@ -156,21 +145,10 @@ pub struct CurveResultProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CurveResponseProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::super::models::util::VersionProto>,
     /// The original request, echoed back for correlation.
     #[prost(message, optional, tag = "10")]
     pub curve_request: ::core::option::Option<CurveRequestProto>,
@@ -394,21 +372,10 @@ pub struct SecurityCurvePoint {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ValuationRequestProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::super::models::util::VersionProto>,
     /// Only supports GET, since there is no backing store, so CREATE isn't relevant. SEARCH isn't relevant either.
     /// VALIDATE could be implemented later, e.g. if the caller wants to check their inputs are correct.
     #[prost(enumeration = "super::util::RequestOperationTypeProto", tag = "10")]
@@ -463,21 +430,10 @@ pub struct ValuationRequestProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ValuationResponseProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::super::models::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::super::models::util::VersionProto>,
     #[prost(message, optional, tag = "20")]
     pub valuation_request: ::core::option::Option<ValuationRequestProto>,
     #[prost(message, repeated, tag = "30")]

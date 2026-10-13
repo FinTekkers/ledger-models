@@ -10,6 +10,7 @@ import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.transaction.TransactionProto;
+import fintekkers.models.util.ObjectTypeProto;
 import org.junit.jupiter.api.Test;
 import testutil.DummyBondObjects;
 import testutil.DummyEquityObjects;
@@ -45,8 +46,7 @@ class SerializerFactoryTest {
         assertEquals(Any.class, proto.getClass());
         assertTrue(((Any)proto).is(TransactionProto.class));
         proto = ((Any) proto).unpack(TransactionProto.class);
-        String tradeName = ((TransactionProto) proto).getObjectClass();
-        assertEquals(Transaction.class.getSimpleName(), tradeName);
+        assertEquals(ObjectTypeProto.OBJECT_TYPE_TRANSACTION, ((TransactionProto) proto).getObjectType());
 
         //Price
         Price price = DummyEquityObjects.getDummyPrice();

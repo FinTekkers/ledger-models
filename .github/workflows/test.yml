@@ -58,16 +58,10 @@ jobs:
         working-directory: ledger-models-rust
         run: cargo test --lib --quiet
 
-      # CurvePointProto from_tenor / to_tenor (LM-313).
-      - name: cargo test --test curve_response_roundtrip_test
+      # Every tests/*.rs file, with the test-utils helpers some need (LM-318).
+      - name: cargo test --tests
         working-directory: ledger-models-rust
-        run: cargo test --features test-utils --test curve_response_roundtrip_test --quiet
-
-      # One deprecation warning per process (LM-307): its own test binary,
-      # so its own process.
-      - name: cargo test --test decimal_deprecation_warning_test
-        working-directory: ledger-models-rust
-        run: cargo test --test decimal_deprecation_warning_test --quiet
+        run: cargo test --tests --features test-utils --quiet
 
       # Enforces the #![deny(clippy::unwrap_used, ...)] no-panic rules in
       # position_filter_parser.rs (LM-299).

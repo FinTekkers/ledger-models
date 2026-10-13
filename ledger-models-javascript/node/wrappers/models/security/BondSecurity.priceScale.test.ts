@@ -7,6 +7,7 @@ import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { UUID } from '../utils/uuid';
 import { ZonedDateTime } from '../utils/datetime';
 import { Decimal } from 'decimal.js';
+import { encodeDecimal, parseDecimalString } from '../utils/decimal';
 
 test('test BondSecurity getPriceScaleFactor', () => {
     testGetPriceScaleFactor();
@@ -23,13 +24,11 @@ function testGetPriceScaleFactor(): void {
 
 function createDummyBondSecurity(): BondSecurity {
     const securityProto = new SecurityProto();
-    securityProto.setObjectClass('Security');
-    securityProto.setVersion('0.0.1');
     securityProto.setUuid(UUID.random().toUUIDProto());
     securityProto.setProductType(ProductTypeProto.TREASURY_NOTE);
     securityProto.setAsOf(ZonedDateTime.now().toProto());
     const bond = new BondDetailsProto();
-    bond.setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
+    bond.setFaceValue(encodeDecimal(parseDecimalString('1000.00')));
     bond.setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     bond.setMaturityDate(new LocalDateProto().setYear(2031).setMonth(1).setDay(1));
     securityProto.setBondDetails(bond);

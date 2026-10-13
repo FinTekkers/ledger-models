@@ -9,20 +9,16 @@ import * as fintekkers_models_transaction_transaction_pb from "../../../fintekke
 import * as fintekkers_requests_transaction_query_transaction_request_pb from "../../../fintekkers/requests/transaction/query_transaction_request_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class QueryTransactionResponseProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): QueryTransactionResponseProto;
-    getVersion(): string;
-    setVersion(value: string): QueryTransactionResponseProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): QueryTransactionResponseProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): QueryTransactionResponseProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): QueryTransactionResponseProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): QueryTransactionResponseProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): QueryTransactionResponseProto;
 
     hasCreateTransactionRequest(): boolean;
     clearCreateTransactionRequest(): void;
@@ -52,12 +48,8 @@ export class QueryTransactionResponseProto extends jspb.Message {
 
 export namespace QueryTransactionResponseProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         createTransactionRequest?: fintekkers_requests_transaction_query_transaction_request_pb.QueryTransactionRequestProto.AsObject,
         transactionResponseList: Array<fintekkers_models_transaction_transaction_pb.TransactionProto.AsObject>,
         errorsOrWarnings?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,

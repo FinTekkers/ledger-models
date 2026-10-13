@@ -12,7 +12,6 @@ const security_1 = __importDefault(require("../security/security"));
 const portfolio_1 = __importDefault(require("../portfolio/portfolio"));
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const security_quantity_type_pb_1 = require("../../../fintekkers/models/security/security_quantity_type_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
@@ -23,11 +22,11 @@ const errors_1 = require("../errors");
 const transaction_pb_1 = require("../../../fintekkers/models/transaction/transaction_pb");
 const portfolio_test_1 = require("../portfolio/portfolio.test");
 const portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
+const decimal_1 = require("../utils/decimal");
 test('test Transaction constructor with parameters', () => {
     testTransactionConstructor();
 });
 function testTransactionConstructor() {
-    var _a;
     // Create test data
     const tradeDate = new Date(2024, 0, 15);
     const settlementDate = new Date(2024, 0, 17);
@@ -69,7 +68,7 @@ function testTransactionConstructor() {
     assert(timeDiff < 1000, `AsOf time difference ${timeDiff}ms exceeds 1 second tolerance`);
     // getPrice() - should return PriceProto with correct price value
     const priceProto = transaction.getPrice();
-    const priceValue = (_a = priceProto.getPrice()) === null || _a === void 0 ? void 0 : _a.getArbitraryPrecisionValue();
+    const priceValue = (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(priceProto.getPrice()));
     assert(priceValue === '100.5', `Expected price '100.5', got '${priceValue}'`);
     // getSecurity() - should return Security matching input security
     assert(transaction.getSecurity().getID().toString() === security.getID().toString(), 'Security IDs should match');
@@ -87,15 +86,13 @@ function testTransactionConstructor() {
 }
 function dummySecurity() {
     const bond = new security_pb_1.BondDetailsProto()
-        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-        .setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'))
+        .setFaceValue((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('1000.00')))
+        .setCouponRate((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('0.05')))
         .setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED)
         .setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2026).setMonth(1).setDay(1))
         .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
         .setAssetClass("Bond")
@@ -119,7 +116,7 @@ function constructionError(proto) {
 }
 test('new Transaction(proto) with no as_of throws ModelValidationError naming transaction.as_of', () => {
     const proto = new transaction_pb_1.TransactionProto()
-        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto());
+        .setUuid(uuid_1.UUID.random().toUUIDProto());
     const e = constructionError(proto);
     expect(e).toBeInstanceOf(errors_1.ModelValidationError);
     expect(e.field).toBe('transaction.as_of');
@@ -127,7 +124,7 @@ test('new Transaction(proto) with no as_of throws ModelValidationError naming tr
 test.each(['', '   '])('new Transaction(proto) with blank time zone %j names transaction.as_of.time_zone', (zone) => {
     const asOf = datetime_1.ZonedDateTime.now().toProto().setTimeZone(zone);
     const proto = new transaction_pb_1.TransactionProto()
-        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setAsOf(asOf);
     const e = constructionError(proto);
     expect(e).toBeInstanceOf(errors_1.ModelValidationError);

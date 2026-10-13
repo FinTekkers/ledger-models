@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class TBillStripsRoundTripTest {
 
     private static DecimalValueProto decimal(String v) {
-        return DecimalValueProto.newBuilder().setArbitraryPrecisionValue(v).build();
+        return Decimals.decimal(v);
     }
 
     private static LocalDateProto date(LocalDate d) {
@@ -61,8 +62,6 @@ class TBillStripsRoundTripTest {
                         .setMaturityDate(date(maturity))
                         .build();
         return SecurityProto.newBuilder()
-                .setObjectClass("Security")
-                .setVersion("0.0.1")
                 .setAsOf(asOf)
                 .setProductType(type)
                 .setAssetClass("Fixed Income")

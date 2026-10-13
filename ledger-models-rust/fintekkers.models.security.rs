@@ -52,21 +52,10 @@ impl IdentifierTypeProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct IdentifierProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::util::VersionProto>,
     /// Primary Key
     #[prost(string, tag = "5")]
     pub identifier_value: ::prost::alloc::string::String,
@@ -373,21 +362,10 @@ impl CouponTypeProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SecurityProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::util::VersionProto>,
     /// Primary Key
     #[prost(message, optional, tag = "5")]
     pub uuid: ::core::option::Option<super::util::UuidProto>,
@@ -736,21 +714,10 @@ impl AssetClassProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct IndexCompositionProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::util::VersionProto>,
     /// Primary Key (same temporal pattern as SecurityProto and PriceProto)
     #[prost(message, optional, tag = "5")]
     pub uuid: ::core::option::Option<super::util::UuidProto>,
@@ -836,21 +803,10 @@ impl TenorTypeProto {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TenorProto {
-    #[deprecated]
-    #[prost(string, tag = "1")]
-    pub object_class: ::prost::alloc::string::String,
-    #[deprecated]
-    #[prost(string, tag = "2")]
-    pub version: ::prost::alloc::string::String,
-    /// Compact form of object_class / version (LM-297). Writers set both in stage 1.
-    #[prost(enumeration = "super::util::ObjectTypeProto", tag = "1001")]
+    #[prost(enumeration = "super::util::ObjectTypeProto", tag = "1")]
     pub object_type: i32,
-    #[prost(uint32, tag = "1002")]
-    pub version_major: u32,
-    #[prost(uint32, tag = "1003")]
-    pub version_minor: u32,
-    #[prost(uint32, tag = "1004")]
-    pub version_patch: u32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::util::VersionProto>,
     #[prost(string, tag = "5")]
     pub term_value: ::prost::alloc::string::String,
     #[prost(enumeration = "TenorTypeProto", tag = "6")]

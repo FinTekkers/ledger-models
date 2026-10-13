@@ -37,7 +37,7 @@ public class TenorSerializer implements IRawDataModelObjectSerializer<TenorProto
             tenorTypeProto = TenorTypeProto.UNKNOWN_TENOR_TYPE;
         }
 
-        TenorProto.Builder builder = ObjectTypes.stamp(TenorProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_TENOR, tenor.getClass().getSimpleName(), "0.0.1")
+        TenorProto.Builder builder = ObjectTypes.stamp(TenorProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_TENOR)
                 .setTenorType(tenorTypeProto);
 //                .setTermValue(tenor.getTenorDescription());
 

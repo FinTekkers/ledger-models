@@ -44,7 +44,7 @@ tenors would arrive empty.
      single byte `0x00`, so it is never read as unset.
 2. **`tenor` keeps its number, type and name.** Its comment now says it is the
    point tenor for par and spot points, and that readers must not parse it on
-   forward points. The `"1-2"` label is legacy and goes away with LM-295.
+   forward points. The `"1-2"` label is legacy; LM-318 deleted the string form that carried it.
 3. **Ordering contract.** `CurveResultProto.points` said "ordered by ascending
    tenor", which has no meaning for a label. It now says par and spot points
    are ordered by ascending `tenor`, forward points by ascending `from_tenor`.

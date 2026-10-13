@@ -7,7 +7,6 @@ public final class ObjectTypeProtos {
   private ObjectTypeProtos() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
-    registry.add(fintekkers.models.util.ObjectTypeProtos.legacyObjectClass);
   }
 
   public static void registerAllExtensions(
@@ -15,26 +14,6 @@ public final class ObjectTypeProtos {
     registerAllExtensions(
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
-  public static final int LEGACY_OBJECT_CLASS_FIELD_NUMBER = 50001;
-  /**
-   * <pre>
-   * The legacy object_class strings this library has written for the type.
-   * Each string is attached to exactly one value. Some strings were written on
-   * more than one message type (e.g. "SecurityRequest" on both the create and
-   * the query security request): the string sits on one value and a reader
-   * takes the decoded message's own type. Stage 1 only: removed with the
-   * strings in stage 3.
-   * </pre>
-   *
-   * <code>extend .google.protobuf.EnumValueOptions { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      com.google.protobuf.DescriptorProtos.EnumValueOptions,
-      java.util.List<java.lang.String>> legacyObjectClass = com.google.protobuf.GeneratedMessage
-          .newFileScopedGeneratedExtension(
-        java.lang.String.class,
-        null);
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -45,76 +24,58 @@ public final class ObjectTypeProtos {
   static {
     java.lang.String[] descriptorData = {
       "\n(fintekkers/models/util/object_type.pro" +
-      "to\022\026fintekkers.models.util\032 google/proto" +
-      "buf/descriptor.proto*\267\020\n\017ObjectTypeProto" +
-      "\022\027\n\023OBJECT_TYPE_UNKNOWN\020\000\022\027\n\023OBJECT_TYPE" +
-      "_API_KEY\020\001\022\032\n\026OBJECT_TYPE_DATE_RANGE\020\002\022*" +
-      "\n\026OBJECT_TYPE_IDENTIFIER\020\003\032\016\212\265\030\nIdentifi" +
-      "er\022!\n\035OBJECT_TYPE_INDEX_COMPOSITION\020\004\022\030\n" +
-      "\024OBJECT_TYPE_ISSUANCE\020\005\022\036\n\032OBJECT_TYPE_N" +
-      "ODE_PARTITION\020\006\022\032\n\026OBJECT_TYPE_NODE_STAT" +
-      "E\020\007\022(\n\025OBJECT_TYPE_PORTFOLIO\020\010\032\r\212\265\030\tPort" +
-      "folio\022&\n\024OBJECT_TYPE_POSITION\020\t\032\014\212\265\030\010Pos" +
-      "ition\0223\n\033OBJECT_TYPE_POSITION_FILTER\020\n\032\022" +
-      "\212\265\030\016PositionFilter\022.\n\021OBJECT_TYPE_PRICE\020" +
-      "\013\032\027\212\265\030\005Price\212\265\030\nPriceProto\022&\n\024OBJECT_TYP" +
-      "E_SECURITY\020\014\032\014\212\265\030\010Security\022&\n\024OBJECT_TYP" +
-      "E_STRATEGY\020\r\032\014\212\265\030\010Strategy\022;\n\037OBJECT_TYP" +
-      "E_STRATEGY_ALLOCATION\020\016\032\026\212\265\030\022StrategyAll" +
-      "ocation\022 \n\021OBJECT_TYPE_TENOR\020\017\032\t\212\265\030\005Teno" +
-      "r\022,\n\027OBJECT_TYPE_TRANSACTION\020\020\032\017\212\265\030\013Tran" +
-      "saction\0220\n,OBJECT_TYPE_CREATE_INDEX_COMP" +
-      "OSITION_REQUEST\020e\0221\n-OBJECT_TYPE_CREATE_" +
-      "INDEX_COMPOSITION_RESPONSE\020f\022(\n$OBJECT_T" +
-      "YPE_CREATE_PORTFOLIO_REQUEST\020g\022)\n%OBJECT" +
-      "_TYPE_CREATE_PORTFOLIO_RESPONSE\020h\022A\n OBJ" +
-      "ECT_TYPE_CREATE_PRICE_REQUEST\020i\032\033\212\265\030\027Cre" +
-      "atePriceRequestProto\022%\n!OBJECT_TYPE_CREA" +
-      "TE_PRICE_RESPONSE\020j\022\'\n#OBJECT_TYPE_CREAT" +
-      "E_SECURITY_REQUEST\020k\022(\n$OBJECT_TYPE_CREA" +
-      "TE_SECURITY_RESPONSE\020l\022*\n&OBJECT_TYPE_CR" +
-      "EATE_TRANSACTION_REQUEST\020m\022+\n\'OBJECT_TYP" +
-      "E_CREATE_TRANSACTION_RESPONSE\020n\022\035\n\031OBJEC" +
-      "T_TYPE_CURVE_REQUEST\020o\022\036\n\032OBJECT_TYPE_CU" +
-      "RVE_RESPONSE\020p\022\036\n\032OBJECT_TYPE_DELETE_REQ" +
-      "UEST\020q\022\037\n\033OBJECT_TYPE_DELETE_RESPONSE\020r\022" +
-      "#\n\037OBJECT_TYPE_GET_FIELDS_RESPONSE\020s\022(\n$" +
-      "OBJECT_TYPE_GET_FIELD_VALUES_REQUEST\020t\022)" +
-      "\n%OBJECT_TYPE_GET_FIELD_VALUES_RESPONSE\020" +
-      "u\022-\n)OBJECT_TYPE_GET_INDEX_COMPOSITION_R" +
-      "EQUEST\020v\022.\n*OBJECT_TYPE_GET_INDEX_COMPOS" +
-      "ITION_RESPONSE\020w\022\034\n\030OBJECT_TYPE_LOCK_REQ" +
-      "UEST\020x\022\035\n\031OBJECT_TYPE_LOCK_RESPONSE\020y\022=\n" +
-      "#OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST\020z\032\024" +
-      "\212\265\030\020PortfolioRequest\022(\n$OBJECT_TYPE_QUER" +
-      "Y_PORTFOLIO_RESPONSE\020{\022&\n\"OBJECT_TYPE_QU" +
-      "ERY_POSITION_REQUEST\020|\022\'\n#OBJECT_TYPE_QU" +
-      "ERY_POSITION_RESPONSE\020}\0225\n\037OBJECT_TYPE_Q" +
-      "UERY_PRICE_REQUEST\020~\032\020\212\265\030\014PriceRequest\022$" +
-      "\n OBJECT_TYPE_QUERY_PRICE_RESPONSE\020\177\022<\n\"" +
-      "OBJECT_TYPE_QUERY_SECURITY_REQUEST\020\200\001\032\023\212" +
-      "\265\030\017SecurityRequest\022(\n#OBJECT_TYPE_QUERY_" +
-      "SECURITY_RESPONSE\020\201\001\022B\n%OBJECT_TYPE_QUER" +
-      "Y_TRANSACTION_REQUEST\020\202\001\032\026\212\265\030\022Transactio" +
-      "nRequest\022+\n&OBJECT_TYPE_QUERY_TRANSACTIO" +
-      "N_RESPONSE\020\203\001\022\"\n\035OBJECT_TYPE_VALUATION_R" +
-      "EQUEST\020\204\001\022#\n\036OBJECT_TYPE_VALUATION_RESPO" +
-      "NSE\020\205\001:@\n\023legacy_object_class\022!.google.p" +
-      "rotobuf.EnumValueOptions\030\321\206\003 \003(\tB\024B\020Obje" +
-      "ctTypeProtosP\001b\006proto3"
+      "to\022\026fintekkers.models.util*\233\016\n\017ObjectTyp" +
+      "eProto\022\027\n\023OBJECT_TYPE_UNKNOWN\020\000\022\027\n\023OBJEC" +
+      "T_TYPE_API_KEY\020\001\022\032\n\026OBJECT_TYPE_DATE_RAN" +
+      "GE\020\002\022\032\n\026OBJECT_TYPE_IDENTIFIER\020\003\022!\n\035OBJE" +
+      "CT_TYPE_INDEX_COMPOSITION\020\004\022\030\n\024OBJECT_TY" +
+      "PE_ISSUANCE\020\005\022\036\n\032OBJECT_TYPE_NODE_PARTIT" +
+      "ION\020\006\022\032\n\026OBJECT_TYPE_NODE_STATE\020\007\022\031\n\025OBJ" +
+      "ECT_TYPE_PORTFOLIO\020\010\022\030\n\024OBJECT_TYPE_POSI" +
+      "TION\020\t\022\037\n\033OBJECT_TYPE_POSITION_FILTER\020\n\022" +
+      "\025\n\021OBJECT_TYPE_PRICE\020\013\022\030\n\024OBJECT_TYPE_SE" +
+      "CURITY\020\014\022\030\n\024OBJECT_TYPE_STRATEGY\020\r\022#\n\037OB" +
+      "JECT_TYPE_STRATEGY_ALLOCATION\020\016\022\025\n\021OBJEC" +
+      "T_TYPE_TENOR\020\017\022\033\n\027OBJECT_TYPE_TRANSACTIO" +
+      "N\020\020\0220\n,OBJECT_TYPE_CREATE_INDEX_COMPOSIT" +
+      "ION_REQUEST\020e\0221\n-OBJECT_TYPE_CREATE_INDE" +
+      "X_COMPOSITION_RESPONSE\020f\022(\n$OBJECT_TYPE_" +
+      "CREATE_PORTFOLIO_REQUEST\020g\022)\n%OBJECT_TYP" +
+      "E_CREATE_PORTFOLIO_RESPONSE\020h\022$\n OBJECT_" +
+      "TYPE_CREATE_PRICE_REQUEST\020i\022%\n!OBJECT_TY" +
+      "PE_CREATE_PRICE_RESPONSE\020j\022\'\n#OBJECT_TYP" +
+      "E_CREATE_SECURITY_REQUEST\020k\022(\n$OBJECT_TY" +
+      "PE_CREATE_SECURITY_RESPONSE\020l\022*\n&OBJECT_" +
+      "TYPE_CREATE_TRANSACTION_REQUEST\020m\022+\n\'OBJ" +
+      "ECT_TYPE_CREATE_TRANSACTION_RESPONSE\020n\022\035" +
+      "\n\031OBJECT_TYPE_CURVE_REQUEST\020o\022\036\n\032OBJECT_" +
+      "TYPE_CURVE_RESPONSE\020p\022\036\n\032OBJECT_TYPE_DEL" +
+      "ETE_REQUEST\020q\022\037\n\033OBJECT_TYPE_DELETE_RESP" +
+      "ONSE\020r\022#\n\037OBJECT_TYPE_GET_FIELDS_RESPONS" +
+      "E\020s\022(\n$OBJECT_TYPE_GET_FIELD_VALUES_REQU" +
+      "EST\020t\022)\n%OBJECT_TYPE_GET_FIELD_VALUES_RE" +
+      "SPONSE\020u\022-\n)OBJECT_TYPE_GET_INDEX_COMPOS" +
+      "ITION_REQUEST\020v\022.\n*OBJECT_TYPE_GET_INDEX" +
+      "_COMPOSITION_RESPONSE\020w\022\034\n\030OBJECT_TYPE_L" +
+      "OCK_REQUEST\020x\022\035\n\031OBJECT_TYPE_LOCK_RESPON" +
+      "SE\020y\022\'\n#OBJECT_TYPE_QUERY_PORTFOLIO_REQU" +
+      "EST\020z\022(\n$OBJECT_TYPE_QUERY_PORTFOLIO_RES" +
+      "PONSE\020{\022&\n\"OBJECT_TYPE_QUERY_POSITION_RE" +
+      "QUEST\020|\022\'\n#OBJECT_TYPE_QUERY_POSITION_RE" +
+      "SPONSE\020}\022#\n\037OBJECT_TYPE_QUERY_PRICE_REQU" +
+      "EST\020~\022$\n OBJECT_TYPE_QUERY_PRICE_RESPONS" +
+      "E\020\177\022\'\n\"OBJECT_TYPE_QUERY_SECURITY_REQUES" +
+      "T\020\200\001\022(\n#OBJECT_TYPE_QUERY_SECURITY_RESPO" +
+      "NSE\020\201\001\022*\n%OBJECT_TYPE_QUERY_TRANSACTION_" +
+      "REQUEST\020\202\001\022+\n&OBJECT_TYPE_QUERY_TRANSACT" +
+      "ION_RESPONSE\020\203\001\022\"\n\035OBJECT_TYPE_VALUATION" +
+      "_REQUEST\020\204\001\022#\n\036OBJECT_TYPE_VALUATION_RES" +
+      "PONSE\020\205\001B\024B\020ObjectTypeProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          com.google.protobuf.DescriptorProtos.getDescriptor(),
         });
-    legacyObjectClass.internalInit(descriptor.getExtensions().get(0));
-    com.google.protobuf.ExtensionRegistry registry =
-        com.google.protobuf.ExtensionRegistry.newInstance();
-    registry.add(fintekkers.models.util.ObjectTypeProtos.legacyObjectClass);
-    com.google.protobuf.Descriptors.FileDescriptor
-        .internalUpdateFileDescriptor(descriptor, registry);
-    com.google.protobuf.DescriptorProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

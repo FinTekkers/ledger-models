@@ -21,10 +21,7 @@ var global = (function() {
   return Function('return this')();
 }.call(null));
 
-var google_protobuf_descriptor_pb = require('google-protobuf/google/protobuf/descriptor_pb.js');
-goog.object.extend(proto, google_protobuf_descriptor_pb);
 goog.exportSymbol('proto.fintekkers.models.util.ObjectTypeProto', null, global);
-goog.exportSymbol('proto.fintekkers.models.util.legacyObjectClassList', null, global);
 /**
  * @enum {number}
  */
@@ -80,30 +77,5 @@ proto.fintekkers.models.util.ObjectTypeProto = {
   OBJECT_TYPE_VALUATION_REQUEST: 132,
   OBJECT_TYPE_VALUATION_RESPONSE: 133
 };
-
-
-/**
- * A tuple of {field number, class constructor} for the extension
- * field named `legacyObjectClassList`.
- * @type {!jspb.ExtensionFieldInfo<!Array<string>>}
- */
-proto.fintekkers.models.util.legacyObjectClassList = new jspb.ExtensionFieldInfo(
-    50001,
-    {legacyObjectClassList: 0},
-    null,
-     /** @type {?function((boolean|undefined),!jspb.Message=): !Object} */ (
-         null),
-    1);
-
-google_protobuf_descriptor_pb.EnumValueOptions.extensionsBinary[50001] = new jspb.ExtensionFieldBinaryInfo(
-    proto.fintekkers.models.util.legacyObjectClassList,
-    jspb.BinaryReader.prototype.readString,
-    jspb.BinaryWriter.prototype.writeRepeatedString,
-    undefined,
-    undefined,
-    false);
-// This registers the extension field with the extended class, so that
-// toObject() will function correctly.
-google_protobuf_descriptor_pb.EnumValueOptions.extensions[50001] = proto.fintekkers.models.util.legacyObjectClassList;
 
 goog.object.extend(exports, proto.fintekkers.models.util);

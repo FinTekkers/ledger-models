@@ -7,6 +7,8 @@ const Price_1 = __importDefault(require("./Price"));
 const price_type_pb_1 = require("../../../fintekkers/models/price/price_type_pb");
 const decimal_js_1 = require("decimal.js");
 const errors_1 = require("../errors");
+const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
+const object_types_1 = require("../../util/object-types");
 const TEST_UUID = '18e8c4e6-3da0-47c9-b26d-c5ea8b8dce95';
 test('Price.fromSimple creates a Price with correct values', () => {
     const date = new Date('2026-03-15T12:00:00Z');
@@ -46,8 +48,8 @@ test('Price.getID returns a valid UUID', () => {
 test('Price proto has all required fields set', () => {
     const date = new Date();
     const price = Price_1.default.fromSimple(TEST_UUID, 50.0, date);
-    expect(price.proto.getObjectClass()).toBe('Price');
-    expect(price.proto.getVersion()).toBe('0.0.1');
+    expect(price.proto.getObjectType()).toBe(object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_PRICE);
+    expect((0, object_types_1.readVersion)(price.proto)).toEqual([0, 0, 1]);
     expect(price.proto.getUuid()).toBeTruthy();
     expect(price.proto.getAsOf()).toBeTruthy();
     expect(price.proto.getPrice()).toBeTruthy();

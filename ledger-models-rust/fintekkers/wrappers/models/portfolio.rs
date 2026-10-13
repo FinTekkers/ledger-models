@@ -269,8 +269,6 @@ pub struct PortfolioProtoBuilder {
     valid_from: LocalTimestampWrapper,
     valid_to: Option<LocalTimestampWrapper>,
 
-    object_class: String,
-    version: String,
     is_link: bool,
 
     uuid: UUIDWrapper,
@@ -287,8 +285,6 @@ impl PortfolioProtoBuilder {
             valid_from: LocalTimestampWrapper::now(),
             valid_to: None,
 
-            object_class: "Portfolio".to_string(),
-            version: "0.0.1".to_string(),
             is_link: false,
 
             uuid: UUIDWrapper::new_random(),
@@ -308,16 +304,6 @@ impl PortfolioProtoBuilder {
 
     pub fn valid_to(mut self, valid_to: LocalTimestampWrapper) -> Self {
         self.valid_to = valid_to.into();
-        self
-    }
-
-    pub fn object_class(mut self, object_class: String) -> PortfolioProtoBuilder {
-        self.object_class = object_class;
-        self
-    }
-
-    pub fn version(mut self, version: String) -> PortfolioProtoBuilder {
-        self.version = version;
         self
     }
 
@@ -353,7 +339,7 @@ impl PortfolioProtoBuilder {
             portfolio_name: self.portfolio_name,
             ..Default::default()
         };
-        object_types::stamp_str(proto, ObjectTypeProto::ObjectTypePortfolio, &self.object_class, &self.version)
+        Ok(object_types::stamp(proto, ObjectTypeProto::ObjectTypePortfolio))
     }
 }
 
@@ -368,8 +354,6 @@ mod test {
             valid_from: None,
             valid_to: None,
 
-            object_class: "Portfolio".to_string(),
-            version: "0.01".to_string(),
             uuid: None,
             is_link: false,
             portfolio_name: "Dummy Name".to_string(),
@@ -394,8 +378,6 @@ mod test {
 
     fn full_portfolio(uuid: Uuid, as_of: LocalTimestampProto, name: &str) -> PortfolioProto {
         PortfolioProto {
-            object_class: "Portfolio".to_string(),
-            version: "0.0.1".to_string(),
             uuid: Some(UuidProto { raw_uuid: uuid.as_bytes().to_vec() }),
             as_of: Some(as_of),
             is_link: false,

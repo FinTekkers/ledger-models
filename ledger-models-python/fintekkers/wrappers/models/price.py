@@ -95,6 +95,6 @@ class Price:
             uuid=UUIDProto(raw_uuid=uuid_value.bytes),
             price=ProtoSerializationUtil.serialize(price),
             security=security.proto,
-        ), ObjectTypeProto.OBJECT_TYPE_PRICE, "PriceProto", "0.0.1")
+        ), ObjectTypeProto.OBJECT_TYPE_PRICE)
 
         return Price(price)

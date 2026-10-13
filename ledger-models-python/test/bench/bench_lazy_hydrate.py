@@ -50,16 +50,12 @@ def _build_pair(as_of: LocalTimestampProto):
     port_uuid_proto = UUIDProto(raw_uuid=port_uuid.bytes)
 
     resolved_portfolio = PortfolioProto(
-        object_class="Portfolio",
-        version="0.0.1",
         uuid=port_uuid_proto,
         as_of=as_of,
         is_link=False,
         portfolio_name=f"P-{port_uuid.hex[:8]}",
     )
     resolved = TransactionProto(
-        object_class="Transaction",
-        version="0.0.1",
         uuid=uuid_proto,
         as_of=as_of,
         is_link=False,

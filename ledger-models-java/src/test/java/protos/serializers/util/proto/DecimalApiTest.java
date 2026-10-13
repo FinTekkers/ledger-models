@@ -73,8 +73,9 @@ class DecimalApiTest {
     }
 
     @Test
-    public void stringAccessorIsDeprecated() throws NoSuchMethodException {
-        assertTrue(DecimalValueProto.class.getMethod("getArbitraryPrecisionValue").isAnnotationPresent(Deprecated.class));
-        assertTrue(DecimalValueProtoOrBuilder.class.getMethod("getArbitraryPrecisionValue").isAnnotationPresent(Deprecated.class));
+    public void stringFieldIsGone() {
+        // LM-318 deleted field 10: only unscaled_value and scale remain.
+        assertEquals(List.of("unscaled_value", "scale"), DecimalValueProto.getDescriptor().getFields().stream()
+                .map(f -> f.getName()).collect(Collectors.toList()));
     }
 }

@@ -1,6 +1,9 @@
-# ADR: Compact object type and version (`ObjectTypeProto` + `version_major/minor/patch`)
+# ADR: Compact object type and version (`ObjectTypeProto` + `VersionProto`)
 
 ## Status
+
+**Superseded by LM-318** for the field layout: see the section at the end.
+The enum (decision 1) still holds.
 
 Accepted (LM-297), stage 1: the proto change and regenerated bindings, plus
 an `ObjectTypes` helper in each language. Library writers set both forms and
@@ -116,3 +119,43 @@ code reads `object_class`.
   the four fields and an enum value.
 - **Rollback after release:** remove the fields, add `reserved 1001 to 1004;` to
   every message, and keep the enum file so its numbers are never reused.
+
+## Superseded by LM-318: in place, one breaking release
+
+LM-318 replaced stages 2 and 3 with one cutover release. It is step 2 of a
+coordinated cutover: (1) the box's stored data is wiped, (2) this release,
+(3) every service moves to it, (4) data gathering re-runs.
+
+- **Fields 1 and 2 change type in place**, on all 49 messages:
+
+  | Field | Number | Type |
+  | --- | --- | --- |
+  | `object_type` | `1` | `fintekkers.models.util.ObjectTypeProto` |
+  | `version` | `2` | `fintekkers.models.util.VersionProto` |
+
+  `VersionProto` (`fintekkers/models/util/version.proto`) is
+  `uint32 major = 1; uint32 minor = 2; uint32 patch = 3`. It is the schema
+  version of the message, not the library release. Writers set `0.0.1`.
+- **Deleted, with no `reserved` lines:** fields 1001-1004, the
+  `legacy_object_class` extension (50001) and every option that used it, the
+  generated legacy map and its mirrors, the strings fixtures, the `v0.4.33`
+  descriptor fixture, and all fallback readers and their warnings.
+- **Helpers:** `stamp(message, type)` sets `object_type` and `version`
+  (0.0.1). `readType` returns `object_type` (`OBJECT_TYPE_UNKNOWN` when unset).
+  `readVersion` returns absent when `version` is unset, never `0.0.0`.
+- **Bytes written by earlier releases are not readable.** Field 2 held the
+  string `"0.0.1"`, which does not parse as a `VersionProto`, so parsing an
+  old message fails in all four languages
+  (`ledger-models-protos/fixtures/legacy_v0433/price.bin` pins it). New bytes
+  are not readable by earlier releases either: a `0.4.x` reader and a new
+  writer cannot share data. This is acceptable only because step 1 wipes all
+  stored data and every service moves together in step 3.
+- **Size:** a stored price's type and version take 6 bytes (`08 0b 12 02 18 01`),
+  down from about 30 bytes of strings.
+- **Checks:** `scripts/checks/proto-shape.sh` fails on `object_class`, a
+  `string version = 2`, fields 1001-1004 or a message with one of the two
+  fields but not the other, and requires one message per `ObjectTypeProto`
+  value. `scripts/checks/wire-diff.py` fails on any wire change since the
+  merge base that no item allowed.
+- **Release:** a breaking bump (`0.5.0` or `1.0.0`, the owner's ruling), not
+  the usual patch.

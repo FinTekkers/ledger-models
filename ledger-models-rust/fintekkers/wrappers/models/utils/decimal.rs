@@ -2,18 +2,13 @@
 //!
 //! value = unscaled_value x 10^-scale, where unscaled_value is a minimal
 //! two's-complement big-endian integer of any size. A non-empty
-//! unscaled_value means the compact form is set and it wins. Otherwise the
-//! deprecated `arbitrary_precision_value` string is read, with a warning
-//! logged once per process (LM-307).
+//! unscaled_value means the decimal is set; empty means unset. The old
+//! string form, field 10, was deleted by LM-318.
 //!
 //! Lossless: no binary floating point on any path. A value that cannot be
 //! represented exactly is a typed `Error::Validation`, never rounded. The
 //! codec does not know which field it is decoding: a caller that wants the
 //! field named labels the error with `Error::in_field`.
-//!
-//! Stage 1: writers set both forms, so readers on older ledger-models keep
-//! working. This module is the only code allowed to touch the deprecated
-//! string field.
 
 use crate::fintekkers::models::util::DecimalValueProto;
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
@@ -23,7 +18,6 @@ use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializatio
 use num_bigint::{BigInt, Sign};
 use rust_decimal::Decimal;
 use std::fmt;
-use std::sync::Once;
 
 /// Most decimal digits allowed in the unscaled value, and the largest scale.
 /// The same in every language (see the ADR). Stops input such as
@@ -38,9 +32,6 @@ pub const MAX_UNSCALED_BYTES: usize = 1702;
 const RUST_DECIMAL_MAX_SCALE: u32 = 28;
 /// `rust_decimal::Decimal` holds a 96-bit unsigned magnitude.
 const RUST_DECIMAL_MAX_BITS: u64 = 96;
-
-/// The library release that first writes the compact form.
-const FIRST_COMPACT_RELEASE: &str = "v0.4.34";
 
 /// An exact decimal: `unscaled x 10^-scale`.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -59,7 +50,7 @@ fn invalid(message: String) -> Error {
     }])
 }
 
-/// Parses a decimal string, as written to `arbitrary_precision_value`.
+/// Parses a decimal string such as `1.50` or `1E+3`.
 ///
 /// Grammar: `[+-]? (digits [. digits?] | . digits) ([eE] [+-]? digits)?`. No
 /// whitespace, no `NaN` or `Infinity`. The exponent is folded into the scale;
@@ -176,11 +167,9 @@ fn preview(s: &str) -> String {
     s.chars().take(64).collect()
 }
 
-/// True when neither form is set: `unscaled_value` and
-/// `arbitrary_precision_value` are both empty.
-#[allow(deprecated)]
+/// True when `unscaled_value` is empty. A set zero is the byte 0x00.
 pub fn is_unset_decimal(p: &DecimalValueProto) -> bool {
-    p.unscaled_value.is_empty() && p.arbitrary_precision_value.is_empty()
+    p.unscaled_value.is_empty()
 }
 
 /// Decodes the compact form (fields 11 and 12). Rejects a scale over
@@ -213,40 +202,30 @@ fn digit_count(n: &BigInt) -> usize {
     n.magnitude().to_str_radix(10).len()
 }
 
-/// Decodes a `DecimalValueProto`. The compact form wins when set. Otherwise
-/// falls back to the deprecated string and logs a deprecation warning, once
-/// per process. Both forms empty is `Error::Validation`; so is a malformed
-/// or over-cap value.
-#[allow(deprecated)]
+/// Decodes a `DecimalValueProto`. An empty `unscaled_value` is
+/// `Error::Validation` ("decimal is required but unset"); so is an over-cap
+/// value.
 pub fn decode_decimal(p: &DecimalValueProto) -> Result<CompactDecimal, Error> {
-    if !p.unscaled_value.is_empty() {
-        return decode_compact(&p.unscaled_value, p.scale);
-    }
-    if p.arbitrary_precision_value.is_empty() {
+    if p.unscaled_value.is_empty() {
         return Err(invalid("decimal is required but unset".to_string()));
     }
-    emit_deprecation();
-    parse_decimal_str(&p.arbitrary_precision_value)
+    decode_compact(&p.unscaled_value, p.scale)
 }
 
-/// Encodes both forms (stage 1): fields 11 and 12, plus the canonical string
-/// in field 10 for readers on ledger-models older than v0.4.34.
-#[allow(deprecated)]
+/// Encodes fields 11 and 12, with the minimal unscaled bytes.
 pub fn encode_decimal(v: &CompactDecimal) -> DecimalValueProto {
     DecimalValueProto {
-        arbitrary_precision_value: v.to_canonical_string(),
         unscaled_value: v.unscaled.to_signed_bytes_be(),
         scale: v.scale,
     }
 }
 
-/// A `DecimalValueProto` holding `d` in both forms.
+/// A `DecimalValueProto` holding `d`.
 pub fn decimal_proto(d: &Decimal) -> DecimalValueProto {
     encode_decimal(&CompactDecimal::from(d))
 }
 
-/// Rewrites `p` in both forms (stage 1), decoding it first. Used when
-/// re-saving a message loaded from older bytes.
+/// Rewrites `p` with minimal unscaled bytes, decoding it first.
 pub fn reencode_decimal(p: &mut DecimalValueProto) -> Result<(), Error> {
     *p = encode_decimal(&decode_decimal(p)?);
     Ok(())
@@ -324,24 +303,6 @@ impl fmt::Display for CompactDecimal {
     }
 }
 
-// ---- Deprecation warning: once per process ----
-
-/// Process-wide and thread-safe, with no key (LM-307): the first fallback
-/// read of the deprecated string warns, every later one is silent.
-static DEPRECATION_WARNING: Once = Once::new();
-
-/// Logs that a decimal was read from the deprecated string, the first time
-/// only in this process. Tested in tests/decimal_deprecation_warning_test.rs.
-fn emit_deprecation() {
-    DEPRECATION_WARNING.call_once(|| {
-        log::warn!(
-            "DecimalValueProto read from deprecated arbitrary_precision_value; \
-             writer predates ledger-models {}",
-            FIRST_COMPACT_RELEASE
-        );
-    });
-}
-
 // ---- DecimalWrapper ----
 
 pub struct DecimalWrapper {
@@ -361,17 +322,10 @@ impl DecimalWrapper {
 }
 
 impl From<&str> for DecimalWrapper {
-    /// Writes both forms when `value` parses. A value that does not parse is
-    /// kept as the string only, so reading it later is the error.
-    #[allow(deprecated)]
+    /// The compact form when `value` parses. A value that does not parse
+    /// gives an unset decimal, so reading it later is the error.
     fn from(value: &str) -> Self {
-        let proto = match parse_decimal_str(value) {
-            Ok(v) => encode_decimal(&v),
-            Err(_) => DecimalValueProto {
-                arbitrary_precision_value: value.to_owned(),
-                ..Default::default()
-            },
-        };
+        let proto = parse_decimal_str(value).map(|v| encode_decimal(&v)).unwrap_or_default();
         DecimalWrapper { proto }
     }
 }
@@ -408,31 +362,27 @@ impl TryFrom<DecimalWrapper> for Decimal {
 }
 
 impl fmt::Display for DecimalWrapper {
-    /// The canonical string when the compact form is set; otherwise the
-    /// stored string as-is.
-    #[allow(deprecated)]
+    /// The canonical string, keeping trailing zeros. Empty when the decimal
+    /// is unset or does not decode.
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        if !self.proto.unscaled_value.is_empty() {
-            if let Ok(v) = decode_compact(&self.proto.unscaled_value, self.proto.scale) {
-                return fmt.write_str(&v.to_canonical_string());
-            }
+        match decode_decimal(&self.proto) {
+            Ok(v) => fmt.write_str(&v.to_canonical_string()),
+            Err(_) => Ok(()),
         }
-        fmt.write_str(&self.proto.arbitrary_precision_value)
     }
 }
 
-/// A field-10-only `DecimalValueProto`, as written before v0.4.34. Tests only.
+/// The `DecimalValueProto` for a decimal string such as `1.50`. Panics on a
+/// string that does not parse. Tests only.
 #[cfg(test)]
-#[allow(deprecated)]
-pub(crate) fn legacy_decimal_proto(s: &str) -> DecimalValueProto {
-    DecimalValueProto { arbitrary_precision_value: s.to_string(), ..Default::default() }
+pub(crate) fn decimal_proto_str(s: &str) -> DecimalValueProto {
+    encode_decimal(&parse_decimal_str(s).unwrap_or_else(|e| panic!("{s:?}: {e}")))
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
     use prost::Message;
-    use std::str::FromStr;
 
     fn hex(bytes: &[u8]) -> String {
         bytes.iter().map(|b| format!("{:02x}", b)).collect()
@@ -485,7 +435,7 @@ mod test {
             assert_eq!(parsed.scale, expected_scale, "{}", name);
             assert_eq!(parsed.to_canonical_string(), str_of(case, "canonical"), "{}", name);
 
-            // Encode: exact bytes, both forms.
+            // Encode: exact bytes, fields 11 and 12 only.
             let proto = encode_decimal(&parsed);
             assert_eq!(hex(&proto.unscaled_value), str_of(case, "unscaled_hex"), "{}", name);
             assert_eq!(hex(&proto.encode_to_vec()), str_of(case, "wire_hex"), "{}", name);
@@ -511,10 +461,6 @@ mod test {
         assert!(cases.len() >= 4);
         for case in &cases {
             let err = parse_decimal_str(str_of(case, "string")).expect_err(str_of(case, "name"));
-            assert_validation_on(err, "price");
-            // The same through the full decode path.
-            let err = decode_decimal(&legacy_decimal_proto(str_of(case, "string")))
-                .expect_err(str_of(case, "name"));
             assert_validation_on(err, "price");
         }
     }
@@ -543,38 +489,10 @@ mod test {
 
     #[test]
     fn exponent_strings_translate() {
-        let v = decode_decimal(&legacy_decimal_proto("1E+3")).unwrap();
+        let v = parse_decimal_str("1E+3").unwrap();
         assert_eq!(v, CompactDecimal { unscaled: BigInt::from(1000), scale: 0 });
-        let v = decode_decimal(&legacy_decimal_proto("1.5E-3")).unwrap();
+        let v = parse_decimal_str("1.5E-3").unwrap();
         assert_eq!(v, CompactDecimal { unscaled: BigInt::from(15), scale: 4 });
-    }
-
-    // ---- Metric 3: deprecation ----
-    // One warning per process, so it is tested in its own process:
-    // tests/decimal_deprecation_warning_test.rs (LM-307).
-
-    #[test]
-    fn string_field_is_deprecated_and_codec_is_the_allowed_reader() {
-        let generated = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/fintekkers.models.util.rs"));
-        let field = generated
-            .find("pub arbitrary_precision_value")
-            .expect("generated field");
-        let before = &generated[..field];
-        let attrs = &before[before.rfind("///").unwrap()..];
-        assert!(attrs.contains("#[deprecated]"), "{}", attrs);
-
-        // The attribute lines directly above each codec function that reads
-        // or writes the string.
-        let source = include_str!("decimal.rs");
-        for function in ["pub fn decode_decimal(", "pub fn encode_decimal(", "pub fn is_unset_decimal("] {
-            let at = source.find(function).unwrap();
-            let attrs: Vec<&str> = source[..at]
-                .lines()
-                .rev()
-                .take_while(|l| l.trim_start().starts_with("#[") || l.trim_start().starts_with("///"))
-                .collect();
-            assert!(attrs.iter().any(|l| l.trim() == "#[allow(deprecated)]"), "{} lacks #[allow(deprecated)]", function);
-        }
     }
 
     // ---- Metric 5: bad input, rust_decimal limits, precedence ----
@@ -583,7 +501,7 @@ mod test {
     fn non_finite_and_malformed_strings_name_the_field() {
         let long_non_ascii = format!("1E+{}{}", "9".repeat(60), "é".repeat(40));
         for s in ["abc", "NaN", "Infinity", "-Infinity", "1E+5000", " 1", "1.2.3", "1e", ".", long_non_ascii.as_str()] {
-            let err = decode_decimal(&legacy_decimal_proto(s)).expect_err(s);
+            let err = parse_decimal_str(s).expect_err(s);
             assert_validation_on(err, "price");
         }
     }
@@ -604,19 +522,15 @@ mod test {
     }
 
     #[test]
-    fn compact_form_wins_when_both_are_set() {
-        #[allow(deprecated)]
-        let proto = DecimalValueProto {
-            arbitrary_precision_value: "999".to_string(),
-            unscaled_value: vec![0x00, 0x96],
-            scale: 2,
-        };
-        let v = decode_decimal(&proto).unwrap();
-        assert_eq!(v.to_canonical_string(), "1.50");
-        // Even when the string is garbage.
-        #[allow(deprecated)]
-        let proto = DecimalValueProto { arbitrary_precision_value: "NaN".to_string(), ..proto };
-        assert!(decode_decimal(&proto).is_ok());
+    fn a_string_only_decimal_from_old_bytes_is_unset() {
+        // A v0.4.33 writer stored 1.5 as field 10 only (0x52 = field 10,
+        // length-delimited). LM-318 deleted field 10, so it is an unknown
+        // field: the decimal is unset and reading it is the typed error.
+        let old = DecimalValueProto::decode(&b"\x52\x031.5"[..]).unwrap();
+        assert!(is_unset_decimal(&old));
+        let err = decode_decimal(&old).unwrap_err();
+        assert!(err.to_string().contains("decimal is required but unset"), "{}", err);
+        assert_validation_on(err, "price");
     }
 
     #[test]
@@ -643,7 +557,7 @@ mod test {
             let bytes = encode_decimal(&v).encode_to_vec();
             let back = decode_decimal(&DecimalValueProto::decode(bytes.as_slice()).unwrap()).unwrap();
             assert_eq!(back, v);
-            // The string written alongside parses back to the same value.
+            // The canonical string parses back to the same value.
             assert_eq!(parse_decimal_str(&v.to_canonical_string()).unwrap(), v);
         }
     }
@@ -676,7 +590,7 @@ mod test {
     // ---- Guardrail 2: wire layout ----
 
     #[test]
-    fn descriptor_reserves_1_and_3_and_keeps_field_10() {
+    fn descriptor_reserves_1_and_3_and_has_only_fields_11_and_12() {
         use prost_types::field_descriptor_proto::Type;
         use prost_types::FileDescriptorSet;
         let set = FileDescriptorSet::decode(crate::fintekkers::proto::LEDGER_MODELS_PROTO_FILE_DESCRIPTOR_SET).unwrap();
@@ -691,30 +605,11 @@ mod test {
         assert!(reserved.contains(&(1, 2)), "{:?}", reserved);
         assert!(reserved.contains(&(3, 4)), "{:?}", reserved);
         let field = |number: i32| message.field.iter().find(|f| f.number() == number).unwrap();
-        assert_eq!(field(10).name(), "arbitrary_precision_value");
-        assert_eq!(field(10).r#type(), Type::String);
         assert_eq!(field(11).name(), "unscaled_value");
         assert_eq!(field(11).r#type(), Type::Bytes);
         assert_eq!(field(12).name(), "scale");
         assert_eq!(field(12).r#type(), Type::Uint32);
-        assert_eq!(message.field.len(), 3);
-    }
-
-    // ---- Metric 4: the last published release reads new bytes ----
-
-    #[test]
-    fn v0433_reads_new_bytes_to_equal_decimals() {
-        use ledger_models_v0433::fintekkers::models::util::DecimalValueProto as OldDecimalValueProto;
-        use ledger_models_v0433::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil as OldUtil;
-        for s in ["1.50", "0", "-123.45", "1.2345678901234567890123456789"] {
-            let d = Decimal::from_str(s).unwrap();
-            let bytes = decimal_proto(&d).encode_to_vec();
-            let old = OldDecimalValueProto::decode(bytes.as_slice()).unwrap();
-            let read = OldUtil::deserialize_decimal(&old).unwrap();
-            assert_eq!(read, d, "{}", s);
-            assert_eq!(read.scale(), d.scale(), "{}", s);
-            assert_eq!(read.to_string(), s, "{}", s);
-        }
+        assert_eq!(message.field.len(), 2);
     }
 
     // ---- require_decimal (LM-312) ----
@@ -729,27 +624,26 @@ mod test {
 
     #[test]
     fn require_decimal_undecodable_names_field() {
-        let err = require_decimal(&Some(legacy_decimal_proto("NaN")), "price").unwrap_err();
+        let over_cap = DecimalValueProto { unscaled_value: vec![0x01], scale: MAX_SCALE + 1 };
+        let err = require_decimal(&Some(over_cap), "price").unwrap_err();
         assert!(matches!(err, Error::Validation(_)), "expected Validation, got {:?}", err);
         assert_eq!(err.violations()[0].field, "price");
         assert!(err.to_string().contains("price"), "{}", err);
     }
 
     #[test]
-    fn require_decimal_reads_both_forms() {
-        let compact = DecimalValueProto { unscaled_value: vec![0x00, 0x96], scale: 2, ..Default::default() };
-        for p in [legacy_decimal_proto("1.50"), compact] {
-            let d = require_decimal(&Some(p.clone()), "price").unwrap();
-            assert_eq!(d.scale(), 2, "{:?}", p);
-            assert_eq!(d.to_string(), "1.50", "{:?}", p);
-        }
+    fn require_decimal_keeps_the_scale() {
+        let p = DecimalValueProto { unscaled_value: vec![0x00, 0x96], scale: 2 };
+        let d = require_decimal(&Some(p), "price").unwrap();
+        assert_eq!(d.scale(), 2);
+        assert_eq!(d.to_string(), "1.50");
     }
 
     // ---- DecimalWrapper (unchanged behaviour) ----
 
     #[test]
     fn test_proto_to_decimal() {
-        let input = DecimalWrapper::new(legacy_decimal_proto("1234567.89"));
+        let input = DecimalWrapper::new(decimal_proto_str("1234567.89"));
 
         let output: Decimal = input.try_into().unwrap();
 
@@ -757,12 +651,11 @@ mod test {
     }
 
     #[test]
-    #[allow(deprecated)]
     fn test_decimal_to_proto() {
         let input = Decimal::from_i128_with_scale(123456789, 2);
         let output = DecimalWrapper::from(&input);
 
-        assert_eq!(output.proto.arbitrary_precision_value, "1234567.89");
+        assert_eq!(output.proto.unscaled_value, BigInt::from(123456789).to_signed_bytes_be());
         assert_eq!(output.proto.scale, 2);
         assert_eq!(output.to_string(), "1234567.89");
     }
@@ -771,6 +664,9 @@ mod test {
     fn display_keeps_trailing_zeros() {
         assert_eq!(DecimalWrapper::from("1.50").to_string(), "1.50");
         assert_eq!(DecimalWrapper::from("1E+3").to_string(), "1000");
-        assert_eq!(DecimalWrapper::new(legacy_decimal_proto("1234567.89")).to_string(), "1234567.89");
+        assert_eq!(DecimalWrapper::new(decimal_proto_str("1234567.89")).to_string(), "1234567.89");
+        // An unset decimal, or a string that does not parse, prints nothing.
+        assert_eq!(DecimalWrapper::new(DecimalValueProto::default()).to_string(), "");
+        assert_eq!(DecimalWrapper::from("NaN").to_string(), "");
     }
 }

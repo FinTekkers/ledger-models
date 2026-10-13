@@ -12,6 +12,7 @@ import fintekkers.requests.valuation.ValuationRequestProto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,9 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FrnRequestRoundtripTest {
 
     private static DecimalValueProto decimal(String value) {
-        return DecimalValueProto.newBuilder()
-                .setArbitraryPrecisionValue(value)
-                .build();
+        return Decimals.decimal(value);
     }
 
     private static LocalDateProto date(int year, int month, int day) {
@@ -55,8 +54,8 @@ class FrnRequestRoundtripTest {
 
         CurvePoint parsed = CurvePoint.parseFrom(original.toByteArray());
 
-        assertEquals("2.0", parsed.getTenor().getArbitraryPrecisionValue());
-        assertEquals("0.0470", parsed.getRate().getArbitraryPrecisionValue());
+        assertEquals("2.0", Decimals.text(parsed.getTenor()));
+        assertEquals("0.0470", Decimals.text(parsed.getRate()));
     }
 
     @Test
@@ -82,7 +81,7 @@ class FrnRequestRoundtripTest {
         YieldCurveInput parsed = YieldCurveInput.parseFrom(sofrCurve().toByteArray());
 
         for (int i = 0; i < expectedTenors.length; i++) {
-            assertEquals(expectedTenors[i], parsed.getPoints(i).getTenor().getArbitraryPrecisionValue(),
+            assertEquals(expectedTenors[i], Decimals.text(parsed.getPoints(i).getTenor()),
                     "tenor mismatch at index " + i);
         }
     }
@@ -96,7 +95,7 @@ class FrnRequestRoundtripTest {
 
         FrnInput parsed = FrnInput.parseFrom(original.toByteArray());
 
-        assertEquals("99.75", parsed.getCleanPrice().getArbitraryPrecisionValue());
+        assertEquals("99.75", Decimals.text(parsed.getCleanPrice()));
         assertEquals(IndexTypeProto.SOFR, parsed.getCurve().getIndex());
         assertEquals(5, parsed.getCurve().getPointsCount());
     }
@@ -112,7 +111,7 @@ class FrnRequestRoundtripTest {
         ProductInput parsed = ProductInput.parseFrom(original.toByteArray());
 
         assertEquals(ProductInput.InputCase.FRN, parsed.getInputCase());
-        assertEquals("99.875", parsed.getFrn().getCleanPrice().getArbitraryPrecisionValue());
+        assertEquals("99.875", Decimals.text(parsed.getFrn().getCleanPrice()));
         assertEquals(IndexTypeProto.SOFR, parsed.getFrn().getCurve().getIndex());
     }
 
@@ -123,29 +122,23 @@ class FrnRequestRoundtripTest {
                 .setCurve(sofrCurve())
                 .build();
         ValuationRequestProto original = ValuationRequestProto.newBuilder()
-                .setObjectClass("ValuationRequest")
-                .setVersion("0.0.1")
                 .setProductInput(ProductInput.newBuilder().setFrn(frn))
                 .build();
 
         ValuationRequestProto parsed = ValuationRequestProto.parseFrom(original.toByteArray());
 
-        assertEquals("ValuationRequest", parsed.getObjectClass());
         assertTrue(parsed.hasProductInput());
         assertEquals(ProductInput.InputCase.FRN, parsed.getProductInput().getInputCase());
-        assertEquals("100.25", parsed.getProductInput().getFrn().getCleanPrice().getArbitraryPrecisionValue());
+        assertEquals("100.25", Decimals.text(parsed.getProductInput().getFrn().getCleanPrice()));
     }
 
     @Test
     void valuationRequest_withoutProductInput_unaffected() throws InvalidProtocolBufferException {
         ValuationRequestProto original = ValuationRequestProto.newBuilder()
-                .setObjectClass("ValuationRequest")
-                .setVersion("0.0.1")
                 .build();
 
         ValuationRequestProto parsed = ValuationRequestProto.parseFrom(original.toByteArray());
 
-        assertEquals("ValuationRequest", parsed.getObjectClass());
         assertFalse(parsed.hasProductInput());
     }
 

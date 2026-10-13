@@ -12,8 +12,6 @@ const uuid_1 = require("../utils/uuid");
 const identifier_1 = require("./identifier");
 function buildSecurityWithIds(ids) {
     const proto = new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.COMMON_STOCK)
         .setAssetClass('Equity')

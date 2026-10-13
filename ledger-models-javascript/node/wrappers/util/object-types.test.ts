@@ -1,11 +1,11 @@
-// Compact object type and version (LM-297): writers set both forms, readers
-// translate the strings-only form. Rows come from the shared fixture
-// test-fixtures/object-type-legacy.json, which Java, Python and Rust also load.
+// Object type and version (LM-297, LM-318): `stamp` writes object_type = 1
+// and version = 2 (0.0.1), and bytes from earlier releases are not readable.
 import * as fs from 'fs';
 import * as path from 'path';
 import { Decimal } from 'decimal.js';
 
 import { ObjectTypeProto } from '../../fintekkers/models/util/object_type_pb';
+import { VersionProto } from '../../fintekkers/models/util/version_pb';
 import { SecurityProto } from '../../fintekkers/models/security/security_pb';
 import { PriceProto } from '../../fintekkers/models/price/price_pb';
 import { TransactionProto } from '../../fintekkers/models/transaction/transaction_pb';
@@ -34,146 +34,43 @@ import { SecurityService } from '../services/security-service/SecurityService';
 import { TransactionService } from '../services/transaction-service/TransactionService';
 import { PortfolioService } from '../services/portfolio-service/PortfolioService';
 
-interface FixtureCase {
-  name: string;
-  source: string;
-  message: string;
-  object_class: string;
-  version: string;
-  bytes: string;
-  expect: { object_type: keyof typeof ObjectTypeProto; version: number[]; warns: boolean };
-}
+// A PriceProto written by ledger-models v0.4.33: object_class / version
+// strings in fields 1 and 2.
+const OLD_PRICE = path.resolve(__dirname, '../../../../ledger-models-protos/fixtures/legacy_v0433/price.bin');
 
-const REPO_ROOT = path.resolve(__dirname, '../../../..');
-const CASES: FixtureCase[] = JSON.parse(
-  fs.readFileSync(path.join(REPO_ROOT, 'test-fixtures', 'object-type-legacy.json'), 'utf8')).cases;
-const COMPACT_NUMBERS: Record<string, number> = {
-  object_type: 1001, version_major: 1002, version_minor: 1003, version_patch: 1004,
-};
+// ---- stamp round-trips (metric 2) ----
 
-type MessageClass = { deserializeBinary(bytes: Uint8Array): ObjectTyped & { serializeBinary(): Uint8Array } };
+test('a stamped price round-trips type and version', () => {
+  const price = objectTypes.stamp(new PriceProto(), ObjectTypeProto.OBJECT_TYPE_PRICE);
+  const bytes = price.serializeBinary();
+  // Exactly field 1 (varint 11) and field 2 ({patch: 1}): nothing at the
+  // removed 1001-1004.
+  expect(Array.from(bytes)).toEqual([0x08, 11, 0x12, 0x02, 0x18, 0x01]);
 
-/** Generated message classes by proto full name: the package is the directory under node/. */
-function messageClasses(): Map<string, MessageClass> {
-  const root = path.resolve(__dirname, '../../fintekkers');
-  const classes = new Map<string, MessageClass>();
-  const walk = (dir: string): void => {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-      const full = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        walk(full);
-      } else if (entry.name.endsWith('_pb.js')) {
-        const pkg = path.relative(path.dirname(root), dir).split(path.sep).join('.');
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        for (const [name, cls] of Object.entries(require(full))) {
-          classes.set(`${pkg}.${name}`, cls as MessageClass);
-        }
-      }
-    }
-  };
-  walk(root);
-  return classes;
-}
-
-const CLASSES = messageClasses();
-
-function decode(c: FixtureCase) {
-  const cls = CLASSES.get(c.message);
-  if (!cls) throw new Error(`no generated class for ${c.message}`);
-  return cls.deserializeBinary(Buffer.from(c.bytes, 'base64'));
-}
-
-/** Field numbers present at the top level of an encoded message. */
-function topLevelFieldNumbers(data: Uint8Array): number[] {
-  const numbers: number[] = [];
-  let i = 0;
-  const varint = (): number => {
-    let result = 0;
-    let scale = 1;
-    for (;;) {
-      const b = data[i++];
-      result += (b & 0x7f) * scale;
-      scale *= 128;
-      if (!(b & 0x80)) return result;
-    }
-  };
-  while (i < data.length) {
-    const key = varint();
-    numbers.push(Math.floor(key / 8));
-    const wireType = key % 8;
-    if (wireType === 0) varint();
-    else if (wireType === 1) i += 8;
-    else if (wireType === 2) {
-      const length = varint();
-      i += length;
-    }
-    else if (wireType === 5) i += 4;
-    else throw new Error(`unexpected wire type ${wireType}`);
-  }
-  return numbers;
-}
-
-let warn: jest.SpyInstance;
-
-beforeEach(() => {
-  objectTypes.resetWarningsForTests();
-  warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  const reread = PriceProto.deserializeBinary(bytes);
+  expect(objectTypes.readType(reread)).toBe(ObjectTypeProto.OBJECT_TYPE_PRICE);
+  expect(objectTypes.readVersion(reread)).toEqual([0, 0, 1]);
+  const version = reread.getVersion() as VersionProto;
+  expect([version.getMajor(), version.getMinor(), version.getPatch()]).toEqual([0, 0, 1]);
+  // Nothing unknown kept on re-serialising.
+  expect(Array.from(reread.serializeBinary())).toEqual(Array.from(bytes));
 });
 
-afterEach(() => {
-  warn.mockRestore();
-  objectTypes.resetWarningsForTests();
+test('an unstamped message reads as unknown and absent', () => {
+  const price = PriceProto.deserializeBinary(new PriceProto().serializeBinary());
+  expect(objectTypes.readType(price)).toBe(ObjectTypeProto.OBJECT_TYPE_UNKNOWN);
+  expect(objectTypes.readVersion(price)).toBeUndefined();
 });
 
-const fallbackWarnings = (): number => warn.mock.calls.filter((args) => String(args[0]).includes('(LM-297)')).length;
+// ---- Old bytes are not readable (metric 3) ----
 
-// ---- Loading the old form translates it (metric 3) ----
-
-describe.each(CASES.map((c) => [c.name, c] as const))('fixture row %s', (_name, c) => {
-  test('decodes to the expected type and version', () => {
-    const message = decode(c);
-    expect(objectTypes.readType(message)).toBe(ObjectTypeProto[c.expect.object_type]);
-    expect(objectTypes.readVersion(message)).toEqual(c.expect.version);
-    expect(fallbackWarnings()).toBe(c.expect.warns ? 1 : 0);
-  });
-
-  test('re-serialises with the compact fields once upgraded', () => {
-    const data = objectTypes.upgrade(decode(c)).serializeBinary();
-    const expected: Record<string, number> = {
-      object_type: ObjectTypeProto[c.expect.object_type],
-      version_major: c.expect.version[0],
-      version_minor: c.expect.version[1],
-      version_patch: c.expect.version[2],
-    };
-    const present = topLevelFieldNumbers(data);
-    for (const [name, number] of Object.entries(COMPACT_NUMBERS)) {
-      expect([name, present.includes(number)]).toEqual([name, expected[name] !== 0]);
-    }
-    const reread = CLASSES.get(c.message)!.deserializeBinary(data);
-    expect([reread.getObjectType(), reread.getVersionMajor(), reread.getVersionMinor(), reread.getVersionPatch()])
-      .toEqual([expected.object_type, expected.version_major, expected.version_minor, expected.version_patch]);
-    expect([reread.getObjectClass(), reread.getVersion()]).toEqual([c.object_class, c.version]);
-  });
+test('bytes from v0.4.33 are not readable', () => {
+  // Field 2 held the string "0.0.1", which does not parse as a VersionProto.
+  const old = new Uint8Array(fs.readFileSync(OLD_PRICE));
+  expect(() => PriceProto.deserializeBinary(old)).toThrow();
 });
 
-// ---- Reading the strings is deprecated (metric 4) ----
-
-test('three strings-only decodes of one type warn once', () => {
-  const c = CASES.find((row) => row.name === 'js-PositionFilterProto')!;
-  for (let i = 0; i < 3; i++) {
-    objectTypes.upgrade(decode(c));
-  }
-  expect(fallbackWarnings()).toBe(1);
-});
-
-test('the new form does not warn', () => {
-  const message = objectTypes.stamp(new PriceProto(), ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1');
-  objectTypes.readType(message);
-  objectTypes.readVersion(message);
-  expect(fallbackWarnings()).toBe(0);
-});
-
-// ---- Writers set both forms (metric 2) ----
+// ---- Every library writer stamps the new form (metric 2) ----
 
 /** A service with its gRPC client swapped for one that records each request. */
 function capturingService<S extends object>(cls: { prototype: S }, response: () => unknown): { service: S; requests: ObjectTyped[] } {
@@ -226,7 +123,7 @@ async function linkResolverRequests(): Promise<ObjectTyped[]> {
   return requests;
 }
 
-type Writer = [string, () => Promise<ObjectTyped>, ObjectTypeProto, string, string];
+type Writer = [string, () => Promise<ObjectTyped>, ObjectTypeProto];
 
 async function lastRequest<S extends object>(cls: { prototype: S }, call: (service: S) => Promise<unknown>): Promise<ObjectTyped> {
   const { service, requests } = capturingService(cls, () => new SummaryProto());
@@ -236,41 +133,41 @@ async function lastRequest<S extends object>(cls: { prototype: S }, call: (servi
 
 const LIBRARY_WRITERS: Writer[] = [
   ['Price.fromSimple', async () => Price.fromSimple(UUID.random().toString(), 1, new Date()).proto,
-    ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_PRICE],
   ['Price.create', async () => Price.create(new Decimal(1), security(), ZonedDateTime.now()).proto,
-    ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_PRICE],
   ['PositionFilter.toProto', async () => filter().toProto(),
-    ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER, 'PositionFilter', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER],
   ['QueryPositionRequest.toProto', async () => new QueryPositionRequest(
     filter(), PositionTypeProto.TRANSACTION, PositionViewProto.DEFAULT_VIEW, [], [], ZonedDateTime.now()).toProto(),
-  ObjectTypeProto.OBJECT_TYPE_QUERY_POSITION_REQUEST, '', '1.0.0'],
+  ObjectTypeProto.OBJECT_TYPE_QUERY_POSITION_REQUEST],
   ['Transaction', async () => transaction().proto,
-    ObjectTypeProto.OBJECT_TYPE_TRANSACTION, 'Transaction', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_TRANSACTION],
   ['Transaction strategy allocation', async () => transaction().proto.getStrategyAllocation()!,
-    ObjectTypeProto.OBJECT_TYPE_STRATEGY_ALLOCATION, 'StrategyAllocation', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_STRATEGY_ALLOCATION],
   ['PriceService.validateCreateOrUpdate', () => lastRequest(PriceService, (s) => s.validateCreateOrUpdate(new PriceProto())),
-    ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, 'PriceRequest', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST],
   ['PriceService.search', () => lastRequest(PriceService, (s) => s.search(asOf, filter())),
-    ObjectTypeProto.OBJECT_TYPE_QUERY_PRICE_REQUEST, 'PriceRequest', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_QUERY_PRICE_REQUEST],
   ['SecurityService.validateCreateSecurity', () => lastRequest(SecurityService, (s) => s.validateCreateSecurity(new SecurityProto())),
-    ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_REQUEST, 'SecurityRequest', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_REQUEST],
   ['SecurityService.searchSecurity', () => lastRequest(SecurityService, (s) => s.searchSecurity(asOf, filter())),
-    ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, 'SecurityRequest', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST],
   ['TransactionService.validateCreateTransaction', () => lastRequest(TransactionService,
     (s) => s.validateCreateTransaction({ proto: new TransactionProto() } as Transaction)),
-  ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1'],
+  ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST],
   ['TransactionService.searchTransaction', () => lastRequest(TransactionService, (s) => s.searchTransaction(asOf, filter())),
-    ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, 'SecurityRequest', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST],
   ['PortfolioService.validateCreatePortfolio', () => lastRequest(PortfolioService, (s) => s.validateCreatePortfolio(new PortfolioProto())),
-    ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST],
   ['PortfolioService.searchPortfolio', () => lastRequest(PortfolioService, (s) => s.searchPortfolio(asOf, filter())),
-    ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST],
   ['LinkResolver securities', async () => (await linkResolverRequests())[0],
-    ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, 'SecurityRequest', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST],
   ['LinkResolver portfolios', async () => (await linkResolverRequests())[1],
-    ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST],
   ['LinkResolver transactions', async () => (await linkResolverRequests())[2],
-    ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1'],
+    ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST],
 ];
 
 function transaction(): Transaction {
@@ -286,22 +183,10 @@ function transaction(): Transaction {
   });
 }
 
-test.each(LIBRARY_WRITERS)('%s sets strings and compact fields that agree', async (_name, build, type, objectClass, version) => {
+test.each(LIBRARY_WRITERS)('%s stamps the type and schema version', async (_name, build, type) => {
   const message = await build();
 
-  expect([message.getObjectClass(), message.getVersion()]).toEqual([objectClass, version]);
-  // The message's own type. Some JS writers put a query request's string on the
-  // create request too; the string still sits on one enum value.
-  expect(message.getObjectType()).toBe(type);
-  if (objectClass) {
-    expect(objectTypes.fromLegacy(objectClass)).not.toBe(ObjectTypeProto.OBJECT_TYPE_UNKNOWN);
-  }
-  expect([message.getVersionMajor(), message.getVersionMinor(), message.getVersionPatch()])
-    .toEqual(objectTypes.parseVersion(version));
-  expect(objectTypes.readVersion(message)).toEqual(objectTypes.parseVersion(version));
-  expect(fallbackWarnings()).toBe(0);
-});
-
-test('stamp rejects a malformed version', () => {
-  expect(() => objectTypes.stamp(new PriceProto(), ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '1.2')).toThrow();
+  expect(objectTypes.readType(message)).toBe(type);
+  expect(objectTypes.readVersion(message)).toEqual(objectTypes.SCHEMA_VERSION);
+  expect(objectTypes.SCHEMA_VERSION).toEqual([0, 0, 1]);
 });

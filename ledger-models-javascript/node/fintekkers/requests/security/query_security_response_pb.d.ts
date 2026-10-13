@@ -9,20 +9,16 @@ import * as fintekkers_models_security_security_pb from "../../../fintekkers/mod
 import * as fintekkers_requests_security_query_security_request_pb from "../../../fintekkers/requests/security/query_security_request_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class QuerySecurityResponseProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): QuerySecurityResponseProto;
-    getVersion(): string;
-    setVersion(value: string): QuerySecurityResponseProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): QuerySecurityResponseProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): QuerySecurityResponseProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): QuerySecurityResponseProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): QuerySecurityResponseProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): QuerySecurityResponseProto;
 
     hasQuerySecurityInput(): boolean;
     clearQuerySecurityInput(): void;
@@ -51,12 +47,8 @@ export class QuerySecurityResponseProto extends jspb.Message {
 
 export namespace QuerySecurityResponseProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         querySecurityInput?: fintekkers_requests_security_query_security_request_pb.QuerySecurityRequestProto.AsObject,
         securityResponseList: Array<fintekkers_models_security_security_pb.SecurityProto.AsObject>,
         errorsOrWarningsList: Array<fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject>,

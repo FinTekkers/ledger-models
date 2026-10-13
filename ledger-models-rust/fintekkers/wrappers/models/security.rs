@@ -445,8 +445,6 @@ pub struct SecurityProtoBuilder {
     valid_from: LocalTimestampWrapper,
     valid_to: Option<LocalTimestampWrapper>,
 
-    object_class: String,
-    version: String,
     is_link: bool,
 
     uuid: UUIDWrapper,
@@ -462,10 +460,6 @@ impl SecurityProtoBuilder {
             as_of: LocalTimestampWrapper::now(),
             valid_from: LocalTimestampWrapper::now(),
             valid_to: None,
-            //This is currently hardcoded, this will change in future versions
-            object_class: "Security".to_string(),
-            //The version is hardcoded, this will change in future versions
-            version: "0.0.1".to_string(),
             is_link: false,
             uuid: UUIDWrapper::new_random(),
             product_type: ProductTypeProto::ProductTypeUnknown,
@@ -487,16 +481,6 @@ impl SecurityProtoBuilder {
 
     pub fn valid_to(mut self, valid_to: LocalTimestampWrapper) -> Self {
         self.valid_to = valid_to.into();
-        self
-    }
-
-    pub fn object_class(mut self, object_class: String) -> Self {
-        self.object_class = object_class;
-        self
-    }
-
-    pub fn version(mut self, version: String) -> Self {
-        self.version = version;
         self
     }
 
@@ -577,13 +561,12 @@ impl SecurityProtoBuilder {
             non_bond_details: None,
             ..Default::default()
         };
-        object_types::stamp_str(proto, ObjectTypeProto::ObjectTypeSecurity, &self.object_class, &self.version)
+        Ok(object_types::stamp(proto, ObjectTypeProto::ObjectTypeSecurity))
     }
 }
 
 #[cfg(test)]
 mod test {
-    #![allow(deprecated)] // Tests read the legacy string field directly.
     use super::*;
     use crate::fintekkers::models::security::security_proto::NonBondDetails;
     use crate::fintekkers::models::security::{
@@ -594,9 +577,14 @@ mod test {
     use crate::fintekkers::models::security::index::IndexTypeProto;
     use crate::fintekkers::models::util::DecimalValueProto;
     use crate::fintekkers::models::util::LocalDateProto;
+    use crate::fintekkers::wrappers::models::utils::decimal::decode_decimal;
 
+    /// The decimal for `value`; an empty string is a set but empty decimal.
     fn decimal(value: &str) -> Option<DecimalValueProto> {
-        Some(crate::fintekkers::wrappers::models::utils::decimal::legacy_decimal_proto(value))
+        if value.is_empty() {
+            return Some(DecimalValueProto::default());
+        }
+        Some(crate::fintekkers::wrappers::models::utils::decimal::decimal_proto_str(value))
     }
 
     fn date(year: u32, month: u32, day: u32) -> Option<LocalDateProto> {
@@ -682,10 +670,10 @@ mod test {
 
         let parsed = round_trip(&proto);
         let bond = parsed.bond_details.expect("bond_details must round-trip");
-        assert_eq!(bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "5.0");
+        assert_eq!(decode_decimal(bond.coupon_rate.as_ref().unwrap()).unwrap().to_string(), "5.0");
         assert_eq!(bond.coupon_type, CouponTypeProto::Fixed as i32);
         assert_eq!(bond.maturity_date.as_ref().unwrap().year, 2030);
-        assert_eq!(bond.face_value.as_ref().unwrap().arbitrary_precision_value, "1000");
+        assert_eq!(decode_decimal(bond.face_value.as_ref().unwrap()).unwrap().to_string(), "1000");
         assert!(parsed.tips_extension.is_none(), "non-TIPS must not populate tips_extension");
         assert!(parsed.frn_extension.is_none(), "non-FRN must not populate frn_extension");
     }
@@ -716,9 +704,9 @@ mod test {
 
         let parsed = round_trip(&proto);
         let bond = parsed.bond_details.expect("bond_details must round-trip on TIPS");
-        assert_eq!(bond.coupon_rate.as_ref().unwrap().arbitrary_precision_value, "0.625");
+        assert_eq!(decode_decimal(bond.coupon_rate.as_ref().unwrap()).unwrap().to_string(), "0.625");
         let tips = parsed.tips_extension.expect("tips_extension must round-trip");
-        assert_eq!(tips.base_cpi.as_ref().unwrap().arbitrary_precision_value, "256.394");
+        assert_eq!(decode_decimal(tips.base_cpi.as_ref().unwrap()).unwrap().to_string(), "256.394");
         assert_eq!(tips.inflation_index_type, IndexTypeProto::CpiU as i32);
         assert!(parsed.frn_extension.is_none());
     }
@@ -749,7 +737,7 @@ mod test {
         let bond = parsed.bond_details.expect("bond_details must round-trip on FRN");
         assert_eq!(bond.maturity_date.as_ref().unwrap().year, 2028);
         let frn = parsed.frn_extension.expect("frn_extension must round-trip");
-        assert_eq!(frn.spread.as_ref().unwrap().arbitrary_precision_value, "50");
+        assert_eq!(decode_decimal(frn.spread.as_ref().unwrap()).unwrap().to_string(), "50");
         assert_eq!(frn.reference_rate_index, IndexTypeProto::TBill13Week as i32);
         assert_eq!(frn.reset_frequency, CouponFrequencyProto::Quarterly as i32);
         assert!(parsed.tips_extension.is_none());

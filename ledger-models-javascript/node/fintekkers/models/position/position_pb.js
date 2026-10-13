@@ -27,6 +27,8 @@ var fintekkers_models_security_security_pb = require('../../../fintekkers/models
 goog.object.extend(proto, fintekkers_models_security_security_pb);
 var fintekkers_models_util_object_type_pb = require('../../../fintekkers/models/util/object_type_pb.js');
 goog.object.extend(proto, fintekkers_models_util_object_type_pb);
+var fintekkers_models_util_version_pb = require('../../../fintekkers/models/util/version_pb.js');
+goog.object.extend(proto, fintekkers_models_util_version_pb);
 goog.exportSymbol('proto.fintekkers.models.position.PositionProto', null, global);
 goog.exportSymbol('proto.fintekkers.models.position.PositionTypeProto', null, global);
 goog.exportSymbol('proto.fintekkers.models.position.PositionViewProto', null, global);
@@ -41,7 +43,7 @@ goog.exportSymbol('proto.fintekkers.models.position.PositionViewProto', null, gl
  * @constructor
  */
 proto.fintekkers.models.position.PositionProto = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, 500, proto.fintekkers.models.position.PositionProto.repeatedFields_, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.fintekkers.models.position.PositionProto.repeatedFields_, null);
 };
 goog.inherits(proto.fintekkers.models.position.PositionProto, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -90,12 +92,8 @@ proto.fintekkers.models.position.PositionProto.prototype.toObject = function(opt
  */
 proto.fintekkers.models.position.PositionProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-    objectClass: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    objectType: jspb.Message.getFieldWithDefault(msg, 1001, 0),
-    versionMajor: jspb.Message.getFieldWithDefault(msg, 1002, 0),
-    versionMinor: jspb.Message.getFieldWithDefault(msg, 1003, 0),
-    versionPatch: jspb.Message.getFieldWithDefault(msg, 1004, 0),
+    objectType: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    version: (f = msg.getVersion()) && fintekkers_models_util_version_pb.VersionProto.toObject(includeInstance, f),
     positionView: jspb.Message.getFieldWithDefault(msg, 10, 0),
     positionType: jspb.Message.getFieldWithDefault(msg, 11, 0),
     measuresList: jspb.Message.toObjectList(msg.getMeasuresList(),
@@ -140,28 +138,13 @@ proto.fintekkers.models.position.PositionProto.deserializeBinaryFromReader = fun
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setObjectClass(value);
-      break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setVersion(value);
-      break;
-    case 1001:
       var value = /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (reader.readEnum());
       msg.setObjectType(value);
       break;
-    case 1002:
-      var value = /** @type {number} */ (reader.readUint32());
-      msg.setVersionMajor(value);
-      break;
-    case 1003:
-      var value = /** @type {number} */ (reader.readUint32());
-      msg.setVersionMinor(value);
-      break;
-    case 1004:
-      var value = /** @type {number} */ (reader.readUint32());
-      msg.setVersionPatch(value);
+    case 2:
+      var value = new fintekkers_models_util_version_pb.VersionProto;
+      reader.readMessage(value,fintekkers_models_util_version_pb.VersionProto.deserializeBinaryFromReader);
+      msg.setVersion(value);
       break;
     case 10:
       var value = /** @type {!proto.fintekkers.models.position.PositionViewProto} */ (reader.readEnum());
@@ -215,46 +198,19 @@ proto.fintekkers.models.position.PositionProto.prototype.serializeBinary = funct
  */
 proto.fintekkers.models.position.PositionProto.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getObjectClass();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getObjectType();
+  if (f !== 0.0) {
+    writer.writeEnum(
       1,
       f
     );
   }
   f = message.getVersion();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f != null) {
+    writer.writeMessage(
       2,
-      f
-    );
-  }
-  f = message.getObjectType();
-  if (f !== 0.0) {
-    writer.writeEnum(
-      1001,
-      f
-    );
-  }
-  f = message.getVersionMajor();
-  if (f !== 0) {
-    writer.writeUint32(
-      1002,
-      f
-    );
-  }
-  f = message.getVersionMinor();
-  if (f !== 0) {
-    writer.writeUint32(
-      1003,
-      f
-    );
-  }
-  f = message.getVersionPatch();
-  if (f !== 0) {
-    writer.writeUint32(
-      1004,
-      f
+      f,
+      fintekkers_models_util_version_pb.VersionProto.serializeBinaryToWriter
     );
   }
   f = message.getPositionView();
@@ -299,47 +255,11 @@ proto.fintekkers.models.position.PositionProto.serializeBinaryToWriter = functio
 
 
 /**
- * optional string object_class = 1;
- * @return {string}
- */
-proto.fintekkers.models.position.PositionProto.prototype.getObjectClass = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.fintekkers.models.position.PositionProto} returns this
- */
-proto.fintekkers.models.position.PositionProto.prototype.setObjectClass = function(value) {
-  return jspb.Message.setProto3StringField(this, 1, value);
-};
-
-
-/**
- * optional string version = 2;
- * @return {string}
- */
-proto.fintekkers.models.position.PositionProto.prototype.getVersion = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.fintekkers.models.position.PositionProto} returns this
- */
-proto.fintekkers.models.position.PositionProto.prototype.setVersion = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
-};
-
-
-/**
- * optional fintekkers.models.util.ObjectTypeProto object_type = 1001;
+ * optional fintekkers.models.util.ObjectTypeProto object_type = 1;
  * @return {!proto.fintekkers.models.util.ObjectTypeProto}
  */
 proto.fintekkers.models.position.PositionProto.prototype.getObjectType = function() {
-  return /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (jspb.Message.getFieldWithDefault(this, 1001, 0));
+  return /** @type {!proto.fintekkers.models.util.ObjectTypeProto} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
@@ -348,61 +268,44 @@ proto.fintekkers.models.position.PositionProto.prototype.getObjectType = functio
  * @return {!proto.fintekkers.models.position.PositionProto} returns this
  */
 proto.fintekkers.models.position.PositionProto.prototype.setObjectType = function(value) {
-  return jspb.Message.setProto3EnumField(this, 1001, value);
+  return jspb.Message.setProto3EnumField(this, 1, value);
 };
 
 
 /**
- * optional uint32 version_major = 1002;
- * @return {number}
+ * optional fintekkers.models.util.VersionProto version = 2;
+ * @return {?proto.fintekkers.models.util.VersionProto}
  */
-proto.fintekkers.models.position.PositionProto.prototype.getVersionMajor = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1002, 0));
+proto.fintekkers.models.position.PositionProto.prototype.getVersion = function() {
+  return /** @type{?proto.fintekkers.models.util.VersionProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_version_pb.VersionProto, 2));
 };
 
 
 /**
- * @param {number} value
+ * @param {?proto.fintekkers.models.util.VersionProto|undefined} value
+ * @return {!proto.fintekkers.models.position.PositionProto} returns this
+*/
+proto.fintekkers.models.position.PositionProto.prototype.setVersion = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.fintekkers.models.position.PositionProto} returns this
  */
-proto.fintekkers.models.position.PositionProto.prototype.setVersionMajor = function(value) {
-  return jspb.Message.setProto3IntField(this, 1002, value);
+proto.fintekkers.models.position.PositionProto.prototype.clearVersion = function() {
+  return this.setVersion(undefined);
 };
 
 
 /**
- * optional uint32 version_minor = 1003;
- * @return {number}
+ * Returns whether this field is set.
+ * @return {boolean}
  */
-proto.fintekkers.models.position.PositionProto.prototype.getVersionMinor = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1003, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.fintekkers.models.position.PositionProto} returns this
- */
-proto.fintekkers.models.position.PositionProto.prototype.setVersionMinor = function(value) {
-  return jspb.Message.setProto3IntField(this, 1003, value);
-};
-
-
-/**
- * optional uint32 version_patch = 1004;
- * @return {number}
- */
-proto.fintekkers.models.position.PositionProto.prototype.getVersionPatch = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1004, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.fintekkers.models.position.PositionProto} returns this
- */
-proto.fintekkers.models.position.PositionProto.prototype.setVersionPatch = function(value) {
-  return jspb.Message.setProto3IntField(this, 1004, value);
+proto.fintekkers.models.position.PositionProto.prototype.hasVersion = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 

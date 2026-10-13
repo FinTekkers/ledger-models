@@ -6,6 +6,7 @@ import fintekkers.models.security.index.IndexTypeProto;
 import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import fintekkers.models.util.LocalDate.LocalDateProto;
 import org.junit.jupiter.api.Test;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,9 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OneofProductDetailsRoundTripTest {
 
     private static DecimalValueProto decimal(String value) {
-        return DecimalValueProto.newBuilder()
-                .setArbitraryPrecisionValue(value)
-                .build();
+        return Decimals.decimal(value);
     }
 
     private static LocalDateProto date(int year, int month, int day) {
@@ -56,10 +55,10 @@ class OneofProductDetailsRoundTripTest {
     private static void assertBondDetailsRoundTrip(SecurityProto parsed, String coupon, String face, int matYear) {
         assertTrue(parsed.hasBondDetails(), "bond_details must be populated for bond-shape products");
         BondDetailsProto bond = parsed.getBondDetails();
-        assertEquals(coupon, bond.getCouponRate().getArbitraryPrecisionValue());
+        assertEquals(coupon, Decimals.text(bond.getCouponRate()));
         assertEquals(CouponTypeProto.FIXED, bond.getCouponType());
         assertEquals(CouponFrequencyProto.SEMIANNUALLY, bond.getCouponFrequency());
-        assertEquals(face, bond.getFaceValue().getArbitraryPrecisionValue());
+        assertEquals(face, Decimals.text(bond.getFaceValue()));
         assertEquals(2020, bond.getIssueDate().getYear());
         assertEquals(matYear, bond.getMaturityDate().getYear());
     }
@@ -119,7 +118,7 @@ class OneofProductDetailsRoundTripTest {
         assertBondDetailsRoundTrip(parsed, "0.625", "1000", 2030);
         assertTrue(parsed.hasTipsExtension(), "TIPS must populate tips_extension");
         TipsExtensionProto tips = parsed.getTipsExtension();
-        assertEquals("256.394", tips.getBaseCpi().getArbitraryPrecisionValue());
+        assertEquals("256.394", Decimals.text(tips.getBaseCpi()));
         assertEquals(2020, tips.getIndexDate().getYear());
         assertEquals(IndexTypeProto.CPI_U, tips.getInflationIndexType());
         assertFalse(parsed.hasFrnExtension(), "TIPS must not populate frn_extension");
@@ -152,7 +151,7 @@ class OneofProductDetailsRoundTripTest {
 
         assertTrue(parsed.hasFrnExtension(), "FRN must populate frn_extension");
         FrnExtensionProto frn = parsed.getFrnExtension();
-        assertEquals("50", frn.getSpread().getArbitraryPrecisionValue());
+        assertEquals("50", Decimals.text(frn.getSpread()));
         assertEquals(IndexTypeProto.T_BILL_13_WEEK, frn.getReferenceRateIndex());
         assertEquals(CouponFrequencyProto.QUARTERLY, frn.getResetFrequency());
         assertFalse(parsed.hasTipsExtension(), "FRN must not populate tips_extension");

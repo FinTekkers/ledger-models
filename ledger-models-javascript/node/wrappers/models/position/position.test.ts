@@ -17,6 +17,7 @@ import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { TenorProto } from '../../../fintekkers/models/security/tenor_pb';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
 import { Tenor } from '../security/term';
+import { decodeDecimal, encodeDecimal, parseDecimalString, toCanonicalString } from '../utils/decimal';
 
 test('test the enum Serialization', async () => {
     let isTrue = await testEnumSerialization();
@@ -45,7 +46,7 @@ async function testEnumSerialization(): Promise<boolean> {
         new FieldMapEntry().setField(FieldProto.POSITION_STATUS).setEnumValue(PositionStatusProto.EXECUTED)
     ]);
 
-    let measureValue = new DecimalValueProto().setArbitraryPrecisionValue("1.55");
+    let measureValue = encodeDecimal(parseDecimalString("1.55"));
     positionProto.setMeasuresList([
         new MeasureMapEntry().setMeasure(MeasureProto.DIRECTED_QUANTITY).setMeasureDecimalValue(measureValue)
     ]);
@@ -177,7 +178,7 @@ async function testSerialization(): Promise<boolean> {
     expect(position.getMeasureValue(MeasureProto.DIRECTED_QUANTITY).toString()).toBe("1");
 
     let price: PriceProto = position.getFieldValue(FieldProto.PRICE);
-    expect(price.getPrice()?.getArbitraryPrecisionValue()).toBe("1.0");
+    expect(toCanonicalString(decodeDecimal(price.getPrice()!))).toBe("1.0");
 
     let tenor = position.getFieldValue(FieldProto.TENOR);
     expect(tenor.getTenorDescription()).toBe("3M");
@@ -200,7 +201,7 @@ function getPosition(includeUnknownEnumValue: boolean) {
     let id = new UUID(UUID.random().toBytes());
 
     let price = new PriceProto()
-        .setPrice(new DecimalValueProto().setArbitraryPrecisionValue("1.0"))
+        .setPrice(encodeDecimal(parseDecimalString("1.0")))
         .setUuid(id.toUUIDProto())
         .setSecurity(security);
 
@@ -209,7 +210,7 @@ function getPosition(includeUnknownEnumValue: boolean) {
         .setTermValue("3M");;
 
     let measure = MeasureProto.DIRECTED_QUANTITY;
-    let measureValue = new DecimalValueProto().setArbitraryPrecisionValue("1.0");
+    let measureValue = encodeDecimal(parseDecimalString("1.0"));
 
     const tradeDatePacked = new Any();
     tradeDatePacked.setTypeUrl(`DUMMYTYPE_DATE`);

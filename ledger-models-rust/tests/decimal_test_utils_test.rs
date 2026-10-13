@@ -10,14 +10,12 @@ use ledger_models::fintekkers::models::security::{
 };
 use ledger_models::fintekkers::models::util::DecimalValueProto;
 use ledger_models::fintekkers::requests::valuation::{CurveInputProto, CurveRequestProto};
-use ledger_models::fintekkers::wrappers::models::utils::decimal::decode_decimal;
 use ledger_models::fintekkers::wrappers::models::utils::decimal_test_utils::{
-    both_forms, compact_only, find_decimals, form_of, rewrite_decimals, string_only, value_and_scale, DecimalForm,
+    compact_only, find_decimals, value_and_scale,
 };
 
 /// Hands out a distinct decimal on each call, each with trailing zeros
-/// (`1.50`, `200.000`, `3.50`, ...), cycling through the three forms so the
-/// fixtures start out mixed.
+/// (`1.50`, `200.000`, `3.50`, ...).
 struct Decimals(u32);
 
 impl Decimals {
@@ -25,11 +23,7 @@ impl Decimals {
         self.0 += 1;
         let n = self.0;
         let s = if n % 2 == 1 { format!("{}.50", n) } else { format!("{}00.000", n) };
-        Some(match n % 3 {
-            0 => string_only(&s),
-            1 => compact_only(&s),
-            _ => both_forms(&s),
-        })
+        Some(compact_only(&s))
     }
 }
 
@@ -157,49 +151,9 @@ fn finds_every_decimal_in_curve_request() {
     }
 }
 
-/// `(path, canonical string)` for each decimal. The canonical string keeps
-/// the scale, so `1.5` and `1.50` differ, which `Decimal ==` would not.
-fn canonical(found: &[(String, DecimalValueProto)]) -> Vec<(String, String)> {
-    found
-        .iter()
-        .map(|(p, d)| (p.clone(), decode_decimal(d).unwrap_or_else(|e| panic!("{}: {}", p, e)).to_canonical_string()))
-        .collect()
-}
-
-fn assert_rewrites<M: prost::Message + Default>(msg: &M, expected_count: usize) {
-    let before = find_decimals(msg);
-    assert_eq!(before.len(), expected_count);
-    assert!(before.iter().all(|(_, d)| form_of(d).is_some()), "fixture has an unset decimal");
-    for form in [DecimalForm::StringOnly, DecimalForm::CompactOnly, DecimalForm::Both] {
-        let after = find_decimals(&rewrite_decimals(msg, form));
-        for (path, d) in &after {
-            assert_eq!(form_of(d), Some(form), "{}: {:?}", path, d);
-        }
-        assert_eq!(canonical(&after), canonical(&before), "{:?}", form);
-    }
-}
-
 #[test]
-fn rewrite_to_each_form() {
-    assert_rewrites(&full_security(), SECURITY_DECIMALS);
-    assert_rewrites(&full_curve_request(), CURVE_REQUEST_DECIMALS);
-}
-
-#[test]
-fn builders_yield_stated_form() {
-    let d = string_only("1.50");
-    assert_eq!(form_of(&d), Some(DecimalForm::StringOnly));
-    assert_eq!(value_and_scale(&d), None);
-    assert_eq!(decode_decimal(&d).unwrap().to_canonical_string(), "1.50");
-
-    let d = compact_only("1.50");
-    assert_eq!(form_of(&d), Some(DecimalForm::CompactOnly));
-    assert_eq!(value_and_scale(&d), Some((150, 2)));
-
-    let d = both_forms("1.50");
-    assert_eq!(form_of(&d), Some(DecimalForm::Both));
-    assert_eq!(value_and_scale(&d), Some((150, 2)));
-
+fn compact_only_keeps_value_and_scale() {
+    assert_eq!(value_and_scale(&compact_only("1.50")), Some((150, 2)));
     assert_eq!(value_and_scale(&compact_only("-0.005")), Some((-5, 3)));
-    assert_eq!(form_of(&DecimalValueProto::default()), None);
+    assert_eq!(value_and_scale(&DecimalValueProto::default()), None);
 }

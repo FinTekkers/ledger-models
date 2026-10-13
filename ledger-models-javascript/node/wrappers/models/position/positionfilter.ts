@@ -75,7 +75,7 @@ export class PositionFilter {
 
     toProto(): PositionFilterProto {
         const positionFilterProto = new PositionFilterProto();
-        stamp(positionFilterProto, ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER, 'PositionFilter', '0.0.1');
+        stamp(positionFilterProto, ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER);
         positionFilterProto.setFiltersList(this.filters);
 
         return positionFilterProto;

@@ -9,6 +9,7 @@ from fintekkers.models.price import price_pb2 as _price_pb2
 from fintekkers.models.position import position_status_pb2 as _position_status_pb2
 from fintekkers.models.transaction import transaction_type_pb2 as _transaction_type_pb2
 from fintekkers.models.util import object_type_pb2 as _object_type_pb2
+from fintekkers.models.util import version_pb2 as _version_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
@@ -18,13 +19,9 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class TransactionProto(_message.Message):
-    __slots__ = ("object_class", "version", "object_type", "version_major", "version_minor", "version_patch", "uuid", "as_of", "is_link", "valid_from", "valid_to", "portfolio", "security", "transaction_type", "quantity", "price", "trade_date", "settlement_date", "childTransactions", "position_status", "trade_name", "strategy_allocation", "is_cancelled")
-    OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
-    VERSION_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("object_type", "version", "uuid", "as_of", "is_link", "valid_from", "valid_to", "portfolio", "security", "transaction_type", "quantity", "price", "trade_date", "settlement_date", "childTransactions", "position_status", "trade_name", "strategy_allocation", "is_cancelled")
     OBJECT_TYPE_FIELD_NUMBER: _ClassVar[int]
-    VERSION_MAJOR_FIELD_NUMBER: _ClassVar[int]
-    VERSION_MINOR_FIELD_NUMBER: _ClassVar[int]
-    VERSION_PATCH_FIELD_NUMBER: _ClassVar[int]
+    VERSION_FIELD_NUMBER: _ClassVar[int]
     UUID_FIELD_NUMBER: _ClassVar[int]
     AS_OF_FIELD_NUMBER: _ClassVar[int]
     IS_LINK_FIELD_NUMBER: _ClassVar[int]
@@ -42,12 +39,8 @@ class TransactionProto(_message.Message):
     TRADE_NAME_FIELD_NUMBER: _ClassVar[int]
     STRATEGY_ALLOCATION_FIELD_NUMBER: _ClassVar[int]
     IS_CANCELLED_FIELD_NUMBER: _ClassVar[int]
-    object_class: str
-    version: str
     object_type: _object_type_pb2.ObjectTypeProto
-    version_major: int
-    version_minor: int
-    version_patch: int
+    version: _version_pb2.VersionProto
     uuid: _uuid_pb2.UUIDProto
     as_of: _local_timestamp_pb2.LocalTimestampProto
     is_link: bool
@@ -65,4 +58,4 @@ class TransactionProto(_message.Message):
     trade_name: str
     strategy_allocation: _strategy_allocation_pb2.StrategyAllocationProto
     is_cancelled: bool
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version_major: _Optional[int] = ..., version_minor: _Optional[int] = ..., version_patch: _Optional[int] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., portfolio: _Optional[_Union[_portfolio_pb2.PortfolioProto, _Mapping]] = ..., security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., transaction_type: _Optional[_Union[_transaction_type_pb2.TransactionTypeProto, str]] = ..., quantity: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., price: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ..., trade_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., settlement_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., childTransactions: _Optional[_Iterable[_Union[TransactionProto, _Mapping]]] = ..., position_status: _Optional[_Union[_position_status_pb2.PositionStatusProto, str]] = ..., trade_name: _Optional[str] = ..., strategy_allocation: _Optional[_Union[_strategy_allocation_pb2.StrategyAllocationProto, _Mapping]] = ..., is_cancelled: bool = ...) -> None: ...
+    def __init__(self, object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version: _Optional[_Union[_version_pb2.VersionProto, _Mapping]] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., portfolio: _Optional[_Union[_portfolio_pb2.PortfolioProto, _Mapping]] = ..., security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., transaction_type: _Optional[_Union[_transaction_type_pb2.TransactionTypeProto, str]] = ..., quantity: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., price: _Optional[_Union[_price_pb2.PriceProto, _Mapping]] = ..., trade_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., settlement_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., childTransactions: _Optional[_Iterable[_Union[TransactionProto, _Mapping]]] = ..., position_status: _Optional[_Union[_position_status_pb2.PositionStatusProto, str]] = ..., trade_name: _Optional[str] = ..., strategy_allocation: _Optional[_Union[_strategy_allocation_pb2.StrategyAllocationProto, _Mapping]] = ..., is_cancelled: bool = ...) -> None: ...

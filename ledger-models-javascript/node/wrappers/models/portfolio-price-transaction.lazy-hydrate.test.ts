@@ -15,6 +15,7 @@ import { LocalTimestampProto } from '../../fintekkers/models/util/local_timestam
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 
 import * as LinkCache from '../util/link-cache';
+import { encodeDecimal, parseDecimalString } from './utils/decimal';
 
 function makeAsOf(epochSeconds = 1_700_000_000): ZonedDateTime {
   const ts = new Timestamp();
@@ -56,8 +57,7 @@ function fullPriceProto(uuid: UUID, asOf: ZonedDateTime, value: string): PricePr
   p.setUuid(uuid.toUUIDProto());
   p.setAsOf(asOf.toProto());
   p.setIsLink(false);
-  const dv = new DecimalValueProto();
-  dv.setArbitraryPrecisionValue(value);
+  const dv = encodeDecimal(parseDecimalString(value));
   p.setPrice(dv);
   return p;
 }

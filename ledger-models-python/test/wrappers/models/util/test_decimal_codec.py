@@ -5,8 +5,6 @@ Python must write each case's exact wire bytes and decode them to the same
 unscaled value and scale as Rust and JS."""
 import inspect
 import json
-import logging
-import warnings
 from decimal import Decimal, localcontext
 from pathlib import Path
 
@@ -14,14 +12,13 @@ import pytest
 
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.wrappers.models.errors import ModelValidationError
-from fintekkers.wrappers.models.util import decimal as codec
 from fintekkers.wrappers.models.util.decimal import (
     MAX_DIGITS,
     MAX_SCALE,
     MAX_UNSCALED_BYTES,
     decode_decimal,
     encode_decimal,
-    legacy_string,
+    is_decimal_set,
 )
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
@@ -49,12 +46,6 @@ def _compact_only(unscaled_hex: str, scale: int) -> DecimalValueProto:
     return DecimalValueProto(unscaled_value=bytes.fromhex(unscaled_hex), scale=scale)
 
 
-@pytest.fixture
-def fresh_log_guard(monkeypatch):
-    """Lets the once-per-process deprecation log fire again in this test."""
-    monkeypatch.setattr(codec, "_legacy_logged", False)
-
-
 def test_oracle_matches_codec_limits():
     assert ORACLE["limits"] == {
         "max_digits": MAX_DIGITS,
@@ -72,13 +63,12 @@ def test_encode_matches_fixture_bytes(case):
     assert proto.SerializeToString().hex() == case["wire_hex"]
     assert proto.unscaled_value.hex() == case["unscaled_hex"]
     assert proto.scale == case["scale"]
-    assert proto.arbitrary_precision_value == case["canonical"]
+    assert format(decode_decimal(proto), "f") == case["canonical"]
 
 
 # Metric 1: decoding the wire bytes gives an equal Decimal with the same exponent.
 @pytest.mark.parametrize("case", CASES, ids=[c["name"] for c in CASES])
-def test_decode_wire_keeps_value_and_exponent(case, fresh_log_guard, caplog):
-    caplog.set_level(logging.WARNING, logger="fintekkers.decimal")
+def test_decode_wire_keeps_value_and_exponent(case):
     proto = DecimalValueProto.FromString(bytes.fromhex(case["wire_hex"]))
 
     decoded = decode_decimal(proto)
@@ -86,23 +76,10 @@ def test_decode_wire_keeps_value_and_exponent(case, fresh_log_guard, caplog):
     assert decoded.as_tuple() == Decimal(case["canonical"]).as_tuple()
     assert _parts(decoded) == (int.from_bytes(bytes.fromhex(case["unscaled_hex"]), "big", signed=True),
                                case["scale"])
-    # The compact form wins, so no deprecation log.
-    assert caplog.records == []
-
-
-# Metric 2: a string-only proto decodes to what the compact form decodes to.
-@pytest.mark.parametrize("case", CASES, ids=[c["name"] for c in CASES])
-def test_string_only_decodes_like_compact(case):
-    from_string = decode_decimal(DecimalValueProto(arbitrary_precision_value=case["string"]))
-    from_compact = decode_decimal(_compact_only(case["unscaled_hex"], case["scale"]))
-
-    assert from_string.as_tuple() == from_compact.as_tuple()
-    # Re-serialising the legacy message writes the compact form too.
-    assert encode_decimal(from_string).SerializeToString().hex() == case["wire_hex"]
 
 
 def test_one_fifty_keeps_scale_two():
-    decoded = decode_decimal(DecimalValueProto.FromString(bytes.fromhex("5204312e35305a0200966002")))
+    decoded = decode_decimal(DecimalValueProto.FromString(bytes.fromhex("5a0200966002")))
 
     assert str(decoded) == "1.50"
     assert decoded.as_tuple().exponent == -2
@@ -116,49 +93,17 @@ def test_decode_takes_only_the_proto():
     assert decode_decimal(encode_decimal(Decimal("100.25"))) == Decimal("100.25")
 
 
-# Metric 4: two string-only decodes log one warning, whatever the message type.
-def test_string_fallback_logs_once_per_process(fresh_log_guard, caplog):
-    from fintekkers.models.price.price_pb2 import PriceProto
-    from fintekkers.models.security.security_pb2 import SecurityProto
+# LM-318: a decimal written as the old string only (field 10) is unset.
+def test_string_only_decimal_from_old_bytes_is_unset():
+    # 0x52 = field 10, length-delimited: "1.5" as a v0.4.33 writer stored it.
+    old = DecimalValueProto.FromString(bytes.fromhex("5203") + b"1.5")
 
-    caplog.set_level(logging.WARNING, logger="fintekkers.decimal")
-    price = PriceProto(price=DecimalValueProto(arbitrary_precision_value="100.25"))
-    security = SecurityProto()
-    security.bond_details.face_value.arbitrary_precision_value = "1000"
-
-    assert decode_decimal(price.price) == Decimal("100.25")
-    assert decode_decimal(security.bond_details.face_value) == Decimal("1000")
-    assert decode_decimal(encode_decimal(Decimal("1.50"))) == Decimal("1.50")
-
-    records = [r for r in caplog.records if r.name == "fintekkers.decimal"]
-    assert len(records) == 1
-    assert records[0].levelno == logging.WARNING
-    assert "DecimalValueProto.arbitrary_precision_value" in records[0].getMessage()
-
-
-def test_compact_decode_logs_nothing(fresh_log_guard, caplog):
-    caplog.set_level(logging.WARNING, logger="fintekkers.decimal")
-
-    decode_decimal(encode_decimal(Decimal("-123.45")))
-
-    assert caplog.records == []
-
-
-# Metric 4: the Python accessor for the deprecated string warns on every call.
-def test_legacy_string_warns_even_after_log_flag_set(monkeypatch):
-    monkeypatch.setattr(codec, "_legacy_logged", True)
-    proto = encode_decimal(Decimal("1.50"))
-
-    with pytest.warns(DeprecationWarning, match="arbitrary_precision_value"):
-        assert legacy_string(proto) == "1.50"
-    with pytest.warns(DeprecationWarning):
-        legacy_string(proto)
-
-
-def test_decode_does_not_emit_deprecation_warning():
-    with warnings.catch_warnings():
-        warnings.simplefilter("error", DeprecationWarning)
-        decode_decimal(DecimalValueProto(arbitrary_precision_value="1.5"))
+    assert not is_decimal_set(old)
+    with pytest.raises(ModelValidationError, match="decimal is required but unset"):
+        decode_decimal(old)
+    # Compact zero is still set.
+    assert is_decimal_set(encode_decimal(Decimal("0")))
+    assert encode_decimal(Decimal("0")).unscaled_value == b"\x00"
 
 
 # Guardrail 1: lossless, no float anywhere.
@@ -194,10 +139,10 @@ def test_encode_rejects_values_over_the_limits():
 
 
 def test_encode_int_and_positive_exponent():
-    assert encode_decimal(-1).SerializeToString().hex() == "52022d315a01ff"
+    assert encode_decimal(-1).SerializeToString().hex() == "5a01ff"
     proto = encode_decimal(Decimal("1E+3"))
     assert (proto.unscaled_value.hex(), proto.scale) == ("03e8", 0)
-    assert encode_decimal(Decimal("0E+5")).SerializeToString().hex() == "5201305a0100"
+    assert encode_decimal(Decimal("0E+5")).SerializeToString().hex() == "5a0100"
 
 
 @pytest.mark.parametrize("name", ["scale_28", "two_pow_127", "scale_40"])
@@ -206,11 +151,9 @@ def test_decode_ignores_context_precision(name):
     with localcontext() as ctx:
         ctx.prec = 5
         from_compact = decode_decimal(_compact_only(case["unscaled_hex"], case["scale"]))
-        from_string = decode_decimal(DecimalValueProto(arbitrary_precision_value=case["string"]))
         encoded = encode_decimal(from_compact)
 
     assert from_compact.as_tuple() == Decimal(case["canonical"]).as_tuple()
-    assert from_string.as_tuple() == Decimal(case["canonical"]).as_tuple()
     assert encoded.SerializeToString().hex() == case["wire_hex"]
 
 
@@ -226,26 +169,6 @@ def test_unset_decimal_is_a_typed_error():
         decode_decimal(DecimalValueProto())
     with pytest.raises(ModelValidationError):
         ProtoSerializationUtil.deserialize(DecimalValueProto())
-
-
-def test_compact_wins_over_malformed_string():
-    proto = DecimalValueProto(arbitrary_precision_value="not a number",
-                              unscaled_value=b"\x00\x96", scale=2)
-
-    assert decode_decimal(proto).as_tuple() == Decimal("1.50").as_tuple()
-
-
-@pytest.mark.parametrize("case", ORACLE["string_errors"], ids=[c["name"] for c in ORACLE["string_errors"]])
-def test_string_errors_are_typed(case):
-    with pytest.raises(ModelValidationError) as err:
-        decode_decimal(DecimalValueProto(arbitrary_precision_value=case["string"]))
-    assert err.value.field == "arbitrary_precision_value"
-
-
-@pytest.mark.parametrize("bad", ["1_0", "١", "1.0\n", "+", "-.", "."])
-def test_strings_python_decimal_accepts_but_grammar_rejects(bad):
-    with pytest.raises(ModelValidationError):
-        decode_decimal(DecimalValueProto(arbitrary_precision_value=bad))
 
 
 def _decode_error_bytes(case) -> bytes:

@@ -11,6 +11,7 @@ from fintekkers.requests.security.query_security_request_pb2 import QuerySecurit
 from fintekkers.wrappers.requests.security import CreateSecurityRequest, QuerySecurityRequest
 
 from models.util.dummy_security import USD
+from fintekkers.wrappers.models.util.decimal import decode_decimal
 
 CASH_USD_REQUEST = QuerySecurityRequest.create_query_request(
         fields={
@@ -30,7 +31,7 @@ def test_create_security_request():
 
     proto:CreateSecurityRequestProto = request.proto
 
-    assert proto.security_input.bond_details.face_value.arbitrary_precision_value == "1000.0"
+    assert format(decode_decimal(proto.security_input.bond_details.face_value), "f") == "1000.0"
     
 def test_query_security_request():
     request = CASH_USD_REQUEST

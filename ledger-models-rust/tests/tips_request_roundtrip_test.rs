@@ -1,22 +1,21 @@
-#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
 
 //! Step 3 tests — TipsInput / ProductInput proto round-trips.
 //!
 //! For each field: construct → encode to bytes → decode → verify field matches.
 
+mod common;
+use common::{decimal, Canonical};
+
 use ledger_models::fintekkers::models::security::{
     BondDetailsProto, CouponFrequencyProto, CouponTypeProto, SecurityProto, ProductTypeProto,
     TipsExtensionProto,
 };
-use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
+use ledger_models::fintekkers::models::util::LocalDateProto;
 use ledger_models::fintekkers::requests::valuation::{
     product_input, ProductInput, TipsInput, ValuationRequestProto,
 };
 use prost::Message;
 
-fn decimal(value: &str) -> DecimalValueProto {
-    DecimalValueProto { arbitrary_precision_value: value.to_string(), ..Default::default() }
-}
 
 fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
     LocalDateProto { year, month, day }
@@ -69,7 +68,7 @@ fn tips_input_clean_price_survives_roundtrip() {
 
     match parsed.input.unwrap() {
         product_input::Input::Tips(t) => {
-            assert_eq!(t.clean_price.unwrap().arbitrary_precision_value, "97.50");
+            assert_eq!(t.clean_price.unwrap().canonical(), "97.50");
         }
         other => panic!("Expected Tips variant, got {:?}", other),
     }
@@ -90,7 +89,7 @@ fn tips_input_current_cpi_survives_roundtrip() {
 
     match parsed.input.unwrap() {
         product_input::Input::Tips(t) => {
-            assert_eq!(t.current_cpi.unwrap().arbitrary_precision_value, "310.326");
+            assert_eq!(t.current_cpi.unwrap().canonical(), "310.326");
         }
         other => panic!("Expected Tips variant, got {:?}", other),
     }
@@ -116,14 +115,14 @@ fn tips_input_security_fields_survive_roundtrip() {
             let bond = sec.bond_details.unwrap();
             assert_eq!(bond.coupon_type(), CouponTypeProto::Fixed);
             assert_eq!(bond.coupon_frequency(), CouponFrequencyProto::Semiannually);
-            assert_eq!(bond.coupon_rate.unwrap().arbitrary_precision_value, "0.625");
-            assert_eq!(bond.face_value.unwrap().arbitrary_precision_value, "1000");
+            assert_eq!(bond.coupon_rate.unwrap().canonical(), "0.625");
+            assert_eq!(bond.face_value.unwrap().canonical(), "1000");
             let mat = bond.maturity_date.unwrap();
             assert_eq!(mat.year, 2030);
             assert_eq!(mat.month, 1);
             assert_eq!(mat.day, 15);
             let tips_ext = sec.tips_extension.unwrap();
-            assert_eq!(tips_ext.base_cpi.unwrap().arbitrary_precision_value, "260.474");
+            assert_eq!(tips_ext.base_cpi.unwrap().canonical(), "260.474");
         }
         other => panic!("Expected Tips variant, got {:?}", other),
     }
@@ -137,8 +136,6 @@ fn valuation_request_with_tips_product_input_survives_roundtrip() {
         current_cpi: Some(decimal("310.326")),
     };
     let original = ValuationRequestProto {
-        object_class: "ValuationRequest".into(),
-        version: "0.0.1".into(),
         product_input: Some(ProductInput {
             input: Some(product_input::Input::Tips(tips)),
         }),
@@ -147,12 +144,11 @@ fn valuation_request_with_tips_product_input_survives_roundtrip() {
 
     let parsed = roundtrip_valuation_request(&original);
 
-    assert_eq!(parsed.object_class, "ValuationRequest");
     let pi = parsed.product_input.unwrap();
     match pi.input.unwrap() {
         product_input::Input::Tips(t) => {
-            assert_eq!(t.clean_price.unwrap().arbitrary_precision_value, "97.50");
-            assert_eq!(t.current_cpi.unwrap().arbitrary_precision_value, "310.326");
+            assert_eq!(t.clean_price.unwrap().canonical(), "97.50");
+            assert_eq!(t.current_cpi.unwrap().canonical(), "310.326");
         }
         other => panic!("Expected Tips variant, got {:?}", other),
     }
@@ -191,10 +187,10 @@ fn tips_index_ratio_fields_preserve_precision() {
 
     match parsed.input.unwrap() {
         product_input::Input::Tips(t) => {
-            assert_eq!(t.current_cpi.unwrap().arbitrary_precision_value, "310.32600");
+            assert_eq!(t.current_cpi.unwrap().canonical(), "310.32600");
             let sec = t.security.unwrap();
             assert_eq!(
-                sec.tips_extension.unwrap().base_cpi.unwrap().arbitrary_precision_value,
+                sec.tips_extension.unwrap().base_cpi.unwrap().canonical(),
                 "260.47400"
             );
         }

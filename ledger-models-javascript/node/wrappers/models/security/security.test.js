@@ -8,13 +8,13 @@ const uuid_1 = require("../utils/uuid");
 const assert = require("assert");
 const security_1 = __importDefault(require("./security"));
 const BondSecurity_1 = __importDefault(require("./BondSecurity"));
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
 const index_type_pb_1 = require("../../../fintekkers/models/security/index/index_type_pb");
 const security_quantity_type_pb_1 = require("../../../fintekkers/models/security/security_quantity_type_pb");
+const decimal_1 = require("../utils/decimal");
 test('test the security wrapper', () => {
     testSerialization();
 });
@@ -106,14 +106,14 @@ test('isFxSpot(): runtime predicate, true on FX_SPOT only', () => {
 });
 function dummySecurity() {
     const bond = new security_pb_1.BondDetailsProto()
-        .setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'))
+        .setCouponRate((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('0.05')))
         .setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED)
-        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
+        .setFaceValue((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('1000.00')))
         .setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2026).setMonth(1).setDay(1))
         .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
         .setAssetClass("Bond")
         .setIssuerName("Dummy issuer")
@@ -124,14 +124,14 @@ function dummyBondSecurity() {
     // Same dummy security but with securityType set so the factory routes
     // to BondSecurity.
     const bond = new security_pb_1.BondDetailsProto()
-        .setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'))
+        .setCouponRate((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('0.05')))
         .setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED)
-        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
+        .setFaceValue((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('1000.00')))
         .setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2026).setMonth(1).setDay(1))
         .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE)
         .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
         .setAssetClass("Bond")
@@ -143,7 +143,7 @@ function dummyEquity() {
     // Equity has no maturity / issue date in the proto, exercising the
     // null-return behavior on the date accessors.
     return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.COMMON_STOCK)
         .setAssetClass("Equity")
         .setIssuerName("Dummy issuer Inc.")
@@ -151,14 +151,14 @@ function dummyEquity() {
 }
 function dummyMbs() {
     const bond = new security_pb_1.BondDetailsProto()
-        .setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.04'))
+        .setCouponRate((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('0.04')))
         .setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.MONTHLY)
         .setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED)
-        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('250000000'))
+        .setFaceValue((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('250000000')))
         .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2024).setMonth(1).setDay(1))
         .setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2054).setMonth(1).setDay(1));
     const proto = new security_pb_1.SecurityProto()
-        .setObjectClass('Security').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.MORTGAGE_BACKED)
         .setAssetClass("FixedIncome")
         .setIssuerName("FNMA")
@@ -170,7 +170,7 @@ function dummyMbs() {
 }
 function dummyIndex() {
     return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.CPI_SERIES)
         .setAssetClass("Index")
         .setIssuerName("BLS")
@@ -178,14 +178,14 @@ function dummyIndex() {
 }
 function dummyCash() {
     return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.CURRENCY)
         .setAssetClass("Cash")
         .setIssuerName("Federal Reserve"));
 }
 function dummyFxSpot() {
     return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.FX_SPOT)
         .setAssetClass("FX")
         .setIssuerName("FX"));

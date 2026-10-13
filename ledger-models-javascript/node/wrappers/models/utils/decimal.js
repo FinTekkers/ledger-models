@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fromDecimalJs = exports.toDecimalJs = exports.reencodeDecimal = exports.encodeDecimal = exports.decodeDecimal = exports.isUnsetDecimal = exports.toCanonicalString = exports.parseDecimalString = exports.withField = exports.setDecimalLogger = exports.MAX_UNSCALED_BYTES = exports.MAX_SCALE = exports.MAX_DIGITS = void 0;
+exports.fromDecimalJs = exports.toDecimalJs = exports.reencodeDecimal = exports.encodeDecimal = exports.decodeDecimal = exports.isUnsetDecimal = exports.toCanonicalString = exports.parseDecimalString = exports.withField = exports.MAX_UNSCALED_BYTES = exports.MAX_SCALE = exports.MAX_DIGITS = void 0;
 const decimal_js_1 = require("decimal.js");
 const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const errors_1 = require("../errors");
@@ -11,19 +11,14 @@ const errors_1 = require("../errors");
  *
  * value = unscaled x 10^-scale, where `unscaled_value` (field 11) is a minimal
  * two's-complement big-endian integer of any size and `scale` is field 12. A
- * non-empty `unscaled_value` means the compact form is set and it wins.
- * Otherwise the deprecated `arbitrary_precision_value` string (field 10) is
- * read, with a warning logged once per process (LM-307).
+ * non-empty `unscaled_value` means the decimal is set; empty means unset. The
+ * old string form, field 10, was deleted by LM-318.
  *
  * Lossless: no binary floating point on any path (no JS `number` value, no
  * `parseFloat`). A value that cannot be represented exactly is a
  * `ModelValidationError`, never rounded. The codec does not know which field
  * it is decoding: a caller that wants the field named wraps the call in
  * `withField`.
- *
- * Stage 1 (until LM-295): writers set both forms, so readers on older
- * ledger-models keep working. This module is the only code allowed to touch
- * the deprecated string field.
  */
 /**
  * Most decimal digits allowed in the unscaled value, and the largest scale.
@@ -36,19 +31,10 @@ exports.MAX_SCALE = 4096;
  * `MAX_DIGITS` digits, so it is rejected before it is parsed.
  */
 exports.MAX_UNSCALED_BYTES = 1702;
-/** The library release that first writes the compact form. */
-const FIRST_COMPACT_RELEASE = 'v0.4.34';
 // No bigint literals: tsconfig targets es2016.
 const ZERO = BigInt(0);
 const ONE = BigInt(1);
 const EIGHT = BigInt(8);
-let logger = console;
-let warned = false;
-/** Sends the deprecation warning to `l` from now on. Tests use it to spy. */
-function setDecimalLogger(l) {
-    logger = l;
-}
-exports.setDecimalLogger = setDecimalLogger;
 /** An unlabelled ModelValidationError: the field is empty until `withField` adds it. */
 function invalid(message) {
     return new errors_1.ModelValidationError([(0, errors_1.violation)('', undefined, message)]);
@@ -95,7 +81,7 @@ function isDigit(c) {
     return c !== undefined && c >= '0' && c <= '9';
 }
 /**
- * Parses a decimal string, as written to `arbitrary_precision_value`.
+ * Parses a decimal string such as `1.50` or `1E+3`.
  *
  * Grammar: `[+-]? (digits [. digits?] | . digits) ([eE] [+-]? digits)?`. No
  * whitespace, no `NaN` or `Infinity`. The exponent is folded into the scale;
@@ -237,35 +223,25 @@ function decodeCompact(unscaledValue, scale) {
     }
     return { unscaled, scale };
 }
-/** True when neither form is set: `unscaled_value` and `arbitrary_precision_value` are both empty. */
+/** True when `unscaled_value` is empty. A set zero is the byte 0x00. */
 function isUnsetDecimal(p) {
-    return p.getUnscaledValue_asU8().length === 0 && p.getArbitraryPrecisionValue() === '';
+    return p.getUnscaledValue_asU8().length === 0;
 }
 exports.isUnsetDecimal = isUnsetDecimal;
 /**
- * Decodes a `DecimalValueProto`. The compact form wins when set. Otherwise
- * falls back to the deprecated string and logs a deprecation warning, once
- * per process. Both forms empty is a ModelValidationError; so is a malformed
- * or over-cap value. Takes the proto only (owner ruling, 12 Oct): label
- * errors with `withField`.
+ * Decodes a `DecimalValueProto`. An empty `unscaled_value` ("decimal is
+ * required but unset") or an over-cap value is a ModelValidationError. Takes
+ * the proto only (owner ruling, 12 Oct): label errors with `withField`.
  */
 function decodeDecimal(p) {
     const unscaledValue = p.getUnscaledValue_asU8();
-    if (unscaledValue.length > 0) {
-        return decodeCompact(unscaledValue, p.getScale());
-    }
-    const legacy = p.getArbitraryPrecisionValue();
-    if (legacy === '') {
+    if (unscaledValue.length === 0) {
         throw invalid('decimal is required but unset');
     }
-    emitDeprecation();
-    return parseDecimalString(legacy);
+    return decodeCompact(unscaledValue, p.getScale());
 }
 exports.decodeDecimal = decodeDecimal;
-/**
- * Encodes both forms (stage 1): fields 11 and 12, plus the canonical string
- * in field 10 for readers on ledger-models older than v0.4.34.
- */
+/** Encodes fields 11 and 12. */
 function encodeDecimal(v) {
     if (typeof v.unscaled !== 'bigint') {
         throw invalid('decimal unscaled value must be a bigint');
@@ -274,15 +250,11 @@ function encodeDecimal(v) {
         throw invalid(`decimal scale must be an integer from 0 to ${exports.MAX_SCALE}: ${v.scale}`);
     }
     return new decimal_value_pb_1.DecimalValueProto()
-        .setArbitraryPrecisionValue(toCanonicalString(v))
         .setUnscaledValue(bigIntToBytes(v.unscaled))
         .setScale(v.scale);
 }
 exports.encodeDecimal = encodeDecimal;
-/**
- * `p` rewritten in both forms (stage 1), keeping its value and scale. Used
- * when re-saving a message loaded from older bytes.
- */
+/** `p` rewritten with minimal unscaled bytes, keeping its value and scale. */
 function reencodeDecimal(p) {
     return encodeDecimal(decodeDecimal(p));
 }
@@ -314,15 +286,4 @@ function fromDecimalJs(d) {
     return parseDecimalString(d.toFixed());
 }
 exports.fromDecimalJs = fromDecimalJs;
-/**
- * Logs that a decimal was read from the deprecated string, the first time
- * only in this process.
- */
-function emitDeprecation() {
-    if (warned)
-        return;
-    warned = true;
-    logger.warn('DecimalValueProto read from deprecated arbitrary_precision_value; '
-        + `writer predates ledger-models ${FIRST_COMPACT_RELEASE}`);
-}
 //# sourceMappingURL=decimal.js.map

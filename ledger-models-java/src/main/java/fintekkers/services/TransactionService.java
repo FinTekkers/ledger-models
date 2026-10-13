@@ -75,7 +75,7 @@ public class TransactionService {
      * delegates to.
      */
     public TransactionProto getByUuid(UUID uuid, ZonedDateTime asOf) {
-        QueryTransactionRequestProto.Builder reqB = ObjectTypes.stamp(QueryTransactionRequestProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, "TransactionRequest", "0.0.1")
+        QueryTransactionRequestProto.Builder reqB = ObjectTypes.stamp(QueryTransactionRequestProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST)
                 .addUuIds(ProtoSerializationUtil.serializeUUID(uuid));
         if (asOf != null) {
             reqB.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));

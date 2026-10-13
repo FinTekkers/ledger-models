@@ -33,17 +33,16 @@ public final class CreatePriceResponseProtos {
       "ce\032#fintekkers/models/price/price.proto\032" +
       "4fintekkers/requests/price/create_price_" +
       "request.proto\032(fintekkers/models/util/ob" +
-      "ject_type.proto\"\337\002\n\030CreatePriceResponseP" +
-      "roto\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007versio" +
-      "n\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fint" +
-      "ekkers.models.util.ObjectTypeProto\022\026\n\rve" +
-      "rsion_major\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001" +
-      "(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022P\n\024create_pri" +
-      "ce_request\030\024 \001(\01322.fintekkers.requests.p" +
-      "rice.CreatePriceRequestProto\022;\n\016price_re" +
-      "sponse\030\036 \003(\0132#.fintekkers.models.price.P" +
-      "riceProtoB\035B\031CreatePriceResponseProtosP\001" +
-      "b\006proto3"
+      "ject_type.proto\032$fintekkers/models/util/" +
+      "version.proto\"\236\002\n\030CreatePriceResponsePro" +
+      "to\022<\n\013object_type\030\001 \001(\0162\'.fintekkers.mod" +
+      "els.util.ObjectTypeProto\0225\n\007version\030\002 \001(" +
+      "\0132$.fintekkers.models.util.VersionProto\022" +
+      "P\n\024create_price_request\030\024 \001(\01322.fintekke" +
+      "rs.requests.price.CreatePriceRequestProt" +
+      "o\022;\n\016price_response\030\036 \003(\0132#.fintekkers.m" +
+      "odels.price.PriceProtoB\035B\031CreatePriceRes" +
+      "ponseProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -51,16 +50,18 @@ public final class CreatePriceResponseProtos {
           fintekkers.models.price.PriceProtos.getDescriptor(),
           fintekkers.requests.price.CreatePriceRequestProtos.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_price_CreatePriceResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_price_CreatePriceResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_price_CreatePriceResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "CreatePriceRequest", "PriceResponse", });
+        new java.lang.String[] { "ObjectType", "Version", "CreatePriceRequest", "PriceResponse", });
     fintekkers.models.price.PriceProtos.getDescriptor();
     fintekkers.requests.price.CreatePriceRequestProtos.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

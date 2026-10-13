@@ -4,6 +4,7 @@ from fintekkers.models.util import local_timestamp_pb2 as _local_timestamp_pb2
 from fintekkers.models.util import uuid_pb2 as _uuid_pb2
 from fintekkers.models.security import security_pb2 as _security_pb2
 from fintekkers.models.util import object_type_pb2 as _object_type_pb2
+from fintekkers.models.util import version_pb2 as _version_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
@@ -13,13 +14,9 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class IndexCompositionProto(_message.Message):
-    __slots__ = ("object_class", "version", "object_type", "version_major", "version_minor", "version_patch", "uuid", "as_of", "is_link", "valid_from", "valid_to", "index_security", "effective_date", "constituents", "index_divisor", "notes")
-    OBJECT_CLASS_FIELD_NUMBER: _ClassVar[int]
-    VERSION_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("object_type", "version", "uuid", "as_of", "is_link", "valid_from", "valid_to", "index_security", "effective_date", "constituents", "index_divisor", "notes")
     OBJECT_TYPE_FIELD_NUMBER: _ClassVar[int]
-    VERSION_MAJOR_FIELD_NUMBER: _ClassVar[int]
-    VERSION_MINOR_FIELD_NUMBER: _ClassVar[int]
-    VERSION_PATCH_FIELD_NUMBER: _ClassVar[int]
+    VERSION_FIELD_NUMBER: _ClassVar[int]
     UUID_FIELD_NUMBER: _ClassVar[int]
     AS_OF_FIELD_NUMBER: _ClassVar[int]
     IS_LINK_FIELD_NUMBER: _ClassVar[int]
@@ -30,12 +27,8 @@ class IndexCompositionProto(_message.Message):
     CONSTITUENTS_FIELD_NUMBER: _ClassVar[int]
     INDEX_DIVISOR_FIELD_NUMBER: _ClassVar[int]
     NOTES_FIELD_NUMBER: _ClassVar[int]
-    object_class: str
-    version: str
     object_type: _object_type_pb2.ObjectTypeProto
-    version_major: int
-    version_minor: int
-    version_patch: int
+    version: _version_pb2.VersionProto
     uuid: _uuid_pb2.UUIDProto
     as_of: _local_timestamp_pb2.LocalTimestampProto
     is_link: bool
@@ -46,7 +39,7 @@ class IndexCompositionProto(_message.Message):
     constituents: _containers.RepeatedCompositeFieldContainer[IndexConstituentProto]
     index_divisor: _decimal_value_pb2.DecimalValueProto
     notes: str
-    def __init__(self, object_class: _Optional[str] = ..., version: _Optional[str] = ..., object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version_major: _Optional[int] = ..., version_minor: _Optional[int] = ..., version_patch: _Optional[int] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., index_security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., effective_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., constituents: _Optional[_Iterable[_Union[IndexConstituentProto, _Mapping]]] = ..., index_divisor: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., notes: _Optional[str] = ...) -> None: ...
+    def __init__(self, object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version: _Optional[_Union[_version_pb2.VersionProto, _Mapping]] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., index_security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., effective_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., constituents: _Optional[_Iterable[_Union[IndexConstituentProto, _Mapping]]] = ..., index_divisor: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., notes: _Optional[str] = ...) -> None: ...
 
 class IndexConstituentProto(_message.Message):
     __slots__ = ("security", "weight", "shares_in_index", "currency")

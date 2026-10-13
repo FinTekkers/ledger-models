@@ -23,85 +23,46 @@ public final class ApiKey {
      *Will be "API_Key"
      * </pre>
      *
-     * <code>string object_class = 1 [deprecated = true];</code>
-     * @deprecated fintekkers.models.util.api.API_Key.object_class is deprecated.
-     *     See fintekkers/models/util/api/api_key.proto;l=35
-     * @return The objectClass.
-     */
-    @java.lang.Deprecated java.lang.String getObjectClass();
-    /**
-     * <pre>
-     *Will be "API_Key"
-     * </pre>
-     *
-     * <code>string object_class = 1 [deprecated = true];</code>
-     * @deprecated fintekkers.models.util.api.API_Key.object_class is deprecated.
-     *     See fintekkers/models/util/api/api_key.proto;l=35
-     * @return The bytes for objectClass.
-     */
-    @java.lang.Deprecated com.google.protobuf.ByteString
-        getObjectClassBytes();
-
-    /**
-     * <pre>
-     *In format 1.0.0
-     * </pre>
-     *
-     * <code>string version = 2 [deprecated = true];</code>
-     * @deprecated fintekkers.models.util.api.API_Key.version is deprecated.
-     *     See fintekkers/models/util/api/api_key.proto;l=38
-     * @return The version.
-     */
-    @java.lang.Deprecated java.lang.String getVersion();
-    /**
-     * <pre>
-     *In format 1.0.0
-     * </pre>
-     *
-     * <code>string version = 2 [deprecated = true];</code>
-     * @deprecated fintekkers.models.util.api.API_Key.version is deprecated.
-     *     See fintekkers/models/util/api/api_key.proto;l=38
-     * @return The bytes for version.
-     */
-    @java.lang.Deprecated com.google.protobuf.ByteString
-        getVersionBytes();
-
-    /**
-     * <pre>
-     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
      * @return The enum numeric value on the wire for objectType.
      */
     int getObjectTypeValue();
     /**
      * <pre>
-     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     *Will be "API_Key"
      * </pre>
      *
-     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
      * @return The objectType.
      */
     fintekkers.models.util.ObjectTypeProto getObjectType();
 
     /**
-     * <code>uint32 version_major = 1002;</code>
-     * @return The versionMajor.
+     * <pre>
+     *In format 1.0.0
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+     * @return Whether the version field is set.
      */
-    int getVersionMajor();
-
+    boolean hasVersion();
     /**
-     * <code>uint32 version_minor = 1003;</code>
-     * @return The versionMinor.
+     * <pre>
+     *In format 1.0.0
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+     * @return The version.
      */
-    int getVersionMinor();
-
+    fintekkers.models.util.VersionProto getVersion();
     /**
-     * <code>uint32 version_patch = 1004;</code>
-     * @return The versionPatch.
+     * <pre>
+     *In format 1.0.0
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
      */
-    int getVersionPatch();
+    fintekkers.models.util.VersionProtoOrBuilder getVersionOrBuilder();
 
     /**
      * <pre>
@@ -180,8 +141,6 @@ public final class ApiKey {
       super(builder);
     }
     private API_Key() {
-      objectClass_ = "";
-      version_ = "";
       objectType_ = 0;
       identity_ = "";
       key_ = "";
@@ -212,116 +171,14 @@ public final class ApiKey {
               fintekkers.models.util.api.ApiKey.API_Key.class, fintekkers.models.util.api.ApiKey.API_Key.Builder.class);
     }
 
-    public static final int OBJECT_CLASS_FIELD_NUMBER = 1;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object objectClass_ = "";
-    /**
-     * <pre>
-     *Will be "API_Key"
-     * </pre>
-     *
-     * <code>string object_class = 1 [deprecated = true];</code>
-     * @deprecated fintekkers.models.util.api.API_Key.object_class is deprecated.
-     *     See fintekkers/models/util/api/api_key.proto;l=35
-     * @return The objectClass.
-     */
-    @java.lang.Override
-    @java.lang.Deprecated public java.lang.String getObjectClass() {
-      java.lang.Object ref = objectClass_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        objectClass_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     *Will be "API_Key"
-     * </pre>
-     *
-     * <code>string object_class = 1 [deprecated = true];</code>
-     * @deprecated fintekkers.models.util.api.API_Key.object_class is deprecated.
-     *     See fintekkers/models/util/api/api_key.proto;l=35
-     * @return The bytes for objectClass.
-     */
-    @java.lang.Override
-    @java.lang.Deprecated public com.google.protobuf.ByteString
-        getObjectClassBytes() {
-      java.lang.Object ref = objectClass_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        objectClass_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int VERSION_FIELD_NUMBER = 2;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object version_ = "";
-    /**
-     * <pre>
-     *In format 1.0.0
-     * </pre>
-     *
-     * <code>string version = 2 [deprecated = true];</code>
-     * @deprecated fintekkers.models.util.api.API_Key.version is deprecated.
-     *     See fintekkers/models/util/api/api_key.proto;l=38
-     * @return The version.
-     */
-    @java.lang.Override
-    @java.lang.Deprecated public java.lang.String getVersion() {
-      java.lang.Object ref = version_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        version_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     *In format 1.0.0
-     * </pre>
-     *
-     * <code>string version = 2 [deprecated = true];</code>
-     * @deprecated fintekkers.models.util.api.API_Key.version is deprecated.
-     *     See fintekkers/models/util/api/api_key.proto;l=38
-     * @return The bytes for version.
-     */
-    @java.lang.Override
-    @java.lang.Deprecated public com.google.protobuf.ByteString
-        getVersionBytes() {
-      java.lang.Object ref = version_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        version_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int OBJECT_TYPE_FIELD_NUMBER = 1001;
+    public static final int OBJECT_TYPE_FIELD_NUMBER = 1;
     private int objectType_ = 0;
     /**
      * <pre>
-     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     *Will be "API_Key"
      * </pre>
      *
-     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
      * @return The enum numeric value on the wire for objectType.
      */
     @java.lang.Override public int getObjectTypeValue() {
@@ -329,10 +186,10 @@ public final class ApiKey {
     }
     /**
      * <pre>
-     * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+     *Will be "API_Key"
      * </pre>
      *
-     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+     * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
      * @return The objectType.
      */
     @java.lang.Override public fintekkers.models.util.ObjectTypeProto getObjectType() {
@@ -340,37 +197,42 @@ public final class ApiKey {
       return result == null ? fintekkers.models.util.ObjectTypeProto.UNRECOGNIZED : result;
     }
 
-    public static final int VERSION_MAJOR_FIELD_NUMBER = 1002;
-    private int versionMajor_ = 0;
+    public static final int VERSION_FIELD_NUMBER = 2;
+    private fintekkers.models.util.VersionProto version_;
     /**
-     * <code>uint32 version_major = 1002;</code>
-     * @return The versionMajor.
+     * <pre>
+     *In format 1.0.0
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+     * @return Whether the version field is set.
      */
     @java.lang.Override
-    public int getVersionMajor() {
-      return versionMajor_;
+    public boolean hasVersion() {
+      return version_ != null;
     }
-
-    public static final int VERSION_MINOR_FIELD_NUMBER = 1003;
-    private int versionMinor_ = 0;
     /**
-     * <code>uint32 version_minor = 1003;</code>
-     * @return The versionMinor.
+     * <pre>
+     *In format 1.0.0
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+     * @return The version.
      */
     @java.lang.Override
-    public int getVersionMinor() {
-      return versionMinor_;
+    public fintekkers.models.util.VersionProto getVersion() {
+      return version_ == null ? fintekkers.models.util.VersionProto.getDefaultInstance() : version_;
     }
-
-    public static final int VERSION_PATCH_FIELD_NUMBER = 1004;
-    private int versionPatch_ = 0;
     /**
-     * <code>uint32 version_patch = 1004;</code>
-     * @return The versionPatch.
+     * <pre>
+     *In format 1.0.0
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.VersionProto version = 2;</code>
      */
     @java.lang.Override
-    public int getVersionPatch() {
-      return versionPatch_;
+    public fintekkers.models.util.VersionProtoOrBuilder getVersionOrBuilder() {
+      return version_ == null ? fintekkers.models.util.VersionProto.getDefaultInstance() : version_;
     }
 
     public static final int IDENTITY_FIELD_NUMBER = 3;
@@ -485,29 +347,17 @@ public final class ApiKey {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, objectClass_);
+      if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
+        output.writeEnum(1, objectType_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, version_);
+      if (version_ != null) {
+        output.writeMessage(2, getVersion());
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(identity_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, identity_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, key_);
-      }
-      if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
-        output.writeEnum(1001, objectType_);
-      }
-      if (versionMajor_ != 0) {
-        output.writeUInt32(1002, versionMajor_);
-      }
-      if (versionMinor_ != 0) {
-        output.writeUInt32(1003, versionMinor_);
-      }
-      if (versionPatch_ != 0) {
-        output.writeUInt32(1004, versionPatch_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -518,33 +368,19 @@ public final class ApiKey {
       if (size != -1) return size;
 
       size = 0;
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(objectClass_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, objectClass_);
+      if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(1, objectType_);
       }
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(version_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, version_);
+      if (version_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getVersion());
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(identity_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, identity_);
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(key_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, key_);
-      }
-      if (objectType_ != fintekkers.models.util.ObjectTypeProto.OBJECT_TYPE_UNKNOWN.getNumber()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1001, objectType_);
-      }
-      if (versionMajor_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(1002, versionMajor_);
-      }
-      if (versionMinor_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(1003, versionMinor_);
-      }
-      if (versionPatch_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(1004, versionPatch_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -561,17 +397,12 @@ public final class ApiKey {
       }
       fintekkers.models.util.api.ApiKey.API_Key other = (fintekkers.models.util.api.ApiKey.API_Key) obj;
 
-      if (!getObjectClass()
-          .equals(other.getObjectClass())) return false;
-      if (!getVersion()
-          .equals(other.getVersion())) return false;
       if (objectType_ != other.objectType_) return false;
-      if (getVersionMajor()
-          != other.getVersionMajor()) return false;
-      if (getVersionMinor()
-          != other.getVersionMinor()) return false;
-      if (getVersionPatch()
-          != other.getVersionPatch()) return false;
+      if (hasVersion() != other.hasVersion()) return false;
+      if (hasVersion()) {
+        if (!getVersion()
+            .equals(other.getVersion())) return false;
+      }
       if (!getIdentity()
           .equals(other.getIdentity())) return false;
       if (!getKey()
@@ -587,18 +418,12 @@ public final class ApiKey {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + OBJECT_CLASS_FIELD_NUMBER;
-      hash = (53 * hash) + getObjectClass().hashCode();
-      hash = (37 * hash) + VERSION_FIELD_NUMBER;
-      hash = (53 * hash) + getVersion().hashCode();
       hash = (37 * hash) + OBJECT_TYPE_FIELD_NUMBER;
       hash = (53 * hash) + objectType_;
-      hash = (37 * hash) + VERSION_MAJOR_FIELD_NUMBER;
-      hash = (53 * hash) + getVersionMajor();
-      hash = (37 * hash) + VERSION_MINOR_FIELD_NUMBER;
-      hash = (53 * hash) + getVersionMinor();
-      hash = (37 * hash) + VERSION_PATCH_FIELD_NUMBER;
-      hash = (53 * hash) + getVersionPatch();
+      if (hasVersion()) {
+        hash = (37 * hash) + VERSION_FIELD_NUMBER;
+        hash = (53 * hash) + getVersion().hashCode();
+      }
       hash = (37 * hash) + IDENTITY_FIELD_NUMBER;
       hash = (53 * hash) + getIdentity().hashCode();
       hash = (37 * hash) + KEY_FIELD_NUMBER;
@@ -752,12 +577,12 @@ public final class ApiKey {
       public Builder clear() {
         super.clear();
         bitField0_ = 0;
-        objectClass_ = "";
-        version_ = "";
         objectType_ = 0;
-        versionMajor_ = 0;
-        versionMinor_ = 0;
-        versionPatch_ = 0;
+        version_ = null;
+        if (versionBuilder_ != null) {
+          versionBuilder_.dispose();
+          versionBuilder_ = null;
+        }
         identity_ = "";
         key_ = "";
         return this;
@@ -794,27 +619,17 @@ public final class ApiKey {
       private void buildPartial0(fintekkers.models.util.api.ApiKey.API_Key result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
-          result.objectClass_ = objectClass_;
-        }
-        if (((from_bitField0_ & 0x00000002) != 0)) {
-          result.version_ = version_;
-        }
-        if (((from_bitField0_ & 0x00000004) != 0)) {
           result.objectType_ = objectType_;
         }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.versionMajor_ = versionMajor_;
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.version_ = versionBuilder_ == null
+              ? version_
+              : versionBuilder_.build();
         }
-        if (((from_bitField0_ & 0x00000010) != 0)) {
-          result.versionMinor_ = versionMinor_;
-        }
-        if (((from_bitField0_ & 0x00000020) != 0)) {
-          result.versionPatch_ = versionPatch_;
-        }
-        if (((from_bitField0_ & 0x00000040) != 0)) {
+        if (((from_bitField0_ & 0x00000004) != 0)) {
           result.identity_ = identity_;
         }
-        if (((from_bitField0_ & 0x00000080) != 0)) {
+        if (((from_bitField0_ & 0x00000008) != 0)) {
           result.key_ = key_;
         }
       }
@@ -863,36 +678,20 @@ public final class ApiKey {
 
       public Builder mergeFrom(fintekkers.models.util.api.ApiKey.API_Key other) {
         if (other == fintekkers.models.util.api.ApiKey.API_Key.getDefaultInstance()) return this;
-        if (!other.getObjectClass().isEmpty()) {
-          objectClass_ = other.objectClass_;
-          bitField0_ |= 0x00000001;
-          onChanged();
-        }
-        if (!other.getVersion().isEmpty()) {
-          version_ = other.version_;
-          bitField0_ |= 0x00000002;
-          onChanged();
-        }
         if (other.objectType_ != 0) {
           setObjectTypeValue(other.getObjectTypeValue());
         }
-        if (other.getVersionMajor() != 0) {
-          setVersionMajor(other.getVersionMajor());
-        }
-        if (other.getVersionMinor() != 0) {
-          setVersionMinor(other.getVersionMinor());
-        }
-        if (other.getVersionPatch() != 0) {
-          setVersionPatch(other.getVersionPatch());
+        if (other.hasVersion()) {
+          mergeVersion(other.getVersion());
         }
         if (!other.getIdentity().isEmpty()) {
           identity_ = other.identity_;
-          bitField0_ |= 0x00000040;
+          bitField0_ |= 0x00000004;
           onChanged();
         }
         if (!other.getKey().isEmpty()) {
           key_ = other.key_;
-          bitField0_ |= 0x00000080;
+          bitField0_ |= 0x00000008;
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -921,46 +720,28 @@ public final class ApiKey {
               case 0:
                 done = true;
                 break;
-              case 10: {
-                objectClass_ = input.readStringRequireUtf8();
+              case 8: {
+                objectType_ = input.readEnum();
                 bitField0_ |= 0x00000001;
                 break;
-              } // case 10
+              } // case 8
               case 18: {
-                version_ = input.readStringRequireUtf8();
+                input.readMessage(
+                    getVersionFieldBuilder().getBuilder(),
+                    extensionRegistry);
                 bitField0_ |= 0x00000002;
                 break;
               } // case 18
               case 26: {
                 identity_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000040;
+                bitField0_ |= 0x00000004;
                 break;
               } // case 26
               case 34: {
                 key_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000080;
-                break;
-              } // case 34
-              case 8008: {
-                objectType_ = input.readEnum();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 8008
-              case 8016: {
-                versionMajor_ = input.readUInt32();
                 bitField0_ |= 0x00000008;
                 break;
-              } // case 8016
-              case 8024: {
-                versionMinor_ = input.readUInt32();
-                bitField0_ |= 0x00000010;
-                break;
-              } // case 8024
-              case 8032: {
-                versionPatch_ = input.readUInt32();
-                bitField0_ |= 0x00000020;
-                break;
-              } // case 8032
+              } // case 34
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -978,217 +759,13 @@ public final class ApiKey {
       }
       private int bitField0_;
 
-      private java.lang.Object objectClass_ = "";
-      /**
-       * <pre>
-       *Will be "API_Key"
-       * </pre>
-       *
-       * <code>string object_class = 1 [deprecated = true];</code>
-       * @deprecated fintekkers.models.util.api.API_Key.object_class is deprecated.
-       *     See fintekkers/models/util/api/api_key.proto;l=35
-       * @return The objectClass.
-       */
-      @java.lang.Deprecated public java.lang.String getObjectClass() {
-        java.lang.Object ref = objectClass_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          objectClass_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       *Will be "API_Key"
-       * </pre>
-       *
-       * <code>string object_class = 1 [deprecated = true];</code>
-       * @deprecated fintekkers.models.util.api.API_Key.object_class is deprecated.
-       *     See fintekkers/models/util/api/api_key.proto;l=35
-       * @return The bytes for objectClass.
-       */
-      @java.lang.Deprecated public com.google.protobuf.ByteString
-          getObjectClassBytes() {
-        java.lang.Object ref = objectClass_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          objectClass_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       *Will be "API_Key"
-       * </pre>
-       *
-       * <code>string object_class = 1 [deprecated = true];</code>
-       * @deprecated fintekkers.models.util.api.API_Key.object_class is deprecated.
-       *     See fintekkers/models/util/api/api_key.proto;l=35
-       * @param value The objectClass to set.
-       * @return This builder for chaining.
-       */
-      @java.lang.Deprecated public Builder setObjectClass(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        objectClass_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       *Will be "API_Key"
-       * </pre>
-       *
-       * <code>string object_class = 1 [deprecated = true];</code>
-       * @deprecated fintekkers.models.util.api.API_Key.object_class is deprecated.
-       *     See fintekkers/models/util/api/api_key.proto;l=35
-       * @return This builder for chaining.
-       */
-      @java.lang.Deprecated public Builder clearObjectClass() {
-        objectClass_ = getDefaultInstance().getObjectClass();
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       *Will be "API_Key"
-       * </pre>
-       *
-       * <code>string object_class = 1 [deprecated = true];</code>
-       * @deprecated fintekkers.models.util.api.API_Key.object_class is deprecated.
-       *     See fintekkers/models/util/api/api_key.proto;l=35
-       * @param value The bytes for objectClass to set.
-       * @return This builder for chaining.
-       */
-      @java.lang.Deprecated public Builder setObjectClassBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        objectClass_ = value;
-        bitField0_ |= 0x00000001;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object version_ = "";
-      /**
-       * <pre>
-       *In format 1.0.0
-       * </pre>
-       *
-       * <code>string version = 2 [deprecated = true];</code>
-       * @deprecated fintekkers.models.util.api.API_Key.version is deprecated.
-       *     See fintekkers/models/util/api/api_key.proto;l=38
-       * @return The version.
-       */
-      @java.lang.Deprecated public java.lang.String getVersion() {
-        java.lang.Object ref = version_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          version_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       *In format 1.0.0
-       * </pre>
-       *
-       * <code>string version = 2 [deprecated = true];</code>
-       * @deprecated fintekkers.models.util.api.API_Key.version is deprecated.
-       *     See fintekkers/models/util/api/api_key.proto;l=38
-       * @return The bytes for version.
-       */
-      @java.lang.Deprecated public com.google.protobuf.ByteString
-          getVersionBytes() {
-        java.lang.Object ref = version_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          version_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       *In format 1.0.0
-       * </pre>
-       *
-       * <code>string version = 2 [deprecated = true];</code>
-       * @deprecated fintekkers.models.util.api.API_Key.version is deprecated.
-       *     See fintekkers/models/util/api/api_key.proto;l=38
-       * @param value The version to set.
-       * @return This builder for chaining.
-       */
-      @java.lang.Deprecated public Builder setVersion(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        version_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       *In format 1.0.0
-       * </pre>
-       *
-       * <code>string version = 2 [deprecated = true];</code>
-       * @deprecated fintekkers.models.util.api.API_Key.version is deprecated.
-       *     See fintekkers/models/util/api/api_key.proto;l=38
-       * @return This builder for chaining.
-       */
-      @java.lang.Deprecated public Builder clearVersion() {
-        version_ = getDefaultInstance().getVersion();
-        bitField0_ = (bitField0_ & ~0x00000002);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       *In format 1.0.0
-       * </pre>
-       *
-       * <code>string version = 2 [deprecated = true];</code>
-       * @deprecated fintekkers.models.util.api.API_Key.version is deprecated.
-       *     See fintekkers/models/util/api/api_key.proto;l=38
-       * @param value The bytes for version to set.
-       * @return This builder for chaining.
-       */
-      @java.lang.Deprecated public Builder setVersionBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        version_ = value;
-        bitField0_ |= 0x00000002;
-        onChanged();
-        return this;
-      }
-
       private int objectType_ = 0;
       /**
        * <pre>
-       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       *Will be "API_Key"
        * </pre>
        *
-       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
        * @return The enum numeric value on the wire for objectType.
        */
       @java.lang.Override public int getObjectTypeValue() {
@@ -1196,25 +773,25 @@ public final class ApiKey {
       }
       /**
        * <pre>
-       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       *Will be "API_Key"
        * </pre>
        *
-       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
        * @param value The enum numeric value on the wire for objectType to set.
        * @return This builder for chaining.
        */
       public Builder setObjectTypeValue(int value) {
         objectType_ = value;
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000001;
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       *Will be "API_Key"
        * </pre>
        *
-       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
        * @return The objectType.
        */
       @java.lang.Override
@@ -1224,10 +801,10 @@ public final class ApiKey {
       }
       /**
        * <pre>
-       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       *Will be "API_Key"
        * </pre>
        *
-       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
        * @param value The objectType to set.
        * @return This builder for chaining.
        */
@@ -1235,120 +812,179 @@ public final class ApiKey {
         if (value == null) {
           throw new NullPointerException();
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000001;
         objectType_ = value.getNumber();
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Compact form of object_class / version (LM-297). Writers set both in stage 1.
+       *Will be "API_Key"
        * </pre>
        *
-       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+       * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearObjectType() {
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000001);
         objectType_ = 0;
         onChanged();
         return this;
       }
 
-      private int versionMajor_ ;
+      private fintekkers.models.util.VersionProto version_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          fintekkers.models.util.VersionProto, fintekkers.models.util.VersionProto.Builder, fintekkers.models.util.VersionProtoOrBuilder> versionBuilder_;
       /**
-       * <code>uint32 version_major = 1002;</code>
-       * @return The versionMajor.
+       * <pre>
+       *In format 1.0.0
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+       * @return Whether the version field is set.
        */
-      @java.lang.Override
-      public int getVersionMajor() {
-        return versionMajor_;
+      public boolean hasVersion() {
+        return ((bitField0_ & 0x00000002) != 0);
       }
       /**
-       * <code>uint32 version_major = 1002;</code>
-       * @param value The versionMajor to set.
-       * @return This builder for chaining.
+       * <pre>
+       *In format 1.0.0
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+       * @return The version.
        */
-      public Builder setVersionMajor(int value) {
-        
-        versionMajor_ = value;
-        bitField0_ |= 0x00000008;
+      public fintekkers.models.util.VersionProto getVersion() {
+        if (versionBuilder_ == null) {
+          return version_ == null ? fintekkers.models.util.VersionProto.getDefaultInstance() : version_;
+        } else {
+          return versionBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       *In format 1.0.0
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+       */
+      public Builder setVersion(fintekkers.models.util.VersionProto value) {
+        if (versionBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          version_ = value;
+        } else {
+          versionBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
       /**
-       * <code>uint32 version_major = 1002;</code>
-       * @return This builder for chaining.
+       * <pre>
+       *In format 1.0.0
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.VersionProto version = 2;</code>
        */
-      public Builder clearVersionMajor() {
-        bitField0_ = (bitField0_ & ~0x00000008);
-        versionMajor_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private int versionMinor_ ;
-      /**
-       * <code>uint32 version_minor = 1003;</code>
-       * @return The versionMinor.
-       */
-      @java.lang.Override
-      public int getVersionMinor() {
-        return versionMinor_;
-      }
-      /**
-       * <code>uint32 version_minor = 1003;</code>
-       * @param value The versionMinor to set.
-       * @return This builder for chaining.
-       */
-      public Builder setVersionMinor(int value) {
-        
-        versionMinor_ = value;
-        bitField0_ |= 0x00000010;
+      public Builder setVersion(
+          fintekkers.models.util.VersionProto.Builder builderForValue) {
+        if (versionBuilder_ == null) {
+          version_ = builderForValue.build();
+        } else {
+          versionBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
       /**
-       * <code>uint32 version_minor = 1003;</code>
-       * @return This builder for chaining.
+       * <pre>
+       *In format 1.0.0
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.VersionProto version = 2;</code>
        */
-      public Builder clearVersionMinor() {
-        bitField0_ = (bitField0_ & ~0x00000010);
-        versionMinor_ = 0;
-        onChanged();
-        return this;
-      }
-
-      private int versionPatch_ ;
-      /**
-       * <code>uint32 version_patch = 1004;</code>
-       * @return The versionPatch.
-       */
-      @java.lang.Override
-      public int getVersionPatch() {
-        return versionPatch_;
-      }
-      /**
-       * <code>uint32 version_patch = 1004;</code>
-       * @param value The versionPatch to set.
-       * @return This builder for chaining.
-       */
-      public Builder setVersionPatch(int value) {
-        
-        versionPatch_ = value;
-        bitField0_ |= 0x00000020;
+      public Builder mergeVersion(fintekkers.models.util.VersionProto value) {
+        if (versionBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0) &&
+            version_ != null &&
+            version_ != fintekkers.models.util.VersionProto.getDefaultInstance()) {
+            getVersionBuilder().mergeFrom(value);
+          } else {
+            version_ = value;
+          }
+        } else {
+          versionBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000002;
         onChanged();
         return this;
       }
       /**
-       * <code>uint32 version_patch = 1004;</code>
-       * @return This builder for chaining.
+       * <pre>
+       *In format 1.0.0
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.VersionProto version = 2;</code>
        */
-      public Builder clearVersionPatch() {
-        bitField0_ = (bitField0_ & ~0x00000020);
-        versionPatch_ = 0;
+      public Builder clearVersion() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        version_ = null;
+        if (versionBuilder_ != null) {
+          versionBuilder_.dispose();
+          versionBuilder_ = null;
+        }
         onChanged();
         return this;
+      }
+      /**
+       * <pre>
+       *In format 1.0.0
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+       */
+      public fintekkers.models.util.VersionProto.Builder getVersionBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getVersionFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       *In format 1.0.0
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+       */
+      public fintekkers.models.util.VersionProtoOrBuilder getVersionOrBuilder() {
+        if (versionBuilder_ != null) {
+          return versionBuilder_.getMessageOrBuilder();
+        } else {
+          return version_ == null ?
+              fintekkers.models.util.VersionProto.getDefaultInstance() : version_;
+        }
+      }
+      /**
+       * <pre>
+       *In format 1.0.0
+       * </pre>
+       *
+       * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          fintekkers.models.util.VersionProto, fintekkers.models.util.VersionProto.Builder, fintekkers.models.util.VersionProtoOrBuilder> 
+          getVersionFieldBuilder() {
+        if (versionBuilder_ == null) {
+          versionBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              fintekkers.models.util.VersionProto, fintekkers.models.util.VersionProto.Builder, fintekkers.models.util.VersionProtoOrBuilder>(
+                  getVersion(),
+                  getParentForChildren(),
+                  isClean());
+          version_ = null;
+        }
+        return versionBuilder_;
       }
 
       private java.lang.Object identity_ = "";
@@ -1409,7 +1045,7 @@ public final class ApiKey {
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         identity_ = value;
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -1424,7 +1060,7 @@ public final class ApiKey {
        */
       public Builder clearIdentity() {
         identity_ = getDefaultInstance().getIdentity();
-        bitField0_ = (bitField0_ & ~0x00000040);
+        bitField0_ = (bitField0_ & ~0x00000004);
         onChanged();
         return this;
       }
@@ -1443,7 +1079,7 @@ public final class ApiKey {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         identity_ = value;
-        bitField0_ |= 0x00000040;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -1506,7 +1142,7 @@ public final class ApiKey {
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         key_ = value;
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -1521,7 +1157,7 @@ public final class ApiKey {
        */
       public Builder clearKey() {
         key_ = getDefaultInstance().getKey();
-        bitField0_ = (bitField0_ & ~0x00000080);
+        bitField0_ = (bitField0_ & ~0x00000008);
         onChanged();
         return this;
       }
@@ -1540,7 +1176,7 @@ public final class ApiKey {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         key_ = value;
-        bitField0_ |= 0x00000080;
+        bitField0_ |= 0x00000008;
         onChanged();
         return this;
       }
@@ -1624,26 +1260,27 @@ public final class ApiKey {
     java.lang.String[] descriptorData = {
       "\n(fintekkers/models/util/api/api_key.pro" +
       "to\022\032fintekkers.models.util.api\032(fintekke" +
-      "rs/models/util/object_type.proto\"\336\001\n\007API" +
-      "_Key\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007versio" +
-      "n\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fint" +
-      "ekkers.models.util.ObjectTypeProto\022\026\n\rve" +
-      "rsion_major\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001" +
-      "(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022\020\n\010identity\030\003" +
-      " \001(\t\022\013\n\003key\030\004 \001(\tb\006proto3"
+      "rs/models/util/object_type.proto\032$fintek" +
+      "kers/models/util/version.proto\"\235\001\n\007API_K" +
+      "ey\022<\n\013object_type\030\001 \001(\0162\'.fintekkers.mod" +
+      "els.util.ObjectTypeProto\0225\n\007version\030\002 \001(" +
+      "\0132$.fintekkers.models.util.VersionProto\022" +
+      "\020\n\010identity\030\003 \001(\t\022\013\n\003key\030\004 \001(\tb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_util_api_API_Key_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_util_api_API_Key_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_util_api_API_Key_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Identity", "Key", });
+        new java.lang.String[] { "ObjectType", "Version", "Identity", "Key", });
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

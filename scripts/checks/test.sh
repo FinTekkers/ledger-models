@@ -33,27 +33,19 @@ if git grep -n 'api\.fintekkers\.org' -- \
   exit 1
 fi
 
-echo "== object type helpers only (LM-297)"
-# Writers set object_class / version only through the ObjectTypes helpers, so
-# both forms stay in step (R15); Rust is checked by the compiler below. The
-# ObjectTypeProto names come from the generated enum or the generated legacy
-# map, never a hand-written list (R19). Generated code, tests and comment
-# lines don't count.
-if git grep -nE 'setObjectClass\(|object_class[[:space:]]*=[^=]' -- \
-    ledger-models-java/src/main ledger-models-python/fintekkers ledger-models-javascript/node/wrappers \
-    ':(exclude)ledger-models-java/src/main/java/common/util/ObjectTypes.java' \
-    ':(exclude)ledger-models-python/fintekkers/wrappers/util/object_types.py' \
-    ':(exclude)ledger-models-javascript/node/wrappers/util/object-types.*' \
-    ':(exclude)*_pb2*' ':(exclude)*.test.*' ':(exclude)*.map' ':(exclude)*.d.ts' \
-  | grep -vE '^[^:]+:[0-9]+:[[:space:]]*(//|/?\*|#)'; then
-  echo "object_class written outside the ObjectTypes helpers: call stamp instead" >&2
-  exit 1
-fi
+echo "== object type, version and decimal shape (LM-318)"
+# Every stamped message declares ObjectTypeProto object_type = 1 and
+# VersionProto version = 2; object_class, string version, fields 1001-1004
+# and the decimal string are gone from protos, library and generated code.
+scripts/checks/proto-shape.sh
+scripts/checks/proto-shape.test.sh
+# The ObjectTypeProto names come from the generated enum, never a
+# hand-written list (R19). Generated code and tests don't count.
 if git grep -nE "[\"']OBJECT_TYPE_" -- \
     ledger-models-java/src/main ledger-models-python/fintekkers ledger-models-javascript/node/wrappers \
     ledger-models-rust/fintekkers \
-    ':(exclude)*_pb2*' ':(exclude)*.test.*' ':(exclude)*.map' ':(exclude)*object*type*legacy.json'; then
-  echo "hand-written ObjectTypeProto name: use the generated enum or legacy map" >&2
+    ':(exclude)*_pb2*' ':(exclude)*.test.*' ':(exclude)*.map'; then
+  echo "hand-written ObjectTypeProto name: use the generated enum" >&2
   exit 1
 fi
 
@@ -65,22 +57,18 @@ echo "== python"
   .venv/bin/ruff check .
   .venv/bin/python -m pytest -m 'not integration' -x -q
 )
-# The JS and Rust legacy-map mirrors match object_type.proto (R20).
-PYTHONPATH=ledger-models-python ledger-models-python/.venv/bin/python scripts/gen-object-type-legacy-map.py --check
+# No wire change beyond the ones an item allowed in wire-diff.py (LM-318).
+ledger-models-python/.venv/bin/python scripts/checks/wire-diff.py
 
 echo "== rust"
 (
   cd ledger-models-rust
-  # Library code writes object_class / version only inside object_types.rs,
-  # the one place allowed to touch the deprecated fields (LM-297, R15).
+  # Library code uses no deprecated item.
   cargo rustc --lib --quiet -- -D deprecated
   cargo test --lib --quiet
-  # The test-utils helpers (LM-312): their unit tests, and the consumer-side
-  # tests that need the feature.
-  cargo test --lib --features test-utils --quiet
-  cargo test --features test-utils --test decimal_test_utils_test --quiet
-  # CurvePointProto from_tenor / to_tenor (LM-313).
-  cargo test --features test-utils --test curve_response_roundtrip_test --quiet
+  # Unit tests and every tests/*.rs file, with the test-utils helpers
+  # (LM-312) some of them need (LM-318).
+  cargo test --tests --features test-utils --quiet
   # Default features never pull in the test-utils dependencies.
   default_deps="$(cargo tree -e normal --prefix none)"
   if grep -q '^prost-reflect ' <<<"$default_deps"; then
@@ -88,9 +76,6 @@ echo "== rust"
     exit 1
   fi
 )
-# One deprecation warning per process (LM-307): its own test binary, so its
-# own process. Named, not a bare `cargo test`.
-(cd ledger-models-rust && cargo test --test decimal_deprecation_warning_test --quiet)
 
 echo "== rust clippy"
 # Enforces the #![deny(clippy::unwrap_used, ...)] no-panic rules in

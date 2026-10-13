@@ -41,27 +41,25 @@ public final class GetIndexCompositionRequestProtos {
       "rs/models/security/index_composition.pro" +
       "to\032(fintekkers/requests/util/operation.p" +
       "roto\032(fintekkers/models/util/object_type" +
-      ".proto\"\312\002\n\037GetIndexCompositionRequestPro" +
-      "to\022\030\n\014object_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030" +
-      "\002 \001(\tB\002\030\001\022=\n\013object_type\030\351\007 \001(\0162\'.fintek" +
-      "kers.models.util.ObjectTypeProto\022\026\n\rvers" +
-      "ion_major\030\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r" +
-      "\022\026\n\rversion_patch\030\354\007 \001(\r\0225\n\nindex_uuid\030\n" +
-      " \001(\0132!.fintekkers.models.util.UUIDProto\022" +
-      ":\n\nas_of_date\030\013 \001(\0132&.fintekkers.models." +
-      "util.LocalDateProto\"\266\003\n GetIndexComposit" +
-      "ionResponseProto\022\030\n\014object_class\030\001 \001(\tB\002" +
-      "\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022=\n\013object_type\030\351" +
-      "\007 \001(\0162\'.fintekkers.models.util.ObjectTyp" +
-      "eProto\022\026\n\rversion_major\030\352\007 \001(\r\022\026\n\rversio" +
-      "n_minor\030\353\007 \001(\r\022\026\n\rversion_patch\030\354\007 \001(\r\022K" +
-      "\n\016operation_type\030\n \001(\01623.fintekkers.requ" +
-      "ests.util.RequestOperationTypeProto\022F\n\013c" +
-      "omposition\030\024 \001(\01321.fintekkers.models.sec" +
-      "urity.IndexCompositionProto\022G\n\027resolved_" +
-      "effective_date\030\025 \001(\0132&.fintekkers.models" +
-      ".util.LocalDateProtoB$B GetIndexComposit" +
-      "ionRequestProtosP\001b\006proto3"
+      ".proto\032$fintekkers/models/util/version.p" +
+      "roto\"\211\002\n\037GetIndexCompositionRequestProto" +
+      "\022<\n\013object_type\030\001 \001(\0162\'.fintekkers.model" +
+      "s.util.ObjectTypeProto\0225\n\007version\030\002 \001(\0132" +
+      "$.fintekkers.models.util.VersionProto\0225\n" +
+      "\nindex_uuid\030\n \001(\0132!.fintekkers.models.ut" +
+      "il.UUIDProto\022:\n\nas_of_date\030\013 \001(\0132&.finte" +
+      "kkers.models.util.LocalDateProto\"\365\002\n Get" +
+      "IndexCompositionResponseProto\022<\n\013object_" +
+      "type\030\001 \001(\0162\'.fintekkers.models.util.Obje" +
+      "ctTypeProto\0225\n\007version\030\002 \001(\0132$.fintekker" +
+      "s.models.util.VersionProto\022K\n\016operation_" +
+      "type\030\n \001(\01623.fintekkers.requests.util.Re" +
+      "questOperationTypeProto\022F\n\013composition\030\024" +
+      " \001(\01321.fintekkers.models.security.IndexC" +
+      "ompositionProto\022G\n\027resolved_effective_da" +
+      "te\030\025 \001(\0132&.fintekkers.models.util.LocalD" +
+      "ateProtoB$B GetIndexCompositionRequestPr" +
+      "otosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -71,24 +69,26 @@ public final class GetIndexCompositionRequestProtos {
           fintekkers.models.security.IndexCompositionProtos.getDescriptor(),
           fintekkers.requests.util.Operation.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_index_composition_GetIndexCompositionRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_index_composition_GetIndexCompositionRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_index_composition_GetIndexCompositionRequestProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "IndexUuid", "AsOfDate", });
+        new java.lang.String[] { "ObjectType", "Version", "IndexUuid", "AsOfDate", });
     internal_static_fintekkers_requests_index_composition_GetIndexCompositionResponseProto_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_fintekkers_requests_index_composition_GetIndexCompositionResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_index_composition_GetIndexCompositionResponseProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "OperationType", "Composition", "ResolvedEffectiveDate", });
+        new java.lang.String[] { "ObjectType", "Version", "OperationType", "Composition", "ResolvedEffectiveDate", });
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.util.LocalDate.getDescriptor();
     fintekkers.models.security.IndexCompositionProtos.getDescriptor();
     fintekkers.requests.util.Operation.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

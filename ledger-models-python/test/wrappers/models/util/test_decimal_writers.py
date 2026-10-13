@@ -1,6 +1,6 @@
-"""LM-305, metric 5: every decimal Python writes sets both forms until
-LM-295 (bytes + scale, and the canonical arbitrary_precision_value string),
-and floats are refused at every public writer (lossless guardrail)."""
+"""LM-305, metric 5: every decimal Python writes is the compact form
+(bytes + scale; LM-318 deleted the string form), and floats are refused at
+every public writer (lossless guardrail)."""
 import re
 from datetime import date, datetime
 from decimal import Decimal
@@ -116,20 +116,16 @@ WRITERS = {
 
 
 @pytest.mark.parametrize("name", list(WRITERS))
-def test_writer_sets_both_forms(name):
+def test_writer_sets_the_compact_form(name):
     build, decimals = WRITERS[name]
 
     written = decimals(build(V))
 
     assert written
     for d in written:
-        assert d.arbitrary_precision_value == "1.50"
         assert d.unscaled_value == b"\x00\x96"
         assert d.scale == 2
-        # The string and compact forms decode to equal values.
-        string_only = DecimalValueProto(arbitrary_precision_value=d.arbitrary_precision_value)
-        compact_only = DecimalValueProto(unscaled_value=d.unscaled_value, scale=d.scale)
-        assert decode_decimal(string_only).as_tuple() == decode_decimal(compact_only).as_tuple()
+        assert decode_decimal(d).as_tuple() == V.as_tuple()
 
 
 @pytest.mark.parametrize("name", list(WRITERS))
@@ -140,13 +136,12 @@ def test_writer_rejects_float(name):
         build(1.5)
 
 
-def test_default_transaction_price_writes_both_forms():
+def test_default_transaction_price_writes_the_compact_form():
     txn = Transaction.create_from(as_of=AS_OF).proto
 
-    assert txn.price.price.arbitrary_precision_value == "-100.00"
-    assert decode_decimal(txn.price.price) == Decimal("-100.00")
-    assert txn.quantity.arbitrary_precision_value == "100"
+    assert decode_decimal(txn.price.price).as_tuple() == Decimal("-100.00").as_tuple()
     assert txn.quantity.unscaled_value == b"\x64"
+    assert txn.quantity.scale == 0
 
 
 def test_price_journey_round_trips_through_bytes():
@@ -158,26 +153,12 @@ def test_price_journey_round_trips_through_bytes():
     assert isinstance(got, Decimal)
     assert got.as_tuple() == Decimal("100.25").as_tuple()
 
-    string_only = PriceProto()
-    string_only.CopyFrom(parsed)
-    string_only.price.ClearField("unscaled_value")
-    string_only.price.ClearField("scale")
-    assert Price(string_only).get_price().as_tuple() == got.as_tuple()
 
-    compact_only = PriceProto()
-    compact_only.CopyFrom(parsed)
-    compact_only.price.ClearField("arbitrary_precision_value")
-    assert Price(compact_only).get_price().as_tuple() == got.as_tuple()
-
-
-# Only the codec writes the deprecated string or builds a DecimalValueProto,
-# so every future writer sets both forms too.
+# Only the codec builds a DecimalValueProto, so every future writer sets the
+# compact form too.
 _PACKAGE = Path(__file__).resolve().parents[4] / "fintekkers"
 _CODEC = _PACKAGE / "wrappers" / "models" / "util" / "decimal.py"
-_FORBIDDEN = re.compile(
-    r"arbitrary_precision_value\s*=(?!=)"     # field 10 assigned (kwarg or attribute)
-    r"|DecimalValueProto\(\s*[^)\s]"          # DecimalValueProto built with arguments
-)
+_FORBIDDEN = re.compile(r"DecimalValueProto\(\s*[^)\s]")  # DecimalValueProto built with arguments
 
 
 def test_only_the_codec_writes_decimals():

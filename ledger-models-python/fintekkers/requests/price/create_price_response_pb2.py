@@ -25,9 +25,10 @@ _sym_db = _symbol_database.Default()
 from fintekkers.models.price import price_pb2 as fintekkers_dot_models_dot_price_dot_price__pb2
 from fintekkers.requests.price import create_price_request_pb2 as fintekkers_dot_requests_dot_price_dot_create__price__request__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n5fintekkers/requests/price/create_price_response.proto\x12\x19\x66intekkers.requests.price\x1a#fintekkers/models/price/price.proto\x1a\x34\x66intekkers/requests/price/create_price_request.proto\x1a(fintekkers/models/util/object_type.proto\"\xdf\x02\n\x18\x43reatePriceResponseProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12P\n\x14\x63reate_price_request\x18\x14 \x01(\x0b\x32\x32.fintekkers.requests.price.CreatePriceRequestProto\x12;\n\x0eprice_response\x18\x1e \x03(\x0b\x32#.fintekkers.models.price.PriceProtoB\x1d\x42\x19\x43reatePriceResponseProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n5fintekkers/requests/price/create_price_response.proto\x12\x19\x66intekkers.requests.price\x1a#fintekkers/models/price/price.proto\x1a\x34\x66intekkers/requests/price/create_price_request.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\x9e\x02\n\x18\x43reatePriceResponseProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12P\n\x14\x63reate_price_request\x18\x14 \x01(\x0b\x32\x32.fintekkers.requests.price.CreatePriceRequestProto\x12;\n\x0eprice_response\x18\x1e \x03(\x0b\x32#.fintekkers.models.price.PriceProtoB\x1d\x42\x19\x43reatePriceResponseProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,10 +36,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.price.c
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\031CreatePriceResponseProtosP\001'
-  _globals['_CREATEPRICERESPONSEPROTO'].fields_by_name['object_class']._loaded_options = None
-  _globals['_CREATEPRICERESPONSEPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_CREATEPRICERESPONSEPROTO'].fields_by_name['version']._loaded_options = None
-  _globals['_CREATEPRICERESPONSEPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_CREATEPRICERESPONSEPROTO']._serialized_start=218
-  _globals['_CREATEPRICERESPONSEPROTO']._serialized_end=569
+  _globals['_CREATEPRICERESPONSEPROTO']._serialized_start=256
+  _globals['_CREATEPRICERESPONSEPROTO']._serialized_end=542
 # @@protoc_insertion_point(module_scope)

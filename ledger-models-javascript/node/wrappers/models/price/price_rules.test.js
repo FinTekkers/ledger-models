@@ -9,10 +9,11 @@ const uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
 const errors_1 = require("../errors");
 const uuid_1 = require("../utils/uuid");
 const price_rules_1 = require("./price_rules");
+const decimal_1 = require("../utils/decimal");
 const PRICE_ID = '6a1d2c3e-4b5f-4a6d-8e7f-9a0b1c2d3e4f';
 const SECURITY_ID = '1f0e8a4c-58b1-4d0e-9a3c-7d2b6e5f4a10';
 function decimal(value) {
-    return new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue(value);
+    return (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(value));
 }
 /** A price that passes every rule. */
 function valid() {
@@ -45,13 +46,17 @@ describe('price_rules.validate', () => {
         expect(fields(validWith(p => p.clearPrice()))).toEqual(['price']);
     });
     test('empty price gives one violation on price', () => {
-        expect(fields(valid().setPrice(decimal('')))).toEqual(['price']);
+        expect(fields(valid().setPrice(new decimal_value_pb_1.DecimalValueProto()))).toEqual(['price']);
     });
     test('zero price is valid', () => {
         expect(fields(valid().setPrice(decimal('0')))).toEqual([]);
     });
-    test.each(['-1', 'abc'])('price value %s is not checked', value => {
-        expect(fields(valid().setPrice(decimal(value)))).toEqual([]);
+    test.each([
+        ['negative', decimal('-1')],
+        // Over the scale cap: set, but it does not decode.
+        ['over_cap', new decimal_value_pb_1.DecimalValueProto().setUnscaledValue(new Uint8Array([1])).setScale(5000)],
+    ])('price value %s is not checked', (_name, value) => {
+        expect(fields(valid().setPrice(value))).toEqual([]);
     });
     test('UNKNOWN_PRICE_TYPE gives one violation on price_type', () => {
         expect(fields(valid().setPriceType(price_type_pb_1.PriceTypeProto.UNKNOWN_PRICE_TYPE))).toEqual(['price_type']);

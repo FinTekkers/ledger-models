@@ -11,6 +11,7 @@ import { DecimalValueProto } from '../../fintekkers/models/util/decimal_value_pb
 import { IdentifierProto } from '../../fintekkers/models/security/identifier/identifier_pb';
 import { QuerySecurityResponseProto } from '../../fintekkers/requests/security/query_security_response_pb';
 import { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
+import { encodeDecimal, parseDecimalString } from '../models/utils/decimal';
 
 /**
  * End-to-end test: priceService.searchWithSecurities resolves all link
@@ -20,8 +21,6 @@ import { QuerySecurityRequestProto } from '../../fintekkers/requests/security/qu
 
 function fullSecurity(uuid: UUID, issuerName: string): SecurityProto {
   const proto = new SecurityProto();
-  proto.setObjectClass('Security');
-  proto.setVersion('0.0.1');
   proto.setUuid(uuid.toUUIDProto());
   proto.setIsLink(false);
   proto.setIssuerName(issuerName);
@@ -37,12 +36,9 @@ function linkPriceProto(securityUuid: UUID, priceValue: string): PriceProto {
   linkSec.setIsLink(true);
 
   const priceProto = new PriceProto();
-  priceProto.setObjectClass('Price');
-  priceProto.setVersion('0.0.1');
   priceProto.setUuid(UUID.random().toUUIDProto());
   priceProto.setSecurity(linkSec);
-  const dv = new DecimalValueProto();
-  dv.setArbitraryPrecisionValue(priceValue);
+  const dv = encodeDecimal(parseDecimalString(priceValue));
   priceProto.setPrice(dv);
   return priceProto;
 }

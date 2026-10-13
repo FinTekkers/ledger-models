@@ -19,8 +19,6 @@ AS_OF = LocalTimestampProto(timestamp=Timestamp(seconds=1718461800), time_zone="
 
 def _currency(**kwargs) -> SecurityProto:
     return SecurityProto(
-        object_class="Security",
-        version="0.0.1",
         as_of=AS_OF,
         product_type=ProductTypeProto.CURRENCY,
         asset_class="Cash",
@@ -32,8 +30,6 @@ def _currency(**kwargs) -> SecurityProto:
 def _bond(**kwargs) -> SecurityProto:
     kwargs.setdefault("settlement_currency", _currency())
     return SecurityProto(
-        object_class="Security",
-        version="0.0.1",
         as_of=AS_OF,
         product_type=ProductTypeProto.CORP_BOND,
         asset_class="Fixed Income",
@@ -44,8 +40,6 @@ def _bond(**kwargs) -> SecurityProto:
 
 def _txn_with_security(security: SecurityProto) -> TransactionProto:
     return TransactionProto(
-        object_class="Transaction",
-        version="0.0.1",
         uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
         as_of=AS_OF,
         security=security,

@@ -12,6 +12,7 @@ import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
+import { decodeDecimal, encodeDecimal, parseDecimalString, toCanonicalString } from '../../models/utils/decimal';
 
 const PRICE_SERVICE_URL = 'localhost:8083';
 
@@ -29,8 +30,6 @@ async function getSecurityUuidWithPrices(): Promise<{ uuid: UUID; client: PriceC
 
   // ListIds to get a price UUID
   const listRequest = new QueryPriceRequestProto();
-  listRequest.setObjectClass('PriceRequest');
-  listRequest.setVersion('0.0.1');
 
   const listIdsAsync = promisify(client.listIds.bind(client));
   const listResponse = await listIdsAsync(listRequest) as QueryPriceResponseProto;
@@ -39,8 +38,6 @@ async function getSecurityUuidWithPrices(): Promise<{ uuid: UUID; client: PriceC
 
   // GetByIds for the first price to get its security UUID
   const getRequest = new QueryPriceRequestProto();
-  getRequest.setObjectClass('PriceRequest');
-  getRequest.setVersion('0.0.1');
   getRequest.setUuidsList([priceUuids[0].getUuid()!]);
 
   const getByIdsAsync = promisify(client.getByIds.bind(client));
@@ -85,7 +82,7 @@ test('search by SECURITY_ID returns prices for a known security', async () => {
 
   for (const price of prices) {
     expect(price.getSecurity()).toBeTruthy();
-    expect(price.getPrice()?.getArbitraryPrecisionValue()).toBeTruthy();
+    expect(toCanonicalString(decodeDecimal(price.getPrice()!))).toBeTruthy();
   }
 }, 120000);
 
@@ -107,7 +104,7 @@ test('search for CUSIP 91282CPZ8 (UUID 18e8c4e6-3da0-47c9-b26d-c5ea8b8dce95) ret
   if (prices.length > 0) {
     for (const price of prices) {
       expect(price.getSecurity()).toBeTruthy();
-      const priceValue = price.getPrice()?.getArbitraryPrecisionValue();
+      const priceValue = toCanonicalString(decodeDecimal(price.getPrice()!));
       expect(priceValue).toBeTruthy();
       console.log(`  Price: ${priceValue}`);
     }
@@ -123,13 +120,10 @@ function buildPriceProto(securityUuid: UUID, priceValue: string): PriceProto {
   const now = dt.ZonedDateTime.now();
 
   const price = new PriceProto();
-  price.setObjectClass('Price');
-  price.setVersion('0.0.1');
   price.setUuid(UUID.random().toUUIDProto());
   price.setAsOf(now.toProto());
 
-  const decimalValue = new DecimalValueProto();
-  decimalValue.setArbitraryPrecisionValue(priceValue);
+  const decimalValue = encodeDecimal(parseDecimalString(priceValue));
   price.setPrice(decimalValue);
 
   // Set security as a link reference
@@ -154,8 +148,8 @@ test('createOrUpdate inserts a price via the gRPC API', async () => {
 
   // The RPC must succeed and return a valid response
   expect(response).toBeTruthy();
-  expect(response.getObjectClass()).toBeTruthy();
-  console.log(`createOrUpdate response object_class: ${response.getObjectClass()}`);
+  expect(response.getObjectType()).toBeTruthy();
+  console.log(`createOrUpdate response object_type: ${response.getObjectType()}`);
 
   // Verify the price was persisted by searching for it
   const now = dt.ZonedDateTime.now();
@@ -163,7 +157,7 @@ test('createOrUpdate inserts a price via the gRPC API', async () => {
     .addEqualsFilter(FieldProto.SECURITY_ID, securityUuid);
 
   const prices = await priceService.searchPrice(now.toProto(), filter);
-  const priceValues = prices.map(p => p.getPrice()?.getArbitraryPrecisionValue());
+  const priceValues = prices.map(p => toCanonicalString(decodeDecimal(p.getPrice()!)));
   expect(priceValues).toContain('99.875');
 }, 120000);
 
@@ -199,7 +193,7 @@ test('createOrUpdate price can be retrieved via search', async () => {
   const prices = await priceService.searchPrice(now.toProto(), filter);
   expect(prices.length).toBeGreaterThan(0);
 
-  const priceValues = prices.map(p => p.getPrice()?.getArbitraryPrecisionValue());
+  const priceValues = prices.map(p => toCanonicalString(decodeDecimal(p.getPrice()!)));
   console.log(`Found ${prices.length} prices for security, values: ${priceValues.join(', ')}`);
   expect(priceValues).toContain('101.5');
 }, 120000);

@@ -7,6 +7,7 @@ import "fintekkers/models/position/measure.proto";
 import "fintekkers/requests/valuation/curve_request.proto";
 import "fintekkers/requests/util/errors/summary.proto";
 import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
 
 option java_multiple_files = true;
 
@@ -19,8 +20,8 @@ message CurvePointProto {
   // The tenor in years (e.g. 0.25 = 3 months, 2.0 = 2 years, 10.0 = 10 years).
   // This is the point tenor for PAR_YIELD and SPOT_YIELD points. On
   // FORWARD_YIELD points readers must not parse it: read from_tenor / to_tenor.
-  // A from-to label such as "1-2" in its string form is legacy, written before
-  // LM-313, and goes away with LM-295.
+  // A from-to label such as "1-2" was written in the decimal string form
+  // before LM-313; LM-318 deleted that form.
   fintekkers.models.util.DecimalValueProto tenor = 1;
 
   // The yield at this tenor point (decimal, 0-1 scale; e.g. 0.045 = 4.50%).
@@ -52,13 +53,8 @@ message CurveResultProto {
 
 // Response from a curve construction request.
 message CurveResponseProto {
-  string object_class = 1 [deprecated = true];
-  string version = 2 [deprecated = true];
-  // Compact form of object_class / version (LM-297). Writers set both in stage 1.
-  fintekkers.models.util.ObjectTypeProto object_type = 1001;
-  uint32 version_major = 1002;
-  uint32 version_minor = 1003;
-  uint32 version_patch = 1004;
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
 
   // The original request, echoed back for correlation.
   CurveRequestProto curve_request = 10;

@@ -13,6 +13,7 @@ from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.wrappers.models.errors import ModelValidationError
 from fintekkers.wrappers.models.price import Price
 from fintekkers.wrappers.models.security.security import Security
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
 
 class TestPrice(unittest.TestCase):
     def setUp(self):
@@ -24,8 +25,6 @@ class TestPrice(unittest.TestCase):
                 time_zone="America/New_York"
             ),
             is_link=False,
-            object_class="Security",
-            version="0.0.1",
             product_type=ProductTypeProto.TREASURY_NOTE,
             asset_class="Fixed Income",
             issuer_name="Test Issuer",
@@ -87,8 +86,8 @@ class TestPrice(unittest.TestCase):
         self.assertTrue(proto.HasField('as_of'))
         self.assertTrue(proto.HasField('price'))
         self.assertEqual(proto.is_link, False)
-        self.assertEqual(proto.object_class, "PriceProto")
-        self.assertEqual(proto.version, "0.0.1")
+        self.assertEqual(proto.object_type, ObjectTypeProto.OBJECT_TYPE_PRICE)
+        self.assertEqual((proto.version.major, proto.version.minor, proto.version.patch), (0, 0, 1))
 
     # LM-272: no as_of, or a blank time zone, is a typed input error naming
     # the field — never defaulted.

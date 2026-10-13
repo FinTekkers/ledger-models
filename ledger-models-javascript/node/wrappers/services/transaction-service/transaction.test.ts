@@ -20,6 +20,7 @@ import { CreateTransactionResponseProto } from '../../../fintekkers/requests/tra
 import assert = require("assert");
 import { PositionFilter } from '../../models/position/positionfilter';
 import { PositionStatusProto } from '../../../fintekkers/models/position/position_status_pb';
+import { encodeDecimal, parseDecimalString } from '../../models/utils/decimal';
 
 
 test('test printing a transaction to string', async () => {
@@ -120,8 +121,6 @@ async function getTransaction(now: dt.ZonedDateTime, positionFilter: PositionFil
   }
 
   const transaction = new TransactionProto();
-  transaction.setObjectClass('Transaction');
-  transaction.setVersion('0.0.1');
   transaction.setUuid(uuid.UUID.random().toUUIDProto());
   transaction.setAsOf(now.toProto());
   transaction.setTradeDate(today);
@@ -130,14 +129,12 @@ async function getTransaction(now: dt.ZonedDateTime, positionFilter: PositionFil
   transaction.setPositionStatus(PositionStatusProto.EXECUTED);
   transaction.setPrice(
     new PriceProto()
-      .setObjectClass('Price')
       .setAsOf(now.toProto())
-      .setVersion('0.0.1')
       .setSecurity(security.proto)
       .setUuid(uuid.UUID.random().toUUIDProto())
-      .setPrice(new DecimalValueProto().setArbitraryPrecisionValue('100.00'))
+      .setPrice(encodeDecimal(parseDecimalString('100.00')))
   );
-  transaction.setQuantity(new DecimalValueProto().setArbitraryPrecisionValue('10000.00'));
+  transaction.setQuantity(encodeDecimal(parseDecimalString('10000.00')));
   transaction.setPortfolio(portfolio.proto);
   transaction.setSecurity(security.proto);
   return transaction;

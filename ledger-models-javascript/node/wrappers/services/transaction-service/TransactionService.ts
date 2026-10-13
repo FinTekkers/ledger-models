@@ -38,7 +38,7 @@ class TransactionService {
 
   async validateCreateTransaction(transaction: Transaction): Promise<SummaryProto> {
     const createRequest = new CreateTransactionRequestProto();
-    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST);
     createRequest.setCreateTransactionInput(transaction.proto);
 
     const validateCreateOrUpdateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
@@ -48,7 +48,7 @@ class TransactionService {
 
   async createTransaction(transaction: Transaction): Promise<CreateTransactionResponseProto> {
     const createRequest = new CreateTransactionRequestProto();
-    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST, 'TransactionRequest', '0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST);
     createRequest.setCreateTransactionInput(transaction.proto);
 
     const createTransactionAsync = promisify(this.client.createOrUpdate.bind(this.client));
@@ -69,7 +69,7 @@ class TransactionService {
   searchTransaction(asOf: LocalTimestampProto, positionFilter: PositionFilter, maxResults: number = 100):
     Promise<Transaction[]> {
     const searchRequest = new QueryTransactionRequestProto();
-    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, 'SecurityRequest', '0.0.1');
+    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST);
     searchRequest.setAsOf(asOf);
 
     searchRequest.setSearchTransactionInput(positionFilter.toProto());

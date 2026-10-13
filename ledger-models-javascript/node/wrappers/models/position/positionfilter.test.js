@@ -9,6 +9,7 @@ const identifier_pb_1 = require("../../../fintekkers/models/security/identifier/
 const identifier_type_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_type_pb");
 const serialization_util_1 = require("../utils/serialization.util");
 const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
+const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
 test('test PositionFilter.addEqualsStringFilter adds string filter', () => {
     testAddEqualsStringFilter();
 });
@@ -108,13 +109,14 @@ function testGetFilters() {
     assert(filters[1].getField() === field_pb_1.FieldProto.PRODUCT_TYPE, 'Second filter should be PRODUCT_TYPE');
 }
 function testToProto() {
+    var _a;
     const filter = new positionfilter_1.PositionFilter();
     filter.addEqualsStringFilter(field_pb_1.FieldProto.ASSET_CLASS, 'FixedIncome');
     filter.addEqualsStringFilter(field_pb_1.FieldProto.PRODUCT_TYPE, 'Bond');
     const proto = filter.toProto();
     assert(proto !== null && proto !== undefined, 'Should return a PositionFilterProto');
-    assert(proto.getObjectClass() === 'PositionFilter', 'Object class should be "PositionFilter"');
-    assert(proto.getVersion() === '0.0.1', 'Version should be "0.0.1"');
+    assert(proto.getObjectType() === object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER, 'Object type should be OBJECT_TYPE_POSITION_FILTER');
+    assert(((_a = proto.getVersion()) === null || _a === void 0 ? void 0 : _a.getPatch()) === 1, 'Version should be 0.0.1');
     const filtersList = proto.getFiltersList();
     assert(filtersList.length === 2, 'Should have two filters in proto');
     assert(filtersList[0].getField() === field_pb_1.FieldProto.ASSET_CLASS, 'First filter should be ASSET_CLASS');

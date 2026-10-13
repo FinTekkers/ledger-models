@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,9 +34,9 @@ class TipsBondFromPricerInputsTest {
         assertTrue(proto.hasTipsExtension(), "tips_extension must be populated");
 
         assertEquals(FACE.toPlainString(),
-                proto.getBondDetails().getFaceValue().getArbitraryPrecisionValue());
+                Decimals.text(proto.getBondDetails().getFaceValue()));
         assertEquals(BASE_CPI.toPlainString(),
-                proto.getTipsExtension().getBaseCpi().getArbitraryPrecisionValue());
+                Decimals.text(proto.getTipsExtension().getBaseCpi()));
         assertEquals(INDEX_DATE.getYear(), proto.getTipsExtension().getIndexDate().getYear());
         assertEquals(IndexTypeProto.CPI_U, proto.getTipsExtension().getInflationIndexType());
     }
@@ -52,7 +53,7 @@ class TipsBondFromPricerInputsTest {
         assertEquals(original, decoded);
         assertEquals(ProductTypeProto.TIPS, decoded.getProductType());
         assertEquals(BASE_CPI.toPlainString(),
-                decoded.getTipsExtension().getBaseCpi().getArbitraryPrecisionValue());
+                Decimals.text(decoded.getTipsExtension().getBaseCpi()));
         assertEquals(IndexTypeProto.CPI_U, decoded.getTipsExtension().getInflationIndexType());
     }
 }

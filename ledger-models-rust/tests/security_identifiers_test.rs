@@ -7,8 +7,6 @@ use ledger_models::fintekkers::wrappers::models::security::SecurityWrapper;
 
 fn ident(ty: IdentifierTypeProto, value: &str) -> IdentifierProto {
     IdentifierProto {
-        object_class: "Identifier".to_string(),
-        version: "0.0.1".to_string(),
         identifier_value: value.to_string(),
         identifier_type: ty as i32,
         ..Default::default()

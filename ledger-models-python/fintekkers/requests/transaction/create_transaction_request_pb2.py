@@ -24,9 +24,10 @@ _sym_db = _symbol_database.Default()
 
 from fintekkers.models.transaction import transaction_pb2 as fintekkers_dot_models_dot_transaction_dot_transaction__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n@fintekkers/requests/transaction/create_transaction_request.proto\x12\x1f\x66intekkers.requests.transaction\x1a/fintekkers/models/transaction/transaction.proto\x1a(fintekkers/models/util/object_type.proto\"\xa8\x02\n\x1d\x43reateTransactionRequestProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12Q\n\x18\x63reate_transaction_input\x18\x14 \x01(\x0b\x32/.fintekkers.models.transaction.TransactionProtoB\"B\x1e\x43reateTransactionRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n@fintekkers/requests/transaction/create_transaction_request.proto\x12\x1f\x66intekkers.requests.transaction\x1a/fintekkers/models/transaction/transaction.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xe7\x01\n\x1d\x43reateTransactionRequestProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12Q\n\x18\x63reate_transaction_input\x18\x14 \x01(\x0b\x32/.fintekkers.models.transaction.TransactionProtoB\"B\x1e\x43reateTransactionRequestProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,10 +35,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.transac
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\036CreateTransactionRequestProtosP\001'
-  _globals['_CREATETRANSACTIONREQUESTPROTO'].fields_by_name['object_class']._loaded_options = None
-  _globals['_CREATETRANSACTIONREQUESTPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_CREATETRANSACTIONREQUESTPROTO'].fields_by_name['version']._loaded_options = None
-  _globals['_CREATETRANSACTIONREQUESTPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_CREATETRANSACTIONREQUESTPROTO']._serialized_start=193
-  _globals['_CREATETRANSACTIONREQUESTPROTO']._serialized_end=489
+  _globals['_CREATETRANSACTIONREQUESTPROTO']._serialized_start=231
+  _globals['_CREATETRANSACTIONREQUESTPROTO']._serialized_end=462
 # @@protoc_insertion_point(module_scope)

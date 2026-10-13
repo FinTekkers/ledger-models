@@ -41,7 +41,7 @@ class Price {
         securityProto.setIsLink(true);
 
         const priceProto = new PriceProto();
-        stamp(priceProto, ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1');
+        stamp(priceProto, ObjectTypeProto.OBJECT_TYPE_PRICE);
         priceProto.setUuid(UUID.random().toUUIDProto());
         priceProto.setAsOf(ZonedDateTime.from(date).toProto());
         priceProto.setPrice(decimalValueProto);
@@ -59,7 +59,7 @@ class Price {
 
         const priceProto = new PriceProto();
         priceProto.setPrice(decimalValueProto);
-        stamp(priceProto, ObjectTypeProto.OBJECT_TYPE_PRICE, 'Price', '0.0.1');
+        stamp(priceProto, ObjectTypeProto.OBJECT_TYPE_PRICE);
         priceProto.setAsOf(asOf.toProto());
         priceProto.setUuid(UUID.random().toUUIDProto());
         priceProto.setSecurity(security.proto);

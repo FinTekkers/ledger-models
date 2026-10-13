@@ -42,7 +42,7 @@ class PortfolioService {
 
   async validateCreatePortfolio(portfolio: PortfolioProto): Promise<SummaryProto> {
     const createRequest = new CreatePortfolioRequestProto();
-    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST);
     createRequest.setCreatePortfolioInput(portfolio);
 
     const validateCreateOrUpdateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
@@ -52,7 +52,7 @@ class PortfolioService {
 
   async createPortfolio(portfolio: PortfolioProto): Promise<CreatePortfolioResponseProto> {
     const createRequest = new CreatePortfolioRequestProto();
-    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST);
     createRequest.setCreatePortfolioInput(portfolio);
 
     const createPortfolioAsync = promisify(this.client.createOrUpdate.bind(this.client));
@@ -72,7 +72,7 @@ class PortfolioService {
   async searchPortfolio(asOf: LocalTimestampProto,
     positionFilter: PositionFilter): Promise<Portfolio[]> {
     const searchRequest = new QueryPortfolioRequestProto();
-    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, 'PortfolioRequest', '0.0.1');
+    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST);
     searchRequest.setAsOf(asOf);
 
     searchRequest.setSearchPortfolioInput(positionFilter.toProto());

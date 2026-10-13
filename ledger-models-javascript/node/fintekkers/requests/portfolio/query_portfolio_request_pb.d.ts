@@ -9,20 +9,16 @@ import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_position_position_filter_pb from "../../../fintekkers/models/position/position_filter_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class QueryPortfolioRequestProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): QueryPortfolioRequestProto;
-    getVersion(): string;
-    setVersion(value: string): QueryPortfolioRequestProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): QueryPortfolioRequestProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): QueryPortfolioRequestProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): QueryPortfolioRequestProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): QueryPortfolioRequestProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): QueryPortfolioRequestProto;
     clearUuidsList(): void;
     getUuidsList(): Array<fintekkers_models_util_uuid_pb.UUIDProto>;
     setUuidsList(value: Array<fintekkers_models_util_uuid_pb.UUIDProto>): QueryPortfolioRequestProto;
@@ -56,12 +52,8 @@ export class QueryPortfolioRequestProto extends jspb.Message {
 
 export namespace QueryPortfolioRequestProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         uuidsList: Array<fintekkers_models_util_uuid_pb.UUIDProto.AsObject>,
         searchPortfolioInput?: fintekkers_models_position_position_filter_pb.PositionFilterProto.AsObject,
         asOf?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,

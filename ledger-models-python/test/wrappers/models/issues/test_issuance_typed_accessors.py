@@ -14,10 +14,11 @@ from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.models.util.local_date_pb2 import LocalDateProto
 
 from fintekkers.wrappers.models.issues.issuance import Issuance
+from fintekkers.wrappers.models.util.decimal import encode_decimal
 
 
 def _decimal_value(dec: Decimal) -> DecimalValueProto:
-    return DecimalValueProto(arbitrary_precision_value=str(dec))
+    return encode_decimal(dec)
 
 
 def _local_date(d: date) -> LocalDateProto:

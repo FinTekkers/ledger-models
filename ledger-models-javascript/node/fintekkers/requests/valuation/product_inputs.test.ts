@@ -9,10 +9,10 @@ import { ValuationRequestProto } from './valuation_request_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
+import { decodeDecimal, encodeDecimal, parseDecimalString, toCanonicalString } from '../../../wrappers/models/utils/decimal';
 
 function decimal(value: string): DecimalValueProto {
-    const d = new DecimalValueProto();
-    d.setArbitraryPrecisionValue(value);
+    const d = encodeDecimal(parseDecimalString(value));
     return d;
 }
 
@@ -53,8 +53,8 @@ describe('CurvePoint round-trip', () => {
 
         const parsed = CurvePoint.deserializeBinary(original.serializeBinary());
 
-        expect(parsed.getTenor()!.getArbitraryPrecisionValue()).toBe('2.0');
-        expect(parsed.getRate()!.getArbitraryPrecisionValue()).toBe('0.0470');
+        expect(toCanonicalString(decodeDecimal(parsed.getTenor()!))).toBe('2.0');
+        expect(toCanonicalString(decodeDecimal(parsed.getRate()!))).toBe('0.0470');
     });
 });
 
@@ -76,14 +76,14 @@ describe('YieldCurveInput round-trip', () => {
         const expectedTenors = ['0.25', '0.5', '1.0', '2.0', '5.0'];
         const parsed = YieldCurveInput.deserializeBinary(sofrCurve().serializeBinary());
         parsed.getPointsList().forEach((pt, i) => {
-            expect(pt.getTenor()!.getArbitraryPrecisionValue()).toBe(expectedTenors[i]);
+            expect(toCanonicalString(decodeDecimal(pt.getTenor()!))).toBe(expectedTenors[i]);
         });
     });
 
     test('first and last point rates survive', () => {
         const parsed = YieldCurveInput.deserializeBinary(sofrCurve().serializeBinary());
-        expect(parsed.getPointsList()[0].getRate()!.getArbitraryPrecisionValue()).toBe('0.0530');
-        expect(parsed.getPointsList()[4].getRate()!.getArbitraryPrecisionValue()).toBe('0.0430');
+        expect(toCanonicalString(decodeDecimal(parsed.getPointsList()[0].getRate()!))).toBe('0.0530');
+        expect(toCanonicalString(decodeDecimal(parsed.getPointsList()[4].getRate()!))).toBe('0.0430');
     });
 });
 
@@ -95,7 +95,7 @@ describe('FrnInput round-trip', () => {
 
         const parsed = FrnInput.deserializeBinary(original.serializeBinary());
 
-        expect(parsed.getCleanPrice()!.getArbitraryPrecisionValue()).toBe('99.75');
+        expect(toCanonicalString(decodeDecimal(parsed.getCleanPrice()!))).toBe('99.75');
         expect(parsed.getCurve()!.getIndex()).toBe(IndexTypeProto.SOFR);
         expect(parsed.getCurve()!.getPointsList()).toHaveLength(5);
     });
@@ -113,7 +113,7 @@ describe('ProductInput round-trip', () => {
         const parsed = ProductInput.deserializeBinary(original.serializeBinary());
 
         expect(parsed.getInputCase()).toBe(ProductInput.InputCase.FRN);
-        expect(parsed.getFrn()!.getCleanPrice()!.getArbitraryPrecisionValue()).toBe('99.875');
+        expect(toCanonicalString(decodeDecimal(parsed.getFrn()!.getCleanPrice()!))).toBe('99.875');
         expect(parsed.getFrn()!.getCurve()!.getIndex()).toBe(IndexTypeProto.SOFR);
     });
 });
@@ -128,26 +128,20 @@ describe('ValuationRequestProto backward compatibility', () => {
         pi.setFrn(frn);
 
         const original = new ValuationRequestProto();
-        original.setObjectClass('ValuationRequest');
-        original.setVersion('0.0.1');
         original.setProductInput(pi);
 
         const parsed = ValuationRequestProto.deserializeBinary(original.serializeBinary());
 
-        expect(parsed.getObjectClass()).toBe('ValuationRequest');
         expect(parsed.hasProductInput()).toBe(true);
         expect(parsed.getProductInput()!.getInputCase()).toBe(ProductInput.InputCase.FRN);
-        expect(parsed.getProductInput()!.getFrn()!.getCleanPrice()!.getArbitraryPrecisionValue()).toBe('100.25');
+        expect(toCanonicalString(decodeDecimal(parsed.getProductInput()!.getFrn()!.getCleanPrice()!))).toBe('100.25');
     });
 
     test('request without product_input is unaffected', () => {
         const original = new ValuationRequestProto();
-        original.setObjectClass('ValuationRequest');
-        original.setVersion('0.0.1');
 
         const parsed = ValuationRequestProto.deserializeBinary(original.serializeBinary());
 
-        expect(parsed.getObjectClass()).toBe('ValuationRequest');
         expect(parsed.hasProductInput()).toBe(false);
     });
 });

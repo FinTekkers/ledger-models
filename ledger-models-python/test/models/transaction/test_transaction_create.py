@@ -6,6 +6,7 @@ from fintekkers.models.transaction.transaction_pb2 import TransactionProto
 from fintekkers.models.transaction.transaction_type_pb2 import TransactionTypeProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.wrappers.models.transaction import Transaction
+from fintekkers.wrappers.models.util.decimal import decode_decimal
 
 
 def test_create_from_produces_valid_proto():
@@ -22,7 +23,7 @@ def test_create_from_produces_valid_proto():
     proto: TransactionProto = txn.proto
     assert proto.position_status == PositionStatusProto.INTENDED
     assert proto.transaction_type == TransactionTypeProto.BUY
-    assert proto.quantity.arbitrary_precision_value == "1000"
+    assert format(decode_decimal(proto.quantity), "f") == "1000"
     assert proto.trade_date.year == 2024
     assert proto.trade_date.month == 6
     assert proto.trade_date.day == 15

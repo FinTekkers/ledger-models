@@ -24,9 +24,10 @@ _sym_db = _symbol_database.Default()
 
 from google.protobuf import any_pb2 as google_dot_protobuf_dot_any__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n<fintekkers/requests/security/get_field_values_response.proto\x12\x1c\x66intekkers.requests.security\x1a\x19google/protobuf/any.proto\x1a(fintekkers/models/util/object_type.proto\"\xf9\x01\n\x1bGetFieldValuesResponseProto\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12$\n\x06values\x18\n \x03(\x0b\x32\x14.google.protobuf.AnyB B\x1cGetFieldValuesResponseProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n<fintekkers/requests/security/get_field_values_response.proto\x12\x1c\x66intekkers.requests.security\x1a\x19google/protobuf/any.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xb8\x01\n\x1bGetFieldValuesResponseProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12$\n\x06values\x18\n \x03(\x0b\x32\x14.google.protobuf.AnyB B\x1cGetFieldValuesResponseProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,10 +35,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.securit
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\034GetFieldValuesResponseProtosP\001'
-  _globals['_GETFIELDVALUESRESPONSEPROTO'].fields_by_name['object_class']._loaded_options = None
-  _globals['_GETFIELDVALUESRESPONSEPROTO'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_GETFIELDVALUESRESPONSEPROTO'].fields_by_name['version']._loaded_options = None
-  _globals['_GETFIELDVALUESRESPONSEPROTO'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_GETFIELDVALUESRESPONSEPROTO']._serialized_start=164
-  _globals['_GETFIELDVALUESRESPONSEPROTO']._serialized_end=413
+  _globals['_GETFIELDVALUESRESPONSEPROTO']._serialized_start=202
+  _globals['_GETFIELDVALUESRESPONSEPROTO']._serialized_end=386
 # @@protoc_insertion_point(module_scope)

@@ -16,6 +16,7 @@ import { UUID } from '../utils/uuid';
 import { ZonedDateTime } from '../utils/datetime';
 import { Decimal } from 'decimal.js';
 import { dummyPortfolio } from '../portfolio/portfolio.test';
+import { encodeDecimal, parseDecimalString } from '../utils/decimal';
 
 test('test Transaction createCashTransaction', () => {
     testCreateCashTransaction();
@@ -182,15 +183,13 @@ function createBondTransaction(transactionType: TransactionTypeProto): Transacti
 
 function createBondSecurity(): Security {
     const bond = new BondDetailsProto()
-        .setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-        .setCouponRate(new DecimalValueProto().setArbitraryPrecisionValue('0.05'))
+        .setFaceValue(encodeDecimal(parseDecimalString('1000.00')))
+        .setCouponRate(encodeDecimal(parseDecimalString('0.05')))
         .setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(CouponTypeProto.FIXED)
         .setMaturityDate(new LocalDateProto().setYear(2034).setMonth(1).setDay(1))
         .setIssueDate(new LocalDateProto().setYear(2024).setMonth(1).setDay(1));
     return Security.create(new SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
         .setProductType(ProductTypeProto.TREASURY_NOTE)
         .setQuantityType(SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
@@ -204,8 +203,6 @@ function createBondSecurity(): Security {
 
 function createEquityTransaction(): Transaction {
     const security = Security.create(new SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
         .setProductType(ProductTypeProto.COMMON_STOCK)
         .setAssetClass('Equity')
@@ -227,8 +224,6 @@ function createEquityTransaction(): Transaction {
 
 function createCashSecurity(): Security {
     return Security.create(new SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(UUID.random().toUUIDProto())
         .setProductType(ProductTypeProto.CURRENCY)
         .setAssetClass('Cash')

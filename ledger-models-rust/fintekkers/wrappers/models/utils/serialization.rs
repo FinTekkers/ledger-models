@@ -76,9 +76,8 @@ impl ProtoSerializationUtil {
         Self::deserialize_timestamp(timestamp_proto)
     }
 
-    /// Deserializes a DecimalValueProto to a native Rust Decimal. The compact
-    /// form wins; the deprecated string is the fallback and logs one warning
-    /// per process. Unset, malformed, or not exactly representable as a Rust
+    /// Deserializes a DecimalValueProto to a native Rust Decimal. Unset,
+    /// malformed, or not exactly representable as a Rust
     /// Decimal is `Error::Validation`, never rounded. The error names no
     /// field: a caller that wants one adds it with `Error::in_field`, e.g.
     /// `deserialize_decimal(p).map_err(|e| e.in_field("price"))`.
@@ -170,7 +169,7 @@ mod tests {
 
     // ---- LM-307: one plain decimal call ----
 
-    use crate::fintekkers::wrappers::models::utils::decimal::legacy_decimal_proto;
+    use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto_str;
     use std::str::FromStr;
 
     #[test]
@@ -181,9 +180,8 @@ mod tests {
         assert_eq!(d, Decimal::new(150, 2));
         assert_eq!(d.scale(), 2);
 
-        // String only (written before v0.4.34), 28 fractional digits.
-        let legacy = legacy_decimal_proto("0.1234567890123456789012345678");
-        let d = ProtoSerializationUtil::deserialize_decimal(&legacy).unwrap();
+        // 28 fractional digits, the most Rust Decimal holds.
+        let d = ProtoSerializationUtil::deserialize_decimal(&decimal_proto_str("0.1234567890123456789012345678")).unwrap();
         assert_eq!(d, Decimal::from_str("0.1234567890123456789012345678").unwrap());
         assert_eq!(d, Decimal::from_i128_with_scale(1_234_567_890_123_456_789_012_345_678, 28));
         assert_eq!(d.scale(), 28);
@@ -192,10 +190,11 @@ mod tests {
     #[test]
     fn invalid_decimal_is_typed_err_and_in_field_labels_it() {
         let inputs = [
-            legacy_decimal_proto("NaN"),
+            // Over the scale cap.
+            DecimalValueProto { unscaled_value: vec![0x01], scale: 4097 },
             // 29 fractional digits: over Rust Decimal's scale 28, so an error,
             // not rounded.
-            legacy_decimal_proto("0.12345678901234567890123456789"),
+            decimal_proto_str("0.12345678901234567890123456789"),
             DecimalValueProto::default(),
         ];
         for input in &inputs {

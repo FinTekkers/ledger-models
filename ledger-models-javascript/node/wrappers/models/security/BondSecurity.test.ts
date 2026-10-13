@@ -10,6 +10,7 @@ import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value
 import { UUID } from '../utils/uuid';
 import { CouponType } from './coupon_type';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
+import { encodeDecimal, parseDecimalString } from '../utils/decimal';
 
 test('test Security.create returns BondSecurity with correct coupon type and frequency', () => {
     testBondSecurityCreation();
@@ -26,8 +27,6 @@ test('test BondSecurity.getTenor() returns correct Tenor for 10-year bond with a
 function testBondSecurityCreation(): void {
     // Create a SecurityProto with BOND_SECURITY type, coupon type, and coupon frequency
     const securityProto = new SecurityProto();
-    securityProto.setObjectClass('Security');
-    securityProto.setVersion('0.0.1');
     securityProto.setUuid(UUID.random().toUUIDProto());
     securityProto.setProductType(ProductTypeProto.TREASURY_NOTE);
     securityProto.setAssetClass('FixedIncome');
@@ -35,8 +34,8 @@ function testBondSecurityCreation(): void {
     const bond = new BondDetailsProto();
     bond.setCouponType(CouponTypeProto.FIXED);
     bond.setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY);
-    bond.setCouponRate(new DecimalValueProto().setArbitraryPrecisionValue('0.05'));
-    bond.setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
+    bond.setCouponRate(encodeDecimal(parseDecimalString('0.05')));
+    bond.setFaceValue(encodeDecimal(parseDecimalString('1000.00')));
     bond.setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
     bond.setMaturityDate(new LocalDateProto().setYear(2031).setMonth(1).setDay(1));
     securityProto.setBondDetails(bond);
@@ -61,8 +60,6 @@ function testBondSecurityCreation(): void {
 function testBondSecurityTenor(): void {
     // Create a SecurityProto with BOND_SECURITY type and dates for a 10-year bond
     const securityProto = new SecurityProto();
-    securityProto.setObjectClass('Security');
-    securityProto.setVersion('0.0.1');
     securityProto.setUuid(UUID.random().toUUIDProto());
     securityProto.setProductType(ProductTypeProto.TREASURY_NOTE);
     securityProto.setAssetClass('FixedIncome');
@@ -70,8 +67,8 @@ function testBondSecurityTenor(): void {
     const bond = new BondDetailsProto();
     bond.setCouponType(CouponTypeProto.FIXED);
     bond.setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY);
-    bond.setCouponRate(new DecimalValueProto().setArbitraryPrecisionValue('0.05'));
-    bond.setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
+    bond.setCouponRate(encodeDecimal(parseDecimalString('0.05')));
+    bond.setFaceValue(encodeDecimal(parseDecimalString('1000.00')));
 
     // Set issue date: January 1, 2021
     bond.setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(1));
@@ -108,8 +105,6 @@ function testBondSecurityTenor(): void {
 
     // Test with a bond that has months and days
     const securityProto2 = new SecurityProto();
-    securityProto2.setObjectClass('Security');
-    securityProto2.setVersion('0.0.1');
     securityProto2.setUuid(UUID.random().toUUIDProto());
     securityProto2.setProductType(ProductTypeProto.TREASURY_NOTE);
     securityProto2.setAssetClass('FixedIncome');
@@ -117,8 +112,8 @@ function testBondSecurityTenor(): void {
     const bond2 = new BondDetailsProto();
     bond2.setCouponType(CouponTypeProto.FIXED);
     bond2.setCouponFrequency(CouponFrequencyProto.SEMIANNUALLY);
-    bond2.setCouponRate(new DecimalValueProto().setArbitraryPrecisionValue('0.05'));
-    bond2.setFaceValue(new DecimalValueProto().setArbitraryPrecisionValue('1000.00'));
+    bond2.setCouponRate(encodeDecimal(parseDecimalString('0.05')));
+    bond2.setFaceValue(encodeDecimal(parseDecimalString('1000.00')));
 
     // Set issue date: January 15, 2021
     bond2.setIssueDate(new LocalDateProto().setYear(2021).setMonth(1).setDay(15));

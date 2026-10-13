@@ -145,7 +145,7 @@ class Transaction():
             uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
             trade_name="No trade name",
             strategy_allocation=None
-        ), ObjectTypeProto.OBJECT_TYPE_TRANSACTION, "Transaction", ""))
+        ), ObjectTypeProto.OBJECT_TYPE_TRANSACTION))
 
     def __init__(self, proto:TransactionProto):
         # A non-link transaction must carry as_of (ModelValidationError naming

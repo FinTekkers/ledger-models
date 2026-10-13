@@ -26,19 +26,16 @@ from fintekkers.models.util import local_timestamp_pb2 as fintekkers_dot_models_
 from fintekkers.models.util import endpoint_pb2 as fintekkers_dot_models_dot_util_dot_endpoint__pb2
 from fintekkers.models.util.lock import node_partition_pb2 as fintekkers_dot_models_dot_util_dot_lock_dot_node__partition__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
+from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n,fintekkers/models/util/lock/node_state.proto\x12\x1b\x66intekkers.models.util.lock\x1a,fintekkers/models/util/local_timestamp.proto\x1a%fintekkers/models/util/endpoint.proto\x1a\x30\x66intekkers/models/util/lock/node_partition.proto\x1a(fintekkers/models/util/object_type.proto\"\x89\x03\n\tNodeState\x12\x18\n\x0cobject_class\x18\x01 \x01(\tB\x02\x18\x01\x12\x13\n\x07version\x18\x02 \x01(\tB\x02\x18\x01\x12=\n\x0bobject_type\x18\xe9\x07 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x16\n\rversion_major\x18\xea\x07 \x01(\r\x12\x16\n\rversion_minor\x18\xeb\x07 \x01(\r\x12\x16\n\rversion_patch\x18\xec\x07 \x01(\r\x12=\n\tpartition\x18\x05 \x01(\x0b\x32*.fintekkers.models.util.lock.NodePartition\x12\x33\n\tend_point\x18\x06 \x01(\x0b\x32 .fintekkers.models.util.Endpoint\x12>\n\tlast_seen\x18\x07 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x12\n\nis_expired\x18\x08 \x01(\x08\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n,fintekkers/models/util/lock/node_state.proto\x12\x1b\x66intekkers.models.util.lock\x1a,fintekkers/models/util/local_timestamp.proto\x1a%fintekkers/models/util/endpoint.proto\x1a\x30\x66intekkers/models/util/lock/node_partition.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xc8\x02\n\tNodeState\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12=\n\tpartition\x18\x05 \x01(\x0b\x32*.fintekkers.models.util.lock.NodePartition\x12\x33\n\tend_point\x18\x06 \x01(\x0b\x32 .fintekkers.models.util.Endpoint\x12>\n\tlast_seen\x18\x07 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x12\n\nis_expired\x18\x08 \x01(\x08\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.util.lock.node_state_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_NODESTATE'].fields_by_name['object_class']._loaded_options = None
-  _globals['_NODESTATE'].fields_by_name['object_class']._serialized_options = b'\030\001'
-  _globals['_NODESTATE'].fields_by_name['version']._loaded_options = None
-  _globals['_NODESTATE'].fields_by_name['version']._serialized_options = b'\030\001'
-  _globals['_NODESTATE']._serialized_start=255
-  _globals['_NODESTATE']._serialized_end=648
+  _globals['_NODESTATE']._serialized_start=293
+  _globals['_NODESTATE']._serialized_end=621
 # @@protoc_insertion_point(module_scope)

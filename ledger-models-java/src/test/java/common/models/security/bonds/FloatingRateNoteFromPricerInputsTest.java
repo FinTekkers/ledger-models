@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,7 +34,7 @@ class FloatingRateNoteFromPricerInputsTest {
         assertTrue(proto.hasFrnExtension(), "frn_extension must be populated");
 
         assertEquals(SPREAD.toPlainString(),
-                proto.getFrnExtension().getSpread().getArbitraryPrecisionValue());
+                Decimals.text(proto.getFrnExtension().getSpread()));
         assertEquals(IndexTypeProto.T_BILL_13_WEEK,
                 proto.getFrnExtension().getReferenceRateIndex());
         assertEquals(CouponFrequencyProto.MONTHLY,
@@ -53,6 +54,6 @@ class FloatingRateNoteFromPricerInputsTest {
         assertEquals(original, decoded);
         assertEquals(ProductTypeProto.TREASURY_FRN, decoded.getProductType());
         assertEquals(SPREAD.toPlainString(),
-                decoded.getFrnExtension().getSpread().getArbitraryPrecisionValue());
+                Decimals.text(decoded.getFrnExtension().getSpread()));
     }
 }

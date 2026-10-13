@@ -42,37 +42,36 @@ public final class TransactionProtos {
       "dels/position/position_status.proto\0324fin" +
       "tekkers/models/transaction/transaction_t" +
       "ype.proto\032(fintekkers/models/util/object" +
-      "_type.proto\"\222\t\n\020TransactionProto\022\030\n\014obje" +
-      "ct_class\030\001 \001(\tB\002\030\001\022\023\n\007version\030\002 \001(\tB\002\030\001\022" +
-      "=\n\013object_type\030\351\007 \001(\0162\'.fintekkers.model" +
-      "s.util.ObjectTypeProto\022\026\n\rversion_major\030" +
-      "\352\007 \001(\r\022\026\n\rversion_minor\030\353\007 \001(\r\022\026\n\rversio" +
-      "n_patch\030\354\007 \001(\r\022/\n\004uuid\030\005 \001(\0132!.fintekker" +
-      "s.models.util.UUIDProto\022:\n\005as_of\030\006 \001(\0132+" +
-      ".fintekkers.models.util.LocalTimestampPr" +
-      "oto\022\017\n\007is_link\030\007 \001(\010\022?\n\nvalid_from\030\010 \001(\013" +
-      "2+.fintekkers.models.util.LocalTimestamp" +
-      "Proto\022=\n\010valid_to\030\t \001(\0132+.fintekkers.mod" +
-      "els.util.LocalTimestampProto\022>\n\tportfoli" +
-      "o\030\n \001(\0132+.fintekkers.models.portfolio.Po" +
-      "rtfolioProto\022;\n\010security\030\013 \001(\0132).fintekk" +
-      "ers.models.security.SecurityProto\022M\n\020tra" +
-      "nsaction_type\030\014 \001(\01623.fintekkers.models." +
-      "transaction.TransactionTypeProto\022;\n\010quan" +
-      "tity\030\r \001(\0132).fintekkers.models.util.Deci" +
-      "malValueProto\0222\n\005price\030\016 \001(\0132#.fintekker" +
-      "s.models.price.PriceProto\022:\n\ntrade_date\030" +
-      "\017 \001(\0132&.fintekkers.models.util.LocalDate" +
-      "Proto\022?\n\017settlement_date\030\020 \001(\0132&.fintekk" +
-      "ers.models.util.LocalDateProto\022J\n\021childT" +
-      "ransactions\030\024 \003(\0132/.fintekkers.models.tr" +
-      "ansaction.TransactionProto\022H\n\017position_s" +
-      "tatus\030\031 \001(\0162/.fintekkers.models.position" +
-      ".PositionStatusProto\022\022\n\ntrade_name\030\032 \001(\t" +
-      "\022P\n\023strategy_allocation\030\033 \001(\01323.fintekke" +
-      "rs.models.strategy.StrategyAllocationPro" +
-      "to\022\024\n\014is_cancelled\030\036 \001(\010B\025B\021TransactionP" +
-      "rotosP\001b\006proto3"
+      "_type.proto\032$fintekkers/models/util/vers" +
+      "ion.proto\"\321\010\n\020TransactionProto\022<\n\013object" +
+      "_type\030\001 \001(\0162\'.fintekkers.models.util.Obj" +
+      "ectTypeProto\0225\n\007version\030\002 \001(\0132$.fintekke" +
+      "rs.models.util.VersionProto\022/\n\004uuid\030\005 \001(" +
+      "\0132!.fintekkers.models.util.UUIDProto\022:\n\005" +
+      "as_of\030\006 \001(\0132+.fintekkers.models.util.Loc" +
+      "alTimestampProto\022\017\n\007is_link\030\007 \001(\010\022?\n\nval" +
+      "id_from\030\010 \001(\0132+.fintekkers.models.util.L" +
+      "ocalTimestampProto\022=\n\010valid_to\030\t \001(\0132+.f" +
+      "intekkers.models.util.LocalTimestampProt" +
+      "o\022>\n\tportfolio\030\n \001(\0132+.fintekkers.models" +
+      ".portfolio.PortfolioProto\022;\n\010security\030\013 " +
+      "\001(\0132).fintekkers.models.security.Securit" +
+      "yProto\022M\n\020transaction_type\030\014 \001(\01623.finte" +
+      "kkers.models.transaction.TransactionType" +
+      "Proto\022;\n\010quantity\030\r \001(\0132).fintekkers.mod" +
+      "els.util.DecimalValueProto\0222\n\005price\030\016 \001(" +
+      "\0132#.fintekkers.models.price.PriceProto\022:" +
+      "\n\ntrade_date\030\017 \001(\0132&.fintekkers.models.u" +
+      "til.LocalDateProto\022?\n\017settlement_date\030\020 " +
+      "\001(\0132&.fintekkers.models.util.LocalDatePr" +
+      "oto\022J\n\021childTransactions\030\024 \003(\0132/.fintekk" +
+      "ers.models.transaction.TransactionProto\022" +
+      "H\n\017position_status\030\031 \001(\0162/.fintekkers.mo" +
+      "dels.position.PositionStatusProto\022\022\n\ntra" +
+      "de_name\030\032 \001(\t\022P\n\023strategy_allocation\030\033 \001" +
+      "(\01323.fintekkers.models.strategy.Strategy" +
+      "AllocationProto\022\024\n\014is_cancelled\030\036 \001(\010B\025B" +
+      "\021TransactionProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -88,13 +87,14 @@ public final class TransactionProtos {
           fintekkers.models.position.PositionStatusProtos.getDescriptor(),
           fintekkers.models.transaction.TransactionTypeProtos.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
+          fintekkers.models.util.VersionProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_transaction_TransactionProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_transaction_TransactionProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_transaction_TransactionProto_descriptor,
-        new java.lang.String[] { "ObjectClass", "Version", "ObjectType", "VersionMajor", "VersionMinor", "VersionPatch", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "Portfolio", "Security", "TransactionType", "Quantity", "Price", "TradeDate", "SettlementDate", "ChildTransactions", "PositionStatus", "TradeName", "StrategyAllocation", "IsCancelled", });
+        new java.lang.String[] { "ObjectType", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "Portfolio", "Security", "TransactionType", "Quantity", "Price", "TradeDate", "SettlementDate", "ChildTransactions", "PositionStatus", "TradeName", "StrategyAllocation", "IsCancelled", });
     fintekkers.models.util.DecimalValue.getDescriptor();
     fintekkers.models.util.LocalDate.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
@@ -106,6 +106,7 @@ public final class TransactionProtos {
     fintekkers.models.position.PositionStatusProtos.getDescriptor();
     fintekkers.models.transaction.TransactionTypeProtos.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
+    fintekkers.models.util.VersionProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -50,7 +50,7 @@ class SecurityService {
     requireValid(security);
 
     const createRequest = new CreateSecurityRequestProto();
-    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_REQUEST, 'SecurityRequest', '0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_REQUEST);
     createRequest.setSecurityInput(security);
 
     const validateCreateOrUpdateAsync = promisify(this.client.validateCreateOrUpdate.bind(this.client));
@@ -64,7 +64,7 @@ class SecurityService {
     requireValid(security);
 
     const createRequest = new CreateSecurityRequestProto();
-    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_REQUEST, 'SecurityRequest', '0.0.1');
+    stamp(createRequest, ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_REQUEST);
     createRequest.setSecurityInput(security);
 
     const createSecurityAsync = promisify(this.client.createOrUpdate.bind(this.client));
@@ -91,7 +91,7 @@ class SecurityService {
 
   async searchSecurity(asOf: LocalTimestampProto, positionFilter: PositionFilter): Promise<Security[]> {
     const searchRequest = new QuerySecurityRequestProto();
-    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST, 'SecurityRequest', '0.0.1');
+    stamp(searchRequest, ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST);
     searchRequest.setAsOf(asOf);
 
     searchRequest.setSearchSecurityInput(positionFilter.toProto());

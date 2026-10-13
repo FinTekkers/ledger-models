@@ -1,23 +1,19 @@
-#![allow(deprecated)] // Reads the legacy decimal string field (LM-294).
 
 //! Tests for the `Issuance` wrapper.
 //!
 //! Construct an `IssuanceProto` with all 8 wrapped fields set, wrap it,
 //! and verify each typed accessor returns the expected value.
 
+mod common;
+use common::decimal;
+
 use ledger_models::fintekkers::models::security::bond::{AuctionTypeProto, IssuanceProto};
-use ledger_models::fintekkers::models::util::{DecimalValueProto, LocalDateProto};
+use ledger_models::fintekkers::models::util::LocalDateProto;
 use ledger_models::fintekkers::wrappers::models::issuance::Issuance;
 
 use chrono::NaiveDate;
 use rust_decimal_macros::dec;
 
-fn decimal(value: &str) -> DecimalValueProto {
-    DecimalValueProto {
-        arbitrary_precision_value: value.to_string(),
-        ..Default::default()
-    }
-}
 
 fn date(year: u32, month: u32, day: u32) -> LocalDateProto {
     LocalDateProto { year, month, day }

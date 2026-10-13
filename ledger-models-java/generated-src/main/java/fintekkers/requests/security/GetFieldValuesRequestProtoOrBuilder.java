@@ -8,73 +8,30 @@ public interface GetFieldValuesRequestProtoOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string object_class = 1 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.security.GetFieldValuesRequestProto.object_class is deprecated.
-   *     See fintekkers/requests/security/get_field_values_request.proto;l=12
-   * @return The objectClass.
-   */
-  @java.lang.Deprecated java.lang.String getObjectClass();
-  /**
-   * <code>string object_class = 1 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.security.GetFieldValuesRequestProto.object_class is deprecated.
-   *     See fintekkers/requests/security/get_field_values_request.proto;l=12
-   * @return The bytes for objectClass.
-   */
-  @java.lang.Deprecated com.google.protobuf.ByteString
-      getObjectClassBytes();
-
-  /**
-   * <code>string version = 2 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.security.GetFieldValuesRequestProto.version is deprecated.
-   *     See fintekkers/requests/security/get_field_values_request.proto;l=13
-   * @return The version.
-   */
-  @java.lang.Deprecated java.lang.String getVersion();
-  /**
-   * <code>string version = 2 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.security.GetFieldValuesRequestProto.version is deprecated.
-   *     See fintekkers/requests/security/get_field_values_request.proto;l=13
-   * @return The bytes for version.
-   */
-  @java.lang.Deprecated com.google.protobuf.ByteString
-      getVersionBytes();
-
-  /**
-   * <pre>
-   * Compact form of object_class / version (LM-297). Writers set both in stage 1.
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+   * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
    * @return The enum numeric value on the wire for objectType.
    */
   int getObjectTypeValue();
   /**
-   * <pre>
-   * Compact form of object_class / version (LM-297). Writers set both in stage 1.
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1001;</code>
+   * <code>.fintekkers.models.util.ObjectTypeProto object_type = 1;</code>
    * @return The objectType.
    */
   fintekkers.models.util.ObjectTypeProto getObjectType();
 
   /**
-   * <code>uint32 version_major = 1002;</code>
-   * @return The versionMajor.
+   * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+   * @return Whether the version field is set.
    */
-  int getVersionMajor();
-
+  boolean hasVersion();
   /**
-   * <code>uint32 version_minor = 1003;</code>
-   * @return The versionMinor.
+   * <code>.fintekkers.models.util.VersionProto version = 2;</code>
+   * @return The version.
    */
-  int getVersionMinor();
-
+  fintekkers.models.util.VersionProto getVersion();
   /**
-   * <code>uint32 version_patch = 1004;</code>
-   * @return The versionPatch.
+   * <code>.fintekkers.models.util.VersionProto version = 2;</code>
    */
-  int getVersionPatch();
+  fintekkers.models.util.VersionProtoOrBuilder getVersionOrBuilder();
 
   /**
    * <code>.fintekkers.models.position.FieldProto field = 10;</code>

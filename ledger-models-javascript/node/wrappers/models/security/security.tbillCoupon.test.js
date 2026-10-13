@@ -8,15 +8,16 @@ const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_valu
 const errors_1 = require("../errors");
 const uuid_1 = require("../utils/uuid");
 const security_rules_1 = require("./security_rules");
+const decimal_1 = require("../utils/decimal");
 const SECURITY_ID = '1f0e8a4c-58b1-4d0e-9a3c-7d2b6e5f4a10';
 function decimal(value) {
-    return new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue(value);
+    return (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(value));
 }
 /** A security of `productType`; `coupon` undefined leaves coupon_rate unset. */
 function security(productType, coupon) {
     const bond = new security_pb_1.BondDetailsProto().setFaceValue(decimal('1000'));
     if (coupon !== undefined)
-        bond.setCouponRate(decimal(coupon));
+        bond.setCouponRate(coupon === '' ? new decimal_value_pb_1.DecimalValueProto() : decimal(coupon));
     return new security_pb_1.SecurityProto()
         .setUuid(new uuid_1.UUID(uuid_1.UUID.fromString(SECURITY_ID)).toUUIDProto())
         .setProductType(productType)

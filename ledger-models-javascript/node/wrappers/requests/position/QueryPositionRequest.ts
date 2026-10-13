@@ -45,7 +45,7 @@ export class QueryPositionRequest {
     }
 
     public toProto(): QueryPositionRequestProto {
-        const proto = stamp(new QueryPositionRequestProto(), ObjectTypeProto.OBJECT_TYPE_QUERY_POSITION_REQUEST, '', '1.0.0')
+        const proto = stamp(new QueryPositionRequestProto(), ObjectTypeProto.OBJECT_TYPE_QUERY_POSITION_REQUEST)
             .setAsOf(this.asOf.toProto())
             .setPositionType(this.positionType)
             .setPositionView(this.positionView)

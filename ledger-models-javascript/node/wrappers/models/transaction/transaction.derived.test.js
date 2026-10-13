@@ -11,7 +11,6 @@ const security_1 = __importDefault(require("../security/security"));
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const security_quantity_type_pb_1 = require("../../../fintekkers/models/security/security_quantity_type_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
@@ -19,6 +18,7 @@ const uuid_1 = require("../utils/uuid");
 const datetime_1 = require("../utils/datetime");
 const decimal_js_1 = require("decimal.js");
 const portfolio_test_1 = require("../portfolio/portfolio.test");
+const decimal_1 = require("../utils/decimal");
 test('test Transaction createCashTransaction', () => {
     testCreateCashTransaction();
 });
@@ -137,15 +137,13 @@ function createBondTransaction(transactionType) {
 }
 function createBondSecurity() {
     const bond = new security_pb_1.BondDetailsProto()
-        .setFaceValue(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
-        .setCouponRate(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0.05'))
+        .setFaceValue((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('1000.00')))
+        .setCouponRate((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('0.05')))
         .setCouponFrequency(coupon_frequency_pb_1.CouponFrequencyProto.SEMIANNUALLY)
         .setCouponType(coupon_type_pb_1.CouponTypeProto.FIXED)
         .setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2034).setMonth(1).setDay(1))
         .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2024).setMonth(1).setDay(1));
     return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE)
         .setQuantityType(security_quantity_type_pb_1.SecurityQuantityTypeProto.ORIGINAL_FACE_VALUE)
@@ -157,8 +155,6 @@ function createBondSecurity() {
 }
 function createEquityTransaction() {
     const security = security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.COMMON_STOCK)
         .setAssetClass('Equity')
@@ -177,8 +173,6 @@ function createEquityTransaction() {
 }
 function createCashSecurity() {
     return security_1.default.create(new security_pb_1.SecurityProto()
-        .setObjectClass('Security')
-        .setVersion('0.0.1')
         .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setProductType(product_type_pb_1.ProductTypeProto.CURRENCY)
         .setAssetClass('Cash')

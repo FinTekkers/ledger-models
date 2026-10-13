@@ -17,7 +17,7 @@ import static common.models.errors.ModelValidationException.violation;
  * {@link #validate} / {@link #requireValid} instead of copying the rules.
  *
  * <p>Three rules, checked in this order: {@code security} has a non-empty
- * UUID, {@code price} has a non-empty arbitrary_precision_value (zero is
+ * UUID, {@code price} has a non-empty unscaled_value (zero is
  * valid, see the PriceProto comment), and {@code price_type} is not
  * UNKNOWN_PRICE_TYPE. The price value is not parsed.
  *

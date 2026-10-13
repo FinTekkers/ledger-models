@@ -6,18 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Issuance_1 = __importDefault(require("./Issuance"));
 const issuance_pb_1 = require("../../../fintekkers/models/security/bond/issuance_pb");
 const auction_type_pb_1 = require("../../../fintekkers/models/security/bond/auction_type_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 const decimal_js_1 = __importDefault(require("decimal.js"));
+const decimal_1 = require("../utils/decimal");
 function buildProto() {
     const p = new issuance_pb_1.IssuanceProto();
     p.setAuctionIssueDate(new local_date_pb_1.LocalDateProto().setYear(2023).setMonth(2).setDay(15));
     p.setAuctionAnnouncementDate(new local_date_pb_1.LocalDateProto().setYear(2023).setMonth(2).setDay(8));
-    p.setAuctionOfferingAmount(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('45000000000'));
-    p.setTotalAccepted(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('44999500000'));
-    p.setPostAuctionOutstandingQuantity(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('44999500000'));
-    p.setMatureSecurityAmount(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('0'));
-    p.setPriceForSinglePriceAuction(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('99.875'));
+    p.setAuctionOfferingAmount((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('45000000000')));
+    p.setTotalAccepted((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('44999500000')));
+    p.setPostAuctionOutstandingQuantity((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('44999500000')));
+    p.setMatureSecurityAmount((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('0')));
+    p.setPriceForSinglePriceAuction((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('99.875')));
     p.setAuctionType(auction_type_pb_1.AuctionTypeProto.SINGLE_PRICE);
     return p;
 }

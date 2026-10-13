@@ -9,20 +9,16 @@ import * as fintekkers_models_util_lock_node_state_pb from "../../../../fintekke
 import * as fintekkers_requests_util_lock_lock_request_pb from "../../../../fintekkers/requests/util/lock/lock_request_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../../fintekkers/requests/util/errors/summary_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../../fintekkers/models/util/version_pb";
 
 export class LockResponseProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): LockResponseProto;
-    getVersion(): string;
-    setVersion(value: string): LockResponseProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): LockResponseProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): LockResponseProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): LockResponseProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): LockResponseProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): LockResponseProto;
 
     hasGetLockRequest(): boolean;
     clearGetLockRequest(): void;
@@ -51,12 +47,8 @@ export class LockResponseProto extends jspb.Message {
 
 export namespace LockResponseProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         getLockRequest?: fintekkers_requests_util_lock_lock_request_pb.LockRequestProto.AsObject,
         lockResponse?: fintekkers_models_util_lock_node_state_pb.NodeState.AsObject,
         errorsOrWarnings?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,

@@ -9,20 +9,16 @@ import * as fintekkers_models_security_security_pb from "../../../fintekkers/mod
 import * as fintekkers_requests_security_create_security_request_pb from "../../../fintekkers/requests/security/create_security_request_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
+import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
 export class CreateSecurityResponseProto extends jspb.Message { 
-    getObjectClass(): string;
-    setObjectClass(value: string): CreateSecurityResponseProto;
-    getVersion(): string;
-    setVersion(value: string): CreateSecurityResponseProto;
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
     setObjectType(value: fintekkers_models_util_object_type_pb.ObjectTypeProto): CreateSecurityResponseProto;
-    getVersionMajor(): number;
-    setVersionMajor(value: number): CreateSecurityResponseProto;
-    getVersionMinor(): number;
-    setVersionMinor(value: number): CreateSecurityResponseProto;
-    getVersionPatch(): number;
-    setVersionPatch(value: number): CreateSecurityResponseProto;
+
+    hasVersion(): boolean;
+    clearVersion(): void;
+    getVersion(): fintekkers_models_util_version_pb.VersionProto | undefined;
+    setVersion(value?: fintekkers_models_util_version_pb.VersionProto): CreateSecurityResponseProto;
 
     hasSecurityRequest(): boolean;
     clearSecurityRequest(): void;
@@ -51,12 +47,8 @@ export class CreateSecurityResponseProto extends jspb.Message {
 
 export namespace CreateSecurityResponseProto {
     export type AsObject = {
-        objectClass: string,
-        version: string,
         objectType: fintekkers_models_util_object_type_pb.ObjectTypeProto,
-        versionMajor: number,
-        versionMinor: number,
-        versionPatch: number,
+        version?: fintekkers_models_util_version_pb.VersionProto.AsObject,
         securityRequest?: fintekkers_requests_security_create_security_request_pb.CreateSecurityRequestProto.AsObject,
         securityResponse?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         errorsOrWarnings?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,

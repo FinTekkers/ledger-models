@@ -654,34 +654,9 @@ dependencies = [
  "chrono",
  "chrono-tz",
  "iana-time-zone",
- "ledger-models 0.4.33",
- "log",
  "num-bigint",
  "prost",
  "prost-reflect",
- "prost-types",
- "rust_decimal",
- "rust_decimal_macros",
- "serde",
- "serde_json",
- "tokio",
- "tonic",
- "tonic-build",
- "uuid",
- "walkdir",
-]
-
-[[package]]
-name = "ledger-models"
-version = "0.4.33"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0752e6c43298a52ff3810e14bab831ab89f162baf2dd0dd9b193424d17c2f98b"
-dependencies = [
- "async-trait",
- "chrono",
- "chrono-tz",
- "iana-time-zone",
- "prost",
  "prost-types",
  "rust_decimal",
  "rust_decimal_macros",

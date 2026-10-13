@@ -68,7 +68,7 @@ class PriceService {
         return __awaiter(this, void 0, void 0, function* () {
             const priceProto = price instanceof Price_1.default ? price.proto : price;
             const createRequest = new create_price_request_pb_1.CreatePriceRequestProto();
-            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, 'PriceRequest', '0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST);
             createRequest.setCreatePriceInput(priceProto);
             const validateAsync = (0, util_1.promisify)(this.client.validateCreateOrUpdate.bind(this.client));
             const response = yield validateAsync(createRequest);
@@ -79,7 +79,7 @@ class PriceService {
         return __awaiter(this, void 0, void 0, function* () {
             const priceProto = price instanceof Price_1.default ? price.proto : price;
             const createRequest = new create_price_request_pb_1.CreatePriceRequestProto();
-            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, 'PriceRequest', '0.0.1');
+            (0, object_types_1.stamp)(createRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST);
             createRequest.setCreatePriceInput(priceProto);
             const createAsync = (0, util_1.promisify)(this.client.createOrUpdate.bind(this.client));
             const response = yield createAsync(createRequest);
@@ -107,7 +107,7 @@ class PriceService {
     search(asOf, positionFilter) {
         return __awaiter(this, void 0, void 0, function* () {
             const searchRequest = new query_price_request_pb_1.QueryPriceRequestProto();
-            (0, object_types_1.stamp)(searchRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_PRICE_REQUEST, 'PriceRequest', '0.0.1');
+            (0, object_types_1.stamp)(searchRequest, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_QUERY_PRICE_REQUEST);
             searchRequest.setAsOf(asOf);
             searchRequest.setSearchPriceInput(positionFilter.toProto());
             const tmpClient = this.client;

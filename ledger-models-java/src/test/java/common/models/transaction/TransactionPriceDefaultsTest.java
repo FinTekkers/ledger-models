@@ -35,16 +35,12 @@ class TransactionPriceDefaultsTest {
 
     private static PriceProto.Builder priceBuilder() {
         return PriceProto.newBuilder()
-                .setObjectClass("Price")
-                .setVersion("0.0.1")
                 .setPrice(ProtoSerializationUtil.serializeBigDecimal(new java.math.BigDecimal("99.5")))
                 .setSecurity(DummyEquityObjects.getDummySecurity().getProto());
     }
 
     private static TransactionProto txnWithPrice(PriceProto.Builder price, boolean withTxnAsOf) {
         TransactionProto.Builder b = TransactionProto.newBuilder()
-                .setObjectClass("Transaction")
-                .setVersion("0.0.1")
                 .setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()))
                 .setPrice(price);
         if (withTxnAsOf) b.setAsOf(TXN_AS_OF);

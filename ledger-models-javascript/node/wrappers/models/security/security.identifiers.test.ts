@@ -8,8 +8,6 @@ import { Identifier } from './identifier';
 
 function buildSecurityWithIds(ids: Array<{ type: IdentifierTypeProto; value: string }>): Security {
   const proto = new SecurityProto()
-    .setObjectClass('Security')
-    .setVersion('0.0.1')
     .setUuid(UUID.random().toUUIDProto())
     .setProductType(ProductTypeProto.COMMON_STOCK)
     .setAssetClass('Equity')

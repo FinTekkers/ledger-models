@@ -9,8 +9,8 @@ const assert = require("assert");
 const transaction_1 = __importDefault(require("./transaction"));
 const transaction_pb_1 = require("../../../fintekkers/models/transaction/transaction_pb");
 const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const datetime_1 = require("../utils/datetime");
+const decimal_1 = require("../utils/decimal");
 test('test the transaction wrapper', () => {
     testSerialization();
 });
@@ -21,11 +21,11 @@ function testSerialization() {
 }
 function dummyTransaction() {
     return new transaction_1.default(new transaction_pb_1.TransactionProto()
-        .setObjectClass('Transaction').setVersion('0.0.1').setUuid(uuid_1.UUID.random().toUUIDProto())
+        .setUuid(uuid_1.UUID.random().toUUIDProto())
         .setAsOf(datetime_1.ZonedDateTime.now().toProto())
         .setTradeDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1))
         .setTransactionType(transaction_type_pb_1.TransactionTypeProto.BUY)
-        .setQuantity(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('1000.00'))
+        .setQuantity((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('1000.00')))
         .setSettlementDate(new local_date_pb_1.LocalDateProto().setYear(2021).setMonth(1).setDay(1)));
 }
 //# sourceMappingURL=transaction.test.js.map

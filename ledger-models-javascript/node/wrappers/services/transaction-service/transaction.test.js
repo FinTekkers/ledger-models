@@ -35,8 +35,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// Models
-const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 // Model Utils
 const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
@@ -52,6 +50,7 @@ const transaction_1 = __importDefault(require("../../models/transaction/transact
 const assert = require("assert");
 const positionfilter_1 = require("../../models/position/positionfilter");
 const position_status_pb_1 = require("../../../fintekkers/models/position/position_status_pb");
+const decimal_1 = require("../../models/utils/decimal");
 test('test printing a transaction to string', () => __awaiter(void 0, void 0, void 0, function* () {
     const isTrue = yield testToString();
     expect(isTrue).toBe(true);
@@ -128,8 +127,6 @@ function getTransaction(now, positionFilter, today) {
             throw new Error('Portfolio is not a test portfolio! Abandoning test');
         }
         const transaction = new transaction_pb_1.TransactionProto();
-        transaction.setObjectClass('Transaction');
-        transaction.setVersion('0.0.1');
         transaction.setUuid(uuid.UUID.random().toUUIDProto());
         transaction.setAsOf(now.toProto());
         transaction.setTradeDate(today);
@@ -137,13 +134,11 @@ function getTransaction(now, positionFilter, today) {
         transaction.setTransactionType(transaction_type_pb_1.TransactionTypeProto.BUY);
         transaction.setPositionStatus(position_status_pb_1.PositionStatusProto.EXECUTED);
         transaction.setPrice(new price_pb_1.PriceProto()
-            .setObjectClass('Price')
             .setAsOf(now.toProto())
-            .setVersion('0.0.1')
             .setSecurity(security.proto)
             .setUuid(uuid.UUID.random().toUUIDProto())
-            .setPrice(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('100.00')));
-        transaction.setQuantity(new decimal_value_pb_1.DecimalValueProto().setArbitraryPrecisionValue('10000.00'));
+            .setPrice((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('100.00'))));
+        transaction.setQuantity((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('10000.00')));
         transaction.setPortfolio(portfolio.proto);
         transaction.setSecurity(security.proto);
         return transaction;

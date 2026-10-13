@@ -33,13 +33,9 @@ function checkUUID() {
 }
 function checkStrategyAllocationProtoDeserialize() {
     const proto = new strategy_allocation_pb_1.StrategyAllocationProto();
-    proto.setObjectClass('StrategyAllocation');
-    proto.setVersion('0.0.1');
     proto.setIsLink(false);
     const deserialized = serialization_1.ProtoSerializationUtil.deserialize(proto);
     assert.strictEqual(deserialized, proto, 'deserialize returns same StrategyAllocationProto instance');
-    assert.equal(deserialized.getObjectClass(), 'StrategyAllocation');
-    assert.equal(deserialized.getVersion(), '0.0.1');
     assert.equal(deserialized.getIsLink(), false);
 }
 //# sourceMappingURL=serialization.test.js.map

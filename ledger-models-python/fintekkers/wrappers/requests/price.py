@@ -93,8 +93,8 @@ class CreatePriceRequest:
                 valid_from=as_of_proto,
                 price=ProtoSerializationUtil.serialize(price),
                 security=security_proto,
-            ), ObjectTypeProto.OBJECT_TYPE_PRICE, "PriceProto", "0.0.1"),
-        ), ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST, "CreatePriceRequestProto", "0.0.1")
+            ), ObjectTypeProto.OBJECT_TYPE_PRICE),
+        ), ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST)
 
         return CreatePriceRequest(proto=proto)
 
