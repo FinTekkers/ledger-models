@@ -18,6 +18,7 @@ use crate::fintekkers::models::security::{
 use crate::fintekkers::models::util::LocalDateProto;
 use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
+use crate::fintekkers::wrappers::util::object_types::stamp_own;
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 
 pub struct MortgageBackedSecurity {
@@ -124,7 +125,7 @@ impl MortgageBackedSecurity {
         current_upb: Decimal,
         psa_speed: Decimal,
     ) -> SecurityProto {
-        SecurityProto {
+        stamp_own(SecurityProto {
             product_type: ProductTypeProto::MortgageBacked as i32,
             bond_details: Some(BondDetailsProto {
                 coupon_rate: Some(decimal_proto(&coupon_rate)),
@@ -148,7 +149,7 @@ impl MortgageBackedSecurity {
                 psa_speed: Some(decimal_proto(&psa_speed)),
             }),
             ..Default::default()
-        }
+        })
     }
 }
 

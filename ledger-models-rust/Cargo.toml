@@ -85,3 +85,12 @@ required-features = ["test-utils"]
 [[test]]
 name = "object_type_coverage_test"
 required-features = ["test-utils"]
+
+# Test-only: tests/builder_stamp_test.rs parses the wrapper sources to find
+# every public builder (LM-325). Never built for consumers.
+[dev-dependencies]
+syn = { version = "2", features = ["full", "visit"] }
+
+[[test]]
+name = "builder_stamp_test"
+required-features = ["test-utils"]

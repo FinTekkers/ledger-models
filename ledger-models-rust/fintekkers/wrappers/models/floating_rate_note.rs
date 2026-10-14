@@ -15,6 +15,7 @@ use crate::fintekkers::models::security::{
 use crate::fintekkers::models::util::LocalDateProto;
 use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
+use crate::fintekkers::wrappers::util::object_types::stamp_own;
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 
 pub struct FloatingRateNote {
@@ -67,7 +68,7 @@ impl FloatingRateNote {
         reference_rate_index: IndexTypeProto,
         reset_frequency: CouponFrequencyProto,
     ) -> SecurityProto {
-        SecurityProto {
+        stamp_own(SecurityProto {
             product_type: ProductTypeProto::TreasuryFrn as i32,
             bond_details: Some(BondDetailsProto {
                 coupon_rate: Some(decimal_proto(&coupon_rate)),
@@ -85,7 +86,7 @@ impl FloatingRateNote {
                 reset_frequency: reset_frequency as i32,
             }),
             ..Default::default()
-        }
+        })
     }
 }
 

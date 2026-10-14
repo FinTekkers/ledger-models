@@ -9,6 +9,7 @@ use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
 // security_type wrapper deleted in M1; use ProductTypeProto directly or ProductHierarchy helper.
 use crate::fintekkers::wrappers::models::issuance::Issuance;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
+use crate::fintekkers::wrappers::util::object_types::stamp_own;
 
 pub struct BondSecurity {
     pub proto: SecurityProto,
@@ -83,7 +84,7 @@ impl BondSecurity {
         issue_date: NaiveDate,
         maturity_date: NaiveDate,
     ) -> SecurityProto {
-        SecurityProto {
+        stamp_own(SecurityProto {
             product_type: ProductTypeProto::TreasuryNote as i32,
             bond_details: Some(BondDetailsProto {
                 coupon_rate: Some(decimal_proto(&coupon_rate)),
@@ -96,7 +97,7 @@ impl BondSecurity {
                 issuance_info: vec![],
             }),
             ..Default::default()
-        }
+        })
     }
 }
 
