@@ -1,5 +1,7 @@
 package protos.serializers.position;
 
+import common.util.ObjectTypes;
+import fintekkers.models.util.ObjectTypeProto;
 import common.models.postion.Field;
 import common.models.postion.PositionFilter;
 import fintekkers.models.position.*;
@@ -31,7 +33,7 @@ public class PositionFilterSerializer {
     }
 
     public PositionFilterProto serialize(PositionFilter filter) {
-        PositionFilterProto.Builder builder = PositionFilterProto.newBuilder();
+        PositionFilterProto.Builder builder = ObjectTypes.stamp(PositionFilterProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER);
 
         filter.getFilters().forEach((field, positionComparator) -> {
             PositionFilter.Operator operator = positionComparator.getOperator();

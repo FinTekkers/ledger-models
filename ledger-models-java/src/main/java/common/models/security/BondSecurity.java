@@ -1,5 +1,7 @@
 package common.models.security;
 
+import common.util.ObjectTypes;
+import fintekkers.models.util.ObjectTypeProto;
 import common.models.JSONFieldNames;
 import common.models.postion.Field;
 import common.models.security.bonds.Issuance;
@@ -253,7 +255,7 @@ public class BondSecurity extends Security {
                                                  CouponFrequencyProto couponFrequency,
                                                  LocalDate issueDate,
                                                  LocalDate maturityDate) {
-        return SecurityProto.newBuilder()
+        return ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY)
                 .setProductType(ProductTypeProto.TREASURY_NOTE)
                 .setBondDetails(buildBondDetails(faceValue, couponRate, couponType,
                         couponFrequency, issueDate, maturityDate))

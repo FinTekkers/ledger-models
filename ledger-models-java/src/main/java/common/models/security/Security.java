@@ -1,5 +1,7 @@
 package common.models.security;
 
+import common.util.ObjectTypes;
+import fintekkers.models.util.ObjectTypeProto;
 import common.models.IFinancialModelObject;
 import common.models.RawDataModelObject;
 import common.models.postion.Field;
@@ -190,7 +192,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
     public static SecurityProto linkOf(UUID uuid, ZonedDateTime asOf) {
         Objects.requireNonNull(uuid, "uuid is required for linkOf");
         Objects.requireNonNull(asOf, "asOf is required for linkOf; use linkOfLatest(uuid) for latest-version semantics");
-        return SecurityProto.newBuilder()
+        return ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY)
                 .setIsLink(true)
                 .setUuid(ProtoSerializationUtil.serializeUUID(uuid))
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf))
@@ -199,7 +201,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
 
     public static SecurityProto linkOfLatest(UUID uuid) {
         Objects.requireNonNull(uuid, "uuid is required for linkOfLatest");
-        return SecurityProto.newBuilder()
+        return ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY)
                 .setIsLink(true)
                 .setUuid(ProtoSerializationUtil.serializeUUID(uuid))
                 .build();
@@ -239,7 +241,7 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
 
     private static SecurityProto buildBaselineProto(UUID id, String issuer, ZonedDateTime asOf,
                                                     CashSecurity settlementCurrency) {
-        SecurityProto.Builder b = SecurityProto.newBuilder();
+        SecurityProto.Builder b = ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY);
         if (id != null) b.setUuid(ProtoSerializationUtil.serializeUUID(id));
         if (asOf != null) b.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
         if (issuer != null) b.setIssuerName(issuer);

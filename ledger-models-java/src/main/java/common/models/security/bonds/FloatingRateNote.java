@@ -1,5 +1,7 @@
 package common.models.security.bonds;
 
+import common.util.ObjectTypes;
+import fintekkers.models.util.ObjectTypeProto;
 import common.models.security.*;
 import fintekkers.models.security.CouponFrequencyProto;
 import fintekkers.models.security.CouponTypeProto;
@@ -127,7 +129,7 @@ public class FloatingRateNote extends BondSecurity implements IndexLinkedSecurit
         if (resetFrequency != null)
             frn.setResetFrequency(resetFrequency);
 
-        return SecurityProto.newBuilder()
+        return ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY)
                 .setProductType(ProductTypeProto.TREASURY_FRN)
                 .setBondDetails(BondSecurity.buildBondDetails(faceValue, couponRate, couponType,
                         couponFrequency, issueDate, maturityDate))
