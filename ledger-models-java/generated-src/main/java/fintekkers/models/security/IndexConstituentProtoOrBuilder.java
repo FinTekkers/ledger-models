@@ -99,24 +99,4 @@ public interface IndexConstituentProtoOrBuilder extends
    * <code>.fintekkers.models.util.DecimalValueProto shares_in_index = 3;</code>
    */
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getSharesInIndexOrBuilder();
-
-  /**
-   * <pre>
-   * The currency of the constituent's price (e.g. "USD"). Needed for multi-currency indices.
-   * </pre>
-   *
-   * <code>string currency = 5;</code>
-   * @return The currency.
-   */
-  java.lang.String getCurrency();
-  /**
-   * <pre>
-   * The currency of the constituent's price (e.g. "USD"). Needed for multi-currency indices.
-   * </pre>
-   *
-   * <code>string currency = 5;</code>
-   * @return The bytes for currency.
-   */
-  com.google.protobuf.ByteString
-      getCurrencyBytes();
 }

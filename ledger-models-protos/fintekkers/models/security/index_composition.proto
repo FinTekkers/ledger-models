@@ -73,7 +73,4 @@ message IndexConstituentProto {
   // Number of shares used in price-weighted index calculation (e.g. DJIA).
   // For non-price-weighted indices, leave unset; use weight instead.
   fintekkers.models.util.DecimalValueProto shares_in_index = 3;
-
-  // The currency of the constituent's price (e.g. "USD"). Needed for multi-currency indices.
-  string currency = 5;
 }

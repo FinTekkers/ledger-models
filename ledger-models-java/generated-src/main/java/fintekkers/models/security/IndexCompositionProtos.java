@@ -59,13 +59,13 @@ public final class IndexCompositionProtos {
       "1.fintekkers.models.security.IndexConsti" +
       "tuentProto\022@\n\rindex_divisor\030\025 \001(\0132).fint" +
       "ekkers.models.util.DecimalValueProto\022\r\n\005" +
-      "notes\030\037 \001(\t\"\345\001\n\025IndexConstituentProto\022;\n" +
+      "notes\030\037 \001(\t\"\323\001\n\025IndexConstituentProto\022;\n" +
       "\010security\030\001 \001(\0132).fintekkers.models.secu" +
       "rity.SecurityProto\0229\n\006weight\030\002 \001(\0132).fin" +
       "tekkers.models.util.DecimalValueProto\022B\n" +
       "\017shares_in_index\030\003 \001(\0132).fintekkers.mode" +
-      "ls.util.DecimalValueProto\022\020\n\010currency\030\005 " +
-      "\001(\tB\032B\026IndexCompositionProtosP\001b\006proto3"
+      "ls.util.DecimalValueProtoB\032B\026IndexCompos" +
+      "itionProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -89,7 +89,7 @@ public final class IndexCompositionProtos {
     internal_static_fintekkers_models_security_IndexConstituentProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_security_IndexConstituentProto_descriptor,
-        new java.lang.String[] { "Security", "Weight", "SharesInIndex", "Currency", });
+        new java.lang.String[] { "Security", "Weight", "SharesInIndex", });
     fintekkers.models.util.DecimalValue.getDescriptor();
     fintekkers.models.util.LocalDate.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
