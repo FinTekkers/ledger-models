@@ -24,6 +24,7 @@ from fintekkers.wrappers.requests.transaction import (
 from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
 from fintekkers.wrappers.util.link_resolver import LinkResolver
 from fintekkers.wrappers.util import link_cache as _link_cache
+from fintekkers.wrappers.util.object_types import stamp_own
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
 
@@ -136,9 +137,9 @@ class TransactionService:
                 `PortfolioService.get_portfolio_by_uuid` so the default
                 transaction fetcher delegates here.
         """
-        request = QueryTransactionRequestProto(
+        request = stamp_own(QueryTransactionRequestProto(
             uuIds=[UUIDProto(raw_uuid=uuid.bytes)],
-        )
+        ))
         if as_of is not None:
             request.as_of.CopyFrom(as_of)
         response: QueryTransactionResponseProto = self.stub.GetByIds(request)

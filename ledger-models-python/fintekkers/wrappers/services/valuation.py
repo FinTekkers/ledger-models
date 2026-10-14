@@ -17,6 +17,7 @@ from fintekkers.wrappers.models.price import Price
 from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
+from fintekkers.wrappers.util.object_types import stamp_own
 
 
 class ValuationService:
@@ -70,11 +71,12 @@ class ValuationService:
         """
         try:
             asOfProto:LocalTimestampProto = ProtoSerializationUtil.serialize(asOf)
-            # Create the valuation request
-            request = ValuationRequestProto(
+            # Create the valuation request. The caller's security, position
+            # and price are copied in as they are, not stamped (LM-322).
+            request = stamp_own(ValuationRequestProto(
                 measures=measures or [],
                 asof_datetime=asOfProto
-            )
+            ))
             if security is not None:
                 request.security_input.CopyFrom(security.proto)
             if position is not None:

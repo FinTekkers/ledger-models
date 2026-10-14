@@ -6,7 +6,7 @@ from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
-from fintekkers.wrappers.util.object_types import stamp
+from fintekkers.wrappers.util.object_types import stamp, stamp_own
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import IdentifierTypeProto
@@ -161,10 +161,10 @@ class SecurityService:
             ValueError: If no security is found with the given identifier
         """
         # Create identifier proto
-        identifier_proto = IdentifierProto(
+        identifier_proto = stamp_own(IdentifierProto(
             identifier_type=identifier_type,
             identifier_value=identifier
-        )
+        ))
         
         # Create security query request
         security_query_request = QuerySecurityRequest.create_query_request({
@@ -183,7 +183,7 @@ class SecurityService:
         return response.fields
 
     def get_field_values(self, field:FieldProto) -> list[object]:
-        request = GetFieldValuesRequestProto(field=field)
+        request = stamp_own(GetFieldValuesRequestProto(field=field))
         response:GetFieldValuesResponseProto = self.stub.GetFieldValues(request)
 
         values = []

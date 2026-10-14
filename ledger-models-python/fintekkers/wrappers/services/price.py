@@ -27,6 +27,7 @@ from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
 from fintekkers.wrappers.services.security import SecurityService
 from fintekkers.wrappers.util.link_resolver import LinkResolver
 from fintekkers.wrappers.util import link_cache as _link_cache
+from fintekkers.wrappers.util.object_types import stamp_own
 
 from fintekkers.services.price_service.price_service_pb2_grpc import PriceStub
 
@@ -206,9 +207,9 @@ class PriceService:
         #     end_date=None
         # )
 
-        request:QueryPriceRequestProto = QueryPriceRequestProto(
+        request:QueryPriceRequestProto = stamp_own(QueryPriceRequestProto(
             uuIds=[uuid_proto]
-        )
+        ))
 
         try:
             prices = self.stub.GetByIds(request).price_response
