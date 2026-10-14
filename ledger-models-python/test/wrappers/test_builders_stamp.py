@@ -114,7 +114,7 @@ ROOT = "fintekkers.wrappers"
 EXCLUDED_PACKAGES = {
     "fintekkers.wrappers.services": (
         "service methods send their requests to a gRPC stub and return no built "
-        "message; covered by Part E (Python service-internal requests)"
+        "message; covered by test/wrappers/services/test_services_stamp.py (LM-326)"
     ),
 }
 

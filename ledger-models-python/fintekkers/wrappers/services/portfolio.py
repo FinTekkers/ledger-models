@@ -14,7 +14,7 @@ from fintekkers.models.position import field_pb2
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
-from fintekkers.wrappers.util.object_types import stamp
+from fintekkers.wrappers.util.object_types import stamp, stamp_own
 from fintekkers.requests.portfolio.create_portfolio_request_pb2 import (
     CreatePortfolioRequestProto,
 )
@@ -172,17 +172,17 @@ class PortfolioService:
             datetime.now()
         )
 
-        portfolio_query = QueryPortfolioRequestProto(
-            search_portfolio_input=PositionFilterProto(
+        portfolio_query = stamp_own(QueryPortfolioRequestProto(
+            search_portfolio_input=stamp_own(PositionFilterProto(
                 filters=[
                     FieldMapEntry(
                         field=field_pb2.FieldProto.PORTFOLIO_NAME,
                         field_value_packed=wrap_string_to_any(portfolio_name),
                     )
                 ]
-            ),
+            )),
             as_of=as_of_proto,
-        )
+        ))
 
         responses = self.search(QueryPortfolioRequest(portfolio_query))
         # search() yields Portfolio wrappers (not raw protos), so list() is correct here
