@@ -364,23 +364,23 @@ fn uuid_proto_from(uuid: Uuid) -> UuidProto {
 /// `as_of` is required; for the rare "always-latest" case use
 /// [`link_of_latest`].
 pub fn link_of(uuid: Uuid, as_of: LocalTimestampProto) -> SecurityProto {
-    SecurityProto {
+    object_types::stamp_own(SecurityProto {
         is_link: true,
         uuid: Some(uuid_proto_from(uuid)),
         as_of: Some(as_of),
         ..Default::default()
-    }
+    })
 }
 
 /// Build a SecurityProto link reference (is_link=true) with only uuid set.
 /// Resolution returns the latest version of the record. Explicit escape hatch
 /// for floats — most callers should prefer [`link_of`].
 pub fn link_of_latest(uuid: Uuid) -> SecurityProto {
-    SecurityProto {
+    object_types::stamp_own(SecurityProto {
         is_link: true,
         uuid: Some(uuid_proto_from(uuid)),
         ..Default::default()
-    }
+    })
 }
 
 /// Field path of the TBILL coupon rule's violation.
@@ -540,14 +540,14 @@ impl SecurityProtoBuilder {
             } else {
                 use crate::fintekkers::models::security::{CashDetailsProto};
                 use crate::fintekkers::models::security::security_proto::NonBondDetails;
-                Some(Box::new(SecurityProto {
+                Some(Box::new(object_types::stamp_own(SecurityProto {
                     uuid: Some(UUIDWrapper::new_random().into()),
                     product_type: ProductTypeProto::Currency.into(),
                     non_bond_details: Some(NonBondDetails::CashDetails(CashDetailsProto {
                         cash_id: self.settlement_currency,
                     })),
                     ..Default::default()
-                }))
+                })))
             },
 
             quantity_type: 0,
