@@ -18,6 +18,8 @@ from fintekkers.models.security.security_pb2 import (
     MbsExtensionProto,
 )
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.models.security.bond.agency_pb2 import AgencyProto
 from fintekkers.wrappers.models.security.bond_security import (
     BondSecurity,
@@ -154,8 +156,8 @@ class MortgageBackedSecurity(BondSecurity):
             current_upb=_decimal_value(current_upb),
             psa_speed=_decimal_value(psa_speed),
         )
-        return SecurityProto(
+        return stamp(SecurityProto(
             product_type=ProductTypeProto.MORTGAGE_BACKED,
             bond_details=bond_details,
             mbs_extension=mbs_extension,
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_SECURITY)

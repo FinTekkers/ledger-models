@@ -128,12 +128,12 @@ class QueryPriceRequest:
             datetime.now()
         )
 
-        request = QueryPriceRequestProto(
-            search_price_input=PositionFilterProto(filters=filters),
+        request = stamp(QueryPriceRequestProto(
+            search_price_input=stamp(PositionFilterProto(filters=filters), ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER),
             as_of=as_of_proto,
             frequency=frequency,
             horizon=horizon
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_PRICE_REQUEST)
 
         return QueryPriceRequest(proto=request)
 
@@ -164,14 +164,14 @@ class QueryPriceRequest:
         start_ts_proto = ProtoSerializationUtil.serialize(datetime.combine(start_date, datetime.min.time())) if start_date else None
         end_ts_proto = ProtoSerializationUtil.serialize(datetime.combine(end_date, datetime.max.time())) if end_date else None
 
-        date_range_proto = DateRangeProto(start=start_ts_proto, end=end_ts_proto) if start_date and end_date else None
+        date_range_proto = stamp(DateRangeProto(start=start_ts_proto, end=end_ts_proto), ObjectTypeProto.OBJECT_TYPE_DATE_RANGE) if start_date and end_date else None
 
-        request = QueryPriceRequestProto(
-            search_price_input=PositionFilterProto(filters=filters),
+        request = stamp(QueryPriceRequestProto(
+            search_price_input=stamp(PositionFilterProto(filters=filters), ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER),
             as_of=as_of_proto,
             frequency=frequency,
             date_range=date_range_proto
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_PRICE_REQUEST)
 
         return QueryPriceRequest(proto=request)
 

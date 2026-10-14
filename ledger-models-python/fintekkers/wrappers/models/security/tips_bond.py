@@ -17,6 +17,8 @@ from fintekkers.models.security.security_pb2 import (
     TipsExtensionProto,
 )
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.models.security.index.index_type_pb2 import IndexTypeProto
 from fintekkers.wrappers.models.security.bond_security import (
     BondSecurity,
@@ -84,8 +86,8 @@ class TIPSBond(BondSecurity):
             index_date=_local_date(index_date),
             inflation_index_type=inflation_index_type,
         )
-        return SecurityProto(
+        return stamp(SecurityProto(
             product_type=ProductTypeProto.TIPS,
             bond_details=bond_details,
             tips_extension=tips_extension,
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_SECURITY)

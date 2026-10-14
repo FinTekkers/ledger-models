@@ -10,12 +10,14 @@ from fintekkers.models.position.position_util_pb2 import FieldMapEntry
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.transaction.transaction_type_pb2 import TransactionTypeProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
 
 from fintekkers.requests.transaction.create_transaction_request_pb2 import CreateTransactionRequestProto
 from fintekkers.requests.transaction.query_transaction_request_pb2 import QueryTransactionRequestProto
 
 from fintekkers.wrappers.models.transaction import Transaction
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+from fintekkers.wrappers.util.object_types import stamp
 
 from datetime import datetime
 
@@ -46,9 +48,9 @@ class CreateTransactionRequest():
                                 settlement_date=settlement_date, position_status=position_status, \
                                     transaction_type=transaction_type, price=price, quantity=quantity, as_of=as_of)
         
-        proto:CreateTransactionRequestProto = CreateTransactionRequestProto(
+        proto:CreateTransactionRequestProto = stamp(CreateTransactionRequestProto(
             create_transaction_input=transaction.proto
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_CREATE_TRANSACTION_REQUEST)
         return CreateTransactionRequest(proto=proto)
     
     def __init__(self, proto:CreateTransactionRequestProto):
@@ -85,12 +87,12 @@ class QueryTransactionRequest():
         
         as_of_proto:LocalTimestampProto = ProtoSerializationUtil.serialize(datetime.now())
 
-        query_request:QueryTransactionRequestProto = QueryTransactionRequestProto(
-            search_transaction_input=PositionFilterProto(
+        query_request:QueryTransactionRequestProto = stamp(QueryTransactionRequestProto(
+            search_transaction_input=stamp(PositionFilterProto(
                 filters=filters
-            ),
+            ), ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER),
             as_of=as_of_proto
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST)
 
         return query_request
     

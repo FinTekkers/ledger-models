@@ -2,6 +2,8 @@ from dateutil.relativedelta import relativedelta
 
 from fintekkers.models.security.tenor_type_pb2 import TenorTypeProto
 from fintekkers.models.security.tenor_pb2 import TenorProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 class Tenor:
     UNKNOWN_TENOR = None
     type:TenorTypeProto = None
@@ -50,10 +52,10 @@ class Tenor:
         return Tenor.period_to_string(self.tenor)
     
     def as_proto(self) -> TenorProto:
-        return TenorProto(
+        return stamp(TenorProto(
             tenor_type=self.type,
             term_value=self.get_tenor_description()
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_TENOR)
 
     @staticmethod
     def period_to_string(period:relativedelta) -> str:
