@@ -28,6 +28,7 @@ const security_pb_1 = require("../../../fintekkers/models/security/security_pb")
 const agency_pb_1 = require("../../../fintekkers/models/security/bond/agency_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const decimal_1 = require("../utils/decimal");
+const object_types_1 = require("../../util/object-types");
 /**
  * MBS-specific accessors layered on top of BondSecurity. Pool-level fields
  * (agency, WAC, WAM, pass-through rate, factors, balances, PSA) live in
@@ -121,10 +122,10 @@ class MortgageBackedSecurity extends BondSecurity_1.default {
             .setOriginalFaceValue((0, BondSecurity_1.decimalToProto)(args.originalFaceValue))
             .setCurrentUpb((0, BondSecurity_1.decimalToProto)(args.currentUpb))
             .setPsaSpeed((0, BondSecurity_1.decimalToProto)(args.psaSpeed));
-        return new security_pb_1.SecurityProto()
+        return (0, object_types_1.stampOwn)(new security_pb_1.SecurityProto()
             .setProductType(product_type_pb_1.ProductTypeProto.MORTGAGE_BACKED)
             .setBondDetails(bond)
-            .setMbsExtension(mbs);
+            .setMbsExtension(mbs));
     }
 }
 exports.default = MortgageBackedSecurity;

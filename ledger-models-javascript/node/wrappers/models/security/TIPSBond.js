@@ -29,6 +29,7 @@ const product_type_pb_1 = require("../../../fintekkers/models/security/product_t
 const index_type_pb_1 = require("../../../fintekkers/models/security/index/index_type_pb");
 const date_1 = require("../utils/date");
 const decimal_1 = require("../utils/decimal");
+const object_types_1 = require("../../util/object-types");
 /**
  * TIPS-specific accessors layered on top of BondSecurity. The inflation
  * fields live in the parallel tips_extension sub-message; bond_details
@@ -71,10 +72,10 @@ class TIPSBond extends BondSecurity_1.default {
             .setBaseCpi((0, BondSecurity_1.decimalToProto)(args.baseCpi))
             .setIndexDate((0, date_1.dateToLocalDateProto)(args.indexDate))
             .setInflationIndexType(args.inflationIndexType);
-        return new security_pb_1.SecurityProto()
+        return (0, object_types_1.stampOwn)(new security_pb_1.SecurityProto()
             .setProductType(product_type_pb_1.ProductTypeProto.TIPS)
             .setBondDetails(bond)
-            .setTipsExtension(tips);
+            .setTipsExtension(tips));
     }
 }
 exports.default = TIPSBond;

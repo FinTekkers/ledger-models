@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Identifier = exports.validateIdentifiersForCreate = exports.validateIdentifierProto = exports.IdentifierValidationError = void 0;
 const identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
 const identifier_type_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_type_pb");
+const object_types_1 = require("../../util/object-types");
 /**
  * Raised when an IdentifierProto is rejected by the client-side guard
  * before being sent to SecurityService. See FinTekkers/second-brain#347.
@@ -109,7 +110,7 @@ class Identifier {
         if (enumValue === undefined) {
             throw new Error(`Unknown IdentifierType name: '${name}'. Valid names: ${Identifier.getAllTypeNames().join(', ')}`);
         }
-        const proto = new identifier_pb_1.IdentifierProto();
+        const proto = (0, object_types_1.stampOwn)(new identifier_pb_1.IdentifierProto());
         proto.setIdentifierType(enumValue);
         proto.setIdentifierValue(value);
         // Client-side guard (#347): rejects UNKNOWN_IDENTIFIER_TYPE and empty

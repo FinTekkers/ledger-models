@@ -53,7 +53,7 @@ class Price {
      */
     static fromSimple(securityId, price, date, priceType = price_type_pb_1.PriceTypeProto.PERCENTAGE) {
         const decimalValueProto = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(price.toString()));
-        const securityProto = new security_pb_1.SecurityProto();
+        const securityProto = (0, object_types_1.stampOwn)(new security_pb_1.SecurityProto());
         securityProto.setUuid(new uuid_1.UUID(uuid_1.UUID.fromString(securityId)).toUUIDProto());
         securityProto.setIsLink(true);
         const priceProto = new price_pb_1.PriceProto();

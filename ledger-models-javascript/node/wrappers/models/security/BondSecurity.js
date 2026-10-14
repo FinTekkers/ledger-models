@@ -16,6 +16,7 @@ const decimal_js_1 = require("decimal.js");
 const product_hierarchy_1 = require("./product_hierarchy");
 const Issuance_1 = __importDefault(require("./Issuance"));
 const decimal_1 = require("../utils/decimal");
+const object_types_1 = require("../../util/object-types");
 /** Build a DecimalValueProto from a Decimal, in both forms (LM-306). */
 function decimalToProto(v) {
     return (0, decimal_1.encodeDecimal)((0, decimal_1.fromDecimalJs)(v));
@@ -143,9 +144,9 @@ class BondSecurity extends security_1.default {
      */
     static fromPricerInputs(args) {
         const bond = buildBondDetails(args);
-        return new security_pb_1.SecurityProto()
+        return (0, object_types_1.stampOwn)(new security_pb_1.SecurityProto()
             .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE)
-            .setBondDetails(bond);
+            .setBondDetails(bond));
     }
     /**
      * Returns the price scale factor for bonds.

@@ -1,6 +1,7 @@
 import { IdentifierProto } from '../../../fintekkers/models/security/identifier/identifier_pb';
 import { IdentifierTypeProto } from '../../../fintekkers/models/security/identifier/identifier_type_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { stampOwn } from '../../util/object-types';
 
 /**
  * Raised when an IdentifierProto is rejected by the client-side guard
@@ -130,7 +131,7 @@ export class Identifier {
                 `Unknown IdentifierType name: '${name}'. Valid names: ${Identifier.getAllTypeNames().join(', ')}`
             );
         }
-        const proto = new IdentifierProto();
+        const proto = stampOwn(new IdentifierProto());
         proto.setIdentifierType(enumValue);
         proto.setIdentifierValue(value);
         // Client-side guard (#347): rejects UNKNOWN_IDENTIFIER_TYPE and empty

@@ -45,6 +45,7 @@ const identifier_1 = require("./identifier");
 const product_hierarchy_1 = require("./product_hierarchy");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
 const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
+const object_types_1 = require("../../util/object-types");
 class Security {
     constructor(proto) {
         this.proto = proto;
@@ -65,7 +66,7 @@ class Security {
             throw new Error("uuid is required for linkOf");
         if (!asOf)
             throw new Error("asOf is required for linkOf; use linkOfLatest(uuid) for latest-version semantics");
-        const proto = new security_pb_1.SecurityProto();
+        const proto = (0, object_types_1.stampOwn)(new security_pb_1.SecurityProto());
         proto.setIsLink(true);
         proto.setUuid(Security._uuidToProto(uuid));
         proto.setAsOf(Security._zonedDateTimeToProto(asOf));
@@ -79,7 +80,7 @@ class Security {
     static linkOfLatest(uuid) {
         if (!uuid)
             throw new Error("uuid is required for linkOfLatest");
-        const proto = new security_pb_1.SecurityProto();
+        const proto = (0, object_types_1.stampOwn)(new security_pb_1.SecurityProto());
         proto.setIsLink(true);
         proto.setUuid(Security._uuidToProto(uuid));
         return proto;
