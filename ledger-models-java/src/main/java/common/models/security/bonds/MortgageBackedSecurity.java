@@ -1,5 +1,7 @@
 package common.models.security.bonds;
 
+import common.util.ObjectTypes;
+import fintekkers.models.util.ObjectTypeProto;
 import common.models.security.*;
 import fintekkers.models.security.CouponFrequencyProto;
 import fintekkers.models.security.CouponTypeProto;
@@ -189,7 +191,7 @@ public class MortgageBackedSecurity extends BondSecurity {
         if (psaSpeed != null)
             mbs.setPsaSpeed(ProtoSerializationUtil.serializeBigDecimal(psaSpeed));
 
-        return SecurityProto.newBuilder()
+        return ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY)
                 .setProductType(ProductTypeProto.MORTGAGE_BACKED)
                 .setBondDetails(BondSecurity.buildBondDetails(faceValue, couponRate, couponType,
                         couponFrequency, issueDate, maturityDate))

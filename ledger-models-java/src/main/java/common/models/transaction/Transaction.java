@@ -429,7 +429,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         // Covers same-process write-then-read flows (tests, in-process
         // gRPC server reading back what it just wrote, etc.).
         primeSecurityCache(full);
-        SecurityProto.Builder link = SecurityProto.newBuilder().setIsLink(true);
+        SecurityProto.Builder link = ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY).setIsLink(true);
         if (full.hasUuid()) link.setUuid(full.getUuid());
         if (full.hasAsOf()) link.setAsOf(full.getAsOf());
         return link.build();
@@ -438,7 +438,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     private static PortfolioProto stripPortfolio(PortfolioProto full) {
         if (full.getIsLink()) return full;
         primePortfolioCache(full);
-        PortfolioProto.Builder link = PortfolioProto.newBuilder().setIsLink(true);
+        PortfolioProto.Builder link = ObjectTypes.stamp(PortfolioProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PORTFOLIO).setIsLink(true);
         if (full.hasUuid()) link.setUuid(full.getUuid());
         if (full.hasAsOf()) link.setAsOf(full.getAsOf());
         return link.build();
@@ -447,7 +447,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     private static PriceProto stripPrice(PriceProto full) {
         if (full.getIsLink()) return full;
         primePriceCache(full);
-        PriceProto.Builder link = PriceProto.newBuilder().setIsLink(true);
+        PriceProto.Builder link = ObjectTypes.stamp(PriceProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PRICE).setIsLink(true);
         if (full.hasUuid()) link.setUuid(full.getUuid());
         if (full.hasAsOf()) link.setAsOf(full.getAsOf());
         return link.build();

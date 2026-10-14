@@ -1,5 +1,7 @@
 package common.models.security;
 
+import common.util.ObjectTypes;
+import fintekkers.models.util.ObjectTypeProto;
 import common.models.security.identifier.Identifier;
 import common.models.security.identifier.IdentifierType;
 import fintekkers.models.security.CashDetailsProto;
@@ -60,7 +62,7 @@ public class CashSecurity extends Security {
     }
 
     private static SecurityProto buildCashProto(UUID id, String cashId, ZonedDateTime asOf) {
-        SecurityProto.Builder b = SecurityProto.newBuilder()
+        SecurityProto.Builder b = ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY)
                 .setProductType(ProductTypeProto.CURRENCY)
                 .setAssetClass(ASSET_CLASS);
         if (cashId != null) b.setIssuerName(cashId);
@@ -68,7 +70,7 @@ public class CashSecurity extends Security {
         if (asOf != null) b.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
         if (cashId != null) {
             b.setCashDetails(CashDetailsProto.newBuilder().setCashId(cashId).build());
-            b.addIdentifiers(IdentifierProto.newBuilder()
+            b.addIdentifiers(ObjectTypes.stamp(IdentifierProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_IDENTIFIER)
                     .setIdentifierType(IdentifierTypeProto.CASH)
                     .setIdentifierValue(cashId)
                     .build());
