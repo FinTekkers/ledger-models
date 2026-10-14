@@ -9,6 +9,7 @@ import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { Decimal } from 'decimal.js';
 import { decodeDecimal, toDecimalJs, withField } from '../utils/decimal';
+import { stampOwn } from '../../util/object-types';
 
 /**
  * FRN-specific accessors layered on top of BondSecurity. The floating-rate
@@ -58,10 +59,10 @@ class FloatingRateNote extends BondSecurity {
       .setSpread(decimalToProto(args.spread))
       .setReferenceRateIndex(args.referenceRateIndex)
       .setResetFrequency(args.resetFrequency);
-    return new SecurityProto()
+    return stampOwn(new SecurityProto()
       .setProductType(ProductTypeProto.TREASURY_FRN)
       .setBondDetails(bond)
-      .setFrnExtension(frn);
+      .setFrnExtension(frn));
   }
 }
 

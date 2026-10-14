@@ -8,6 +8,7 @@ import { AgencyProto } from '../../../fintekkers/models/security/bond/agency_pb'
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
 import { Decimal } from 'decimal.js';
 import { decodeDecimal, toDecimalJs, withField } from '../utils/decimal';
+import { stampOwn } from '../../util/object-types';
 
 /**
  * MBS-specific accessors layered on top of BondSecurity. Pool-level fields
@@ -116,10 +117,10 @@ class MortgageBackedSecurity extends BondSecurity {
       .setOriginalFaceValue(decimalToProto(args.originalFaceValue))
       .setCurrentUpb(decimalToProto(args.currentUpb))
       .setPsaSpeed(decimalToProto(args.psaSpeed));
-    return new SecurityProto()
+    return stampOwn(new SecurityProto()
       .setProductType(ProductTypeProto.MORTGAGE_BACKED)
       .setBondDetails(bond)
-      .setMbsExtension(mbs);
+      .setMbsExtension(mbs));
   }
 }
 

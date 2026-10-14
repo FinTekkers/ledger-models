@@ -9,6 +9,7 @@ import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_
 import { dateToLocalDateProto, localDateProtoToDate } from '../utils/date';
 import { Decimal } from 'decimal.js';
 import { decodeDecimal, toDecimalJs, withField } from '../utils/decimal';
+import { stampOwn } from '../../util/object-types';
 
 /**
  * TIPS-specific accessors layered on top of BondSecurity. The inflation
@@ -59,10 +60,10 @@ class TIPSBond extends BondSecurity {
       .setBaseCpi(decimalToProto(args.baseCpi))
       .setIndexDate(dateToLocalDateProto(args.indexDate))
       .setInflationIndexType(args.inflationIndexType);
-    return new SecurityProto()
+    return stampOwn(new SecurityProto()
       .setProductType(ProductTypeProto.TIPS)
       .setBondDetails(bond)
-      .setTipsExtension(tips);
+      .setTipsExtension(tips));
   }
 }
 

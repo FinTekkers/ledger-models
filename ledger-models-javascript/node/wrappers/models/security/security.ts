@@ -11,6 +11,7 @@ import { Identifier } from "./identifier";
 import { isDescendantOf } from "./product_hierarchy";
 import * as LinkCacheModule from "../../util/link-cache";
 import LinkResolver from "../../util/link-resolver";
+import { stampOwn } from "../../util/object-types";
 
 class Security {
   proto: SecurityProto;
@@ -33,7 +34,7 @@ class Security {
   static linkOf(uuid: UUID, asOf: ZonedDateTime): SecurityProto {
     if (!uuid) throw new Error("uuid is required for linkOf");
     if (!asOf) throw new Error("asOf is required for linkOf; use linkOfLatest(uuid) for latest-version semantics");
-    const proto = new SecurityProto();
+    const proto = stampOwn(new SecurityProto());
     proto.setIsLink(true);
     proto.setUuid(Security._uuidToProto(uuid));
     proto.setAsOf(Security._zonedDateTimeToProto(asOf));
@@ -47,7 +48,7 @@ class Security {
    */
   static linkOfLatest(uuid: UUID): SecurityProto {
     if (!uuid) throw new Error("uuid is required for linkOfLatest");
-    const proto = new SecurityProto();
+    const proto = stampOwn(new SecurityProto());
     proto.setIsLink(true);
     proto.setUuid(Security._uuidToProto(uuid));
     return proto;

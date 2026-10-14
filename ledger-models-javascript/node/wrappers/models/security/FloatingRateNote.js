@@ -29,6 +29,7 @@ const product_type_pb_1 = require("../../../fintekkers/models/security/product_t
 const index_type_pb_1 = require("../../../fintekkers/models/security/index/index_type_pb");
 const coupon_frequency_pb_1 = require("../../../fintekkers/models/security/coupon_frequency_pb");
 const decimal_1 = require("../utils/decimal");
+const object_types_1 = require("../../util/object-types");
 /**
  * FRN-specific accessors layered on top of BondSecurity. The floating-rate
  * fields live in the parallel frn_extension sub-message; bond_details
@@ -70,10 +71,10 @@ class FloatingRateNote extends BondSecurity_1.default {
             .setSpread((0, BondSecurity_1.decimalToProto)(args.spread))
             .setReferenceRateIndex(args.referenceRateIndex)
             .setResetFrequency(args.resetFrequency);
-        return new security_pb_1.SecurityProto()
+        return (0, object_types_1.stampOwn)(new security_pb_1.SecurityProto()
             .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_FRN)
             .setBondDetails(bond)
-            .setFrnExtension(frn);
+            .setFrnExtension(frn));
     }
 }
 exports.default = FloatingRateNote;

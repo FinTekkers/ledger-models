@@ -15,6 +15,7 @@ import { Decimal } from 'decimal.js';
 import { isDescendantOf } from './product_hierarchy';
 import Issuance from './Issuance';
 import { decodeDecimal, encodeDecimal, fromDecimalJs, toDecimalJs, withField } from '../utils/decimal';
+import { stampOwn } from '../../util/object-types';
 
 /**
  * Inputs required to mint a SecurityProto for the bond pricer. Shared by
@@ -166,9 +167,9 @@ class BondSecurity extends Security {
    */
   static fromPricerInputs(args: BondPricerInputs): SecurityProto {
     const bond = buildBondDetails(args);
-    return new SecurityProto()
+    return stampOwn(new SecurityProto()
       .setProductType(ProductTypeProto.TREASURY_NOTE)
-      .setBondDetails(bond);
+      .setBondDetails(bond));
   }
 
   /**

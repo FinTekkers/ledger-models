@@ -9,7 +9,7 @@ import { Decimal } from "decimal.js";
 import * as LinkCacheModule from "../../util/link-cache";
 import { decodeDecimal, encodeDecimal, fromDecimalJs, isUnsetDecimal, parseDecimalString, toCanonicalString, toDecimalJs, withField } from "../utils/decimal";
 import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
-import { stamp } from '../../util/object-types';
+import { stamp, stampOwn } from '../../util/object-types';
 
 class Price {
     proto: PriceProto;
@@ -36,7 +36,7 @@ class Price {
     ): Price {
         const decimalValueProto = encodeDecimal(parseDecimalString(price.toString()));
 
-        const securityProto = new SecurityProto();
+        const securityProto = stampOwn(new SecurityProto());
         securityProto.setUuid(new UUID(UUID.fromString(securityId)).toUUIDProto());
         securityProto.setIsLink(true);
 
