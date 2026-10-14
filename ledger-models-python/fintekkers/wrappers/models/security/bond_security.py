@@ -17,6 +17,8 @@ from fintekkers.models.security.security_pb2 import (
     BondDetailsProto,
 )
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.models.util.local_date_pb2 import LocalDateProto
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.wrappers.models.util.decimal import encode_decimal
@@ -66,7 +68,7 @@ class BondSecurity(Security):
             issue_date=_local_date(issue_date),
             maturity_date=_local_date(maturity_date),
         )
-        return SecurityProto(
+        return stamp(SecurityProto(
             product_type=ProductTypeProto.TREASURY_NOTE,
             bond_details=bond_details,
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_SECURITY)

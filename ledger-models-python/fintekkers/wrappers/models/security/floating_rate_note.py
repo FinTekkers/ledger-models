@@ -15,6 +15,8 @@ from fintekkers.models.security.security_pb2 import (
     FrnExtensionProto,
 )
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
+from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.models.security.index.index_type_pb2 import IndexTypeProto
 from fintekkers.models.security.coupon_frequency_pb2 import CouponFrequencyProto
 from fintekkers.wrappers.models.security.bond_security import (
@@ -79,8 +81,8 @@ class FloatingRateNote(BondSecurity):
             reference_rate_index=reference_rate_index,
             reset_frequency=reset_frequency,
         )
-        return SecurityProto(
+        return stamp(SecurityProto(
             product_type=ProductTypeProto.TREASURY_FRN,
             bond_details=bond_details,
             frn_extension=frn_extension,
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_SECURITY)

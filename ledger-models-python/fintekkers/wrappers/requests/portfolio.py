@@ -6,6 +6,7 @@ from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.position.position_filter_pb2 import PositionFilterProto
 from fintekkers.models.position.position_util_pb2 import FieldMapEntry
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
 
 from fintekkers.requests.portfolio.create_portfolio_request_pb2 import (
     CreatePortfolioRequestProto,
@@ -16,6 +17,7 @@ from fintekkers.requests.portfolio.query_portfolio_request_pb2 import (
 
 from fintekkers.wrappers.models.portfolio import Portfolio
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
+from fintekkers.wrappers.util.object_types import stamp
 
 
 class CreatePortfolioRequest:
@@ -23,17 +25,17 @@ class CreatePortfolioRequest:
     def create_portfolio_request_from_name(
         portfolio_name: str,
     ):
-        return CreatePortfolioRequestProto(
+        return stamp(CreatePortfolioRequestProto(
             create_portfolio_input=Portfolio.create_portfolio(portfolio_name).proto
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST)
 
     @staticmethod
     def create_portfolio_request_from_proto(
         portfolio: PortfolioProto,
     ):
-        return CreatePortfolioRequestProto(
+        return stamp(CreatePortfolioRequestProto(
             create_portfolio_input=portfolio
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST)
 
 
 class QueryPortfolioRequest:
@@ -72,10 +74,10 @@ class QueryPortfolioRequest:
             datetime.now()
         )
 
-        query_request: QueryPortfolioRequestProto = QueryPortfolioRequestProto(
-            search_portfolio_input=PositionFilterProto(filters=filters),
+        query_request: QueryPortfolioRequestProto = stamp(QueryPortfolioRequestProto(
+            search_portfolio_input=stamp(PositionFilterProto(filters=filters), ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER),
             as_of=as_of_proto,
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST)
 
         return QueryPortfolioRequest(query_request)
 

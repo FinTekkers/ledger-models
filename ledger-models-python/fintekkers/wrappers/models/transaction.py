@@ -132,12 +132,12 @@ class Transaction():
             portfolio=portfolio,
             security=security,
             position_status=position_status,
-            price=PriceProto(
+            price=stamp(PriceProto(
                 uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
                 as_of=as_of_proto,
                 price=encode_decimal(price),
                 security=security
-            ),
+            ), ObjectTypeProto.OBJECT_TYPE_PRICE),
             transaction_type=transaction_type,
             quantity=encode_decimal(quantity),
             trade_date=LocalDateProto(year=trade_date.year, month=trade_date.month, day=trade_date.day),

@@ -3,6 +3,7 @@ from fintekkers.models.security.identifier.identifier_type_pb2 import Identifier
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
+from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from fintekkers.models.position.field_pb2 import *
@@ -18,6 +19,7 @@ from fintekkers.wrappers.models.security.security_identifier import Identifier
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 from fintekkers.wrappers.util import link_cache as _link_cache
+from fintekkers.wrappers.util.object_types import stamp
 
 # Module-level fetcher hook — pluggable so this module stays free of a
 # direct SecurityServiceClient import (avoids cycles in tests). Set via
@@ -94,11 +96,11 @@ class Security():
             raise ValueError("uuid is required for link_of")
         if as_of is None:
             raise ValueError("as_of is required for link_of; use link_of_latest(uuid) for latest-version semantics")
-        return SecurityProto(
+        return stamp(SecurityProto(
             is_link=True,
             uuid=UUIDProto(raw_uuid=uuid.bytes),
             as_of=_datetime_to_local_timestamp(as_of),
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_SECURITY)
 
     @staticmethod
     def link_of_latest(uuid: UUID) -> SecurityProto:
@@ -108,10 +110,10 @@ class Security():
         """
         if uuid is None:
             raise ValueError("uuid is required for link_of_latest")
-        return SecurityProto(
+        return stamp(SecurityProto(
             is_link=True,
             uuid=UUIDProto(raw_uuid=uuid.bytes),
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_SECURITY)
 
     def is_link(self) -> bool:
         """True iff this Security is a link reference (only uuid + optionally

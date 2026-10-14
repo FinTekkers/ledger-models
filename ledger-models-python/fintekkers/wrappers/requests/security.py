@@ -71,7 +71,7 @@ class CreateSecurityRequest:
             Returns:
                     request (CreateSecurityRequest): A request wrapper, with the fields attached
         """
-        id = IdentifierProto(identifier_type=CUSIP, identifier_value=cusip)
+        id = stamp(IdentifierProto(identifier_type=CUSIP, identifier_value=cusip), ObjectTypeProto.OBJECT_TYPE_IDENTIFIER)
 
         # Initialize default coupon settings
         coupon_frequency = SEMIANNUALLY
@@ -128,7 +128,7 @@ class CreateSecurityRequest:
 
         # Bond fields live in bond_details; subtype extras in
         # tips_extension / frn_extension.
-        security_proto: SecurityProto = SecurityProto(
+        security_proto: SecurityProto = stamp(SecurityProto(
             as_of=LocalTimestampProto(
                 time_zone="America/New_York",
                 timestamp=Timestamp(seconds=timstamp_seconds, nanos=0),
@@ -140,7 +140,7 @@ class CreateSecurityRequest:
             quantity_type=ORIGINAL_FACE_VALUE,
             settlement_currency=cash_security,
             asset_class="Fixed Income",
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_SECURITY)
 
         bond_base_kwargs = dict(
             coupon_rate=coupon_rate_proto,
@@ -167,9 +167,9 @@ class CreateSecurityRequest:
 
     @staticmethod
     def create_or_update_request(security: Security):
-        proto: CreateSecurityRequestProto = CreateSecurityRequestProto(
+        proto: CreateSecurityRequestProto = stamp(CreateSecurityRequestProto(
             security_input=security.proto
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_REQUEST)
 
         return CreateSecurityRequest(proto=proto)
 
@@ -210,10 +210,10 @@ class QuerySecurityRequest:
             datetime.now()
         )
 
-        request: QuerySecurityRequestProto = QuerySecurityRequestProto(
-            search_security_input=PositionFilterProto(filters=filters),
+        request: QuerySecurityRequestProto = stamp(QuerySecurityRequestProto(
+            search_security_input=stamp(PositionFilterProto(filters=filters), ObjectTypeProto.OBJECT_TYPE_POSITION_FILTER),
             as_of=as_of_proto,
-        )
+        ), ObjectTypeProto.OBJECT_TYPE_QUERY_SECURITY_REQUEST)
 
         return QuerySecurityRequest(proto=request)
 
