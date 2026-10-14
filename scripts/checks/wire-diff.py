@@ -117,7 +117,13 @@ def lm318(key: str, old, new, head: dict) -> bool:
     return False
 
 
-ALLOWED = [lm318]
+def lm332(key: str, old, new, head: dict) -> bool:
+    """LM-332: IndexConstituentProto.currency deleted; the linked security has it."""
+    return (key == "field .fintekkers.models.security.IndexConstituentProto = 5"
+            and old == "string currency" and new is None)
+
+
+ALLOWED = [lm318, lm332]
 
 
 def main() -> int:

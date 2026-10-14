@@ -771,8 +771,7 @@ proto.fintekkers.models.security.IndexConstituentProto.toObject = function(inclu
   var f, obj = {
     security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
     weight: (f = msg.getWeight()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-    sharesInIndex: (f = msg.getSharesInIndex()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-    currency: jspb.Message.getFieldWithDefault(msg, 5, "")
+    sharesInIndex: (f = msg.getSharesInIndex()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -823,10 +822,6 @@ proto.fintekkers.models.security.IndexConstituentProto.deserializeBinaryFromRead
       var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
       reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
       msg.setSharesInIndex(value);
-      break;
-    case 5:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setCurrency(value);
       break;
     default:
       reader.skipField();
@@ -879,13 +874,6 @@ proto.fintekkers.models.security.IndexConstituentProto.serializeBinaryToWriter =
       3,
       f,
       fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
-    );
-  }
-  f = message.getCurrency();
-  if (f.length > 0) {
-    writer.writeString(
-      5,
-      f
     );
   }
 };
@@ -999,24 +987,6 @@ proto.fintekkers.models.security.IndexConstituentProto.prototype.clearSharesInIn
  */
 proto.fintekkers.models.security.IndexConstituentProto.prototype.hasSharesInIndex = function() {
   return jspb.Message.getField(this, 3) != null;
-};
-
-
-/**
- * optional string currency = 5;
- * @return {string}
- */
-proto.fintekkers.models.security.IndexConstituentProto.prototype.getCurrency = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.fintekkers.models.security.IndexConstituentProto} returns this
- */
-proto.fintekkers.models.security.IndexConstituentProto.prototype.setCurrency = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 

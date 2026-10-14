@@ -108,8 +108,6 @@ export class IndexConstituentProto extends jspb.Message {
     clearSharesInIndex(): void;
     getSharesInIndex(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
     setSharesInIndex(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): IndexConstituentProto;
-    getCurrency(): string;
-    setCurrency(value: string): IndexConstituentProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): IndexConstituentProto.AsObject;
@@ -126,6 +124,5 @@ export namespace IndexConstituentProto {
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         weight?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         sharesInIndex?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
-        currency: string,
     }
 }

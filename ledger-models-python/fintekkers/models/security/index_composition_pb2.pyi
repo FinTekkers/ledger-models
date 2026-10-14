@@ -42,13 +42,11 @@ class IndexCompositionProto(_message.Message):
     def __init__(self, object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version: _Optional[_Union[_version_pb2.VersionProto, _Mapping]] = ..., uuid: _Optional[_Union[_uuid_pb2.UUIDProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., is_link: bool = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., index_security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., effective_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., constituents: _Optional[_Iterable[_Union[IndexConstituentProto, _Mapping]]] = ..., index_divisor: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., notes: _Optional[str] = ...) -> None: ...
 
 class IndexConstituentProto(_message.Message):
-    __slots__ = ("security", "weight", "shares_in_index", "currency")
+    __slots__ = ("security", "weight", "shares_in_index")
     SECURITY_FIELD_NUMBER: _ClassVar[int]
     WEIGHT_FIELD_NUMBER: _ClassVar[int]
     SHARES_IN_INDEX_FIELD_NUMBER: _ClassVar[int]
-    CURRENCY_FIELD_NUMBER: _ClassVar[int]
     security: _security_pb2.SecurityProto
     weight: _decimal_value_pb2.DecimalValueProto
     shares_in_index: _decimal_value_pb2.DecimalValueProto
-    currency: str
-    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., weight: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., shares_in_index: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., currency: _Optional[str] = ...) -> None: ...
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., weight: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., shares_in_index: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...

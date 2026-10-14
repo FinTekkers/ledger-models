@@ -767,9 +767,6 @@ pub struct IndexConstituentProto {
     /// For non-price-weighted indices, leave unset; use weight instead.
     #[prost(message, optional, tag = "3")]
     pub shares_in_index: ::core::option::Option<super::util::DecimalValueProto>,
-    /// The currency of the constituent's price (e.g. "USD"). Needed for multi-currency indices.
-    #[prost(string, tag = "5")]
-    pub currency: ::prost::alloc::string::String,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
