@@ -30,6 +30,21 @@ public final class ProductInputProtos {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_fintekkers_requests_valuation_TipsInput_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fintekkers_requests_valuation_InflationIndexInput_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fintekkers_requests_valuation_InflationIndexInput_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fintekkers_requests_valuation_MonthlyIndexReadings_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fintekkers_requests_valuation_MonthlyIndexReadings_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fintekkers_requests_valuation_MonthlyIndexReading_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fintekkers_requests_valuation_MonthlyIndexReading_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_fintekkers_requests_valuation_FrnInput_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -80,35 +95,48 @@ public final class ProductInputProtos {
       "intekkers.models.util.DecimalValueProto\022" +
       "O\n\017benchmark_curve\030\n \001(\01326.fintekkers.re" +
       "quests.valuation.SecurityBasedCurveInput" +
-      "\"\310\001\n\tTipsInput\022;\n\010security\030\001 \001(\0132).finte" +
+      "\"\215\002\n\tTipsInput\022;\n\010security\030\001 \001(\0132).finte" +
       "kkers.models.security.SecurityProto\022>\n\013c" +
       "lean_price\030\002 \001(\0132).fintekkers.models.uti" +
-      "l.DecimalValueProto\022>\n\013current_cpi\030\003 \001(\013" +
+      "l.DecimalValueProto\022B\n\013current_cpi\030\003 \001(\013" +
       "2).fintekkers.models.util.DecimalValuePr" +
-      "oto\"\306\001\n\010FrnInput\022;\n\010security\030\001 \001(\0132).fin" +
-      "tekkers.models.security.SecurityProto\022>\n" +
-      "\013clean_price\030\002 \001(\0132).fintekkers.models.u" +
-      "til.DecimalValueProto\022=\n\005curve\030\n \001(\0132..f" +
-      "intekkers.requests.valuation.YieldCurveI" +
-      "nput\"\315\001\n\017YieldCurveInput\022?\n\005index\030\001 \001(\0162" +
-      "0.fintekkers.models.security.index.Index" +
-      "TypeProto\022>\n\016reference_date\030\002 \001(\0132&.fint" +
-      "ekkers.models.util.LocalDateProto\0229\n\006poi" +
-      "nts\030\003 \003(\0132).fintekkers.requests.valuatio" +
-      "n.CurvePoint\"\177\n\nCurvePoint\0228\n\005tenor\030\001 \001(" +
+      "otoB\002\030\001\022?\n\003cpi\030\004 \001(\01322.fintekkers.reques" +
+      "ts.valuation.InflationIndexInput\"\343\001\n\023Inf" +
+      "lationIndexInput\0228\n\005index\030\001 \001(\0132).fintek" +
+      "kers.models.security.SecurityProto\022G\n\010re" +
+      "adings\030\002 \001(\01323.fintekkers.requests.valua" +
+      "tion.MonthlyIndexReadingsH\000\022B\n\rreference" +
+      "_cpi\030\003 \001(\0132).fintekkers.models.util.Deci" +
+      "malValueProtoH\000B\005\n\003cpi\"\\\n\024MonthlyIndexRe" +
+      "adings\022D\n\010readings\030\001 \003(\01322.fintekkers.re" +
+      "quests.valuation.MonthlyIndexReading\"l\n\023" +
+      "MonthlyIndexReading\022\014\n\004year\030\001 \001(\005\022\r\n\005mon" +
+      "th\030\002 \001(\005\0228\n\005value\030\003 \001(\0132).fintekkers.mod" +
+      "els.util.DecimalValueProto\"\306\001\n\010FrnInput\022" +
+      ";\n\010security\030\001 \001(\0132).fintekkers.models.se" +
+      "curity.SecurityProto\022>\n\013clean_price\030\002 \001(" +
       "\0132).fintekkers.models.util.DecimalValueP" +
-      "roto\0227\n\004rate\030\002 \001(\0132).fintekkers.models.u" +
-      "til.DecimalValueProto\"\335\001\n\027SecurityBasedC" +
-      "urveInput\022?\n\005index\030\001 \001(\01620.fintekkers.mo" +
-      "dels.security.index.IndexTypeProto\022>\n\016re" +
-      "ference_date\030\002 \001(\0132&.fintekkers.models.u" +
-      "til.LocalDateProto\022A\n\006points\030\003 \003(\01321.fin" +
-      "tekkers.requests.valuation.SecurityCurve" +
-      "Point\"\221\001\n\022SecurityCurvePoint\022;\n\010security" +
-      "\030\001 \001(\0132).fintekkers.models.security.Secu" +
-      "rityProto\022>\n\013clean_price\030\002 \001(\0132).fintekk" +
-      "ers.models.util.DecimalValueProtoB\026B\022Pro" +
-      "ductInputProtosP\001b\006proto3"
+      "roto\022=\n\005curve\030\n \001(\0132..fintekkers.request" +
+      "s.valuation.YieldCurveInput\"\315\001\n\017YieldCur" +
+      "veInput\022?\n\005index\030\001 \001(\01620.fintekkers.mode" +
+      "ls.security.index.IndexTypeProto\022>\n\016refe" +
+      "rence_date\030\002 \001(\0132&.fintekkers.models.uti" +
+      "l.LocalDateProto\0229\n\006points\030\003 \003(\0132).finte" +
+      "kkers.requests.valuation.CurvePoint\"\177\n\nC" +
+      "urvePoint\0228\n\005tenor\030\001 \001(\0132).fintekkers.mo" +
+      "dels.util.DecimalValueProto\0227\n\004rate\030\002 \001(" +
+      "\0132).fintekkers.models.util.DecimalValueP" +
+      "roto\"\335\001\n\027SecurityBasedCurveInput\022?\n\005inde" +
+      "x\030\001 \001(\01620.fintekkers.models.security.ind" +
+      "ex.IndexTypeProto\022>\n\016reference_date\030\002 \001(" +
+      "\0132&.fintekkers.models.util.LocalDateProt" +
+      "o\022A\n\006points\030\003 \003(\01321.fintekkers.requests." +
+      "valuation.SecurityCurvePoint\"\221\001\n\022Securit" +
+      "yCurvePoint\022;\n\010security\030\001 \001(\0132).fintekke" +
+      "rs.models.security.SecurityProto\022>\n\013clea" +
+      "n_price\030\002 \001(\0132).fintekkers.models.util.D" +
+      "ecimalValueProtoB\026B\022ProductInputProtosP\001" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -135,33 +163,51 @@ public final class ProductInputProtos {
     internal_static_fintekkers_requests_valuation_TipsInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_TipsInput_descriptor,
-        new java.lang.String[] { "Security", "CleanPrice", "CurrentCpi", });
-    internal_static_fintekkers_requests_valuation_FrnInput_descriptor =
+        new java.lang.String[] { "Security", "CleanPrice", "CurrentCpi", "Cpi", });
+    internal_static_fintekkers_requests_valuation_InflationIndexInput_descriptor =
       getDescriptor().getMessageTypes().get(3);
+    internal_static_fintekkers_requests_valuation_InflationIndexInput_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fintekkers_requests_valuation_InflationIndexInput_descriptor,
+        new java.lang.String[] { "Index", "Readings", "ReferenceCpi", "Cpi", });
+    internal_static_fintekkers_requests_valuation_MonthlyIndexReadings_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_fintekkers_requests_valuation_MonthlyIndexReadings_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fintekkers_requests_valuation_MonthlyIndexReadings_descriptor,
+        new java.lang.String[] { "Readings", });
+    internal_static_fintekkers_requests_valuation_MonthlyIndexReading_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_fintekkers_requests_valuation_MonthlyIndexReading_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fintekkers_requests_valuation_MonthlyIndexReading_descriptor,
+        new java.lang.String[] { "Year", "Month", "Value", });
+    internal_static_fintekkers_requests_valuation_FrnInput_descriptor =
+      getDescriptor().getMessageTypes().get(6);
     internal_static_fintekkers_requests_valuation_FrnInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_FrnInput_descriptor,
         new java.lang.String[] { "Security", "CleanPrice", "Curve", });
     internal_static_fintekkers_requests_valuation_YieldCurveInput_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_fintekkers_requests_valuation_YieldCurveInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_YieldCurveInput_descriptor,
         new java.lang.String[] { "Index", "ReferenceDate", "Points", });
     internal_static_fintekkers_requests_valuation_CurvePoint_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_fintekkers_requests_valuation_CurvePoint_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_CurvePoint_descriptor,
         new java.lang.String[] { "Tenor", "Rate", });
     internal_static_fintekkers_requests_valuation_SecurityBasedCurveInput_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_fintekkers_requests_valuation_SecurityBasedCurveInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_SecurityBasedCurveInput_descriptor,
         new java.lang.String[] { "Index", "ReferenceDate", "Points", });
     internal_static_fintekkers_requests_valuation_SecurityCurvePoint_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_fintekkers_requests_valuation_SecurityCurvePoint_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_SecurityCurvePoint_descriptor,

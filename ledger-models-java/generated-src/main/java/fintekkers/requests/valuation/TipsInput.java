@@ -12,6 +12,9 @@ package fintekkers.requests.valuation;
  * security.bond_details. TIPS-specific extras (base_cpi, index_date,
  * inflation_index_type) are read from security.tips_extension.
  * Settlement date is read from ValuationRequestProto.asof_datetime.
+ * CPI precedence: cpi (4) is used when set. Otherwise the deprecated
+ * current_cpi (3), then the deprecated ValuationRequestProto.cpi_price_input
+ * (24). New callers set cpi only.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
  *
@@ -140,47 +143,92 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.util.DecimalValue.DecimalValueProto currentCpi_;
   /**
    * <pre>
-   * Current CPI index value (e.g. 310.326). Used to compute:
-   *   index_ratio = current_cpi / base_cpi
-   *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-   * The base CPI is read from security.tips_extension.base_cpi.
+   * Deprecated: use cpi (4). Read only when cpi is unset.
+   * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+   *   index_ratio = current_cpi / security.tips_extension.base_cpi
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.TipsInput.current_cpi is deprecated.
+   *     See fintekkers/requests/valuation/product_inputs.proto;l=83
    * @return Whether the currentCpi field is set.
    */
   @java.lang.Override
-  public boolean hasCurrentCpi() {
+  @java.lang.Deprecated public boolean hasCurrentCpi() {
     return currentCpi_ != null;
   }
   /**
    * <pre>
-   * Current CPI index value (e.g. 310.326). Used to compute:
-   *   index_ratio = current_cpi / base_cpi
-   *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-   * The base CPI is read from security.tips_extension.base_cpi.
+   * Deprecated: use cpi (4). Read only when cpi is unset.
+   * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+   *   index_ratio = current_cpi / security.tips_extension.base_cpi
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.TipsInput.current_cpi is deprecated.
+   *     See fintekkers/requests/valuation/product_inputs.proto;l=83
    * @return The currentCpi.
    */
   @java.lang.Override
-  public fintekkers.models.util.DecimalValue.DecimalValueProto getCurrentCpi() {
+  @java.lang.Deprecated public fintekkers.models.util.DecimalValue.DecimalValueProto getCurrentCpi() {
     return currentCpi_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : currentCpi_;
   }
   /**
    * <pre>
-   * Current CPI index value (e.g. 310.326). Used to compute:
-   *   index_ratio = current_cpi / base_cpi
-   *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-   * The base CPI is read from security.tips_extension.base_cpi.
+   * Deprecated: use cpi (4). Read only when cpi is unset.
+   * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+   *   index_ratio = current_cpi / security.tips_extension.base_cpi
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
    */
   @java.lang.Override
-  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCurrentCpiOrBuilder() {
+  @java.lang.Deprecated public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCurrentCpiOrBuilder() {
     return currentCpi_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : currentCpi_;
+  }
+
+  public static final int CPI_FIELD_NUMBER = 4;
+  private fintekkers.requests.valuation.InflationIndexInput cpi_;
+  /**
+   * <pre>
+   * The CPI the index ratio is computed from: raw monthly index levels, or a
+   * reference CPI already derived for the settlement date. See
+   * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+   * @return Whether the cpi field is set.
+   */
+  @java.lang.Override
+  public boolean hasCpi() {
+    return cpi_ != null;
+  }
+  /**
+   * <pre>
+   * The CPI the index ratio is computed from: raw monthly index levels, or a
+   * reference CPI already derived for the settlement date. See
+   * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+   * @return The cpi.
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.InflationIndexInput getCpi() {
+    return cpi_ == null ? fintekkers.requests.valuation.InflationIndexInput.getDefaultInstance() : cpi_;
+  }
+  /**
+   * <pre>
+   * The CPI the index ratio is computed from: raw monthly index levels, or a
+   * reference CPI already derived for the settlement date. See
+   * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.InflationIndexInputOrBuilder getCpiOrBuilder() {
+    return cpi_ == null ? fintekkers.requests.valuation.InflationIndexInput.getDefaultInstance() : cpi_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -206,6 +254,9 @@ private static final long serialVersionUID = 0L;
     if (currentCpi_ != null) {
       output.writeMessage(3, getCurrentCpi());
     }
+    if (cpi_ != null) {
+      output.writeMessage(4, getCpi());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -226,6 +277,10 @@ private static final long serialVersionUID = 0L;
     if (currentCpi_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(3, getCurrentCpi());
+    }
+    if (cpi_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(4, getCpi());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -257,6 +312,11 @@ private static final long serialVersionUID = 0L;
       if (!getCurrentCpi()
           .equals(other.getCurrentCpi())) return false;
     }
+    if (hasCpi() != other.hasCpi()) return false;
+    if (hasCpi()) {
+      if (!getCpi()
+          .equals(other.getCpi())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -279,6 +339,10 @@ private static final long serialVersionUID = 0L;
     if (hasCurrentCpi()) {
       hash = (37 * hash) + CURRENT_CPI_FIELD_NUMBER;
       hash = (53 * hash) + getCurrentCpi().hashCode();
+    }
+    if (hasCpi()) {
+      hash = (37 * hash) + CPI_FIELD_NUMBER;
+      hash = (53 * hash) + getCpi().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -384,6 +448,9 @@ private static final long serialVersionUID = 0L;
    * security.bond_details. TIPS-specific extras (base_cpi, index_date,
    * inflation_index_type) are read from security.tips_extension.
    * Settlement date is read from ValuationRequestProto.asof_datetime.
+   * CPI precedence: cpi (4) is used when set. Otherwise the deprecated
+   * current_cpi (3), then the deprecated ValuationRequestProto.cpi_price_input
+   * (24). New callers set cpi only.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
    *
@@ -435,6 +502,11 @@ private static final long serialVersionUID = 0L;
         currentCpiBuilder_.dispose();
         currentCpiBuilder_ = null;
       }
+      cpi_ = null;
+      if (cpiBuilder_ != null) {
+        cpiBuilder_.dispose();
+        cpiBuilder_ = null;
+      }
       return this;
     }
 
@@ -482,6 +554,11 @@ private static final long serialVersionUID = 0L;
         result.currentCpi_ = currentCpiBuilder_ == null
             ? currentCpi_
             : currentCpiBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.cpi_ = cpiBuilder_ == null
+            ? cpi_
+            : cpiBuilder_.build();
       }
     }
 
@@ -538,6 +615,9 @@ private static final long serialVersionUID = 0L;
       if (other.hasCurrentCpi()) {
         mergeCurrentCpi(other.getCurrentCpi());
       }
+      if (other.hasCpi()) {
+        mergeCpi(other.getCpi());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -585,6 +665,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000004;
               break;
             } // case 26
+            case 34: {
+              input.readMessage(
+                  getCpiFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 34
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -935,30 +1022,32 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> currentCpiBuilder_;
     /**
      * <pre>
-     * Current CPI index value (e.g. 310.326). Used to compute:
-     *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-     * The base CPI is read from security.tips_extension.base_cpi.
+     * Deprecated: use cpi (4). Read only when cpi is unset.
+     * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+     *   index_ratio = current_cpi / security.tips_extension.base_cpi
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
+     * @deprecated fintekkers.requests.valuation.TipsInput.current_cpi is deprecated.
+     *     See fintekkers/requests/valuation/product_inputs.proto;l=83
      * @return Whether the currentCpi field is set.
      */
-    public boolean hasCurrentCpi() {
+    @java.lang.Deprecated public boolean hasCurrentCpi() {
       return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      * <pre>
-     * Current CPI index value (e.g. 310.326). Used to compute:
-     *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-     * The base CPI is read from security.tips_extension.base_cpi.
+     * Deprecated: use cpi (4). Read only when cpi is unset.
+     * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+     *   index_ratio = current_cpi / security.tips_extension.base_cpi
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
+     * @deprecated fintekkers.requests.valuation.TipsInput.current_cpi is deprecated.
+     *     See fintekkers/requests/valuation/product_inputs.proto;l=83
      * @return The currentCpi.
      */
-    public fintekkers.models.util.DecimalValue.DecimalValueProto getCurrentCpi() {
+    @java.lang.Deprecated public fintekkers.models.util.DecimalValue.DecimalValueProto getCurrentCpi() {
       if (currentCpiBuilder_ == null) {
         return currentCpi_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : currentCpi_;
       } else {
@@ -967,15 +1056,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Current CPI index value (e.g. 310.326). Used to compute:
-     *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-     * The base CPI is read from security.tips_extension.base_cpi.
+     * Deprecated: use cpi (4). Read only when cpi is unset.
+     * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+     *   index_ratio = current_cpi / security.tips_extension.base_cpi
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
      */
-    public Builder setCurrentCpi(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+    @java.lang.Deprecated public Builder setCurrentCpi(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
       if (currentCpiBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -990,15 +1078,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Current CPI index value (e.g. 310.326). Used to compute:
-     *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-     * The base CPI is read from security.tips_extension.base_cpi.
+     * Deprecated: use cpi (4). Read only when cpi is unset.
+     * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+     *   index_ratio = current_cpi / security.tips_extension.base_cpi
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
      */
-    public Builder setCurrentCpi(
+    @java.lang.Deprecated public Builder setCurrentCpi(
         fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
       if (currentCpiBuilder_ == null) {
         currentCpi_ = builderForValue.build();
@@ -1011,15 +1098,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Current CPI index value (e.g. 310.326). Used to compute:
-     *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-     * The base CPI is read from security.tips_extension.base_cpi.
+     * Deprecated: use cpi (4). Read only when cpi is unset.
+     * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+     *   index_ratio = current_cpi / security.tips_extension.base_cpi
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
      */
-    public Builder mergeCurrentCpi(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+    @java.lang.Deprecated public Builder mergeCurrentCpi(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
       if (currentCpiBuilder_ == null) {
         if (((bitField0_ & 0x00000004) != 0) &&
           currentCpi_ != null &&
@@ -1037,15 +1123,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Current CPI index value (e.g. 310.326). Used to compute:
-     *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-     * The base CPI is read from security.tips_extension.base_cpi.
+     * Deprecated: use cpi (4). Read only when cpi is unset.
+     * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+     *   index_ratio = current_cpi / security.tips_extension.base_cpi
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
      */
-    public Builder clearCurrentCpi() {
+    @java.lang.Deprecated public Builder clearCurrentCpi() {
       bitField0_ = (bitField0_ & ~0x00000004);
       currentCpi_ = null;
       if (currentCpiBuilder_ != null) {
@@ -1057,30 +1142,28 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Current CPI index value (e.g. 310.326). Used to compute:
-     *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-     * The base CPI is read from security.tips_extension.base_cpi.
+     * Deprecated: use cpi (4). Read only when cpi is unset.
+     * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+     *   index_ratio = current_cpi / security.tips_extension.base_cpi
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
      */
-    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getCurrentCpiBuilder() {
+    @java.lang.Deprecated public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getCurrentCpiBuilder() {
       bitField0_ |= 0x00000004;
       onChanged();
       return getCurrentCpiFieldBuilder().getBuilder();
     }
     /**
      * <pre>
-     * Current CPI index value (e.g. 310.326). Used to compute:
-     *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-     * The base CPI is read from security.tips_extension.base_cpi.
+     * Deprecated: use cpi (4). Read only when cpi is unset.
+     * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+     *   index_ratio = current_cpi / security.tips_extension.base_cpi
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
      */
-    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCurrentCpiOrBuilder() {
+    @java.lang.Deprecated public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCurrentCpiOrBuilder() {
       if (currentCpiBuilder_ != null) {
         return currentCpiBuilder_.getMessageOrBuilder();
       } else {
@@ -1090,13 +1173,12 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Current CPI index value (e.g. 310.326). Used to compute:
-     *   index_ratio = current_cpi / base_cpi
-     *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-     * The base CPI is read from security.tips_extension.base_cpi.
+     * Deprecated: use cpi (4). Read only when cpi is unset.
+     * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+     *   index_ratio = current_cpi / security.tips_extension.base_cpi
      * </pre>
      *
-     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+     * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
@@ -1110,6 +1192,179 @@ private static final long serialVersionUID = 0L;
         currentCpi_ = null;
       }
       return currentCpiBuilder_;
+    }
+
+    private fintekkers.requests.valuation.InflationIndexInput cpi_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.InflationIndexInput, fintekkers.requests.valuation.InflationIndexInput.Builder, fintekkers.requests.valuation.InflationIndexInputOrBuilder> cpiBuilder_;
+    /**
+     * <pre>
+     * The CPI the index ratio is computed from: raw monthly index levels, or a
+     * reference CPI already derived for the settlement date. See
+     * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+     * @return Whether the cpi field is set.
+     */
+    public boolean hasCpi() {
+      return ((bitField0_ & 0x00000008) != 0);
+    }
+    /**
+     * <pre>
+     * The CPI the index ratio is computed from: raw monthly index levels, or a
+     * reference CPI already derived for the settlement date. See
+     * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+     * @return The cpi.
+     */
+    public fintekkers.requests.valuation.InflationIndexInput getCpi() {
+      if (cpiBuilder_ == null) {
+        return cpi_ == null ? fintekkers.requests.valuation.InflationIndexInput.getDefaultInstance() : cpi_;
+      } else {
+        return cpiBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The CPI the index ratio is computed from: raw monthly index levels, or a
+     * reference CPI already derived for the settlement date. See
+     * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+     */
+    public Builder setCpi(fintekkers.requests.valuation.InflationIndexInput value) {
+      if (cpiBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        cpi_ = value;
+      } else {
+        cpiBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The CPI the index ratio is computed from: raw monthly index levels, or a
+     * reference CPI already derived for the settlement date. See
+     * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+     */
+    public Builder setCpi(
+        fintekkers.requests.valuation.InflationIndexInput.Builder builderForValue) {
+      if (cpiBuilder_ == null) {
+        cpi_ = builderForValue.build();
+      } else {
+        cpiBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The CPI the index ratio is computed from: raw monthly index levels, or a
+     * reference CPI already derived for the settlement date. See
+     * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+     */
+    public Builder mergeCpi(fintekkers.requests.valuation.InflationIndexInput value) {
+      if (cpiBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0) &&
+          cpi_ != null &&
+          cpi_ != fintekkers.requests.valuation.InflationIndexInput.getDefaultInstance()) {
+          getCpiBuilder().mergeFrom(value);
+        } else {
+          cpi_ = value;
+        }
+      } else {
+        cpiBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The CPI the index ratio is computed from: raw monthly index levels, or a
+     * reference CPI already derived for the settlement date. See
+     * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+     */
+    public Builder clearCpi() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      cpi_ = null;
+      if (cpiBuilder_ != null) {
+        cpiBuilder_.dispose();
+        cpiBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The CPI the index ratio is computed from: raw monthly index levels, or a
+     * reference CPI already derived for the settlement date. See
+     * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+     */
+    public fintekkers.requests.valuation.InflationIndexInput.Builder getCpiBuilder() {
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return getCpiFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The CPI the index ratio is computed from: raw monthly index levels, or a
+     * reference CPI already derived for the settlement date. See
+     * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+     */
+    public fintekkers.requests.valuation.InflationIndexInputOrBuilder getCpiOrBuilder() {
+      if (cpiBuilder_ != null) {
+        return cpiBuilder_.getMessageOrBuilder();
+      } else {
+        return cpi_ == null ?
+            fintekkers.requests.valuation.InflationIndexInput.getDefaultInstance() : cpi_;
+      }
+    }
+    /**
+     * <pre>
+     * The CPI the index ratio is computed from: raw monthly index levels, or a
+     * reference CPI already derived for the settlement date. See
+     * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.InflationIndexInput, fintekkers.requests.valuation.InflationIndexInput.Builder, fintekkers.requests.valuation.InflationIndexInputOrBuilder> 
+        getCpiFieldBuilder() {
+      if (cpiBuilder_ == null) {
+        cpiBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.requests.valuation.InflationIndexInput, fintekkers.requests.valuation.InflationIndexInput.Builder, fintekkers.requests.valuation.InflationIndexInputOrBuilder>(
+                getCpi(),
+                getParentForChildren(),
+                isClean());
+        cpi_ = null;
+      }
+      return cpiBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

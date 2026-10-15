@@ -34,4 +34,6 @@ export enum MeasureProto {
     DV01 = 25,
     DISCOUNT_YIELD = 26,
     BOND_EQUIVALENT_YIELD = 27,
+    REFERENCE_CPI = 28,
+    INDEX_RATIO = 29,
 }

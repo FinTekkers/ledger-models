@@ -81,7 +81,14 @@ public enum Measure {
     BOND_EQUIVALENT_YIELD("U.S. Treasury Bill bond-equivalent yield (365-day, conventional). " +
             "Computed as (F - P) / P × 365 / days_to_maturity. " +
             "Comparable to YTM on coupon-bearing Treasuries. " +
-            "TBill-specific (and principal-only Strips <1yr); null otherwise.");
+            "TBill-specific (and principal-only Strips <1yr); null otherwise."),
+
+    REFERENCE_CPI("TIPS reference CPI for the settlement date, in index points. " +
+            "Taken from TipsInput.cpi: the reference_cpi as given, or derived by valuation-service " +
+            "from the monthly readings for months m-3 and m-2. Unrounded. TIPS-specific; null otherwise."),
+
+    INDEX_RATIO("TIPS index ratio: REFERENCE_CPI / base_cpi. Dimensionless, unrounded and unfloored. " +
+            "TIPS-specific; null otherwise.");
 
     static {
         Set<String> measureNames = Arrays.stream(Measure.values())

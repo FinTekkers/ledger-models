@@ -216,33 +216,43 @@ public interface ValuationRequestProtoOrBuilder extends
 
   /**
    * <pre>
+   *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
+   *TipsInput.cpi nor TipsInput.current_cpi is set.
    *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
    *Modeled as a PriceProto on a SecurityProto representing the CPI index.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.cpi_price_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=50
    * @return Whether the cpiPriceInput field is set.
    */
-  boolean hasCpiPriceInput();
+  @java.lang.Deprecated boolean hasCpiPriceInput();
   /**
    * <pre>
+   *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
+   *TipsInput.cpi nor TipsInput.current_cpi is set.
    *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
    *Modeled as a PriceProto on a SecurityProto representing the CPI index.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.cpi_price_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=50
    * @return The cpiPriceInput.
    */
-  fintekkers.models.price.PriceProto getCpiPriceInput();
+  @java.lang.Deprecated fintekkers.models.price.PriceProto getCpiPriceInput();
   /**
    * <pre>
+   *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
+   *TipsInput.cpi nor TipsInput.current_cpi is set.
    *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
    *Modeled as a PriceProto on a SecurityProto representing the CPI index.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24;</code>
+   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
    */
-  fintekkers.models.price.PriceProtoOrBuilder getCpiPriceInputOrBuilder();
+  @java.lang.Deprecated fintekkers.models.price.PriceProtoOrBuilder getCpiPriceInputOrBuilder();
 
   /**
    * <pre>
@@ -254,10 +264,12 @@ public interface ValuationRequestProtoOrBuilder extends
    *Required for legacy flat-rate FRN valuation.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
+   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.reference_rate_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=58
    * @return Whether the referenceRateInput field is set.
    */
-  boolean hasReferenceRateInput();
+  @java.lang.Deprecated boolean hasReferenceRateInput();
   /**
    * <pre>
    *The current reference rate observation for floating rate note (FRN) valuation.
@@ -268,10 +280,12 @@ public interface ValuationRequestProtoOrBuilder extends
    *Required for legacy flat-rate FRN valuation.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
+   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.reference_rate_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=58
    * @return The referenceRateInput.
    */
-  fintekkers.models.price.PriceProto getReferenceRateInput();
+  @java.lang.Deprecated fintekkers.models.price.PriceProto getReferenceRateInput();
   /**
    * <pre>
    *The current reference rate observation for floating rate note (FRN) valuation.
@@ -282,9 +296,9 @@ public interface ValuationRequestProtoOrBuilder extends
    *Required for legacy flat-rate FRN valuation.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25;</code>
+   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
    */
-  fintekkers.models.price.PriceProtoOrBuilder getReferenceRateInputOrBuilder();
+  @java.lang.Deprecated fintekkers.models.price.PriceProtoOrBuilder getReferenceRateInputOrBuilder();
 
   /**
    * <pre>

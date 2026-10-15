@@ -4,9 +4,15 @@
  * For each new message type: construct → serializeBinary() → deserializeBinary() → verify all fields match.
  */
 
-import { ProductInput, FrnInput, YieldCurveInput, CurvePoint } from './product_inputs_pb';
+import {
+    ProductInput, FrnInput, YieldCurveInput, CurvePoint,
+    TipsInput, InflationIndexInput, MonthlyIndexReadings, MonthlyIndexReading,
+} from './product_inputs_pb';
 import { ValuationRequestProto } from './valuation_request_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
+import { IndexDetailsProto, SecurityProto, TipsExtensionProto } from '../../../fintekkers/models/security/security_pb';
+import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
+import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { decodeDecimal, encodeDecimal, parseDecimalString, toCanonicalString } from '../../../wrappers/models/utils/decimal';
@@ -162,5 +168,123 @@ describe('New RFR index types round-trip', () => {
 
         const parsed = YieldCurveInput.deserializeBinary(curve.serializeBinary());
         expect(parsed.getIndex()).toBe(index);
+    });
+});
+
+describe('TipsInput.cpi round-trip through ValuationRequestProto (LM-343)', () => {
+    function text(d: DecimalValueProto | undefined): string {
+        return toCanonicalString(decodeDecimal(d!));
+    }
+
+    function cpiIndex(): SecurityProto {
+        const details = new IndexDetailsProto();
+        details.setIndexType(IndexTypeProto.CPI_U);
+        const index = new SecurityProto();
+        index.setIssuerName('CPI-U NSA');
+        index.setIndexDetails(details);
+        return index;
+    }
+
+    function tipsSecurity(): SecurityProto {
+        const ext = new TipsExtensionProto();
+        ext.setBaseCpi(decimal('260.47400'));
+        ext.setInflationIndexType(IndexTypeProto.CPI_U);
+        const security = new SecurityProto();
+        security.setProductType(ProductTypeProto.TIPS);
+        security.setTipsExtension(ext);
+        return security;
+    }
+
+    function reading(year: number, month: number, value: string): MonthlyIndexReading {
+        const r = new MonthlyIndexReading();
+        r.setYear(year);
+        r.setMonth(month);
+        r.setValue(decimal(value));
+        return r;
+    }
+
+    function request(tips: TipsInput): ValuationRequestProto {
+        const pi = new ProductInput();
+        pi.setTips(tips);
+        const req = new ValuationRequestProto();
+        req.setProductInput(pi);
+        return req;
+    }
+
+    function roundtripTips(original: ValuationRequestProto): TipsInput {
+        const parsed = ValuationRequestProto.deserializeBinary(original.serializeBinary());
+        expect(parsed.getProductInput()!.getInputCase()).toBe(ProductInput.InputCase.TIPS);
+        return parsed.getProductInput()!.getTips()!;
+    }
+
+    function expectCpiIndex(index: SecurityProto | undefined): void {
+        expect(index!.getIssuerName()).toBe('CPI-U NSA');
+        expect(index!.getIndexDetails()!.getIndexType()).toBe(IndexTypeProto.CPI_U);
+    }
+
+    test('readings case survives', () => {
+        const readings = new MonthlyIndexReadings();
+        readings.addReadings(reading(2026, 4, '320.000'));
+        readings.addReadings(reading(2026, 5, '321.500'));
+        const cpi = new InflationIndexInput();
+        cpi.setIndex(cpiIndex());
+        cpi.setReadings(readings);
+        const tips = new TipsInput();
+        tips.setSecurity(tipsSecurity());
+        tips.setCleanPrice(decimal('97.50'));
+        tips.setCpi(cpi);
+
+        const parsed = roundtripTips(request(tips));
+
+        expect(parsed.hasCpi()).toBe(true);
+        const parsedCpi = parsed.getCpi()!;
+        expect(parsedCpi.getCpiCase()).toBe(InflationIndexInput.CpiCase.READINGS);
+        expectCpiIndex(parsedCpi.getIndex());
+        const got = parsedCpi.getReadings()!.getReadingsList()
+            .map(r => [r.getYear(), r.getMonth(), text(r.getValue())]);
+        expect(got).toEqual([[2026, 4, '320.000'], [2026, 5, '321.500']]);
+        expect(text(parsed.getCleanPrice())).toBe('97.50');
+    });
+
+    test('reference_cpi case survives', () => {
+        const cpi = new InflationIndexInput();
+        cpi.setIndex(cpiIndex());
+        cpi.setReferenceCpi(decimal('310.32600'));
+        const tips = new TipsInput();
+        tips.setSecurity(tipsSecurity());
+        tips.setCleanPrice(decimal('97.50'));
+        tips.setCpi(cpi);
+
+        const parsed = roundtripTips(request(tips));
+
+        const parsedCpi = parsed.getCpi()!;
+        expect(parsedCpi.getCpiCase()).toBe(InflationIndexInput.CpiCase.REFERENCE_CPI);
+        expect(parsedCpi.hasReadings()).toBe(false);
+        expectCpiIndex(parsedCpi.getIndex());
+        expect(text(parsedCpi.getReferenceCpi())).toBe('310.32600');
+    });
+
+    test('deprecated current_cpi, cpi_price_input and reference_rate_input still survive unchanged', () => {
+        const tips = new TipsInput();
+        tips.setSecurity(tipsSecurity());
+        tips.setCurrentCpi(decimal('310.32600'));
+        const original = request(tips);
+        const cpiPrice = new PriceProto();
+        cpiPrice.setPrice(decimal('310.326'));
+        cpiPrice.setSecurity(cpiIndex());
+        original.setCpiPriceInput(cpiPrice);
+        const referenceRate = new PriceProto();
+        referenceRate.setPrice(decimal('5.33'));
+        original.setReferenceRateInput(referenceRate);
+
+        const parsed = ValuationRequestProto.deserializeBinary(original.serializeBinary());
+
+        expect(parsed.toObject()).toEqual(original.toObject());
+        const parsedTips = parsed.getProductInput()!.getTips()!;
+        expect(text(parsedTips.getCurrentCpi())).toBe('310.32600');
+        expect(parsedTips.hasCpi()).toBe(false);
+        expect(text(parsed.getCpiPriceInput()!.getPrice())).toBe('310.326');
+        expectCpiIndex(parsed.getCpiPriceInput()!.getSecurity());
+        expect(text(parsed.getReferenceRateInput()!.getPrice())).toBe('5.33');
     });
 });

@@ -48,6 +48,12 @@ public enum MeasureProto
    *               = price / 100 * directed_quantity
    *   Where price is quoted as a percentage of par (e.g. 95 means 95% of face).
    * Example: face=1000, price=95, qty=20000 → MV = 95/100 * 20000 = 19,000.
+   * Formula (TIPS): the real clean price is scaled by the index ratio.
+   *   MarketValue = (clean_price / 100 * face_value * index_ratio) * (directed_quantity / face_value)
+   *               = clean_price / 100 * index_ratio * directed_quantity
+   *   Where index_ratio is INDEX_RATIO: unrounded and unfloored. The deflation
+   *   floor does not apply to market value (see INFLATION_ADJUSTED_PRINCIPAL).
+   * Example (TIPS): price=97.5, index_ratio=1.2, qty=20000 → MV = 97.5/100 * 1.2 * 20000 = 23,400.
    * Model assumptions: None — this is a direct mark-to-market calculation.
    * Applicability: Bond, TIPS, FRN, Equity (price=share price, face_value=1), Cash.
    * Units: Dollars (or settlement currency).
@@ -193,13 +199,14 @@ public enum MeasureProto
    * The inflation-adjusted principal of a TIPS bond, reflecting the cumulative
    * change in the Consumer Price Index (CPI) since the bond's issuance.
    * Formula:
-   *   index_ratio = current_cpi / base_cpi
+   *   index_ratio = INDEX_RATIO = reference_cpi / base_cpi
    *   adjusted_principal = max(face_value * index_ratio, face_value)
    *   The max() enforces the deflation floor: at maturity, TIPS redeem at no less
-   *   than the original face value, even if CPI has fallen.
+   *   than the original face value, even if CPI has fallen. The floor applies
+   *   to this measure only; INDEX_RATIO and MARKET_VALUE are unfloored.
    * Model assumptions:
-   *   - Uses the CPI values provided in the request (base_cpi on the security,
-   *     current_cpi on the cpi_price_input).
+   *   - Uses base_cpi from security.tips_extension and the reference CPI from
+   *     TipsInput.cpi (see REFERENCE_CPI).
    *   - Deflation floor applies only to the principal at maturity; interim coupons
    *     use the raw (potentially deflated) adjusted principal.
    * Applicability: TIPS only.
@@ -547,6 +554,50 @@ public enum MeasureProto
    * <code>BOND_EQUIVALENT_YIELD = 27;</code>
    */
   BOND_EQUIVALENT_YIELD(27),
+  /**
+   * <pre>
+   * The reference CPI of a TIPS for the settlement date
+   * (ValuationRequestProto.asof_datetime), the numerator of INDEX_RATIO.
+   * Formula:
+   *   With TipsInput.cpi.reference_cpi: the value as given.
+   *   With TipsInput.cpi.readings:
+   *     RefCPI = CPI(m-3) + (d - 1) / days_in_month * (CPI(m-2) - CPI(m-3))
+   *   Where m is the settlement month, d the settlement day of month,
+   *   days_in_month the number of days in month m, and CPI(m-k) the reading
+   *   for the month k months before m.
+   * Example: settlement 2026-07-16, CPI(April)=320.0, CPI(May)=321.5 →
+   *   RefCPI = 320.0 + 15/31 * (321.5 - 320.0) = 320.72580645...
+   * Model assumptions:
+   *   - Unrounded: Treasury publishes reference CPIs to 5 decimals; this
+   *     measure is not rounded to match.
+   *   - The measure is absent when readings lacks month m-3 or m-2, or
+   *     when no CPI is given.
+   * Applicability: TIPS only.
+   * Units: Index points (e.g. 310.326).
+   * </pre>
+   *
+   * <code>REFERENCE_CPI = 28;</code>
+   */
+  REFERENCE_CPI(28),
+  /**
+   * <pre>
+   * The index ratio of a TIPS for the settlement date.
+   * Formula:
+   *   IndexRatio = REFERENCE_CPI / security.tips_extension.base_cpi
+   * Example: RefCPI=312.0, base_cpi=260.0 → IndexRatio = 1.2.
+   * Model assumptions:
+   *   - Unrounded: Treasury publishes index ratios to 5 decimals; this
+   *     measure is not rounded to match.
+   *   - Unfloored: a ratio below 1 is returned as is. The deflation floor
+   *     belongs to INFLATION_ADJUSTED_PRINCIPAL only.
+   *   - The measure is absent when REFERENCE_CPI or base_cpi is absent.
+   * Applicability: TIPS only.
+   * Units: Dimensionless ratio (e.g. 1.2 = 20% cumulative inflation since base).
+   * </pre>
+   *
+   * <code>INDEX_RATIO = 29;</code>
+   */
+  INDEX_RATIO(29),
   UNRECOGNIZED(-1),
   ;
 
@@ -579,6 +630,12 @@ public enum MeasureProto
    *               = price / 100 * directed_quantity
    *   Where price is quoted as a percentage of par (e.g. 95 means 95% of face).
    * Example: face=1000, price=95, qty=20000 → MV = 95/100 * 20000 = 19,000.
+   * Formula (TIPS): the real clean price is scaled by the index ratio.
+   *   MarketValue = (clean_price / 100 * face_value * index_ratio) * (directed_quantity / face_value)
+   *               = clean_price / 100 * index_ratio * directed_quantity
+   *   Where index_ratio is INDEX_RATIO: unrounded and unfloored. The deflation
+   *   floor does not apply to market value (see INFLATION_ADJUSTED_PRINCIPAL).
+   * Example (TIPS): price=97.5, index_ratio=1.2, qty=20000 → MV = 97.5/100 * 1.2 * 20000 = 23,400.
    * Model assumptions: None — this is a direct mark-to-market calculation.
    * Applicability: Bond, TIPS, FRN, Equity (price=share price, face_value=1), Cash.
    * Units: Dollars (or settlement currency).
@@ -724,13 +781,14 @@ public enum MeasureProto
    * The inflation-adjusted principal of a TIPS bond, reflecting the cumulative
    * change in the Consumer Price Index (CPI) since the bond's issuance.
    * Formula:
-   *   index_ratio = current_cpi / base_cpi
+   *   index_ratio = INDEX_RATIO = reference_cpi / base_cpi
    *   adjusted_principal = max(face_value * index_ratio, face_value)
    *   The max() enforces the deflation floor: at maturity, TIPS redeem at no less
-   *   than the original face value, even if CPI has fallen.
+   *   than the original face value, even if CPI has fallen. The floor applies
+   *   to this measure only; INDEX_RATIO and MARKET_VALUE are unfloored.
    * Model assumptions:
-   *   - Uses the CPI values provided in the request (base_cpi on the security,
-   *     current_cpi on the cpi_price_input).
+   *   - Uses base_cpi from security.tips_extension and the reference CPI from
+   *     TipsInput.cpi (see REFERENCE_CPI).
    *   - Deflation floor applies only to the principal at maturity; interim coupons
    *     use the raw (potentially deflated) adjusted principal.
    * Applicability: TIPS only.
@@ -1078,6 +1136,50 @@ public enum MeasureProto
    * <code>BOND_EQUIVALENT_YIELD = 27;</code>
    */
   public static final int BOND_EQUIVALENT_YIELD_VALUE = 27;
+  /**
+   * <pre>
+   * The reference CPI of a TIPS for the settlement date
+   * (ValuationRequestProto.asof_datetime), the numerator of INDEX_RATIO.
+   * Formula:
+   *   With TipsInput.cpi.reference_cpi: the value as given.
+   *   With TipsInput.cpi.readings:
+   *     RefCPI = CPI(m-3) + (d - 1) / days_in_month * (CPI(m-2) - CPI(m-3))
+   *   Where m is the settlement month, d the settlement day of month,
+   *   days_in_month the number of days in month m, and CPI(m-k) the reading
+   *   for the month k months before m.
+   * Example: settlement 2026-07-16, CPI(April)=320.0, CPI(May)=321.5 →
+   *   RefCPI = 320.0 + 15/31 * (321.5 - 320.0) = 320.72580645...
+   * Model assumptions:
+   *   - Unrounded: Treasury publishes reference CPIs to 5 decimals; this
+   *     measure is not rounded to match.
+   *   - The measure is absent when readings lacks month m-3 or m-2, or
+   *     when no CPI is given.
+   * Applicability: TIPS only.
+   * Units: Index points (e.g. 310.326).
+   * </pre>
+   *
+   * <code>REFERENCE_CPI = 28;</code>
+   */
+  public static final int REFERENCE_CPI_VALUE = 28;
+  /**
+   * <pre>
+   * The index ratio of a TIPS for the settlement date.
+   * Formula:
+   *   IndexRatio = REFERENCE_CPI / security.tips_extension.base_cpi
+   * Example: RefCPI=312.0, base_cpi=260.0 → IndexRatio = 1.2.
+   * Model assumptions:
+   *   - Unrounded: Treasury publishes index ratios to 5 decimals; this
+   *     measure is not rounded to match.
+   *   - Unfloored: a ratio below 1 is returned as is. The deflation floor
+   *     belongs to INFLATION_ADJUSTED_PRINCIPAL only.
+   *   - The measure is absent when REFERENCE_CPI or base_cpi is absent.
+   * Applicability: TIPS only.
+   * Units: Dimensionless ratio (e.g. 1.2 = 20% cumulative inflation since base).
+   * </pre>
+   *
+   * <code>INDEX_RATIO = 29;</code>
+   */
+  public static final int INDEX_RATIO_VALUE = 29;
 
 
   public final int getNumber() {
@@ -1131,6 +1233,8 @@ public enum MeasureProto
       case 25: return DV01;
       case 26: return DISCOUNT_YIELD;
       case 27: return BOND_EQUIVALENT_YIELD;
+      case 28: return REFERENCE_CPI;
+      case 29: return INDEX_RATIO;
       default: return null;
     }
   }

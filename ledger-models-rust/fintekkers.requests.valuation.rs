@@ -231,6 +231,10 @@ pub struct BondInput {
 /// inflation_index_type) are read from security.tips_extension.
 ///
 /// Settlement date is read from ValuationRequestProto.asof_datetime.
+///
+/// CPI precedence: cpi (4) is used when set. Otherwise the deprecated
+/// current_cpi (3), then the deprecated ValuationRequestProto.cpi_price_input
+/// (24). New callers set cpi only.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -245,14 +249,78 @@ pub struct TipsInput {
     pub clean_price: ::core::option::Option<
         super::super::models::util::DecimalValueProto,
     >,
-    /// Current CPI index value (e.g. 310.326). Used to compute:
-    ///    index_ratio = current_cpi / base_cpi
-    ///    adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-    /// The base CPI is read from security.tips_extension.base_cpi.
+    /// Deprecated: use cpi (4). Read only when cpi is unset.
+    /// A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+    ///    index_ratio = current_cpi / security.tips_extension.base_cpi
+    #[deprecated]
     #[prost(message, optional, tag = "3")]
     pub current_cpi: ::core::option::Option<
         super::super::models::util::DecimalValueProto,
     >,
+    /// The CPI the index ratio is computed from: raw monthly index levels, or a
+    /// reference CPI already derived for the settlement date. See
+    /// MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+    #[prost(message, optional, tag = "4")]
+    pub cpi: ::core::option::Option<InflationIndexInput>,
+}
+/// ═══════════════════════════════════════════════════════════════════════════
+/// InflationIndexInput — the inflation index a TIPS is linked to, and its CPI.
+///
+/// Either the raw monthly readings (valuation-service derives the reference
+/// CPI for the settlement date, ValuationRequestProto.asof_datetime) or the
+/// reference CPI itself. There is no source field: index names the index, and
+/// where a reading came from is price-service's concern. See
+/// docs/adr/inflation_index_input.md.
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct InflationIndexInput {
+    /// The index security, with index_details.index_type set (e.g. CPI_U).
+    /// Should match security.tips_extension.inflation_index_type on the TIPS.
+    #[prost(message, optional, tag = "1")]
+    pub index: ::core::option::Option<super::super::models::security::SecurityProto>,
+    #[prost(oneof = "inflation_index_input::Cpi", tags = "2, 3")]
+    pub cpi: ::core::option::Option<inflation_index_input::Cpi>,
+}
+/// Nested message and enum types in `InflationIndexInput`.
+pub mod inflation_index_input {
+    #[allow(clippy::derive_partial_eq_without_eq)]
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Cpi {
+        /// Raw monthly index levels. The reference CPI for settlement month m
+        /// needs the readings for months m-3 and m-2; others are ignored.
+        #[prost(message, tag = "2")]
+        Readings(super::MonthlyIndexReadings),
+        /// Reference CPI for the settlement date, already derived
+        /// (e.g. 310.32600). Used as-is: not rounded, not re-derived.
+        #[prost(message, tag = "3")]
+        ReferenceCpi(super::super::super::models::util::DecimalValueProto),
+    }
+}
+/// A set of monthly index levels. A wrapper because a oneof cannot hold a
+/// repeated field directly.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MonthlyIndexReadings {
+    /// Order is not significant. Each (year, month) appears at most once; a
+    /// request with a duplicate (year, month) is invalid and is rejected, even
+    /// when the values agree.
+    #[prost(message, repeated, tag = "1")]
+    pub readings: ::prost::alloc::vec::Vec<MonthlyIndexReading>,
+}
+/// One published monthly index level, e.g. CPI-U NSA for July 2026.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MonthlyIndexReading {
+    /// Calendar year of the reading (e.g. 2026).
+    #[prost(int32, tag = "1")]
+    pub year: i32,
+    /// Calendar month of the reading, 1-12.
+    #[prost(int32, tag = "2")]
+    pub month: i32,
+    /// Index level in index points as published (e.g. 321.500). Not a rate.
+    #[prost(message, optional, tag = "3")]
+    pub value: ::core::option::Option<super::super::models::util::DecimalValueProto>,
 }
 /// ═══════════════════════════════════════════════════════════════════════════
 /// FrnInput — valuation request for a Floating Rate Note.
@@ -406,8 +474,11 @@ pub struct ValuationRequestProto {
     pub asof_datetime: ::core::option::Option<
         super::super::models::util::LocalTimestampProto,
     >,
+    /// Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
+    /// TipsInput.cpi nor TipsInput.current_cpi is set.
     /// The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
     /// Modeled as a PriceProto on a SecurityProto representing the CPI index.
+    #[deprecated]
     #[prost(message, optional, tag = "24")]
     pub cpi_price_input: ::core::option::Option<super::super::models::price::PriceProto>,
     /// The current reference rate observation for floating rate note (FRN) valuation.
@@ -416,6 +487,7 @@ pub struct ValuationRequestProto {
     /// Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
     /// Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
     /// Required for legacy flat-rate FRN valuation.
+    #[deprecated]
     #[prost(message, optional, tag = "25")]
     pub reference_rate_input: ::core::option::Option<
         super::super::models::price::PriceProto,

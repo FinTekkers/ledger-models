@@ -107,6 +107,11 @@ export class TipsInput extends jspb.Message {
     getCurrentCpi(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
     setCurrentCpi(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TipsInput;
 
+    hasCpi(): boolean;
+    clearCpi(): void;
+    getCpi(): InflationIndexInput | undefined;
+    setCpi(value?: InflationIndexInput): TipsInput;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): TipsInput.AsObject;
     static toObject(includeInstance: boolean, msg: TipsInput): TipsInput.AsObject;
@@ -122,6 +127,102 @@ export namespace TipsInput {
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         currentCpi?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        cpi?: InflationIndexInput.AsObject,
+    }
+}
+
+export class InflationIndexInput extends jspb.Message { 
+
+    hasIndex(): boolean;
+    clearIndex(): void;
+    getIndex(): fintekkers_models_security_security_pb.SecurityProto | undefined;
+    setIndex(value?: fintekkers_models_security_security_pb.SecurityProto): InflationIndexInput;
+
+    hasReadings(): boolean;
+    clearReadings(): void;
+    getReadings(): MonthlyIndexReadings | undefined;
+    setReadings(value?: MonthlyIndexReadings): InflationIndexInput;
+
+    hasReferenceCpi(): boolean;
+    clearReferenceCpi(): void;
+    getReferenceCpi(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setReferenceCpi(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): InflationIndexInput;
+
+    getCpiCase(): InflationIndexInput.CpiCase;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): InflationIndexInput.AsObject;
+    static toObject(includeInstance: boolean, msg: InflationIndexInput): InflationIndexInput.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: InflationIndexInput, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): InflationIndexInput;
+    static deserializeBinaryFromReader(message: InflationIndexInput, reader: jspb.BinaryReader): InflationIndexInput;
+}
+
+export namespace InflationIndexInput {
+    export type AsObject = {
+        index?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
+        readings?: MonthlyIndexReadings.AsObject,
+        referenceCpi?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+    }
+
+    export enum CpiCase {
+        CPI_NOT_SET = 0,
+        READINGS = 2,
+        REFERENCE_CPI = 3,
+    }
+
+}
+
+export class MonthlyIndexReadings extends jspb.Message { 
+    clearReadingsList(): void;
+    getReadingsList(): Array<MonthlyIndexReading>;
+    setReadingsList(value: Array<MonthlyIndexReading>): MonthlyIndexReadings;
+    addReadings(value?: MonthlyIndexReading, index?: number): MonthlyIndexReading;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): MonthlyIndexReadings.AsObject;
+    static toObject(includeInstance: boolean, msg: MonthlyIndexReadings): MonthlyIndexReadings.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: MonthlyIndexReadings, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): MonthlyIndexReadings;
+    static deserializeBinaryFromReader(message: MonthlyIndexReadings, reader: jspb.BinaryReader): MonthlyIndexReadings;
+}
+
+export namespace MonthlyIndexReadings {
+    export type AsObject = {
+        readingsList: Array<MonthlyIndexReading.AsObject>,
+    }
+}
+
+export class MonthlyIndexReading extends jspb.Message { 
+    getYear(): number;
+    setYear(value: number): MonthlyIndexReading;
+    getMonth(): number;
+    setMonth(value: number): MonthlyIndexReading;
+
+    hasValue(): boolean;
+    clearValue(): void;
+    getValue(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setValue(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): MonthlyIndexReading;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): MonthlyIndexReading.AsObject;
+    static toObject(includeInstance: boolean, msg: MonthlyIndexReading): MonthlyIndexReading.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: MonthlyIndexReading, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): MonthlyIndexReading;
+    static deserializeBinaryFromReader(message: MonthlyIndexReading, reader: jspb.BinaryReader): MonthlyIndexReading;
+}
+
+export namespace MonthlyIndexReading {
+    export type AsObject = {
+        year: number,
+        month: number,
+        value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }
 
