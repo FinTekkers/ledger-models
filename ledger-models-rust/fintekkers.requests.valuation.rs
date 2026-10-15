@@ -413,9 +413,9 @@ pub struct ValuationRequestProto {
     /// The current reference rate observation for floating rate note (FRN) valuation.
     /// Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
     /// Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-    /// Unit: decimal fraction (0.0533 = 5.33%).
-    /// valuation-service currently also accepts values > 1 as percent; this is a tolerance, not a second unit.
-    /// When absent, valuation-service defaults to 0.0533.
+    /// Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
+    /// Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
+    /// Required for legacy flat-rate FRN valuation.
     #[prost(message, optional, tag = "25")]
     pub reference_rate_input: ::core::option::Option<
         super::super::models::price::PriceProto,
