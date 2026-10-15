@@ -69,37 +69,71 @@ public interface TipsInputOrBuilder extends
 
   /**
    * <pre>
-   * Current CPI index value (e.g. 310.326). Used to compute:
-   *   index_ratio = current_cpi / base_cpi
-   *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-   * The base CPI is read from security.tips_extension.base_cpi.
+   * Deprecated: use cpi (4). Read only when cpi is unset.
+   * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+   *   index_ratio = current_cpi / security.tips_extension.base_cpi
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.TipsInput.current_cpi is deprecated.
+   *     See fintekkers/requests/valuation/product_inputs.proto;l=83
    * @return Whether the currentCpi field is set.
    */
-  boolean hasCurrentCpi();
+  @java.lang.Deprecated boolean hasCurrentCpi();
   /**
    * <pre>
-   * Current CPI index value (e.g. 310.326). Used to compute:
-   *   index_ratio = current_cpi / base_cpi
-   *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-   * The base CPI is read from security.tips_extension.base_cpi.
+   * Deprecated: use cpi (4). Read only when cpi is unset.
+   * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+   *   index_ratio = current_cpi / security.tips_extension.base_cpi
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.TipsInput.current_cpi is deprecated.
+   *     See fintekkers/requests/valuation/product_inputs.proto;l=83
    * @return The currentCpi.
    */
-  fintekkers.models.util.DecimalValue.DecimalValueProto getCurrentCpi();
+  @java.lang.Deprecated fintekkers.models.util.DecimalValue.DecimalValueProto getCurrentCpi();
   /**
    * <pre>
-   * Current CPI index value (e.g. 310.326). Used to compute:
-   *   index_ratio = current_cpi / base_cpi
-   *   adjusted_principal = max(face_value * index_ratio, face_value)  (deflation floor at par)
-   * The base CPI is read from security.tips_extension.base_cpi.
+   * Deprecated: use cpi (4). Read only when cpi is unset.
+   * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
+   *   index_ratio = current_cpi / security.tips_extension.base_cpi
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3;</code>
+   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
    */
-  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCurrentCpiOrBuilder();
+  @java.lang.Deprecated fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCurrentCpiOrBuilder();
+
+  /**
+   * <pre>
+   * The CPI the index ratio is computed from: raw monthly index levels, or a
+   * reference CPI already derived for the settlement date. See
+   * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+   * @return Whether the cpi field is set.
+   */
+  boolean hasCpi();
+  /**
+   * <pre>
+   * The CPI the index ratio is computed from: raw monthly index levels, or a
+   * reference CPI already derived for the settlement date. See
+   * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+   * @return The cpi.
+   */
+  fintekkers.requests.valuation.InflationIndexInput getCpi();
+  /**
+   * <pre>
+   * The CPI the index ratio is computed from: raw monthly index levels, or a
+   * reference CPI already derived for the settlement date. See
+   * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
+   */
+  fintekkers.requests.valuation.InflationIndexInputOrBuilder getCpiOrBuilder();
 }

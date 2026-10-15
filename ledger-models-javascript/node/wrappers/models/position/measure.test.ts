@@ -73,6 +73,8 @@ describe('Measure.getAllTypeNames', () => {
         //   DV01 = 25;
         //   DISCOUNT_YIELD = 26;          (v0.2.3, #209 — TBill yield conventions)
         //   BOND_EQUIVALENT_YIELD = 27;   (v0.2.3, #209)
+        //   REFERENCE_CPI = 28;           (LM-343 — TIPS index ratio inputs)
+        //   INDEX_RATIO = 29;             (LM-343)
         expect(Measure.getAllTypeNames()).toEqual([
             'DIRECTED_QUANTITY',
             'MARKET_VALUE',
@@ -100,6 +102,8 @@ describe('Measure.getAllTypeNames', () => {
             'DV01',
             'DISCOUNT_YIELD',
             'BOND_EQUIVALENT_YIELD',
+            'REFERENCE_CPI',
+            'INDEX_RATIO',
         ]);
     });
 

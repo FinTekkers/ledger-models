@@ -123,7 +123,33 @@ def lm332(key: str, old, new, head: dict) -> bool:
             and old == "string currency" and new is None)
 
 
-ALLOWED = [lm318, lm332]
+VALUATION = ".fintekkers.requests.valuation"
+DECIMAL = ".fintekkers.models.util.DecimalValueProto"
+LM343 = {
+    f"message {VALUATION}.InflationIndexInput": "message",
+    f"field {VALUATION}.InflationIndexInput = 1": ".fintekkers.models.security.SecurityProto index",
+    f"field {VALUATION}.InflationIndexInput = 2": f"{VALUATION}.MonthlyIndexReadings readings",
+    f"field {VALUATION}.InflationIndexInput = 3": f"{DECIMAL} reference_cpi",
+    f"message {VALUATION}.MonthlyIndexReadings": "message",
+    f"field {VALUATION}.MonthlyIndexReadings = 1": f"repeated {VALUATION}.MonthlyIndexReading readings",
+    f"message {VALUATION}.MonthlyIndexReading": "message",
+    f"field {VALUATION}.MonthlyIndexReading = 1": "int32 year",
+    f"field {VALUATION}.MonthlyIndexReading = 2": "int32 month",
+    f"field {VALUATION}.MonthlyIndexReading = 3": f"{DECIMAL} value",
+    f"field {VALUATION}.TipsInput = 4": f"{VALUATION}.InflationIndexInput cpi",
+    "value .fintekkers.models.position.MeasureProto = 28": "REFERENCE_CPI",
+    "value .fintekkers.models.position.MeasureProto = 29": "INDEX_RATIO",
+}
+
+
+def lm343(key: str, old, new, head: dict) -> bool:
+    """LM-343: InflationIndexInput, MonthlyIndexReading(s), TipsInput.cpi and
+    the REFERENCE_CPI / INDEX_RATIO measures added. Nothing else; no source
+    or timestamp field on InflationIndexInput."""
+    return old is None and key in LM343 and new == LM343[key]
+
+
+ALLOWED = [lm318, lm332, lm343]
 
 
 def main() -> int:

@@ -8,6 +8,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const product_inputs_pb_1 = require("./product_inputs_pb");
 const valuation_request_pb_1 = require("./valuation_request_pb");
 const index_type_pb_1 = require("../../../fintekkers/models/security/index/index_type_pb");
+const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
+const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
+const price_pb_1 = require("../../../fintekkers/models/price/price_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 const decimal_1 = require("../../../wrappers/models/utils/decimal");
 function decimal(value) {
@@ -134,6 +137,108 @@ describe('New RFR index types round-trip', () => {
         curve.addPoints(p);
         const parsed = product_inputs_pb_1.YieldCurveInput.deserializeBinary(curve.serializeBinary());
         expect(parsed.getIndex()).toBe(index);
+    });
+});
+describe('TipsInput.cpi round-trip through ValuationRequestProto (LM-343)', () => {
+    function text(d) {
+        return (0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(d));
+    }
+    function cpiIndex() {
+        const details = new security_pb_1.IndexDetailsProto();
+        details.setIndexType(index_type_pb_1.IndexTypeProto.CPI_U);
+        const index = new security_pb_1.SecurityProto();
+        index.setIssuerName('CPI-U NSA');
+        index.setIndexDetails(details);
+        return index;
+    }
+    function tipsSecurity() {
+        const ext = new security_pb_1.TipsExtensionProto();
+        ext.setBaseCpi(decimal('260.47400'));
+        ext.setInflationIndexType(index_type_pb_1.IndexTypeProto.CPI_U);
+        const security = new security_pb_1.SecurityProto();
+        security.setProductType(product_type_pb_1.ProductTypeProto.TIPS);
+        security.setTipsExtension(ext);
+        return security;
+    }
+    function reading(year, month, value) {
+        const r = new product_inputs_pb_1.MonthlyIndexReading();
+        r.setYear(year);
+        r.setMonth(month);
+        r.setValue(decimal(value));
+        return r;
+    }
+    function request(tips) {
+        const pi = new product_inputs_pb_1.ProductInput();
+        pi.setTips(tips);
+        const req = new valuation_request_pb_1.ValuationRequestProto();
+        req.setProductInput(pi);
+        return req;
+    }
+    function roundtripTips(original) {
+        const parsed = valuation_request_pb_1.ValuationRequestProto.deserializeBinary(original.serializeBinary());
+        expect(parsed.getProductInput().getInputCase()).toBe(product_inputs_pb_1.ProductInput.InputCase.TIPS);
+        return parsed.getProductInput().getTips();
+    }
+    function expectCpiIndex(index) {
+        expect(index.getIssuerName()).toBe('CPI-U NSA');
+        expect(index.getIndexDetails().getIndexType()).toBe(index_type_pb_1.IndexTypeProto.CPI_U);
+    }
+    test('readings case survives', () => {
+        const readings = new product_inputs_pb_1.MonthlyIndexReadings();
+        readings.addReadings(reading(2026, 4, '320.000'));
+        readings.addReadings(reading(2026, 5, '321.500'));
+        const cpi = new product_inputs_pb_1.InflationIndexInput();
+        cpi.setIndex(cpiIndex());
+        cpi.setReadings(readings);
+        const tips = new product_inputs_pb_1.TipsInput();
+        tips.setSecurity(tipsSecurity());
+        tips.setCleanPrice(decimal('97.50'));
+        tips.setCpi(cpi);
+        const parsed = roundtripTips(request(tips));
+        expect(parsed.hasCpi()).toBe(true);
+        const parsedCpi = parsed.getCpi();
+        expect(parsedCpi.getCpiCase()).toBe(product_inputs_pb_1.InflationIndexInput.CpiCase.READINGS);
+        expectCpiIndex(parsedCpi.getIndex());
+        const got = parsedCpi.getReadings().getReadingsList()
+            .map(r => [r.getYear(), r.getMonth(), text(r.getValue())]);
+        expect(got).toEqual([[2026, 4, '320.000'], [2026, 5, '321.500']]);
+        expect(text(parsed.getCleanPrice())).toBe('97.50');
+    });
+    test('reference_cpi case survives', () => {
+        const cpi = new product_inputs_pb_1.InflationIndexInput();
+        cpi.setIndex(cpiIndex());
+        cpi.setReferenceCpi(decimal('310.32600'));
+        const tips = new product_inputs_pb_1.TipsInput();
+        tips.setSecurity(tipsSecurity());
+        tips.setCleanPrice(decimal('97.50'));
+        tips.setCpi(cpi);
+        const parsed = roundtripTips(request(tips));
+        const parsedCpi = parsed.getCpi();
+        expect(parsedCpi.getCpiCase()).toBe(product_inputs_pb_1.InflationIndexInput.CpiCase.REFERENCE_CPI);
+        expect(parsedCpi.hasReadings()).toBe(false);
+        expectCpiIndex(parsedCpi.getIndex());
+        expect(text(parsedCpi.getReferenceCpi())).toBe('310.32600');
+    });
+    test('deprecated current_cpi, cpi_price_input and reference_rate_input still survive unchanged', () => {
+        const tips = new product_inputs_pb_1.TipsInput();
+        tips.setSecurity(tipsSecurity());
+        tips.setCurrentCpi(decimal('310.32600'));
+        const original = request(tips);
+        const cpiPrice = new price_pb_1.PriceProto();
+        cpiPrice.setPrice(decimal('310.326'));
+        cpiPrice.setSecurity(cpiIndex());
+        original.setCpiPriceInput(cpiPrice);
+        const referenceRate = new price_pb_1.PriceProto();
+        referenceRate.setPrice(decimal('5.33'));
+        original.setReferenceRateInput(referenceRate);
+        const parsed = valuation_request_pb_1.ValuationRequestProto.deserializeBinary(original.serializeBinary());
+        expect(parsed.toObject()).toEqual(original.toObject());
+        const parsedTips = parsed.getProductInput().getTips();
+        expect(text(parsedTips.getCurrentCpi())).toBe('310.32600');
+        expect(parsedTips.hasCpi()).toBe(false);
+        expect(text(parsed.getCpiPriceInput().getPrice())).toBe('310.326');
+        expectCpiIndex(parsed.getCpiPriceInput().getSecurity());
+        expect(text(parsed.getReferenceRateInput().getPrice())).toBe('5.33');
     });
 });
 //# sourceMappingURL=product_inputs.test.js.map

@@ -33,6 +33,8 @@ class MeasureProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     DV01: _ClassVar[MeasureProto]
     DISCOUNT_YIELD: _ClassVar[MeasureProto]
     BOND_EQUIVALENT_YIELD: _ClassVar[MeasureProto]
+    REFERENCE_CPI: _ClassVar[MeasureProto]
+    INDEX_RATIO: _ClassVar[MeasureProto]
 UNKNOWN_MEASURE: MeasureProto
 DIRECTED_QUANTITY: MeasureProto
 MARKET_VALUE: MeasureProto
@@ -60,3 +62,5 @@ MODIFIED_DURATION: MeasureProto
 DV01: MeasureProto
 DISCOUNT_YIELD: MeasureProto
 BOND_EQUIVALENT_YIELD: MeasureProto
+REFERENCE_CPI: MeasureProto
+INDEX_RATIO: MeasureProto

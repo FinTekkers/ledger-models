@@ -30,7 +30,7 @@
       "enum_value": 2,
       "display_name": "Market Value",
       "description": "The current dollar value of a position at the given market price.",
-      "formula": "MarketValue = price / 100 * directed_quantity",
+      "formula": "MarketValue = price / 100 * directed_quantity; TIPS: clean_price / 100 * index_ratio * directed_quantity (index_ratio unrounded, unfloored)",
       "units": "Dollars (or settlement currency)",
       "category": "valuation",
       "applies_to": ["BOND_SECURITY", "TIPS", "FRN", "EQUITY_SECURITY", "CASH_SECURITY"],
@@ -151,12 +151,12 @@
       "enum_value": 11,
       "display_name": "Inflation-Adjusted Principal",
       "description": "The inflation-adjusted principal of a TIPS bond, reflecting the cumulative change in the Consumer Price Index (CPI) since the bond's issuance.",
-      "formula": "adjusted_principal = max(face_value * (current_cpi / base_cpi), face_value)",
+      "formula": "adjusted_principal = max(face_value * index_ratio, face_value)",
       "units": "Dollars (e.g. 103.36 for face=100 with 3.36% cumulative inflation)",
       "category": "valuation",
       "applies_to": ["TIPS"],
       "model_assumptions": [
-        "Uses the CPI values provided in the request (base_cpi on the security, current_cpi on the cpi_price_input)",
+        "Uses base_cpi from the security's tips_extension and the reference CPI from TipsInput.cpi",
         "Deflation floor applies only to the principal at maturity; interim coupons use the raw adjusted principal"
       ],
       "implemented": true
@@ -252,6 +252,38 @@
         "Derived from spot curve (bootstrapped from par)",
         "No-arbitrage between spot and forward rates",
         "Forward period defined by adjacent tenor points"
+      ],
+      "implemented": false
+    },
+    {
+      "name": "REFERENCE_CPI",
+      "enum_value": 28,
+      "display_name": "Reference CPI",
+      "description": "The reference CPI of a TIPS for the settlement date (ValuationRequestProto.asof_datetime), the numerator of the index ratio.",
+      "formula": "reference_cpi as given, or RefCPI = CPI(m-3) + (d - 1) / days_in_month * (CPI(m-2) - CPI(m-3)) from monthly readings",
+      "units": "Index points (e.g. 310.326)",
+      "category": "valuation",
+      "applies_to": ["TIPS"],
+      "model_assumptions": [
+        "Reference CPI from TipsInput.cpi",
+        "Unrounded (Treasury publishes 5 decimals)",
+        "Absent when readings lack month m-3 or m-2"
+      ],
+      "implemented": false
+    },
+    {
+      "name": "INDEX_RATIO",
+      "enum_value": 29,
+      "display_name": "Index Ratio",
+      "description": "The index ratio of a TIPS for the settlement date: reference CPI over the security's base CPI.",
+      "formula": "IndexRatio = reference_cpi / base_cpi (unrounded, unfloored)",
+      "units": "Dimensionless",
+      "category": "valuation",
+      "applies_to": ["TIPS"],
+      "model_assumptions": [
+        "Reference CPI from TipsInput.cpi",
+        "Unrounded (Treasury publishes 5 decimals)",
+        "Unfloored: the deflation floor applies to INFLATION_ADJUSTED_PRINCIPAL only"
       ],
       "implemented": false
     }

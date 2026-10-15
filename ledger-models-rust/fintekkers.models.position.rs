@@ -172,6 +172,14 @@ pub enum MeasureProto {
     ///
     /// Example: face=1000, price=95, qty=20000 → MV = 95/100 * 20000 = 19,000.
     ///
+    /// Formula (TIPS): the real clean price is scaled by the index ratio.
+    ///    MarketValue = (clean_price / 100 * face_value * index_ratio) * (directed_quantity / face_value)
+    ///                = clean_price / 100 * index_ratio * directed_quantity
+    ///    Where index_ratio is INDEX_RATIO: unrounded and unfloored. The deflation
+    ///    floor does not apply to market value (see INFLATION_ADJUSTED_PRINCIPAL).
+    ///
+    /// Example (TIPS): price=97.5, index_ratio=1.2, qty=20000 → MV = 97.5/100 * 1.2 * 20000 = 23,400.
+    ///
     /// Model assumptions: None — this is a direct mark-to-market calculation.
     /// Applicability: Bond, TIPS, FRN, Equity (price=share price, face_value=1), Cash.
     /// Units: Dollars (or settlement currency).
@@ -290,14 +298,15 @@ pub enum MeasureProto {
     /// change in the Consumer Price Index (CPI) since the bond's issuance.
     ///
     /// Formula:
-    ///    index_ratio = current_cpi / base_cpi
+    ///    index_ratio = INDEX_RATIO = reference_cpi / base_cpi
     ///    adjusted_principal = max(face_value * index_ratio, face_value)
     ///    The max() enforces the deflation floor: at maturity, TIPS redeem at no less
-    ///    than the original face value, even if CPI has fallen.
+    ///    than the original face value, even if CPI has fallen. The floor applies
+    ///    to this measure only; INDEX_RATIO and MARKET_VALUE are unfloored.
     ///
     /// Model assumptions:
-    ///    - Uses the CPI values provided in the request (base_cpi on the security,
-    ///      current_cpi on the cpi_price_input).
+    ///    - Uses base_cpi from security.tips_extension and the reference CPI from
+    ///      TipsInput.cpi (see REFERENCE_CPI).
     ///    - Deflation floor applies only to the principal at maturity; interim coupons
     ///      use the raw (potentially deflated) adjusted principal.
     ///
@@ -604,6 +613,46 @@ pub enum MeasureProto {
     ///    Strips with <1yr remaining. Returns null/error for other product types.
     /// Units: Decimal (0-1 scale; e.g. 0.0371 = 3.71%).
     BondEquivalentYield = 27,
+    /// The reference CPI of a TIPS for the settlement date
+    /// (ValuationRequestProto.asof_datetime), the numerator of INDEX_RATIO.
+    ///
+    /// Formula:
+    ///    With TipsInput.cpi.reference_cpi: the value as given.
+    ///    With TipsInput.cpi.readings:
+    ///      RefCPI = CPI(m-3) + (d - 1) / days_in_month * (CPI(m-2) - CPI(m-3))
+    ///    Where m is the settlement month, d the settlement day of month,
+    ///    days_in_month the number of days in month m, and CPI(m-k) the reading
+    ///    for the month k months before m.
+    ///
+    /// Example: settlement 2026-07-16, CPI(April)=320.0, CPI(May)=321.5 →
+    ///    RefCPI = 320.0 + 15/31 * (321.5 - 320.0) = 320.72580645...
+    ///
+    /// Model assumptions:
+    ///    - Unrounded: Treasury publishes reference CPIs to 5 decimals; this
+    ///      measure is not rounded to match.
+    ///    - The measure is absent when readings lacks month m-3 or m-2, or
+    ///      when no CPI is given.
+    ///
+    /// Applicability: TIPS only.
+    /// Units: Index points (e.g. 310.326).
+    ReferenceCpi = 28,
+    /// The index ratio of a TIPS for the settlement date.
+    ///
+    /// Formula:
+    ///    IndexRatio = REFERENCE_CPI / security.tips_extension.base_cpi
+    ///
+    /// Example: RefCPI=312.0, base_cpi=260.0 → IndexRatio = 1.2.
+    ///
+    /// Model assumptions:
+    ///    - Unrounded: Treasury publishes index ratios to 5 decimals; this
+    ///      measure is not rounded to match.
+    ///    - Unfloored: a ratio below 1 is returned as is. The deflation floor
+    ///      belongs to INFLATION_ADJUSTED_PRINCIPAL only.
+    ///    - The measure is absent when REFERENCE_CPI or base_cpi is absent.
+    ///
+    /// Applicability: TIPS only.
+    /// Units: Dimensionless ratio (e.g. 1.2 = 20% cumulative inflation since base).
+    IndexRatio = 29,
 }
 impl MeasureProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -639,6 +688,8 @@ impl MeasureProto {
             MeasureProto::Dv01 => "DV01",
             MeasureProto::DiscountYield => "DISCOUNT_YIELD",
             MeasureProto::BondEquivalentYield => "BOND_EQUIVALENT_YIELD",
+            MeasureProto::ReferenceCpi => "REFERENCE_CPI",
+            MeasureProto::IndexRatio => "INDEX_RATIO",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -671,6 +722,8 @@ impl MeasureProto {
             "DV01" => Some(Self::Dv01),
             "DISCOUNT_YIELD" => Some(Self::DiscountYield),
             "BOND_EQUIVALENT_YIELD" => Some(Self::BondEquivalentYield),
+            "REFERENCE_CPI" => Some(Self::ReferenceCpi),
+            "INDEX_RATIO" => Some(Self::IndexRatio),
             _ => None,
         }
     }

@@ -31,14 +31,42 @@ class BondInput(_message.Message):
     def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., benchmark_curve: _Optional[_Union[SecurityBasedCurveInput, _Mapping]] = ...) -> None: ...
 
 class TipsInput(_message.Message):
-    __slots__ = ("security", "clean_price", "current_cpi")
+    __slots__ = ("security", "clean_price", "current_cpi", "cpi")
     SECURITY_FIELD_NUMBER: _ClassVar[int]
     CLEAN_PRICE_FIELD_NUMBER: _ClassVar[int]
     CURRENT_CPI_FIELD_NUMBER: _ClassVar[int]
+    CPI_FIELD_NUMBER: _ClassVar[int]
     security: _security_pb2.SecurityProto
     clean_price: _decimal_value_pb2.DecimalValueProto
     current_cpi: _decimal_value_pb2.DecimalValueProto
-    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., current_cpi: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
+    cpi: InflationIndexInput
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., current_cpi: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., cpi: _Optional[_Union[InflationIndexInput, _Mapping]] = ...) -> None: ...
+
+class InflationIndexInput(_message.Message):
+    __slots__ = ("index", "readings", "reference_cpi")
+    INDEX_FIELD_NUMBER: _ClassVar[int]
+    READINGS_FIELD_NUMBER: _ClassVar[int]
+    REFERENCE_CPI_FIELD_NUMBER: _ClassVar[int]
+    index: _security_pb2.SecurityProto
+    readings: MonthlyIndexReadings
+    reference_cpi: _decimal_value_pb2.DecimalValueProto
+    def __init__(self, index: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., readings: _Optional[_Union[MonthlyIndexReadings, _Mapping]] = ..., reference_cpi: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
+
+class MonthlyIndexReadings(_message.Message):
+    __slots__ = ("readings",)
+    READINGS_FIELD_NUMBER: _ClassVar[int]
+    readings: _containers.RepeatedCompositeFieldContainer[MonthlyIndexReading]
+    def __init__(self, readings: _Optional[_Iterable[_Union[MonthlyIndexReading, _Mapping]]] = ...) -> None: ...
+
+class MonthlyIndexReading(_message.Message):
+    __slots__ = ("year", "month", "value")
+    YEAR_FIELD_NUMBER: _ClassVar[int]
+    MONTH_FIELD_NUMBER: _ClassVar[int]
+    VALUE_FIELD_NUMBER: _ClassVar[int]
+    year: int
+    month: int
+    value: _decimal_value_pb2.DecimalValueProto
+    def __init__(self, year: _Optional[int] = ..., month: _Optional[int] = ..., value: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
 
 class FrnInput(_message.Message):
     __slots__ = ("security", "clean_price", "curve")
