@@ -39,8 +39,11 @@ public interface InflationIndexInputOrBuilder extends
 
   /**
    * <pre>
-   * Raw monthly index levels. The reference CPI for settlement month m
-   * needs the readings for months m-3 and m-2; others are ignored.
+   * Raw monthly index levels. Must be exactly the readings for months m-3
+   * and m-2 of settlement month m, the month of the UTC date of
+   * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used). A missing or extra month makes the request
+   * invalid and it is rejected, the same as a duplicate (year, month).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -49,8 +52,11 @@ public interface InflationIndexInputOrBuilder extends
   boolean hasReadings();
   /**
    * <pre>
-   * Raw monthly index levels. The reference CPI for settlement month m
-   * needs the readings for months m-3 and m-2; others are ignored.
+   * Raw monthly index levels. Must be exactly the readings for months m-3
+   * and m-2 of settlement month m, the month of the UTC date of
+   * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used). A missing or extra month makes the request
+   * invalid and it is rejected, the same as a duplicate (year, month).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -59,8 +65,11 @@ public interface InflationIndexInputOrBuilder extends
   fintekkers.requests.valuation.MonthlyIndexReadings getReadings();
   /**
    * <pre>
-   * Raw monthly index levels. The reference CPI for settlement month m
-   * needs the readings for months m-3 and m-2; others are ignored.
+   * Raw monthly index levels. Must be exactly the readings for months m-3
+   * and m-2 of settlement month m, the month of the UTC date of
+   * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used). A missing or extra month makes the request
+   * invalid and it is rejected, the same as a duplicate (year, month).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>

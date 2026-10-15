@@ -259,7 +259,7 @@
       "name": "REFERENCE_CPI",
       "enum_value": 28,
       "display_name": "Reference CPI",
-      "description": "The reference CPI of a TIPS for the settlement date (ValuationRequestProto.asof_datetime), the numerator of the index ratio.",
+      "description": "The reference CPI of a TIPS for the settlement date (UTC date of ValuationRequestProto.asof_datetime), the numerator of the index ratio.",
       "formula": "reference_cpi as given, or RefCPI = CPI(m-3) + (d - 1) / days_in_month * (CPI(m-2) - CPI(m-3)) from monthly readings",
       "units": "Index points (e.g. 310.326)",
       "category": "valuation",
@@ -267,7 +267,8 @@
       "model_assumptions": [
         "Reference CPI from TipsInput.cpi",
         "Unrounded (Treasury publishes 5 decimals)",
-        "Absent when readings lack month m-3 or m-2"
+        "Request rejected unless readings are exactly months m-3 and m-2 (UTC settlement month)",
+        "Absent when no CPI is given"
       ],
       "implemented": false
     },

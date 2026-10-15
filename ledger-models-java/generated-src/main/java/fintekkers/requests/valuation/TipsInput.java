@@ -194,6 +194,12 @@ private static final long serialVersionUID = 0L;
    * The CPI the index ratio is computed from: raw monthly index levels, or a
    * reference CPI already derived for the settlement date. See
    * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+   * With readings, they must be exactly the readings for months m-3 and m-2
+   * of settlement month m, the month of the UTC date of
+   * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used). A missing or extra month makes the request
+   * invalid and it is rejected, the same as a duplicate month. See
+   * InflationIndexInput and MonthlyIndexReadings.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -208,6 +214,12 @@ private static final long serialVersionUID = 0L;
    * The CPI the index ratio is computed from: raw monthly index levels, or a
    * reference CPI already derived for the settlement date. See
    * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+   * With readings, they must be exactly the readings for months m-3 and m-2
+   * of settlement month m, the month of the UTC date of
+   * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used). A missing or extra month makes the request
+   * invalid and it is rejected, the same as a duplicate month. See
+   * InflationIndexInput and MonthlyIndexReadings.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -222,6 +234,12 @@ private static final long serialVersionUID = 0L;
    * The CPI the index ratio is computed from: raw monthly index levels, or a
    * reference CPI already derived for the settlement date. See
    * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+   * With readings, they must be exactly the readings for months m-3 and m-2
+   * of settlement month m, the month of the UTC date of
+   * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used). A missing or extra month makes the request
+   * invalid and it is rejected, the same as a duplicate month. See
+   * InflationIndexInput and MonthlyIndexReadings.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1202,6 +1220,12 @@ private static final long serialVersionUID = 0L;
      * The CPI the index ratio is computed from: raw monthly index levels, or a
      * reference CPI already derived for the settlement date. See
      * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * With readings, they must be exactly the readings for months m-3 and m-2
+     * of settlement month m, the month of the UTC date of
+     * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+     * time_zone is not used). A missing or extra month makes the request
+     * invalid and it is rejected, the same as a duplicate month. See
+     * InflationIndexInput and MonthlyIndexReadings.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1215,6 +1239,12 @@ private static final long serialVersionUID = 0L;
      * The CPI the index ratio is computed from: raw monthly index levels, or a
      * reference CPI already derived for the settlement date. See
      * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * With readings, they must be exactly the readings for months m-3 and m-2
+     * of settlement month m, the month of the UTC date of
+     * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+     * time_zone is not used). A missing or extra month makes the request
+     * invalid and it is rejected, the same as a duplicate month. See
+     * InflationIndexInput and MonthlyIndexReadings.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1232,6 +1262,12 @@ private static final long serialVersionUID = 0L;
      * The CPI the index ratio is computed from: raw monthly index levels, or a
      * reference CPI already derived for the settlement date. See
      * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * With readings, they must be exactly the readings for months m-3 and m-2
+     * of settlement month m, the month of the UTC date of
+     * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+     * time_zone is not used). A missing or extra month makes the request
+     * invalid and it is rejected, the same as a duplicate month. See
+     * InflationIndexInput and MonthlyIndexReadings.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1254,6 +1290,12 @@ private static final long serialVersionUID = 0L;
      * The CPI the index ratio is computed from: raw monthly index levels, or a
      * reference CPI already derived for the settlement date. See
      * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * With readings, they must be exactly the readings for months m-3 and m-2
+     * of settlement month m, the month of the UTC date of
+     * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+     * time_zone is not used). A missing or extra month makes the request
+     * invalid and it is rejected, the same as a duplicate month. See
+     * InflationIndexInput and MonthlyIndexReadings.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1274,6 +1316,12 @@ private static final long serialVersionUID = 0L;
      * The CPI the index ratio is computed from: raw monthly index levels, or a
      * reference CPI already derived for the settlement date. See
      * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * With readings, they must be exactly the readings for months m-3 and m-2
+     * of settlement month m, the month of the UTC date of
+     * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+     * time_zone is not used). A missing or extra month makes the request
+     * invalid and it is rejected, the same as a duplicate month. See
+     * InflationIndexInput and MonthlyIndexReadings.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1299,6 +1347,12 @@ private static final long serialVersionUID = 0L;
      * The CPI the index ratio is computed from: raw monthly index levels, or a
      * reference CPI already derived for the settlement date. See
      * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * With readings, they must be exactly the readings for months m-3 and m-2
+     * of settlement month m, the month of the UTC date of
+     * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+     * time_zone is not used). A missing or extra month makes the request
+     * invalid and it is rejected, the same as a duplicate month. See
+     * InflationIndexInput and MonthlyIndexReadings.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1318,6 +1372,12 @@ private static final long serialVersionUID = 0L;
      * The CPI the index ratio is computed from: raw monthly index levels, or a
      * reference CPI already derived for the settlement date. See
      * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * With readings, they must be exactly the readings for months m-3 and m-2
+     * of settlement month m, the month of the UTC date of
+     * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+     * time_zone is not used). A missing or extra month makes the request
+     * invalid and it is rejected, the same as a duplicate month. See
+     * InflationIndexInput and MonthlyIndexReadings.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1332,6 +1392,12 @@ private static final long serialVersionUID = 0L;
      * The CPI the index ratio is computed from: raw monthly index levels, or a
      * reference CPI already derived for the settlement date. See
      * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * With readings, they must be exactly the readings for months m-3 and m-2
+     * of settlement month m, the month of the UTC date of
+     * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+     * time_zone is not used). A missing or extra month makes the request
+     * invalid and it is rejected, the same as a duplicate month. See
+     * InflationIndexInput and MonthlyIndexReadings.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -1349,6 +1415,12 @@ private static final long serialVersionUID = 0L;
      * The CPI the index ratio is computed from: raw monthly index levels, or a
      * reference CPI already derived for the settlement date. See
      * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+     * With readings, they must be exactly the readings for months m-3 and m-2
+     * of settlement month m, the month of the UTC date of
+     * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+     * time_zone is not used). A missing or extra month makes the request
+     * invalid and it is rejected, the same as a duplicate month. See
+     * InflationIndexInput and MonthlyIndexReadings.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>

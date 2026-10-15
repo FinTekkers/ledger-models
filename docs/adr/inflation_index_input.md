@@ -50,7 +50,7 @@ valuation-service reads the CPI in this order:
 
 ### New measures
 
-- **`REFERENCE_CPI = 28`.** With `reference_cpi`, the value as given. With `readings`, `RefCPI = CPI(m-3) + (d - 1) / days_in_month × (CPI(m-2) - CPI(m-3))`, for settlement month m and day d. Absent when month m-3 or m-2 is missing. Index points.
+- **`REFERENCE_CPI = 28`.** With `reference_cpi`, the value as given. With `readings`, `RefCPI = CPI(m-3) + (d - 1) / days_in_month × (CPI(m-2) - CPI(m-3))`, for settlement month m and day d. The request is rejected unless readings are exactly months m-3 and m-2. Index points.
 - **`INDEX_RATIO = 29`.** `REFERENCE_CPI / security.tips_extension.base_cpi`. Dimensionless.
 - **Both are unrounded.** Treasury publishes reference CPIs and index ratios to 5 decimals. We chose not to round: rounding is a presentation choice, and an unrounded ratio keeps `MARKET_VALUE` and `INFLATION_ADJUSTED_PRINCIPAL` consistent with each other. Results can differ from Treasury's published ratio in the last digits.
 - **`INDEX_RATIO` is unfloored.** The deflation floor, `max(face × index_ratio, face)`, applies only to `INFLATION_ADJUSTED_PRINCIPAL` (redemption at maturity).
@@ -66,3 +66,10 @@ No CPI interpolation or index-ratio helper is added in any language. The formula
 - Wire-compatible: `scripts/checks/wire-diff.py` allows exactly the new messages, `TipsInput.cpi = 4` and measure values 28/29 (rule `lm343`). A `source` or timestamp field would fail that check.
 - Consumers that read fields 24, 25 or 3 get deprecation warnings, not errors. In Rust, a struct literal for `TipsInput` without `..Default::default()` must add `cpi: None`, as with any new prost field.
 - valuation-service must honour the precedence order above when it migrates.
+
+## Amendment 2026-10-15 (LM-346)
+
+- **Readings must be exactly months m-3 and m-2.** A missing or extra month makes the request invalid, and it is rejected, the same as a duplicate `(year, month)`. Before, the measure was absent if a needed month was not sent, and other months were dropped silently. valuation-service will enforce the stricter rule, so the spec states it first ("Models first", rule 3).
+- **The settlement month is taken in UTC.** It is the month of the UTC date of `ValuationRequestProto.asof_datetime`, read from `asof_datetime.timestamp`. `asof_datetime.time_zone` is not used. Example: `timestamp` = 2026-08-01T02:00Z with `time_zone` = `America/New_York` gives settlement month August, not July, so the readings must be May and June.
+- **`REFERENCE_CPI` is still absent when no CPI is given.** The duplicate rule is unchanged.
+- **No wire change.** Only comments and the `catalog/measures.json` assumption strings change. Enforcement end to end is the valuation-service item VS-101.
