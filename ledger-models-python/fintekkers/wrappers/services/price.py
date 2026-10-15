@@ -183,7 +183,7 @@ class PriceService:
         if response is not None:
             for persisted in response.price_response:
                 if persisted.HasField("uuid") and persisted.HasField("as_of"):
-                    uuid_obj = ProtoSerializationUtil.deserialize(persisted.uuid).uuid
+                    uuid_obj = ProtoSerializationUtil.deserialize_required_uuid(persisted.uuid, "price.uuid").uuid
                     as_of_dt = ProtoSerializationUtil.deserialize(persisted.as_of)
                     _link_cache.PRICE.put(uuid_obj, persisted, as_of_dt)
         return response
@@ -239,7 +239,7 @@ class PriceService:
             for price_proto in response.price_response:
                 price_proto: PriceProto
                 price_id = price_proto.uuid
-                uuid: UUID = ProtoSerializationUtil.deserialize(price_id).as_uuid()
+                uuid: UUID = ProtoSerializationUtil.deserialize_required_uuid(price_id, "price.uuid").as_uuid()
                 ids.append(uuid)
 
             return ids

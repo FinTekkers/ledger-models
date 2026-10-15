@@ -103,6 +103,22 @@ One shared `PriceProto` validator in every binding, so price services return its
 
 LM-254 adds an `InvalidFieldError` in Python and JS. LM-255b/c must reuse or extend it as the typed input error rather than add a second one, and must fold LM-258's T-bill coupon `validate()` into the shared rules module.
 
+### UUID length (LM-334)
+
+A `raw_uuid` that is neither empty nor exactly 16 bytes is a typed input error naming `raw_uuid` in every binding. Before, Java read the first 16 bytes of a longer one and dropped the rest. Empty is unset. Byte order and the 16-byte result are unchanged.
+
+| Binding | Decoder | Empty | Wrong length |
+| --- | --- | --- | --- |
+| Java | `ProtoSerializationUtil.deserializeUUID` | `null` | `InvalidFieldException("raw_uuid", …)` |
+| Python | `ProtoSerializationUtil.deserialize(UUIDProto)` | `None` | `ModelValidationError` |
+| Python | `FintekkersUuid.from_bytes` | `ModelValidationError` | `ModelValidationError` |
+| JS | `UUID.fromUUIDProto` (new) | `undefined` | `ModelValidationError` |
+| JS | `UUID.fromU8Array` | accepted, as before | `ModelValidationError` |
+| Rust | `ProtoSerializationUtil::try_deserialize_uuid` (new) | `Ok(None)` | `Error::Validation` |
+| Rust | `ProtoSerializationUtil::deserialize_uuid` (legacy) | `Error::UuidError` | `Error::UuidError` |
+
+`InvalidFieldException` now extends `IllegalArgumentException`, so callers that caught the old plain `IllegalArgumentException` keep working. A `try` that catches `IllegalArgumentException` before `InvalidFieldException` no longer compiles: put the subtype first. Python wrappers that need a UUID call `ProtoSerializationUtil.deserialize_required_uuid`, which raises `ModelValidationError` naming the field (e.g. `price.uuid`) when it is unset.
+
 ## Affected callers
 
 - Java callers that catch `TransactionProcessingException` around `Transaction.addCashImpact` (or the short-form `Transaction` constructor) no longer see the missing-`face_value` case; it now arrives as `IllegalArgumentException` / `ModelValidationException`. No caller in this repo does this. ledger-service's dependent item maps it to `INVALID_ARGUMENT`.
@@ -111,6 +127,6 @@ LM-254 adds an `InvalidFieldError` in Python and JS. LM-255b/c must reuse or ext
 
 ## Known follow-ups
 
-- **LS-12**: UUID-length errors in `Security.extractId` stay a bare `IllegalArgumentException`. They are not a rule named in this item.
+- **LS-12**: UUID-length errors in `Security.extractId` stay a bare `IllegalArgumentException`. They are not a rule named in this item. `ProtoSerializationUtil.deserializeUUID` is typed since LM-334.
 - **Java-first rollout gap**: until LM-255b/c/d merge, only Java raises the typed error; the other bindings already have the generated `FieldViolationProto` and `ErrorProto.violations`.
 - ledger-service deletes its copied bond rules and bond-inference logic in its own dependent items, after bumping its pinned version.

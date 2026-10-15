@@ -7,9 +7,7 @@ package common.models.errors;
  *
  * <p>Deliberately an {@link IllegalArgumentException} and not a
  * {@link NumberFormatException}: existing {@code catch (NumberFormatException)}
- * blocks do not swallow it, and callers can catch it by name. Note this differs
- * from {@link InvalidFieldException}, which is deliberately not an
- * {@link IllegalArgumentException}; aligning the two is a separate decision.
+ * blocks do not swallow it, and callers can catch it by name.
  *
  * <p>Callers that treat an empty decimal as absent can check first with
  * {@link protos.serializers.util.proto.ProtoSerializationUtil#isUnsetDecimal}.

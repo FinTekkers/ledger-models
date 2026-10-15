@@ -10,12 +10,13 @@ import java.util.List;
  * month 13). Services map it to gRPC INVALID_ARGUMENT.
  *
  * <p>Distinct from {@link common.models.errors.transaction.TransactionProcessingException}
- * (state errors, FAILED_PRECONDITION). Deliberately not an
- * {@link IllegalArgumentException}, so existing generic catch sites do not
- * absorb it. {@link #getViolations()} gives the same wire shape as
- * {@link ModelValidationException} so services can return either as-is.
+ * (state errors, FAILED_PRECONDITION). An {@link IllegalArgumentException}
+ * (LM-334), so callers that caught the plain {@code IllegalArgumentException}
+ * a decoder raised before it was typed keep working. {@link #getViolations()}
+ * gives the same wire shape as {@link ModelValidationException} so services
+ * can return either as-is.
  */
-public class InvalidFieldException extends RuntimeException {
+public class InvalidFieldException extends IllegalArgumentException {
     private final String fieldName;
 
     public InvalidFieldException(String fieldName, String message) {

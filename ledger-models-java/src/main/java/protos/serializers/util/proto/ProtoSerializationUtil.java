@@ -142,9 +142,9 @@ public class ProtoSerializationUtil {
             // (e.g., assign a new one for creates, or reject for lookups)
             return null;
         }
-        if (bytes.length < 16) {
-            throw new IllegalArgumentException(
-                "Invalid UUID: expected 16 bytes but got " + bytes.length);
+        if (bytes.length != 16) {
+            throw new InvalidFieldException("raw_uuid",
+                "expected 16 bytes but got " + bytes.length);
         }
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         long firstLong = bb.getLong();

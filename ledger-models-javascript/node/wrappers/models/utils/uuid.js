@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UUID = void 0;
 const uuid_pb_1 = require("../../../fintekkers/models/util/uuid_pb");
 const uuid = __importStar(require("uuid"));
+const errors_1 = require("../errors");
 /**
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
@@ -67,9 +68,27 @@ class UUID {
         const random = uuid.v4();
         return new UUID(UUID.fromString(random));
     }
+    /**
+     * Throws ModelValidationError naming `raw_uuid` when the input is neither
+     * empty nor exactly 16 bytes (LM-334). Empty is accepted as before; prefer
+     * fromUUIDProto, which reads empty as unset.
+     */
     static fromU8Array(uint8Array) {
+        if (uint8Array.length !== 0)
+            checkRawUuidLength(uint8Array);
         const array = Array.from(uint8Array, byte => byte);
         return new UUID(array);
+    }
+    /**
+     * Decodes a UUIDProto (LM-334). Unset or empty raw_uuid is undefined. Any
+     * other length but 16 throws ModelValidationError naming `raw_uuid`.
+     */
+    static fromUUIDProto(proto) {
+        const raw = proto === null || proto === void 0 ? void 0 : proto.getRawUuid_asU8();
+        if (!raw || raw.length === 0)
+            return undefined;
+        checkRawUuidLength(raw);
+        return new UUID(Array.from(raw, byte => byte));
     }
     static fromString(uuidString) {
         // Remove hyphens and convert to a continuous hexadecimal string
@@ -82,4 +101,11 @@ class UUID {
     }
 }
 exports.UUID = UUID;
+function checkRawUuidLength(raw) {
+    if (raw.length !== 16) {
+        throw new errors_1.ModelValidationError([
+            (0, errors_1.violation)('raw_uuid', undefined, `expected 16 bytes but got ${raw.length}`),
+        ]);
+    }
+}
 //# sourceMappingURL=uuid.js.map

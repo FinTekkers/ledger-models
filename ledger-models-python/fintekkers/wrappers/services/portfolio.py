@@ -105,7 +105,7 @@ class PortfolioService:
         if response is not None:
             for persisted in response.portfolio_response:
                 if persisted.HasField("uuid") and persisted.HasField("as_of"):
-                    uuid_obj = ProtoSerializationUtil.deserialize(persisted.uuid).uuid
+                    uuid_obj = ProtoSerializationUtil.deserialize_required_uuid(persisted.uuid, "portfolio.uuid").uuid
                     as_of_dt = ProtoSerializationUtil.deserialize(persisted.as_of)
                     _link_cache.PORTFOLIO.put(uuid_obj, persisted, as_of_dt)
         return response

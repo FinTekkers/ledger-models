@@ -124,6 +124,17 @@ class ProtoSerializationUtil:
         return ProtoSerializationUtil._deserialize_timestamp(proto, field_path)
 
     @staticmethod
+    def deserialize_required_uuid(proto: Optional[UUIDProto], field_path: str) -> FintekkersUuid:
+        """Deserializes a required UUID. Raises ModelValidationError naming
+        `field_path` when unset or empty, and naming `raw_uuid` when it is not
+        16 bytes (LM-334)."""
+        uuid = None if proto is None else ProtoSerializationUtil.deserialize(proto)
+        if uuid is None:
+            raise ModelValidationError([violation(
+                field_path, None, f"{field_path} is required but unset")])
+        return uuid
+
+    @staticmethod
     def _deserialize_timestamp(proto: LocalTimestampProto, field_path: str) -> datetime:
         if not proto.time_zone.strip():
             field = f"{field_path}.time_zone"
@@ -139,6 +150,10 @@ class ProtoSerializationUtil:
             #unpack a string value
             return StringValue.FromString(obj.value).value
         if isinstance(obj, UUIDProto):
+            # Empty is unset (LM-334). Any other length but 16 raises
+            # ModelValidationError naming raw_uuid.
+            if not obj.raw_uuid:
+                return None
             return FintekkersUuid.from_bytes(raw_uuid=obj.raw_uuid)
         if isinstance(obj, LocalDateProto):
             return date(year=obj.year, month=obj.month, day=obj.day)

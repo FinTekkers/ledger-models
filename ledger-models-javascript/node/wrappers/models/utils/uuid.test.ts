@@ -1,5 +1,8 @@
 import assert = require('assert');
 import { UUID } from './uuid';
+import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
+import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
+import { ModelValidationError, violation } from '../errors';
 
 test('test packing/unpacking string', () => {
   const test_uuid_bytes = [217, 98, 253, 240, 51, 225, 77, 157, 153, 155, 126, 195, 80, 240, 203, 119];
@@ -40,3 +43,64 @@ test('equals returns true for same instance', () => {
   assert(uuid.equals(uuid));
 });
 
+// LM-334: a raw_uuid that is neither empty nor exactly 16 bytes is a typed
+// input error naming raw_uuid.
+
+function rawUuid(length: number): Uint8Array {
+  return Uint8Array.from({ length }, (_, i) => i);
+}
+
+function protoOf(raw: Uint8Array): UUIDProto {
+  const proto = new UUIDProto();
+  proto.setRawUuid(raw);
+  return proto;
+}
+
+function expectRawUuidError(decode: () => unknown, length: number): void {
+  let caught: unknown;
+  try {
+    decode();
+  } catch (e) {
+    caught = e;
+  }
+  expect(caught).toBeInstanceOf(ModelValidationError);
+  const err = caught as ModelValidationError;
+  expect(err.field).toBe('raw_uuid');
+  expect(err.message).toContain('raw_uuid');
+  expect(err.message).toContain(`got ${length}`);
+}
+
+test.each([15, 17])('fromUUIDProto rejects %i bytes with ModelValidationError naming raw_uuid', (length) => {
+  expectRawUuidError(() => UUID.fromUUIDProto(protoOf(rawUuid(length))), length);
+});
+
+test('fromUUIDProto decodes 16 bytes in byte order and round-trips', () => {
+  expect(UUID.fromUUIDProto(protoOf(rawUuid(16)))!.toString())
+    .toBe('00010203-0405-0607-0809-0a0b0c0d0e0f');
+
+  const original = UUID.random();
+  const proto = original.toUUIDProto();
+  expect(proto.getRawUuid_asU8().length).toBe(16);
+  expect(UUID.fromUUIDProto(proto)!.equals(original)).toBe(true);
+});
+
+test('fromUUIDProto returns undefined for unset or empty', () => {
+  expect(UUID.fromUUIDProto(undefined)).toBeUndefined();
+  expect(UUID.fromUUIDProto(new UUIDProto())).toBeUndefined();
+  expect(UUID.fromUUIDProto(protoOf(new Uint8Array(0)))).toBeUndefined();
+});
+
+test('fromU8Array keeps accepting empty and rejects 17 bytes', () => {
+  expect(UUID.fromU8Array(new Uint8Array(0)).toBytes()).toEqual([]);
+  expect(UUID.fromU8Array(rawUuid(16)).toString()).toBe('00010203-0405-0607-0809-0a0b0c0d0e0f');
+  expectRawUuidError(() => UUID.fromU8Array(rawUuid(17)), 17);
+});
+
+test('ModelValidationError with a malformed object_id still names its own field', () => {
+  const v: FieldViolationProto = violation('price', undefined, 'price is required but unset');
+  v.setObjectId(protoOf(rawUuid(17)));
+  const err = new ModelValidationError([v]);
+  expect(err.field).toBe('price');
+  expect(err.message).toContain('price: price is required but unset');
+  expect(err.objectId).toBeUndefined();
+});

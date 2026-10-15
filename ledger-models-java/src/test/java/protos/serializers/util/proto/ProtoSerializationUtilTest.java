@@ -3,6 +3,7 @@ package protos.serializers.util.proto;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import common.models.errors.InvalidDecimalException;
+import common.models.errors.InvalidFieldException;
 import common.models.errors.UnsetDecimalException;
 import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import fintekkers.models.util.LocalTimestamp;
@@ -145,6 +146,45 @@ class ProtoSerializationUtilTest {
         UUID uuidCopy = ProtoSerializationUtil.deserializeUUID(protoCopy);
 
         Assertions.assertEquals(uuid_string, uuidCopy.toString());
+    }
+
+    // LM-334 — a raw_uuid that is neither empty nor exactly 16 bytes is a typed
+    // input error naming raw_uuid. Longer input is no longer truncated.
+
+    private static Uuid.UUIDProto rawUuid(int length) {
+        byte[] bytes = new byte[length];
+        for (int i = 0; i < length; i++) bytes[i] = (byte) i;
+        return Uuid.UUIDProto.newBuilder().setRawUuid(ByteString.copyFrom(bytes)).build();
+    }
+
+    @Test
+    public void deserializeUUID_wrongLengthThrowsInvalidFieldException() {
+        for (int length : new int[]{15, 17}) {
+            InvalidFieldException e = assertThrows(InvalidFieldException.class,
+                    () -> ProtoSerializationUtil.deserializeUUID(rawUuid(length)), "length " + length);
+            assertEquals("raw_uuid", e.getFieldName());
+            assertTrue(e.getMessage().contains("raw_uuid"), e.getMessage());
+            assertTrue(e.getMessage().contains("got " + length), e.getMessage());
+            // Callers that caught the old IllegalArgumentException still catch it.
+            assertTrue(e instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void deserializeUUID_sixteenBytesDecodesInByteOrder() {
+        assertEquals(UUID.fromString("00010203-0405-0607-0809-0a0b0c0d0e0f"),
+                ProtoSerializationUtil.deserializeUUID(rawUuid(16)));
+
+        UUID original = UUID.randomUUID();
+        Uuid.UUIDProto proto = ProtoSerializationUtil.serializeUUID(original);
+        assertEquals(16, proto.getRawUuid().size());
+        assertEquals(original, ProtoSerializationUtil.deserializeUUID(proto));
+    }
+
+    @Test
+    public void deserializeUUID_unsetOrEmptyReturnsNull() {
+        assertNull(ProtoSerializationUtil.deserializeUUID(Uuid.UUIDProto.getDefaultInstance()));
+        assertNull(ProtoSerializationUtil.deserializeUUID(rawUuid(0)));
     }
 
     // LM-269 — an empty DecimalValueProto raises the typed UnsetDecimalException,

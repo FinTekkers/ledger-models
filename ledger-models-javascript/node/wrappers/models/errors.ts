@@ -43,6 +43,7 @@ export function violation(field: string, objectId: UUID | undefined, message: st
 }
 
 function objectIdOf(v: FieldViolationProto): string | undefined {
-    const id = v.getObjectId();
-    return id ? UUID.fromU8Array(id.getRawUuid_asU8()).toString() : undefined;
+    const raw = v.getObjectId()?.getRawUuid_asU8();
+    // A malformed id must not stop the error for another field being built (LM-334).
+    return raw && raw.length === 16 ? UUID.fromU8Array(raw).toString() : undefined;
 }

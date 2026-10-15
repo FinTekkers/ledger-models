@@ -508,6 +508,7 @@ NOT_BUILDERS = {
     "models.util.serialization.ProtoSerializationUtil": "namespace class with no state; serialize is the builder",
     "models.util.serialization.ProtoSerializationUtil.deserialize": "read path",
     "models.util.serialization.ProtoSerializationUtil.deserialize_required_timestamp": "read path",
+    "models.util.serialization.ProtoSerializationUtil.deserialize_required_uuid": "read path",
     "requests.portfolio.CreatePortfolioRequest": "namespace class with no constructor of its own; its static methods are the builders",
     "util.link_cache.LinkCache": "cache of protos it was given; creates none",
     "util.link_resolver.LinkResolver": "resolves links through a caller's fetcher; creates none",

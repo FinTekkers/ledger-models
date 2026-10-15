@@ -176,7 +176,7 @@ class Transaction():
         # Inline import to avoid circular dependency.
         from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
-        uuid_obj: UUID = ProtoSerializationUtil.deserialize(self.proto.uuid).uuid
+        uuid_obj: UUID = ProtoSerializationUtil.deserialize_required_uuid(self.proto.uuid, "transaction.uuid").uuid
         as_of: Optional[datetime] = None
         if self.proto.HasField("as_of"):
             as_of = ProtoSerializationUtil.deserialize(self.proto.as_of)

@@ -1,5 +1,7 @@
 from uuid import UUID, uuid4
 
+from fintekkers.wrappers.models.errors import ModelValidationError, violation
+
 
 class FintekkersUuid:
     uuid: UUID
@@ -16,6 +18,11 @@ class FintekkersUuid:
 
     @staticmethod
     def from_bytes(raw_uuid: list[bytes]):
+        """Raises ModelValidationError naming `raw_uuid` unless it is exactly
+        16 bytes (LM-334). Still a ValueError, as before."""
+        if len(raw_uuid) != 16:
+            raise ModelValidationError([violation(
+                "raw_uuid", None, f"expected 16 bytes but got {len(raw_uuid)}")])
         return FintekkersUuid(UUID(bytes=raw_uuid))
 
     @staticmethod
