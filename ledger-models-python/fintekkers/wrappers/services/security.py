@@ -108,7 +108,7 @@ class SecurityService:
         if response is not None and response.HasField("security_response"):
             persisted = response.security_response
             if persisted.HasField("uuid") and persisted.HasField("as_of"):
-                uuid_obj = ProtoSerializationUtil.deserialize(persisted.uuid).uuid
+                uuid_obj = ProtoSerializationUtil.deserialize_required_uuid(persisted.uuid, "security.uuid").uuid
                 as_of_dt = ProtoSerializationUtil.deserialize(persisted.as_of)
                 _link_cache.SECURITY.put(uuid_obj, persisted, as_of_dt)
         return response

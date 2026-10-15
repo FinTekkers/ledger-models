@@ -42,7 +42,9 @@ function violation(field, objectId, message) {
 }
 exports.violation = violation;
 function objectIdOf(v) {
-    const id = v.getObjectId();
-    return id ? uuid_1.UUID.fromU8Array(id.getRawUuid_asU8()).toString() : undefined;
+    var _a;
+    const raw = (_a = v.getObjectId()) === null || _a === void 0 ? void 0 : _a.getRawUuid_asU8();
+    // A malformed id must not stop the error for another field being built (LM-334).
+    return raw && raw.length === 16 ? uuid_1.UUID.fromU8Array(raw).toString() : undefined;
 }
 //# sourceMappingURL=errors.js.map

@@ -1,5 +1,6 @@
 import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
 import * as uuid from 'uuid';
+import { ModelValidationError, violation } from '../errors';
 
 /**
  * Convert array of 16 byte values to UUID string format of the form:
@@ -51,9 +52,26 @@ class UUID {
     return new UUID(UUID.fromString(random));
   }
 
+  /**
+   * Throws ModelValidationError naming `raw_uuid` when the input is neither
+   * empty nor exactly 16 bytes (LM-334). Empty is accepted as before; prefer
+   * fromUUIDProto, which reads empty as unset.
+   */
   static fromU8Array(uint8Array: Uint8Array): UUID {
+    if (uint8Array.length !== 0) checkRawUuidLength(uint8Array);
     const array: number[] = Array.from(uint8Array, byte => byte);
     return new UUID(array);
+  }
+
+  /**
+   * Decodes a UUIDProto (LM-334). Unset or empty raw_uuid is undefined. Any
+   * other length but 16 throws ModelValidationError naming `raw_uuid`.
+   */
+  static fromUUIDProto(proto?: UUIDProto): UUID | undefined {
+    const raw = proto?.getRawUuid_asU8();
+    if (!raw || raw.length === 0) return undefined;
+    checkRawUuidLength(raw);
+    return new UUID(Array.from(raw, byte => byte));
   }
 
   static fromString(uuidString: string): number[] {
@@ -67,6 +85,14 @@ class UUID {
     const bytes = hexChunks!.map((chunk) => parseInt(chunk, 16));
 
     return bytes;
+  }
+}
+
+function checkRawUuidLength(raw: Uint8Array): void {
+  if (raw.length !== 16) {
+    throw new ModelValidationError([
+      violation('raw_uuid', undefined, `expected 16 bytes but got ${raw.length}`),
+    ]);
   }
 }
 

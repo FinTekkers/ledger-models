@@ -200,7 +200,8 @@ class TransactionWrapperTest {
         Throwable e = Assertions.assertThrows(RuntimeException.class, t::getTradeDate);
         Assertions.assertEquals("trade_date", Assertions.assertInstanceOf(InvalidFieldException.class, e).getFieldName());
         Assertions.assertFalse(e instanceof TransactionProcessingException, "input error, not a state error");
-        Assertions.assertFalse(e instanceof IllegalArgumentException, "must not be absorbed by generic catches");
+        // LM-334: InvalidFieldException is an IllegalArgumentException.
+        Assertions.assertTrue(e instanceof IllegalArgumentException);
         Assertions.assertFalse(e instanceof DateTimeException);
     }
 

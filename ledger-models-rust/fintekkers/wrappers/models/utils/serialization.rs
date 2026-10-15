@@ -14,9 +14,29 @@ use uuid::Uuid;
 pub struct ProtoSerializationUtil;
 
 impl ProtoSerializationUtil {
-    /// Deserializes a UuidProto to a native Rust Uuid
+    /// Deserializes a UuidProto to a native Rust Uuid. Legacy: any length but
+    /// 16, including empty, is the untyped `Error::UuidError`. Prefer
+    /// [`Self::try_deserialize_uuid`].
     pub fn deserialize_uuid(uuid_proto: &UuidProto) -> Result<Uuid, Error> {
         Uuid::from_slice(&uuid_proto.raw_uuid).map_err(|_| Error::UuidError)
+    }
+
+    /// Deserializes a UuidProto (LM-334). Empty `raw_uuid` is unset:
+    /// `Ok(None)`. Any other length but 16 is `Error::Validation` naming
+    /// `raw_uuid`; a caller adds its own field with `Error::in_field`, e.g.
+    /// `try_deserialize_uuid(p).map_err(|e| e.in_field("uuid"))`.
+    pub fn try_deserialize_uuid(uuid_proto: &UuidProto) -> Result<Option<Uuid>, Error> {
+        let raw = &uuid_proto.raw_uuid;
+        if raw.is_empty() {
+            return Ok(None);
+        }
+        if raw.len() != 16 {
+            return Err(validation_error(
+                "raw_uuid".to_string(),
+                format!("expected 16 bytes but got {}", raw.len()),
+            ));
+        }
+        Uuid::from_slice(raw).map(Some).map_err(|_| Error::UuidError)
     }
 
     /// Deserializes a LocalDateProto to a native Rust NaiveDate
@@ -164,6 +184,52 @@ mod tests {
             matches!(result, Err(Error::DateConversion)),
             "Unparseable time_zone must surface as Err(DateConversion). Got: {:?}",
             result
+        );
+    }
+
+    // ---- LM-334: raw_uuid length ----
+
+    fn raw_uuid(length: u8) -> UuidProto {
+        UuidProto { raw_uuid: (0..length).collect() }
+    }
+
+    #[test]
+    fn try_deserialize_uuid_rejects_wrong_length_naming_raw_uuid() {
+        for length in [15, 17] {
+            let err = ProtoSerializationUtil::try_deserialize_uuid(&raw_uuid(length)).unwrap_err();
+            assert!(matches!(err, Error::Validation(_)), "expected Validation, got {:?}", err);
+            assert_eq!(err.violations()[0].field, "raw_uuid");
+            let message = err.to_string();
+            assert!(message.contains("raw_uuid"), "{}", message);
+            assert!(message.contains(&format!("got {}", length)), "{}", message);
+        }
+    }
+
+    #[test]
+    fn try_deserialize_uuid_decodes_sixteen_bytes_in_byte_order() {
+        let decoded = ProtoSerializationUtil::try_deserialize_uuid(&raw_uuid(16)).unwrap();
+        assert_eq!(decoded, Some(Uuid::parse_str("00010203-0405-0607-0809-0a0b0c0d0e0f").unwrap()));
+
+        let original = Uuid::new_v4();
+        let proto = UuidProto { raw_uuid: original.into_bytes().to_vec() };
+        assert_eq!(proto.raw_uuid.len(), 16);
+        assert_eq!(ProtoSerializationUtil::try_deserialize_uuid(&proto).unwrap(), Some(original));
+    }
+
+    #[test]
+    fn try_deserialize_uuid_unset_is_none() {
+        assert_eq!(ProtoSerializationUtil::try_deserialize_uuid(&UuidProto::default()).unwrap(), None);
+    }
+
+    #[test]
+    fn legacy_deserialize_uuid_is_unchanged() {
+        assert!(matches!(
+            ProtoSerializationUtil::deserialize_uuid(&raw_uuid(17)),
+            Err(Error::UuidError)
+        ));
+        assert_eq!(
+            ProtoSerializationUtil::deserialize_uuid(&raw_uuid(16)).unwrap(),
+            Uuid::parse_str("00010203-0405-0607-0809-0a0b0c0d0e0f").unwrap()
         );
     }
 

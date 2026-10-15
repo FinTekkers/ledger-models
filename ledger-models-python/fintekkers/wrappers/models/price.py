@@ -41,7 +41,7 @@ class Price:
         """Lazy hydration. See docs/adr/lazy-link-hydration.md."""
         if not self.proto.is_link:
             return
-        uuid_obj: UUID = ProtoSerializationUtil.deserialize(self.proto.uuid).uuid
+        uuid_obj: UUID = ProtoSerializationUtil.deserialize_required_uuid(self.proto.uuid, "price.uuid").uuid
         as_of: Optional[datetime] = None
         if self.proto.HasField("as_of"):
             as_of = ProtoSerializationUtil.deserialize(self.proto.as_of)
@@ -79,7 +79,7 @@ class Price:
             self.proto.as_of if self.proto.HasField("as_of") else None, "price.as_of")
 
     def get_uuid(self) -> UUID:
-        uuid: FintekkersUuid = ProtoSerializationUtil.deserialize(self.proto.uuid)
+        uuid: FintekkersUuid = ProtoSerializationUtil.deserialize_required_uuid(self.proto.uuid, "price.uuid")
         return uuid.as_uuid()
 
 

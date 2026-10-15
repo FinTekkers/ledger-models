@@ -131,7 +131,7 @@ class Security():
         if not self.proto.is_link:
             return
         uuid_proto = self.proto.uuid
-        uuid_obj: UUID = ProtoSerializationUtil.deserialize(uuid_proto).uuid
+        uuid_obj: UUID = ProtoSerializationUtil.deserialize_required_uuid(uuid_proto, "security.uuid").uuid
         as_of: Optional[datetime] = None
         if self.proto.HasField("as_of"):
             as_of = ProtoSerializationUtil.deserialize(self.proto.as_of)
@@ -188,7 +188,7 @@ class Security():
             raise ValueError(f"Field not mapped in Security wrapper: {FieldProto.DESCRIPTOR.values_by_number[field].name}")
 
     def get_id(self) -> UUID:
-        uuid:FintekkersUuid = ProtoSerializationUtil.deserialize(self.proto.uuid)
+        uuid:FintekkersUuid = ProtoSerializationUtil.deserialize_required_uuid(self.proto.uuid, "security.uuid")
         return uuid.uuid
     
     def get_as_of(self) -> datetime:
