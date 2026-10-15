@@ -374,6 +374,15 @@ enum MeasureProto {
   //   where num_bonds = directed_quantity / face_value
   //   Equivalently: market_value / directed_quantity * 100
   //
+  // Without a position (e.g. a valuation request carrying only a security and price):
+  //   DirtyPrice = clean_price + accrued_interest_per_bond / face_value * 100
+  //   where accrued_interest_per_bond = (coupon_rate / coupon_frequency) * face_value
+  //                                     * (days_since_last_coupon / days_in_period)
+  //   Day count: Actual/Actual (ICMA), as of the settlement date.
+  //   The result is a percentage of par, per bond, and is never scaled by quantity.
+  //   The settlement date and coupon inputs (coupon_rate, coupon_frequency) are
+  //   required; they have no defaults.
+  //
   // Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
   // Units: Percentage of par (e.g. 99.5 = 99.5% of par).
   DIRTY_PRICE = 22;
