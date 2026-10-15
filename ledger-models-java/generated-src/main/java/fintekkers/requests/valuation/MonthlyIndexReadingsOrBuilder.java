@@ -9,6 +9,11 @@ public interface MonthlyIndexReadingsOrBuilder extends
 
   /**
    * <pre>
+   * When used as InflationIndexInput.readings, must hold exactly the
+   * readings for months m-3 and m-2 of settlement month m, the month of the
+   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+   * in UTC; time_zone is not used). A missing or extra month makes the
+   * request invalid, the same as a duplicate month.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -20,6 +25,11 @@ public interface MonthlyIndexReadingsOrBuilder extends
       getReadingsList();
   /**
    * <pre>
+   * When used as InflationIndexInput.readings, must hold exactly the
+   * readings for months m-3 and m-2 of settlement month m, the month of the
+   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+   * in UTC; time_zone is not used). A missing or extra month makes the
+   * request invalid, the same as a duplicate month.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -30,6 +40,11 @@ public interface MonthlyIndexReadingsOrBuilder extends
   fintekkers.requests.valuation.MonthlyIndexReading getReadings(int index);
   /**
    * <pre>
+   * When used as InflationIndexInput.readings, must hold exactly the
+   * readings for months m-3 and m-2 of settlement month m, the month of the
+   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+   * in UTC; time_zone is not used). A missing or extra month makes the
+   * request invalid, the same as a duplicate month.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -40,6 +55,11 @@ public interface MonthlyIndexReadingsOrBuilder extends
   int getReadingsCount();
   /**
    * <pre>
+   * When used as InflationIndexInput.readings, must hold exactly the
+   * readings for months m-3 and m-2 of settlement month m, the month of the
+   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+   * in UTC; time_zone is not used). A missing or extra month makes the
+   * request invalid, the same as a duplicate month.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -51,6 +71,11 @@ public interface MonthlyIndexReadingsOrBuilder extends
       getReadingsOrBuilderList();
   /**
    * <pre>
+   * When used as InflationIndexInput.readings, must hold exactly the
+   * readings for months m-3 and m-2 of settlement month m, the month of the
+   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+   * in UTC; time_zone is not used). A missing or extra month makes the
+   * request invalid, the same as a duplicate month.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.

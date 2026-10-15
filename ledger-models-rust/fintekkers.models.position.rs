@@ -613,14 +613,16 @@ pub enum MeasureProto {
     ///    Strips with <1yr remaining. Returns null/error for other product types.
     /// Units: Decimal (0-1 scale; e.g. 0.0371 = 3.71%).
     BondEquivalentYield = 27,
-    /// The reference CPI of a TIPS for the settlement date
-    /// (ValuationRequestProto.asof_datetime), the numerator of INDEX_RATIO.
+    /// The reference CPI of a TIPS for the settlement date (the UTC date of
+    /// ValuationRequestProto.asof_datetime), the numerator of INDEX_RATIO.
     ///
     /// Formula:
     ///    With TipsInput.cpi.reference_cpi: the value as given.
     ///    With TipsInput.cpi.readings:
     ///      RefCPI = CPI(m-3) + (d - 1) / days_in_month * (CPI(m-2) - CPI(m-3))
-    ///    Where m is the settlement month, d the settlement day of month,
+    ///    Where m is the settlement month, the month of the UTC date of
+    ///    ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+    ///    time_zone is not used), d the settlement day of month,
     ///    days_in_month the number of days in month m, and CPI(m-k) the reading
     ///    for the month k months before m.
     ///
@@ -630,8 +632,9 @@ pub enum MeasureProto {
     /// Model assumptions:
     ///    - Unrounded: Treasury publishes reference CPIs to 5 decimals; this
     ///      measure is not rounded to match.
-    ///    - The measure is absent when readings lacks month m-3 or m-2, or
-    ///      when no CPI is given.
+    ///    - With readings, the request is rejected unless readings are exactly
+    ///      months m-3 and m-2 (a missing, extra or duplicate month).
+    ///    - The measure is absent when no CPI is given.
     ///
     /// Applicability: TIPS only.
     /// Units: Index points (e.g. 310.326).

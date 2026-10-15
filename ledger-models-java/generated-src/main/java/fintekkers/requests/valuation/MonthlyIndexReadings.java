@@ -54,6 +54,11 @@ private static final long serialVersionUID = 0L;
   private java.util.List<fintekkers.requests.valuation.MonthlyIndexReading> readings_;
   /**
    * <pre>
+   * When used as InflationIndexInput.readings, must hold exactly the
+   * readings for months m-3 and m-2 of settlement month m, the month of the
+   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+   * in UTC; time_zone is not used). A missing or extra month makes the
+   * request invalid, the same as a duplicate month.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -67,6 +72,11 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
+   * When used as InflationIndexInput.readings, must hold exactly the
+   * readings for months m-3 and m-2 of settlement month m, the month of the
+   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+   * in UTC; time_zone is not used). A missing or extra month makes the
+   * request invalid, the same as a duplicate month.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -81,6 +91,11 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
+   * When used as InflationIndexInput.readings, must hold exactly the
+   * readings for months m-3 and m-2 of settlement month m, the month of the
+   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+   * in UTC; time_zone is not used). A missing or extra month makes the
+   * request invalid, the same as a duplicate month.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -94,6 +109,11 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
+   * When used as InflationIndexInput.readings, must hold exactly the
+   * readings for months m-3 and m-2 of settlement month m, the month of the
+   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+   * in UTC; time_zone is not used). A missing or extra month makes the
+   * request invalid, the same as a duplicate month.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -107,6 +127,11 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
+   * When used as InflationIndexInput.readings, must hold exactly the
+   * readings for months m-3 and m-2 of settlement month m, the month of the
+   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+   * in UTC; time_zone is not used). A missing or extra month makes the
+   * request invalid, the same as a duplicate month.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -511,6 +536,11 @@ private static final long serialVersionUID = 0L;
 
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -527,6 +557,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -543,6 +578,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -559,6 +599,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -582,6 +627,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -602,6 +652,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -624,6 +679,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -647,6 +707,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -667,6 +732,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -687,6 +757,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -708,6 +783,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -727,6 +807,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -746,6 +831,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -759,6 +849,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -775,6 +870,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -792,6 +892,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -805,6 +910,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -819,6 +929,11 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
+     * When used as InflationIndexInput.readings, must hold exactly the
+     * readings for months m-3 and m-2 of settlement month m, the month of the
+     * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+     * in UTC; time_zone is not used). A missing or extra month makes the
+     * request invalid, the same as a duplicate month.
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.

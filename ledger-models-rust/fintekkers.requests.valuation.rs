@@ -260,6 +260,13 @@ pub struct TipsInput {
     /// The CPI the index ratio is computed from: raw monthly index levels, or a
     /// reference CPI already derived for the settlement date. See
     /// MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
+    ///
+    /// With readings, they must be exactly the readings for months m-3 and m-2
+    /// of settlement month m, the month of the UTC date of
+    /// ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+    /// time_zone is not used). A missing or extra month makes the request
+    /// invalid and it is rejected, the same as a duplicate month. See
+    /// InflationIndexInput and MonthlyIndexReadings.
     #[prost(message, optional, tag = "4")]
     pub cpi: ::core::option::Option<InflationIndexInput>,
 }
@@ -287,8 +294,11 @@ pub mod inflation_index_input {
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Cpi {
-        /// Raw monthly index levels. The reference CPI for settlement month m
-        /// needs the readings for months m-3 and m-2; others are ignored.
+        /// Raw monthly index levels. Must be exactly the readings for months m-3
+        /// and m-2 of settlement month m, the month of the UTC date of
+        /// ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+        /// time_zone is not used). A missing or extra month makes the request
+        /// invalid and it is rejected, the same as a duplicate (year, month).
         #[prost(message, tag = "2")]
         Readings(super::MonthlyIndexReadings),
         /// Reference CPI for the settlement date, already derived
@@ -302,6 +312,12 @@ pub mod inflation_index_input {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MonthlyIndexReadings {
+    /// When used as InflationIndexInput.readings, must hold exactly the
+    /// readings for months m-3 and m-2 of settlement month m, the month of the
+    /// UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
+    /// in UTC; time_zone is not used). A missing or extra month makes the
+    /// request invalid, the same as a duplicate month.
+    ///
     /// Order is not significant. Each (year, month) appears at most once; a
     /// request with a duplicate (year, month) is invalid and is rejected, even
     /// when the values agree.
