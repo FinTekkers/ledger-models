@@ -352,7 +352,15 @@ public enum MeasureProto
    * <pre>
    * The profit or loss on a position relative to its cost basis.
    * Formula:
-   *   ProfitLoss = MarketValue - (UnadjustedCostBasis / 100 * DirectedQuantity)
+   *   ProfitLoss = MarketValue - (UnadjustedCostBasis / d * DirectedQuantity)
+   *   Where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and
+   *   d = 1 for dollar-quoted securities (equities, cash).
+   * Example (bond): MV=19,000, UCB=90 (% of par), qty=20000 face →
+   *   ProfitLoss = 19000 - (90 / 100 * 20000) = 19000 - 18000 = 1,000.
+   * Example (equity): MV=5,500, UCB=50 (dollars per share), qty=100 →
+   *   ProfitLoss = 5500 - (50 / 1 * 100) = 5500 - 5000 = 500.
+   * The measure is absent, never 0, when MarketValue, UnadjustedCostBasis
+   * or DirectedQuantity is unavailable.
    * Applicability: All security types.
    * Units: Dollars (or settlement currency).
    * </pre>
@@ -364,7 +372,11 @@ public enum MeasureProto
    * <pre>
    * The profit or loss as a percentage of the original cost basis.
    * Formula:
-   *   ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / 100 * DirectedQuantity)
+   *   ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / d * DirectedQuantity)
+   *   Where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and
+   *   d = 1 for dollar-quoted securities (equities, cash).
+   * The measure is absent, never 0, when MarketValue, UnadjustedCostBasis
+   * or DirectedQuantity is unavailable.
    * Applicability: All security types.
    * Units: Decimal (0-1 scale; e.g. 0.05 = 5.00% gain).
    * </pre>
@@ -871,7 +883,15 @@ public enum MeasureProto
    * <pre>
    * The profit or loss on a position relative to its cost basis.
    * Formula:
-   *   ProfitLoss = MarketValue - (UnadjustedCostBasis / 100 * DirectedQuantity)
+   *   ProfitLoss = MarketValue - (UnadjustedCostBasis / d * DirectedQuantity)
+   *   Where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and
+   *   d = 1 for dollar-quoted securities (equities, cash).
+   * Example (bond): MV=19,000, UCB=90 (% of par), qty=20000 face →
+   *   ProfitLoss = 19000 - (90 / 100 * 20000) = 19000 - 18000 = 1,000.
+   * Example (equity): MV=5,500, UCB=50 (dollars per share), qty=100 →
+   *   ProfitLoss = 5500 - (50 / 1 * 100) = 5500 - 5000 = 500.
+   * The measure is absent, never 0, when MarketValue, UnadjustedCostBasis
+   * or DirectedQuantity is unavailable.
    * Applicability: All security types.
    * Units: Dollars (or settlement currency).
    * </pre>
@@ -883,7 +903,11 @@ public enum MeasureProto
    * <pre>
    * The profit or loss as a percentage of the original cost basis.
    * Formula:
-   *   ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / 100 * DirectedQuantity)
+   *   ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / d * DirectedQuantity)
+   *   Where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and
+   *   d = 1 for dollar-quoted securities (equities, cash).
+   * The measure is absent, never 0, when MarketValue, UnadjustedCostBasis
+   * or DirectedQuantity is unavailable.
    * Applicability: All security types.
    * Units: Decimal (0-1 scale; e.g. 0.05 = 5.00% gain).
    * </pre>

@@ -42,10 +42,16 @@ public enum Measure {
             "discounted at the bond's yield to maturity. Returned as a quoted price (% of par)."),
 
     PROFIT_LOSS("The profit or loss on a position relative to its cost basis. " +
-            "Formula: MarketValue - (UnadjustedCostBasis / 100 * DirectedQuantity). Units: Dollars."),
+            "Formula: MarketValue - (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for " +
+            "par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities " +
+            "(equities, cash). Absent, never 0, when MarketValue, UnadjustedCostBasis or " +
+            "DirectedQuantity is unavailable. Units: Dollars."),
 
     PROFIT_LOSS_PERCENT("The profit or loss as a percentage of the original cost basis. " +
-            "Formula: ProfitLoss / (UnadjustedCostBasis / 100 * DirectedQuantity). Units: Decimal (0-1 scale)."),
+            "Formula: ProfitLoss / (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for " +
+            "par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities " +
+            "(equities, cash). Absent, never 0, when MarketValue, UnadjustedCostBasis or " +
+            "DirectedQuantity is unavailable. Units: Decimal (0-1 scale)."),
 
     ACCRUED_INTEREST("Bond coupon interest earned but not yet paid since the last coupon date. " +
             "Computed by valuation-service from coupon_rate, coupon_frequency, and the day-count " +
