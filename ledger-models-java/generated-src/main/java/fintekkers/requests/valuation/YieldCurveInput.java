@@ -58,8 +58,9 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The benchmark this curve represents (e.g. SOFR, SONIA).
-   * Should match the FRN security's reference_rate_index.
-   * Not validated today: the service does not read this field. Check tracked in VS-74.
+   * Must match the FRN security's reference_rate_index. valuation-service
+   * rejects a mismatch with INVALID_ARGUMENT. An unset index
+   * (UNKNOWN_INDEX_TYPE) is accepted.
    * </pre>
    *
    * <code>.fintekkers.models.security.index.IndexTypeProto index = 1;</code>
@@ -71,8 +72,9 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The benchmark this curve represents (e.g. SOFR, SONIA).
-   * Should match the FRN security's reference_rate_index.
-   * Not validated today: the service does not read this field. Check tracked in VS-74.
+   * Must match the FRN security's reference_rate_index. valuation-service
+   * rejects a mismatch with INVALID_ARGUMENT. An unset index
+   * (UNKNOWN_INDEX_TYPE) is accepted.
    * </pre>
    *
    * <code>.fintekkers.models.security.index.IndexTypeProto index = 1;</code>
@@ -624,8 +626,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The benchmark this curve represents (e.g. SOFR, SONIA).
-     * Should match the FRN security's reference_rate_index.
-     * Not validated today: the service does not read this field. Check tracked in VS-74.
+     * Must match the FRN security's reference_rate_index. valuation-service
+     * rejects a mismatch with INVALID_ARGUMENT. An unset index
+     * (UNKNOWN_INDEX_TYPE) is accepted.
      * </pre>
      *
      * <code>.fintekkers.models.security.index.IndexTypeProto index = 1;</code>
@@ -637,8 +640,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The benchmark this curve represents (e.g. SOFR, SONIA).
-     * Should match the FRN security's reference_rate_index.
-     * Not validated today: the service does not read this field. Check tracked in VS-74.
+     * Must match the FRN security's reference_rate_index. valuation-service
+     * rejects a mismatch with INVALID_ARGUMENT. An unset index
+     * (UNKNOWN_INDEX_TYPE) is accepted.
      * </pre>
      *
      * <code>.fintekkers.models.security.index.IndexTypeProto index = 1;</code>
@@ -654,8 +658,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The benchmark this curve represents (e.g. SOFR, SONIA).
-     * Should match the FRN security's reference_rate_index.
-     * Not validated today: the service does not read this field. Check tracked in VS-74.
+     * Must match the FRN security's reference_rate_index. valuation-service
+     * rejects a mismatch with INVALID_ARGUMENT. An unset index
+     * (UNKNOWN_INDEX_TYPE) is accepted.
      * </pre>
      *
      * <code>.fintekkers.models.security.index.IndexTypeProto index = 1;</code>
@@ -669,8 +674,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The benchmark this curve represents (e.g. SOFR, SONIA).
-     * Should match the FRN security's reference_rate_index.
-     * Not validated today: the service does not read this field. Check tracked in VS-74.
+     * Must match the FRN security's reference_rate_index. valuation-service
+     * rejects a mismatch with INVALID_ARGUMENT. An unset index
+     * (UNKNOWN_INDEX_TYPE) is accepted.
      * </pre>
      *
      * <code>.fintekkers.models.security.index.IndexTypeProto index = 1;</code>
@@ -689,8 +695,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The benchmark this curve represents (e.g. SOFR, SONIA).
-     * Should match the FRN security's reference_rate_index.
-     * Not validated today: the service does not read this field. Check tracked in VS-74.
+     * Must match the FRN security's reference_rate_index. valuation-service
+     * rejects a mismatch with INVALID_ARGUMENT. An unset index
+     * (UNKNOWN_INDEX_TYPE) is accepted.
      * </pre>
      *
      * <code>.fintekkers.models.security.index.IndexTypeProto index = 1;</code>
