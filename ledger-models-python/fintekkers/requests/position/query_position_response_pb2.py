@@ -24,11 +24,12 @@ _sym_db = _symbol_database.Default()
 
 from fintekkers.models.position import position_pb2 as fintekkers_dot_models_dot_position_dot_position__pb2
 from fintekkers.requests.position import query_position_request_pb2 as fintekkers_dot_requests_dot_position_dot_query__position__request__pb2
+from fintekkers.requests.util.errors import summary_pb2 as fintekkers_dot_requests_dot_util_dot_errors_dot_summary__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
 from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n:fintekkers/requests/position/query_position_response.proto\x12\x1c\x66intekkers.requests.position\x1a)fintekkers/models/position/position.proto\x1a\x39\x66intekkers/requests/position/query_position_request.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xbe\x02\n\x1aQueryPositionResponseProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12Q\n\x10position_request\x18\x0b \x01(\x0b\x32\x37.fintekkers.requests.position.QueryPositionRequestProto\x12\x1a\n\x12reporting_currency\x18\x0c \x01(\t\x12<\n\tpositions\x18\x1e \x03(\x0b\x32).fintekkers.models.position.PositionProtoB\x1f\x42\x1bQueryPositionResponseProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n:fintekkers/requests/position/query_position_response.proto\x12\x1c\x66intekkers.requests.position\x1a)fintekkers/models/position/position.proto\x1a\x39\x66intekkers/requests/position/query_position_request.proto\x1a-fintekkers/requests/util/errors/summary.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\x89\x03\n\x1aQueryPositionResponseProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12Q\n\x10position_request\x18\x0b \x01(\x0b\x32\x37.fintekkers.requests.position.QueryPositionRequestProto\x12\x1a\n\x12reporting_currency\x18\x0c \x01(\t\x12<\n\tpositions\x18\x1e \x03(\x0b\x32).fintekkers.models.position.PositionProto\x12I\n\x12\x65rrors_or_warnings\x18( \x01(\x0b\x32-.fintekkers.requests.util.errors.SummaryProtoB\x1f\x42\x1bQueryPositionResponseProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,6 +37,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.positio
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\033QueryPositionResponseProtosP\001'
-  _globals['_QUERYPOSITIONRESPONSEPROTO']._serialized_start=275
-  _globals['_QUERYPOSITIONRESPONSEPROTO']._serialized_end=593
+  _globals['_QUERYPOSITIONRESPONSEPROTO']._serialized_start=322
+  _globals['_QUERYPOSITIONRESPONSEPROTO']._serialized_end=715
 # @@protoc_insertion_point(module_scope)

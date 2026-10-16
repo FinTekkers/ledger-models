@@ -25,6 +25,8 @@ var fintekkers_models_position_position_pb = require('../../../fintekkers/models
 goog.object.extend(proto, fintekkers_models_position_position_pb);
 var fintekkers_requests_position_query_position_request_pb = require('../../../fintekkers/requests/position/query_position_request_pb.js');
 goog.object.extend(proto, fintekkers_requests_position_query_position_request_pb);
+var fintekkers_requests_util_errors_summary_pb = require('../../../fintekkers/requests/util/errors/summary_pb.js');
+goog.object.extend(proto, fintekkers_requests_util_errors_summary_pb);
 var fintekkers_models_util_object_type_pb = require('../../../fintekkers/models/util/object_type_pb.js');
 goog.object.extend(proto, fintekkers_models_util_object_type_pb);
 var fintekkers_models_util_version_pb = require('../../../fintekkers/models/util/version_pb.js');
@@ -95,7 +97,8 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.toObject = functio
     positionRequest: (f = msg.getPositionRequest()) && fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto.toObject(includeInstance, f),
     reportingCurrency: jspb.Message.getFieldWithDefault(msg, 12, ""),
     positionsList: jspb.Message.toObjectList(msg.getPositionsList(),
-    fintekkers_models_position_position_pb.PositionProto.toObject, includeInstance)
+    fintekkers_models_position_position_pb.PositionProto.toObject, includeInstance),
+    errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -154,6 +157,11 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.deserializeBinaryF
       var value = new fintekkers_models_position_position_pb.PositionProto;
       reader.readMessage(value,fintekkers_models_position_position_pb.PositionProto.deserializeBinaryFromReader);
       msg.addPositions(value);
+      break;
+    case 40:
+      var value = new fintekkers_requests_util_errors_summary_pb.SummaryProto;
+      reader.readMessage(value,fintekkers_requests_util_errors_summary_pb.SummaryProto.deserializeBinaryFromReader);
+      msg.setErrorsOrWarnings(value);
       break;
     default:
       reader.skipField();
@@ -220,6 +228,14 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.serializeBinaryToW
       30,
       f,
       fintekkers_models_position_position_pb.PositionProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getErrorsOrWarnings();
+  if (f != null) {
+    writer.writeMessage(
+      40,
+      f,
+      fintekkers_requests_util_errors_summary_pb.SummaryProto.serializeBinaryToWriter
     );
   }
 };
@@ -370,6 +386,43 @@ proto.fintekkers.requests.position.QueryPositionResponseProto.prototype.addPosit
  */
 proto.fintekkers.requests.position.QueryPositionResponseProto.prototype.clearPositionsList = function() {
   return this.setPositionsList([]);
+};
+
+
+/**
+ * optional fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;
+ * @return {?proto.fintekkers.requests.util.errors.SummaryProto}
+ */
+proto.fintekkers.requests.position.QueryPositionResponseProto.prototype.getErrorsOrWarnings = function() {
+  return /** @type{?proto.fintekkers.requests.util.errors.SummaryProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_requests_util_errors_summary_pb.SummaryProto, 40));
+};
+
+
+/**
+ * @param {?proto.fintekkers.requests.util.errors.SummaryProto|undefined} value
+ * @return {!proto.fintekkers.requests.position.QueryPositionResponseProto} returns this
+*/
+proto.fintekkers.requests.position.QueryPositionResponseProto.prototype.setErrorsOrWarnings = function(value) {
+  return jspb.Message.setWrapperField(this, 40, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.requests.position.QueryPositionResponseProto} returns this
+ */
+proto.fintekkers.requests.position.QueryPositionResponseProto.prototype.clearErrorsOrWarnings = function() {
+  return this.setErrorsOrWarnings(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.requests.position.QueryPositionResponseProto.prototype.hasErrorsOrWarnings = function() {
+  return jspb.Message.getField(this, 40) != null;
 };
 
 

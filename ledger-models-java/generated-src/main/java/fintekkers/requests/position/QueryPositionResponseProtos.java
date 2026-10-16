@@ -32,24 +32,28 @@ public final class QueryPositionResponseProtos {
       "ition_response.proto\022\034fintekkers.request" +
       "s.position\032)fintekkers/models/position/p" +
       "osition.proto\0329fintekkers/requests/posit" +
-      "ion/query_position_request.proto\032(fintek" +
-      "kers/models/util/object_type.proto\032$fint" +
-      "ekkers/models/util/version.proto\"\276\002\n\032Que" +
-      "ryPositionResponseProto\022<\n\013object_type\030\001" +
-      " \001(\0162\'.fintekkers.models.util.ObjectType" +
-      "Proto\0225\n\007version\030\002 \001(\0132$.fintekkers.mode" +
-      "ls.util.VersionProto\022Q\n\020position_request" +
-      "\030\013 \001(\01327.fintekkers.requests.position.Qu" +
-      "eryPositionRequestProto\022\032\n\022reporting_cur" +
-      "rency\030\014 \001(\t\022<\n\tpositions\030\036 \003(\0132).fintekk" +
-      "ers.models.position.PositionProtoB\037B\033Que" +
-      "ryPositionResponseProtosP\001b\006proto3"
+      "ion/query_position_request.proto\032-fintek" +
+      "kers/requests/util/errors/summary.proto\032" +
+      "(fintekkers/models/util/object_type.prot" +
+      "o\032$fintekkers/models/util/version.proto\"" +
+      "\211\003\n\032QueryPositionResponseProto\022<\n\013object" +
+      "_type\030\001 \001(\0162\'.fintekkers.models.util.Obj" +
+      "ectTypeProto\0225\n\007version\030\002 \001(\0132$.fintekke" +
+      "rs.models.util.VersionProto\022Q\n\020position_" +
+      "request\030\013 \001(\01327.fintekkers.requests.posi" +
+      "tion.QueryPositionRequestProto\022\032\n\022report" +
+      "ing_currency\030\014 \001(\t\022<\n\tpositions\030\036 \003(\0132)." +
+      "fintekkers.models.position.PositionProto" +
+      "\022I\n\022errors_or_warnings\030( \001(\0132-.fintekker" +
+      "s.requests.util.errors.SummaryProtoB\037B\033Q" +
+      "ueryPositionResponseProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.position.PositionProtos.getDescriptor(),
           fintekkers.requests.position.QueryPositionRequestProtos.getDescriptor(),
+          fintekkers.requests.util.errors.Summary.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
           fintekkers.models.util.VersionProtos.getDescriptor(),
         });
@@ -58,9 +62,10 @@ public final class QueryPositionResponseProtos {
     internal_static_fintekkers_requests_position_QueryPositionResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_position_QueryPositionResponseProto_descriptor,
-        new java.lang.String[] { "ObjectType", "Version", "PositionRequest", "ReportingCurrency", "Positions", });
+        new java.lang.String[] { "ObjectType", "Version", "PositionRequest", "ReportingCurrency", "Positions", "ErrorsOrWarnings", });
     fintekkers.models.position.PositionProtos.getDescriptor();
     fintekkers.requests.position.QueryPositionRequestProtos.getDescriptor();
+    fintekkers.requests.util.errors.Summary.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
     fintekkers.models.util.VersionProtos.getDescriptor();
   }
