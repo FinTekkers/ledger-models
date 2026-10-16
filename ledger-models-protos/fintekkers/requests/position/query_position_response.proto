@@ -4,6 +4,7 @@ package fintekkers.requests.position;
 
 import "fintekkers/models/position/position.proto";
 import "fintekkers/requests/position/query_position_request.proto";
+import "fintekkers/requests/util/errors/summary.proto";
 import "fintekkers/models/util/object_type.proto";
 import "fintekkers/models/util/version.proto";
 
@@ -21,6 +22,9 @@ message QueryPositionResponseProto {
   //TODO - Think about how to model this long term; ISO code vs. UUID vs. full security object
 
   repeated fintekkers.models.position.PositionProto positions = 30;
+
+  // Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+  util.errors.SummaryProto errors_or_warnings = 40;
 }
 
 

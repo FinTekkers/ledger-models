@@ -52,4 +52,7 @@ pub struct QueryPositionResponseProto {
     pub positions: ::prost::alloc::vec::Vec<
         super::super::models::position::PositionProto,
     >,
+    /// Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+    #[prost(message, optional, tag = "40")]
+    pub errors_or_warnings: ::core::option::Option<super::util::errors::SummaryProto>,
 }

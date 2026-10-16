@@ -91,4 +91,31 @@ public interface QueryPositionResponseProtoOrBuilder extends
    */
   fintekkers.models.position.PositionProtoOrBuilder getPositionsOrBuilder(
       int index);
+
+  /**
+   * <pre>
+   * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   * @return Whether the errorsOrWarnings field is set.
+   */
+  boolean hasErrorsOrWarnings();
+  /**
+   * <pre>
+   * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   * @return The errorsOrWarnings.
+   */
+  fintekkers.requests.util.errors.Summary.SummaryProto getErrorsOrWarnings();
+  /**
+   * <pre>
+   * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   */
+  fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getErrorsOrWarningsOrBuilder();
 }
