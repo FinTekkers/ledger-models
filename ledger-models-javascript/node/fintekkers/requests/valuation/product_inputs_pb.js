@@ -840,7 +840,6 @@ proto.fintekkers.requests.valuation.TipsInput.toObject = function(includeInstanc
   var f, obj = {
     security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
     cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-    currentCpi: (f = msg.getCurrentCpi()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     cpi: (f = msg.getCpi()) && proto.fintekkers.requests.valuation.InflationIndexInput.toObject(includeInstance, f)
   };
 
@@ -888,11 +887,6 @@ proto.fintekkers.requests.valuation.TipsInput.deserializeBinaryFromReader = func
       reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
       msg.setCleanPrice(value);
       break;
-    case 3:
-      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
-      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
-      msg.setCurrentCpi(value);
-      break;
     case 4:
       var value = new proto.fintekkers.requests.valuation.InflationIndexInput;
       reader.readMessage(value,proto.fintekkers.requests.valuation.InflationIndexInput.deserializeBinaryFromReader);
@@ -939,14 +933,6 @@ proto.fintekkers.requests.valuation.TipsInput.serializeBinaryToWriter = function
   if (f != null) {
     writer.writeMessage(
       2,
-      f,
-      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
-    );
-  }
-  f = message.getCurrentCpi();
-  if (f != null) {
-    writer.writeMessage(
-      3,
       f,
       fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
     );
@@ -1033,43 +1019,6 @@ proto.fintekkers.requests.valuation.TipsInput.prototype.clearCleanPrice = functi
  */
 proto.fintekkers.requests.valuation.TipsInput.prototype.hasCleanPrice = function() {
   return jspb.Message.getField(this, 2) != null;
-};
-
-
-/**
- * optional fintekkers.models.util.DecimalValueProto current_cpi = 3;
- * @return {?proto.fintekkers.models.util.DecimalValueProto}
- */
-proto.fintekkers.requests.valuation.TipsInput.prototype.getCurrentCpi = function() {
-  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
-    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 3));
-};
-
-
-/**
- * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
- * @return {!proto.fintekkers.requests.valuation.TipsInput} returns this
-*/
-proto.fintekkers.requests.valuation.TipsInput.prototype.setCurrentCpi = function(value) {
-  return jspb.Message.setWrapperField(this, 3, value);
-};
-
-
-/**
- * Clears the message field making it undefined.
- * @return {!proto.fintekkers.requests.valuation.TipsInput} returns this
- */
-proto.fintekkers.requests.valuation.TipsInput.prototype.clearCurrentCpi = function() {
-  return this.setCurrentCpi(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.fintekkers.requests.valuation.TipsInput.prototype.hasCurrentCpi = function() {
-  return jspb.Message.getField(this, 3) != null;
 };
 
 

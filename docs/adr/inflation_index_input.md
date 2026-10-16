@@ -73,3 +73,24 @@ No CPI interpolation or index-ratio helper is added in any language. The formula
 - **The settlement month is taken in UTC.** It is the month of the UTC date of `ValuationRequestProto.asof_datetime`, read from `asof_datetime.timestamp`. `asof_datetime.time_zone` is not used. Example: `timestamp` = 2026-08-01T02:00Z with `time_zone` = `America/New_York` gives settlement month August, not July, so the readings must be May and June.
 - **`REFERENCE_CPI` is still absent when no CPI is given.** The duplicate rule is unchanged.
 - **No wire change.** Only comments and the `catalog/measures.json` assumption strings change. Enforcement end to end is the valuation-service item VS-101.
+
+## Amendment 2026-10-16 (LM-344): fields 24, 25 and 3 removed in 0.5
+
+- **Removed.** `ValuationRequestProto.cpi_price_input` (24), `ValuationRequestProto.reference_rate_input` (25) and `TipsInput.current_cpi` (3) are deleted. Their numbers and names are `reserved`, so they are never reused. The 15 Oct ruling approves this break. It ships as **0.5.0**, tagged by the owner, never as a 0.4.x patch.
+- **Supersedes "Precedence and deprecations".** `TipsInput.cpi` (4) is the only CPI input. There is no fallback to field 3 or field 24.
+- **The legacy flat-rate FRN path is retired.** With field 25 gone, FRNs are priced from `FrnInput.curve` only. There is no flat reference rate and no default rate.
+- **Old clients.** A 0.4 client that still sends 24, 25 or 3 to a 0.5 reader is not rejected by the parser: the fields arrive as unknown fields and are ignored. A TIPS request whose CPI came only from 3 or 24 then has no CPI and valuation-service rejects it, so nothing is mispriced.
+- **Wire check.** `scripts/checks/wire-diff.py` rule `lm344` allows exactly these three deletions. The fields are listed once, in `test-fixtures/removed-fields/lm-344.json`, which the descriptor tests in every language, the tracked-source scan (`test_removed_fields_scan.py`) and `lm344` all read.
+
+### Consumer bumps from `<0.5` to 0.5
+
+valuation-service goes first, because it is the only reader of the removed fields.
+
+1. **valuation-service (Rust)**
+   - Delete the flat-rate FRN path that reads `reference_rate_input`, including its `0.0533` default. Price FRNs from `FrnInput.curve` only.
+   - Delete the TIPS fallback through `current_cpi` and `cpi_price_input`. Read `TipsInput.cpi` only.
+   - Rename matches on `Error::MissingCurrentCpi` to `Error::MissingCpi`. The gRPC status a client sees is still `InvalidArgument`, but its message text changes from `MissingCurrentCpi` to `MissingCpi`.
+2. **ledger-service (Java), broker-service (Rust), ui-service (JS) and Python clients**
+   - Stop setting the three fields: `setCpiPriceInput`, `setReferenceRateInput` and `TipsInput.setCurrentCpi` (Java/JS), the `cpi_price_input`, `reference_rate_input` and `current_cpi` struct fields (Rust) and attributes (Python).
+   - Set `TipsInput.cpi` for TIPS, and `FrnInput.curve` for FRNs.
+3. **Every service** bumps its pinned ledger-models to `0.5.0`: Cargo (`ledger-models`), Gradle (Maven Central), pip and npm (`@fintekkers/ledger-models`). `^0.4` / `~0.4` ranges never resolve to 0.5, so each bump is deliberate.

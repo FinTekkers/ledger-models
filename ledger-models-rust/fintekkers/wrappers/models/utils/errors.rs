@@ -15,7 +15,7 @@ pub enum Error {
     NotABondSecurity,
     MissingSecurityInput,
     MissingBaseCpi,
-    MissingCurrentCpi,
+    MissingCpi,
     MissingMeasure(MeasureProto),
     DecimalConversion,
     DateConversion,

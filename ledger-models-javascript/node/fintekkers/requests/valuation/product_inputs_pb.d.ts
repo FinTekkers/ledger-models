@@ -102,11 +102,6 @@ export class TipsInput extends jspb.Message {
     getCleanPrice(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
     setCleanPrice(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TipsInput;
 
-    hasCurrentCpi(): boolean;
-    clearCurrentCpi(): void;
-    getCurrentCpi(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
-    setCurrentCpi(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TipsInput;
-
     hasCpi(): boolean;
     clearCpi(): void;
     getCpi(): InflationIndexInput | undefined;
@@ -126,7 +121,6 @@ export namespace TipsInput {
     export type AsObject = {
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
-        currentCpi?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         cpi?: InflationIndexInput.AsObject,
     }
 }

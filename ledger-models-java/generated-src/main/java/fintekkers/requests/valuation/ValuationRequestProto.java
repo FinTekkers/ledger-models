@@ -357,114 +357,6 @@ private static final long serialVersionUID = 0L;
     return asofDatetime_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : asofDatetime_;
   }
 
-  public static final int CPI_PRICE_INPUT_FIELD_NUMBER = 24;
-  private fintekkers.models.price.PriceProto cpiPriceInput_;
-  /**
-   * <pre>
-   *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-   *TipsInput.cpi nor TipsInput.current_cpi is set.
-   *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-   *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.cpi_price_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=50
-   * @return Whether the cpiPriceInput field is set.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public boolean hasCpiPriceInput() {
-    return cpiPriceInput_ != null;
-  }
-  /**
-   * <pre>
-   *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-   *TipsInput.cpi nor TipsInput.current_cpi is set.
-   *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-   *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.cpi_price_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=50
-   * @return The cpiPriceInput.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public fintekkers.models.price.PriceProto getCpiPriceInput() {
-    return cpiPriceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : cpiPriceInput_;
-  }
-  /**
-   * <pre>
-   *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-   *TipsInput.cpi nor TipsInput.current_cpi is set.
-   *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-   *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public fintekkers.models.price.PriceProtoOrBuilder getCpiPriceInputOrBuilder() {
-    return cpiPriceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : cpiPriceInput_;
-  }
-
-  public static final int REFERENCE_RATE_INPUT_FIELD_NUMBER = 25;
-  private fintekkers.models.price.PriceProto referenceRateInput_;
-  /**
-   * <pre>
-   *The current reference rate observation for floating rate note (FRN) valuation.
-   *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-   *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-   *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-   *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-   *Required for legacy flat-rate FRN valuation.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.reference_rate_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=58
-   * @return Whether the referenceRateInput field is set.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public boolean hasReferenceRateInput() {
-    return referenceRateInput_ != null;
-  }
-  /**
-   * <pre>
-   *The current reference rate observation for floating rate note (FRN) valuation.
-   *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-   *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-   *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-   *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-   *Required for legacy flat-rate FRN valuation.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.reference_rate_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=58
-   * @return The referenceRateInput.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public fintekkers.models.price.PriceProto getReferenceRateInput() {
-    return referenceRateInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : referenceRateInput_;
-  }
-  /**
-   * <pre>
-   *The current reference rate observation for floating rate note (FRN) valuation.
-   *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-   *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-   *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-   *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-   *Required for legacy flat-rate FRN valuation.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public fintekkers.models.price.PriceProtoOrBuilder getReferenceRateInputOrBuilder() {
-    return referenceRateInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : referenceRateInput_;
-  }
-
   public static final int PRODUCT_INPUT_FIELD_NUMBER = 70;
   private fintekkers.requests.valuation.ProductInput productInput_;
   /**
@@ -548,12 +440,6 @@ private static final long serialVersionUID = 0L;
     if (asofDatetime_ != null) {
       output.writeMessage(23, getAsofDatetime());
     }
-    if (cpiPriceInput_ != null) {
-      output.writeMessage(24, getCpiPriceInput());
-    }
-    if (referenceRateInput_ != null) {
-      output.writeMessage(25, getReferenceRateInput());
-    }
     if (getMeasuresList().size() > 0) {
       output.writeUInt32NoTag(242);
       output.writeUInt32NoTag(measuresMemoizedSerializedSize);
@@ -600,14 +486,6 @@ private static final long serialVersionUID = 0L;
     if (asofDatetime_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(23, getAsofDatetime());
-    }
-    if (cpiPriceInput_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(24, getCpiPriceInput());
-    }
-    if (referenceRateInput_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(25, getReferenceRateInput());
     }
     {
       int dataSize = 0;
@@ -668,16 +546,6 @@ private static final long serialVersionUID = 0L;
       if (!getAsofDatetime()
           .equals(other.getAsofDatetime())) return false;
     }
-    if (hasCpiPriceInput() != other.hasCpiPriceInput()) return false;
-    if (hasCpiPriceInput()) {
-      if (!getCpiPriceInput()
-          .equals(other.getCpiPriceInput())) return false;
-    }
-    if (hasReferenceRateInput() != other.hasReferenceRateInput()) return false;
-    if (hasReferenceRateInput()) {
-      if (!getReferenceRateInput()
-          .equals(other.getReferenceRateInput())) return false;
-    }
     if (hasProductInput() != other.hasProductInput()) return false;
     if (hasProductInput()) {
       if (!getProductInput()
@@ -721,14 +589,6 @@ private static final long serialVersionUID = 0L;
     if (hasAsofDatetime()) {
       hash = (37 * hash) + ASOF_DATETIME_FIELD_NUMBER;
       hash = (53 * hash) + getAsofDatetime().hashCode();
-    }
-    if (hasCpiPriceInput()) {
-      hash = (37 * hash) + CPI_PRICE_INPUT_FIELD_NUMBER;
-      hash = (53 * hash) + getCpiPriceInput().hashCode();
-    }
-    if (hasReferenceRateInput()) {
-      hash = (37 * hash) + REFERENCE_RATE_INPUT_FIELD_NUMBER;
-      hash = (53 * hash) + getReferenceRateInput().hashCode();
     }
     if (hasProductInput()) {
       hash = (37 * hash) + PRODUCT_INPUT_FIELD_NUMBER;
@@ -898,16 +758,6 @@ private static final long serialVersionUID = 0L;
         asofDatetimeBuilder_.dispose();
         asofDatetimeBuilder_ = null;
       }
-      cpiPriceInput_ = null;
-      if (cpiPriceInputBuilder_ != null) {
-        cpiPriceInputBuilder_.dispose();
-        cpiPriceInputBuilder_ = null;
-      }
-      referenceRateInput_ = null;
-      if (referenceRateInputBuilder_ != null) {
-        referenceRateInputBuilder_.dispose();
-        referenceRateInputBuilder_ = null;
-      }
       productInput_ = null;
       if (productInputBuilder_ != null) {
         productInputBuilder_.dispose();
@@ -987,16 +837,6 @@ private static final long serialVersionUID = 0L;
             : asofDatetimeBuilder_.build();
       }
       if (((from_bitField0_ & 0x00000100) != 0)) {
-        result.cpiPriceInput_ = cpiPriceInputBuilder_ == null
-            ? cpiPriceInput_
-            : cpiPriceInputBuilder_.build();
-      }
-      if (((from_bitField0_ & 0x00000200) != 0)) {
-        result.referenceRateInput_ = referenceRateInputBuilder_ == null
-            ? referenceRateInput_
-            : referenceRateInputBuilder_.build();
-      }
-      if (((from_bitField0_ & 0x00000400) != 0)) {
         result.productInput_ = productInputBuilder_ == null
             ? productInput_
             : productInputBuilder_.build();
@@ -1078,12 +918,6 @@ private static final long serialVersionUID = 0L;
       if (other.hasAsofDatetime()) {
         mergeAsofDatetime(other.getAsofDatetime());
       }
-      if (other.hasCpiPriceInput()) {
-        mergeCpiPriceInput(other.getCpiPriceInput());
-      }
-      if (other.hasReferenceRateInput()) {
-        mergeReferenceRateInput(other.getReferenceRateInput());
-      }
       if (other.hasProductInput()) {
         mergeProductInput(other.getProductInput());
       }
@@ -1158,20 +992,6 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000080;
               break;
             } // case 186
-            case 194: {
-              input.readMessage(
-                  getCpiPriceInputFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000100;
-              break;
-            } // case 194
-            case 202: {
-              input.readMessage(
-                  getReferenceRateInputFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000200;
-              break;
-            } // case 202
             case 240: {
               int tmpRaw = input.readEnum();
               ensureMeasuresIsMutable();
@@ -1193,7 +1013,7 @@ private static final long serialVersionUID = 0L;
               input.readMessage(
                   getProductInputFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000400;
+              bitField0_ |= 0x00000100;
               break;
             } // case 562
             default: {
@@ -2280,396 +2100,6 @@ private static final long serialVersionUID = 0L;
       return asofDatetimeBuilder_;
     }
 
-    private fintekkers.models.price.PriceProto cpiPriceInput_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> cpiPriceInputBuilder_;
-    /**
-     * <pre>
-     *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-     *TipsInput.cpi nor TipsInput.current_cpi is set.
-     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.cpi_price_input is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=50
-     * @return Whether the cpiPriceInput field is set.
-     */
-    @java.lang.Deprecated public boolean hasCpiPriceInput() {
-      return ((bitField0_ & 0x00000100) != 0);
-    }
-    /**
-     * <pre>
-     *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-     *TipsInput.cpi nor TipsInput.current_cpi is set.
-     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.cpi_price_input is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=50
-     * @return The cpiPriceInput.
-     */
-    @java.lang.Deprecated public fintekkers.models.price.PriceProto getCpiPriceInput() {
-      if (cpiPriceInputBuilder_ == null) {
-        return cpiPriceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : cpiPriceInput_;
-      } else {
-        return cpiPriceInputBuilder_.getMessage();
-      }
-    }
-    /**
-     * <pre>
-     *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-     *TipsInput.cpi nor TipsInput.current_cpi is set.
-     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder setCpiPriceInput(fintekkers.models.price.PriceProto value) {
-      if (cpiPriceInputBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        cpiPriceInput_ = value;
-      } else {
-        cpiPriceInputBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000100;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-     *TipsInput.cpi nor TipsInput.current_cpi is set.
-     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder setCpiPriceInput(
-        fintekkers.models.price.PriceProto.Builder builderForValue) {
-      if (cpiPriceInputBuilder_ == null) {
-        cpiPriceInput_ = builderForValue.build();
-      } else {
-        cpiPriceInputBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000100;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-     *TipsInput.cpi nor TipsInput.current_cpi is set.
-     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder mergeCpiPriceInput(fintekkers.models.price.PriceProto value) {
-      if (cpiPriceInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000100) != 0) &&
-          cpiPriceInput_ != null &&
-          cpiPriceInput_ != fintekkers.models.price.PriceProto.getDefaultInstance()) {
-          getCpiPriceInputBuilder().mergeFrom(value);
-        } else {
-          cpiPriceInput_ = value;
-        }
-      } else {
-        cpiPriceInputBuilder_.mergeFrom(value);
-      }
-      bitField0_ |= 0x00000100;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-     *TipsInput.cpi nor TipsInput.current_cpi is set.
-     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder clearCpiPriceInput() {
-      bitField0_ = (bitField0_ & ~0x00000100);
-      cpiPriceInput_ = null;
-      if (cpiPriceInputBuilder_ != null) {
-        cpiPriceInputBuilder_.dispose();
-        cpiPriceInputBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-     *TipsInput.cpi nor TipsInput.current_cpi is set.
-     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public fintekkers.models.price.PriceProto.Builder getCpiPriceInputBuilder() {
-      bitField0_ |= 0x00000100;
-      onChanged();
-      return getCpiPriceInputFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-     *TipsInput.cpi nor TipsInput.current_cpi is set.
-     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public fintekkers.models.price.PriceProtoOrBuilder getCpiPriceInputOrBuilder() {
-      if (cpiPriceInputBuilder_ != null) {
-        return cpiPriceInputBuilder_.getMessageOrBuilder();
-      } else {
-        return cpiPriceInput_ == null ?
-            fintekkers.models.price.PriceProto.getDefaultInstance() : cpiPriceInput_;
-      }
-    }
-    /**
-     * <pre>
-     *Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-     *TipsInput.cpi nor TipsInput.current_cpi is set.
-     *The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-     *Modeled as a PriceProto on a SecurityProto representing the CPI index.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> 
-        getCpiPriceInputFieldBuilder() {
-      if (cpiPriceInputBuilder_ == null) {
-        cpiPriceInputBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder>(
-                getCpiPriceInput(),
-                getParentForChildren(),
-                isClean());
-        cpiPriceInput_ = null;
-      }
-      return cpiPriceInputBuilder_;
-    }
-
-    private fintekkers.models.price.PriceProto referenceRateInput_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> referenceRateInputBuilder_;
-    /**
-     * <pre>
-     *The current reference rate observation for floating rate note (FRN) valuation.
-     *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-     *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-     *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-     *Required for legacy flat-rate FRN valuation.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.reference_rate_input is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=58
-     * @return Whether the referenceRateInput field is set.
-     */
-    @java.lang.Deprecated public boolean hasReferenceRateInput() {
-      return ((bitField0_ & 0x00000200) != 0);
-    }
-    /**
-     * <pre>
-     *The current reference rate observation for floating rate note (FRN) valuation.
-     *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-     *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-     *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-     *Required for legacy flat-rate FRN valuation.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.reference_rate_input is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=58
-     * @return The referenceRateInput.
-     */
-    @java.lang.Deprecated public fintekkers.models.price.PriceProto getReferenceRateInput() {
-      if (referenceRateInputBuilder_ == null) {
-        return referenceRateInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : referenceRateInput_;
-      } else {
-        return referenceRateInputBuilder_.getMessage();
-      }
-    }
-    /**
-     * <pre>
-     *The current reference rate observation for floating rate note (FRN) valuation.
-     *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-     *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-     *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-     *Required for legacy flat-rate FRN valuation.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder setReferenceRateInput(fintekkers.models.price.PriceProto value) {
-      if (referenceRateInputBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        referenceRateInput_ = value;
-      } else {
-        referenceRateInputBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000200;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The current reference rate observation for floating rate note (FRN) valuation.
-     *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-     *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-     *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-     *Required for legacy flat-rate FRN valuation.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder setReferenceRateInput(
-        fintekkers.models.price.PriceProto.Builder builderForValue) {
-      if (referenceRateInputBuilder_ == null) {
-        referenceRateInput_ = builderForValue.build();
-      } else {
-        referenceRateInputBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000200;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The current reference rate observation for floating rate note (FRN) valuation.
-     *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-     *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-     *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-     *Required for legacy flat-rate FRN valuation.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder mergeReferenceRateInput(fintekkers.models.price.PriceProto value) {
-      if (referenceRateInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000200) != 0) &&
-          referenceRateInput_ != null &&
-          referenceRateInput_ != fintekkers.models.price.PriceProto.getDefaultInstance()) {
-          getReferenceRateInputBuilder().mergeFrom(value);
-        } else {
-          referenceRateInput_ = value;
-        }
-      } else {
-        referenceRateInputBuilder_.mergeFrom(value);
-      }
-      bitField0_ |= 0x00000200;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The current reference rate observation for floating rate note (FRN) valuation.
-     *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-     *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-     *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-     *Required for legacy flat-rate FRN valuation.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder clearReferenceRateInput() {
-      bitField0_ = (bitField0_ & ~0x00000200);
-      referenceRateInput_ = null;
-      if (referenceRateInputBuilder_ != null) {
-        referenceRateInputBuilder_.dispose();
-        referenceRateInputBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The current reference rate observation for floating rate note (FRN) valuation.
-     *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-     *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-     *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-     *Required for legacy flat-rate FRN valuation.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public fintekkers.models.price.PriceProto.Builder getReferenceRateInputBuilder() {
-      bitField0_ |= 0x00000200;
-      onChanged();
-      return getReferenceRateInputFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     *The current reference rate observation for floating rate note (FRN) valuation.
-     *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-     *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-     *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-     *Required for legacy flat-rate FRN valuation.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public fintekkers.models.price.PriceProtoOrBuilder getReferenceRateInputOrBuilder() {
-      if (referenceRateInputBuilder_ != null) {
-        return referenceRateInputBuilder_.getMessageOrBuilder();
-      } else {
-        return referenceRateInput_ == null ?
-            fintekkers.models.price.PriceProto.getDefaultInstance() : referenceRateInput_;
-      }
-    }
-    /**
-     * <pre>
-     *The current reference rate observation for floating rate note (FRN) valuation.
-     *Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-     *Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-     *Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-     *Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-     *Required for legacy flat-rate FRN valuation.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> 
-        getReferenceRateInputFieldBuilder() {
-      if (referenceRateInputBuilder_ == null) {
-        referenceRateInputBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder>(
-                getReferenceRateInput(),
-                getParentForChildren(),
-                isClean());
-        referenceRateInput_ = null;
-      }
-      return referenceRateInputBuilder_;
-    }
-
     private fintekkers.requests.valuation.ProductInput productInput_;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.requests.valuation.ProductInput, fintekkers.requests.valuation.ProductInput.Builder, fintekkers.requests.valuation.ProductInputOrBuilder> productInputBuilder_;
@@ -2685,7 +2115,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the productInput field is set.
      */
     public boolean hasProductInput() {
-      return ((bitField0_ & 0x00000400) != 0);
+      return ((bitField0_ & 0x00000100) != 0);
     }
     /**
      * <pre>
@@ -2724,7 +2154,7 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2745,7 +2175,7 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2761,7 +2191,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeProductInput(fintekkers.requests.valuation.ProductInput value) {
       if (productInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000400) != 0) &&
+        if (((bitField0_ & 0x00000100) != 0) &&
           productInput_ != null &&
           productInput_ != fintekkers.requests.valuation.ProductInput.getDefaultInstance()) {
           getProductInputBuilder().mergeFrom(value);
@@ -2771,7 +2201,7 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2786,7 +2216,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
      */
     public Builder clearProductInput() {
-      bitField0_ = (bitField0_ & ~0x00000400);
+      bitField0_ = (bitField0_ & ~0x00000100);
       productInput_ = null;
       if (productInputBuilder_ != null) {
         productInputBuilder_.dispose();
@@ -2806,7 +2236,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
      */
     public fintekkers.requests.valuation.ProductInput.Builder getProductInputBuilder() {
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000100;
       onChanged();
       return getProductInputFieldBuilder().getBuilder();
     }

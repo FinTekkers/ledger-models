@@ -39,7 +39,7 @@ public final class ValuationRequestProtos {
       "ition/measure.proto\0322fintekkers/requests" +
       "/valuation/product_inputs.proto\032(fintekk" +
       "ers/models/util/object_type.proto\032$finte" +
-      "kkers/models/util/version.proto\"\346\005\n\025Valu" +
+      "kkers/models/util/version.proto\"\220\005\n\025Valu" +
       "ationRequestProto\022<\n\013object_type\030\001 \001(\0162\'" +
       ".fintekkers.models.util.ObjectTypeProto\022" +
       "5\n\007version\030\002 \001(\0132$.fintekkers.models.uti" +
@@ -53,13 +53,11 @@ public final class ValuationRequestProtos {
       "Proto\0228\n\013price_input\030\026 \001(\0132#.fintekkers." +
       "models.price.PriceProto\022B\n\rasof_datetime" +
       "\030\027 \001(\0132+.fintekkers.models.util.LocalTim" +
-      "estampProto\022@\n\017cpi_price_input\030\030 \001(\0132#.f" +
-      "intekkers.models.price.PriceProtoB\002\030\001\022E\n" +
-      "\024reference_rate_input\030\031 \001(\0132#.fintekkers" +
-      ".models.price.PriceProtoB\002\030\001\022B\n\rproduct_" +
-      "input\030F \001(\0132+.fintekkers.requests.valuat" +
-      "ion.ProductInputB\032B\026ValuationRequestProt" +
-      "osP\001b\006proto3"
+      "estampProto\022B\n\rproduct_input\030F \001(\0132+.fin" +
+      "tekkers.requests.valuation.ProductInputJ" +
+      "\004\010\030\020\031J\004\010\031\020\032R\017cpi_price_inputR\024reference_" +
+      "rate_inputB\032B\026ValuationRequestProtosP\001b\006" +
+      "proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -79,7 +77,7 @@ public final class ValuationRequestProtos {
     internal_static_fintekkers_requests_valuation_ValuationRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_ValuationRequestProto_descriptor,
-        new java.lang.String[] { "ObjectType", "Version", "OperationType", "Measures", "SecurityInput", "PositionInput", "PriceInput", "AsofDatetime", "CpiPriceInput", "ReferenceRateInput", "ProductInput", });
+        new java.lang.String[] { "ObjectType", "Version", "OperationType", "Measures", "SecurityInput", "PositionInput", "PriceInput", "AsofDatetime", "ProductInput", });
     fintekkers.models.security.SecurityProtos.getDescriptor();
     fintekkers.models.position.PositionProtos.getDescriptor();
     fintekkers.models.price.PriceProtos.getDescriptor();

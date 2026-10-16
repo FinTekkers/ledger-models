@@ -4,6 +4,8 @@
  * For each new message type: construct → serializeBinary() → deserializeBinary() → verify all fields match.
  */
 
+import * as fs from 'fs';
+import * as path from 'path';
 import {
     ProductInput, FrnInput, YieldCurveInput, CurvePoint,
     TipsInput, InflationIndexInput, MonthlyIndexReadings, MonthlyIndexReading,
@@ -12,7 +14,6 @@ import { ValuationRequestProto } from './valuation_request_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 import { IndexDetailsProto, SecurityProto, TipsExtensionProto } from '../../../fintekkers/models/security/security_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
-import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { decodeDecimal, encodeDecimal, parseDecimalString, toCanonicalString } from '../../../wrappers/models/utils/decimal';
@@ -263,28 +264,42 @@ describe('TipsInput.cpi round-trip through ValuationRequestProto (LM-343)', () =
         expectCpiIndex(parsedCpi.getIndex());
         expect(text(parsedCpi.getReferenceCpi())).toBe('310.32600');
     });
+});
 
-    test('deprecated current_cpi, cpi_price_input and reference_rate_input still survive unchanged', () => {
-        const tips = new TipsInput();
-        tips.setSecurity(tipsSecurity());
-        tips.setCurrentCpi(decimal('310.32600'));
-        const original = request(tips);
-        const cpiPrice = new PriceProto();
-        cpiPrice.setPrice(decimal('310.326'));
-        cpiPrice.setSecurity(cpiIndex());
-        original.setCpiPriceInput(cpiPrice);
-        const referenceRate = new PriceProto();
-        referenceRate.setPrice(decimal('5.33'));
-        original.setReferenceRateInput(referenceRate);
+// ── Fields removed in 0.5 (LM-344) ─────────────────────────────────────────
+// google-protobuf JS keeps no reserved metadata; Java, Python and Rust check
+// the reserved numbers and names. The names come from the shared fixture.
 
-        const parsed = ValuationRequestProto.deserializeBinary(original.serializeBinary());
+interface RemovedField { message: string; number: number; name: string; }
 
-        expect(parsed.toObject()).toEqual(original.toObject());
-        const parsedTips = parsed.getProductInput()!.getTips()!;
-        expect(text(parsedTips.getCurrentCpi())).toBe('310.32600');
-        expect(parsedTips.hasCpi()).toBe(false);
-        expect(text(parsed.getCpiPriceInput()!.getPrice())).toBe('310.326');
-        expectCpiIndex(parsed.getCpiPriceInput()!.getSecurity());
-        expect(text(parsed.getReferenceRateInput()!.getPrice())).toBe('5.33');
+const removedFieldsPath = path.resolve(__dirname, '../../../../../test-fixtures/removed-fields/lm-344.json');
+const removedFields: RemovedField[] = JSON.parse(fs.readFileSync(removedFieldsPath, 'utf8')).fields;
+
+const removedFieldMessages: Record<string, { prototype: object; new (): { toObject(): object } }> = {
+    '.fintekkers.requests.valuation.ValuationRequestProto': ValuationRequestProto,
+    '.fintekkers.requests.valuation.TipsInput': TipsInput,
+};
+
+function removedFieldMessage(message: string) {
+    if (!Object.prototype.hasOwnProperty.call(removedFieldMessages, message)) {
+        throw new Error(`fixture names an unknown message: ${message}`);
+    }
+    return removedFieldMessages[message];
+}
+
+describe('fields removed in 0.5 (LM-344)', () => {
+    test('the fixture lists three fields', () => {
+        expect(removedFields).toHaveLength(3);
     });
+
+    test.each(removedFields.map((f): [string, RemovedField] => [`${f.message}.${f.name}`, f]))(
+        '%s has no accessors and no toObject key', (_label, field) => {
+            const message = removedFieldMessage(field.message);
+            const camel = field.name.split('_').map((p) => p[0].toUpperCase() + p.slice(1)).join('');
+            for (const verb of ['get', 'set', 'has', 'clear']) {
+                expect(`${verb}${camel}` in message.prototype).toBe(false);
+            }
+            const lowerCamel = camel[0].toLowerCase() + camel.slice(1);
+            expect(Object.keys(new message().toObject())).not.toContain(lowerCamel);
+        });
 });

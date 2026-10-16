@@ -86,6 +86,10 @@ required-features = ["test-utils"]
 name = "object_type_coverage_test"
 required-features = ["test-utils"]
 
+[[test]]
+name = "removed_fields_test"
+required-features = ["test-utils"]
+
 # Test-only: tests/builder_stamp_test.rs parses the wrapper sources to find
 # every public builder (LM-325). Never built for consumers.
 [dev-dependencies]

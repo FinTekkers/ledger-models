@@ -95,48 +95,46 @@ public final class ProductInputProtos {
       "intekkers.models.util.DecimalValueProto\022" +
       "O\n\017benchmark_curve\030\n \001(\01326.fintekkers.re" +
       "quests.valuation.SecurityBasedCurveInput" +
-      "\"\215\002\n\tTipsInput\022;\n\010security\030\001 \001(\0132).finte" +
+      "\"\334\001\n\tTipsInput\022;\n\010security\030\001 \001(\0132).finte" +
       "kkers.models.security.SecurityProto\022>\n\013c" +
       "lean_price\030\002 \001(\0132).fintekkers.models.uti" +
-      "l.DecimalValueProto\022B\n\013current_cpi\030\003 \001(\013" +
-      "2).fintekkers.models.util.DecimalValuePr" +
-      "otoB\002\030\001\022?\n\003cpi\030\004 \001(\01322.fintekkers.reques" +
-      "ts.valuation.InflationIndexInput\"\343\001\n\023Inf" +
-      "lationIndexInput\0228\n\005index\030\001 \001(\0132).fintek" +
-      "kers.models.security.SecurityProto\022G\n\010re" +
-      "adings\030\002 \001(\01323.fintekkers.requests.valua" +
-      "tion.MonthlyIndexReadingsH\000\022B\n\rreference" +
-      "_cpi\030\003 \001(\0132).fintekkers.models.util.Deci" +
-      "malValueProtoH\000B\005\n\003cpi\"\\\n\024MonthlyIndexRe" +
-      "adings\022D\n\010readings\030\001 \003(\01322.fintekkers.re" +
-      "quests.valuation.MonthlyIndexReading\"l\n\023" +
-      "MonthlyIndexReading\022\014\n\004year\030\001 \001(\005\022\r\n\005mon" +
-      "th\030\002 \001(\005\0228\n\005value\030\003 \001(\0132).fintekkers.mod" +
-      "els.util.DecimalValueProto\"\306\001\n\010FrnInput\022" +
-      ";\n\010security\030\001 \001(\0132).fintekkers.models.se" +
-      "curity.SecurityProto\022>\n\013clean_price\030\002 \001(" +
+      "l.DecimalValueProto\022?\n\003cpi\030\004 \001(\01322.finte" +
+      "kkers.requests.valuation.InflationIndexI" +
+      "nputJ\004\010\003\020\004R\013current_cpi\"\343\001\n\023InflationInd" +
+      "exInput\0228\n\005index\030\001 \001(\0132).fintekkers.mode" +
+      "ls.security.SecurityProto\022G\n\010readings\030\002 " +
+      "\001(\01323.fintekkers.requests.valuation.Mont" +
+      "hlyIndexReadingsH\000\022B\n\rreference_cpi\030\003 \001(" +
       "\0132).fintekkers.models.util.DecimalValueP" +
-      "roto\022=\n\005curve\030\n \001(\0132..fintekkers.request" +
-      "s.valuation.YieldCurveInput\"\315\001\n\017YieldCur" +
-      "veInput\022?\n\005index\030\001 \001(\01620.fintekkers.mode" +
-      "ls.security.index.IndexTypeProto\022>\n\016refe" +
-      "rence_date\030\002 \001(\0132&.fintekkers.models.uti" +
-      "l.LocalDateProto\0229\n\006points\030\003 \003(\0132).finte" +
-      "kkers.requests.valuation.CurvePoint\"\177\n\nC" +
-      "urvePoint\0228\n\005tenor\030\001 \001(\0132).fintekkers.mo" +
-      "dels.util.DecimalValueProto\0227\n\004rate\030\002 \001(" +
-      "\0132).fintekkers.models.util.DecimalValueP" +
-      "roto\"\335\001\n\027SecurityBasedCurveInput\022?\n\005inde" +
-      "x\030\001 \001(\01620.fintekkers.models.security.ind" +
-      "ex.IndexTypeProto\022>\n\016reference_date\030\002 \001(" +
-      "\0132&.fintekkers.models.util.LocalDateProt" +
-      "o\022A\n\006points\030\003 \003(\01321.fintekkers.requests." +
-      "valuation.SecurityCurvePoint\"\221\001\n\022Securit" +
-      "yCurvePoint\022;\n\010security\030\001 \001(\0132).fintekke" +
-      "rs.models.security.SecurityProto\022>\n\013clea" +
-      "n_price\030\002 \001(\0132).fintekkers.models.util.D" +
-      "ecimalValueProtoB\026B\022ProductInputProtosP\001" +
-      "b\006proto3"
+      "rotoH\000B\005\n\003cpi\"\\\n\024MonthlyIndexReadings\022D\n" +
+      "\010readings\030\001 \003(\01322.fintekkers.requests.va" +
+      "luation.MonthlyIndexReading\"l\n\023MonthlyIn" +
+      "dexReading\022\014\n\004year\030\001 \001(\005\022\r\n\005month\030\002 \001(\005\022" +
+      "8\n\005value\030\003 \001(\0132).fintekkers.models.util." +
+      "DecimalValueProto\"\306\001\n\010FrnInput\022;\n\010securi" +
+      "ty\030\001 \001(\0132).fintekkers.models.security.Se" +
+      "curityProto\022>\n\013clean_price\030\002 \001(\0132).finte" +
+      "kkers.models.util.DecimalValueProto\022=\n\005c" +
+      "urve\030\n \001(\0132..fintekkers.requests.valuati" +
+      "on.YieldCurveInput\"\315\001\n\017YieldCurveInput\022?" +
+      "\n\005index\030\001 \001(\01620.fintekkers.models.securi" +
+      "ty.index.IndexTypeProto\022>\n\016reference_dat" +
+      "e\030\002 \001(\0132&.fintekkers.models.util.LocalDa" +
+      "teProto\0229\n\006points\030\003 \003(\0132).fintekkers.req" +
+      "uests.valuation.CurvePoint\"\177\n\nCurvePoint" +
+      "\0228\n\005tenor\030\001 \001(\0132).fintekkers.models.util" +
+      ".DecimalValueProto\0227\n\004rate\030\002 \001(\0132).finte" +
+      "kkers.models.util.DecimalValueProto\"\335\001\n\027" +
+      "SecurityBasedCurveInput\022?\n\005index\030\001 \001(\01620" +
+      ".fintekkers.models.security.index.IndexT" +
+      "ypeProto\022>\n\016reference_date\030\002 \001(\0132&.finte" +
+      "kkers.models.util.LocalDateProto\022A\n\006poin" +
+      "ts\030\003 \003(\01321.fintekkers.requests.valuation" +
+      ".SecurityCurvePoint\"\221\001\n\022SecurityCurvePoi" +
+      "nt\022;\n\010security\030\001 \001(\0132).fintekkers.models" +
+      ".security.SecurityProto\022>\n\013clean_price\030\002" +
+      " \001(\0132).fintekkers.models.util.DecimalVal" +
+      "ueProtoB\026B\022ProductInputProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -163,7 +161,7 @@ public final class ProductInputProtos {
     internal_static_fintekkers_requests_valuation_TipsInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_TipsInput_descriptor,
-        new java.lang.String[] { "Security", "CleanPrice", "CurrentCpi", "Cpi", });
+        new java.lang.String[] { "Security", "CleanPrice", "Cpi", });
     internal_static_fintekkers_requests_valuation_InflationIndexInput_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_fintekkers_requests_valuation_InflationIndexInput_fieldAccessorTable = new

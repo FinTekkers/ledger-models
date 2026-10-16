@@ -4,13 +4,37 @@
  *
  * For each new message type: construct → serializeBinary() → deserializeBinary() → verify all fields match.
  */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
 const product_inputs_pb_1 = require("./product_inputs_pb");
 const valuation_request_pb_1 = require("./valuation_request_pb");
 const index_type_pb_1 = require("../../../fintekkers/models/security/index/index_type_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
-const price_pb_1 = require("../../../fintekkers/models/price/price_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 const decimal_1 = require("../../../wrappers/models/utils/decimal");
 function decimal(value) {
@@ -219,26 +243,31 @@ describe('TipsInput.cpi round-trip through ValuationRequestProto (LM-343)', () =
         expectCpiIndex(parsedCpi.getIndex());
         expect(text(parsedCpi.getReferenceCpi())).toBe('310.32600');
     });
-    test('deprecated current_cpi, cpi_price_input and reference_rate_input still survive unchanged', () => {
-        const tips = new product_inputs_pb_1.TipsInput();
-        tips.setSecurity(tipsSecurity());
-        tips.setCurrentCpi(decimal('310.32600'));
-        const original = request(tips);
-        const cpiPrice = new price_pb_1.PriceProto();
-        cpiPrice.setPrice(decimal('310.326'));
-        cpiPrice.setSecurity(cpiIndex());
-        original.setCpiPriceInput(cpiPrice);
-        const referenceRate = new price_pb_1.PriceProto();
-        referenceRate.setPrice(decimal('5.33'));
-        original.setReferenceRateInput(referenceRate);
-        const parsed = valuation_request_pb_1.ValuationRequestProto.deserializeBinary(original.serializeBinary());
-        expect(parsed.toObject()).toEqual(original.toObject());
-        const parsedTips = parsed.getProductInput().getTips();
-        expect(text(parsedTips.getCurrentCpi())).toBe('310.32600');
-        expect(parsedTips.hasCpi()).toBe(false);
-        expect(text(parsed.getCpiPriceInput().getPrice())).toBe('310.326');
-        expectCpiIndex(parsed.getCpiPriceInput().getSecurity());
-        expect(text(parsed.getReferenceRateInput().getPrice())).toBe('5.33');
+});
+const removedFieldsPath = path.resolve(__dirname, '../../../../../test-fixtures/removed-fields/lm-344.json');
+const removedFields = JSON.parse(fs.readFileSync(removedFieldsPath, 'utf8')).fields;
+const removedFieldMessages = {
+    '.fintekkers.requests.valuation.ValuationRequestProto': valuation_request_pb_1.ValuationRequestProto,
+    '.fintekkers.requests.valuation.TipsInput': product_inputs_pb_1.TipsInput,
+};
+function removedFieldMessage(message) {
+    if (!Object.prototype.hasOwnProperty.call(removedFieldMessages, message)) {
+        throw new Error(`fixture names an unknown message: ${message}`);
+    }
+    return removedFieldMessages[message];
+}
+describe('fields removed in 0.5 (LM-344)', () => {
+    test('the fixture lists three fields', () => {
+        expect(removedFields).toHaveLength(3);
+    });
+    test.each(removedFields.map((f) => [`${f.message}.${f.name}`, f]))('%s has no accessors and no toObject key', (_label, field) => {
+        const message = removedFieldMessage(field.message);
+        const camel = field.name.split('_').map((p) => p[0].toUpperCase() + p.slice(1)).join('');
+        for (const verb of ['get', 'set', 'has', 'clear']) {
+            expect(`${verb}${camel}` in message.prototype).toBe(false);
+        }
+        const lowerCamel = camel[0].toLowerCase() + camel.slice(1);
+        expect(Object.keys(new message().toObject())).not.toContain(lowerCamel);
     });
 });
 //# sourceMappingURL=product_inputs.test.js.map

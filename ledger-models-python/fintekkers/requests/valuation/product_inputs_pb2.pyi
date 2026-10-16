@@ -31,16 +31,14 @@ class BondInput(_message.Message):
     def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., benchmark_curve: _Optional[_Union[SecurityBasedCurveInput, _Mapping]] = ...) -> None: ...
 
 class TipsInput(_message.Message):
-    __slots__ = ("security", "clean_price", "current_cpi", "cpi")
+    __slots__ = ("security", "clean_price", "cpi")
     SECURITY_FIELD_NUMBER: _ClassVar[int]
     CLEAN_PRICE_FIELD_NUMBER: _ClassVar[int]
-    CURRENT_CPI_FIELD_NUMBER: _ClassVar[int]
     CPI_FIELD_NUMBER: _ClassVar[int]
     security: _security_pb2.SecurityProto
     clean_price: _decimal_value_pb2.DecimalValueProto
-    current_cpi: _decimal_value_pb2.DecimalValueProto
     cpi: InflationIndexInput
-    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., current_cpi: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., cpi: _Optional[_Union[InflationIndexInput, _Mapping]] = ...) -> None: ...
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., cpi: _Optional[_Union[InflationIndexInput, _Mapping]] = ...) -> None: ...
 
 class InflationIndexInput(_message.Message):
     __slots__ = ("index", "readings", "reference_cpi")

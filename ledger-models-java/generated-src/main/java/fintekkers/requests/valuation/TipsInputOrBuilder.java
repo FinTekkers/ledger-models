@@ -69,43 +69,6 @@ public interface TipsInputOrBuilder extends
 
   /**
    * <pre>
-   * Deprecated: use cpi (4). Read only when cpi is unset.
-   * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
-   *   index_ratio = current_cpi / security.tips_extension.base_cpi
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.TipsInput.current_cpi is deprecated.
-   *     See fintekkers/requests/valuation/product_inputs.proto;l=83
-   * @return Whether the currentCpi field is set.
-   */
-  @java.lang.Deprecated boolean hasCurrentCpi();
-  /**
-   * <pre>
-   * Deprecated: use cpi (4). Read only when cpi is unset.
-   * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
-   *   index_ratio = current_cpi / security.tips_extension.base_cpi
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.TipsInput.current_cpi is deprecated.
-   *     See fintekkers/requests/valuation/product_inputs.proto;l=83
-   * @return The currentCpi.
-   */
-  @java.lang.Deprecated fintekkers.models.util.DecimalValue.DecimalValueProto getCurrentCpi();
-  /**
-   * <pre>
-   * Deprecated: use cpi (4). Read only when cpi is unset.
-   * A CPI index value (e.g. 310.326), used as the reference CPI as-is:
-   *   index_ratio = current_cpi / security.tips_extension.base_cpi
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.DecimalValueProto current_cpi = 3 [deprecated = true];</code>
-   */
-  @java.lang.Deprecated fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getCurrentCpiOrBuilder();
-
-  /**
-   * <pre>
    * The CPI the index ratio is computed from: raw monthly index levels, or a
    * reference CPI already derived for the settlement date. See
    * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
