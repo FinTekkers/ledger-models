@@ -130,4 +130,39 @@ public interface QueryPriceResponseProtoOrBuilder extends
    */
   com.google.protobuf.ByteString
       getNextPageTokenBytes();
+
+  /**
+   * <pre>
+   * Row cap (see docs/adr/query_price_truncation.md). True only when the
+   * server stopped at `row_cap` and more matching rows exist that the caller
+   * cannot reach by paging: `truncated` is set only when `next_page_token` is
+   * empty. A page that returns a `next_page_token` is never truncated; follow
+   * the token instead. Unset (reads as false) when the result is complete.
+   * Servers that predate this field never set it, so unset also means "not
+   * reported". For streaming Search, only the final message of the stream
+   * carries it.
+   * To recover when true: raise the request's `limit`, up to the server
+   * ceiling, or narrow the as-of window with a shorter `date_range` or
+   * `horizon`.
+   * </pre>
+   *
+   * <code>bool truncated = 60;</code>
+   * @return The truncated.
+   */
+  boolean getTruncated();
+
+  /**
+   * <pre>
+   * Row cap (see docs/adr/query_price_truncation.md). The effective cap the
+   * server applied, in rows: the request's `limit` clamped to the server
+   * ceiling, or the default cap when `limit` is unset or &lt; 1. Set when
+   * `truncated` is true. Unset (reads as 0) when the result is complete. For
+   * streaming Search, counts rows across the whole stream and only the final
+   * message carries it.
+   * </pre>
+   *
+   * <code>int32 row_cap = 61;</code>
+   * @return The rowCap.
+   */
+  int getRowCap();
 }

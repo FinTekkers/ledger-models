@@ -254,6 +254,51 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int TRUNCATED_FIELD_NUMBER = 60;
+  private boolean truncated_ = false;
+  /**
+   * <pre>
+   * Row cap (see docs/adr/query_price_truncation.md). True only when the
+   * server stopped at `row_cap` and more matching rows exist that the caller
+   * cannot reach by paging: `truncated` is set only when `next_page_token` is
+   * empty. A page that returns a `next_page_token` is never truncated; follow
+   * the token instead. Unset (reads as false) when the result is complete.
+   * Servers that predate this field never set it, so unset also means "not
+   * reported". For streaming Search, only the final message of the stream
+   * carries it.
+   * To recover when true: raise the request's `limit`, up to the server
+   * ceiling, or narrow the as-of window with a shorter `date_range` or
+   * `horizon`.
+   * </pre>
+   *
+   * <code>bool truncated = 60;</code>
+   * @return The truncated.
+   */
+  @java.lang.Override
+  public boolean getTruncated() {
+    return truncated_;
+  }
+
+  public static final int ROW_CAP_FIELD_NUMBER = 61;
+  private int rowCap_ = 0;
+  /**
+   * <pre>
+   * Row cap (see docs/adr/query_price_truncation.md). The effective cap the
+   * server applied, in rows: the request's `limit` clamped to the server
+   * ceiling, or the default cap when `limit` is unset or &lt; 1. Set when
+   * `truncated` is true. Unset (reads as 0) when the result is complete. For
+   * streaming Search, counts rows across the whole stream and only the final
+   * message carries it.
+   * </pre>
+   *
+   * <code>int32 row_cap = 61;</code>
+   * @return The rowCap.
+   */
+  @java.lang.Override
+  public int getRowCap() {
+    return rowCap_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -286,6 +331,12 @@ private static final long serialVersionUID = 0L;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(nextPageToken_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 50, nextPageToken_);
     }
+    if (truncated_ != false) {
+      output.writeBool(60, truncated_);
+    }
+    if (rowCap_ != 0) {
+      output.writeInt32(61, rowCap_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -317,6 +368,14 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(nextPageToken_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(50, nextPageToken_);
+    }
+    if (truncated_ != false) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBoolSize(60, truncated_);
+    }
+    if (rowCap_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(61, rowCap_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -353,6 +412,10 @@ private static final long serialVersionUID = 0L;
     }
     if (!getNextPageToken()
         .equals(other.getNextPageToken())) return false;
+    if (getTruncated()
+        != other.getTruncated()) return false;
+    if (getRowCap()
+        != other.getRowCap()) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -384,6 +447,11 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + NEXT_PAGE_TOKEN_FIELD_NUMBER;
     hash = (53 * hash) + getNextPageToken().hashCode();
+    hash = (37 * hash) + TRUNCATED_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+        getTruncated());
+    hash = (37 * hash) + ROW_CAP_FIELD_NUMBER;
+    hash = (53 * hash) + getRowCap();
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -537,6 +605,8 @@ private static final long serialVersionUID = 0L;
         errorsOrWarningsBuilder_ = null;
       }
       nextPageToken_ = "";
+      truncated_ = false;
+      rowCap_ = 0;
       return this;
     }
 
@@ -603,6 +673,12 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000020) != 0)) {
         result.nextPageToken_ = nextPageToken_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.truncated_ = truncated_;
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.rowCap_ = rowCap_;
       }
     }
 
@@ -693,6 +769,12 @@ private static final long serialVersionUID = 0L;
         bitField0_ |= 0x00000020;
         onChanged();
       }
+      if (other.getTruncated() != false) {
+        setTruncated(other.getTruncated());
+      }
+      if (other.getRowCap() != 0) {
+        setRowCap(other.getRowCap());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -763,6 +845,16 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000020;
               break;
             } // case 402
+            case 480: {
+              truncated_ = input.readBool();
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 480
+            case 488: {
+              rowCap_ = input.readInt32();
+              bitField0_ |= 0x00000080;
+              break;
+            } // case 488
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1587,6 +1679,139 @@ private static final long serialVersionUID = 0L;
       checkByteStringIsUtf8(value);
       nextPageToken_ = value;
       bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+
+    private boolean truncated_ ;
+    /**
+     * <pre>
+     * Row cap (see docs/adr/query_price_truncation.md). True only when the
+     * server stopped at `row_cap` and more matching rows exist that the caller
+     * cannot reach by paging: `truncated` is set only when `next_page_token` is
+     * empty. A page that returns a `next_page_token` is never truncated; follow
+     * the token instead. Unset (reads as false) when the result is complete.
+     * Servers that predate this field never set it, so unset also means "not
+     * reported". For streaming Search, only the final message of the stream
+     * carries it.
+     * To recover when true: raise the request's `limit`, up to the server
+     * ceiling, or narrow the as-of window with a shorter `date_range` or
+     * `horizon`.
+     * </pre>
+     *
+     * <code>bool truncated = 60;</code>
+     * @return The truncated.
+     */
+    @java.lang.Override
+    public boolean getTruncated() {
+      return truncated_;
+    }
+    /**
+     * <pre>
+     * Row cap (see docs/adr/query_price_truncation.md). True only when the
+     * server stopped at `row_cap` and more matching rows exist that the caller
+     * cannot reach by paging: `truncated` is set only when `next_page_token` is
+     * empty. A page that returns a `next_page_token` is never truncated; follow
+     * the token instead. Unset (reads as false) when the result is complete.
+     * Servers that predate this field never set it, so unset also means "not
+     * reported". For streaming Search, only the final message of the stream
+     * carries it.
+     * To recover when true: raise the request's `limit`, up to the server
+     * ceiling, or narrow the as-of window with a shorter `date_range` or
+     * `horizon`.
+     * </pre>
+     *
+     * <code>bool truncated = 60;</code>
+     * @param value The truncated to set.
+     * @return This builder for chaining.
+     */
+    public Builder setTruncated(boolean value) {
+      
+      truncated_ = value;
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Row cap (see docs/adr/query_price_truncation.md). True only when the
+     * server stopped at `row_cap` and more matching rows exist that the caller
+     * cannot reach by paging: `truncated` is set only when `next_page_token` is
+     * empty. A page that returns a `next_page_token` is never truncated; follow
+     * the token instead. Unset (reads as false) when the result is complete.
+     * Servers that predate this field never set it, so unset also means "not
+     * reported". For streaming Search, only the final message of the stream
+     * carries it.
+     * To recover when true: raise the request's `limit`, up to the server
+     * ceiling, or narrow the as-of window with a shorter `date_range` or
+     * `horizon`.
+     * </pre>
+     *
+     * <code>bool truncated = 60;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearTruncated() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      truncated_ = false;
+      onChanged();
+      return this;
+    }
+
+    private int rowCap_ ;
+    /**
+     * <pre>
+     * Row cap (see docs/adr/query_price_truncation.md). The effective cap the
+     * server applied, in rows: the request's `limit` clamped to the server
+     * ceiling, or the default cap when `limit` is unset or &lt; 1. Set when
+     * `truncated` is true. Unset (reads as 0) when the result is complete. For
+     * streaming Search, counts rows across the whole stream and only the final
+     * message carries it.
+     * </pre>
+     *
+     * <code>int32 row_cap = 61;</code>
+     * @return The rowCap.
+     */
+    @java.lang.Override
+    public int getRowCap() {
+      return rowCap_;
+    }
+    /**
+     * <pre>
+     * Row cap (see docs/adr/query_price_truncation.md). The effective cap the
+     * server applied, in rows: the request's `limit` clamped to the server
+     * ceiling, or the default cap when `limit` is unset or &lt; 1. Set when
+     * `truncated` is true. Unset (reads as 0) when the result is complete. For
+     * streaming Search, counts rows across the whole stream and only the final
+     * message carries it.
+     * </pre>
+     *
+     * <code>int32 row_cap = 61;</code>
+     * @param value The rowCap to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRowCap(int value) {
+      
+      rowCap_ = value;
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Row cap (see docs/adr/query_price_truncation.md). The effective cap the
+     * server applied, in rows: the request's `limit` clamped to the server
+     * ceiling, or the default cap when `limit` is unset or &lt; 1. Set when
+     * `truncated` is true. Unset (reads as 0) when the result is complete. For
+     * streaming Search, counts rows across the whole stream and only the final
+     * message carries it.
+     * </pre>
+     *
+     * <code>int32 row_cap = 61;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearRowCap() {
+      bitField0_ = (bitField0_ & ~0x00000080);
+      rowCap_ = 0;
       onChanged();
       return this;
     }
