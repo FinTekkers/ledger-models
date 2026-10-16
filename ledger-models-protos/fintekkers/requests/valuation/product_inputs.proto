@@ -180,8 +180,9 @@ message FrnInput {
 // ═══════════════════════════════════════════════════════════════════════════
 message YieldCurveInput {
   // The benchmark this curve represents (e.g. SOFR, SONIA).
-  // Should match the FRN security's reference_rate_index.
-  // Not validated today: the service does not read this field. Check tracked in VS-74.
+  // Must match the FRN security's reference_rate_index. valuation-service
+  // rejects a mismatch with INVALID_ARGUMENT. An unset index
+  // (UNKNOWN_INDEX_TYPE) is accepted.
   fintekkers.models.security.index.IndexTypeProto index = 1;
 
   // As-of date for the curve, typically today or the most recent business day.
