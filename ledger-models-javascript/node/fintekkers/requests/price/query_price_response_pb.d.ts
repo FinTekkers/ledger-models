@@ -35,6 +35,10 @@ export class QueryPriceResponseProto extends jspb.Message {
     setErrorsOrWarnings(value?: fintekkers_requests_util_errors_summary_pb.SummaryProto): QueryPriceResponseProto;
     getNextPageToken(): string;
     setNextPageToken(value: string): QueryPriceResponseProto;
+    getTruncated(): boolean;
+    setTruncated(value: boolean): QueryPriceResponseProto;
+    getRowCap(): number;
+    setRowCap(value: number): QueryPriceResponseProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QueryPriceResponseProto.AsObject;
@@ -54,5 +58,7 @@ export namespace QueryPriceResponseProto {
         priceResponseList: Array<fintekkers_models_price_price_pb.PriceProto.AsObject>,
         errorsOrWarnings?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,
         nextPageToken: string,
+        truncated: boolean,
+        rowCap: number,
     }
 }

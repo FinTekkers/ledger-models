@@ -98,7 +98,9 @@ proto.fintekkers.requests.price.QueryPriceResponseProto.toObject = function(incl
     priceResponseList: jspb.Message.toObjectList(msg.getPriceResponseList(),
     fintekkers_models_price_price_pb.PriceProto.toObject, includeInstance),
     errorsOrWarnings: (f = msg.getErrorsOrWarnings()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f),
-    nextPageToken: jspb.Message.getFieldWithDefault(msg, 50, "")
+    nextPageToken: jspb.Message.getFieldWithDefault(msg, 50, ""),
+    truncated: jspb.Message.getBooleanFieldWithDefault(msg, 60, false),
+    rowCap: jspb.Message.getFieldWithDefault(msg, 61, 0)
   };
 
   if (includeInstance) {
@@ -162,6 +164,14 @@ proto.fintekkers.requests.price.QueryPriceResponseProto.deserializeBinaryFromRea
     case 50:
       var value = /** @type {string} */ (reader.readString());
       msg.setNextPageToken(value);
+      break;
+    case 60:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setTruncated(value);
+      break;
+    case 61:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setRowCap(value);
       break;
     default:
       reader.skipField();
@@ -235,6 +245,20 @@ proto.fintekkers.requests.price.QueryPriceResponseProto.serializeBinaryToWriter 
   if (f.length > 0) {
     writer.writeString(
       50,
+      f
+    );
+  }
+  f = message.getTruncated();
+  if (f) {
+    writer.writeBool(
+      60,
+      f
+    );
+  }
+  f = message.getRowCap();
+  if (f !== 0) {
+    writer.writeInt32(
+      61,
       f
     );
   }
@@ -423,6 +447,42 @@ proto.fintekkers.requests.price.QueryPriceResponseProto.prototype.getNextPageTok
  */
 proto.fintekkers.requests.price.QueryPriceResponseProto.prototype.setNextPageToken = function(value) {
   return jspb.Message.setProto3StringField(this, 50, value);
+};
+
+
+/**
+ * optional bool truncated = 60;
+ * @return {boolean}
+ */
+proto.fintekkers.requests.price.QueryPriceResponseProto.prototype.getTruncated = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 60, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.fintekkers.requests.price.QueryPriceResponseProto} returns this
+ */
+proto.fintekkers.requests.price.QueryPriceResponseProto.prototype.setTruncated = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 60, value);
+};
+
+
+/**
+ * optional int32 row_cap = 61;
+ * @return {number}
+ */
+proto.fintekkers.requests.price.QueryPriceResponseProto.prototype.getRowCap = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 61, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.fintekkers.requests.price.QueryPriceResponseProto} returns this
+ */
+proto.fintekkers.requests.price.QueryPriceResponseProto.prototype.setRowCap = function(value) {
+  return jspb.Message.setProto3IntField(this, 61, value);
 };
 
 

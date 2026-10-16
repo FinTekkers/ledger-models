@@ -29,7 +29,7 @@ from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_
 from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n4fintekkers/requests/price/query_price_response.proto\x12\x19\x66intekkers.requests.price\x1a#fintekkers/models/price/price.proto\x1a\x33\x66intekkers/requests/price/query_price_request.proto\x1a-fintekkers/requests/util/errors/summary.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xff\x02\n\x17QueryPriceResponseProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12N\n\x13query_price_request\x18\x14 \x01(\x0b\x32\x31.fintekkers.requests.price.QueryPriceRequestProto\x12;\n\x0eprice_response\x18\x1e \x03(\x0b\x32#.fintekkers.models.price.PriceProto\x12I\n\x12\x65rrors_or_warnings\x18( \x01(\x0b\x32-.fintekkers.requests.util.errors.SummaryProto\x12\x17\n\x0fnext_page_token\x18\x32 \x01(\tB\x1c\x42\x18QueryPriceResponseProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n4fintekkers/requests/price/query_price_response.proto\x12\x19\x66intekkers.requests.price\x1a#fintekkers/models/price/price.proto\x1a\x33\x66intekkers/requests/price/query_price_request.proto\x1a-fintekkers/requests/util/errors/summary.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xa3\x03\n\x17QueryPriceResponseProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12N\n\x13query_price_request\x18\x14 \x01(\x0b\x32\x31.fintekkers.requests.price.QueryPriceRequestProto\x12;\n\x0eprice_response\x18\x1e \x03(\x0b\x32#.fintekkers.models.price.PriceProto\x12I\n\x12\x65rrors_or_warnings\x18( \x01(\x0b\x32-.fintekkers.requests.util.errors.SummaryProto\x12\x17\n\x0fnext_page_token\x18\x32 \x01(\t\x12\x11\n\ttruncated\x18< \x01(\x08\x12\x0f\n\x07row_cap\x18= \x01(\x05\x42\x1c\x42\x18QueryPriceResponseProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -38,5 +38,5 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\030QueryPriceResponseProtosP\001'
   _globals['_QUERYPRICERESPONSEPROTO']._serialized_start=301
-  _globals['_QUERYPRICERESPONSEPROTO']._serialized_end=684
+  _globals['_QUERYPRICERESPONSEPROTO']._serialized_end=720
 # @@protoc_insertion_point(module_scope)

@@ -130,7 +130,8 @@ def test_response_fields_numbers_and_types(entity):
 def test_new_fields_sit_above_existing_numbers(entity):
     message, limit_number = REQUESTS[entity]
     new_request = {"page_token"} | ({"limit"} if limit_number == 50 else set())
-    new_response = {"next_page_token"}
+    # truncated / row_cap came after paging (LM-348), above next_page_token.
+    new_response = {"next_page_token", "truncated", "row_cap"}
     old_request = [f.number for f in message.DESCRIPTOR.fields if f.name not in new_request]
     old_response = [f.number for f in RESPONSES[entity].DESCRIPTOR.fields if f.name not in new_response]
 

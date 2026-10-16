@@ -149,7 +149,20 @@ def lm343(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM343 and new == LM343[key]
 
 
-ALLOWED = [lm318, lm332, lm343]
+PRICE_RESPONSE = ".fintekkers.requests.price.QueryPriceResponseProto"
+LM348 = {
+    f"field {PRICE_RESPONSE} = 60": "bool truncated",
+    f"field {PRICE_RESPONSE} = 61": "int32 row_cap",
+}
+
+
+def lm348(key: str, old, new, head: dict) -> bool:
+    """LM-348: QueryPriceResponseProto.truncated / row_cap added. Nothing else;
+    no request field, cursor or paging RPC."""
+    return old is None and key in LM348 and new == LM348[key]
+
+
+ALLOWED = [lm318, lm332, lm343, lm348]
 
 
 def main() -> int:
