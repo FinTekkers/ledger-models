@@ -2,15 +2,10 @@
 //! Step 3 tests — TipsInput / ProductInput proto round-trips.
 //!
 //! For each field: construct → encode to bytes → decode → verify field matches.
-//!
-//! TipsInput.current_cpi, ValuationRequestProto.cpi_price_input and
-//! reference_rate_input are deprecated (LM-343) but must keep round-tripping.
-#![allow(deprecated)]
 
 mod common;
 use common::{decimal, Canonical};
 
-use ledger_models::fintekkers::models::price::PriceProto;
 use ledger_models::fintekkers::models::security::index::IndexTypeProto;
 use ledger_models::fintekkers::models::security::{
     security_proto, BondDetailsProto, CouponFrequencyProto, CouponTypeProto, IndexDetailsProto,
@@ -48,6 +43,21 @@ fn tips_security(base_cpi: &str) -> SecurityProto {
     }
 }
 
+// A reference CPI already derived for the settlement date (TipsInput.cpi, 4).
+fn reference_cpi(value: &str) -> InflationIndexInput {
+    InflationIndexInput {
+        index: None,
+        cpi: Some(inflation_index_input::Cpi::ReferenceCpi(decimal(value))),
+    }
+}
+
+fn assert_reference_cpi(cpi: Option<InflationIndexInput>, expected: &str) {
+    match cpi.expect("cpi missing").cpi {
+        Some(inflation_index_input::Cpi::ReferenceCpi(d)) => assert_eq!(d.canonical(), expected),
+        other => panic!("Expected ReferenceCpi, got {:?}", other),
+    }
+}
+
 fn roundtrip_product_input(original: &ProductInput) -> ProductInput {
     let mut buf = Vec::new();
     original.encode(&mut buf).expect("encode failed");
@@ -65,8 +75,7 @@ fn tips_input_clean_price_survives_roundtrip() {
     let tips = TipsInput {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
-        current_cpi: Some(decimal("310.326")),
-        cpi: None,
+        cpi: Some(reference_cpi("310.326")),
     };
     let original = ProductInput {
         input: Some(product_input::Input::Tips(tips)),
@@ -83,34 +92,11 @@ fn tips_input_clean_price_survives_roundtrip() {
 }
 
 #[test]
-fn tips_input_current_cpi_survives_roundtrip() {
-    let tips = TipsInput {
-        security: Some(tips_security("260.474")),
-        clean_price: Some(decimal("97.50")),
-        current_cpi: Some(decimal("310.326")),
-        cpi: None,
-    };
-    let original = ProductInput {
-        input: Some(product_input::Input::Tips(tips)),
-    };
-
-    let parsed = roundtrip_product_input(&original);
-
-    match parsed.input.unwrap() {
-        product_input::Input::Tips(t) => {
-            assert_eq!(t.current_cpi.unwrap().canonical(), "310.326");
-        }
-        other => panic!("Expected Tips variant, got {:?}", other),
-    }
-}
-
-#[test]
 fn tips_input_security_fields_survive_roundtrip() {
     let tips = TipsInput {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
-        current_cpi: Some(decimal("310.326")),
-        cpi: None,
+        cpi: Some(reference_cpi("310.326")),
     };
     let original = ProductInput {
         input: Some(product_input::Input::Tips(tips)),
@@ -143,8 +129,7 @@ fn valuation_request_with_tips_product_input_survives_roundtrip() {
     let tips = TipsInput {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
-        current_cpi: Some(decimal("310.326")),
-        cpi: None,
+        cpi: Some(reference_cpi("310.326")),
     };
     let original = ValuationRequestProto {
         product_input: Some(ProductInput {
@@ -159,7 +144,7 @@ fn valuation_request_with_tips_product_input_survives_roundtrip() {
     match pi.input.unwrap() {
         product_input::Input::Tips(t) => {
             assert_eq!(t.clean_price.unwrap().canonical(), "97.50");
-            assert_eq!(t.current_cpi.unwrap().canonical(), "310.326");
+            assert_reference_cpi(t.cpi, "310.326");
         }
         other => panic!("Expected Tips variant, got {:?}", other),
     }
@@ -170,8 +155,7 @@ fn tips_is_distinct_from_bond_oneof_variant() {
     let tips = TipsInput {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
-        current_cpi: Some(decimal("310.326")),
-        cpi: None,
+        cpi: Some(reference_cpi("310.326")),
     };
     let original = ProductInput {
         input: Some(product_input::Input::Tips(tips)),
@@ -190,8 +174,7 @@ fn tips_index_ratio_fields_preserve_precision() {
     let tips = TipsInput {
         security: Some(tips_security("260.47400")),
         clean_price: Some(decimal("98.765432")),
-        current_cpi: Some(decimal("310.32600")),
-        cpi: None,
+        cpi: Some(reference_cpi("310.32600")),
     };
     let original = ProductInput {
         input: Some(product_input::Input::Tips(tips)),
@@ -200,7 +183,7 @@ fn tips_index_ratio_fields_preserve_precision() {
 
     match parsed.input.unwrap() {
         product_input::Input::Tips(t) => {
-            assert_eq!(t.current_cpi.unwrap().canonical(), "310.32600");
+            assert_reference_cpi(t.cpi, "310.32600");
             let sec = t.security.unwrap();
             assert_eq!(
                 sec.tips_extension.unwrap().base_cpi.unwrap().canonical(),
@@ -309,41 +292,5 @@ fn tips_cpi_reference_cpi_survives_valuation_request_roundtrip() {
     match cpi.cpi {
         Some(inflation_index_input::Cpi::ReferenceCpi(d)) => assert_eq!(d.canonical(), "310.32600"),
         other => panic!("Expected ReferenceCpi, got {:?}", other),
-    }
-}
-
-#[test]
-fn deprecated_cpi_and_reference_rate_fields_still_roundtrip_unchanged() {
-    let tips = TipsInput {
-        security: Some(tips_security("260.47400")),
-        current_cpi: Some(decimal("310.32600")),
-        ..Default::default()
-    };
-    let original = ValuationRequestProto {
-        cpi_price_input: Some(PriceProto {
-            price: Some(decimal("310.326")),
-            security: Some(cpi_index()),
-            ..Default::default()
-        }),
-        reference_rate_input: Some(PriceProto {
-            price: Some(decimal("5.33")),
-            ..Default::default()
-        }),
-        ..tips_request(tips)
-    };
-
-    let parsed = roundtrip_valuation_request(&original);
-
-    assert_eq!(parsed, original);
-    let cpi_price = parsed.cpi_price_input.unwrap();
-    assert_eq!(cpi_price.price.unwrap().canonical(), "310.326");
-    assert_cpi_index(cpi_price.security);
-    assert_eq!(parsed.reference_rate_input.unwrap().price.unwrap().canonical(), "5.33");
-    match parsed.product_input.unwrap().input.unwrap() {
-        product_input::Input::Tips(t) => {
-            assert_eq!(t.current_cpi.unwrap().canonical(), "310.32600");
-            assert!(t.cpi.is_none());
-        }
-        other => panic!("Expected Tips variant, got {:?}", other),
     }
 }

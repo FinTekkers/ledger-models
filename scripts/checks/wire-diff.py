@@ -11,6 +11,7 @@ Usage: wire-diff.py [base]. base defaults to the merge base with origin/main
 (or main). Needs grpcio-tools (ledger-models-python's venv).
 """
 
+import json
 import subprocess
 import sys
 import tarfile
@@ -169,7 +170,19 @@ def lm349(key: str, old, new, head: dict) -> bool:
             and old is None and new == ".fintekkers.requests.util.errors.SummaryProto errors_or_warnings")
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm349]
+LM344 = {
+    f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}"
+    for f in json.loads((REPO / "test-fixtures/removed-fields/lm-344.json").read_text())["fields"]
+}
+
+
+def lm344(key: str, old, new, head: dict) -> bool:
+    """LM-344: ValuationRequestProto 24 and 25 and TipsInput 3 deleted (0.5).
+    Only deletions of exactly these fields; their numbers and names are reserved."""
+    return new is None and key in LM344 and old == LM344[key]
+
+
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344]
 
 
 def main() -> int:

@@ -1,0 +1,10 @@
+{
+  "item": "LM-344",
+  "pattern": "cpi_?price_?input|reference_?rate_?input|current_?cpi",
+  "fields": [
+    {"message": ".fintekkers.requests.valuation.ValuationRequestProto", "number": 24, "name": "cpi_price_input", "type": ".fintekkers.models.price.PriceProto"},
+    {"message": ".fintekkers.requests.valuation.ValuationRequestProto", "number": 25, "name": "reference_rate_input", "type": ".fintekkers.models.price.PriceProto"},
+    {"message": ".fintekkers.requests.valuation.TipsInput", "number": 3, "name": "current_cpi", "type": ".fintekkers.models.util.DecimalValueProto"}
+  ],
+  "kept": {"message": ".fintekkers.requests.valuation.TipsInput", "number": 4, "name": "cpi"}
+}

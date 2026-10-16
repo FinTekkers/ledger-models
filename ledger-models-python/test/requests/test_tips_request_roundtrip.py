@@ -1,17 +1,27 @@
 """
 TipsInput.cpi (LM-343) round-trips through a full ValuationRequestProto, the
-deprecated CPI / reference-rate fields still round-trip, and the new messages
+fields removed in 0.5 (LM-344) are gone and reserved, and the new messages
 carry exactly the planned fields.
 """
+import json
 from decimal import Decimal
+from pathlib import Path
 
-from fintekkers.models.price import price_pb2
+from google.protobuf import descriptor_pb2
+
 from fintekkers.models.security import product_type_pb2, security_pb2
 from fintekkers.models.security.index import index_type_pb2
 from fintekkers.models.util import decimal_value_pb2
 from fintekkers.requests.valuation import product_inputs_pb2
 from fintekkers.requests.valuation import valuation_request_pb2
 from fintekkers.wrappers.models.util.decimal import decode_decimal, encode_decimal
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+REMOVED_FIELDS = json.loads((REPO_ROOT / "test-fixtures" / "removed-fields" / "lm-344.json").read_text())
+MESSAGES = {
+    m.DESCRIPTOR.full_name: m
+    for m in (valuation_request_pb2.ValuationRequestProto, product_inputs_pb2.TipsInput)
+}
 
 
 def _decimal(value: str) -> decimal_value_pb2.DecimalValueProto:
@@ -98,35 +108,30 @@ class TestTipsInputCpiRoundTrip:
         assert _text(parsed.cpi.reference_cpi) == "310.32600"
 
 
-class TestDeprecatedFields:
-    def test_deprecated_fields_still_roundtrip_unchanged(self):
-        tips = product_inputs_pb2.TipsInput(
-            security=_tips_security(), current_cpi=_decimal("310.32600"),
-        )
-        original = _request(tips)
-        original.cpi_price_input.CopyFrom(
-            price_pb2.PriceProto(price=_decimal("310.326"), security=_cpi_index()))
-        original.reference_rate_input.CopyFrom(price_pb2.PriceProto(price=_decimal("5.33")))
+class TestRemovedFields:
+    """LM-344: ValuationRequestProto 24 and 25 and TipsInput 3 are removed in 0.5."""
 
-        parsed = _roundtrip(original)
+    @staticmethod
+    def _message(entry: dict):
+        return MESSAGES[entry["message"].lstrip(".")]
 
-        assert parsed == original
-        assert _text(parsed.product_input.tips.current_cpi) == "310.32600"
-        assert not parsed.product_input.tips.HasField("cpi")
-        assert _text(parsed.cpi_price_input.price) == "310.326"
-        assert parsed.cpi_price_input.security.issuer_name == "CPI-U NSA"
-        assert _text(parsed.reference_rate_input.price) == "5.33"
+    def test_removed_fields_are_gone_and_reserved(self):
+        assert len(REMOVED_FIELDS["fields"]) == 3
+        for f in REMOVED_FIELDS["fields"]:
+            descriptor = self._message(f).DESCRIPTOR
+            assert f["number"] not in descriptor.fields_by_number, descriptor.full_name
+            assert f["name"] not in descriptor.fields_by_name, descriptor.full_name
+            proto = descriptor_pb2.DescriptorProto()
+            descriptor.CopyToProto(proto)
+            # Ranges are half-open: reserved 24, 25 may be one range [24, 26).
+            assert any(r.start <= f["number"] < r.end for r in proto.reserved_range), (
+                f"{descriptor.full_name} does not reserve {f['number']}")
+            assert f["name"] in proto.reserved_name, descriptor.full_name
 
-    def test_fields_are_marked_deprecated_and_keep_their_numbers(self):
-        request_fields = valuation_request_pb2.ValuationRequestProto.DESCRIPTOR.fields_by_name
-        tips_fields = product_inputs_pb2.TipsInput.DESCRIPTOR.fields_by_name
-        for field, number in (
-            (request_fields["cpi_price_input"], 24),
-            (request_fields["reference_rate_input"], 25),
-            (tips_fields["current_cpi"], 3),
-        ):
-            assert field.number == number
-            assert field.GetOptions().deprecated is True, field.full_name
+    def test_tips_cpi_is_kept(self):
+        kept = REMOVED_FIELDS["kept"]
+        field = self._message(kept).DESCRIPTOR.fields_by_number[kept["number"]]
+        assert field.name == kept["name"]
 
     def test_tips_cpi_is_not_deprecated(self):
         cpi = product_inputs_pb2.TipsInput.DESCRIPTOR.fields_by_name["cpi"]

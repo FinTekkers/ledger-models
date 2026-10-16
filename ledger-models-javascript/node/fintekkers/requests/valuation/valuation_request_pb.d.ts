@@ -50,16 +50,6 @@ export class ValuationRequestProto extends jspb.Message {
     getAsofDatetime(): fintekkers_models_util_local_timestamp_pb.LocalTimestampProto | undefined;
     setAsofDatetime(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): ValuationRequestProto;
 
-    hasCpiPriceInput(): boolean;
-    clearCpiPriceInput(): void;
-    getCpiPriceInput(): fintekkers_models_price_price_pb.PriceProto | undefined;
-    setCpiPriceInput(value?: fintekkers_models_price_price_pb.PriceProto): ValuationRequestProto;
-
-    hasReferenceRateInput(): boolean;
-    clearReferenceRateInput(): void;
-    getReferenceRateInput(): fintekkers_models_price_price_pb.PriceProto | undefined;
-    setReferenceRateInput(value?: fintekkers_models_price_price_pb.PriceProto): ValuationRequestProto;
-
     hasProductInput(): boolean;
     clearProductInput(): void;
     getProductInput(): fintekkers_requests_valuation_product_inputs_pb.ProductInput | undefined;
@@ -85,8 +75,6 @@ export namespace ValuationRequestProto {
         positionInput?: fintekkers_models_position_position_pb.PositionProto.AsObject,
         priceInput?: fintekkers_models_price_price_pb.PriceProto.AsObject,
         asofDatetime?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
-        cpiPriceInput?: fintekkers_models_price_price_pb.PriceProto.AsObject,
-        referenceRateInput?: fintekkers_models_price_price_pb.PriceProto.AsObject,
         productInput?: fintekkers_requests_valuation_product_inputs_pb.ProductInput.AsObject,
     }
 }

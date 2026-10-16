@@ -1,7 +1,13 @@
 package protos.serializers;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.protobuf.DescriptorProtos.DescriptorProto;
+import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.InvalidProtocolBufferException;
-import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.IndexDetailsProto;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
@@ -16,6 +22,11 @@ import fintekkers.requests.valuation.TipsInput;
 import fintekkers.requests.valuation.ValuationRequestProto;
 import org.junit.jupiter.api.Test;
 import testutil.Decimals;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -115,27 +126,44 @@ class TipsRequestRoundtripTest {
         assertEquals("310.32600", Decimals.text(parsedCpi.getReferenceCpi()));
     }
 
+    private static final Path REMOVED_FIELDS = Path.of("..", "test-fixtures", "removed-fields", "lm-344.json");
+
+    private static JsonObject removedFields() throws IOException {
+        return JsonParser.parseString(Files.readString(REMOVED_FIELDS)).getAsJsonObject();
+    }
+
+    private static Descriptor message(JsonObject entry) {
+        String name = entry.get("message").getAsString().substring(1);
+        for (Descriptor d : List.of(ValuationRequestProto.getDescriptor(), TipsInput.getDescriptor())) {
+            if (d.getFullName().equals(name)) {
+                return d;
+            }
+        }
+        throw new AssertionError("no descriptor for " + name);
+    }
+
+    /** LM-344: fields 24 and 25 and TipsInput 3 are removed, their numbers and names reserved. */
     @Test
-    @SuppressWarnings("deprecation")
-    void deprecatedCpiAndReferenceRateFields_stillRoundtripUnchanged() throws InvalidProtocolBufferException {
-        PriceProto cpiPrice = PriceProto.newBuilder().setPrice(decimal("310.326")).setSecurity(cpiIndex()).build();
-        PriceProto referenceRate = PriceProto.newBuilder().setPrice(decimal("5.33")).build();
-        TipsInput tips = TipsInput.newBuilder()
-                .setSecurity(tipsSecurity())
-                .setCurrentCpi(decimal("310.32600"))
-                .build();
-        ValuationRequestProto original = request(tips).toBuilder()
-                .setCpiPriceInput(cpiPrice)
-                .setReferenceRateInput(referenceRate)
-                .build();
-
-        ValuationRequestProto parsed = ValuationRequestProto.parseFrom(original.toByteArray());
-
-        assertEquals(original, parsed);
-        assertEquals("310.32600", Decimals.text(parsed.getProductInput().getTips().getCurrentCpi()));
-        assertFalse(parsed.getProductInput().getTips().hasCpi());
-        assertEquals("310.326", Decimals.text(parsed.getCpiPriceInput().getPrice()));
-        assertEquals("CPI-U NSA", parsed.getCpiPriceInput().getSecurity().getIssuerName());
-        assertEquals("5.33", Decimals.text(parsed.getReferenceRateInput().getPrice()));
+    void removedFields_areGoneAndReserved() throws IOException {
+        JsonArray fields = removedFields().getAsJsonArray("fields");
+        assertEquals(3, fields.size());
+        for (JsonElement el : fields) {
+            JsonObject f = el.getAsJsonObject();
+            Descriptor d = message(f);
+            int number = f.get("number").getAsInt();
+            String name = f.get("name").getAsString();
+            assertNull(d.findFieldByNumber(number), d.getFullName() + " still has field " + number);
+            assertNull(d.findFieldByName(name), d.getFullName() + " still has " + name);
+            DescriptorProto proto = d.toProto();
+            // Ranges are half-open: reserved 24, 25 may be one range [24, 26).
+            assertTrue(proto.getReservedRangeList().stream()
+                            .anyMatch(r -> r.getStart() <= number && number < r.getEnd()),
+                    d.getFullName() + " does not reserve " + number);
+            assertTrue(proto.getReservedNameList().contains(name), d.getFullName() + " does not reserve " + name);
+        }
+        JsonObject kept = removedFields().getAsJsonObject("kept");
+        FieldDescriptor cpi = message(kept).findFieldByNumber(kept.get("number").getAsInt());
+        assertNotNull(cpi);
+        assertEquals(kept.get("name").getAsString(), cpi.getName());
     }
 }

@@ -44,19 +44,10 @@ message ValuationRequestProto {
   //The asof datetime for the valuation.
   fintekkers.models.util.LocalTimestampProto asof_datetime = 23;
 
-  //Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-  //TipsInput.cpi nor TipsInput.current_cpi is set.
-  //The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-  //Modeled as a PriceProto on a SecurityProto representing the CPI index.
-  fintekkers.models.price.PriceProto cpi_price_input = 24 [deprecated = true];
-
-  //The current reference rate observation for floating rate note (FRN) valuation.
-  //Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-  //Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-  //Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-  //Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-  //Required for legacy flat-rate FRN valuation.
-  fintekkers.models.price.PriceProto reference_rate_input = 25 [deprecated = true];
+  //Removed in 0.5 (LM-344). TIPS CPI: ProductInput.tips.cpi (TipsInput.cpi).
+  //FRNs: ProductInput.frn.curve (FrnInput.curve); there is no flat-rate path.
+  reserved 24, 25;
+  reserved "cpi_price_input", "reference_rate_input";
 
   // Product-specific input — determines the calculation path in the service.
   // When set, the service routes to the new engine dispatch; existing flat fields

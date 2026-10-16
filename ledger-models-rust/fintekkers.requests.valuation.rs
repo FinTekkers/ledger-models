@@ -232,9 +232,7 @@ pub struct BondInput {
 ///
 /// Settlement date is read from ValuationRequestProto.asof_datetime.
 ///
-/// CPI precedence: cpi (4) is used when set. Otherwise the deprecated
-/// current_cpi (3), then the deprecated ValuationRequestProto.cpi_price_input
-/// (24). New callers set cpi only.
+/// cpi (4) is the only CPI input.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -247,14 +245,6 @@ pub struct TipsInput {
     /// Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
     #[prost(message, optional, tag = "2")]
     pub clean_price: ::core::option::Option<
-        super::super::models::util::DecimalValueProto,
-    >,
-    /// Deprecated: use cpi (4). Read only when cpi is unset.
-    /// A CPI index value (e.g. 310.326), used as the reference CPI as-is:
-    ///    index_ratio = current_cpi / security.tips_extension.base_cpi
-    #[deprecated]
-    #[prost(message, optional, tag = "3")]
-    pub current_cpi: ::core::option::Option<
         super::super::models::util::DecimalValueProto,
     >,
     /// The CPI the index ratio is computed from: raw monthly index levels, or a
@@ -489,24 +479,6 @@ pub struct ValuationRequestProto {
     #[prost(message, optional, tag = "23")]
     pub asof_datetime: ::core::option::Option<
         super::super::models::util::LocalTimestampProto,
-    >,
-    /// Deprecated: use ProductInput.tips.cpi (TipsInput.cpi). Read only when neither
-    /// TipsInput.cpi nor TipsInput.current_cpi is set.
-    /// The CPI index observation used for inflation-linked bond valuation (e.g. TIPS).
-    /// Modeled as a PriceProto on a SecurityProto representing the CPI index.
-    #[deprecated]
-    #[prost(message, optional, tag = "24")]
-    pub cpi_price_input: ::core::option::Option<super::super::models::price::PriceProto>,
-    /// The current reference rate observation for floating rate note (FRN) valuation.
-    /// Modeled as a PriceProto on an INDEX_SECURITY representing the benchmark (e.g. SOFR).
-    /// Deprecated in favour of FrnInput.curve — retained for backward compatibility with flat-rate FRN pricing.
-    /// Unit: percentage form (5.33 = 5.33%), the same unit as BondDetailsProto.coupon_rate.
-    /// Values in (0, 0.1) are invalid: valuation-service rejects them as decimal-fraction mistakes.
-    /// Required for legacy flat-rate FRN valuation.
-    #[deprecated]
-    #[prost(message, optional, tag = "25")]
-    pub reference_rate_input: ::core::option::Option<
-        super::super::models::price::PriceProto,
     >,
     /// Product-specific input — determines the calculation path in the service.
     /// When set, the service routes to the new engine dispatch; existing flat fields

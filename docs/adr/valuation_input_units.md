@@ -48,3 +48,7 @@ No Java, Python, Rust or JS wrapper or validator checks the `coupon_rate` unit; 
 
 - Callers can read units and current validation straight from the generated bindings.
 - When VS-69 or VS-74 lands, the matching comment must be updated to say the rule is enforced.
+
+## Amendment 2026-10-16 (LM-344)
+
+Rows **L2** (`TipsInput.current_cpi`) and **L5 / D4** (`ValuationRequestProto.reference_rate_input`) are retired in 0.5: both fields are removed and reserved. The deflation floor in L2 still applies to `MeasureProto.INFLATION_ADJUSTED_PRINCIPAL`, now computed from `TipsInput.cpi` (see `inflation_index_input.md`). Retiring L5 / D4 ends the legacy flat-rate FRN path and its `0.0533` default: FRNs are priced from `FrnInput.curve` only.
