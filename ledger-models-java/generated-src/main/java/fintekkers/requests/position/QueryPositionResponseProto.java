@@ -204,6 +204,44 @@ private static final long serialVersionUID = 0L;
     return positions_.get(index);
   }
 
+  public static final int ERRORS_OR_WARNINGS_FIELD_NUMBER = 40;
+  private fintekkers.requests.util.errors.Summary.SummaryProto errorsOrWarnings_;
+  /**
+   * <pre>
+   * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   * @return Whether the errorsOrWarnings field is set.
+   */
+  @java.lang.Override
+  public boolean hasErrorsOrWarnings() {
+    return errorsOrWarnings_ != null;
+  }
+  /**
+   * <pre>
+   * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   * @return The errorsOrWarnings.
+   */
+  @java.lang.Override
+  public fintekkers.requests.util.errors.Summary.SummaryProto getErrorsOrWarnings() {
+    return errorsOrWarnings_ == null ? fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : errorsOrWarnings_;
+  }
+  /**
+   * <pre>
+   * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getErrorsOrWarningsOrBuilder() {
+    return errorsOrWarnings_ == null ? fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : errorsOrWarnings_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -233,6 +271,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < positions_.size(); i++) {
       output.writeMessage(30, positions_.get(i));
     }
+    if (errorsOrWarnings_ != null) {
+      output.writeMessage(40, getErrorsOrWarnings());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -260,6 +301,10 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < positions_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(30, positions_.get(i));
+    }
+    if (errorsOrWarnings_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(40, getErrorsOrWarnings());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -291,6 +336,11 @@ private static final long serialVersionUID = 0L;
         .equals(other.getReportingCurrency())) return false;
     if (!getPositionsList()
         .equals(other.getPositionsList())) return false;
+    if (hasErrorsOrWarnings() != other.hasErrorsOrWarnings()) return false;
+    if (hasErrorsOrWarnings()) {
+      if (!getErrorsOrWarnings()
+          .equals(other.getErrorsOrWarnings())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -317,6 +367,10 @@ private static final long serialVersionUID = 0L;
     if (getPositionsCount() > 0) {
       hash = (37 * hash) + POSITIONS_FIELD_NUMBER;
       hash = (53 * hash) + getPositionsList().hashCode();
+    }
+    if (hasErrorsOrWarnings()) {
+      hash = (37 * hash) + ERRORS_OR_WARNINGS_FIELD_NUMBER;
+      hash = (53 * hash) + getErrorsOrWarnings().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -466,6 +520,11 @@ private static final long serialVersionUID = 0L;
         positionsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000010);
+      errorsOrWarnings_ = null;
+      if (errorsOrWarningsBuilder_ != null) {
+        errorsOrWarningsBuilder_.dispose();
+        errorsOrWarningsBuilder_ = null;
+      }
       return this;
     }
 
@@ -527,6 +586,11 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000008) != 0)) {
         result.reportingCurrency_ = reportingCurrency_;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.errorsOrWarnings_ = errorsOrWarningsBuilder_ == null
+            ? errorsOrWarnings_
+            : errorsOrWarningsBuilder_.build();
       }
     }
 
@@ -614,6 +678,9 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (other.hasErrorsOrWarnings()) {
+        mergeErrorsOrWarnings(other.getErrorsOrWarnings());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -677,6 +744,13 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 242
+            case 322: {
+              input.readMessage(
+                  getErrorsOrWarningsFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 322
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1315,6 +1389,161 @@ private static final long serialVersionUID = 0L;
         positions_ = null;
       }
       return positionsBuilder_;
+    }
+
+    private fintekkers.requests.util.errors.Summary.SummaryProto errorsOrWarnings_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.util.errors.Summary.SummaryProto, fintekkers.requests.util.errors.Summary.SummaryProto.Builder, fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder> errorsOrWarningsBuilder_;
+    /**
+     * <pre>
+     * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     * @return Whether the errorsOrWarnings field is set.
+     */
+    public boolean hasErrorsOrWarnings() {
+      return ((bitField0_ & 0x00000020) != 0);
+    }
+    /**
+     * <pre>
+     * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     * @return The errorsOrWarnings.
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto getErrorsOrWarnings() {
+      if (errorsOrWarningsBuilder_ == null) {
+        return errorsOrWarnings_ == null ? fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : errorsOrWarnings_;
+      } else {
+        return errorsOrWarningsBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public Builder setErrorsOrWarnings(fintekkers.requests.util.errors.Summary.SummaryProto value) {
+      if (errorsOrWarningsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        errorsOrWarnings_ = value;
+      } else {
+        errorsOrWarningsBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public Builder setErrorsOrWarnings(
+        fintekkers.requests.util.errors.Summary.SummaryProto.Builder builderForValue) {
+      if (errorsOrWarningsBuilder_ == null) {
+        errorsOrWarnings_ = builderForValue.build();
+      } else {
+        errorsOrWarningsBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public Builder mergeErrorsOrWarnings(fintekkers.requests.util.errors.Summary.SummaryProto value) {
+      if (errorsOrWarningsBuilder_ == null) {
+        if (((bitField0_ & 0x00000020) != 0) &&
+          errorsOrWarnings_ != null &&
+          errorsOrWarnings_ != fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance()) {
+          getErrorsOrWarningsBuilder().mergeFrom(value);
+        } else {
+          errorsOrWarnings_ = value;
+        }
+      } else {
+        errorsOrWarningsBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public Builder clearErrorsOrWarnings() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      errorsOrWarnings_ = null;
+      if (errorsOrWarningsBuilder_ != null) {
+        errorsOrWarningsBuilder_.dispose();
+        errorsOrWarningsBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProto.Builder getErrorsOrWarningsBuilder() {
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return getErrorsOrWarningsFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    public fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder getErrorsOrWarningsOrBuilder() {
+      if (errorsOrWarningsBuilder_ != null) {
+        return errorsOrWarningsBuilder_.getMessageOrBuilder();
+      } else {
+        return errorsOrWarnings_ == null ?
+            fintekkers.requests.util.errors.Summary.SummaryProto.getDefaultInstance() : errorsOrWarnings_;
+      }
+    }
+    /**
+     * <pre>
+     * Warnings and errors for this query, e.g. a measure unsupported in the requested view.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.util.errors.SummaryProto errors_or_warnings = 40;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.util.errors.Summary.SummaryProto, fintekkers.requests.util.errors.Summary.SummaryProto.Builder, fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder> 
+        getErrorsOrWarningsFieldBuilder() {
+      if (errorsOrWarningsBuilder_ == null) {
+        errorsOrWarningsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.requests.util.errors.Summary.SummaryProto, fintekkers.requests.util.errors.Summary.SummaryProto.Builder, fintekkers.requests.util.errors.Summary.SummaryProtoOrBuilder>(
+                getErrorsOrWarnings(),
+                getParentForChildren(),
+                isClean());
+        errorsOrWarnings_ = null;
+      }
+      return errorsOrWarningsBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

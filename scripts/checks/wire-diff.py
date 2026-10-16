@@ -163,6 +163,13 @@ def lm348(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM348 and new == LM348[key]
 
 
+def lm349(key: str, old, new, head: dict) -> bool:
+    """LM-349: QueryPositionResponseProto.errors_or_warnings = 40 added,
+    matching the other query responses."""
+    return (key == "field .fintekkers.requests.position.QueryPositionResponseProto = 40"
+            and old is None and new == ".fintekkers.requests.util.errors.SummaryProto errors_or_warnings")
+
+
 LM344 = {
     f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}"
     for f in json.loads((REPO / "test-fixtures/removed-fields/lm-344.json").read_text())["fields"]
@@ -175,7 +182,7 @@ def lm344(key: str, old, new, head: dict) -> bool:
     return new is None and key in LM344 and old == LM344[key]
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm344]
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344]
 
 
 def main() -> int:

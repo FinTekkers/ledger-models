@@ -7,6 +7,7 @@
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_position_position_pb from "../../../fintekkers/models/position/position_pb";
 import * as fintekkers_requests_position_query_position_request_pb from "../../../fintekkers/requests/position/query_position_request_pb";
+import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
 
@@ -30,6 +31,11 @@ export class QueryPositionResponseProto extends jspb.Message {
     setPositionsList(value: Array<fintekkers_models_position_position_pb.PositionProto>): QueryPositionResponseProto;
     addPositions(value?: fintekkers_models_position_position_pb.PositionProto, index?: number): fintekkers_models_position_position_pb.PositionProto;
 
+    hasErrorsOrWarnings(): boolean;
+    clearErrorsOrWarnings(): void;
+    getErrorsOrWarnings(): fintekkers_requests_util_errors_summary_pb.SummaryProto | undefined;
+    setErrorsOrWarnings(value?: fintekkers_requests_util_errors_summary_pb.SummaryProto): QueryPositionResponseProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): QueryPositionResponseProto.AsObject;
     static toObject(includeInstance: boolean, msg: QueryPositionResponseProto): QueryPositionResponseProto.AsObject;
@@ -47,5 +53,6 @@ export namespace QueryPositionResponseProto {
         positionRequest?: fintekkers_requests_position_query_position_request_pb.QueryPositionRequestProto.AsObject,
         reportingCurrency: string,
         positionsList: Array<fintekkers_models_position_position_pb.PositionProto.AsObject>,
+        errorsOrWarnings?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,
     }
 }
