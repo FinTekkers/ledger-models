@@ -117,14 +117,17 @@ public enum MeasureProto
    *   price * (face / 100) = Sum_{t=1}^{N} [C / (1 + r/m)^t] + F / (1 + r/m)^N
    *   Where C = periodic coupon, F = principal (face or inflation-adjusted),
    *   m = coupon frequency, N = number of periods.
+   *   For TIPS the left side is also scaled by index_ratio (see REAL_YIELD).
    * Solver: Newton-Raphson iteration (ytm_solver.rs) with the linear approximation
    *   YTM ≈ (annual_coupon + (F - P) / years) / ((F + P) / 2)
    *   as the initial guess. Converges to the exact YTM where PV = price.
    * Model assumptions:
    *   - Coupon reinvestment at the YTM rate (standard bond math assumption).
-   *   - For TIPS: uses inflation-adjusted principal for cashflows, but the input
-   *     price is real — yielding a "mixed" rate, not the true real yield. Use
-   *     REAL_YIELD for the economically correct TIPS yield.
+   *   - For TIPS: returns the same value as REAL_YIELD (the real yield), and adds
+   *     this warning to the response summary:
+   *     "YIELD_TO_MATURITY for TIPS is the real yield (same as REAL_YIELD); a nominal
+   *     yield needs an inflation forecast". There is no nominal TIPS yield without
+   *     an inflation forecast.
    *   - Settlement on a coupon date (no accrued interest adjustment currently).
    *   - Day count: Actual/365 for years-to-maturity.
    * Applicability: Bond, TIPS. Not meaningful for FRN (use DISCOUNT_MARGIN) or Equity.
@@ -142,6 +145,7 @@ public enum MeasureProto
    *   D = Sum_{t=1}^{N} [(t / m) * PV_t / TotalPV]
    *   Where PV_t = cashflow_t / (1 + r/m)^t, TotalPV = Sum(PV_t),
    *   m = coupon frequency, r = YTM.
+   *   For TIPS, r = REAL_YIELD and cashflow_t is the inflation-adjusted cash flow.
    * Model assumptions:
    *   - Uses the bond's YTM (from Newton-Raphson solver) as the discount rate.
    *   - Flat yield curve (single rate for all maturities).
@@ -166,8 +170,9 @@ public enum MeasureProto
    *   price == present_value == sum(cashflow_pvs)
    * Model assumptions:
    *   - Same as YIELD_TO_MATURITY (the discount rate is derived from the input price).
-   *   - For TIPS: cashflows use inflation-adjusted principal; discount rate is the
-   *     Newton-Raphson-solved rate equating nominal cashflows to the real price.
+   *   - For TIPS: the inflation-adjusted cash flows are discounted at REAL_YIELD,
+   *     consistent with the scaled price clean_price × index_ratio (so the
+   *     invariant reads clean_price × index_ratio == present_value).
    * Applicability: Bond, TIPS. For FRN, PV uses the discount margin framework instead.
    * Units: Quoted price (% of par; e.g. 95.00 = $95 per $100 face).
    * </pre>
@@ -179,14 +184,15 @@ public enum MeasureProto
    * <pre>
    * The yield of a TIPS bond in real (inflation-adjusted) terms. This is the return
    * an investor earns above the rate of inflation.
-   * Formula: Currently delegates to the YTM calculator, which uses inflation-adjusted
-   *   principal for cashflows. For a par TIPS (real coupon = real yield), the solver
-   *   finds a "mixed" rate rather than the true real yield (see YIELD_TO_MATURITY notes).
+   * Formula (TIPS):
+   *   Solve for r (annual) such that:
+   *   clean_price × index_ratio × face / 100 = Σ PV(inflation-adjusted cash flows at r)
+   *   The quoted real price is scaled by the same index ratio as the cash flows, so
+   *   the result is the true real yield and does not change with CPI.
    * Model assumptions:
-   *   - Same as YIELD_TO_MATURITY but applied to TIPS securities.
-   *   - Known limitation: the current implementation mixes real price with nominal
-   *     (inflation-adjusted) cashflows in the solver, which produces a rate that is
-   *     not the true real yield for non-par TIPS.
+   *   - Same solver and conventions as YIELD_TO_MATURITY.
+   *   - PRESENT_VALUE, MACAULAY_DURATION, MODIFIED_DURATION and CONVEXITY for TIPS
+   *     are computed at this real yield on the inflation-adjusted cash flows.
    * Applicability: TIPS only. For nominal bonds, returns the same value as YTM.
    * Units: Decimal (0-1 scale; e.g. 0.02 = 2.00% real annual yield).
    * </pre>
@@ -423,6 +429,7 @@ public enum MeasureProto
    *   PV_t = CF_t / (1+r)^t, n = coupon frequency (periods per year).
    * Model assumptions:
    *   - Same as MACAULAY_DURATION (flat yield curve, YTM-based discounting).
+   *   - For TIPS: y = REAL_YIELD and CF_t are the inflation-adjusted cash flows.
    *   - For FRN: uses flat-forwards effective YTM (same model as PRESENT_VALUE).
    *   - Settlement on a coupon date (integer period exponents).
    * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
@@ -478,6 +485,7 @@ public enum MeasureProto
    * Formula:
    *   ModifiedDuration = MacaulayDuration / (1 + ytm/n)
    *   where ytm = yield to maturity (annual), n = coupon periods per year.
+   *   For TIPS, ytm = REAL_YIELD (on the inflation-adjusted cash flows).
    * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
    * Units: Years (dimensionally equivalent to years, interpreted as % per 100bp).
    * </pre>
@@ -702,14 +710,17 @@ public enum MeasureProto
    *   price * (face / 100) = Sum_{t=1}^{N} [C / (1 + r/m)^t] + F / (1 + r/m)^N
    *   Where C = periodic coupon, F = principal (face or inflation-adjusted),
    *   m = coupon frequency, N = number of periods.
+   *   For TIPS the left side is also scaled by index_ratio (see REAL_YIELD).
    * Solver: Newton-Raphson iteration (ytm_solver.rs) with the linear approximation
    *   YTM ≈ (annual_coupon + (F - P) / years) / ((F + P) / 2)
    *   as the initial guess. Converges to the exact YTM where PV = price.
    * Model assumptions:
    *   - Coupon reinvestment at the YTM rate (standard bond math assumption).
-   *   - For TIPS: uses inflation-adjusted principal for cashflows, but the input
-   *     price is real — yielding a "mixed" rate, not the true real yield. Use
-   *     REAL_YIELD for the economically correct TIPS yield.
+   *   - For TIPS: returns the same value as REAL_YIELD (the real yield), and adds
+   *     this warning to the response summary:
+   *     "YIELD_TO_MATURITY for TIPS is the real yield (same as REAL_YIELD); a nominal
+   *     yield needs an inflation forecast". There is no nominal TIPS yield without
+   *     an inflation forecast.
    *   - Settlement on a coupon date (no accrued interest adjustment currently).
    *   - Day count: Actual/365 for years-to-maturity.
    * Applicability: Bond, TIPS. Not meaningful for FRN (use DISCOUNT_MARGIN) or Equity.
@@ -727,6 +738,7 @@ public enum MeasureProto
    *   D = Sum_{t=1}^{N} [(t / m) * PV_t / TotalPV]
    *   Where PV_t = cashflow_t / (1 + r/m)^t, TotalPV = Sum(PV_t),
    *   m = coupon frequency, r = YTM.
+   *   For TIPS, r = REAL_YIELD and cashflow_t is the inflation-adjusted cash flow.
    * Model assumptions:
    *   - Uses the bond's YTM (from Newton-Raphson solver) as the discount rate.
    *   - Flat yield curve (single rate for all maturities).
@@ -751,8 +763,9 @@ public enum MeasureProto
    *   price == present_value == sum(cashflow_pvs)
    * Model assumptions:
    *   - Same as YIELD_TO_MATURITY (the discount rate is derived from the input price).
-   *   - For TIPS: cashflows use inflation-adjusted principal; discount rate is the
-   *     Newton-Raphson-solved rate equating nominal cashflows to the real price.
+   *   - For TIPS: the inflation-adjusted cash flows are discounted at REAL_YIELD,
+   *     consistent with the scaled price clean_price × index_ratio (so the
+   *     invariant reads clean_price × index_ratio == present_value).
    * Applicability: Bond, TIPS. For FRN, PV uses the discount margin framework instead.
    * Units: Quoted price (% of par; e.g. 95.00 = $95 per $100 face).
    * </pre>
@@ -764,14 +777,15 @@ public enum MeasureProto
    * <pre>
    * The yield of a TIPS bond in real (inflation-adjusted) terms. This is the return
    * an investor earns above the rate of inflation.
-   * Formula: Currently delegates to the YTM calculator, which uses inflation-adjusted
-   *   principal for cashflows. For a par TIPS (real coupon = real yield), the solver
-   *   finds a "mixed" rate rather than the true real yield (see YIELD_TO_MATURITY notes).
+   * Formula (TIPS):
+   *   Solve for r (annual) such that:
+   *   clean_price × index_ratio × face / 100 = Σ PV(inflation-adjusted cash flows at r)
+   *   The quoted real price is scaled by the same index ratio as the cash flows, so
+   *   the result is the true real yield and does not change with CPI.
    * Model assumptions:
-   *   - Same as YIELD_TO_MATURITY but applied to TIPS securities.
-   *   - Known limitation: the current implementation mixes real price with nominal
-   *     (inflation-adjusted) cashflows in the solver, which produces a rate that is
-   *     not the true real yield for non-par TIPS.
+   *   - Same solver and conventions as YIELD_TO_MATURITY.
+   *   - PRESENT_VALUE, MACAULAY_DURATION, MODIFIED_DURATION and CONVEXITY for TIPS
+   *     are computed at this real yield on the inflation-adjusted cash flows.
    * Applicability: TIPS only. For nominal bonds, returns the same value as YTM.
    * Units: Decimal (0-1 scale; e.g. 0.02 = 2.00% real annual yield).
    * </pre>
@@ -1008,6 +1022,7 @@ public enum MeasureProto
    *   PV_t = CF_t / (1+r)^t, n = coupon frequency (periods per year).
    * Model assumptions:
    *   - Same as MACAULAY_DURATION (flat yield curve, YTM-based discounting).
+   *   - For TIPS: y = REAL_YIELD and CF_t are the inflation-adjusted cash flows.
    *   - For FRN: uses flat-forwards effective YTM (same model as PRESENT_VALUE).
    *   - Settlement on a coupon date (integer period exponents).
    * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
@@ -1063,6 +1078,7 @@ public enum MeasureProto
    * Formula:
    *   ModifiedDuration = MacaulayDuration / (1 + ytm/n)
    *   where ytm = yield to maturity (annual), n = coupon periods per year.
+   *   For TIPS, ytm = REAL_YIELD (on the inflation-adjusted cash flows).
    * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
    * Units: Years (dimensionally equivalent to years, interpreted as % per 100bp).
    * </pre>

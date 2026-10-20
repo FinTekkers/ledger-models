@@ -92,7 +92,7 @@
       "applies_to": ["BOND_SECURITY", "TIPS"],
       "model_assumptions": [
         "Coupon reinvestment at the YTM rate (standard bond math assumption)",
-        "For TIPS: uses inflation-adjusted principal for cashflows, yielding a mixed rate — use REAL_YIELD instead",
+        "For TIPS: returns the same value as REAL_YIELD, with the response summary warning \"YIELD_TO_MATURITY for TIPS is the real yield (same as REAL_YIELD); a nominal yield needs an inflation forecast\"",
         "Settlement on a coupon date (no accrued interest adjustment currently)",
         "Day count: Actual/365 for years-to-maturity",
         "Solver: Newton-Raphson iteration with linear approximation initial guess"
@@ -126,7 +126,7 @@
       "applies_to": ["BOND_SECURITY", "TIPS"],
       "model_assumptions": [
         "Same as YIELD_TO_MATURITY (the discount rate is derived from the input price)",
-        "For TIPS: cashflows use inflation-adjusted principal",
+        "For TIPS: inflation-adjusted cash flows discounted at REAL_YIELD, consistent with clean_price × index_ratio",
         "Three-way invariant: price == present_value == sum(cashflow_pvs)"
       ],
       "implemented": true
@@ -136,13 +136,13 @@
       "enum_value": 10,
       "display_name": "Real Yield",
       "description": "The yield of a TIPS bond in real (inflation-adjusted) terms. This is the return an investor earns above the rate of inflation.",
-      "formula": "Delegates to YTM calculator with inflation-adjusted principal cashflows",
+      "formula": "Solve for r: clean_price × index_ratio × face / 100 = Sum[PV(inflation-adjusted cash flows at r)]",
       "units": "Decimal (0-1 scale; e.g. 0.02 = 2.00% real annual yield)",
       "category": "yield",
       "applies_to": ["TIPS"],
       "model_assumptions": [
-        "Same as YIELD_TO_MATURITY but applied to TIPS securities",
-        "Known limitation: mixes real price with nominal (inflation-adjusted) cashflows, producing a rate that is not the true real yield for non-par TIPS"
+        "Same solver and conventions as YIELD_TO_MATURITY",
+        "The quoted real price is scaled by the same index ratio as the cash flows, so the result is the true real yield and does not change with CPI"
       ],
       "implemented": true
     },
