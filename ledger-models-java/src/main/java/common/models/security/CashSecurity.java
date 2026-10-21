@@ -80,7 +80,8 @@ public class CashSecurity extends Security {
 
     @Override
     public String getAssetClass() {
-        return ASSET_CLASS;
+        String stored = super.getAssetClass(); // hydrates link-mode wrappers
+        return getProto().getAssetClass().isEmpty() ? ASSET_CLASS : stored;
     }
 
     @Override
