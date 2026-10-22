@@ -472,6 +472,36 @@ pub struct SecurityCurvePoint {
         super::super::models::util::DecimalValueProto,
     >,
 }
+/// ═══════════════════════════════════════════════════════════════════════════
+/// TaxLotInputProto — one open tax lot of the valued position, carried on
+/// ValuationRequestProto.tax_lots (27) for ADJUSTED_COST_BASIS (LM-364).
+///
+/// Every field is required. See docs/adr/amortisation_elections.md.
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TaxLotInputProto {
+    /// The date the lot was purchased. AmortisationElectionsProto.effective_from
+    /// applies the elections to lots purchased on or after it, compared with
+    /// this date.
+    #[prost(message, optional, tag = "1")]
+    pub trade_date: ::core::option::Option<super::super::models::util::LocalDateProto>,
+    /// Amortisation accrues from this date: the constant yield is solved so the
+    /// lot's cash flows from settlement_date price at `price`.
+    #[prost(message, optional, tag = "2")]
+    pub settlement_date: ::core::option::Option<
+        super::super::models::util::LocalDateProto,
+    >,
+    /// The lot's open quantity, in the same units as the position's quantity
+    /// (face-value dollars for bonds). Positive.
+    #[prost(message, optional, tag = "3")]
+    pub quantity: ::core::option::Option<super::super::models::util::DecimalValueProto>,
+    /// The lot's purchase price, clean, per 100 face (99.75 = 99.75% of par).
+    /// TIPS: the real (unadjusted) price, as quoted. It is not multiplied by the
+    /// index ratio.
+    #[prost(message, optional, tag = "4")]
+    pub price: ::core::option::Option<super::super::models::util::DecimalValueProto>,
+}
 /// Developer notes. This will need some re-organization once we start thinking through
 /// varied valuations (e.g. value over a time range, value multiple securities in the same
 /// request/etc. For now, the caller will need to make individual requests.
@@ -512,6 +542,17 @@ pub struct ValuationRequestProto {
     pub asof_datetime: ::core::option::Option<
         super::super::models::util::LocalTimestampProto,
     >,
+    /// The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
+    /// Callers copy them from PortfolioProto.amortisation_elections (11). The
+    /// service is stateless and reads only this field. Unset: every default.
+    #[prost(message, optional, tag = "26")]
+    pub amortisation_elections: ::core::option::Option<
+        super::super::models::portfolio::AmortisationElectionsProto,
+    >,
+    /// The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
+    /// Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
+    #[prost(message, repeated, tag = "27")]
+    pub tax_lots: ::prost::alloc::vec::Vec<TaxLotInputProto>,
     /// Product-specific input — determines the calculation path in the service.
     /// When set, the service routes to the new engine dispatch; existing flat fields
     /// (security_input, price_input, etc.) are ignored for the purposes of the

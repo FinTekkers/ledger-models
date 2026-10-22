@@ -57,12 +57,17 @@
       "name": "ADJUSTED_COST_BASIS",
       "enum_value": 4,
       "display_name": "Adjusted Cost Basis",
-      "description": "The cost basis adjusted for amortization of premium, accretion of discount, or corporate actions (e.g. stock splits, return of capital). Reserved for future use.",
-      "formula": null,
-      "units": "Quoted price (% of par for bonds; dollar price for equities)",
+      "description": "Tax amortised cost, constant yield, per 100 face, quantity-weighted across open lots. Premium is amortised and market discount accreted per the holder's tax elections (AmortisationElectionsProto). Absent, never 0, when there are no open lots.",
+      "formula": "AdjustedCostBasis = sum(quantity_i * acb_i) / sum(quantity_i) over the open lots in ValuationRequestProto.tax_lots, where acb_i is lot i's amortised cost per 100 face at the valuation date under the constant yield y_i that prices its remaining cash flows at price_i on settlement_date_i",
+      "units": "Price per 100 face (% of par)",
       "category": "cost",
-      "applies_to": ["BOND_SECURITY", "TIPS", "FRN", "EQUITY_SECURITY"],
-      "model_assumptions": [],
+      "applies_to": ["BOND_SECURITY", "TIPS", "FRN"],
+      "model_assumptions": [
+        "Constant-yield amortisation from each lot's settlement_date",
+        "Elections from ValuationRequestProto.amortisation_elections apply to lots whose trade_date is on or after effective_from; unset fields use the defaults",
+        "TIPS: lot price is the real (unadjusted) price; amortised in real terms, then multiplied by the index ratio at the valuation date, so the result is per 100 of original face in nominal dollars",
+        "Tax basis only; book (GAAP/IFRS) cost is out of scope"
+      ],
       "implemented": false
     },
     {

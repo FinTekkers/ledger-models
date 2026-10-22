@@ -12,6 +12,7 @@ import "fintekkers/models/position/measure.proto";
 import "fintekkers/requests/valuation/product_inputs.proto";
 import "fintekkers/models/util/object_type.proto";
 import "fintekkers/models/util/version.proto";
+import "fintekkers/models/portfolio/amortisation_elections.proto";
 
 option java_multiple_files = true;
 
@@ -48,6 +49,15 @@ message ValuationRequestProto {
   //FRNs: ProductInput.frn.curve (FrnInput.curve); there is no flat-rate path.
   reserved 24, 25;
   reserved "cpi_price_input", "reference_rate_input";
+
+  //The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
+  //Callers copy them from PortfolioProto.amortisation_elections (11). The
+  //service is stateless and reads only this field. Unset: every default.
+  fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;
+
+  //The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
+  //Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
+  repeated TaxLotInputProto tax_lots = 27;
 
   // Product-specific input — determines the calculation path in the service.
   // When set, the service routes to the new engine dispatch; existing flat fields

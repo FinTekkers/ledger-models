@@ -14,6 +14,7 @@ import * as fintekkers_models_position_measure_pb from "../../../fintekkers/mode
 import * as fintekkers_requests_valuation_product_inputs_pb from "../../../fintekkers/requests/valuation/product_inputs_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
+import * as fintekkers_models_portfolio_amortisation_elections_pb from "../../../fintekkers/models/portfolio/amortisation_elections_pb";
 
 export class ValuationRequestProto extends jspb.Message { 
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;
@@ -50,6 +51,15 @@ export class ValuationRequestProto extends jspb.Message {
     getAsofDatetime(): fintekkers_models_util_local_timestamp_pb.LocalTimestampProto | undefined;
     setAsofDatetime(value?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto): ValuationRequestProto;
 
+    hasAmortisationElections(): boolean;
+    clearAmortisationElections(): void;
+    getAmortisationElections(): fintekkers_models_portfolio_amortisation_elections_pb.AmortisationElectionsProto | undefined;
+    setAmortisationElections(value?: fintekkers_models_portfolio_amortisation_elections_pb.AmortisationElectionsProto): ValuationRequestProto;
+    clearTaxLotsList(): void;
+    getTaxLotsList(): Array<fintekkers_requests_valuation_product_inputs_pb.TaxLotInputProto>;
+    setTaxLotsList(value: Array<fintekkers_requests_valuation_product_inputs_pb.TaxLotInputProto>): ValuationRequestProto;
+    addTaxLots(value?: fintekkers_requests_valuation_product_inputs_pb.TaxLotInputProto, index?: number): fintekkers_requests_valuation_product_inputs_pb.TaxLotInputProto;
+
     hasProductInput(): boolean;
     clearProductInput(): void;
     getProductInput(): fintekkers_requests_valuation_product_inputs_pb.ProductInput | undefined;
@@ -75,6 +85,8 @@ export namespace ValuationRequestProto {
         positionInput?: fintekkers_models_position_position_pb.PositionProto.AsObject,
         priceInput?: fintekkers_models_price_price_pb.PriceProto.AsObject,
         asofDatetime?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
+        amortisationElections?: fintekkers_models_portfolio_amortisation_elections_pb.AmortisationElectionsProto.AsObject,
+        taxLotsList: Array<fintekkers_requests_valuation_product_inputs_pb.TaxLotInputProto.AsObject>,
         productInput?: fintekkers_requests_valuation_product_inputs_pb.ProductInput.AsObject,
     }
 }

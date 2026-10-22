@@ -123,3 +123,15 @@ class SecurityCurvePoint(_message.Message):
     security: _security_pb2.SecurityProto
     clean_price: _decimal_value_pb2.DecimalValueProto
     def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
+
+class TaxLotInputProto(_message.Message):
+    __slots__ = ("trade_date", "settlement_date", "quantity", "price")
+    TRADE_DATE_FIELD_NUMBER: _ClassVar[int]
+    SETTLEMENT_DATE_FIELD_NUMBER: _ClassVar[int]
+    QUANTITY_FIELD_NUMBER: _ClassVar[int]
+    PRICE_FIELD_NUMBER: _ClassVar[int]
+    trade_date: _local_date_pb2.LocalDateProto
+    settlement_date: _local_date_pb2.LocalDateProto
+    quantity: _decimal_value_pb2.DecimalValueProto
+    price: _decimal_value_pb2.DecimalValueProto
+    def __init__(self, trade_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., settlement_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., quantity: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...

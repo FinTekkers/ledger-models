@@ -74,6 +74,11 @@ public final class ProductInputProtos {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_fintekkers_requests_valuation_SecurityCurvePoint_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fintekkers_requests_valuation_TaxLotInputProto_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fintekkers_requests_valuation_TaxLotInputProto_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -146,8 +151,14 @@ public final class ProductInputProtos {
       "rvePoint\022;\n\010security\030\001 \001(\0132).fintekkers." +
       "models.security.SecurityProto\022>\n\013clean_p" +
       "rice\030\002 \001(\0132).fintekkers.models.util.Deci" +
-      "malValueProtoB\026B\022ProductInputProtosP\001b\006p" +
-      "roto3"
+      "malValueProto\"\206\002\n\020TaxLotInputProto\022:\n\ntr" +
+      "ade_date\030\001 \001(\0132&.fintekkers.models.util." +
+      "LocalDateProto\022?\n\017settlement_date\030\002 \001(\0132" +
+      "&.fintekkers.models.util.LocalDateProto\022" +
+      ";\n\010quantity\030\003 \001(\0132).fintekkers.models.ut" +
+      "il.DecimalValueProto\0228\n\005price\030\004 \001(\0132).fi" +
+      "ntekkers.models.util.DecimalValueProtoB\026" +
+      "B\022ProductInputProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -229,6 +240,12 @@ public final class ProductInputProtos {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_SecurityCurvePoint_descriptor,
         new java.lang.String[] { "Security", "CleanPrice", });
+    internal_static_fintekkers_requests_valuation_TaxLotInputProto_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_fintekkers_requests_valuation_TaxLotInputProto_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fintekkers_requests_valuation_TaxLotInputProto_descriptor,
+        new java.lang.String[] { "TradeDate", "SettlementDate", "Quantity", "Price", });
     fintekkers.models.security.SecurityProtos.getDescriptor();
     fintekkers.models.security.index.IndexTypeProtos.getDescriptor();
     fintekkers.models.util.DecimalValue.getDescriptor();

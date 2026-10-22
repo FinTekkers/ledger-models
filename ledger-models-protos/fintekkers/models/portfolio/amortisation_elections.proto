@@ -1,0 +1,42 @@
+syntax = "proto3";
+package fintekkers.models.portfolio;
+import "fintekkers/models/util/local_date.proto";
+option java_multiple_files = true;
+option java_outer_classname = "AmortisationElectionsProtos";
+
+// The holder's US tax elections for amortising bond premium and discount
+// (VS-110, LM-364). See docs/adr/amortisation_elections.md.
+// Every field's zero value means "use the default". An unset message means
+// every default. Tax elections only: book (GAAP/IFRS) elections are out of
+// scope.
+//
+// Fields 1 and 2 are not used. This is a value nested in PortfolioProto and
+// ValuationRequestProto, not a stamped message (LM-318).
+message AmortisationElectionsProto {
+  PremiumAmortisationElectionProto bond_premium = 10;             // IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+  MarketDiscountInclusionProto market_discount_inclusion = 11;    // IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+  MarketDiscountAccrualMethodProto market_discount_accrual = 12;  // IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+
+  // The elections apply to lots purchased on or after this date: lots whose
+  // TaxLotInputProto.trade_date is on or after effective_from. Unset: they
+  // apply to every lot, since inception.
+  fintekkers.models.util.LocalDateProto effective_from = 13;
+}
+
+enum PremiumAmortisationElectionProto {
+  UNSPECIFIED_PREMIUM_ELECTION = 0;  // Use the default: PREMIUM_ELECTED.
+  PREMIUM_ELECTED = 1;
+  PREMIUM_NOT_ELECTED = 2;
+}
+
+enum MarketDiscountInclusionProto {
+  UNSPECIFIED_MARKET_DISCOUNT_INCLUSION = 0;  // Use the default: AT_DISPOSITION.
+  AT_DISPOSITION = 1;
+  INCLUDE_CURRENTLY = 2;
+}
+
+enum MarketDiscountAccrualMethodProto {
+  UNSPECIFIED_ACCRUAL_METHOD = 0;  // Use the default: RATABLE.
+  RATABLE = 1;
+  CONSTANT_YIELD = 2;
+}

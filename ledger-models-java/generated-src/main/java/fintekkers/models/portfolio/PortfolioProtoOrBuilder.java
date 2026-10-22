@@ -135,4 +135,37 @@ public interface PortfolioProtoOrBuilder extends
    */
   com.google.protobuf.ByteString
       getPortfolioNameBytes();
+
+  /**
+   * <pre>
+   * The portfolio's tax amortisation elections (LM-364). Unset: every default
+   * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+   * ValuationRequestProto.amortisation_elections (26).
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+   * @return Whether the amortisationElections field is set.
+   */
+  boolean hasAmortisationElections();
+  /**
+   * <pre>
+   * The portfolio's tax amortisation elections (LM-364). Unset: every default
+   * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+   * ValuationRequestProto.amortisation_elections (26).
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+   * @return The amortisationElections.
+   */
+  fintekkers.models.portfolio.AmortisationElectionsProto getAmortisationElections();
+  /**
+   * <pre>
+   * The portfolio's tax amortisation elections (LM-364). Unset: every default
+   * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+   * ValuationRequestProto.amortisation_elections (26).
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+   */
+  fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder getAmortisationElectionsOrBuilder();
 }

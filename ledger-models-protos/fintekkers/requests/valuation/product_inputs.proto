@@ -262,3 +262,29 @@ message SecurityCurvePoint {
   // Market clean price as a percentage of face value (e.g. 99.50 = 99.50% of par).
   fintekkers.models.util.DecimalValueProto clean_price = 2;
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TaxLotInputProto — one open tax lot of the valued position, carried on
+// ValuationRequestProto.tax_lots (27) for ADJUSTED_COST_BASIS (LM-364).
+//
+// Every field is required. See docs/adr/amortisation_elections.md.
+// ═══════════════════════════════════════════════════════════════════════════
+message TaxLotInputProto {
+  // The date the lot was purchased. AmortisationElectionsProto.effective_from
+  // applies the elections to lots purchased on or after it, compared with
+  // this date.
+  fintekkers.models.util.LocalDateProto trade_date = 1;
+
+  // Amortisation accrues from this date: the constant yield is solved so the
+  // lot's cash flows from settlement_date price at `price`.
+  fintekkers.models.util.LocalDateProto settlement_date = 2;
+
+  // The lot's open quantity, in the same units as the position's quantity
+  // (face-value dollars for bonds). Positive.
+  fintekkers.models.util.DecimalValueProto quantity = 3;
+
+  // The lot's purchase price, clean, per 100 face (99.75 = 99.75% of par).
+  // TIPS: the real (unadjusted) price, as quoted. It is not multiplied by the
+  // index ratio.
+  fintekkers.models.util.DecimalValueProto price = 4;
+}

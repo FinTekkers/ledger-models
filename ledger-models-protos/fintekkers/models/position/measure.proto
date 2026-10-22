@@ -61,12 +61,37 @@ enum MeasureProto {
   // Units: Quoted price (% of par for bonds; dollar price for equities).
   UNADJUSTED_COST_BASIS = 3;
 
-  // Reserved for future use. The cost basis adjusted for amortization of premium,
-  // accretion of discount, or corporate actions (e.g. stock splits, return of capital).
+  // Tax amortised cost, constant yield, per 100 face, quantity-weighted across
+  // open lots (LM-364). See docs/adr/amortisation_elections.md.
   //
-  // Not currently implemented.
-  // Applicability: Bond, TIPS, FRN, Equity.
-  // Units: Quoted price (% of par for bonds; dollar price for equities).
+  // Inputs: ValuationRequestProto.tax_lots (27), the open lots of the position,
+  //   and ValuationRequestProto.amortisation_elections (26).
+  //
+  // Formula, for each open lot i:
+  //   y_i   = the constant yield at which the bond's remaining cash flows from
+  //           settlement_date_i price at price_i.
+  //   acb_i = the lot's amortised cost per 100 face at asof_datetime: price_i,
+  //           less premium amortised and plus discount accreted under y_i,
+  //           accruing from settlement_date_i.
+  //   AdjustedCostBasis = sum(quantity_i * acb_i) / sum(quantity_i)
+  //
+  // Elections (AmortisationElectionsProto) apply to lots purchased (trade_date)
+  // on or after effective_from; other lots use every default.
+  //   - Premium (IRC §171): amortised when elected (the default); otherwise the
+  //     premium stays in the basis.
+  //   - Market discount: accreted only with INCLUDE_CURRENTLY, by RATABLE (the
+  //     default) or CONSTANT_YIELD; AT_DISPOSITION (the default) leaves it out.
+  //
+  // TIPS: lot price is the real (unadjusted) price. Amortise in real terms,
+  //   then multiply by INDEX_RATIO at the valuation date, as MARKET_VALUE does.
+  //   The result is per 100 of original face, in nominal (today's) dollars.
+  //
+  // The measure is absent, never 0, when there are no open lots; the response
+  // carries a "no open lots" warning.
+  //
+  // Tax basis only. Book (GAAP/IFRS) cost is out of scope.
+  // Applicability: Bond (fixed rate), TIPS, FRN.
+  // Units: Price per 100 face (% of par).
   ADJUSTED_COST_BASIS = 4;
 
   // Annual coupon income as a percentage of the current market price.

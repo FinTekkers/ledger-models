@@ -268,6 +268,50 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int AMORTISATION_ELECTIONS_FIELD_NUMBER = 11;
+  private fintekkers.models.portfolio.AmortisationElectionsProto amortisationElections_;
+  /**
+   * <pre>
+   * The portfolio's tax amortisation elections (LM-364). Unset: every default
+   * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+   * ValuationRequestProto.amortisation_elections (26).
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+   * @return Whether the amortisationElections field is set.
+   */
+  @java.lang.Override
+  public boolean hasAmortisationElections() {
+    return amortisationElections_ != null;
+  }
+  /**
+   * <pre>
+   * The portfolio's tax amortisation elections (LM-364). Unset: every default
+   * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+   * ValuationRequestProto.amortisation_elections (26).
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+   * @return The amortisationElections.
+   */
+  @java.lang.Override
+  public fintekkers.models.portfolio.AmortisationElectionsProto getAmortisationElections() {
+    return amortisationElections_ == null ? fintekkers.models.portfolio.AmortisationElectionsProto.getDefaultInstance() : amortisationElections_;
+  }
+  /**
+   * <pre>
+   * The portfolio's tax amortisation elections (LM-364). Unset: every default
+   * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+   * ValuationRequestProto.amortisation_elections (26).
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder getAmortisationElectionsOrBuilder() {
+    return amortisationElections_ == null ? fintekkers.models.portfolio.AmortisationElectionsProto.getDefaultInstance() : amortisationElections_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -305,6 +349,9 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(portfolioName_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 10, portfolioName_);
+    }
+    if (amortisationElections_ != null) {
+      output.writeMessage(11, getAmortisationElections());
     }
     getUnknownFields().writeTo(output);
   }
@@ -345,6 +392,10 @@ private static final long serialVersionUID = 0L;
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(portfolioName_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, portfolioName_);
+    }
+    if (amortisationElections_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(11, getAmortisationElections());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -391,6 +442,11 @@ private static final long serialVersionUID = 0L;
     }
     if (!getPortfolioName()
         .equals(other.getPortfolioName())) return false;
+    if (hasAmortisationElections() != other.hasAmortisationElections()) return false;
+    if (hasAmortisationElections()) {
+      if (!getAmortisationElections()
+          .equals(other.getAmortisationElections())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -429,6 +485,10 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + PORTFOLIO_NAME_FIELD_NUMBER;
     hash = (53 * hash) + getPortfolioName().hashCode();
+    if (hasAmortisationElections()) {
+      hash = (37 * hash) + AMORTISATION_ELECTIONS_FIELD_NUMBER;
+      hash = (53 * hash) + getAmortisationElections().hashCode();
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -586,6 +646,11 @@ private static final long serialVersionUID = 0L;
         validToBuilder_ = null;
       }
       portfolioName_ = "";
+      amortisationElections_ = null;
+      if (amortisationElectionsBuilder_ != null) {
+        amortisationElectionsBuilder_.dispose();
+        amortisationElectionsBuilder_ = null;
+      }
       return this;
     }
 
@@ -652,6 +717,11 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000080) != 0)) {
         result.portfolioName_ = portfolioName_;
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.amortisationElections_ = amortisationElectionsBuilder_ == null
+            ? amortisationElections_
+            : amortisationElectionsBuilder_.build();
       }
     }
 
@@ -724,6 +794,9 @@ private static final long serialVersionUID = 0L;
         portfolioName_ = other.portfolioName_;
         bitField0_ |= 0x00000080;
         onChanged();
+      }
+      if (other.hasAmortisationElections()) {
+        mergeAmortisationElections(other.getAmortisationElections());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -801,6 +874,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000080;
               break;
             } // case 82
+            case 90: {
+              input.readMessage(
+                  getAmortisationElectionsFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000100;
+              break;
+            } // case 90
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1639,6 +1719,179 @@ private static final long serialVersionUID = 0L;
       bitField0_ |= 0x00000080;
       onChanged();
       return this;
+    }
+
+    private fintekkers.models.portfolio.AmortisationElectionsProto amortisationElections_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.portfolio.AmortisationElectionsProto, fintekkers.models.portfolio.AmortisationElectionsProto.Builder, fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder> amortisationElectionsBuilder_;
+    /**
+     * <pre>
+     * The portfolio's tax amortisation elections (LM-364). Unset: every default
+     * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+     * ValuationRequestProto.amortisation_elections (26).
+     * </pre>
+     *
+     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+     * @return Whether the amortisationElections field is set.
+     */
+    public boolean hasAmortisationElections() {
+      return ((bitField0_ & 0x00000100) != 0);
+    }
+    /**
+     * <pre>
+     * The portfolio's tax amortisation elections (LM-364). Unset: every default
+     * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+     * ValuationRequestProto.amortisation_elections (26).
+     * </pre>
+     *
+     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+     * @return The amortisationElections.
+     */
+    public fintekkers.models.portfolio.AmortisationElectionsProto getAmortisationElections() {
+      if (amortisationElectionsBuilder_ == null) {
+        return amortisationElections_ == null ? fintekkers.models.portfolio.AmortisationElectionsProto.getDefaultInstance() : amortisationElections_;
+      } else {
+        return amortisationElectionsBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The portfolio's tax amortisation elections (LM-364). Unset: every default
+     * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+     * ValuationRequestProto.amortisation_elections (26).
+     * </pre>
+     *
+     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+     */
+    public Builder setAmortisationElections(fintekkers.models.portfolio.AmortisationElectionsProto value) {
+      if (amortisationElectionsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        amortisationElections_ = value;
+      } else {
+        amortisationElectionsBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The portfolio's tax amortisation elections (LM-364). Unset: every default
+     * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+     * ValuationRequestProto.amortisation_elections (26).
+     * </pre>
+     *
+     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+     */
+    public Builder setAmortisationElections(
+        fintekkers.models.portfolio.AmortisationElectionsProto.Builder builderForValue) {
+      if (amortisationElectionsBuilder_ == null) {
+        amortisationElections_ = builderForValue.build();
+      } else {
+        amortisationElectionsBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The portfolio's tax amortisation elections (LM-364). Unset: every default
+     * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+     * ValuationRequestProto.amortisation_elections (26).
+     * </pre>
+     *
+     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+     */
+    public Builder mergeAmortisationElections(fintekkers.models.portfolio.AmortisationElectionsProto value) {
+      if (amortisationElectionsBuilder_ == null) {
+        if (((bitField0_ & 0x00000100) != 0) &&
+          amortisationElections_ != null &&
+          amortisationElections_ != fintekkers.models.portfolio.AmortisationElectionsProto.getDefaultInstance()) {
+          getAmortisationElectionsBuilder().mergeFrom(value);
+        } else {
+          amortisationElections_ = value;
+        }
+      } else {
+        amortisationElectionsBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The portfolio's tax amortisation elections (LM-364). Unset: every default
+     * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+     * ValuationRequestProto.amortisation_elections (26).
+     * </pre>
+     *
+     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+     */
+    public Builder clearAmortisationElections() {
+      bitField0_ = (bitField0_ & ~0x00000100);
+      amortisationElections_ = null;
+      if (amortisationElectionsBuilder_ != null) {
+        amortisationElectionsBuilder_.dispose();
+        amortisationElectionsBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The portfolio's tax amortisation elections (LM-364). Unset: every default
+     * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+     * ValuationRequestProto.amortisation_elections (26).
+     * </pre>
+     *
+     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+     */
+    public fintekkers.models.portfolio.AmortisationElectionsProto.Builder getAmortisationElectionsBuilder() {
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return getAmortisationElectionsFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The portfolio's tax amortisation elections (LM-364). Unset: every default
+     * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+     * ValuationRequestProto.amortisation_elections (26).
+     * </pre>
+     *
+     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+     */
+    public fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder getAmortisationElectionsOrBuilder() {
+      if (amortisationElectionsBuilder_ != null) {
+        return amortisationElectionsBuilder_.getMessageOrBuilder();
+      } else {
+        return amortisationElections_ == null ?
+            fintekkers.models.portfolio.AmortisationElectionsProto.getDefaultInstance() : amortisationElections_;
+      }
+    }
+    /**
+     * <pre>
+     * The portfolio's tax amortisation elections (LM-364). Unset: every default
+     * applies. Callers that request ADJUSTED_COST_BASIS copy this into
+     * ValuationRequestProto.amortisation_elections (26).
+     * </pre>
+     *
+     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.portfolio.AmortisationElectionsProto, fintekkers.models.portfolio.AmortisationElectionsProto.Builder, fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder> 
+        getAmortisationElectionsFieldBuilder() {
+      if (amortisationElectionsBuilder_ == null) {
+        amortisationElectionsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.portfolio.AmortisationElectionsProto, fintekkers.models.portfolio.AmortisationElectionsProto.Builder, fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder>(
+                getAmortisationElections(),
+                getParentForChildren(),
+                isClean());
+        amortisationElections_ = null;
+      }
+      return amortisationElectionsBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

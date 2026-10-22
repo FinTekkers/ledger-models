@@ -6,6 +6,7 @@ import "fintekkers/models/util/local_timestamp.proto";
 import "fintekkers/models/util/uuid.proto";
 import "fintekkers/models/util/object_type.proto";
 import "fintekkers/models/util/version.proto";
+import "fintekkers/models/portfolio/amortisation_elections.proto";
 
 option java_multiple_files = true;
 
@@ -28,4 +29,9 @@ message PortfolioProto {
   util.LocalTimestampProto valid_to = 9;
 
   string portfolio_name = 10;
+
+  // The portfolio's tax amortisation elections (LM-364). Unset: every default
+  // applies. Callers that request ADJUSTED_COST_BASIS copy this into
+  // ValuationRequestProto.amortisation_elections (26).
+  AmortisationElectionsProto amortisation_elections = 11;
 }

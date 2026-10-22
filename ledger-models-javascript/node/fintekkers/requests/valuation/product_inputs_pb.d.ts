@@ -411,3 +411,44 @@ export namespace SecurityCurvePoint {
         cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }
+
+export class TaxLotInputProto extends jspb.Message { 
+
+    hasTradeDate(): boolean;
+    clearTradeDate(): void;
+    getTradeDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
+    setTradeDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): TaxLotInputProto;
+
+    hasSettlementDate(): boolean;
+    clearSettlementDate(): void;
+    getSettlementDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
+    setSettlementDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): TaxLotInputProto;
+
+    hasQuantity(): boolean;
+    clearQuantity(): void;
+    getQuantity(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setQuantity(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TaxLotInputProto;
+
+    hasPrice(): boolean;
+    clearPrice(): void;
+    getPrice(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setPrice(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TaxLotInputProto;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): TaxLotInputProto.AsObject;
+    static toObject(includeInstance: boolean, msg: TaxLotInputProto): TaxLotInputProto.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: TaxLotInputProto, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): TaxLotInputProto;
+    static deserializeBinaryFromReader(message: TaxLotInputProto, reader: jspb.BinaryReader): TaxLotInputProto;
+}
+
+export namespace TaxLotInputProto {
+    export type AsObject = {
+        tradeDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
+        settlementDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
+        quantity?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        price?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+    }
+}

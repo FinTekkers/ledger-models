@@ -216,6 +216,88 @@ public interface ValuationRequestProtoOrBuilder extends
 
   /**
    * <pre>
+   *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
+   *Callers copy them from PortfolioProto.amortisation_elections (11). The
+   *service is stateless and reads only this field. Unset: every default.
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
+   * @return Whether the amortisationElections field is set.
+   */
+  boolean hasAmortisationElections();
+  /**
+   * <pre>
+   *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
+   *Callers copy them from PortfolioProto.amortisation_elections (11). The
+   *service is stateless and reads only this field. Unset: every default.
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
+   * @return The amortisationElections.
+   */
+  fintekkers.models.portfolio.AmortisationElectionsProto getAmortisationElections();
+  /**
+   * <pre>
+   *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
+   *Callers copy them from PortfolioProto.amortisation_elections (11). The
+   *service is stateless and reads only this field. Unset: every default.
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
+   */
+  fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder getAmortisationElectionsOrBuilder();
+
+  /**
+   * <pre>
+   *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
+   *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
+   */
+  java.util.List<fintekkers.requests.valuation.TaxLotInputProto> 
+      getTaxLotsList();
+  /**
+   * <pre>
+   *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
+   *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
+   */
+  fintekkers.requests.valuation.TaxLotInputProto getTaxLots(int index);
+  /**
+   * <pre>
+   *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
+   *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
+   */
+  int getTaxLotsCount();
+  /**
+   * <pre>
+   *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
+   *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
+   */
+  java.util.List<? extends fintekkers.requests.valuation.TaxLotInputProtoOrBuilder> 
+      getTaxLotsOrBuilderList();
+  /**
+   * <pre>
+   *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
+   *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
+   */
+  fintekkers.requests.valuation.TaxLotInputProtoOrBuilder getTaxLotsOrBuilder(
+      int index);
+
+  /**
+   * <pre>
    * Product-specific input — determines the calculation path in the service.
    * When set, the service routes to the new engine dispatch; existing flat fields
    * (security_input, price_input, etc.) are ignored for the purposes of the
