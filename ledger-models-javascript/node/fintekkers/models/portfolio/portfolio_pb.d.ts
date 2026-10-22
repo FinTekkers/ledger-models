@@ -5,6 +5,7 @@
 /* eslint-disable */
 
 import * as jspb from "google-protobuf";
+import * as fintekkers_models_portfolio_amortisation_elections_pb from "../../../fintekkers/models/portfolio/amortisation_elections_pb";
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
@@ -43,6 +44,11 @@ export class PortfolioProto extends jspb.Message {
     getPortfolioName(): string;
     setPortfolioName(value: string): PortfolioProto;
 
+    hasAmortisationElections(): boolean;
+    clearAmortisationElections(): void;
+    getAmortisationElections(): fintekkers_models_portfolio_amortisation_elections_pb.AmortisationElectionsProto | undefined;
+    setAmortisationElections(value?: fintekkers_models_portfolio_amortisation_elections_pb.AmortisationElectionsProto): PortfolioProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): PortfolioProto.AsObject;
     static toObject(includeInstance: boolean, msg: PortfolioProto): PortfolioProto.AsObject;
@@ -63,5 +69,6 @@ export namespace PortfolioProto {
         validFrom?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         validTo?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         portfolioName: string,
+        amortisationElections?: fintekkers_models_portfolio_amortisation_elections_pb.AmortisationElectionsProto.AsObject,
     }
 }

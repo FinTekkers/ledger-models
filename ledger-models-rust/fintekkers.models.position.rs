@@ -194,12 +194,41 @@ pub enum MeasureProto {
     /// Applicability: Bond, TIPS, FRN, Equity, Cash.
     /// Units: Quoted price (% of par for bonds; dollar price for equities).
     UnadjustedCostBasis = 3,
-    /// Reserved for future use. The cost basis adjusted for amortization of premium,
-    /// accretion of discount, or corporate actions (e.g. stock splits, return of capital).
+    /// Tax amortised cost, per 100 face, quantity-weighted over the open lots
+    /// (LM-364; implemented under VS-110). See docs/adr/amortisation_elections.md.
     ///
-    /// Not currently implemented.
-    /// Applicability: Bond, TIPS, FRN, Equity.
-    /// Units: Quoted price (% of par for bonds; dollar price for equities).
+    /// Inputs: cost_basis (CostBasisInput) on BondInput, TipsInput or FrnInput:
+    ///    lots, the holding's open TaxLotProto lots, and elections, the
+    ///    portfolio's AmortisationElectionsProto (unset = every default).
+    ///
+    /// Formula, for each open lot i:
+    ///    acb_i = the lot's amortised cost per 100 face at the valuation date:
+    ///            price_i, adjusted by the OID, premium and market-discount rules below.
+    ///    AdjustedCostBasis = sum(open_quantity_i * acb_i) / sum(open_quantity_i)
+    ///
+    /// OID: always accreted (mandatory, whatever the elections) at constant yield
+    ///    from the issue price (IssuanceProto.price_for_single_price_auction,
+    ///    MDI-82), reduced by any acquisition premium.
+    /// Premium (IRC §171): amortised at constant yield if elected
+    ///    (bond_premium; the default is PREMIUM_ELECTED).
+    /// Market discount: accreted only with INCLUDE_CURRENTLY, ratably or at
+    ///    constant yield per market_discount_accrual (the default is RATABLE);
+    ///    otherwise (AT_DISPOSITION, the default) left until disposition.
+    /// De minimis: OID and market discount below 0.25% × complete years to
+    ///    maturity are treated as zero.
+    /// Accrual start: from each lot's open_date plus the product's settlement lag
+    ///    (e.g. T+1 for Treasuries).
+    /// TIPS: amortise in real terms, then multiply by the index ratio
+    ///    (INDEX_RATIO) at the valuation date, giving a figure per 100 original
+    ///    face in nominal dollars.
+    /// FRN: use the equivalent fixed rate from the fixing at settlement.
+    /// No lots: the measure is absent, with a "no open lots" warning, never 0.
+    ///
+    /// Scope: tax basis only. Book (GAAP/IFRS) cost is out of scope.
+    /// Applicability: TREASURY_NOTE, TREASURY_BOND, SOVEREIGN_BOND, CORP_BOND,
+    ///    MUNI_BOND, TIPS, TREASURY_FRN.
+    /// Units: Price per 100 face (% of par). TIPS: per 100 original face, in
+    ///    nominal dollars.
     AdjustedCostBasis = 4,
     /// Annual coupon income as a percentage of the current market price.
     ///
@@ -940,4 +969,24 @@ impl PositionStatusProto {
             _ => None,
         }
     }
+}
+/// One open tax lot of a holding.
+///
+/// The proto form of the tax lots ledger-models already computes in Java
+/// (common.models.taxLot.TaxLotSummary). A domain model, not a request-only
+/// input: CostBasisInput.lots carries it to valuation-service for
+/// MeasureProto.ADJUSTED_COST_BASIS (LM-364).
+/// See docs/adr/amortisation_elections.md.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TaxLotProto {
+    /// the opening trade date
+    #[prost(message, optional, tag = "1")]
+    pub open_date: ::core::option::Option<super::util::LocalDateProto>,
+    /// quantity still open, in the position's units (face value for bonds)
+    #[prost(message, optional, tag = "2")]
+    pub open_quantity: ::core::option::Option<super::util::DecimalValueProto>,
+    /// purchase price per 100 face, clean; TIPS: the real (unadjusted) price
+    #[prost(message, optional, tag = "3")]
+    pub price: ::core::option::Option<super::util::DecimalValueProto>,
 }

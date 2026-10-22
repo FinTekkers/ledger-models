@@ -205,7 +205,51 @@ def lm367(key: str, old, new, head: dict) -> bool:
             and old is None and new == "MULTIPLE_PRICE")
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367]
+PORTFOLIO = ".fintekkers.models.portfolio"
+ELECTIONS = f"{PORTFOLIO}.AmortisationElectionsProto"
+TAX_LOT = ".fintekkers.models.position.TaxLotProto"
+COST_BASIS = f"{VALUATION}.CostBasisInput"
+LM364 = {
+    f"message {ELECTIONS}": "message",
+    f"field {ELECTIONS} = 10": f"{PORTFOLIO}.PremiumAmortisationElectionProto bond_premium",
+    f"field {ELECTIONS} = 11": f"{PORTFOLIO}.MarketDiscountInclusionProto market_discount_inclusion",
+    f"field {ELECTIONS} = 12": f"{PORTFOLIO}.MarketDiscountAccrualMethodProto market_discount_accrual",
+    f"enum {PORTFOLIO}.PremiumAmortisationElectionProto": "enum",
+    f"value {PORTFOLIO}.PremiumAmortisationElectionProto = 0": "UNSPECIFIED_PREMIUM_ELECTION",
+    f"value {PORTFOLIO}.PremiumAmortisationElectionProto = 1": "PREMIUM_ELECTED",
+    f"value {PORTFOLIO}.PremiumAmortisationElectionProto = 2": "PREMIUM_NOT_ELECTED",
+    f"enum {PORTFOLIO}.MarketDiscountInclusionProto": "enum",
+    f"value {PORTFOLIO}.MarketDiscountInclusionProto = 0": "UNSPECIFIED_MARKET_DISCOUNT_INCLUSION",
+    f"value {PORTFOLIO}.MarketDiscountInclusionProto = 1": "AT_DISPOSITION",
+    f"value {PORTFOLIO}.MarketDiscountInclusionProto = 2": "INCLUDE_CURRENTLY",
+    f"enum {PORTFOLIO}.MarketDiscountAccrualMethodProto": "enum",
+    f"value {PORTFOLIO}.MarketDiscountAccrualMethodProto = 0": "UNSPECIFIED_ACCRUAL_METHOD",
+    f"value {PORTFOLIO}.MarketDiscountAccrualMethodProto = 1": "RATABLE",
+    f"value {PORTFOLIO}.MarketDiscountAccrualMethodProto = 2": "CONSTANT_YIELD",
+    f"field {PORTFOLIO}.PortfolioProto = 11": f"{ELECTIONS} amortisation_elections",
+    f"message {TAX_LOT}": "message",
+    f"field {TAX_LOT} = 1": ".fintekkers.models.util.LocalDateProto open_date",
+    f"field {TAX_LOT} = 2": f"{DECIMAL} open_quantity",
+    f"field {TAX_LOT} = 3": f"{DECIMAL} price",
+    f"message {COST_BASIS}": "message",
+    f"field {COST_BASIS} = 1": f"{ELECTIONS} elections",
+    f"field {COST_BASIS} = 2": f"repeated {TAX_LOT} lots",
+    f"field {VALUATION}.BondInput = 20": f"{COST_BASIS} cost_basis",
+    f"field {VALUATION}.TipsInput = 20": f"{COST_BASIS} cost_basis",
+    f"field {VALUATION}.FrnInput = 20": f"{COST_BASIS} cost_basis",
+}
+
+
+def lm364(key: str, old, new, head: dict) -> bool:
+    """LM-364: AmortisationElectionsProto and its three enums,
+    PortfolioProto.amortisation_elections = 11, TaxLotProto, CostBasisInput
+    and cost_basis = 20 on BondInput, TipsInput and FrnInput added. Additions
+    of exactly these only; nothing on ValuationRequestProto, whose 24 and 25
+    stay reserved."""
+    return old is None and key in LM364 and new == LM364[key]
+
+
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364]
 
 
 def main() -> int:
