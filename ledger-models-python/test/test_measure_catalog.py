@@ -1,6 +1,7 @@
 """The measure catalog lists REFERENCE_CPI (28) and INDEX_RATIO (29) (LM-343),
 in the source copy and the packaged Python mirror, matching MeasureProto.
-Every language's mirror is byte-equal to the source, and LM-364 leaves the
+applies_to holds ProductTypeProto names or hierarchy.json nodes (LM-372),
+every language's mirror is byte-equal to the source, and LM-364 leaves the
 UNADJUSTED_COST_BASIS and PROFIT_LOSS entries unchanged."""
 import json
 from pathlib import Path
@@ -8,11 +9,13 @@ from pathlib import Path
 import pytest
 
 from fintekkers.models.position import measure_pb2
+from fintekkers.models.security import product_type_pb2
 
 _PYTHON = Path(__file__).resolve().parents[1]
 SOURCE = _PYTHON.parent / "ledger-models-protos" / "catalog" / "measures.json"
 MIRROR = _PYTHON / "fintekkers" / "catalog" / "measures.json"
 _REPO = _PYTHON.parent
+HIERARCHY = _REPO / "ledger-models-protos" / "hierarchy.json"
 OTHER_MIRRORS = {
     "java": _REPO / "ledger-models-java" / "src" / "main" / "resources" / "catalog" / "measures.json",
     "javascript": _REPO / "ledger-models-javascript" / "catalog" / "measures.json",
@@ -38,6 +41,24 @@ def test_python_mirror_matches_source():
 @pytest.mark.parametrize("mirror", OTHER_MIRRORS.values(), ids=OTHER_MIRRORS.keys())
 def test_language_mirror_matches_source(mirror):
     assert mirror.read_bytes() == SOURCE.read_bytes()
+
+
+def test_applies_to_names_product_types_or_hierarchy_nodes():
+    product_types = set(product_type_pb2.ProductTypeProto.keys())
+    nodes = {
+        name
+        for name, entry in json.loads(HIERARCHY.read_text())["product_types"].items()
+        if entry.get("abstract")
+    }
+    measures = json.loads(SOURCE.read_text())["measures"]
+    unknown = {
+        (m["name"], name)
+        for m in measures
+        for name in m["applies_to"]
+        if name not in product_types and name not in nodes
+    }
+    assert not unknown
+    assert any(m["applies_to"] for m in measures)
 
 
 @pytest.mark.parametrize("name", LM364_UNCHANGED["catalog"])

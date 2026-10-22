@@ -68,8 +68,8 @@ declare class Security {
      */
     static create(proto: SecurityProto): Security;
     /**
-     * Type guard: true iff this Security is a BondSecurity (BOND_SECURITY,
-     * TIPS, or FRN). Use to narrow before calling bond-specific getters:
+     * Type guard: true iff this Security is a BondSecurity (under BOND,
+     * e.g. TIPS or TREASURY_FRN). Use to narrow before calling bond-specific getters:
      *
      *   if (sec.isBond()) {
      *     // sec: BondSecurity here — TS knows about getCouponRate(), etc.

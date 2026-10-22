@@ -1,6 +1,6 @@
 {
   "item": "LM-364",
-  "note": "Snapshot from main (caa1b3db) before LM-364. PROFIT_LOSS has no catalog entry (null) and must not gain one here.",
+  "note": "Snapshot from main (caa1b3db) before LM-364, with LM-372's applies_to renames applied. PROFIT_LOSS has no catalog entry (null) and must not gain one here.",
   "catalog": {
     "UNADJUSTED_COST_BASIS": {
       "name": "UNADJUSTED_COST_BASIS",
@@ -11,11 +11,11 @@
       "units": "Quoted price (% of par for bonds; dollar price for equities)",
       "category": "cost",
       "applies_to": [
-        "BOND_SECURITY",
+        "BOND",
         "TIPS",
-        "FRN",
-        "EQUITY_SECURITY",
-        "CASH_SECURITY"
+        "TREASURY_FRN",
+        "STOCK",
+        "CASH_INSTRUMENT"
       ],
       "model_assumptions": [
         "None — pass-through of the input price"

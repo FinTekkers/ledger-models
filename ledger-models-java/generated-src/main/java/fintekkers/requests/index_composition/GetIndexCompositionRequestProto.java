@@ -97,7 +97,7 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.util.Uuid.UUIDProto indexUuid_;
   /**
    * <pre>
-   * UUID of the index security (EQUITY_INDEX_SECURITY).
+   * UUID of the index security (EQUITY_INDEX).
    * </pre>
    *
    * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -109,7 +109,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * UUID of the index security (EQUITY_INDEX_SECURITY).
+   * UUID of the index security (EQUITY_INDEX).
    * </pre>
    *
    * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -121,7 +121,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * UUID of the index security (EQUITY_INDEX_SECURITY).
+   * UUID of the index security (EQUITY_INDEX).
    * </pre>
    *
    * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -784,7 +784,7 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.Uuid.UUIDProto, fintekkers.models.util.Uuid.UUIDProto.Builder, fintekkers.models.util.Uuid.UUIDProtoOrBuilder> indexUuidBuilder_;
     /**
      * <pre>
-     * UUID of the index security (EQUITY_INDEX_SECURITY).
+     * UUID of the index security (EQUITY_INDEX).
      * </pre>
      *
      * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -795,7 +795,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * UUID of the index security (EQUITY_INDEX_SECURITY).
+     * UUID of the index security (EQUITY_INDEX).
      * </pre>
      *
      * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -810,7 +810,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * UUID of the index security (EQUITY_INDEX_SECURITY).
+     * UUID of the index security (EQUITY_INDEX).
      * </pre>
      *
      * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -830,7 +830,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * UUID of the index security (EQUITY_INDEX_SECURITY).
+     * UUID of the index security (EQUITY_INDEX).
      * </pre>
      *
      * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -848,7 +848,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * UUID of the index security (EQUITY_INDEX_SECURITY).
+     * UUID of the index security (EQUITY_INDEX).
      * </pre>
      *
      * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -871,7 +871,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * UUID of the index security (EQUITY_INDEX_SECURITY).
+     * UUID of the index security (EQUITY_INDEX).
      * </pre>
      *
      * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -888,7 +888,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * UUID of the index security (EQUITY_INDEX_SECURITY).
+     * UUID of the index security (EQUITY_INDEX).
      * </pre>
      *
      * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -900,7 +900,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * UUID of the index security (EQUITY_INDEX_SECURITY).
+     * UUID of the index security (EQUITY_INDEX).
      * </pre>
      *
      * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -915,7 +915,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * UUID of the index security (EQUITY_INDEX_SECURITY).
+     * UUID of the index security (EQUITY_INDEX).
      * </pre>
      *
      * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>

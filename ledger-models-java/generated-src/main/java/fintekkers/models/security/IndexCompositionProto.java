@@ -235,7 +235,7 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.security.SecurityProto indexSecurity_;
   /**
    * <pre>
-   * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+   * The index security this composition belongs to (EQUITY_INDEX type).
    * Typically is_link = true; resolve via SecurityService.GetByIds.
    * </pre>
    *
@@ -248,7 +248,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+   * The index security this composition belongs to (EQUITY_INDEX type).
    * Typically is_link = true; resolve via SecurityService.GetByIds.
    * </pre>
    *
@@ -261,7 +261,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+   * The index security this composition belongs to (EQUITY_INDEX type).
    * Typically is_link = true; resolve via SecurityService.GetByIds.
    * </pre>
    *
@@ -1933,7 +1933,7 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> indexSecurityBuilder_;
     /**
      * <pre>
-     * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+     * The index security this composition belongs to (EQUITY_INDEX type).
      * Typically is_link = true; resolve via SecurityService.GetByIds.
      * </pre>
      *
@@ -1945,7 +1945,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+     * The index security this composition belongs to (EQUITY_INDEX type).
      * Typically is_link = true; resolve via SecurityService.GetByIds.
      * </pre>
      *
@@ -1961,7 +1961,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+     * The index security this composition belongs to (EQUITY_INDEX type).
      * Typically is_link = true; resolve via SecurityService.GetByIds.
      * </pre>
      *
@@ -1982,7 +1982,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+     * The index security this composition belongs to (EQUITY_INDEX type).
      * Typically is_link = true; resolve via SecurityService.GetByIds.
      * </pre>
      *
@@ -2001,7 +2001,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+     * The index security this composition belongs to (EQUITY_INDEX type).
      * Typically is_link = true; resolve via SecurityService.GetByIds.
      * </pre>
      *
@@ -2025,7 +2025,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+     * The index security this composition belongs to (EQUITY_INDEX type).
      * Typically is_link = true; resolve via SecurityService.GetByIds.
      * </pre>
      *
@@ -2043,7 +2043,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+     * The index security this composition belongs to (EQUITY_INDEX type).
      * Typically is_link = true; resolve via SecurityService.GetByIds.
      * </pre>
      *
@@ -2056,7 +2056,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+     * The index security this composition belongs to (EQUITY_INDEX type).
      * Typically is_link = true; resolve via SecurityService.GetByIds.
      * </pre>
      *
@@ -2072,7 +2072,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+     * The index security this composition belongs to (EQUITY_INDEX type).
      * Typically is_link = true; resolve via SecurityService.GetByIds.
      * </pre>
      *

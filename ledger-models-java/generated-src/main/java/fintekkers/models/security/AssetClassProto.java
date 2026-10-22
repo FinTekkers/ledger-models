@@ -76,7 +76,7 @@ public enum AssetClassProto
   /**
    * <pre>
    * VOLATILITY covers volatility-class reference instruments — VIX
-   * (CBOE Volatility Index), VVIX, etc. Stored as INDEX_SECURITY at the
+   * (CBOE Volatility Index), VVIX, etc. Stored as INDEX at the
    * proto type level (these are reference indices, not holdable
    * instruments) but distinct asset_class to differentiate from
    * equity / fixed-income reference indices like SP500 or CMT yields.
@@ -137,7 +137,7 @@ public enum AssetClassProto
   /**
    * <pre>
    * VOLATILITY covers volatility-class reference instruments — VIX
-   * (CBOE Volatility Index), VVIX, etc. Stored as INDEX_SECURITY at the
+   * (CBOE Volatility Index), VVIX, etc. Stored as INDEX at the
    * proto type level (these are reference indices, not holdable
    * instruments) but distinct asset_class to differentiate from
    * equity / fixed-income reference indices like SP500 or CMT yields.

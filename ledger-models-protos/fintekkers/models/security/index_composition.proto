@@ -38,7 +38,7 @@ message IndexCompositionProto {
   fintekkers.models.util.LocalTimestampProto valid_from = 8;
   fintekkers.models.util.LocalTimestampProto valid_to   = 9;
 
-  // The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+  // The index security this composition belongs to (EQUITY_INDEX type).
   // Typically is_link = true; resolve via SecurityService.GetByIds.
   fintekkers.models.security.SecurityProto index_security = 10;
 

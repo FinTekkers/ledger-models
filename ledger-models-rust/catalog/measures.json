@@ -1,4 +1,5 @@
 {
+  "_doc": "applies_to lists the products a measure covers. Each entry is a ProductTypeProto name (e.g. TIPS, TREASURY_FRN) or a node name from ../hierarchy.json (e.g. BOND, STOCK, CASH_INSTRUMENT), which covers every product type under it.",
   "schema_version": "1.0",
   "measures": [
     {
@@ -21,7 +22,7 @@
       "formula": null,
       "units": "Units of the security (shares for equity, face-value dollars for bonds)",
       "category": "input",
-      "applies_to": ["BOND_SECURITY", "TIPS", "FRN", "EQUITY_SECURITY", "CASH_SECURITY"],
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
       "model_assumptions": [],
       "implemented": true
     },
@@ -33,7 +34,7 @@
       "formula": "MarketValue = price / 100 * directed_quantity; TIPS: clean_price / 100 * index_ratio * directed_quantity (index_ratio unrounded, unfloored)",
       "units": "Dollars (or settlement currency)",
       "category": "valuation",
-      "applies_to": ["BOND_SECURITY", "TIPS", "FRN", "EQUITY_SECURITY", "CASH_SECURITY"],
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
       "model_assumptions": [
         "None — direct mark-to-market calculation"
       ],
@@ -47,7 +48,7 @@
       "formula": "Returns the price_input as-is (quoted as % of par for bonds)",
       "units": "Quoted price (% of par for bonds; dollar price for equities)",
       "category": "cost",
-      "applies_to": ["BOND_SECURITY", "TIPS", "FRN", "EQUITY_SECURITY", "CASH_SECURITY"],
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
       "model_assumptions": [
         "None — pass-through of the input price"
       ],
@@ -79,7 +80,7 @@
       "formula": "CurrentYield = (coupon_rate * principal) / (price * face_value / 100). For zero-coupon: (face_value / dollar_price)^(1 / years_to_maturity) - 1",
       "units": "Decimal (0-1 scale; e.g. 0.0526 = 5.26%)",
       "category": "yield",
-      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "applies_to": ["BOND", "TIPS"],
       "model_assumptions": [
         "Assumes coupon income is constant (no reinvestment assumption)",
         "For TIPS, uses the inflation-adjusted principal for the annual coupon calculation",
@@ -95,7 +96,7 @@
       "formula": "Solve for r: price * (face / 100) = Sum[C / (1 + r/m)^t] + F / (1 + r/m)^N",
       "units": "Decimal (0-1 scale; e.g. 0.06 = 6.00% annual)",
       "category": "yield",
-      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "applies_to": ["BOND", "TIPS"],
       "model_assumptions": [
         "Coupon reinvestment at the YTM rate (standard bond math assumption)",
         "For TIPS: returns the same value as REAL_YIELD, with the response summary warning \"YIELD_TO_MATURITY for TIPS is the real yield (same as REAL_YIELD); a nominal yield needs an inflation forecast\"",
@@ -113,7 +114,7 @@
       "formula": "D = Sum[(t / m) * PV_t / TotalPV]",
       "units": "Years (e.g. 4.41 = 4.41 years)",
       "category": "risk",
-      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "applies_to": ["BOND", "TIPS"],
       "model_assumptions": [
         "Uses the bond's YTM (from Newton-Raphson solver) as the discount rate",
         "Flat yield curve (single rate for all maturities)",
@@ -129,7 +130,7 @@
       "formula": "PV = Sum[C / (1 + r/m)^t] + F / (1 + r/m)^N, returned as quoted price (% of par)",
       "units": "Quoted price (% of par; e.g. 95.00 = $95 per $100 face)",
       "category": "valuation",
-      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "applies_to": ["BOND", "TIPS"],
       "model_assumptions": [
         "Same as YIELD_TO_MATURITY (the discount rate is derived from the input price)",
         "For TIPS: inflation-adjusted cash flows discounted at REAL_YIELD, consistent with clean_price × index_ratio",
@@ -175,7 +176,7 @@
       "formula": "Each CashflowProto contains: cashflow_date, fv_amount, pv_amount, coupon_rate. Sum of pv_amounts equals PRESENT_VALUE.",
       "units": "fv_amount and pv_amount in dollars; coupon_rate as percentage",
       "category": "valuation",
-      "applies_to": ["BOND_SECURITY", "TIPS", "FRN"],
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
       "model_assumptions": [
         "Same as PRESENT_VALUE",
         "Three-way invariant: sum(pv_amounts) == present_value == price"
@@ -190,7 +191,7 @@
       "formula": "Solve for DM: price = Sum[(R + QM)/m * FV / (1 + (R + DM)/m)^t] + FV / (1 + (R + DM)/m)^N",
       "units": "Decimal (0-1 scale; e.g. 0.0075 = 75 basis points)",
       "category": "yield",
-      "applies_to": ["FRN"],
+      "applies_to": ["TREASURY_FRN"],
       "model_assumptions": [
         "Flat forward rates: all future reference rate fixings assumed equal to current observation",
         "When DM = QM, price = par (100) on a reset date",
@@ -207,7 +208,7 @@
       "formula": "SpreadDuration = (P_down - P_up) / (2 * 0.0001 * P_base)",
       "units": "Years (e.g. 1.90 = a 1bp spread widening causes ~1.90bp price decline)",
       "category": "risk",
-      "applies_to": ["FRN"],
+      "applies_to": ["TREASURY_FRN"],
       "model_assumptions": [
         "Same flat-forward assumption as DISCOUNT_MARGIN",
         "Uses a symmetric 1bp bump for numerical differentiation",
@@ -223,7 +224,7 @@
       "formula": "Solve for c: 100 = Sum[c/m / (1 + r_t)^t] + 100 / (1 + r_N)^N",
       "units": "Decimal (0-1 scale; e.g. 0.045 = 4.50% annual)",
       "category": "curve",
-      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "applies_to": ["BOND", "TIPS"],
       "model_assumptions": [
         "Coupon frequency matches market convention (semiannual for US Treasuries)",
         "Interpolation between observed maturities uses method specified in CurveRequestProto"
@@ -238,7 +239,7 @@
       "formula": "Bootstrapped from par curve: s_N = ((100 + c/m) / (100 - Sum[c/m / (1+s_t)^t]))^(1/N) - 1",
       "units": "Decimal (0-1 scale; e.g. 0.046 = 4.60% annual)",
       "category": "curve",
-      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "applies_to": ["BOND", "TIPS"],
       "model_assumptions": [
         "Requires a complete par yield curve as input",
         "Bootstrap assumes exact coupon dates"
@@ -253,7 +254,7 @@
       "formula": "f(t1,t2) = [(1 + s_t2)^t2 / (1 + s_t1)^t1]^(1/(t2-t1)) - 1",
       "units": "Decimal (0-1 scale; e.g. 0.048 = 4.80% annual forward rate)",
       "category": "curve",
-      "applies_to": ["BOND_SECURITY", "TIPS"],
+      "applies_to": ["BOND", "TIPS"],
       "model_assumptions": [
         "Derived from spot curve (bootstrapped from par)",
         "No-arbitrage between spot and forward rates",

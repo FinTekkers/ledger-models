@@ -24,7 +24,7 @@ test('test BondSecurity.getTenor() returns correct Tenor for 10-year bond with a
     testBondSecurityTenorWithAsOfDate();
 });
 function testBondSecurityCreation() {
-    // Create a SecurityProto with BOND_SECURITY type, coupon type, and coupon frequency
+    // Create a SecurityProto with a bond product type, coupon type, and coupon frequency
     const securityProto = new security_pb_1.SecurityProto();
     securityProto.setUuid(uuid_1.UUID.random().toUUIDProto());
     securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
@@ -52,7 +52,7 @@ function testBondSecurityCreation() {
     assert(couponFrequency.toString() === 'SEMIANNUALLY', `Expected coupon frequency SEMIANNUALLY, got ${couponFrequency.toString()}`);
 }
 function testBondSecurityTenor() {
-    // Create a SecurityProto with BOND_SECURITY type and dates for a 10-year bond
+    // Create a SecurityProto with a bond product type and dates for a 10-year bond
     const securityProto = new security_pb_1.SecurityProto();
     securityProto.setUuid(uuid_1.UUID.random().toUUIDProto());
     securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
@@ -120,7 +120,7 @@ function testBondSecurityTenor() {
     assert(tenor2.toString() === 'TERM: 2Y6M', `Expected "TERM: 2Y6M", got "${tenor2.toString()}"`);
 }
 function testBondSecurityTenorWithAsOfDate() {
-    // Create a SecurityProto with BOND_SECURITY type and dates for a 10-year bond
+    // Create a SecurityProto with a bond product type and dates for a 10-year bond
     const securityProto = new security_pb_1.SecurityProto();
     securityProto.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
     const bond3 = new security_pb_1.BondDetailsProto();

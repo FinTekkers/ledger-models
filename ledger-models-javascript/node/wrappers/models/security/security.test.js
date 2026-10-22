@@ -104,6 +104,12 @@ test('isFxSpot(): runtime predicate, true on FX_SPOT only', () => {
     expect(dummyCash().isFxSpot()).toBe(false);
     expect(dummyEquity().isFxSpot()).toBe(false);
 });
+test('getProductType(): PRODUCT_TYPE_UNKNOWN when unset or unrecognised', () => {
+    expect(new security_1.default(new security_pb_1.SecurityProto()).getProductType()).toBe('PRODUCT_TYPE_UNKNOWN');
+    // A number newer than this build's enum falls back to the same name.
+    const unrecognised = new security_pb_1.SecurityProto().setProductType(9999);
+    expect(new security_1.default(unrecognised).getProductType()).toBe('PRODUCT_TYPE_UNKNOWN');
+});
 function dummySecurity() {
     const bond = new security_pb_1.BondDetailsProto()
         .setCouponRate((0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)('0.05')))

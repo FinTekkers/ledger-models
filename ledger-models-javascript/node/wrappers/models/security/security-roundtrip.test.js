@@ -32,7 +32,7 @@ function makeIdentifier(type, value) {
     return new identifier_pb_1.IdentifierProto().setIdentifierType(type).setIdentifierValue(value);
 }
 describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () => {
-    test('BOND_SECURITY: all bond fields survive round-trip', () => {
+    test('BOND: all bond fields survive round-trip', () => {
         const original = new security_pb_2.SecurityProto();
         original.setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE);
         original.setAssetClass('Fixed Income');
@@ -126,7 +126,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsedFrn.getSpread()))).toBe('50');
         expect(parsedFrn.getReferenceRateIndex()).toBe(index_type_pb_1.IndexTypeProto.T_BILL_13_WEEK);
     });
-    test('EQUITY_SECURITY: identifier + asset_class survive round-trip', () => {
+    test('STOCK: identifier + asset_class survive round-trip', () => {
         const original = new security_pb_2.SecurityProto();
         original.setProductType(product_type_pb_1.ProductTypeProto.COMMON_STOCK);
         original.setAssetClass('Equity');
@@ -144,7 +144,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getIdentifiersList()[0].getIdentifierValue()).toBe('AAPL');
         expect(parsed.getIdentifiersList()[0].getIdentifierType()).toBe(identifier_type_pb_1.IdentifierTypeProto.EXCH_TICKER);
     });
-    test('CASH_SECURITY: cash_id + settlement fields survive round-trip', () => {
+    test('CASH_INSTRUMENT: cash_id + settlement fields survive round-trip', () => {
         const original = new security_pb_2.SecurityProto();
         original.setProductType(product_type_pb_1.ProductTypeProto.CURRENCY);
         original.setAssetClass('Cash');
@@ -162,7 +162,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getIdentifiersList()[0].getIdentifierValue()).toBe('USD');
         expect(parsed.getIdentifiersList()[0].getIdentifierType()).toBe(identifier_type_pb_1.IdentifierTypeProto.CASH);
     });
-    test('INDEX_SECURITY: index_type + inflation_index_type survive round-trip', () => {
+    test('INDEX: index_type + inflation_index_type survive round-trip', () => {
         const original = new security_pb_2.SecurityProto();
         original.setProductType(product_type_pb_1.ProductTypeProto.EQUITY_INDEX);
         original.setAssetClass('Index');

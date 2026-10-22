@@ -45,7 +45,7 @@ pub struct GetIndexCompositionRequestProto {
     pub object_type: i32,
     #[prost(message, optional, tag = "2")]
     pub version: ::core::option::Option<super::super::models::util::VersionProto>,
-    /// UUID of the index security (EQUITY_INDEX_SECURITY).
+    /// UUID of the index security (EQUITY_INDEX).
     #[prost(message, optional, tag = "10")]
     pub index_uuid: ::core::option::Option<super::super::models::util::UuidProto>,
     /// The business date for which to retrieve the active composition.
