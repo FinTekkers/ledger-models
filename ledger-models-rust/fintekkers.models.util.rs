@@ -1,15 +1,5 @@
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct LocalDateProto {
-    #[prost(uint32, tag = "1")]
-    pub year: u32,
-    #[prost(uint32, tag = "2")]
-    pub month: u32,
-    #[prost(uint32, tag = "3")]
-    pub day: u32,
-}
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct LocalTimestampProto {
     #[prost(message, optional, tag = "1")]
     pub timestamp: ::core::option::Option<::prost_types::Timestamp>,
@@ -339,6 +329,16 @@ pub struct DecimalValueProto {
     /// such as 1E+3 is stored as unscaled 1000, scale 0.
     #[prost(uint32, tag = "12")]
     pub scale: u32,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct LocalDateProto {
+    #[prost(uint32, tag = "1")]
+    pub year: u32,
+    #[prost(uint32, tag = "2")]
+    pub month: u32,
+    #[prost(uint32, tag = "3")]
+    pub day: u32,
 }
 /// A currency, identified by its ISO 4217 alpha code (e.g. "USD", "GBP", "EUR").
 /// This is a lightweight alternative to embedding a full CASH_SECURITY SecurityProto

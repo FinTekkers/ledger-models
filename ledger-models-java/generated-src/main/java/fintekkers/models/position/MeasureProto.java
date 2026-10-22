@@ -78,31 +78,37 @@ public enum MeasureProto
   UNADJUSTED_COST_BASIS(3),
   /**
    * <pre>
-   * Tax amortised cost, constant yield, per 100 face, quantity-weighted across
-   * open lots (LM-364). See docs/adr/amortisation_elections.md.
-   * Inputs: ValuationRequestProto.tax_lots (27), the open lots of the position,
-   *   and ValuationRequestProto.amortisation_elections (26).
+   * Tax amortised cost, per 100 face, quantity-weighted over the open lots
+   * (LM-364; implemented under VS-110). See docs/adr/amortisation_elections.md.
+   * Inputs: cost_basis (CostBasisInput) on BondInput, TipsInput or FrnInput:
+   *   lots, the holding's open TaxLotProto lots, and elections, the
+   *   portfolio's AmortisationElectionsProto (unset = every default).
    * Formula, for each open lot i:
-   *   y_i   = the constant yield at which the bond's remaining cash flows from
-   *           settlement_date_i price at price_i.
-   *   acb_i = the lot's amortised cost per 100 face at asof_datetime: price_i,
-   *           less premium amortised and plus discount accreted under y_i,
-   *           accruing from settlement_date_i.
-   *   AdjustedCostBasis = sum(quantity_i * acb_i) / sum(quantity_i)
-   * Elections (AmortisationElectionsProto) apply to lots purchased (trade_date)
-   * on or after effective_from; other lots use every default.
-   *   - Premium (IRC §171): amortised when elected (the default); otherwise the
-   *     premium stays in the basis.
-   *   - Market discount: accreted only with INCLUDE_CURRENTLY, by RATABLE (the
-   *     default) or CONSTANT_YIELD; AT_DISPOSITION (the default) leaves it out.
-   * TIPS: lot price is the real (unadjusted) price. Amortise in real terms,
-   *   then multiply by INDEX_RATIO at the valuation date, as MARKET_VALUE does.
-   *   The result is per 100 of original face, in nominal (today's) dollars.
-   * The measure is absent, never 0, when there are no open lots; the response
-   * carries a "no open lots" warning.
-   * Tax basis only. Book (GAAP/IFRS) cost is out of scope.
-   * Applicability: Bond (fixed rate), TIPS, FRN.
-   * Units: Price per 100 face (% of par).
+   *   acb_i = the lot's amortised cost per 100 face at the valuation date:
+   *           price_i, adjusted by the OID, premium and market-discount rules below.
+   *   AdjustedCostBasis = sum(open_quantity_i * acb_i) / sum(open_quantity_i)
+   * OID: always accreted (mandatory, whatever the elections) at constant yield
+   *   from the issue price (IssuanceProto.price_for_single_price_auction,
+   *   MDI-82), reduced by any acquisition premium.
+   * Premium (IRC §171): amortised at constant yield if elected
+   *   (bond_premium; the default is PREMIUM_ELECTED).
+   * Market discount: accreted only with INCLUDE_CURRENTLY, ratably or at
+   *   constant yield per market_discount_accrual (the default is RATABLE);
+   *   otherwise (AT_DISPOSITION, the default) left until disposition.
+   * De minimis: OID and market discount below 0.25% × complete years to
+   *   maturity are treated as zero.
+   * Accrual start: from each lot's open_date plus the product's settlement lag
+   *   (e.g. T+1 for Treasuries).
+   * TIPS: amortise in real terms, then multiply by the index ratio
+   *   (INDEX_RATIO) at the valuation date, giving a figure per 100 original
+   *   face in nominal dollars.
+   * FRN: use the equivalent fixed rate from the fixing at settlement.
+   * No lots: the measure is absent, with a "no open lots" warning, never 0.
+   * Scope: tax basis only. Book (GAAP/IFRS) cost is out of scope.
+   * Applicability: TREASURY_NOTE, TREASURY_BOND, SOVEREIGN_BOND, CORP_BOND,
+   *   MUNI_BOND, TIPS, TREASURY_FRN.
+   * Units: Price per 100 face (% of par). TIPS: per 100 original face, in
+   *   nominal dollars.
    * </pre>
    *
    * <code>ADJUSTED_COST_BASIS = 4;</code>
@@ -691,31 +697,37 @@ public enum MeasureProto
   public static final int UNADJUSTED_COST_BASIS_VALUE = 3;
   /**
    * <pre>
-   * Tax amortised cost, constant yield, per 100 face, quantity-weighted across
-   * open lots (LM-364). See docs/adr/amortisation_elections.md.
-   * Inputs: ValuationRequestProto.tax_lots (27), the open lots of the position,
-   *   and ValuationRequestProto.amortisation_elections (26).
+   * Tax amortised cost, per 100 face, quantity-weighted over the open lots
+   * (LM-364; implemented under VS-110). See docs/adr/amortisation_elections.md.
+   * Inputs: cost_basis (CostBasisInput) on BondInput, TipsInput or FrnInput:
+   *   lots, the holding's open TaxLotProto lots, and elections, the
+   *   portfolio's AmortisationElectionsProto (unset = every default).
    * Formula, for each open lot i:
-   *   y_i   = the constant yield at which the bond's remaining cash flows from
-   *           settlement_date_i price at price_i.
-   *   acb_i = the lot's amortised cost per 100 face at asof_datetime: price_i,
-   *           less premium amortised and plus discount accreted under y_i,
-   *           accruing from settlement_date_i.
-   *   AdjustedCostBasis = sum(quantity_i * acb_i) / sum(quantity_i)
-   * Elections (AmortisationElectionsProto) apply to lots purchased (trade_date)
-   * on or after effective_from; other lots use every default.
-   *   - Premium (IRC §171): amortised when elected (the default); otherwise the
-   *     premium stays in the basis.
-   *   - Market discount: accreted only with INCLUDE_CURRENTLY, by RATABLE (the
-   *     default) or CONSTANT_YIELD; AT_DISPOSITION (the default) leaves it out.
-   * TIPS: lot price is the real (unadjusted) price. Amortise in real terms,
-   *   then multiply by INDEX_RATIO at the valuation date, as MARKET_VALUE does.
-   *   The result is per 100 of original face, in nominal (today's) dollars.
-   * The measure is absent, never 0, when there are no open lots; the response
-   * carries a "no open lots" warning.
-   * Tax basis only. Book (GAAP/IFRS) cost is out of scope.
-   * Applicability: Bond (fixed rate), TIPS, FRN.
-   * Units: Price per 100 face (% of par).
+   *   acb_i = the lot's amortised cost per 100 face at the valuation date:
+   *           price_i, adjusted by the OID, premium and market-discount rules below.
+   *   AdjustedCostBasis = sum(open_quantity_i * acb_i) / sum(open_quantity_i)
+   * OID: always accreted (mandatory, whatever the elections) at constant yield
+   *   from the issue price (IssuanceProto.price_for_single_price_auction,
+   *   MDI-82), reduced by any acquisition premium.
+   * Premium (IRC §171): amortised at constant yield if elected
+   *   (bond_premium; the default is PREMIUM_ELECTED).
+   * Market discount: accreted only with INCLUDE_CURRENTLY, ratably or at
+   *   constant yield per market_discount_accrual (the default is RATABLE);
+   *   otherwise (AT_DISPOSITION, the default) left until disposition.
+   * De minimis: OID and market discount below 0.25% × complete years to
+   *   maturity are treated as zero.
+   * Accrual start: from each lot's open_date plus the product's settlement lag
+   *   (e.g. T+1 for Treasuries).
+   * TIPS: amortise in real terms, then multiply by the index ratio
+   *   (INDEX_RATIO) at the valuation date, giving a figure per 100 original
+   *   face in nominal dollars.
+   * FRN: use the equivalent fixed rate from the fixing at settlement.
+   * No lots: the measure is absent, with a "no open lots" warning, never 0.
+   * Scope: tax basis only. Book (GAAP/IFRS) cost is out of scope.
+   * Applicability: TREASURY_NOTE, TREASURY_BOND, SOVEREIGN_BOND, CORP_BOND,
+   *   MUNI_BOND, TIPS, TREASURY_FRN.
+   * Units: Price per 100 face (% of par). TIPS: per 100 original face, in
+   *   nominal dollars.
    * </pre>
    *
    * <code>ADJUSTED_COST_BASIS = 4;</code>

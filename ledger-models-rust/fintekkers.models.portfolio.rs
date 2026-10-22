@@ -1,28 +1,24 @@
-/// The holder's US tax elections for amortising bond premium and discount
-/// (VS-110, LM-364). See docs/adr/amortisation_elections.md.
-/// Every field's zero value means "use the default". An unset message means
-/// every default. Tax elections only: book (GAAP/IFRS) elections are out of
-/// scope.
+/// US tax elections for amortising bond premium and discount. Fixed per
+/// portfolio: they apply to every lot. Zero values mean "use the default".
+/// Read by MeasureProto.ADJUSTED_COST_BASIS (VS-110, LM-364). Tax elections
+/// only: book (GAAP/IFRS) elections are out of scope.
+/// See docs/adr/amortisation_elections.md.
 ///
 /// Fields 1 and 2 are not used. This is a value nested in PortfolioProto and
-/// ValuationRequestProto, not a stamped message (LM-318).
+/// CostBasisInput, not a stamped message, so it has no object_type/version
+/// (LM-318).
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AmortisationElectionsProto {
-    /// IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+    /// IRC §171; UNSPECIFIED → PREMIUM_ELECTED
     #[prost(enumeration = "PremiumAmortisationElectionProto", tag = "10")]
     pub bond_premium: i32,
-    /// IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+    /// IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
     #[prost(enumeration = "MarketDiscountInclusionProto", tag = "11")]
     pub market_discount_inclusion: i32,
-    /// IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+    /// IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
     #[prost(enumeration = "MarketDiscountAccrualMethodProto", tag = "12")]
     pub market_discount_accrual: i32,
-    /// The elections apply to lots purchased on or after this date: lots whose
-    /// TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-    /// apply to every lot, since inception.
-    #[prost(message, optional, tag = "13")]
-    pub effective_from: ::core::option::Option<super::util::LocalDateProto>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -145,9 +141,9 @@ pub struct PortfolioProto {
     pub valid_to: ::core::option::Option<super::util::LocalTimestampProto>,
     #[prost(string, tag = "10")]
     pub portfolio_name: ::prost::alloc::string::String,
-    /// The portfolio's tax amortisation elections (LM-364). Unset: every default
-    /// applies. Callers that request ADJUSTED_COST_BASIS copy this into
-    /// ValuationRequestProto.amortisation_elections (26).
+    /// US tax elections, fixed per portfolio; apply to every lot. Unset = every
+    /// default. Copied into CostBasisInput.elections for ADJUSTED_COST_BASIS.
+    /// See docs/adr/amortisation_elections.md.
     #[prost(message, optional, tag = "11")]
     pub amortisation_elections: ::core::option::Option<AmortisationElectionsProto>,
 }

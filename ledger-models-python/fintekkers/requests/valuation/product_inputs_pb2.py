@@ -22,13 +22,15 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
+from fintekkers.models.portfolio import amortisation_elections_pb2 as fintekkers_dot_models_dot_portfolio_dot_amortisation__elections__pb2
+from fintekkers.models.position import tax_lot_pb2 as fintekkers_dot_models_dot_position_dot_tax__lot__pb2
 from fintekkers.models.security import security_pb2 as fintekkers_dot_models_dot_security_dot_security__pb2
 from fintekkers.models.security.index import index_type_pb2 as fintekkers_dot_models_dot_security_dot_index_dot_index__type__pb2
 from fintekkers.models.util import decimal_value_pb2 as fintekkers_dot_models_dot_util_dot_decimal__value__pb2
 from fintekkers.models.util import local_date_pb2 as fintekkers_dot_models_dot_util_dot_local__date__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n2fintekkers/requests/valuation/product_inputs.proto\x12\x1d\x66intekkers.requests.valuation\x1a)fintekkers/models/security/security.proto\x1a\x31\x66intekkers/models/security/index/index_type.proto\x1a*fintekkers/models/util/decimal_value.proto\x1a\'fintekkers/models/util/local_date.proto\"\xc3\x01\n\x0cProductInput\x12\x38\n\x04\x62ond\x18\x01 \x01(\x0b\x32(.fintekkers.requests.valuation.BondInputH\x00\x12\x38\n\x04tips\x18\x02 \x01(\x0b\x32(.fintekkers.requests.valuation.TipsInputH\x00\x12\x36\n\x03\x66rn\x18\x08 \x01(\x0b\x32\'.fintekkers.requests.valuation.FrnInputH\x00\x42\x07\n\x05input\"\xd9\x01\n\tBondInput\x12;\n\x08security\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12>\n\x0b\x63lean_price\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12O\n\x0f\x62\x65nchmark_curve\x18\n \x01(\x0b\x32\x36.fintekkers.requests.valuation.SecurityBasedCurveInput\"\xdc\x01\n\tTipsInput\x12;\n\x08security\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12>\n\x0b\x63lean_price\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12?\n\x03\x63pi\x18\x04 \x01(\x0b\x32\x32.fintekkers.requests.valuation.InflationIndexInputJ\x04\x08\x03\x10\x04R\x0b\x63urrent_cpi\"\xe3\x01\n\x13InflationIndexInput\x12\x38\n\x05index\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12G\n\x08readings\x18\x02 \x01(\x0b\x32\x33.fintekkers.requests.valuation.MonthlyIndexReadingsH\x00\x12\x42\n\rreference_cpi\x18\x03 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProtoH\x00\x42\x05\n\x03\x63pi\"\\\n\x14MonthlyIndexReadings\x12\x44\n\x08readings\x18\x01 \x03(\x0b\x32\x32.fintekkers.requests.valuation.MonthlyIndexReading\"l\n\x13MonthlyIndexReading\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\x12\x38\n\x05value\x18\x03 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\x90\x02\n\x08\x46rnInput\x12;\n\x08security\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12>\n\x0b\x63lean_price\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12=\n\x05\x63urve\x18\n \x01(\x0b\x32..fintekkers.requests.valuation.YieldCurveInput\x12H\n\x07\x66ixings\x18\x0b \x03(\x0b\x32\x37.fintekkers.requests.valuation.ReferenceRateFixingProto\"\xd1\x01\n\x18ReferenceRateFixingProto\x12?\n\x05index\x18\x01 \x01(\x0e\x32\x30.fintekkers.models.security.index.IndexTypeProto\x12;\n\x0b\x66ixing_date\x18\x02 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12\x37\n\x04rate\x18\x03 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\xcd\x01\n\x0fYieldCurveInput\x12?\n\x05index\x18\x01 \x01(\x0e\x32\x30.fintekkers.models.security.index.IndexTypeProto\x12>\n\x0ereference_date\x18\x02 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12\x39\n\x06points\x18\x03 \x03(\x0b\x32).fintekkers.requests.valuation.CurvePoint\"\x7f\n\nCurvePoint\x12\x38\n\x05tenor\x18\x01 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12\x37\n\x04rate\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\xdd\x01\n\x17SecurityBasedCurveInput\x12?\n\x05index\x18\x01 \x01(\x0e\x32\x30.fintekkers.models.security.index.IndexTypeProto\x12>\n\x0ereference_date\x18\x02 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12\x41\n\x06points\x18\x03 \x03(\x0b\x32\x31.fintekkers.requests.valuation.SecurityCurvePoint\"\x91\x01\n\x12SecurityCurvePoint\x12;\n\x08security\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12>\n\x0b\x63lean_price\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\x86\x02\n\x10TaxLotInputProto\x12:\n\ntrade_date\x18\x01 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12?\n\x0fsettlement_date\x18\x02 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12;\n\x08quantity\x18\x03 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12\x38\n\x05price\x18\x04 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProtoB\x16\x42\x12ProductInputProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n2fintekkers/requests/valuation/product_inputs.proto\x12\x1d\x66intekkers.requests.valuation\x1a\x38\x66intekkers/models/portfolio/amortisation_elections.proto\x1a(fintekkers/models/position/tax_lot.proto\x1a)fintekkers/models/security/security.proto\x1a\x31\x66intekkers/models/security/index/index_type.proto\x1a*fintekkers/models/util/decimal_value.proto\x1a\'fintekkers/models/util/local_date.proto\"\xc3\x01\n\x0cProductInput\x12\x38\n\x04\x62ond\x18\x01 \x01(\x0b\x32(.fintekkers.requests.valuation.BondInputH\x00\x12\x38\n\x04tips\x18\x02 \x01(\x0b\x32(.fintekkers.requests.valuation.TipsInputH\x00\x12\x36\n\x03\x66rn\x18\x08 \x01(\x0b\x32\'.fintekkers.requests.valuation.FrnInputH\x00\x42\x07\n\x05input\"\x9c\x02\n\tBondInput\x12;\n\x08security\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12>\n\x0b\x63lean_price\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12O\n\x0f\x62\x65nchmark_curve\x18\n \x01(\x0b\x32\x36.fintekkers.requests.valuation.SecurityBasedCurveInput\x12\x41\n\ncost_basis\x18\x14 \x01(\x0b\x32-.fintekkers.requests.valuation.CostBasisInput\"\x9f\x02\n\tTipsInput\x12;\n\x08security\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12>\n\x0b\x63lean_price\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12?\n\x03\x63pi\x18\x04 \x01(\x0b\x32\x32.fintekkers.requests.valuation.InflationIndexInput\x12\x41\n\ncost_basis\x18\x14 \x01(\x0b\x32-.fintekkers.requests.valuation.CostBasisInputJ\x04\x08\x03\x10\x04R\x0b\x63urrent_cpi\"\x93\x01\n\x0e\x43ostBasisInput\x12J\n\telections\x18\x01 \x01(\x0b\x32\x37.fintekkers.models.portfolio.AmortisationElectionsProto\x12\x35\n\x04lots\x18\x02 \x03(\x0b\x32\'.fintekkers.models.position.TaxLotProto\"\xe3\x01\n\x13InflationIndexInput\x12\x38\n\x05index\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12G\n\x08readings\x18\x02 \x01(\x0b\x32\x33.fintekkers.requests.valuation.MonthlyIndexReadingsH\x00\x12\x42\n\rreference_cpi\x18\x03 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProtoH\x00\x42\x05\n\x03\x63pi\"\\\n\x14MonthlyIndexReadings\x12\x44\n\x08readings\x18\x01 \x03(\x0b\x32\x32.fintekkers.requests.valuation.MonthlyIndexReading\"l\n\x13MonthlyIndexReading\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\x12\x38\n\x05value\x18\x03 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\xd3\x02\n\x08\x46rnInput\x12;\n\x08security\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12>\n\x0b\x63lean_price\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12=\n\x05\x63urve\x18\n \x01(\x0b\x32..fintekkers.requests.valuation.YieldCurveInput\x12H\n\x07\x66ixings\x18\x0b \x03(\x0b\x32\x37.fintekkers.requests.valuation.ReferenceRateFixingProto\x12\x41\n\ncost_basis\x18\x14 \x01(\x0b\x32-.fintekkers.requests.valuation.CostBasisInput\"\xd1\x01\n\x18ReferenceRateFixingProto\x12?\n\x05index\x18\x01 \x01(\x0e\x32\x30.fintekkers.models.security.index.IndexTypeProto\x12;\n\x0b\x66ixing_date\x18\x02 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12\x37\n\x04rate\x18\x03 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\xcd\x01\n\x0fYieldCurveInput\x12?\n\x05index\x18\x01 \x01(\x0e\x32\x30.fintekkers.models.security.index.IndexTypeProto\x12>\n\x0ereference_date\x18\x02 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12\x39\n\x06points\x18\x03 \x03(\x0b\x32).fintekkers.requests.valuation.CurvePoint\"\x7f\n\nCurvePoint\x12\x38\n\x05tenor\x18\x01 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12\x37\n\x04rate\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\"\xdd\x01\n\x17SecurityBasedCurveInput\x12?\n\x05index\x18\x01 \x01(\x0e\x32\x30.fintekkers.models.security.index.IndexTypeProto\x12>\n\x0ereference_date\x18\x02 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12\x41\n\x06points\x18\x03 \x03(\x0b\x32\x31.fintekkers.requests.valuation.SecurityCurvePoint\"\x91\x01\n\x12SecurityCurvePoint\x12;\n\x08security\x18\x01 \x01(\x0b\x32).fintekkers.models.security.SecurityProto\x12>\n\x0b\x63lean_price\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProtoB\x16\x42\x12ProductInputProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,30 +38,30 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.valuati
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\022ProductInputProtosP\001'
-  _globals['_PRODUCTINPUT']._serialized_start=265
-  _globals['_PRODUCTINPUT']._serialized_end=460
-  _globals['_BONDINPUT']._serialized_start=463
-  _globals['_BONDINPUT']._serialized_end=680
-  _globals['_TIPSINPUT']._serialized_start=683
-  _globals['_TIPSINPUT']._serialized_end=903
-  _globals['_INFLATIONINDEXINPUT']._serialized_start=906
-  _globals['_INFLATIONINDEXINPUT']._serialized_end=1133
-  _globals['_MONTHLYINDEXREADINGS']._serialized_start=1135
-  _globals['_MONTHLYINDEXREADINGS']._serialized_end=1227
-  _globals['_MONTHLYINDEXREADING']._serialized_start=1229
-  _globals['_MONTHLYINDEXREADING']._serialized_end=1337
-  _globals['_FRNINPUT']._serialized_start=1340
-  _globals['_FRNINPUT']._serialized_end=1612
-  _globals['_REFERENCERATEFIXINGPROTO']._serialized_start=1615
-  _globals['_REFERENCERATEFIXINGPROTO']._serialized_end=1824
-  _globals['_YIELDCURVEINPUT']._serialized_start=1827
-  _globals['_YIELDCURVEINPUT']._serialized_end=2032
-  _globals['_CURVEPOINT']._serialized_start=2034
-  _globals['_CURVEPOINT']._serialized_end=2161
-  _globals['_SECURITYBASEDCURVEINPUT']._serialized_start=2164
-  _globals['_SECURITYBASEDCURVEINPUT']._serialized_end=2385
-  _globals['_SECURITYCURVEPOINT']._serialized_start=2388
-  _globals['_SECURITYCURVEPOINT']._serialized_end=2533
-  _globals['_TAXLOTINPUTPROTO']._serialized_start=2536
-  _globals['_TAXLOTINPUTPROTO']._serialized_end=2798
+  _globals['_PRODUCTINPUT']._serialized_start=365
+  _globals['_PRODUCTINPUT']._serialized_end=560
+  _globals['_BONDINPUT']._serialized_start=563
+  _globals['_BONDINPUT']._serialized_end=847
+  _globals['_TIPSINPUT']._serialized_start=850
+  _globals['_TIPSINPUT']._serialized_end=1137
+  _globals['_COSTBASISINPUT']._serialized_start=1140
+  _globals['_COSTBASISINPUT']._serialized_end=1287
+  _globals['_INFLATIONINDEXINPUT']._serialized_start=1290
+  _globals['_INFLATIONINDEXINPUT']._serialized_end=1517
+  _globals['_MONTHLYINDEXREADINGS']._serialized_start=1519
+  _globals['_MONTHLYINDEXREADINGS']._serialized_end=1611
+  _globals['_MONTHLYINDEXREADING']._serialized_start=1613
+  _globals['_MONTHLYINDEXREADING']._serialized_end=1721
+  _globals['_FRNINPUT']._serialized_start=1724
+  _globals['_FRNINPUT']._serialized_end=2063
+  _globals['_REFERENCERATEFIXINGPROTO']._serialized_start=2066
+  _globals['_REFERENCERATEFIXINGPROTO']._serialized_end=2275
+  _globals['_YIELDCURVEINPUT']._serialized_start=2278
+  _globals['_YIELDCURVEINPUT']._serialized_end=2483
+  _globals['_CURVEPOINT']._serialized_start=2485
+  _globals['_CURVEPOINT']._serialized_end=2612
+  _globals['_SECURITYBASEDCURVEINPUT']._serialized_start=2615
+  _globals['_SECURITYBASEDCURVEINPUT']._serialized_end=2836
+  _globals['_SECURITYCURVEPOINT']._serialized_start=2839
+  _globals['_SECURITYCURVEPOINT']._serialized_end=2984
 # @@protoc_insertion_point(module_scope)

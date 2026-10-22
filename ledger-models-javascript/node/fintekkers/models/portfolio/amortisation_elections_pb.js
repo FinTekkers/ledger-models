@@ -21,8 +21,6 @@ var global = (function() {
   return Function('return this')();
 }.call(null));
 
-var fintekkers_models_util_local_date_pb = require('../../../fintekkers/models/util/local_date_pb.js');
-goog.object.extend(proto, fintekkers_models_util_local_date_pb);
 goog.exportSymbol('proto.fintekkers.models.portfolio.AmortisationElectionsProto', null, global);
 goog.exportSymbol('proto.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto', null, global);
 goog.exportSymbol('proto.fintekkers.models.portfolio.MarketDiscountInclusionProto', null, global);
@@ -82,8 +80,7 @@ proto.fintekkers.models.portfolio.AmortisationElectionsProto.toObject = function
   var f, obj = {
     bondPremium: jspb.Message.getFieldWithDefault(msg, 10, 0),
     marketDiscountInclusion: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    marketDiscountAccrual: jspb.Message.getFieldWithDefault(msg, 12, 0),
-    effectiveFrom: (f = msg.getEffectiveFrom()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
+    marketDiscountAccrual: jspb.Message.getFieldWithDefault(msg, 12, 0)
   };
 
   if (includeInstance) {
@@ -131,11 +128,6 @@ proto.fintekkers.models.portfolio.AmortisationElectionsProto.deserializeBinaryFr
     case 12:
       var value = /** @type {!proto.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto} */ (reader.readEnum());
       msg.setMarketDiscountAccrual(value);
-      break;
-    case 13:
-      var value = new fintekkers_models_util_local_date_pb.LocalDateProto;
-      reader.readMessage(value,fintekkers_models_util_local_date_pb.LocalDateProto.deserializeBinaryFromReader);
-      msg.setEffectiveFrom(value);
       break;
     default:
       reader.skipField();
@@ -185,14 +177,6 @@ proto.fintekkers.models.portfolio.AmortisationElectionsProto.serializeBinaryToWr
     writer.writeEnum(
       12,
       f
-    );
-  }
-  f = message.getEffectiveFrom();
-  if (f != null) {
-    writer.writeMessage(
-      13,
-      f,
-      fintekkers_models_util_local_date_pb.LocalDateProto.serializeBinaryToWriter
     );
   }
 };
@@ -249,43 +233,6 @@ proto.fintekkers.models.portfolio.AmortisationElectionsProto.prototype.getMarket
  */
 proto.fintekkers.models.portfolio.AmortisationElectionsProto.prototype.setMarketDiscountAccrual = function(value) {
   return jspb.Message.setProto3EnumField(this, 12, value);
-};
-
-
-/**
- * optional fintekkers.models.util.LocalDateProto effective_from = 13;
- * @return {?proto.fintekkers.models.util.LocalDateProto}
- */
-proto.fintekkers.models.portfolio.AmortisationElectionsProto.prototype.getEffectiveFrom = function() {
-  return /** @type{?proto.fintekkers.models.util.LocalDateProto} */ (
-    jspb.Message.getWrapperField(this, fintekkers_models_util_local_date_pb.LocalDateProto, 13));
-};
-
-
-/**
- * @param {?proto.fintekkers.models.util.LocalDateProto|undefined} value
- * @return {!proto.fintekkers.models.portfolio.AmortisationElectionsProto} returns this
-*/
-proto.fintekkers.models.portfolio.AmortisationElectionsProto.prototype.setEffectiveFrom = function(value) {
-  return jspb.Message.setWrapperField(this, 13, value);
-};
-
-
-/**
- * Clears the message field making it undefined.
- * @return {!proto.fintekkers.models.portfolio.AmortisationElectionsProto} returns this
- */
-proto.fintekkers.models.portfolio.AmortisationElectionsProto.prototype.clearEffectiveFrom = function() {
-  return this.setEffectiveFrom(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.fintekkers.models.portfolio.AmortisationElectionsProto.prototype.hasEffectiveFrom = function() {
-  return jspb.Message.getField(this, 13) != null;
 };
 
 

@@ -25,7 +25,6 @@ private static final long serialVersionUID = 0L;
     objectType_ = 0;
     operationType_ = 0;
     measures_ = java.util.Collections.emptyList();
-    taxLots_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -358,116 +357,6 @@ private static final long serialVersionUID = 0L;
     return asofDatetime_ == null ? fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance() : asofDatetime_;
   }
 
-  public static final int AMORTISATION_ELECTIONS_FIELD_NUMBER = 26;
-  private fintekkers.models.portfolio.AmortisationElectionsProto amortisationElections_;
-  /**
-   * <pre>
-   *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-   *Callers copy them from PortfolioProto.amortisation_elections (11). The
-   *service is stateless and reads only this field. Unset: every default.
-   * </pre>
-   *
-   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-   * @return Whether the amortisationElections field is set.
-   */
-  @java.lang.Override
-  public boolean hasAmortisationElections() {
-    return amortisationElections_ != null;
-  }
-  /**
-   * <pre>
-   *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-   *Callers copy them from PortfolioProto.amortisation_elections (11). The
-   *service is stateless and reads only this field. Unset: every default.
-   * </pre>
-   *
-   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-   * @return The amortisationElections.
-   */
-  @java.lang.Override
-  public fintekkers.models.portfolio.AmortisationElectionsProto getAmortisationElections() {
-    return amortisationElections_ == null ? fintekkers.models.portfolio.AmortisationElectionsProto.getDefaultInstance() : amortisationElections_;
-  }
-  /**
-   * <pre>
-   *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-   *Callers copy them from PortfolioProto.amortisation_elections (11). The
-   *service is stateless and reads only this field. Unset: every default.
-   * </pre>
-   *
-   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-   */
-  @java.lang.Override
-  public fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder getAmortisationElectionsOrBuilder() {
-    return amortisationElections_ == null ? fintekkers.models.portfolio.AmortisationElectionsProto.getDefaultInstance() : amortisationElections_;
-  }
-
-  public static final int TAX_LOTS_FIELD_NUMBER = 27;
-  @SuppressWarnings("serial")
-  private java.util.List<fintekkers.requests.valuation.TaxLotInputProto> taxLots_;
-  /**
-   * <pre>
-   *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-   *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-   * </pre>
-   *
-   * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-   */
-  @java.lang.Override
-  public java.util.List<fintekkers.requests.valuation.TaxLotInputProto> getTaxLotsList() {
-    return taxLots_;
-  }
-  /**
-   * <pre>
-   *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-   *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-   * </pre>
-   *
-   * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-   */
-  @java.lang.Override
-  public java.util.List<? extends fintekkers.requests.valuation.TaxLotInputProtoOrBuilder> 
-      getTaxLotsOrBuilderList() {
-    return taxLots_;
-  }
-  /**
-   * <pre>
-   *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-   *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-   * </pre>
-   *
-   * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-   */
-  @java.lang.Override
-  public int getTaxLotsCount() {
-    return taxLots_.size();
-  }
-  /**
-   * <pre>
-   *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-   *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-   * </pre>
-   *
-   * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-   */
-  @java.lang.Override
-  public fintekkers.requests.valuation.TaxLotInputProto getTaxLots(int index) {
-    return taxLots_.get(index);
-  }
-  /**
-   * <pre>
-   *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-   *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-   * </pre>
-   *
-   * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-   */
-  @java.lang.Override
-  public fintekkers.requests.valuation.TaxLotInputProtoOrBuilder getTaxLotsOrBuilder(
-      int index) {
-    return taxLots_.get(index);
-  }
-
   public static final int PRODUCT_INPUT_FIELD_NUMBER = 70;
   private fintekkers.requests.valuation.ProductInput productInput_;
   /**
@@ -551,12 +440,6 @@ private static final long serialVersionUID = 0L;
     if (asofDatetime_ != null) {
       output.writeMessage(23, getAsofDatetime());
     }
-    if (amortisationElections_ != null) {
-      output.writeMessage(26, getAmortisationElections());
-    }
-    for (int i = 0; i < taxLots_.size(); i++) {
-      output.writeMessage(27, taxLots_.get(i));
-    }
     if (getMeasuresList().size() > 0) {
       output.writeUInt32NoTag(242);
       output.writeUInt32NoTag(measuresMemoizedSerializedSize);
@@ -603,14 +486,6 @@ private static final long serialVersionUID = 0L;
     if (asofDatetime_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(23, getAsofDatetime());
-    }
-    if (amortisationElections_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(26, getAmortisationElections());
-    }
-    for (int i = 0; i < taxLots_.size(); i++) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(27, taxLots_.get(i));
     }
     {
       int dataSize = 0;
@@ -671,13 +546,6 @@ private static final long serialVersionUID = 0L;
       if (!getAsofDatetime()
           .equals(other.getAsofDatetime())) return false;
     }
-    if (hasAmortisationElections() != other.hasAmortisationElections()) return false;
-    if (hasAmortisationElections()) {
-      if (!getAmortisationElections()
-          .equals(other.getAmortisationElections())) return false;
-    }
-    if (!getTaxLotsList()
-        .equals(other.getTaxLotsList())) return false;
     if (hasProductInput() != other.hasProductInput()) return false;
     if (hasProductInput()) {
       if (!getProductInput()
@@ -721,14 +589,6 @@ private static final long serialVersionUID = 0L;
     if (hasAsofDatetime()) {
       hash = (37 * hash) + ASOF_DATETIME_FIELD_NUMBER;
       hash = (53 * hash) + getAsofDatetime().hashCode();
-    }
-    if (hasAmortisationElections()) {
-      hash = (37 * hash) + AMORTISATION_ELECTIONS_FIELD_NUMBER;
-      hash = (53 * hash) + getAmortisationElections().hashCode();
-    }
-    if (getTaxLotsCount() > 0) {
-      hash = (37 * hash) + TAX_LOTS_FIELD_NUMBER;
-      hash = (53 * hash) + getTaxLotsList().hashCode();
     }
     if (hasProductInput()) {
       hash = (37 * hash) + PRODUCT_INPUT_FIELD_NUMBER;
@@ -898,18 +758,6 @@ private static final long serialVersionUID = 0L;
         asofDatetimeBuilder_.dispose();
         asofDatetimeBuilder_ = null;
       }
-      amortisationElections_ = null;
-      if (amortisationElectionsBuilder_ != null) {
-        amortisationElectionsBuilder_.dispose();
-        amortisationElectionsBuilder_ = null;
-      }
-      if (taxLotsBuilder_ == null) {
-        taxLots_ = java.util.Collections.emptyList();
-      } else {
-        taxLots_ = null;
-        taxLotsBuilder_.clear();
-      }
-      bitField0_ = (bitField0_ & ~0x00000200);
       productInput_ = null;
       if (productInputBuilder_ != null) {
         productInputBuilder_.dispose();
@@ -953,15 +801,6 @@ private static final long serialVersionUID = 0L;
         bitField0_ = (bitField0_ & ~0x00000008);
       }
       result.measures_ = measures_;
-      if (taxLotsBuilder_ == null) {
-        if (((bitField0_ & 0x00000200) != 0)) {
-          taxLots_ = java.util.Collections.unmodifiableList(taxLots_);
-          bitField0_ = (bitField0_ & ~0x00000200);
-        }
-        result.taxLots_ = taxLots_;
-      } else {
-        result.taxLots_ = taxLotsBuilder_.build();
-      }
     }
 
     private void buildPartial0(fintekkers.requests.valuation.ValuationRequestProto result) {
@@ -998,11 +837,6 @@ private static final long serialVersionUID = 0L;
             : asofDatetimeBuilder_.build();
       }
       if (((from_bitField0_ & 0x00000100) != 0)) {
-        result.amortisationElections_ = amortisationElectionsBuilder_ == null
-            ? amortisationElections_
-            : amortisationElectionsBuilder_.build();
-      }
-      if (((from_bitField0_ & 0x00000400) != 0)) {
         result.productInput_ = productInputBuilder_ == null
             ? productInput_
             : productInputBuilder_.build();
@@ -1084,35 +918,6 @@ private static final long serialVersionUID = 0L;
       if (other.hasAsofDatetime()) {
         mergeAsofDatetime(other.getAsofDatetime());
       }
-      if (other.hasAmortisationElections()) {
-        mergeAmortisationElections(other.getAmortisationElections());
-      }
-      if (taxLotsBuilder_ == null) {
-        if (!other.taxLots_.isEmpty()) {
-          if (taxLots_.isEmpty()) {
-            taxLots_ = other.taxLots_;
-            bitField0_ = (bitField0_ & ~0x00000200);
-          } else {
-            ensureTaxLotsIsMutable();
-            taxLots_.addAll(other.taxLots_);
-          }
-          onChanged();
-        }
-      } else {
-        if (!other.taxLots_.isEmpty()) {
-          if (taxLotsBuilder_.isEmpty()) {
-            taxLotsBuilder_.dispose();
-            taxLotsBuilder_ = null;
-            taxLots_ = other.taxLots_;
-            bitField0_ = (bitField0_ & ~0x00000200);
-            taxLotsBuilder_ = 
-              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                 getTaxLotsFieldBuilder() : null;
-          } else {
-            taxLotsBuilder_.addAllMessages(other.taxLots_);
-          }
-        }
-      }
       if (other.hasProductInput()) {
         mergeProductInput(other.getProductInput());
       }
@@ -1187,26 +992,6 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000080;
               break;
             } // case 186
-            case 210: {
-              input.readMessage(
-                  getAmortisationElectionsFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000100;
-              break;
-            } // case 210
-            case 218: {
-              fintekkers.requests.valuation.TaxLotInputProto m =
-                  input.readMessage(
-                      fintekkers.requests.valuation.TaxLotInputProto.parser(),
-                      extensionRegistry);
-              if (taxLotsBuilder_ == null) {
-                ensureTaxLotsIsMutable();
-                taxLots_.add(m);
-              } else {
-                taxLotsBuilder_.addMessage(m);
-              }
-              break;
-            } // case 218
             case 240: {
               int tmpRaw = input.readEnum();
               ensureMeasuresIsMutable();
@@ -1228,7 +1013,7 @@ private static final long serialVersionUID = 0L;
               input.readMessage(
                   getProductInputFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000400;
+              bitField0_ |= 0x00000100;
               break;
             } // case 562
             default: {
@@ -2315,509 +2100,6 @@ private static final long serialVersionUID = 0L;
       return asofDatetimeBuilder_;
     }
 
-    private fintekkers.models.portfolio.AmortisationElectionsProto amortisationElections_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.portfolio.AmortisationElectionsProto, fintekkers.models.portfolio.AmortisationElectionsProto.Builder, fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder> amortisationElectionsBuilder_;
-    /**
-     * <pre>
-     *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-     *Callers copy them from PortfolioProto.amortisation_elections (11). The
-     *service is stateless and reads only this field. Unset: every default.
-     * </pre>
-     *
-     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-     * @return Whether the amortisationElections field is set.
-     */
-    public boolean hasAmortisationElections() {
-      return ((bitField0_ & 0x00000100) != 0);
-    }
-    /**
-     * <pre>
-     *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-     *Callers copy them from PortfolioProto.amortisation_elections (11). The
-     *service is stateless and reads only this field. Unset: every default.
-     * </pre>
-     *
-     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-     * @return The amortisationElections.
-     */
-    public fintekkers.models.portfolio.AmortisationElectionsProto getAmortisationElections() {
-      if (amortisationElectionsBuilder_ == null) {
-        return amortisationElections_ == null ? fintekkers.models.portfolio.AmortisationElectionsProto.getDefaultInstance() : amortisationElections_;
-      } else {
-        return amortisationElectionsBuilder_.getMessage();
-      }
-    }
-    /**
-     * <pre>
-     *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-     *Callers copy them from PortfolioProto.amortisation_elections (11). The
-     *service is stateless and reads only this field. Unset: every default.
-     * </pre>
-     *
-     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-     */
-    public Builder setAmortisationElections(fintekkers.models.portfolio.AmortisationElectionsProto value) {
-      if (amortisationElectionsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        amortisationElections_ = value;
-      } else {
-        amortisationElectionsBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000100;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-     *Callers copy them from PortfolioProto.amortisation_elections (11). The
-     *service is stateless and reads only this field. Unset: every default.
-     * </pre>
-     *
-     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-     */
-    public Builder setAmortisationElections(
-        fintekkers.models.portfolio.AmortisationElectionsProto.Builder builderForValue) {
-      if (amortisationElectionsBuilder_ == null) {
-        amortisationElections_ = builderForValue.build();
-      } else {
-        amortisationElectionsBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000100;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-     *Callers copy them from PortfolioProto.amortisation_elections (11). The
-     *service is stateless and reads only this field. Unset: every default.
-     * </pre>
-     *
-     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-     */
-    public Builder mergeAmortisationElections(fintekkers.models.portfolio.AmortisationElectionsProto value) {
-      if (amortisationElectionsBuilder_ == null) {
-        if (((bitField0_ & 0x00000100) != 0) &&
-          amortisationElections_ != null &&
-          amortisationElections_ != fintekkers.models.portfolio.AmortisationElectionsProto.getDefaultInstance()) {
-          getAmortisationElectionsBuilder().mergeFrom(value);
-        } else {
-          amortisationElections_ = value;
-        }
-      } else {
-        amortisationElectionsBuilder_.mergeFrom(value);
-      }
-      bitField0_ |= 0x00000100;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-     *Callers copy them from PortfolioProto.amortisation_elections (11). The
-     *service is stateless and reads only this field. Unset: every default.
-     * </pre>
-     *
-     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-     */
-    public Builder clearAmortisationElections() {
-      bitField0_ = (bitField0_ & ~0x00000100);
-      amortisationElections_ = null;
-      if (amortisationElectionsBuilder_ != null) {
-        amortisationElectionsBuilder_.dispose();
-        amortisationElectionsBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-     *Callers copy them from PortfolioProto.amortisation_elections (11). The
-     *service is stateless and reads only this field. Unset: every default.
-     * </pre>
-     *
-     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-     */
-    public fintekkers.models.portfolio.AmortisationElectionsProto.Builder getAmortisationElectionsBuilder() {
-      bitField0_ |= 0x00000100;
-      onChanged();
-      return getAmortisationElectionsFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-     *Callers copy them from PortfolioProto.amortisation_elections (11). The
-     *service is stateless and reads only this field. Unset: every default.
-     * </pre>
-     *
-     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-     */
-    public fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder getAmortisationElectionsOrBuilder() {
-      if (amortisationElectionsBuilder_ != null) {
-        return amortisationElectionsBuilder_.getMessageOrBuilder();
-      } else {
-        return amortisationElections_ == null ?
-            fintekkers.models.portfolio.AmortisationElectionsProto.getDefaultInstance() : amortisationElections_;
-      }
-    }
-    /**
-     * <pre>
-     *The holder's tax amortisation elections, for ADJUSTED_COST_BASIS (LM-364).
-     *Callers copy them from PortfolioProto.amortisation_elections (11). The
-     *service is stateless and reads only this field. Unset: every default.
-     * </pre>
-     *
-     * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 26;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.portfolio.AmortisationElectionsProto, fintekkers.models.portfolio.AmortisationElectionsProto.Builder, fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder> 
-        getAmortisationElectionsFieldBuilder() {
-      if (amortisationElectionsBuilder_ == null) {
-        amortisationElectionsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            fintekkers.models.portfolio.AmortisationElectionsProto, fintekkers.models.portfolio.AmortisationElectionsProto.Builder, fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder>(
-                getAmortisationElections(),
-                getParentForChildren(),
-                isClean());
-        amortisationElections_ = null;
-      }
-      return amortisationElectionsBuilder_;
-    }
-
-    private java.util.List<fintekkers.requests.valuation.TaxLotInputProto> taxLots_ =
-      java.util.Collections.emptyList();
-    private void ensureTaxLotsIsMutable() {
-      if (!((bitField0_ & 0x00000200) != 0)) {
-        taxLots_ = new java.util.ArrayList<fintekkers.requests.valuation.TaxLotInputProto>(taxLots_);
-        bitField0_ |= 0x00000200;
-       }
-    }
-
-    private com.google.protobuf.RepeatedFieldBuilderV3<
-        fintekkers.requests.valuation.TaxLotInputProto, fintekkers.requests.valuation.TaxLotInputProto.Builder, fintekkers.requests.valuation.TaxLotInputProtoOrBuilder> taxLotsBuilder_;
-
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public java.util.List<fintekkers.requests.valuation.TaxLotInputProto> getTaxLotsList() {
-      if (taxLotsBuilder_ == null) {
-        return java.util.Collections.unmodifiableList(taxLots_);
-      } else {
-        return taxLotsBuilder_.getMessageList();
-      }
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public int getTaxLotsCount() {
-      if (taxLotsBuilder_ == null) {
-        return taxLots_.size();
-      } else {
-        return taxLotsBuilder_.getCount();
-      }
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public fintekkers.requests.valuation.TaxLotInputProto getTaxLots(int index) {
-      if (taxLotsBuilder_ == null) {
-        return taxLots_.get(index);
-      } else {
-        return taxLotsBuilder_.getMessage(index);
-      }
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public Builder setTaxLots(
-        int index, fintekkers.requests.valuation.TaxLotInputProto value) {
-      if (taxLotsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureTaxLotsIsMutable();
-        taxLots_.set(index, value);
-        onChanged();
-      } else {
-        taxLotsBuilder_.setMessage(index, value);
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public Builder setTaxLots(
-        int index, fintekkers.requests.valuation.TaxLotInputProto.Builder builderForValue) {
-      if (taxLotsBuilder_ == null) {
-        ensureTaxLotsIsMutable();
-        taxLots_.set(index, builderForValue.build());
-        onChanged();
-      } else {
-        taxLotsBuilder_.setMessage(index, builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public Builder addTaxLots(fintekkers.requests.valuation.TaxLotInputProto value) {
-      if (taxLotsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureTaxLotsIsMutable();
-        taxLots_.add(value);
-        onChanged();
-      } else {
-        taxLotsBuilder_.addMessage(value);
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public Builder addTaxLots(
-        int index, fintekkers.requests.valuation.TaxLotInputProto value) {
-      if (taxLotsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureTaxLotsIsMutable();
-        taxLots_.add(index, value);
-        onChanged();
-      } else {
-        taxLotsBuilder_.addMessage(index, value);
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public Builder addTaxLots(
-        fintekkers.requests.valuation.TaxLotInputProto.Builder builderForValue) {
-      if (taxLotsBuilder_ == null) {
-        ensureTaxLotsIsMutable();
-        taxLots_.add(builderForValue.build());
-        onChanged();
-      } else {
-        taxLotsBuilder_.addMessage(builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public Builder addTaxLots(
-        int index, fintekkers.requests.valuation.TaxLotInputProto.Builder builderForValue) {
-      if (taxLotsBuilder_ == null) {
-        ensureTaxLotsIsMutable();
-        taxLots_.add(index, builderForValue.build());
-        onChanged();
-      } else {
-        taxLotsBuilder_.addMessage(index, builderForValue.build());
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public Builder addAllTaxLots(
-        java.lang.Iterable<? extends fintekkers.requests.valuation.TaxLotInputProto> values) {
-      if (taxLotsBuilder_ == null) {
-        ensureTaxLotsIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, taxLots_);
-        onChanged();
-      } else {
-        taxLotsBuilder_.addAllMessages(values);
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public Builder clearTaxLots() {
-      if (taxLotsBuilder_ == null) {
-        taxLots_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000200);
-        onChanged();
-      } else {
-        taxLotsBuilder_.clear();
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public Builder removeTaxLots(int index) {
-      if (taxLotsBuilder_ == null) {
-        ensureTaxLotsIsMutable();
-        taxLots_.remove(index);
-        onChanged();
-      } else {
-        taxLotsBuilder_.remove(index);
-      }
-      return this;
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public fintekkers.requests.valuation.TaxLotInputProto.Builder getTaxLotsBuilder(
-        int index) {
-      return getTaxLotsFieldBuilder().getBuilder(index);
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public fintekkers.requests.valuation.TaxLotInputProtoOrBuilder getTaxLotsOrBuilder(
-        int index) {
-      if (taxLotsBuilder_ == null) {
-        return taxLots_.get(index);  } else {
-        return taxLotsBuilder_.getMessageOrBuilder(index);
-      }
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public java.util.List<? extends fintekkers.requests.valuation.TaxLotInputProtoOrBuilder> 
-         getTaxLotsOrBuilderList() {
-      if (taxLotsBuilder_ != null) {
-        return taxLotsBuilder_.getMessageOrBuilderList();
-      } else {
-        return java.util.Collections.unmodifiableList(taxLots_);
-      }
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public fintekkers.requests.valuation.TaxLotInputProto.Builder addTaxLotsBuilder() {
-      return getTaxLotsFieldBuilder().addBuilder(
-          fintekkers.requests.valuation.TaxLotInputProto.getDefaultInstance());
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public fintekkers.requests.valuation.TaxLotInputProto.Builder addTaxLotsBuilder(
-        int index) {
-      return getTaxLotsFieldBuilder().addBuilder(
-          index, fintekkers.requests.valuation.TaxLotInputProto.getDefaultInstance());
-    }
-    /**
-     * <pre>
-     *The open tax lots of position_input, for ADJUSTED_COST_BASIS (LM-364).
-     *Empty: ADJUSTED_COST_BASIS is not returned, with a "no open lots" warning.
-     * </pre>
-     *
-     * <code>repeated .fintekkers.requests.valuation.TaxLotInputProto tax_lots = 27;</code>
-     */
-    public java.util.List<fintekkers.requests.valuation.TaxLotInputProto.Builder> 
-         getTaxLotsBuilderList() {
-      return getTaxLotsFieldBuilder().getBuilderList();
-    }
-    private com.google.protobuf.RepeatedFieldBuilderV3<
-        fintekkers.requests.valuation.TaxLotInputProto, fintekkers.requests.valuation.TaxLotInputProto.Builder, fintekkers.requests.valuation.TaxLotInputProtoOrBuilder> 
-        getTaxLotsFieldBuilder() {
-      if (taxLotsBuilder_ == null) {
-        taxLotsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-            fintekkers.requests.valuation.TaxLotInputProto, fintekkers.requests.valuation.TaxLotInputProto.Builder, fintekkers.requests.valuation.TaxLotInputProtoOrBuilder>(
-                taxLots_,
-                ((bitField0_ & 0x00000200) != 0),
-                getParentForChildren(),
-                isClean());
-        taxLots_ = null;
-      }
-      return taxLotsBuilder_;
-    }
-
     private fintekkers.requests.valuation.ProductInput productInput_;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.requests.valuation.ProductInput, fintekkers.requests.valuation.ProductInput.Builder, fintekkers.requests.valuation.ProductInputOrBuilder> productInputBuilder_;
@@ -2833,7 +2115,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the productInput field is set.
      */
     public boolean hasProductInput() {
-      return ((bitField0_ & 0x00000400) != 0);
+      return ((bitField0_ & 0x00000100) != 0);
     }
     /**
      * <pre>
@@ -2872,7 +2154,7 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2893,7 +2175,7 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2909,7 +2191,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeProductInput(fintekkers.requests.valuation.ProductInput value) {
       if (productInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000400) != 0) &&
+        if (((bitField0_ & 0x00000100) != 0) &&
           productInput_ != null &&
           productInput_ != fintekkers.requests.valuation.ProductInput.getDefaultInstance()) {
           getProductInputBuilder().mergeFrom(value);
@@ -2919,7 +2201,7 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -2934,7 +2216,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
      */
     public Builder clearProductInput() {
-      bitField0_ = (bitField0_ & ~0x00000400);
+      bitField0_ = (bitField0_ & ~0x00000100);
       productInput_ = null;
       if (productInputBuilder_ != null) {
         productInputBuilder_.dispose();
@@ -2954,7 +2236,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
      */
     public fintekkers.requests.valuation.ProductInput.Builder getProductInputBuilder() {
-      bitField0_ |= 0x00000400;
+      bitField0_ |= 0x00000100;
       onChanged();
       return getProductInputFieldBuilder().getBuilder();
     }

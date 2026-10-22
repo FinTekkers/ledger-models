@@ -5,7 +5,6 @@
 /* eslint-disable */
 
 import * as jspb from "google-protobuf";
-import * as fintekkers_models_util_local_date_pb from "../../../fintekkers/models/util/local_date_pb";
 
 export class AmortisationElectionsProto extends jspb.Message { 
     getBondPremium(): PremiumAmortisationElectionProto;
@@ -14,11 +13,6 @@ export class AmortisationElectionsProto extends jspb.Message {
     setMarketDiscountInclusion(value: MarketDiscountInclusionProto): AmortisationElectionsProto;
     getMarketDiscountAccrual(): MarketDiscountAccrualMethodProto;
     setMarketDiscountAccrual(value: MarketDiscountAccrualMethodProto): AmortisationElectionsProto;
-
-    hasEffectiveFrom(): boolean;
-    clearEffectiveFrom(): void;
-    getEffectiveFrom(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
-    setEffectiveFrom(value?: fintekkers_models_util_local_date_pb.LocalDateProto): AmortisationElectionsProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): AmortisationElectionsProto.AsObject;
@@ -35,7 +29,6 @@ export namespace AmortisationElectionsProto {
         bondPremium: PremiumAmortisationElectionProto,
         marketDiscountInclusion: MarketDiscountInclusionProto,
         marketDiscountAccrual: MarketDiscountAccrualMethodProto,
-        effectiveFrom?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
     }
 }
 

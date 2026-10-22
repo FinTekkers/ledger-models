@@ -5,11 +5,11 @@
 /* eslint-disable */
 
 import * as jspb from "google-protobuf";
+import * as fintekkers_models_portfolio_amortisation_elections_pb from "../../../fintekkers/models/portfolio/amortisation_elections_pb";
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_models_util_uuid_pb from "../../../fintekkers/models/util/uuid_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
-import * as fintekkers_models_portfolio_amortisation_elections_pb from "../../../fintekkers/models/portfolio/amortisation_elections_pb";
 
 export class PortfolioProto extends jspb.Message { 
     getObjectType(): fintekkers_models_util_object_type_pb.ObjectTypeProto;

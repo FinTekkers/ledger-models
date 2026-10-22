@@ -22,14 +22,14 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
+from fintekkers.models.portfolio import amortisation_elections_pb2 as fintekkers_dot_models_dot_portfolio_dot_amortisation__elections__pb2
 from fintekkers.models.util import local_timestamp_pb2 as fintekkers_dot_models_dot_util_dot_local__timestamp__pb2
 from fintekkers.models.util import uuid_pb2 as fintekkers_dot_models_dot_util_dot_uuid__pb2
 from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_util_dot_object__type__pb2
 from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
-from fintekkers.models.portfolio import amortisation_elections_pb2 as fintekkers_dot_models_dot_portfolio_dot_amortisation__elections__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n+fintekkers/models/portfolio/portfolio.proto\x12\x1b\x66intekkers.models.portfolio\x1a,fintekkers/models/util/local_timestamp.proto\x1a!fintekkers/models/util/uuid.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\x1a\x38\x66intekkers/models/portfolio/amortisation_elections.proto\"\xf4\x03\n\x0ePortfolioProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12/\n\x04uuid\x18\x05 \x01(\x0b\x32!.fintekkers.models.util.UUIDProto\x12:\n\x05\x61s_of\x18\x06 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x0f\n\x07is_link\x18\x07 \x01(\x08\x12?\n\nvalid_from\x18\x08 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12=\n\x08valid_to\x18\t \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x16\n\x0eportfolio_name\x18\n \x01(\t\x12W\n\x16\x61mortisation_elections\x18\x0b \x01(\x0b\x32\x37.fintekkers.models.portfolio.AmortisationElectionsProtoB\x13\x42\x0fPortfolioProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n+fintekkers/models/portfolio/portfolio.proto\x12\x1b\x66intekkers.models.portfolio\x1a\x38\x66intekkers/models/portfolio/amortisation_elections.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a!fintekkers/models/util/uuid.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xf4\x03\n\x0ePortfolioProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12/\n\x04uuid\x18\x05 \x01(\x0b\x32!.fintekkers.models.util.UUIDProto\x12:\n\x05\x61s_of\x18\x06 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x0f\n\x07is_link\x18\x07 \x01(\x08\x12?\n\nvalid_from\x18\x08 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12=\n\x08valid_to\x18\t \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x16\n\x0eportfolio_name\x18\n \x01(\t\x12W\n\x16\x61mortisation_elections\x18\x0b \x01(\x0b\x32\x37.fintekkers.models.portfolio.AmortisationElectionsProtoB\x13\x42\x0fPortfolioProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)

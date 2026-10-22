@@ -29,13 +29,13 @@ public final class PortfolioProtos {
   static {
     java.lang.String[] descriptorData = {
       "\n+fintekkers/models/portfolio/portfolio." +
-      "proto\022\033fintekkers.models.portfolio\032,fint" +
-      "ekkers/models/util/local_timestamp.proto" +
-      "\032!fintekkers/models/util/uuid.proto\032(fin" +
-      "tekkers/models/util/object_type.proto\032$f" +
-      "intekkers/models/util/version.proto\0328fin" +
-      "tekkers/models/portfolio/amortisation_el" +
-      "ections.proto\"\364\003\n\016PortfolioProto\022<\n\013obje" +
+      "proto\022\033fintekkers.models.portfolio\0328fint" +
+      "ekkers/models/portfolio/amortisation_ele" +
+      "ctions.proto\032,fintekkers/models/util/loc" +
+      "al_timestamp.proto\032!fintekkers/models/ut" +
+      "il/uuid.proto\032(fintekkers/models/util/ob" +
+      "ject_type.proto\032$fintekkers/models/util/" +
+      "version.proto\"\364\003\n\016PortfolioProto\022<\n\013obje" +
       "ct_type\030\001 \001(\0162\'.fintekkers.models.util.O" +
       "bjectTypeProto\0225\n\007version\030\002 \001(\0132$.fintek" +
       "kers.models.util.VersionProto\022/\n\004uuid\030\005 " +
@@ -53,11 +53,11 @@ public final class PortfolioProtos {
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          fintekkers.models.portfolio.AmortisationElectionsProtos.getDescriptor(),
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.models.util.Uuid.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
           fintekkers.models.util.VersionProtos.getDescriptor(),
-          fintekkers.models.portfolio.AmortisationElectionsProtos.getDescriptor(),
         });
     internal_static_fintekkers_models_portfolio_PortfolioProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -65,11 +65,11 @@ public final class PortfolioProtos {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_portfolio_PortfolioProto_descriptor,
         new java.lang.String[] { "ObjectType", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "PortfolioName", "AmortisationElections", });
+    fintekkers.models.portfolio.AmortisationElectionsProtos.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
     fintekkers.models.util.VersionProtos.getDescriptor();
-    fintekkers.models.portfolio.AmortisationElectionsProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

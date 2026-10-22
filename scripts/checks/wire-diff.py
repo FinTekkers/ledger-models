@@ -207,13 +207,13 @@ def lm367(key: str, old, new, head: dict) -> bool:
 
 PORTFOLIO = ".fintekkers.models.portfolio"
 ELECTIONS = f"{PORTFOLIO}.AmortisationElectionsProto"
-LOCAL_DATE = ".fintekkers.models.util.LocalDateProto"
+TAX_LOT = ".fintekkers.models.position.TaxLotProto"
+COST_BASIS = f"{VALUATION}.CostBasisInput"
 LM364 = {
     f"message {ELECTIONS}": "message",
     f"field {ELECTIONS} = 10": f"{PORTFOLIO}.PremiumAmortisationElectionProto bond_premium",
     f"field {ELECTIONS} = 11": f"{PORTFOLIO}.MarketDiscountInclusionProto market_discount_inclusion",
     f"field {ELECTIONS} = 12": f"{PORTFOLIO}.MarketDiscountAccrualMethodProto market_discount_accrual",
-    f"field {ELECTIONS} = 13": f"{LOCAL_DATE} effective_from",
     f"enum {PORTFOLIO}.PremiumAmortisationElectionProto": "enum",
     f"value {PORTFOLIO}.PremiumAmortisationElectionProto = 0": "UNSPECIFIED_PREMIUM_ELECTION",
     f"value {PORTFOLIO}.PremiumAmortisationElectionProto = 1": "PREMIUM_ELECTED",
@@ -227,20 +227,25 @@ LM364 = {
     f"value {PORTFOLIO}.MarketDiscountAccrualMethodProto = 1": "RATABLE",
     f"value {PORTFOLIO}.MarketDiscountAccrualMethodProto = 2": "CONSTANT_YIELD",
     f"field {PORTFOLIO}.PortfolioProto = 11": f"{ELECTIONS} amortisation_elections",
-    f"field {VALUATION}.ValuationRequestProto = 26": f"{ELECTIONS} amortisation_elections",
-    f"field {VALUATION}.ValuationRequestProto = 27": f"repeated {VALUATION}.TaxLotInputProto tax_lots",
-    f"message {VALUATION}.TaxLotInputProto": "message",
-    f"field {VALUATION}.TaxLotInputProto = 1": f"{LOCAL_DATE} trade_date",
-    f"field {VALUATION}.TaxLotInputProto = 2": f"{LOCAL_DATE} settlement_date",
-    f"field {VALUATION}.TaxLotInputProto = 3": f"{DECIMAL} quantity",
-    f"field {VALUATION}.TaxLotInputProto = 4": f"{DECIMAL} price",
+    f"message {TAX_LOT}": "message",
+    f"field {TAX_LOT} = 1": ".fintekkers.models.util.LocalDateProto open_date",
+    f"field {TAX_LOT} = 2": f"{DECIMAL} open_quantity",
+    f"field {TAX_LOT} = 3": f"{DECIMAL} price",
+    f"message {COST_BASIS}": "message",
+    f"field {COST_BASIS} = 1": f"{ELECTIONS} elections",
+    f"field {COST_BASIS} = 2": f"repeated {TAX_LOT} lots",
+    f"field {VALUATION}.BondInput = 20": f"{COST_BASIS} cost_basis",
+    f"field {VALUATION}.TipsInput = 20": f"{COST_BASIS} cost_basis",
+    f"field {VALUATION}.FrnInput = 20": f"{COST_BASIS} cost_basis",
 }
 
 
 def lm364(key: str, old, new, head: dict) -> bool:
-    """LM-364: AmortisationElectionsProto and its three enums, PortfolioProto
-    11, ValuationRequestProto 26 and 27, and TaxLotInputProto added. Additions
-    of exactly these only; reserved 24 and 25 stay unused."""
+    """LM-364: AmortisationElectionsProto and its three enums,
+    PortfolioProto.amortisation_elections = 11, TaxLotProto, CostBasisInput
+    and cost_basis = 20 on BondInput, TipsInput and FrnInput added. Additions
+    of exactly these only; nothing on ValuationRequestProto, whose 24 and 25
+    stay reserved."""
     return old is None and key in LM364 and new == LM364[key]
 
 

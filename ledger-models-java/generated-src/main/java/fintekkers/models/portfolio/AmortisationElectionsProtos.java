@@ -30,39 +30,35 @@ public final class AmortisationElectionsProtos {
     java.lang.String[] descriptorData = {
       "\n8fintekkers/models/portfolio/amortisati" +
       "on_elections.proto\022\033fintekkers.models.po" +
-      "rtfolio\032\'fintekkers/models/util/local_da" +
-      "te.proto\"\357\002\n\032AmortisationElectionsProto\022" +
-      "S\n\014bond_premium\030\n \001(\0162=.fintekkers.model" +
-      "s.portfolio.PremiumAmortisationElectionP" +
-      "roto\022\\\n\031market_discount_inclusion\030\013 \001(\0162" +
-      "9.fintekkers.models.portfolio.MarketDisc" +
-      "ountInclusionProto\022^\n\027market_discount_ac" +
-      "crual\030\014 \001(\0162=.fintekkers.models.portfoli" +
-      "o.MarketDiscountAccrualMethodProto\022>\n\016ef" +
-      "fective_from\030\r \001(\0132&.fintekkers.models.u" +
-      "til.LocalDateProto*r\n PremiumAmortisatio" +
-      "nElectionProto\022 \n\034UNSPECIFIED_PREMIUM_EL" +
-      "ECTION\020\000\022\023\n\017PREMIUM_ELECTED\020\001\022\027\n\023PREMIUM" +
-      "_NOT_ELECTED\020\002*t\n\034MarketDiscountInclusio" +
-      "nProto\022)\n%UNSPECIFIED_MARKET_DISCOUNT_IN" +
-      "CLUSION\020\000\022\022\n\016AT_DISPOSITION\020\001\022\025\n\021INCLUDE" +
-      "_CURRENTLY\020\002*c\n MarketDiscountAccrualMet" +
-      "hodProto\022\036\n\032UNSPECIFIED_ACCRUAL_METHOD\020\000" +
-      "\022\013\n\007RATABLE\020\001\022\022\n\016CONSTANT_YIELD\020\002B\037B\033Amo" +
-      "rtisationElectionsProtosP\001b\006proto3"
+      "rtfolio\"\257\002\n\032AmortisationElectionsProto\022S" +
+      "\n\014bond_premium\030\n \001(\0162=.fintekkers.models" +
+      ".portfolio.PremiumAmortisationElectionPr" +
+      "oto\022\\\n\031market_discount_inclusion\030\013 \001(\01629" +
+      ".fintekkers.models.portfolio.MarketDisco" +
+      "untInclusionProto\022^\n\027market_discount_acc" +
+      "rual\030\014 \001(\0162=.fintekkers.models.portfolio" +
+      ".MarketDiscountAccrualMethodProto*r\n Pre" +
+      "miumAmortisationElectionProto\022 \n\034UNSPECI" +
+      "FIED_PREMIUM_ELECTION\020\000\022\023\n\017PREMIUM_ELECT" +
+      "ED\020\001\022\027\n\023PREMIUM_NOT_ELECTED\020\002*t\n\034MarketD" +
+      "iscountInclusionProto\022)\n%UNSPECIFIED_MAR" +
+      "KET_DISCOUNT_INCLUSION\020\000\022\022\n\016AT_DISPOSITI" +
+      "ON\020\001\022\025\n\021INCLUDE_CURRENTLY\020\002*c\n MarketDis" +
+      "countAccrualMethodProto\022\036\n\032UNSPECIFIED_A" +
+      "CCRUAL_METHOD\020\000\022\013\n\007RATABLE\020\001\022\022\n\016CONSTANT" +
+      "_YIELD\020\002B\037B\033AmortisationElectionsProtosP" +
+      "\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          fintekkers.models.util.LocalDate.getDescriptor(),
         });
     internal_static_fintekkers_models_portfolio_AmortisationElectionsProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_models_portfolio_AmortisationElectionsProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_portfolio_AmortisationElectionsProto_descriptor,
-        new java.lang.String[] { "BondPremium", "MarketDiscountInclusion", "MarketDiscountAccrual", "EffectiveFrom", });
-    fintekkers.models.util.LocalDate.getDescriptor();
+        new java.lang.String[] { "BondPremium", "MarketDiscountInclusion", "MarketDiscountAccrual", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

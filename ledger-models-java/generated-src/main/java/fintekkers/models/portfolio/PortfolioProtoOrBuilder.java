@@ -138,9 +138,9 @@ public interface PortfolioProtoOrBuilder extends
 
   /**
    * <pre>
-   * The portfolio's tax amortisation elections (LM-364). Unset: every default
-   * applies. Callers that request ADJUSTED_COST_BASIS copy this into
-   * ValuationRequestProto.amortisation_elections (26).
+   * US tax elections, fixed per portfolio; apply to every lot. Unset = every
+   * default. Copied into CostBasisInput.elections for ADJUSTED_COST_BASIS.
+   * See docs/adr/amortisation_elections.md.
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
@@ -149,9 +149,9 @@ public interface PortfolioProtoOrBuilder extends
   boolean hasAmortisationElections();
   /**
    * <pre>
-   * The portfolio's tax amortisation elections (LM-364). Unset: every default
-   * applies. Callers that request ADJUSTED_COST_BASIS copy this into
-   * ValuationRequestProto.amortisation_elections (26).
+   * US tax elections, fixed per portfolio; apply to every lot. Unset = every
+   * default. Copied into CostBasisInput.elections for ADJUSTED_COST_BASIS.
+   * See docs/adr/amortisation_elections.md.
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
@@ -160,9 +160,9 @@ public interface PortfolioProtoOrBuilder extends
   fintekkers.models.portfolio.AmortisationElectionsProto getAmortisationElections();
   /**
    * <pre>
-   * The portfolio's tax amortisation elections (LM-364). Unset: every default
-   * applies. Callers that request ADJUSTED_COST_BASIS copy this into
-   * ValuationRequestProto.amortisation_elections (26).
+   * US tax elections, fixed per portfolio; apply to every lot. Unset = every
+   * default. Copied into CostBasisInput.elections for ADJUSTED_COST_BASIS.
+   * See docs/adr/amortisation_elections.md.
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>

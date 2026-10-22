@@ -1,8 +1,8 @@
+from fintekkers.models.portfolio import amortisation_elections_pb2 as _amortisation_elections_pb2
 from fintekkers.models.util import local_timestamp_pb2 as _local_timestamp_pb2
 from fintekkers.models.util import uuid_pb2 as _uuid_pb2
 from fintekkers.models.util import object_type_pb2 as _object_type_pb2
 from fintekkers.models.util import version_pb2 as _version_pb2
-from fintekkers.models.portfolio import amortisation_elections_pb2 as _amortisation_elections_pb2
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from collections.abc import Mapping as _Mapping

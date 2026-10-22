@@ -5,13 +5,14 @@ package fintekkers.models.portfolio;
 
 /**
  * <pre>
- * The holder's US tax elections for amortising bond premium and discount
- * (VS-110, LM-364). See docs/adr/amortisation_elections.md.
- * Every field's zero value means "use the default". An unset message means
- * every default. Tax elections only: book (GAAP/IFRS) elections are out of
- * scope.
+ * US tax elections for amortising bond premium and discount. Fixed per
+ * portfolio: they apply to every lot. Zero values mean "use the default".
+ * Read by MeasureProto.ADJUSTED_COST_BASIS (VS-110, LM-364). Tax elections
+ * only: book (GAAP/IFRS) elections are out of scope.
+ * See docs/adr/amortisation_elections.md.
  * Fields 1 and 2 are not used. This is a value nested in PortfolioProto and
- * ValuationRequestProto, not a stamped message (LM-318).
+ * CostBasisInput, not a stamped message, so it has no object_type/version
+ * (LM-318).
  * </pre>
  *
  * Protobuf type {@code fintekkers.models.portfolio.AmortisationElectionsProto}
@@ -60,7 +61,7 @@ private static final long serialVersionUID = 0L;
   private int bondPremium_ = 0;
   /**
    * <pre>
-   * IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+   * IRC §171; UNSPECIFIED → PREMIUM_ELECTED
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.PremiumAmortisationElectionProto bond_premium = 10;</code>
@@ -71,7 +72,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+   * IRC §171; UNSPECIFIED → PREMIUM_ELECTED
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.PremiumAmortisationElectionProto bond_premium = 10;</code>
@@ -86,7 +87,7 @@ private static final long serialVersionUID = 0L;
   private int marketDiscountInclusion_ = 0;
   /**
    * <pre>
-   * IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+   * IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.MarketDiscountInclusionProto market_discount_inclusion = 11;</code>
@@ -97,7 +98,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+   * IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.MarketDiscountInclusionProto market_discount_inclusion = 11;</code>
@@ -112,7 +113,7 @@ private static final long serialVersionUID = 0L;
   private int marketDiscountAccrual_ = 0;
   /**
    * <pre>
-   * IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+   * IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto market_discount_accrual = 12;</code>
@@ -123,7 +124,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+   * IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto market_discount_accrual = 12;</code>
@@ -132,50 +133,6 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override public fintekkers.models.portfolio.MarketDiscountAccrualMethodProto getMarketDiscountAccrual() {
     fintekkers.models.portfolio.MarketDiscountAccrualMethodProto result = fintekkers.models.portfolio.MarketDiscountAccrualMethodProto.forNumber(marketDiscountAccrual_);
     return result == null ? fintekkers.models.portfolio.MarketDiscountAccrualMethodProto.UNRECOGNIZED : result;
-  }
-
-  public static final int EFFECTIVE_FROM_FIELD_NUMBER = 13;
-  private fintekkers.models.util.LocalDate.LocalDateProto effectiveFrom_;
-  /**
-   * <pre>
-   * The elections apply to lots purchased on or after this date: lots whose
-   * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-   * apply to every lot, since inception.
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-   * @return Whether the effectiveFrom field is set.
-   */
-  @java.lang.Override
-  public boolean hasEffectiveFrom() {
-    return effectiveFrom_ != null;
-  }
-  /**
-   * <pre>
-   * The elections apply to lots purchased on or after this date: lots whose
-   * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-   * apply to every lot, since inception.
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-   * @return The effectiveFrom.
-   */
-  @java.lang.Override
-  public fintekkers.models.util.LocalDate.LocalDateProto getEffectiveFrom() {
-    return effectiveFrom_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : effectiveFrom_;
-  }
-  /**
-   * <pre>
-   * The elections apply to lots purchased on or after this date: lots whose
-   * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-   * apply to every lot, since inception.
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-   */
-  @java.lang.Override
-  public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getEffectiveFromOrBuilder() {
-    return effectiveFrom_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : effectiveFrom_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -201,9 +158,6 @@ private static final long serialVersionUID = 0L;
     if (marketDiscountAccrual_ != fintekkers.models.portfolio.MarketDiscountAccrualMethodProto.UNSPECIFIED_ACCRUAL_METHOD.getNumber()) {
       output.writeEnum(12, marketDiscountAccrual_);
     }
-    if (effectiveFrom_ != null) {
-      output.writeMessage(13, getEffectiveFrom());
-    }
     getUnknownFields().writeTo(output);
   }
 
@@ -225,10 +179,6 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(12, marketDiscountAccrual_);
     }
-    if (effectiveFrom_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(13, getEffectiveFrom());
-    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -247,11 +197,6 @@ private static final long serialVersionUID = 0L;
     if (bondPremium_ != other.bondPremium_) return false;
     if (marketDiscountInclusion_ != other.marketDiscountInclusion_) return false;
     if (marketDiscountAccrual_ != other.marketDiscountAccrual_) return false;
-    if (hasEffectiveFrom() != other.hasEffectiveFrom()) return false;
-    if (hasEffectiveFrom()) {
-      if (!getEffectiveFrom()
-          .equals(other.getEffectiveFrom())) return false;
-    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -269,10 +214,6 @@ private static final long serialVersionUID = 0L;
     hash = (53 * hash) + marketDiscountInclusion_;
     hash = (37 * hash) + MARKET_DISCOUNT_ACCRUAL_FIELD_NUMBER;
     hash = (53 * hash) + marketDiscountAccrual_;
-    if (hasEffectiveFrom()) {
-      hash = (37 * hash) + EFFECTIVE_FROM_FIELD_NUMBER;
-      hash = (53 * hash) + getEffectiveFrom().hashCode();
-    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -370,13 +311,14 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * The holder's US tax elections for amortising bond premium and discount
-   * (VS-110, LM-364). See docs/adr/amortisation_elections.md.
-   * Every field's zero value means "use the default". An unset message means
-   * every default. Tax elections only: book (GAAP/IFRS) elections are out of
-   * scope.
+   * US tax elections for amortising bond premium and discount. Fixed per
+   * portfolio: they apply to every lot. Zero values mean "use the default".
+   * Read by MeasureProto.ADJUSTED_COST_BASIS (VS-110, LM-364). Tax elections
+   * only: book (GAAP/IFRS) elections are out of scope.
+   * See docs/adr/amortisation_elections.md.
    * Fields 1 and 2 are not used. This is a value nested in PortfolioProto and
-   * ValuationRequestProto, not a stamped message (LM-318).
+   * CostBasisInput, not a stamped message, so it has no object_type/version
+   * (LM-318).
    * </pre>
    *
    * Protobuf type {@code fintekkers.models.portfolio.AmortisationElectionsProto}
@@ -415,11 +357,6 @@ private static final long serialVersionUID = 0L;
       bondPremium_ = 0;
       marketDiscountInclusion_ = 0;
       marketDiscountAccrual_ = 0;
-      effectiveFrom_ = null;
-      if (effectiveFromBuilder_ != null) {
-        effectiveFromBuilder_.dispose();
-        effectiveFromBuilder_ = null;
-      }
       return this;
     }
 
@@ -461,11 +398,6 @@ private static final long serialVersionUID = 0L;
       }
       if (((from_bitField0_ & 0x00000004) != 0)) {
         result.marketDiscountAccrual_ = marketDiscountAccrual_;
-      }
-      if (((from_bitField0_ & 0x00000008) != 0)) {
-        result.effectiveFrom_ = effectiveFromBuilder_ == null
-            ? effectiveFrom_
-            : effectiveFromBuilder_.build();
       }
     }
 
@@ -522,9 +454,6 @@ private static final long serialVersionUID = 0L;
       if (other.marketDiscountAccrual_ != 0) {
         setMarketDiscountAccrualValue(other.getMarketDiscountAccrualValue());
       }
-      if (other.hasEffectiveFrom()) {
-        mergeEffectiveFrom(other.getEffectiveFrom());
-      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -566,13 +495,6 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000004;
               break;
             } // case 96
-            case 106: {
-              input.readMessage(
-                  getEffectiveFromFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000008;
-              break;
-            } // case 106
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -593,7 +515,7 @@ private static final long serialVersionUID = 0L;
     private int bondPremium_ = 0;
     /**
      * <pre>
-     * IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+     * IRC §171; UNSPECIFIED → PREMIUM_ELECTED
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.PremiumAmortisationElectionProto bond_premium = 10;</code>
@@ -604,7 +526,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+     * IRC §171; UNSPECIFIED → PREMIUM_ELECTED
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.PremiumAmortisationElectionProto bond_premium = 10;</code>
@@ -619,7 +541,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+     * IRC §171; UNSPECIFIED → PREMIUM_ELECTED
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.PremiumAmortisationElectionProto bond_premium = 10;</code>
@@ -632,7 +554,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+     * IRC §171; UNSPECIFIED → PREMIUM_ELECTED
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.PremiumAmortisationElectionProto bond_premium = 10;</code>
@@ -650,7 +572,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+     * IRC §171; UNSPECIFIED → PREMIUM_ELECTED
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.PremiumAmortisationElectionProto bond_premium = 10;</code>
@@ -666,7 +588,7 @@ private static final long serialVersionUID = 0L;
     private int marketDiscountInclusion_ = 0;
     /**
      * <pre>
-     * IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+     * IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.MarketDiscountInclusionProto market_discount_inclusion = 11;</code>
@@ -677,7 +599,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+     * IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.MarketDiscountInclusionProto market_discount_inclusion = 11;</code>
@@ -692,7 +614,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+     * IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.MarketDiscountInclusionProto market_discount_inclusion = 11;</code>
@@ -705,7 +627,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+     * IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.MarketDiscountInclusionProto market_discount_inclusion = 11;</code>
@@ -723,7 +645,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+     * IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.MarketDiscountInclusionProto market_discount_inclusion = 11;</code>
@@ -739,7 +661,7 @@ private static final long serialVersionUID = 0L;
     private int marketDiscountAccrual_ = 0;
     /**
      * <pre>
-     * IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+     * IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto market_discount_accrual = 12;</code>
@@ -750,7 +672,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+     * IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto market_discount_accrual = 12;</code>
@@ -765,7 +687,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+     * IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto market_discount_accrual = 12;</code>
@@ -778,7 +700,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+     * IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto market_discount_accrual = 12;</code>
@@ -796,7 +718,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+     * IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
      * </pre>
      *
      * <code>.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto market_discount_accrual = 12;</code>
@@ -807,179 +729,6 @@ private static final long serialVersionUID = 0L;
       marketDiscountAccrual_ = 0;
       onChanged();
       return this;
-    }
-
-    private fintekkers.models.util.LocalDate.LocalDateProto effectiveFrom_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> effectiveFromBuilder_;
-    /**
-     * <pre>
-     * The elections apply to lots purchased on or after this date: lots whose
-     * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-     * apply to every lot, since inception.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-     * @return Whether the effectiveFrom field is set.
-     */
-    public boolean hasEffectiveFrom() {
-      return ((bitField0_ & 0x00000008) != 0);
-    }
-    /**
-     * <pre>
-     * The elections apply to lots purchased on or after this date: lots whose
-     * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-     * apply to every lot, since inception.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-     * @return The effectiveFrom.
-     */
-    public fintekkers.models.util.LocalDate.LocalDateProto getEffectiveFrom() {
-      if (effectiveFromBuilder_ == null) {
-        return effectiveFrom_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : effectiveFrom_;
-      } else {
-        return effectiveFromBuilder_.getMessage();
-      }
-    }
-    /**
-     * <pre>
-     * The elections apply to lots purchased on or after this date: lots whose
-     * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-     * apply to every lot, since inception.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-     */
-    public Builder setEffectiveFrom(fintekkers.models.util.LocalDate.LocalDateProto value) {
-      if (effectiveFromBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        effectiveFrom_ = value;
-      } else {
-        effectiveFromBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000008;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * The elections apply to lots purchased on or after this date: lots whose
-     * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-     * apply to every lot, since inception.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-     */
-    public Builder setEffectiveFrom(
-        fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
-      if (effectiveFromBuilder_ == null) {
-        effectiveFrom_ = builderForValue.build();
-      } else {
-        effectiveFromBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000008;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * The elections apply to lots purchased on or after this date: lots whose
-     * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-     * apply to every lot, since inception.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-     */
-    public Builder mergeEffectiveFrom(fintekkers.models.util.LocalDate.LocalDateProto value) {
-      if (effectiveFromBuilder_ == null) {
-        if (((bitField0_ & 0x00000008) != 0) &&
-          effectiveFrom_ != null &&
-          effectiveFrom_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
-          getEffectiveFromBuilder().mergeFrom(value);
-        } else {
-          effectiveFrom_ = value;
-        }
-      } else {
-        effectiveFromBuilder_.mergeFrom(value);
-      }
-      bitField0_ |= 0x00000008;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * The elections apply to lots purchased on or after this date: lots whose
-     * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-     * apply to every lot, since inception.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-     */
-    public Builder clearEffectiveFrom() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      effectiveFrom_ = null;
-      if (effectiveFromBuilder_ != null) {
-        effectiveFromBuilder_.dispose();
-        effectiveFromBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     * The elections apply to lots purchased on or after this date: lots whose
-     * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-     * apply to every lot, since inception.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-     */
-    public fintekkers.models.util.LocalDate.LocalDateProto.Builder getEffectiveFromBuilder() {
-      bitField0_ |= 0x00000008;
-      onChanged();
-      return getEffectiveFromFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     * The elections apply to lots purchased on or after this date: lots whose
-     * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-     * apply to every lot, since inception.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-     */
-    public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getEffectiveFromOrBuilder() {
-      if (effectiveFromBuilder_ != null) {
-        return effectiveFromBuilder_.getMessageOrBuilder();
-      } else {
-        return effectiveFrom_ == null ?
-            fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : effectiveFrom_;
-      }
-    }
-    /**
-     * <pre>
-     * The elections apply to lots purchased on or after this date: lots whose
-     * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-     * apply to every lot, since inception.
-     * </pre>
-     *
-     * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> 
-        getEffectiveFromFieldBuilder() {
-      if (effectiveFromBuilder_ == null) {
-        effectiveFromBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder>(
-                getEffectiveFrom(),
-                getParentForChildren(),
-                isClean());
-        effectiveFrom_ = null;
-      }
-      return effectiveFromBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

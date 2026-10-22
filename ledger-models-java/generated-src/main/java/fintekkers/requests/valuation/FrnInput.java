@@ -255,6 +255,44 @@ private static final long serialVersionUID = 0L;
     return fixings_.get(index);
   }
 
+  public static final int COST_BASIS_FIELD_NUMBER = 20;
+  private fintekkers.requests.valuation.CostBasisInput costBasis_;
+  /**
+   * <pre>
+   * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+   * @return Whether the costBasis field is set.
+   */
+  @java.lang.Override
+  public boolean hasCostBasis() {
+    return costBasis_ != null;
+  }
+  /**
+   * <pre>
+   * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+   * @return The costBasis.
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.CostBasisInput getCostBasis() {
+    return costBasis_ == null ? fintekkers.requests.valuation.CostBasisInput.getDefaultInstance() : costBasis_;
+  }
+  /**
+   * <pre>
+   * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.CostBasisInputOrBuilder getCostBasisOrBuilder() {
+    return costBasis_ == null ? fintekkers.requests.valuation.CostBasisInput.getDefaultInstance() : costBasis_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -281,6 +319,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < fixings_.size(); i++) {
       output.writeMessage(11, fixings_.get(i));
     }
+    if (costBasis_ != null) {
+      output.writeMessage(20, getCostBasis());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -305,6 +346,10 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < fixings_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(11, fixings_.get(i));
+    }
+    if (costBasis_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(20, getCostBasis());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -338,6 +383,11 @@ private static final long serialVersionUID = 0L;
     }
     if (!getFixingsList()
         .equals(other.getFixingsList())) return false;
+    if (hasCostBasis() != other.hasCostBasis()) return false;
+    if (hasCostBasis()) {
+      if (!getCostBasis()
+          .equals(other.getCostBasis())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -364,6 +414,10 @@ private static final long serialVersionUID = 0L;
     if (getFixingsCount() > 0) {
       hash = (37 * hash) + FIXINGS_FIELD_NUMBER;
       hash = (53 * hash) + getFixingsList().hashCode();
+    }
+    if (hasCostBasis()) {
+      hash = (37 * hash) + COST_BASIS_FIELD_NUMBER;
+      hash = (53 * hash) + getCostBasis().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -528,6 +582,11 @@ private static final long serialVersionUID = 0L;
         fixingsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000008);
+      costBasis_ = null;
+      if (costBasisBuilder_ != null) {
+        costBasisBuilder_.dispose();
+        costBasisBuilder_ = null;
+      }
       return this;
     }
 
@@ -588,6 +647,11 @@ private static final long serialVersionUID = 0L;
         result.curve_ = curveBuilder_ == null
             ? curve_
             : curveBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.costBasis_ = costBasisBuilder_ == null
+            ? costBasis_
+            : costBasisBuilder_.build();
       }
     }
 
@@ -670,6 +734,9 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (other.hasCostBasis()) {
+        mergeCostBasis(other.getCostBasis());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -730,6 +797,13 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 90
+            case 162: {
+              input.readMessage(
+                  getCostBasisFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 162
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1603,6 +1677,161 @@ private static final long serialVersionUID = 0L;
         fixings_ = null;
       }
       return fixingsBuilder_;
+    }
+
+    private fintekkers.requests.valuation.CostBasisInput costBasis_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.CostBasisInput, fintekkers.requests.valuation.CostBasisInput.Builder, fintekkers.requests.valuation.CostBasisInputOrBuilder> costBasisBuilder_;
+    /**
+     * <pre>
+     * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+     * @return Whether the costBasis field is set.
+     */
+    public boolean hasCostBasis() {
+      return ((bitField0_ & 0x00000010) != 0);
+    }
+    /**
+     * <pre>
+     * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+     * @return The costBasis.
+     */
+    public fintekkers.requests.valuation.CostBasisInput getCostBasis() {
+      if (costBasisBuilder_ == null) {
+        return costBasis_ == null ? fintekkers.requests.valuation.CostBasisInput.getDefaultInstance() : costBasis_;
+      } else {
+        return costBasisBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+     */
+    public Builder setCostBasis(fintekkers.requests.valuation.CostBasisInput value) {
+      if (costBasisBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        costBasis_ = value;
+      } else {
+        costBasisBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+     */
+    public Builder setCostBasis(
+        fintekkers.requests.valuation.CostBasisInput.Builder builderForValue) {
+      if (costBasisBuilder_ == null) {
+        costBasis_ = builderForValue.build();
+      } else {
+        costBasisBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+     */
+    public Builder mergeCostBasis(fintekkers.requests.valuation.CostBasisInput value) {
+      if (costBasisBuilder_ == null) {
+        if (((bitField0_ & 0x00000010) != 0) &&
+          costBasis_ != null &&
+          costBasis_ != fintekkers.requests.valuation.CostBasisInput.getDefaultInstance()) {
+          getCostBasisBuilder().mergeFrom(value);
+        } else {
+          costBasis_ = value;
+        }
+      } else {
+        costBasisBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+     */
+    public Builder clearCostBasis() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      costBasis_ = null;
+      if (costBasisBuilder_ != null) {
+        costBasisBuilder_.dispose();
+        costBasisBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+     */
+    public fintekkers.requests.valuation.CostBasisInput.Builder getCostBasisBuilder() {
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return getCostBasisFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+     */
+    public fintekkers.requests.valuation.CostBasisInputOrBuilder getCostBasisOrBuilder() {
+      if (costBasisBuilder_ != null) {
+        return costBasisBuilder_.getMessageOrBuilder();
+      } else {
+        return costBasis_ == null ?
+            fintekkers.requests.valuation.CostBasisInput.getDefaultInstance() : costBasis_;
+      }
+    }
+    /**
+     * <pre>
+     * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.CostBasisInput, fintekkers.requests.valuation.CostBasisInput.Builder, fintekkers.requests.valuation.CostBasisInputOrBuilder> 
+        getCostBasisFieldBuilder() {
+      if (costBasisBuilder_ == null) {
+        costBasisBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.requests.valuation.CostBasisInput, fintekkers.requests.valuation.CostBasisInput.Builder, fintekkers.requests.valuation.CostBasisInputOrBuilder>(
+                getCostBasis(),
+                getParentForChildren(),
+                isClean());
+        costBasis_ = null;
+      }
+      return costBasisBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

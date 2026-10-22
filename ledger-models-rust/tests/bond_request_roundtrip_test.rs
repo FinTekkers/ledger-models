@@ -84,6 +84,7 @@ fn bond_input_clean_price_survives_roundtrip() {
         security: Some(treasury_security()),
         clean_price: Some(decimal("98.50")),
         benchmark_curve: None,
+        cost_basis: None,
     };
     let original = ProductInput {
         input: Some(product_input::Input::Bond(bond)),
@@ -105,6 +106,7 @@ fn bond_input_security_fields_survive_roundtrip() {
         security: Some(treasury_security()),
         clean_price: Some(decimal("101.25")),
         benchmark_curve: None,
+        cost_basis: None,
     };
     let original = ProductInput {
         input: Some(product_input::Input::Bond(bond)),
@@ -136,6 +138,7 @@ fn bond_input_with_benchmark_curve_survives_roundtrip() {
         security: Some(treasury_security()),
         clean_price: Some(decimal("99.75")),
         benchmark_curve: Some(treasury_curve()),
+        cost_basis: None,
     };
     let original = ProductInput {
         input: Some(product_input::Input::Bond(bond)),
@@ -166,6 +169,7 @@ fn valuation_request_with_bond_product_input_survives_roundtrip() {
         security: Some(treasury_security()),
         clean_price: Some(decimal("98.50")),
         benchmark_curve: None,
+        cost_basis: None,
     };
     let original = ValuationRequestProto {
         product_input: Some(ProductInput {
@@ -192,6 +196,7 @@ fn bond_and_frn_are_distinct_oneof_variants() {
         security: Some(treasury_security()),
         clean_price: Some(decimal("100.00")),
         benchmark_curve: None,
+        cost_basis: None,
     };
     let original = ProductInput {
         input: Some(product_input::Input::Bond(bond)),

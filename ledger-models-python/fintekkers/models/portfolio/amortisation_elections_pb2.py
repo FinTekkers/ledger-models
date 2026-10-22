@@ -22,10 +22,9 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
-from fintekkers.models.util import local_date_pb2 as fintekkers_dot_models_dot_util_dot_local__date__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n8fintekkers/models/portfolio/amortisation_elections.proto\x12\x1b\x66intekkers.models.portfolio\x1a\'fintekkers/models/util/local_date.proto\"\xef\x02\n\x1a\x41mortisationElectionsProto\x12S\n\x0c\x62ond_premium\x18\n \x01(\x0e\x32=.fintekkers.models.portfolio.PremiumAmortisationElectionProto\x12\\\n\x19market_discount_inclusion\x18\x0b \x01(\x0e\x32\x39.fintekkers.models.portfolio.MarketDiscountInclusionProto\x12^\n\x17market_discount_accrual\x18\x0c \x01(\x0e\x32=.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto\x12>\n\x0e\x65\x66\x66\x65\x63tive_from\x18\r \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto*r\n PremiumAmortisationElectionProto\x12 \n\x1cUNSPECIFIED_PREMIUM_ELECTION\x10\x00\x12\x13\n\x0fPREMIUM_ELECTED\x10\x01\x12\x17\n\x13PREMIUM_NOT_ELECTED\x10\x02*t\n\x1cMarketDiscountInclusionProto\x12)\n%UNSPECIFIED_MARKET_DISCOUNT_INCLUSION\x10\x00\x12\x12\n\x0e\x41T_DISPOSITION\x10\x01\x12\x15\n\x11INCLUDE_CURRENTLY\x10\x02*c\n MarketDiscountAccrualMethodProto\x12\x1e\n\x1aUNSPECIFIED_ACCRUAL_METHOD\x10\x00\x12\x0b\n\x07RATABLE\x10\x01\x12\x12\n\x0e\x43ONSTANT_YIELD\x10\x02\x42\x1f\x42\x1b\x41mortisationElectionsProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n8fintekkers/models/portfolio/amortisation_elections.proto\x12\x1b\x66intekkers.models.portfolio\"\xaf\x02\n\x1a\x41mortisationElectionsProto\x12S\n\x0c\x62ond_premium\x18\n \x01(\x0e\x32=.fintekkers.models.portfolio.PremiumAmortisationElectionProto\x12\\\n\x19market_discount_inclusion\x18\x0b \x01(\x0e\x32\x39.fintekkers.models.portfolio.MarketDiscountInclusionProto\x12^\n\x17market_discount_accrual\x18\x0c \x01(\x0e\x32=.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto*r\n PremiumAmortisationElectionProto\x12 \n\x1cUNSPECIFIED_PREMIUM_ELECTION\x10\x00\x12\x13\n\x0fPREMIUM_ELECTED\x10\x01\x12\x17\n\x13PREMIUM_NOT_ELECTED\x10\x02*t\n\x1cMarketDiscountInclusionProto\x12)\n%UNSPECIFIED_MARKET_DISCOUNT_INCLUSION\x10\x00\x12\x12\n\x0e\x41T_DISPOSITION\x10\x01\x12\x15\n\x11INCLUDE_CURRENTLY\x10\x02*c\n MarketDiscountAccrualMethodProto\x12\x1e\n\x1aUNSPECIFIED_ACCRUAL_METHOD\x10\x00\x12\x0b\n\x07RATABLE\x10\x01\x12\x12\n\x0e\x43ONSTANT_YIELD\x10\x02\x42\x1f\x42\x1b\x41mortisationElectionsProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,12 +32,12 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.portfolio
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\033AmortisationElectionsProtosP\001'
-  _globals['_PREMIUMAMORTISATIONELECTIONPROTO']._serialized_start=500
-  _globals['_PREMIUMAMORTISATIONELECTIONPROTO']._serialized_end=614
-  _globals['_MARKETDISCOUNTINCLUSIONPROTO']._serialized_start=616
-  _globals['_MARKETDISCOUNTINCLUSIONPROTO']._serialized_end=732
-  _globals['_MARKETDISCOUNTACCRUALMETHODPROTO']._serialized_start=734
-  _globals['_MARKETDISCOUNTACCRUALMETHODPROTO']._serialized_end=833
-  _globals['_AMORTISATIONELECTIONSPROTO']._serialized_start=131
-  _globals['_AMORTISATIONELECTIONSPROTO']._serialized_end=498
+  _globals['_PREMIUMAMORTISATIONELECTIONPROTO']._serialized_start=395
+  _globals['_PREMIUMAMORTISATIONELECTIONPROTO']._serialized_end=509
+  _globals['_MARKETDISCOUNTINCLUSIONPROTO']._serialized_start=511
+  _globals['_MARKETDISCOUNTINCLUSIONPROTO']._serialized_end=627
+  _globals['_MARKETDISCOUNTACCRUALMETHODPROTO']._serialized_start=629
+  _globals['_MARKETDISCOUNTACCRUALMETHODPROTO']._serialized_end=728
+  _globals['_AMORTISATIONELECTIONSPROTO']._serialized_start=90
+  _globals['_AMORTISATIONELECTIONSPROTO']._serialized_end=393
 # @@protoc_insertion_point(module_scope)

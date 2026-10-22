@@ -9,7 +9,7 @@ public interface AmortisationElectionsProtoOrBuilder extends
 
   /**
    * <pre>
-   * IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+   * IRC §171; UNSPECIFIED → PREMIUM_ELECTED
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.PremiumAmortisationElectionProto bond_premium = 10;</code>
@@ -18,7 +18,7 @@ public interface AmortisationElectionsProtoOrBuilder extends
   int getBondPremiumValue();
   /**
    * <pre>
-   * IRC §171. UNSPECIFIED → PREMIUM_ELECTED
+   * IRC §171; UNSPECIFIED → PREMIUM_ELECTED
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.PremiumAmortisationElectionProto bond_premium = 10;</code>
@@ -28,7 +28,7 @@ public interface AmortisationElectionsProtoOrBuilder extends
 
   /**
    * <pre>
-   * IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+   * IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.MarketDiscountInclusionProto market_discount_inclusion = 11;</code>
@@ -37,7 +37,7 @@ public interface AmortisationElectionsProtoOrBuilder extends
   int getMarketDiscountInclusionValue();
   /**
    * <pre>
-   * IRC §1278(b). UNSPECIFIED → AT_DISPOSITION
+   * IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.MarketDiscountInclusionProto market_discount_inclusion = 11;</code>
@@ -47,7 +47,7 @@ public interface AmortisationElectionsProtoOrBuilder extends
 
   /**
    * <pre>
-   * IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+   * IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto market_discount_accrual = 12;</code>
@@ -56,44 +56,11 @@ public interface AmortisationElectionsProtoOrBuilder extends
   int getMarketDiscountAccrualValue();
   /**
    * <pre>
-   * IRC §1276(b)(2). UNSPECIFIED → RATABLE; used only with INCLUDE_CURRENTLY
+   * IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
    * </pre>
    *
    * <code>.fintekkers.models.portfolio.MarketDiscountAccrualMethodProto market_discount_accrual = 12;</code>
    * @return The marketDiscountAccrual.
    */
   fintekkers.models.portfolio.MarketDiscountAccrualMethodProto getMarketDiscountAccrual();
-
-  /**
-   * <pre>
-   * The elections apply to lots purchased on or after this date: lots whose
-   * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-   * apply to every lot, since inception.
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-   * @return Whether the effectiveFrom field is set.
-   */
-  boolean hasEffectiveFrom();
-  /**
-   * <pre>
-   * The elections apply to lots purchased on or after this date: lots whose
-   * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-   * apply to every lot, since inception.
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-   * @return The effectiveFrom.
-   */
-  fintekkers.models.util.LocalDate.LocalDateProto getEffectiveFrom();
-  /**
-   * <pre>
-   * The elections apply to lots purchased on or after this date: lots whose
-   * TaxLotInputProto.trade_date is on or after effective_from. Unset: they
-   * apply to every lot, since inception.
-   * </pre>
-   *
-   * <code>.fintekkers.models.util.LocalDateProto effective_from = 13;</code>
-   */
-  fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getEffectiveFromOrBuilder();
 }

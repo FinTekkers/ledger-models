@@ -39,30 +39,25 @@ public final class ValuationRequestProtos {
       "ition/measure.proto\0322fintekkers/requests" +
       "/valuation/product_inputs.proto\032(fintekk" +
       "ers/models/util/object_type.proto\032$finte" +
-      "kkers/models/util/version.proto\0328fintekk" +
-      "ers/models/portfolio/amortisation_electi" +
-      "ons.proto\"\254\006\n\025ValuationRequestProto\022<\n\013o" +
-      "bject_type\030\001 \001(\0162\'.fintekkers.models.uti" +
-      "l.ObjectTypeProto\0225\n\007version\030\002 \001(\0132$.fin" +
-      "tekkers.models.util.VersionProto\022K\n\016oper" +
-      "ation_type\030\n \001(\01623.fintekkers.requests.u" +
-      "til.RequestOperationTypeProto\022:\n\010measure" +
-      "s\030\036 \003(\0162(.fintekkers.models.position.Mea" +
-      "sureProto\022A\n\016security_input\030\024 \001(\0132).fint" +
-      "ekkers.models.security.SecurityProto\022A\n\016" +
-      "position_input\030\025 \001(\0132).fintekkers.models" +
-      ".position.PositionProto\0228\n\013price_input\030\026" +
-      " \001(\0132#.fintekkers.models.price.PriceProt" +
-      "o\022B\n\rasof_datetime\030\027 \001(\0132+.fintekkers.mo" +
-      "dels.util.LocalTimestampProto\022W\n\026amortis" +
-      "ation_elections\030\032 \001(\01327.fintekkers.model" +
-      "s.portfolio.AmortisationElectionsProto\022A" +
-      "\n\010tax_lots\030\033 \003(\0132/.fintekkers.requests.v" +
-      "aluation.TaxLotInputProto\022B\n\rproduct_inp" +
-      "ut\030F \001(\0132+.fintekkers.requests.valuation" +
-      ".ProductInputJ\004\010\030\020\031J\004\010\031\020\032R\017cpi_price_inp" +
-      "utR\024reference_rate_inputB\032B\026ValuationReq" +
-      "uestProtosP\001b\006proto3"
+      "kkers/models/util/version.proto\"\220\005\n\025Valu" +
+      "ationRequestProto\022<\n\013object_type\030\001 \001(\0162\'" +
+      ".fintekkers.models.util.ObjectTypeProto\022" +
+      "5\n\007version\030\002 \001(\0132$.fintekkers.models.uti" +
+      "l.VersionProto\022K\n\016operation_type\030\n \001(\01623" +
+      ".fintekkers.requests.util.RequestOperati" +
+      "onTypeProto\022:\n\010measures\030\036 \003(\0162(.fintekke" +
+      "rs.models.position.MeasureProto\022A\n\016secur" +
+      "ity_input\030\024 \001(\0132).fintekkers.models.secu" +
+      "rity.SecurityProto\022A\n\016position_input\030\025 \001" +
+      "(\0132).fintekkers.models.position.Position" +
+      "Proto\0228\n\013price_input\030\026 \001(\0132#.fintekkers." +
+      "models.price.PriceProto\022B\n\rasof_datetime" +
+      "\030\027 \001(\0132+.fintekkers.models.util.LocalTim" +
+      "estampProto\022B\n\rproduct_input\030F \001(\0132+.fin" +
+      "tekkers.requests.valuation.ProductInputJ" +
+      "\004\010\030\020\031J\004\010\031\020\032R\017cpi_price_inputR\024reference_" +
+      "rate_inputB\032B\026ValuationRequestProtosP\001b\006" +
+      "proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -76,14 +71,13 @@ public final class ValuationRequestProtos {
           fintekkers.requests.valuation.ProductInputProtos.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
           fintekkers.models.util.VersionProtos.getDescriptor(),
-          fintekkers.models.portfolio.AmortisationElectionsProtos.getDescriptor(),
         });
     internal_static_fintekkers_requests_valuation_ValuationRequestProto_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_fintekkers_requests_valuation_ValuationRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_ValuationRequestProto_descriptor,
-        new java.lang.String[] { "ObjectType", "Version", "OperationType", "Measures", "SecurityInput", "PositionInput", "PriceInput", "AsofDatetime", "AmortisationElections", "TaxLots", "ProductInput", });
+        new java.lang.String[] { "ObjectType", "Version", "OperationType", "Measures", "SecurityInput", "PositionInput", "PriceInput", "AsofDatetime", "ProductInput", });
     fintekkers.models.security.SecurityProtos.getDescriptor();
     fintekkers.models.position.PositionProtos.getDescriptor();
     fintekkers.models.price.PriceProtos.getDescriptor();
@@ -93,7 +87,6 @@ public final class ValuationRequestProtos {
     fintekkers.requests.valuation.ProductInputProtos.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();
     fintekkers.models.util.VersionProtos.getDescriptor();
-    fintekkers.models.portfolio.AmortisationElectionsProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)
