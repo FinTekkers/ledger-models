@@ -39,25 +39,25 @@ public final class ValuationRequestProtos {
       "ition/measure.proto\0322fintekkers/requests" +
       "/valuation/product_inputs.proto\032(fintekk" +
       "ers/models/util/object_type.proto\032$finte" +
-      "kkers/models/util/version.proto\"\220\005\n\025Valu" +
+      "kkers/models/util/version.proto\"\230\005\n\025Valu" +
       "ationRequestProto\022<\n\013object_type\030\001 \001(\0162\'" +
       ".fintekkers.models.util.ObjectTypeProto\022" +
       "5\n\007version\030\002 \001(\0132$.fintekkers.models.uti" +
       "l.VersionProto\022K\n\016operation_type\030\n \001(\01623" +
       ".fintekkers.requests.util.RequestOperati" +
       "onTypeProto\022:\n\010measures\030\036 \003(\0162(.fintekke" +
-      "rs.models.position.MeasureProto\022A\n\016secur" +
+      "rs.models.position.MeasureProto\022E\n\016secur" +
       "ity_input\030\024 \001(\0132).fintekkers.models.secu" +
-      "rity.SecurityProto\022A\n\016position_input\030\025 \001" +
-      "(\0132).fintekkers.models.position.Position" +
-      "Proto\0228\n\013price_input\030\026 \001(\0132#.fintekkers." +
-      "models.price.PriceProto\022B\n\rasof_datetime" +
-      "\030\027 \001(\0132+.fintekkers.models.util.LocalTim" +
-      "estampProto\022B\n\rproduct_input\030F \001(\0132+.fin" +
-      "tekkers.requests.valuation.ProductInputJ" +
-      "\004\010\030\020\031J\004\010\031\020\032R\017cpi_price_inputR\024reference_" +
-      "rate_inputB\032B\026ValuationRequestProtosP\001b\006" +
-      "proto3"
+      "rity.SecurityProtoB\002\030\001\022A\n\016position_input" +
+      "\030\025 \001(\0132).fintekkers.models.position.Posi" +
+      "tionProto\022<\n\013price_input\030\026 \001(\0132#.fintekk" +
+      "ers.models.price.PriceProtoB\002\030\001\022B\n\rasof_" +
+      "datetime\030\027 \001(\0132+.fintekkers.models.util." +
+      "LocalTimestampProto\022B\n\rproduct_input\030F \001" +
+      "(\0132+.fintekkers.requests.valuation.Produ" +
+      "ctInputJ\004\010\030\020\031J\004\010\031\020\032R\017cpi_price_inputR\024re" +
+      "ference_rate_inputB\032B\026ValuationRequestPr" +
+      "otosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

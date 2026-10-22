@@ -207,36 +207,43 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    *The full security object for which we are going to run the valuation
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=35
    * @return Whether the securityInput field is set.
    */
   @java.lang.Override
-  public boolean hasSecurityInput() {
+  @java.lang.Deprecated public boolean hasSecurityInput() {
     return securityInput_ != null;
   }
   /**
    * <pre>
    *The full security object for which we are going to run the valuation
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=35
    * @return The securityInput.
    */
   @java.lang.Override
-  public fintekkers.models.security.SecurityProto getSecurityInput() {
+  @java.lang.Deprecated public fintekkers.models.security.SecurityProto getSecurityInput() {
     return securityInput_ == null ? fintekkers.models.security.SecurityProto.getDefaultInstance() : securityInput_;
   }
   /**
    * <pre>
    *The full security object for which we are going to run the valuation
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
    */
   @java.lang.Override
-  public fintekkers.models.security.SecurityProtoOrBuilder getSecurityInputOrBuilder() {
+  @java.lang.Deprecated public fintekkers.models.security.SecurityProtoOrBuilder getSecurityInputOrBuilder() {
     return securityInput_ == null ? fintekkers.models.security.SecurityProto.getDefaultInstance() : securityInput_;
   }
 
@@ -284,38 +291,45 @@ private static final long serialVersionUID = 0L;
    * <pre>
    *The price we are going to use for the valuation.
    *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=43
    * @return Whether the priceInput field is set.
    */
   @java.lang.Override
-  public boolean hasPriceInput() {
+  @java.lang.Deprecated public boolean hasPriceInput() {
     return priceInput_ != null;
   }
   /**
    * <pre>
    *The price we are going to use for the valuation.
    *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=43
    * @return The priceInput.
    */
   @java.lang.Override
-  public fintekkers.models.price.PriceProto getPriceInput() {
+  @java.lang.Deprecated public fintekkers.models.price.PriceProto getPriceInput() {
     return priceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : priceInput_;
   }
   /**
    * <pre>
    *The price we are going to use for the valuation.
    *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
    */
   @java.lang.Override
-  public fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder() {
+  @java.lang.Deprecated public fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder() {
     return priceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : priceInput_;
   }
 
@@ -1477,23 +1491,29 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      *The full security object for which we are going to run the valuation
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
+     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
+     *     See fintekkers/requests/valuation/valuation_request.proto;l=35
      * @return Whether the securityInput field is set.
      */
-    public boolean hasSecurityInput() {
+    @java.lang.Deprecated public boolean hasSecurityInput() {
       return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      * <pre>
      *The full security object for which we are going to run the valuation
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
+     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
+     *     See fintekkers/requests/valuation/valuation_request.proto;l=35
      * @return The securityInput.
      */
-    public fintekkers.models.security.SecurityProto getSecurityInput() {
+    @java.lang.Deprecated public fintekkers.models.security.SecurityProto getSecurityInput() {
       if (securityInputBuilder_ == null) {
         return securityInput_ == null ? fintekkers.models.security.SecurityProto.getDefaultInstance() : securityInput_;
       } else {
@@ -1503,11 +1523,12 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      *The full security object for which we are going to run the valuation
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
      */
-    public Builder setSecurityInput(fintekkers.models.security.SecurityProto value) {
+    @java.lang.Deprecated public Builder setSecurityInput(fintekkers.models.security.SecurityProto value) {
       if (securityInputBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -1523,11 +1544,12 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      *The full security object for which we are going to run the valuation
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
      */
-    public Builder setSecurityInput(
+    @java.lang.Deprecated public Builder setSecurityInput(
         fintekkers.models.security.SecurityProto.Builder builderForValue) {
       if (securityInputBuilder_ == null) {
         securityInput_ = builderForValue.build();
@@ -1541,11 +1563,12 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      *The full security object for which we are going to run the valuation
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
      */
-    public Builder mergeSecurityInput(fintekkers.models.security.SecurityProto value) {
+    @java.lang.Deprecated public Builder mergeSecurityInput(fintekkers.models.security.SecurityProto value) {
       if (securityInputBuilder_ == null) {
         if (((bitField0_ & 0x00000010) != 0) &&
           securityInput_ != null &&
@@ -1564,11 +1587,12 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      *The full security object for which we are going to run the valuation
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
      */
-    public Builder clearSecurityInput() {
+    @java.lang.Deprecated public Builder clearSecurityInput() {
       bitField0_ = (bitField0_ & ~0x00000010);
       securityInput_ = null;
       if (securityInputBuilder_ != null) {
@@ -1581,11 +1605,12 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      *The full security object for which we are going to run the valuation
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
      */
-    public fintekkers.models.security.SecurityProto.Builder getSecurityInputBuilder() {
+    @java.lang.Deprecated public fintekkers.models.security.SecurityProto.Builder getSecurityInputBuilder() {
       bitField0_ |= 0x00000010;
       onChanged();
       return getSecurityInputFieldBuilder().getBuilder();
@@ -1593,11 +1618,12 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      *The full security object for which we are going to run the valuation
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
      */
-    public fintekkers.models.security.SecurityProtoOrBuilder getSecurityInputOrBuilder() {
+    @java.lang.Deprecated public fintekkers.models.security.SecurityProtoOrBuilder getSecurityInputOrBuilder() {
       if (securityInputBuilder_ != null) {
         return securityInputBuilder_.getMessageOrBuilder();
       } else {
@@ -1608,9 +1634,10 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      *The full security object for which we are going to run the valuation
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> 
@@ -1788,24 +1815,30 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The price we are going to use for the valuation.
      *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
+     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
+     *     See fintekkers/requests/valuation/valuation_request.proto;l=43
      * @return Whether the priceInput field is set.
      */
-    public boolean hasPriceInput() {
+    @java.lang.Deprecated public boolean hasPriceInput() {
       return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      * <pre>
      *The price we are going to use for the valuation.
      *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
+     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
+     *     See fintekkers/requests/valuation/valuation_request.proto;l=43
      * @return The priceInput.
      */
-    public fintekkers.models.price.PriceProto getPriceInput() {
+    @java.lang.Deprecated public fintekkers.models.price.PriceProto getPriceInput() {
       if (priceInputBuilder_ == null) {
         return priceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : priceInput_;
       } else {
@@ -1816,11 +1849,12 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The price we are going to use for the valuation.
      *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
      */
-    public Builder setPriceInput(fintekkers.models.price.PriceProto value) {
+    @java.lang.Deprecated public Builder setPriceInput(fintekkers.models.price.PriceProto value) {
       if (priceInputBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -1837,11 +1871,12 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The price we are going to use for the valuation.
      *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
      */
-    public Builder setPriceInput(
+    @java.lang.Deprecated public Builder setPriceInput(
         fintekkers.models.price.PriceProto.Builder builderForValue) {
       if (priceInputBuilder_ == null) {
         priceInput_ = builderForValue.build();
@@ -1856,11 +1891,12 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The price we are going to use for the valuation.
      *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
      */
-    public Builder mergePriceInput(fintekkers.models.price.PriceProto value) {
+    @java.lang.Deprecated public Builder mergePriceInput(fintekkers.models.price.PriceProto value) {
       if (priceInputBuilder_ == null) {
         if (((bitField0_ & 0x00000040) != 0) &&
           priceInput_ != null &&
@@ -1880,11 +1916,12 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The price we are going to use for the valuation.
      *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
      */
-    public Builder clearPriceInput() {
+    @java.lang.Deprecated public Builder clearPriceInput() {
       bitField0_ = (bitField0_ & ~0x00000040);
       priceInput_ = null;
       if (priceInputBuilder_ != null) {
@@ -1898,11 +1935,12 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The price we are going to use for the valuation.
      *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
      */
-    public fintekkers.models.price.PriceProto.Builder getPriceInputBuilder() {
+    @java.lang.Deprecated public fintekkers.models.price.PriceProto.Builder getPriceInputBuilder() {
       bitField0_ |= 0x00000040;
       onChanged();
       return getPriceInputFieldBuilder().getBuilder();
@@ -1911,11 +1949,12 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The price we are going to use for the valuation.
      *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
      */
-    public fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder() {
+    @java.lang.Deprecated public fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder() {
       if (priceInputBuilder_ != null) {
         return priceInputBuilder_.getMessageOrBuilder();
       } else {
@@ -1927,9 +1966,10 @@ private static final long serialVersionUID = 0L;
      * <pre>
      *The price we are going to use for the valuation.
      *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
      * </pre>
      *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> 

@@ -32,19 +32,21 @@ message ValuationRequestProto {
   repeated fintekkers.models.position.MeasureProto measures = 30;
 
   //The full security object for which we are going to run the valuation
-  fintekkers.models.security.SecurityProto security_input = 20;
+  //Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
+  fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];
 
   //The positions we are going to value.
   fintekkers.models.position.PositionProto position_input= 21;
 
   //The price we are going to use for the valuation.
   //Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-  fintekkers.models.price.PriceProto price_input = 22;
+  //Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
+  fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];
 
   //The asof datetime for the valuation.
   fintekkers.models.util.LocalTimestampProto asof_datetime = 23;
 
-  //Removed in 0.5 (LM-344). TIPS CPI: ProductInput.tips.cpi (TipsInput.cpi).
+  //Removed in 0.4.60 (LM-344). TIPS CPI: ProductInput.tips.cpi (TipsInput.cpi).
   //FRNs: ProductInput.frn.curve (FrnInput.curve); there is no flat-rate path.
   reserved 24, 25;
   reserved "cpi_price_input", "reference_rate_input";

@@ -61,3 +61,7 @@ Rows **L2** (`TipsInput.current_cpi`) and **L5 / D4** (`ValuationRequestProto.re
 | L8 | `IssuanceProto.high_discount_rate` | **Percent per annum, bank-discount basis**, as Treasury publishes `HighDiscountRate`: `4.215` = 4.215%. Same unit style as L1. |
 
 L7 and L8 differ on purpose, as L1 and L5 did. See `frn_reference_rate_fixings.md`.
+
+## Amendment 2026-10-22 (LM-377)
+
+`ValuationRequestProto.security_input` (20) and `price_input` (22, row **L6**) are marked `[deprecated = true]` in favour of `product_input` (70). They stay supported, and L6's units still apply, until every product has a typed `ProductInput` arm; they are removed under LM-376.

@@ -106,29 +106,36 @@ public interface ValuationRequestProtoOrBuilder extends
   /**
    * <pre>
    *The full security object for which we are going to run the valuation
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=35
    * @return Whether the securityInput field is set.
    */
-  boolean hasSecurityInput();
+  @java.lang.Deprecated boolean hasSecurityInput();
   /**
    * <pre>
    *The full security object for which we are going to run the valuation
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=35
    * @return The securityInput.
    */
-  fintekkers.models.security.SecurityProto getSecurityInput();
+  @java.lang.Deprecated fintekkers.models.security.SecurityProto getSecurityInput();
   /**
    * <pre>
    *The full security object for which we are going to run the valuation
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20;</code>
+   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
    */
-  fintekkers.models.security.SecurityProtoOrBuilder getSecurityInputOrBuilder();
+  @java.lang.Deprecated fintekkers.models.security.SecurityProtoOrBuilder getSecurityInputOrBuilder();
 
   /**
    * <pre>
@@ -161,31 +168,38 @@ public interface ValuationRequestProtoOrBuilder extends
    * <pre>
    *The price we are going to use for the valuation.
    *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=43
    * @return Whether the priceInput field is set.
    */
-  boolean hasPriceInput();
+  @java.lang.Deprecated boolean hasPriceInput();
   /**
    * <pre>
    *The price we are going to use for the valuation.
    *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
+   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
+   *     See fintekkers/requests/valuation/valuation_request.proto;l=43
    * @return The priceInput.
    */
-  fintekkers.models.price.PriceProto getPriceInput();
+  @java.lang.Deprecated fintekkers.models.price.PriceProto getPriceInput();
   /**
    * <pre>
    *The price we are going to use for the valuation.
    *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
    * </pre>
    *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22;</code>
+   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
    */
-  fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder();
+  @java.lang.Deprecated fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder();
 
   /**
    * <pre>
