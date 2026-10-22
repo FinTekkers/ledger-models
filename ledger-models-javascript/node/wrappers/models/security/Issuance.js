@@ -43,7 +43,7 @@ class Issuance {
     getMatureSecurityAmount() {
         return Issuance._toDecimal(this.proto.getMatureSecurityAmount());
     }
-    /** Single-price auction clearing price. Null if unset (e.g., multi-price). */
+    /** Single issue price per 100 par; real (not index-ratio adjusted) for TIPS. Null for multiple-price auctions, reopenings and bills. */
     getPriceForSinglePriceAuction() {
         return Issuance._toDecimal(this.proto.getPriceForSinglePriceAuction());
     }

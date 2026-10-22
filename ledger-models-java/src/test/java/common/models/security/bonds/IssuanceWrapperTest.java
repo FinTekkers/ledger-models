@@ -91,4 +91,33 @@ class IssuanceWrapperTest {
         assertTrue(parsed.hasHighDiscountRate());
         assertEquals("4.215", Decimals.text(parsed.getHighDiscountRate()));
     }
+
+    /** LM-367: MULTIPLE_PRICE added; the existing values keep their numbers. */
+    @Test
+    public void auctionType_values() {
+        assertEquals(0, AuctionTypeProto.UNKNOWN_AUCTION_TYPE.getNumber());
+        assertEquals(1, AuctionTypeProto.SINGLE_PRICE.getNumber());
+        assertEquals(2, AuctionTypeProto.MULTIPLE_PRICE.getNumber());
+    }
+
+    @Test
+    public void multiplePrice_roundTripsThroughWrapper() throws InvalidProtocolBufferException {
+        IssuanceProto original = IssuanceProto.newBuilder().setAuctionType(AuctionTypeProto.MULTIPLE_PRICE).build();
+        IssuanceProto parsed = IssuanceProto.parseFrom(original.toByteArray());
+
+        assertEquals(2, parsed.getAuctionTypeValue());
+        assertEquals(AuctionTypeProto.MULTIPLE_PRICE, new Issuance(parsed).getAuctionType());
+    }
+
+    /**
+     * Field 24, varint 99: a value no binding knows. Stands in for an old
+     * binding reading MULTIPLE_PRICE (2); proto3 enums are open.
+     */
+    @Test
+    public void unknownAuctionType_parsesAndKeepsRawValue() throws InvalidProtocolBufferException {
+        IssuanceProto proto = IssuanceProto.parseFrom(new byte[] {(byte) 0xC0, 0x01, 0x63});
+
+        assertEquals(99, proto.getAuctionTypeValue());
+        assertEquals(AuctionTypeProto.UNRECOGNIZED, new Issuance(proto).getAuctionType());
+    }
 }

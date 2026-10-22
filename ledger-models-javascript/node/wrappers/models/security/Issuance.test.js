@@ -106,4 +106,23 @@ test('IssuanceProto.high_discount_rate round-trips and is unset by default', () 
     expect(parsed.hasHighDiscountRate()).toBe(true);
     expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getHighDiscountRate()))).toBe('4.215');
 });
+// LM-367: MULTIPLE_PRICE added; the existing values keep their numbers.
+test('AuctionTypeProto values', () => {
+    expect(auction_type_pb_1.AuctionTypeProto.UNKNOWN_AUCTION_TYPE).toBe(0);
+    expect(auction_type_pb_1.AuctionTypeProto.SINGLE_PRICE).toBe(1);
+    expect(auction_type_pb_1.AuctionTypeProto.MULTIPLE_PRICE).toBe(2);
+});
+test('MULTIPLE_PRICE round-trips through the wrapper', () => {
+    const p = new issuance_pb_1.IssuanceProto();
+    p.setAuctionType(auction_type_pb_1.AuctionTypeProto.MULTIPLE_PRICE);
+    const parsed = issuance_pb_1.IssuanceProto.deserializeBinary(p.serializeBinary());
+    expect(new Issuance_1.default(parsed).getAuctionType()).toBe(auction_type_pb_1.AuctionTypeProto.MULTIPLE_PRICE);
+});
+// Field 24, varint 99: a value no binding knows. Stands in for an old
+// binding reading MULTIPLE_PRICE (2); proto3 enums are open.
+test('unknown auction type parses and keeps the raw value', () => {
+    const proto = issuance_pb_1.IssuanceProto.deserializeBinary(new Uint8Array([0xc0, 0x01, 0x63]));
+    expect(proto.getAuctionType()).toBe(99);
+    expect(new Issuance_1.default(proto).getAuctionType()).toBe(99);
+});
 //# sourceMappingURL=Issuance.test.js.map

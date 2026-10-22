@@ -9,24 +9,56 @@ package fintekkers.models.security.bond;
 public enum AuctionTypeProto
     implements com.google.protobuf.ProtocolMessageEnum {
   /**
+   * <pre>
+   * Unset or not known.
+   * </pre>
+   *
    * <code>UNKNOWN_AUCTION_TYPE = 0;</code>
    */
   UNKNOWN_AUCTION_TYPE(0),
   /**
+   * <pre>
+   * All winning bidders pay one clearing price. US Treasury auctions from 1998-11-01.
+   * </pre>
+   *
    * <code>SINGLE_PRICE = 1;</code>
    */
   SINGLE_PRICE(1),
+  /**
+   * <pre>
+   * Each winning bidder pays the price it bid. US Treasury auctions before 1998-11-01.
+   * </pre>
+   *
+   * <code>MULTIPLE_PRICE = 2;</code>
+   */
+  MULTIPLE_PRICE(2),
   UNRECOGNIZED(-1),
   ;
 
   /**
+   * <pre>
+   * Unset or not known.
+   * </pre>
+   *
    * <code>UNKNOWN_AUCTION_TYPE = 0;</code>
    */
   public static final int UNKNOWN_AUCTION_TYPE_VALUE = 0;
   /**
+   * <pre>
+   * All winning bidders pay one clearing price. US Treasury auctions from 1998-11-01.
+   * </pre>
+   *
    * <code>SINGLE_PRICE = 1;</code>
    */
   public static final int SINGLE_PRICE_VALUE = 1;
+  /**
+   * <pre>
+   * Each winning bidder pays the price it bid. US Treasury auctions before 1998-11-01.
+   * </pre>
+   *
+   * <code>MULTIPLE_PRICE = 2;</code>
+   */
+  public static final int MULTIPLE_PRICE_VALUE = 2;
 
 
   public final int getNumber() {
@@ -55,6 +87,7 @@ public enum AuctionTypeProto
     switch (value) {
       case 0: return UNKNOWN_AUCTION_TYPE;
       case 1: return SINGLE_PRICE;
+      case 2: return MULTIPLE_PRICE;
       default: return null;
     }
   }

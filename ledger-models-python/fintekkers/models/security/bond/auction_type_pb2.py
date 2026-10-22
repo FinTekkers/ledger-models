@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n2fintekkers/models/security/bond/auction_type.proto\x12\x1f\x66intekkers.models.security.bond*>\n\x10\x41uctionTypeProto\x12\x18\n\x14UNKNOWN_AUCTION_TYPE\x10\x00\x12\x10\n\x0cSINGLE_PRICE\x10\x01\x42\x15\x42\x11\x41uctionTypeProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n2fintekkers/models/security/bond/auction_type.proto\x12\x1f\x66intekkers.models.security.bond*R\n\x10\x41uctionTypeProto\x12\x18\n\x14UNKNOWN_AUCTION_TYPE\x10\x00\x12\x10\n\x0cSINGLE_PRICE\x10\x01\x12\x12\n\x0eMULTIPLE_PRICE\x10\x02\x42\x15\x42\x11\x41uctionTypeProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,5 +33,5 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\021AuctionTypeProtosP\001'
   _globals['_AUCTIONTYPEPROTO']._serialized_start=87
-  _globals['_AUCTIONTYPEPROTO']._serialized_end=149
+  _globals['_AUCTIONTYPEPROTO']._serialized_end=169
 # @@protoc_insertion_point(module_scope)

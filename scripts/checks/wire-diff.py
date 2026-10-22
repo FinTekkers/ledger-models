@@ -197,7 +197,15 @@ def lm365(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM365 and new == LM365[key]
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365]
+def lm367(key: str, old, new, head: dict) -> bool:
+    """LM-367: AuctionTypeProto.MULTIPLE_PRICE = 2 added. Nothing else; the
+    existing values and IssuanceProto.price_for_single_price_auction keep
+    their numbers, names and types."""
+    return (key == "value .fintekkers.models.security.bond.AuctionTypeProto = 2"
+            and old is None and new == "MULTIPLE_PRICE")
+
+
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367]
 
 
 def main() -> int:
