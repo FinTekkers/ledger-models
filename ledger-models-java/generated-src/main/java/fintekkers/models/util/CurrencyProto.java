@@ -6,7 +6,7 @@ package fintekkers.models.util;
 /**
  * <pre>
  * A currency, identified by its ISO 4217 alpha code (e.g. "USD", "GBP", "EUR").
- * This is a lightweight alternative to embedding a full CASH_SECURITY SecurityProto
+ * This is a lightweight alternative to embedding a full CASH_INSTRUMENT SecurityProto
  * when only the currency code is needed.
  * </pre>
  *
@@ -254,7 +254,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * A currency, identified by its ISO 4217 alpha code (e.g. "USD", "GBP", "EUR").
-   * This is a lightweight alternative to embedding a full CASH_SECURITY SecurityProto
+   * This is a lightweight alternative to embedding a full CASH_INSTRUMENT SecurityProto
    * when only the currency code is needed.
    * </pre>
    *

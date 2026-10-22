@@ -35,7 +35,7 @@ public interface GetIndexCompositionRequestProtoOrBuilder extends
 
   /**
    * <pre>
-   * UUID of the index security (EQUITY_INDEX_SECURITY).
+   * UUID of the index security (EQUITY_INDEX).
    * </pre>
    *
    * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -44,7 +44,7 @@ public interface GetIndexCompositionRequestProtoOrBuilder extends
   boolean hasIndexUuid();
   /**
    * <pre>
-   * UUID of the index security (EQUITY_INDEX_SECURITY).
+   * UUID of the index security (EQUITY_INDEX).
    * </pre>
    *
    * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>
@@ -53,7 +53,7 @@ public interface GetIndexCompositionRequestProtoOrBuilder extends
   fintekkers.models.util.Uuid.UUIDProto getIndexUuid();
   /**
    * <pre>
-   * UUID of the index security (EQUITY_INDEX_SECURITY).
+   * UUID of the index security (EQUITY_INDEX).
    * </pre>
    *
    * <code>.fintekkers.models.util.UUIDProto index_uuid = 10;</code>

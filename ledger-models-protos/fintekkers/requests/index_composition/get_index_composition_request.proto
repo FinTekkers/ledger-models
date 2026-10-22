@@ -19,7 +19,7 @@ message GetIndexCompositionRequestProto {
   fintekkers.models.util.ObjectTypeProto object_type = 1;
   fintekkers.models.util.VersionProto version = 2;
 
-  // UUID of the index security (EQUITY_INDEX_SECURITY).
+  // UUID of the index security (EQUITY_INDEX).
   fintekkers.models.util.UUIDProto index_uuid = 10;
 
   // The business date for which to retrieve the active composition.

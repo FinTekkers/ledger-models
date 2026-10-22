@@ -194,8 +194,8 @@ class Security {
         return new Security(proto);
     }
     /**
-     * Type guard: true iff this Security is a BondSecurity (BOND_SECURITY,
-     * TIPS, or FRN). Use to narrow before calling bond-specific getters:
+     * Type guard: true iff this Security is a BondSecurity (under BOND,
+     * e.g. TIPS or TREASURY_FRN). Use to narrow before calling bond-specific getters:
      *
      *   if (sec.isBond()) {
      *     // sec: BondSecurity here — TS knows about getCouponRate(), etc.
@@ -337,7 +337,7 @@ class Security {
         this.ensureHydrated();
         const securityType = this.proto.getProductType();
         const securityTypeString = Object.keys(product_type_pb_1.ProductTypeProto).find(key => product_type_pb_1.ProductTypeProto[key] === securityType);
-        return securityTypeString || 'UNKNOWN_SECURITY_TYPE';
+        return securityTypeString || 'PRODUCT_TYPE_UNKNOWN';
     }
     /**
      * Returns every Identifier attached to this security as typed wrappers.

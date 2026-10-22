@@ -12,7 +12,6 @@ import "fintekkers/models/util/version.proto";
 // import "fintekkers/models/util/uuid.proto";
 
 // import "fintekkers/models/security/identifier/identifier.proto";
-// import "fintekkers/models/security/security_type.proto";
 // import "fintekkers/models/security/security_quantity_type.proto";
 // import "fintekkers/models/security/coupon_frequency.proto";
 // import "fintekkers/models/security/coupon_type.proto";

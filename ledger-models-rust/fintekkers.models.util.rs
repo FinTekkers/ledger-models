@@ -341,7 +341,7 @@ pub struct LocalDateProto {
     pub day: u32,
 }
 /// A currency, identified by its ISO 4217 alpha code (e.g. "USD", "GBP", "EUR").
-/// This is a lightweight alternative to embedding a full CASH_SECURITY SecurityProto
+/// This is a lightweight alternative to embedding a full CASH_INSTRUMENT SecurityProto
 /// when only the currency code is needed.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

@@ -557,7 +557,7 @@ exports.default = Transaction;
 //   }
 //   BigDecimal bookAmount = null;
 //   switch(parentTransaction.getSecurity().getProductType()) {
-//       case BOND_SECURITY:
+//       case BOND:
 //           if(TransactionType.MATURATION.equals(parentTransaction.getTransactionType())
 //               || TransactionType.MATURATION_OFFSET.equals(parentTransaction.getTransactionType())) {
 //               bookAmount = parentTransaction.getQuantity();

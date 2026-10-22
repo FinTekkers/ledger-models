@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Round-trip: T_BILL and STRIPS_SECURITY proto → BondSecurity with face_value,
+ * Round-trip: TBILL and STRIPS proto → BondSecurity with face_value,
  * issue_date, maturity_date, dated_date, coupon_rate populated.
  *
  * Both productTypes must be wired through SecuritySerializer.deserialize /
@@ -77,7 +77,7 @@ class TBillStripsRoundTripTest {
         Security security = Security.fromProto(proto);
 
         assertInstanceOf(BondSecurity.class, security,
-                "T_BILL must deserialize to BondSecurity, not the default plain Security");
+                "TBILL must deserialize to BondSecurity, not the default plain Security");
         BondSecurity bond = (BondSecurity) security;
         assertNotNull(bond.getFaceValue());
         assertEquals(0, bond.getFaceValue().compareTo(BigDecimal.valueOf(1000)));
@@ -95,7 +95,7 @@ class TBillStripsRoundTripTest {
         Security security = Security.fromProto(proto);
 
         assertInstanceOf(BondSecurity.class, security,
-                "STRIPS_SECURITY must deserialize to BondSecurity, not the default plain Security");
+                "STRIPS must deserialize to BondSecurity, not the default plain Security");
         BondSecurity bond = (BondSecurity) security;
         assertNotNull(bond.getFaceValue());
         assertEquals(0, bond.getFaceValue().compareTo(BigDecimal.valueOf(1000)));

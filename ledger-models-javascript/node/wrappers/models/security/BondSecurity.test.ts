@@ -25,7 +25,7 @@ test('test BondSecurity.getTenor() returns correct Tenor for 10-year bond with a
 });
 
 function testBondSecurityCreation(): void {
-    // Create a SecurityProto with BOND_SECURITY type, coupon type, and coupon frequency
+    // Create a SecurityProto with a bond product type, coupon type, and coupon frequency
     const securityProto = new SecurityProto();
     securityProto.setUuid(UUID.random().toUUIDProto());
     securityProto.setProductType(ProductTypeProto.TREASURY_NOTE);
@@ -58,7 +58,7 @@ function testBondSecurityCreation(): void {
 }
 
 function testBondSecurityTenor(): void {
-    // Create a SecurityProto with BOND_SECURITY type and dates for a 10-year bond
+    // Create a SecurityProto with a bond product type and dates for a 10-year bond
     const securityProto = new SecurityProto();
     securityProto.setUuid(UUID.random().toUUIDProto());
     securityProto.setProductType(ProductTypeProto.TREASURY_NOTE);
@@ -138,7 +138,7 @@ function testBondSecurityTenor(): void {
 }
 
 function testBondSecurityTenorWithAsOfDate(): void {
-    // Create a SecurityProto with BOND_SECURITY type and dates for a 10-year bond
+    // Create a SecurityProto with a bond product type and dates for a 10-year bond
     const securityProto = new SecurityProto();
 
     securityProto.setProductType(ProductTypeProto.TREASURY_NOTE);

@@ -113,7 +113,7 @@ public interface IndexCompositionProtoOrBuilder extends
 
   /**
    * <pre>
-   * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+   * The index security this composition belongs to (EQUITY_INDEX type).
    * Typically is_link = true; resolve via SecurityService.GetByIds.
    * </pre>
    *
@@ -123,7 +123,7 @@ public interface IndexCompositionProtoOrBuilder extends
   boolean hasIndexSecurity();
   /**
    * <pre>
-   * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+   * The index security this composition belongs to (EQUITY_INDEX type).
    * Typically is_link = true; resolve via SecurityService.GetByIds.
    * </pre>
    *
@@ -133,7 +133,7 @@ public interface IndexCompositionProtoOrBuilder extends
   fintekkers.models.security.SecurityProto getIndexSecurity();
   /**
    * <pre>
-   * The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+   * The index security this composition belongs to (EQUITY_INDEX type).
    * Typically is_link = true; resolve via SecurityService.GetByIds.
    * </pre>
    *

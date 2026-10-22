@@ -169,8 +169,8 @@ class Security {
   }
 
   /**
-   * Type guard: true iff this Security is a BondSecurity (BOND_SECURITY,
-   * TIPS, or FRN). Use to narrow before calling bond-specific getters:
+   * Type guard: true iff this Security is a BondSecurity (under BOND,
+   * e.g. TIPS or TREASURY_FRN). Use to narrow before calling bond-specific getters:
    *
    *   if (sec.isBond()) {
    *     // sec: BondSecurity here — TS knows about getCouponRate(), etc.
@@ -325,7 +325,7 @@ class Security {
       key => ProductTypeProto[key] === securityType
     );
 
-    return securityTypeString || 'UNKNOWN_SECURITY_TYPE';
+    return securityTypeString || 'PRODUCT_TYPE_UNKNOWN';
   }
 
   /**

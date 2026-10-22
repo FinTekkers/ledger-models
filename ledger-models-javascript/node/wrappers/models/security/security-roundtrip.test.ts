@@ -33,7 +33,7 @@ function makeIdentifier(type: number, value: string): IdentifierProto {
 
 describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () => {
 
-    test('BOND_SECURITY: all bond fields survive round-trip', () => {
+    test('BOND: all bond fields survive round-trip', () => {
         const original = new SecurityProto();
         original.setProductType(ProductTypeProto.TREASURY_NOTE);
         original.setAssetClass('Fixed Income');
@@ -136,7 +136,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsedFrn.getReferenceRateIndex()).toBe(IndexTypeProto.T_BILL_13_WEEK);
     });
 
-    test('EQUITY_SECURITY: identifier + asset_class survive round-trip', () => {
+    test('STOCK: identifier + asset_class survive round-trip', () => {
         const original = new SecurityProto();
         original.setProductType(ProductTypeProto.COMMON_STOCK);
         original.setAssetClass('Equity');
@@ -157,7 +157,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getIdentifiersList()[0].getIdentifierType()).toBe(IdentifierTypeProto.EXCH_TICKER);
     });
 
-    test('CASH_SECURITY: cash_id + settlement fields survive round-trip', () => {
+    test('CASH_INSTRUMENT: cash_id + settlement fields survive round-trip', () => {
         const original = new SecurityProto();
         original.setProductType(ProductTypeProto.CURRENCY);
         original.setAssetClass('Cash');
@@ -178,7 +178,7 @@ describe('SecurityProto Round-Trip Serialization — All 6 Security Types', () =
         expect(parsed.getIdentifiersList()[0].getIdentifierType()).toBe(IdentifierTypeProto.CASH);
     });
 
-    test('INDEX_SECURITY: index_type + inflation_index_type survive round-trip', () => {
+    test('INDEX: index_type + inflation_index_type survive round-trip', () => {
         const original = new SecurityProto();
         original.setProductType(ProductTypeProto.EQUITY_INDEX);
         original.setAssetClass('Index');

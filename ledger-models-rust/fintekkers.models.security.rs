@@ -657,7 +657,7 @@ pub enum AssetClassProto {
     /// EQUITY). A stored "INDEX" asset class matches no filter.
     Index = 4,
     /// VOLATILITY covers volatility-class reference instruments — VIX
-    /// (CBOE Volatility Index), VVIX, etc. Stored as INDEX_SECURITY at the
+    /// (CBOE Volatility Index), VVIX, etc. Stored as INDEX at the
     /// proto type level (these are reference indices, not holdable
     /// instruments) but distinct asset_class to differentiate from
     /// equity / fixed-income reference indices like SP500 or CMT yields.
@@ -729,7 +729,7 @@ pub struct IndexCompositionProto {
     pub valid_from: ::core::option::Option<super::util::LocalTimestampProto>,
     #[prost(message, optional, tag = "9")]
     pub valid_to: ::core::option::Option<super::util::LocalTimestampProto>,
-    /// The index security this composition belongs to (EQUITY_INDEX_SECURITY type).
+    /// The index security this composition belongs to (EQUITY_INDEX type).
     /// Typically is_link = true; resolve via SecurityService.GetByIds.
     #[prost(message, optional, tag = "10")]
     pub index_security: ::core::option::Option<SecurityProto>,
