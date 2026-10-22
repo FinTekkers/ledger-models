@@ -4,6 +4,8 @@ import fintekkers.models.security.bond.AuctionTypeProto;
 import fintekkers.models.security.bond.IssuanceProto;
 import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import fintekkers.models.util.LocalDate.LocalDateProto;
+import com.google.protobuf.Descriptors.FieldDescriptor;
+import com.google.protobuf.InvalidProtocolBufferException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -11,6 +13,8 @@ import java.time.LocalDate;
 import testutil.Decimals;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class IssuanceWrapperTest {
@@ -66,5 +70,25 @@ class IssuanceWrapperTest {
         // AuctionType has a proto3 default (UNKNOWN_AUCTION_TYPE), not null.
         assertNotNull(wrapper.getAuctionType());
         assertEquals(AuctionTypeProto.UNKNOWN_AUCTION_TYPE, wrapper.getAuctionType());
+    }
+
+    /** LM-365: high_discount_rate is field 28, a DecimalValueProto with presence. */
+    @Test
+    public void highDiscountRate_isField28Decimal() {
+        FieldDescriptor f = IssuanceProto.getDescriptor().findFieldByNumber(28);
+        assertNotNull(f);
+        assertEquals("high_discount_rate", f.getName());
+        assertEquals(DecimalValueProto.getDescriptor(), f.getMessageType());
+    }
+
+    @Test
+    public void highDiscountRate_survivesRoundtripAndIsUnsetByDefault() throws InvalidProtocolBufferException {
+        assertFalse(IssuanceProto.newBuilder().build().hasHighDiscountRate());
+
+        IssuanceProto original = IssuanceProto.newBuilder().setHighDiscountRate(decimal("4.215")).build();
+        IssuanceProto parsed = IssuanceProto.parseFrom(original.toByteArray());
+
+        assertTrue(parsed.hasHighDiscountRate());
+        assertEquals("4.215", Decimals.text(parsed.getHighDiscountRate()));
     }
 }

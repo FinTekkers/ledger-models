@@ -4,7 +4,8 @@ import { AuctionTypeProto } from '../../../fintekkers/models/security/bond/aucti
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import Decimal from 'decimal.js';
-import { encodeDecimal, parseDecimalString } from '../utils/decimal';
+import * as jspb from 'google-protobuf';
+import { decodeDecimal, encodeDecimal, parseDecimalString, toCanonicalString } from '../utils/decimal';
 
 function buildProto(): IssuanceProto {
   const p = new IssuanceProto();
@@ -58,4 +59,29 @@ test('Issuance Decimal returns are Decimal instances (for math)', () => {
   expect(faceValue).toBeInstanceOf(Decimal);
   // smoke: doing arithmetic should work
   expect(faceValue!.plus(1).toString()).toBe('45000000001');
+});
+
+// LM-365: high_discount_rate (28) is a DecimalValueProto with presence.
+// google-protobuf JS has no runtime descriptors: the wire bytes are checked.
+test('IssuanceProto.high_discount_rate is field 28, a DecimalValueProto', () => {
+  const p = new IssuanceProto();
+  p.setHighDiscountRate(encodeDecimal(parseDecimalString('4.215')));
+  const reader = new jspb.BinaryReader(p.serializeBinary());
+  expect(reader.nextField()).toBe(true);
+  expect(reader.getFieldNumber()).toBe(28);
+  expect(reader.getWireType()).toBe(2); // length-delimited
+  const decimal = DecimalValueProto.deserializeBinary(reader.readBytes());
+  expect(toCanonicalString(decodeDecimal(decimal))).toBe('4.215');
+  expect(reader.nextField()).toBe(false);
+});
+
+test('IssuanceProto.high_discount_rate round-trips and is unset by default', () => {
+  expect(new IssuanceProto().hasHighDiscountRate()).toBe(false);
+
+  const p = new IssuanceProto();
+  p.setHighDiscountRate(encodeDecimal(parseDecimalString('4.215')));
+  const parsed = IssuanceProto.deserializeBinary(p.serializeBinary());
+
+  expect(parsed.hasHighDiscountRate()).toBe(true);
+  expect(toCanonicalString(decodeDecimal(parsed.getHighDiscountRate()!))).toBe('4.215');
 });

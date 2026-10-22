@@ -40,7 +40,7 @@ fn bond(d: &mut Decimals) -> SecurityProto {
 /// - bond_details: coupon_rate, face_value                                2
 /// - bond_details.issuance_info[0]: post_auction_outstanding_quantity,
 ///   auction_offering_amount, price_for_single_price_auction,
-///   total_accepted, mature_security_amount                              5
+///   total_accepted, mature_security_amount, high_discount_rate          6
 /// - tips_extension.base_cpi                                              1
 /// - frn_extension.spread                                                 1
 /// - mbs_extension: wac, pass_through_rate, current_factor,
@@ -51,8 +51,8 @@ fn bond(d: &mut Decimals) -> SecurityProto {
 /// - legs[0] is a bond                                                    2
 /// - settlement_currency is a cash security: no decimal fields            0
 ///
-/// Total                                                                 19
-const SECURITY_DECIMALS: usize = 19;
+/// Total                                                                 20
+const SECURITY_DECIMALS: usize = 20;
 
 fn full_security() -> SecurityProto {
     let d = &mut Decimals(0);
@@ -64,6 +64,7 @@ fn full_security() -> SecurityProto {
             price_for_single_price_auction: d.next(),
             total_accepted: d.next(),
             mature_security_amount: d.next(),
+            high_discount_rate: d.next(),
             ..Default::default()
         }];
     }

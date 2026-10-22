@@ -12,7 +12,7 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class IssuanceProto(_message.Message):
-    __slots__ = ("object_type", "version", "as_of", "valid_from", "valid_to", "auction_announcement_date", "auction_issue_date", "post_auction_outstanding_quantity", "auction_offering_amount", "auction_type", "price_for_single_price_auction", "total_accepted", "mature_security_amount")
+    __slots__ = ("object_type", "version", "as_of", "valid_from", "valid_to", "auction_announcement_date", "auction_issue_date", "post_auction_outstanding_quantity", "auction_offering_amount", "auction_type", "price_for_single_price_auction", "total_accepted", "mature_security_amount", "high_discount_rate")
     OBJECT_TYPE_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     AS_OF_FIELD_NUMBER: _ClassVar[int]
@@ -26,6 +26,7 @@ class IssuanceProto(_message.Message):
     PRICE_FOR_SINGLE_PRICE_AUCTION_FIELD_NUMBER: _ClassVar[int]
     TOTAL_ACCEPTED_FIELD_NUMBER: _ClassVar[int]
     MATURE_SECURITY_AMOUNT_FIELD_NUMBER: _ClassVar[int]
+    HIGH_DISCOUNT_RATE_FIELD_NUMBER: _ClassVar[int]
     object_type: _object_type_pb2.ObjectTypeProto
     version: _version_pb2.VersionProto
     as_of: _local_timestamp_pb2.LocalTimestampProto
@@ -39,4 +40,5 @@ class IssuanceProto(_message.Message):
     price_for_single_price_auction: _decimal_value_pb2.DecimalValueProto
     total_accepted: _decimal_value_pb2.DecimalValueProto
     mature_security_amount: _decimal_value_pb2.DecimalValueProto
-    def __init__(self, object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version: _Optional[_Union[_version_pb2.VersionProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., auction_announcement_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., auction_issue_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., post_auction_outstanding_quantity: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., auction_offering_amount: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., auction_type: _Optional[_Union[_auction_type_pb2.AuctionTypeProto, str]] = ..., price_for_single_price_auction: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., total_accepted: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., mature_security_amount: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
+    high_discount_rate: _decimal_value_pb2.DecimalValueProto
+    def __init__(self, object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version: _Optional[_Union[_version_pb2.VersionProto, _Mapping]] = ..., as_of: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_from: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., valid_to: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., auction_announcement_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., auction_issue_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., post_auction_outstanding_quantity: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., auction_offering_amount: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., auction_type: _Optional[_Union[_auction_type_pb2.AuctionTypeProto, str]] = ..., price_for_single_price_auction: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., total_accepted: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., mature_security_amount: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., high_discount_rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...

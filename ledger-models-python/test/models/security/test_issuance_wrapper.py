@@ -3,8 +3,10 @@ import datetime
 from decimal import Decimal
 import time
 from fintekkers.models.security.bond.issuance_pb2 import IssuanceProto
+from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.wrappers.models.issues.issuance import IssuanceHistory
+from fintekkers.wrappers.models.util.decimal import decode_decimal, encode_decimal
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 
 
@@ -45,6 +47,21 @@ class Testing(unittest.TestCase):
 
         issuance.sort_by_auction_announcement_date()
         issuance.print_auction_history()
+
+    def test_high_discount_rate_is_field_28_decimal(self):
+        # LM-365: bill auctions record Treasury's high discount rate.
+        field = IssuanceProto.DESCRIPTOR.fields_by_number[28]
+        self.assertEqual(field.name, "high_discount_rate")
+        self.assertIs(field.message_type, DecimalValueProto.DESCRIPTOR)
+
+    def test_high_discount_rate_round_trips_and_is_unset_by_default(self):
+        self.assertFalse(IssuanceProto().HasField("high_discount_rate"))
+
+        original = IssuanceProto(high_discount_rate=encode_decimal(Decimal("4.215")))
+        parsed = IssuanceProto.FromString(original.SerializeToString())
+
+        self.assertTrue(parsed.HasField("high_discount_rate"))
+        self.assertEqual(format(decode_decimal(parsed.high_discount_rate), "f"), "4.215")
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ package fintekkers.requests.valuation;
  * dated_date, maturity_date) are read from security.bond_details; FRN-specific
  * extras (spread, reference_rate_index, reset_frequency) are read from
  * security.frn_extension. None are repeated on this message.
+ * fixings (11) carries published reference-rate fixings.
  * Settlement date is read from ValuationRequestProto.asof_datetime.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
@@ -27,6 +28,7 @@ private static final long serialVersionUID = 0L;
     super(builder);
   }
   private FrnInput() {
+    fixings_ = java.util.Collections.emptyList();
   }
 
   @java.lang.Override
@@ -177,6 +179,82 @@ private static final long serialVersionUID = 0L;
     return curve_ == null ? fintekkers.requests.valuation.YieldCurveInput.getDefaultInstance() : curve_;
   }
 
+  public static final int FIXINGS_FIELD_NUMBER = 11;
+  @SuppressWarnings("serial")
+  private java.util.List<fintekkers.requests.valuation.ReferenceRateFixingProto> fixings_;
+  /**
+   * <pre>
+   * Published fixings of the FRN's reference rate, one per fixing date.
+   * Each fixing.index must equal security.frn_extension.reference_rate_index.
+   * Order is not significant. A duplicate fixing_date makes the input invalid.
+   * Not read by valuation-service today; use is tracked under VS-110.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+   */
+  @java.lang.Override
+  public java.util.List<fintekkers.requests.valuation.ReferenceRateFixingProto> getFixingsList() {
+    return fixings_;
+  }
+  /**
+   * <pre>
+   * Published fixings of the FRN's reference rate, one per fixing date.
+   * Each fixing.index must equal security.frn_extension.reference_rate_index.
+   * Order is not significant. A duplicate fixing_date makes the input invalid.
+   * Not read by valuation-service today; use is tracked under VS-110.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+   */
+  @java.lang.Override
+  public java.util.List<? extends fintekkers.requests.valuation.ReferenceRateFixingProtoOrBuilder> 
+      getFixingsOrBuilderList() {
+    return fixings_;
+  }
+  /**
+   * <pre>
+   * Published fixings of the FRN's reference rate, one per fixing date.
+   * Each fixing.index must equal security.frn_extension.reference_rate_index.
+   * Order is not significant. A duplicate fixing_date makes the input invalid.
+   * Not read by valuation-service today; use is tracked under VS-110.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+   */
+  @java.lang.Override
+  public int getFixingsCount() {
+    return fixings_.size();
+  }
+  /**
+   * <pre>
+   * Published fixings of the FRN's reference rate, one per fixing date.
+   * Each fixing.index must equal security.frn_extension.reference_rate_index.
+   * Order is not significant. A duplicate fixing_date makes the input invalid.
+   * Not read by valuation-service today; use is tracked under VS-110.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.ReferenceRateFixingProto getFixings(int index) {
+    return fixings_.get(index);
+  }
+  /**
+   * <pre>
+   * Published fixings of the FRN's reference rate, one per fixing date.
+   * Each fixing.index must equal security.frn_extension.reference_rate_index.
+   * Order is not significant. A duplicate fixing_date makes the input invalid.
+   * Not read by valuation-service today; use is tracked under VS-110.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.ReferenceRateFixingProtoOrBuilder getFixingsOrBuilder(
+      int index) {
+    return fixings_.get(index);
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -200,6 +278,9 @@ private static final long serialVersionUID = 0L;
     if (curve_ != null) {
       output.writeMessage(10, getCurve());
     }
+    for (int i = 0; i < fixings_.size(); i++) {
+      output.writeMessage(11, fixings_.get(i));
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -220,6 +301,10 @@ private static final long serialVersionUID = 0L;
     if (curve_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(10, getCurve());
+    }
+    for (int i = 0; i < fixings_.size(); i++) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(11, fixings_.get(i));
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -251,6 +336,8 @@ private static final long serialVersionUID = 0L;
       if (!getCurve()
           .equals(other.getCurve())) return false;
     }
+    if (!getFixingsList()
+        .equals(other.getFixingsList())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -273,6 +360,10 @@ private static final long serialVersionUID = 0L;
     if (hasCurve()) {
       hash = (37 * hash) + CURVE_FIELD_NUMBER;
       hash = (53 * hash) + getCurve().hashCode();
+    }
+    if (getFixingsCount() > 0) {
+      hash = (37 * hash) + FIXINGS_FIELD_NUMBER;
+      hash = (53 * hash) + getFixingsList().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -377,6 +468,7 @@ private static final long serialVersionUID = 0L;
    * dated_date, maturity_date) are read from security.bond_details; FRN-specific
    * extras (spread, reference_rate_index, reset_frequency) are read from
    * security.frn_extension. None are repeated on this message.
+   * fixings (11) carries published reference-rate fixings.
    * Settlement date is read from ValuationRequestProto.asof_datetime.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
@@ -429,6 +521,13 @@ private static final long serialVersionUID = 0L;
         curveBuilder_.dispose();
         curveBuilder_ = null;
       }
+      if (fixingsBuilder_ == null) {
+        fixings_ = java.util.Collections.emptyList();
+      } else {
+        fixings_ = null;
+        fixingsBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
@@ -455,9 +554,22 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.requests.valuation.FrnInput buildPartial() {
       fintekkers.requests.valuation.FrnInput result = new fintekkers.requests.valuation.FrnInput(this);
+      buildPartialRepeatedFields(result);
       if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
+    }
+
+    private void buildPartialRepeatedFields(fintekkers.requests.valuation.FrnInput result) {
+      if (fixingsBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0)) {
+          fixings_ = java.util.Collections.unmodifiableList(fixings_);
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.fixings_ = fixings_;
+      } else {
+        result.fixings_ = fixingsBuilder_.build();
+      }
     }
 
     private void buildPartial0(fintekkers.requests.valuation.FrnInput result) {
@@ -532,6 +644,32 @@ private static final long serialVersionUID = 0L;
       if (other.hasCurve()) {
         mergeCurve(other.getCurve());
       }
+      if (fixingsBuilder_ == null) {
+        if (!other.fixings_.isEmpty()) {
+          if (fixings_.isEmpty()) {
+            fixings_ = other.fixings_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureFixingsIsMutable();
+            fixings_.addAll(other.fixings_);
+          }
+          onChanged();
+        }
+      } else {
+        if (!other.fixings_.isEmpty()) {
+          if (fixingsBuilder_.isEmpty()) {
+            fixingsBuilder_.dispose();
+            fixingsBuilder_ = null;
+            fixings_ = other.fixings_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+            fixingsBuilder_ = 
+              com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                 getFixingsFieldBuilder() : null;
+          } else {
+            fixingsBuilder_.addAllMessages(other.fixings_);
+          }
+        }
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -579,6 +717,19 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000004;
               break;
             } // case 82
+            case 90: {
+              fintekkers.requests.valuation.ReferenceRateFixingProto m =
+                  input.readMessage(
+                      fintekkers.requests.valuation.ReferenceRateFixingProto.parser(),
+                      extensionRegistry);
+              if (fixingsBuilder_ == null) {
+                ensureFixingsIsMutable();
+                fixings_.add(m);
+              } else {
+                fixingsBuilder_.addMessage(m);
+              }
+              break;
+            } // case 90
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1086,6 +1237,372 @@ private static final long serialVersionUID = 0L;
         curve_ = null;
       }
       return curveBuilder_;
+    }
+
+    private java.util.List<fintekkers.requests.valuation.ReferenceRateFixingProto> fixings_ =
+      java.util.Collections.emptyList();
+    private void ensureFixingsIsMutable() {
+      if (!((bitField0_ & 0x00000008) != 0)) {
+        fixings_ = new java.util.ArrayList<fintekkers.requests.valuation.ReferenceRateFixingProto>(fixings_);
+        bitField0_ |= 0x00000008;
+       }
+    }
+
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        fintekkers.requests.valuation.ReferenceRateFixingProto, fintekkers.requests.valuation.ReferenceRateFixingProto.Builder, fintekkers.requests.valuation.ReferenceRateFixingProtoOrBuilder> fixingsBuilder_;
+
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public java.util.List<fintekkers.requests.valuation.ReferenceRateFixingProto> getFixingsList() {
+      if (fixingsBuilder_ == null) {
+        return java.util.Collections.unmodifiableList(fixings_);
+      } else {
+        return fixingsBuilder_.getMessageList();
+      }
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public int getFixingsCount() {
+      if (fixingsBuilder_ == null) {
+        return fixings_.size();
+      } else {
+        return fixingsBuilder_.getCount();
+      }
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public fintekkers.requests.valuation.ReferenceRateFixingProto getFixings(int index) {
+      if (fixingsBuilder_ == null) {
+        return fixings_.get(index);
+      } else {
+        return fixingsBuilder_.getMessage(index);
+      }
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public Builder setFixings(
+        int index, fintekkers.requests.valuation.ReferenceRateFixingProto value) {
+      if (fixingsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFixingsIsMutable();
+        fixings_.set(index, value);
+        onChanged();
+      } else {
+        fixingsBuilder_.setMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public Builder setFixings(
+        int index, fintekkers.requests.valuation.ReferenceRateFixingProto.Builder builderForValue) {
+      if (fixingsBuilder_ == null) {
+        ensureFixingsIsMutable();
+        fixings_.set(index, builderForValue.build());
+        onChanged();
+      } else {
+        fixingsBuilder_.setMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public Builder addFixings(fintekkers.requests.valuation.ReferenceRateFixingProto value) {
+      if (fixingsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFixingsIsMutable();
+        fixings_.add(value);
+        onChanged();
+      } else {
+        fixingsBuilder_.addMessage(value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public Builder addFixings(
+        int index, fintekkers.requests.valuation.ReferenceRateFixingProto value) {
+      if (fixingsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFixingsIsMutable();
+        fixings_.add(index, value);
+        onChanged();
+      } else {
+        fixingsBuilder_.addMessage(index, value);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public Builder addFixings(
+        fintekkers.requests.valuation.ReferenceRateFixingProto.Builder builderForValue) {
+      if (fixingsBuilder_ == null) {
+        ensureFixingsIsMutable();
+        fixings_.add(builderForValue.build());
+        onChanged();
+      } else {
+        fixingsBuilder_.addMessage(builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public Builder addFixings(
+        int index, fintekkers.requests.valuation.ReferenceRateFixingProto.Builder builderForValue) {
+      if (fixingsBuilder_ == null) {
+        ensureFixingsIsMutable();
+        fixings_.add(index, builderForValue.build());
+        onChanged();
+      } else {
+        fixingsBuilder_.addMessage(index, builderForValue.build());
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public Builder addAllFixings(
+        java.lang.Iterable<? extends fintekkers.requests.valuation.ReferenceRateFixingProto> values) {
+      if (fixingsBuilder_ == null) {
+        ensureFixingsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, fixings_);
+        onChanged();
+      } else {
+        fixingsBuilder_.addAllMessages(values);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public Builder clearFixings() {
+      if (fixingsBuilder_ == null) {
+        fixings_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+      } else {
+        fixingsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public Builder removeFixings(int index) {
+      if (fixingsBuilder_ == null) {
+        ensureFixingsIsMutable();
+        fixings_.remove(index);
+        onChanged();
+      } else {
+        fixingsBuilder_.remove(index);
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public fintekkers.requests.valuation.ReferenceRateFixingProto.Builder getFixingsBuilder(
+        int index) {
+      return getFixingsFieldBuilder().getBuilder(index);
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public fintekkers.requests.valuation.ReferenceRateFixingProtoOrBuilder getFixingsOrBuilder(
+        int index) {
+      if (fixingsBuilder_ == null) {
+        return fixings_.get(index);  } else {
+        return fixingsBuilder_.getMessageOrBuilder(index);
+      }
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public java.util.List<? extends fintekkers.requests.valuation.ReferenceRateFixingProtoOrBuilder> 
+         getFixingsOrBuilderList() {
+      if (fixingsBuilder_ != null) {
+        return fixingsBuilder_.getMessageOrBuilderList();
+      } else {
+        return java.util.Collections.unmodifiableList(fixings_);
+      }
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public fintekkers.requests.valuation.ReferenceRateFixingProto.Builder addFixingsBuilder() {
+      return getFixingsFieldBuilder().addBuilder(
+          fintekkers.requests.valuation.ReferenceRateFixingProto.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public fintekkers.requests.valuation.ReferenceRateFixingProto.Builder addFixingsBuilder(
+        int index) {
+      return getFixingsFieldBuilder().addBuilder(
+          index, fintekkers.requests.valuation.ReferenceRateFixingProto.getDefaultInstance());
+    }
+    /**
+     * <pre>
+     * Published fixings of the FRN's reference rate, one per fixing date.
+     * Each fixing.index must equal security.frn_extension.reference_rate_index.
+     * Order is not significant. A duplicate fixing_date makes the input invalid.
+     * Not read by valuation-service today; use is tracked under VS-110.
+     * </pre>
+     *
+     * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+     */
+    public java.util.List<fintekkers.requests.valuation.ReferenceRateFixingProto.Builder> 
+         getFixingsBuilderList() {
+      return getFixingsFieldBuilder().getBuilderList();
+    }
+    private com.google.protobuf.RepeatedFieldBuilderV3<
+        fintekkers.requests.valuation.ReferenceRateFixingProto, fintekkers.requests.valuation.ReferenceRateFixingProto.Builder, fintekkers.requests.valuation.ReferenceRateFixingProtoOrBuilder> 
+        getFixingsFieldBuilder() {
+      if (fixingsBuilder_ == null) {
+        fixingsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+            fintekkers.requests.valuation.ReferenceRateFixingProto, fintekkers.requests.valuation.ReferenceRateFixingProto.Builder, fintekkers.requests.valuation.ReferenceRateFixingProtoOrBuilder>(
+                fixings_,
+                ((bitField0_ & 0x00000008) != 0),
+                getParentForChildren(),
+                isClean());
+        fixings_ = null;
+      }
+      return fixingsBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

@@ -73,6 +73,11 @@ export class IssuanceProto extends jspb.Message {
     getMatureSecurityAmount(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
     setMatureSecurityAmount(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): IssuanceProto;
 
+    hasHighDiscountRate(): boolean;
+    clearHighDiscountRate(): void;
+    getHighDiscountRate(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setHighDiscountRate(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): IssuanceProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): IssuanceProto.AsObject;
     static toObject(includeInstance: boolean, msg: IssuanceProto): IssuanceProto.AsObject;
@@ -98,5 +103,6 @@ export namespace IssuanceProto {
         priceForSinglePriceAuction?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         totalAccepted?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         matureSecurityAmount?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        highDiscountRate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }

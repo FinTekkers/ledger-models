@@ -5,13 +5,14 @@
 //! and verify each typed accessor returns the expected value.
 
 mod common;
-use common::decimal;
+use common::{decimal, Canonical};
 
 use ledger_models::fintekkers::models::security::bond::{AuctionTypeProto, IssuanceProto};
 use ledger_models::fintekkers::models::util::LocalDateProto;
 use ledger_models::fintekkers::wrappers::models::issuance::Issuance;
 
 use chrono::NaiveDate;
+use prost::Message;
 use rust_decimal_macros::dec;
 
 
@@ -69,4 +70,14 @@ fn issuance_proto_accessor_returns_underlying() {
     let proto = populated_issuance();
     let wrapped = Issuance::new(proto.clone());
     assert_eq!(wrapped.proto(), &proto);
+}
+
+/// LM-365: high_discount_rate (28) is a message field, so presence is kept.
+#[test]
+fn high_discount_rate_round_trips_and_is_unset_by_default() {
+    assert!(IssuanceProto::default().high_discount_rate.is_none());
+
+    let original = IssuanceProto { high_discount_rate: Some(decimal("4.215")), ..Default::default() };
+    let parsed = IssuanceProto::decode(&original.encode_to_vec()[..]).expect("decode failed");
+    assert_eq!(parsed.high_discount_rate.expect("high_discount_rate").canonical(), "4.215");
 }

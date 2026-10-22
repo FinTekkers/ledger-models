@@ -52,3 +52,12 @@ No Java, Python, Rust or JS wrapper or validator checks the `coupon_rate` unit; 
 ## Amendment 2026-10-16 (LM-344)
 
 Rows **L2** (`TipsInput.current_cpi`) and **L5 / D4** (`ValuationRequestProto.reference_rate_input`) are retired in 0.5: both fields are removed and reserved. The deflation floor in L2 still applies to `MeasureProto.INFLATION_ADJUSTED_PRINCIPAL`, now computed from `TipsInput.cpi` (see `inflation_index_input.md`). Retiring L5 / D4 ends the legacy flat-rate FRN path and its `0.0533` default: FRNs are priced from `FrnInput.curve` only.
+
+## Amendment 2026-10-22 (LM-365)
+
+| ID | Field | Decision |
+|---|---|---|
+| L7 | `ReferenceRateFixingProto.rate` (`FrnInput.fixings`) | **Decimal fraction**: `0.0432` = 4.32%, the same unit as the retired L5 and `CurvePoint.rate`. For `T_BILL_13_WEEK` it is the auction high rate as a money-market yield, not the bank-discount rate. |
+| L8 | `IssuanceProto.high_discount_rate` | **Percent per annum, bank-discount basis**, as Treasury publishes `HighDiscountRate`: `4.215` = 4.215%. Same unit style as L1. |
+
+L7 and L8 differ on purpose, as L1 and L5 did. See `frn_reference_rate_fixings.md`.

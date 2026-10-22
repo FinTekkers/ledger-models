@@ -236,6 +236,10 @@ export class FrnInput extends jspb.Message {
     clearCurve(): void;
     getCurve(): YieldCurveInput | undefined;
     setCurve(value?: YieldCurveInput): FrnInput;
+    clearFixingsList(): void;
+    getFixingsList(): Array<ReferenceRateFixingProto>;
+    setFixingsList(value: Array<ReferenceRateFixingProto>): FrnInput;
+    addFixings(value?: ReferenceRateFixingProto, index?: number): ReferenceRateFixingProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): FrnInput.AsObject;
@@ -252,6 +256,39 @@ export namespace FrnInput {
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         curve?: YieldCurveInput.AsObject,
+        fixingsList: Array<ReferenceRateFixingProto.AsObject>,
+    }
+}
+
+export class ReferenceRateFixingProto extends jspb.Message { 
+    getIndex(): fintekkers_models_security_index_index_type_pb.IndexTypeProto;
+    setIndex(value: fintekkers_models_security_index_index_type_pb.IndexTypeProto): ReferenceRateFixingProto;
+
+    hasFixingDate(): boolean;
+    clearFixingDate(): void;
+    getFixingDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
+    setFixingDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): ReferenceRateFixingProto;
+
+    hasRate(): boolean;
+    clearRate(): void;
+    getRate(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setRate(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): ReferenceRateFixingProto;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ReferenceRateFixingProto.AsObject;
+    static toObject(includeInstance: boolean, msg: ReferenceRateFixingProto): ReferenceRateFixingProto.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ReferenceRateFixingProto, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ReferenceRateFixingProto;
+    static deserializeBinaryFromReader(message: ReferenceRateFixingProto, reader: jspb.BinaryReader): ReferenceRateFixingProto;
+}
+
+export namespace ReferenceRateFixingProto {
+    export type AsObject = {
+        index: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
+        fixingDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
+        rate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }
 

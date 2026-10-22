@@ -156,6 +156,8 @@ message MonthlyIndexReading {
 // extras (spread, reference_rate_index, reset_frequency) are read from
 // security.frn_extension. None are repeated on this message.
 //
+// fixings (11) carries published reference-rate fixings.
+//
 // Settlement date is read from ValuationRequestProto.asof_datetime.
 // ═══════════════════════════════════════════════════════════════════════════
 message FrnInput {
@@ -170,6 +172,30 @@ message FrnInput {
   // A single curve is used for both projection and discounting (single-curve framework).
   // This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
   YieldCurveInput curve = 10;
+
+  // Published fixings of the FRN's reference rate, one per fixing date.
+  // Each fixing.index must equal security.frn_extension.reference_rate_index.
+  // Order is not significant. A duplicate fixing_date makes the input invalid.
+  // Not read by valuation-service today; use is tracked under VS-110.
+  repeated ReferenceRateFixingProto fixings = 11;
+}
+
+// One published fixing of a floating-rate benchmark, e.g. the 13-week
+// T-bill rate set at the 2026-10-19 auction.
+message ReferenceRateFixingProto {
+  // The benchmark. Same enum as FrnExtensionProto.reference_rate_index
+  // (IndexTypeProto), and must equal it on the FRN being valued.
+  fintekkers.models.security.index.IndexTypeProto index = 1;
+
+  // The date the rate was fixed: the auction date for T_BILL_13_WEEK,
+  // the business day the rate applies to for SOFR.
+  fintekkers.models.util.LocalDateProto fixing_date = 2;
+
+  // The index rate as the FRN accrues it, as a decimal fraction:
+  // 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
+  // auction high rate converted to a money-market yield. It is not the
+  // bank-discount rate in IssuanceProto.high_discount_rate.
+  fintekkers.models.util.DecimalValueProto rate = 3;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

@@ -7,7 +7,8 @@ mod common;
 use common::{decimal, Canonical};
 
 use ledger_models::fintekkers::requests::valuation::{
-    product_input, CurvePoint, FrnInput, ProductInput, ValuationRequestProto, YieldCurveInput,
+    product_input, CurvePoint, FrnInput, ProductInput, ReferenceRateFixingProto, ValuationRequestProto,
+    YieldCurveInput,
 };
 use ledger_models::fintekkers::models::security::index::IndexTypeProto;
 use ledger_models::fintekkers::models::util::LocalDateProto;
@@ -191,4 +192,56 @@ fn new_rfr_index_types_round_trip() {
         let parsed = YieldCurveInput::decode(&buf[..]).expect("decode failed");
         assert_eq!(parsed.index, index as i32, "{label} did not survive roundtrip");
     }
+}
+
+// LM-365: published reference-rate fixings on FrnInput. T_BILL_13_WEEK is a
+// non-default enum value, so it is on the wire.
+fn fixing(year: u32, month: u32, day: u32, rate: &str) -> ReferenceRateFixingProto {
+    ReferenceRateFixingProto {
+        index: IndexTypeProto::TBill13Week.into(),
+        fixing_date: Some(date(year, month, day)),
+        rate: Some(decimal(rate)),
+    }
+}
+
+#[test]
+fn reference_rate_fixing_all_fields_round_trip() {
+    let original = fixing(2026, 10, 19, "0.0432");
+    let mut buf = Vec::new();
+    original.encode(&mut buf).expect("encode failed");
+    let parsed = ReferenceRateFixingProto::decode(&buf[..]).expect("decode failed");
+
+    assert_eq!(parsed.index, IndexTypeProto::TBill13Week as i32);
+    let d = parsed.fixing_date.expect("fixing_date");
+    assert_eq!(d.year, 2026);
+    assert_eq!(d.month, 10);
+    assert_eq!(d.day, 19);
+    assert_eq!(parsed.rate.expect("rate").canonical(), "0.0432");
+}
+
+#[test]
+fn frn_input_two_fixings_round_trip_in_order() {
+    let mut second = fixing(2026, 10, 26, "0.0429");
+    second.index = IndexTypeProto::Sofr.into();
+    let original = FrnInput {
+        clean_price: Some(decimal("99.75")),
+        fixings: vec![fixing(2026, 10, 19, "0.0432"), second],
+        ..Default::default()
+    };
+    let mut buf = Vec::new();
+    original.encode(&mut buf).expect("encode failed");
+    let parsed = FrnInput::decode(&buf[..]).expect("decode failed");
+
+    assert_eq!(parsed.fixings.len(), 2);
+    let expected = [
+        (IndexTypeProto::TBill13Week, 19, "0.0432"),
+        (IndexTypeProto::Sofr, 26, "0.0429"),
+    ];
+    for (f, (index, day, rate)) in parsed.fixings.iter().zip(expected) {
+        assert_eq!(f.index, index as i32);
+        let d = f.fixing_date.as_ref().expect("fixing_date");
+        assert_eq!((d.year, d.month, d.day), (2026, 10, day));
+        assert_eq!(f.rate.as_ref().expect("rate").canonical(), rate);
+    }
+    assert_eq!(parsed.clean_price.expect("clean_price").canonical(), "99.75");
 }

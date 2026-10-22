@@ -1,6 +1,14 @@
 package protos.serializers;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.InvalidProtocolBufferException;
+import fintekkers.models.security.FrnExtensionProto;
+import fintekkers.models.security.bond.IssuanceProto;
 import fintekkers.models.security.index.IndexTypeProto;
 import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import fintekkers.models.util.LocalDate.LocalDateProto;
@@ -8,11 +16,22 @@ import fintekkers.requests.valuation.ProductInput;
 import fintekkers.requests.valuation.FrnInput;
 import fintekkers.requests.valuation.YieldCurveInput;
 import fintekkers.requests.valuation.CurvePoint;
+import fintekkers.requests.valuation.ReferenceRateFixingProto;
 import fintekkers.requests.valuation.ValuationRequestProto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import testutil.Decimals;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -154,5 +173,139 @@ class FrnRequestRoundtripTest {
         YieldCurveInput parsed = YieldCurveInput.parseFrom(original.toByteArray());
 
         assertEquals(index, parsed.getIndex(), index.name() + " did not survive roundtrip");
+    }
+
+    // LM-365: published reference-rate fixings on FrnInput. T_BILL_13_WEEK is a
+    // non-default enum value, so it is on the wire.
+    private static ReferenceRateFixingProto fixing(IndexTypeProto index, LocalDateProto date, String rate) {
+        return ReferenceRateFixingProto.newBuilder()
+                .setIndex(index)
+                .setFixingDate(date)
+                .setRate(decimal(rate))
+                .build();
+    }
+
+    @Test
+    void referenceRateFixing_allFieldsSurviveRoundtrip() throws InvalidProtocolBufferException {
+        ReferenceRateFixingProto original = fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 10, 19), "0.0432");
+
+        ReferenceRateFixingProto parsed = ReferenceRateFixingProto.parseFrom(original.toByteArray());
+
+        assertEquals(IndexTypeProto.T_BILL_13_WEEK, parsed.getIndex());
+        assertEquals(2026, parsed.getFixingDate().getYear());
+        assertEquals(10, parsed.getFixingDate().getMonth());
+        assertEquals(19, parsed.getFixingDate().getDay());
+        assertEquals("0.0432", Decimals.text(parsed.getRate()));
+    }
+
+    @Test
+    void frnInput_twoFixingsSurviveRoundtripInOrder() throws InvalidProtocolBufferException {
+        FrnInput original = FrnInput.newBuilder()
+                .setCleanPrice(decimal("99.75"))
+                .addFixings(fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 10, 19), "0.0432"))
+                .addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), "0.0429"))
+                .build();
+
+        FrnInput parsed = FrnInput.parseFrom(original.toByteArray());
+
+        assertEquals(2, parsed.getFixingsCount());
+        ReferenceRateFixingProto first = parsed.getFixings(0);
+        assertEquals(IndexTypeProto.T_BILL_13_WEEK, first.getIndex());
+        assertEquals(2026, first.getFixingDate().getYear());
+        assertEquals(10, first.getFixingDate().getMonth());
+        assertEquals(19, first.getFixingDate().getDay());
+        assertEquals("0.0432", Decimals.text(first.getRate()));
+        ReferenceRateFixingProto second = parsed.getFixings(1);
+        assertEquals(IndexTypeProto.SOFR, second.getIndex());
+        assertEquals(2026, second.getFixingDate().getYear());
+        assertEquals(10, second.getFixingDate().getMonth());
+        assertEquals(26, second.getFixingDate().getDay());
+        assertEquals("0.0429", Decimals.text(second.getRate()));
+        assertEquals("99.75", Decimals.text(parsed.getCleanPrice()));
+    }
+
+    private static final Path FIELD_CHANGES = Path.of("..", "test-fixtures", "field-changes", "lm-365.json");
+
+    private static JsonArray fieldChanges(String section) throws IOException {
+        return JsonParser.parseString(Files.readString(FIELD_CHANGES)).getAsJsonObject().getAsJsonArray(section);
+    }
+
+    private static final List<Descriptor> LM365_MESSAGES = List.of(
+            FrnInput.getDescriptor(), ReferenceRateFixingProto.getDescriptor(), IssuanceProto.getDescriptor());
+
+    private static Descriptor lm365Message(JsonObject entry) {
+        String name = entry.get("message").getAsString().substring(1);
+        return LM365_MESSAGES.stream().filter(d -> d.getFullName().equals(name)).findFirst()
+                .orElseThrow(() -> new AssertionError("no descriptor for " + name));
+    }
+
+    private static String typeName(FieldDescriptor f) {
+        switch (f.getJavaType()) {
+            case MESSAGE: return "." + f.getMessageType().getFullName();
+            case ENUM: return "." + f.getEnumType().getFullName();
+            default: return f.getType().name();
+        }
+    }
+
+    private static void assertField(JsonObject entry) {
+        Descriptor d = lm365Message(entry);
+        int number = entry.get("number").getAsInt();
+        FieldDescriptor f = d.findFieldByNumber(number);
+        assertNotNull(f, d.getFullName() + " has no field " + number);
+        assertEquals(entry.get("name").getAsString(), f.getName(), entry.toString());
+        assertEquals(entry.get("type").getAsString(), typeName(f), entry.toString());
+        boolean repeated = entry.has("repeated") && entry.get("repeated").getAsBoolean();
+        assertEquals(repeated, f.isRepeated(), entry.toString());
+    }
+
+    /** LM-365: every FrnInput and IssuanceProto field keeps its number, name and type. */
+    @Test
+    void lm365_keptFieldsKeepNumberNameAndType() throws IOException {
+        for (JsonElement el : fieldChanges("kept")) {
+            assertField(el.getAsJsonObject());
+        }
+    }
+
+    /** LM-365: the added fields, including high_discount_rate = 28 as DecimalValueProto. */
+    @Test
+    void lm365_addedFieldsHaveNumberNameAndType() throws IOException {
+        for (JsonElement el : fieldChanges("added")) {
+            assertField(el.getAsJsonObject());
+        }
+    }
+
+    /** LM-365: each message's field numbers are exactly kept plus added. */
+    @Test
+    void lm365_fieldSetsAreExactlyKeptAndAdded() throws IOException {
+        Map<String, Set<Integer>> expected = new TreeMap<>();
+        for (String section : List.of("kept", "added")) {
+            for (JsonElement el : fieldChanges(section)) {
+                JsonObject entry = el.getAsJsonObject();
+                expected.computeIfAbsent(lm365Message(entry).getFullName(), k -> new TreeSet<>())
+                        .add(entry.get("number").getAsInt());
+            }
+        }
+        assertEquals(3, expected.size());
+        for (Descriptor d : LM365_MESSAGES) {
+            Set<Integer> actual = d.getFields().stream().map(FieldDescriptor::getNumber)
+                    .collect(Collectors.toCollection(TreeSet::new));
+            assertEquals(expected.get(d.getFullName()), actual, d.getFullName());
+        }
+    }
+
+    @Test
+    void lm365_fixingsIsRepeatedMessageNotMap() {
+        FieldDescriptor fixings = FrnInput.getDescriptor().findFieldByName("fixings");
+        assertTrue(fixings.isRepeated());
+        assertFalse(fixings.isMapField());
+        assertEquals(ReferenceRateFixingProto.getDescriptor(), fixings.getMessageType());
+    }
+
+    @Test
+    void lm365_fixingIndexIsTheReferenceRateIndexEnum() {
+        FieldDescriptor index = ReferenceRateFixingProto.getDescriptor().findFieldByName("index");
+        FieldDescriptor referenceRateIndex = FrnExtensionProto.getDescriptor().findFieldByName("reference_rate_index");
+        assertEquals(referenceRateIndex.getEnumType().getFullName(), index.getEnumType().getFullName());
+        assertEquals("fintekkers.models.security.index.IndexTypeProto", index.getEnumType().getFullName());
     }
 }

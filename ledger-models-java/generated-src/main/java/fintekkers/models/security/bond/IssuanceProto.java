@@ -540,6 +540,56 @@ private static final long serialVersionUID = 0L;
     return matureSecurityAmount_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : matureSecurityAmount_;
   }
 
+  public static final int HIGH_DISCOUNT_RATE_FIELD_NUMBER = 28;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto highDiscountRate_;
+  /**
+   * <pre>
+   **
+   *High discount rate of a bill auction, in percent per annum on a
+   *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+   *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+   *and any issuance without a discount rate.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+   * @return Whether the highDiscountRate field is set.
+   */
+  @java.lang.Override
+  public boolean hasHighDiscountRate() {
+    return highDiscountRate_ != null;
+  }
+  /**
+   * <pre>
+   **
+   *High discount rate of a bill auction, in percent per annum on a
+   *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+   *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+   *and any issuance without a discount rate.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+   * @return The highDiscountRate.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getHighDiscountRate() {
+    return highDiscountRate_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : highDiscountRate_;
+  }
+  /**
+   * <pre>
+   **
+   *High discount rate of a bill auction, in percent per annum on a
+   *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+   *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+   *and any issuance without a discount rate.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getHighDiscountRateOrBuilder() {
+    return highDiscountRate_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : highDiscountRate_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -592,6 +642,9 @@ private static final long serialVersionUID = 0L;
     }
     if (matureSecurityAmount_ != null) {
       output.writeMessage(27, getMatureSecurityAmount());
+    }
+    if (highDiscountRate_ != null) {
+      output.writeMessage(28, getHighDiscountRate());
     }
     getUnknownFields().writeTo(output);
   }
@@ -653,6 +706,10 @@ private static final long serialVersionUID = 0L;
     if (matureSecurityAmount_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(27, getMatureSecurityAmount());
+    }
+    if (highDiscountRate_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(28, getHighDiscountRate());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -726,6 +783,11 @@ private static final long serialVersionUID = 0L;
       if (!getMatureSecurityAmount()
           .equals(other.getMatureSecurityAmount())) return false;
     }
+    if (hasHighDiscountRate() != other.hasHighDiscountRate()) return false;
+    if (hasHighDiscountRate()) {
+      if (!getHighDiscountRate()
+          .equals(other.getHighDiscountRate())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -784,6 +846,10 @@ private static final long serialVersionUID = 0L;
     if (hasMatureSecurityAmount()) {
       hash = (37 * hash) + MATURE_SECURITY_AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + getMatureSecurityAmount().hashCode();
+    }
+    if (hasHighDiscountRate()) {
+      hash = (37 * hash) + HIGH_DISCOUNT_RATE_FIELD_NUMBER;
+      hash = (53 * hash) + getHighDiscountRate().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -1002,6 +1068,11 @@ private static final long serialVersionUID = 0L;
         matureSecurityAmountBuilder_.dispose();
         matureSecurityAmountBuilder_ = null;
       }
+      highDiscountRate_ = null;
+      if (highDiscountRateBuilder_ != null) {
+        highDiscountRateBuilder_.dispose();
+        highDiscountRateBuilder_ = null;
+      }
       return this;
     }
 
@@ -1096,6 +1167,11 @@ private static final long serialVersionUID = 0L;
             ? matureSecurityAmount_
             : matureSecurityAmountBuilder_.build();
       }
+      if (((from_bitField0_ & 0x00002000) != 0)) {
+        result.highDiscountRate_ = highDiscountRateBuilder_ == null
+            ? highDiscountRate_
+            : highDiscountRateBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -1180,6 +1256,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasMatureSecurityAmount()) {
         mergeMatureSecurityAmount(other.getMatureSecurityAmount());
+      }
+      if (other.hasHighDiscountRate()) {
+        mergeHighDiscountRate(other.getHighDiscountRate());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -1294,6 +1373,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00001000;
               break;
             } // case 218
+            case 226: {
+              input.readMessage(
+                  getHighDiscountRateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00002000;
+              break;
+            } // case 226
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -3145,6 +3231,197 @@ private static final long serialVersionUID = 0L;
         matureSecurityAmount_ = null;
       }
       return matureSecurityAmountBuilder_;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto highDiscountRate_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> highDiscountRateBuilder_;
+    /**
+     * <pre>
+     **
+     *High discount rate of a bill auction, in percent per annum on a
+     *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+     *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+     *and any issuance without a discount rate.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+     * @return Whether the highDiscountRate field is set.
+     */
+    public boolean hasHighDiscountRate() {
+      return ((bitField0_ & 0x00002000) != 0);
+    }
+    /**
+     * <pre>
+     **
+     *High discount rate of a bill auction, in percent per annum on a
+     *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+     *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+     *and any issuance without a discount rate.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+     * @return The highDiscountRate.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getHighDiscountRate() {
+      if (highDiscountRateBuilder_ == null) {
+        return highDiscountRate_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : highDiscountRate_;
+      } else {
+        return highDiscountRateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     **
+     *High discount rate of a bill auction, in percent per annum on a
+     *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+     *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+     *and any issuance without a discount rate.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+     */
+    public Builder setHighDiscountRate(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (highDiscountRateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        highDiscountRate_ = value;
+      } else {
+        highDiscountRateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00002000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *High discount rate of a bill auction, in percent per annum on a
+     *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+     *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+     *and any issuance without a discount rate.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+     */
+    public Builder setHighDiscountRate(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (highDiscountRateBuilder_ == null) {
+        highDiscountRate_ = builderForValue.build();
+      } else {
+        highDiscountRateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00002000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *High discount rate of a bill auction, in percent per annum on a
+     *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+     *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+     *and any issuance without a discount rate.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+     */
+    public Builder mergeHighDiscountRate(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (highDiscountRateBuilder_ == null) {
+        if (((bitField0_ & 0x00002000) != 0) &&
+          highDiscountRate_ != null &&
+          highDiscountRate_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getHighDiscountRateBuilder().mergeFrom(value);
+        } else {
+          highDiscountRate_ = value;
+        }
+      } else {
+        highDiscountRateBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00002000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *High discount rate of a bill auction, in percent per annum on a
+     *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+     *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+     *and any issuance without a discount rate.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+     */
+    public Builder clearHighDiscountRate() {
+      bitField0_ = (bitField0_ & ~0x00002000);
+      highDiscountRate_ = null;
+      if (highDiscountRateBuilder_ != null) {
+        highDiscountRateBuilder_.dispose();
+        highDiscountRateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *High discount rate of a bill auction, in percent per annum on a
+     *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+     *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+     *and any issuance without a discount rate.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getHighDiscountRateBuilder() {
+      bitField0_ |= 0x00002000;
+      onChanged();
+      return getHighDiscountRateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     **
+     *High discount rate of a bill auction, in percent per annum on a
+     *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+     *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+     *and any issuance without a discount rate.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getHighDiscountRateOrBuilder() {
+      if (highDiscountRateBuilder_ != null) {
+        return highDiscountRateBuilder_.getMessageOrBuilder();
+      } else {
+        return highDiscountRate_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : highDiscountRate_;
+      }
+    }
+    /**
+     * <pre>
+     **
+     *High discount rate of a bill auction, in percent per annum on a
+     *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+     *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+     *and any issuance without a discount rate.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getHighDiscountRateFieldBuilder() {
+      if (highDiscountRateBuilder_ == null) {
+        highDiscountRateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getHighDiscountRate(),
+                getParentForChildren(),
+                isClean());
+        highDiscountRate_ = null;
+      }
+      return highDiscountRateBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

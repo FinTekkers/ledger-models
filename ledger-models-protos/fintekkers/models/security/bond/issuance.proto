@@ -109,4 +109,12 @@ message IssuanceProto {
    */
   fintekkers.models.util.DecimalValueProto mature_security_amount = 27;
 
+  /**
+  High discount rate of a bill auction, in percent per annum on a
+  bank-discount basis, as Treasury publishes it (HighDiscountRate):
+  4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+  and any issuance without a discount rate.
+   */
+  fintekkers.models.util.DecimalValueProto high_discount_rate = 28;
+
 }
