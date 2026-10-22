@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package fintekkers.models.portfolio;
 
+import "fintekkers/models/portfolio/amortisation_elections.proto";
 import "fintekkers/models/util/local_timestamp.proto";
 import "fintekkers/models/util/uuid.proto";
 import "fintekkers/models/util/object_type.proto";
@@ -28,4 +29,9 @@ message PortfolioProto {
   util.LocalTimestampProto valid_to = 9;
 
   string portfolio_name = 10;
+
+  // US tax elections, fixed per portfolio; apply to every lot. Unset = every
+  // default. Copied into CostBasisInput.elections for ADJUSTED_COST_BASIS.
+  // See docs/adr/amortisation_elections.md.
+  AmortisationElectionsProto amortisation_elections = 11;
 }

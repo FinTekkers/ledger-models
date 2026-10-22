@@ -4,6 +4,7 @@
     {"message": ".fintekkers.requests.valuation.FrnInput", "number": 1, "name": "security", "type": ".fintekkers.models.security.SecurityProto"},
     {"message": ".fintekkers.requests.valuation.FrnInput", "number": 2, "name": "clean_price", "type": ".fintekkers.models.util.DecimalValueProto"},
     {"message": ".fintekkers.requests.valuation.FrnInput", "number": 10, "name": "curve", "type": ".fintekkers.requests.valuation.YieldCurveInput"},
+    {"message": ".fintekkers.requests.valuation.FrnInput", "number": 20, "name": "cost_basis", "type": ".fintekkers.requests.valuation.CostBasisInput"},
     {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 1, "name": "object_type", "type": ".fintekkers.models.util.ObjectTypeProto"},
     {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 2, "name": "version", "type": ".fintekkers.models.util.VersionProto"},
     {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 6, "name": "as_of", "type": ".fintekkers.models.util.LocalTimestampProto"},

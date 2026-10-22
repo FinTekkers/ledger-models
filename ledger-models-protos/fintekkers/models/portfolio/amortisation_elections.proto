@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package fintekkers.models.portfolio;
+
+option java_multiple_files = true;
+option java_outer_classname = "AmortisationElectionsProtos";
+
+// US tax elections for amortising bond premium and discount. Fixed per
+// portfolio: they apply to every lot. Zero values mean "use the default".
+// Read by MeasureProto.ADJUSTED_COST_BASIS (VS-110, LM-364). Tax elections
+// only: book (GAAP/IFRS) elections are out of scope.
+// See docs/adr/amortisation_elections.md.
+//
+// Fields 1 and 2 are not used. This is a value nested in PortfolioProto and
+// CostBasisInput, not a stamped message, so it has no object_type/version
+// (LM-318).
+message AmortisationElectionsProto {
+  PremiumAmortisationElectionProto bond_premium = 10;             // IRC §171; UNSPECIFIED → PREMIUM_ELECTED
+  MarketDiscountInclusionProto market_discount_inclusion = 11;    // IRC §1278(b); UNSPECIFIED → AT_DISPOSITION
+  MarketDiscountAccrualMethodProto market_discount_accrual = 12;  // IRC §1276(b)(2); UNSPECIFIED → RATABLE; only with INCLUDE_CURRENTLY
+}
+
+enum PremiumAmortisationElectionProto {
+  UNSPECIFIED_PREMIUM_ELECTION = 0;  // Use the default: PREMIUM_ELECTED.
+  PREMIUM_ELECTED = 1;
+  PREMIUM_NOT_ELECTED = 2;
+}
+
+enum MarketDiscountInclusionProto {
+  UNSPECIFIED_MARKET_DISCOUNT_INCLUSION = 0;  // Use the default: AT_DISPOSITION.
+  AT_DISPOSITION = 1;
+  INCLUDE_CURRENTLY = 2;
+}
+
+enum MarketDiscountAccrualMethodProto {
+  UNSPECIFIED_ACCRUAL_METHOD = 0;  // Use the default: RATABLE.
+  RATABLE = 1;
+  CONSTANT_YIELD = 2;
+}

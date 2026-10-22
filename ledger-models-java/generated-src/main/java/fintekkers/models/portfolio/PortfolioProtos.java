@@ -29,26 +29,31 @@ public final class PortfolioProtos {
   static {
     java.lang.String[] descriptorData = {
       "\n+fintekkers/models/portfolio/portfolio." +
-      "proto\022\033fintekkers.models.portfolio\032,fint" +
-      "ekkers/models/util/local_timestamp.proto" +
-      "\032!fintekkers/models/util/uuid.proto\032(fin" +
-      "tekkers/models/util/object_type.proto\032$f" +
-      "intekkers/models/util/version.proto\"\233\003\n\016" +
-      "PortfolioProto\022<\n\013object_type\030\001 \001(\0162\'.fi" +
-      "ntekkers.models.util.ObjectTypeProto\0225\n\007" +
-      "version\030\002 \001(\0132$.fintekkers.models.util.V" +
-      "ersionProto\022/\n\004uuid\030\005 \001(\0132!.fintekkers.m" +
-      "odels.util.UUIDProto\022:\n\005as_of\030\006 \001(\0132+.fi" +
-      "ntekkers.models.util.LocalTimestampProto" +
-      "\022\017\n\007is_link\030\007 \001(\010\022?\n\nvalid_from\030\010 \001(\0132+." +
-      "fintekkers.models.util.LocalTimestampPro" +
-      "to\022=\n\010valid_to\030\t \001(\0132+.fintekkers.models" +
-      ".util.LocalTimestampProto\022\026\n\016portfolio_n" +
-      "ame\030\n \001(\tB\023B\017PortfolioProtosP\001b\006proto3"
+      "proto\022\033fintekkers.models.portfolio\0328fint" +
+      "ekkers/models/portfolio/amortisation_ele" +
+      "ctions.proto\032,fintekkers/models/util/loc" +
+      "al_timestamp.proto\032!fintekkers/models/ut" +
+      "il/uuid.proto\032(fintekkers/models/util/ob" +
+      "ject_type.proto\032$fintekkers/models/util/" +
+      "version.proto\"\364\003\n\016PortfolioProto\022<\n\013obje" +
+      "ct_type\030\001 \001(\0162\'.fintekkers.models.util.O" +
+      "bjectTypeProto\0225\n\007version\030\002 \001(\0132$.fintek" +
+      "kers.models.util.VersionProto\022/\n\004uuid\030\005 " +
+      "\001(\0132!.fintekkers.models.util.UUIDProto\022:" +
+      "\n\005as_of\030\006 \001(\0132+.fintekkers.models.util.L" +
+      "ocalTimestampProto\022\017\n\007is_link\030\007 \001(\010\022?\n\nv" +
+      "alid_from\030\010 \001(\0132+.fintekkers.models.util" +
+      ".LocalTimestampProto\022=\n\010valid_to\030\t \001(\0132+" +
+      ".fintekkers.models.util.LocalTimestampPr" +
+      "oto\022\026\n\016portfolio_name\030\n \001(\t\022W\n\026amortisat" +
+      "ion_elections\030\013 \001(\01327.fintekkers.models." +
+      "portfolio.AmortisationElectionsProtoB\023B\017" +
+      "PortfolioProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          fintekkers.models.portfolio.AmortisationElectionsProtos.getDescriptor(),
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.models.util.Uuid.getDescriptor(),
           fintekkers.models.util.ObjectTypeProtos.getDescriptor(),
@@ -59,7 +64,8 @@ public final class PortfolioProtos {
     internal_static_fintekkers_models_portfolio_PortfolioProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_portfolio_PortfolioProto_descriptor,
-        new java.lang.String[] { "ObjectType", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "PortfolioName", });
+        new java.lang.String[] { "ObjectType", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "PortfolioName", "AmortisationElections", });
+    fintekkers.models.portfolio.AmortisationElectionsProtos.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.util.Uuid.getDescriptor();
     fintekkers.models.util.ObjectTypeProtos.getDescriptor();

@@ -30,6 +30,11 @@ public final class ProductInputProtos {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_fintekkers_requests_valuation_TipsInput_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fintekkers_requests_valuation_CostBasisInput_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fintekkers_requests_valuation_CostBasisInput_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
     internal_static_fintekkers_requests_valuation_InflationIndexInput_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -85,73 +90,86 @@ public final class ProductInputProtos {
     java.lang.String[] descriptorData = {
       "\n2fintekkers/requests/valuation/product_" +
       "inputs.proto\022\035fintekkers.requests.valuat" +
-      "ion\032)fintekkers/models/security/security" +
-      ".proto\0321fintekkers/models/security/index" +
-      "/index_type.proto\032*fintekkers/models/uti" +
-      "l/decimal_value.proto\032\'fintekkers/models" +
-      "/util/local_date.proto\"\303\001\n\014ProductInput\022" +
-      "8\n\004bond\030\001 \001(\0132(.fintekkers.requests.valu" +
-      "ation.BondInputH\000\0228\n\004tips\030\002 \001(\0132(.fintek" +
-      "kers.requests.valuation.TipsInputH\000\0226\n\003f" +
-      "rn\030\010 \001(\0132\'.fintekkers.requests.valuation" +
-      ".FrnInputH\000B\007\n\005input\"\331\001\n\tBondInput\022;\n\010se" +
-      "curity\030\001 \001(\0132).fintekkers.models.securit" +
-      "y.SecurityProto\022>\n\013clean_price\030\002 \001(\0132).f" +
-      "intekkers.models.util.DecimalValueProto\022" +
-      "O\n\017benchmark_curve\030\n \001(\01326.fintekkers.re" +
-      "quests.valuation.SecurityBasedCurveInput" +
-      "\"\334\001\n\tTipsInput\022;\n\010security\030\001 \001(\0132).finte" +
+      "ion\0328fintekkers/models/portfolio/amortis" +
+      "ation_elections.proto\032(fintekkers/models" +
+      "/position/tax_lot.proto\032)fintekkers/mode" +
+      "ls/security/security.proto\0321fintekkers/m" +
+      "odels/security/index/index_type.proto\032*f" +
+      "intekkers/models/util/decimal_value.prot" +
+      "o\032\'fintekkers/models/util/local_date.pro" +
+      "to\"\303\001\n\014ProductInput\0228\n\004bond\030\001 \001(\0132(.fint" +
+      "ekkers.requests.valuation.BondInputH\000\0228\n" +
+      "\004tips\030\002 \001(\0132(.fintekkers.requests.valuat" +
+      "ion.TipsInputH\000\0226\n\003frn\030\010 \001(\0132\'.fintekker" +
+      "s.requests.valuation.FrnInputH\000B\007\n\005input" +
+      "\"\234\002\n\tBondInput\022;\n\010security\030\001 \001(\0132).finte" +
       "kkers.models.security.SecurityProto\022>\n\013c" +
       "lean_price\030\002 \001(\0132).fintekkers.models.uti" +
-      "l.DecimalValueProto\022?\n\003cpi\030\004 \001(\01322.finte" +
-      "kkers.requests.valuation.InflationIndexI" +
-      "nputJ\004\010\003\020\004R\013current_cpi\"\343\001\n\023InflationInd" +
-      "exInput\0228\n\005index\030\001 \001(\0132).fintekkers.mode" +
-      "ls.security.SecurityProto\022G\n\010readings\030\002 " +
-      "\001(\01323.fintekkers.requests.valuation.Mont" +
-      "hlyIndexReadingsH\000\022B\n\rreference_cpi\030\003 \001(" +
-      "\0132).fintekkers.models.util.DecimalValueP" +
-      "rotoH\000B\005\n\003cpi\"\\\n\024MonthlyIndexReadings\022D\n" +
-      "\010readings\030\001 \003(\01322.fintekkers.requests.va" +
-      "luation.MonthlyIndexReading\"l\n\023MonthlyIn" +
-      "dexReading\022\014\n\004year\030\001 \001(\005\022\r\n\005month\030\002 \001(\005\022" +
-      "8\n\005value\030\003 \001(\0132).fintekkers.models.util." +
-      "DecimalValueProto\"\220\002\n\010FrnInput\022;\n\010securi" +
-      "ty\030\001 \001(\0132).fintekkers.models.security.Se" +
-      "curityProto\022>\n\013clean_price\030\002 \001(\0132).finte" +
-      "kkers.models.util.DecimalValueProto\022=\n\005c" +
-      "urve\030\n \001(\0132..fintekkers.requests.valuati" +
-      "on.YieldCurveInput\022H\n\007fixings\030\013 \003(\01327.fi" +
-      "ntekkers.requests.valuation.ReferenceRat" +
-      "eFixingProto\"\321\001\n\030ReferenceRateFixingProt" +
-      "o\022?\n\005index\030\001 \001(\01620.fintekkers.models.sec" +
-      "urity.index.IndexTypeProto\022;\n\013fixing_dat" +
-      "e\030\002 \001(\0132&.fintekkers.models.util.LocalDa" +
-      "teProto\0227\n\004rate\030\003 \001(\0132).fintekkers.model" +
-      "s.util.DecimalValueProto\"\315\001\n\017YieldCurveI" +
-      "nput\022?\n\005index\030\001 \001(\01620.fintekkers.models." +
-      "security.index.IndexTypeProto\022>\n\016referen" +
-      "ce_date\030\002 \001(\0132&.fintekkers.models.util.L" +
-      "ocalDateProto\0229\n\006points\030\003 \003(\0132).fintekke" +
-      "rs.requests.valuation.CurvePoint\"\177\n\nCurv" +
-      "ePoint\0228\n\005tenor\030\001 \001(\0132).fintekkers.model" +
-      "s.util.DecimalValueProto\0227\n\004rate\030\002 \001(\0132)" +
+      "l.DecimalValueProto\022O\n\017benchmark_curve\030\n" +
+      " \001(\01326.fintekkers.requests.valuation.Sec" +
+      "urityBasedCurveInput\022A\n\ncost_basis\030\024 \001(\013" +
+      "2-.fintekkers.requests.valuation.CostBas" +
+      "isInput\"\237\002\n\tTipsInput\022;\n\010security\030\001 \001(\0132" +
+      ").fintekkers.models.security.SecurityPro" +
+      "to\022>\n\013clean_price\030\002 \001(\0132).fintekkers.mod" +
+      "els.util.DecimalValueProto\022?\n\003cpi\030\004 \001(\0132" +
+      "2.fintekkers.requests.valuation.Inflatio" +
+      "nIndexInput\022A\n\ncost_basis\030\024 \001(\0132-.fintek" +
+      "kers.requests.valuation.CostBasisInputJ\004" +
+      "\010\003\020\004R\013current_cpi\"\223\001\n\016CostBasisInput\022J\n\t" +
+      "elections\030\001 \001(\01327.fintekkers.models.port" +
+      "folio.AmortisationElectionsProto\0225\n\004lots" +
+      "\030\002 \003(\0132\'.fintekkers.models.position.TaxL" +
+      "otProto\"\343\001\n\023InflationIndexInput\0228\n\005index" +
+      "\030\001 \001(\0132).fintekkers.models.security.Secu" +
+      "rityProto\022G\n\010readings\030\002 \001(\01323.fintekkers" +
+      ".requests.valuation.MonthlyIndexReadings" +
+      "H\000\022B\n\rreference_cpi\030\003 \001(\0132).fintekkers.m" +
+      "odels.util.DecimalValueProtoH\000B\005\n\003cpi\"\\\n" +
+      "\024MonthlyIndexReadings\022D\n\010readings\030\001 \003(\0132" +
+      "2.fintekkers.requests.valuation.MonthlyI" +
+      "ndexReading\"l\n\023MonthlyIndexReading\022\014\n\004ye" +
+      "ar\030\001 \001(\005\022\r\n\005month\030\002 \001(\005\0228\n\005value\030\003 \001(\0132)" +
       ".fintekkers.models.util.DecimalValueProt" +
-      "o\"\335\001\n\027SecurityBasedCurveInput\022?\n\005index\030\001" +
-      " \001(\01620.fintekkers.models.security.index." +
-      "IndexTypeProto\022>\n\016reference_date\030\002 \001(\0132&" +
-      ".fintekkers.models.util.LocalDateProto\022A" +
-      "\n\006points\030\003 \003(\01321.fintekkers.requests.val" +
-      "uation.SecurityCurvePoint\"\221\001\n\022SecurityCu" +
-      "rvePoint\022;\n\010security\030\001 \001(\0132).fintekkers." +
-      "models.security.SecurityProto\022>\n\013clean_p" +
-      "rice\030\002 \001(\0132).fintekkers.models.util.Deci" +
-      "malValueProtoB\026B\022ProductInputProtosP\001b\006p" +
-      "roto3"
+      "o\"\323\002\n\010FrnInput\022;\n\010security\030\001 \001(\0132).finte" +
+      "kkers.models.security.SecurityProto\022>\n\013c" +
+      "lean_price\030\002 \001(\0132).fintekkers.models.uti" +
+      "l.DecimalValueProto\022=\n\005curve\030\n \001(\0132..fin" +
+      "tekkers.requests.valuation.YieldCurveInp" +
+      "ut\022H\n\007fixings\030\013 \003(\01327.fintekkers.request" +
+      "s.valuation.ReferenceRateFixingProto\022A\n\n" +
+      "cost_basis\030\024 \001(\0132-.fintekkers.requests.v" +
+      "aluation.CostBasisInput\"\321\001\n\030ReferenceRat" +
+      "eFixingProto\022?\n\005index\030\001 \001(\01620.fintekkers" +
+      ".models.security.index.IndexTypeProto\022;\n" +
+      "\013fixing_date\030\002 \001(\0132&.fintekkers.models.u" +
+      "til.LocalDateProto\0227\n\004rate\030\003 \001(\0132).finte" +
+      "kkers.models.util.DecimalValueProto\"\315\001\n\017" +
+      "YieldCurveInput\022?\n\005index\030\001 \001(\01620.fintekk" +
+      "ers.models.security.index.IndexTypeProto" +
+      "\022>\n\016reference_date\030\002 \001(\0132&.fintekkers.mo" +
+      "dels.util.LocalDateProto\0229\n\006points\030\003 \003(\013" +
+      "2).fintekkers.requests.valuation.CurvePo" +
+      "int\"\177\n\nCurvePoint\0228\n\005tenor\030\001 \001(\0132).finte" +
+      "kkers.models.util.DecimalValueProto\0227\n\004r" +
+      "ate\030\002 \001(\0132).fintekkers.models.util.Decim" +
+      "alValueProto\"\335\001\n\027SecurityBasedCurveInput" +
+      "\022?\n\005index\030\001 \001(\01620.fintekkers.models.secu" +
+      "rity.index.IndexTypeProto\022>\n\016reference_d" +
+      "ate\030\002 \001(\0132&.fintekkers.models.util.Local" +
+      "DateProto\022A\n\006points\030\003 \003(\01321.fintekkers.r" +
+      "equests.valuation.SecurityCurvePoint\"\221\001\n" +
+      "\022SecurityCurvePoint\022;\n\010security\030\001 \001(\0132)." +
+      "fintekkers.models.security.SecurityProto" +
+      "\022>\n\013clean_price\030\002 \001(\0132).fintekkers.model" +
+      "s.util.DecimalValueProtoB\026B\022ProductInput" +
+      "ProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
+          fintekkers.models.portfolio.AmortisationElectionsProtos.getDescriptor(),
+          fintekkers.models.position.TaxLotProtos.getDescriptor(),
           fintekkers.models.security.SecurityProtos.getDescriptor(),
           fintekkers.models.security.index.IndexTypeProtos.getDescriptor(),
           fintekkers.models.util.DecimalValue.getDescriptor(),
@@ -168,67 +186,75 @@ public final class ProductInputProtos {
     internal_static_fintekkers_requests_valuation_BondInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_BondInput_descriptor,
-        new java.lang.String[] { "Security", "CleanPrice", "BenchmarkCurve", });
+        new java.lang.String[] { "Security", "CleanPrice", "BenchmarkCurve", "CostBasis", });
     internal_static_fintekkers_requests_valuation_TipsInput_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_fintekkers_requests_valuation_TipsInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_TipsInput_descriptor,
-        new java.lang.String[] { "Security", "CleanPrice", "Cpi", });
-    internal_static_fintekkers_requests_valuation_InflationIndexInput_descriptor =
+        new java.lang.String[] { "Security", "CleanPrice", "Cpi", "CostBasis", });
+    internal_static_fintekkers_requests_valuation_CostBasisInput_descriptor =
       getDescriptor().getMessageTypes().get(3);
+    internal_static_fintekkers_requests_valuation_CostBasisInput_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fintekkers_requests_valuation_CostBasisInput_descriptor,
+        new java.lang.String[] { "Elections", "Lots", });
+    internal_static_fintekkers_requests_valuation_InflationIndexInput_descriptor =
+      getDescriptor().getMessageTypes().get(4);
     internal_static_fintekkers_requests_valuation_InflationIndexInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_InflationIndexInput_descriptor,
         new java.lang.String[] { "Index", "Readings", "ReferenceCpi", "Cpi", });
     internal_static_fintekkers_requests_valuation_MonthlyIndexReadings_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_fintekkers_requests_valuation_MonthlyIndexReadings_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_MonthlyIndexReadings_descriptor,
         new java.lang.String[] { "Readings", });
     internal_static_fintekkers_requests_valuation_MonthlyIndexReading_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_fintekkers_requests_valuation_MonthlyIndexReading_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_MonthlyIndexReading_descriptor,
         new java.lang.String[] { "Year", "Month", "Value", });
     internal_static_fintekkers_requests_valuation_FrnInput_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_fintekkers_requests_valuation_FrnInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_FrnInput_descriptor,
-        new java.lang.String[] { "Security", "CleanPrice", "Curve", "Fixings", });
+        new java.lang.String[] { "Security", "CleanPrice", "Curve", "Fixings", "CostBasis", });
     internal_static_fintekkers_requests_valuation_ReferenceRateFixingProto_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_fintekkers_requests_valuation_ReferenceRateFixingProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_ReferenceRateFixingProto_descriptor,
         new java.lang.String[] { "Index", "FixingDate", "Rate", });
     internal_static_fintekkers_requests_valuation_YieldCurveInput_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_fintekkers_requests_valuation_YieldCurveInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_YieldCurveInput_descriptor,
         new java.lang.String[] { "Index", "ReferenceDate", "Points", });
     internal_static_fintekkers_requests_valuation_CurvePoint_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_fintekkers_requests_valuation_CurvePoint_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_CurvePoint_descriptor,
         new java.lang.String[] { "Tenor", "Rate", });
     internal_static_fintekkers_requests_valuation_SecurityBasedCurveInput_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_fintekkers_requests_valuation_SecurityBasedCurveInput_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_SecurityBasedCurveInput_descriptor,
         new java.lang.String[] { "Index", "ReferenceDate", "Points", });
     internal_static_fintekkers_requests_valuation_SecurityCurvePoint_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_fintekkers_requests_valuation_SecurityCurvePoint_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_SecurityCurvePoint_descriptor,
         new java.lang.String[] { "Security", "CleanPrice", });
+    fintekkers.models.portfolio.AmortisationElectionsProtos.getDescriptor();
+    fintekkers.models.position.TaxLotProtos.getDescriptor();
     fintekkers.models.security.SecurityProtos.getDescriptor();
     fintekkers.models.security.index.IndexTypeProtos.getDescriptor();
     fintekkers.models.util.DecimalValue.getDescriptor();

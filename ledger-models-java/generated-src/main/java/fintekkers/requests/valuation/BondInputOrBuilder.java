@@ -102,4 +102,31 @@ public interface BondInputOrBuilder extends
    * <code>.fintekkers.requests.valuation.SecurityBasedCurveInput benchmark_curve = 10;</code>
    */
   fintekkers.requests.valuation.SecurityBasedCurveInputOrBuilder getBenchmarkCurveOrBuilder();
+
+  /**
+   * <pre>
+   * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+   * @return Whether the costBasis field is set.
+   */
+  boolean hasCostBasis();
+  /**
+   * <pre>
+   * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+   * @return The costBasis.
+   */
+  fintekkers.requests.valuation.CostBasisInput getCostBasis();
+  /**
+   * <pre>
+   * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
+   */
+  fintekkers.requests.valuation.CostBasisInputOrBuilder getCostBasisOrBuilder();
 }

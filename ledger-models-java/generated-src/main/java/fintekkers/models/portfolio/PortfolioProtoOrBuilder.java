@@ -135,4 +135,37 @@ public interface PortfolioProtoOrBuilder extends
    */
   com.google.protobuf.ByteString
       getPortfolioNameBytes();
+
+  /**
+   * <pre>
+   * US tax elections, fixed per portfolio; apply to every lot. Unset = every
+   * default. Copied into CostBasisInput.elections for ADJUSTED_COST_BASIS.
+   * See docs/adr/amortisation_elections.md.
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+   * @return Whether the amortisationElections field is set.
+   */
+  boolean hasAmortisationElections();
+  /**
+   * <pre>
+   * US tax elections, fixed per portfolio; apply to every lot. Unset = every
+   * default. Copied into CostBasisInput.elections for ADJUSTED_COST_BASIS.
+   * See docs/adr/amortisation_elections.md.
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+   * @return The amortisationElections.
+   */
+  fintekkers.models.portfolio.AmortisationElectionsProto getAmortisationElections();
+  /**
+   * <pre>
+   * US tax elections, fixed per portfolio; apply to every lot. Unset = every
+   * default. Copied into CostBasisInput.elections for ADJUSTED_COST_BASIS.
+   * See docs/adr/amortisation_elections.md.
+   * </pre>
+   *
+   * <code>.fintekkers.models.portfolio.AmortisationElectionsProto amortisation_elections = 11;</code>
+   */
+  fintekkers.models.portfolio.AmortisationElectionsProtoOrBuilder getAmortisationElectionsOrBuilder();
 }

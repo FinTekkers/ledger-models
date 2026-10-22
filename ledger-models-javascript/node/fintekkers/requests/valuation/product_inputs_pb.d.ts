@@ -5,6 +5,8 @@
 /* eslint-disable */
 
 import * as jspb from "google-protobuf";
+import * as fintekkers_models_portfolio_amortisation_elections_pb from "../../../fintekkers/models/portfolio/amortisation_elections_pb";
+import * as fintekkers_models_position_tax_lot_pb from "../../../fintekkers/models/position/tax_lot_pb";
 import * as fintekkers_models_security_security_pb from "../../../fintekkers/models/security/security_pb";
 import * as fintekkers_models_security_index_index_type_pb from "../../../fintekkers/models/security/index/index_type_pb";
 import * as fintekkers_models_util_decimal_value_pb from "../../../fintekkers/models/util/decimal_value_pb";
@@ -72,6 +74,11 @@ export class BondInput extends jspb.Message {
     getBenchmarkCurve(): SecurityBasedCurveInput | undefined;
     setBenchmarkCurve(value?: SecurityBasedCurveInput): BondInput;
 
+    hasCostBasis(): boolean;
+    clearCostBasis(): void;
+    getCostBasis(): CostBasisInput | undefined;
+    setCostBasis(value?: CostBasisInput): BondInput;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): BondInput.AsObject;
     static toObject(includeInstance: boolean, msg: BondInput): BondInput.AsObject;
@@ -87,6 +94,7 @@ export namespace BondInput {
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         benchmarkCurve?: SecurityBasedCurveInput.AsObject,
+        costBasis?: CostBasisInput.AsObject,
     }
 }
 
@@ -107,6 +115,11 @@ export class TipsInput extends jspb.Message {
     getCpi(): InflationIndexInput | undefined;
     setCpi(value?: InflationIndexInput): TipsInput;
 
+    hasCostBasis(): boolean;
+    clearCostBasis(): void;
+    getCostBasis(): CostBasisInput | undefined;
+    setCostBasis(value?: CostBasisInput): TipsInput;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): TipsInput.AsObject;
     static toObject(includeInstance: boolean, msg: TipsInput): TipsInput.AsObject;
@@ -122,6 +135,35 @@ export namespace TipsInput {
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         cpi?: InflationIndexInput.AsObject,
+        costBasis?: CostBasisInput.AsObject,
+    }
+}
+
+export class CostBasisInput extends jspb.Message { 
+
+    hasElections(): boolean;
+    clearElections(): void;
+    getElections(): fintekkers_models_portfolio_amortisation_elections_pb.AmortisationElectionsProto | undefined;
+    setElections(value?: fintekkers_models_portfolio_amortisation_elections_pb.AmortisationElectionsProto): CostBasisInput;
+    clearLotsList(): void;
+    getLotsList(): Array<fintekkers_models_position_tax_lot_pb.TaxLotProto>;
+    setLotsList(value: Array<fintekkers_models_position_tax_lot_pb.TaxLotProto>): CostBasisInput;
+    addLots(value?: fintekkers_models_position_tax_lot_pb.TaxLotProto, index?: number): fintekkers_models_position_tax_lot_pb.TaxLotProto;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): CostBasisInput.AsObject;
+    static toObject(includeInstance: boolean, msg: CostBasisInput): CostBasisInput.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: CostBasisInput, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CostBasisInput;
+    static deserializeBinaryFromReader(message: CostBasisInput, reader: jspb.BinaryReader): CostBasisInput;
+}
+
+export namespace CostBasisInput {
+    export type AsObject = {
+        elections?: fintekkers_models_portfolio_amortisation_elections_pb.AmortisationElectionsProto.AsObject,
+        lotsList: Array<fintekkers_models_position_tax_lot_pb.TaxLotProto.AsObject>,
     }
 }
 
@@ -241,6 +283,11 @@ export class FrnInput extends jspb.Message {
     setFixingsList(value: Array<ReferenceRateFixingProto>): FrnInput;
     addFixings(value?: ReferenceRateFixingProto, index?: number): ReferenceRateFixingProto;
 
+    hasCostBasis(): boolean;
+    clearCostBasis(): void;
+    getCostBasis(): CostBasisInput | undefined;
+    setCostBasis(value?: CostBasisInput): FrnInput;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): FrnInput.AsObject;
     static toObject(includeInstance: boolean, msg: FrnInput): FrnInput.AsObject;
@@ -257,6 +304,7 @@ export namespace FrnInput {
         cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         curve?: YieldCurveInput.AsObject,
         fixingsList: Array<ReferenceRateFixingProto.AsObject>,
+        costBasis?: CostBasisInput.AsObject,
     }
 }
 

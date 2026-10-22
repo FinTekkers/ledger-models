@@ -1,3 +1,5 @@
+from fintekkers.models.portfolio import amortisation_elections_pb2 as _amortisation_elections_pb2
+from fintekkers.models.position import tax_lot_pb2 as _tax_lot_pb2
 from fintekkers.models.security import security_pb2 as _security_pb2
 from fintekkers.models.security.index import index_type_pb2 as _index_type_pb2
 from fintekkers.models.util import decimal_value_pb2 as _decimal_value_pb2
@@ -21,24 +23,36 @@ class ProductInput(_message.Message):
     def __init__(self, bond: _Optional[_Union[BondInput, _Mapping]] = ..., tips: _Optional[_Union[TipsInput, _Mapping]] = ..., frn: _Optional[_Union[FrnInput, _Mapping]] = ...) -> None: ...
 
 class BondInput(_message.Message):
-    __slots__ = ("security", "clean_price", "benchmark_curve")
+    __slots__ = ("security", "clean_price", "benchmark_curve", "cost_basis")
     SECURITY_FIELD_NUMBER: _ClassVar[int]
     CLEAN_PRICE_FIELD_NUMBER: _ClassVar[int]
     BENCHMARK_CURVE_FIELD_NUMBER: _ClassVar[int]
+    COST_BASIS_FIELD_NUMBER: _ClassVar[int]
     security: _security_pb2.SecurityProto
     clean_price: _decimal_value_pb2.DecimalValueProto
     benchmark_curve: SecurityBasedCurveInput
-    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., benchmark_curve: _Optional[_Union[SecurityBasedCurveInput, _Mapping]] = ...) -> None: ...
+    cost_basis: CostBasisInput
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., benchmark_curve: _Optional[_Union[SecurityBasedCurveInput, _Mapping]] = ..., cost_basis: _Optional[_Union[CostBasisInput, _Mapping]] = ...) -> None: ...
 
 class TipsInput(_message.Message):
-    __slots__ = ("security", "clean_price", "cpi")
+    __slots__ = ("security", "clean_price", "cpi", "cost_basis")
     SECURITY_FIELD_NUMBER: _ClassVar[int]
     CLEAN_PRICE_FIELD_NUMBER: _ClassVar[int]
     CPI_FIELD_NUMBER: _ClassVar[int]
+    COST_BASIS_FIELD_NUMBER: _ClassVar[int]
     security: _security_pb2.SecurityProto
     clean_price: _decimal_value_pb2.DecimalValueProto
     cpi: InflationIndexInput
-    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., cpi: _Optional[_Union[InflationIndexInput, _Mapping]] = ...) -> None: ...
+    cost_basis: CostBasisInput
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., cpi: _Optional[_Union[InflationIndexInput, _Mapping]] = ..., cost_basis: _Optional[_Union[CostBasisInput, _Mapping]] = ...) -> None: ...
+
+class CostBasisInput(_message.Message):
+    __slots__ = ("elections", "lots")
+    ELECTIONS_FIELD_NUMBER: _ClassVar[int]
+    LOTS_FIELD_NUMBER: _ClassVar[int]
+    elections: _amortisation_elections_pb2.AmortisationElectionsProto
+    lots: _containers.RepeatedCompositeFieldContainer[_tax_lot_pb2.TaxLotProto]
+    def __init__(self, elections: _Optional[_Union[_amortisation_elections_pb2.AmortisationElectionsProto, _Mapping]] = ..., lots: _Optional[_Iterable[_Union[_tax_lot_pb2.TaxLotProto, _Mapping]]] = ...) -> None: ...
 
 class InflationIndexInput(_message.Message):
     __slots__ = ("index", "readings", "reference_cpi")
@@ -67,16 +81,18 @@ class MonthlyIndexReading(_message.Message):
     def __init__(self, year: _Optional[int] = ..., month: _Optional[int] = ..., value: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
 
 class FrnInput(_message.Message):
-    __slots__ = ("security", "clean_price", "curve", "fixings")
+    __slots__ = ("security", "clean_price", "curve", "fixings", "cost_basis")
     SECURITY_FIELD_NUMBER: _ClassVar[int]
     CLEAN_PRICE_FIELD_NUMBER: _ClassVar[int]
     CURVE_FIELD_NUMBER: _ClassVar[int]
     FIXINGS_FIELD_NUMBER: _ClassVar[int]
+    COST_BASIS_FIELD_NUMBER: _ClassVar[int]
     security: _security_pb2.SecurityProto
     clean_price: _decimal_value_pb2.DecimalValueProto
     curve: YieldCurveInput
     fixings: _containers.RepeatedCompositeFieldContainer[ReferenceRateFixingProto]
-    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., curve: _Optional[_Union[YieldCurveInput, _Mapping]] = ..., fixings: _Optional[_Iterable[_Union[ReferenceRateFixingProto, _Mapping]]] = ...) -> None: ...
+    cost_basis: CostBasisInput
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., curve: _Optional[_Union[YieldCurveInput, _Mapping]] = ..., fixings: _Optional[_Iterable[_Union[ReferenceRateFixingProto, _Mapping]]] = ..., cost_basis: _Optional[_Union[CostBasisInput, _Mapping]] = ...) -> None: ...
 
 class ReferenceRateFixingProto(_message.Message):
     __slots__ = ("index", "fixing_date", "rate")

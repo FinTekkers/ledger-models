@@ -76,6 +76,7 @@ fn tips_input_clean_price_survives_roundtrip() {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
         cpi: Some(reference_cpi("310.326")),
+        cost_basis: None,
     };
     let original = ProductInput {
         input: Some(product_input::Input::Tips(tips)),
@@ -97,6 +98,7 @@ fn tips_input_security_fields_survive_roundtrip() {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
         cpi: Some(reference_cpi("310.326")),
+        cost_basis: None,
     };
     let original = ProductInput {
         input: Some(product_input::Input::Tips(tips)),
@@ -130,6 +132,7 @@ fn valuation_request_with_tips_product_input_survives_roundtrip() {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
         cpi: Some(reference_cpi("310.326")),
+        cost_basis: None,
     };
     let original = ValuationRequestProto {
         product_input: Some(ProductInput {
@@ -156,6 +159,7 @@ fn tips_is_distinct_from_bond_oneof_variant() {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
         cpi: Some(reference_cpi("310.326")),
+        cost_basis: None,
     };
     let original = ProductInput {
         input: Some(product_input::Input::Tips(tips)),
@@ -175,6 +179,7 @@ fn tips_index_ratio_fields_preserve_precision() {
         security: Some(tips_security("260.47400")),
         clean_price: Some(decimal("98.765432")),
         cpi: Some(reference_cpi("310.32600")),
+        cost_basis: None,
     };
     let original = ProductInput {
         input: Some(product_input::Input::Tips(tips)),

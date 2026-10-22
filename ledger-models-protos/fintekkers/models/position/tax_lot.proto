@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package fintekkers.models.position;
+
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_date.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "TaxLotProtos";
+
+// One open tax lot of a holding.
+//
+// The proto form of the tax lots ledger-models already computes in Java
+// (common.models.taxLot.TaxLotSummary). A domain model, not a request-only
+// input: CostBasisInput.lots carries it to valuation-service for
+// MeasureProto.ADJUSTED_COST_BASIS (LM-364).
+// See docs/adr/amortisation_elections.md.
+message TaxLotProto {
+  fintekkers.models.util.LocalDateProto open_date = 1;         // the opening trade date
+  fintekkers.models.util.DecimalValueProto open_quantity = 2;  // quantity still open, in the position's units (face value for bonds)
+  fintekkers.models.util.DecimalValueProto price = 3;          // purchase price per 100 face, clean; TIPS: the real (unadjusted) price
+}

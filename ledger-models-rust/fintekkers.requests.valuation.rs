@@ -221,6 +221,9 @@ pub struct BondInput {
     /// a zero-coupon spot curve internally. When omitted, Z-spread is not computed.
     #[prost(message, optional, tag = "10")]
     pub benchmark_curve: ::core::option::Option<SecurityBasedCurveInput>,
+    /// Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+    #[prost(message, optional, tag = "20")]
+    pub cost_basis: ::core::option::Option<CostBasisInput>,
 }
 /// ═══════════════════════════════════════════════════════════════════════════
 /// TipsInput — valuation request for a Treasury Inflation-Protected Security.
@@ -259,6 +262,22 @@ pub struct TipsInput {
     /// InflationIndexInput and MonthlyIndexReadings.
     #[prost(message, optional, tag = "4")]
     pub cpi: ::core::option::Option<InflationIndexInput>,
+    /// Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+    #[prost(message, optional, tag = "20")]
+    pub cost_basis: ::core::option::Option<CostBasisInput>,
+}
+/// Inputs for ADJUSTED_COST_BASIS, reused by every typed input that supports it.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CostBasisInput {
+    /// copied from the portfolio; unset = every default
+    #[prost(message, optional, tag = "1")]
+    pub elections: ::core::option::Option<
+        super::super::models::portfolio::AmortisationElectionsProto,
+    >,
+    /// the holding's open lots
+    #[prost(message, repeated, tag = "2")]
+    pub lots: ::prost::alloc::vec::Vec<super::super::models::position::TaxLotProto>,
 }
 /// ═══════════════════════════════════════════════════════════════════════════
 /// InflationIndexInput — the inflation index a TIPS is linked to, and its CPI.
@@ -363,6 +382,9 @@ pub struct FrnInput {
     /// Not read by valuation-service today; use is tracked under VS-110.
     #[prost(message, repeated, tag = "11")]
     pub fixings: ::prost::alloc::vec::Vec<ReferenceRateFixingProto>,
+    /// Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+    #[prost(message, optional, tag = "20")]
+    pub cost_basis: ::core::option::Option<CostBasisInput>,
 }
 /// One published fixing of a floating-rate benchmark, e.g. the 13-week
 /// T-bill rate set at the 2026-10-19 auction.

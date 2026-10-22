@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package fintekkers.requests.valuation;
 
+import "fintekkers/models/portfolio/amortisation_elections.proto";
+import "fintekkers/models/position/tax_lot.proto";
 import "fintekkers/models/security/security.proto";
 import "fintekkers/models/security/index/index_type.proto";
 import "fintekkers/models/util/decimal_value.proto";
@@ -53,6 +55,9 @@ message BondInput {
   // benchmark securities and their market clean prices. The engine bootstraps
   // a zero-coupon spot curve internally. When omitted, Z-spread is not computed.
   SecurityBasedCurveInput benchmark_curve = 10;
+
+  // Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+  CostBasisInput cost_basis = 20;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -91,6 +96,22 @@ message TipsInput {
   // invalid and it is rejected, the same as a duplicate month. See
   // InflationIndexInput and MonthlyIndexReadings.
   InflationIndexInput cpi = 4;
+
+  // Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+  CostBasisInput cost_basis = 20;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CostBasisInput — the inputs for MeasureProto.ADJUSTED_COST_BASIS (LM-364).
+//
+// Carried as cost_basis (20) on BondInput, TipsInput and FrnInput, never on
+// the root of ValuationRequestProto. See docs/adr/amortisation_elections.md.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Inputs for ADJUSTED_COST_BASIS, reused by every typed input that supports it.
+message CostBasisInput {
+  fintekkers.models.portfolio.AmortisationElectionsProto elections = 1;  // copied from the portfolio; unset = every default
+  repeated fintekkers.models.position.TaxLotProto lots = 2;              // the holding's open lots
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -178,6 +199,9 @@ message FrnInput {
   // Order is not significant. A duplicate fixing_date makes the input invalid.
   // Not read by valuation-service today; use is tracked under VS-110.
   repeated ReferenceRateFixingProto fixings = 11;
+
+  // Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+  CostBasisInput cost_basis = 20;
 }
 
 // One published fixing of a floating-rate benchmark, e.g. the 13-week
