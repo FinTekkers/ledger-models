@@ -38,8 +38,12 @@ impl AgencyProto {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum AuctionTypeProto {
+    /// Unset or not known.
     UnknownAuctionType = 0,
+    /// All winning bidders pay one clearing price. US Treasury auctions from 1998-11-01.
     SinglePrice = 1,
+    /// Each winning bidder pays the price it bid. US Treasury auctions before 1998-11-01.
+    MultiplePrice = 2,
 }
 impl AuctionTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -50,6 +54,7 @@ impl AuctionTypeProto {
         match self {
             AuctionTypeProto::UnknownAuctionType => "UNKNOWN_AUCTION_TYPE",
             AuctionTypeProto::SinglePrice => "SINGLE_PRICE",
+            AuctionTypeProto::MultiplePrice => "MULTIPLE_PRICE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -57,6 +62,7 @@ impl AuctionTypeProto {
         match value {
             "UNKNOWN_AUCTION_TYPE" => Some(Self::UnknownAuctionType),
             "SINGLE_PRICE" => Some(Self::SinglePrice),
+            "MULTIPLE_PRICE" => Some(Self::MultiplePrice),
             _ => None,
         }
     }
@@ -140,7 +146,11 @@ pub struct IssuanceProto {
     #[prost(enumeration = "AuctionTypeProto", tag = "24")]
     pub auction_type: i32,
     /// *
-    /// If the auction was a single price auction, this is the price paid by bidders
+    /// The auction's single issue price, per 100 par: the price every winning bidder paid.
+    /// For inflation-indexed securities (e.g. TIPS) this is the real, unadjusted price; it is
+    /// not multiplied by the index ratio.
+    /// Unset when the auction has no single issue price: multiple-price auctions
+    /// (auction_type = MULTIPLE_PRICE), reopenings and bills.
     #[prost(message, optional, tag = "25")]
     pub price_for_single_price_auction: ::core::option::Option<
         super::super::util::DecimalValueProto,

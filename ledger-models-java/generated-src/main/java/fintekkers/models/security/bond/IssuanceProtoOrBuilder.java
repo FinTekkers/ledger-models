@@ -249,7 +249,11 @@ public interface IssuanceProtoOrBuilder extends
   /**
    * <pre>
    **
-   *If the auction was a single price auction, this is the price paid by bidders
+   *The auction's single issue price, per 100 par: the price every winning bidder paid.
+   *For inflation-indexed securities (e.g. TIPS) this is the real, unadjusted price; it is
+   *not multiplied by the index ratio.
+   *Unset when the auction has no single issue price: multiple-price auctions
+   *(auction_type = MULTIPLE_PRICE), reopenings and bills.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
@@ -259,7 +263,11 @@ public interface IssuanceProtoOrBuilder extends
   /**
    * <pre>
    **
-   *If the auction was a single price auction, this is the price paid by bidders
+   *The auction's single issue price, per 100 par: the price every winning bidder paid.
+   *For inflation-indexed securities (e.g. TIPS) this is the real, unadjusted price; it is
+   *not multiplied by the index ratio.
+   *Unset when the auction has no single issue price: multiple-price auctions
+   *(auction_type = MULTIPLE_PRICE), reopenings and bills.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>
@@ -269,7 +277,11 @@ public interface IssuanceProtoOrBuilder extends
   /**
    * <pre>
    **
-   *If the auction was a single price auction, this is the price paid by bidders
+   *The auction's single issue price, per 100 par: the price every winning bidder paid.
+   *For inflation-indexed securities (e.g. TIPS) this is the real, unadjusted price; it is
+   *not multiplied by the index ratio.
+   *Unset when the auction has no single issue price: multiple-price auctions
+   *(auction_type = MULTIPLE_PRICE), reopenings and bills.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto price_for_single_price_auction = 25;</code>

@@ -69,3 +69,26 @@ def test_unset_fields_return_none_or_unknown():
     assert wrapper.get_price_for_single_price_auction() is None
     # auction_type is a scalar enum — unset reads as the zero value.
     assert wrapper.get_auction_type() == AuctionTypeProto.UNKNOWN_AUCTION_TYPE
+
+
+# LM-367: MULTIPLE_PRICE added; the existing values keep their numbers.
+def test_auction_type_values():
+    assert AuctionTypeProto.UNKNOWN_AUCTION_TYPE == 0
+    assert AuctionTypeProto.SINGLE_PRICE == 1
+    assert AuctionTypeProto.MULTIPLE_PRICE == 2
+
+
+def test_multiple_price_round_trips_through_wrapper():
+    original = IssuanceProto(auction_type=AuctionTypeProto.MULTIPLE_PRICE)
+    parsed = IssuanceProto.FromString(original.SerializeToString())
+
+    assert Issuance(parsed).get_auction_type() == AuctionTypeProto.MULTIPLE_PRICE
+
+
+def test_unknown_auction_type_parses_and_keeps_raw_value():
+    # Field 24, varint 99: a value no binding knows. Stands in for an old
+    # binding reading MULTIPLE_PRICE (2); proto3 enums are open.
+    proto = IssuanceProto.FromString(bytes([0xC0, 0x01, 0x63]))
+
+    assert proto.auction_type == 99
+    assert Issuance(proto).get_auction_type() == 99

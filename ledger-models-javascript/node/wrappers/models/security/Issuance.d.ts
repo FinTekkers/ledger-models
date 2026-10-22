@@ -25,7 +25,7 @@ declare class Issuance {
     getPostAuctionOutstandingQuantity(): Decimal | null;
     /** Quantity of the mature security used in reopenings. Null if unset. */
     getMatureSecurityAmount(): Decimal | null;
-    /** Single-price auction clearing price. Null if unset (e.g., multi-price). */
+    /** Single issue price per 100 par; real (not index-ratio adjusted) for TIPS. Null for multiple-price auctions, reopenings and bills. */
     getPriceForSinglePriceAuction(): Decimal | null;
     /** Auction type enum (defaults to UNKNOWN_AUCTION_TYPE if unset). */
     getAuctionType(): AuctionTypeProto;

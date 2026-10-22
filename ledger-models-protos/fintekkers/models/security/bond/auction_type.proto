@@ -7,6 +7,10 @@ option java_multiple_files = true;
 option java_outer_classname = "AuctionTypeProtos";
 
 enum AuctionTypeProto {
+    // Unset or not known.
     UNKNOWN_AUCTION_TYPE=0;
+    // All winning bidders pay one clearing price. US Treasury auctions from 1998-11-01.
     SINGLE_PRICE=1;
+    // Each winning bidder pays the price it bid. US Treasury auctions before 1998-11-01.
+    MULTIPLE_PRICE=2;
 }

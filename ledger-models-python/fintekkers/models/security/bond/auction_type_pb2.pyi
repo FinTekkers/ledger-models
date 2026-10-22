@@ -8,5 +8,7 @@ class AuctionTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
     UNKNOWN_AUCTION_TYPE: _ClassVar[AuctionTypeProto]
     SINGLE_PRICE: _ClassVar[AuctionTypeProto]
+    MULTIPLE_PRICE: _ClassVar[AuctionTypeProto]
 UNKNOWN_AUCTION_TYPE: AuctionTypeProto
 SINGLE_PRICE: AuctionTypeProto
+MULTIPLE_PRICE: AuctionTypeProto

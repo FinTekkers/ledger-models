@@ -81,3 +81,31 @@ fn high_discount_rate_round_trips_and_is_unset_by_default() {
     let parsed = IssuanceProto::decode(&original.encode_to_vec()[..]).expect("decode failed");
     assert_eq!(parsed.high_discount_rate.expect("high_discount_rate").canonical(), "4.215");
 }
+
+/// LM-367: MULTIPLE_PRICE added; the existing values keep their numbers.
+#[test]
+fn auction_type_values() {
+    assert_eq!(AuctionTypeProto::UnknownAuctionType as i32, 0);
+    assert_eq!(AuctionTypeProto::SinglePrice as i32, 1);
+    assert_eq!(AuctionTypeProto::MultiplePrice as i32, 2);
+}
+
+#[test]
+fn multiple_price_round_trips_through_wrapper() {
+    let original = IssuanceProto { auction_type: AuctionTypeProto::MultiplePrice as i32, ..Default::default() };
+    let parsed = IssuanceProto::decode(&original.encode_to_vec()[..]).expect("decode failed");
+
+    assert_eq!(parsed.auction_type, 2);
+    assert_eq!(Issuance::new(parsed).auction_type(), AuctionTypeProto::MultiplePrice);
+}
+
+/// Field 24, varint 99: a value no binding knows. Stands in for an old
+/// binding reading MULTIPLE_PRICE (2); proto3 enums are open. The wrapper
+/// maps unknown values to UnknownAuctionType; the raw field keeps them.
+#[test]
+fn unknown_auction_type_parses_and_keeps_raw_value() {
+    let proto = IssuanceProto::decode(&[0xC0u8, 0x01, 0x63][..]).expect("decode failed");
+
+    assert_eq!(proto.auction_type, 99);
+    assert_eq!(Issuance::new(proto).auction_type(), AuctionTypeProto::UnknownAuctionType);
+}

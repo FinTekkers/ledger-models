@@ -25,9 +25,9 @@ public final class AuctionTypeProtos {
     java.lang.String[] descriptorData = {
       "\n2fintekkers/models/security/bond/auctio" +
       "n_type.proto\022\037fintekkers.models.security" +
-      ".bond*>\n\020AuctionTypeProto\022\030\n\024UNKNOWN_AUC" +
-      "TION_TYPE\020\000\022\020\n\014SINGLE_PRICE\020\001B\025B\021Auction" +
-      "TypeProtosP\001b\006proto3"
+      ".bond*R\n\020AuctionTypeProto\022\030\n\024UNKNOWN_AUC" +
+      "TION_TYPE\020\000\022\020\n\014SINGLE_PRICE\020\001\022\022\n\016MULTIPL" +
+      "E_PRICE\020\002B\025B\021AuctionTypeProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

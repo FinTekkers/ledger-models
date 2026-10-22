@@ -27,7 +27,8 @@ goog.exportSymbol('proto.fintekkers.models.security.bond.AuctionTypeProto', null
  */
 proto.fintekkers.models.security.bond.AuctionTypeProto = {
   UNKNOWN_AUCTION_TYPE: 0,
-  SINGLE_PRICE: 1
+  SINGLE_PRICE: 1,
+  MULTIPLE_PRICE: 2
 };
 
 goog.object.extend(exports, proto.fintekkers.models.security.bond);
