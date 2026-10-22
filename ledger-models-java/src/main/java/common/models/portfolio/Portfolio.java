@@ -7,6 +7,7 @@ import common.models.RawDataModelObject;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.util.LinkCache;
+import fintekkers.models.portfolio.AmortisationElectionsProto;
 import fintekkers.models.portfolio.PortfolioProto;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
@@ -212,6 +213,16 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
     public String getPortfolioName() {
         ensureHydrated();
         return proto.getPortfolioName();
+    }
+
+    /**
+     * US tax amortisation elections (LM-364). A portfolio stored without
+     * field 11 returns the default instance: every enum reads UNSPECIFIED,
+     * meaning "use the default". Copied into {@code CostBasisInput.elections}.
+     */
+    public AmortisationElectionsProto getAmortisationElections() {
+        ensureHydrated();
+        return proto.getAmortisationElections();
     }
 
     /** Active proto. Returns the resolved form after lazy hydration. */

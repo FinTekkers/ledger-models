@@ -26,23 +26,28 @@ public class PortfolioSerializer implements IRawDataModelObjectSerializer<Portfo
 
     @Override
     public PortfolioProto serialize(Portfolio portfolio) {
-        PortfolioProto.Builder builder = ObjectTypes.stamp(PortfolioProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PORTFOLIO)
+        if (portfolio.isLink()) {
+            // Stay a link: reading the proto would force hydration.
+            return withKey(PortfolioProto.newBuilder(), portfolio).setIsLink(true).build();
+        }
+
+        // The proto is the source of every biz field, so valid_from, valid_to,
+        // portfolio_name and amortisation_elections pass through (LM-366).
+        return withKey(portfolio.getProto().toBuilder(), portfolio).clearIsLink().build();
+    }
+
+    private static PortfolioProto.Builder withKey(PortfolioProto.Builder builder, Portfolio portfolio) {
+        ObjectTypes.stamp(builder, ObjectTypeProto.OBJECT_TYPE_PORTFOLIO)
                 //Primary Key
                 .setUuid(ProtoSerializationUtil.serializeUUID(portfolio.getID()));
         // A link may carry no as_of; never default it (LM-271).
         ZonedDateTime asOf = portfolio.getAsOf();
         if (asOf != null) {
             builder.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
+        } else {
+            builder.clearAsOf();
         }
-
-        if (portfolio.isLink()) {
-            // Stay a link: reading the name would force hydration.
-            return builder.setIsLink(true).build();
-        }
-
-        //Biz fields
-        builder.setPortfolioName(portfolio.getPortfolioName());
-        return builder.build();
+        return builder;
     }
 
     @Override

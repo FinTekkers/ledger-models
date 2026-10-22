@@ -54,7 +54,20 @@ The full measure rules (OID, premium, market discount, de minimis, accrual start
 
 ## Who maps TaxLotSummary to TaxLotProto
 
-`TaxLotSummary` is in the models jar, so the `TaxLotSummary` → `TaxLotProto` serializer belongs in ledger-models too (Models first, rule 5), not in ledger-service. It is a follow-up item. That serializer owns the unit conversion: `TaxLotSummary.getAverageCostBasis()` and `openQuantity()` must be converted to a clean price per 100 face and to face-value units there, once, for every service.
+`TaxLotSummary` is in the models jar, so the `TaxLotSummary` → `TaxLotProto` serializer belongs in ledger-models too (Models first, rule 5), not in ledger-service. That serializer owns the unit conversion, once, for every service.
+
+LM-366 added it as Java `TaxLotSummary.toProto()`:
+
+- `open_date` and `price` come from the lot's earliest delta by `asOf`. `price` is that delta's purchase price, not `getAverageCostBasis()`. Lot prices are stored as quoted (clean, per 100 face; TIPS: real), so no scaling is applied.
+- `open_quantity` is `openQuantity()`, the sum of every delta, so partial closes are netted. A fully closed lot gives 0; the caller filters closed lots.
+- No delta is skipped, invalidated or not, matching `openQuantity()`. `TaxLotDelta.createDelta` copies the open date and price, so every delta of a lot carries the same values.
+- A lot with no deltas, or with no open date or price, throws `IllegalStateException` naming the lot.
+
+`TaxLotSummary` exists only in Java, so there is no counterpart in the other languages.
+
+## Portfolio serialization keeps every field
+
+Java `PortfolioSerializer.serialize` used to copy fields one by one and dropped `valid_from`, `valid_to` and `amortisation_elections`. Since LM-366 it starts from the portfolio's proto and re-stamps only `object_type`, `version`, `uuid` and `as_of`, so every stored field, including any added later, passes through. A link still serializes as `uuid`, `as_of` and `is_link` without hydrating. `Portfolio.getAmortisationElections()` returns the message; a portfolio stored before field 11 returns the default instance, so every election reads UNSPECIFIED and no migration is needed. The Python, JS and Rust wrappers already keep the whole proto.
 
 ## Rules not enforced here
 

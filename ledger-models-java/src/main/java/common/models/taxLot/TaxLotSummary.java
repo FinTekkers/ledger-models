@@ -4,6 +4,8 @@ import common.models.IFinancialModelObject;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.price.Price;
+import fintekkers.models.position.TaxLotProto;
+import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -59,6 +61,41 @@ public class TaxLotSummary implements IFinancialModelObject {
         }
 
         return openQuantity;
+    }
+
+    /**
+     * The proto form of this lot for {@code CostBasisInput.lots} (LM-364, LM-366).
+     *
+     * <p>{@code open_date} and {@code price} come from the earliest delta by asOf.
+     * Every delta of a lot carries the same open date and purchase price
+     * ({@link TaxLotDelta#createDelta} copies them), so, like {@link #openQuantity()},
+     * no delta is skipped: invalidated deltas count too. {@code price} is the
+     * purchase price as stored (per 100 face, clean; TIPS: real), not the
+     * weighted average. {@code open_quantity} is {@link #openQuantity()}: a fully
+     * closed lot gives 0, and the caller filters closed lots.
+     *
+     * @throws IllegalStateException naming the lot if it has no deltas, or its
+     *         earliest delta has no open date or price
+     */
+    public TaxLotProto toProto() {
+        TaxLotDelta opening = deltas.stream()
+                .min(Comparator.comparing(TaxLotDelta::getAsOf))
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format("Tax lot %s has no deltas", latest.getID())));
+        if (opening.getOpenDate() == null) {
+            throw new IllegalStateException(
+                    String.format("Tax lot %s: open_date is unset on its opening delta", getID()));
+        }
+        if (opening.getPrice() == null || opening.getPrice().getPrice() == null) {
+            throw new IllegalStateException(
+                    String.format("Tax lot %s: price is unset on its opening delta", getID()));
+        }
+
+        return TaxLotProto.newBuilder()
+                .setOpenDate(ProtoSerializationUtil.serializeLocalDate(opening.getOpenDate()))
+                .setOpenQuantity(ProtoSerializationUtil.serializeBigDecimal(openQuantity()))
+                .setPrice(ProtoSerializationUtil.serializeBigDecimal(opening.getPrice().getPrice()))
+                .build();
     }
 
     public BigDecimal getAverageCostBasis() {
