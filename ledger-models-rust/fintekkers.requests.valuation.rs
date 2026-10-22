@@ -516,6 +516,8 @@ pub struct ValuationRequestProto {
     )]
     pub measures: ::prost::alloc::vec::Vec<i32>,
     /// The full security object for which we are going to run the valuation
+    /// Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
+    #[deprecated]
     #[prost(message, optional, tag = "20")]
     pub security_input: ::core::option::Option<
         super::super::models::security::SecurityProto,
@@ -527,6 +529,8 @@ pub struct ValuationRequestProto {
     >,
     /// The price we are going to use for the valuation.
     /// Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
+    /// Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
+    #[deprecated]
     #[prost(message, optional, tag = "22")]
     pub price_input: ::core::option::Option<super::super::models::price::PriceProto>,
     /// The asof datetime for the valuation.
