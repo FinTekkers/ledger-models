@@ -6,8 +6,9 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import * as jspb from 'google-protobuf';
 import {
-    ProductInput, FrnInput, YieldCurveInput, CurvePoint,
+    ProductInput, FrnInput, YieldCurveInput, CurvePoint, ReferenceRateFixingProto,
     TipsInput, InflationIndexInput, MonthlyIndexReadings, MonthlyIndexReading,
 } from './product_inputs_pb';
 import { ValuationRequestProto } from './valuation_request_pb';
@@ -302,4 +303,121 @@ describe('fields removed in 0.5 (LM-344)', () => {
             const lowerCamel = camel[0].toLowerCase() + camel.slice(1);
             expect(Object.keys(new message().toObject())).not.toContain(lowerCamel);
         });
+});
+
+// ── Reference-rate fixings on FrnInput (LM-365) ─────────────────────────────
+// T_BILL_13_WEEK is a non-default enum value, so it is on the wire.
+// google-protobuf JS has no runtime descriptors: the field numbers and types
+// are checked on the wire bytes instead.
+
+function canonical(d: DecimalValueProto | undefined): string {
+    return toCanonicalString(decodeDecimal(d!));
+}
+
+function fixing(index: IndexTypeProto, fixingDate: LocalDateProto, rate: string): ReferenceRateFixingProto {
+    const f = new ReferenceRateFixingProto();
+    f.setIndex(index);
+    f.setFixingDate(fixingDate);
+    f.setRate(decimal(rate));
+    return f;
+}
+
+// Wire types from the protobuf encoding spec. google-protobuf v4 does not
+// export BinaryConstants at runtime.
+const VARINT = 0;
+const DELIMITED = 2;
+
+/** [field number, wire type] of each field in bytes, in order. */
+function wireFields(bytes: Uint8Array): [number, number][] {
+    const reader = new jspb.BinaryReader(bytes);
+    const out: [number, number][] = [];
+    while (reader.nextField() && !reader.isEndGroup()) {
+        out.push([reader.getFieldNumber(), reader.getWireType()]);
+        reader.skipField();
+    }
+    return out;
+}
+
+/** The payload of the one length-delimited field in bytes, decoded as T. */
+function onlyMessage<T>(bytes: Uint8Array, number: number, type: { deserializeBinary(b: Uint8Array): T }): T {
+    const reader = new jspb.BinaryReader(bytes);
+    expect(reader.nextField()).toBe(true);
+    expect(reader.getFieldNumber()).toBe(number);
+    expect(reader.getWireType()).toBe(DELIMITED);
+    const payload = reader.readBytes();
+    expect(reader.nextField()).toBe(false);
+    return type.deserializeBinary(payload);
+}
+
+describe('ReferenceRateFixingProto round-trip (LM-365)', () => {
+    test('index, fixing_date and rate survive', () => {
+        const original = fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 10, 19), '0.0432');
+        const parsed = ReferenceRateFixingProto.deserializeBinary(original.serializeBinary());
+
+        expect(parsed.getIndex()).toBe(IndexTypeProto.T_BILL_13_WEEK);
+        expect(parsed.getFixingDate()!.getYear()).toBe(2026);
+        expect(parsed.getFixingDate()!.getMonth()).toBe(10);
+        expect(parsed.getFixingDate()!.getDay()).toBe(19);
+        expect(canonical(parsed.getRate())).toBe('0.0432');
+    });
+
+    test('two fixings on FrnInput survive in order', () => {
+        const original = new FrnInput();
+        original.setCleanPrice(decimal('99.75'));
+        original.addFixings(fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 10, 19), '0.0432'));
+        original.addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '0.0429'));
+
+        const parsed = FrnInput.deserializeBinary(original.serializeBinary());
+
+        const got = parsed.getFixingsList().map(f => [
+            f.getIndex(), f.getFixingDate()!.getYear(), f.getFixingDate()!.getMonth(),
+            f.getFixingDate()!.getDay(), canonical(f.getRate()),
+        ]);
+        expect(got).toEqual([
+            [IndexTypeProto.T_BILL_13_WEEK, 2026, 10, 19, '0.0432'],
+            [IndexTypeProto.SOFR, 2026, 10, 26, '0.0429'],
+        ]);
+        expect(canonical(parsed.getCleanPrice())).toBe('99.75');
+    });
+});
+
+describe('LM-365 wire field numbers and types', () => {
+    test('ReferenceRateFixingProto: index = 1 enum, fixing_date = 2 LocalDateProto, rate = 3 DecimalValueProto', () => {
+        const full = fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 10, 19), '0.0432');
+        expect(wireFields(full.serializeBinary())).toEqual([[1, VARINT], [2, DELIMITED], [3, DELIMITED]]);
+
+        const index = new ReferenceRateFixingProto();
+        index.setIndex(IndexTypeProto.T_BILL_13_WEEK);
+        const reader = new jspb.BinaryReader(index.serializeBinary());
+        expect(reader.nextField()).toBe(true);
+        expect(reader.getFieldNumber()).toBe(1);
+        expect(reader.getWireType()).toBe(VARINT);
+        expect(reader.readEnum()).toBe(IndexTypeProto.T_BILL_13_WEEK);
+
+        const onlyDate = new ReferenceRateFixingProto();
+        onlyDate.setFixingDate(date(2026, 10, 19));
+        expect(onlyMessage(onlyDate.serializeBinary(), 2, LocalDateProto).getDay()).toBe(19);
+
+        const onlyRate = new ReferenceRateFixingProto();
+        onlyRate.setRate(decimal('0.0432'));
+        expect(canonical(onlyMessage(onlyRate.serializeBinary(), 3, DecimalValueProto))).toBe('0.0432');
+    });
+
+    test('FrnInput keeps security = 1, clean_price = 2, curve = 10 and adds repeated fixings = 11', () => {
+        const frn = new FrnInput();
+        frn.setSecurity(new SecurityProto());
+        frn.setCleanPrice(decimal('99.75'));
+        frn.setCurve(sofrCurve());
+        frn.addFixings(fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 10, 19), '0.0432'));
+        frn.addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '0.0429'));
+        expect(wireFields(frn.serializeBinary())).toEqual([
+            [1, DELIMITED], [2, DELIMITED], [10, DELIMITED], [11, DELIMITED], [11, DELIMITED],
+        ]);
+
+        const onlyFixing = new FrnInput();
+        onlyFixing.addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '0.0429'));
+        const parsed = onlyMessage(onlyFixing.serializeBinary(), 11, ReferenceRateFixingProto);
+        expect(parsed.getIndex()).toBe(IndexTypeProto.SOFR);
+        expect(canonical(parsed.getRate())).toBe('0.0429');
+    });
 });

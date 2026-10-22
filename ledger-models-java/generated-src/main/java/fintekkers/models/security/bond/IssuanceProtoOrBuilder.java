@@ -335,4 +335,43 @@ public interface IssuanceProtoOrBuilder extends
    * <code>.fintekkers.models.util.DecimalValueProto mature_security_amount = 27;</code>
    */
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getMatureSecurityAmountOrBuilder();
+
+  /**
+   * <pre>
+   **
+   *High discount rate of a bill auction, in percent per annum on a
+   *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+   *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+   *and any issuance without a discount rate.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+   * @return Whether the highDiscountRate field is set.
+   */
+  boolean hasHighDiscountRate();
+  /**
+   * <pre>
+   **
+   *High discount rate of a bill auction, in percent per annum on a
+   *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+   *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+   *and any issuance without a discount rate.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+   * @return The highDiscountRate.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getHighDiscountRate();
+  /**
+   * <pre>
+   **
+   *High discount rate of a bill auction, in percent per annum on a
+   *bank-discount basis, as Treasury publishes it (HighDiscountRate):
+   *4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+   *and any issuance without a discount rate.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getHighDiscountRateOrBuilder();
 }

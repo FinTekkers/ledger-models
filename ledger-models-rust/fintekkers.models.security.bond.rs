@@ -155,4 +155,13 @@ pub struct IssuanceProto {
     pub mature_security_amount: ::core::option::Option<
         super::super::util::DecimalValueProto,
     >,
+    /// *
+    /// High discount rate of a bill auction, in percent per annum on a
+    /// bank-discount basis, as Treasury publishes it (HighDiscountRate):
+    /// 4.215 = 4.215%. Not a decimal fraction. Unset for coupon auctions
+    /// and any issuance without a discount rate.
+    #[prost(message, optional, tag = "28")]
+    pub high_discount_rate: ::core::option::Option<
+        super::super::util::DecimalValueProto,
+    >,
 }

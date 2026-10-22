@@ -182,7 +182,22 @@ def lm344(key: str, old, new, head: dict) -> bool:
     return new is None and key in LM344 and old == LM344[key]
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344]
+LM365_FIXTURE = json.loads((REPO / "test-fixtures/field-changes/lm-365.json").read_text())
+LM365 = {
+    f"field {f['message']} = {f['number']}": f"{'repeated ' if f.get('repeated') else ''}{f['type']} {f['name']}"
+    for f in LM365_FIXTURE["added"]
+}
+LM365[f"message {VALUATION}.ReferenceRateFixingProto"] = "message"
+
+
+def lm365(key: str, old, new, head: dict) -> bool:
+    """LM-365: ReferenceRateFixingProto, FrnInput.fixings = 11 and
+    IssuanceProto.high_discount_rate = 28 added. Additions of exactly these
+    fields and types only; no map, new enum or renumbered field."""
+    return old is None and key in LM365 and new == LM365[key]
+
+
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365]
 
 
 def main() -> int:

@@ -1,0 +1,28 @@
+{
+  "item": "LM-365",
+  "kept": [
+    {"message": ".fintekkers.requests.valuation.FrnInput", "number": 1, "name": "security", "type": ".fintekkers.models.security.SecurityProto"},
+    {"message": ".fintekkers.requests.valuation.FrnInput", "number": 2, "name": "clean_price", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.requests.valuation.FrnInput", "number": 10, "name": "curve", "type": ".fintekkers.requests.valuation.YieldCurveInput"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 1, "name": "object_type", "type": ".fintekkers.models.util.ObjectTypeProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 2, "name": "version", "type": ".fintekkers.models.util.VersionProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 6, "name": "as_of", "type": ".fintekkers.models.util.LocalTimestampProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 8, "name": "valid_from", "type": ".fintekkers.models.util.LocalTimestampProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 9, "name": "valid_to", "type": ".fintekkers.models.util.LocalTimestampProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 20, "name": "auction_announcement_date", "type": ".fintekkers.models.util.LocalDateProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 21, "name": "auction_issue_date", "type": ".fintekkers.models.util.LocalDateProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 22, "name": "post_auction_outstanding_quantity", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 23, "name": "auction_offering_amount", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 24, "name": "auction_type", "type": ".fintekkers.models.security.bond.AuctionTypeProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 25, "name": "price_for_single_price_auction", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 26, "name": "total_accepted", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 27, "name": "mature_security_amount", "type": ".fintekkers.models.util.DecimalValueProto"}
+  ],
+  "added": [
+    {"message": ".fintekkers.requests.valuation.ReferenceRateFixingProto", "number": 1, "name": "index", "type": ".fintekkers.models.security.index.IndexTypeProto"},
+    {"message": ".fintekkers.requests.valuation.ReferenceRateFixingProto", "number": 2, "name": "fixing_date", "type": ".fintekkers.models.util.LocalDateProto"},
+    {"message": ".fintekkers.requests.valuation.ReferenceRateFixingProto", "number": 3, "name": "rate", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.requests.valuation.FrnInput", "number": 11, "name": "fixings", "type": ".fintekkers.requests.valuation.ReferenceRateFixingProto", "repeated": true},
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 28, "name": "high_discount_rate", "type": ".fintekkers.models.util.DecimalValueProto"}
+  ]
+}

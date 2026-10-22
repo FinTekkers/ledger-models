@@ -336,6 +336,8 @@ pub struct MonthlyIndexReading {
 /// extras (spread, reference_rate_index, reset_frequency) are read from
 /// security.frn_extension. None are repeated on this message.
 ///
+/// fixings (11) carries published reference-rate fixings.
+///
 /// Settlement date is read from ValuationRequestProto.asof_datetime.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -355,6 +357,35 @@ pub struct FrnInput {
     /// This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
     #[prost(message, optional, tag = "10")]
     pub curve: ::core::option::Option<YieldCurveInput>,
+    /// Published fixings of the FRN's reference rate, one per fixing date.
+    /// Each fixing.index must equal security.frn_extension.reference_rate_index.
+    /// Order is not significant. A duplicate fixing_date makes the input invalid.
+    /// Not read by valuation-service today; use is tracked under VS-110.
+    #[prost(message, repeated, tag = "11")]
+    pub fixings: ::prost::alloc::vec::Vec<ReferenceRateFixingProto>,
+}
+/// One published fixing of a floating-rate benchmark, e.g. the 13-week
+/// T-bill rate set at the 2026-10-19 auction.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ReferenceRateFixingProto {
+    /// The benchmark. Same enum as FrnExtensionProto.reference_rate_index
+    /// (IndexTypeProto), and must equal it on the FRN being valued.
+    #[prost(
+        enumeration = "super::super::models::security::index::IndexTypeProto",
+        tag = "1"
+    )]
+    pub index: i32,
+    /// The date the rate was fixed: the auction date for T_BILL_13_WEEK,
+    /// the business day the rate applies to for SOFR.
+    #[prost(message, optional, tag = "2")]
+    pub fixing_date: ::core::option::Option<super::super::models::util::LocalDateProto>,
+    /// The index rate as the FRN accrues it, as a decimal fraction:
+    /// 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
+    /// auction high rate converted to a money-market yield. It is not the
+    /// bank-discount rate in IssuanceProto.high_discount_rate.
+    #[prost(message, optional, tag = "3")]
+    pub rate: ::core::option::Option<super::super::models::util::DecimalValueProto>,
 }
 /// ═══════════════════════════════════════════════════════════════════════════
 /// YieldCurveInput — a term structure of continuously compounded zero rates.

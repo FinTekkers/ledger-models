@@ -99,7 +99,8 @@ proto.fintekkers.models.security.bond.IssuanceProto.toObject = function(includeI
     auctionType: jspb.Message.getFieldWithDefault(msg, 24, 0),
     priceForSinglePriceAuction: (f = msg.getPriceForSinglePriceAuction()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     totalAccepted: (f = msg.getTotalAccepted()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-    matureSecurityAmount: (f = msg.getMatureSecurityAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    matureSecurityAmount: (f = msg.getMatureSecurityAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    highDiscountRate: (f = msg.getHighDiscountRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -198,6 +199,11 @@ proto.fintekkers.models.security.bond.IssuanceProto.deserializeBinaryFromReader 
       var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
       reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
       msg.setMatureSecurityAmount(value);
+      break;
+    case 28:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setHighDiscountRate(value);
       break;
     default:
       reader.skipField();
@@ -326,6 +332,14 @@ proto.fintekkers.models.security.bond.IssuanceProto.serializeBinaryToWriter = fu
   if (f != null) {
     writer.writeMessage(
       27,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getHighDiscountRate();
+  if (f != null) {
+    writer.writeMessage(
+      28,
       f,
       fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
     );
@@ -773,6 +787,43 @@ proto.fintekkers.models.security.bond.IssuanceProto.prototype.clearMatureSecurit
  */
 proto.fintekkers.models.security.bond.IssuanceProto.prototype.hasMatureSecurityAmount = function() {
   return jspb.Message.getField(this, 27) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto high_discount_rate = 28;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.getHighDiscountRate = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 28));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.models.security.bond.IssuanceProto} returns this
+*/
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.setHighDiscountRate = function(value) {
+  return jspb.Message.setWrapperField(this, 28, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.security.bond.IssuanceProto} returns this
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.clearHighDiscountRate = function() {
+  return this.setHighDiscountRate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.hasHighDiscountRate = function() {
+  return jspb.Message.getField(this, 28) != null;
 };
 
 

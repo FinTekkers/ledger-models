@@ -96,4 +96,63 @@ public interface FrnInputOrBuilder extends
    * <code>.fintekkers.requests.valuation.YieldCurveInput curve = 10;</code>
    */
   fintekkers.requests.valuation.YieldCurveInputOrBuilder getCurveOrBuilder();
+
+  /**
+   * <pre>
+   * Published fixings of the FRN's reference rate, one per fixing date.
+   * Each fixing.index must equal security.frn_extension.reference_rate_index.
+   * Order is not significant. A duplicate fixing_date makes the input invalid.
+   * Not read by valuation-service today; use is tracked under VS-110.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+   */
+  java.util.List<fintekkers.requests.valuation.ReferenceRateFixingProto> 
+      getFixingsList();
+  /**
+   * <pre>
+   * Published fixings of the FRN's reference rate, one per fixing date.
+   * Each fixing.index must equal security.frn_extension.reference_rate_index.
+   * Order is not significant. A duplicate fixing_date makes the input invalid.
+   * Not read by valuation-service today; use is tracked under VS-110.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+   */
+  fintekkers.requests.valuation.ReferenceRateFixingProto getFixings(int index);
+  /**
+   * <pre>
+   * Published fixings of the FRN's reference rate, one per fixing date.
+   * Each fixing.index must equal security.frn_extension.reference_rate_index.
+   * Order is not significant. A duplicate fixing_date makes the input invalid.
+   * Not read by valuation-service today; use is tracked under VS-110.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+   */
+  int getFixingsCount();
+  /**
+   * <pre>
+   * Published fixings of the FRN's reference rate, one per fixing date.
+   * Each fixing.index must equal security.frn_extension.reference_rate_index.
+   * Order is not significant. A duplicate fixing_date makes the input invalid.
+   * Not read by valuation-service today; use is tracked under VS-110.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+   */
+  java.util.List<? extends fintekkers.requests.valuation.ReferenceRateFixingProtoOrBuilder> 
+      getFixingsOrBuilderList();
+  /**
+   * <pre>
+   * Published fixings of the FRN's reference rate, one per fixing date.
+   * Each fixing.index must equal security.frn_extension.reference_rate_index.
+   * Order is not significant. A duplicate fixing_date makes the input invalid.
+   * Not read by valuation-service today; use is tracked under VS-110.
+   * </pre>
+   *
+   * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
+   */
+  fintekkers.requests.valuation.ReferenceRateFixingProtoOrBuilder getFixingsOrBuilder(
+      int index);
 }

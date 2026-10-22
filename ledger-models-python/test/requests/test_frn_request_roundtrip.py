@@ -3,9 +3,15 @@ Step 3 tests — FrnInput / ProductInput proto round-trips.
 
 For each new message type: construct → serialize to bytes → deserialize → verify all fields match.
 """
+import json
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
+from google.protobuf.descriptor import FieldDescriptor
+
+from fintekkers.models.security import security_pb2
+from fintekkers.models.security.bond import issuance_pb2
 from fintekkers.requests.valuation import product_inputs_pb2
 from fintekkers.requests.valuation import valuation_request_pb2
 from fintekkers.models.security.index import index_type_pb2
@@ -174,3 +180,103 @@ class TestNewRfrIndexTypesRoundTrip:
         )
         parsed = _roundtrip_curve(original)
         assert parsed.index == index, f"{label} did not survive roundtrip"
+
+
+# LM-365: published reference-rate fixings on FrnInput. T_BILL_13_WEEK is a
+# non-default enum value, so it is on the wire.
+def _fixing(index, date, rate: str) -> product_inputs_pb2.ReferenceRateFixingProto:
+    return product_inputs_pb2.ReferenceRateFixingProto(index=index, fixing_date=date, rate=_decimal(rate))
+
+
+class TestReferenceRateFixingRoundTrip:
+    def test_all_fields_survive(self):
+        original = _fixing(index_type_pb2.T_BILL_13_WEEK, _date(2026, 10, 19), "0.0432")
+        parsed = product_inputs_pb2.ReferenceRateFixingProto.FromString(original.SerializeToString())
+
+        assert parsed.index == index_type_pb2.T_BILL_13_WEEK
+        assert parsed.fixing_date.year == 2026
+        assert parsed.fixing_date.month == 10
+        assert parsed.fixing_date.day == 19
+        assert format(decode_decimal(parsed.rate), "f") == "0.0432"
+
+    def test_two_fixings_survive_in_order(self):
+        original = product_inputs_pb2.FrnInput(
+            clean_price=_decimal("99.75"),
+            fixings=[
+                _fixing(index_type_pb2.T_BILL_13_WEEK, _date(2026, 10, 19), "0.0432"),
+                _fixing(index_type_pb2.SOFR, _date(2026, 10, 26), "0.0429"),
+            ],
+        )
+        parsed = _roundtrip_frn(original)
+
+        assert len(parsed.fixings) == 2
+        expected = [
+            (index_type_pb2.T_BILL_13_WEEK, 19, "0.0432"),
+            (index_type_pb2.SOFR, 26, "0.0429"),
+        ]
+        for fixing, (index, day, rate) in zip(parsed.fixings, expected):
+            assert fixing.index == index
+            assert fixing.fixing_date.year == 2026
+            assert fixing.fixing_date.month == 10
+            assert fixing.fixing_date.day == day
+            assert format(decode_decimal(fixing.rate), "f") == rate
+        assert format(decode_decimal(parsed.clean_price), "f") == "99.75"
+
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+FIELD_CHANGES = json.loads((REPO_ROOT / "test-fixtures" / "field-changes" / "lm-365.json").read_text())
+LM365_MESSAGES = {
+    d.full_name: d
+    for d in (
+        product_inputs_pb2.FrnInput.DESCRIPTOR,
+        product_inputs_pb2.ReferenceRateFixingProto.DESCRIPTOR,
+        issuance_pb2.IssuanceProto.DESCRIPTOR,
+    )
+}
+
+
+def _type_name(field: FieldDescriptor) -> str:
+    if field.message_type is not None:
+        return f".{field.message_type.full_name}"
+    if field.enum_type is not None:
+        return f".{field.enum_type.full_name}"
+    return str(field.type)
+
+
+def _check(entry: dict) -> None:
+    message = LM365_MESSAGES[entry["message"][1:]]
+    field = message.fields_by_number.get(entry["number"])
+    assert field is not None, f"{message.full_name} has no field {entry['number']}"
+    assert field.name == entry["name"], entry
+    assert _type_name(field) == entry["type"], entry
+    assert (field.label == FieldDescriptor.LABEL_REPEATED) == entry.get("repeated", False), entry
+
+
+class TestLm365Descriptors:
+    @pytest.mark.parametrize("entry", FIELD_CHANGES["kept"], ids=lambda e: f"{e['message']}={e['number']}")
+    def test_kept_field_keeps_number_name_and_type(self, entry):
+        _check(entry)
+
+    @pytest.mark.parametrize("entry", FIELD_CHANGES["added"], ids=lambda e: f"{e['message']}={e['number']}")
+    def test_added_field_has_number_name_and_type(self, entry):
+        _check(entry)
+
+    def test_field_sets_are_exactly_kept_and_added(self):
+        expected: dict = {}
+        for entry in FIELD_CHANGES["kept"] + FIELD_CHANGES["added"]:
+            expected.setdefault(entry["message"][1:], set()).add(entry["number"])
+        assert expected.keys() == LM365_MESSAGES.keys()
+        for name, message in LM365_MESSAGES.items():
+            assert set(message.fields_by_number) == expected[name], name
+
+    def test_fixings_is_repeated_message_not_map(self):
+        fixings = product_inputs_pb2.FrnInput.DESCRIPTOR.fields_by_name["fixings"]
+        assert fixings.label == FieldDescriptor.LABEL_REPEATED
+        assert fixings.message_type is product_inputs_pb2.ReferenceRateFixingProto.DESCRIPTOR
+        assert not fixings.message_type.GetOptions().map_entry
+
+    def test_fixing_index_is_the_reference_rate_index_enum(self):
+        index = product_inputs_pb2.ReferenceRateFixingProto.DESCRIPTOR.fields_by_name["index"]
+        reference_rate_index = security_pb2.FrnExtensionProto.DESCRIPTOR.fields_by_name["reference_rate_index"]
+        assert index.enum_type.full_name == reference_rate_index.enum_type.full_name
+        assert index.enum_type.full_name == "fintekkers.models.security.index.IndexTypeProto"
