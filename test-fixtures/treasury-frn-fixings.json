@@ -1,0 +1,52 @@
+{
+  "item": "LM-382",
+  "about": "Shared cases for the per-issuance tenor, standardBillTerm(tenor, anchor) and TreasuryFrnFixings.select in Java, Python, JS and Rust. Periods are ISO-8601 (P<y>Y<m>M<d>D) as Java's Period.between gives them; every language must give the same period (python-dateutil's relativedelta gives P3M, not P2M30D, for 2026-08-31 -> 2026-11-30). days is the exact day count anchor -> anchor + period. standard_bill_term_weeks is the snapped term in weeks, or null when the tenor is not within 3 days of 4, 6, 8, 13, 17, 26 or 52 weeks. Rates are IssuanceProto.high_discount_rate as Treasury publishes it (percent, bank-discount basis) and must come back from select unchanged.",
+  "issuance_tenors": [
+    {"case": "reopened bill, original auction", "auction_issue_date": "2026-04-23", "maturity_date": "2026-10-22", "period": "P5M29D", "days": 182, "standard_bill_term_weeks": 26},
+    {"case": "reopened bill, reopening", "auction_issue_date": "2026-07-23", "maturity_date": "2026-10-22", "period": "P2M29D", "days": 91, "standard_bill_term_weeks": 13},
+    {"case": "4-week bill over February", "auction_issue_date": "2026-02-02", "maturity_date": "2026-03-03", "period": "P1M1D", "days": 29, "standard_bill_term_weeks": 4},
+    {"case": "month-end start", "auction_issue_date": "2026-01-31", "maturity_date": "2026-03-01", "period": "P1M1D", "days": 29, "standard_bill_term_weeks": 4},
+    {"case": "month-end start, leap year", "auction_issue_date": "2028-01-31", "maturity_date": "2028-03-01", "period": "P1M1D", "days": 30, "standard_bill_term_weeks": 4},
+    {"case": "month-end to month-end", "auction_issue_date": "2026-08-31", "maturity_date": "2026-11-30", "period": "P2M30D", "days": 91, "standard_bill_term_weeks": 13}
+  ],
+  "standard_bill_terms": [
+    {"case": "89 days", "period": "P89D", "anchors": ["2026-01-15", "2026-02-27"], "standard_bill_term_weeks": 13},
+    {"case": "94 days", "period": "P94D", "anchors": ["2026-01-15", "2026-02-27"], "standard_bill_term_weeks": 13},
+    {"case": "100 days", "period": "P100D", "anchors": ["2026-01-15", "2026-02-27"], "standard_bill_term_weeks": null},
+    {"case": "88 days, lower edge", "period": "P88D", "anchors": ["2026-01-15", "2026-02-27"], "standard_bill_term_weeks": 13},
+    {"case": "87 days, below the edge", "period": "P87D", "anchors": ["2026-01-15", "2026-02-27"], "standard_bill_term_weeks": null},
+    {"case": "95 days, above the edge", "period": "P95D", "anchors": ["2026-01-15", "2026-02-27"], "standard_bill_term_weeks": null}
+  ],
+  "select": {
+    "bills": [
+      {
+        "name": "26-week bill reopened as a 13-week bill",
+        "maturity_date": "2026-10-22",
+        "issuances": [
+          {"auction_date": "2026-04-20", "auction_issue_date": "2026-04-23", "high_discount_rate": "4.300"},
+          {"auction_date": "2026-07-20", "auction_issue_date": "2026-07-23", "high_discount_rate": "4.215"}
+        ]
+      },
+      {
+        "name": "13-week bill auctioned the week before",
+        "maturity_date": "2026-10-15",
+        "issuances": [
+          {"auction_date": "2026-07-13", "auction_issue_date": "2026-07-16", "high_discount_rate": "4.190"}
+        ]
+      },
+      {
+        "name": "13-week bill auctioned the day after",
+        "maturity_date": "2026-10-23",
+        "issuances": [
+          {"auction_date": "2026-07-21", "auction_issue_date": "2026-07-24", "high_discount_rate": "4.230"}
+        ]
+      }
+    ],
+    "cases": [
+      {"case": "auction on the date, a reopening", "date": "2026-07-20", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.215", "fixing_date": "2026-07-20", "bill_maturity_date": "2026-10-22"}},
+      {"case": "day before the reopening", "date": "2026-07-19", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.190", "fixing_date": "2026-07-13", "bill_maturity_date": "2026-10-15"}},
+      {"case": "auction the day after the reopening", "date": "2026-07-21", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.230", "fixing_date": "2026-07-21", "bill_maturity_date": "2026-10-23"}},
+      {"case": "only the 26-week original auction is on or before the date", "date": "2026-04-21", "fixing": null}
+    ]
+  }
+}

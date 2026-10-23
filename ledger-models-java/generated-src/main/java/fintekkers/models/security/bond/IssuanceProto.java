@@ -602,6 +602,53 @@ private static final long serialVersionUID = 0L;
     return highDiscountRate_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : highDiscountRate_;
   }
 
+  public static final int AUCTION_DATE_FIELD_NUMBER = 29;
+  private fintekkers.models.util.LocalDate.LocalDateProto auctionDate_;
+  /**
+   * <pre>
+   **
+   *The date the auction was held. For a bill, the date its high discount
+   *rate was set. Not the issue date (auction_issue_date) or the
+   *announcement date (auction_announcement_date). Unset when unknown.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+   * @return Whether the auctionDate field is set.
+   */
+  @java.lang.Override
+  public boolean hasAuctionDate() {
+    return auctionDate_ != null;
+  }
+  /**
+   * <pre>
+   **
+   *The date the auction was held. For a bill, the date its high discount
+   *rate was set. Not the issue date (auction_issue_date) or the
+   *announcement date (auction_announcement_date). Unset when unknown.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+   * @return The auctionDate.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProto getAuctionDate() {
+    return auctionDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : auctionDate_;
+  }
+  /**
+   * <pre>
+   **
+   *The date the auction was held. For a bill, the date its high discount
+   *rate was set. Not the issue date (auction_issue_date) or the
+   *announcement date (auction_announcement_date). Unset when unknown.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getAuctionDateOrBuilder() {
+    return auctionDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : auctionDate_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -657,6 +704,9 @@ private static final long serialVersionUID = 0L;
     }
     if (highDiscountRate_ != null) {
       output.writeMessage(28, getHighDiscountRate());
+    }
+    if (auctionDate_ != null) {
+      output.writeMessage(29, getAuctionDate());
     }
     getUnknownFields().writeTo(output);
   }
@@ -722,6 +772,10 @@ private static final long serialVersionUID = 0L;
     if (highDiscountRate_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(28, getHighDiscountRate());
+    }
+    if (auctionDate_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(29, getAuctionDate());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -800,6 +854,11 @@ private static final long serialVersionUID = 0L;
       if (!getHighDiscountRate()
           .equals(other.getHighDiscountRate())) return false;
     }
+    if (hasAuctionDate() != other.hasAuctionDate()) return false;
+    if (hasAuctionDate()) {
+      if (!getAuctionDate()
+          .equals(other.getAuctionDate())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -862,6 +921,10 @@ private static final long serialVersionUID = 0L;
     if (hasHighDiscountRate()) {
       hash = (37 * hash) + HIGH_DISCOUNT_RATE_FIELD_NUMBER;
       hash = (53 * hash) + getHighDiscountRate().hashCode();
+    }
+    if (hasAuctionDate()) {
+      hash = (37 * hash) + AUCTION_DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getAuctionDate().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -1085,6 +1148,11 @@ private static final long serialVersionUID = 0L;
         highDiscountRateBuilder_.dispose();
         highDiscountRateBuilder_ = null;
       }
+      auctionDate_ = null;
+      if (auctionDateBuilder_ != null) {
+        auctionDateBuilder_.dispose();
+        auctionDateBuilder_ = null;
+      }
       return this;
     }
 
@@ -1184,6 +1252,11 @@ private static final long serialVersionUID = 0L;
             ? highDiscountRate_
             : highDiscountRateBuilder_.build();
       }
+      if (((from_bitField0_ & 0x00004000) != 0)) {
+        result.auctionDate_ = auctionDateBuilder_ == null
+            ? auctionDate_
+            : auctionDateBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -1271,6 +1344,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasHighDiscountRate()) {
         mergeHighDiscountRate(other.getHighDiscountRate());
+      }
+      if (other.hasAuctionDate()) {
+        mergeAuctionDate(other.getAuctionDate());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -1392,6 +1468,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00002000;
               break;
             } // case 226
+            case 234: {
+              input.readMessage(
+                  getAuctionDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00004000;
+              break;
+            } // case 234
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -3470,6 +3553,188 @@ private static final long serialVersionUID = 0L;
         highDiscountRate_ = null;
       }
       return highDiscountRateBuilder_;
+    }
+
+    private fintekkers.models.util.LocalDate.LocalDateProto auctionDate_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> auctionDateBuilder_;
+    /**
+     * <pre>
+     **
+     *The date the auction was held. For a bill, the date its high discount
+     *rate was set. Not the issue date (auction_issue_date) or the
+     *announcement date (auction_announcement_date). Unset when unknown.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+     * @return Whether the auctionDate field is set.
+     */
+    public boolean hasAuctionDate() {
+      return ((bitField0_ & 0x00004000) != 0);
+    }
+    /**
+     * <pre>
+     **
+     *The date the auction was held. For a bill, the date its high discount
+     *rate was set. Not the issue date (auction_issue_date) or the
+     *announcement date (auction_announcement_date). Unset when unknown.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+     * @return The auctionDate.
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto getAuctionDate() {
+      if (auctionDateBuilder_ == null) {
+        return auctionDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : auctionDate_;
+      } else {
+        return auctionDateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     **
+     *The date the auction was held. For a bill, the date its high discount
+     *rate was set. Not the issue date (auction_issue_date) or the
+     *announcement date (auction_announcement_date). Unset when unknown.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+     */
+    public Builder setAuctionDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (auctionDateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        auctionDate_ = value;
+      } else {
+        auctionDateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00004000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The date the auction was held. For a bill, the date its high discount
+     *rate was set. Not the issue date (auction_issue_date) or the
+     *announcement date (auction_announcement_date). Unset when unknown.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+     */
+    public Builder setAuctionDate(
+        fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
+      if (auctionDateBuilder_ == null) {
+        auctionDate_ = builderForValue.build();
+      } else {
+        auctionDateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00004000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The date the auction was held. For a bill, the date its high discount
+     *rate was set. Not the issue date (auction_issue_date) or the
+     *announcement date (auction_announcement_date). Unset when unknown.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+     */
+    public Builder mergeAuctionDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (auctionDateBuilder_ == null) {
+        if (((bitField0_ & 0x00004000) != 0) &&
+          auctionDate_ != null &&
+          auctionDate_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
+          getAuctionDateBuilder().mergeFrom(value);
+        } else {
+          auctionDate_ = value;
+        }
+      } else {
+        auctionDateBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00004000;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The date the auction was held. For a bill, the date its high discount
+     *rate was set. Not the issue date (auction_issue_date) or the
+     *announcement date (auction_announcement_date). Unset when unknown.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+     */
+    public Builder clearAuctionDate() {
+      bitField0_ = (bitField0_ & ~0x00004000);
+      auctionDate_ = null;
+      if (auctionDateBuilder_ != null) {
+        auctionDateBuilder_.dispose();
+        auctionDateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     **
+     *The date the auction was held. For a bill, the date its high discount
+     *rate was set. Not the issue date (auction_issue_date) or the
+     *announcement date (auction_announcement_date). Unset when unknown.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto.Builder getAuctionDateBuilder() {
+      bitField0_ |= 0x00004000;
+      onChanged();
+      return getAuctionDateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     **
+     *The date the auction was held. For a bill, the date its high discount
+     *rate was set. Not the issue date (auction_issue_date) or the
+     *announcement date (auction_announcement_date). Unset when unknown.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getAuctionDateOrBuilder() {
+      if (auctionDateBuilder_ != null) {
+        return auctionDateBuilder_.getMessageOrBuilder();
+      } else {
+        return auctionDate_ == null ?
+            fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : auctionDate_;
+      }
+    }
+    /**
+     * <pre>
+     **
+     *The date the auction was held. For a bill, the date its high discount
+     *rate was set. Not the issue date (auction_issue_date) or the
+     *announcement date (auction_announcement_date). Unset when unknown.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> 
+        getAuctionDateFieldBuilder() {
+      if (auctionDateBuilder_ == null) {
+        auctionDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder>(
+                getAuctionDate(),
+                getParentForChildren(),
+                isClean());
+        auctionDate_ = null;
+      }
+      return auctionDateBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

@@ -2,7 +2,9 @@
 //! name and type, and gain only ReferenceRateFixingProto, FrnInput.fixings
 //! (11) and IssuanceProto.high_discount_rate (28). Reads the checked-in
 //! descriptor set, so it also guards against a stale `.bin`.
-//! The fields come from test-fixtures/field-changes/lm-365.json.
+//! The fields come from test-fixtures/field-changes/lm-365.json. The exact
+//! field sets also take LM-382's additions (lm-382.json): IssuanceProto
+//! auction_date (29) and ReferenceRateFixingProto bill_maturity_date (4).
 //! Runs only with `cargo test --features test-utils`.
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -11,9 +13,17 @@ use ledger_models::fintekkers::proto::LEDGER_MODELS_PROTO_FILE_DESCRIPTOR_SET;
 use prost_reflect::{Cardinality, DescriptorPool, FieldDescriptor, Kind};
 use serde_json::Value;
 
-fn fixture() -> Value {
-    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../test-fixtures/field-changes/lm-365.json");
+fn read_fixture(path: &str) -> Value {
     serde_json::from_str(&std::fs::read_to_string(path).expect("read fixture")).expect("parse fixture")
+}
+
+fn fixture() -> Value {
+    read_fixture(concat!(env!("CARGO_MANIFEST_DIR"), "/../test-fixtures/field-changes/lm-365.json"))
+}
+
+fn lm382_added() -> Vec<Value> {
+    let lm382 = read_fixture(concat!(env!("CARGO_MANIFEST_DIR"), "/../test-fixtures/field-changes/lm-382.json"));
+    lm382["added"].as_array().unwrap().clone()
 }
 
 fn pool() -> DescriptorPool {
@@ -67,7 +77,7 @@ fn added_fields_have_their_number_name_and_type() {
 fn field_sets_are_exactly_kept_and_added() {
     let pool = pool();
     let mut expected: BTreeMap<String, BTreeSet<u32>> = BTreeMap::new();
-    for entry in entries("kept").iter().chain(entries("added").iter()) {
+    for entry in entries("kept").iter().chain(entries("added").iter()).chain(lm382_added().iter()) {
         let msg = entry["message"].as_str().unwrap().trim_start_matches('.').to_string();
         expected.entry(msg).or_default().insert(entry["number"].as_u64().unwrap() as u32);
     }

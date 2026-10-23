@@ -12,6 +12,7 @@ import {
     TipsInput, InflationIndexInput, MonthlyIndexReadings, MonthlyIndexReading,
 } from './product_inputs_pb';
 import { ValuationRequestProto } from './valuation_request_pb';
+import { IssuanceProto } from '../../../fintekkers/models/security/bond/issuance_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 import { IndexDetailsProto, SecurityProto, TipsExtensionProto } from '../../../fintekkers/models/security/security_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
@@ -419,5 +420,60 @@ describe('LM-365 wire field numbers and types', () => {
         const parsed = onlyMessage(onlyFixing.serializeBinary(), 11, ReferenceRateFixingProto);
         expect(parsed.getIndex()).toBe(IndexTypeProto.SOFR);
         expect(canonical(parsed.getRate())).toBe('0.0429');
+    });
+});
+
+// ── T-bill fixing dates (LM-382) ────────────────────────────────────────────
+// The T_BILL_13_WEEK fixing carries its bill's maturity, and the issuance its
+// auction date. Each date differs, so a swapped field fails.
+
+describe('LM-382 auction_date and bill_maturity_date round-trip', () => {
+    test('bill_maturity_date = 4 survives on the fixing', () => {
+        const original = fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 7, 20), '4.215');
+        original.setBillMaturityDate(date(2026, 10, 22));
+        expect(wireFields(original.serializeBinary())).toEqual([[1, VARINT], [2, DELIMITED], [3, DELIMITED], [4, DELIMITED]]);
+
+        const parsed = ReferenceRateFixingProto.deserializeBinary(original.serializeBinary());
+
+        expect(parsed.getIndex()).toBe(IndexTypeProto.T_BILL_13_WEEK);
+        expect(parsed.getFixingDate()!.toObject()).toEqual(date(2026, 7, 20).toObject());
+        expect(parsed.hasBillMaturityDate()).toBe(true);
+        expect(parsed.getBillMaturityDate()!.toObject()).toEqual(date(2026, 10, 22).toObject());
+        expect(canonical(parsed.getRate())).toBe('4.215');
+    });
+
+    test('auction_date = 29 survives on the issuance', () => {
+        const original = new IssuanceProto();
+        original.setAuctionAnnouncementDate(date(2026, 7, 16));
+        original.setAuctionDate(date(2026, 7, 20));
+        original.setAuctionIssueDate(date(2026, 7, 23));
+        original.setHighDiscountRate(decimal('4.215'));
+
+        const onlyAuctionDate = new IssuanceProto();
+        onlyAuctionDate.setAuctionDate(date(2026, 7, 20));
+        expect(onlyMessage(onlyAuctionDate.serializeBinary(), 29, LocalDateProto).getDay()).toBe(20);
+
+        const parsed = IssuanceProto.deserializeBinary(original.serializeBinary());
+
+        expect(parsed.hasAuctionDate()).toBe(true);
+        expect(parsed.getAuctionDate()!.toObject()).toEqual(date(2026, 7, 20).toObject());
+        expect(parsed.getAuctionIssueDate()!.toObject()).toEqual(date(2026, 7, 23).toObject());
+        expect(parsed.getAuctionAnnouncementDate()!.toObject()).toEqual(date(2026, 7, 16).toObject());
+        expect(canonical(parsed.getHighDiscountRate())).toBe('4.215');
+    });
+
+    test('a message without the new fields decodes with them unset', () => {
+        const fixingBytes = fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '0.0429').serializeBinary();
+        const oldIssuance = new IssuanceProto();
+        oldIssuance.setAuctionIssueDate(date(2026, 7, 23));
+
+        const parsedFixing = ReferenceRateFixingProto.deserializeBinary(fixingBytes);
+        const parsedIssuance = IssuanceProto.deserializeBinary(oldIssuance.serializeBinary());
+
+        expect(parsedFixing.hasBillMaturityDate()).toBe(false);
+        expect(parsedFixing.getBillMaturityDate()).toBeUndefined();
+        expect(parsedIssuance.hasAuctionDate()).toBe(false);
+        expect(parsedIssuance.getAuctionDate()).toBeUndefined();
+        expect(parsedIssuance.getAuctionIssueDate()!.toObject()).toEqual(date(2026, 7, 23).toObject());
     });
 });

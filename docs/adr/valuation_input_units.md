@@ -65,3 +65,13 @@ L7 and L8 differ on purpose, as L1 and L5 did. See `frn_reference_rate_fixings.m
 ## Amendment 2026-10-22 (LM-377)
 
 `ValuationRequestProto.security_input` (20) and `price_input` (22, row **L6**) are marked `[deprecated = true]` in favour of `product_input` (70). They stay supported, and L6's units still apply, until every product has a typed `ProductInput` arm; they are removed under LM-376.
+
+## Amendment 2026-10-23 (LM-382)
+
+Row **L7** is restated for `T_BILL_13_WEEK` (owner ruling, 23 Oct). It supersedes the T-bill sentence of the LM-365 row above.
+
+| ID | Field | Decision |
+|---|---|---|
+| L7 | `ReferenceRateFixingProto.rate` (`FrnInput.fixings`) | **SOFR: decimal fraction**, unchanged: `0.0432` = 4.32%. **`T_BILL_13_WEEK`: percent per annum, bank-discount basis**: the auction's high discount rate as Treasury publishes it, `4.215` = 4.215%, the same value and unit as L8. valuation-service converts it to the money-market yield the FRN accrues on, using `ReferenceRateFixingProto.bill_maturity_date`. |
+
+L7 for `T_BILL_13_WEEK` and L8 are now the same unit. See the LM-382 amendment in `frn_reference_rate_fixings.md`.

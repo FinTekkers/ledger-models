@@ -1,0 +1,7 @@
+{
+  "item": "LM-382",
+  "added": [
+    {"message": ".fintekkers.models.security.bond.IssuanceProto", "number": 29, "name": "auction_date", "type": ".fintekkers.models.util.LocalDateProto"},
+    {"message": ".fintekkers.requests.valuation.ReferenceRateFixingProto", "number": 4, "name": "bill_maturity_date", "type": ".fintekkers.models.util.LocalDateProto"}
+  ]
+}

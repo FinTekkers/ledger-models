@@ -61,9 +61,13 @@ public interface ReferenceRateFixingProtoOrBuilder extends
   /**
    * <pre>
    * The index rate as the FRN accrues it, as a decimal fraction:
-   * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-   * auction high rate converted to a money-market yield. It is not the
-   * bank-discount rate in IssuanceProto.high_discount_rate.
+   * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+   * where rate is the auction's high discount rate as Treasury publishes
+   * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+   * That is the same value and unit as IssuanceProto.high_discount_rate,
+   * not a decimal fraction and not yet the rate the FRN accrues on:
+   * valuation-service converts it to the money-market yield the FRN
+   * accrues on, using bill_maturity_date.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -73,9 +77,13 @@ public interface ReferenceRateFixingProtoOrBuilder extends
   /**
    * <pre>
    * The index rate as the FRN accrues it, as a decimal fraction:
-   * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-   * auction high rate converted to a money-market yield. It is not the
-   * bank-discount rate in IssuanceProto.high_discount_rate.
+   * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+   * where rate is the auction's high discount rate as Treasury publishes
+   * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+   * That is the same value and unit as IssuanceProto.high_discount_rate,
+   * not a decimal fraction and not yet the rate the FRN accrues on:
+   * valuation-service converts it to the money-market yield the FRN
+   * accrues on, using bill_maturity_date.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -85,12 +93,49 @@ public interface ReferenceRateFixingProtoOrBuilder extends
   /**
    * <pre>
    * The index rate as the FRN accrues it, as a decimal fraction:
-   * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-   * auction high rate converted to a money-market yield. It is not the
-   * bank-discount rate in IssuanceProto.high_discount_rate.
+   * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+   * where rate is the auction's high discount rate as Treasury publishes
+   * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+   * That is the same value and unit as IssuanceProto.high_discount_rate,
+   * not a decimal fraction and not yet the rate the FRN accrues on:
+   * valuation-service converts it to the money-market yield the FRN
+   * accrues on, using bill_maturity_date.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
    */
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getRateOrBuilder();
+
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+   * this fixing. valuation-service uses it for the bill's actual days to
+   * maturity when it converts rate. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+   * @return Whether the billMaturityDate field is set.
+   */
+  boolean hasBillMaturityDate();
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+   * this fixing. valuation-service uses it for the bill's actual days to
+   * maturity when it converts rate. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+   * @return The billMaturityDate.
+   */
+  fintekkers.models.util.LocalDate.LocalDateProto getBillMaturityDate();
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+   * this fixing. valuation-service uses it for the bill's actual days to
+   * maturity when it converts rate. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+   */
+  fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getBillMaturityDateOrBuilder();
 }

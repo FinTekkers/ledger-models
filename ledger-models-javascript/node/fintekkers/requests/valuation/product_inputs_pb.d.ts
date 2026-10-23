@@ -322,6 +322,11 @@ export class ReferenceRateFixingProto extends jspb.Message {
     getRate(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
     setRate(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): ReferenceRateFixingProto;
 
+    hasBillMaturityDate(): boolean;
+    clearBillMaturityDate(): void;
+    getBillMaturityDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
+    setBillMaturityDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): ReferenceRateFixingProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): ReferenceRateFixingProto.AsObject;
     static toObject(includeInstance: boolean, msg: ReferenceRateFixingProto): ReferenceRateFixingProto.AsObject;
@@ -337,6 +342,7 @@ export namespace ReferenceRateFixingProto {
         index: fintekkers_models_security_index_index_type_pb.IndexTypeProto,
         fixingDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
         rate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        billMaturityDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
     }
 }
 

@@ -10,6 +10,7 @@ use ledger_models::fintekkers::requests::valuation::{
     product_input, CurvePoint, FrnInput, ProductInput, ReferenceRateFixingProto, ValuationRequestProto,
     YieldCurveInput,
 };
+use ledger_models::fintekkers::models::security::bond::IssuanceProto;
 use ledger_models::fintekkers::models::security::index::IndexTypeProto;
 use ledger_models::fintekkers::models::util::LocalDateProto;
 use prost::Message;
@@ -201,6 +202,7 @@ fn fixing(year: u32, month: u32, day: u32, rate: &str) -> ReferenceRateFixingPro
         index: IndexTypeProto::TBill13Week.into(),
         fixing_date: Some(date(year, month, day)),
         rate: Some(decimal(rate)),
+        ..Default::default()
     }
 }
 
@@ -244,4 +246,50 @@ fn frn_input_two_fixings_round_trip_in_order() {
         assert_eq!(f.rate.as_ref().expect("rate").canonical(), rate);
     }
     assert_eq!(parsed.clean_price.expect("clean_price").canonical(), "99.75");
+}
+
+// LM-382: the T_BILL_13_WEEK fixing carries its bill's maturity, and the
+// issuance its auction date. Each date differs, so a swapped field fails.
+#[test]
+fn lm382_bill_maturity_date_round_trips() {
+    let original = ReferenceRateFixingProto {
+        bill_maturity_date: Some(date(2026, 10, 22)),
+        ..fixing(2026, 7, 20, "4.215")
+    };
+    let parsed = ReferenceRateFixingProto::decode(original.encode_to_vec().as_slice()).expect("decode failed");
+
+    assert_eq!(parsed.index, IndexTypeProto::TBill13Week as i32);
+    assert_eq!(parsed.fixing_date, Some(date(2026, 7, 20)));
+    assert_eq!(parsed.bill_maturity_date, Some(date(2026, 10, 22)));
+    assert_eq!(parsed.rate.expect("rate").canonical(), "4.215");
+}
+
+#[test]
+fn lm382_auction_date_round_trips() {
+    let original = IssuanceProto {
+        auction_announcement_date: Some(date(2026, 7, 16)),
+        auction_date: Some(date(2026, 7, 20)),
+        auction_issue_date: Some(date(2026, 7, 23)),
+        high_discount_rate: Some(decimal("4.215")),
+        ..Default::default()
+    };
+    let parsed = IssuanceProto::decode(original.encode_to_vec().as_slice()).expect("decode failed");
+
+    assert_eq!(parsed.auction_date, Some(date(2026, 7, 20)));
+    assert_eq!(parsed.auction_issue_date, Some(date(2026, 7, 23)));
+    assert_eq!(parsed.auction_announcement_date, Some(date(2026, 7, 16)));
+    assert_eq!(parsed.high_discount_rate.expect("high_discount_rate").canonical(), "4.215");
+}
+
+#[test]
+fn lm382_new_fields_decode_unset_when_absent() {
+    let mut sofr = fixing(2026, 10, 26, "0.0429");
+    sofr.index = IndexTypeProto::Sofr.into();
+    let fixing = ReferenceRateFixingProto::decode(sofr.encode_to_vec().as_slice()).expect("decode failed");
+    let old_issuance = IssuanceProto { auction_issue_date: Some(date(2026, 7, 23)), ..Default::default() };
+    let issuance = IssuanceProto::decode(old_issuance.encode_to_vec().as_slice()).expect("decode failed");
+
+    assert_eq!(fixing.bill_maturity_date, None);
+    assert_eq!(issuance.auction_date, None);
+    assert_eq!(issuance.auction_issue_date, Some(date(2026, 7, 23)));
 }

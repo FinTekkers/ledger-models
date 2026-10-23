@@ -123,9 +123,13 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The index rate as the FRN accrues it, as a decimal fraction:
-   * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-   * auction high rate converted to a money-market yield. It is not the
-   * bank-discount rate in IssuanceProto.high_discount_rate.
+   * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+   * where rate is the auction's high discount rate as Treasury publishes
+   * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+   * That is the same value and unit as IssuanceProto.high_discount_rate,
+   * not a decimal fraction and not yet the rate the FRN accrues on:
+   * valuation-service converts it to the money-market yield the FRN
+   * accrues on, using bill_maturity_date.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -138,9 +142,13 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The index rate as the FRN accrues it, as a decimal fraction:
-   * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-   * auction high rate converted to a money-market yield. It is not the
-   * bank-discount rate in IssuanceProto.high_discount_rate.
+   * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+   * where rate is the auction's high discount rate as Treasury publishes
+   * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+   * That is the same value and unit as IssuanceProto.high_discount_rate,
+   * not a decimal fraction and not yet the rate the FRN accrues on:
+   * valuation-service converts it to the money-market yield the FRN
+   * accrues on, using bill_maturity_date.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -153,9 +161,13 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The index rate as the FRN accrues it, as a decimal fraction:
-   * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-   * auction high rate converted to a money-market yield. It is not the
-   * bank-discount rate in IssuanceProto.high_discount_rate.
+   * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+   * where rate is the auction's high discount rate as Treasury publishes
+   * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+   * That is the same value and unit as IssuanceProto.high_discount_rate,
+   * not a decimal fraction and not yet the rate the FRN accrues on:
+   * valuation-service converts it to the money-market yield the FRN
+   * accrues on, using bill_maturity_date.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -163,6 +175,50 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getRateOrBuilder() {
     return rate_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : rate_;
+  }
+
+  public static final int BILL_MATURITY_DATE_FIELD_NUMBER = 4;
+  private fintekkers.models.util.LocalDate.LocalDateProto billMaturityDate_;
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+   * this fixing. valuation-service uses it for the bill's actual days to
+   * maturity when it converts rate. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+   * @return Whether the billMaturityDate field is set.
+   */
+  @java.lang.Override
+  public boolean hasBillMaturityDate() {
+    return billMaturityDate_ != null;
+  }
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+   * this fixing. valuation-service uses it for the bill's actual days to
+   * maturity when it converts rate. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+   * @return The billMaturityDate.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProto getBillMaturityDate() {
+    return billMaturityDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : billMaturityDate_;
+  }
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+   * this fixing. valuation-service uses it for the bill's actual days to
+   * maturity when it converts rate. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getBillMaturityDateOrBuilder() {
+    return billMaturityDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : billMaturityDate_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -188,6 +244,9 @@ private static final long serialVersionUID = 0L;
     if (rate_ != null) {
       output.writeMessage(3, getRate());
     }
+    if (billMaturityDate_ != null) {
+      output.writeMessage(4, getBillMaturityDate());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -208,6 +267,10 @@ private static final long serialVersionUID = 0L;
     if (rate_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(3, getRate());
+    }
+    if (billMaturityDate_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(4, getBillMaturityDate());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -235,6 +298,11 @@ private static final long serialVersionUID = 0L;
       if (!getRate()
           .equals(other.getRate())) return false;
     }
+    if (hasBillMaturityDate() != other.hasBillMaturityDate()) return false;
+    if (hasBillMaturityDate()) {
+      if (!getBillMaturityDate()
+          .equals(other.getBillMaturityDate())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -255,6 +323,10 @@ private static final long serialVersionUID = 0L;
     if (hasRate()) {
       hash = (37 * hash) + RATE_FIELD_NUMBER;
       hash = (53 * hash) + getRate().hashCode();
+    }
+    if (hasBillMaturityDate()) {
+      hash = (37 * hash) + BILL_MATURITY_DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getBillMaturityDate().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -401,6 +473,11 @@ private static final long serialVersionUID = 0L;
         rateBuilder_.dispose();
         rateBuilder_ = null;
       }
+      billMaturityDate_ = null;
+      if (billMaturityDateBuilder_ != null) {
+        billMaturityDateBuilder_.dispose();
+        billMaturityDateBuilder_ = null;
+      }
       return this;
     }
 
@@ -446,6 +523,11 @@ private static final long serialVersionUID = 0L;
         result.rate_ = rateBuilder_ == null
             ? rate_
             : rateBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.billMaturityDate_ = billMaturityDateBuilder_ == null
+            ? billMaturityDate_
+            : billMaturityDateBuilder_.build();
       }
     }
 
@@ -502,6 +584,9 @@ private static final long serialVersionUID = 0L;
       if (other.hasRate()) {
         mergeRate(other.getRate());
       }
+      if (other.hasBillMaturityDate()) {
+        mergeBillMaturityDate(other.getBillMaturityDate());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -547,6 +632,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000004;
               break;
             } // case 26
+            case 34: {
+              input.readMessage(
+                  getBillMaturityDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 34
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -812,9 +904,13 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The index rate as the FRN accrues it, as a decimal fraction:
-     * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-     * auction high rate converted to a money-market yield. It is not the
-     * bank-discount rate in IssuanceProto.high_discount_rate.
+     * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+     * where rate is the auction's high discount rate as Treasury publishes
+     * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+     * That is the same value and unit as IssuanceProto.high_discount_rate,
+     * not a decimal fraction and not yet the rate the FRN accrues on:
+     * valuation-service converts it to the money-market yield the FRN
+     * accrues on, using bill_maturity_date.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -826,9 +922,13 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The index rate as the FRN accrues it, as a decimal fraction:
-     * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-     * auction high rate converted to a money-market yield. It is not the
-     * bank-discount rate in IssuanceProto.high_discount_rate.
+     * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+     * where rate is the auction's high discount rate as Treasury publishes
+     * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+     * That is the same value and unit as IssuanceProto.high_discount_rate,
+     * not a decimal fraction and not yet the rate the FRN accrues on:
+     * valuation-service converts it to the money-market yield the FRN
+     * accrues on, using bill_maturity_date.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -844,9 +944,13 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The index rate as the FRN accrues it, as a decimal fraction:
-     * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-     * auction high rate converted to a money-market yield. It is not the
-     * bank-discount rate in IssuanceProto.high_discount_rate.
+     * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+     * where rate is the auction's high discount rate as Treasury publishes
+     * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+     * That is the same value and unit as IssuanceProto.high_discount_rate,
+     * not a decimal fraction and not yet the rate the FRN accrues on:
+     * valuation-service converts it to the money-market yield the FRN
+     * accrues on, using bill_maturity_date.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -867,9 +971,13 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The index rate as the FRN accrues it, as a decimal fraction:
-     * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-     * auction high rate converted to a money-market yield. It is not the
-     * bank-discount rate in IssuanceProto.high_discount_rate.
+     * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+     * where rate is the auction's high discount rate as Treasury publishes
+     * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+     * That is the same value and unit as IssuanceProto.high_discount_rate,
+     * not a decimal fraction and not yet the rate the FRN accrues on:
+     * valuation-service converts it to the money-market yield the FRN
+     * accrues on, using bill_maturity_date.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -888,9 +996,13 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The index rate as the FRN accrues it, as a decimal fraction:
-     * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-     * auction high rate converted to a money-market yield. It is not the
-     * bank-discount rate in IssuanceProto.high_discount_rate.
+     * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+     * where rate is the auction's high discount rate as Treasury publishes
+     * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+     * That is the same value and unit as IssuanceProto.high_discount_rate,
+     * not a decimal fraction and not yet the rate the FRN accrues on:
+     * valuation-service converts it to the money-market yield the FRN
+     * accrues on, using bill_maturity_date.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -914,9 +1026,13 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The index rate as the FRN accrues it, as a decimal fraction:
-     * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-     * auction high rate converted to a money-market yield. It is not the
-     * bank-discount rate in IssuanceProto.high_discount_rate.
+     * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+     * where rate is the auction's high discount rate as Treasury publishes
+     * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+     * That is the same value and unit as IssuanceProto.high_discount_rate,
+     * not a decimal fraction and not yet the rate the FRN accrues on:
+     * valuation-service converts it to the money-market yield the FRN
+     * accrues on, using bill_maturity_date.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -934,9 +1050,13 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The index rate as the FRN accrues it, as a decimal fraction:
-     * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-     * auction high rate converted to a money-market yield. It is not the
-     * bank-discount rate in IssuanceProto.high_discount_rate.
+     * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+     * where rate is the auction's high discount rate as Treasury publishes
+     * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+     * That is the same value and unit as IssuanceProto.high_discount_rate,
+     * not a decimal fraction and not yet the rate the FRN accrues on:
+     * valuation-service converts it to the money-market yield the FRN
+     * accrues on, using bill_maturity_date.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -949,9 +1069,13 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The index rate as the FRN accrues it, as a decimal fraction:
-     * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-     * auction high rate converted to a money-market yield. It is not the
-     * bank-discount rate in IssuanceProto.high_discount_rate.
+     * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+     * where rate is the auction's high discount rate as Treasury publishes
+     * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+     * That is the same value and unit as IssuanceProto.high_discount_rate,
+     * not a decimal fraction and not yet the rate the FRN accrues on:
+     * valuation-service converts it to the money-market yield the FRN
+     * accrues on, using bill_maturity_date.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -967,9 +1091,13 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The index rate as the FRN accrues it, as a decimal fraction:
-     * 0.0432 = 4.32%. Not a percentage. For T_BILL_13_WEEK this is the
-     * auction high rate converted to a money-market yield. It is not the
-     * bank-discount rate in IssuanceProto.high_discount_rate.
+     * 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
+     * where rate is the auction's high discount rate as Treasury publishes
+     * it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
+     * That is the same value and unit as IssuanceProto.high_discount_rate,
+     * not a decimal fraction and not yet the rate the FRN accrues on:
+     * valuation-service converts it to the money-market yield the FRN
+     * accrues on, using bill_maturity_date.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -986,6 +1114,179 @@ private static final long serialVersionUID = 0L;
         rate_ = null;
       }
       return rateBuilder_;
+    }
+
+    private fintekkers.models.util.LocalDate.LocalDateProto billMaturityDate_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> billMaturityDateBuilder_;
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+     * this fixing. valuation-service uses it for the bill's actual days to
+     * maturity when it converts rate. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+     * @return Whether the billMaturityDate field is set.
+     */
+    public boolean hasBillMaturityDate() {
+      return ((bitField0_ & 0x00000008) != 0);
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+     * this fixing. valuation-service uses it for the bill's actual days to
+     * maturity when it converts rate. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+     * @return The billMaturityDate.
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto getBillMaturityDate() {
+      if (billMaturityDateBuilder_ == null) {
+        return billMaturityDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : billMaturityDate_;
+      } else {
+        return billMaturityDateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+     * this fixing. valuation-service uses it for the bill's actual days to
+     * maturity when it converts rate. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+     */
+    public Builder setBillMaturityDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (billMaturityDateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        billMaturityDate_ = value;
+      } else {
+        billMaturityDateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+     * this fixing. valuation-service uses it for the bill's actual days to
+     * maturity when it converts rate. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+     */
+    public Builder setBillMaturityDate(
+        fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
+      if (billMaturityDateBuilder_ == null) {
+        billMaturityDate_ = builderForValue.build();
+      } else {
+        billMaturityDateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+     * this fixing. valuation-service uses it for the bill's actual days to
+     * maturity when it converts rate. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+     */
+    public Builder mergeBillMaturityDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (billMaturityDateBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0) &&
+          billMaturityDate_ != null &&
+          billMaturityDate_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
+          getBillMaturityDateBuilder().mergeFrom(value);
+        } else {
+          billMaturityDate_ = value;
+        }
+      } else {
+        billMaturityDateBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+     * this fixing. valuation-service uses it for the bill's actual days to
+     * maturity when it converts rate. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+     */
+    public Builder clearBillMaturityDate() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      billMaturityDate_ = null;
+      if (billMaturityDateBuilder_ != null) {
+        billMaturityDateBuilder_.dispose();
+        billMaturityDateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+     * this fixing. valuation-service uses it for the bill's actual days to
+     * maturity when it converts rate. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto.Builder getBillMaturityDateBuilder() {
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return getBillMaturityDateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+     * this fixing. valuation-service uses it for the bill's actual days to
+     * maturity when it converts rate. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getBillMaturityDateOrBuilder() {
+      if (billMaturityDateBuilder_ != null) {
+        return billMaturityDateBuilder_.getMessageOrBuilder();
+      } else {
+        return billMaturityDate_ == null ?
+            fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : billMaturityDate_;
+      }
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the maturity date of the bill whose auction set
+     * this fixing. valuation-service uses it for the bill's actual days to
+     * maturity when it converts rate. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> 
+        getBillMaturityDateFieldBuilder() {
+      if (billMaturityDateBuilder_ == null) {
+        billMaturityDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder>(
+                getBillMaturityDate(),
+                getParentForChildren(),
+                isClean());
+        billMaturityDate_ = null;
+      }
+      return billMaturityDateBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

@@ -36,7 +36,7 @@ public final class IssuanceProtos {
       "l/local_date.proto\032,fintekkers/models/ut" +
       "il/local_timestamp.proto\032(fintekkers/mod" +
       "els/util/object_type.proto\032$fintekkers/m" +
-      "odels/util/version.proto\"\342\007\n\rIssuancePro" +
+      "odels/util/version.proto\"\240\010\n\rIssuancePro" +
       "to\022<\n\013object_type\030\001 \001(\0162\'.fintekkers.mod" +
       "els.util.ObjectTypeProto\0225\n\007version\030\002 \001(" +
       "\0132$.fintekkers.models.util.VersionProto\022" +
@@ -61,8 +61,9 @@ public final class IssuanceProtos {
       "ature_security_amount\030\033 \001(\0132).fintekkers" +
       ".models.util.DecimalValueProto\022E\n\022high_d" +
       "iscount_rate\030\034 \001(\0132).fintekkers.models.u" +
-      "til.DecimalValueProtoB\022B\016IssuanceProtosP" +
-      "\001b\006proto3"
+      "til.DecimalValueProto\022<\n\014auction_date\030\035 " +
+      "\001(\0132&.fintekkers.models.util.LocalDatePr" +
+      "otoB\022B\016IssuanceProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -79,7 +80,7 @@ public final class IssuanceProtos {
     internal_static_fintekkers_models_security_bond_IssuanceProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_security_bond_IssuanceProto_descriptor,
-        new java.lang.String[] { "ObjectType", "Version", "AsOf", "ValidFrom", "ValidTo", "AuctionAnnouncementDate", "AuctionIssueDate", "PostAuctionOutstandingQuantity", "AuctionOfferingAmount", "AuctionType", "PriceForSinglePriceAuction", "TotalAccepted", "MatureSecurityAmount", "HighDiscountRate", });
+        new java.lang.String[] { "ObjectType", "Version", "AsOf", "ValidFrom", "ValidTo", "AuctionAnnouncementDate", "AuctionIssueDate", "PostAuctionOutstandingQuantity", "AuctionOfferingAmount", "AuctionType", "PriceForSinglePriceAuction", "TotalAccepted", "MatureSecurityAmount", "HighDiscountRate", "AuctionDate", });
     fintekkers.models.security.bond.AuctionTypeProtos.getDescriptor();
     fintekkers.models.util.DecimalValue.getDescriptor();
     fintekkers.models.util.LocalDate.getDescriptor();
