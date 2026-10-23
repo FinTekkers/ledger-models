@@ -2,18 +2,20 @@
 carries the elections and repeated lots, and cost_basis = 20 sits on BondInput,
 TipsInput and FrnInput (LM-364). Nothing is added to the root of
 ValuationRequestProto, and its 24 and 25 stay reserved. A TipsInput with
-non-default elections and two lots round-trips unchanged.
+non-default elections and two lots round-trips unchanged. A TIPS
+ADJUSTED_COST_BASIS request with two lots and the valuation date's m-3 and m-2
+CPI readings round-trips unchanged (LM-378).
 """
 import json
 from decimal import Decimal
 from pathlib import Path
 
-from google.protobuf import descriptor_pb2
+from google.protobuf import descriptor_pb2, timestamp_pb2
 from google.protobuf.descriptor import FieldDescriptor
 
 from fintekkers.models.portfolio import amortisation_elections_pb2
 from fintekkers.models.position import tax_lot_pb2
-from fintekkers.models.util import decimal_value_pb2, local_date_pb2
+from fintekkers.models.util import decimal_value_pb2, local_date_pb2, local_timestamp_pb2
 from fintekkers.requests.valuation import product_inputs_pb2, valuation_request_pb2
 from fintekkers.wrappers.models.util.decimal import decode_decimal, encode_decimal
 
@@ -117,6 +119,41 @@ def test_tips_input_cost_basis_round_trips_unchanged():
     assert elections.bond_premium == amortisation_elections_pb2.PREMIUM_NOT_ELECTED
     assert elections.market_discount_inclusion == amortisation_elections_pb2.INCLUDE_CURRENTLY
     assert elections.market_discount_accrual == amortisation_elections_pb2.CONSTANT_YIELD
+    lots = [
+        ((lot.open_date.year, lot.open_date.month, lot.open_date.day), _text(lot.open_quantity), _text(lot.price))
+        for lot in tips.cost_basis.lots
+    ]
+    assert lots == [((2024, 1, 15), "10000", "98.25"), ((2025, 6, 2), "5000", "101.50")]
+
+
+def test_tips_acb_request_with_cpi_readings_round_trips_unchanged():
+    # 2026-10-23T14:30:00Z: settlement month 2026-10, so m-3 and m-2 are 2026-07 and 2026-08.
+    asof = local_timestamp_pb2.LocalTimestampProto(timestamp=timestamp_pb2.Timestamp(seconds=1792765800))
+    original = product_inputs_pb2.TipsInput(
+        clean_price=_decimal("97.50"),
+        cpi=product_inputs_pb2.InflationIndexInput(
+            readings=product_inputs_pb2.MonthlyIndexReadings(readings=[
+                product_inputs_pb2.MonthlyIndexReading(year=2026, month=7, value=_decimal("322.100")),
+                product_inputs_pb2.MonthlyIndexReading(year=2026, month=8, value=_decimal("322.900")),
+            ]),
+        ),
+        cost_basis=COST_BASIS(lots=[_lot(2024, 1, 15, "10000", "98.25"), _lot(2025, 6, 2, "5000", "101.50")]),
+    )
+    request = valuation_request_pb2.ValuationRequestProto(
+        asof_datetime=asof,
+        product_input=product_inputs_pb2.ProductInput(tips=original),
+    )
+
+    parsed = valuation_request_pb2.ValuationRequestProto.FromString(request.SerializeToString())
+
+    assert parsed.asof_datetime == asof
+    assert parsed.asof_datetime.timestamp.ToJsonString() == "2026-10-23T14:30:00Z"
+    tips = parsed.product_input.tips
+    assert tips == original
+    assert tips.cpi.WhichOneof("cpi") == "readings"
+    assert [(r.year, r.month, _text(r.value)) for r in tips.cpi.readings.readings] == [
+        (2026, 7, "322.100"), (2026, 8, "322.900"),
+    ]
     lots = [
         ((lot.open_date.year, lot.open_date.month, lot.open_date.day), _text(lot.open_quantity), _text(lot.price))
         for lot in tips.cost_basis.lots

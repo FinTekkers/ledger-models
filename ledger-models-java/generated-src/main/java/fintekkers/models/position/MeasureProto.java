@@ -101,7 +101,26 @@ public enum MeasureProto
    *   (e.g. T+1 for Treasuries).
    * TIPS: amortise in real terms, then multiply by the index ratio
    *   (INDEX_RATIO) at the valuation date, giving a figure per 100 original
-   *   face in nominal dollars.
+   *   face in nominal dollars:
+   *     AdjustedCostBasis = sum(open_quantity_i * real_acb_i) / sum(open_quantity_i)
+   *                         * IndexRatio(valuation date)
+   *   real_acb_i: lot i's amortised cost per 100 real face. It starts from the
+   *     lot's real purchase price (TaxLotProto.price) and accrues at constant
+   *     yield on real principal.
+   *   open_quantity_i: the lot's original (unadjusted) face.
+   *   Accrual start: as above, on real principal. valuation-service owns the
+   *     settlement lag; lots carry no settlement field.
+   *   Elections: premium and market discount accrue or not per the elections,
+   *     as in the fixed-rate rules above.
+   *   IndexRatio(valuation date): INDEX_RATIO for the UTC date of
+   *     ValuationRequestProto.asof_datetime. It uses only the m-3 and m-2
+   *     readings in TipsInput.cpi. Lot dates need no CPI readings.
+   *   Rounding: none. real_acb_i, the weighted average, the index ratio and
+   *     the result are all unrounded, as for INDEX_RATIO and MARKET_VALUE.
+   *   Deflation floor: not applied. It applies only to final principal
+   *     (INFLATION_ADJUSTED_PRINCIPAL), never to the basis.
+   *   Example: lots of 10000 at real_acb 99.00 and 5000 at 101.50, index
+   *     ratio 1.2 -&gt; (10000*99.00 + 5000*101.50) / 15000 * 1.2 = 119.80.
    * FRN: use the equivalent fixed rate from the fixing at settlement.
    * No lots: the measure is absent, with a "no open lots" warning, never 0.
    * Scope: tax basis only. Book (GAAP/IFRS) cost is out of scope.
@@ -720,7 +739,26 @@ public enum MeasureProto
    *   (e.g. T+1 for Treasuries).
    * TIPS: amortise in real terms, then multiply by the index ratio
    *   (INDEX_RATIO) at the valuation date, giving a figure per 100 original
-   *   face in nominal dollars.
+   *   face in nominal dollars:
+   *     AdjustedCostBasis = sum(open_quantity_i * real_acb_i) / sum(open_quantity_i)
+   *                         * IndexRatio(valuation date)
+   *   real_acb_i: lot i's amortised cost per 100 real face. It starts from the
+   *     lot's real purchase price (TaxLotProto.price) and accrues at constant
+   *     yield on real principal.
+   *   open_quantity_i: the lot's original (unadjusted) face.
+   *   Accrual start: as above, on real principal. valuation-service owns the
+   *     settlement lag; lots carry no settlement field.
+   *   Elections: premium and market discount accrue or not per the elections,
+   *     as in the fixed-rate rules above.
+   *   IndexRatio(valuation date): INDEX_RATIO for the UTC date of
+   *     ValuationRequestProto.asof_datetime. It uses only the m-3 and m-2
+   *     readings in TipsInput.cpi. Lot dates need no CPI readings.
+   *   Rounding: none. real_acb_i, the weighted average, the index ratio and
+   *     the result are all unrounded, as for INDEX_RATIO and MARKET_VALUE.
+   *   Deflation floor: not applied. It applies only to final principal
+   *     (INFLATION_ADJUSTED_PRINCIPAL), never to the basis.
+   *   Example: lots of 10000 at real_acb 99.00 and 5000 at 101.50, index
+   *     ratio 1.2 -&gt; (10000*99.00 + 5000*101.50) / 15000 * 1.2 = 119.80.
    * FRN: use the equivalent fixed rate from the fixing at settlement.
    * No lots: the measure is absent, with a "no open lots" warning, never 0.
    * Scope: tax basis only. Book (GAAP/IFRS) cost is out of scope.
