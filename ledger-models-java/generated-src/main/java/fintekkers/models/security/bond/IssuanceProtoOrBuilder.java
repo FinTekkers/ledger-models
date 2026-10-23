@@ -386,4 +386,40 @@ public interface IssuanceProtoOrBuilder extends
    * <code>.fintekkers.models.util.DecimalValueProto high_discount_rate = 28;</code>
    */
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getHighDiscountRateOrBuilder();
+
+  /**
+   * <pre>
+   **
+   *The date the auction was held. For a bill, the date its high discount
+   *rate was set. Not the issue date (auction_issue_date) or the
+   *announcement date (auction_announcement_date). Unset when unknown.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+   * @return Whether the auctionDate field is set.
+   */
+  boolean hasAuctionDate();
+  /**
+   * <pre>
+   **
+   *The date the auction was held. For a bill, the date its high discount
+   *rate was set. Not the issue date (auction_issue_date) or the
+   *announcement date (auction_announcement_date). Unset when unknown.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+   * @return The auctionDate.
+   */
+  fintekkers.models.util.LocalDate.LocalDateProto getAuctionDate();
+  /**
+   * <pre>
+   **
+   *The date the auction was held. For a bill, the date its high discount
+   *rate was set. Not the issue date (auction_issue_date) or the
+   *announcement date (auction_announcement_date). Unset when unknown.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto auction_date = 29;</code>
+   */
+  fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getAuctionDateOrBuilder();
 }

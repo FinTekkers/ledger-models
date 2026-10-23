@@ -174,4 +174,10 @@ pub struct IssuanceProto {
     pub high_discount_rate: ::core::option::Option<
         super::super::util::DecimalValueProto,
     >,
+    /// *
+    /// The date the auction was held. For a bill, the date its high discount
+    /// rate was set. Not the issue date (auction_issue_date) or the
+    /// announcement date (auction_announcement_date). Unset when unknown.
+    #[prost(message, optional, tag = "29")]
+    pub auction_date: ::core::option::Option<super::super::util::LocalDateProto>,
 }

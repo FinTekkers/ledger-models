@@ -224,10 +224,62 @@ class FrnRequestRoundtripTest {
         assertEquals("99.75", Decimals.text(parsed.getCleanPrice()));
     }
 
+    // LM-382: the T_BILL_13_WEEK fixing carries its bill's maturity, and the
+    // issuance its auction date. Each date differs, so a swapped field fails.
+    @Test
+    void lm382_billMaturityDateSurvivesRoundtrip() throws InvalidProtocolBufferException {
+        ReferenceRateFixingProto original = fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 7, 20), "4.215")
+                .toBuilder().setBillMaturityDate(date(2026, 10, 22)).build();
+
+        ReferenceRateFixingProto parsed = ReferenceRateFixingProto.parseFrom(original.toByteArray());
+
+        assertEquals(IndexTypeProto.T_BILL_13_WEEK, parsed.getIndex());
+        assertEquals(date(2026, 7, 20), parsed.getFixingDate());
+        assertTrue(parsed.hasBillMaturityDate());
+        assertEquals(date(2026, 10, 22), parsed.getBillMaturityDate());
+        assertEquals("4.215", Decimals.text(parsed.getRate()));
+    }
+
+    @Test
+    void lm382_auctionDateSurvivesRoundtrip() throws InvalidProtocolBufferException {
+        IssuanceProto original = IssuanceProto.newBuilder()
+                .setAuctionAnnouncementDate(date(2026, 7, 16))
+                .setAuctionDate(date(2026, 7, 20))
+                .setAuctionIssueDate(date(2026, 7, 23))
+                .setHighDiscountRate(decimal("4.215"))
+                .build();
+
+        IssuanceProto parsed = IssuanceProto.parseFrom(original.toByteArray());
+
+        assertTrue(parsed.hasAuctionDate());
+        assertEquals(date(2026, 7, 20), parsed.getAuctionDate());
+        assertEquals(date(2026, 7, 23), parsed.getAuctionIssueDate());
+        assertEquals(date(2026, 7, 16), parsed.getAuctionAnnouncementDate());
+        assertEquals("4.215", Decimals.text(parsed.getHighDiscountRate()));
+    }
+
+    /** LM-382: a message without the new fields decodes with them unset, not as a default date. */
+    @Test
+    void lm382_newFieldsDecodeUnsetWhenAbsent() throws InvalidProtocolBufferException {
+        ReferenceRateFixingProto fixing = ReferenceRateFixingProto.parseFrom(
+                fixing(IndexTypeProto.SOFR, date(2026, 10, 26), "0.0429").toByteArray());
+        IssuanceProto issuance = IssuanceProto.parseFrom(
+                IssuanceProto.newBuilder().setAuctionIssueDate(date(2026, 7, 23)).build().toByteArray());
+
+        assertFalse(fixing.hasBillMaturityDate());
+        assertFalse(issuance.hasAuctionDate());
+        assertEquals(date(2026, 7, 23), issuance.getAuctionIssueDate());
+    }
+
     private static final Path FIELD_CHANGES = Path.of("..", "test-fixtures", "field-changes", "lm-365.json");
+    private static final Path LM382_FIELD_CHANGES = Path.of("..", "test-fixtures", "field-changes", "lm-382.json");
 
     private static JsonArray fieldChanges(String section) throws IOException {
         return JsonParser.parseString(Files.readString(FIELD_CHANGES)).getAsJsonObject().getAsJsonArray(section);
+    }
+
+    private static JsonArray lm382Added() throws IOException {
+        return JsonParser.parseString(Files.readString(LM382_FIELD_CHANGES)).getAsJsonObject().getAsJsonArray("added");
     }
 
     private static final List<Descriptor> LM365_MESSAGES = List.of(
@@ -274,12 +326,21 @@ class FrnRequestRoundtripTest {
         }
     }
 
-    /** LM-365: each message's field numbers are exactly kept plus added. */
+    /** LM-382: auction_date = 29 and bill_maturity_date = 4, both LocalDateProto. */
+    @Test
+    void lm382_addedFieldsHaveNumberNameAndType() throws IOException {
+        for (JsonElement el : lm382Added()) {
+            assertField(el.getAsJsonObject());
+        }
+    }
+
+    /** LM-365: each message's field numbers are exactly kept plus added, plus LM-382's additions. */
     @Test
     void lm365_fieldSetsAreExactlyKeptAndAdded() throws IOException {
         Map<String, Set<Integer>> expected = new TreeMap<>();
-        for (String section : List.of("kept", "added")) {
-            for (JsonElement el : fieldChanges(section)) {
+        List<JsonArray> sections = List.of(fieldChanges("kept"), fieldChanges("added"), lm382Added());
+        for (JsonArray section : sections) {
+            for (JsonElement el : section) {
                 JsonObject entry = el.getAsJsonObject();
                 expected.computeIfAbsent(lm365Message(entry).getFullName(), k -> new TreeSet<>())
                         .add(entry.get("number").getAsInt());

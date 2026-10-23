@@ -100,7 +100,8 @@ proto.fintekkers.models.security.bond.IssuanceProto.toObject = function(includeI
     priceForSinglePriceAuction: (f = msg.getPriceForSinglePriceAuction()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     totalAccepted: (f = msg.getTotalAccepted()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     matureSecurityAmount: (f = msg.getMatureSecurityAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-    highDiscountRate: (f = msg.getHighDiscountRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    highDiscountRate: (f = msg.getHighDiscountRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    auctionDate: (f = msg.getAuctionDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -204,6 +205,11 @@ proto.fintekkers.models.security.bond.IssuanceProto.deserializeBinaryFromReader 
       var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
       reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
       msg.setHighDiscountRate(value);
+      break;
+    case 29:
+      var value = new fintekkers_models_util_local_date_pb.LocalDateProto;
+      reader.readMessage(value,fintekkers_models_util_local_date_pb.LocalDateProto.deserializeBinaryFromReader);
+      msg.setAuctionDate(value);
       break;
     default:
       reader.skipField();
@@ -342,6 +348,14 @@ proto.fintekkers.models.security.bond.IssuanceProto.serializeBinaryToWriter = fu
       28,
       f,
       fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getAuctionDate();
+  if (f != null) {
+    writer.writeMessage(
+      29,
+      f,
+      fintekkers_models_util_local_date_pb.LocalDateProto.serializeBinaryToWriter
     );
   }
 };
@@ -824,6 +838,43 @@ proto.fintekkers.models.security.bond.IssuanceProto.prototype.clearHighDiscountR
  */
 proto.fintekkers.models.security.bond.IssuanceProto.prototype.hasHighDiscountRate = function() {
   return jspb.Message.getField(this, 28) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.LocalDateProto auction_date = 29;
+ * @return {?proto.fintekkers.models.util.LocalDateProto}
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.getAuctionDate = function() {
+  return /** @type{?proto.fintekkers.models.util.LocalDateProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_local_date_pb.LocalDateProto, 29));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.LocalDateProto|undefined} value
+ * @return {!proto.fintekkers.models.security.bond.IssuanceProto} returns this
+*/
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.setAuctionDate = function(value) {
+  return jspb.Message.setWrapperField(this, 29, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.security.bond.IssuanceProto} returns this
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.clearAuctionDate = function() {
+  return this.setAuctionDate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.security.bond.IssuanceProto.prototype.hasAuctionDate = function() {
+  return jspb.Message.getField(this, 29) != null;
 };
 
 

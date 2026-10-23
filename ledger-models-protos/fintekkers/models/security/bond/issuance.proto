@@ -120,4 +120,11 @@ message IssuanceProto {
    */
   fintekkers.models.util.DecimalValueProto high_discount_rate = 28;
 
+  /**
+  The date the auction was held. For a bill, the date its high discount
+  rate was set. Not the issue date (auction_issue_date) or the
+  announcement date (auction_announcement_date). Unset when unknown.
+   */
+  fintekkers.models.util.LocalDateProto auction_date = 29;
+
 }

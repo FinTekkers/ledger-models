@@ -2468,7 +2468,8 @@ proto.fintekkers.requests.valuation.ReferenceRateFixingProto.toObject = function
   var f, obj = {
     index: jspb.Message.getFieldWithDefault(msg, 1, 0),
     fixingDate: (f = msg.getFixingDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
-    rate: (f = msg.getRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
+    rate: (f = msg.getRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    billMaturityDate: (f = msg.getBillMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -2518,6 +2519,11 @@ proto.fintekkers.requests.valuation.ReferenceRateFixingProto.deserializeBinaryFr
       var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
       reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
       msg.setRate(value);
+      break;
+    case 4:
+      var value = new fintekkers_models_util_local_date_pb.LocalDateProto;
+      reader.readMessage(value,fintekkers_models_util_local_date_pb.LocalDateProto.deserializeBinaryFromReader);
+      msg.setBillMaturityDate(value);
       break;
     default:
       reader.skipField();
@@ -2569,6 +2575,14 @@ proto.fintekkers.requests.valuation.ReferenceRateFixingProto.serializeBinaryToWr
       3,
       f,
       fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getBillMaturityDate();
+  if (f != null) {
+    writer.writeMessage(
+      4,
+      f,
+      fintekkers_models_util_local_date_pb.LocalDateProto.serializeBinaryToWriter
     );
   }
 };
@@ -2663,6 +2677,43 @@ proto.fintekkers.requests.valuation.ReferenceRateFixingProto.prototype.clearRate
  */
 proto.fintekkers.requests.valuation.ReferenceRateFixingProto.prototype.hasRate = function() {
   return jspb.Message.getField(this, 3) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.LocalDateProto bill_maturity_date = 4;
+ * @return {?proto.fintekkers.models.util.LocalDateProto}
+ */
+proto.fintekkers.requests.valuation.ReferenceRateFixingProto.prototype.getBillMaturityDate = function() {
+  return /** @type{?proto.fintekkers.models.util.LocalDateProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_local_date_pb.LocalDateProto, 4));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.LocalDateProto|undefined} value
+ * @return {!proto.fintekkers.requests.valuation.ReferenceRateFixingProto} returns this
+*/
+proto.fintekkers.requests.valuation.ReferenceRateFixingProto.prototype.setBillMaturityDate = function(value) {
+  return jspb.Message.setWrapperField(this, 4, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.requests.valuation.ReferenceRateFixingProto} returns this
+ */
+proto.fintekkers.requests.valuation.ReferenceRateFixingProto.prototype.clearBillMaturityDate = function() {
+  return this.setBillMaturityDate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.requests.valuation.ReferenceRateFixingProto.prototype.hasBillMaturityDate = function() {
+  return jspb.Message.getField(this, 4) != null;
 };
 
 

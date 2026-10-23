@@ -78,6 +78,11 @@ export class IssuanceProto extends jspb.Message {
     getHighDiscountRate(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
     setHighDiscountRate(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): IssuanceProto;
 
+    hasAuctionDate(): boolean;
+    clearAuctionDate(): void;
+    getAuctionDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
+    setAuctionDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): IssuanceProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): IssuanceProto.AsObject;
     static toObject(includeInstance: boolean, msg: IssuanceProto): IssuanceProto.AsObject;
@@ -104,5 +109,6 @@ export namespace IssuanceProto {
         totalAccepted?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         matureSecurityAmount?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         highDiscountRate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        auctionDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
     }
 }

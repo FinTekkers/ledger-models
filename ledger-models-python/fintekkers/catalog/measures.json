@@ -201,7 +201,8 @@
         "Flat forward rates: all future reference rate fixings assumed equal to current observation",
         "When DM = QM, price = par (100) on a reset date",
         "When DM > QM, price < par; when DM < QM, price > par",
-        "Solver: Newton-Raphson, same as YTM"
+        "Solver: Newton-Raphson, same as YTM",
+        "T_BILL_13_WEEK fixings: FrnInput.fixings rate is the auction's high discount rate as Treasury publishes it, in percent per annum on a bank-discount basis (4.215 = 4.215%), the same as IssuanceProto.high_discount_rate. valuation-service converts it to the money-market yield the FRN accrues on, using the fixing's bill_maturity_date. SOFR fixings stay decimal fractions (0.0432 = 4.32%)."
       ],
       "implemented": true
     },

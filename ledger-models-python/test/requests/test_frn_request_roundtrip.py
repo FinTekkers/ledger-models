@@ -223,8 +223,49 @@ class TestReferenceRateFixingRoundTrip:
         assert format(decode_decimal(parsed.clean_price), "f") == "99.75"
 
 
+# LM-382: the T_BILL_13_WEEK fixing carries its bill's maturity, and the
+# issuance its auction date. Each date differs, so a swapped field fails.
+class TestLm382RoundTrip:
+    def test_bill_maturity_date_survives(self):
+        original = _fixing(index_type_pb2.T_BILL_13_WEEK, _date(2026, 7, 20), "4.215")
+        original.bill_maturity_date.CopyFrom(_date(2026, 10, 22))
+        parsed = product_inputs_pb2.ReferenceRateFixingProto.FromString(original.SerializeToString())
+
+        assert parsed.index == index_type_pb2.T_BILL_13_WEEK
+        assert parsed.fixing_date == _date(2026, 7, 20)
+        assert parsed.HasField("bill_maturity_date")
+        assert parsed.bill_maturity_date == _date(2026, 10, 22)
+        assert format(decode_decimal(parsed.rate), "f") == "4.215"
+
+    def test_auction_date_survives(self):
+        original = issuance_pb2.IssuanceProto(
+            auction_announcement_date=_date(2026, 7, 16),
+            auction_date=_date(2026, 7, 20),
+            auction_issue_date=_date(2026, 7, 23),
+            high_discount_rate=_decimal("4.215"),
+        )
+        parsed = issuance_pb2.IssuanceProto.FromString(original.SerializeToString())
+
+        assert parsed.HasField("auction_date")
+        assert parsed.auction_date == _date(2026, 7, 20)
+        assert parsed.auction_issue_date == _date(2026, 7, 23)
+        assert parsed.auction_announcement_date == _date(2026, 7, 16)
+        assert format(decode_decimal(parsed.high_discount_rate), "f") == "4.215"
+
+    def test_new_fields_decode_unset_when_absent(self):
+        fixing = product_inputs_pb2.ReferenceRateFixingProto.FromString(
+            _fixing(index_type_pb2.SOFR, _date(2026, 10, 26), "0.0429").SerializeToString())
+        issuance = issuance_pb2.IssuanceProto.FromString(
+            issuance_pb2.IssuanceProto(auction_issue_date=_date(2026, 7, 23)).SerializeToString())
+
+        assert not fixing.HasField("bill_maturity_date")
+        assert not issuance.HasField("auction_date")
+        assert issuance.auction_issue_date == _date(2026, 7, 23)
+
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 FIELD_CHANGES = json.loads((REPO_ROOT / "test-fixtures" / "field-changes" / "lm-365.json").read_text())
+LM382_ADDED = json.loads((REPO_ROOT / "test-fixtures" / "field-changes" / "lm-382.json").read_text())["added"]
 LM365_MESSAGES = {
     d.full_name: d
     for d in (
@@ -261,9 +302,14 @@ class TestLm365Descriptors:
     def test_added_field_has_number_name_and_type(self, entry):
         _check(entry)
 
+    @pytest.mark.parametrize("entry", LM382_ADDED, ids=lambda e: f"{e['message']}={e['number']}")
+    def test_lm382_added_field_has_number_name_and_type(self, entry):
+        _check(entry)
+
     def test_field_sets_are_exactly_kept_and_added(self):
+        # LM-382's additions join LM-365's kept and added fields.
         expected: dict = {}
-        for entry in FIELD_CHANGES["kept"] + FIELD_CHANGES["added"]:
+        for entry in FIELD_CHANGES["kept"] + FIELD_CHANGES["added"] + LM382_ADDED:
             expected.setdefault(entry["message"][1:], set()).add(entry["number"])
         assert expected.keys() == LM365_MESSAGES.keys()
         for name, message in LM365_MESSAGES.items():
