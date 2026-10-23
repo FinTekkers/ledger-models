@@ -1,0 +1,68 @@
+{
+  "item": "LM-378",
+  "note": "Snapshot from main (beb4b9fc) before LM-378. These measures keep their meaning: the proto comment blocks and catalog entries must not change.",
+  "catalog": {
+    "UNADJUSTED_COST_BASIS": {
+      "name": "UNADJUSTED_COST_BASIS",
+      "enum_value": 3,
+      "display_name": "Unadjusted Cost Basis",
+      "description": "The original purchase price of the security, before any adjustments for amortization, accretion, or corporate actions.",
+      "formula": "Returns the price_input as-is (quoted as % of par for bonds)",
+      "units": "Quoted price (% of par for bonds; dollar price for equities)",
+      "category": "cost",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN",
+        "STOCK",
+        "CASH_INSTRUMENT"
+      ],
+      "model_assumptions": [
+        "None — pass-through of the input price"
+      ],
+      "implemented": true
+    },
+    "INDEX_RATIO": {
+      "name": "INDEX_RATIO",
+      "enum_value": 29,
+      "display_name": "Index Ratio",
+      "description": "The index ratio of a TIPS for the settlement date: reference CPI over the security's base CPI.",
+      "formula": "IndexRatio = reference_cpi / base_cpi (unrounded, unfloored)",
+      "units": "Dimensionless",
+      "category": "valuation",
+      "applies_to": [
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Reference CPI from TipsInput.cpi",
+        "Unrounded (Treasury publishes 5 decimals)",
+        "Unfloored: the deflation floor applies to INFLATION_ADJUSTED_PRINCIPAL only"
+      ],
+      "implemented": false
+    },
+    "REFERENCE_CPI": {
+      "name": "REFERENCE_CPI",
+      "enum_value": 28,
+      "display_name": "Reference CPI",
+      "description": "The reference CPI of a TIPS for the settlement date (UTC date of ValuationRequestProto.asof_datetime), the numerator of the index ratio.",
+      "formula": "reference_cpi as given, or RefCPI = CPI(m-3) + (d - 1) / days_in_month * (CPI(m-2) - CPI(m-3)) from monthly readings",
+      "units": "Index points (e.g. 310.326)",
+      "category": "valuation",
+      "applies_to": [
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Reference CPI from TipsInput.cpi",
+        "Unrounded (Treasury publishes 5 decimals)",
+        "Request rejected unless readings are exactly months m-3 and m-2 (UTC settlement month)",
+        "Absent when no CPI is given"
+      ],
+      "implemented": false
+    }
+  },
+  "measure_proto_comments": {
+    "UNADJUSTED_COST_BASIS": "  // The original purchase price of the security, before any adjustments for\n  // amortization, accretion, or corporate actions.\n  //\n  // Formula: Returns the price_input as-is (quoted as % of par for bonds).\n  //   Over time this may incorporate adjustments such as stock splits.\n  //\n  // Model assumptions: None — pass-through of the input price.\n  // Applicability: Bond, TIPS, FRN, Equity, Cash.\n  // Units: Quoted price (% of par for bonds; dollar price for equities).\n  UNADJUSTED_COST_BASIS = 3;",
+    "INDEX_RATIO": "  // The index ratio of a TIPS for the settlement date.\n  //\n  // Formula:\n  //   IndexRatio = REFERENCE_CPI / security.tips_extension.base_cpi\n  //\n  // Example: RefCPI=312.0, base_cpi=260.0 → IndexRatio = 1.2.\n  //\n  // Model assumptions:\n  //   - Unrounded: Treasury publishes index ratios to 5 decimals; this\n  //     measure is not rounded to match.\n  //   - Unfloored: a ratio below 1 is returned as is. The deflation floor\n  //     belongs to INFLATION_ADJUSTED_PRINCIPAL only.\n  //   - The measure is absent when REFERENCE_CPI or base_cpi is absent.\n  //\n  // Applicability: TIPS only.\n  // Units: Dimensionless ratio (e.g. 1.2 = 20% cumulative inflation since base).\n  INDEX_RATIO = 29;",
+    "REFERENCE_CPI": "  // The reference CPI of a TIPS for the settlement date (the UTC date of\n  // ValuationRequestProto.asof_datetime), the numerator of INDEX_RATIO.\n  //\n  // Formula:\n  //   With TipsInput.cpi.reference_cpi: the value as given.\n  //   With TipsInput.cpi.readings:\n  //     RefCPI = CPI(m-3) + (d - 1) / days_in_month * (CPI(m-2) - CPI(m-3))\n  //   Where m is the settlement month, the month of the UTC date of\n  //   ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;\n  //   time_zone is not used), d the settlement day of month,\n  //   days_in_month the number of days in month m, and CPI(m-k) the reading\n  //   for the month k months before m.\n  //\n  // Example: settlement 2026-07-16, CPI(April)=320.0, CPI(May)=321.5 →\n  //   RefCPI = 320.0 + 15/31 * (321.5 - 320.0) = 320.72580645...\n  //\n  // Model assumptions:\n  //   - Unrounded: Treasury publishes reference CPIs to 5 decimals; this\n  //     measure is not rounded to match.\n  //   - With readings, the request is rejected unless readings are exactly\n  //     months m-3 and m-2 (a missing, extra or duplicate month).\n  //   - The measure is absent when no CPI is given.\n  //\n  // Applicability: TIPS only.\n  // Units: Index points (e.g. 310.326).\n  REFERENCE_CPI = 28;"
+  }
+}

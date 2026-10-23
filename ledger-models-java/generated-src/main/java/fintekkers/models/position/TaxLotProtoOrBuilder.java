@@ -36,7 +36,7 @@ public interface TaxLotProtoOrBuilder extends
 
   /**
    * <pre>
-   * quantity still open, in the position's units (face value for bonds)
+   * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -45,7 +45,7 @@ public interface TaxLotProtoOrBuilder extends
   boolean hasOpenQuantity();
   /**
    * <pre>
-   * quantity still open, in the position's units (face value for bonds)
+   * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -54,7 +54,7 @@ public interface TaxLotProtoOrBuilder extends
   fintekkers.models.util.DecimalValue.DecimalValueProto getOpenQuantity();
   /**
    * <pre>
-   * quantity still open, in the position's units (face value for bonds)
+   * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>

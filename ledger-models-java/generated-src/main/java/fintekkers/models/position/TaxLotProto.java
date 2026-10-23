@@ -94,7 +94,7 @@ private static final long serialVersionUID = 0L;
   private fintekkers.models.util.DecimalValue.DecimalValueProto openQuantity_;
   /**
    * <pre>
-   * quantity still open, in the position's units (face value for bonds)
+   * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -106,7 +106,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * quantity still open, in the position's units (face value for bonds)
+   * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -118,7 +118,7 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * quantity still open, in the position's units (face value for bonds)
+   * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -743,7 +743,7 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> openQuantityBuilder_;
     /**
      * <pre>
-     * quantity still open, in the position's units (face value for bonds)
+     * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -754,7 +754,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * quantity still open, in the position's units (face value for bonds)
+     * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -769,7 +769,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * quantity still open, in the position's units (face value for bonds)
+     * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -789,7 +789,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * quantity still open, in the position's units (face value for bonds)
+     * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -807,7 +807,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * quantity still open, in the position's units (face value for bonds)
+     * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -830,7 +830,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * quantity still open, in the position's units (face value for bonds)
+     * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -847,7 +847,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * quantity still open, in the position's units (face value for bonds)
+     * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -859,7 +859,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * quantity still open, in the position's units (face value for bonds)
+     * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>
@@ -874,7 +874,7 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * quantity still open, in the position's units (face value for bonds)
+     * quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto open_quantity = 2;</code>

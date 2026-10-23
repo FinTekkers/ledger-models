@@ -17,6 +17,6 @@ option java_outer_classname = "TaxLotProtos";
 // See docs/adr/amortisation_elections.md.
 message TaxLotProto {
   fintekkers.models.util.LocalDateProto open_date = 1;         // the opening trade date
-  fintekkers.models.util.DecimalValueProto open_quantity = 2;  // quantity still open, in the position's units (face value for bonds)
+  fintekkers.models.util.DecimalValueProto open_quantity = 2;  // quantity still open, in the position's units (face value for bonds; TIPS: original face, not inflation-adjusted)
   fintekkers.models.util.DecimalValueProto price = 3;          // purchase price per 100 face, clean; TIPS: the real (unadjusted) price
 }
