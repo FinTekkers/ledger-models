@@ -61,10 +61,11 @@ from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import CUSIP
 from fintekkers.models.security.index.index_type_pb2 import IndexTypeProto
 from fintekkers.models.security.product_type_pb2 import TREASURY_FRN, TREASURY_NOTE
-from fintekkers.models.security.security_pb2 import SecurityProto
+from fintekkers.models.security.security_pb2 import BondDetailsProto, SecurityProto
 from fintekkers.models.security.tenor_type_pb2 import TenorTypeProto
 from fintekkers.models.transaction.transaction_pb2 import TransactionProto
 from fintekkers.models.transaction.transaction_type_pb2 import TransactionTypeProto
+from fintekkers.models.util.local_date_pb2 import LocalDateProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
@@ -92,6 +93,7 @@ from fintekkers.wrappers.models.security.mortgage_backed_security import Mortgag
 from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.security.security_identifier import Identifier
 from fintekkers.wrappers.models.security.tenor import Tenor
+from fintekkers.wrappers.models.security import treasury_frn_fixings
 from fintekkers.wrappers.models.security.tips_bond import TIPSBond
 from fintekkers.wrappers.models.transaction import Transaction
 from fintekkers.wrappers.models.util import date_utils
@@ -399,6 +401,11 @@ BUILDERS = {
     "models.util.date_utils.get_date_proto": lambda: date_utils.get_date_proto(date(2026, 10, 14)),
     "models.util.date_utils.today_proto": lambda: date_utils.today_proto(),
     "models.util.decimal.encode_decimal": lambda: encode_decimal(Decimal("99.5")),
+    "models.security.treasury_frn_fixings.select": lambda: treasury_frn_fixings.select([BondSecurity(SecurityProto(
+        bond_details=BondDetailsProto(maturity_date=LocalDateProto(year=2026, month=10, day=22), issuance_info=[
+            IssuanceProto(auction_date=LocalDateProto(year=2026, month=7, day=20),
+                          auction_issue_date=LocalDateProto(year=2026, month=7, day=23),
+                          high_discount_rate=encode_decimal(Decimal("4.215")))])))], date(2026, 7, 20)),
     "models.util.serialization.ProtoSerializationUtil.serialize": lambda: [
         ProtoSerializationUtil.serialize(value) for value in (
             UUID(int=109), date(2026, 10, 14), datetime(2026, 10, 14, 9, 30), Decimal("1.5"), "text",
@@ -492,6 +499,9 @@ NOT_BUILDERS = {
     "models.security.tenor.Tenor.from_tenor_description": "returns a relativedelta",
     "models.security.tenor.Tenor.parse_period": "returns a relativedelta",
     "models.security.tenor.Tenor.period_to_string": "returns a str",
+    "models.security.tenor.Tenor.period_between": "returns a relativedelta",
+    "models.security.tenor.Tenor.of_period": "returns a Tenor, which holds a relativedelta; Tenor.as_proto is the builder",
+    "models.security.treasury_frn_fixings.standard_bill_term": "returns an int or None",
     "models.util.date_utils.get_date": "returns a datetime",
     "models.util.date_utils.get_date_as_dict": "returns a dict",
     "models.util.date_utils.get_date_from_proto": "read path: returns a datetime",
