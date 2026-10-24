@@ -472,8 +472,31 @@ describe('LM-382 auction_date and bill_maturity_date round-trip', () => {
 
         expect(parsedFixing.hasBillMaturityDate()).toBe(false);
         expect(parsedFixing.getBillMaturityDate()).toBeUndefined();
+        expect(parsedFixing.hasBillIssueDate()).toBe(false);
+        expect(parsedFixing.getBillIssueDate()).toBeUndefined();
         expect(parsedIssuance.hasAuctionDate()).toBe(false);
         expect(parsedIssuance.getAuctionDate()).toBeUndefined();
         expect(parsedIssuance.getAuctionIssueDate()!.toObject()).toEqual(date(2026, 7, 23).toObject());
+    });
+});
+
+// ── T-bill fixing issue date (LM-389) ───────────────────────────────────────
+// The T_BILL_13_WEEK fixing carries its auction's issue date. Fixing, issue
+// and maturity dates all differ, so a swapped field fails.
+
+describe('LM-389 bill_issue_date round-trip', () => {
+    test('bill_issue_date = 5 survives on the fixing', () => {
+        const original = fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 7, 20), '4.215');
+        original.setBillMaturityDate(date(2026, 10, 22));
+        original.setBillIssueDate(date(2026, 7, 23));
+        expect(wireFields(original.serializeBinary())).toEqual(
+            [[1, VARINT], [2, DELIMITED], [3, DELIMITED], [4, DELIMITED], [5, DELIMITED]]);
+
+        const parsed = ReferenceRateFixingProto.deserializeBinary(original.serializeBinary());
+
+        expect(parsed.hasBillIssueDate()).toBe(true);
+        expect(parsed.getBillIssueDate()!.toObject()).toEqual(date(2026, 7, 23).toObject());
+        expect(parsed.getFixingDate()!.toObject()).toEqual(date(2026, 7, 20).toObject());
+        expect(parsed.getBillMaturityDate()!.toObject()).toEqual(date(2026, 10, 22).toObject());
     });
 });

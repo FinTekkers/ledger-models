@@ -92,6 +92,14 @@ def _input_rate(bills: list[BondSecurity], auction_date: date) -> DecimalValuePr
     raise AssertionError(f"no input issuance auctioned {auction_date}")
 
 
+def _input_issue_date(bills: list[BondSecurity], auction_date: date) -> LocalDateProto:
+    for b in bills:
+        for i in b.get_issuances():
+            if i.get_auction_date() == auction_date and i.get_high_discount_rate() is not None:
+                return i.proto.auction_issue_date
+    raise AssertionError(f"no input issuance auctioned {auction_date}")
+
+
 # ---- metric 1: per-issuance tenor -----------------------------------------
 
 
@@ -183,6 +191,11 @@ def _assert_select_block(block: dict) -> int:
         assert got.rate == _input_rate(bills, fixing_date), c["case"]
         assert got.fixing_date == _date_proto(fixing_date), c["case"]
         assert got.bill_maturity_date == _date_proto(_d(want["bill_maturity_date"])), c["case"]
+        # LM-389: bill_issue_date is the chosen issuance's auction_issue_date.
+        assert "bill_issue_date" in want, f"{c['case']}: fixture fixing has no bill_issue_date"
+        assert got.HasField("bill_issue_date"), c["case"]
+        assert got.bill_issue_date == _date_proto(_d(want["bill_issue_date"])), c["case"]
+        assert got.bill_issue_date == _input_issue_date(bills, fixing_date), c["case"]
     return len(block["cases"])
 
 
@@ -192,6 +205,30 @@ def test_select_matches_fixture():
 
 def test_select_skips_matches_fixture():
     assert _assert_select_block(_fixture()["select_skips"]) == 2
+
+
+def test_select_reopening_bill_issue_date_is_the_reopenings():
+    bills = _bills(_fixture()["select"]["bills"])
+
+    got = select(bills, _d("2026-07-20"))
+
+    assert got.bill_issue_date == _date_proto(_d("2026-07-23"))
+    assert got.bill_issue_date != _date_proto(_d("2026-04-23"))
+
+
+def test_select_bill_issue_date_is_copied_not_derived():
+    # Issued four days after the auction (e.g. a holiday), so the issue date
+    # is neither maturity - 91 days nor auction + 3 days: 2026-07-23.
+    late = IssuanceProto(
+        auction_date=_date_proto(_d("2026-07-20")),
+        auction_issue_date=_date_proto(_d("2026-07-24")),
+        high_discount_rate=encode_decimal(Decimal("4.215")),
+    )
+
+    got = select([_bill(_d("2026-10-22"), [late])], _d("2026-07-20"))
+
+    assert got.bill_issue_date == _date_proto(_d("2026-07-24"))
+    assert got.bill_issue_date != _date_proto(_d("2026-07-23"))
 
 
 def test_select_empty_bill_list_is_none():

@@ -1,0 +1,6 @@
+{
+  "item": "LM-389",
+  "added": [
+    {"message": ".fintekkers.requests.valuation.ReferenceRateFixingProto", "number": 5, "name": "bill_issue_date", "type": ".fintekkers.models.util.LocalDateProto"}
+  ]
+}

@@ -87,7 +87,7 @@ message IssuanceProto {
 
 ### Open point for valuation-service: days to maturity
 
-Treasury's investment-rate formula counts days from the bill's **issue** date to maturity. The fixing carries `fixing_date` (the auction date) and `bill_maturity_date`, but no issue date, and no further field is added here. valuation-service must count from the issue date (for example `fixing_date` plus the bill's settlement lag), or it overstates the days by the auction-to-issue lag. The owner rules on this in the valuation-service follow-up.
+Treasury's investment-rate formula counts days from the bill's **issue** date to maturity. The fixing carries `fixing_date` (the auction date) and `bill_maturity_date`, but no issue date, and no further field is added here. valuation-service must count from the issue date (for example `fixing_date` plus the bill's settlement lag), or it overstates the days by the auction-to-issue lag. The owner rules on this in the valuation-service follow-up. *Superseded by the LM-389 amendment below: the fixing now carries `bill_issue_date`.*
 
 ### Consequences
 
@@ -126,3 +126,24 @@ Accepted (LM-386, part 3 of LM-382). Library methods only; no proto change. The 
 - **JS `calculatePeriod` fix (owner ruling, Option A).** `getIssuanceTenor` reuses the private `calculatePeriod`, the formula of `getTenor()`, so JS keeps one term formula. For a forward period (start on or before end) it now ports Java's `LocalDate.until`: whole months stepped from the start with month-end clamping, then the leftover days. Before, it added the prior month's length with no clamp, so `2026-01-31 -> 2026-03-01` gave `P1M-2D` and `2026-01-31 -> 2026-03-30` gave `P1M27D`; both now match Java (`P1M1D`, `P1M30D`). Years and months never change, so `getProductType()` is unaffected; only days change, for start days past the length of the month before the end month. **The backward branch** (start after end, from `getTenor(asOfDate)` after maturity) **keeps the original arithmetic on purpose**, so no existing years or months output changes.
 - **Rust:** `wrappers::models::tenor::Tenor { years, months, days }` mirrors Java's `Period`, not the JS `Tenor` (which also holds a tenor type). `Tenor::between(start, end)` ports `LocalDate.until`, backward periods included; `Tenor::add_to(date)` is `LocalDate.plus(Period)`. It is a period type, not a stored term: `BondSecurity::original_tenor()` stays the ACT/ACT decimal-year count. `Issuance::auction_date()` and `high_discount_rate()` (None when unset or an empty decimal); `BondSecurity::issuance_tenor(&issuance) -> Option<Tenor>` (None where Java returns `UNKNOWN_TENOR`); `wrappers::models::treasury_frn_fixings::standard_bill_term(&Tenor, anchor) -> Option<u32>` and `select(&[BondSecurity], date) -> Option<ReferenceRateFixingProto>`. `select` skips through `high_discount_rate()`, so an empty decimal is skipped as in Java.
 - **Builder-stamp guards.** `ReferenceRateFixingProto` has no `object_type`. The Rust scan does not flag `select`; the JS scan flags it only for calling `BondSecurity.getIssuances`, so it is an `EXCLUSIONS` row in `object-types.test.ts`.
+
+## Amendment 2026-10-24 (LM-389): `bill_issue_date`
+
+### Status
+
+Accepted (LM-389). Owner ruling on LM-383, option (a), 24 Oct. Additive proto change.
+
+### Decision
+
+- `ReferenceRateFixingProto` gains `fintekkers.models.util.LocalDateProto bill_issue_date = 5`. For `T_BILL_13_WEEK` it is the issue date of the auction chosen for the fixing, copied from that issuance's `IssuanceProto.auction_issue_date`. A reopened bill uses the reopening's own issue date, not the original auction's. Unset for SOFR.
+- valuation-service counts the bill's days to maturity from `bill_issue_date` to `bill_maturity_date`. This settles the open point above; no settlement-lag guess is needed. ledger-models still does no conversion maths.
+- `rate`, `fixing_date` and `bill_maturity_date` keep their meanings.
+- `select` in all four languages still picks the same issuance and copies its `auction_issue_date` proto into `bill_issue_date`. It never derives it, from maturity minus 91 days or from the auction date. The shared fixture's expected fixings gain `bill_issue_date`; every language also tests an inline bill issued four days after its auction, where a derived date would be wrong.
+- Validation that a `T_BILL_13_WEEK` fixing has `bill_issue_date` is left to a separate item, once valuation-service reads the field. Requiring it now would reject valid payloads built before this field.
+
+### Consequences
+
+- Old readers skip field 5; new readers see it unset in old data.
+- Rust code that builds `ReferenceRateFixingProto` with a struct literal and no `..Default::default()` must add the field.
+- `wire-diff.py` rule `lm389` allows exactly this addition, listed in `test-fixtures/field-changes/lm-389.json`. The Java, Python and Rust exact-field-set tests take the union with that file.
+- If the field is ever removed, 5 and `bill_issue_date` must be `reserved`, never reused.

@@ -258,6 +258,21 @@ class FrnRequestRoundtripTest {
         assertEquals("4.215", Decimals.text(parsed.getHighDiscountRate()));
     }
 
+    // LM-389: the T_BILL_13_WEEK fixing carries its auction's issue date.
+    // Fixing, issue and maturity dates all differ, so a swapped field fails.
+    @Test
+    void lm389_billIssueDateSurvivesRoundtrip() throws InvalidProtocolBufferException {
+        ReferenceRateFixingProto original = fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 7, 20), "4.215")
+                .toBuilder().setBillMaturityDate(date(2026, 10, 22)).setBillIssueDate(date(2026, 7, 23)).build();
+
+        ReferenceRateFixingProto parsed = ReferenceRateFixingProto.parseFrom(original.toByteArray());
+
+        assertTrue(parsed.hasBillIssueDate());
+        assertEquals(date(2026, 7, 23), parsed.getBillIssueDate());
+        assertEquals(date(2026, 7, 20), parsed.getFixingDate());
+        assertEquals(date(2026, 10, 22), parsed.getBillMaturityDate());
+    }
+
     /** LM-382: a message without the new fields decodes with them unset, not as a default date. */
     @Test
     void lm382_newFieldsDecodeUnsetWhenAbsent() throws InvalidProtocolBufferException {
@@ -267,6 +282,7 @@ class FrnRequestRoundtripTest {
                 IssuanceProto.newBuilder().setAuctionIssueDate(date(2026, 7, 23)).build().toByteArray());
 
         assertFalse(fixing.hasBillMaturityDate());
+        assertFalse(fixing.hasBillIssueDate());
         assertFalse(issuance.hasAuctionDate());
         assertEquals(date(2026, 7, 23), issuance.getAuctionIssueDate());
     }
@@ -280,6 +296,12 @@ class FrnRequestRoundtripTest {
 
     private static JsonArray lm382Added() throws IOException {
         return JsonParser.parseString(Files.readString(LM382_FIELD_CHANGES)).getAsJsonObject().getAsJsonArray("added");
+    }
+
+    private static final Path LM389_FIELD_CHANGES = Path.of("..", "test-fixtures", "field-changes", "lm-389.json");
+
+    private static JsonArray lm389Added() throws IOException {
+        return JsonParser.parseString(Files.readString(LM389_FIELD_CHANGES)).getAsJsonObject().getAsJsonArray("added");
     }
 
     private static final List<Descriptor> LM365_MESSAGES = List.of(
@@ -334,11 +356,19 @@ class FrnRequestRoundtripTest {
         }
     }
 
-    /** LM-365: each message's field numbers are exactly kept plus added, plus LM-382's additions. */
+    /** LM-389: bill_issue_date = 5, LocalDateProto. */
+    @Test
+    void lm389_addedFieldsHaveNumberNameAndType() throws IOException {
+        for (JsonElement el : lm389Added()) {
+            assertField(el.getAsJsonObject());
+        }
+    }
+
+    /** LM-365: each message's field numbers are exactly kept plus added, plus LM-382's and LM-389's additions. */
     @Test
     void lm365_fieldSetsAreExactlyKeptAndAdded() throws IOException {
         Map<String, Set<Integer>> expected = new TreeMap<>();
-        List<JsonArray> sections = List.of(fieldChanges("kept"), fieldChanges("added"), lm382Added());
+        List<JsonArray> sections = List.of(fieldChanges("kept"), fieldChanges("added"), lm382Added(), lm389Added());
         for (JsonArray section : sections) {
             for (JsonElement el : section) {
                 JsonObject entry = el.getAsJsonObject();

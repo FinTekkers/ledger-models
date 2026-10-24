@@ -281,6 +281,22 @@ fn lm382_auction_date_round_trips() {
     assert_eq!(parsed.high_discount_rate.expect("high_discount_rate").canonical(), "4.215");
 }
 
+// LM-389: the T_BILL_13_WEEK fixing carries its auction's issue date.
+// Fixing, issue and maturity dates all differ, so a swapped field fails.
+#[test]
+fn lm389_bill_issue_date_round_trips() {
+    let original = ReferenceRateFixingProto {
+        bill_maturity_date: Some(date(2026, 10, 22)),
+        bill_issue_date: Some(date(2026, 7, 23)),
+        ..fixing(2026, 7, 20, "4.215")
+    };
+    let parsed = ReferenceRateFixingProto::decode(original.encode_to_vec().as_slice()).expect("decode failed");
+
+    assert_eq!(parsed.bill_issue_date, Some(date(2026, 7, 23)));
+    assert_eq!(parsed.fixing_date, Some(date(2026, 7, 20)));
+    assert_eq!(parsed.bill_maturity_date, Some(date(2026, 10, 22)));
+}
+
 #[test]
 fn lm382_new_fields_decode_unset_when_absent() {
     let mut sofr = fixing(2026, 10, 26, "0.0429");
@@ -290,6 +306,7 @@ fn lm382_new_fields_decode_unset_when_absent() {
     let issuance = IssuanceProto::decode(old_issuance.encode_to_vec().as_slice()).expect("decode failed");
 
     assert_eq!(fixing.bill_maturity_date, None);
+    assert_eq!(fixing.bill_issue_date, None);
     assert_eq!(issuance.auction_date, None);
     assert_eq!(issuance.auction_issue_date, Some(date(2026, 7, 23)));
 }

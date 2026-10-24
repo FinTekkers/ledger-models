@@ -138,4 +138,43 @@ public interface ReferenceRateFixingProtoOrBuilder extends
    * <code>.fintekkers.models.util.LocalDateProto bill_maturity_date = 4;</code>
    */
   fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getBillMaturityDateOrBuilder();
+
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+   * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+   * A reopened bill uses the reopening's own issue date, not the original
+   * auction's. valuation-service counts the bill's days to maturity from
+   * here to bill_maturity_date. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+   * @return Whether the billIssueDate field is set.
+   */
+  boolean hasBillIssueDate();
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+   * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+   * A reopened bill uses the reopening's own issue date, not the original
+   * auction's. valuation-service counts the bill's days to maturity from
+   * here to bill_maturity_date. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+   * @return The billIssueDate.
+   */
+  fintekkers.models.util.LocalDate.LocalDateProto getBillIssueDate();
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+   * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+   * A reopened bill uses the reopening's own issue date, not the original
+   * auction's. valuation-service counts the bill's days to maturity from
+   * here to bill_maturity_date. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+   */
+  fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getBillIssueDateOrBuilder();
 }

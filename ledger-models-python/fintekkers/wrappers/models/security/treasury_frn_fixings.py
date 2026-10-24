@@ -51,8 +51,9 @@ def select(bills: list[BondSecurity], as_of: date) -> Optional[ReferenceRateFixi
     latest auction date. On a tie the first in input order wins.
 
     The fixing's ``rate`` is the issuance's ``high_discount_rate`` unchanged,
-    ``fixing_date`` its ``auction_date`` and ``bill_maturity_date`` the
-    bill's maturity. None when nothing qualifies.
+    ``fixing_date`` its ``auction_date``, ``bill_maturity_date`` the
+    bill's maturity and ``bill_issue_date`` its ``auction_issue_date``,
+    copied as is (LM-389). None when nothing qualifies.
     """
     if not bills or as_of is None:
         return None
@@ -86,4 +87,5 @@ def select(bills: list[BondSecurity], as_of: date) -> Optional[ReferenceRateFixi
     fixing.bill_maturity_date.CopyFrom(
         LocalDateProto(year=maturity.year, month=maturity.month, day=maturity.day)
     )
+    fixing.bill_issue_date.CopyFrom(best.proto.auction_issue_date)
     return fixing

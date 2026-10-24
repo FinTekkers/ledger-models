@@ -61,8 +61,9 @@ public final class TreasuryFrnFixings {
      * the latest auction date. On a tie the first in input order wins.
      *
      * <p>The fixing's {@code rate} is the issuance's {@code high_discount_rate}
-     * unchanged, {@code fixing_date} its {@code auction_date} and
-     * {@code bill_maturity_date} the bill's maturity. Empty when nothing
+     * unchanged, {@code fixing_date} its {@code auction_date},
+     * {@code bill_maturity_date} the bill's maturity and {@code bill_issue_date}
+     * its {@code auction_issue_date}, copied as is (LM-389). Empty when nothing
      * qualifies.
      */
     public static Optional<ReferenceRateFixingProto> select(List<BondSecurity> bills, LocalDate date) {
@@ -97,6 +98,7 @@ public final class TreasuryFrnFixings {
                 .setFixingDate(proto.getAuctionDate())
                 .setRate(proto.getHighDiscountRate())
                 .setBillMaturityDate(ProtoSerializationUtil.serializeLocalDate(bestBill.getMaturityDate()))
+                .setBillIssueDate(proto.getAuctionIssueDate())
                 .build());
     }
 }

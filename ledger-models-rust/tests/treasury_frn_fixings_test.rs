@@ -112,7 +112,8 @@ fn expected_fixing(f: &Value) -> ReferenceRateFixingProto {
         fixing_date: Some(date_proto(str_of(f, "fixing_date"))),
         rate: Some(decimal(str_of(f, "rate"))),
         bill_maturity_date: Some(date_proto(str_of(f, "bill_maturity_date"))),
-        ..Default::default()
+        // LM-389: the chosen issuance's auction_issue_date; a missing key panics.
+        bill_issue_date: Some(date_proto(str_of(f, "bill_issue_date"))),
     }
 }
 
@@ -228,4 +229,24 @@ fn select_tie_on_auction_date_goes_to_the_first_in_input_order() {
     let got = select(&[second(), first()], date).unwrap();
     assert_eq!(got.rate.unwrap().canonical(), "4.215");
     assert_eq!(got.bill_maturity_date, Some(date_proto("2026-10-22")));
+}
+
+// ---------- LM-389: bill_issue_date ----------
+
+#[test]
+fn select_reopening_bill_issue_date_is_the_reopenings() {
+    let bills = fixture_bills(&fixture()["select"]);
+    let got = select(&bills, parse_date("2026-07-20")).expect("the reopening qualifies");
+    assert_eq!(got.bill_issue_date, Some(date_proto("2026-07-23")));
+    assert_ne!(got.bill_issue_date, Some(date_proto("2026-04-23")));
+}
+
+#[test]
+fn select_bill_issue_date_is_copied_not_derived() {
+    // Issued four days after the auction (e.g. a holiday), so the issue date
+    // is neither maturity - 91 days nor auction + 3 days: 2026-07-23.
+    let late = bill("2026-10-22", vec![issuance(Some("2026-07-20"), Some("2026-07-24"), Some(decimal("4.215")))]);
+    let got = select(&[late], parse_date("2026-07-20")).expect("the late-issued bill qualifies");
+    assert_eq!(got.bill_issue_date, Some(date_proto("2026-07-24")));
+    assert_ne!(got.bill_issue_date, Some(date_proto("2026-07-23")));
 }

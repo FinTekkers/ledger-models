@@ -39,8 +39,9 @@ pub fn standard_bill_term(tenor: &Tenor, anchor: NaiveDate) -> Option<u32> {
 /// latest auction date. On a tie the first in input order wins.
 ///
 /// The fixing's `rate` is the issuance's `high_discount_rate` proto
-/// unchanged, `fixing_date` its `auction_date` and `bill_maturity_date` the
-/// bill's maturity. None when nothing qualifies.
+/// unchanged, `fixing_date` its `auction_date`, `bill_maturity_date` the
+/// bill's maturity and `bill_issue_date` its `auction_issue_date`, copied as
+/// is (LM-389). None when nothing qualifies.
 pub fn select(bills: &[BondSecurity], date: NaiveDate) -> Option<ReferenceRateFixingProto> {
     let mut best: Option<(NaiveDate, Issuance, NaiveDate)> = None;
     for bill in bills {
@@ -70,6 +71,7 @@ pub fn select(bills: &[BondSecurity], date: NaiveDate) -> Option<ReferenceRateFi
         fixing_date: proto.auction_date,
         rate: proto.high_discount_rate,
         bill_maturity_date: Some(date_proto(maturity)),
+        bill_issue_date: proto.auction_issue_date,
     })
 }
 
