@@ -7,8 +7,8 @@ const decimal_1 = require("../utils/decimal");
  * sub-messages and Decimal/Date for populated ones — callers no longer
  * have to spell out the proto / Decimal coercions at every call site.
  *
- * Note: IssuanceProto has no `dated_date` or `auction_date` field on the
- * proto today, so those accessors are intentionally absent.
+ * Note: IssuanceProto has no `dated_date` field on the proto today, so that
+ * accessor is intentionally absent.
  */
 class Issuance {
     constructor(proto) {
@@ -26,6 +26,19 @@ class Issuance {
     /** Auction announcement date. Null if unset. */
     getAnnouncementDate() {
         return (0, date_1.localDateProtoToDate)(this.proto.getAuctionAnnouncementDate());
+    }
+    /** The date the auction was held, when a bill's high discount rate is set. Null if unset. */
+    getAuctionDate() {
+        if (!this.proto.hasAuctionDate())
+            return null;
+        return (0, date_1.localDateProtoToDate)(this.proto.getAuctionDate());
+    }
+    /**
+     * The auction's high discount rate as Treasury publishes it (percent,
+     * bank-discount basis). Null when unset or set to an empty decimal.
+     */
+    getHighDiscountRate() {
+        return Issuance._toDecimal(this.proto.getHighDiscountRate());
     }
     /** Auction offering amount (original face value offered). Null if unset. */
     getOriginalFaceValue() {

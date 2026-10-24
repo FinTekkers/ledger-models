@@ -38,8 +38,21 @@ declare class BondSecurity extends Security {
      */
     getTenor(asOfDate?: Date): Tenor;
     /**
+     * The tenor of one auction of this bond: the period from that issuance's
+     * `auction_issue_date` to the bond's maturity, the same formula as
+     * `getTenor()`. A reopened 26-week bill reads 26W for its original auction
+     * and 13W for a reopening 13 weeks before maturity. `Tenor.UNKNOWN_TENOR`
+     * when either date is unset.
+     */
+    getIssuanceTenor(issuance: Issuance | null): Tenor;
+    /**
      * Calculates the period between two dates in years, months, and days.
      * This method handles month and year boundaries correctly.
+     *
+     * A forward period (start on or before end) matches Java's
+     * `Period.between`: whole months stepped from the start, clamped to month
+     * end, then the leftover days, so 2026-01-31 -> 2026-03-01 is 1M1D (LM-386).
+     * A backward period keeps the original arithmetic.
      */
     private calculatePeriod;
     getCouponRate(): Decimal | null;

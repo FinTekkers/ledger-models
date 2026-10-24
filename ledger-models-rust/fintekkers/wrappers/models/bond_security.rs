@@ -8,6 +8,7 @@ use crate::fintekkers::models::util::LocalDateProto;
 use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
 // security_type wrapper deleted in M1; use ProductTypeProto directly or ProductHierarchy helper.
 use crate::fintekkers::wrappers::models::issuance::Issuance;
+use crate::fintekkers::wrappers::models::tenor::Tenor;
 use crate::fintekkers::wrappers::models::utils::errors::Error;
 use crate::fintekkers::wrappers::util::object_types::stamp_own;
 
@@ -47,6 +48,15 @@ impl BondSecurity {
         let issue = self.issue_date()?;
         let maturity = self.maturity_date()?;
         Some(act_act_year_fraction(issue, maturity))
+    }
+
+    /// The tenor of one auction of this bond: the calendar period from that
+    /// issuance's `auction_issue_date` to the bond's maturity, as Java's
+    /// `BondSecurity.getIssuanceTenor` (`Period.between`). A reopened 26-week
+    /// bill reads 26W for its original auction and 13W for a reopening 13
+    /// weeks before maturity. None when either date is unset.
+    pub fn issuance_tenor(&self, issuance: &Issuance) -> Option<Tenor> {
+        Some(Tenor::between(issuance.issue_date()?, self.maturity_date()?))
     }
 
     /// Effective tenor in decimal years: `maturity_date - as_of` under ACT/ACT.

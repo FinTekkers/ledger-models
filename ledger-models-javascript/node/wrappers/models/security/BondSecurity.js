@@ -70,10 +70,43 @@ class BondSecurity extends security_1.default {
         return new term_1.Tenor(tenor_type_pb_1.TenorTypeProto.TERM, period);
     }
     /**
+     * The tenor of one auction of this bond: the period from that issuance's
+     * `auction_issue_date` to the bond's maturity, the same formula as
+     * `getTenor()`. A reopened 26-week bill reads 26W for its original auction
+     * and 13W for a reopening 13 weeks before maturity. `Tenor.UNKNOWN_TENOR`
+     * when either date is unset.
+     */
+    getIssuanceTenor(issuance) {
+        const issueDate = issuance ? issuance.getIssueDate() : null;
+        const maturityDate = this.getMaturityDate();
+        if (!issueDate || !maturityDate)
+            return term_1.Tenor.UNKNOWN_TENOR;
+        return new term_1.Tenor(tenor_type_pb_1.TenorTypeProto.TERM, this.calculatePeriod(issueDate, maturityDate));
+    }
+    /**
      * Calculates the period between two dates in years, months, and days.
      * This method handles month and year boundaries correctly.
+     *
+     * A forward period (start on or before end) matches Java's
+     * `Period.between`: whole months stepped from the start, clamped to month
+     * end, then the leftover days, so 2026-01-31 -> 2026-03-01 is 1M1D (LM-386).
+     * A backward period keeps the original arithmetic.
      */
     calculatePeriod(startDate, endDate) {
+        if ((0, date_1.daysBetween)(startDate, endDate) >= 0) {
+            let totalMonths = (endDate.getFullYear() - startDate.getFullYear()) * 12
+                + (endDate.getMonth() - startDate.getMonth());
+            let forwardDays = endDate.getDate() - startDate.getDate();
+            if (totalMonths > 0 && forwardDays < 0) {
+                totalMonths--;
+                forwardDays = (0, date_1.daysBetween)((0, date_1.plusMonthsClamped)(startDate, totalMonths), endDate);
+            }
+            return {
+                years: Math.trunc(totalMonths / 12),
+                months: totalMonths % 12,
+                days: forwardDays
+            };
+        }
         let years = endDate.getFullYear() - startDate.getFullYear();
         let months = endDate.getMonth() - startDate.getMonth();
         let days = endDate.getDate() - startDate.getDate();
