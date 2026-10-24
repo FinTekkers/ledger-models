@@ -294,6 +294,22 @@ public class BondSecurity extends Security {
         return new Tenor(TenorType.TERM, Period.between(issue, maturity));
     }
 
+    /**
+     * The tenor of one auction of this bond: {@code Period.between} that
+     * issuance's {@code auction_issue_date} and the bond's maturity, the same
+     * formula as {@link #getTenor()}. A reopened 26-week bill reads 26W for its
+     * original auction and 13W for a reopening 13 weeks before maturity.
+     * {@link Tenor#UNKNOWN_TENOR} when either date is unset.
+     */
+    public Tenor getIssuanceTenor(Issuance issuance) {
+        LocalDate issue = issuance == null ? null : issuance.getIssueDate();
+        LocalDate maturity = getMaturityDate();
+        if (issue == null || maturity == null) {
+            return Tenor.UNKNOWN_TENOR;
+        }
+        return new Tenor(TenorType.TERM, Period.between(issue, maturity));
+    }
+
     public Tenor getAdjustedTenor(LocalDate asOfDate) {
         LocalDate maturity = getMaturityDate();
         if (maturity == null) return Tenor.UNKNOWN_TENOR;
