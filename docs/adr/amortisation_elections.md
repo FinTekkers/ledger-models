@@ -52,6 +52,14 @@ The full measure rules (OID, premium, market discount, de minimis, accrual start
 - `TaxLotProto.price`: purchase price per 100 face, clean. TIPS: real, not multiplied by the index ratio.
 - `ADJUSTED_COST_BASIS`: price per 100 face, quantity-weighted over the open lots. TIPS: per 100 original face, in nominal dollars.
 
+## Treasury FRN (LM-383)
+
+The `ADJUSTED_COST_BASIS` comment and catalog entry state the Treasury FRN rule (`T_BILL_13_WEEK` index). It reuses the existing inputs and adds no field: `FrnInput.cost_basis` (20) for lots and elections, and `FrnInput.fixings` (11), whose `rate` keeps the LM-382 meaning, the published high discount rate in percent (`valuation_input_units.md` row L7).
+
+- **Per lot, fixed at the lot's accrual start.** Each lot is amortised as the equivalent fixed-rate instrument, with coupon `MMY(fixing) + spread / 10000` from the fixing in effect at the lot's accrual start (latest `fixing_date` on or before it). Later resets do not change the schedule, so a lot's basis never needs the fixing history after it opens. OID uses the fixing in effect on the issue date.
+- **The conversion is valuation-service's job** (owner ruling, 24 Oct, option (a)): `MMY = 360 * d / (360 - d * t)`, a 360-day basis, with `d = rate / 100` and `t = bill_maturity_date - bill_issue_date` in days. `bill_issue_date` (LM-389) is the chosen auction's own issue date, so a reopened bill counts from the reopening.
+- **No fixing on or before a needed date makes the request invalid.** Other indices (SOFR) are not defined yet.
+
 ## Who maps TaxLotSummary to TaxLotProto
 
 `TaxLotSummary` is in the models jar, so the `TaxLotSummary` → `TaxLotProto` serializer belongs in ledger-models too (Models first, rule 5), not in ledger-service. That serializer owns the unit conversion, once, for every service.
@@ -81,6 +89,7 @@ Java `PortfolioSerializer.serialize` used to copy fields one by one and dropped 
 - `scripts/checks/wire-diff.py` rule `lm364` allows exactly these additions with these types; a root field or a fourth `TaxLotProto` field fails it.
 - Python descriptor tests pin the ruled names and numbers, enums only, three lot fields, and the unchanged `ValuationRequestProto` field set. Java, Python, Rust and JS round-trip a `TipsInput` with non-default elections and two lots.
 - `test-fixtures/catalog/lm-364-unchanged.json` pins the `UNADJUSTED_COST_BASIS` and `PROFIT_LOSS` catalog entries and `measure.proto` comments.
+- `test_lm383_frn_acb_spec.py` checks the Treasury FRN rule in both the comment and the catalog entry, and that every line from before LM-383 (`test-fixtures/catalog/lm-383-acb-before.json`) is kept, in order.
 
 ## Consequences
 
