@@ -95,16 +95,18 @@ class FrnInput(_message.Message):
     def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., curve: _Optional[_Union[YieldCurveInput, _Mapping]] = ..., fixings: _Optional[_Iterable[_Union[ReferenceRateFixingProto, _Mapping]]] = ..., cost_basis: _Optional[_Union[CostBasisInput, _Mapping]] = ...) -> None: ...
 
 class ReferenceRateFixingProto(_message.Message):
-    __slots__ = ("index", "fixing_date", "rate", "bill_maturity_date")
+    __slots__ = ("index", "fixing_date", "rate", "bill_maturity_date", "bill_issue_date")
     INDEX_FIELD_NUMBER: _ClassVar[int]
     FIXING_DATE_FIELD_NUMBER: _ClassVar[int]
     RATE_FIELD_NUMBER: _ClassVar[int]
     BILL_MATURITY_DATE_FIELD_NUMBER: _ClassVar[int]
+    BILL_ISSUE_DATE_FIELD_NUMBER: _ClassVar[int]
     index: _index_type_pb2.IndexTypeProto
     fixing_date: _local_date_pb2.LocalDateProto
     rate: _decimal_value_pb2.DecimalValueProto
     bill_maturity_date: _local_date_pb2.LocalDateProto
-    def __init__(self, index: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ..., fixing_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., bill_maturity_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ...) -> None: ...
+    bill_issue_date: _local_date_pb2.LocalDateProto
+    def __init__(self, index: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ..., fixing_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., bill_maturity_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., bill_issue_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ...) -> None: ...
 
 class YieldCurveInput(_message.Message):
     __slots__ = ("index", "reference_date", "points")

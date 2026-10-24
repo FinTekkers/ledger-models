@@ -52,7 +52,7 @@
       }
     ],
     "cases": [
-      {"case": "auction on the date beats the day before, the day after and the no-rate issuance", "date": "2026-07-20", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.215", "fixing_date": "2026-07-20", "bill_maturity_date": "2026-10-22"}},
+      {"case": "auction on the date beats the day before, the day after and the no-rate issuance", "date": "2026-07-20", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.215", "fixing_date": "2026-07-20", "bill_maturity_date": "2026-10-22", "bill_issue_date": "2026-07-23"}},
       {"case": "only the 26-week original auction is on or before the date", "date": "2026-04-21", "fixing": null}
     ]
   },
@@ -82,9 +82,9 @@
       }
     ],
     "cases": [
-      {"case": "auction on the date, a reopening", "date": "2026-07-20", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.215", "fixing_date": "2026-07-20", "bill_maturity_date": "2026-10-22"}},
-      {"case": "day before the reopening", "date": "2026-07-19", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.190", "fixing_date": "2026-07-13", "bill_maturity_date": "2026-10-15"}},
-      {"case": "auction the day after the reopening", "date": "2026-07-21", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.230", "fixing_date": "2026-07-21", "bill_maturity_date": "2026-10-23"}},
+      {"case": "auction on the date, a reopening", "date": "2026-07-20", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.215", "fixing_date": "2026-07-20", "bill_maturity_date": "2026-10-22", "bill_issue_date": "2026-07-23"}},
+      {"case": "day before the reopening", "date": "2026-07-19", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.190", "fixing_date": "2026-07-13", "bill_maturity_date": "2026-10-15", "bill_issue_date": "2026-07-16"}},
+      {"case": "auction the day after the reopening", "date": "2026-07-21", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.230", "fixing_date": "2026-07-21", "bill_maturity_date": "2026-10-23", "bill_issue_date": "2026-07-24"}},
       {"case": "only the 26-week original auction is on or before the date", "date": "2026-04-21", "fixing": null}
     ]
   }

@@ -4,7 +4,8 @@
 //! descriptor set, so it also guards against a stale `.bin`.
 //! The fields come from test-fixtures/field-changes/lm-365.json. The exact
 //! field sets also take LM-382's additions (lm-382.json): IssuanceProto
-//! auction_date (29) and ReferenceRateFixingProto bill_maturity_date (4).
+//! auction_date (29) and ReferenceRateFixingProto bill_maturity_date (4),
+//! and LM-389's (lm-389.json): ReferenceRateFixingProto bill_issue_date (5).
 //! Runs only with `cargo test --features test-utils`.
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -24,6 +25,11 @@ fn fixture() -> Value {
 fn lm382_added() -> Vec<Value> {
     let lm382 = read_fixture(concat!(env!("CARGO_MANIFEST_DIR"), "/../test-fixtures/field-changes/lm-382.json"));
     lm382["added"].as_array().unwrap().clone()
+}
+
+fn lm389_added() -> Vec<Value> {
+    let lm389 = read_fixture(concat!(env!("CARGO_MANIFEST_DIR"), "/../test-fixtures/field-changes/lm-389.json"));
+    lm389["added"].as_array().unwrap().clone()
 }
 
 fn pool() -> DescriptorPool {
@@ -74,10 +80,23 @@ fn added_fields_have_their_number_name_and_type() {
 }
 
 #[test]
+fn lm389_added_field_has_its_number_name_and_type() {
+    let pool = pool();
+    for entry in lm389_added() {
+        check(&pool, &entry);
+    }
+}
+
+#[test]
 fn field_sets_are_exactly_kept_and_added() {
     let pool = pool();
     let mut expected: BTreeMap<String, BTreeSet<u32>> = BTreeMap::new();
-    for entry in entries("kept").iter().chain(entries("added").iter()).chain(lm382_added().iter()) {
+    for entry in entries("kept")
+        .iter()
+        .chain(entries("added").iter())
+        .chain(lm382_added().iter())
+        .chain(lm389_added().iter())
+    {
         let msg = entry["message"].as_str().unwrap().trim_start_matches('.').to_string();
         expected.entry(msg).or_default().insert(entry["number"].as_u64().unwrap() as u32);
     }

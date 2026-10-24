@@ -45,11 +45,12 @@ exports.standardBillTerm = standardBillTerm;
  * date. On a tie the first in input order wins.
  *
  * The fixing's `rate` is the issuance's `high_discount_rate` proto
- * unchanged, `fixing_date` its `auction_date` and `bill_maturity_date` the
- * bill's maturity. Null when nothing qualifies.
+ * unchanged, `fixing_date` its `auction_date`, `bill_maturity_date` the
+ * bill's maturity and `bill_issue_date` its `auction_issue_date`, copied as
+ * is (LM-389). Null when nothing qualifies.
  */
 function select(bills, date) {
-    var _a, _b;
+    var _a, _b, _c;
     let bestBill = null;
     let best = null;
     let bestAuctionDate = null;
@@ -79,7 +80,8 @@ function select(bills, date) {
         .setIndex(index_type_pb_1.IndexTypeProto.T_BILL_13_WEEK)
         .setFixingDate((_a = best.proto.getAuctionDate()) === null || _a === void 0 ? void 0 : _a.cloneMessage())
         .setRate((_b = best.proto.getHighDiscountRate()) === null || _b === void 0 ? void 0 : _b.cloneMessage())
-        .setBillMaturityDate((0, date_1.dateToLocalDateProto)(maturity));
+        .setBillMaturityDate((0, date_1.dateToLocalDateProto)(maturity))
+        .setBillIssueDate((_c = best.proto.getAuctionIssueDate()) === null || _c === void 0 ? void 0 : _c.cloneMessage());
 }
 exports.select = select;
 //# sourceMappingURL=TreasuryFrnFixings.js.map

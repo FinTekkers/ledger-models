@@ -419,6 +419,15 @@ pub struct ReferenceRateFixingProto {
     pub bill_maturity_date: ::core::option::Option<
         super::super::models::util::LocalDateProto,
     >,
+    /// T_BILL_13_WEEK only: the issue date of the auction chosen for this
+    /// fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+    /// A reopened bill uses the reopening's own issue date, not the original
+    /// auction's. valuation-service counts the bill's days to maturity from
+    /// here to bill_maturity_date. Unset for SOFR.
+    #[prost(message, optional, tag = "5")]
+    pub bill_issue_date: ::core::option::Option<
+        super::super::models::util::LocalDateProto,
+    >,
 }
 /// ═══════════════════════════════════════════════════════════════════════════
 /// YieldCurveInput — a term structure of continuously compounded zero rates.

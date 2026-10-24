@@ -137,7 +137,7 @@
   ],
   "models.security.treasury_frn_fixings.select": [
     {
-      "bytes": "080b120708ea0f100718141a065a0210776003220708ea0f100a1816",
+      "bytes": "080b120708ea0f100718141a065a0210776003220708ea0f100a18162a0708ea0f10071817",
       "type": "fintekkers.requests.valuation.ReferenceRateFixingProto"
     }
   ],

@@ -15,7 +15,8 @@ export declare function standardBillTerm(tenor: Tenor | null, anchor: Date | nul
  * date. On a tie the first in input order wins.
  *
  * The fixing's `rate` is the issuance's `high_discount_rate` proto
- * unchanged, `fixing_date` its `auction_date` and `bill_maturity_date` the
- * bill's maturity. Null when nothing qualifies.
+ * unchanged, `fixing_date` its `auction_date`, `bill_maturity_date` the
+ * bill's maturity and `bill_issue_date` its `auction_issue_date`, copied as
+ * is (LM-389). Null when nothing qualifies.
  */
 export declare function select(bills: BondSecurity[], date: Date): ReferenceRateFixingProto | null;

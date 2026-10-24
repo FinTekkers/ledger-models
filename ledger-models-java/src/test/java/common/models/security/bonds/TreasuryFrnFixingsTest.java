@@ -14,6 +14,7 @@ import fintekkers.models.security.SecurityProto;
 import fintekkers.models.security.bond.IssuanceProto;
 import fintekkers.models.security.index.IndexTypeProto;
 import fintekkers.models.util.DecimalValue.DecimalValueProto;
+import fintekkers.models.util.LocalDate.LocalDateProto;
 import fintekkers.models.util.ObjectTypeProto;
 import fintekkers.requests.valuation.ReferenceRateFixingProto;
 import org.junit.jupiter.api.Test;
@@ -99,6 +100,18 @@ class TreasuryFrnFixingsTest {
             for (Issuance i : b.getIssuances()) {
                 if (auctionDate.equals(i.getAuctionDate()) && i.getHighDiscountRate() != null) {
                     return i.getProto().getHighDiscountRate();
+                }
+            }
+        }
+        throw new AssertionError("no input issuance auctioned " + auctionDate);
+    }
+
+    /** The input auction_issue_date proto of the rated issuance auctioned on {@code auctionDate}. */
+    private static LocalDateProto inputIssueDate(List<BondSecurity> bills, LocalDate auctionDate) {
+        for (BondSecurity b : bills) {
+            for (Issuance i : b.getIssuances()) {
+                if (auctionDate.equals(i.getAuctionDate()) && i.getHighDiscountRate() != null) {
+                    return i.getProto().getAuctionIssueDate();
                 }
             }
         }
@@ -216,6 +229,12 @@ class TreasuryFrnFixingsTest {
             assertEquals(ProtoSerializationUtil.serializeLocalDate(fixingDate), f.getFixingDate(), name);
             assertEquals(ProtoSerializationUtil.serializeLocalDate(date(w.get("bill_maturity_date").getAsString())),
                     f.getBillMaturityDate(), name);
+            // LM-389: bill_issue_date is the chosen issuance's auction_issue_date.
+            assertTrue(w.has("bill_issue_date"), name + ": fixture fixing has no bill_issue_date");
+            assertTrue(f.hasBillIssueDate(), name);
+            assertEquals(ProtoSerializationUtil.serializeLocalDate(date(w.get("bill_issue_date").getAsString())),
+                    f.getBillIssueDate(), name);
+            assertEquals(inputIssueDate(bills, fixingDate), f.getBillIssueDate(), name);
         }
         return cases.size();
     }
@@ -228,6 +247,33 @@ class TreasuryFrnFixingsTest {
     @Test
     void selectSkips_matchesFixture() throws IOException {
         assertEquals(2, assertSelectBlock(fixture().getAsJsonObject("select_skips")));
+    }
+
+    @Test
+    void select_reopening_billIssueDateIsTheReopenings() throws IOException {
+        List<BondSecurity> bills = bills(fixture().getAsJsonObject("select").getAsJsonArray("bills"));
+
+        ReferenceRateFixingProto f = TreasuryFrnFixings.select(bills, date("2026-07-20")).orElseThrow();
+
+        assertEquals(ProtoSerializationUtil.serializeLocalDate(date("2026-07-23")), f.getBillIssueDate());
+        assertNotEquals(ProtoSerializationUtil.serializeLocalDate(date("2026-04-23")), f.getBillIssueDate());
+    }
+
+    @Test
+    void select_billIssueDate_isCopiedNotDerived() {
+        // Issued four days after the auction (e.g. a holiday), so the issue date
+        // is neither maturity - 91 days nor auction + 3 days: 2026-07-23.
+        IssuanceProto late = IssuanceProto.newBuilder()
+                .setAuctionDate(ProtoSerializationUtil.serializeLocalDate(date("2026-07-20")))
+                .setAuctionIssueDate(ProtoSerializationUtil.serializeLocalDate(date("2026-07-24")))
+                .setHighDiscountRate(Decimals.decimal("4.215"))
+                .build();
+        BondSecurity bill = bill(date("2026-10-22"), List.of(late));
+
+        ReferenceRateFixingProto f = TreasuryFrnFixings.select(List.of(bill), date("2026-07-20")).orElseThrow();
+
+        assertEquals(ProtoSerializationUtil.serializeLocalDate(date("2026-07-24")), f.getBillIssueDate());
+        assertNotEquals(ProtoSerializationUtil.serializeLocalDate(date("2026-07-23")), f.getBillIssueDate());
     }
 
     @Test

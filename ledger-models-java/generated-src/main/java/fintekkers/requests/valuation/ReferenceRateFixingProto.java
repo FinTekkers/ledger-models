@@ -221,6 +221,56 @@ private static final long serialVersionUID = 0L;
     return billMaturityDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : billMaturityDate_;
   }
 
+  public static final int BILL_ISSUE_DATE_FIELD_NUMBER = 5;
+  private fintekkers.models.util.LocalDate.LocalDateProto billIssueDate_;
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+   * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+   * A reopened bill uses the reopening's own issue date, not the original
+   * auction's. valuation-service counts the bill's days to maturity from
+   * here to bill_maturity_date. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+   * @return Whether the billIssueDate field is set.
+   */
+  @java.lang.Override
+  public boolean hasBillIssueDate() {
+    return billIssueDate_ != null;
+  }
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+   * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+   * A reopened bill uses the reopening's own issue date, not the original
+   * auction's. valuation-service counts the bill's days to maturity from
+   * here to bill_maturity_date. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+   * @return The billIssueDate.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProto getBillIssueDate() {
+    return billIssueDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : billIssueDate_;
+  }
+  /**
+   * <pre>
+   * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+   * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+   * A reopened bill uses the reopening's own issue date, not the original
+   * auction's. valuation-service counts the bill's days to maturity from
+   * here to bill_maturity_date. Unset for SOFR.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getBillIssueDateOrBuilder() {
+    return billIssueDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : billIssueDate_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -247,6 +297,9 @@ private static final long serialVersionUID = 0L;
     if (billMaturityDate_ != null) {
       output.writeMessage(4, getBillMaturityDate());
     }
+    if (billIssueDate_ != null) {
+      output.writeMessage(5, getBillIssueDate());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -271,6 +324,10 @@ private static final long serialVersionUID = 0L;
     if (billMaturityDate_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(4, getBillMaturityDate());
+    }
+    if (billIssueDate_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(5, getBillIssueDate());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -303,6 +360,11 @@ private static final long serialVersionUID = 0L;
       if (!getBillMaturityDate()
           .equals(other.getBillMaturityDate())) return false;
     }
+    if (hasBillIssueDate() != other.hasBillIssueDate()) return false;
+    if (hasBillIssueDate()) {
+      if (!getBillIssueDate()
+          .equals(other.getBillIssueDate())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -327,6 +389,10 @@ private static final long serialVersionUID = 0L;
     if (hasBillMaturityDate()) {
       hash = (37 * hash) + BILL_MATURITY_DATE_FIELD_NUMBER;
       hash = (53 * hash) + getBillMaturityDate().hashCode();
+    }
+    if (hasBillIssueDate()) {
+      hash = (37 * hash) + BILL_ISSUE_DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getBillIssueDate().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -478,6 +544,11 @@ private static final long serialVersionUID = 0L;
         billMaturityDateBuilder_.dispose();
         billMaturityDateBuilder_ = null;
       }
+      billIssueDate_ = null;
+      if (billIssueDateBuilder_ != null) {
+        billIssueDateBuilder_.dispose();
+        billIssueDateBuilder_ = null;
+      }
       return this;
     }
 
@@ -528,6 +599,11 @@ private static final long serialVersionUID = 0L;
         result.billMaturityDate_ = billMaturityDateBuilder_ == null
             ? billMaturityDate_
             : billMaturityDateBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.billIssueDate_ = billIssueDateBuilder_ == null
+            ? billIssueDate_
+            : billIssueDateBuilder_.build();
       }
     }
 
@@ -587,6 +663,9 @@ private static final long serialVersionUID = 0L;
       if (other.hasBillMaturityDate()) {
         mergeBillMaturityDate(other.getBillMaturityDate());
       }
+      if (other.hasBillIssueDate()) {
+        mergeBillIssueDate(other.getBillIssueDate());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -639,6 +718,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000008;
               break;
             } // case 34
+            case 42: {
+              input.readMessage(
+                  getBillIssueDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000010;
+              break;
+            } // case 42
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1287,6 +1373,197 @@ private static final long serialVersionUID = 0L;
         billMaturityDate_ = null;
       }
       return billMaturityDateBuilder_;
+    }
+
+    private fintekkers.models.util.LocalDate.LocalDateProto billIssueDate_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> billIssueDateBuilder_;
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+     * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+     * A reopened bill uses the reopening's own issue date, not the original
+     * auction's. valuation-service counts the bill's days to maturity from
+     * here to bill_maturity_date. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+     * @return Whether the billIssueDate field is set.
+     */
+    public boolean hasBillIssueDate() {
+      return ((bitField0_ & 0x00000010) != 0);
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+     * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+     * A reopened bill uses the reopening's own issue date, not the original
+     * auction's. valuation-service counts the bill's days to maturity from
+     * here to bill_maturity_date. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+     * @return The billIssueDate.
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto getBillIssueDate() {
+      if (billIssueDateBuilder_ == null) {
+        return billIssueDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : billIssueDate_;
+      } else {
+        return billIssueDateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+     * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+     * A reopened bill uses the reopening's own issue date, not the original
+     * auction's. valuation-service counts the bill's days to maturity from
+     * here to bill_maturity_date. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+     */
+    public Builder setBillIssueDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (billIssueDateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        billIssueDate_ = value;
+      } else {
+        billIssueDateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+     * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+     * A reopened bill uses the reopening's own issue date, not the original
+     * auction's. valuation-service counts the bill's days to maturity from
+     * here to bill_maturity_date. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+     */
+    public Builder setBillIssueDate(
+        fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
+      if (billIssueDateBuilder_ == null) {
+        billIssueDate_ = builderForValue.build();
+      } else {
+        billIssueDateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+     * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+     * A reopened bill uses the reopening's own issue date, not the original
+     * auction's. valuation-service counts the bill's days to maturity from
+     * here to bill_maturity_date. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+     */
+    public Builder mergeBillIssueDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (billIssueDateBuilder_ == null) {
+        if (((bitField0_ & 0x00000010) != 0) &&
+          billIssueDate_ != null &&
+          billIssueDate_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
+          getBillIssueDateBuilder().mergeFrom(value);
+        } else {
+          billIssueDate_ = value;
+        }
+      } else {
+        billIssueDateBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+     * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+     * A reopened bill uses the reopening's own issue date, not the original
+     * auction's. valuation-service counts the bill's days to maturity from
+     * here to bill_maturity_date. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+     */
+    public Builder clearBillIssueDate() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      billIssueDate_ = null;
+      if (billIssueDateBuilder_ != null) {
+        billIssueDateBuilder_.dispose();
+        billIssueDateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+     * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+     * A reopened bill uses the reopening's own issue date, not the original
+     * auction's. valuation-service counts the bill's days to maturity from
+     * here to bill_maturity_date. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto.Builder getBillIssueDateBuilder() {
+      bitField0_ |= 0x00000010;
+      onChanged();
+      return getBillIssueDateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+     * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+     * A reopened bill uses the reopening's own issue date, not the original
+     * auction's. valuation-service counts the bill's days to maturity from
+     * here to bill_maturity_date. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getBillIssueDateOrBuilder() {
+      if (billIssueDateBuilder_ != null) {
+        return billIssueDateBuilder_.getMessageOrBuilder();
+      } else {
+        return billIssueDate_ == null ?
+            fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : billIssueDate_;
+      }
+    }
+    /**
+     * <pre>
+     * T_BILL_13_WEEK only: the issue date of the auction chosen for this
+     * fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+     * A reopened bill uses the reopening's own issue date, not the original
+     * auction's. valuation-service counts the bill's days to maturity from
+     * here to bill_maturity_date. Unset for SOFR.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto bill_issue_date = 5;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> 
+        getBillIssueDateFieldBuilder() {
+      if (billIssueDateBuilder_ == null) {
+        billIssueDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder>(
+                getBillIssueDate(),
+                getParentForChildren(),
+                isClean());
+        billIssueDate_ = null;
+      }
+      return billIssueDateBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

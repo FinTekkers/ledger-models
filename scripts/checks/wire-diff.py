@@ -262,7 +262,19 @@ def lm382(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM382 and new == LM382[key]
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382]
+LM389 = {
+    f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}"
+    for f in json.loads((REPO / "test-fixtures/field-changes/lm-389.json").read_text())["added"]
+}
+
+
+def lm389(key: str, old, new, head: dict) -> bool:
+    """LM-389: ReferenceRateFixingProto.bill_issue_date = 5 added,
+    LocalDateProto. That addition only."""
+    return old is None and key in LM389 and new == LM389[key]
+
+
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389]
 
 
 def main() -> int:

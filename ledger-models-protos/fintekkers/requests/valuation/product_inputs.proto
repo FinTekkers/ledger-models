@@ -229,6 +229,13 @@ message ReferenceRateFixingProto {
   // this fixing. valuation-service uses it for the bill's actual days to
   // maturity when it converts rate. Unset for SOFR.
   fintekkers.models.util.LocalDateProto bill_maturity_date = 4;
+
+  // T_BILL_13_WEEK only: the issue date of the auction chosen for this
+  // fixing, copied from that issuance's IssuanceProto.auction_issue_date.
+  // A reopened bill uses the reopening's own issue date, not the original
+  // auction's. valuation-service counts the bill's days to maturity from
+  // here to bill_maturity_date. Unset for SOFR.
+  fintekkers.models.util.LocalDateProto bill_issue_date = 5;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

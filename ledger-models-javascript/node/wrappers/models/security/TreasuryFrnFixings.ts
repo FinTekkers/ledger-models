@@ -47,8 +47,9 @@ export function standardBillTerm(tenor: Tenor | null, anchor: Date | null): numb
  * date. On a tie the first in input order wins.
  *
  * The fixing's `rate` is the issuance's `high_discount_rate` proto
- * unchanged, `fixing_date` its `auction_date` and `bill_maturity_date` the
- * bill's maturity. Null when nothing qualifies.
+ * unchanged, `fixing_date` its `auction_date`, `bill_maturity_date` the
+ * bill's maturity and `bill_issue_date` its `auction_issue_date`, copied as
+ * is (LM-389). Null when nothing qualifies.
  */
 export function select(bills: BondSecurity[], date: Date): ReferenceRateFixingProto | null {
   let bestBill: BondSecurity | null = null;
@@ -75,5 +76,6 @@ export function select(bills: BondSecurity[], date: Date): ReferenceRateFixingPr
     .setIndex(IndexTypeProto.T_BILL_13_WEEK)
     .setFixingDate(best.proto.getAuctionDate()?.cloneMessage())
     .setRate(best.proto.getHighDiscountRate()?.cloneMessage())
-    .setBillMaturityDate(dateToLocalDateProto(maturity));
+    .setBillMaturityDate(dateToLocalDateProto(maturity))
+    .setBillIssueDate(best.proto.getAuctionIssueDate()?.cloneMessage());
 }

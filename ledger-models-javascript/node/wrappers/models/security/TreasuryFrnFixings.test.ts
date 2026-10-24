@@ -23,7 +23,7 @@ const fixture = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
 
 interface FixtureIssuance { auction_date?: string; auction_issue_date?: string; high_discount_rate?: string }
 interface FixtureBill { maturity_date: string; issuances: FixtureIssuance[] }
-interface FixtureFixing { index: string; rate: string; fixing_date: string; bill_maturity_date: string }
+interface FixtureFixing { index: string; rate: string; fixing_date: string; bill_maturity_date: string; bill_issue_date: string }
 interface FixtureSelectBlock { bills: FixtureBill[]; cases: { case: string; date: string; fixing: FixtureFixing | null }[] }
 
 function dateProto(s: string): LocalDateProto {
@@ -93,11 +93,14 @@ function checkSelectBlock(block: FixtureSelectBlock): void {
       continue;
     }
     expect(c.fixing.index).toBe('T_BILL_13_WEEK');
+    // LM-389: bill_issue_date is the chosen issuance's auction_issue_date.
+    expect([c.case, typeof c.fixing.bill_issue_date]).toEqual([c.case, 'string']);
     const want = new ReferenceRateFixingProto()
       .setIndex(IndexTypeProto.T_BILL_13_WEEK)
       .setFixingDate(dateProto(c.fixing.fixing_date))
       .setRate(decimal(c.fixing.rate))
-      .setBillMaturityDate(dateProto(c.fixing.bill_maturity_date));
+      .setBillMaturityDate(dateProto(c.fixing.bill_maturity_date))
+      .setBillIssueDate(dateProto(c.fixing.bill_issue_date));
     expect([c.case, got?.toObject()]).toEqual([c.case, want.toObject()]);
     // The published rate comes back unchanged, scale included.
     expect([c.case, canonical(got?.getRate())]).toEqual([c.case, c.fixing.rate]);
@@ -194,4 +197,21 @@ test('select: a tie on auction date goes to the first in input order', () => {
   got = select([second(), first()], date);
   expect(canonical(got?.getRate())).toBe('4.215');
   expect(got?.getBillMaturityDate()?.toObject()).toEqual(dateProto('2026-10-22').toObject());
+});
+
+// ---------- LM-389: bill_issue_date ----------
+
+test('select: a reopening\'s bill_issue_date is the reopening\'s, not the original\'s', () => {
+  const got = select(fixtureBills(fixture.select), localDate('2026-07-20'));
+  expect(got?.getBillIssueDate()?.toObject()).toEqual(dateProto('2026-07-23').toObject());
+  expect(got?.getBillIssueDate()?.toObject()).not.toEqual(dateProto('2026-04-23').toObject());
+});
+
+test('select: bill_issue_date is copied from the issuance, not derived', () => {
+  // Issued four days after the auction (e.g. a holiday), so the issue date
+  // is neither maturity - 91 days nor auction + 3 days: 2026-07-23.
+  const late = bill('2026-10-22', [issuance('2026-07-20', '2026-07-24', decimal('4.215'))]);
+  const got = select([late], localDate('2026-07-20'));
+  expect(got?.getBillIssueDate()?.toObject()).toEqual(dateProto('2026-07-24').toObject());
+  expect(got?.getBillIssueDate()?.toObject()).not.toEqual(dateProto('2026-07-23').toObject());
 });
