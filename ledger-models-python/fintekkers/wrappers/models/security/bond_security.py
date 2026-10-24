@@ -17,6 +17,7 @@ from fintekkers.models.security.security_pb2 import (
     BondDetailsProto,
 )
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
+from fintekkers.models.security.tenor_type_pb2 import TenorTypeProto
 from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
 from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.models.util.local_date_pb2 import LocalDateProto
@@ -24,6 +25,7 @@ from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
 from fintekkers.wrappers.models.util.decimal import encode_decimal
 from fintekkers.wrappers.models.issues.issuance import Issuance
 from fintekkers.wrappers.models.security.security import Security
+from fintekkers.wrappers.models.security.tenor import Tenor
 
 
 def _local_date(d: date) -> LocalDateProto:
@@ -45,6 +47,24 @@ class BondSecurity(Security):
         if not self.proto.HasField("bond_details"):
             return []
         return [Issuance(p) for p in self.proto.bond_details.issuance_info]
+
+    def get_issuance_tenor(self, issuance: Optional[Issuance]) -> Tenor:
+        """The tenor of one auction of this bond: Java's ``Period.between``
+        that issuance's auction_issue_date and the bond's maturity, the same
+        formula as Java's ``BondSecurity.getTenor()``. A reopened 26-week bill
+        reads 26W for its original auction and 13W for a reopening 13 weeks
+        before maturity. An UNKNOWN_TENOR_TYPE tenor when either date is unset.
+
+        Read the period with ``get_tenor()``. ``get_tenor_description()`` and
+        ``as_proto()`` round 27 or more days up to a month (P2M29D prints as
+        3M), so their string differs from Java's ``Period.toString()``.
+        """
+        issue = issuance.get_issue_date() if issuance is not None else None
+        self._ensure_hydrated()
+        bond = self._get_bond_like_details()
+        if issue is None or bond is None or not bond.HasField("maturity_date"):
+            return Tenor(TenorTypeProto.UNKNOWN_TENOR_TYPE)
+        return Tenor.of_period(Tenor.period_between(issue, self.get_maturity_date()))
 
     @staticmethod
     def from_pricer_inputs(

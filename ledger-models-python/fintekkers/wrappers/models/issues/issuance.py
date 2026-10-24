@@ -29,6 +29,15 @@ class Issuance:
         d = self.proto.auction_announcement_date
         return date(d.year, d.month, d.day)
 
+    def get_auction_date(self) -> Optional[date]:
+        """The date the auction was held, when a bill's high discount rate is set."""
+        if not self.proto.HasField("auction_date"):
+            return None
+        d = self.proto.auction_date
+        if d.year == 0 and d.month == 0 and d.day == 0:
+            return None
+        return date(d.year, d.month, d.day)
+
     # --- Decimal amounts ------------------------------------------------
     def get_original_face_value(self) -> Optional[Decimal]:
         return self._decimal_or_none("auction_offering_amount")
@@ -44,6 +53,11 @@ class Issuance:
 
     def get_price_for_single_price_auction(self) -> Optional[Decimal]:
         return self._decimal_or_none("price_for_single_price_auction")
+
+    def get_high_discount_rate(self) -> Optional[Decimal]:
+        """The auction's high discount rate as Treasury publishes it (percent,
+        bank-discount basis). None when unset or set to an empty decimal."""
+        return self._decimal_or_none("high_discount_rate")
 
     # --- Enums ----------------------------------------------------------
     def get_auction_type(self) -> AuctionTypeProto:

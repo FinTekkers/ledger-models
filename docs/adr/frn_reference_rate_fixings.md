@@ -96,3 +96,20 @@ Treasury's investment-rate formula counts days from the bill's **issue** date to
 - Rust code that builds `ReferenceRateFixingProto` or `IssuanceProto` with a struct literal and no `..Default::default()` must add the new field.
 - `wire-diff.py` rule `lm382` allows exactly the two additions, listed in `test-fixtures/field-changes/lm-382.json`. The Java, Python and Rust exact-field-set tests take the union with that file.
 - If either field is ever removed, its number and name must be `reserved`, never reused.
+
+## Amendment 2026-10-24 (LM-385): Java and Python fixing helpers
+
+### Status
+
+Accepted (LM-385, part 2 of LM-382). Library methods only; no proto change. JS and Rust follow in LM-386.
+
+### Decision
+
+- **Java:** `Issuance.getAuctionDate()` and `getHighDiscountRate()`; `BondSecurity.getIssuanceTenor(Issuance)`; `common.models.security.bonds.TreasuryFrnFixings.standardBillTerm(Tenor, LocalDate anchor) -> OptionalInt` and `select(List<BondSecurity> bills, LocalDate date) -> Optional<ReferenceRateFixingProto>`.
+- **Python:** `Issuance.get_auction_date()` and `get_high_discount_rate()`; `BondSecurity.get_issuance_tenor(issuance)`; `fintekkers.wrappers.models.security.treasury_frn_fixings.standard_bill_term(tenor, anchor) -> Optional[int]` and `select(bills, as_of) -> Optional[ReferenceRateFixingProto]`.
+- **Per-issuance tenor** is `Period.between(auction_issue_date, maturity_date)`, the formula of `getTenor()`, which is unchanged. Unknown tenor when either date is unset.
+- **`standardBillTerm`** counts days from `anchor` to `anchor + tenor` and snaps to 4, 6, 8, 13, 17, 26 or 52 weeks within ±3 days. Empty for a null tenor, a non-`TERM` tenor or a null anchor.
+- **`select`** walks bills in input order, then each bill's issuances in order. It skips a bill with no `maturity_date`, and an issuance with no `auction_date`, no `auction_issue_date`, no `high_discount_rate` (unset, or set to an empty decimal), or an `auction_date` after the date. It keeps issuances whose per-issuance tenor snaps to 13W anchored on `auction_issue_date`, and picks the latest `auction_date`; on a tie the first in input order wins. The fixing is `index = T_BILL_13_WEEK`, `rate` = the `high_discount_rate` proto copied unchanged (no decimal round trip, so the published scale stays), `fixing_date` = `auction_date`, `bill_maturity_date` = the bill's maturity. Empty when nothing qualifies.
+- **Python builds the period from fields.** `Tenor.period_between(start, end)` ports Java's `LocalDate.until` and returns `relativedelta(years=, months=, days=)`, splitting months by truncation toward zero as Java does. It never calls `relativedelta(end, start)`, which gives `P3M` for 2026-08-31 → 2026-11-30 where Java gives `P2M30D`. `Tenor.of_period` wraps it in the existing `Tenor`; there is no second period type.
+- **Python rounding trap.** `Tenor.get_tenor_description()` and `as_proto()` round 27 or more days up to a month (`P2M29D` prints as `3M`). Read a per-issuance tenor with `get_tenor()`; its printed form differs from Java's `Period.toString()`.
+- **Fixture.** `test-fixtures/treasury-frn-fixings.json` gains a `select_skips` block (a 13W issuance with no `high_discount_rate`, first in input order and auctioned on the date, and a 13W auction one day before the date). The existing blocks are unchanged.

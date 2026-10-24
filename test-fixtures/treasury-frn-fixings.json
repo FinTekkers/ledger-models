@@ -17,6 +17,45 @@
     {"case": "87 days, below the edge", "period": "P87D", "anchors": ["2026-01-15", "2026-02-27"], "standard_bill_term_weeks": null},
     {"case": "95 days, above the edge", "period": "P95D", "anchors": ["2026-01-15", "2026-02-27"], "standard_bill_term_weeks": null}
   ],
+  "select_skips": {
+    "item": "LM-385",
+    "about": "Added by LM-385. Same rule as select, with a 13-week issuance that has no high_discount_rate (first in input order and auctioned on the date, so it wins if the skip is broken) and a 13-week auction exactly one day before the date. An issuance without a high_discount_rate key has the field unset.",
+    "bills": [
+      {
+        "name": "13-week bill with no high discount rate",
+        "maturity_date": "2026-10-22",
+        "issuances": [
+          {"auction_date": "2026-07-20", "auction_issue_date": "2026-07-23"}
+        ]
+      },
+      {
+        "name": "26-week bill reopened as a 13-week bill",
+        "maturity_date": "2026-10-22",
+        "issuances": [
+          {"auction_date": "2026-04-20", "auction_issue_date": "2026-04-23", "high_discount_rate": "4.300"},
+          {"auction_date": "2026-07-20", "auction_issue_date": "2026-07-23", "high_discount_rate": "4.215"}
+        ]
+      },
+      {
+        "name": "13-week bill auctioned the day before",
+        "maturity_date": "2026-10-21",
+        "issuances": [
+          {"auction_date": "2026-07-19", "auction_issue_date": "2026-07-22", "high_discount_rate": "4.205"}
+        ]
+      },
+      {
+        "name": "13-week bill auctioned the day after",
+        "maturity_date": "2026-10-23",
+        "issuances": [
+          {"auction_date": "2026-07-21", "auction_issue_date": "2026-07-24", "high_discount_rate": "4.230"}
+        ]
+      }
+    ],
+    "cases": [
+      {"case": "auction on the date beats the day before, the day after and the no-rate issuance", "date": "2026-07-20", "fixing": {"index": "T_BILL_13_WEEK", "rate": "4.215", "fixing_date": "2026-07-20", "bill_maturity_date": "2026-10-22"}},
+      {"case": "only the 26-week original auction is on or before the date", "date": "2026-04-21", "fixing": null}
+    ]
+  },
   "select": {
     "bills": [
       {

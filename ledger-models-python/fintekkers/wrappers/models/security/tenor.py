@@ -1,3 +1,6 @@
+import calendar
+from datetime import date
+
 from dateutil.relativedelta import relativedelta
 
 from fintekkers.models.security.tenor_type_pb2 import TenorTypeProto
@@ -25,6 +28,31 @@ class Tenor:
             result.append(self.get_tenor_description())
 
         return "".join(result)
+
+    @staticmethod
+    def of_period(period: relativedelta) -> "Tenor":
+        """A TERM tenor holding ``period`` as is."""
+        tenor = Tenor(TenorTypeProto.TERM)
+        tenor.tenor = period
+        return tenor
+
+    @staticmethod
+    def period_between(start: date, end: date) -> relativedelta:
+        """Java's ``Period.between(start, end)`` as a relativedelta built from
+        fields. Never ``relativedelta(end, start)``: that normalises
+        2026-08-31 -> 2026-11-30 to 3 months, where Java gives P2M30D.
+        Years and months split by truncation toward zero, as Java does."""
+        total_months = (end.year * 12 + end.month) - (start.year * 12 + start.month)
+        days = end.day - start.day
+        if total_months > 0 and days < 0:
+            total_months -= 1
+            days = (end - (start + relativedelta(months=total_months))).days
+        elif total_months < 0 and days > 0:
+            total_months += 1
+            days -= calendar.monthrange(end.year, end.month)[1]
+        years = abs(total_months) // 12 * (1 if total_months >= 0 else -1)
+        months = total_months - 12 * years
+        return relativedelta(years=years, months=months, days=days)
 
     @classmethod
     def from_tenor_description(cls, tenor_description) -> relativedelta:

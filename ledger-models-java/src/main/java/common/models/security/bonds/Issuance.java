@@ -57,6 +57,22 @@ public class Issuance {
         return ProtoSerializationUtil.deserializeBigDecimal(proto.getPriceForSinglePriceAuction());
     }
 
+    /** The date the auction was held, when a bill's high discount rate is set. */
+    public LocalDate getAuctionDate() {
+        if (!proto.hasAuctionDate()) return null;
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(proto.getAuctionDate(), "auction_date");
+    }
+
+    /**
+     * The auction's high discount rate as Treasury publishes it (percent,
+     * bank-discount basis). Null when unset or set to an empty decimal.
+     */
+    public BigDecimal getHighDiscountRate() {
+        if (!proto.hasHighDiscountRate()) return null;
+        if (ProtoSerializationUtil.isUnsetDecimal(proto.getHighDiscountRate())) return null;
+        return ProtoSerializationUtil.deserializeBigDecimal(proto.getHighDiscountRate());
+    }
+
     public AuctionTypeProto getAuctionType() {
         return proto.getAuctionType();
     }
