@@ -60,4 +60,32 @@ function dateToLocalDateProto(d: Date): LocalDateProto {
     .setDay(d.getDate());
 }
 
-export { LocalDate, localDateProtoToDate, dateToLocalDateProto };
+/**
+ * `d` plus `months` calendar months at local midnight, clamped to the end of
+ * the target month as Java's `LocalDate.plusMonths` does: Jan 31 + 1 month is
+ * Feb 28 (Feb 29 in a leap year), not Mar 3 as `setMonth` gives. Reads and
+ * writes local date parts, like `localDateProtoToDate`.
+ */
+function plusMonthsClamped(d: Date, months: number): Date {
+  const target = new Date(d.getFullYear(), d.getMonth() + months, 1);
+  const lastDay = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
+  return new Date(target.getFullYear(), target.getMonth(), Math.min(d.getDate(), lastDay));
+}
+
+/** `d` plus `days` calendar days at local midnight, from local date parts. */
+function plusDays(d: Date, days: number): Date {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + days);
+}
+
+/**
+ * Calendar days from `start` to `end`, negative when `end` is earlier.
+ * Counts from the local date parts through `Date.UTC`, so a DST change
+ * between the two dates cannot shift the count.
+ */
+function daysBetween(start: Date, end: Date): number {
+  const startUtc = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
+  const endUtc = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
+  return Math.round((endUtc - startUtc) / 86400000);
+}
+
+export { LocalDate, localDateProtoToDate, dateToLocalDateProto, plusMonthsClamped, plusDays, daysBetween };

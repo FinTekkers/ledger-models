@@ -12,6 +12,8 @@ pub mod price;
 pub mod product_hierarchy;
 pub mod raw_datamodel_object;
 pub mod security;
+pub mod tenor;
 pub mod tips_bond;
 pub mod transaction;
+pub mod treasury_frn_fixings;
 pub mod utils;

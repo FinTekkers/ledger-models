@@ -174,3 +174,26 @@ function testBondSecurityTenorWithAsOfDate(): void {
     const tenorString = tenor.toString();
     assert(tenorString === 'TERM: 5Y', `Expected "TERM: 5Y", got "${tenorString}"`);
 }
+// LM-386: forward periods match Java's Period.between for month-end starts.
+// Only days change; years and months, and so getProductType(), do not.
+function monthEndBill(maturityMonth: number, maturityDay: number): BondSecurity {
+    const securityProto = new SecurityProto();
+    securityProto.setProductType(ProductTypeProto.TBILL);
+    const bond = new BondDetailsProto();
+    bond.setIssueDate(new LocalDateProto().setYear(2026).setMonth(1).setDay(31));
+    bond.setMaturityDate(new LocalDateProto().setYear(2026).setMonth(maturityMonth).setDay(maturityDay));
+    securityProto.setBondDetails(bond);
+    return Security.create(securityProto) as BondSecurity;
+}
+
+test('BondSecurity.getTenor() for 2026-01-31 -> 2026-03-01 is 1M1D, as Java Period.between', () => {
+    const bill = monthEndBill(3, 1);
+    expect(bill.getTenor().getTenor()).toEqual({ years: 0, months: 1, days: 1 });
+    expect(bill.getProductType()).toBe('BILL');
+});
+
+test('BondSecurity.getTenor() for 2026-01-31 -> 2026-03-30 is 1M30D, as Java Period.between', () => {
+    const bill = monthEndBill(3, 30);
+    expect(bill.getTenor().getTenor()).toEqual({ years: 0, months: 1, days: 30 });
+    expect(bill.getProductType()).toBe('BILL');
+});
