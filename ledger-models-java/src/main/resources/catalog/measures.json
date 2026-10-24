@@ -73,6 +73,14 @@
         "TIPS rounding: none. real_acb_i, the weighted average, the index ratio and the result are all unrounded, as for INDEX_RATIO and MARKET_VALUE",
         "TIPS deflation floor: not applied. It applies only to final principal (INFLATION_ADJUSTED_PRINCIPAL), never to the basis",
         "FRN: use the equivalent fixed rate from the fixing at settlement",
+        "Treasury FRN (frn_extension.reference_rate_index T_BILL_13_WEEK, LM-383): inputs are FrnInput.cost_basis (lots and elections) and FrnInput.fixings",
+        "Treasury FRN per lot: amortise each lot as the equivalent fixed-rate instrument, using the same constant-yield, elections and de minimis rules as the fixed-rate bonds",
+        "Treasury FRN coupon: the lot's equivalent fixed coupon, as a decimal fraction, is coupon_i = MMY(fixing_i) + spread / 10000. fixing_i is the fixing in effect at the lot's accrual start, i.e. the FrnInput.fixings entry with the latest fixing_date on or before it; spread is frn_extension.spread, in basis points",
+        "Treasury FRN OID: the fixing in effect on bond_details.issue_date (the latest fixing_date on or before it) sets the issue-date OID schedule",
+        "Treasury FRN resets: later coupon resets do not change a lot's schedule",
+        "Treasury FRN conversion: fixings.rate is the published high discount rate in percent (see ReferenceRateFixingProto.rate). valuation-service converts it to the money-market yield, on a 360-day basis: MMY = 360 * d / (360 - d * t), where d = rate / 100 and t = bill_maturity_date - bill_issue_date, in days, both from the same fixing. bill_issue_date is the chosen auction's own issue date, so a reopened bill counts from the reopening. Example: rate 4.215, t 91 -> d = 0.04215, MMY = 360 * 0.04215 / (360 - 0.04215 * 91) = 0.042604 (rounded here only)",
+        "Treasury FRN missing data: no fixing on or before a needed date (a lot's accrual start, or the issue date) makes the request invalid",
+        "Treasury FRN other indices (e.g. SOFR): not defined yet",
         "No lots: the measure is absent, with a \"no open lots\" warning, never 0"
       ],
       "implemented": false
