@@ -654,7 +654,10 @@ class BuilderStampCoverageTest {
         TransactionProto caller = callerTransaction();
         TransactionProto out = new Transaction(caller).getProto();
 
-        assertTrue(out.getSecurity().getIsLink() && out.getPortfolio().getIsLink() && out.getPrice().getIsLink());
+        assertTrue(out.getSecurity().getIsLink() && out.getPortfolio().getIsLink());
+        // LM-394: the price stays inline; only its nested Security is a link.
+        assertFalse(out.getPrice().getIsLink());
+        assertTrue(out.getPrice().getSecurity().getIsLink());
         assertEquals(ObjectTypeProto.OBJECT_TYPE_SECURITY, ObjectTypes.readType(out.getSecurity()));
         assertEquals(ObjectTypeProto.OBJECT_TYPE_PORTFOLIO, ObjectTypes.readType(out.getPortfolio()));
         assertEquals(ObjectTypeProto.OBJECT_TYPE_PRICE, ObjectTypes.readType(out.getPrice()));

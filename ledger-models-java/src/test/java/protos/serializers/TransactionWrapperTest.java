@@ -25,10 +25,11 @@ import java.time.temporal.ChronoUnit;
  * {@code new Transaction(proto)} — no separate TransactionSerializer.
  *
  * <p>Key behavioral change: {@code transaction.getProto()} applies
- * <strong>strip-on-write</strong> to inner Security/Portfolio/Price sub-protos
- * (per Phase 2 dispatch). After round-trip, the inner sub-protos are
+ * <strong>strip-on-write</strong> to inner Security/Portfolio sub-protos
+ * (per Phase 2 dispatch). After round-trip, those sub-protos are
  * {@code is_link=true} link references (uuid + as_of preserved), NOT full
- * inline data. Tests verify identity via UUIDs, NOT inner field values.
+ * inline data. The Price stays inline; only its nested Security is a link
+ * (LM-394). Tests verify identity via UUIDs, NOT inner field values.
  * Callers that need full data must hydrate via
  * {@link common.util.LinkResolver#resolveSecuritiesOnTransactions(java.util.List)}
  * and the portfolio counterpart before wrapping again.
@@ -82,17 +83,18 @@ class TransactionWrapperTest {
     }
 
     @Test
-    public void testTransactionGetProto_stripsInlinePriceToLink() {
+    public void testTransactionGetProto_keepsPriceInline() {
         Transaction transaction = DummyBondObjects.getDummyTransaction();
 
         TransactionProto out = transaction.getProto();
 
         Assertions.assertTrue(out.hasPrice(), "price must remain set");
         PriceProto price = out.getPrice();
-        Assertions.assertTrue(price.getIsLink(),
-                "Phase 2 strip-on-write: inner Price must be is_link=true after getProto()");
-        Assertions.assertTrue(price.hasUuid(),
-                "stripped Price must carry the uuid for re-hydration");
+        Assertions.assertFalse(price.getIsLink(),
+                "LM-394: a trade Price stays inline after getProto()");
+        Assertions.assertTrue(price.hasUuid(), "inline Price must carry its uuid");
+        Assertions.assertTrue(price.getSecurity().getIsLink(),
+                "the Price's nested Security is stripped to a link");
     }
 
     @Test

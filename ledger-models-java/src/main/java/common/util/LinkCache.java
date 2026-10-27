@@ -72,6 +72,8 @@ public final class LinkCache<V> {
     // and correct; perf is good enough for the typical lazy-hydrate access
     // pattern (mostly reads, low contention).
     private final LinkedHashMap<UUID, CacheEntry<V>> map;
+    // Diagnostic: number of get() calls (hits and misses) since the last clear().
+    private long lookups;
 
     public LinkCache() {
         this(DEFAULT_TTL_FOR_LATEST, DEFAULT_MAX_ENTRIES);
@@ -108,6 +110,7 @@ public final class LinkCache<V> {
      *         above; otherwise null (caller must refetch)
      */
     public synchronized V get(UUID id, ZonedDateTime requestedAsOf) {
+        lookups++;
         CacheEntry<V> entry = map.get(id);
         if (entry == null) return null;
         if (requestedAsOf == null) {
@@ -145,6 +148,16 @@ public final class LinkCache<V> {
 
     public synchronized void clear() {
         map.clear();
+        lookups = 0;
+    }
+
+    /**
+     * Diagnostic counter: the number of {@link #get(UUID, ZonedDateTime)}
+     * calls, hits and misses alike, since construction or the last
+     * {@link #clear()}. Lets tests prove a read path never touched the cache.
+     */
+    public synchronized long lookupCount() {
+        return lookups;
     }
 
     public synchronized int size() {

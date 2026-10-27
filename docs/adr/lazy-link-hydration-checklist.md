@@ -44,7 +44,7 @@ Companion to [`lazy-link-hydration.md`](lazy-link-hydration.md). **5 PRs total**
 | LinkResolver write-through to LinkCache | pending | pending | pending | pending |
 | Service-client write-through on createOrUpdate | pending | pending | pending | pending |
 
-**Why Java has tactical extras the others don't:** Java's `Transaction.getProto()` strips embedded Security/Portfolio/Price to `is_link=true` before serializing (see `stripSecurity` / `stripPortfolio` / `stripPrice` in `Transaction.java`). That strip path needed to populate `LinkCache` before stripping so downstream consumers can rehydrate. Python/TS/Rust **do not strip on serialize** — they pass embedded entities through whole — so the same tactical fix does not apply there.
+**Why Java has tactical extras the others don't:** Java's `Transaction.getProto()` strips embedded Security/Portfolio to `is_link=true` before serializing (see `stripSecurity` / `stripPortfolio` in `Transaction.java`). Since LM-394 the Price stays inline and only its nested Security is stripped (`stripPrice`), matching Python/TS/Rust for the price. That strip path needed to populate `LinkCache` before stripping so downstream consumers can rehydrate. Python/TS/Rust **do not strip on serialize** — they pass embedded entities through whole — so the same tactical fix does not apply there.
 
 **ledger-service test suite: 25 → 19 failures with #231 merged.** The 5 deterministic failures listed below all turn green. Remaining 19 are fixture gaps, other-service-down tests, and pre-existing unrelated bugs.
 

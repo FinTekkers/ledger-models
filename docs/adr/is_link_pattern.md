@@ -30,6 +30,8 @@ The `is_link` field lets us inline a **reference** instead: just the UUID, plus 
        ~2 KB
 ```
 
+(The diagram shows the link form of each entity. In practice, Java's `Transaction.getProto()` links the Security and Portfolio but keeps the trade Price inline, linking only the Price's nested Security — LM-394.)
+
 Same on-wire response — orders of magnitude smaller in the link form. (The database row is unchanged; `is_link` is a wire-shape choice, not a storage choice.)
 
 ---

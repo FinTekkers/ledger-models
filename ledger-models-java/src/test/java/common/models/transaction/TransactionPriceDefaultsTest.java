@@ -57,11 +57,11 @@ class TransactionPriceDefaultsTest {
         Transaction txn = new Transaction(txnWithPrice(priceBuilder().setAsOf(PRICE_AS_OF), true));
 
         assertSixteenBytes(txn.getRawProto().getPrice());
-        // getProto() strips to a link; the link must carry the filled UUID.
-        PriceProto link = txn.getProto().getPrice();
-        assertTrue(link.getIsLink());
-        assertSixteenBytes(link);
-        assertEquals(txn.getRawProto().getPrice().getUuid(), link.getUuid());
+        // getProto() keeps the price inline (LM-394); it must carry the filled UUID.
+        PriceProto out = txn.getProto().getPrice();
+        assertFalse(out.getIsLink());
+        assertSixteenBytes(out);
+        assertEquals(txn.getRawProto().getPrice().getUuid(), out.getUuid());
         // The LS-17 failure path: serializing the Price POJO must not throw.
         PriceProto serialized = assertDoesNotThrow(
                 () -> PriceSerializer.getInstance().serialize(txn.getPrice()));
