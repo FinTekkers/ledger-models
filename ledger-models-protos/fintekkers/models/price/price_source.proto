@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package fintekkers.models.price;
+
+option java_multiple_files = true;
+
+option java_outer_classname = "PriceSourceProtos";
+
+enum PriceSourceProto {
+  UNKNOWN_PRICE_SOURCE = 0; // Unset. Read as MARKET: prices stored before this field existed.
+  MARKET = 1;               // A published or observed market price (e.g. FedInvest end of day).
+  TRADE = 2;                // The price a transaction was executed at.
+}

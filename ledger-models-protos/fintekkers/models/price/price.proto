@@ -8,6 +8,7 @@ import "fintekkers/models/util/uuid.proto";
 
 import "fintekkers/models/security/security.proto";
 import "fintekkers/models/price/price_type.proto";
+import "fintekkers/models/price/price_source.proto";
 import "fintekkers/models/util/object_type.proto";
 import "fintekkers/models/util/version.proto";
 
@@ -34,6 +35,7 @@ message PriceProto {
   fintekkers.models.util.DecimalValueProto price = 10;
   fintekkers.models.security.SecurityProto security = 11;
   PriceTypeProto price_type = 12;
+  PriceSourceProto price_source = 13;
 
   /*
   TODO: Price types:

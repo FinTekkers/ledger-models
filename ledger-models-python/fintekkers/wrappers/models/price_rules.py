@@ -13,6 +13,7 @@ from typing import Optional
 from uuid import UUID
 
 from fintekkers.models.price.price_pb2 import PriceProto
+from fintekkers.models.price.price_source_pb2 import PriceSourceProto
 from fintekkers.models.price.price_type_pb2 import PriceTypeProto
 from fintekkers.requests.util.errors.field_violation_pb2 import FieldViolationProto
 from fintekkers.wrappers.models.errors import ModelValidationError, violation
@@ -43,6 +44,15 @@ def require_valid(proto: Optional[PriceProto]) -> None:
     violations = validate(proto)
     if violations:
         raise ModelValidationError(violations)
+
+
+def is_market_price(proto: Optional[PriceProto]) -> bool:
+    """True when price_source is unset or MARKET; False for TRADE or an
+    unrecognised value, so a new source is never read as market by accident.
+    None reads as unset. Not a validation rule: an unset source is valid. See
+    docs/adr/price_source.md."""
+    p = proto if proto is not None else PriceProto()
+    return p.price_source in (PriceSourceProto.UNKNOWN_PRICE_SOURCE, PriceSourceProto.MARKET)
 
 
 def _object_id_of(proto: PriceProto) -> Optional[UUID]:

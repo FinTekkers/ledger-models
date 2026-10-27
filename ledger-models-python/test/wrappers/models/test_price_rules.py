@@ -6,6 +6,7 @@ import uuid
 import pytest
 
 from fintekkers.models.price.price_pb2 import PriceProto
+from fintekkers.models.price.price_source_pb2 import PriceSourceProto
 from fintekkers.models.price.price_type_pb2 import PriceTypeProto
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.util.decimal_value_pb2 import DecimalValueProto
@@ -128,3 +129,14 @@ def test_require_valid_raises_typed_error_carrying_violations():
         price_rules.require_valid(p)
     assert list(e.value.violations) == price_rules.validate(p)
     price_rules.require_valid(_valid())
+
+
+def test_is_market_price_unset_and_trade():
+    """LM-395: a price serialised before price_source existed reads as unset, which is market."""
+    old = PriceProto.FromString(_valid().SerializeToString())
+    assert old.price_source == PriceSourceProto.UNKNOWN_PRICE_SOURCE
+    assert price_rules.is_market_price(old)
+
+    trade = _valid()
+    trade.price_source = PriceSourceProto.TRADE
+    assert not price_rules.is_market_price(PriceProto.FromString(trade.SerializeToString()))

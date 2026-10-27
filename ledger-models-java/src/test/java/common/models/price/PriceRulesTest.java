@@ -3,6 +3,7 @@ package common.models.price;
 import com.google.protobuf.ByteString;
 import common.models.errors.ModelValidationException;
 import fintekkers.models.price.PriceProto;
+import fintekkers.models.price.PriceSourceProto;
 import fintekkers.models.price.PriceTypeProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.util.DecimalValue.DecimalValueProto;
@@ -128,5 +129,18 @@ class PriceRulesTest {
         ModelValidationException e = assertThrows(ModelValidationException.class, () -> PriceRules.requireValid(p));
         assertEquals(PriceRules.validate(p), e.getViolations());
         assertDoesNotThrow(() -> PriceRules.requireValid(valid().build()));
+    }
+
+    @Test
+    void marketPriceWhenSourceUnset_tradeIsNot() throws Exception {
+        // LM-395: a price serialised before price_source existed reads as unset, which is market.
+        PriceProto old = PriceProto.parseFrom(valid().build().toByteArray());
+        assertEquals(PriceSourceProto.UNKNOWN_PRICE_SOURCE, old.getPriceSource());
+        assertTrue(PriceRules.isMarketPrice(old));
+        assertTrue(PriceRules.isMarketPrice(null));
+
+        PriceProto trade = PriceProto.parseFrom(
+                valid().setPriceSource(PriceSourceProto.TRADE).build().toByteArray());
+        assertFalse(PriceRules.isMarketPrice(trade));
     }
 }

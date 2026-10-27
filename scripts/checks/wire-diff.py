@@ -274,7 +274,22 @@ def lm389(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM389 and new == LM389[key]
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389]
+LM395_SPEC = json.loads((REPO / "test-fixtures/field-changes/lm-395.json").read_text())
+LM395 = {
+    **{f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}" for f in LM395_SPEC["added"]},
+    **{f"enum {e['enum']}": "enum" for e in LM395_SPEC["added_enums"]},
+    **{f"value {e['enum']} = {v['number']}": v["name"] for e in LM395_SPEC["added_enums"] for v in e["values"]},
+}
+
+
+def lm395(key: str, old, new, head: dict) -> bool:
+    """LM-395: PriceSourceProto (UNKNOWN_PRICE_SOURCE = 0, MARKET = 1,
+    TRADE = 2) and PriceProto.price_source = 13 added. Additions of exactly
+    these only; price_type keeps its number, name and values."""
+    return old is None and key in LM395 and new == LM395[key]
+
+
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395]
 
 
 def main() -> int:

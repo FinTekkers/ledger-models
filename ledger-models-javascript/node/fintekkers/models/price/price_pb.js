@@ -31,6 +31,8 @@ var fintekkers_models_security_security_pb = require('../../../fintekkers/models
 goog.object.extend(proto, fintekkers_models_security_security_pb);
 var fintekkers_models_price_price_type_pb = require('../../../fintekkers/models/price/price_type_pb.js');
 goog.object.extend(proto, fintekkers_models_price_price_type_pb);
+var fintekkers_models_price_price_source_pb = require('../../../fintekkers/models/price/price_source_pb.js');
+goog.object.extend(proto, fintekkers_models_price_price_source_pb);
 var fintekkers_models_util_object_type_pb = require('../../../fintekkers/models/util/object_type_pb.js');
 goog.object.extend(proto, fintekkers_models_util_object_type_pb);
 var fintekkers_models_util_version_pb = require('../../../fintekkers/models/util/version_pb.js');
@@ -98,7 +100,8 @@ proto.fintekkers.models.price.PriceProto.toObject = function(includeInstance, ms
     validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     price: (f = msg.getPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
-    priceType: jspb.Message.getFieldWithDefault(msg, 12, 0)
+    priceType: jspb.Message.getFieldWithDefault(msg, 12, 0),
+    priceSource: jspb.Message.getFieldWithDefault(msg, 13, 0)
   };
 
   if (includeInstance) {
@@ -181,6 +184,10 @@ proto.fintekkers.models.price.PriceProto.deserializeBinaryFromReader = function(
     case 12:
       var value = /** @type {!proto.fintekkers.models.price.PriceTypeProto} */ (reader.readEnum());
       msg.setPriceType(value);
+      break;
+    case 13:
+      var value = /** @type {!proto.fintekkers.models.price.PriceSourceProto} */ (reader.readEnum());
+      msg.setPriceSource(value);
       break;
     default:
       reader.skipField();
@@ -285,6 +292,13 @@ proto.fintekkers.models.price.PriceProto.serializeBinaryToWriter = function(mess
   if (f !== 0.0) {
     writer.writeEnum(
       12,
+      f
+    );
+  }
+  f = message.getPriceSource();
+  if (f !== 0.0) {
+    writer.writeEnum(
+      13,
       f
     );
   }
@@ -601,6 +615,24 @@ proto.fintekkers.models.price.PriceProto.prototype.getPriceType = function() {
  */
 proto.fintekkers.models.price.PriceProto.prototype.setPriceType = function(value) {
   return jspb.Message.setProto3EnumField(this, 12, value);
+};
+
+
+/**
+ * optional PriceSourceProto price_source = 13;
+ * @return {!proto.fintekkers.models.price.PriceSourceProto}
+ */
+proto.fintekkers.models.price.PriceProto.prototype.getPriceSource = function() {
+  return /** @type {!proto.fintekkers.models.price.PriceSourceProto} */ (jspb.Message.getFieldWithDefault(this, 13, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.price.PriceSourceProto} value
+ * @return {!proto.fintekkers.models.price.PriceProto} returns this
+ */
+proto.fintekkers.models.price.PriceProto.prototype.setPriceSource = function(value) {
+  return jspb.Message.setProto3EnumField(this, 13, value);
 };
 
 

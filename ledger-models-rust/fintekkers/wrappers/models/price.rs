@@ -2,7 +2,7 @@ use std::hash::{Hash, Hasher};
 use std::sync::OnceLock;
 use rust_decimal::Decimal;
 
-use crate::fintekkers::models::price::{PriceProto, PriceTypeProto};
+use crate::fintekkers::models::price::{PriceProto, PriceSourceProto, PriceTypeProto};
 use crate::fintekkers::models::security::SecurityProto;
 use crate::fintekkers::models::util::ObjectTypeProto;
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
@@ -203,6 +203,15 @@ pub fn require_valid_price(proto: &PriceProto) -> Result<(), Error> {
     } else {
         Err(Error::Validation(violations))
     }
+}
+
+/// True when `price_source` is unset or MARKET; false for TRADE or an
+/// unrecognised value, so a new source is never read as market by accident.
+/// Not a validation rule: an unset source is valid. See
+/// docs/adr/price_source.md.
+pub fn is_market_price(proto: &PriceProto) -> bool {
+    proto.price_source == PriceSourceProto::UnknownPriceSource as i32
+        || proto.price_source == PriceSourceProto::Market as i32
 }
 
 /// Required-field rules only (LM-290): `security` and `price`, the same
