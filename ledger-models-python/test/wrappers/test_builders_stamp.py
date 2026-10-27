@@ -488,6 +488,7 @@ NOT_BUILDERS = {
     "models.position_filter.matches": "predicate over a row",
     "models.price_rules.validate": "validator; its FieldViolationProtos come from errors.violation (a builder)",
     "models.price_rules.require_valid": "validator; raises or returns None",
+    "models.price_rules.is_market_price": "predicate; returns a bool, builds no proto",
     "models.security.security_rules.validate": "validator; its FieldViolationProtos come from errors.violation (a builder)",
     "models.security.security_rules.require_valid": "validator; raises or returns None",
     "models.security.security_identifier.validate_identifier_proto": "validator; raises or returns None",
