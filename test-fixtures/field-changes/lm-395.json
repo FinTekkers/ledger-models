@@ -1,0 +1,13 @@
+{
+  "item": "LM-395",
+  "added_enums": [
+    {"enum": ".fintekkers.models.price.PriceSourceProto", "values": [
+      {"number": 0, "name": "UNKNOWN_PRICE_SOURCE"},
+      {"number": 1, "name": "MARKET"},
+      {"number": 2, "name": "TRADE"}
+    ]}
+  ],
+  "added": [
+    {"message": ".fintekkers.models.price.PriceProto", "number": 13, "name": "price_source", "type": ".fintekkers.models.price.PriceSourceProto"}
+  ]
+}

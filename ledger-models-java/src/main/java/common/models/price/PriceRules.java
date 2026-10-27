@@ -2,6 +2,7 @@ package common.models.price;
 
 import common.models.errors.ModelValidationException;
 import fintekkers.models.price.PriceProto;
+import fintekkers.models.price.PriceSourceProto;
 import fintekkers.models.price.PriceTypeProto;
 import fintekkers.requests.util.errors.FieldViolation.FieldViolationProto;
 import protos.serializers.util.proto.ProtoSerializationUtil;
@@ -54,6 +55,17 @@ public final class PriceRules {
     public static void requireValid(PriceProto proto) {
         List<FieldViolationProto> violations = validate(proto);
         if (!violations.isEmpty()) throw new ModelValidationException(violations);
+    }
+
+    /**
+     * True when price_source is unset or MARKET; false for TRADE or an unrecognised value,
+     * so a new source is never read as market by accident. Null reads as unset. Not a
+     * validation rule: an unset source is valid. See docs/adr/price_source.md.
+     */
+    public static boolean isMarketPrice(PriceProto proto) {
+        // Raw number, like validate's price_type check.
+        int v = (proto == null ? PriceProto.getDefaultInstance() : proto).getPriceSourceValue();
+        return v == PriceSourceProto.UNKNOWN_PRICE_SOURCE_VALUE || v == PriceSourceProto.MARKET_VALUE;
     }
 
     /** The price's UUID, or null when it has none or it is not 16 bytes. */

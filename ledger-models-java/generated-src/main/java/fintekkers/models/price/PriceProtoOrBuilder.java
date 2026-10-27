@@ -168,4 +168,15 @@ public interface PriceProtoOrBuilder extends
    * @return The priceType.
    */
   fintekkers.models.price.PriceTypeProto getPriceType();
+
+  /**
+   * <code>.fintekkers.models.price.PriceSourceProto price_source = 13;</code>
+   * @return The enum numeric value on the wire for priceSource.
+   */
+  int getPriceSourceValue();
+  /**
+   * <code>.fintekkers.models.price.PriceSourceProto price_source = 13;</code>
+   * @return The priceSource.
+   */
+  fintekkers.models.price.PriceSourceProto getPriceSource();
 }

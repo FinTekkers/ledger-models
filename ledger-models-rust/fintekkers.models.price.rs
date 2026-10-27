@@ -37,6 +37,38 @@ impl PriceTypeProto {
         }
     }
 }
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum PriceSourceProto {
+    /// Unset. Read as MARKET: prices stored before this field existed.
+    UnknownPriceSource = 0,
+    /// A published or observed market price (e.g. FedInvest end of day).
+    Market = 1,
+    /// The price a transaction was executed at.
+    Trade = 2,
+}
+impl PriceSourceProto {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            PriceSourceProto::UnknownPriceSource => "UNKNOWN_PRICE_SOURCE",
+            PriceSourceProto::Market => "MARKET",
+            PriceSourceProto::Trade => "TRADE",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_PRICE_SOURCE" => Some(Self::UnknownPriceSource),
+            "MARKET" => Some(Self::Market),
+            "TRADE" => Some(Self::Trade),
+            _ => None,
+        }
+    }
+}
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PriceProto {
@@ -64,4 +96,6 @@ pub struct PriceProto {
     pub security: ::core::option::Option<super::security::SecurityProto>,
     #[prost(enumeration = "PriceTypeProto", tag = "12")]
     pub price_type: i32,
+    #[prost(enumeration = "PriceSourceProto", tag = "13")]
+    pub price_source: i32,
 }

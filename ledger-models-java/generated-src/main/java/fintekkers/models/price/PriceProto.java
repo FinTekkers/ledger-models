@@ -18,6 +18,7 @@ private static final long serialVersionUID = 0L;
   private PriceProto() {
     objectType_ = 0;
     priceType_ = 0;
+    priceSource_ = 0;
   }
 
   @java.lang.Override
@@ -303,6 +304,24 @@ private static final long serialVersionUID = 0L;
     return result == null ? fintekkers.models.price.PriceTypeProto.UNRECOGNIZED : result;
   }
 
+  public static final int PRICE_SOURCE_FIELD_NUMBER = 13;
+  private int priceSource_ = 0;
+  /**
+   * <code>.fintekkers.models.price.PriceSourceProto price_source = 13;</code>
+   * @return The enum numeric value on the wire for priceSource.
+   */
+  @java.lang.Override public int getPriceSourceValue() {
+    return priceSource_;
+  }
+  /**
+   * <code>.fintekkers.models.price.PriceSourceProto price_source = 13;</code>
+   * @return The priceSource.
+   */
+  @java.lang.Override public fintekkers.models.price.PriceSourceProto getPriceSource() {
+    fintekkers.models.price.PriceSourceProto result = fintekkers.models.price.PriceSourceProto.forNumber(priceSource_);
+    return result == null ? fintekkers.models.price.PriceSourceProto.UNRECOGNIZED : result;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -346,6 +365,9 @@ private static final long serialVersionUID = 0L;
     }
     if (priceType_ != fintekkers.models.price.PriceTypeProto.UNKNOWN_PRICE_TYPE.getNumber()) {
       output.writeEnum(12, priceType_);
+    }
+    if (priceSource_ != fintekkers.models.price.PriceSourceProto.UNKNOWN_PRICE_SOURCE.getNumber()) {
+      output.writeEnum(13, priceSource_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -395,6 +417,10 @@ private static final long serialVersionUID = 0L;
     if (priceType_ != fintekkers.models.price.PriceTypeProto.UNKNOWN_PRICE_TYPE.getNumber()) {
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(12, priceType_);
+    }
+    if (priceSource_ != fintekkers.models.price.PriceSourceProto.UNKNOWN_PRICE_SOURCE.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(13, priceSource_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -450,6 +476,7 @@ private static final long serialVersionUID = 0L;
           .equals(other.getSecurity())) return false;
     }
     if (priceType_ != other.priceType_) return false;
+    if (priceSource_ != other.priceSource_) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -496,6 +523,8 @@ private static final long serialVersionUID = 0L;
     }
     hash = (37 * hash) + PRICE_TYPE_FIELD_NUMBER;
     hash = (53 * hash) + priceType_;
+    hash = (37 * hash) + PRICE_SOURCE_FIELD_NUMBER;
+    hash = (53 * hash) + priceSource_;
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -663,6 +692,7 @@ private static final long serialVersionUID = 0L;
         securityBuilder_ = null;
       }
       priceType_ = 0;
+      priceSource_ = 0;
       return this;
     }
 
@@ -740,6 +770,9 @@ private static final long serialVersionUID = 0L;
       if (((from_bitField0_ & 0x00000200) != 0)) {
         result.priceType_ = priceType_;
       }
+      if (((from_bitField0_ & 0x00000400) != 0)) {
+        result.priceSource_ = priceSource_;
+      }
     }
 
     @java.lang.Override
@@ -815,6 +848,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.priceType_ != 0) {
         setPriceTypeValue(other.getPriceTypeValue());
+      }
+      if (other.priceSource_ != 0) {
+        setPriceSourceValue(other.getPriceSourceValue());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -906,6 +942,11 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000200;
               break;
             } // case 96
+            case 104: {
+              priceSource_ = input.readEnum();
+              bitField0_ |= 0x00000400;
+              break;
+            } // case 104
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1977,6 +2018,59 @@ private static final long serialVersionUID = 0L;
     public Builder clearPriceType() {
       bitField0_ = (bitField0_ & ~0x00000200);
       priceType_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private int priceSource_ = 0;
+    /**
+     * <code>.fintekkers.models.price.PriceSourceProto price_source = 13;</code>
+     * @return The enum numeric value on the wire for priceSource.
+     */
+    @java.lang.Override public int getPriceSourceValue() {
+      return priceSource_;
+    }
+    /**
+     * <code>.fintekkers.models.price.PriceSourceProto price_source = 13;</code>
+     * @param value The enum numeric value on the wire for priceSource to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPriceSourceValue(int value) {
+      priceSource_ = value;
+      bitField0_ |= 0x00000400;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.price.PriceSourceProto price_source = 13;</code>
+     * @return The priceSource.
+     */
+    @java.lang.Override
+    public fintekkers.models.price.PriceSourceProto getPriceSource() {
+      fintekkers.models.price.PriceSourceProto result = fintekkers.models.price.PriceSourceProto.forNumber(priceSource_);
+      return result == null ? fintekkers.models.price.PriceSourceProto.UNRECOGNIZED : result;
+    }
+    /**
+     * <code>.fintekkers.models.price.PriceSourceProto price_source = 13;</code>
+     * @param value The priceSource to set.
+     * @return This builder for chaining.
+     */
+    public Builder setPriceSource(fintekkers.models.price.PriceSourceProto value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      bitField0_ |= 0x00000400;
+      priceSource_ = value.getNumber();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>.fintekkers.models.price.PriceSourceProto price_source = 13;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearPriceSource() {
+      bitField0_ = (bitField0_ & ~0x00000400);
+      priceSource_ = 0;
       onChanged();
       return this;
     }
