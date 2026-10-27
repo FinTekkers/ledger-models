@@ -45,8 +45,9 @@ import static common.models.postion.Field.*;
  * truth; field accessors forward to {@code proto.getXxx()} with type conversion.
  * Mutations write into a lazily-allocated {@code overlay} builder;
  * {@link #getProto()} returns the overlay-merged proto with inner
- * Security/Portfolio/Price sub-protos rewritten to {@code is_link=true}
- * (uuid + as_of preserved) — strip-on-write per Phase 2 dispatch.
+ * Security/Portfolio sub-protos rewritten to {@code is_link=true}
+ * (uuid + as_of preserved) — strip-on-write per Phase 2 dispatch. The trade
+ * Price stays inline (LM-394): only its nested Security becomes a link.
  *
  * <p>Resolver wiring (D): Java Transaction wrapper takes ONLY proto in ctor,
  * matching the Python/Rust pattern. No auto-resolve. {@link #getSecurity()}
@@ -117,9 +118,9 @@ public class Transaction extends RawDataModelObject implements ITransaction {
      *       are visible to in-process getters immediately.</li>
      *   <li>Serialize ({@link #getProto()}): the overlay (or {@code proto} if
      *       no writes occurred) is the basis for the emitted proto, with
-     *       strip-on-write applied to nested Security/Portfolio/Price
-     *       sub-protos and child transactions rebuilt from the in-memory
-     *       {@code childrenTransactions} list.</li>
+     *       strip-on-write applied to nested Security/Portfolio sub-protos
+     *       (and the Price's nested Security) and child transactions rebuilt
+     *       from the in-memory {@code childrenTransactions} list.</li>
      * </ol>
      *
      * <p>The {@code overlay == null} check doubles as a "has been mutated?"
@@ -367,8 +368,12 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
     /**
      * Returns the active view of the proto with strip-on-write applied:
-     *   - Inner Security/Portfolio/Price sub-protos rewritten to is_link=true
+     *   - Inner Security/Portfolio sub-protos rewritten to is_link=true
      *     with only uuid + as_of preserved.
+     *   - Inner Price kept inline (price decimal, uuid, as_of): a trade price
+     *     is a fact of the transaction, not a link to market data (LM-394).
+     *     Only the Price's nested Security is rewritten to a link. A Price
+     *     that is already a link passes through unchanged.
      *   - childTransactions rebuilt from the in-memory list (so additions
      *     made via addChildTransaction propagate).
      *
@@ -394,7 +399,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         if (b.hasPortfolio()) {
             b.setPortfolio(stripPortfolio(b.getPortfolio()));
         }
-        // Strip inline Price → link reference.
+        // Keep Price inline; strip only its nested Security → link reference.
         if (b.hasPrice()) {
             b.setPrice(stripPrice(b.getPrice()));
         }
@@ -444,13 +449,16 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return link.build();
     }
 
+    /**
+     * A trade price stays inline (price decimal, uuid, as_of) so a persisted
+     * transaction reads its price back without a {@code LinkCache.PRICE}
+     * lookup (LM-394). Only the nested Security is stripped to a link.
+     */
     private static PriceProto stripPrice(PriceProto full) {
         if (full.getIsLink()) return full;
-        primePriceCache(full);
-        PriceProto.Builder link = ObjectTypes.stamp(PriceProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PRICE).setIsLink(true);
-        if (full.hasUuid()) link.setUuid(full.getUuid());
-        if (full.hasAsOf()) link.setAsOf(full.getAsOf());
-        return link.build();
+        PriceProto.Builder inline = ObjectTypes.stamp(full.toBuilder(), ObjectTypeProto.OBJECT_TYPE_PRICE);
+        if (full.hasSecurity()) inline.setSecurity(stripSecurity(full.getSecurity()));
+        return inline.build();
     }
 
     // ---- LinkCache pre-warm helpers (write-through on strip) -------------
@@ -467,13 +475,6 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         java.util.UUID id = protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(full.getUuid());
         java.time.ZonedDateTime asOf = protos.serializers.util.proto.ProtoSerializationUtil.deserializeTimestamp(full.getAsOf());
         if (id != null && asOf != null) common.util.LinkCache.PORTFOLIO.put(id, full, asOf);
-    }
-
-    private static void primePriceCache(PriceProto full) {
-        if (!full.hasUuid() || !full.hasAsOf()) return;
-        java.util.UUID id = protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(full.getUuid());
-        java.time.ZonedDateTime asOf = protos.serializers.util.proto.ProtoSerializationUtil.deserializeTimestamp(full.getAsOf());
-        if (id != null && asOf != null) common.util.LinkCache.PRICE.put(id, full, asOf);
     }
 
     // ---- toString / equals / hashCode -----------------------------------
@@ -609,9 +610,9 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         if (!a.hasPrice()) return null;
         fintekkers.models.price.PriceProto pp = a.getPrice();
         // Lazy-hydrate the embedded Price: if it's a link-mode proto,
-        // resolve via LinkCache.PRICE. Pre-warm-on-strip in this wrapper's
-        // own getProto() populates that cache for round-trip flows, and
-        // service-side write-through covers cross-process flows.
+        // resolve via LinkCache.PRICE. getProto() keeps prices inline
+        // (LM-394), so only link prices sent by callers or persisted by
+        // older releases take this path; service-side write-through warms it.
         if (pp.getIsLink() && pp.hasUuid()) {
             java.util.UUID priceId = protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(pp.getUuid());
             java.time.ZonedDateTime priceAsOf = pp.hasAsOf()
@@ -624,8 +625,8 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                 throw new IllegalStateException(
                     "Cannot read fields on link-mode Price uuid=" + priceId
                     + " asOf=" + priceAsOf + " — LinkCache.PRICE miss. "
-                    + "Pre-warm via LinkResolver.resolvePricesOnTransactions(...) "
-                    + "or rely on strip-on-write self-prewarm (same-process flows).");
+                    + "Pre-warm LinkCache.PRICE (e.g. via price-service write-through) before reading. "
+                    + "Prices written by Transaction.getProto() stay inline and never take this path.");
             }
         }
         return PriceSerializer.getInstance().deserialize(pp);

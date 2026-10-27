@@ -172,6 +172,10 @@ Most consumers either want "latest" (`link.asOf == null`) or want exactly the vi
 - **No sentinel defaults.** `null` → throw, missing security → throw.
 - **Cache stale within a process**: best-effort; cross-process write doesn't invalidate. Local mutations do.
 
+### Trade price stays inline (LM-394)
+
+A transaction's trade price is a fixed fact of the transaction, not a link to market data. Java's `Transaction.getProto()` strips the embedded Security and Portfolio to links, but keeps the Price inline (price decimal, `uuid`, `as_of`); only the Price's nested Security becomes a link. A consumer that persists `getProto()` reads the price back after a cold start with no `LinkCache.PRICE` lookup. `getProto()` no longer primes `LinkCache.PRICE`. A Price that arrives already as a link passes through unchanged, and `Transaction.getPrice()` still resolves it from `LinkCache.PRICE`. Python, TypeScript and Rust never stripped the price, so all four languages now match.
+
 ## Components to migrate
 
 | Wrapper | Add lazy hydrate? | Service backing it | Notes |
