@@ -13,8 +13,10 @@ option py_generic_services = true;
 service Price {
     rpc CreateOrUpdate   (fintekkers.requests.price.CreatePriceRequestProto) returns   (fintekkers.requests.price.CreatePriceResponseProto);
 
+    // Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
     rpc GetByIds   (fintekkers.requests.price.QueryPriceRequestProto) returns   (fintekkers.requests.price.QueryPriceResponseProto);
-    rpc Search   (fintekkers.requests.price.QueryPriceRequestProto) returns   (stream fintekkers.requests.price.QueryPriceResponseProto);
+    // For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
+    rpc Search  (fintekkers.requests.price.QueryPriceRequestProto) returns   (stream fintekkers.requests.price.QueryPriceResponseProto);
     rpc ListIds   (fintekkers.requests.price.QueryPriceRequestProto) returns   (fintekkers.requests.price.QueryPriceResponseProto);
 
     rpc ValidateCreateOrUpdate   (fintekkers.requests.price.CreatePriceRequestProto) returns (fintekkers.requests.util.errors.SummaryProto);

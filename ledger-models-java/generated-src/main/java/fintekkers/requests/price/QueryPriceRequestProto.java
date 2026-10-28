@@ -136,6 +136,16 @@ private static final long serialVersionUID = 0L;
   @SuppressWarnings("serial")
   private java.util.List<fintekkers.models.util.Uuid.UUIDProto> uuIds_;
   /**
+   * <pre>
+   * Price IDs (PriceProto.uuid), never security IDs.
+   * Search: when non-empty, only prices with these IDs match. This is
+   * ANDed with every other filter (search_price_input, as_of, horizon or
+   * date_range, frequency), as in transaction Search.
+   * To get prices for given securities, leave uuIds empty and put a
+   * SECURITY_ID filter in search_price_input.
+   * GetByIds: takes price IDs in this field.
+   * </pre>
+   *
    * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
    */
   @java.lang.Override
@@ -143,6 +153,16 @@ private static final long serialVersionUID = 0L;
     return uuIds_;
   }
   /**
+   * <pre>
+   * Price IDs (PriceProto.uuid), never security IDs.
+   * Search: when non-empty, only prices with these IDs match. This is
+   * ANDed with every other filter (search_price_input, as_of, horizon or
+   * date_range, frequency), as in transaction Search.
+   * To get prices for given securities, leave uuIds empty and put a
+   * SECURITY_ID filter in search_price_input.
+   * GetByIds: takes price IDs in this field.
+   * </pre>
+   *
    * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
    */
   @java.lang.Override
@@ -151,6 +171,16 @@ private static final long serialVersionUID = 0L;
     return uuIds_;
   }
   /**
+   * <pre>
+   * Price IDs (PriceProto.uuid), never security IDs.
+   * Search: when non-empty, only prices with these IDs match. This is
+   * ANDed with every other filter (search_price_input, as_of, horizon or
+   * date_range, frequency), as in transaction Search.
+   * To get prices for given securities, leave uuIds empty and put a
+   * SECURITY_ID filter in search_price_input.
+   * GetByIds: takes price IDs in this field.
+   * </pre>
+   *
    * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
    */
   @java.lang.Override
@@ -158,6 +188,16 @@ private static final long serialVersionUID = 0L;
     return uuIds_.size();
   }
   /**
+   * <pre>
+   * Price IDs (PriceProto.uuid), never security IDs.
+   * Search: when non-empty, only prices with these IDs match. This is
+   * ANDed with every other filter (search_price_input, as_of, horizon or
+   * date_range, frequency), as in transaction Search.
+   * To get prices for given securities, leave uuIds empty and put a
+   * SECURITY_ID filter in search_price_input.
+   * GetByIds: takes price IDs in this field.
+   * </pre>
+   *
    * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
    */
   @java.lang.Override
@@ -165,6 +205,16 @@ private static final long serialVersionUID = 0L;
     return uuIds_.get(index);
   }
   /**
+   * <pre>
+   * Price IDs (PriceProto.uuid), never security IDs.
+   * Search: when non-empty, only prices with these IDs match. This is
+   * ANDed with every other filter (search_price_input, as_of, horizon or
+   * date_range, frequency), as in transaction Search.
+   * To get prices for given securities, leave uuIds empty and put a
+   * SECURITY_ID filter in search_price_input.
+   * GetByIds: takes price IDs in this field.
+   * </pre>
+   *
    * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
    */
   @java.lang.Override
@@ -1264,6 +1314,16 @@ private static final long serialVersionUID = 0L;
         fintekkers.models.util.Uuid.UUIDProto, fintekkers.models.util.Uuid.UUIDProto.Builder, fintekkers.models.util.Uuid.UUIDProtoOrBuilder> uuIdsBuilder_;
 
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public java.util.List<fintekkers.models.util.Uuid.UUIDProto> getUuIdsList() {
@@ -1274,6 +1334,16 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public int getUuIdsCount() {
@@ -1284,6 +1354,16 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public fintekkers.models.util.Uuid.UUIDProto getUuIds(int index) {
@@ -1294,6 +1374,16 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public Builder setUuIds(
@@ -1311,6 +1401,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public Builder setUuIds(
@@ -1325,6 +1425,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public Builder addUuIds(fintekkers.models.util.Uuid.UUIDProto value) {
@@ -1341,6 +1451,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public Builder addUuIds(
@@ -1358,6 +1478,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public Builder addUuIds(
@@ -1372,6 +1502,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public Builder addUuIds(
@@ -1386,6 +1526,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public Builder addAllUuIds(
@@ -1401,6 +1551,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public Builder clearUuIds() {
@@ -1414,6 +1574,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public Builder removeUuIds(int index) {
@@ -1427,6 +1597,16 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public fintekkers.models.util.Uuid.UUIDProto.Builder getUuIdsBuilder(
@@ -1434,6 +1614,16 @@ private static final long serialVersionUID = 0L;
       return getUuIdsFieldBuilder().getBuilder(index);
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public fintekkers.models.util.Uuid.UUIDProtoOrBuilder getUuIdsOrBuilder(
@@ -1444,6 +1634,16 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public java.util.List<? extends fintekkers.models.util.Uuid.UUIDProtoOrBuilder> 
@@ -1455,6 +1655,16 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public fintekkers.models.util.Uuid.UUIDProto.Builder addUuIdsBuilder() {
@@ -1462,6 +1672,16 @@ private static final long serialVersionUID = 0L;
           fintekkers.models.util.Uuid.UUIDProto.getDefaultInstance());
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public fintekkers.models.util.Uuid.UUIDProto.Builder addUuIdsBuilder(
@@ -1470,6 +1690,16 @@ private static final long serialVersionUID = 0L;
           index, fintekkers.models.util.Uuid.UUIDProto.getDefaultInstance());
     }
     /**
+     * <pre>
+     * Price IDs (PriceProto.uuid), never security IDs.
+     * Search: when non-empty, only prices with these IDs match. This is
+     * ANDed with every other filter (search_price_input, as_of, horizon or
+     * date_range, frequency), as in transaction Search.
+     * To get prices for given securities, leave uuIds empty and put a
+     * SECURITY_ID filter in search_price_input.
+     * GetByIds: takes price IDs in this field.
+     * </pre>
+     *
      * <code>repeated .fintekkers.models.util.UUIDProto uuIds = 21;</code>
      */
     public java.util.List<fintekkers.models.util.Uuid.UUIDProto.Builder> 

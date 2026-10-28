@@ -108,11 +108,11 @@ class PriceService:
         # Get security uuid from identifier and identifier type via the security service
         security_uuid: UUID = SecurityService().get_security_uuid_by_identifier(identifer, identifier_type)
 
-        # Create price query request using the security UUID, frequency, and horizon
-        # uuid_proto = UUIDProto(raw_uuid=security_uuid.bytes)
+        # Create price query request using the security UUID, frequency, and horizon.
+        # The security goes in a SECURITY_ID filter: uuIds holds price IDs only.
         request = QueryPriceRequest.create_query_request(
             fields={
-                FieldProto.SECURITY_ID: security_uuid
+                FieldProto.SECURITY_ID: UUIDProto(raw_uuid=security_uuid.bytes)
             },
             frequency=frequency,
             horizon=horizon
