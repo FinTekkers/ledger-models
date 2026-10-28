@@ -2,8 +2,9 @@
 in the source copy and the packaged Python mirror, matching MeasureProto.
 applies_to holds ProductTypeProto names or hierarchy.json nodes (LM-372),
 every language's mirror is byte-equal to the source, LM-364 leaves the
-UNADJUSTED_COST_BASIS entry unchanged, and every MeasureProto value has one
-catalog entry (LM-402, which also added PROFIT_LOSS)."""
+UNADJUSTED_COST_BASIS entry unchanged, every MeasureProto value has one
+catalog entry (LM-402, which also added PROFIT_LOSS), and every entry says
+what computes it and what it depends on (LM-403)."""
 import json
 from pathlib import Path
 
@@ -22,6 +23,9 @@ OTHER_MIRRORS = {
     "javascript": _REPO / "ledger-models-javascript" / "catalog" / "measures.json",
     "rust": _REPO / "ledger-models-rust" / "catalog" / "measures.json",
 }
+COMPUTED_BY = {"input", "ledger-service", "valuation-service"}
+INPUTS = {"TAX_LOTS", "SECURITY_TERMS", "CPI_U", "BILL_FIXINGS", "YIELD_CURVE", "TREASURY_PRICES"}
+LM403_KEYS = {"computed_by", "depends_on"}
 LM364_UNCHANGED = json.loads((_REPO / "test-fixtures" / "catalog" / "lm-364-unchanged.json").read_text())
 
 
@@ -66,8 +70,10 @@ def test_applies_to_names_product_types_or_hierarchy_nodes():
 def test_lm364_leaves_unadjusted_cost_basis_and_profit_loss_unchanged(name):
     if LM364_UNCHANGED["catalog"][name] is None:
         pytest.skip(f"{name} had no entry before LM-364; LM-402 added one")
-    measures = {m["name"]: m for m in json.loads(SOURCE.read_text())["measures"]}
-    assert measures.get(name) == LM364_UNCHANGED["catalog"][name]
+    baseline = LM364_UNCHANGED["catalog"][name]
+    entry = {m["name"]: m for m in json.loads(SOURCE.read_text())["measures"]}[name]
+    assert set(entry) - set(baseline) <= LM403_KEYS
+    assert {key: entry.get(key) for key in baseline} == baseline
 
 
 @pytest.mark.parametrize("path", [SOURCE, MIRROR], ids=["source", "python-mirror"])
@@ -79,3 +85,32 @@ def test_every_measure_has_one_catalog_entry(path):
         entries = [m for m in measures if m["name"] == name]
         assert len(entries) == 1, name
         assert entries[0]["enum_value"] == number, name
+
+
+@pytest.mark.parametrize("path", [SOURCE, MIRROR], ids=["source", "python-mirror"])
+def test_every_measure_has_computed_by_and_depends_on(path):
+    measures = json.loads(path.read_text())["measures"]
+    names = {m["name"] for m in measures}
+    for m in measures:
+        assert LM403_KEYS <= set(m), m["name"]
+        assert isinstance(m["depends_on"], list), m["name"]
+        if m["category"] == "sentinel":
+            assert m["computed_by"] is None and m["depends_on"] == [], m["name"]
+            continue
+        assert m["computed_by"] in COMPUTED_BY, m["name"]
+        unknown = [d for d in m["depends_on"] if d not in names and d not in INPUTS]
+        assert not unknown, (m["name"], unknown)
+        assert m["name"] not in m["depends_on"], m["name"]
+        if m["computed_by"] == "input":
+            assert m["depends_on"] == [], m["name"]
+
+
+def test_lm403_dependency_values():
+    measures = {m["name"]: m for m in json.loads(SOURCE.read_text())["measures"]}
+    assert (measures["CLEAN_PRICE"]["computed_by"], measures["CLEAN_PRICE"]["depends_on"]) == ("input", [])
+    assert measures["DIRECTED_QUANTITY"]["computed_by"] == "ledger-service"
+    assert measures["UNADJUSTED_COST_BASIS"]["depends_on"] == ["TAX_LOTS"]
+    assert measures["ADJUSTED_COST_BASIS"]["depends_on"] == [
+        "TAX_LOTS", "SECURITY_TERMS", "REFERENCE_CPI", "BILL_FIXINGS"]
+    assert measures["DV01"]["depends_on"] == ["MODIFIED_DURATION", "MARKET_VALUE"]
+    assert measures["REFERENCE_CPI"]["depends_on"] == ["CPI_U"]
