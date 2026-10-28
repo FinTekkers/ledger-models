@@ -85,9 +85,10 @@ public enum Measure {
 
     REFERENCE_CPI("TIPS reference CPI for the settlement date, in index points. " +
             "Taken from TipsInput.cpi: the reference_cpi as given, or derived by valuation-service " +
-            "from the monthly readings for months m-3 and m-2. Unrounded. TIPS-specific; null otherwise."),
+            "from the monthly readings for months m-3 and m-2, rounded to 5 decimals per 31 CFR 356 Appendix B. " +
+            "TIPS-specific; null otherwise."),
 
-    INDEX_RATIO("TIPS index ratio: REFERENCE_CPI / base_cpi. Dimensionless, unrounded and unfloored. " +
+    INDEX_RATIO("TIPS index ratio: REFERENCE_CPI / base_cpi. Dimensionless, rounded to 5 decimals per 31 CFR 356 Appendix B, unfloored. " +
             "TIPS-specific; null otherwise.");
 
     static {

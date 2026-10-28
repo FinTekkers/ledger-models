@@ -1,17 +1,18 @@
 """
 TipsInput.cpi (LM-343) round-trips through a full ValuationRequestProto, the
 fields removed in 0.5 (LM-344) are gone and reserved, and the new messages
-carry exactly the planned fields.
+carry exactly the planned fields. Readings with extra lot months (LM-405), and
+with only m-3 and m-2, round-trip unchanged.
 """
 import json
 from decimal import Decimal
 from pathlib import Path
 
-from google.protobuf import descriptor_pb2
+from google.protobuf import descriptor_pb2, timestamp_pb2
 
 from fintekkers.models.security import product_type_pb2, security_pb2
 from fintekkers.models.security.index import index_type_pb2
-from fintekkers.models.util import decimal_value_pb2
+from fintekkers.models.util import decimal_value_pb2, local_timestamp_pb2
 from fintekkers.requests.valuation import product_inputs_pb2
 from fintekkers.requests.valuation import valuation_request_pb2
 from fintekkers.wrappers.models.util.decimal import decode_decimal, encode_decimal
@@ -48,10 +49,14 @@ def _tips_security() -> security_pb2.SecurityProto:
     )
 
 
-def _request(tips: product_inputs_pb2.TipsInput) -> valuation_request_pb2.ValuationRequestProto:
-    return valuation_request_pb2.ValuationRequestProto(
+def _request(tips: product_inputs_pb2.TipsInput, asof_seconds: int = 0) -> valuation_request_pb2.ValuationRequestProto:
+    request = valuation_request_pb2.ValuationRequestProto(
         product_input=product_inputs_pb2.ProductInput(tips=tips),
     )
+    if asof_seconds:
+        request.asof_datetime.CopyFrom(
+            local_timestamp_pb2.LocalTimestampProto(timestamp=timestamp_pb2.Timestamp(seconds=asof_seconds)))
+    return request
 
 
 def _roundtrip(original: valuation_request_pb2.ValuationRequestProto) -> valuation_request_pb2.ValuationRequestProto:
@@ -66,8 +71,43 @@ def _roundtrip_tips(original: valuation_request_pb2.ValuationRequestProto) -> pr
     return parsed.product_input.tips
 
 
+def _readings_tips(readings: list) -> product_inputs_pb2.TipsInput:
+    return product_inputs_pb2.TipsInput(
+        security=_tips_security(), clean_price=_decimal("97.50"),
+        cpi=product_inputs_pb2.InflationIndexInput(
+            index=_cpi_index(),
+            readings=product_inputs_pb2.MonthlyIndexReadings(readings=[
+                product_inputs_pb2.MonthlyIndexReading(year=y, month=m, value=_decimal(v)) for y, m, v in readings
+            ]),
+        ),
+    )
+
+
 class TestTipsInputCpiRoundTrip:
-    def test_readings_survive_valuation_request(self):
+    def test_readings_with_extra_lot_months_survive_valuation_request(self):
+        """LM-405: m-3 and m-2 of the valuation month plus two earlier lot
+        months, out of order, keep their order and decimal strings."""
+        # 2026-02-17T14:30:00Z: m-3 and m-2 are 2025-11 and 2025-12. A lot
+        # settling in 2025-11 adds 2025-08 and 2025-09.
+        readings = [
+            (2025, 12, "324.05400"),
+            (2025, 8, "323.97600"),
+            (2025, 11, "324.12200"),
+            (2025, 9, "324.80000"),
+        ]
+        original = _request(_readings_tips(readings), asof_seconds=1771338600)
+
+        parsed = _roundtrip(original)
+
+        assert parsed == original
+        assert parsed.asof_datetime.timestamp.ToJsonString() == "2026-02-17T14:30:00Z"
+        tips = parsed.product_input.tips
+        assert tips.cpi.WhichOneof("cpi") == "readings"
+        assert [(r.year, r.month, _text(r.value)) for r in tips.cpi.readings.readings] == readings
+
+    def test_backward_compat_m3_m2_readings_survive_valuation_request(self):
+        """A request with only the m-3 and m-2 readings stays valid and
+        round-trips unchanged (LM-405 guardrail)."""
         cpi = product_inputs_pb2.InflationIndexInput(
             index=_cpi_index(),
             readings=product_inputs_pb2.MonthlyIndexReadings(readings=[
@@ -79,7 +119,11 @@ class TestTipsInputCpiRoundTrip:
             security=_tips_security(), clean_price=_decimal("97.50"), cpi=cpi,
         )
 
-        parsed = _roundtrip_tips(_request(tips))
+        # 2026-07-16T00:00:00Z: m-3 and m-2 are 2026-04 and 2026-05.
+        original = _request(tips, asof_seconds=1784160000)
+        assert _roundtrip(original) == original
+
+        parsed = _roundtrip_tips(original)
 
         assert parsed.HasField("cpi")
         assert parsed.cpi.WhichOneof("cpi") == "readings"

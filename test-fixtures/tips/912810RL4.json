@@ -1,0 +1,42 @@
+{
+  "item": "LM-405",
+  "note": "Owner-supplied inputs for the TIPS PROFIT_LOSS worked example (issue #405, 28 Oct 2026), each with its source. Never service output: test_lm405_tips_pnl_spec.py re-derives the documented numbers from these inputs with 31 CFR 356 Appendix B rounding.",
+  "security": {
+    "cusip": "912810RL4",
+    "description": "TIPS 0.750% due 2045-02-15, dated 2015-02-15",
+    "base_cpi": "235.48150",
+    "source": "TreasuryDirect TA_WS referenceCpiOnOriginalDatedDate: https://www.treasurydirect.gov/TA_WS/securities/search?cusip=912810RL4&format=json"
+  },
+  "lot": {
+    "face": "100000",
+    "real_price": "68.1875",
+    "open_date": "2026-07-27",
+    "settlement_date": "2026-07-28",
+    "source": "the ledger's ValuationTest portfolio, TAX_LOT_OPEN_DATE; settlement is open_date + 1 business day (Treasury T+1)"
+  },
+  "valuation": {
+    "date": "2026-10-28",
+    "real_clean_price": "67.625",
+    "source": "FedInvest end of day 2026-10-26 (latest within the 7-day lookback on 28 Oct)"
+  },
+  "cpi_u_nsa": {
+    "series": "CUUR0000SA0",
+    "source": "https://data.bls.gov/timeseries/CUUR0000SA0",
+    "readings": [
+      {"year": 2026, "month": 4, "value": "333.020"},
+      {"year": 2026, "month": 5, "value": "335.123"},
+      {"year": 2026, "month": 7, "value": "333.918"},
+      {"year": 2026, "month": 8, "value": "334.980"}
+    ]
+  },
+  "expected": {
+    "lot_reference_cpi": "334.85165",
+    "lot_index_ratio": "1.42199",
+    "cost": "96961.94",
+    "valuation_reference_cpi": "334.84297",
+    "valuation_index_ratio": "1.42195",
+    "market": "96159.37",
+    "profit_loss": "-802.57",
+    "profit_loss_percent": "-0.0082772"
+  }
+}

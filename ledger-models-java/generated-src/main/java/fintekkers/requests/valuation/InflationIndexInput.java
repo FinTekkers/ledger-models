@@ -139,11 +139,14 @@ private static final long serialVersionUID = 0L;
   public static final int READINGS_FIELD_NUMBER = 2;
   /**
    * <pre>
-   * Raw monthly index levels. Must be exactly the readings for months m-3
+   * Raw monthly index levels. Must include the readings for months m-3
    * and m-2 of settlement month m, the month of the UTC date of
    * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-   * time_zone is not used). A missing or extra month makes the request
-   * invalid and it is rejected, the same as a duplicate (year, month).
+   * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+   * and it is rejected. May also include the extra months that lot
+   * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+   * month no date needs is allowed and ignored. A duplicate (year, month)
+   * or a month outside 1-12 is still rejected.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -155,11 +158,14 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Raw monthly index levels. Must be exactly the readings for months m-3
+   * Raw monthly index levels. Must include the readings for months m-3
    * and m-2 of settlement month m, the month of the UTC date of
    * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-   * time_zone is not used). A missing or extra month makes the request
-   * invalid and it is rejected, the same as a duplicate (year, month).
+   * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+   * and it is rejected. May also include the extra months that lot
+   * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+   * month no date needs is allowed and ignored. A duplicate (year, month)
+   * or a month outside 1-12 is still rejected.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -174,11 +180,14 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Raw monthly index levels. Must be exactly the readings for months m-3
+   * Raw monthly index levels. Must include the readings for months m-3
    * and m-2 of settlement month m, the month of the UTC date of
    * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-   * time_zone is not used). A missing or extra month makes the request
-   * invalid and it is rejected, the same as a duplicate (year, month).
+   * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+   * and it is rejected. May also include the extra months that lot
+   * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+   * month no date needs is allowed and ignored. A duplicate (year, month)
+   * or a month outside 1-12 is still rejected.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -855,11 +864,14 @@ private static final long serialVersionUID = 0L;
         fintekkers.requests.valuation.MonthlyIndexReadings, fintekkers.requests.valuation.MonthlyIndexReadings.Builder, fintekkers.requests.valuation.MonthlyIndexReadingsOrBuilder> readingsBuilder_;
     /**
      * <pre>
-     * Raw monthly index levels. Must be exactly the readings for months m-3
+     * Raw monthly index levels. Must include the readings for months m-3
      * and m-2 of settlement month m, the month of the UTC date of
      * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-     * time_zone is not used). A missing or extra month makes the request
-     * invalid and it is rejected, the same as a duplicate (year, month).
+     * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+     * and it is rejected. May also include the extra months that lot
+     * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+     * month no date needs is allowed and ignored. A duplicate (year, month)
+     * or a month outside 1-12 is still rejected.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -871,11 +883,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Raw monthly index levels. Must be exactly the readings for months m-3
+     * Raw monthly index levels. Must include the readings for months m-3
      * and m-2 of settlement month m, the month of the UTC date of
      * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-     * time_zone is not used). A missing or extra month makes the request
-     * invalid and it is rejected, the same as a duplicate (year, month).
+     * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+     * and it is rejected. May also include the extra months that lot
+     * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+     * month no date needs is allowed and ignored. A duplicate (year, month)
+     * or a month outside 1-12 is still rejected.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -897,11 +912,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Raw monthly index levels. Must be exactly the readings for months m-3
+     * Raw monthly index levels. Must include the readings for months m-3
      * and m-2 of settlement month m, the month of the UTC date of
      * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-     * time_zone is not used). A missing or extra month makes the request
-     * invalid and it is rejected, the same as a duplicate (year, month).
+     * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+     * and it is rejected. May also include the extra months that lot
+     * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+     * month no date needs is allowed and ignored. A duplicate (year, month)
+     * or a month outside 1-12 is still rejected.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -921,11 +939,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Raw monthly index levels. Must be exactly the readings for months m-3
+     * Raw monthly index levels. Must include the readings for months m-3
      * and m-2 of settlement month m, the month of the UTC date of
      * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-     * time_zone is not used). A missing or extra month makes the request
-     * invalid and it is rejected, the same as a duplicate (year, month).
+     * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+     * and it is rejected. May also include the extra months that lot
+     * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+     * month no date needs is allowed and ignored. A duplicate (year, month)
+     * or a month outside 1-12 is still rejected.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -943,11 +964,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Raw monthly index levels. Must be exactly the readings for months m-3
+     * Raw monthly index levels. Must include the readings for months m-3
      * and m-2 of settlement month m, the month of the UTC date of
      * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-     * time_zone is not used). A missing or extra month makes the request
-     * invalid and it is rejected, the same as a duplicate (year, month).
+     * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+     * and it is rejected. May also include the extra months that lot
+     * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+     * month no date needs is allowed and ignored. A duplicate (year, month)
+     * or a month outside 1-12 is still rejected.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -974,11 +998,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Raw monthly index levels. Must be exactly the readings for months m-3
+     * Raw monthly index levels. Must include the readings for months m-3
      * and m-2 of settlement month m, the month of the UTC date of
      * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-     * time_zone is not used). A missing or extra month makes the request
-     * invalid and it is rejected, the same as a duplicate (year, month).
+     * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+     * and it is rejected. May also include the extra months that lot
+     * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+     * month no date needs is allowed and ignored. A duplicate (year, month)
+     * or a month outside 1-12 is still rejected.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -1001,11 +1028,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Raw monthly index levels. Must be exactly the readings for months m-3
+     * Raw monthly index levels. Must include the readings for months m-3
      * and m-2 of settlement month m, the month of the UTC date of
      * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-     * time_zone is not used). A missing or extra month makes the request
-     * invalid and it is rejected, the same as a duplicate (year, month).
+     * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+     * and it is rejected. May also include the extra months that lot
+     * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+     * month no date needs is allowed and ignored. A duplicate (year, month)
+     * or a month outside 1-12 is still rejected.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -1015,11 +1045,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Raw monthly index levels. Must be exactly the readings for months m-3
+     * Raw monthly index levels. Must include the readings for months m-3
      * and m-2 of settlement month m, the month of the UTC date of
      * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-     * time_zone is not used). A missing or extra month makes the request
-     * invalid and it is rejected, the same as a duplicate (year, month).
+     * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+     * and it is rejected. May also include the extra months that lot
+     * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+     * month no date needs is allowed and ignored. A duplicate (year, month)
+     * or a month outside 1-12 is still rejected.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -1037,11 +1070,14 @@ private static final long serialVersionUID = 0L;
     }
     /**
      * <pre>
-     * Raw monthly index levels. Must be exactly the readings for months m-3
+     * Raw monthly index levels. Must include the readings for months m-3
      * and m-2 of settlement month m, the month of the UTC date of
      * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-     * time_zone is not used). A missing or extra month makes the request
-     * invalid and it is rejected, the same as a duplicate (year, month).
+     * time_zone is not used); a missing m-3 or m-2 makes the request invalid
+     * and it is rejected. May also include the extra months that lot
+     * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+     * month no date needs is allowed and ignored. A duplicate (year, month)
+     * or a month outside 1-12 is still rejected.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>

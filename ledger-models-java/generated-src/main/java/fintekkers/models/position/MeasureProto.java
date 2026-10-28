@@ -51,8 +51,11 @@ public enum MeasureProto
    * Formula (TIPS): the real clean price is scaled by the index ratio.
    *   MarketValue = (clean_price / 100 * face_value * index_ratio) * (directed_quantity / face_value)
    *               = clean_price / 100 * index_ratio * directed_quantity
-   *   Where index_ratio is INDEX_RATIO: unrounded and unfloored. The deflation
-   *   floor does not apply to market value (see INFLATION_ADJUSTED_PRINCIPAL).
+   *   Where index_ratio is INDEX_RATIO: rounded to 5 decimals per 31 CFR 356
+   *   Appendix B, and unfloored. The deflation floor does not apply to market
+   *   value (see INFLATION_ADJUSTED_PRINCIPAL).
+   *   The TIPS result is rounded to cents (a project rule, not Appendix B
+   *   text), so it equals the PROFIT_LOSS (TIPS) market side.
    * Example (TIPS): price=97.5, index_ratio=1.2, qty=20000 → MV = 97.5/100 * 1.2 * 20000 = 23,400.
    * Model assumptions: None — this is a direct mark-to-market calculation.
    * Applicability: Bond, TIPS, FRN, Equity (price=share price, face_value=1), Cash.
@@ -114,9 +117,11 @@ public enum MeasureProto
    *     as in the fixed-rate rules above.
    *   IndexRatio(valuation date): INDEX_RATIO for the UTC date of
    *     ValuationRequestProto.asof_datetime. It uses only the m-3 and m-2
-   *     readings in TipsInput.cpi. Lot dates need no CPI readings.
-   *   Rounding: none. real_acb_i, the weighted average, the index ratio and
-   *     the result are all unrounded, as for INDEX_RATIO and MARKET_VALUE.
+   *     readings in TipsInput.cpi. Extra lot months there serve PROFIT_LOSS
+   *     and are ignored here.
+   *   Rounding: the index ratio is INDEX_RATIO, rounded to 5 decimals per
+   *     31 CFR 356 Appendix B. real_acb_i, the weighted average and the
+   *     result are not rounded further.
    *   Deflation floor: not applied. It applies only to final principal
    *     (INFLATION_ADJUSTED_PRINCIPAL), never to the basis.
    *   Example: lots of 10000 at real_acb 99.00 and 5000 at 101.50, index
@@ -445,6 +450,49 @@ public enum MeasureProto
    *   ProfitLoss = 5500 - (50 / 1 * 100) = 5500 - 5000 = 500.
    * The measure is absent, never 0, when MarketValue, UnadjustedCostBasis
    * or DirectedQuantity is unavailable.
+   * Formula (TIPS): replaces the formula above for TIPS. Nominal and clean,
+   *   with both sides index-adjusted (LM-405):
+   *     MarketSide = clean_price / 100 * IndexRatio(valuation date) * directed_quantity
+   *     CostSide   = sum over the open lots i in TipsInput.cost_basis.lots of
+   *                  price_i / 100 * IndexRatio(S_i) * face_i
+   *     ProfitLoss = MarketSide - CostSide
+   *   MarketSide: the real clean price (TipsInput.clean_price) scaled by
+   *     INDEX_RATIO for the valuation date. It equals MARKET_VALUE for TIPS.
+   *   price_i: the lot's real purchase price per 100 face (TaxLotProto.price).
+   *   face_i: the open lot's remaining quantity (TaxLotProto.open_quantity),
+   *     in original (unadjusted) face units.
+   *   S_i: the lot's settlement date, TaxLotProto.open_date plus the product's
+   *     settlement lag (T+1 business day for Treasuries). valuation-service
+   *     owns the lag; lots carry no settlement field.
+   *   IndexRatio(S_i): REFERENCE_CPI's daily interpolation with S_i as the
+   *     settlement date, from the CPI-U readings for months L-3 and L-2 of
+   *     S_i's month L in TipsInput.cpi.readings, divided by base_cpi, and
+   *     rounded as REFERENCE_CPI and INDEX_RATIO are.
+   *   Accrued interest is excluded on both sides.
+   * Absent (TIPS): the measure is absent, never 0 and never the real-price
+   *   fallback (the UnadjustedCostBasis formula above), when:
+   *   - there are no lots (TipsInput.cost_basis unset or its lots empty);
+   *   - a lot has no open_date;
+   *   - a needed CPI-U month is missing: L-3 or L-2 of any lot's settlement
+   *     month. TipsInput.cpi with reference_cpi carries no lot months, so the
+   *     measure is absent then. (A missing m-3 or m-2 of the valuation month
+   *     makes the whole request invalid; see TipsInput.cpi.)
+   * Rounding (TIPS): 31 CFR 356 Appendix B. Each reference CPI and each
+   *   index ratio is rounded to 5 decimals (half up). Project rule, not
+   *   Appendix B text: MarketSide and CostSide (after the sum) are each
+   *   rounded to cents, and ProfitLoss is the difference of the rounded sides.
+   * Example (TIPS): 912810RL4, 0.750% due 2045-02-15, base_cpi 235.48150.
+   *   Lot: face 100,000, real price 68.1875, open_date 2026-07-27, settling
+   *     2026-07-28. CPI-U April 2026 333.020, May 2026 335.123 →
+   *     RefCPI = 333.020 + 27/31 * (335.123 - 333.020) = 334.85165,
+   *     IndexRatio = 334.85165 / 235.48150 = 1.42199,
+   *     CostSide = 68.1875 / 100 * 1.42199 * 100,000 = 96,961.94.
+   *   Valuation 2026-10-28, clean_price 67.625. CPI-U July 2026 333.918,
+   *     August 2026 334.980 →
+   *     RefCPI = 333.918 + 27/31 * (334.980 - 333.918) = 334.84297,
+   *     IndexRatio = 334.84297 / 235.48150 = 1.42195,
+   *     MarketSide = 67.625 / 100 * 1.42195 * 100,000 = 96,159.37.
+   *   ProfitLoss = 96,159.37 - 96,961.94 = -802.57.
    * Applicability: All security types.
    * Units: Dollars (or settlement currency).
    * </pre>
@@ -461,6 +509,25 @@ public enum MeasureProto
    *   d = 1 for dollar-quoted securities (equities, cash).
    * The measure is absent, never 0, when MarketValue, UnadjustedCostBasis
    * or DirectedQuantity is unavailable.
+   * Formula (TIPS): replaces the formula above for TIPS (LM-405):
+   *     ProfitLossPercent = ProfitLoss / CostSide
+   *   ProfitLoss and CostSide are PROFIT_LOSS (TIPS): nominal and clean, with
+   *   the market side at INDEX_RATIO for the valuation date and each open
+   *   lot's real price at the index ratio for its settlement date
+   *   (TaxLotProto.open_date plus the product's settlement lag). Accrued
+   *   interest is excluded on both sides.
+   * Absent (TIPS): the measure is absent, never 0 and never the real-price
+   *   fallback (the UnadjustedCostBasis formula above), when:
+   *   - there are no lots (TipsInput.cost_basis unset or its lots empty);
+   *   - a lot has no open_date;
+   *   - a needed CPI-U month is missing (see PROFIT_LOSS).
+   * Rounding (TIPS): ProfitLoss and CostSide are rounded as in PROFIT_LOSS:
+   *   31 CFR 356 Appendix B, reference CPI and index ratio to 5 decimals,
+   *   then each side to cents (a project rule). The ratio is not rounded
+   *   further.
+   * Example (TIPS): 912810RL4 (see PROFIT_LOSS): cost 96,961.94,
+   *   market 96,159.37, P&amp;L -802.57 →
+   *   ProfitLossPercent = -802.57 / 96,961.94 = -0.0082772 (rounded here only).
    * Applicability: All security types.
    * Units: Decimal (0-1 scale; e.g. 0.05 = 5.00% gain).
    * </pre>
@@ -643,12 +710,14 @@ public enum MeasureProto
    *   days_in_month the number of days in month m, and CPI(m-k) the reading
    *   for the month k months before m.
    * Example: settlement 2026-07-16, CPI(April)=320.0, CPI(May)=321.5 →
-   *   RefCPI = 320.0 + 15/31 * (321.5 - 320.0) = 320.72580645...
+   *   RefCPI = 320.0 + 15/31 * (321.5 - 320.0) = 320.72580645... → 320.72581.
    * Model assumptions:
-   *   - Unrounded: Treasury publishes reference CPIs to 5 decimals; this
-   *     measure is not rounded to match.
-   *   - With readings, the request is rejected unless readings are exactly
-   *     months m-3 and m-2 (a missing, extra or duplicate month).
+   *   - Rounding: with readings, RefCPI is rounded to 5 decimals (half up)
+   *     per 31 CFR 356 Appendix B. A given reference_cpi is used as-is.
+   *   - With readings, months m-3 and m-2 are required: the request is
+   *     rejected when either is missing. Extra months (e.g. those lot
+   *     settlement dates need for PROFIT_LOSS) are allowed and ignored here.
+   *     A duplicate (year, month) or a month outside 1-12 is rejected.
    *   - The measure is absent when no CPI is given.
    * Applicability: TIPS only.
    * Units: Index points (e.g. 310.326).
@@ -664,8 +733,11 @@ public enum MeasureProto
    *   IndexRatio = REFERENCE_CPI / security.tips_extension.base_cpi
    * Example: RefCPI=312.0, base_cpi=260.0 → IndexRatio = 1.2.
    * Model assumptions:
-   *   - Unrounded: Treasury publishes index ratios to 5 decimals; this
-   *     measure is not rounded to match.
+   *   - Rounding: computed from the rounded REFERENCE_CPI and rounded to
+   *     5 decimals (half up) per 31 CFR 356 Appendix B. Every measure that
+   *     uses the index ratio (MARKET_VALUE, ADJUSTED_COST_BASIS,
+   *     INFLATION_ADJUSTED_PRINCIPAL, REAL_YIELD, PRESENT_VALUE, PROFIT_LOSS)
+   *     uses this rounded ratio.
    *   - Unfloored: a ratio below 1 is returned as is. The deflation floor
    *     belongs to INFLATION_ADJUSTED_PRINCIPAL only.
    *   - The measure is absent when REFERENCE_CPI or base_cpi is absent.
@@ -711,8 +783,11 @@ public enum MeasureProto
    * Formula (TIPS): the real clean price is scaled by the index ratio.
    *   MarketValue = (clean_price / 100 * face_value * index_ratio) * (directed_quantity / face_value)
    *               = clean_price / 100 * index_ratio * directed_quantity
-   *   Where index_ratio is INDEX_RATIO: unrounded and unfloored. The deflation
-   *   floor does not apply to market value (see INFLATION_ADJUSTED_PRINCIPAL).
+   *   Where index_ratio is INDEX_RATIO: rounded to 5 decimals per 31 CFR 356
+   *   Appendix B, and unfloored. The deflation floor does not apply to market
+   *   value (see INFLATION_ADJUSTED_PRINCIPAL).
+   *   The TIPS result is rounded to cents (a project rule, not Appendix B
+   *   text), so it equals the PROFIT_LOSS (TIPS) market side.
    * Example (TIPS): price=97.5, index_ratio=1.2, qty=20000 → MV = 97.5/100 * 1.2 * 20000 = 23,400.
    * Model assumptions: None — this is a direct mark-to-market calculation.
    * Applicability: Bond, TIPS, FRN, Equity (price=share price, face_value=1), Cash.
@@ -774,9 +849,11 @@ public enum MeasureProto
    *     as in the fixed-rate rules above.
    *   IndexRatio(valuation date): INDEX_RATIO for the UTC date of
    *     ValuationRequestProto.asof_datetime. It uses only the m-3 and m-2
-   *     readings in TipsInput.cpi. Lot dates need no CPI readings.
-   *   Rounding: none. real_acb_i, the weighted average, the index ratio and
-   *     the result are all unrounded, as for INDEX_RATIO and MARKET_VALUE.
+   *     readings in TipsInput.cpi. Extra lot months there serve PROFIT_LOSS
+   *     and are ignored here.
+   *   Rounding: the index ratio is INDEX_RATIO, rounded to 5 decimals per
+   *     31 CFR 356 Appendix B. real_acb_i, the weighted average and the
+   *     result are not rounded further.
    *   Deflation floor: not applied. It applies only to final principal
    *     (INFLATION_ADJUSTED_PRINCIPAL), never to the basis.
    *   Example: lots of 10000 at real_acb 99.00 and 5000 at 101.50, index
@@ -1105,6 +1182,49 @@ public enum MeasureProto
    *   ProfitLoss = 5500 - (50 / 1 * 100) = 5500 - 5000 = 500.
    * The measure is absent, never 0, when MarketValue, UnadjustedCostBasis
    * or DirectedQuantity is unavailable.
+   * Formula (TIPS): replaces the formula above for TIPS. Nominal and clean,
+   *   with both sides index-adjusted (LM-405):
+   *     MarketSide = clean_price / 100 * IndexRatio(valuation date) * directed_quantity
+   *     CostSide   = sum over the open lots i in TipsInput.cost_basis.lots of
+   *                  price_i / 100 * IndexRatio(S_i) * face_i
+   *     ProfitLoss = MarketSide - CostSide
+   *   MarketSide: the real clean price (TipsInput.clean_price) scaled by
+   *     INDEX_RATIO for the valuation date. It equals MARKET_VALUE for TIPS.
+   *   price_i: the lot's real purchase price per 100 face (TaxLotProto.price).
+   *   face_i: the open lot's remaining quantity (TaxLotProto.open_quantity),
+   *     in original (unadjusted) face units.
+   *   S_i: the lot's settlement date, TaxLotProto.open_date plus the product's
+   *     settlement lag (T+1 business day for Treasuries). valuation-service
+   *     owns the lag; lots carry no settlement field.
+   *   IndexRatio(S_i): REFERENCE_CPI's daily interpolation with S_i as the
+   *     settlement date, from the CPI-U readings for months L-3 and L-2 of
+   *     S_i's month L in TipsInput.cpi.readings, divided by base_cpi, and
+   *     rounded as REFERENCE_CPI and INDEX_RATIO are.
+   *   Accrued interest is excluded on both sides.
+   * Absent (TIPS): the measure is absent, never 0 and never the real-price
+   *   fallback (the UnadjustedCostBasis formula above), when:
+   *   - there are no lots (TipsInput.cost_basis unset or its lots empty);
+   *   - a lot has no open_date;
+   *   - a needed CPI-U month is missing: L-3 or L-2 of any lot's settlement
+   *     month. TipsInput.cpi with reference_cpi carries no lot months, so the
+   *     measure is absent then. (A missing m-3 or m-2 of the valuation month
+   *     makes the whole request invalid; see TipsInput.cpi.)
+   * Rounding (TIPS): 31 CFR 356 Appendix B. Each reference CPI and each
+   *   index ratio is rounded to 5 decimals (half up). Project rule, not
+   *   Appendix B text: MarketSide and CostSide (after the sum) are each
+   *   rounded to cents, and ProfitLoss is the difference of the rounded sides.
+   * Example (TIPS): 912810RL4, 0.750% due 2045-02-15, base_cpi 235.48150.
+   *   Lot: face 100,000, real price 68.1875, open_date 2026-07-27, settling
+   *     2026-07-28. CPI-U April 2026 333.020, May 2026 335.123 →
+   *     RefCPI = 333.020 + 27/31 * (335.123 - 333.020) = 334.85165,
+   *     IndexRatio = 334.85165 / 235.48150 = 1.42199,
+   *     CostSide = 68.1875 / 100 * 1.42199 * 100,000 = 96,961.94.
+   *   Valuation 2026-10-28, clean_price 67.625. CPI-U July 2026 333.918,
+   *     August 2026 334.980 →
+   *     RefCPI = 333.918 + 27/31 * (334.980 - 333.918) = 334.84297,
+   *     IndexRatio = 334.84297 / 235.48150 = 1.42195,
+   *     MarketSide = 67.625 / 100 * 1.42195 * 100,000 = 96,159.37.
+   *   ProfitLoss = 96,159.37 - 96,961.94 = -802.57.
    * Applicability: All security types.
    * Units: Dollars (or settlement currency).
    * </pre>
@@ -1121,6 +1241,25 @@ public enum MeasureProto
    *   d = 1 for dollar-quoted securities (equities, cash).
    * The measure is absent, never 0, when MarketValue, UnadjustedCostBasis
    * or DirectedQuantity is unavailable.
+   * Formula (TIPS): replaces the formula above for TIPS (LM-405):
+   *     ProfitLossPercent = ProfitLoss / CostSide
+   *   ProfitLoss and CostSide are PROFIT_LOSS (TIPS): nominal and clean, with
+   *   the market side at INDEX_RATIO for the valuation date and each open
+   *   lot's real price at the index ratio for its settlement date
+   *   (TaxLotProto.open_date plus the product's settlement lag). Accrued
+   *   interest is excluded on both sides.
+   * Absent (TIPS): the measure is absent, never 0 and never the real-price
+   *   fallback (the UnadjustedCostBasis formula above), when:
+   *   - there are no lots (TipsInput.cost_basis unset or its lots empty);
+   *   - a lot has no open_date;
+   *   - a needed CPI-U month is missing (see PROFIT_LOSS).
+   * Rounding (TIPS): ProfitLoss and CostSide are rounded as in PROFIT_LOSS:
+   *   31 CFR 356 Appendix B, reference CPI and index ratio to 5 decimals,
+   *   then each side to cents (a project rule). The ratio is not rounded
+   *   further.
+   * Example (TIPS): 912810RL4 (see PROFIT_LOSS): cost 96,961.94,
+   *   market 96,159.37, P&amp;L -802.57 →
+   *   ProfitLossPercent = -802.57 / 96,961.94 = -0.0082772 (rounded here only).
    * Applicability: All security types.
    * Units: Decimal (0-1 scale; e.g. 0.05 = 5.00% gain).
    * </pre>
@@ -1303,12 +1442,14 @@ public enum MeasureProto
    *   days_in_month the number of days in month m, and CPI(m-k) the reading
    *   for the month k months before m.
    * Example: settlement 2026-07-16, CPI(April)=320.0, CPI(May)=321.5 →
-   *   RefCPI = 320.0 + 15/31 * (321.5 - 320.0) = 320.72580645...
+   *   RefCPI = 320.0 + 15/31 * (321.5 - 320.0) = 320.72580645... → 320.72581.
    * Model assumptions:
-   *   - Unrounded: Treasury publishes reference CPIs to 5 decimals; this
-   *     measure is not rounded to match.
-   *   - With readings, the request is rejected unless readings are exactly
-   *     months m-3 and m-2 (a missing, extra or duplicate month).
+   *   - Rounding: with readings, RefCPI is rounded to 5 decimals (half up)
+   *     per 31 CFR 356 Appendix B. A given reference_cpi is used as-is.
+   *   - With readings, months m-3 and m-2 are required: the request is
+   *     rejected when either is missing. Extra months (e.g. those lot
+   *     settlement dates need for PROFIT_LOSS) are allowed and ignored here.
+   *     A duplicate (year, month) or a month outside 1-12 is rejected.
    *   - The measure is absent when no CPI is given.
    * Applicability: TIPS only.
    * Units: Index points (e.g. 310.326).
@@ -1324,8 +1465,11 @@ public enum MeasureProto
    *   IndexRatio = REFERENCE_CPI / security.tips_extension.base_cpi
    * Example: RefCPI=312.0, base_cpi=260.0 → IndexRatio = 1.2.
    * Model assumptions:
-   *   - Unrounded: Treasury publishes index ratios to 5 decimals; this
-   *     measure is not rounded to match.
+   *   - Rounding: computed from the rounded REFERENCE_CPI and rounded to
+   *     5 decimals (half up) per 31 CFR 356 Appendix B. Every measure that
+   *     uses the index ratio (MARKET_VALUE, ADJUSTED_COST_BASIS,
+   *     INFLATION_ADJUSTED_PRINCIPAL, REAL_YIELD, PRESENT_VALUE, PROFIT_LOSS)
+   *     uses this rounded ratio.
    *   - Unfloored: a ratio below 1 is returned as is. The deflation floor
    *     belongs to INFLATION_ADJUSTED_PRINCIPAL only.
    *   - The measure is absent when REFERENCE_CPI or base_cpi is absent.

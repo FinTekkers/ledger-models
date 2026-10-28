@@ -72,12 +72,15 @@ public interface TipsInputOrBuilder extends
    * The CPI the index ratio is computed from: raw monthly index levels, or a
    * reference CPI already derived for the settlement date. See
    * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
-   * With readings, they must be exactly the readings for months m-3 and m-2
+   * With readings, they must include the readings for months m-3 and m-2
    * of settlement month m, the month of the UTC date of
    * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-   * time_zone is not used). A missing or extra month makes the request
-   * invalid and it is rejected, the same as a duplicate month. See
-   * InflationIndexInput and MonthlyIndexReadings.
+   * time_zone is not used). A missing m-3 or m-2 makes the request invalid
+   * and it is rejected. They may also include the extra months that lot
+   * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+   * month no date needs is allowed and ignored. A duplicate (year, month) or
+   * a month outside 1-12 is still rejected. See InflationIndexInput and
+   * MonthlyIndexReadings.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -89,12 +92,15 @@ public interface TipsInputOrBuilder extends
    * The CPI the index ratio is computed from: raw monthly index levels, or a
    * reference CPI already derived for the settlement date. See
    * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
-   * With readings, they must be exactly the readings for months m-3 and m-2
+   * With readings, they must include the readings for months m-3 and m-2
    * of settlement month m, the month of the UTC date of
    * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-   * time_zone is not used). A missing or extra month makes the request
-   * invalid and it is rejected, the same as a duplicate month. See
-   * InflationIndexInput and MonthlyIndexReadings.
+   * time_zone is not used). A missing m-3 or m-2 makes the request invalid
+   * and it is rejected. They may also include the extra months that lot
+   * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+   * month no date needs is allowed and ignored. A duplicate (year, month) or
+   * a month outside 1-12 is still rejected. See InflationIndexInput and
+   * MonthlyIndexReadings.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -106,12 +112,15 @@ public interface TipsInputOrBuilder extends
    * The CPI the index ratio is computed from: raw monthly index levels, or a
    * reference CPI already derived for the settlement date. See
    * MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
-   * With readings, they must be exactly the readings for months m-3 and m-2
+   * With readings, they must include the readings for months m-3 and m-2
    * of settlement month m, the month of the UTC date of
    * ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-   * time_zone is not used). A missing or extra month makes the request
-   * invalid and it is rejected, the same as a duplicate month. See
-   * InflationIndexInput and MonthlyIndexReadings.
+   * time_zone is not used). A missing m-3 or m-2 makes the request invalid
+   * and it is rejected. They may also include the extra months that lot
+   * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+   * month no date needs is allowed and ignored. A duplicate (year, month) or
+   * a month outside 1-12 is still rejected. See InflationIndexInput and
+   * MonthlyIndexReadings.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
