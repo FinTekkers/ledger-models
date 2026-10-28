@@ -380,15 +380,11 @@ DRIVEN = {
     f"{_PR}.get_price_by_uuid": Case(
         lambda: PriceService().get_price_by_uuid(UUID(int=2)),
         [("PriceService", "GetByIds")]),
-    # get_prices hands a uuid.UUID to QueryPriceRequest.create_query_request,
-    # whose Any.Pack raises AttributeError before the price request is built
-    # (a defect on main, outside this item). Only the security lookup is sent.
     f"{_PR}.get_prices": Case(
         lambda: list(PriceService().get_prices("912796Y29", IdentifierTypeProto.CUSIP, PRICE_HORIZON_1_MONTH)),
-        [("SecurityService", "Search")],
+        [("SecurityService", "Search"), ("PriceService", "Search")],
         responses={("SecurityService", "Search"): _found_security_stream()},
-        extra=_identifier_filter_is_stamped,
-        raises=AttributeError),
+        extra=_identifier_filter_is_stamped),
     f"{_PR}.list_ids": Case(
         lambda: PriceService().list_ids(),
         [("PriceService", "ListIds")]),

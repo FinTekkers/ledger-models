@@ -117,6 +117,7 @@ pub mod price_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /// Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
         pub async fn get_by_ids(
             &mut self,
             request: impl tonic::IntoRequest<
@@ -151,6 +152,7 @@ pub mod price_client {
                 );
             self.inner.unary(req, path, codec).await
         }
+        /// For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
         pub async fn search(
             &mut self,
             request: impl tonic::IntoRequest<
@@ -299,6 +301,7 @@ pub mod price_server {
             >,
             tonic::Status,
         >;
+        /// Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
         async fn get_by_ids(
             &self,
             request: tonic::Request<
@@ -319,6 +322,7 @@ pub mod price_server {
             >
             + Send
             + 'static;
+        /// For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
         async fn search(
             &self,
             request: tonic::Request<
