@@ -277,6 +277,147 @@
       "implemented": false
     },
     {
+      "name": "PROFIT_LOSS",
+      "enum_value": 18,
+      "display_name": "Profit / Loss",
+      "description": "The profit or loss on a position relative to its cost basis.",
+      "formula": "ProfitLoss = MarketValue - (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities (equities, cash)",
+      "units": "Dollars (or settlement currency)",
+      "category": "valuation",
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
+      "model_assumptions": [
+        "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "PROFIT_LOSS_PERCENT",
+      "enum_value": 19,
+      "display_name": "Profit / Loss Percent",
+      "description": "The profit or loss as a percentage of the original cost basis.",
+      "formula": "ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities (equities, cash)",
+      "units": "Decimal (0-1 scale; e.g. 0.05 = 5.00% gain)",
+      "category": "valuation",
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
+      "model_assumptions": [
+        "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "ACCRUED_INTEREST",
+      "enum_value": 20,
+      "display_name": "Accrued Interest",
+      "description": "The coupon interest accrued from the last coupon date up to (but not including) the settlement date, per the security's day count. Earned but not yet received.",
+      "formula": "Fixed-coupon bonds and TIPS: AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period) * directed_quantity. Treasury FRNs: AccruedInterest = Σ_{each day} (index_fixing_d + spread) / 360 * directed_quantity, where directed_quantity is the position's face",
+      "units": "Dollars (absolute dollar amount for the position)",
+      "category": "valuation",
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
+      "model_assumptions": [
+        "Day count: the security's (Actual/Actual (ICMA) for US Treasuries)",
+        "Treasury FRNs: the fixings are the ones supplied in the request; no curve is used",
+        "Returns null/zero for Equity, Cash, and zero-coupon bonds"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "CONVEXITY",
+      "enum_value": 21,
+      "display_name": "Convexity",
+      "description": "The second derivative of a bond's price with respect to yield, normalised by price. Convexity measures how the duration of a bond changes as yield changes — a bond with higher convexity gains more in price when yields fall and loses less when yields rise, compared to a bond with lower convexity of equal duration.",
+      "formula": "Convexity = (1/P) × Σ_{t=1}^{N} [CF_t × t × (t+1) / (1+y/n)^(t+2)] / n²",
+      "units": "Years² (e.g. 20.5 = 20.5 years²)",
+      "category": "risk",
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
+      "model_assumptions": [
+        "Same as MACAULAY_DURATION (flat yield curve, YTM-based discounting)",
+        "For TIPS: y = REAL_YIELD and CF_t are the inflation-adjusted cash flows",
+        "For FRN: uses flat-forwards effective YTM (same model as PRESENT_VALUE)",
+        "Settlement on a coupon date (integer period exponents)"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "DIRTY_PRICE",
+      "enum_value": 22,
+      "display_name": "Dirty Price",
+      "description": "The full (invoice) price of a bond including accrued interest, expressed as a percentage of face value.",
+      "formula": "DirtyPrice = CLEAN_PRICE + accrued_interest_per_bond / face_value * 100, where CLEAN_PRICE is the supplied market clean price and accrued_interest_per_bond is ACCRUED_INTEREST for one bond of face_value, as of the settlement date. The result is a percentage of par, per bond, and is never scaled by quantity",
+      "units": "Percentage of par (e.g. 99.5 = 99.5% of par)",
+      "category": "valuation",
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
+      "model_assumptions": [],
+      "implemented": true
+    },
+    {
+      "name": "CLEAN_PRICE",
+      "enum_value": 23,
+      "display_name": "Clean Price",
+      "description": "The market clean price per 100 of face (excluding accrued interest), as supplied in the request — e.g. the FedInvest end-of-day price via price-service. An input, never computed: valuation-service returns UNIMPLEMENTED for it.",
+      "formula": null,
+      "units": "Percentage of par (e.g. 98.75 = 98.75% of par)",
+      "category": "input",
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
+      "model_assumptions": [],
+      "implemented": false
+    },
+    {
+      "name": "MODIFIED_DURATION",
+      "enum_value": 24,
+      "display_name": "Modified Duration",
+      "description": "Measures the percentage price change of a bond for a 1% (100bp) change in yield. Unlike Macaulay Duration (which is expressed in years), Modified Duration is a direct measure of price sensitivity: a bond with ModifiedDuration=5 will move approximately 5% in price for a 100bp parallel shift in yield.",
+      "formula": "ModifiedDuration = MacaulayDuration / (1 + ytm/n), where ytm = yield to maturity (annual), n = coupon periods per year. For TIPS, ytm = REAL_YIELD (on the inflation-adjusted cash flows)",
+      "units": "Years (dimensionally equivalent to years, interpreted as % per 100bp)",
+      "category": "risk",
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
+      "model_assumptions": [],
+      "implemented": true
+    },
+    {
+      "name": "DV01",
+      "enum_value": 25,
+      "display_name": "DV01",
+      "description": "DV01 (Dollar Value of 01) = the dollar P&L impact of a 1bp (0.01%) yield increase.",
+      "formula": "DV01 = ModifiedDuration × MarketValue × 0.0001",
+      "units": "Dollars per basis point",
+      "category": "risk",
+      "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
+      "model_assumptions": [],
+      "implemented": true
+    },
+    {
+      "name": "DISCOUNT_YIELD",
+      "enum_value": 26,
+      "display_name": "Discount Yield",
+      "description": "U.S. Treasury Bill discount-basis yield. The market convention used by TreasuryDirect auction results (\"High discount rate\"), Bloomberg TBILL screens, and most short-tenor money-market quotes.",
+      "formula": "DiscountYield = (F - P) / F × 360 / days_to_maturity, where F = face value (par), P = dollar price, day count is Actual/360",
+      "units": "Decimal (0-1 scale; e.g. 0.0363 = 3.63%)",
+      "category": "yield",
+      "applies_to": ["TBILL", "STRIPS"],
+      "model_assumptions": [
+        "Simple (non-compounded) discount basis — standard U.S. money-market",
+        "360-day year (Actual/360 day count)",
+        "Assumes the security has a defined maturity_date and face_value; null for instruments where days_to_maturity is undefined"
+      ],
+      "implemented": true
+    },
+    {
+      "name": "BOND_EQUIVALENT_YIELD",
+      "enum_value": 27,
+      "display_name": "Bond-Equivalent Yield",
+      "description": "Bond-Equivalent Yield (BEY) for U.S. Treasury Bills — also known as the \"investment rate\" published alongside DISCOUNT_YIELD on TreasuryDirect. The conventional way to compare TBill returns to coupon-bearing bond yields (which conventionally use a 365-day year).",
+      "formula": "BondEquivalentYield = (F - P) / P × 365 / days_to_maturity, where F = face value (par), P = dollar price, day count is Actual/365",
+      "units": "Decimal (0-1 scale; e.g. 0.0371 = 3.71%)",
+      "category": "yield",
+      "applies_to": ["TBILL", "STRIPS"],
+      "model_assumptions": [
+        "Simple (non-compounded) basis",
+        "365-day year (Actual/365 day count)",
+        "Same applicability constraints as DISCOUNT_YIELD"
+      ],
+      "implemented": true
+    },
+    {
       "name": "REFERENCE_CPI",
       "enum_value": 28,
       "display_name": "Reference CPI",

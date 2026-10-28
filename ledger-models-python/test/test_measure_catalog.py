@@ -1,8 +1,9 @@
 """The measure catalog lists REFERENCE_CPI (28) and INDEX_RATIO (29) (LM-343),
 in the source copy and the packaged Python mirror, matching MeasureProto.
 applies_to holds ProductTypeProto names or hierarchy.json nodes (LM-372),
-every language's mirror is byte-equal to the source, and LM-364 leaves the
-UNADJUSTED_COST_BASIS and PROFIT_LOSS entries unchanged."""
+every language's mirror is byte-equal to the source, LM-364 leaves the
+UNADJUSTED_COST_BASIS entry unchanged, and every MeasureProto value has one
+catalog entry (LM-402, which also added PROFIT_LOSS)."""
 import json
 from pathlib import Path
 
@@ -63,5 +64,18 @@ def test_applies_to_names_product_types_or_hierarchy_nodes():
 
 @pytest.mark.parametrize("name", LM364_UNCHANGED["catalog"])
 def test_lm364_leaves_unadjusted_cost_basis_and_profit_loss_unchanged(name):
+    if LM364_UNCHANGED["catalog"][name] is None:
+        pytest.skip(f"{name} had no entry before LM-364; LM-402 added one")
     measures = {m["name"]: m for m in json.loads(SOURCE.read_text())["measures"]}
     assert measures.get(name) == LM364_UNCHANGED["catalog"][name]
+
+
+@pytest.mark.parametrize("path", [SOURCE, MIRROR], ids=["source", "python-mirror"])
+def test_every_measure_has_one_catalog_entry(path):
+    measures = json.loads(path.read_text())["measures"]
+    for name, number in measure_pb2.MeasureProto.items():
+        if name == "UNKNOWN_MEASURE":
+            continue
+        entries = [m for m in measures if m["name"] == name]
+        assert len(entries) == 1, name
+        assert entries[0]["enum_value"] == number, name
