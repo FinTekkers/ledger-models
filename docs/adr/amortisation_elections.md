@@ -88,7 +88,7 @@ Java `PortfolioSerializer.serialize` used to copy fields one by one and dropped 
 
 - `scripts/checks/wire-diff.py` rule `lm364` allows exactly these additions with these types; a root field or a fourth `TaxLotProto` field fails it.
 - Python descriptor tests pin the ruled names and numbers, enums only, three lot fields, and the unchanged `ValuationRequestProto` field set. Java, Python, Rust and JS round-trip a `TipsInput` with non-default elections and two lots.
-- `test-fixtures/catalog/lm-364-unchanged.json` pins the `UNADJUSTED_COST_BASIS` and `PROFIT_LOSS` catalog entries and `measure.proto` comments.
+- `test-fixtures/catalog/lm-364-unchanged.json` pins the `UNADJUSTED_COST_BASIS` catalog entry and the `UNADJUSTED_COST_BASIS` and `PROFIT_LOSS` `measure.proto` comments. `PROFIT_LOSS` had no catalog entry before LM-364; LM-402 added one.
 - `test_lm383_frn_acb_spec.py` checks the Treasury FRN rule in both the comment and the catalog entry, and that every line from before LM-383 (`test-fixtures/catalog/lm-383-acb-before.json`) is kept, in order.
 
 ## Consequences
