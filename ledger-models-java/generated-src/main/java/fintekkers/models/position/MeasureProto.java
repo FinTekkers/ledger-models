@@ -470,14 +470,18 @@ public enum MeasureProto
   PROFIT_LOSS_PERCENT(19),
   /**
    * <pre>
-   * The accrued interest on a bond position — the pro-rated coupon income earned
-   * since the last coupon payment date but not yet received.
-   * Formula (coupon-bearing bonds):
+   * The coupon interest accrued from the last coupon date up to (but not
+   * including) the settlement date, per the security's day count. Earned but not
+   * yet received.
+   * Fixed-coupon bonds and TIPS:
    *   AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period)
    *                     * directed_quantity
-   *   Day count: Actual/Actual (ICMA) for US Treasuries.
-   * Accrued interest on settlement date T is the interest accumulated from the
-   * last coupon date up to but not including T.
+   *   Day count: the security's (Actual/Actual (ICMA) for US Treasuries).
+   * Treasury FRNs: the sum, over each day from the last coupon date to
+   * settlement, of that day's (13-week bill index fixing + spread) / 360 on face:
+   *   AccruedInterest = Σ_{each day} (index_fixing_d + spread) / 360 * directed_quantity
+   *   where directed_quantity is the position's face.
+   *   The fixings are the ones supplied in the request; no curve is used.
    * Applicability: Bond, TIPS, FRN (coupon-bearing securities).
    *   Returns null/zero for Equity, Cash, and zero-coupon bonds.
    * Units: Dollars (absolute dollar amount for the position).
@@ -515,18 +519,12 @@ public enum MeasureProto
    * The full (invoice) price of a bond including accrued interest, expressed as a
    * percentage of face value.
    * Formula:
-   *   DirtyPrice = market_value / (num_bonds * face_value) * 100
-   *   where num_bonds = directed_quantity / face_value
-   *   Equivalently: market_value / directed_quantity * 100
-   * Without a position (e.g. a valuation request carrying only a security and price):
-   *   DirtyPrice = clean_price + accrued_interest_per_bond / face_value * 100
-   *   where accrued_interest_per_bond = (coupon_rate / coupon_frequency) * face_value
-   *                                     * (days_since_last_coupon / days_in_period)
-   *   Day count: Actual/Actual (ICMA), as of the settlement date.
+   *   DirtyPrice = CLEAN_PRICE + accrued_interest_per_bond / face_value * 100
+   *   where CLEAN_PRICE is the supplied market clean price and
+   *   accrued_interest_per_bond is ACCRUED_INTEREST for one bond of face_value,
+   *   as of the settlement date.
    *   The result is a percentage of par, per bond, and is never scaled by quantity.
-   *   The settlement date and coupon inputs (coupon_rate, coupon_frequency) are
-   *   required; they have no defaults.
-   * Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
+   * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
    * Units: Percentage of par (e.g. 99.5 = 99.5% of par).
    * </pre>
    *
@@ -535,11 +533,9 @@ public enum MeasureProto
   DIRTY_PRICE(22),
   /**
    * <pre>
-   * The quoted price of a bond excluding accrued interest, expressed as a
-   * percentage of face value. This is the price conventionally quoted in bond markets.
-   * Formula:
-   *   CleanPrice = DirtyPrice - (accrued_interest / directed_quantity * 100)
-   * Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
+   * The market clean price per 100 of face (excluding accrued interest), as
+   * supplied in the request — e.g. the FedInvest end-of-day price via price-service.
+   * An input, never computed: valuation-service returns UNIMPLEMENTED for it.
    * Units: Percentage of par (e.g. 98.75 = 98.75% of par).
    * </pre>
    *
@@ -1134,14 +1130,18 @@ public enum MeasureProto
   public static final int PROFIT_LOSS_PERCENT_VALUE = 19;
   /**
    * <pre>
-   * The accrued interest on a bond position — the pro-rated coupon income earned
-   * since the last coupon payment date but not yet received.
-   * Formula (coupon-bearing bonds):
+   * The coupon interest accrued from the last coupon date up to (but not
+   * including) the settlement date, per the security's day count. Earned but not
+   * yet received.
+   * Fixed-coupon bonds and TIPS:
    *   AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period)
    *                     * directed_quantity
-   *   Day count: Actual/Actual (ICMA) for US Treasuries.
-   * Accrued interest on settlement date T is the interest accumulated from the
-   * last coupon date up to but not including T.
+   *   Day count: the security's (Actual/Actual (ICMA) for US Treasuries).
+   * Treasury FRNs: the sum, over each day from the last coupon date to
+   * settlement, of that day's (13-week bill index fixing + spread) / 360 on face:
+   *   AccruedInterest = Σ_{each day} (index_fixing_d + spread) / 360 * directed_quantity
+   *   where directed_quantity is the position's face.
+   *   The fixings are the ones supplied in the request; no curve is used.
    * Applicability: Bond, TIPS, FRN (coupon-bearing securities).
    *   Returns null/zero for Equity, Cash, and zero-coupon bonds.
    * Units: Dollars (absolute dollar amount for the position).
@@ -1179,18 +1179,12 @@ public enum MeasureProto
    * The full (invoice) price of a bond including accrued interest, expressed as a
    * percentage of face value.
    * Formula:
-   *   DirtyPrice = market_value / (num_bonds * face_value) * 100
-   *   where num_bonds = directed_quantity / face_value
-   *   Equivalently: market_value / directed_quantity * 100
-   * Without a position (e.g. a valuation request carrying only a security and price):
-   *   DirtyPrice = clean_price + accrued_interest_per_bond / face_value * 100
-   *   where accrued_interest_per_bond = (coupon_rate / coupon_frequency) * face_value
-   *                                     * (days_since_last_coupon / days_in_period)
-   *   Day count: Actual/Actual (ICMA), as of the settlement date.
+   *   DirtyPrice = CLEAN_PRICE + accrued_interest_per_bond / face_value * 100
+   *   where CLEAN_PRICE is the supplied market clean price and
+   *   accrued_interest_per_bond is ACCRUED_INTEREST for one bond of face_value,
+   *   as of the settlement date.
    *   The result is a percentage of par, per bond, and is never scaled by quantity.
-   *   The settlement date and coupon inputs (coupon_rate, coupon_frequency) are
-   *   required; they have no defaults.
-   * Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
+   * Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.
    * Units: Percentage of par (e.g. 99.5 = 99.5% of par).
    * </pre>
    *
@@ -1199,11 +1193,9 @@ public enum MeasureProto
   public static final int DIRTY_PRICE_VALUE = 22;
   /**
    * <pre>
-   * The quoted price of a bond excluding accrued interest, expressed as a
-   * percentage of face value. This is the price conventionally quoted in bond markets.
-   * Formula:
-   *   CleanPrice = DirtyPrice - (accrued_interest / directed_quantity * 100)
-   * Applicability: Bond, TIPS. UNIMPLEMENTED for Equity and Cash.
+   * The market clean price per 100 of face (excluding accrued interest), as
+   * supplied in the request — e.g. the FedInvest end-of-day price via price-service.
+   * An input, never computed: valuation-service returns UNIMPLEMENTED for it.
    * Units: Percentage of par (e.g. 98.75 = 98.75% of par).
    * </pre>
    *
