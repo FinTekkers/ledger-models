@@ -269,6 +269,9 @@ public final class PriceGrpc {
     }
 
     /**
+     * <pre>
+     * Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
+     * </pre>
      */
     default void getByIds(fintekkers.requests.price.QueryPriceRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.price.QueryPriceResponseProto> responseObserver) {
@@ -276,6 +279,9 @@ public final class PriceGrpc {
     }
 
     /**
+     * <pre>
+     * For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
+     * </pre>
      */
     default void search(fintekkers.requests.price.QueryPriceRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.price.QueryPriceResponseProto> responseObserver) {
@@ -340,6 +346,9 @@ public final class PriceGrpc {
     }
 
     /**
+     * <pre>
+     * Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
+     * </pre>
      */
     public void getByIds(fintekkers.requests.price.QueryPriceRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.price.QueryPriceResponseProto> responseObserver) {
@@ -348,6 +357,9 @@ public final class PriceGrpc {
     }
 
     /**
+     * <pre>
+     * For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
+     * </pre>
      */
     public void search(fintekkers.requests.price.QueryPriceRequestProto request,
         io.grpc.stub.StreamObserver<fintekkers.requests.price.QueryPriceResponseProto> responseObserver) {
@@ -404,6 +416,9 @@ public final class PriceGrpc {
     }
 
     /**
+     * <pre>
+     * Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
+     * </pre>
      */
     public fintekkers.requests.price.QueryPriceResponseProto getByIds(fintekkers.requests.price.QueryPriceRequestProto request) throws io.grpc.StatusException {
       return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
@@ -411,6 +426,9 @@ public final class PriceGrpc {
     }
 
     /**
+     * <pre>
+     * For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
+     * </pre>
      */
     @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/10918")
     public io.grpc.stub.BlockingClientCall<?, fintekkers.requests.price.QueryPriceResponseProto>
@@ -465,6 +483,9 @@ public final class PriceGrpc {
     }
 
     /**
+     * <pre>
+     * Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
+     * </pre>
      */
     public fintekkers.requests.price.QueryPriceResponseProto getByIds(fintekkers.requests.price.QueryPriceRequestProto request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
@@ -472,6 +493,9 @@ public final class PriceGrpc {
     }
 
     /**
+     * <pre>
+     * For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
+     * </pre>
      */
     public java.util.Iterator<fintekkers.requests.price.QueryPriceResponseProto> search(
         fintekkers.requests.price.QueryPriceRequestProto request) {
@@ -526,6 +550,9 @@ public final class PriceGrpc {
     }
 
     /**
+     * <pre>
+     * Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
+     * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<fintekkers.requests.price.QueryPriceResponseProto> getByIds(
         fintekkers.requests.price.QueryPriceRequestProto request) {

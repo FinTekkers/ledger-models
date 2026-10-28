@@ -31,6 +31,10 @@ public final class PriceService {
           com.google.protobuf.RpcCallback<fintekkers.requests.price.CreatePriceResponseProto> done);
 
       /**
+       * <pre>
+       * Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
+       * </pre>
+       *
        * <code>rpc GetByIds(.fintekkers.requests.price.QueryPriceRequestProto) returns (.fintekkers.requests.price.QueryPriceResponseProto);</code>
        */
       public abstract void getByIds(
@@ -39,6 +43,10 @@ public final class PriceService {
           com.google.protobuf.RpcCallback<fintekkers.requests.price.QueryPriceResponseProto> done);
 
       /**
+       * <pre>
+       * For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
+       * </pre>
+       *
        * <code>rpc Search(.fintekkers.requests.price.QueryPriceRequestProto) returns (stream .fintekkers.requests.price.QueryPriceResponseProto);</code>
        */
       public abstract void search(
@@ -226,6 +234,10 @@ public final class PriceService {
         com.google.protobuf.RpcCallback<fintekkers.requests.price.CreatePriceResponseProto> done);
 
     /**
+     * <pre>
+     * Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
+     * </pre>
+     *
      * <code>rpc GetByIds(.fintekkers.requests.price.QueryPriceRequestProto) returns (.fintekkers.requests.price.QueryPriceResponseProto);</code>
      */
     public abstract void getByIds(
@@ -234,6 +246,10 @@ public final class PriceService {
         com.google.protobuf.RpcCallback<fintekkers.requests.price.QueryPriceResponseProto> done);
 
     /**
+     * <pre>
+     * For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
+     * </pre>
+     *
      * <code>rpc Search(.fintekkers.requests.price.QueryPriceRequestProto) returns (stream .fintekkers.requests.price.QueryPriceResponseProto);</code>
      */
     public abstract void search(

@@ -31,6 +31,13 @@ pub struct QueryPriceRequestProto {
     pub object_type: i32,
     #[prost(message, optional, tag = "2")]
     pub version: ::core::option::Option<super::super::models::util::VersionProto>,
+    /// Price IDs (PriceProto.uuid), never security IDs.
+    /// Search: when non-empty, only prices with these IDs match. This is
+    /// ANDed with every other filter (search_price_input, as_of, horizon or
+    /// date_range, frequency), as in transaction Search.
+    /// To get prices for given securities, leave uuIds empty and put a
+    /// SECURITY_ID filter in search_price_input.
+    /// GetByIds: takes price IDs in this field.
     #[prost(message, repeated, tag = "21")]
     pub uu_ids: ::prost::alloc::vec::Vec<super::super::models::util::UuidProto>,
     #[prost(message, optional, tag = "22")]
