@@ -45,6 +45,16 @@ RULES = {
 PHRASES = [(rule, phrase) for rule, phrases in RULES.items() for phrase in phrases]
 # test_lm378_tips_acb_spec.py rejects these in the whole ADJUSTED_COST_BASIS text.
 BANNED = ["settlement date", "settlement_date", "m-1", "m-4"]
+# LM-405 replaced these TIPS lines (lot months, Appendix B rounding); the
+# snapshot keeps them as history.
+SUPERSEDED = {
+    "  //     readings in TipsInput.cpi. Lot dates need no CPI readings.",
+    "  //   Rounding: none. real_acb_i, the weighted average, the index ratio and",
+    "  //     the result are all unrounded, as for INDEX_RATIO and MARKET_VALUE.",
+    "TIPS CPI: only the m-3 and m-2 readings for the valuation date in TipsInput.cpi; lot dates need no CPI readings",
+    "TIPS rounding: none. real_acb_i, the weighted average, the index ratio and the result are all unrounded, "
+    "as for INDEX_RATIO and MARKET_VALUE",
+}
 
 
 def _block(path: Path, declaration: str) -> str:
@@ -96,12 +106,20 @@ def _in_order(old: list, new: list) -> bool:
     return all(item in rest for item in old)
 
 
+def _kept(lines: list) -> list:
+    return [line for line in lines if line not in SUPERSEDED]
+
+
 def test_original_proto_comment_lines_are_kept_in_order():
-    assert _in_order(BEFORE["measure_proto_comment_lines"], BLOCK.splitlines())
+    assert _in_order(_kept(BEFORE["measure_proto_comment_lines"]), BLOCK.splitlines())
 
 
 def test_original_catalog_model_assumptions_are_kept_in_order():
-    assert _in_order(BEFORE["catalog"]["model_assumptions"], ENTRY["model_assumptions"])
+    assert _in_order(_kept(BEFORE["catalog"]["model_assumptions"]), ENTRY["model_assumptions"])
+
+
+def test_superseded_lines_are_in_the_snapshot():
+    assert SUPERSEDED <= set(BEFORE["measure_proto_comment_lines"]) | set(BEFORE["catalog"]["model_assumptions"])
 
 
 @pytest.mark.parametrize("key", ["description", "formula", "units"])

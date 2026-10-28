@@ -254,12 +254,15 @@ pub struct TipsInput {
     /// reference CPI already derived for the settlement date. See
     /// MeasureProto.REFERENCE_CPI and MeasureProto.INDEX_RATIO.
     ///
-    /// With readings, they must be exactly the readings for months m-3 and m-2
+    /// With readings, they must include the readings for months m-3 and m-2
     /// of settlement month m, the month of the UTC date of
     /// ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-    /// time_zone is not used). A missing or extra month makes the request
-    /// invalid and it is rejected, the same as a duplicate month. See
-    /// InflationIndexInput and MonthlyIndexReadings.
+    /// time_zone is not used). A missing m-3 or m-2 makes the request invalid
+    /// and it is rejected. They may also include the extra months that lot
+    /// settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+    /// month no date needs is allowed and ignored. A duplicate (year, month) or
+    /// a month outside 1-12 is still rejected. See InflationIndexInput and
+    /// MonthlyIndexReadings.
     #[prost(message, optional, tag = "4")]
     pub cpi: ::core::option::Option<InflationIndexInput>,
     /// Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
@@ -303,11 +306,14 @@ pub mod inflation_index_input {
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Cpi {
-        /// Raw monthly index levels. Must be exactly the readings for months m-3
+        /// Raw monthly index levels. Must include the readings for months m-3
         /// and m-2 of settlement month m, the month of the UTC date of
         /// ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
-        /// time_zone is not used). A missing or extra month makes the request
-        /// invalid and it is rejected, the same as a duplicate (year, month).
+        /// time_zone is not used); a missing m-3 or m-2 makes the request invalid
+        /// and it is rejected. May also include the extra months that lot
+        /// settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
+        /// month no date needs is allowed and ignored. A duplicate (year, month)
+        /// or a month outside 1-12 is still rejected.
         #[prost(message, tag = "2")]
         Readings(super::MonthlyIndexReadings),
         /// Reference CPI for the settlement date, already derived
@@ -321,11 +327,13 @@ pub mod inflation_index_input {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MonthlyIndexReadings {
-    /// When used as InflationIndexInput.readings, must hold exactly the
-    /// readings for months m-3 and m-2 of settlement month m, the month of the
-    /// UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
-    /// in UTC; time_zone is not used). A missing or extra month makes the
-    /// request invalid, the same as a duplicate month.
+    /// When used as InflationIndexInput.readings, must include the readings
+    /// for months m-3 and m-2 of settlement month m, the month of the UTC date
+    /// of ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+    /// time_zone is not used); a missing m-3 or m-2 makes the request invalid.
+    /// May also include the extra months that lot settlement dates need for
+    /// MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
+    /// allowed and ignored. A month outside 1-12 is invalid.
     ///
     /// Order is not significant. Each (year, month) appears at most once; a
     /// request with a duplicate (year, month) is invalid and is rejected, even

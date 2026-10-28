@@ -2,7 +2,8 @@
 measure.proto and its catalog entry both state every rule: what it is, OID,
 premium, market discount, de minimis, accrual start, TIPS, FRN, no lots and
 scope, plus its units and the seven product types it applies to. The
-UNADJUSTED_COST_BASIS and PROFIT_LOSS comments are unchanged.
+UNADJUSTED_COST_BASIS comment is unchanged. The PROFIT_LOSS comment keeps every
+original line, in order; LM-405 added its TIPS paragraph.
 
 Comments are found by the name they document, never by line number.
 """
@@ -100,6 +101,15 @@ def test_units_are_per_100_face_and_per_100_original_face_for_tips():
         assert "tips: per 100 original face, in nominal dollars" in text
 
 
-@pytest.mark.parametrize("name", UNCHANGED["measure_proto_comments"])
-def test_unadjusted_cost_basis_and_profit_loss_comments_are_unchanged(name):
+def test_unadjusted_cost_basis_comment_is_unchanged():
+    name = "UNADJUSTED_COST_BASIS"
     assert _block(MEASURE, name) == UNCHANGED["measure_proto_comments"][name]
+
+
+def test_profit_loss_comment_keeps_its_original_lines_in_order():
+    rest = iter(_block(MEASURE, "PROFIT_LOSS").splitlines())
+    assert all(line in rest for line in UNCHANGED["measure_proto_comments"]["PROFIT_LOSS"].splitlines())
+
+
+def test_baseline_covers_unadjusted_cost_basis_and_profit_loss():
+    assert list(UNCHANGED["measure_proto_comments"]) == ["UNADJUSTED_COST_BASIS", "PROFIT_LOSS"]

@@ -2,8 +2,9 @@
 the catalog entry both state the TIPS formula, real_acb_i, the accrual start,
 the CPI the valuation date needs, the rounding and the units. Neither asks for
 a settlement date or for CPI readings beyond m-3 and m-2. The
-UNADJUSTED_COST_BASIS, INDEX_RATIO and REFERENCE_CPI comments and catalog
-entries are unchanged.
+UNADJUSTED_COST_BASIS comment and catalog entry are unchanged. LM-405 amended
+the rounding (31 CFR 356 Appendix B) and INDEX_RATIO and REFERENCE_CPI; see
+test_lm405_tips_pnl_spec.py.
 
 Comments are found by the name they document, never by line number.
 """
@@ -29,13 +30,16 @@ PHRASES = [
     "constant yield on real principal",
     "open_date plus the product's settlement lag",
     "m-3 and m-2",
-    "lot dates need no cpi readings",
-    "rounding: none",
+    "extra lot months there serve profit_loss and are ignored here",
+    "rounding: the index ratio is index_ratio, rounded to 5 decimals per 31 cfr 356 appendix b",
     "never to the basis",
     "per 100 original face, in nominal dollars",
 ]
 BANNED = ["settlement date", "settlement_date", "m-1", "m-4", "cpi reading for each lot"]
 EXAMPLE = "(10000*99.00 + 5000*101.50) / 15000 * 1.2 = 119.80"
+# LM-405 amended these (Appendix B rounding, lot-month readings); the baseline
+# keeps them as history.
+AMENDED = {"INDEX_RATIO", "REFERENCE_CPI"}
 
 
 def _block(path: Path, declaration: str) -> str:
@@ -85,12 +89,12 @@ def test_worked_example_is_stated(source):
     assert EXAMPLE in TEXTS[source]
 
 
-@pytest.mark.parametrize("name", UNCHANGED["measure_proto_comments"])
+@pytest.mark.parametrize("name", [n for n in UNCHANGED["measure_proto_comments"] if n not in AMENDED])
 def test_proto_comment_is_unchanged(name):
     assert _block(MEASURE, name) == UNCHANGED["measure_proto_comments"][name]
 
 
-@pytest.mark.parametrize("name", UNCHANGED["catalog"])
+@pytest.mark.parametrize("name", [n for n in UNCHANGED["catalog"] if n not in AMENDED])
 def test_catalog_entry_is_unchanged(name):
     # LM-403 added computed_by and depends_on; every key in the baseline stays as it was.
     baseline = UNCHANGED["catalog"][name]

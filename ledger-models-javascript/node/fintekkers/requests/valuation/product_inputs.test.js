@@ -39,6 +39,8 @@ const security_pb_1 = require("../../../fintekkers/models/security/security_pb")
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
+const local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
+const timestamp_pb_1 = require("google-protobuf/google/protobuf/timestamp_pb");
 const decimal_1 = require("../../../wrappers/models/utils/decimal");
 function decimal(value) {
     const d = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(value));
@@ -201,6 +203,29 @@ describe('TipsInput.cpi round-trip through ValuationRequestProto (LM-343)', () =
         req.setProductInput(pi);
         return req;
     }
+    function requestAt(tips, seconds) {
+        const timestamp = new timestamp_pb_1.Timestamp();
+        timestamp.setSeconds(seconds);
+        const asof = new local_timestamp_pb_1.LocalTimestampProto();
+        asof.setTimestamp(timestamp);
+        const req = request(tips);
+        req.setAsofDatetime(asof);
+        return req;
+    }
+    function readingsTips(rows) {
+        const readings = new product_inputs_pb_1.MonthlyIndexReadings();
+        for (const [year, month, value] of rows) {
+            readings.addReadings(reading(year, month, value));
+        }
+        const cpi = new product_inputs_pb_1.InflationIndexInput();
+        cpi.setIndex(cpiIndex());
+        cpi.setReadings(readings);
+        const tips = new product_inputs_pb_1.TipsInput();
+        tips.setSecurity(tipsSecurity());
+        tips.setCleanPrice(decimal('97.50'));
+        tips.setCpi(cpi);
+        return tips;
+    }
     function roundtripTips(original) {
         const parsed = valuation_request_pb_1.ValuationRequestProto.deserializeBinary(original.serializeBinary());
         expect(parsed.getProductInput().getInputCase()).toBe(product_inputs_pb_1.ProductInput.InputCase.TIPS);
@@ -210,18 +235,31 @@ describe('TipsInput.cpi round-trip through ValuationRequestProto (LM-343)', () =
         expect(index.getIssuerName()).toBe('CPI-U NSA');
         expect(index.getIndexDetails().getIndexType()).toBe(index_type_pb_1.IndexTypeProto.CPI_U);
     }
-    test('readings case survives', () => {
-        const readings = new product_inputs_pb_1.MonthlyIndexReadings();
-        readings.addReadings(reading(2026, 4, '320.000'));
-        readings.addReadings(reading(2026, 5, '321.500'));
-        const cpi = new product_inputs_pb_1.InflationIndexInput();
-        cpi.setIndex(cpiIndex());
-        cpi.setReadings(readings);
-        const tips = new product_inputs_pb_1.TipsInput();
-        tips.setSecurity(tipsSecurity());
-        tips.setCleanPrice(decimal('97.50'));
-        tips.setCpi(cpi);
-        const parsed = roundtripTips(request(tips));
+    test('readings with extra lot months survive unchanged (LM-405)', () => {
+        // 2026-02-17T14:30:00Z: m-3 and m-2 are 2025-11 and 2025-12. A lot
+        // settling in 2025-11 adds 2025-08 and 2025-09. Listed out of order.
+        const rows = [
+            [2025, 12, '324.05400'],
+            [2025, 8, '323.97600'],
+            [2025, 11, '324.12200'],
+            [2025, 9, '324.80000'],
+        ];
+        const original = requestAt(readingsTips(rows), 1771338600);
+        const parsed = valuation_request_pb_1.ValuationRequestProto.deserializeBinary(original.serializeBinary());
+        expect(parsed.toObject()).toEqual(original.toObject());
+        expect(parsed.serializeBinary()).toEqual(original.serializeBinary());
+        expect(parsed.getAsofDatetime().getTimestamp().toDate().toISOString()).toBe('2026-02-17T14:30:00.000Z');
+        const got = parsed.getProductInput().getTips().getCpi().getReadings().getReadingsList()
+            .map(r => [r.getYear(), r.getMonth(), text(r.getValue())]);
+        expect(got).toEqual(rows);
+    });
+    test('backward compat: readings case with only m-3 and m-2 survives unchanged', () => {
+        // 2026-07-16T00:00:00Z: m-3 and m-2 are 2026-04 and 2026-05.
+        const original = requestAt(readingsTips([[2026, 4, '320.000'], [2026, 5, '321.500']]), 1784160000);
+        const reparsed = valuation_request_pb_1.ValuationRequestProto.deserializeBinary(original.serializeBinary());
+        expect(reparsed.toObject()).toEqual(original.toObject());
+        expect(reparsed.serializeBinary()).toEqual(original.serializeBinary());
+        const parsed = roundtripTips(original);
         expect(parsed.hasCpi()).toBe(true);
         const parsedCpi = parsed.getCpi();
         expect(parsedCpi.getCpiCase()).toBe(product_inputs_pb_1.InflationIndexInput.CpiCase.READINGS);

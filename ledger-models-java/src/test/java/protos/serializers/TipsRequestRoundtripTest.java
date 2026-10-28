@@ -8,12 +8,14 @@ import com.google.protobuf.DescriptorProtos.DescriptorProto;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Timestamp;
 import fintekkers.models.security.IndexDetailsProto;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.security.TipsExtensionProto;
 import fintekkers.models.security.index.IndexTypeProto;
 import fintekkers.models.util.DecimalValue.DecimalValueProto;
+import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
 import fintekkers.requests.valuation.InflationIndexInput;
 import fintekkers.requests.valuation.MonthlyIndexReading;
 import fintekkers.requests.valuation.MonthlyIndexReadings;
@@ -33,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * TipsInput.cpi (LM-343) through a full ValuationRequestProto:
  * construct → toByteArray() → parseFrom() → verify the oneof case and values.
+ * Readings with extra lot months (LM-405), and with only m-3 and m-2, round-trip
+ * unchanged.
  */
 class TipsRequestRoundtripTest {
 
@@ -66,6 +70,13 @@ class TipsRequestRoundtripTest {
                 .build();
     }
 
+    private static ValuationRequestProto request(TipsInput tips, long asofSeconds) {
+        return request(tips).toBuilder()
+                .setAsofDatetime(LocalTimestampProto.newBuilder()
+                        .setTimestamp(Timestamp.newBuilder().setSeconds(asofSeconds)))
+                .build();
+    }
+
     private static TipsInput roundtripTips(ValuationRequestProto original) throws InvalidProtocolBufferException {
         ValuationRequestProto parsed = ValuationRequestProto.parseFrom(original.toByteArray());
         assertEquals(ProductInput.InputCase.TIPS, parsed.getProductInput().getInputCase());
@@ -73,7 +84,37 @@ class TipsRequestRoundtripTest {
     }
 
     @Test
-    void cpiReadings_surviveValuationRequestRoundtrip() throws InvalidProtocolBufferException {
+    void cpiReadingsWithExtraLotMonths_surviveValuationRequestRoundtrip() throws InvalidProtocolBufferException {
+        // LM-405. 2026-02-17T14:30:00Z: m-3 and m-2 are 2025-11 and 2025-12. A lot
+        // settling in 2025-11 adds 2025-08 and 2025-09. Listed out of order.
+        List<MonthlyIndexReading> readings = List.of(
+                reading(2025, 12, "324.05400"),
+                reading(2025, 8, "323.97600"),
+                reading(2025, 11, "324.12200"),
+                reading(2025, 9, "324.80000"));
+        TipsInput tips = TipsInput.newBuilder()
+                .setSecurity(tipsSecurity())
+                .setCleanPrice(decimal("97.50"))
+                .setCpi(InflationIndexInput.newBuilder()
+                        .setIndex(cpiIndex())
+                        .setReadings(MonthlyIndexReadings.newBuilder().addAllReadings(readings)))
+                .build();
+        ValuationRequestProto original = request(tips, 1771338600L);
+
+        ValuationRequestProto parsed = ValuationRequestProto.parseFrom(original.toByteArray());
+
+        assertEquals(original, parsed);
+        assertEquals(1771338600L, parsed.getAsofDatetime().getTimestamp().getSeconds());
+        InflationIndexInput parsedCpi = parsed.getProductInput().getTips().getCpi();
+        assertEquals(InflationIndexInput.CpiCase.READINGS, parsedCpi.getCpiCase());
+        assertEquals(List.of("2025-12 324.05400", "2025-8 323.97600", "2025-11 324.12200", "2025-9 324.80000"),
+                parsedCpi.getReadings().getReadingsList().stream()
+                        .map(r -> r.getYear() + "-" + r.getMonth() + " " + Decimals.text(r.getValue()))
+                        .toList());
+    }
+
+    @Test
+    void backwardCompat_m3m2CpiReadings_surviveValuationRequestRoundtrip() throws InvalidProtocolBufferException {
         InflationIndexInput cpi = InflationIndexInput.newBuilder()
                 .setIndex(cpiIndex())
                 .setReadings(MonthlyIndexReadings.newBuilder()
@@ -85,8 +126,11 @@ class TipsRequestRoundtripTest {
                 .setCleanPrice(decimal("97.50"))
                 .setCpi(cpi)
                 .build();
+        // 2026-07-16T00:00:00Z: m-3 and m-2 are 2026-04 and 2026-05.
+        ValuationRequestProto original = request(tips, 1784160000L);
+        assertEquals(original, ValuationRequestProto.parseFrom(original.toByteArray()));
 
-        TipsInput parsed = roundtripTips(request(tips));
+        TipsInput parsed = roundtripTips(original);
 
         assertTrue(parsed.hasCpi());
         InflationIndexInput parsedCpi = parsed.getCpi();

@@ -35,7 +35,7 @@
       "enum_value": 2,
       "display_name": "Market Value",
       "description": "The current dollar value of a position at the given market price.",
-      "formula": "MarketValue = price / 100 * directed_quantity; TIPS: clean_price / 100 * index_ratio * directed_quantity (index_ratio unrounded, unfloored)",
+      "formula": "MarketValue = price / 100 * directed_quantity; TIPS: clean_price / 100 * index_ratio * directed_quantity (index_ratio rounded to 5 decimals per 31 CFR 356 Appendix B, unfloored; the TIPS result rounded to cents, a project rule)",
       "units": "Dollars (or settlement currency)",
       "category": "valuation",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
@@ -77,8 +77,8 @@
         "TIPS: amortise in real terms, then multiply by the index ratio at the valuation date, giving a figure per 100 original face in nominal dollars",
         "TIPS accrual start: from each lot's open_date plus the product's settlement lag, on real principal; valuation-service owns the settlement lag and lots carry no settlement field",
         "TIPS elections: premium and market discount accrue or not per the elections, as in the fixed-rate rules",
-        "TIPS CPI: only the m-3 and m-2 readings for the valuation date in TipsInput.cpi; lot dates need no CPI readings",
-        "TIPS rounding: none. real_acb_i, the weighted average, the index ratio and the result are all unrounded, as for INDEX_RATIO and MARKET_VALUE",
+        "TIPS CPI: only the m-3 and m-2 readings for the valuation date in TipsInput.cpi; extra lot months there serve PROFIT_LOSS and are ignored here",
+        "TIPS rounding: the index ratio is INDEX_RATIO, rounded to 5 decimals per 31 CFR 356 Appendix B. real_acb_i, the weighted average and the result are not rounded further",
         "TIPS deflation floor: not applied. It applies only to final principal (INFLATION_ADJUSTED_PRINCIPAL), never to the basis",
         "FRN: use the equivalent fixed rate from the fixing at settlement",
         "Treasury FRN (frn_extension.reference_rate_index T_BILL_13_WEEK, LM-383): inputs are FrnInput.cost_basis (lots and elections) and FrnInput.fixings",
@@ -315,32 +315,42 @@
       "enum_value": 18,
       "display_name": "Profit / Loss",
       "description": "The profit or loss on a position relative to its cost basis.",
-      "formula": "ProfitLoss = MarketValue - (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities (equities, cash)",
+      "formula": "ProfitLoss = MarketValue - (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities (equities, cash); TIPS: ProfitLoss = MarketSide - CostSide, where MarketSide = clean_price / 100 * IndexRatio(valuation date) * directed_quantity and CostSide = sum over the open lots i in TipsInput.cost_basis.lots of price_i / 100 * IndexRatio(S_i) * face_i",
       "units": "Dollars (or settlement currency)",
       "category": "valuation",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
       "model_assumptions": [
-        "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable"
+        "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable",
+        "TIPS (LM-405): nominal and clean, with both sides index-adjusted; MarketSide equals MARKET_VALUE for TIPS; price_i is the lot's real purchase price per 100 face (TaxLotProto.price); face_i is the open lot's remaining quantity (TaxLotProto.open_quantity), in original (unadjusted) face units; accrued interest is excluded on both sides",
+        "TIPS lot settlement date: S_i = TaxLotProto.open_date plus the product's settlement lag (T+1 business day for Treasuries); valuation-service owns the lag and lots carry no settlement field",
+        "TIPS IndexRatio(S_i): REFERENCE_CPI's daily interpolation with S_i as the settlement date, from the CPI-U readings for months L-3 and L-2 of S_i's month L in TipsInput.cpi.readings, divided by base_cpi and rounded as REFERENCE_CPI and INDEX_RATIO are",
+        "TIPS absent: the measure is absent, never 0 and never the real-price fallback (the UnadjustedCostBasis formula), when there are no lots (TipsInput.cost_basis unset or its lots empty), when a lot has no open_date, or when a needed CPI-U month is missing (L-3 or L-2 of any lot's settlement month); TipsInput.cpi with reference_cpi carries no lot months, so the measure is absent then. A missing m-3 or m-2 of the valuation month makes the whole request invalid (see TipsInput.cpi)",
+        "TIPS rounding: 31 CFR 356 Appendix B, each reference CPI and each index ratio rounded to 5 decimals (half up). Project rule, not Appendix B text: MarketSide and CostSide (after the sum) are each rounded to cents, and ProfitLoss is the difference of the rounded sides",
+        "TIPS example: 912810RL4, 0.750% due 2045-02-15, base_cpi 235.48150. Lot: face 100,000, real price 68.1875, open_date 2026-07-27, settling 2026-07-28; CPI-U April 2026 333.020, May 2026 335.123 -> RefCPI = 333.020 + 27/31 * (335.123 - 333.020) = 334.85165, IndexRatio = 334.85165 / 235.48150 = 1.42199, CostSide = 68.1875 / 100 * 1.42199 * 100,000 = 96,961.94. Valuation 2026-10-28, clean_price 67.625; CPI-U July 2026 333.918, August 2026 334.980 -> RefCPI = 333.918 + 27/31 * (334.980 - 333.918) = 334.84297, IndexRatio = 334.84297 / 235.48150 = 1.42195, MarketSide = 67.625 / 100 * 1.42195 * 100,000 = 96,159.37. ProfitLoss = 96,159.37 - 96,961.94 = -802.57"
       ],
       "implemented": true,
       "computed_by": "valuation-service",
-      "depends_on": ["MARKET_VALUE", "UNADJUSTED_COST_BASIS", "DIRECTED_QUANTITY"]
+      "depends_on": ["MARKET_VALUE", "UNADJUSTED_COST_BASIS", "DIRECTED_QUANTITY", "INDEX_RATIO", "TAX_LOTS"]
     },
     {
       "name": "PROFIT_LOSS_PERCENT",
       "enum_value": 19,
       "display_name": "Profit / Loss Percent",
       "description": "The profit or loss as a percentage of the original cost basis.",
-      "formula": "ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities (equities, cash)",
+      "formula": "ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities (equities, cash); TIPS: ProfitLossPercent = ProfitLoss / CostSide, with ProfitLoss and CostSide as in PROFIT_LOSS (TIPS)",
       "units": "Decimal (0-1 scale; e.g. 0.05 = 5.00% gain)",
       "category": "valuation",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
       "model_assumptions": [
-        "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable"
+        "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable",
+        "TIPS (LM-405): ProfitLoss and CostSide are PROFIT_LOSS (TIPS): nominal and clean, with the market side at INDEX_RATIO for the valuation date and each open lot's real price at the index ratio for its settlement date (TaxLotProto.open_date plus the product's settlement lag); accrued interest is excluded on both sides",
+        "TIPS absent: the measure is absent, never 0 and never the real-price fallback (the UnadjustedCostBasis formula), when there are no lots (TipsInput.cost_basis unset or its lots empty), when a lot has no open_date, or when a needed CPI-U month is missing (see PROFIT_LOSS)",
+        "TIPS rounding: ProfitLoss and CostSide are rounded as in PROFIT_LOSS: 31 CFR 356 Appendix B, reference CPI and index ratio to 5 decimals, then each side to cents (a project rule). The ratio is not rounded further",
+        "TIPS example: 912810RL4 (see PROFIT_LOSS): cost 96,961.94, market 96,159.37, P&L -802.57 -> ProfitLossPercent = -802.57 / 96,961.94 = -0.0082772 (rounded here only)"
       ],
       "implemented": true,
       "computed_by": "valuation-service",
-      "depends_on": ["PROFIT_LOSS", "UNADJUSTED_COST_BASIS"]
+      "depends_on": ["PROFIT_LOSS", "UNADJUSTED_COST_BASIS", "INDEX_RATIO", "TAX_LOTS"]
     },
     {
       "name": "ACCRUED_INTEREST",
@@ -482,8 +492,8 @@
       "applies_to": ["TIPS"],
       "model_assumptions": [
         "Reference CPI from TipsInput.cpi",
-        "Unrounded (Treasury publishes 5 decimals)",
-        "Request rejected unless readings are exactly months m-3 and m-2 (UTC settlement month)",
+        "Rounding: with readings, RefCPI is rounded to 5 decimals (half up) per 31 CFR 356 Appendix B; a given reference_cpi is used as-is",
+        "Readings must include months m-3 and m-2 (UTC settlement month): the request is rejected when either is missing. Extra months (e.g. those lot settlement dates need for PROFIT_LOSS) are allowed and ignored here. A duplicate (year, month) or a month outside 1-12 is rejected",
         "Absent when no CPI is given"
       ],
       "implemented": false,
@@ -495,13 +505,13 @@
       "enum_value": 29,
       "display_name": "Index Ratio",
       "description": "The index ratio of a TIPS for the settlement date: reference CPI over the security's base CPI.",
-      "formula": "IndexRatio = reference_cpi / base_cpi (unrounded, unfloored)",
+      "formula": "IndexRatio = reference_cpi / base_cpi (rounded to 5 decimals per 31 CFR 356 Appendix B, unfloored)",
       "units": "Dimensionless",
       "category": "valuation",
       "applies_to": ["TIPS"],
       "model_assumptions": [
         "Reference CPI from TipsInput.cpi",
-        "Unrounded (Treasury publishes 5 decimals)",
+        "Rounding: computed from the rounded REFERENCE_CPI and rounded to 5 decimals (half up) per 31 CFR 356 Appendix B. Every measure that uses the index ratio (MARKET_VALUE, ADJUSTED_COST_BASIS, INFLATION_ADJUSTED_PRINCIPAL, REAL_YIELD, PRESENT_VALUE, PROFIT_LOSS) uses this rounded ratio",
         "Unfloored: the deflation floor applies to INFLATION_ADJUSTED_PRINCIPAL only"
       ],
       "implemented": false,

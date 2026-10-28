@@ -9,11 +9,13 @@ public interface MonthlyIndexReadingsOrBuilder extends
 
   /**
    * <pre>
-   * When used as InflationIndexInput.readings, must hold exactly the
-   * readings for months m-3 and m-2 of settlement month m, the month of the
-   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
-   * in UTC; time_zone is not used). A missing or extra month makes the
-   * request invalid, the same as a duplicate month.
+   * When used as InflationIndexInput.readings, must include the readings
+   * for months m-3 and m-2 of settlement month m, the month of the UTC date
+   * of ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used); a missing m-3 or m-2 makes the request invalid.
+   * May also include the extra months that lot settlement dates need for
+   * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
+   * allowed and ignored. A month outside 1-12 is invalid.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -25,11 +27,13 @@ public interface MonthlyIndexReadingsOrBuilder extends
       getReadingsList();
   /**
    * <pre>
-   * When used as InflationIndexInput.readings, must hold exactly the
-   * readings for months m-3 and m-2 of settlement month m, the month of the
-   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
-   * in UTC; time_zone is not used). A missing or extra month makes the
-   * request invalid, the same as a duplicate month.
+   * When used as InflationIndexInput.readings, must include the readings
+   * for months m-3 and m-2 of settlement month m, the month of the UTC date
+   * of ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used); a missing m-3 or m-2 makes the request invalid.
+   * May also include the extra months that lot settlement dates need for
+   * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
+   * allowed and ignored. A month outside 1-12 is invalid.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -40,11 +44,13 @@ public interface MonthlyIndexReadingsOrBuilder extends
   fintekkers.requests.valuation.MonthlyIndexReading getReadings(int index);
   /**
    * <pre>
-   * When used as InflationIndexInput.readings, must hold exactly the
-   * readings for months m-3 and m-2 of settlement month m, the month of the
-   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
-   * in UTC; time_zone is not used). A missing or extra month makes the
-   * request invalid, the same as a duplicate month.
+   * When used as InflationIndexInput.readings, must include the readings
+   * for months m-3 and m-2 of settlement month m, the month of the UTC date
+   * of ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used); a missing m-3 or m-2 makes the request invalid.
+   * May also include the extra months that lot settlement dates need for
+   * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
+   * allowed and ignored. A month outside 1-12 is invalid.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -55,11 +61,13 @@ public interface MonthlyIndexReadingsOrBuilder extends
   int getReadingsCount();
   /**
    * <pre>
-   * When used as InflationIndexInput.readings, must hold exactly the
-   * readings for months m-3 and m-2 of settlement month m, the month of the
-   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
-   * in UTC; time_zone is not used). A missing or extra month makes the
-   * request invalid, the same as a duplicate month.
+   * When used as InflationIndexInput.readings, must include the readings
+   * for months m-3 and m-2 of settlement month m, the month of the UTC date
+   * of ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used); a missing m-3 or m-2 makes the request invalid.
+   * May also include the extra months that lot settlement dates need for
+   * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
+   * allowed and ignored. A month outside 1-12 is invalid.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -71,11 +79,13 @@ public interface MonthlyIndexReadingsOrBuilder extends
       getReadingsOrBuilderList();
   /**
    * <pre>
-   * When used as InflationIndexInput.readings, must hold exactly the
-   * readings for months m-3 and m-2 of settlement month m, the month of the
-   * UTC date of ValuationRequestProto.asof_datetime (asof_datetime.timestamp
-   * in UTC; time_zone is not used). A missing or extra month makes the
-   * request invalid, the same as a duplicate month.
+   * When used as InflationIndexInput.readings, must include the readings
+   * for months m-3 and m-2 of settlement month m, the month of the UTC date
+   * of ValuationRequestProto.asof_datetime (asof_datetime.timestamp in UTC;
+   * time_zone is not used); a missing m-3 or m-2 makes the request invalid.
+   * May also include the extra months that lot settlement dates need for
+   * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
+   * allowed and ignored. A month outside 1-12 is invalid.
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
