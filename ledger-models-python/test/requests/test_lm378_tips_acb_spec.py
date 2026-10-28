@@ -92,7 +92,11 @@ def test_proto_comment_is_unchanged(name):
 
 @pytest.mark.parametrize("name", UNCHANGED["catalog"])
 def test_catalog_entry_is_unchanged(name):
-    assert _entries()[name] == UNCHANGED["catalog"][name]
+    # LM-403 added computed_by and depends_on; every key in the baseline stays as it was.
+    baseline = UNCHANGED["catalog"][name]
+    entry = _entries()[name]
+    assert set(entry) - set(baseline) <= {"computed_by", "depends_on"}
+    assert {key: entry.get(key) for key in baseline} == baseline
 
 
 def test_baseline_covers_the_three_measures():

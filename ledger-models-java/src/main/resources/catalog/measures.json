@@ -1,5 +1,5 @@
 {
-  "_doc": "applies_to lists the products a measure covers. Each entry is a ProductTypeProto name (e.g. TIPS, TREASURY_FRN) or a node name from ../hierarchy.json (e.g. BOND, STOCK, CASH_INSTRUMENT), which covers every product type under it.",
+  "_doc": "applies_to lists the products a measure covers. Each entry is a ProductTypeProto name (e.g. TIPS, TREASURY_FRN) or a node name from ../hierarchy.json (e.g. BOND, STOCK, CASH_INSTRUMENT), which covers every product type under it. computed_by says where a measure's value comes from: input (supplied by the caller, not computed), ledger-service or valuation-service. The UNKNOWN_MEASURE sentinel has computed_by null. depends_on lists what a measure is computed from: other measure names from this catalog, plus these inputs: TAX_LOTS (the position's tax lots), SECURITY_TERMS (the security's terms and conditions), CPI_U (the CPI-U index series), BILL_FIXINGS (T-bill auction fixings), YIELD_CURVE (the discount curve) and TREASURY_PRICES (Treasury market prices). It is empty for an input.",
   "schema_version": "1.0",
   "measures": [
     {
@@ -12,7 +12,9 @@
       "category": "sentinel",
       "applies_to": [],
       "model_assumptions": [],
-      "implemented": false
+      "implemented": false,
+      "computed_by": null,
+      "depends_on": []
     },
     {
       "name": "DIRECTED_QUANTITY",
@@ -24,7 +26,9 @@
       "category": "input",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
       "model_assumptions": [],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "ledger-service",
+      "depends_on": ["TAX_LOTS"]
     },
     {
       "name": "MARKET_VALUE",
@@ -38,7 +42,9 @@
       "model_assumptions": [
         "None — direct mark-to-market calculation"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["CLEAN_PRICE", "DIRECTED_QUANTITY", "INDEX_RATIO"]
     },
     {
       "name": "UNADJUSTED_COST_BASIS",
@@ -52,7 +58,9 @@
       "model_assumptions": [
         "None — pass-through of the input price"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "ledger-service",
+      "depends_on": ["TAX_LOTS"]
     },
     {
       "name": "ADJUSTED_COST_BASIS",
@@ -83,7 +91,9 @@
         "Treasury FRN other indices (e.g. SOFR): not defined yet",
         "No lots: the measure is absent, with a \"no open lots\" warning, never 0"
       ],
-      "implemented": false
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": ["TAX_LOTS", "SECURITY_TERMS", "REFERENCE_CPI", "BILL_FIXINGS"]
     },
     {
       "name": "CURRENT_YIELD",
@@ -99,7 +109,9 @@
         "For TIPS, uses the inflation-adjusted principal for the annual coupon calculation",
         "Day count: Actual/365 for years-to-maturity calculation"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["CLEAN_PRICE", "SECURITY_TERMS"]
     },
     {
       "name": "YIELD_TO_MATURITY",
@@ -117,7 +129,9 @@
         "Day count: Actual/365 for years-to-maturity",
         "Solver: Newton-Raphson iteration with linear approximation initial guess"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["CLEAN_PRICE", "SECURITY_TERMS", "INDEX_RATIO"]
     },
     {
       "name": "MACAULAY_DURATION",
@@ -133,7 +147,9 @@
         "Flat yield curve (single rate for all maturities)",
         "Settlement on a coupon date (integer period exponents)"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["YIELD_TO_MATURITY"]
     },
     {
       "name": "PRESENT_VALUE",
@@ -149,7 +165,9 @@
         "For TIPS: inflation-adjusted cash flows discounted at REAL_YIELD, consistent with clean_price × index_ratio",
         "Three-way invariant: price == present_value == sum(cashflow_pvs)"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["YIELD_TO_MATURITY"]
     },
     {
       "name": "REAL_YIELD",
@@ -164,7 +182,9 @@
         "Same solver and conventions as YIELD_TO_MATURITY",
         "The quoted real price is scaled by the same index ratio as the cash flows, so the result is the true real yield and does not change with CPI"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["YIELD_TO_MATURITY"]
     },
     {
       "name": "INFLATION_ADJUSTED_PRINCIPAL",
@@ -179,7 +199,9 @@
         "Uses base_cpi from the security's tips_extension and the reference CPI from TipsInput.cpi",
         "Deflation floor applies only to the principal at maturity; interim coupons use the raw adjusted principal"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["SECURITY_TERMS", "INDEX_RATIO"]
     },
     {
       "name": "PRESENT_VALUE_CASHFLOWS",
@@ -194,7 +216,9 @@
         "Same as PRESENT_VALUE",
         "Three-way invariant: sum(pv_amounts) == present_value == price"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["YIELD_TO_MATURITY", "YIELD_CURVE"]
     },
     {
       "name": "DISCOUNT_MARGIN",
@@ -212,7 +236,9 @@
         "Solver: Newton-Raphson, same as YTM",
         "T_BILL_13_WEEK fixings: FrnInput.fixings rate is the auction's high discount rate as Treasury publishes it, in percent per annum on a bank-discount basis (4.215 = 4.215%), the same as IssuanceProto.high_discount_rate. valuation-service converts it to the money-market yield the FRN accrues on, using the fixing's bill_maturity_date. SOFR fixings stay decimal fractions (0.0432 = 4.32%)."
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["CLEAN_PRICE", "YIELD_CURVE", "BILL_FIXINGS"]
     },
     {
       "name": "SPREAD_DURATION",
@@ -228,7 +254,9 @@
         "Uses a symmetric 1bp bump for numerical differentiation",
         "Interest rate duration of an FRN is near-zero; spread duration captures the economically significant risk"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["DISCOUNT_MARGIN", "YIELD_CURVE"]
     },
     {
       "name": "PAR_YIELD",
@@ -243,7 +271,9 @@
         "Coupon frequency matches market convention (semiannual for US Treasuries)",
         "Interpolation between observed maturities uses method specified in CurveRequestProto"
       ],
-      "implemented": false
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": ["TREASURY_PRICES"]
     },
     {
       "name": "SPOT_YIELD",
@@ -258,7 +288,9 @@
         "Requires a complete par yield curve as input",
         "Bootstrap assumes exact coupon dates"
       ],
-      "implemented": false
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": ["PAR_YIELD"]
     },
     {
       "name": "FORWARD_YIELD",
@@ -274,7 +306,9 @@
         "No-arbitrage between spot and forward rates",
         "Forward period defined by adjacent tenor points"
       ],
-      "implemented": false
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": ["SPOT_YIELD"]
     },
     {
       "name": "PROFIT_LOSS",
@@ -288,7 +322,9 @@
       "model_assumptions": [
         "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["MARKET_VALUE", "UNADJUSTED_COST_BASIS", "DIRECTED_QUANTITY"]
     },
     {
       "name": "PROFIT_LOSS_PERCENT",
@@ -302,7 +338,9 @@
       "model_assumptions": [
         "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["PROFIT_LOSS", "UNADJUSTED_COST_BASIS"]
     },
     {
       "name": "ACCRUED_INTEREST",
@@ -318,7 +356,9 @@
         "Treasury FRNs: the fixings are the ones supplied in the request; no curve is used",
         "Returns null/zero for Equity, Cash, and zero-coupon bonds"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["SECURITY_TERMS", "BILL_FIXINGS"]
     },
     {
       "name": "CONVEXITY",
@@ -335,7 +375,9 @@
         "For FRN: uses flat-forwards effective YTM (same model as PRESENT_VALUE)",
         "Settlement on a coupon date (integer period exponents)"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["YIELD_TO_MATURITY"]
     },
     {
       "name": "DIRTY_PRICE",
@@ -347,7 +389,9 @@
       "category": "valuation",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
       "model_assumptions": [],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["CLEAN_PRICE", "ACCRUED_INTEREST"]
     },
     {
       "name": "CLEAN_PRICE",
@@ -359,7 +403,9 @@
       "category": "input",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
       "model_assumptions": [],
-      "implemented": false
+      "implemented": false,
+      "computed_by": "input",
+      "depends_on": []
     },
     {
       "name": "MODIFIED_DURATION",
@@ -371,7 +417,9 @@
       "category": "risk",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
       "model_assumptions": [],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["MACAULAY_DURATION"]
     },
     {
       "name": "DV01",
@@ -383,7 +431,9 @@
       "category": "risk",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
       "model_assumptions": [],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["MODIFIED_DURATION", "MARKET_VALUE"]
     },
     {
       "name": "DISCOUNT_YIELD",
@@ -399,7 +449,9 @@
         "360-day year (Actual/360 day count)",
         "Assumes the security has a defined maturity_date and face_value; null for instruments where days_to_maturity is undefined"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["CLEAN_PRICE", "SECURITY_TERMS"]
     },
     {
       "name": "BOND_EQUIVALENT_YIELD",
@@ -415,7 +467,9 @@
         "365-day year (Actual/365 day count)",
         "Same applicability constraints as DISCOUNT_YIELD"
       ],
-      "implemented": true
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": ["CLEAN_PRICE", "SECURITY_TERMS"]
     },
     {
       "name": "REFERENCE_CPI",
@@ -432,7 +486,9 @@
         "Request rejected unless readings are exactly months m-3 and m-2 (UTC settlement month)",
         "Absent when no CPI is given"
       ],
-      "implemented": false
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": ["CPI_U"]
     },
     {
       "name": "INDEX_RATIO",
@@ -448,7 +504,9 @@
         "Unrounded (Treasury publishes 5 decimals)",
         "Unfloored: the deflation floor applies to INFLATION_ADJUSTED_PRINCIPAL only"
       ],
-      "implemented": false
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": ["REFERENCE_CPI", "SECURITY_TERMS"]
     }
   ]
 }
