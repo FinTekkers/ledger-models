@@ -125,11 +125,11 @@ private static final long serialVersionUID = 0L;
    * The index rate exactly as its source publishes it, in percent per annum.
    * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
    * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-   * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-   * and unit as IssuanceProto.high_discount_rate.
-   * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-   * valuation-service converts it, T_BILL_13_WEEK to the money-market
-   * yield using bill_maturity_date and SOFR from percent.
+   * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+   * Same value and unit as IssuanceProto.high_discount_rate.
+   * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+   * For T_BILL_13_WEEK valuation-service converts it to the money-market
+   * yield using bill_maturity_date; for SOFR it converts it from percent.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -144,11 +144,11 @@ private static final long serialVersionUID = 0L;
    * The index rate exactly as its source publishes it, in percent per annum.
    * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
    * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-   * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-   * and unit as IssuanceProto.high_discount_rate.
-   * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-   * valuation-service converts it, T_BILL_13_WEEK to the money-market
-   * yield using bill_maturity_date and SOFR from percent.
+   * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+   * Same value and unit as IssuanceProto.high_discount_rate.
+   * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+   * For T_BILL_13_WEEK valuation-service converts it to the money-market
+   * yield using bill_maturity_date; for SOFR it converts it from percent.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -163,11 +163,11 @@ private static final long serialVersionUID = 0L;
    * The index rate exactly as its source publishes it, in percent per annum.
    * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
    * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-   * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-   * and unit as IssuanceProto.high_discount_rate.
-   * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-   * valuation-service converts it, T_BILL_13_WEEK to the money-market
-   * yield using bill_maturity_date and SOFR from percent.
+   * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+   * Same value and unit as IssuanceProto.high_discount_rate.
+   * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+   * For T_BILL_13_WEEK valuation-service converts it to the money-market
+   * yield using bill_maturity_date; for SOFR it converts it from percent.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -992,11 +992,11 @@ private static final long serialVersionUID = 0L;
      * The index rate exactly as its source publishes it, in percent per annum.
      * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
      * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-     * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-     * and unit as IssuanceProto.high_discount_rate.
-     * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-     * valuation-service converts it, T_BILL_13_WEEK to the money-market
-     * yield using bill_maturity_date and SOFR from percent.
+     * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+     * Same value and unit as IssuanceProto.high_discount_rate.
+     * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+     * For T_BILL_13_WEEK valuation-service converts it to the money-market
+     * yield using bill_maturity_date; for SOFR it converts it from percent.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -1010,11 +1010,11 @@ private static final long serialVersionUID = 0L;
      * The index rate exactly as its source publishes it, in percent per annum.
      * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
      * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-     * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-     * and unit as IssuanceProto.high_discount_rate.
-     * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-     * valuation-service converts it, T_BILL_13_WEEK to the money-market
-     * yield using bill_maturity_date and SOFR from percent.
+     * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+     * Same value and unit as IssuanceProto.high_discount_rate.
+     * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+     * For T_BILL_13_WEEK valuation-service converts it to the money-market
+     * yield using bill_maturity_date; for SOFR it converts it from percent.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -1032,11 +1032,11 @@ private static final long serialVersionUID = 0L;
      * The index rate exactly as its source publishes it, in percent per annum.
      * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
      * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-     * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-     * and unit as IssuanceProto.high_discount_rate.
-     * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-     * valuation-service converts it, T_BILL_13_WEEK to the money-market
-     * yield using bill_maturity_date and SOFR from percent.
+     * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+     * Same value and unit as IssuanceProto.high_discount_rate.
+     * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+     * For T_BILL_13_WEEK valuation-service converts it to the money-market
+     * yield using bill_maturity_date; for SOFR it converts it from percent.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -1059,11 +1059,11 @@ private static final long serialVersionUID = 0L;
      * The index rate exactly as its source publishes it, in percent per annum.
      * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
      * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-     * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-     * and unit as IssuanceProto.high_discount_rate.
-     * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-     * valuation-service converts it, T_BILL_13_WEEK to the money-market
-     * yield using bill_maturity_date and SOFR from percent.
+     * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+     * Same value and unit as IssuanceProto.high_discount_rate.
+     * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+     * For T_BILL_13_WEEK valuation-service converts it to the money-market
+     * yield using bill_maturity_date; for SOFR it converts it from percent.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -1084,11 +1084,11 @@ private static final long serialVersionUID = 0L;
      * The index rate exactly as its source publishes it, in percent per annum.
      * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
      * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-     * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-     * and unit as IssuanceProto.high_discount_rate.
-     * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-     * valuation-service converts it, T_BILL_13_WEEK to the money-market
-     * yield using bill_maturity_date and SOFR from percent.
+     * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+     * Same value and unit as IssuanceProto.high_discount_rate.
+     * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+     * For T_BILL_13_WEEK valuation-service converts it to the money-market
+     * yield using bill_maturity_date; for SOFR it converts it from percent.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -1114,11 +1114,11 @@ private static final long serialVersionUID = 0L;
      * The index rate exactly as its source publishes it, in percent per annum.
      * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
      * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-     * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-     * and unit as IssuanceProto.high_discount_rate.
-     * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-     * valuation-service converts it, T_BILL_13_WEEK to the money-market
-     * yield using bill_maturity_date and SOFR from percent.
+     * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+     * Same value and unit as IssuanceProto.high_discount_rate.
+     * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+     * For T_BILL_13_WEEK valuation-service converts it to the money-market
+     * yield using bill_maturity_date; for SOFR it converts it from percent.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -1138,11 +1138,11 @@ private static final long serialVersionUID = 0L;
      * The index rate exactly as its source publishes it, in percent per annum.
      * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
      * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-     * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-     * and unit as IssuanceProto.high_discount_rate.
-     * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-     * valuation-service converts it, T_BILL_13_WEEK to the money-market
-     * yield using bill_maturity_date and SOFR from percent.
+     * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+     * Same value and unit as IssuanceProto.high_discount_rate.
+     * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+     * For T_BILL_13_WEEK valuation-service converts it to the money-market
+     * yield using bill_maturity_date; for SOFR it converts it from percent.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -1157,11 +1157,11 @@ private static final long serialVersionUID = 0L;
      * The index rate exactly as its source publishes it, in percent per annum.
      * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
      * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-     * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-     * and unit as IssuanceProto.high_discount_rate.
-     * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-     * valuation-service converts it, T_BILL_13_WEEK to the money-market
-     * yield using bill_maturity_date and SOFR from percent.
+     * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+     * Same value and unit as IssuanceProto.high_discount_rate.
+     * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+     * For T_BILL_13_WEEK valuation-service converts it to the money-market
+     * yield using bill_maturity_date; for SOFR it converts it from percent.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
@@ -1179,11 +1179,11 @@ private static final long serialVersionUID = 0L;
      * The index rate exactly as its source publishes it, in percent per annum.
      * SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
      * T_BILL_13_WEEK: the auction's high discount rate as Treasury
-     * publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
-     * and unit as IssuanceProto.high_discount_rate.
-     * Neither is a decimal fraction, nor yet the rate the FRN accrues on:
-     * valuation-service converts it, T_BILL_13_WEEK to the money-market
-     * yield using bill_maturity_date and SOFR from percent.
+     * publishes it, in percent on a bank-discount basis: 4.215 = 4.215%.
+     * Same value and unit as IssuanceProto.high_discount_rate.
+     * Neither is a decimal fraction, nor yet the rate the FRN accrues on.
+     * For T_BILL_13_WEEK valuation-service converts it to the money-market
+     * yield using bill_maturity_date; for SOFR it converts it from percent.
      * </pre>
      *
      * <code>.fintekkers.models.util.DecimalValueProto rate = 3;</code>
