@@ -61,6 +61,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The FRN security. Must have bond_details and frn_extension populated.
+   * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -73,6 +74,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The FRN security. Must have bond_details and frn_extension populated.
+   * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -85,6 +87,7 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * The FRN security. Must have bond_details and frn_extension populated.
+   * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
    * </pre>
    *
    * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -827,6 +830,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The FRN security. Must have bond_details and frn_extension populated.
+     * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -838,6 +842,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The FRN security. Must have bond_details and frn_extension populated.
+     * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -853,6 +858,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The FRN security. Must have bond_details and frn_extension populated.
+     * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -873,6 +879,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The FRN security. Must have bond_details and frn_extension populated.
+     * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -891,6 +898,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The FRN security. Must have bond_details and frn_extension populated.
+     * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -914,6 +922,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The FRN security. Must have bond_details and frn_extension populated.
+     * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -931,6 +940,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The FRN security. Must have bond_details and frn_extension populated.
+     * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -943,6 +953,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The FRN security. Must have bond_details and frn_extension populated.
+     * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>
@@ -958,6 +969,7 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * The FRN security. Must have bond_details and frn_extension populated.
+     * Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
      * </pre>
      *
      * <code>.fintekkers.models.security.SecurityProto security = 1;</code>

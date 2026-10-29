@@ -1,0 +1,25 @@
+{
+  "item": "LM-408",
+  "added_messages": [
+    ".fintekkers.requests.valuation.MbsInput",
+    ".fintekkers.requests.valuation.EquityInput",
+    ".fintekkers.requests.valuation.CashInput"
+  ],
+  "added": [
+    {"message": ".fintekkers.requests.valuation.ProductInput", "number": 13, "name": "mbs", "type": ".fintekkers.requests.valuation.MbsInput"},
+    {"message": ".fintekkers.requests.valuation.ProductInput", "number": 14, "name": "equity", "type": ".fintekkers.requests.valuation.EquityInput"},
+    {"message": ".fintekkers.requests.valuation.ProductInput", "number": 15, "name": "cash", "type": ".fintekkers.requests.valuation.CashInput"},
+    {"message": ".fintekkers.requests.valuation.MbsInput", "number": 1, "name": "security", "type": ".fintekkers.models.security.SecurityProto"},
+    {"message": ".fintekkers.requests.valuation.MbsInput", "number": 2, "name": "clean_price", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.requests.valuation.MbsInput", "number": 20, "name": "cost_basis", "type": ".fintekkers.requests.valuation.CostBasisInput"},
+    {"message": ".fintekkers.requests.valuation.EquityInput", "number": 1, "name": "security", "type": ".fintekkers.models.security.SecurityProto"},
+    {"message": ".fintekkers.requests.valuation.EquityInput", "number": 2, "name": "unit_price", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.requests.valuation.CashInput", "number": 1, "name": "security", "type": ".fintekkers.models.security.SecurityProto"},
+    {"message": ".fintekkers.requests.valuation.CashInput", "number": 2, "name": "unit_price", "type": ".fintekkers.models.util.DecimalValueProto"}
+  ],
+  "kept_arms": [
+    {"message": ".fintekkers.requests.valuation.ProductInput", "number": 1, "name": "bond", "type": ".fintekkers.requests.valuation.BondInput"},
+    {"message": ".fintekkers.requests.valuation.ProductInput", "number": 2, "name": "tips", "type": ".fintekkers.requests.valuation.TipsInput"},
+    {"message": ".fintekkers.requests.valuation.ProductInput", "number": 8, "name": "frn", "type": ".fintekkers.requests.valuation.FrnInput"}
+  ]
+}

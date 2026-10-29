@@ -13,7 +13,11 @@ package fintekkers.requests.valuation;
  *   1–7  fixed-income (bond, callable, tips, muni, amortizing, ...)
  *   8    frn
  *   9–12 rates/credit (swap, xccy, repo, loan)
- *   13+  other (mbs, money market, futures, scenario, krd, ...)
+ *   13   mbs
+ *   14   equity
+ *   15   cash
+ *   16+  other (money market, futures, scenario, krd, ...)
+ * The arms grouped by valuation engine: docs/adr/product_input_engine_arms.md.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
  *
@@ -64,6 +68,9 @@ private static final long serialVersionUID = 0L;
     BOND(1),
     TIPS(2),
     FRN(8),
+    MBS(13),
+    EQUITY(14),
+    CASH(15),
     INPUT_NOT_SET(0);
     private final int value;
     private InputCase(int value) {
@@ -84,6 +91,9 @@ private static final long serialVersionUID = 0L;
         case 1: return BOND;
         case 2: return TIPS;
         case 8: return FRN;
+        case 13: return MBS;
+        case 14: return EQUITY;
+        case 15: return CASH;
         case 0: return INPUT_NOT_SET;
         default: return null;
       }
@@ -101,6 +111,10 @@ private static final long serialVersionUID = 0L;
 
   public static final int BOND_FIELD_NUMBER = 1;
   /**
+   * <pre>
+   * Intended for coupon_type FIXED. Not validated today; see VS-69.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
    * @return Whether the bond field is set.
    */
@@ -109,6 +123,10 @@ private static final long serialVersionUID = 0L;
     return inputCase_ == 1;
   }
   /**
+   * <pre>
+   * Intended for coupon_type FIXED. Not validated today; see VS-69.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
    * @return The bond.
    */
@@ -120,6 +138,10 @@ private static final long serialVersionUID = 0L;
     return fintekkers.requests.valuation.BondInput.getDefaultInstance();
   }
   /**
+   * <pre>
+   * Intended for coupon_type FIXED. Not validated today; see VS-69.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
    */
   @java.lang.Override
@@ -163,6 +185,10 @@ private static final long serialVersionUID = 0L;
 
   public static final int FRN_FIELD_NUMBER = 8;
   /**
+   * <pre>
+   * Intended for coupon_type FLOAT.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
    * @return Whether the frn field is set.
    */
@@ -171,6 +197,10 @@ private static final long serialVersionUID = 0L;
     return inputCase_ == 8;
   }
   /**
+   * <pre>
+   * Intended for coupon_type FLOAT.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
    * @return The frn.
    */
@@ -182,6 +212,10 @@ private static final long serialVersionUID = 0L;
     return fintekkers.requests.valuation.FrnInput.getDefaultInstance();
   }
   /**
+   * <pre>
+   * Intended for coupon_type FLOAT.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
    */
   @java.lang.Override
@@ -190,6 +224,135 @@ private static final long serialVersionUID = 0L;
        return (fintekkers.requests.valuation.FrnInput) input_;
     }
     return fintekkers.requests.valuation.FrnInput.getDefaultInstance();
+  }
+
+  public static final int MBS_FIELD_NUMBER = 13;
+  /**
+   * <pre>
+   * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+   * @return Whether the mbs field is set.
+   */
+  @java.lang.Override
+  public boolean hasMbs() {
+    return inputCase_ == 13;
+  }
+  /**
+   * <pre>
+   * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+   * @return The mbs.
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.MbsInput getMbs() {
+    if (inputCase_ == 13) {
+       return (fintekkers.requests.valuation.MbsInput) input_;
+    }
+    return fintekkers.requests.valuation.MbsInput.getDefaultInstance();
+  }
+  /**
+   * <pre>
+   * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.MbsInputOrBuilder getMbsOrBuilder() {
+    if (inputCase_ == 13) {
+       return (fintekkers.requests.valuation.MbsInput) input_;
+    }
+    return fintekkers.requests.valuation.MbsInput.getDefaultInstance();
+  }
+
+  public static final int EQUITY_FIELD_NUMBER = 14;
+  /**
+   * <pre>
+   * Equities and funds priced per share. See EquityInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+   * @return Whether the equity field is set.
+   */
+  @java.lang.Override
+  public boolean hasEquity() {
+    return inputCase_ == 14;
+  }
+  /**
+   * <pre>
+   * Equities and funds priced per share. See EquityInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+   * @return The equity.
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.EquityInput getEquity() {
+    if (inputCase_ == 14) {
+       return (fintekkers.requests.valuation.EquityInput) input_;
+    }
+    return fintekkers.requests.valuation.EquityInput.getDefaultInstance();
+  }
+  /**
+   * <pre>
+   * Equities and funds priced per share. See EquityInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.EquityInputOrBuilder getEquityOrBuilder() {
+    if (inputCase_ == 14) {
+       return (fintekkers.requests.valuation.EquityInput) input_;
+    }
+    return fintekkers.requests.valuation.EquityInput.getDefaultInstance();
+  }
+
+  public static final int CASH_FIELD_NUMBER = 15;
+  /**
+   * <pre>
+   * Cash and money-market funds priced at NAV per unit. See CashInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+   * @return Whether the cash field is set.
+   */
+  @java.lang.Override
+  public boolean hasCash() {
+    return inputCase_ == 15;
+  }
+  /**
+   * <pre>
+   * Cash and money-market funds priced at NAV per unit. See CashInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+   * @return The cash.
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.CashInput getCash() {
+    if (inputCase_ == 15) {
+       return (fintekkers.requests.valuation.CashInput) input_;
+    }
+    return fintekkers.requests.valuation.CashInput.getDefaultInstance();
+  }
+  /**
+   * <pre>
+   * Cash and money-market funds priced at NAV per unit. See CashInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+   */
+  @java.lang.Override
+  public fintekkers.requests.valuation.CashInputOrBuilder getCashOrBuilder() {
+    if (inputCase_ == 15) {
+       return (fintekkers.requests.valuation.CashInput) input_;
+    }
+    return fintekkers.requests.valuation.CashInput.getDefaultInstance();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -215,6 +378,15 @@ private static final long serialVersionUID = 0L;
     if (inputCase_ == 8) {
       output.writeMessage(8, (fintekkers.requests.valuation.FrnInput) input_);
     }
+    if (inputCase_ == 13) {
+      output.writeMessage(13, (fintekkers.requests.valuation.MbsInput) input_);
+    }
+    if (inputCase_ == 14) {
+      output.writeMessage(14, (fintekkers.requests.valuation.EquityInput) input_);
+    }
+    if (inputCase_ == 15) {
+      output.writeMessage(15, (fintekkers.requests.valuation.CashInput) input_);
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -235,6 +407,18 @@ private static final long serialVersionUID = 0L;
     if (inputCase_ == 8) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(8, (fintekkers.requests.valuation.FrnInput) input_);
+    }
+    if (inputCase_ == 13) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(13, (fintekkers.requests.valuation.MbsInput) input_);
+    }
+    if (inputCase_ == 14) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(14, (fintekkers.requests.valuation.EquityInput) input_);
+    }
+    if (inputCase_ == 15) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(15, (fintekkers.requests.valuation.CashInput) input_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -265,6 +449,18 @@ private static final long serialVersionUID = 0L;
         if (!getFrn()
             .equals(other.getFrn())) return false;
         break;
+      case 13:
+        if (!getMbs()
+            .equals(other.getMbs())) return false;
+        break;
+      case 14:
+        if (!getEquity()
+            .equals(other.getEquity())) return false;
+        break;
+      case 15:
+        if (!getCash()
+            .equals(other.getCash())) return false;
+        break;
       case 0:
       default:
     }
@@ -291,6 +487,18 @@ private static final long serialVersionUID = 0L;
       case 8:
         hash = (37 * hash) + FRN_FIELD_NUMBER;
         hash = (53 * hash) + getFrn().hashCode();
+        break;
+      case 13:
+        hash = (37 * hash) + MBS_FIELD_NUMBER;
+        hash = (53 * hash) + getMbs().hashCode();
+        break;
+      case 14:
+        hash = (37 * hash) + EQUITY_FIELD_NUMBER;
+        hash = (53 * hash) + getEquity().hashCode();
+        break;
+      case 15:
+        hash = (37 * hash) + CASH_FIELD_NUMBER;
+        hash = (53 * hash) + getCash().hashCode();
         break;
       case 0:
       default:
@@ -400,7 +608,11 @@ private static final long serialVersionUID = 0L;
    *   1–7  fixed-income (bond, callable, tips, muni, amortizing, ...)
    *   8    frn
    *   9–12 rates/credit (swap, xccy, repo, loan)
-   *   13+  other (mbs, money market, futures, scenario, krd, ...)
+   *   13   mbs
+   *   14   equity
+   *   15   cash
+   *   16+  other (money market, futures, scenario, krd, ...)
+   * The arms grouped by valuation engine: docs/adr/product_input_engine_arms.md.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
    *
@@ -445,6 +657,15 @@ private static final long serialVersionUID = 0L;
       }
       if (frnBuilder_ != null) {
         frnBuilder_.clear();
+      }
+      if (mbsBuilder_ != null) {
+        mbsBuilder_.clear();
+      }
+      if (equityBuilder_ != null) {
+        equityBuilder_.clear();
+      }
+      if (cashBuilder_ != null) {
+        cashBuilder_.clear();
       }
       inputCase_ = 0;
       input_ = null;
@@ -498,6 +719,18 @@ private static final long serialVersionUID = 0L;
       if (inputCase_ == 8 &&
           frnBuilder_ != null) {
         result.input_ = frnBuilder_.build();
+      }
+      if (inputCase_ == 13 &&
+          mbsBuilder_ != null) {
+        result.input_ = mbsBuilder_.build();
+      }
+      if (inputCase_ == 14 &&
+          equityBuilder_ != null) {
+        result.input_ = equityBuilder_.build();
+      }
+      if (inputCase_ == 15 &&
+          cashBuilder_ != null) {
+        result.input_ = cashBuilder_.build();
       }
     }
 
@@ -558,6 +791,18 @@ private static final long serialVersionUID = 0L;
           mergeFrn(other.getFrn());
           break;
         }
+        case MBS: {
+          mergeMbs(other.getMbs());
+          break;
+        }
+        case EQUITY: {
+          mergeEquity(other.getEquity());
+          break;
+        }
+        case CASH: {
+          mergeCash(other.getCash());
+          break;
+        }
         case INPUT_NOT_SET: {
           break;
         }
@@ -609,6 +854,27 @@ private static final long serialVersionUID = 0L;
               inputCase_ = 8;
               break;
             } // case 66
+            case 106: {
+              input.readMessage(
+                  getMbsFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              inputCase_ = 13;
+              break;
+            } // case 106
+            case 114: {
+              input.readMessage(
+                  getEquityFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              inputCase_ = 14;
+              break;
+            } // case 114
+            case 122: {
+              input.readMessage(
+                  getCashFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              inputCase_ = 15;
+              break;
+            } // case 122
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -644,6 +910,10 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.requests.valuation.BondInput, fintekkers.requests.valuation.BondInput.Builder, fintekkers.requests.valuation.BondInputOrBuilder> bondBuilder_;
     /**
+     * <pre>
+     * Intended for coupon_type FIXED. Not validated today; see VS-69.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
      * @return Whether the bond field is set.
      */
@@ -652,6 +922,10 @@ private static final long serialVersionUID = 0L;
       return inputCase_ == 1;
     }
     /**
+     * <pre>
+     * Intended for coupon_type FIXED. Not validated today; see VS-69.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
      * @return The bond.
      */
@@ -670,6 +944,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Intended for coupon_type FIXED. Not validated today; see VS-69.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
      */
     public Builder setBond(fintekkers.requests.valuation.BondInput value) {
@@ -686,6 +964,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Intended for coupon_type FIXED. Not validated today; see VS-69.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
      */
     public Builder setBond(
@@ -700,6 +982,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Intended for coupon_type FIXED. Not validated today; see VS-69.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
      */
     public Builder mergeBond(fintekkers.requests.valuation.BondInput value) {
@@ -723,6 +1009,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Intended for coupon_type FIXED. Not validated today; see VS-69.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
      */
     public Builder clearBond() {
@@ -742,12 +1032,20 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Intended for coupon_type FIXED. Not validated today; see VS-69.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
      */
     public fintekkers.requests.valuation.BondInput.Builder getBondBuilder() {
       return getBondFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     * Intended for coupon_type FIXED. Not validated today; see VS-69.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
      */
     @java.lang.Override
@@ -762,6 +1060,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Intended for coupon_type FIXED. Not validated today; see VS-69.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -928,6 +1230,10 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.requests.valuation.FrnInput, fintekkers.requests.valuation.FrnInput.Builder, fintekkers.requests.valuation.FrnInputOrBuilder> frnBuilder_;
     /**
+     * <pre>
+     * Intended for coupon_type FLOAT.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
      * @return Whether the frn field is set.
      */
@@ -936,6 +1242,10 @@ private static final long serialVersionUID = 0L;
       return inputCase_ == 8;
     }
     /**
+     * <pre>
+     * Intended for coupon_type FLOAT.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
      * @return The frn.
      */
@@ -954,6 +1264,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Intended for coupon_type FLOAT.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
      */
     public Builder setFrn(fintekkers.requests.valuation.FrnInput value) {
@@ -970,6 +1284,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Intended for coupon_type FLOAT.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
      */
     public Builder setFrn(
@@ -984,6 +1302,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Intended for coupon_type FLOAT.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
      */
     public Builder mergeFrn(fintekkers.requests.valuation.FrnInput value) {
@@ -1007,6 +1329,10 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Intended for coupon_type FLOAT.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
      */
     public Builder clearFrn() {
@@ -1026,12 +1352,20 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * Intended for coupon_type FLOAT.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
      */
     public fintekkers.requests.valuation.FrnInput.Builder getFrnBuilder() {
       return getFrnFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     * Intended for coupon_type FLOAT.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
      */
     @java.lang.Override
@@ -1046,6 +1380,10 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * Intended for coupon_type FLOAT.
+     * </pre>
+     *
      * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -1065,6 +1403,540 @@ private static final long serialVersionUID = 0L;
       inputCase_ = 8;
       onChanged();
       return frnBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.MbsInput, fintekkers.requests.valuation.MbsInput.Builder, fintekkers.requests.valuation.MbsInputOrBuilder> mbsBuilder_;
+    /**
+     * <pre>
+     * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+     * @return Whether the mbs field is set.
+     */
+    @java.lang.Override
+    public boolean hasMbs() {
+      return inputCase_ == 13;
+    }
+    /**
+     * <pre>
+     * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+     * @return The mbs.
+     */
+    @java.lang.Override
+    public fintekkers.requests.valuation.MbsInput getMbs() {
+      if (mbsBuilder_ == null) {
+        if (inputCase_ == 13) {
+          return (fintekkers.requests.valuation.MbsInput) input_;
+        }
+        return fintekkers.requests.valuation.MbsInput.getDefaultInstance();
+      } else {
+        if (inputCase_ == 13) {
+          return mbsBuilder_.getMessage();
+        }
+        return fintekkers.requests.valuation.MbsInput.getDefaultInstance();
+      }
+    }
+    /**
+     * <pre>
+     * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+     */
+    public Builder setMbs(fintekkers.requests.valuation.MbsInput value) {
+      if (mbsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        input_ = value;
+        onChanged();
+      } else {
+        mbsBuilder_.setMessage(value);
+      }
+      inputCase_ = 13;
+      return this;
+    }
+    /**
+     * <pre>
+     * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+     */
+    public Builder setMbs(
+        fintekkers.requests.valuation.MbsInput.Builder builderForValue) {
+      if (mbsBuilder_ == null) {
+        input_ = builderForValue.build();
+        onChanged();
+      } else {
+        mbsBuilder_.setMessage(builderForValue.build());
+      }
+      inputCase_ = 13;
+      return this;
+    }
+    /**
+     * <pre>
+     * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+     */
+    public Builder mergeMbs(fintekkers.requests.valuation.MbsInput value) {
+      if (mbsBuilder_ == null) {
+        if (inputCase_ == 13 &&
+            input_ != fintekkers.requests.valuation.MbsInput.getDefaultInstance()) {
+          input_ = fintekkers.requests.valuation.MbsInput.newBuilder((fintekkers.requests.valuation.MbsInput) input_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          input_ = value;
+        }
+        onChanged();
+      } else {
+        if (inputCase_ == 13) {
+          mbsBuilder_.mergeFrom(value);
+        } else {
+          mbsBuilder_.setMessage(value);
+        }
+      }
+      inputCase_ = 13;
+      return this;
+    }
+    /**
+     * <pre>
+     * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+     */
+    public Builder clearMbs() {
+      if (mbsBuilder_ == null) {
+        if (inputCase_ == 13) {
+          inputCase_ = 0;
+          input_ = null;
+          onChanged();
+        }
+      } else {
+        if (inputCase_ == 13) {
+          inputCase_ = 0;
+          input_ = null;
+        }
+        mbsBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+     */
+    public fintekkers.requests.valuation.MbsInput.Builder getMbsBuilder() {
+      return getMbsFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+     */
+    @java.lang.Override
+    public fintekkers.requests.valuation.MbsInputOrBuilder getMbsOrBuilder() {
+      if ((inputCase_ == 13) && (mbsBuilder_ != null)) {
+        return mbsBuilder_.getMessageOrBuilder();
+      } else {
+        if (inputCase_ == 13) {
+          return (fintekkers.requests.valuation.MbsInput) input_;
+        }
+        return fintekkers.requests.valuation.MbsInput.getDefaultInstance();
+      }
+    }
+    /**
+     * <pre>
+     * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.MbsInput, fintekkers.requests.valuation.MbsInput.Builder, fintekkers.requests.valuation.MbsInputOrBuilder> 
+        getMbsFieldBuilder() {
+      if (mbsBuilder_ == null) {
+        if (!(inputCase_ == 13)) {
+          input_ = fintekkers.requests.valuation.MbsInput.getDefaultInstance();
+        }
+        mbsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.requests.valuation.MbsInput, fintekkers.requests.valuation.MbsInput.Builder, fintekkers.requests.valuation.MbsInputOrBuilder>(
+                (fintekkers.requests.valuation.MbsInput) input_,
+                getParentForChildren(),
+                isClean());
+        input_ = null;
+      }
+      inputCase_ = 13;
+      onChanged();
+      return mbsBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.EquityInput, fintekkers.requests.valuation.EquityInput.Builder, fintekkers.requests.valuation.EquityInputOrBuilder> equityBuilder_;
+    /**
+     * <pre>
+     * Equities and funds priced per share. See EquityInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+     * @return Whether the equity field is set.
+     */
+    @java.lang.Override
+    public boolean hasEquity() {
+      return inputCase_ == 14;
+    }
+    /**
+     * <pre>
+     * Equities and funds priced per share. See EquityInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+     * @return The equity.
+     */
+    @java.lang.Override
+    public fintekkers.requests.valuation.EquityInput getEquity() {
+      if (equityBuilder_ == null) {
+        if (inputCase_ == 14) {
+          return (fintekkers.requests.valuation.EquityInput) input_;
+        }
+        return fintekkers.requests.valuation.EquityInput.getDefaultInstance();
+      } else {
+        if (inputCase_ == 14) {
+          return equityBuilder_.getMessage();
+        }
+        return fintekkers.requests.valuation.EquityInput.getDefaultInstance();
+      }
+    }
+    /**
+     * <pre>
+     * Equities and funds priced per share. See EquityInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+     */
+    public Builder setEquity(fintekkers.requests.valuation.EquityInput value) {
+      if (equityBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        input_ = value;
+        onChanged();
+      } else {
+        equityBuilder_.setMessage(value);
+      }
+      inputCase_ = 14;
+      return this;
+    }
+    /**
+     * <pre>
+     * Equities and funds priced per share. See EquityInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+     */
+    public Builder setEquity(
+        fintekkers.requests.valuation.EquityInput.Builder builderForValue) {
+      if (equityBuilder_ == null) {
+        input_ = builderForValue.build();
+        onChanged();
+      } else {
+        equityBuilder_.setMessage(builderForValue.build());
+      }
+      inputCase_ = 14;
+      return this;
+    }
+    /**
+     * <pre>
+     * Equities and funds priced per share. See EquityInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+     */
+    public Builder mergeEquity(fintekkers.requests.valuation.EquityInput value) {
+      if (equityBuilder_ == null) {
+        if (inputCase_ == 14 &&
+            input_ != fintekkers.requests.valuation.EquityInput.getDefaultInstance()) {
+          input_ = fintekkers.requests.valuation.EquityInput.newBuilder((fintekkers.requests.valuation.EquityInput) input_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          input_ = value;
+        }
+        onChanged();
+      } else {
+        if (inputCase_ == 14) {
+          equityBuilder_.mergeFrom(value);
+        } else {
+          equityBuilder_.setMessage(value);
+        }
+      }
+      inputCase_ = 14;
+      return this;
+    }
+    /**
+     * <pre>
+     * Equities and funds priced per share. See EquityInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+     */
+    public Builder clearEquity() {
+      if (equityBuilder_ == null) {
+        if (inputCase_ == 14) {
+          inputCase_ = 0;
+          input_ = null;
+          onChanged();
+        }
+      } else {
+        if (inputCase_ == 14) {
+          inputCase_ = 0;
+          input_ = null;
+        }
+        equityBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Equities and funds priced per share. See EquityInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+     */
+    public fintekkers.requests.valuation.EquityInput.Builder getEquityBuilder() {
+      return getEquityFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Equities and funds priced per share. See EquityInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+     */
+    @java.lang.Override
+    public fintekkers.requests.valuation.EquityInputOrBuilder getEquityOrBuilder() {
+      if ((inputCase_ == 14) && (equityBuilder_ != null)) {
+        return equityBuilder_.getMessageOrBuilder();
+      } else {
+        if (inputCase_ == 14) {
+          return (fintekkers.requests.valuation.EquityInput) input_;
+        }
+        return fintekkers.requests.valuation.EquityInput.getDefaultInstance();
+      }
+    }
+    /**
+     * <pre>
+     * Equities and funds priced per share. See EquityInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.EquityInput, fintekkers.requests.valuation.EquityInput.Builder, fintekkers.requests.valuation.EquityInputOrBuilder> 
+        getEquityFieldBuilder() {
+      if (equityBuilder_ == null) {
+        if (!(inputCase_ == 14)) {
+          input_ = fintekkers.requests.valuation.EquityInput.getDefaultInstance();
+        }
+        equityBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.requests.valuation.EquityInput, fintekkers.requests.valuation.EquityInput.Builder, fintekkers.requests.valuation.EquityInputOrBuilder>(
+                (fintekkers.requests.valuation.EquityInput) input_,
+                getParentForChildren(),
+                isClean());
+        input_ = null;
+      }
+      inputCase_ = 14;
+      onChanged();
+      return equityBuilder_;
+    }
+
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.CashInput, fintekkers.requests.valuation.CashInput.Builder, fintekkers.requests.valuation.CashInputOrBuilder> cashBuilder_;
+    /**
+     * <pre>
+     * Cash and money-market funds priced at NAV per unit. See CashInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+     * @return Whether the cash field is set.
+     */
+    @java.lang.Override
+    public boolean hasCash() {
+      return inputCase_ == 15;
+    }
+    /**
+     * <pre>
+     * Cash and money-market funds priced at NAV per unit. See CashInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+     * @return The cash.
+     */
+    @java.lang.Override
+    public fintekkers.requests.valuation.CashInput getCash() {
+      if (cashBuilder_ == null) {
+        if (inputCase_ == 15) {
+          return (fintekkers.requests.valuation.CashInput) input_;
+        }
+        return fintekkers.requests.valuation.CashInput.getDefaultInstance();
+      } else {
+        if (inputCase_ == 15) {
+          return cashBuilder_.getMessage();
+        }
+        return fintekkers.requests.valuation.CashInput.getDefaultInstance();
+      }
+    }
+    /**
+     * <pre>
+     * Cash and money-market funds priced at NAV per unit. See CashInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+     */
+    public Builder setCash(fintekkers.requests.valuation.CashInput value) {
+      if (cashBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        input_ = value;
+        onChanged();
+      } else {
+        cashBuilder_.setMessage(value);
+      }
+      inputCase_ = 15;
+      return this;
+    }
+    /**
+     * <pre>
+     * Cash and money-market funds priced at NAV per unit. See CashInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+     */
+    public Builder setCash(
+        fintekkers.requests.valuation.CashInput.Builder builderForValue) {
+      if (cashBuilder_ == null) {
+        input_ = builderForValue.build();
+        onChanged();
+      } else {
+        cashBuilder_.setMessage(builderForValue.build());
+      }
+      inputCase_ = 15;
+      return this;
+    }
+    /**
+     * <pre>
+     * Cash and money-market funds priced at NAV per unit. See CashInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+     */
+    public Builder mergeCash(fintekkers.requests.valuation.CashInput value) {
+      if (cashBuilder_ == null) {
+        if (inputCase_ == 15 &&
+            input_ != fintekkers.requests.valuation.CashInput.getDefaultInstance()) {
+          input_ = fintekkers.requests.valuation.CashInput.newBuilder((fintekkers.requests.valuation.CashInput) input_)
+              .mergeFrom(value).buildPartial();
+        } else {
+          input_ = value;
+        }
+        onChanged();
+      } else {
+        if (inputCase_ == 15) {
+          cashBuilder_.mergeFrom(value);
+        } else {
+          cashBuilder_.setMessage(value);
+        }
+      }
+      inputCase_ = 15;
+      return this;
+    }
+    /**
+     * <pre>
+     * Cash and money-market funds priced at NAV per unit. See CashInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+     */
+    public Builder clearCash() {
+      if (cashBuilder_ == null) {
+        if (inputCase_ == 15) {
+          inputCase_ = 0;
+          input_ = null;
+          onChanged();
+        }
+      } else {
+        if (inputCase_ == 15) {
+          inputCase_ = 0;
+          input_ = null;
+        }
+        cashBuilder_.clear();
+      }
+      return this;
+    }
+    /**
+     * <pre>
+     * Cash and money-market funds priced at NAV per unit. See CashInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+     */
+    public fintekkers.requests.valuation.CashInput.Builder getCashBuilder() {
+      return getCashFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Cash and money-market funds priced at NAV per unit. See CashInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+     */
+    @java.lang.Override
+    public fintekkers.requests.valuation.CashInputOrBuilder getCashOrBuilder() {
+      if ((inputCase_ == 15) && (cashBuilder_ != null)) {
+        return cashBuilder_.getMessageOrBuilder();
+      } else {
+        if (inputCase_ == 15) {
+          return (fintekkers.requests.valuation.CashInput) input_;
+        }
+        return fintekkers.requests.valuation.CashInput.getDefaultInstance();
+      }
+    }
+    /**
+     * <pre>
+     * Cash and money-market funds priced at NAV per unit. See CashInput.
+     * </pre>
+     *
+     * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.requests.valuation.CashInput, fintekkers.requests.valuation.CashInput.Builder, fintekkers.requests.valuation.CashInputOrBuilder> 
+        getCashFieldBuilder() {
+      if (cashBuilder_ == null) {
+        if (!(inputCase_ == 15)) {
+          input_ = fintekkers.requests.valuation.CashInput.getDefaultInstance();
+        }
+        cashBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.requests.valuation.CashInput, fintekkers.requests.valuation.CashInput.Builder, fintekkers.requests.valuation.CashInputOrBuilder>(
+                (fintekkers.requests.valuation.CashInput) input_,
+                getParentForChildren(),
+                isClean());
+        input_ = null;
+      }
+      inputCase_ = 15;
+      onChanged();
+      return cashBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

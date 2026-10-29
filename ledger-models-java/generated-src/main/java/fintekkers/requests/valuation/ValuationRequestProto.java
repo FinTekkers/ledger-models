@@ -376,9 +376,9 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * Product-specific input — determines the calculation path in the service.
-   * When set, the service routes to the new engine dispatch; existing flat fields
-   * (security_input, price_input, etc.) are ignored for the purposes of the
-   * product calculation but may still be read for logging and audit.
+   * When set, the service values from this input alone: security_input (20)
+   * and price_input (22) are not read for the calculation. They may still be
+   * read for logging and audit.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -391,9 +391,9 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * Product-specific input — determines the calculation path in the service.
-   * When set, the service routes to the new engine dispatch; existing flat fields
-   * (security_input, price_input, etc.) are ignored for the purposes of the
-   * product calculation but may still be read for logging and audit.
+   * When set, the service values from this input alone: security_input (20)
+   * and price_input (22) are not read for the calculation. They may still be
+   * read for logging and audit.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -406,9 +406,9 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * Product-specific input — determines the calculation path in the service.
-   * When set, the service routes to the new engine dispatch; existing flat fields
-   * (security_input, price_input, etc.) are ignored for the purposes of the
-   * product calculation but may still be read for logging and audit.
+   * When set, the service values from this input alone: security_input (20)
+   * and price_input (22) are not read for the calculation. They may still be
+   * read for logging and audit.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2146,9 +2146,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service routes to the new engine dispatch; existing flat fields
-     * (security_input, price_input, etc.) are ignored for the purposes of the
-     * product calculation but may still be read for logging and audit.
+     * When set, the service values from this input alone: security_input (20)
+     * and price_input (22) are not read for the calculation. They may still be
+     * read for logging and audit.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2160,9 +2160,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service routes to the new engine dispatch; existing flat fields
-     * (security_input, price_input, etc.) are ignored for the purposes of the
-     * product calculation but may still be read for logging and audit.
+     * When set, the service values from this input alone: security_input (20)
+     * and price_input (22) are not read for the calculation. They may still be
+     * read for logging and audit.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2178,9 +2178,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service routes to the new engine dispatch; existing flat fields
-     * (security_input, price_input, etc.) are ignored for the purposes of the
-     * product calculation but may still be read for logging and audit.
+     * When set, the service values from this input alone: security_input (20)
+     * and price_input (22) are not read for the calculation. They may still be
+     * read for logging and audit.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2201,9 +2201,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service routes to the new engine dispatch; existing flat fields
-     * (security_input, price_input, etc.) are ignored for the purposes of the
-     * product calculation but may still be read for logging and audit.
+     * When set, the service values from this input alone: security_input (20)
+     * and price_input (22) are not read for the calculation. They may still be
+     * read for logging and audit.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2222,9 +2222,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service routes to the new engine dispatch; existing flat fields
-     * (security_input, price_input, etc.) are ignored for the purposes of the
-     * product calculation but may still be read for logging and audit.
+     * When set, the service values from this input alone: security_input (20)
+     * and price_input (22) are not read for the calculation. They may still be
+     * read for logging and audit.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2248,9 +2248,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service routes to the new engine dispatch; existing flat fields
-     * (security_input, price_input, etc.) are ignored for the purposes of the
-     * product calculation but may still be read for logging and audit.
+     * When set, the service values from this input alone: security_input (20)
+     * and price_input (22) are not read for the calculation. They may still be
+     * read for logging and audit.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2268,9 +2268,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service routes to the new engine dispatch; existing flat fields
-     * (security_input, price_input, etc.) are ignored for the purposes of the
-     * product calculation but may still be read for logging and audit.
+     * When set, the service values from this input alone: security_input (20)
+     * and price_input (22) are not read for the calculation. They may still be
+     * read for logging and audit.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2283,9 +2283,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service routes to the new engine dispatch; existing flat fields
-     * (security_input, price_input, etc.) are ignored for the purposes of the
-     * product calculation but may still be read for logging and audit.
+     * When set, the service values from this input alone: security_input (20)
+     * and price_input (22) are not read for the calculation. They may still be
+     * read for logging and audit.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2301,9 +2301,9 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service routes to the new engine dispatch; existing flat fields
-     * (security_input, price_input, etc.) are ignored for the purposes of the
-     * product calculation but may still be read for logging and audit.
+     * When set, the service values from this input alone: security_input (20)
+     * and price_input (22) are not read for the calculation. They may still be
+     * read for logging and audit.
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
