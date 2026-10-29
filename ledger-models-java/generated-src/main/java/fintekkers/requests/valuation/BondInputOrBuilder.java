@@ -10,7 +10,8 @@ public interface BondInputOrBuilder extends
   /**
    * <pre>
    * The bond security, with bond_details populated.
-   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED. A FLOAT
+   * coupon belongs on FrnInput (ProductInput.frn).
    * Not validated today: any product_type is accepted and coupon_type is
    * ignored. Check tracked in VS-69.
    * </pre>
@@ -22,7 +23,8 @@ public interface BondInputOrBuilder extends
   /**
    * <pre>
    * The bond security, with bond_details populated.
-   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED. A FLOAT
+   * coupon belongs on FrnInput (ProductInput.frn).
    * Not validated today: any product_type is accepted and coupon_type is
    * ignored. Check tracked in VS-69.
    * </pre>
@@ -34,7 +36,8 @@ public interface BondInputOrBuilder extends
   /**
    * <pre>
    * The bond security, with bond_details populated.
-   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+   * Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED. A FLOAT
+   * coupon belongs on FrnInput (ProductInput.frn).
    * Not validated today: any product_type is accepted and coupon_type is
    * ignored. Check tracked in VS-69.
    * </pre>

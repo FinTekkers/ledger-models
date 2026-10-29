@@ -8,16 +8,28 @@ public interface ProductInputOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
+   * <pre>
+   * Intended for coupon_type FIXED. Not validated today; see VS-69.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
    * @return Whether the bond field is set.
    */
   boolean hasBond();
   /**
+   * <pre>
+   * Intended for coupon_type FIXED. Not validated today; see VS-69.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
    * @return The bond.
    */
   fintekkers.requests.valuation.BondInput getBond();
   /**
+   * <pre>
+   * Intended for coupon_type FIXED. Not validated today; see VS-69.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.BondInput bond = 1;</code>
    */
   fintekkers.requests.valuation.BondInputOrBuilder getBondOrBuilder();
@@ -38,19 +50,112 @@ public interface ProductInputOrBuilder extends
   fintekkers.requests.valuation.TipsInputOrBuilder getTipsOrBuilder();
 
   /**
+   * <pre>
+   * Intended for coupon_type FLOAT.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
    * @return Whether the frn field is set.
    */
   boolean hasFrn();
   /**
+   * <pre>
+   * Intended for coupon_type FLOAT.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
    * @return The frn.
    */
   fintekkers.requests.valuation.FrnInput getFrn();
   /**
+   * <pre>
+   * Intended for coupon_type FLOAT.
+   * </pre>
+   *
    * <code>.fintekkers.requests.valuation.FrnInput frn = 8;</code>
    */
   fintekkers.requests.valuation.FrnInputOrBuilder getFrnOrBuilder();
+
+  /**
+   * <pre>
+   * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+   * @return Whether the mbs field is set.
+   */
+  boolean hasMbs();
+  /**
+   * <pre>
+   * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+   * @return The mbs.
+   */
+  fintekkers.requests.valuation.MbsInput getMbs();
+  /**
+   * <pre>
+   * MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.MbsInput mbs = 13;</code>
+   */
+  fintekkers.requests.valuation.MbsInputOrBuilder getMbsOrBuilder();
+
+  /**
+   * <pre>
+   * Equities and funds priced per share. See EquityInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+   * @return Whether the equity field is set.
+   */
+  boolean hasEquity();
+  /**
+   * <pre>
+   * Equities and funds priced per share. See EquityInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+   * @return The equity.
+   */
+  fintekkers.requests.valuation.EquityInput getEquity();
+  /**
+   * <pre>
+   * Equities and funds priced per share. See EquityInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.EquityInput equity = 14;</code>
+   */
+  fintekkers.requests.valuation.EquityInputOrBuilder getEquityOrBuilder();
+
+  /**
+   * <pre>
+   * Cash and money-market funds priced at NAV per unit. See CashInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+   * @return Whether the cash field is set.
+   */
+  boolean hasCash();
+  /**
+   * <pre>
+   * Cash and money-market funds priced at NAV per unit. See CashInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+   * @return The cash.
+   */
+  fintekkers.requests.valuation.CashInput getCash();
+  /**
+   * <pre>
+   * Cash and money-market funds priced at NAV per unit. See CashInput.
+   * </pre>
+   *
+   * <code>.fintekkers.requests.valuation.CashInput cash = 15;</code>
+   */
+  fintekkers.requests.valuation.CashInputOrBuilder getCashOrBuilder();
 
   public fintekkers.requests.valuation.ProductInput.InputCase getInputCase();
 }
