@@ -289,6 +289,20 @@ def lm395(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM395 and new == LM395[key]
 
 
+LM408_SPEC = json.loads((REPO / "test-fixtures/field-changes/lm-408.json").read_text())
+LM408 = {
+    **{f"message {m}": "message" for m in LM408_SPEC["added_messages"]},
+    **{f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}" for f in LM408_SPEC["added"]},
+}
+
+
+def lm408(key: str, old, new, head: dict) -> bool:
+    """LM-408: MbsInput, EquityInput and CashInput, and the ProductInput arms
+    mbs = 13, equity = 14 and cash = 15 added. Additions of exactly these
+    only; bond, tips and frn keep their numbers, names and types, and
+    MbsInput 10-19 stay unused."""
+    return old is None and key in LM408 and new == LM408[key]
+
 
 LM412 = {
     f"value {v['enum']} = {v['number']}": v["name"]
@@ -303,7 +317,7 @@ def lm412(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM412 and new == LM412[key]
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm412]
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412]
 
 
 def main() -> int:

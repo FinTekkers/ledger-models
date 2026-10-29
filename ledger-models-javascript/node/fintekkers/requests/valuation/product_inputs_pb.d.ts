@@ -29,6 +29,21 @@ export class ProductInput extends jspb.Message {
     getFrn(): FrnInput | undefined;
     setFrn(value?: FrnInput): ProductInput;
 
+    hasMbs(): boolean;
+    clearMbs(): void;
+    getMbs(): MbsInput | undefined;
+    setMbs(value?: MbsInput): ProductInput;
+
+    hasEquity(): boolean;
+    clearEquity(): void;
+    getEquity(): EquityInput | undefined;
+    setEquity(value?: EquityInput): ProductInput;
+
+    hasCash(): boolean;
+    clearCash(): void;
+    getCash(): CashInput | undefined;
+    setCash(value?: CashInput): ProductInput;
+
     getInputCase(): ProductInput.InputCase;
 
     serializeBinary(): Uint8Array;
@@ -46,6 +61,9 @@ export namespace ProductInput {
         bond?: BondInput.AsObject,
         tips?: TipsInput.AsObject,
         frn?: FrnInput.AsObject,
+        mbs?: MbsInput.AsObject,
+        equity?: EquityInput.AsObject,
+        cash?: CashInput.AsObject,
     }
 
     export enum InputCase {
@@ -53,6 +71,9 @@ export namespace ProductInput {
         BOND = 1,
         TIPS = 2,
         FRN = 8,
+        MBS = 13,
+        EQUITY = 14,
+        CASH = 15,
     }
 
 }
@@ -349,6 +370,99 @@ export namespace ReferenceRateFixingProto {
         rate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         billMaturityDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
         billIssueDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
+    }
+}
+
+export class MbsInput extends jspb.Message { 
+
+    hasSecurity(): boolean;
+    clearSecurity(): void;
+    getSecurity(): fintekkers_models_security_security_pb.SecurityProto | undefined;
+    setSecurity(value?: fintekkers_models_security_security_pb.SecurityProto): MbsInput;
+
+    hasCleanPrice(): boolean;
+    clearCleanPrice(): void;
+    getCleanPrice(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setCleanPrice(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): MbsInput;
+
+    hasCostBasis(): boolean;
+    clearCostBasis(): void;
+    getCostBasis(): CostBasisInput | undefined;
+    setCostBasis(value?: CostBasisInput): MbsInput;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): MbsInput.AsObject;
+    static toObject(includeInstance: boolean, msg: MbsInput): MbsInput.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: MbsInput, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): MbsInput;
+    static deserializeBinaryFromReader(message: MbsInput, reader: jspb.BinaryReader): MbsInput;
+}
+
+export namespace MbsInput {
+    export type AsObject = {
+        security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
+        cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+        costBasis?: CostBasisInput.AsObject,
+    }
+}
+
+export class EquityInput extends jspb.Message { 
+
+    hasSecurity(): boolean;
+    clearSecurity(): void;
+    getSecurity(): fintekkers_models_security_security_pb.SecurityProto | undefined;
+    setSecurity(value?: fintekkers_models_security_security_pb.SecurityProto): EquityInput;
+
+    hasUnitPrice(): boolean;
+    clearUnitPrice(): void;
+    getUnitPrice(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setUnitPrice(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): EquityInput;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): EquityInput.AsObject;
+    static toObject(includeInstance: boolean, msg: EquityInput): EquityInput.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: EquityInput, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): EquityInput;
+    static deserializeBinaryFromReader(message: EquityInput, reader: jspb.BinaryReader): EquityInput;
+}
+
+export namespace EquityInput {
+    export type AsObject = {
+        security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
+        unitPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
+    }
+}
+
+export class CashInput extends jspb.Message { 
+
+    hasSecurity(): boolean;
+    clearSecurity(): void;
+    getSecurity(): fintekkers_models_security_security_pb.SecurityProto | undefined;
+    setSecurity(value?: fintekkers_models_security_security_pb.SecurityProto): CashInput;
+
+    hasUnitPrice(): boolean;
+    clearUnitPrice(): void;
+    getUnitPrice(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setUnitPrice(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): CashInput;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): CashInput.AsObject;
+    static toObject(includeInstance: boolean, msg: CashInput): CashInput.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: CashInput, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CashInput;
+    static deserializeBinaryFromReader(message: CashInput, reader: jspb.BinaryReader): CashInput;
+}
+
+export namespace CashInput {
+    export type AsObject = {
+        security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
+        unitPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }
 

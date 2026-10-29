@@ -172,12 +172,17 @@ pub struct CurveResponseProto {
 ///    1–7  fixed-income (bond, callable, tips, muni, amortizing, ...)
 ///    8    frn
 ///    9–12 rates/credit (swap, xccy, repo, loan)
-///    13+  other (mbs, money market, futures, scenario, krd, ...)
+///    13   mbs
+///    14   equity
+///    15   cash
+///    16+  other (money market, futures, scenario, krd, ...)
+///
+/// The arms grouped by valuation engine: docs/adr/product_input_engine_arms.md.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ProductInput {
-    #[prost(oneof = "product_input::Input", tags = "1, 2, 8")]
+    #[prost(oneof = "product_input::Input", tags = "1, 2, 8, 13, 14, 15")]
     pub input: ::core::option::Option<product_input::Input>,
 }
 /// Nested message and enum types in `ProductInput`.
@@ -185,12 +190,23 @@ pub mod product_input {
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Input {
+        /// Intended for coupon_type FIXED. Not validated today; see VS-69.
         #[prost(message, tag = "1")]
         Bond(super::BondInput),
         #[prost(message, tag = "2")]
         Tips(super::TipsInput),
+        /// Intended for coupon_type FLOAT.
         #[prost(message, tag = "8")]
         Frn(super::FrnInput),
+        /// MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+        #[prost(message, tag = "13")]
+        Mbs(super::MbsInput),
+        /// Equities and funds priced per share. See EquityInput.
+        #[prost(message, tag = "14")]
+        Equity(super::EquityInput),
+        /// Cash and money-market funds priced at NAV per unit. See CashInput.
+        #[prost(message, tag = "15")]
+        Cash(super::CashInput),
     }
 }
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -206,7 +222,8 @@ pub mod product_input {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BondInput {
     /// The bond security, with bond_details populated.
-    /// Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+    /// Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED. A FLOAT
+    /// coupon belongs on FrnInput (ProductInput.frn).
     /// Not validated today: any product_type is accepted and coupon_type is
     /// ignored. Check tracked in VS-69.
     #[prost(message, optional, tag = "1")]
@@ -371,6 +388,7 @@ pub struct MonthlyIndexReading {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct FrnInput {
     /// The FRN security. Must have bond_details and frn_extension populated.
+    /// Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
     #[prost(message, optional, tag = "1")]
     pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
     /// Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
@@ -435,6 +453,79 @@ pub struct ReferenceRateFixingProto {
     #[prost(message, optional, tag = "5")]
     pub bill_issue_date: ::core::option::Option<
         super::super::models::util::LocalDateProto,
+    >,
+}
+/// ═══════════════════════════════════════════════════════════════════════════
+/// MbsInput — valuation request for a mortgage-backed security (LM-408).
+///
+/// Static pool data (pass_through_rate, wac, wam, current_factor, psa_speed,
+/// ...) is read from security.bond_details and security.mbs_extension. None
+/// is repeated on this message.
+///
+/// G8 (valuation-service known gap 8, tracked as VS-71): MORTGAGE_BACKED is
+/// valued as a bullet fixed-rate bond (no amortisation or prepayment), because
+/// it descends from BOND. The mbs arm gives MBS its own route, but it still
+/// uses the bond engine, so the numbers are unchanged until a real MBS engine
+/// replaces it.
+///
+/// Fields 10-19 are kept free for later prepayment and curve inputs. Do not
+/// use them for anything else.
+///
+/// Settlement date is read from ValuationRequestProto.asof_datetime.
+/// See docs/adr/product_input_engine_arms.md.
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MbsInput {
+    /// The MBS security: ProductTypeProto.MORTGAGE_BACKED with bond_details and
+    /// mbs_extension populated.
+    #[prost(message, optional, tag = "1")]
+    pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
+    /// Market clean price as a percentage of current face: the original face
+    /// times mbs_extension.current_factor, not the original face
+    /// (e.g. 101.5 = 101.5% of current face).
+    #[prost(message, optional, tag = "2")]
+    pub clean_price: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
+    >,
+    /// Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+    #[prost(message, optional, tag = "20")]
+    pub cost_basis: ::core::option::Option<CostBasisInput>,
+}
+/// ═══════════════════════════════════════════════════════════════════════════
+/// EquityInput — valuation request for an equity or fund priced per share
+/// (LM-408). Unit-priced: market value is unit_price x quantity, no accrual.
+/// See docs/adr/product_input_engine_arms.md.
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct EquityInput {
+    /// The equity security (e.g. COMMON_STOCK, ETF).
+    #[prost(message, optional, tag = "1")]
+    pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
+    /// Market price per share, in the security's currency (e.g. 187.25 = 187.25
+    /// per share). Not a percentage of face.
+    #[prost(message, optional, tag = "2")]
+    pub unit_price: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
+    >,
+}
+/// ═══════════════════════════════════════════════════════════════════════════
+/// CashInput — valuation request for cash or a money-market fund (LM-408).
+/// Unit-priced: market value is unit_price x quantity, no accrual.
+/// See docs/adr/product_input_engine_arms.md.
+/// ═══════════════════════════════════════════════════════════════════════════
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CashInput {
+    /// The cash or money-market fund security (e.g. CURRENCY, MONEY_MARKET_FUND).
+    #[prost(message, optional, tag = "1")]
+    pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
+    /// NAV per unit, in the security's currency (e.g. 1.00 for cash or a stable
+    /// NAV fund). Not a percentage of face.
+    #[prost(message, optional, tag = "2")]
+    pub unit_price: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
     >,
 }
 /// ═══════════════════════════════════════════════════════════════════════════
@@ -567,9 +658,9 @@ pub struct ValuationRequestProto {
         super::super::models::util::LocalTimestampProto,
     >,
     /// Product-specific input — determines the calculation path in the service.
-    /// When set, the service routes to the new engine dispatch; existing flat fields
-    /// (security_input, price_input, etc.) are ignored for the purposes of the
-    /// product calculation but may still be read for logging and audit.
+    /// When set, the service values from this input alone: security_input (20)
+    /// and price_input (22) are not read for the calculation. They may still be
+    /// read for logging and audit.
     #[prost(message, optional, tag = "70")]
     pub product_input: ::core::option::Option<ProductInput>,
 }

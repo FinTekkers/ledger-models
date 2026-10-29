@@ -10,11 +10,13 @@ import * as jspb from 'google-protobuf';
 import {
     ProductInput, FrnInput, YieldCurveInput, CurvePoint, ReferenceRateFixingProto,
     TipsInput, InflationIndexInput, MonthlyIndexReadings, MonthlyIndexReading,
+    MbsInput, EquityInput, CashInput, CostBasisInput,
 } from './product_inputs_pb';
 import { ValuationRequestProto } from './valuation_request_pb';
 import { IssuanceProto } from '../../../fintekkers/models/security/bond/issuance_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
-import { IndexDetailsProto, SecurityProto, TipsExtensionProto } from '../../../fintekkers/models/security/security_pb';
+import { IndexDetailsProto, MbsExtensionProto, SecurityProto, TipsExtensionProto } from '../../../fintekkers/models/security/security_pb';
+import { TaxLotProto } from '../../../fintekkers/models/position/tax_lot_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
@@ -541,5 +543,89 @@ describe('LM-389 bill_issue_date round-trip', () => {
         expect(parsed.getBillIssueDate()!.toObject()).toEqual(date(2026, 7, 23).toObject());
         expect(parsed.getFixingDate()!.toObject()).toEqual(date(2026, 7, 20).toObject());
         expect(parsed.getBillMaturityDate()!.toObject()).toEqual(date(2026, 10, 22).toObject());
+    });
+});
+
+// ── mbs, equity and cash arms (LM-408) ──────────────────────────────────────
+// Each new arm round-trips through bytes as the same arm, with the security,
+// the price and, for mbs, a non-default cost_basis.
+
+function security(productType: ProductTypeProto, issuerName: string): SecurityProto {
+    const s = new SecurityProto();
+    s.setProductType(productType);
+    s.setIssuerName(issuerName);
+    return s;
+}
+
+describe('LM-408 ProductInput arms round-trip', () => {
+    test('mbs = 13 survives with security, clean_price and cost_basis', () => {
+        const ext = new MbsExtensionProto();
+        ext.setPoolNumber('FN AS1234');
+        ext.setCurrentFactor(decimal('0.8125'));
+        const sec = security(ProductTypeProto.MORTGAGE_BACKED, 'FNMA');
+        sec.setMbsExtension(ext);
+        const lot = new TaxLotProto();
+        lot.setOpenDate(date(2025, 6, 2));
+        lot.setOpenQuantity(decimal('250000'));
+        lot.setPrice(decimal('99.50'));
+        const costBasis = new CostBasisInput();
+        costBasis.addLots(lot);
+        const mbs = new MbsInput();
+        mbs.setSecurity(sec);
+        mbs.setCleanPrice(decimal('101.5'));
+        mbs.setCostBasis(costBasis);
+        const original = new ProductInput();
+        original.setMbs(mbs);
+
+        const parsed = ProductInput.deserializeBinary(original.serializeBinary());
+
+        expect(parsed.getInputCase()).toBe(ProductInput.InputCase.MBS);
+        expect(parsed.toObject()).toEqual(original.toObject());
+        const m = parsed.getMbs()!;
+        expect(m.hasSecurity()).toBe(true);
+        expect(m.getSecurity()!.getProductType()).toBe(ProductTypeProto.MORTGAGE_BACKED);
+        expect(m.getSecurity()!.getMbsExtension()!.getPoolNumber()).toBe('FN AS1234');
+        expect(toCanonicalString(decodeDecimal(m.getCleanPrice()!))).toBe('101.5');
+        expect(m.hasCostBasis()).toBe(true);
+        const lots = m.getCostBasis()!.getLotsList();
+        expect(lots).toHaveLength(1);
+        expect(toCanonicalString(decodeDecimal(lots[0].getOpenQuantity()!))).toBe('250000');
+        expect(toCanonicalString(decodeDecimal(lots[0].getPrice()!))).toBe('99.50');
+    });
+
+    test('equity = 14 survives with security and unit_price', () => {
+        const equity = new EquityInput();
+        equity.setSecurity(security(ProductTypeProto.COMMON_STOCK, 'equity'));
+        equity.setUnitPrice(decimal('187.25'));
+        const original = new ProductInput();
+        original.setEquity(equity);
+
+        const parsed = ProductInput.deserializeBinary(original.serializeBinary());
+
+        expect(parsed.getInputCase()).toBe(ProductInput.InputCase.EQUITY);
+        expect(parsed.toObject()).toEqual(original.toObject());
+        const e = parsed.getEquity()!;
+        expect(e.hasSecurity()).toBe(true);
+        expect(e.getSecurity()!.getProductType()).toBe(ProductTypeProto.COMMON_STOCK);
+        expect(e.getSecurity()!.getIssuerName()).toBe('equity');
+        expect(toCanonicalString(decodeDecimal(e.getUnitPrice()!))).toBe('187.25');
+    });
+
+    test('cash = 15 survives with security and unit_price', () => {
+        const cash = new CashInput();
+        cash.setSecurity(security(ProductTypeProto.MONEY_MARKET_FUND, 'cash'));
+        cash.setUnitPrice(decimal('1.00'));
+        const original = new ProductInput();
+        original.setCash(cash);
+
+        const parsed = ProductInput.deserializeBinary(original.serializeBinary());
+
+        expect(parsed.getInputCase()).toBe(ProductInput.InputCase.CASH);
+        expect(parsed.toObject()).toEqual(original.toObject());
+        const c = parsed.getCash()!;
+        expect(c.hasSecurity()).toBe(true);
+        expect(c.getSecurity()!.getProductType()).toBe(ProductTypeProto.MONEY_MARKET_FUND);
+        expect(c.getSecurity()!.getIssuerName()).toBe('cash');
+        expect(toCanonicalString(decodeDecimal(c.getUnitPrice()!))).toBe('1.00');
     });
 });

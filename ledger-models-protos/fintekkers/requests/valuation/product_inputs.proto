@@ -22,13 +22,26 @@ option java_outer_classname = "ProductInputProtos";
 //   1–7  fixed-income (bond, callable, tips, muni, amortizing, ...)
 //   8    frn
 //   9–12 rates/credit (swap, xccy, repo, loan)
-//   13+  other (mbs, money market, futures, scenario, krd, ...)
+//   13   mbs
+//   14   equity
+//   15   cash
+//   16+  other (money market, futures, scenario, krd, ...)
+//
+// The arms grouped by valuation engine: docs/adr/product_input_engine_arms.md.
 // ═══════════════════════════════════════════════════════════════════════════
 message ProductInput {
   oneof input {
+    // Intended for coupon_type FIXED. Not validated today; see VS-69.
     BondInput bond = 1;
     TipsInput tips = 2;
+    // Intended for coupon_type FLOAT.
     FrnInput frn = 8;
+    // MORTGAGE_BACKED. Valued by the bond engine today (G8, VS-71); see MbsInput.
+    MbsInput mbs = 13;
+    // Equities and funds priced per share. See EquityInput.
+    EquityInput equity = 14;
+    // Cash and money-market funds priced at NAV per unit. See CashInput.
+    CashInput cash = 15;
   }
 }
 
@@ -43,7 +56,8 @@ message ProductInput {
 // ═══════════════════════════════════════════════════════════════════════════
 message BondInput {
   // The bond security, with bond_details populated.
-  // Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED.
+  // Intended: ProductTypeProto.TREASURY_NOTE with coupon_type FIXED. A FLOAT
+  // coupon belongs on FrnInput (ProductInput.frn).
   // Not validated today: any product_type is accepted and coupon_type is
   // ignored. Check tracked in VS-69.
   fintekkers.models.security.SecurityProto security = 1;
@@ -107,8 +121,9 @@ message TipsInput {
 // ═══════════════════════════════════════════════════════════════════════════
 // CostBasisInput — the inputs for MeasureProto.ADJUSTED_COST_BASIS (LM-364).
 //
-// Carried as cost_basis (20) on BondInput, TipsInput and FrnInput, never on
-// the root of ValuationRequestProto. See docs/adr/amortisation_elections.md.
+// Carried as cost_basis (20) on BondInput, TipsInput, FrnInput and MbsInput,
+// never on the root of ValuationRequestProto. See
+// docs/adr/amortisation_elections.md.
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Inputs for ADJUSTED_COST_BASIS, reused by every typed input that supports it.
@@ -191,6 +206,7 @@ message MonthlyIndexReading {
 // ═══════════════════════════════════════════════════════════════════════════
 message FrnInput {
   // The FRN security. Must have bond_details and frn_extension populated.
+  // Intended for coupon_type FLOAT; a FIXED coupon belongs on BondInput.
   fintekkers.models.security.SecurityProto security = 1;
 
   // Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
@@ -244,6 +260,67 @@ message ReferenceRateFixingProto {
   // auction's. valuation-service counts the bill's days to maturity from
   // here to bill_maturity_date. Unset for SOFR.
   fintekkers.models.util.LocalDateProto bill_issue_date = 5;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MbsInput — valuation request for a mortgage-backed security (LM-408).
+//
+// Static pool data (pass_through_rate, wac, wam, current_factor, psa_speed,
+// ...) is read from security.bond_details and security.mbs_extension. None
+// is repeated on this message.
+//
+// G8 (valuation-service known gap 8, tracked as VS-71): MORTGAGE_BACKED is
+// valued as a bullet fixed-rate bond (no amortisation or prepayment), because
+// it descends from BOND. The mbs arm gives MBS its own route, but it still
+// uses the bond engine, so the numbers are unchanged until a real MBS engine
+// replaces it.
+//
+// Fields 10-19 are kept free for later prepayment and curve inputs. Do not
+// use them for anything else.
+//
+// Settlement date is read from ValuationRequestProto.asof_datetime.
+// See docs/adr/product_input_engine_arms.md.
+// ═══════════════════════════════════════════════════════════════════════════
+message MbsInput {
+  // The MBS security: ProductTypeProto.MORTGAGE_BACKED with bond_details and
+  // mbs_extension populated.
+  fintekkers.models.security.SecurityProto security = 1;
+
+  // Market clean price as a percentage of current face: the original face
+  // times mbs_extension.current_factor, not the original face
+  // (e.g. 101.5 = 101.5% of current face).
+  fintekkers.models.util.DecimalValueProto clean_price = 2;
+
+  // Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
+  CostBasisInput cost_basis = 20;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// EquityInput — valuation request for an equity or fund priced per share
+// (LM-408). Unit-priced: market value is unit_price x quantity, no accrual.
+// See docs/adr/product_input_engine_arms.md.
+// ═══════════════════════════════════════════════════════════════════════════
+message EquityInput {
+  // The equity security (e.g. COMMON_STOCK, ETF).
+  fintekkers.models.security.SecurityProto security = 1;
+
+  // Market price per share, in the security's currency (e.g. 187.25 = 187.25
+  // per share). Not a percentage of face.
+  fintekkers.models.util.DecimalValueProto unit_price = 2;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CashInput — valuation request for cash or a money-market fund (LM-408).
+// Unit-priced: market value is unit_price x quantity, no accrual.
+// See docs/adr/product_input_engine_arms.md.
+// ═══════════════════════════════════════════════════════════════════════════
+message CashInput {
+  // The cash or money-market fund security (e.g. CURRENCY, MONEY_MARKET_FUND).
+  fintekkers.models.security.SecurityProto security = 1;
+
+  // NAV per unit, in the security's currency (e.g. 1.00 for cash or a stable
+  // NAV fund). Not a percentage of face.
+  fintekkers.models.util.DecimalValueProto unit_price = 2;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
