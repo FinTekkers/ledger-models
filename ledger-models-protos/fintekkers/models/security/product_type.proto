@@ -56,6 +56,7 @@ enum ProductTypeProto {
   VIX_SPOT        = 33;
   CPI_SERIES      = 34;
   SOFR_SERIES     = 35;
+  T_BILL_13_WEEK_SERIES = 36;
 
   // Cash and FX (40-49)
   CURRENCY          = 40;

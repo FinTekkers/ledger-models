@@ -27,6 +27,7 @@ class ProductTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     VIX_SPOT: _ClassVar[ProductTypeProto]
     CPI_SERIES: _ClassVar[ProductTypeProto]
     SOFR_SERIES: _ClassVar[ProductTypeProto]
+    T_BILL_13_WEEK_SERIES: _ClassVar[ProductTypeProto]
     CURRENCY: _ClassVar[ProductTypeProto]
     FX_SPOT: _ClassVar[ProductTypeProto]
     MONEY_MARKET_FUND: _ClassVar[ProductTypeProto]
@@ -55,6 +56,7 @@ COMMODITY_INDEX: ProductTypeProto
 VIX_SPOT: ProductTypeProto
 CPI_SERIES: ProductTypeProto
 SOFR_SERIES: ProductTypeProto
+T_BILL_13_WEEK_SERIES: ProductTypeProto
 CURRENCY: ProductTypeProto
 FX_SPOT: ProductTypeProto
 MONEY_MARKET_FUND: ProductTypeProto

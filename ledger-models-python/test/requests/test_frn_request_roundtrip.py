@@ -204,7 +204,7 @@ class TestReferenceRateFixingRoundTrip:
             clean_price=_decimal("99.75"),
             fixings=[
                 _fixing(index_type_pb2.T_BILL_13_WEEK, _date(2026, 10, 19), "0.0432"),
-                _fixing(index_type_pb2.SOFR, _date(2026, 10, 26), "0.0429"),
+                _fixing(index_type_pb2.SOFR, _date(2026, 10, 26), "4.29"),
             ],
         )
         parsed = _roundtrip_frn(original)
@@ -212,7 +212,7 @@ class TestReferenceRateFixingRoundTrip:
         assert len(parsed.fixings) == 2
         expected = [
             (index_type_pb2.T_BILL_13_WEEK, 19, "0.0432"),
-            (index_type_pb2.SOFR, 26, "0.0429"),
+            (index_type_pb2.SOFR, 26, "4.29"),
         ]
         for fixing, (index, day, rate) in zip(parsed.fixings, expected):
             assert fixing.index == index
@@ -254,7 +254,7 @@ class TestLm382RoundTrip:
 
     def test_new_fields_decode_unset_when_absent(self):
         fixing = product_inputs_pb2.ReferenceRateFixingProto.FromString(
-            _fixing(index_type_pb2.SOFR, _date(2026, 10, 26), "0.0429").SerializeToString())
+            _fixing(index_type_pb2.SOFR, _date(2026, 10, 26), "4.29").SerializeToString())
         issuance = issuance_pb2.IssuanceProto.FromString(
             issuance_pb2.IssuanceProto(auction_issue_date=_date(2026, 7, 23)).SerializeToString())
 
@@ -280,7 +280,7 @@ class TestLm389RoundTrip:
 
     def test_bill_issue_date_unset_for_sofr(self):
         parsed = product_inputs_pb2.ReferenceRateFixingProto.FromString(
-            _fixing(index_type_pb2.SOFR, _date(2026, 10, 26), "0.0429").SerializeToString())
+            _fixing(index_type_pb2.SOFR, _date(2026, 10, 26), "4.29").SerializeToString())
 
         assert not parsed.HasField("bill_issue_date")
 

@@ -10,6 +10,8 @@ pub enum PriceTypeProto {
     BasisPoints = 3,
     /// Index level (e.g. CPI readings)
     IndexLevel = 4,
+    /// Reference-rate fixing (e.g. SOFR, 13-week T-bill). Unit is the one ReferenceRateFixingProto.rate defines for the security's index.
+    Rate = 5,
 }
 impl PriceTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -23,6 +25,7 @@ impl PriceTypeProto {
             PriceTypeProto::Percentage => "PERCENTAGE",
             PriceTypeProto::BasisPoints => "BASIS_POINTS",
             PriceTypeProto::IndexLevel => "INDEX_LEVEL",
+            PriceTypeProto::Rate => "RATE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -33,6 +36,7 @@ impl PriceTypeProto {
             "PERCENTAGE" => Some(Self::Percentage),
             "BASIS_POINTS" => Some(Self::BasisPoints),
             "INDEX_LEVEL" => Some(Self::IndexLevel),
+            "RATE" => Some(Self::Rate),
             _ => None,
         }
     }

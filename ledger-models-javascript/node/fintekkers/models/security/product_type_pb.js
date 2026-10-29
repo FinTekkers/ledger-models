@@ -47,6 +47,7 @@ proto.fintekkers.models.security.ProductTypeProto = {
   VIX_SPOT: 33,
   CPI_SERIES: 34,
   SOFR_SERIES: 35,
+  T_BILL_13_WEEK_SERIES: 36,
   CURRENCY: 40,
   FX_SPOT: 41,
   MONEY_MARKET_FUND: 42,

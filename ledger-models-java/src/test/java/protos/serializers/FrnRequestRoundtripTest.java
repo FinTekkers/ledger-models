@@ -203,7 +203,7 @@ class FrnRequestRoundtripTest {
         FrnInput original = FrnInput.newBuilder()
                 .setCleanPrice(decimal("99.75"))
                 .addFixings(fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 10, 19), "0.0432"))
-                .addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), "0.0429"))
+                .addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), "4.29"))
                 .build();
 
         FrnInput parsed = FrnInput.parseFrom(original.toByteArray());
@@ -220,7 +220,7 @@ class FrnRequestRoundtripTest {
         assertEquals(2026, second.getFixingDate().getYear());
         assertEquals(10, second.getFixingDate().getMonth());
         assertEquals(26, second.getFixingDate().getDay());
-        assertEquals("0.0429", Decimals.text(second.getRate()));
+        assertEquals("4.29", Decimals.text(second.getRate()));
         assertEquals("99.75", Decimals.text(parsed.getCleanPrice()));
     }
 
@@ -277,7 +277,7 @@ class FrnRequestRoundtripTest {
     @Test
     void lm382_newFieldsDecodeUnsetWhenAbsent() throws InvalidProtocolBufferException {
         ReferenceRateFixingProto fixing = ReferenceRateFixingProto.parseFrom(
-                fixing(IndexTypeProto.SOFR, date(2026, 10, 26), "0.0429").toByteArray());
+                fixing(IndexTypeProto.SOFR, date(2026, 10, 26), "4.29").toByteArray());
         IssuanceProto issuance = IssuanceProto.parseFrom(
                 IssuanceProto.newBuilder().setAuctionIssueDate(date(2026, 7, 23)).build().toByteArray());
 

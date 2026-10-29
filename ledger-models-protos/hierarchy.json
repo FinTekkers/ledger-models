@@ -39,6 +39,7 @@
     "VIX_SPOT":        { "parent": "INDEX", "asset_class": "VOLATILITY", "instrument_type": "REFERENCE_INDEX", "label": "VIX (volatility)", "status": "active" },
     "CPI_SERIES":      { "parent": "INDEX", "asset_class": "RATES",      "instrument_type": "REFERENCE_INDEX", "label": "CPI Series",       "status": "active" },
     "SOFR_SERIES":     { "parent": "INDEX", "asset_class": "RATES",      "instrument_type": "REFERENCE_INDEX", "label": "SOFR Series",      "status": "active" },
+    "T_BILL_13_WEEK_SERIES": { "parent": "INDEX", "asset_class": "RATES", "instrument_type": "REFERENCE_INDEX", "label": "13-Week T-Bill Series", "status": "active" },
 
     "CASH_INSTRUMENT": { "parent": null, "abstract": true, "label": "Cash Instrument" },
     "CURRENCY":          { "parent": "CASH_INSTRUMENT", "asset_class": "CASH", "instrument_type": "CASH", "label": "Currency",          "status": "active" },

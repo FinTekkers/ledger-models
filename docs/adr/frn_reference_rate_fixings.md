@@ -147,3 +147,42 @@ Accepted (LM-389). Owner ruling on LM-383, option (a), 24 Oct. Additive proto ch
 - Rust code that builds `ReferenceRateFixingProto` with a struct literal and no `..Default::default()` must add the field.
 - `wire-diff.py` rule `lm389` allows exactly this addition, listed in `test-fixtures/field-changes/lm-389.json`. The Java, Python and Rust exact-field-set tests take the union with that file.
 - If the field is ever removed, 5 and `bill_issue_date` must be `reserved`, never reused.
+
+## Amendment 2026-10-29 (LM-412): SOFR in published percent; RATE price type
+
+### Status
+
+Accepted (LM-412, owner ruling of 29 Oct on [LM-412](https://github.com/FinTekkers/ledger-models/issues/412)). Additive only: `PriceTypeProto.RATE = 5` and `ProductTypeProto.T_BILL_13_WEEK_SERIES = 36`. No value is renumbered, renamed or removed, and no field changes.
+
+### Decision
+
+```proto
+enum PriceTypeProto {
+  ...                                            // 0-4 unchanged
+  RATE = 5;
+}
+
+enum ProductTypeProto {
+  ...                                            // existing values unchanged
+  T_BILL_13_WEEK_SERIES = 36;
+}
+```
+
+- **Every `ReferenceRateFixingProto.rate` is the rate exactly as its source publishes it, in percent per annum.** SOFR is the rate as the New York Fed publishes it: `4.32` = 4.32%. This **supersedes** the LM-382 line "SOFR is unchanged" above, and the LM-365 Units text that `rate` is a decimal fraction. SOFR now matches `T_BILL_13_WEEK`, which has carried the published rate since LM-382.
+- **valuation-service converts.** It converts SOFR from percent, and `T_BILL_13_WEEK` to the money-market yield as before. Models do no conversion.
+- **`PriceTypeProto.RATE`** marks a price that is a reference-rate fixing (for example a SOFR or 13-week T-bill series stored in price-service). Its value uses the unit that `ReferenceRateFixingProto.rate` defines for the security's index. `INDEX_LEVEL` (CPI readings) and `PERCENTAGE` (bond prices as % of par) keep their meanings.
+- **`ProductTypeProto.T_BILL_13_WEEK_SERIES`** is the series product for the 13-week T-bill benchmark, the counterpart of `SOFR_SERIES`. In `hierarchy.json` it has the same classification: parent `INDEX`, asset class `RATES`, instrument type `REFERENCE_INDEX`.
+- The `DISCOUNT_MARGIN` catalog entry now says SOFR fixings are the published percent. `valuation_input_units.md` row L7 is restated to match.
+
+### Consequences
+
+- valuation-service does not read `fixings` yet (VS-110), so the SOFR unit change alters no reader's behaviour. VS-110 must convert SOFR from percent.
+- A producer that already sends SOFR fixings as decimal fractions (`0.0432`) will be misread once VS-110 lands. No such producer is known.
+- Old readers see `RATE` and `T_BILL_13_WEEK_SERIES` as unknown enum numbers; proto3 keeps them, so nothing breaks. price-service picks them up in its own item.
+- If either value is ever retired, it is marked deprecated, never removed or renumbered.
+
+### Checks
+
+- `scripts/checks/wire-diff.py` rule `lm412` allows exactly the two values, listed in `test-fixtures/field-changes/lm-412.json`. That file's `kept` list holds every existing value of both enums. The descriptor tests in Java, Python, Rust and JS read it and assert that `kept` plus `added_values` is the whole enum.
+- Each language's hierarchy tests assert that `T_BILL_13_WEEK_SERIES` has the same parent, asset class and instrument type as `SOFR_SERIES`.
+- `ledger-models-python/test/requests/test_lm412_sofr_rate_spec.py` checks the `rate` comment, this amendment and the unchanged `INDEX_LEVEL` and `PERCENTAGE` comments.

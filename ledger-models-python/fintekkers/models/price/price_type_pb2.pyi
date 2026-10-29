@@ -11,8 +11,10 @@ class PriceTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     PERCENTAGE: _ClassVar[PriceTypeProto]
     BASIS_POINTS: _ClassVar[PriceTypeProto]
     INDEX_LEVEL: _ClassVar[PriceTypeProto]
+    RATE: _ClassVar[PriceTypeProto]
 UNKNOWN_PRICE_TYPE: PriceTypeProto
 ABSOLUTE: PriceTypeProto
 PERCENTAGE: PriceTypeProto
 BASIS_POINTS: PriceTypeProto
 INDEX_LEVEL: PriceTypeProto
+RATE: PriceTypeProto

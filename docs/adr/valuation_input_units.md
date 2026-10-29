@@ -75,3 +75,13 @@ Row **L7** is restated for `T_BILL_13_WEEK` (owner ruling, 23 Oct). It supersede
 | L7 | `ReferenceRateFixingProto.rate` (`FrnInput.fixings`) | **SOFR: decimal fraction**, unchanged: `0.0432` = 4.32%. **`T_BILL_13_WEEK`: percent per annum, bank-discount basis**: the auction's high discount rate as Treasury publishes it, `4.215` = 4.215%, the same value and unit as L8. valuation-service converts it to the money-market yield the FRN accrues on, using `ReferenceRateFixingProto.bill_maturity_date`. |
 
 L7 for `T_BILL_13_WEEK` and L8 are now the same unit. See the LM-382 amendment in `frn_reference_rate_fixings.md`.
+
+## Amendment 2026-10-29 (LM-412)
+
+Row **L7** is restated for SOFR (owner ruling, 29 Oct). It supersedes the SOFR sentence of the LM-382 row above ("SOFR: decimal fraction, unchanged").
+
+| ID | Field | Decision |
+|---|---|---|
+| L7 | `ReferenceRateFixingProto.rate` (`FrnInput.fixings`) | **The rate exactly as its source publishes it, in percent per annum.** **SOFR**: as the New York Fed publishes it, `4.32` = 4.32%. **`T_BILL_13_WEEK`**: the auction's high discount rate on a bank-discount basis, `4.215` = 4.215%, the same value and unit as L8. Neither is a decimal fraction. valuation-service converts SOFR from percent, and `T_BILL_13_WEEK` to the money-market yield using `ReferenceRateFixingProto.bill_maturity_date`. |
+
+See the LM-412 amendment in `frn_reference_rate_fixings.md`.

@@ -12,4 +12,5 @@ enum PriceTypeProto {
   PERCENTAGE = 2; //Price as a percentage (e.g. bond prices quoted as % of par)
   BASIS_POINTS = 3; //Price in basis points (e.g. spreads)
   INDEX_LEVEL = 4; //Index level (e.g. CPI readings)
+  RATE = 5; //Reference-rate fixing (e.g. SOFR, 13-week T-bill). Unit is the one ReferenceRateFixingProto.rate defines for the security's index.
 }

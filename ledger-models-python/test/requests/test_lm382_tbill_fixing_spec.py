@@ -1,7 +1,7 @@
 """The T-bill fixing spec (LM-382). For T_BILL_13_WEEK, ReferenceRateFixingProto.rate
 is the auction's high discount rate as Treasury publishes it (percent per annum,
-bank-discount basis) and valuation-service converts it. SOFR's wording is kept
-verbatim. The bill_maturity_date and IssuanceProto.auction_date comments say what
+bank-discount basis) and valuation-service converts it. SOFR's wording is the
+LM-412 one (published percent). The bill_maturity_date and IssuanceProto.auction_date comments say what
 each date is, and the DISCOUNT_MARGIN catalog entry states the same unit.
 
 Comments are found by the message and field they document, never by line number.
@@ -68,9 +68,10 @@ AUCTION_DATE = _prose(_block_comment(ISSUANCE, "IssuanceProto", "auction_date"))
 DISCOUNT_MARGIN = next(m for m in json.loads(CATALOG.read_text())["measures"] if m["name"] == "DISCOUNT_MARGIN")
 CATALOG_LINES = [line for line in DISCOUNT_MARGIN["model_assumptions"] if "T_BILL_13_WEEK" in line]
 
-# SOFR's meaning and wording are unchanged (guardrail): these sentences are
-# kept verbatim from LM-365.
-SOFR_SENTENCES = "The index rate as the FRN accrues it, as a decimal fraction: 0.0432 = 4.32%. Not a percentage."
+# SOFR's LM-365 decimal-fraction sentences were superseded by the LM-412 owner
+# ruling (29 Oct): SOFR is the published percent. These open the comment.
+SOFR_SENTENCES = ("The index rate exactly as its source publishes it, in percent per annum. "
+                  "SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.")
 
 RATE_PHRASES = [
     "T_BILL_13_WEEK",
@@ -121,5 +122,5 @@ def test_discount_margin_catalog_states_the_published_unit():
     line = CATALOG_LINES[0]
     for phrase in ["percent per annum", "bank-discount basis", "4.215 = 4.215%",
                    "IssuanceProto.high_discount_rate", "valuation-service converts it",
-                   "bill_maturity_date", "SOFR fixings stay decimal fractions"]:
+                   "bill_maturity_date", "SOFR fixings are the rate as the New York Fed publishes it"]:
         assert phrase in line, phrase
