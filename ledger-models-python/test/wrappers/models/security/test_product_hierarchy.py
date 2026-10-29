@@ -40,9 +40,10 @@ def test_registry_loads_without_error():
 def test_active_product_types_match_m1_spec_count():
     """Sentinel against accidental dropping or reverting of registry entries.
     M1 of #257 locked in 26 active leaves; #274 Phase 2 promotes
-    MORTGAGE_BACKED to active, taking the count to 27."""
+    MORTGAGE_BACKED to active, taking the count to 27; LM-412 adds
+    T_BILL_13_WEEK_SERIES, taking it to 28."""
     active = PH.active_product_types()
-    assert len(active) == 27, f"expected 27 active leaves, got {len(active)}: {active}"
+    assert len(active) == 28, f"expected 28 active leaves, got {len(active)}: {active}"
 
 
 def test_active_product_types_include_known_m1_leaves():
@@ -54,12 +55,19 @@ def test_active_product_types_include_known_m1_leaves():
         "STRIPS", "SOVEREIGN_BOND", "CORP_BOND", "MUNI_BOND",
         "COMMON_STOCK", "PREFERRED_STOCK", "ADR", "ETF",
         "EQUITY_INDEX", "BOND_INDEX", "COMMODITY_INDEX", "VIX_SPOT",
-        "CPI_SERIES", "SOFR_SERIES",
+        "CPI_SERIES", "SOFR_SERIES", "T_BILL_13_WEEK_SERIES",
         "CURRENCY", "FX_SPOT", "MONEY_MARKET_FUND",
         "CRYPTOCURRENCY", "STABLECOIN",
         "GOLD", "SILVER",
     ]:
         assert expected in active, f"{expected} missing from active product types"
+
+
+def test_t_bill_13_week_series_is_classified_like_sofr_series():
+    """LM-412: the T-bill rate series sits beside the SOFR series."""
+    assert PH.parent_of("T_BILL_13_WEEK_SERIES") == PH.parent_of("SOFR_SERIES") == "INDEX"
+    assert PH.asset_class_of("T_BILL_13_WEEK_SERIES") == PH.asset_class_of("SOFR_SERIES") == "RATES"
+    assert PH.instrument_type_of("T_BILL_13_WEEK_SERIES") == PH.instrument_type_of("SOFR_SERIES") == "REFERENCE_INDEX"
 
 
 def test_descendants_of_bond_walks_transitively():

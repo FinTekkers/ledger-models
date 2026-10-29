@@ -111,6 +111,7 @@ pub enum ProductTypeProto {
     VixSpot = 33,
     CpiSeries = 34,
     SofrSeries = 35,
+    TBill13WeekSeries = 36,
     /// Cash and FX (40-49)
     Currency = 40,
     FxSpot = 41,
@@ -150,6 +151,7 @@ impl ProductTypeProto {
             ProductTypeProto::VixSpot => "VIX_SPOT",
             ProductTypeProto::CpiSeries => "CPI_SERIES",
             ProductTypeProto::SofrSeries => "SOFR_SERIES",
+            ProductTypeProto::TBill13WeekSeries => "T_BILL_13_WEEK_SERIES",
             ProductTypeProto::Currency => "CURRENCY",
             ProductTypeProto::FxSpot => "FX_SPOT",
             ProductTypeProto::MoneyMarketFund => "MONEY_MARKET_FUND",
@@ -183,6 +185,7 @@ impl ProductTypeProto {
             "VIX_SPOT" => Some(Self::VixSpot),
             "CPI_SERIES" => Some(Self::CpiSeries),
             "SOFR_SERIES" => Some(Self::SofrSeries),
+            "T_BILL_13_WEEK_SERIES" => Some(Self::TBill13WeekSeries),
             "CURRENCY" => Some(Self::Currency),
             "FX_SPOT" => Some(Self::FxSpot),
             "MONEY_MARKET_FUND" => Some(Self::MoneyMarketFund),

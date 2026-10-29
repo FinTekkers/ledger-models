@@ -24,7 +24,7 @@ public final class ProductTypeProtos {
   static {
     java.lang.String[] descriptorData = {
       "\n-fintekkers/models/security/product_typ" +
-      "e.proto\022\032fintekkers.models.security*\327\003\n\020" +
+      "e.proto\022\032fintekkers.models.security*\362\003\n\020" +
       "ProductTypeProto\022\030\n\024PRODUCT_TYPE_UNKNOWN" +
       "\020\000\022\t\n\005TBILL\020\001\022\021\n\rTREASURY_NOTE\020\002\022\021\n\rTREA" +
       "SURY_BOND\020\003\022\010\n\004TIPS\020\004\022\020\n\014TREASURY_FRN\020\005\022" +
@@ -34,10 +34,11 @@ public final class ProductTypeProtos {
       "\025\022\007\n\003ADR\020\026\022\007\n\003ETF\020\027\022\020\n\014EQUITY_INDEX\020\036\022\016\n" +
       "\nBOND_INDEX\020\037\022\023\n\017COMMODITY_INDEX\020 \022\014\n\010VI" +
       "X_SPOT\020!\022\016\n\nCPI_SERIES\020\"\022\017\n\013SOFR_SERIES\020" +
-      "#\022\014\n\010CURRENCY\020(\022\013\n\007FX_SPOT\020)\022\025\n\021MONEY_MA" +
-      "RKET_FUND\020*\022\022\n\016CRYPTOCURRENCY\0202\022\016\n\nSTABL" +
-      "ECOIN\0203\022\010\n\004GOLD\020<\022\n\n\006SILVER\020=B\025B\021Product" +
-      "TypeProtosP\001b\006proto3"
+      "#\022\031\n\025T_BILL_13_WEEK_SERIES\020$\022\014\n\010CURRENCY" +
+      "\020(\022\013\n\007FX_SPOT\020)\022\025\n\021MONEY_MARKET_FUND\020*\022\022" +
+      "\n\016CRYPTOCURRENCY\0202\022\016\n\nSTABLECOIN\0203\022\010\n\004GO" +
+      "LD\020<\022\n\n\006SILVER\020=B\025B\021ProductTypeProtosP\001b" +
+      "\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

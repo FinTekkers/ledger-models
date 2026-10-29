@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n(fintekkers/models/price/price_type.proto\x12\x17\x66intekkers.models.price*i\n\x0ePriceTypeProto\x12\x16\n\x12UNKNOWN_PRICE_TYPE\x10\x00\x12\x0c\n\x08\x41\x42SOLUTE\x10\x01\x12\x0e\n\nPERCENTAGE\x10\x02\x12\x10\n\x0c\x42\x41SIS_POINTS\x10\x03\x12\x0f\n\x0bINDEX_LEVEL\x10\x04\x42\x13\x42\x0fPriceTypeProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n(fintekkers/models/price/price_type.proto\x12\x17\x66intekkers.models.price*s\n\x0ePriceTypeProto\x12\x16\n\x12UNKNOWN_PRICE_TYPE\x10\x00\x12\x0c\n\x08\x41\x42SOLUTE\x10\x01\x12\x0e\n\nPERCENTAGE\x10\x02\x12\x10\n\x0c\x42\x41SIS_POINTS\x10\x03\x12\x0f\n\x0bINDEX_LEVEL\x10\x04\x12\x08\n\x04RATE\x10\x05\x42\x13\x42\x0fPriceTypeProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,5 +33,5 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\017PriceTypeProtosP\001'
   _globals['_PRICETYPEPROTO']._serialized_start=69
-  _globals['_PRICETYPEPROTO']._serialized_end=174
+  _globals['_PRICETYPEPROTO']._serialized_end=184
 # @@protoc_insertion_point(module_scope)

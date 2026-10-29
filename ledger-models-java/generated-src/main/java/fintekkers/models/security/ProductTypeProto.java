@@ -125,6 +125,10 @@ public enum ProductTypeProto
    */
   SOFR_SERIES(35),
   /**
+   * <code>T_BILL_13_WEEK_SERIES = 36;</code>
+   */
+  T_BILL_13_WEEK_SERIES(36),
+  /**
    * <pre>
    * Cash and FX (40-49)
    * </pre>
@@ -264,6 +268,10 @@ public enum ProductTypeProto
    */
   public static final int SOFR_SERIES_VALUE = 35;
   /**
+   * <code>T_BILL_13_WEEK_SERIES = 36;</code>
+   */
+  public static final int T_BILL_13_WEEK_SERIES_VALUE = 36;
+  /**
    * <pre>
    * Cash and FX (40-49)
    * </pre>
@@ -350,6 +358,7 @@ public enum ProductTypeProto
       case 33: return VIX_SPOT;
       case 34: return CPI_SERIES;
       case 35: return SOFR_SERIES;
+      case 36: return T_BILL_13_WEEK_SERIES;
       case 40: return CURRENCY;
       case 41: return FX_SPOT;
       case 42: return MONEY_MARKET_FUND;

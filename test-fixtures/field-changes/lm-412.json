@@ -1,0 +1,42 @@
+{
+  "item": "LM-412",
+  "added_values": [
+    {"enum": ".fintekkers.models.price.PriceTypeProto", "number": 5, "name": "RATE"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 36, "name": "T_BILL_13_WEEK_SERIES"}
+  ],
+  "kept": [
+    {"enum": ".fintekkers.models.price.PriceTypeProto", "number": 0, "name": "UNKNOWN_PRICE_TYPE"},
+    {"enum": ".fintekkers.models.price.PriceTypeProto", "number": 1, "name": "ABSOLUTE"},
+    {"enum": ".fintekkers.models.price.PriceTypeProto", "number": 2, "name": "PERCENTAGE"},
+    {"enum": ".fintekkers.models.price.PriceTypeProto", "number": 3, "name": "BASIS_POINTS"},
+    {"enum": ".fintekkers.models.price.PriceTypeProto", "number": 4, "name": "INDEX_LEVEL"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 0, "name": "PRODUCT_TYPE_UNKNOWN"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 1, "name": "TBILL"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 2, "name": "TREASURY_NOTE"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 3, "name": "TREASURY_BOND"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 4, "name": "TIPS"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 5, "name": "TREASURY_FRN"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 6, "name": "STRIPS"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 7, "name": "SOVEREIGN_BOND"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 8, "name": "CORP_BOND"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 9, "name": "MUNI_BOND"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 10, "name": "MORTGAGE_BACKED"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 20, "name": "COMMON_STOCK"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 21, "name": "PREFERRED_STOCK"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 22, "name": "ADR"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 23, "name": "ETF"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 30, "name": "EQUITY_INDEX"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 31, "name": "BOND_INDEX"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 32, "name": "COMMODITY_INDEX"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 33, "name": "VIX_SPOT"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 34, "name": "CPI_SERIES"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 35, "name": "SOFR_SERIES"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 40, "name": "CURRENCY"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 41, "name": "FX_SPOT"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 42, "name": "MONEY_MARKET_FUND"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 50, "name": "CRYPTOCURRENCY"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 51, "name": "STABLECOIN"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 60, "name": "GOLD"},
+    {"enum": ".fintekkers.models.security.ProductTypeProto", "number": 61, "name": "SILVER"}
+  ]
+}

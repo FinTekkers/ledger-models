@@ -72,6 +72,20 @@ class ProductHierarchyRegistryGuardTest {
         assertEquals("CASH", ProductHierarchy.instrumentTypeOf("TBILL"));
     }
 
+    @Test
+    public void tBill13WeekSeriesIsClassifiedLikeSofrSeries() {
+        // LM-412: the T-bill rate series sits beside the SOFR series.
+        assertEquals("INDEX", ProductHierarchy.parentOf(ProductTypeProto.T_BILL_13_WEEK_SERIES));
+        assertEquals(ProductHierarchy.parentOf(ProductTypeProto.SOFR_SERIES),
+                ProductHierarchy.parentOf(ProductTypeProto.T_BILL_13_WEEK_SERIES));
+        assertEquals("RATES", ProductHierarchy.assetClassOf(ProductTypeProto.T_BILL_13_WEEK_SERIES));
+        assertEquals(ProductHierarchy.assetClassOf(ProductTypeProto.SOFR_SERIES),
+                ProductHierarchy.assetClassOf(ProductTypeProto.T_BILL_13_WEEK_SERIES));
+        assertEquals("REFERENCE_INDEX", ProductHierarchy.instrumentTypeOf("T_BILL_13_WEEK_SERIES"));
+        assertEquals(ProductHierarchy.instrumentTypeOf("SOFR_SERIES"),
+                ProductHierarchy.instrumentTypeOf("T_BILL_13_WEEK_SERIES"));
+    }
+
     /**
      * Test-the-test: deliberate omission must surface as a mismatch.
      * Done via a synthetic comparison: pretend the registry is missing one

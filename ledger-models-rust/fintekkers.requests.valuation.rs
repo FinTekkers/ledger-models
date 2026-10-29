@@ -410,14 +410,14 @@ pub struct ReferenceRateFixingProto {
     /// the business day the rate applies to for SOFR.
     #[prost(message, optional, tag = "2")]
     pub fixing_date: ::core::option::Option<super::super::models::util::LocalDateProto>,
-    /// The index rate as the FRN accrues it, as a decimal fraction:
-    /// 0.0432 = 4.32%. Not a percentage. The exception is T_BILL_13_WEEK,
-    /// where rate is the auction's high discount rate as Treasury publishes
-    /// it, in percent per annum on a bank-discount basis: 4.215 = 4.215%.
-    /// That is the same value and unit as IssuanceProto.high_discount_rate,
-    /// not a decimal fraction and not yet the rate the FRN accrues on:
-    /// valuation-service converts it to the money-market yield the FRN
-    /// accrues on, using bill_maturity_date.
+    /// The index rate exactly as its source publishes it, in percent per annum.
+    /// SOFR: the rate as the New York Fed publishes it: 4.32 = 4.32%.
+    /// T_BILL_13_WEEK: the auction's high discount rate as Treasury
+    /// publishes it, on a bank-discount basis: 4.215 = 4.215%. Same value
+    /// and unit as IssuanceProto.high_discount_rate.
+    /// Neither is a decimal fraction, nor yet the rate the FRN accrues on:
+    /// valuation-service converts it, T_BILL_13_WEEK to the money-market
+    /// yield using bill_maturity_date and SOFR from percent.
     #[prost(message, optional, tag = "3")]
     pub rate: ::core::option::Option<super::super::models::util::DecimalValueProto>,
     /// T_BILL_13_WEEK only: the maturity date of the bill whose auction set

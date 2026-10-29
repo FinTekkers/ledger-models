@@ -421,8 +421,20 @@ mod test {
     #[test]
     fn registry_loads_and_active_count_matches_spec() {
         let active = active_product_types();
-        // M1 locked 26 active leaves; #274 Phase 2 promotes MORTGAGE_BACKED → 27.
-        assert_eq!(active.len(), 27, "expected 27 active leaves, got {}: {active:?}", active.len());
+        // M1 locked 26 active leaves; #274 Phase 2 promotes MORTGAGE_BACKED → 27;
+        // LM-412 adds T_BILL_13_WEEK_SERIES → 28.
+        assert_eq!(active.len(), 28, "expected 28 active leaves, got {}: {active:?}", active.len());
+    }
+
+    #[test]
+    fn t_bill_13_week_series_is_classified_like_sofr_series() {
+        // LM-412: the T-bill rate series sits beside the SOFR series.
+        assert_eq!(parent_of("T_BILL_13_WEEK_SERIES"), Some("INDEX".to_string()));
+        assert_eq!(parent_of("T_BILL_13_WEEK_SERIES"), parent_of("SOFR_SERIES"));
+        assert_eq!(asset_class_of("T_BILL_13_WEEK_SERIES"), Some("RATES".to_string()));
+        assert_eq!(asset_class_of("T_BILL_13_WEEK_SERIES"), asset_class_of("SOFR_SERIES"));
+        assert_eq!(instrument_type_of("T_BILL_13_WEEK_SERIES"), Some("REFERENCE_INDEX".to_string()));
+        assert_eq!(instrument_type_of("T_BILL_13_WEEK_SERIES"), instrument_type_of("SOFR_SERIES"));
     }
 
     #[test]

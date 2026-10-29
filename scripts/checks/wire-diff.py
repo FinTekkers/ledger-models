@@ -289,7 +289,21 @@ def lm395(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM395 and new == LM395[key]
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395]
+
+LM412 = {
+    f"value {v['enum']} = {v['number']}": v["name"]
+    for v in json.loads((REPO / "test-fixtures/field-changes/lm-412.json").read_text())["added_values"]
+}
+
+
+def lm412(key: str, old, new, head: dict) -> bool:
+    """LM-412: PriceTypeProto.RATE = 5 and ProductTypeProto.T_BILL_13_WEEK_SERIES
+    = 36 added. Additions of exactly these values only; every existing value
+    keeps its number and name."""
+    return old is None and key in LM412 and new == LM412[key]
+
+
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm412]
 
 
 def main() -> int:

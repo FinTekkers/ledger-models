@@ -44,6 +44,14 @@ public enum PriceTypeProto
    * <code>INDEX_LEVEL = 4;</code>
    */
   INDEX_LEVEL(4),
+  /**
+   * <pre>
+   *Reference-rate fixing (e.g. SOFR, 13-week T-bill). Unit is the one ReferenceRateFixingProto.rate defines for the security's index.
+   * </pre>
+   *
+   * <code>RATE = 5;</code>
+   */
+  RATE(5),
   UNRECOGNIZED(-1),
   ;
 
@@ -83,6 +91,14 @@ public enum PriceTypeProto
    * <code>INDEX_LEVEL = 4;</code>
    */
   public static final int INDEX_LEVEL_VALUE = 4;
+  /**
+   * <pre>
+   *Reference-rate fixing (e.g. SOFR, 13-week T-bill). Unit is the one ReferenceRateFixingProto.rate defines for the security's index.
+   * </pre>
+   *
+   * <code>RATE = 5;</code>
+   */
+  public static final int RATE_VALUE = 5;
 
 
   public final int getNumber() {
@@ -114,6 +130,7 @@ public enum PriceTypeProto
       case 2: return PERCENTAGE;
       case 3: return BASIS_POINTS;
       case 4: return INDEX_LEVEL;
+      case 5: return RATE;
       default: return null;
     }
   }

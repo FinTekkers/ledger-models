@@ -223,7 +223,7 @@ fn reference_rate_fixing_all_fields_round_trip() {
 
 #[test]
 fn frn_input_two_fixings_round_trip_in_order() {
-    let mut second = fixing(2026, 10, 26, "0.0429");
+    let mut second = fixing(2026, 10, 26, "4.29");
     second.index = IndexTypeProto::Sofr.into();
     let original = FrnInput {
         clean_price: Some(decimal("99.75")),
@@ -237,7 +237,7 @@ fn frn_input_two_fixings_round_trip_in_order() {
     assert_eq!(parsed.fixings.len(), 2);
     let expected = [
         (IndexTypeProto::TBill13Week, 19, "0.0432"),
-        (IndexTypeProto::Sofr, 26, "0.0429"),
+        (IndexTypeProto::Sofr, 26, "4.29"),
     ];
     for (f, (index, day, rate)) in parsed.fixings.iter().zip(expected) {
         assert_eq!(f.index, index as i32);
@@ -299,7 +299,7 @@ fn lm389_bill_issue_date_round_trips() {
 
 #[test]
 fn lm382_new_fields_decode_unset_when_absent() {
-    let mut sofr = fixing(2026, 10, 26, "0.0429");
+    let mut sofr = fixing(2026, 10, 26, "4.29");
     sofr.index = IndexTypeProto::Sofr.into();
     let fixing = ReferenceRateFixingProto::decode(sofr.encode_to_vec().as_slice()).expect("decode failed");
     let old_issuance = IssuanceProto { auction_issue_date: Some(date(2026, 7, 23)), ..Default::default() };

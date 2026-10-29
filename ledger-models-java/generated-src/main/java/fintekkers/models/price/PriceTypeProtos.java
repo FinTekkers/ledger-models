@@ -24,11 +24,11 @@ public final class PriceTypeProtos {
   static {
     java.lang.String[] descriptorData = {
       "\n(fintekkers/models/price/price_type.pro" +
-      "to\022\027fintekkers.models.price*i\n\016PriceType" +
+      "to\022\027fintekkers.models.price*s\n\016PriceType" +
       "Proto\022\026\n\022UNKNOWN_PRICE_TYPE\020\000\022\014\n\010ABSOLUT" +
       "E\020\001\022\016\n\nPERCENTAGE\020\002\022\020\n\014BASIS_POINTS\020\003\022\017\n" +
-      "\013INDEX_LEVEL\020\004B\023B\017PriceTypeProtosP\001b\006pro" +
-      "to3"
+      "\013INDEX_LEVEL\020\004\022\010\n\004RATE\020\005B\023B\017PriceTypePro" +
+      "tosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

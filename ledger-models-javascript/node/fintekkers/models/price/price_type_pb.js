@@ -30,7 +30,8 @@ proto.fintekkers.models.price.PriceTypeProto = {
   ABSOLUTE: 1,
   PERCENTAGE: 2,
   BASIS_POINTS: 3,
-  INDEX_LEVEL: 4
+  INDEX_LEVEL: 4,
+  RATE: 5
 };
 
 goog.object.extend(exports, proto.fintekkers.models.price);

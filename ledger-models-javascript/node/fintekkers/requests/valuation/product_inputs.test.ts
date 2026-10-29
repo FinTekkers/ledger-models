@@ -409,7 +409,7 @@ describe('ReferenceRateFixingProto round-trip (LM-365)', () => {
         const original = new FrnInput();
         original.setCleanPrice(decimal('99.75'));
         original.addFixings(fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 10, 19), '0.0432'));
-        original.addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '0.0429'));
+        original.addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '4.29'));
 
         const parsed = FrnInput.deserializeBinary(original.serializeBinary());
 
@@ -419,7 +419,7 @@ describe('ReferenceRateFixingProto round-trip (LM-365)', () => {
         ]);
         expect(got).toEqual([
             [IndexTypeProto.T_BILL_13_WEEK, 2026, 10, 19, '0.0432'],
-            [IndexTypeProto.SOFR, 2026, 10, 26, '0.0429'],
+            [IndexTypeProto.SOFR, 2026, 10, 26, '4.29'],
         ]);
         expect(canonical(parsed.getCleanPrice())).toBe('99.75');
     });
@@ -453,16 +453,16 @@ describe('LM-365 wire field numbers and types', () => {
         frn.setCleanPrice(decimal('99.75'));
         frn.setCurve(sofrCurve());
         frn.addFixings(fixing(IndexTypeProto.T_BILL_13_WEEK, date(2026, 10, 19), '0.0432'));
-        frn.addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '0.0429'));
+        frn.addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '4.29'));
         expect(wireFields(frn.serializeBinary())).toEqual([
             [1, DELIMITED], [2, DELIMITED], [10, DELIMITED], [11, DELIMITED], [11, DELIMITED],
         ]);
 
         const onlyFixing = new FrnInput();
-        onlyFixing.addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '0.0429'));
+        onlyFixing.addFixings(fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '4.29'));
         const parsed = onlyMessage(onlyFixing.serializeBinary(), 11, ReferenceRateFixingProto);
         expect(parsed.getIndex()).toBe(IndexTypeProto.SOFR);
-        expect(canonical(parsed.getRate())).toBe('0.0429');
+        expect(canonical(parsed.getRate())).toBe('4.29');
     });
 });
 
@@ -506,7 +506,7 @@ describe('LM-382 auction_date and bill_maturity_date round-trip', () => {
     });
 
     test('a message without the new fields decodes with them unset', () => {
-        const fixingBytes = fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '0.0429').serializeBinary();
+        const fixingBytes = fixing(IndexTypeProto.SOFR, date(2026, 10, 26), '4.29').serializeBinary();
         const oldIssuance = new IssuanceProto();
         oldIssuance.setAuctionIssueDate(date(2026, 7, 23));
 

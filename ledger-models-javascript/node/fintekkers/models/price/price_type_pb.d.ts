@@ -12,4 +12,5 @@ export enum PriceTypeProto {
     PERCENTAGE = 2,
     BASIS_POINTS = 3,
     INDEX_LEVEL = 4,
+    RATE = 5,
 }
