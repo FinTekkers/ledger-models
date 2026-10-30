@@ -9,13 +9,27 @@
 //! node with any match decides. No match, or an `unpriced` match, is
 //! [`ProductInputError::Unmapped`]: there is no default arm.
 //!
+//! [`for_security`] builds the `ProductInput` for that arm from a security,
+//! its price and its market data; [`check_product_input`] checks a
+//! `ProductInput` against the same rule (LM-410, see
+//! docs/adr/product_input_builders.md).
+//!
 //! Embeds the crate-root `hierarchy.json` itself rather than reading it
 //! through [`product_hierarchy`], so that loader stays unchanged. A broken
 //! section is [`ProductInputError::InvalidRegistry`], never a panic.
 
+use crate::fintekkers::models::price::PriceProto;
 use crate::fintekkers::models::security::{CouponTypeProto, ProductTypeProto, SecurityProto};
+use crate::fintekkers::models::util::UuidProto;
 use crate::fintekkers::proto::LEDGER_MODELS_PROTO_FILE_DESCRIPTOR_SET;
+use crate::fintekkers::requests::util::errors::FieldViolationProto;
+use crate::fintekkers::requests::valuation::product_input::Input;
+use crate::fintekkers::requests::valuation::{
+    BondInput, CashInput, EquityInput, FrnInput, InflationIndexInput, MbsInput, ProductInput,
+    ReferenceRateFixingProto, TipsInput, YieldCurveInput,
+};
 use crate::fintekkers::wrappers::models::product_hierarchy;
+use crate::fintekkers::wrappers::models::utils::errors::object_id_of;
 use prost::Message;
 use serde_json::{Map, Value};
 use std::collections::{HashMap, HashSet};
@@ -57,14 +71,67 @@ impl MarketDataKind {
 }
 
 /// Typed input error for valuation-arm lookups (docs/adr/typed-input-errors.md).
-#[derive(Debug, Clone, PartialEq, Eq)]
+/// Non-exhaustive: match it with a wildcard arm.
+#[derive(Debug, Clone, PartialEq)]
+#[non_exhaustive]
 pub enum ProductInputError {
     /// The product type (and coupon type) has no arm, or is `unpriced`.
     /// Rust counterpart of `UnmappedProductTypeError`. Maps to `Code::InvalidArgument`.
     Unmapped { product_type: String, coupon_type: String },
     /// hierarchy.json `valuation_arms` is broken. Maps to `Code::Internal`.
     InvalidRegistry(String),
+    /// The arm requires market data the caller did not supply (LM-410).
+    /// Maps to `Code::InvalidArgument`.
+    MissingMarketData(MissingMarketDataError),
+    /// The `ProductInput` or request is malformed: no arm, the wrong arm, or a
+    /// missing required field (LM-410). Never empty. Maps to `Code::InvalidArgument`.
+    Validation(Vec<FieldViolationProto>),
 }
+
+impl ProductInputError {
+    /// Field-level violations of a `MissingMarketData` or `Validation` error;
+    /// empty for the other variants.
+    pub fn violations(&self) -> Vec<FieldViolationProto> {
+        match self {
+            ProductInputError::MissingMarketData(e) => vec![e.violation()],
+            ProductInputError::Validation(v) => v.clone(),
+            _ => vec![],
+        }
+    }
+}
+
+/// The security's valuation arm requires market data (hierarchy.json
+/// `valuation_arms` `requires`) that the caller did not supply, e.g. arm
+/// `tips` with no `CPI_U`. Rust counterpart of `MissingMarketDataError`.
+#[derive(Debug, Clone, PartialEq)]
+pub struct MissingMarketDataError {
+    /// The `ProductInput.input` field, e.g. `tips`.
+    pub arm: String,
+    pub kind: MarketDataKind,
+    /// The arm field that holds it, e.g. `tips.cpi`.
+    pub field: String,
+    /// UUID of the security; `None` when it has none.
+    pub object_id: Option<UuidProto>,
+}
+
+impl MissingMarketDataError {
+    /// The one field-level violation, on [`Self::field`].
+    pub fn violation(&self) -> FieldViolationProto {
+        FieldViolationProto {
+            field: self.field.clone(),
+            object_id: self.object_id.clone(),
+            message: self.to_string(),
+        }
+    }
+}
+
+impl fmt::Display for MissingMarketDataError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "missing market data {} for arm {}", self.kind.as_str_name(), self.arm)
+    }
+}
+
+impl std::error::Error for MissingMarketDataError {}
 
 impl fmt::Display for ProductInputError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -76,6 +143,12 @@ impl fmt::Display for ProductInputError {
             ProductInputError::InvalidRegistry(detail) => {
                 write!(f, "hierarchy.json valuation_arms: {detail}")
             }
+            ProductInputError::MissingMarketData(e) => write!(f, "{}: {e}", e.field),
+            ProductInputError::Validation(violations) => write!(
+                f,
+                "{}",
+                violations.iter().map(|v| format!("{}: {}", v.field, v.message)).collect::<Vec<_>>().join("; ")
+            ),
         }
     }
 }
@@ -85,7 +158,9 @@ impl std::error::Error for ProductInputError {}
 impl From<ProductInputError> for Status {
     fn from(value: ProductInputError) -> Self {
         let code = match value {
-            ProductInputError::Unmapped { .. } => Code::InvalidArgument,
+            ProductInputError::Unmapped { .. }
+            | ProductInputError::MissingMarketData(_)
+            | ProductInputError::Validation(_) => Code::InvalidArgument,
             ProductInputError::InvalidRegistry(_) => Code::Internal,
         };
         Status::new(code, value.to_string())
@@ -309,4 +384,120 @@ pub fn arm_for(security: &SecurityProto) -> Result<&'static str, ProductInputErr
 /// Market data the security's arm needs, in file order; empty when none.
 pub fn required_market_data(security: &SecurityProto) -> Result<Vec<MarketDataKind>, ProductInputError> {
     resolve(security).map(|a| a.requires.clone())
+}
+
+/// Market data for [`for_security`], one field per [`MarketDataKind`]:
+/// `CpiU` is `cpi`, `FrnFixings` is `fixings`, `FrnCurve` is `curve`. Each is
+/// copied to the arm field of the same name (`TipsInput.cpi`,
+/// `FrnInput.fixings`, `FrnInput.curve`) when the arm has one; the others are
+/// ignored.
+#[derive(Debug, Clone, Default, PartialEq)]
+pub struct MarketData {
+    pub cpi: Option<InflationIndexInput>,
+    pub fixings: Vec<ReferenceRateFixingProto>,
+    pub curve: Option<YieldCurveInput>,
+}
+
+/// The `ProductInput` for `security`, in the arm [`arm_for`] picks.
+///
+/// Sets the arm's security and copies `price.price` as is into `clean_price`
+/// (bond, tips, frn, mbs) or `unit_price` (equity, cash). Never sets
+/// `cost_basis`. `Err(Unmapped)` when the type has no arm,
+/// `Err(MissingMarketData)` when `market_data` lacks a kind the arm requires.
+pub fn for_security(
+    security: &SecurityProto,
+    price: &PriceProto,
+    market_data: &MarketData,
+) -> Result<ProductInput, ProductInputError> {
+    let arm = arm_for(security)?;
+    let security_field = Some(security.clone());
+    let price_field = price.price.clone();
+    let input = match arm {
+        "bond" => Input::Bond(BondInput { security: security_field, clean_price: price_field, ..Default::default() }),
+        "tips" => Input::Tips(TipsInput {
+            security: security_field,
+            clean_price: price_field,
+            cpi: market_data.cpi.clone(),
+            ..Default::default()
+        }),
+        "frn" => Input::Frn(FrnInput {
+            security: security_field,
+            clean_price: price_field,
+            curve: market_data.curve.clone(),
+            fixings: market_data.fixings.clone(),
+            ..Default::default()
+        }),
+        "mbs" => Input::Mbs(MbsInput { security: security_field, clean_price: price_field, ..Default::default() }),
+        "equity" => Input::Equity(EquityInput { security: security_field, unit_price: price_field }),
+        "cash" => Input::Cash(CashInput { security: security_field, unit_price: price_field }),
+        other => return Err(bad(format!("for_security has no builder for arm {other}"))),
+    };
+    let out = ProductInput { input: Some(input) };
+    check_product_input(&out)?;
+    Ok(out)
+}
+
+/// Checks `product_input` is the arm [`arm_for`] picks for its security, and
+/// holds every market-data kind that arm requires. `Err(Validation)` when no
+/// arm is set or it is the wrong arm, `Err(Unmapped)`, or
+/// `Err(MissingMarketData)`.
+pub fn check_product_input(product_input: &ProductInput) -> Result<(), ProductInputError> {
+    let Some(input) = &product_input.input else {
+        return Err(ProductInputError::Validation(vec![FieldViolationProto {
+            field: "product_input".to_string(),
+            object_id: None,
+            message: "no ProductInput arm is set".to_string(),
+        }]));
+    };
+    let (arm, security) = match input {
+        Input::Bond(b) => ("bond", &b.security),
+        Input::Tips(t) => ("tips", &t.security),
+        Input::Frn(f) => ("frn", &f.security),
+        Input::Mbs(m) => ("mbs", &m.security),
+        Input::Equity(e) => ("equity", &e.security),
+        Input::Cash(c) => ("cash", &c.security),
+    };
+    let security = security.clone().unwrap_or_default();
+    let resolved = resolve(&security)?;
+    let object_id = object_id_of(security.uuid.as_ref());
+    if resolved.arm != arm {
+        return Err(ProductInputError::Validation(vec![FieldViolationProto {
+            field: format!("product_input.{arm}"),
+            object_id,
+            message: format!(
+                "arm {arm} does not match arm {} for product_type {}",
+                resolved.arm,
+                product_type_of(&security)
+            ),
+        }]));
+    }
+    match resolved.requires.iter().find(|kind| !has(product_input, **kind)) {
+        Some(kind) => Err(ProductInputError::MissingMarketData(MissingMarketDataError {
+            arm: arm.to_string(),
+            kind: *kind,
+            field: format!("{arm}.{}", field_of(*kind)),
+            object_id,
+        })),
+        None => Ok(()),
+    }
+}
+
+/// The `ProductInput` arm field (and [`MarketData`] field) that holds `kind`.
+fn field_of(kind: MarketDataKind) -> &'static str {
+    match kind {
+        MarketDataKind::CpiU => "cpi",
+        MarketDataKind::FrnFixings => "fixings",
+        MarketDataKind::FrnCurve => "curve",
+    }
+}
+
+/// Whether `product_input` holds `kind`. A cpi with neither readings nor
+/// reference_cpi does not count.
+fn has(product_input: &ProductInput, kind: MarketDataKind) -> bool {
+    match (&product_input.input, kind) {
+        (Some(Input::Tips(t)), MarketDataKind::CpiU) => t.cpi.as_ref().is_some_and(|c| c.cpi.is_some()),
+        (Some(Input::Frn(f)), MarketDataKind::FrnFixings) => !f.fixings.is_empty(),
+        (Some(Input::Frn(f)), MarketDataKind::FrnCurve) => f.curve.is_some(),
+        _ => false,
+    }
 }

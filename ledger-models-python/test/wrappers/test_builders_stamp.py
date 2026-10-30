@@ -51,6 +51,7 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
 from fintekkers.models.position.field_pb2 import FieldProto
 from fintekkers.models.position.position_filter_pb2 import PositionFilterProto
+from fintekkers.models.position.measure_pb2 import MeasureProto
 from fintekkers.models.position.position_pb2 import PositionProto
 from fintekkers.models.position.position_status_pb2 import PositionStatusProto
 from fintekkers.models.price.price_pb2 import PriceProto
@@ -90,6 +91,7 @@ from fintekkers.wrappers.models.security.bond_security import BondSecurity
 from fintekkers.wrappers.models.security.floating_rate_note import FloatingRateNote
 from fintekkers.wrappers.models.security.index_security import IndexSecurity
 from fintekkers.wrappers.models.security.mortgage_backed_security import MortgageBackedSecurity
+from fintekkers.wrappers.models.security.product_inputs import for_security
 from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.security.security_identifier import Identifier
 from fintekkers.wrappers.models.security.tenor import Tenor
@@ -108,6 +110,7 @@ from fintekkers.wrappers.requests.portfolio import CreatePortfolioRequest, Query
 from fintekkers.wrappers.requests.price import CreatePriceRequest, QueryPriceRequest
 from fintekkers.wrappers.requests.security import CreateSecurityRequest, QuerySecurityRequest
 from fintekkers.wrappers.requests.transaction import CreateTransactionRequest, QueryTransactionRequest
+from fintekkers.wrappers.requests.valuation import ValuationRequests
 from fintekkers.wrappers.util.object_types import SCHEMA_VERSION, own_type, read_type, read_version, stamp, stamp_own
 
 ROOT = "fintekkers.wrappers"
@@ -305,6 +308,13 @@ def _portfolio() -> PortfolioProto:
     return stamp_own(PortfolioProto(uuid=_uuid(103), as_of=_timestamp(), portfolio_name="Test portfolio"))
 
 
+def _note() -> SecurityProto:
+    """_security() as a TREASURY_NOTE, so it has a ProductInput arm (bond)."""
+    security = _security()
+    security.product_type = TREASURY_NOTE
+    return security
+
+
 def _price() -> PriceProto:
     return stamp_own(PriceProto(
         uuid=_uuid(104), as_of=_timestamp(), price=encode_decimal(Decimal("99.5")), security=_security(),
@@ -396,6 +406,8 @@ BUILDERS = {
         pass_through_rate=Decimal("4.5"), current_factor=Decimal("0.9"), original_face_value=Decimal(1000000),
         current_upb=Decimal(900000), psa_speed=Decimal(150)),
     "models.security.tenor.Tenor.as_proto": lambda: Tenor(TenorTypeProto.TERM, "5Y").as_proto(),
+    # LM-410: a ProductInput (no object_type) holding the caller's security as it is.
+    "models.security.product_inputs.for_security": lambda: for_security(_note(), _price()),
     # Value builders: their messages have no object_type field.
     "models.errors.violation": lambda: errors.violation("price", UUID(int=108), "price is required"),
     "models.util.date_utils.get_date_proto": lambda: date_utils.get_date_proto(date(2026, 10, 14)),
@@ -457,6 +469,9 @@ BUILDERS = {
             settlement_date=date(2026, 10, 15), position_status=PositionStatusProto.INTENDED,
             transaction_type=TransactionTypeProto.BUY, price=Decimal("99.5"), quantity=Decimal(100),
             as_of=datetime(2026, 10, 14, 9, 30)).proto),
+    # LM-410: the request is the builder's; product_input and position_input are the caller's.
+    "requests.valuation.ValuationRequests.typed": lambda: ValuationRequests.typed(
+        _timestamp(), for_security(_note(), _price()), stamp_own(PositionProto()), [MeasureProto.MARKET_VALUE]),
     # Takes only message filter values: it packs every value into an Any.
     "requests.transaction.QueryTransactionRequest.create_query_request": lambda: (
         QueryTransactionRequest.create_query_request({FieldProto.ID: _uuid(106)})),
@@ -477,6 +492,7 @@ NOT_BUILDERS = {
     "models.errors.ModelValidationError": "exception type; its violations come from errors.violation (a builder)",
     "models.errors.UnmappedProductTypeError": "exception type",
     "models.errors.InvalidRegistryError": "exception type",
+    "models.errors.MissingMarketDataError": "exception type; its violation comes from errors.violation (a builder)",
     "models.portfolio.set_portfolio_fetcher": "setter for the lazy-hydrate fetcher",
     "models.price.set_price_fetcher": "setter for the lazy-hydrate fetcher",
     "models.security.security.set_security_fetcher": "setter for the lazy-hydrate fetcher",
@@ -499,6 +515,8 @@ NOT_BUILDERS = {
     "models.security.product_inputs.arm_for": "registry lookup; returns a ProductInput arm name",
     "models.security.product_inputs.required_market_data": "registry lookup; returns MarketDataKind values",
     "models.security.product_inputs.MarketDataKind": "str enum of market-data kinds, not a message",
+    "models.security.product_inputs.MarketData": "frozen holder of the caller's market-data protos; creates none",
+    "models.security.product_inputs.check_product_input": "validator; raises or returns None",
     "models.security.security.IFinancialModelObject": "interface with no state",
     "models.security.security.RawDataModelObject": "plain id/as_of holder, no message",
     "models.security.tenor.Tenor": "holds a TenorTypeProto value and a relativedelta; Tenor.as_proto is the builder",
@@ -525,6 +543,7 @@ NOT_BUILDERS = {
     "models.util.serialization.ProtoSerializationUtil.deserialize": "read path",
     "models.util.serialization.ProtoSerializationUtil.deserialize_required_timestamp": "read path",
     "models.util.serialization.ProtoSerializationUtil.deserialize_required_uuid": "read path",
+    "requests.valuation.ValuationRequests": "namespace class with no constructor of its own; ValuationRequests.typed is the builder",
     "requests.portfolio.CreatePortfolioRequest": "namespace class with no constructor of its own; its static methods are the builders",
     "util.link_cache.LinkCache": "cache of protos it was given; creates none",
     "util.link_resolver.LinkResolver": "resolves links through a caller's fetcher; creates none",

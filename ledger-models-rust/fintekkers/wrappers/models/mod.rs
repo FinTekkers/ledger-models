@@ -17,4 +17,5 @@ pub mod tenor;
 pub mod tips_bond;
 pub mod transaction;
 pub mod treasury_frn_fixings;
+pub mod valuation_requests;
 pub mod utils;

@@ -132,6 +132,19 @@ A `raw_uuid` that is neither empty nor exactly 16 bytes is a typed input error n
 
 It carries no `FieldViolationProto`s: the input is valid, the registry just has no arm for it. Services map it to `INVALID_ARGUMENT`.
 
+### Missing market data (LM-410)
+
+`ProductInputs.forSecurity` and `ValuationRequests.typed` raise `MissingMarketDataError` when the security's arm `requires` market data the caller did not supply, e.g. arm `tips` with no `CPI_U`. It names the arm and the kind, and carries one violation on the arm field (`tips.cpi`, `frn.fixings`, `frn.curve`) with the security's UUID. A malformed `ProductInput` (no arm, or an arm `armFor` did not pick) or a missing `position_input` / `asof_datetime` is a plain `ModelValidationException` / `ModelValidationError`. See [`product_input_builders.md`](product_input_builders.md).
+
+| Binding | Missing market data | Base | Malformed input |
+|---|---|---|---|
+| Java | `common.models.errors.MissingMarketDataError` (`getArm()`, `getKind()`) | `ModelValidationException` | `ModelValidationException` |
+| Python | `fintekkers.wrappers.models.errors.MissingMarketDataError` (`.arm`, `.kind`) | `ModelValidationError` | `ModelValidationError` |
+| JS/TS | `wrappers/models/errors` `MissingMarketDataError` (`arm`, `kind`) | `ModelValidationError` | `ModelValidationError` |
+| Rust | `ProductInputError::MissingMarketData(MissingMarketDataError { arm, kind, .. })` | `ProductInputError` (now `#[non_exhaustive]`) | `ProductInputError::Validation` |
+
+Services map all of them to `INVALID_ARGUMENT`.
+
 ## Affected callers
 
 - Java callers that catch `TransactionProcessingException` around `Transaction.addCashImpact` (or the short-form `Transaction` constructor) no longer see the missing-`face_value` case; it now arrives as `IllegalArgumentException` / `ModelValidationException`. No caller in this repo does this. ledger-service's dependent item maps it to `INVALID_ARGUMENT`.

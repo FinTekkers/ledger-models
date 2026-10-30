@@ -20,6 +20,12 @@ import java.util.OptionalInt;
  * {@code fintekkers.wrappers.models.security.treasury_frn_fixings}; both are
  * tested against {@code test-fixtures/treasury-frn-fixings.json}.
  * See {@code docs/adr/frn_reference_rate_fixings.md} (LM-382, LM-385).
+ *
+ * <p>Deprecated (LM-410): FRN fixings now come from price-service (MDI-100)
+ * and reach {@code ProductInputs.forSecurity} ready to use through
+ * {@code MarketData}; nothing here picks them any more. To be deleted in
+ * LM-411, once ledger-service no longer calls it (LS-202). See
+ * docs/adr/product_input_builders.md.
  */
 public final class TreasuryFrnFixings {
 

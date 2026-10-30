@@ -28,12 +28,13 @@ use rust_decimal_macros::dec;
 use syn::visit::Visit;
 use uuid::Uuid;
 
+use ledger_models::fintekkers::models::position::{MeasureProto, PositionProto};
 use ledger_models::fintekkers::models::price::PriceProto;
 use ledger_models::fintekkers::models::security::bond::AgencyProto;
 use ledger_models::fintekkers::models::security::index::IndexTypeProto;
 use ledger_models::fintekkers::models::security::security_proto::NonBondDetails;
 use ledger_models::fintekkers::models::security::{
-    CashDetailsProto, CouponFrequencyProto, CouponTypeProto, SecurityProto,
+    CashDetailsProto, CouponFrequencyProto, CouponTypeProto, ProductTypeProto, SecurityProto,
 };
 use ledger_models::fintekkers::models::util::LocalTimestampProto;
 use ledger_models::fintekkers::proto::LEDGER_MODELS_PROTO_FILE_DESCRIPTOR_SET;
@@ -42,6 +43,8 @@ use ledger_models::fintekkers::wrappers::models::floating_rate_note::FloatingRat
 use ledger_models::fintekkers::wrappers::models::mortgage_backed_security::MortgageBackedSecurity;
 use ledger_models::fintekkers::wrappers::models::portfolio::PortfolioProtoBuilder;
 use ledger_models::fintekkers::wrappers::models::price::PriceProtoBuilder;
+use ledger_models::fintekkers::wrappers::models::product_inputs::{for_security, MarketData};
+use ledger_models::fintekkers::wrappers::models::valuation_requests::typed;
 use ledger_models::fintekkers::wrappers::models::security::{link_of, link_of_latest, SecurityProtoBuilder};
 use ledger_models::fintekkers::wrappers::models::tips_bond::TIPSBond;
 use ledger_models::fintekkers::wrappers::models::utils::decimal::DecimalWrapper;
@@ -53,6 +56,7 @@ use ledger_models::fintekkers::models::util::ObjectTypeProto;
 const SECURITY: &str = "fintekkers.models.security.SecurityProto";
 const PRICE: &str = "fintekkers.models.price.PriceProto";
 const PORTFOLIO: &str = "fintekkers.models.portfolio.PortfolioProto";
+const VALUATION_REQUEST: &str = "fintekkers.requests.valuation.ValuationRequestProto";
 
 /// A builder: its scan name, the proto full name it returns, a call that
 /// returns the encoded message, and the nested paths the walk must check.
@@ -75,6 +79,7 @@ const BUILDERS: &[Builder] = &[
     ("TIPSBond::from_pricer_inputs", SECURITY, tips_from_pricer_inputs, &["$"]),
     ("FloatingRateNote::from_pricer_inputs", SECURITY, frn_from_pricer_inputs, &["$"]),
     ("MortgageBackedSecurity::from_pricer_inputs", SECURITY, mbs_from_pricer_inputs, &["$"]),
+    ("valuation_requests::typed", VALUATION_REQUEST, typed_valuation_request, &["$", "$.product_input.bond.security"]),
 ];
 
 /// Public functions that return a message they did not build, with why.
@@ -195,6 +200,16 @@ fn mbs_from_pricer_inputs() -> Vec<u8> {
         dec!(150),
     )
     .encode_to_vec()
+}
+
+/// The request is the builder's; the product input's security and the
+/// position are the caller's, passed in stamped.
+fn typed_valuation_request() -> Vec<u8> {
+    let note = SecurityProto { product_type: ProductTypeProto::TreasuryNote.into(), ..stamped_security() };
+    let product_input = for_security(&note, &PriceProto::default(), &MarketData::default()).unwrap();
+    typed(LocalTimestampProto::default(), product_input, stamp_own(PositionProto::default()), &[MeasureProto::MarketValue])
+        .unwrap()
+        .encode_to_vec()
 }
 
 // ---------- the stamp walk ----------

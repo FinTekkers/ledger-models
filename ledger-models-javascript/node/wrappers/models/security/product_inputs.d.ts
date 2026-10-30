@@ -10,8 +10,14 @@
  * match decides. No match, or an unpriced match, throws
  * UnmappedProductTypeError: there is no default arm. A broken section throws
  * a plain Error at load, like product_hierarchy.
+ *
+ * forSecurity builds the ProductInput for that arm from a security, its price
+ * and its market data; checkProductInput checks a ProductInput against the
+ * same rule (LM-410). See docs/adr/product_input_builders.md.
  */
+import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { InflationIndexInput, ProductInput, ReferenceRateFixingProto, YieldCurveInput } from '../../../fintekkers/requests/valuation/product_inputs_pb';
 /** The closed requires vocabulary: market data an arm needs beyond the price. */
 export type MarketDataKind = 'CPI_U' | 'FRN_FIXINGS' | 'FRN_CURVE';
 interface Arm {
@@ -43,4 +49,31 @@ export declare function shippedValuationArms(): ValuationArms;
 export declare function armFor(security: SecurityProto): string;
 /** Market data the security's arm needs, in file order. A fresh array; empty when none. */
 export declare function requiredMarketData(security: SecurityProto): MarketDataKind[];
+/**
+ * Market data for forSecurity, one field per MarketDataKind: CPI_U is `cpi`,
+ * FRN_FIXINGS is `fixings`, FRN_CURVE is `curve`. Each is copied to the arm
+ * field of the same name (TipsInput.cpi, FrnInput.fixings, FrnInput.curve)
+ * when the arm has one; the others are ignored.
+ */
+export interface MarketData {
+    cpi?: InflationIndexInput;
+    fixings?: ReferenceRateFixingProto[];
+    curve?: YieldCurveInput;
+}
+/**
+ * The ProductInput for `security`, in the arm armFor picks.
+ *
+ * Sets the arm's security and copies price.price as is into clean_price
+ * (bond, tips, frn, mbs) or unit_price (equity, cash). Never sets
+ * cost_basis. Throws UnmappedProductTypeError when the type has no arm and
+ * MissingMarketDataError when `marketData` lacks a kind the arm requires.
+ * The caller's protos are set as they are, not copied or stamped (LM-322).
+ */
+export declare function forSecurity(security: SecurityProto, price: PriceProto, marketData?: MarketData | null): ProductInput;
+/**
+ * Checks `productInput` is the arm armFor picks for its security, and holds
+ * every market-data kind that arm requires. Throws ModelValidationError (no
+ * arm, or the wrong arm), UnmappedProductTypeError or MissingMarketDataError.
+ */
+export declare function checkProductInput(productInput: ProductInput): void;
 export {};

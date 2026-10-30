@@ -10,14 +10,23 @@
  * match decides. No match, or an unpriced match, throws
  * UnmappedProductTypeError: there is no default arm. A broken section throws
  * a plain Error at load, like product_hierarchy.
+ *
+ * forSecurity builds the ProductInput for that arm from a security, its price
+ * and its market data; checkProductInput checks a ProductInput against the
+ * same rule (LM-410). See docs/adr/product_input_builders.md.
  */
 
 import hierarchy from '../../../../hierarchy.json';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
+import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { ProductInput } from '../../../fintekkers/requests/valuation/product_inputs_pb';
-import { UnmappedProductTypeError } from '../errors';
+import {
+  BondInput, CashInput, EquityInput, FrnInput, InflationIndexInput, MbsInput, ProductInput,
+  ReferenceRateFixingProto, TipsInput, YieldCurveInput,
+} from '../../../fintekkers/requests/valuation/product_inputs_pb';
+import { MissingMarketDataError, ModelValidationError, UnmappedProductTypeError, violation } from '../errors';
+import { UUID } from '../utils/uuid';
 import { allProductTypes, descendantsOf, parentOf } from './product_hierarchy';
 
 /** The closed requires vocabulary: market data an arm needs beyond the price. */
@@ -190,4 +199,110 @@ export function armFor(security: SecurityProto): string {
 /** Market data the security's arm needs, in file order. A fresh array; empty when none. */
 export function requiredMarketData(security: SecurityProto): MarketDataKind[] {
   return [...shippedValuationArms().require(productTypeOf(security), couponTypeOf(security)).requires];
+}
+
+/**
+ * Market data for forSecurity, one field per MarketDataKind: CPI_U is `cpi`,
+ * FRN_FIXINGS is `fixings`, FRN_CURVE is `curve`. Each is copied to the arm
+ * field of the same name (TipsInput.cpi, FrnInput.fixings, FrnInput.curve)
+ * when the arm has one; the others are ignored.
+ */
+export interface MarketData {
+  cpi?: InflationIndexInput;
+  fixings?: ReferenceRateFixingProto[];
+  curve?: YieldCurveInput;
+}
+
+/**
+ * The ProductInput for `security`, in the arm armFor picks.
+ *
+ * Sets the arm's security and copies price.price as is into clean_price
+ * (bond, tips, frn, mbs) or unit_price (equity, cash). Never sets
+ * cost_basis. Throws UnmappedProductTypeError when the type has no arm and
+ * MissingMarketDataError when `marketData` lacks a kind the arm requires.
+ * The caller's protos are set as they are, not copied or stamped (LM-322).
+ */
+export function forSecurity(security: SecurityProto, price: PriceProto, marketData?: MarketData | null): ProductInput {
+  const md = marketData ?? {};
+  const arm = armFor(security);
+  const p = price.getPrice();
+  const out = new ProductInput();
+  switch (arm) {
+    case 'bond':
+      out.setBond(new BondInput().setSecurity(security).setCleanPrice(p));
+      break;
+    case 'tips':
+      out.setTips(new TipsInput().setSecurity(security).setCleanPrice(p).setCpi(md.cpi));
+      break;
+    case 'frn':
+      out.setFrn(new FrnInput().setSecurity(security).setCleanPrice(p).setCurve(md.curve)
+        .setFixingsList([...(md.fixings ?? [])]));
+      break;
+    case 'mbs':
+      out.setMbs(new MbsInput().setSecurity(security).setCleanPrice(p));
+      break;
+    case 'equity':
+      out.setEquity(new EquityInput().setSecurity(security).setUnitPrice(p));
+      break;
+    case 'cash':
+      out.setCash(new CashInput().setSecurity(security).setUnitPrice(p));
+      break;
+    default:
+      throw new Error(`forSecurity has no builder for arm ${arm}`);
+  }
+  checkProductInput(out);
+  return out;
+}
+
+/**
+ * Checks `productInput` is the arm armFor picks for its security, and holds
+ * every market-data kind that arm requires. Throws ModelValidationError (no
+ * arm, or the wrong arm), UnmappedProductTypeError or MissingMarketDataError.
+ */
+export function checkProductInput(productInput: ProductInput): void {
+  const [arm, body] = armOf(productInput);
+  if (!body) throw new ModelValidationError([violation('product_input', undefined, 'no ProductInput arm is set')]);
+  const security = body.getSecurity() ?? new SecurityProto();
+  const productType = productTypeOf(security);
+  const resolved = shippedValuationArms().require(productType, couponTypeOf(security));
+  if (resolved.arm !== arm) {
+    throw new ModelValidationError([violation(`product_input.${arm}`, uuidOf(security),
+      `arm ${arm} does not match arm ${resolved.arm} for product_type ${productType}`)]);
+  }
+  for (const kind of resolved.requires) {
+    if (!has(productInput, kind)) throw new MissingMarketDataError(arm, kind, `${arm}.${FIELD_OF[kind]}`, uuidOf(security));
+  }
+}
+
+/** The set arm's name and message, or [undefined, undefined] when none is set. */
+function armOf(input: ProductInput): [string, { getSecurity(): SecurityProto | undefined }] | [undefined, undefined] {
+  switch (input.getInputCase()) {
+    case ProductInput.InputCase.BOND: return ['bond', input.getBond()!];
+    case ProductInput.InputCase.TIPS: return ['tips', input.getTips()!];
+    case ProductInput.InputCase.FRN: return ['frn', input.getFrn()!];
+    case ProductInput.InputCase.MBS: return ['mbs', input.getMbs()!];
+    case ProductInput.InputCase.EQUITY: return ['equity', input.getEquity()!];
+    case ProductInput.InputCase.CASH: return ['cash', input.getCash()!];
+    default: return [undefined, undefined];
+  }
+}
+
+/** The ProductInput arm field (and MarketData field) that holds each kind. */
+const FIELD_OF: Readonly<Record<MarketDataKind, string>> = { CPI_U: 'cpi', FRN_FIXINGS: 'fixings', FRN_CURVE: 'curve' };
+
+/** Whether `input` holds `kind`. A cpi with neither readings nor reference_cpi does not count. */
+function has(input: ProductInput, kind: MarketDataKind): boolean {
+  switch (kind) {
+    case 'CPI_U': {
+      const cpi = input.getTips()?.getCpi();
+      return cpi !== undefined && cpi.getCpiCase() !== InflationIndexInput.CpiCase.CPI_NOT_SET;
+    }
+    case 'FRN_FIXINGS': return (input.getFrn()?.getFixingsList().length ?? 0) > 0;
+    case 'FRN_CURVE': return input.getFrn()?.hasCurve() ?? false;
+  }
+}
+
+function uuidOf(security: SecurityProto): UUID | undefined {
+  const raw = security.getUuid()?.getRawUuid_asU8();
+  return raw && raw.length === 16 ? UUID.fromU8Array(raw) : undefined;
 }

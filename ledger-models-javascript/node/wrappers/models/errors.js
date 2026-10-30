@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.violation = exports.UnmappedProductTypeError = exports.ModelValidationError = void 0;
+exports.violation = exports.MissingMarketDataError = exports.UnmappedProductTypeError = exports.ModelValidationError = void 0;
 const field_violation_pb_1 = require("../../fintekkers/requests/util/errors/field_violation_pb");
 const uuid_1 = require("./utils/uuid");
 /**
@@ -47,6 +47,28 @@ class UnmappedProductTypeError extends Error {
     }
 }
 exports.UnmappedProductTypeError = UnmappedProductTypeError;
+/**
+ * Typed input error: the security's valuation arm requires market data
+ * (hierarchy.json valuation_arms `requires`) that the caller did not supply,
+ * e.g. arm `tips` with no `CPI_U`. Thrown by product_inputs.forSecurity and
+ * ValuationRequests.typed. Carries one violation on the arm field, e.g.
+ * `tips.cpi` (docs/adr/product_input_builders.md).
+ */
+class MissingMarketDataError extends ModelValidationError {
+    /**
+     * @param arm the ProductInput.input field, e.g. `tips`
+     * @param kind the missing MarketDataKind, e.g. `CPI_U`
+     * @param field the arm field that holds it, e.g. `tips.cpi`
+     * @param objectId the security's UUID, or undefined if it has none
+     */
+    constructor(arm, kind, field, objectId) {
+        super([violation(field, objectId, `missing market data ${kind} for arm ${arm}`)]);
+        this.name = 'MissingMarketDataError';
+        this.arm = arm;
+        this.kind = kind;
+    }
+}
+exports.MissingMarketDataError = MissingMarketDataError;
 /** Builds one violation. `objectId` may be undefined when the input had no UUID. */
 function violation(field, objectId, message) {
     const v = new field_violation_pb_1.FieldViolationProto();

@@ -26,6 +26,7 @@ import inspect
 import pkgutil
 from dataclasses import dataclass, field
 from datetime import datetime
+from decimal import Decimal
 from typing import Callable, Optional
 from uuid import UUID
 
@@ -40,6 +41,7 @@ from fintekkers.models.position.position_pb2 import PositionProto
 from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.security.identifier.identifier_pb2 import IdentifierProto
 from fintekkers.models.security.identifier.identifier_type_pb2 import IdentifierTypeProto
+from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.transaction.transaction_pb2 import TransactionProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
@@ -69,6 +71,7 @@ from fintekkers.requests.transaction.query_transaction_response_pb2 import Query
 from fintekkers.requests.valuation.valuation_response_pb2 import ValuationResponseProto
 
 from fintekkers.wrappers.models.position import Position
+from fintekkers.wrappers.models.util.decimal import encode_decimal
 from fintekkers.wrappers.models.price import Price
 from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.requests.portfolio import QueryPortfolioRequest
@@ -308,6 +311,19 @@ def _price_proto() -> PriceProto:
     return PriceProto(uuid=_uuid_proto(204), as_of=_timestamp(), security=_security_proto())
 
 
+def _equity_proto() -> SecurityProto:
+    """A COMMON_STOCK: run_valuation needs a type with a ProductInput arm
+    (equity, which requires no market data). Unstamped."""
+    security = _security_proto()
+    security.product_type = ProductTypeProto.COMMON_STOCK
+    return security
+
+
+def _equity_price_proto() -> PriceProto:
+    return PriceProto(uuid=_uuid_proto(204), as_of=_timestamp(), security=_equity_proto(),
+                      price=encode_decimal(Decimal("187.25")))
+
+
 def _transaction_proto() -> TransactionProto:
     return TransactionProto(uuid=_uuid_proto(205), as_of=_timestamp(), portfolio=_portfolio_proto())
 
@@ -413,16 +429,14 @@ DRIVEN = {
     f"{_P}.get_or_create_portfolio_by_name[not found]": Case(
         lambda: PortfolioService().get_or_create_portfolio_by_name("Test portfolio"),
         [("PortfolioService", "Search"), ("PortfolioService", "CreateOrUpdate")]),
-    f"{_V}.run_valuation[bare]": Case(
-        lambda: ValuationService().run_valuation(measures=[MeasureProto.MARKET_VALUE], asOf=datetime(2026, 10, 14)),
-        [("ValuationService", "RunValuation")]),
-    # Caller inputs arrive stamped here; test_caller_protos_not_restamped
-    # sends them unstamped.
+    # Caller inputs arrive stamped here; test_run_valuation_inputs_not_restamped
+    # sends them unstamped. With no security, position or price,
+    # run_valuation raises before sending (test_valuation_typed_builders.py).
     f"{_V}.run_valuation[with inputs]": Case(
         lambda: ValuationService().run_valuation(
-            security=Security(_stamp_all(_security_proto())),
+            security=Security(_stamp_all(_equity_proto())),
             position=Position(_stamp_all(PositionProto())),
-            price=Price(_stamp_all(_price_proto())),
+            price=Price(_stamp_all(_equity_price_proto())),
             measures=[MeasureProto.MARKET_VALUE],
             asOf=datetime(2026, 10, 14)),
         [("ValuationService", "RunValuation")]),
@@ -531,16 +545,19 @@ PASS_THROUGH = {
 
 
 def _valuation_inputs():
-    security, position, price = _security_proto(), PositionProto(), _price_proto()
+    security, position, price = _equity_proto(), PositionProto(), _equity_price_proto()
     return (security, position, price)
 
 
-# run_valuation builds its own request but copies the caller's protos into it:
-# each copy must arrive as the caller passed it, unstamped.
+# run_valuation builds its own request but copies the caller's protos into it
+# (LM-410: the security and price go into product_input.equity): each copy
+# must arrive as the caller passed it, unstamped.
 VALUATION_INPUTS = {
-    f"{_V}.run_valuation[security_input]": (0, lambda request: request.security_input),
-    f"{_V}.run_valuation[position_input]": (1, lambda request: request.position_input),
-    f"{_V}.run_valuation[price_input]": (2, lambda request: request.price_input),
+    f"{_V}.run_valuation[product_input.equity.security]": (
+        0, lambda request: request.product_input.equity.security, lambda caller: caller),
+    f"{_V}.run_valuation[position_input]": (1, lambda request: request.position_input, lambda caller: caller),
+    f"{_V}.run_valuation[product_input.equity.unit_price]": (
+        2, lambda request: request.product_input.equity.unit_price, lambda caller: caller.price),
 }
 
 # Method -> why it is neither driven nor pass-through.
@@ -609,7 +626,7 @@ def test_caller_protos_not_restamped(name, calls):
 
 @pytest.mark.parametrize("name", sorted(VALUATION_INPUTS))
 def test_run_valuation_inputs_not_restamped(name, calls):
-    position_index, sent_input = VALUATION_INPUTS[name]
+    position_index, sent_input, caller_part = VALUATION_INPUTS[name]
     security, position, price = _valuation_inputs()
     caller_input = (security, position, price)[position_index]
     before = copy.deepcopy(caller_input)
@@ -623,8 +640,9 @@ def test_run_valuation_inputs_not_restamped(name, calls):
     # The request itself is the service's: stamped.
     assert read_type(request) == own_type(request)
     assert read_version(request) == SCHEMA_VERSION
-    assert sent_input(request) == before
-    _assert_unstamped(sent_input(request), f"{name} as sent")
+    assert sent_input(request) == caller_part(before)
+    if "object_type" in sent_input(request).DESCRIPTOR.fields_by_name:
+        _assert_unstamped(sent_input(request), f"{name} as sent")
     _assert_unstamped(caller_input, f"{name} caller input")
 
 

@@ -49,6 +49,7 @@ const transaction_pb_1 = require("../../fintekkers/models/transaction/transactio
 const portfolio_pb_1 = require("../../fintekkers/models/portfolio/portfolio_pb");
 const transaction_type_pb_1 = require("../../fintekkers/models/transaction/transaction_type_pb");
 const position_pb_1 = require("../../fintekkers/models/position/position_pb");
+const measure_pb_1 = require("../../fintekkers/models/position/measure_pb");
 const query_security_response_pb_1 = require("../../fintekkers/requests/security/query_security_response_pb");
 const query_portfolio_response_pb_1 = require("../../fintekkers/requests/portfolio/query_portfolio_response_pb");
 const query_transaction_response_pb_1 = require("../../fintekkers/requests/transaction/query_transaction_response_pb");
@@ -77,6 +78,8 @@ const transaction_1 = __importDefault(require("../models/transaction/transaction
 const transaction_type_1 = require("../models/transaction/transaction_type");
 const positionfilter_1 = require("../models/position/positionfilter");
 const QueryPositionRequest_1 = require("../requests/position/QueryPositionRequest");
+const ValuationRequests_1 = require("../requests/valuation/ValuationRequests");
+const product_inputs_1 = require("../models/security/product_inputs");
 const uuid_1 = require("../models/utils/uuid");
 const datetime_1 = require("../models/utils/datetime");
 const PriceService_1 = require("../services/price-service/PriceService");
@@ -259,6 +262,8 @@ const BUILDERS = [
     B('LinkResolver.getTransaction', T.OBJECT_TYPE_QUERY_TRANSACTION_REQUEST, () => resolverRequest((r) => r.getTransaction(linkUuid()))),
     B('LinkResolver.resolveSecurities', T.OBJECT_TYPE_QUERY_SECURITY_REQUEST, (c) => resolverRequest((r) => r.resolveSecurities([linkedPrice(c)]))),
     B('LinkResolver.resolvePortfolios', T.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, (c) => resolverRequest((r) => r.resolvePortfolios([linkedTransaction(c)]))),
+    // LM-410: the request is the builder's; the product input's security and the position are the caller's.
+    B('ValuationRequests.typed', T.OBJECT_TYPE_VALUATION_REQUEST, (c) => ValuationRequests_1.ValuationRequests.typed(asOf, (0, product_inputs_1.forSecurity)(bond(c).proto, new price_pb_1.PriceProto()), c(new position_pb_1.PositionProto()), [measure_pb_1.MeasureProto.MARKET_VALUE])),
 ];
 /** The messages a builder returned: wrappers are read through `proto`, arrays item by item. */
 function messagesOf(built) {
@@ -531,7 +536,7 @@ const WRAPS_CALLER = "wraps the caller's proto (pass-through ruling)";
 const SERIALIZES = "converts values to untyped messages (dates, UUIDs, decimals) or returns the caller's Identifier proto as is";
 const DESERIALIZES = 'decodes protos the caller or server sent into wrappers; builds no message';
 /** Public callables the scan flags that build no message to stamp, each with its reason. */
-const EXCLUSIONS = Object.assign(Object.assign({ 'object-types.stamp': 'the stamping helper itself (tested above)', 'object-types.stampOwn': 'the stamping helper itself (tested above)', 'price_rules.validate': 'local stand-in for null input; never returned or sent', 'price_rules.requireValid': 'local stand-in for null input; never returned or sent', 'Security.create': "picks the wrapper class for the caller's proto (pass-through ruling)", 'Position.fromJSON': DESERIALIZES, 'ProtoSerializationUtil.deserialize': DESERIALIZES, 'serialization.util.unpack': DESERIALIZES, 'LocalDate.toDate': DESERIALIZES, 'ProtoSerializationUtil.serialize': SERIALIZES, 'serialization.util.pack': SERIALIZES, 'PositionFilter.addFilter': SERIALIZES, 'PositionFilter.addEqualsFilter': SERIALIZES, 'PositionFilter.addEqualsStringFilter': SERIALIZES, 'PositionFilter.addObjectFilter': SERIALIZES, 'Security.hydrate': 'swaps in the proto LinkResolver.getSecurity fetched (that request is tested)', 'Portfolio.hydrate': 'swaps in the proto LinkResolver.getPortfolio fetched (that request is tested)', 'Transaction.hydrate': 'swaps in the proto LinkResolver.getTransaction fetched (that request is tested)', 'TreasuryFrnFixings.select': "builds a ReferenceRateFixingProto, which has no object_type; flagged only for reading the caller's issuances" }, Object.fromEntries([
+const EXCLUSIONS = Object.assign(Object.assign({ 'object-types.stamp': 'the stamping helper itself (tested above)', 'object-types.stampOwn': 'the stamping helper itself (tested above)', 'price_rules.validate': 'local stand-in for null input; never returned or sent', 'price_rules.requireValid': 'local stand-in for null input; never returned or sent', 'product_inputs.checkProductInput': 'local stand-in SecurityProto for an arm with no security; never returned or sent', 'product_inputs.forSecurity': "builds a ProductInput, which has no object_type, around the caller's security; flagged only for calling checkProductInput", 'Security.create': "picks the wrapper class for the caller's proto (pass-through ruling)", 'Position.fromJSON': DESERIALIZES, 'ProtoSerializationUtil.deserialize': DESERIALIZES, 'serialization.util.unpack': DESERIALIZES, 'LocalDate.toDate': DESERIALIZES, 'ProtoSerializationUtil.serialize': SERIALIZES, 'serialization.util.pack': SERIALIZES, 'PositionFilter.addFilter': SERIALIZES, 'PositionFilter.addEqualsFilter': SERIALIZES, 'PositionFilter.addEqualsStringFilter': SERIALIZES, 'PositionFilter.addObjectFilter': SERIALIZES, 'Security.hydrate': 'swaps in the proto LinkResolver.getSecurity fetched (that request is tested)', 'Portfolio.hydrate': 'swaps in the proto LinkResolver.getPortfolio fetched (that request is tested)', 'Transaction.hydrate': 'swaps in the proto LinkResolver.getTransaction fetched (that request is tested)', 'TreasuryFrnFixings.select': "builds a ReferenceRateFixingProto, which has no object_type; flagged only for reading the caller's issuances" }, Object.fromEntries([
     'BondSecurity.constructor', 'FloatingRateNote.constructor', 'Identifier.constructor', 'IndexSecurity.constructor',
     'Issuance.constructor', 'MortgageBackedSecurity.constructor', 'Portfolio.constructor', 'Position.constructor',
     'Price.constructor', 'Security.constructor', 'TIPSBond.constructor',
