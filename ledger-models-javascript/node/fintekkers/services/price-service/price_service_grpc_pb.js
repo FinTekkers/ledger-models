@@ -76,7 +76,8 @@ var PriceService = exports.PriceService = {
     responseSerialize: serialize_fintekkers_requests_price_CreatePriceResponseProto,
     responseDeserialize: deserialize_fintekkers_requests_price_CreatePriceResponseProto,
   },
-  getByIds: {
+  // Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
+getByIds: {
     path: '/fintekkers.services.price_service.Price/GetByIds',
     requestStream: false,
     responseStream: false,
@@ -87,7 +88,8 @@ var PriceService = exports.PriceService = {
     responseSerialize: serialize_fintekkers_requests_price_QueryPriceResponseProto,
     responseDeserialize: deserialize_fintekkers_requests_price_QueryPriceResponseProto,
   },
-  search: {
+  // For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
+search: {
     path: '/fintekkers.services.price_service.Price/Search',
     requestStream: false,
     responseStream: true,
