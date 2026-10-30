@@ -33,6 +33,9 @@ jobs:
         working-directory: ledger-models-python
         run: ruff check .
 
+      - name: Materialize hierarchy.json mirror (bundled package asset)
+        run: ./sync-hierarchy-mirrors.sh
+
       - name: pytest (unit only)
         working-directory: ledger-models-python
         run: python -m pytest -m 'not integration' -x -q

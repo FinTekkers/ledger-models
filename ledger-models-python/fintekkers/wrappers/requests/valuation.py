@@ -1,4 +1,6 @@
 """Typed valuation requests (LM-410). See docs/adr/product_input_builders.md."""
+from __future__ import annotations
+
 from typing import Iterable, Optional
 
 from fintekkers.models.position.measure_pb2 import MeasureProto
