@@ -80,13 +80,15 @@ class PriceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetByIds(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """Returns the prices whose IDs are in QueryPriceRequestProto.uuIds (price IDs).
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def Search(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """For a given security, filter on SECURITY_ID in search_price_input; uuIds holds price IDs only.
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
