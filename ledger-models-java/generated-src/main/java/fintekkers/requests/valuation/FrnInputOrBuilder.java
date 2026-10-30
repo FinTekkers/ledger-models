@@ -70,6 +70,30 @@ public interface FrnInputOrBuilder extends
    * curve.index must match security.frn_extension.reference_rate_index.
    * A single curve is used for both projection and discounting (single-curve framework).
    * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
+   * When curve is supplied, its meaning is unchanged by the rules below.
+   * A curve measure is a measure that projects or discounts the FRN's
+   * cashflows. A measure documented as "no curve is used" is not a curve
+   * measure.
+   * curve may be absent for a curve measure when fixings is present.
+   * valuation-service then builds a flat-forward curve from the latest
+   * fixing (see fixings). This is an approximation: one rate for every tenor.
+   * Flat-curve rate. r is a continuously-compounded zero rate per annum,
+   * as a decimal fraction (0.0436 = 4.36%), with time on Actual/365.
+   * T_BILL_13_WEEK: r = ln(1 + mmy*d/360) / (d/365), where
+   *   d   = the bill's days: Actual days from bill_issue_date to
+   *         bill_maturity_date of the latest fixing.
+   *   mmy = that fixing's money-market yield on Actual/360, as a decimal
+   *         fraction (0.0432 = 4.32%). valuation-service derives the
+   *         money-market yield, in percent, from ReferenceRateFixingProto.rate;
+   *         divide by 100 for mmy. rate itself stays percent, bank-discount
+   *         basis.
+   * Example: mmy = 0.0432, d = 91 gives r = 0.0436 (rounded).
+   * If the latest T_BILL_13_WEEK fixing lacks bill_issue_date or
+   * bill_maturity_date, d is undefined and, when curve is absent, the
+   * request is invalid for a curve measure.
+   * Every other index still requires curve until its flat-curve rate is
+   * defined here. Without curve, such a request is invalid for a curve
+   * measure.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.YieldCurveInput curve = 10;</code>
@@ -82,6 +106,30 @@ public interface FrnInputOrBuilder extends
    * curve.index must match security.frn_extension.reference_rate_index.
    * A single curve is used for both projection and discounting (single-curve framework).
    * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
+   * When curve is supplied, its meaning is unchanged by the rules below.
+   * A curve measure is a measure that projects or discounts the FRN's
+   * cashflows. A measure documented as "no curve is used" is not a curve
+   * measure.
+   * curve may be absent for a curve measure when fixings is present.
+   * valuation-service then builds a flat-forward curve from the latest
+   * fixing (see fixings). This is an approximation: one rate for every tenor.
+   * Flat-curve rate. r is a continuously-compounded zero rate per annum,
+   * as a decimal fraction (0.0436 = 4.36%), with time on Actual/365.
+   * T_BILL_13_WEEK: r = ln(1 + mmy*d/360) / (d/365), where
+   *   d   = the bill's days: Actual days from bill_issue_date to
+   *         bill_maturity_date of the latest fixing.
+   *   mmy = that fixing's money-market yield on Actual/360, as a decimal
+   *         fraction (0.0432 = 4.32%). valuation-service derives the
+   *         money-market yield, in percent, from ReferenceRateFixingProto.rate;
+   *         divide by 100 for mmy. rate itself stays percent, bank-discount
+   *         basis.
+   * Example: mmy = 0.0432, d = 91 gives r = 0.0436 (rounded).
+   * If the latest T_BILL_13_WEEK fixing lacks bill_issue_date or
+   * bill_maturity_date, d is undefined and, when curve is absent, the
+   * request is invalid for a curve measure.
+   * Every other index still requires curve until its flat-curve rate is
+   * defined here. Without curve, such a request is invalid for a curve
+   * measure.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.YieldCurveInput curve = 10;</code>
@@ -94,6 +142,30 @@ public interface FrnInputOrBuilder extends
    * curve.index must match security.frn_extension.reference_rate_index.
    * A single curve is used for both projection and discounting (single-curve framework).
    * This is appropriate for RFR-based FRNs (SOFR, SONIA, ESTR, TONA).
+   * When curve is supplied, its meaning is unchanged by the rules below.
+   * A curve measure is a measure that projects or discounts the FRN's
+   * cashflows. A measure documented as "no curve is used" is not a curve
+   * measure.
+   * curve may be absent for a curve measure when fixings is present.
+   * valuation-service then builds a flat-forward curve from the latest
+   * fixing (see fixings). This is an approximation: one rate for every tenor.
+   * Flat-curve rate. r is a continuously-compounded zero rate per annum,
+   * as a decimal fraction (0.0436 = 4.36%), with time on Actual/365.
+   * T_BILL_13_WEEK: r = ln(1 + mmy*d/360) / (d/365), where
+   *   d   = the bill's days: Actual days from bill_issue_date to
+   *         bill_maturity_date of the latest fixing.
+   *   mmy = that fixing's money-market yield on Actual/360, as a decimal
+   *         fraction (0.0432 = 4.32%). valuation-service derives the
+   *         money-market yield, in percent, from ReferenceRateFixingProto.rate;
+   *         divide by 100 for mmy. rate itself stays percent, bank-discount
+   *         basis.
+   * Example: mmy = 0.0432, d = 91 gives r = 0.0436 (rounded).
+   * If the latest T_BILL_13_WEEK fixing lacks bill_issue_date or
+   * bill_maturity_date, d is undefined and, when curve is absent, the
+   * request is invalid for a curve measure.
+   * Every other index still requires curve until its flat-curve rate is
+   * defined here. Without curve, such a request is invalid for a curve
+   * measure.
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.YieldCurveInput curve = 10;</code>
@@ -105,7 +177,12 @@ public interface FrnInputOrBuilder extends
    * Published fixings of the FRN's reference rate, one per fixing date.
    * Each fixing.index must equal security.frn_extension.reference_rate_index.
    * Order is not significant. A duplicate fixing_date makes the input invalid.
-   * Not read by valuation-service today; use is tracked under VS-110.
+   * The latest fixing is the one with the greatest fixing_date on or before
+   * the UTC date of ValuationRequestProto.asof_datetime (a fixing on that
+   * date counts). When curve is absent, it builds the flat-forward curve
+   * (see curve). When curve is absent and no fixing_date is on or before
+   * that date, the request is invalid for a curve measure.
+   * A curve measure with neither curve nor fixings is invalid.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
@@ -117,7 +194,12 @@ public interface FrnInputOrBuilder extends
    * Published fixings of the FRN's reference rate, one per fixing date.
    * Each fixing.index must equal security.frn_extension.reference_rate_index.
    * Order is not significant. A duplicate fixing_date makes the input invalid.
-   * Not read by valuation-service today; use is tracked under VS-110.
+   * The latest fixing is the one with the greatest fixing_date on or before
+   * the UTC date of ValuationRequestProto.asof_datetime (a fixing on that
+   * date counts). When curve is absent, it builds the flat-forward curve
+   * (see curve). When curve is absent and no fixing_date is on or before
+   * that date, the request is invalid for a curve measure.
+   * A curve measure with neither curve nor fixings is invalid.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
@@ -128,7 +210,12 @@ public interface FrnInputOrBuilder extends
    * Published fixings of the FRN's reference rate, one per fixing date.
    * Each fixing.index must equal security.frn_extension.reference_rate_index.
    * Order is not significant. A duplicate fixing_date makes the input invalid.
-   * Not read by valuation-service today; use is tracked under VS-110.
+   * The latest fixing is the one with the greatest fixing_date on or before
+   * the UTC date of ValuationRequestProto.asof_datetime (a fixing on that
+   * date counts). When curve is absent, it builds the flat-forward curve
+   * (see curve). When curve is absent and no fixing_date is on or before
+   * that date, the request is invalid for a curve measure.
+   * A curve measure with neither curve nor fixings is invalid.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
@@ -139,7 +226,12 @@ public interface FrnInputOrBuilder extends
    * Published fixings of the FRN's reference rate, one per fixing date.
    * Each fixing.index must equal security.frn_extension.reference_rate_index.
    * Order is not significant. A duplicate fixing_date makes the input invalid.
-   * Not read by valuation-service today; use is tracked under VS-110.
+   * The latest fixing is the one with the greatest fixing_date on or before
+   * the UTC date of ValuationRequestProto.asof_datetime (a fixing on that
+   * date counts). When curve is absent, it builds the flat-forward curve
+   * (see curve). When curve is absent and no fixing_date is on or before
+   * that date, the request is invalid for a curve measure.
+   * A curve measure with neither curve nor fixings is invalid.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
@@ -151,7 +243,12 @@ public interface FrnInputOrBuilder extends
    * Published fixings of the FRN's reference rate, one per fixing date.
    * Each fixing.index must equal security.frn_extension.reference_rate_index.
    * Order is not significant. A duplicate fixing_date makes the input invalid.
-   * Not read by valuation-service today; use is tracked under VS-110.
+   * The latest fixing is the one with the greatest fixing_date on or before
+   * the UTC date of ValuationRequestProto.asof_datetime (a fixing on that
+   * date counts). When curve is absent, it builds the flat-forward curve
+   * (see curve). When curve is absent and no fixing_date is on or before
+   * that date, the request is invalid for a curve measure.
+   * A curve measure with neither curve nor fixings is invalid.
    * </pre>
    *
    * <code>repeated .fintekkers.requests.valuation.ReferenceRateFixingProto fixings = 11;</code>
