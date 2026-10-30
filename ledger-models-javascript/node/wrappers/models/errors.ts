@@ -52,6 +52,31 @@ export class UnmappedProductTypeError extends Error {
     }
 }
 
+/**
+ * Typed input error: the security's valuation arm requires market data
+ * (hierarchy.json valuation_arms `requires`) that the caller did not supply,
+ * e.g. arm `tips` with no `CPI_U`. Thrown by product_inputs.forSecurity and
+ * ValuationRequests.typed. Carries one violation on the arm field, e.g.
+ * `tips.cpi` (docs/adr/product_input_builders.md).
+ */
+export class MissingMarketDataError extends ModelValidationError {
+    readonly arm: string;
+    readonly kind: string;
+
+    /**
+     * @param arm the ProductInput.input field, e.g. `tips`
+     * @param kind the missing MarketDataKind, e.g. `CPI_U`
+     * @param field the arm field that holds it, e.g. `tips.cpi`
+     * @param objectId the security's UUID, or undefined if it has none
+     */
+    constructor(arm: string, kind: string, field: string, objectId: UUID | undefined) {
+        super([violation(field, objectId, `missing market data ${kind} for arm ${arm}`)]);
+        this.name = 'MissingMarketDataError';
+        this.arm = arm;
+        this.kind = kind;
+    }
+}
+
 /** Builds one violation. `objectId` may be undefined when the input had no UUID. */
 export function violation(field: string, objectId: UUID | undefined, message: string): FieldViolationProto {
     const v = new FieldViolationProto();

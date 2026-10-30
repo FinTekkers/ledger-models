@@ -13,7 +13,8 @@ import { PriceProto } from '../../fintekkers/models/price/price_pb';
 import { TransactionProto } from '../../fintekkers/models/transaction/transaction_pb';
 import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
 import { TransactionTypeProto } from '../../fintekkers/models/transaction/transaction_type_pb';
-import { PositionTypeProto, PositionViewProto } from '../../fintekkers/models/position/position_pb';
+import { PositionProto, PositionTypeProto, PositionViewProto } from '../../fintekkers/models/position/position_pb';
+import { MeasureProto } from '../../fintekkers/models/position/measure_pb';
 import { QuerySecurityResponseProto } from '../../fintekkers/requests/security/query_security_response_pb';
 import { QueryPortfolioResponseProto } from '../../fintekkers/requests/portfolio/query_portfolio_response_pb';
 import { QueryTransactionResponseProto } from '../../fintekkers/requests/transaction/query_transaction_response_pb';
@@ -45,6 +46,8 @@ import Transaction from '../models/transaction/transaction';
 import { TransactionType } from '../models/transaction/transaction_type';
 import { PositionFilter } from '../models/position/positionfilter';
 import { QueryPositionRequest } from '../requests/position/QueryPositionRequest';
+import { ValuationRequests } from '../requests/valuation/ValuationRequests';
+import { forSecurity } from '../models/security/product_inputs';
 import { UUID } from '../models/utils/uuid';
 import { ZonedDateTime } from '../models/utils/datetime';
 import { PriceService } from '../services/price-service/PriceService';
@@ -281,6 +284,9 @@ const BUILDERS: Builder[] = [
     (c) => resolverRequest((r) => r.resolveSecurities([linkedPrice(c)]))),
   B('LinkResolver.resolvePortfolios', T.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST,
     (c) => resolverRequest((r) => r.resolvePortfolios([linkedTransaction(c)]))),
+  // LM-410: the request is the builder's; the product input's security and the position are the caller's.
+  B('ValuationRequests.typed', T.OBJECT_TYPE_VALUATION_REQUEST, (c) => ValuationRequests.typed(
+    asOf, forSecurity(bond(c).proto, new PriceProto()), c(new PositionProto()), [MeasureProto.MARKET_VALUE])),
 ];
 
 /** The messages a builder returned: wrappers are read through `proto`, arrays item by item. */
@@ -577,6 +583,8 @@ const EXCLUSIONS: Record<string, string> = {
   'object-types.stampOwn': 'the stamping helper itself (tested above)',
   'price_rules.validate': 'local stand-in for null input; never returned or sent',
   'price_rules.requireValid': 'local stand-in for null input; never returned or sent',
+  'product_inputs.checkProductInput': 'local stand-in SecurityProto for an arm with no security; never returned or sent',
+  'product_inputs.forSecurity': "builds a ProductInput, which has no object_type, around the caller's security; flagged only for calling checkProductInput",
   'Security.create': "picks the wrapper class for the caller's proto (pass-through ruling)",
   'Position.fromJSON': DESERIALIZES,
   'ProtoSerializationUtil.deserialize': DESERIALIZES,

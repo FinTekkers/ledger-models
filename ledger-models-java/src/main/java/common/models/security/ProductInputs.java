@@ -6,10 +6,22 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Descriptors.OneofDescriptor;
+import com.google.protobuf.Message;
+import common.models.errors.MissingMarketDataError;
+import common.models.errors.ModelValidationException;
 import common.models.errors.UnmappedProductTypeError;
+import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.CouponTypeProto;
 import fintekkers.models.security.SecurityProto;
+import fintekkers.requests.valuation.BondInput;
+import fintekkers.requests.valuation.CashInput;
+import fintekkers.requests.valuation.EquityInput;
+import fintekkers.requests.valuation.FrnInput;
+import fintekkers.requests.valuation.InflationIndexInput;
+import fintekkers.requests.valuation.MbsInput;
 import fintekkers.requests.valuation.ProductInput;
+import fintekkers.requests.valuation.TipsInput;
+import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 /**
  * Which {@code ProductInput} arm values a security, and which market data
@@ -36,6 +49,11 @@ import java.util.TreeSet;
  * {@code unpriced} listing. The first node with any match decides. No match,
  * or an {@code unpriced} match, throws {@link UnmappedProductTypeError}:
  * there is no default arm.
+ *
+ * <p>{@link #forSecurity} builds the {@code ProductInput} for that arm from a
+ * security, its price and its market data; {@link #checkProductInput} checks
+ * a {@code ProductInput} against the same rule (LM-410, see
+ * docs/adr/product_input_builders.md).
  *
  * <p>Reads {@code /hierarchy.json} itself rather than through
  * {@link ProductHierarchy}, so the existing loader stays unchanged.
@@ -120,6 +138,128 @@ public final class ProductInputs {
     /** Market data the security's arm needs, in file order. Unmodifiable; empty when none. */
     public static List<MarketDataKind> requiredMarketData(SecurityProto security) {
         return Shipped.ARMS.require(productTypeOf(security), couponTypeOf(security)).requires;
+    }
+
+    /**
+     * The {@code ProductInput} for {@code security}, in the arm {@link #armFor} picks.
+     *
+     * <p>Sets the arm's security and copies {@code price.price} as is into
+     * clean_price (bond, tips, frn, mbs) or unit_price (equity, cash). Never
+     * sets cost_basis. {@code marketData} supplies the arm's other fields.
+     *
+     * @throws UnmappedProductTypeError when the security's type has no arm
+     * @throws MissingMarketDataError   when {@code marketData} lacks a kind the arm requires
+     */
+    public static ProductInput forSecurity(SecurityProto security, PriceProto price, MarketData marketData) {
+        MarketData md = marketData != null ? marketData : MarketData.NONE;
+        String arm = armFor(security);
+        ProductInput.Builder out = ProductInput.newBuilder();
+        switch (arm) {
+            case "bond": {
+                BondInput.Builder b = BondInput.newBuilder().setSecurity(security);
+                if (price.hasPrice()) b.setCleanPrice(price.getPrice());
+                out.setBond(b);
+                break;
+            }
+            case "tips": {
+                TipsInput.Builder b = TipsInput.newBuilder().setSecurity(security);
+                if (price.hasPrice()) b.setCleanPrice(price.getPrice());
+                md.cpi().ifPresent(b::setCpi);
+                out.setTips(b);
+                break;
+            }
+            case "frn": {
+                FrnInput.Builder b = FrnInput.newBuilder().setSecurity(security);
+                if (price.hasPrice()) b.setCleanPrice(price.getPrice());
+                md.curve().ifPresent(b::setCurve);
+                b.addAllFixings(md.fixings());
+                out.setFrn(b);
+                break;
+            }
+            case "mbs": {
+                MbsInput.Builder b = MbsInput.newBuilder().setSecurity(security);
+                if (price.hasPrice()) b.setCleanPrice(price.getPrice());
+                out.setMbs(b);
+                break;
+            }
+            case "equity": {
+                EquityInput.Builder b = EquityInput.newBuilder().setSecurity(security);
+                if (price.hasPrice()) b.setUnitPrice(price.getPrice());
+                out.setEquity(b);
+                break;
+            }
+            case "cash": {
+                CashInput.Builder b = CashInput.newBuilder().setSecurity(security);
+                if (price.hasPrice()) b.setUnitPrice(price.getPrice());
+                out.setCash(b);
+                break;
+            }
+            default:
+                throw new IllegalStateException("forSecurity has no builder for arm " + arm);
+        }
+        ProductInput built = out.build();
+        checkProductInput(built);
+        return built;
+    }
+
+    /**
+     * Checks {@code productInput} is the arm {@link #armFor} picks for its
+     * security, and holds every market-data kind that arm requires.
+     *
+     * @throws ModelValidationException  when no arm is set, or the wrong arm
+     * @throws UnmappedProductTypeError  when the security's type has no arm
+     * @throws MissingMarketDataError    when a required kind is missing
+     */
+    public static void checkProductInput(ProductInput productInput) {
+        if (productInput == null || productInput.getInputCase() == ProductInput.InputCase.INPUT_NOT_SET) {
+            throw new ModelValidationException(List.of(
+                    ModelValidationException.violation("product_input", null, "no ProductInput arm is set")));
+        }
+        FieldDescriptor armField = ProductInput.getDescriptor().findFieldByNumber(productInput.getInputCase().getNumber());
+        String arm = armField.getName();
+        Message body = (Message) productInput.getField(armField);
+        SecurityProto security = (SecurityProto) body.getField(body.getDescriptorForType().findFieldByName("security"));
+        String productType = productTypeOf(security);
+        Arm resolved = Shipped.ARMS.require(productType, couponTypeOf(security));
+        if (!resolved.arm.equals(arm)) {
+            throw new ModelValidationException(List.of(ModelValidationException.violation("product_input." + arm,
+                    uuidOf(security), "arm " + arm + " does not match arm " + resolved.arm + " for product_type " + productType)));
+        }
+        for (MarketDataKind kind : resolved.requires) {
+            if (!has(productInput, kind)) {
+                throw new MissingMarketDataError(arm, kind, arm + "." + fieldOf(kind), uuidOf(security));
+            }
+        }
+    }
+
+    /** The ProductInput arm field (and {@link MarketData} field) that holds {@code kind}. */
+    private static String fieldOf(MarketDataKind kind) {
+        switch (kind) {
+            case CPI_U: return "cpi";
+            case FRN_FIXINGS: return "fixings";
+            case FRN_CURVE: return "curve";
+            default: throw new IllegalStateException("no field for market data " + kind);
+        }
+    }
+
+    /** Whether {@code in} holds {@code kind}. A cpi with neither readings nor reference_cpi does not count. */
+    private static boolean has(ProductInput in, MarketDataKind kind) {
+        switch (kind) {
+            case CPI_U:
+                return in.hasTips() && in.getTips().getCpi().getCpiCase() != InflationIndexInput.CpiCase.CPI_NOT_SET;
+            case FRN_FIXINGS:
+                return in.hasFrn() && in.getFrn().getFixingsCount() > 0;
+            case FRN_CURVE:
+                return in.hasFrn() && in.getFrn().hasCurve();
+            default:
+                throw new IllegalStateException("no presence rule for market data " + kind);
+        }
+    }
+
+    /** The security's UUID, or null when unset or not 16 bytes. */
+    private static UUID uuidOf(SecurityProto security) {
+        return security.getUuid().getRawUuid().size() == 16
+                ? ProtoSerializationUtil.deserializeUUID(security.getUuid()) : null;
     }
 
     static ValuationArms shipped() {

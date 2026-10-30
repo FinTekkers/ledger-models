@@ -4,6 +4,11 @@
 //! Python's `treasury_frn_fixings` and JS's `TreasuryFrnFixings`; all are
 //! tested against `test-fixtures/treasury-frn-fixings.json`.
 //! See `docs/adr/frn_reference_rate_fixings.md` (LM-382, LM-385, LM-386).
+//!
+//! Deprecated (LM-410): FRN fixings now come from price-service (MDI-100) and
+//! reach `for_security` ready to use through `MarketData`; nothing here picks
+//! them any more. To be deleted in LM-411, once ledger-service no longer calls
+//! the Java copy (LS-202). See docs/adr/product_input_builders.md.
 
 use chrono::{Datelike, NaiveDate};
 

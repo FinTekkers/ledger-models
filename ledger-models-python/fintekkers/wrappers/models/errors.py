@@ -46,6 +46,20 @@ class UnmappedProductTypeError(ValueError):
         )
 
 
+class MissingMarketDataError(ModelValidationError):
+    """Typed input error: the security's valuation arm requires market data
+    (hierarchy.json valuation_arms `requires`) that the caller did not supply,
+    e.g. arm `tips` with no `CPI_U`. Raised by product_inputs.for_security and
+    ValuationRequests.typed. Carries one violation on the arm field, e.g.
+    `tips.cpi` (docs/adr/product_input_builders.md)."""
+
+    def __init__(self, arm: str, kind: str, field: str, object_id: Optional[UUID]):
+        """`kind` is the MarketDataKind value, e.g. "CPI_U"."""
+        self.arm = arm
+        self.kind = kind
+        super().__init__([violation(field, object_id, f"missing market data {kind} for arm {arm}")])
+
+
 class InvalidRegistryError(RuntimeError):
     """hierarchy.json itself is broken (e.g. a valuation_arms requires value
     outside the closed vocabulary). Not a ValueError, so callers catching bad

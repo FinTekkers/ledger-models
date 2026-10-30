@@ -14,9 +14,12 @@ import common.models.security.BondSecurity;
 import common.models.security.CashSecurity;
 import common.models.security.EquitySecurity;
 import common.models.security.IndexSecurity;
+import common.models.security.MarketData;
+import common.models.security.ProductInputs;
 import common.models.security.Security;
 import common.models.security.Tenor;
 import common.models.security.TenorType;
+import common.models.security.ValuationRequests;
 import common.models.security.bonds.FloatingRateNote;
 import common.models.security.bonds.MortgageBackedSecurity;
 import common.models.security.bonds.TIPSBond;
@@ -27,6 +30,8 @@ import common.models.strategy.StrategyAllocation;
 import common.models.transaction.Transaction;
 import common.models.transaction.TransactionType;
 import fintekkers.models.portfolio.PortfolioProto;
+import fintekkers.models.position.MeasureProto;
+import fintekkers.models.position.PositionProto;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.bond.AgencyProto;
 import fintekkers.models.security.BondDetailsProto;
@@ -290,6 +295,14 @@ class BuilderStampCoverageTest {
                     return captured.getAndSet(null);
                 });
 
+        // ---- Typed valuation request (LM-410): the request is the builder's; the
+        // product input's security and the position are the caller's.
+        fixture("common.models.security.ValuationRequests#typed(LocalTimestampProto,ProductInput,PositionProto,List)",
+                () -> ValuationRequests.typed(ProtoSerializationUtil.serializeTimestamp(AS_OF),
+                        ProductInputs.forSecurity(callerNote(), PriceProto.getDefaultInstance(), MarketData.NONE),
+                        PositionProto.getDefaultInstance(), List.of(MeasureProto.MARKET_VALUE)),
+                "product_input.bond.security", "position_input");
+
         // ---- Exclusions, each by full signature
         exclude(MAIN_WILDCARD, "demo entry point, not a library builder");
         exclude("common.util.ObjectTypes#stamp(Builder,ObjectTypeProto)",
@@ -333,6 +346,11 @@ class BuilderStampCoverageTest {
     }
 
     // ---- Fixture inputs
+
+    /** A caller's TREASURY_NOTE: it has a ProductInput arm (bond). Unstamped. */
+    private static SecurityProto callerNote() {
+        return SecurityProto.newBuilder().setProductType(ProductTypeProto.TREASURY_NOTE).build();
+    }
 
     private static EquitySecurity equity() {
         return new EquitySecurity(UUID.randomUUID(), "ACME", AS_OF, CashSecurity.USD);

@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Optional
 import grpc
 from grpc import RpcError
 from fintekkers.models.position.measure_pb2 import MeasureProto
@@ -8,16 +9,17 @@ from fintekkers.models.position.position_pb2 import PositionProto
 from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
-from fintekkers.requests.valuation.valuation_request_pb2 import ValuationRequestProto
 from fintekkers.requests.valuation.valuation_response_pb2 import ValuationResponseProto
 from fintekkers.requests.util.operation_pb2 import RequestOperationTypeProto, CREATE
 from fintekkers.services.valuation_service.valuation_service_pb2_grpc import ValuationStub
+from fintekkers.wrappers.models.errors import ModelValidationError, violation
 from fintekkers.wrappers.models.position import Position
 from fintekkers.wrappers.models.price import Price
+from fintekkers.wrappers.models.security.product_inputs import MarketData, for_security
 from fintekkers.wrappers.models.security.security import Security
+from fintekkers.wrappers.requests.valuation import ValuationRequests
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
 from fintekkers.wrappers.services.util.Environment import EnvConfig, ServiceType
-from fintekkers.wrappers.util.object_types import stamp_own
 
 
 class ValuationService:
@@ -52,38 +54,41 @@ class ValuationService:
                      position: Position = None, 
                      price: Price = None,
                      measures: list[MeasureProto] = None,
-                     asOf: datetime = datetime.now()) -> ValuationResponseProto:
+                     asOf: datetime = datetime.now(),
+                     market_data: Optional[MarketData] = None) -> ValuationResponseProto:
         """
         Runs a valuation with the provided inputs.
         
         Args:
-            security: The security to value (optional)
-            position: The position to value (optional)
-            price: The price to use for valuation (optional)
+            security: The security to value (required)
+            position: The position to value (required)
+            price: The price to use for valuation (required)
             measures: List of measures to calculate (optional)
-            operation_type: The type of operation to perform (default: CREATE)
+            asOf: The valuation date and time
+            market_data: Market data the security's arm requires, e.g. the
+                CPI for a TIPS (optional when the arm requires none)
             
         Returns:
             ValuationResponseProto containing the valuation results
             
         Raises:
+            ModelValidationError: If security, position or price is missing
+            UnmappedProductTypeError: If the security's type has no ProductInput arm
+            MissingMarketDataError: If market_data lacks a kind the arm requires
             RpcError: If the gRPC call fails
         """
+        missing = [violation(name, None, f"{name} is required")
+                   for name, value in (("security", security), ("position", position), ("price", price))
+                   if value is None]
+        if missing:
+            raise ModelValidationError(missing)
+        # Typed request only: product_input (70) and position_input (21),
+        # never security_input (20) or price_input (22) (LM-410). The
+        # caller's protos are copied in as they are, not stamped (LM-322).
+        asOfProto: LocalTimestampProto = ProtoSerializationUtil.serialize(asOf)
+        product_input = for_security(security.proto, price.proto, market_data)
+        request = ValuationRequests.typed(asOfProto, product_input, position.positionProto, measures or [])
         try:
-            asOfProto:LocalTimestampProto = ProtoSerializationUtil.serialize(asOf)
-            # Create the valuation request. The caller's security, position
-            # and price are copied in as they are, not stamped (LM-322).
-            request = stamp_own(ValuationRequestProto(
-                measures=measures or [],
-                asof_datetime=asOfProto
-            ))
-            if security is not None:
-                request.security_input.CopyFrom(security.proto)
-            if position is not None:
-                request.position_input.CopyFrom(position.positionProto)
-            if price is not None:
-                request.price_input.CopyFrom(price.proto)
-                
             # Run the valuation
             response = self.stub.RunValuation(request)
             return response
