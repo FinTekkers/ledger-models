@@ -93,6 +93,13 @@ def _registry() -> Dict[str, Any]:
     return registry
 
 
+def registry_section(name: str) -> Optional[Any]:
+    """Raw top-level section of hierarchy.json (e.g. "valuation_arms"), or None
+    if absent. For sibling modules that parse their own section; the returned
+    value is shared, so do not mutate it."""
+    return _registry().get(name)
+
+
 def _product_types() -> Dict[str, Dict[str, Any]]:
     return _registry()["product_types"]
 

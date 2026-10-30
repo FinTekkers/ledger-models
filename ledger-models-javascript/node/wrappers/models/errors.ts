@@ -33,6 +33,25 @@ export class ModelValidationError extends Error {
     }
 }
 
+/**
+ * Typed input error: the security's product_type (and coupon_type) has no
+ * valuation arm in hierarchy.json valuation_arms, or is listed there as
+ * unpriced. Services map it to gRPC INVALID_ARGUMENT. A sibling of
+ * ModelValidationError, not a state error (docs/adr/valuation_arms.md).
+ */
+export class UnmappedProductTypeError extends Error {
+    readonly productType: string;
+    readonly couponType: string;
+
+    /** @param productType ProductTypeProto name; @param couponType CouponTypeProto name */
+    constructor(productType: string, couponType: string) {
+        super(`No valuation arm for product_type ${productType}, coupon_type ${couponType}`);
+        this.name = 'UnmappedProductTypeError';
+        this.productType = productType;
+        this.couponType = couponType;
+    }
+}
+
 /** Builds one violation. `objectId` may be undefined when the input had no UUID. */
 export function violation(field: string, objectId: UUID | undefined, message: string): FieldViolationProto {
     const v = new FieldViolationProto();

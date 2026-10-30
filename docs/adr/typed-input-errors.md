@@ -119,6 +119,19 @@ A `raw_uuid` that is neither empty nor exactly 16 bytes is a typed input error n
 
 `InvalidFieldException` now extends `IllegalArgumentException`, so callers that caught the old plain `IllegalArgumentException` keep working. A `try` that catches `IllegalArgumentException` before `InvalidFieldException` no longer compiles: put the subtype first. Python wrappers that need a UUID call `ProtoSerializationUtil.deserialize_required_uuid`, which raises `ModelValidationError` naming the field (e.g. `price.uuid`) when it is unset.
 
+### Unmapped product types (LM-409)
+
+`ProductInputs.armFor` / `requiredMarketData` raise a typed input error when a security's `product_type` (and `bond_details.coupon_type`) has no arm in `hierarchy.json` `valuation_arms`, or is `unpriced`. The message names both types. See [`valuation_arms.md`](valuation_arms.md).
+
+| Binding | Typed input error | Base | Broken registry |
+|---|---|---|---|
+| Java | `common.models.errors.UnmappedProductTypeError` | `IllegalArgumentException` | `IllegalStateException` |
+| Python | `fintekkers.wrappers.models.errors.UnmappedProductTypeError` | `ValueError` | `InvalidRegistryError` (`RuntimeError`) |
+| JS/TS | `wrappers/models/errors` `UnmappedProductTypeError` | `Error` | `Error` |
+| Rust | `ProductInputError::Unmapped { product_type, coupon_type }` | `wrappers::models::product_inputs::ProductInputError` | `ProductInputError::InvalidRegistry` |
+
+It carries no `FieldViolationProto`s: the input is valid, the registry just has no arm for it. Services map it to `INVALID_ARGUMENT`.
+
 ## Affected callers
 
 - Java callers that catch `TransactionProcessingException` around `Transaction.addCashImpact` (or the short-form `Transaction` constructor) no longer see the missing-`face_value` case; it now arrives as `IllegalArgumentException` / `ModelValidationException`. No caller in this repo does this. ledger-service's dependent item maps it to `INVALID_ARGUMENT`.

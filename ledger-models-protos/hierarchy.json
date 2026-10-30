@@ -1,6 +1,6 @@
 {
-  "schema_version": "1.2",
-  "_doc": "Single source of truth for the FinTekkers product hierarchy. See ../docs/product-hierarchy.md for narrative description, hierarchy-examples.md for worked examples, and registry-versioning.md for compatibility rules. Each leaf product_type carries (asset_class, instrument_type). Abstract nodes carry only hierarchy. status=active entries must have a matching ProductTypeProto enum value (CI-enforced). status=planned entries are aspirational and not yet wired into the proto enum. NOTE: M1 ships a 3-dimensional registry (productType + asset_class + instrument_type). The 4th dimension (index_type — single_name vs index) is intentionally deferred and will be added in a future milestone. Option strategy leaves (butterfly, vertical spread, calendar spread, condor, straddle, ...) are also intentionally absent — strategies are derived from the legs field on SecurityProto, not from a productType enum value. asset_classes is the one canonical asset-class vocabulary (codes and tree); an entry's optional aliases list names legacy values that resolve to it. instrument_types maps each instrument-type code to {label}, in display order; every code must have a matching INSTRUMENT_TYPE_<CODE> InstrumentTypeProto value (checked at load), and that enum value takes its label from here. enum_labels holds display labels (and identifier-type input placeholders) for proto enum values with no entry elsewhere, keyed by proto enum name then value name. See ../docs/adr/asset_class_vocabulary.md.",
+  "schema_version": "1.3",
+  "_doc": "Single source of truth for the FinTekkers product hierarchy. See ../docs/product-hierarchy.md for narrative description, hierarchy-examples.md for worked examples, and registry-versioning.md for compatibility rules. Each leaf product_type carries (asset_class, instrument_type). Abstract nodes carry only hierarchy. status=active entries must have a matching ProductTypeProto enum value (CI-enforced). status=planned entries are aspirational and not yet wired into the proto enum. NOTE: M1 ships a 3-dimensional registry (productType + asset_class + instrument_type). The 4th dimension (index_type — single_name vs index) is intentionally deferred and will be added in a future milestone. Option strategy leaves (butterfly, vertical spread, calendar spread, condor, straddle, ...) are also intentionally absent — strategies are derived from the legs field on SecurityProto, not from a productType enum value. asset_classes is the one canonical asset-class vocabulary (codes and tree); an entry's optional aliases list names legacy values that resolve to it. instrument_types maps each instrument-type code to {label}, in display order; every code must have a matching INSTRUMENT_TYPE_<CODE> InstrumentTypeProto value (checked at load), and that enum value takes its label from here. enum_labels holds display labels (and identifier-type input placeholders) for proto enum values with no entry elsewhere, keyed by proto enum name then value name. See ../docs/adr/asset_class_vocabulary.md. valuation_arms maps a product_type node, optionally narrowed by coupon_types, to its ProductInput arm and the market data it requires; unpriced lists nodes with no arm. The deepest matching node wins; see ../docs/adr/valuation_arms.md.",
 
   "product_types": {
     "BOND": { "parent": null, "abstract": true, "label": "Bond" },
@@ -156,5 +156,22 @@
       "UNKNOWN_ASSET_CLASS": { "label": "Unknown" },
       "INDEX":               { "label": "Index" }
     }
+  },
+
+  "valuation_arms": {
+    "entries": [
+      { "node": "BOND",              "arm": "bond",   "requires": [] },
+      { "node": "BOND",              "coupon_types": ["FLOAT"], "arm": "frn", "requires": ["FRN_FIXINGS"] },
+      { "node": "TIPS",              "arm": "tips",   "requires": ["CPI_U"] },
+      { "node": "TREASURY_FRN",      "arm": "frn",    "requires": ["FRN_FIXINGS"] },
+      { "node": "MORTGAGE_BACKED",   "arm": "mbs",    "requires": [] },
+      { "node": "STOCK",             "arm": "equity", "requires": [] },
+      { "node": "CURRENCY",          "arm": "cash",   "requires": [] },
+      { "node": "MONEY_MARKET_FUND", "arm": "cash",   "requires": [] }
+    ],
+    "unpriced": [
+      "FX_SPOT", "INDEX", "CRYPTO", "COMMODITY_SPOT", "FUTURE", "OPTION", "SWAP", "FORWARD",
+      "FINANCING", "FUND_LP", "CMBS", "ABS", "CLO", "CONVERTIBLE_BOND", "COCO"
+    ]
   }
 }

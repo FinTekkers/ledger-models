@@ -1,0 +1,12 @@
+{
+  "_doc": "Shared fixture for ProductInputs.armFor / requiredMarketData (arm_for / required_market_data). Read by the Java, JS, Python and Rust tests; all four must agree on every case. A case has either arm + requires, or error. See docs/adr/valuation_arms.md for the resolution rule.",
+  "cases": [
+    { "product_type": "TBILL",            "coupon_type": "ZERO",                "arm": "bond", "requires": [] },
+    { "product_type": "TIPS",             "coupon_type": "FIXED",               "arm": "tips", "requires": ["CPI_U"] },
+    { "product_type": "CORP_BOND",        "coupon_type": "FLOAT",               "arm": "frn",  "requires": ["FRN_FIXINGS"] },
+    { "product_type": "TREASURY_NOTE",    "coupon_type": "FLOAT",               "arm": "frn",  "requires": ["FRN_FIXINGS"], "_note": "the BOND coupon_types entry overrides the BOND node entry" },
+    { "product_type": "FX_SPOT",          "coupon_type": "UNKNOWN_COUPON_TYPE", "error": "UnmappedProductTypeError" },
+    { "product_type": "CMBS",             "coupon_type": "FIXED",               "error": "UnmappedProductTypeError", "_note": "a deeper unpriced node beats the BOND node entry; CMBS does not inherit mbs" },
+    { "product_type": "CONVERTIBLE_BOND", "coupon_type": "FLOAT",               "error": "UnmappedProductTypeError", "_note": "a deeper unpriced node beats the BOND coupon_types entry" }
+  ]
+}
