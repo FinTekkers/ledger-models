@@ -32,6 +32,26 @@ class ModelValidationError(ValueError):
         return _object_id_of(self.violations[0])
 
 
+class UnmappedProductTypeError(ValueError):
+    """Typed input error: the security's product_type (and coupon_type) has no
+    valuation arm in hierarchy.json valuation_arms, or is listed there as
+    unpriced. Services map it to gRPC INVALID_ARGUMENT. A sibling of
+    ModelValidationError, not a state error (docs/adr/valuation_arms.md)."""
+
+    def __init__(self, product_type: str, coupon_type: str):
+        self.product_type = product_type
+        self.coupon_type = coupon_type
+        super().__init__(
+            f"No valuation arm for product_type {product_type}, coupon_type {coupon_type}"
+        )
+
+
+class InvalidRegistryError(RuntimeError):
+    """hierarchy.json itself is broken (e.g. a valuation_arms requires value
+    outside the closed vocabulary). Not a ValueError, so callers catching bad
+    input never mistake a broken registry for it."""
+
+
 def violation(field: str, object_id: Optional[UUID], message: str) -> FieldViolationProto:
     """Builds one violation. `object_id` may be None when the input had no UUID."""
     v = FieldViolationProto(field=field, message=message)

@@ -10,6 +10,7 @@ pub mod position;
 pub mod position_filter_parser;
 pub mod price;
 pub mod product_hierarchy;
+pub mod product_inputs;
 pub mod raw_datamodel_object;
 pub mod security;
 pub mod tenor;

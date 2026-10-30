@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.violation = exports.ModelValidationError = void 0;
+exports.violation = exports.UnmappedProductTypeError = exports.ModelValidationError = void 0;
 const field_violation_pb_1 = require("../../fintekkers/requests/util/errors/field_violation_pb");
 const uuid_1 = require("./utils/uuid");
 /**
@@ -31,6 +31,22 @@ class ModelValidationError extends Error {
     }
 }
 exports.ModelValidationError = ModelValidationError;
+/**
+ * Typed input error: the security's product_type (and coupon_type) has no
+ * valuation arm in hierarchy.json valuation_arms, or is listed there as
+ * unpriced. Services map it to gRPC INVALID_ARGUMENT. A sibling of
+ * ModelValidationError, not a state error (docs/adr/valuation_arms.md).
+ */
+class UnmappedProductTypeError extends Error {
+    /** @param productType ProductTypeProto name; @param couponType CouponTypeProto name */
+    constructor(productType, couponType) {
+        super(`No valuation arm for product_type ${productType}, coupon_type ${couponType}`);
+        this.name = 'UnmappedProductTypeError';
+        this.productType = productType;
+        this.couponType = couponType;
+    }
+}
+exports.UnmappedProductTypeError = UnmappedProductTypeError;
 /** Builds one violation. `objectId` may be undefined when the input had no UUID. */
 function violation(field, objectId, message) {
     const v = new field_violation_pb_1.FieldViolationProto();

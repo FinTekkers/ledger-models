@@ -468,13 +468,15 @@ _PRODUCT_HIERARCHY_LOOKUPS = (
     "asset_class_parent_of", "asset_class_proto_label_of", "descendants_of", "identifier_type_label_of",
     "identifier_type_placeholder_of", "instrument_type_code_label_of", "instrument_type_label_of",
     "instrument_type_of", "is_asset_class_descendant_of", "is_descendant_of", "label_of", "parent_of",
-    "product_type_label_of", "resolve_asset_class",
+    "product_type_label_of", "registry_section", "resolve_asset_class",
 )
 
 # Qualified name (relative to ROOT) -> why it is not a builder.
 NOT_BUILDERS = {
     "models.cost_basis.weighted_average_purchase_price": "returns a Decimal",
     "models.errors.ModelValidationError": "exception type; its violations come from errors.violation (a builder)",
+    "models.errors.UnmappedProductTypeError": "exception type",
+    "models.errors.InvalidRegistryError": "exception type",
     "models.portfolio.set_portfolio_fetcher": "setter for the lazy-hydrate fetcher",
     "models.price.set_price_fetcher": "setter for the lazy-hydrate fetcher",
     "models.security.security.set_security_fetcher": "setter for the lazy-hydrate fetcher",
@@ -494,6 +496,9 @@ NOT_BUILDERS = {
     "models.security.security_identifier.validate_identifier_proto": "validator; raises or returns None",
     "models.security.security_identifier.validate_identifiers_for_create": "validator; raises or returns None",
     "models.security.security_identifier.IdentifierValidationError": "exception type",
+    "models.security.product_inputs.arm_for": "registry lookup; returns a ProductInput arm name",
+    "models.security.product_inputs.required_market_data": "registry lookup; returns MarketDataKind values",
+    "models.security.product_inputs.MarketDataKind": "str enum of market-data kinds, not a message",
     "models.security.security.IFinancialModelObject": "interface with no state",
     "models.security.security.RawDataModelObject": "plain id/as_of holder, no message",
     "models.security.tenor.Tenor": "holds a TenorTypeProto value and a relativedelta; Tenor.as_proto is the builder",
