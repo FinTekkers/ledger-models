@@ -4,14 +4,17 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Descriptors.OneofDescriptor;
 import com.google.protobuf.Message;
 import common.models.errors.MissingMarketDataError;
 import common.models.errors.ModelValidationException;
 import common.models.errors.UnmappedProductTypeError;
+import fintekkers.models.position.MeasureProto;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.CouponTypeProto;
+import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.requests.valuation.BondInput;
 import fintekkers.requests.valuation.CashInput;
@@ -54,6 +57,10 @@ import java.util.UUID;
  * security, its price and its market data; {@link #checkProductInput} checks
  * a {@code ProductInput} against the same rule (LM-410, see
  * docs/adr/product_input_builders.md).
+ *
+ * <p>{@link #measuresForArm} lists the measures valuation-service computes
+ * for an arm, read from the bundled {@code /catalog/measures.json} through the
+ * same lookup (LM-427). There is no measure list in code.
  *
  * <p>Reads {@code /hierarchy.json} itself rather than through
  * {@link ProductHierarchy}, so the existing loader stays unchanged.
@@ -128,6 +135,10 @@ public final class ProductInputs {
         static final ValuationArms ARMS = load();
     }
 
+    private static final class ShippedMeasures {
+        static final JsonArray MEASURES = loadMeasures();
+    }
+
     private ProductInputs() { }
 
     /** Name of the {@code ProductInput.input} oneof field that values {@code security}, e.g. {@code "tips"}. */
@@ -138,6 +149,58 @@ public final class ProductInputs {
     /** Market data the security's arm needs, in file order. Unmodifiable; empty when none. */
     public static List<MarketDataKind> requiredMarketData(SecurityProto security) {
         return Shipped.ARMS.require(productTypeOf(security), couponTypeOf(security)).requires;
+    }
+
+    /**
+     * The measures valuation-service computes for {@code arm} (e.g. {@code "frn"}),
+     * in catalog order: entries of the bundled catalog/measures.json with
+     * {@code computed_by: valuation-service} and {@code implemented: true} whose
+     * {@code applies_to} names a leaf product type the arm values, or an
+     * ancestor of one. A fresh, modifiable list.
+     *
+     * @throws UnmappedProductTypeError with {@code productType} = {@code arm}
+     *         when no leaf maps to {@code arm}
+     */
+    public static List<MeasureProto> measuresForArm(String arm) {
+        return measuresForArm(ShippedMeasures.MEASURES, arm);
+    }
+
+    /** {@link #measuresForArm(String)} over a given {@code measures} list. */
+    static List<MeasureProto> measuresForArm(JsonArray measures, String arm) {
+        Set<String> enumTypes = new HashSet<>();
+        for (ProductTypeProto pt : ProductTypeProto.values()) {
+            if (pt != ProductTypeProto.UNRECOGNIZED) enumTypes.add(pt.name());
+        }
+        Set<String> lineage = new HashSet<>();
+        for (String leaf : ProductHierarchy.allProductTypes()) {
+            if (!ProductHierarchy.descendantsOf(leaf).isEmpty() || !enumTypes.contains(leaf)) continue;
+            // Leaves resolve with no coupon type, as armFor does with no bond_details:
+            // the BOND + FLOAT entry is ignored on purpose (docs/adr/valuation_arms.md).
+            Arm a = Shipped.ARMS.resolve(leaf, UNKNOWN_COUPON);
+            if (a == null || !a.arm.equals(arm)) continue;
+            for (String node = leaf; node != null; node = ProductHierarchy.parentOf(node)) lineage.add(node);
+        }
+        if (lineage.isEmpty()) throw new UnmappedProductTypeError(arm, UNKNOWN_COUPON);
+        List<MeasureProto> out = new ArrayList<>();
+        for (JsonElement e : measures) {
+            JsonObject m = e.getAsJsonObject();
+            boolean implemented = new JsonPrimitive(true).equals(m.get("implemented"));
+            if (!"valuation-service".equals(stringOrNull(m.get("computed_by"))) || !implemented) continue;
+            boolean applies = false;
+            for (JsonElement node : catalogArray(m, "applies_to")) {
+                if (lineage.contains(stringOrNull(node))) applies = true;
+            }
+            if (!applies) continue;
+            String name = stringOrNull(m.get("name"));
+            MeasureProto measure;
+            try {
+                measure = MeasureProto.valueOf(name == null ? "" : name);
+            } catch (IllegalArgumentException ex) {
+                throw new IllegalStateException("catalog/measures.json: '" + name + "' is not a MeasureProto name", ex);
+            }
+            if (!out.contains(measure)) out.add(measure);
+        }
+        return out;
     }
 
     /**
@@ -292,6 +355,34 @@ public final class ProductInputs {
         } catch (IOException e) {
             throw new IllegalStateException("Failed to load hierarchy.json", e);
         }
+    }
+
+    private static JsonArray loadMeasures() {
+        try (InputStream in = ProductInputs.class.getResourceAsStream("/catalog/measures.json")) {
+            if (in == null) {
+                throw new IllegalStateException(
+                        "catalog/measures.json not found on classpath. compile.sh copies it into src/main/resources/catalog/");
+            }
+            JsonObject root;
+            try (InputStreamReader r = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+                root = new Gson().fromJson(r, JsonObject.class);
+            }
+            return catalogArray(root, "measures");
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load catalog/measures.json", e);
+        }
+    }
+
+    private static String stringOrNull(JsonElement v) {
+        return v != null && v.isJsonPrimitive() ? v.getAsString() : null;
+    }
+
+    private static JsonArray catalogArray(JsonObject o, String key) {
+        JsonElement v = o.get(key);
+        if (v == null || !v.isJsonArray()) {
+            throw new IllegalStateException("catalog/measures.json: '" + key + "' must be a list in " + o);
+        }
+        return v.getAsJsonArray();
     }
 
     /**

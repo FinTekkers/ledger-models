@@ -75,6 +75,25 @@ A broken registry is a different error from an unmapped type: Java `IllegalState
 
 Every leaf in `product_types`, active or planned, must resolve to an arm or to `unpriced`. Java and Python tests fail on any uncovered leaf. That test cannot catch a leaf that is covered wrongly: **a new leaf under a mapped node (e.g. a new `BOND` leaf) inherits that node's arm, so adding one needs a reviewed `valuation_arms` decision** (see `registry-versioning.md`).
 
+### Measures per arm (LM-427)
+
+`ProductInputs.measuresForArm(arm)` (Python and Rust: `measures_for_arm`) lists the measures valuation-service computes for an arm, so callers (VS-150, US-303) stop keeping their own list. The answer comes only from `catalog/measures.json` and this section; no binding holds a measure or arm list.
+
+1. Take every leaf of `product_types` that has a `ProductTypeProto` value (planned leaves carry no security).
+2. Resolve each leaf with coupon type `UNKNOWN_COUPON_TYPE`, as `armFor` does for a security with no `bond_details`, and keep the leaves whose arm is `arm`.
+3. The arm's nodes are those leaves plus every ancestor (`parentOf`).
+4. Return, in catalog order and without duplicates, each catalog entry with `computed_by: valuation-service` and `implemented: true` whose `applies_to` names one of those nodes.
+
+**The `BOND` + `FLOAT` entry is ignored on purpose.** At runtime a floating `CORP_BOND` is valued by the `frn` arm, but step 2 resolves leaves without a coupon type, so `frn` gets its measures from the `TREASURY_FRN` lineage only. Counting `BOND` as an `frn` node would pull every `BOND` measure (convexity, durations, DV01, YTM) into `frn`, which `src/engine/frn.rs` does not compute.
+
+**An unknown arm** (no leaf resolves to it, e.g. `"swap"`) throws the existing `UnmappedProductTypeError(arm, "UNKNOWN_COUPON_TYPE")` (Rust: `ProductInputError::Unmapped { product_type: arm, .. }`). The message reads "No valuation arm for product_type swap, coupon_type UNKNOWN_COUPON_TYPE". The wording is awkward for an arm name, but it reuses the existing type and signature instead of adding a constructor or variant; keep it that way.
+
+**Embedding.** Each binding bundles the catalog the same way it bundles `hierarchy.json`, and reads no repo path at runtime: Rust `include_str!("../../../catalog/measures.json")`, JS `import catalog from '../../../../catalog/measures.json'`, Java the classpath resource `/catalog/measures.json`, Python the package resource `fintekkers/catalog/measures.json` (no dev-checkout fallback).
+
+**`PROFIT_LOSS_PERCENT` on `TREASURY_FRN`** (owner ruling, 31 Oct): `frn.rs` returns UNIMPLEMENTED for it, and the engine is the source of truth, so its `applies_to` lists the nodes under `BOND` other than `TREASURY_FRN` instead of `BOND` itself (as `YIELD_TO_MATURITY` does). Only `frn` changes.
+
+The expected list per arm is hand-written in `test-fixtures/catalog/measures-for-arm.json` and checked by all four bindings' tests.
+
 ## Consequences
 
 - valuation-service (LM-410, LM-411) asks `armFor` / `requiredMarketData` instead of keeping its own table.

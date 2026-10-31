@@ -8,9 +8,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { armFor, parseValuationArms, requiredMarketData, shippedValuationArms } from './product_inputs';
+import {
+  armFor, measuresForArm, measuresForArmIn, parseValuationArms, requiredMarketData, shippedValuationArms,
+} from './product_inputs';
 import { descendantsOf } from './product_hierarchy';
 import { UnmappedProductTypeError } from '../errors';
+import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
 import { BondDetailsProto, SecurityProto } from '../../../fintekkers/models/security/security_pb';
@@ -138,4 +141,68 @@ test('parse rejects a requires value outside the vocabulary (metric 5)', () => {
 
 test('every leaf is covered (metric 3)', () => {
   expect(shippedValuationArms().uncoveredLeaves()).toEqual([]);
+});
+
+// ---------- LM-427: measuresForArm ----------
+
+describe('measuresForArm', () => {
+  const ARMS = ['bond', 'tips', 'frn', 'mbs', 'equity', 'cash'];
+  const fixture: { arms: Record<string, string[]>; unknown_arm: string } = JSON.parse(
+    fs.readFileSync(path.resolve(PROTOS, '../test-fixtures/catalog/measures-for-arm.json'), 'utf-8'),
+  );
+  const names = (arm: string): string[] =>
+    measuresForArm(arm).map(m => Object.keys(MeasureProto).find(k => (MeasureProto as any)[k] === m)!);
+
+  test('fixture lists the six arms, none empty', () => {
+    expect(Object.keys(fixture.arms).sort()).toEqual([...ARMS].sort());
+    for (const arm of ARMS) expect(fixture.arms[arm].length).toBeGreaterThan(0);
+  });
+
+  test.each(ARMS)('%s matches the shared fixture', arm => {
+    const got = names(arm);
+    expect(new Set(got).size).toBe(got.length);
+    expect([...got].sort()).toEqual([...fixture.arms[arm]].sort());
+  });
+
+  test('frn and tips', () => {
+    const frn = names('frn');
+    for (const name of ['CONVEXITY', 'MODIFIED_DURATION', 'DV01', 'PROFIT_LOSS_PERCENT']) {
+      expect(frn).not.toContain(name);
+    }
+    expect(names('tips')).toEqual(expect.arrayContaining(['REFERENCE_CPI', 'INDEX_RATIO']));
+  });
+
+  test('an unknown arm throws UnmappedProductTypeError', () => {
+    let error: unknown;
+    try {
+      measuresForArm(fixture.unknown_arm);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeInstanceOf(UnmappedProductTypeError);
+    expect((error as Error).constructor).toBe(UnmappedProductTypeError);
+    expect((error as UnmappedProductTypeError).productType).toBe('swap');
+  });
+
+  /** The bundled catalog, with `fields` set on the entry named `name`. */
+  function catalogWith(name: string, fields: Record<string, unknown>): unknown[] {
+    const measures = JSON.parse(
+      fs.readFileSync(path.resolve(__dirname, '../../../../catalog/measures.json'), 'utf-8'),
+    ).measures as Record<string, unknown>[];
+    return measures.map(m => (m.name === name ? { ...m, ...fields } : m));
+  }
+
+  test('follows implemented', () => {
+    expect(measuresForArm('frn')).toContain(MeasureProto.DISCOUNT_MARGIN);
+    expect(measuresForArmIn(catalogWith('DISCOUNT_MARGIN', { implemented: false }), 'frn'))
+      .not.toContain(MeasureProto.DISCOUNT_MARGIN);
+  });
+
+  test('follows an ancestor node', () => {
+    const measures = catalogWith('PAR_YIELD', { implemented: true, applies_to: ['GOV_BOND'] });
+    for (const arm of ['frn', 'bond']) {
+      expect(measuresForArm(arm)).not.toContain(MeasureProto.PAR_YIELD);
+      expect(measuresForArmIn(measures, arm)).toContain(MeasureProto.PAR_YIELD);
+    }
+  });
 });

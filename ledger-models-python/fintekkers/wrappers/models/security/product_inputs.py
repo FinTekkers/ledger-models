@@ -12,16 +12,23 @@ there is no default arm. A broken section raises InvalidRegistryError.
 for_security builds the ProductInput for that arm from a security, its price
 and its market data; check_product_input checks a ProductInput against the
 same rule (LM-410). See docs/adr/product_input_builders.md.
+
+measures_for_arm lists the measures valuation-service computes for an arm,
+read from the packaged catalog/measures.json through the same lookup (LM-427).
+There is no measure list in code.
 """
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from enum import Enum
 from functools import lru_cache
+from importlib import resources
 from typing import Any, Dict, FrozenSet, List, NamedTuple, Optional, Set, Tuple
 from uuid import UUID
 
+from fintekkers.models.position.measure_pb2 import MeasureProto
 from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.security.coupon_type_pb2 import CouponTypeProto
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
@@ -116,6 +123,65 @@ def arm_for(security: SecurityProto) -> str:
 def required_market_data(security: SecurityProto) -> List[MarketDataKind]:
     """Market data the security's arm needs, in file order. A fresh list; empty when none."""
     return list(_shipped().require(_product_type_of(security), _coupon_type_of(security)).requires)
+
+
+def measures_for_arm(arm: str) -> List[int]:
+    """The MeasureProto values valuation-service computes for `arm` (e.g.
+    "frn"), in catalog order: entries of the packaged catalog/measures.json
+    with computed_by valuation-service and implemented true whose applies_to
+    names a leaf product type the arm values, or an ancestor of one. Raises
+    UnmappedProductTypeError(arm, "UNKNOWN_COUPON_TYPE") when no leaf maps to
+    `arm`. A fresh list."""
+    return _measures_for_arm_in(_shipped_measures(), arm)
+
+
+def _measures_for_arm_in(measures: List[Dict[str, Any]], arm: str) -> List[int]:
+    """measures_for_arm over a given `measures` list."""
+    arms = _shipped()
+    # Leaves resolve with no coupon type, as arm_for does with no bond_details:
+    # the BOND + FLOAT entry is ignored on purpose (docs/adr/valuation_arms.md).
+    leaves = [
+        n for n in product_hierarchy.all_product_types()
+        if not product_hierarchy.descendants_of(n) and n in ProductTypeProto.keys()
+    ]
+    lineage: Set[str] = set()
+    for leaf in leaves:
+        resolved = arms.resolve(leaf, _UNKNOWN_COUPON)
+        if resolved is None or resolved.arm != arm:
+            continue
+        node: Optional[str] = leaf
+        while node is not None:
+            lineage.add(node)
+            node = product_hierarchy.parent_of(node)
+    if not lineage:
+        raise UnmappedProductTypeError(arm, _UNKNOWN_COUPON)
+    out: List[int] = []
+    for m in measures:
+        if m.get("computed_by") != "valuation-service" or m.get("implemented") is not True:
+            continue
+        applies_to = m.get("applies_to")
+        if not isinstance(applies_to, list):
+            raise InvalidRegistryError(f"catalog/measures.json: 'applies_to' must be a list in {m!r}")
+        if not any(node in lineage for node in applies_to):
+            continue
+        name = m.get("name")
+        if name not in MeasureProto.keys():
+            raise InvalidRegistryError(f"catalog/measures.json: '{name}' is not a MeasureProto name")
+        value = MeasureProto.Value(name)
+        if value not in out:
+            out.append(value)
+    return out
+
+
+@lru_cache(maxsize=1)
+def _shipped_measures() -> List[Dict[str, Any]]:
+    """The packaged catalog's measures list. Read from the package only, with
+    no repo-path fallback."""
+    with resources.files("fintekkers.catalog").joinpath("measures.json").open("r", encoding="utf-8") as f:
+        measures = json.load(f).get("measures")
+    if not isinstance(measures, list):
+        raise InvalidRegistryError("catalog/measures.json has no measures list")
+    return measures
 
 
 @dataclass(frozen=True)

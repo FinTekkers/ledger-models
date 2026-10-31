@@ -35,6 +35,7 @@ const path = __importStar(require("path"));
 const product_inputs_1 = require("./product_inputs");
 const product_hierarchy_1 = require("./product_hierarchy");
 const errors_1 = require("../errors");
+const measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
@@ -140,5 +141,57 @@ test('parse rejects a requires value outside the vocabulary (metric 5)', () => {
 });
 test('every leaf is covered (metric 3)', () => {
     expect((0, product_inputs_1.shippedValuationArms)().uncoveredLeaves()).toEqual([]);
+});
+// ---------- LM-427: measuresForArm ----------
+describe('measuresForArm', () => {
+    const ARMS = ['bond', 'tips', 'frn', 'mbs', 'equity', 'cash'];
+    const fixture = JSON.parse(fs.readFileSync(path.resolve(PROTOS, '../test-fixtures/catalog/measures-for-arm.json'), 'utf-8'));
+    const names = (arm) => (0, product_inputs_1.measuresForArm)(arm).map(m => Object.keys(measure_pb_1.MeasureProto).find(k => measure_pb_1.MeasureProto[k] === m));
+    test('fixture lists the six arms, none empty', () => {
+        expect(Object.keys(fixture.arms).sort()).toEqual([...ARMS].sort());
+        for (const arm of ARMS)
+            expect(fixture.arms[arm].length).toBeGreaterThan(0);
+    });
+    test.each(ARMS)('%s matches the shared fixture', arm => {
+        const got = names(arm);
+        expect(new Set(got).size).toBe(got.length);
+        expect([...got].sort()).toEqual([...fixture.arms[arm]].sort());
+    });
+    test('frn and tips', () => {
+        const frn = names('frn');
+        for (const name of ['CONVEXITY', 'MODIFIED_DURATION', 'DV01', 'PROFIT_LOSS_PERCENT']) {
+            expect(frn).not.toContain(name);
+        }
+        expect(names('tips')).toEqual(expect.arrayContaining(['REFERENCE_CPI', 'INDEX_RATIO']));
+    });
+    test('an unknown arm throws UnmappedProductTypeError', () => {
+        let error;
+        try {
+            (0, product_inputs_1.measuresForArm)(fixture.unknown_arm);
+        }
+        catch (e) {
+            error = e;
+        }
+        expect(error).toBeInstanceOf(errors_1.UnmappedProductTypeError);
+        expect(error.constructor).toBe(errors_1.UnmappedProductTypeError);
+        expect(error.productType).toBe('swap');
+    });
+    /** The bundled catalog, with `fields` set on the entry named `name`. */
+    function catalogWith(name, fields) {
+        const measures = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../../../catalog/measures.json'), 'utf-8')).measures;
+        return measures.map(m => (m.name === name ? Object.assign(Object.assign({}, m), fields) : m));
+    }
+    test('follows implemented', () => {
+        expect((0, product_inputs_1.measuresForArm)('frn')).toContain(measure_pb_1.MeasureProto.DISCOUNT_MARGIN);
+        expect((0, product_inputs_1.measuresForArmIn)(catalogWith('DISCOUNT_MARGIN', { implemented: false }), 'frn'))
+            .not.toContain(measure_pb_1.MeasureProto.DISCOUNT_MARGIN);
+    });
+    test('follows an ancestor node', () => {
+        const measures = catalogWith('PAR_YIELD', { implemented: true, applies_to: ['GOV_BOND'] });
+        for (const arm of ['frn', 'bond']) {
+            expect((0, product_inputs_1.measuresForArm)(arm)).not.toContain(measure_pb_1.MeasureProto.PAR_YIELD);
+            expect((0, product_inputs_1.measuresForArmIn)(measures, arm)).toContain(measure_pb_1.MeasureProto.PAR_YIELD);
+        }
+    });
 });
 //# sourceMappingURL=product_inputs.test.js.map

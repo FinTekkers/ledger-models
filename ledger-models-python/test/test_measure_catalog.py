@@ -6,7 +6,9 @@ UNADJUSTED_COST_BASIS entry unchanged, every MeasureProto value has one
 catalog entry (LM-402, which also added PROFIT_LOSS), and every entry says
 what computes it and what it depends on (LM-403). LM-425 corrects applies_to
 and implemented to match valuation-service: every change is listed, with its
-engine file, in test-fixtures/catalog/lm-425-changes.json."""
+engine file, in test-fixtures/catalog/lm-425-changes.json; LM-427 adds one
+row (PROFIT_LOSS_PERCENT off TREASURY_FRN) and reads the per-arm lists through
+product_inputs.measures_for_arm."""
 import json
 from pathlib import Path
 
@@ -14,10 +16,7 @@ import pytest
 
 from fintekkers.models.position import measure_pb2
 from fintekkers.models.security import product_type_pb2
-from fintekkers.models.security.security_pb2 import SecurityProto
-from fintekkers.wrappers.models.errors import UnmappedProductTypeError
-from fintekkers.wrappers.models.security import product_hierarchy
-from fintekkers.wrappers.models.security.product_inputs import arm_for
+from fintekkers.wrappers.models.security.product_inputs import _measures_for_arm_in, measures_for_arm
 
 _PYTHON = Path(__file__).resolve().parents[1]
 SOURCE = _PYTHON.parent / "ledger-models-protos" / "catalog" / "measures.json"
@@ -125,6 +124,7 @@ def test_lm403_dependency_values():
 LM425_BEFORE = json.loads((_REPO / "test-fixtures" / "catalog" / "lm-425-before.json").read_text())["measures"]
 LM425_CHANGES = json.loads((_REPO / "test-fixtures" / "catalog" / "lm-425-changes.json").read_text())["changes"]
 LM425_FIELDS = ("applies_to", "implemented")
+ARMS = ("bond", "tips", "frn", "mbs", "equity", "cash")
 
 
 def test_lm425_catalog_edits_touch_only_applies_to_and_implemented():
@@ -156,45 +156,18 @@ def test_lm425_every_catalog_change_is_listed_with_its_engine_file():
         assert row["engine_file"].startswith("src/engine/") and row["reason"], key
 
 
-def _arm_of(product_type):
-    if product_type not in product_type_pb2.ProductTypeProto.keys():
-        return None  # a planned leaf with no enum value yet: no security can carry it
-    try:
-        return arm_for(SecurityProto(product_type=product_type_pb2.ProductTypeProto.Value(product_type)))
-    except UnmappedProductTypeError:
-        return None
+def _by_arm(measures_for):
+    return {arm: {measure_pb2.MeasureProto.Name(m) for m in measures_for(arm)} for arm in ARMS}
 
 
-def _measures_by_arm(measures):
-    """The valuation-service measures each arm reaches: an applies_to entry
-    names one of the arm's leaf product types or an ancestor of it."""
-    leaves = {}
-    for product_type in product_hierarchy.all_product_types():
-        if not product_hierarchy.descendants_of(product_type):
-            arm = _arm_of(product_type)
-            if arm is not None:
-                leaves.setdefault(arm, []).append(product_type)
-
-    def lineage(node):
-        while node is not None:
-            yield node
-            node = product_hierarchy.parent_of(node)
-
-    return {
-        arm: {
-            m["name"]
-            for m in measures
-            if m["computed_by"] == "valuation-service" and m["implemented"]
-            and any(node in m["applies_to"] for leaf in arm_leaves for node in lineage(leaf))
-        }
-        for arm, arm_leaves in leaves.items()
-    }
+def test_measures_by_arm_helper_is_gone():
+    # LM-427: the public product_inputs.measures_for_arm replaced it.
+    assert "_measures_by_arm" not in globals()
 
 
 def test_lm425_changes_per_arm_are_only_the_listed_ones():
-    before = _measures_by_arm(LM425_BEFORE)
-    after = _measures_by_arm(json.loads(SOURCE.read_text())["measures"])
-    assert set(before) == set(after) == {"bond", "tips", "frn", "mbs", "equity", "cash"}
+    before = _by_arm(lambda arm: _measures_for_arm_in(LM425_BEFORE, arm))
+    after = _by_arm(measures_for_arm)
     changes = {
         arm: (before[arm] - after[arm], after[arm] - before[arm])
         for arm in before
@@ -202,13 +175,13 @@ def test_lm425_changes_per_arm_are_only_the_listed_ones():
     }
     assert changes == {
         "frn": ({"YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE",
-                 "CONVEXITY", "MODIFIED_DURATION", "DV01"}, set()),
+                 "CONVEXITY", "MODIFIED_DURATION", "DV01", "PROFIT_LOSS_PERCENT"}, set()),
         "tips": (set(), {"REFERENCE_CPI", "INDEX_RATIO"}),
     }
     # What src/engine/frn.rs computes, less ADJUSTED_COST_BASIS (implemented:
-    # false), plus PROFIT_LOSS_PERCENT, which LM-405 pins; frn.rs rejecting it
-    # is a valuation-service follow-up.
+    # false). PROFIT_LOSS_PERCENT is gone too: frn.rs returns UNIMPLEMENTED for
+    # it (LM-427, owner ruling 31 Oct).
     assert after["frn"] == {
         "MARKET_VALUE", "CURRENT_YIELD", "PRESENT_VALUE_CASHFLOWS", "DISCOUNT_MARGIN",
-        "SPREAD_DURATION", "PROFIT_LOSS", "PROFIT_LOSS_PERCENT", "ACCRUED_INTEREST", "DIRTY_PRICE",
+        "SPREAD_DURATION", "PROFIT_LOSS", "ACCRUED_INTEREST", "DIRTY_PRICE",
     }

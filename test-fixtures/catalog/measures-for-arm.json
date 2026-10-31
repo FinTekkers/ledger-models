@@ -1,0 +1,29 @@
+{
+  "item": "LM-427",
+  "note": "Written by hand, never generated: the measures valuation-service computes for each ProductInput arm, which ProductInputs.measuresForArm must return in Java, Python, JS and Rust (any order, no duplicates). frn has no PROFIT_LOSS_PERCENT (owner ruling, 31 Oct: src/engine/frn.rs returns UNIMPLEMENTED for it). unknown_arm has no arm and must raise UnmappedProductTypeError.",
+  "arms": {
+    "bond": [
+      "MARKET_VALUE", "CURRENT_YIELD", "YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE",
+      "PRESENT_VALUE_CASHFLOWS", "PROFIT_LOSS", "PROFIT_LOSS_PERCENT", "ACCRUED_INTEREST", "CONVEXITY",
+      "DIRTY_PRICE", "MODIFIED_DURATION", "DV01", "DISCOUNT_YIELD", "BOND_EQUIVALENT_YIELD"
+    ],
+    "tips": [
+      "MARKET_VALUE", "CURRENT_YIELD", "YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE",
+      "REAL_YIELD", "INFLATION_ADJUSTED_PRINCIPAL", "PRESENT_VALUE_CASHFLOWS", "PROFIT_LOSS",
+      "PROFIT_LOSS_PERCENT", "ACCRUED_INTEREST", "CONVEXITY", "DIRTY_PRICE", "MODIFIED_DURATION", "DV01",
+      "REFERENCE_CPI", "INDEX_RATIO"
+    ],
+    "frn": [
+      "MARKET_VALUE", "CURRENT_YIELD", "PRESENT_VALUE_CASHFLOWS", "DISCOUNT_MARGIN", "SPREAD_DURATION",
+      "PROFIT_LOSS", "ACCRUED_INTEREST", "DIRTY_PRICE"
+    ],
+    "mbs": [
+      "MARKET_VALUE", "CURRENT_YIELD", "YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE",
+      "PRESENT_VALUE_CASHFLOWS", "PROFIT_LOSS", "PROFIT_LOSS_PERCENT", "ACCRUED_INTEREST", "CONVEXITY",
+      "DIRTY_PRICE", "MODIFIED_DURATION", "DV01"
+    ],
+    "equity": ["MARKET_VALUE", "PROFIT_LOSS", "PROFIT_LOSS_PERCENT"],
+    "cash": ["MARKET_VALUE", "PROFIT_LOSS", "PROFIT_LOSS_PERCENT"]
+  },
+  "unknown_arm": "swap"
+}

@@ -9,8 +9,8 @@ use ledger_models::fintekkers::models::security::{
 };
 use ledger_models::fintekkers::wrappers::models::product_hierarchy;
 use ledger_models::fintekkers::wrappers::models::product_inputs::{
-    arm_for, parse_valuation_arms, required_market_data, shipped_valuation_arms, MarketDataKind,
-    ProductInputError,
+    arm_for, measures_for_arm, parse_valuation_arms, required_market_data, shipped_valuation_arms,
+    MarketDataKind, ProductInputError,
 };
 use serde_json::Value;
 
@@ -167,4 +167,78 @@ fn parse_rejects_unknown_requires() {
 fn unmapped_maps_to_invalid_argument() {
     let status: tonic::Status = unmapped("FX_SPOT", "UNKNOWN_COUPON_TYPE").into();
     assert_eq!(status.code(), tonic::Code::InvalidArgument);
+}
+
+// ---------- LM-427: measures_for_arm ----------
+
+const ARMS: [&str; 6] = ["bond", "tips", "frn", "mbs", "equity", "cash"];
+
+fn measures_fixture() -> Value {
+    read_json("../test-fixtures/catalog/measures-for-arm.json")
+}
+
+fn measure_names(arm: &str) -> Vec<String> {
+    measures_for_arm(arm)
+        .unwrap_or_else(|e| panic!("{arm}: {e}"))
+        .iter()
+        .map(|m| m.as_str_name().to_string())
+        .collect()
+}
+
+#[test]
+fn measures_fixture_lists_the_six_arms_none_empty() {
+    let fixture = measures_fixture();
+    let arms = fixture["arms"].as_object().expect("arms");
+    let mut keys: Vec<&str> = arms.keys().map(String::as_str).collect();
+    keys.sort();
+    let mut expected = ARMS.to_vec();
+    expected.sort();
+    assert_eq!(keys, expected);
+    for (arm, list) in arms {
+        assert!(!list.as_array().expect("list").is_empty(), "{arm}");
+    }
+}
+
+#[test]
+fn measures_for_arm_matches_the_shared_fixture() {
+    let fixture = measures_fixture();
+    for arm in ARMS {
+        let mut expected: Vec<String> = fixture["arms"][arm]
+            .as_array()
+            .expect("list")
+            .iter()
+            .map(|v| v.as_str().expect("name").to_string())
+            .collect();
+        expected.sort();
+        let mut got = measure_names(arm);
+        let mut distinct = got.clone();
+        distinct.sort();
+        distinct.dedup();
+        assert_eq!(got.len(), distinct.len(), "{arm} has duplicates");
+        got.sort();
+        assert_eq!(got, expected, "{arm}");
+    }
+}
+
+#[test]
+fn measures_for_arm_frn_and_tips() {
+    let frn = measure_names("frn");
+    for name in ["CONVEXITY", "MODIFIED_DURATION", "DV01", "PROFIT_LOSS_PERCENT"] {
+        assert!(!frn.contains(&name.to_string()), "frn has {name}");
+    }
+    let tips = measure_names("tips");
+    for name in ["REFERENCE_CPI", "INDEX_RATIO"] {
+        assert!(tips.contains(&name.to_string()), "tips lacks {name}");
+    }
+}
+
+#[test]
+fn measures_for_unknown_arm_is_unmapped() {
+    let fixture = measures_fixture();
+    let arm = fixture["unknown_arm"].as_str().expect("unknown_arm");
+    let err = measures_for_arm(arm).expect_err("unknown arm");
+    assert!(
+        matches!(err, ProductInputError::Unmapped { ref product_type, .. } if product_type == "swap"),
+        "{err:?}"
+    );
 }
