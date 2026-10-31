@@ -1,21 +1,22 @@
 {
-  "item": "LM-427",
-  "note": "Written by hand, never generated: the measures valuation-service computes for each ProductInput arm, which ProductInputs.measuresForArm must return in Java, Python, JS and Rust (any order, no duplicates). frn has no PROFIT_LOSS_PERCENT (owner ruling, 31 Oct: src/engine/frn.rs returns UNIMPLEMENTED for it). unknown_arm has no arm and must raise UnmappedProductTypeError.",
+  "item": "LM-429",
+  "note": "Written by hand, never generated: the measures valuation-service computes for each ProductInput arm, which ProductInputs.measuresForArm must return in Java, Python, JS and Rust (any order, no duplicates). frn has no PROFIT_LOSS_PERCENT (owner ruling, 31 Oct: src/engine/frn.rs returns UNIMPLEMENTED for it). unknown_arm has no arm and must raise UnmappedProductTypeError. LM-429: bond, tips and frn gain ADJUSTED_COST_BASIS (valuation-service VS-121, VS-122, VS-123; found by VS-150's catalog test).",
   "arms": {
     "bond": [
       "MARKET_VALUE", "CURRENT_YIELD", "YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE",
       "PRESENT_VALUE_CASHFLOWS", "PROFIT_LOSS", "PROFIT_LOSS_PERCENT", "ACCRUED_INTEREST", "CONVEXITY",
-      "DIRTY_PRICE", "MODIFIED_DURATION", "DV01", "DISCOUNT_YIELD", "BOND_EQUIVALENT_YIELD"
+      "DIRTY_PRICE", "MODIFIED_DURATION", "DV01", "DISCOUNT_YIELD", "BOND_EQUIVALENT_YIELD",
+      "ADJUSTED_COST_BASIS"
     ],
     "tips": [
       "MARKET_VALUE", "CURRENT_YIELD", "YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE",
       "REAL_YIELD", "INFLATION_ADJUSTED_PRINCIPAL", "PRESENT_VALUE_CASHFLOWS", "PROFIT_LOSS",
       "PROFIT_LOSS_PERCENT", "ACCRUED_INTEREST", "CONVEXITY", "DIRTY_PRICE", "MODIFIED_DURATION", "DV01",
-      "REFERENCE_CPI", "INDEX_RATIO"
+      "REFERENCE_CPI", "INDEX_RATIO", "ADJUSTED_COST_BASIS"
     ],
     "frn": [
       "MARKET_VALUE", "CURRENT_YIELD", "PRESENT_VALUE_CASHFLOWS", "DISCOUNT_MARGIN", "SPREAD_DURATION",
-      "PROFIT_LOSS", "ACCRUED_INTEREST", "DIRTY_PRICE"
+      "PROFIT_LOSS", "ACCRUED_INTEREST", "DIRTY_PRICE", "ADJUSTED_COST_BASIS"
     ],
     "mbs": [
       "MARKET_VALUE", "CURRENT_YIELD", "YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE",

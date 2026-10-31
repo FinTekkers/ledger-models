@@ -91,7 +91,7 @@
         "Treasury FRN other indices (e.g. SOFR): not defined yet",
         "No lots: the measure is absent, with a \"no open lots\" warning, never 0"
       ],
-      "implemented": false,
+      "implemented": true,
       "computed_by": "valuation-service",
       "depends_on": ["TAX_LOTS", "SECURITY_TERMS", "REFERENCE_CPI", "BILL_FIXINGS"]
     },

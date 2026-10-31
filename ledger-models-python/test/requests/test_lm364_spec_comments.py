@@ -92,7 +92,7 @@ def test_catalog_entry_applies_to_the_seven_product_types():
     assert ENTRY["enum_value"] == 4
     assert "reserved" not in ENTRY["description"].lower()
     assert ENTRY["applies_to"] == APPLIES_TO
-    assert ENTRY["implemented"] is False
+    assert ENTRY["implemented"] is True  # LM-429: VS-121, VS-122, VS-123
 
 
 def test_units_are_per_100_face_and_per_100_original_face_for_tips():

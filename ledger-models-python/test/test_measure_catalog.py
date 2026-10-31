@@ -175,13 +175,16 @@ def test_lm425_changes_per_arm_are_only_the_listed_ones():
     }
     assert changes == {
         "frn": ({"YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE",
-                 "CONVEXITY", "MODIFIED_DURATION", "DV01", "PROFIT_LOSS_PERCENT"}, set()),
-        "tips": (set(), {"REFERENCE_CPI", "INDEX_RATIO"}),
+                 "CONVEXITY", "MODIFIED_DURATION", "DV01", "PROFIT_LOSS_PERCENT"},
+                {"ADJUSTED_COST_BASIS"}),
+        "tips": (set(), {"REFERENCE_CPI", "INDEX_RATIO", "ADJUSTED_COST_BASIS"}),
+        "bond": (set(), {"ADJUSTED_COST_BASIS"}),
     }
-    # What src/engine/frn.rs computes, less ADJUSTED_COST_BASIS (implemented:
-    # false). PROFIT_LOSS_PERCENT is gone too: frn.rs returns UNIMPLEMENTED for
+    # What src/engine/frn.rs computes, ADJUSTED_COST_BASIS included (LM-429:
+    # VS-123). PROFIT_LOSS_PERCENT is gone: frn.rs returns UNIMPLEMENTED for
     # it (LM-427, owner ruling 31 Oct).
     assert after["frn"] == {
         "MARKET_VALUE", "CURRENT_YIELD", "PRESENT_VALUE_CASHFLOWS", "DISCOUNT_MARGIN",
         "SPREAD_DURATION", "PROFIT_LOSS", "ACCRUED_INTEREST", "DIRTY_PRICE",
+        "ADJUSTED_COST_BASIS",
     }

@@ -79,7 +79,7 @@ Java `PortfolioSerializer.serialize` used to copy fields one by one and dropped 
 
 ## Rules not enforced here
 
-- valuation-service does not compute `ADJUSTED_COST_BASIS` yet; the catalog keeps `implemented: false` until it does (VS-110).
+- valuation-service computes `ADJUSTED_COST_BASIS` on the bond, TIPS and FRN arms (VS-121, VS-122, VS-123); the catalog marks it `implemented: true` since LM-429.
 - What happens when a bond has no `IssuanceProto.price_for_single_price_auction` is not yet ruled; that will be a comment-only follow-up.
 - Persisting `PortfolioProto.amortisation_elections` in ledger-service is a ledger-service follow-up.
 - The catalog `applies_to` for this entry uses product types (`TREASURY_NOTE`, …); older entries still use `BOND_SECURITY`/`TIPS`/`FRN`. No code reads `applies_to`.
