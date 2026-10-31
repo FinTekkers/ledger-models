@@ -1,0 +1,70 @@
+{
+  "item": "LM-425",
+  "note": "Every catalog/measures.json change LM-425 makes against lm-425-before.json, each with the FinTekkers/valuation-service file (main, aff2228) that justifies it. NO_FRN is BOND's GOV_BOND children minus TREASURY_FRN (TBILL, TREASURY_NOTE, TREASURY_BOND, STRIPS, SOVEREIGN_BOND, with TIPS kept as its own entry), plus CREDIT_BOND and STRUCTURED_BOND: every product BOND covered except TREASURY_FRN. MORTGAGE_BACKED stays covered through STRUCTURED_BOND (G8, VS-71: src/engine/mbs.rs values MbsInput through bond::run_bond_inputs, so mbs keeps every bond measure).",
+  "changes": [
+    {
+      "measure": "YIELD_TO_MATURITY",
+      "field": "applies_to",
+      "before": ["BOND", "TIPS"],
+      "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
+      "engine_file": "src/engine/frn.rs",
+      "reason": "run_frn has no YIELD_TO_MATURITY arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+    },
+    {
+      "measure": "MACAULAY_DURATION",
+      "field": "applies_to",
+      "before": ["BOND", "TIPS"],
+      "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
+      "engine_file": "src/engine/frn.rs",
+      "reason": "run_frn has no MACAULAY_DURATION arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+    },
+    {
+      "measure": "PRESENT_VALUE",
+      "field": "applies_to",
+      "before": ["BOND", "TIPS"],
+      "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
+      "engine_file": "src/engine/frn.rs",
+      "reason": "run_frn has no PRESENT_VALUE arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+    },
+    {
+      "measure": "CONVEXITY",
+      "field": "applies_to",
+      "before": ["BOND", "TIPS", "TREASURY_FRN"],
+      "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
+      "engine_file": "src/engine/frn.rs",
+      "reason": "run_frn has no CONVEXITY arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+    },
+    {
+      "measure": "MODIFIED_DURATION",
+      "field": "applies_to",
+      "before": ["BOND", "TIPS", "TREASURY_FRN"],
+      "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
+      "engine_file": "src/engine/frn.rs",
+      "reason": "run_frn has no MODIFIED_DURATION arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+    },
+    {
+      "measure": "DV01",
+      "field": "applies_to",
+      "before": ["BOND", "TIPS", "TREASURY_FRN"],
+      "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
+      "engine_file": "src/engine/frn.rs",
+      "reason": "run_frn has no DV01 arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+    },
+    {
+      "measure": "REFERENCE_CPI",
+      "field": "implemented",
+      "before": false,
+      "after": true,
+      "engine_file": "src/engine/tips.rs",
+      "reason": "cpi_measure_entries returns REFERENCE_CPI from TipsInput.cpi"
+    },
+    {
+      "measure": "INDEX_RATIO",
+      "field": "implemented",
+      "before": false,
+      "after": true,
+      "engine_file": "src/engine/tips.rs",
+      "reason": "cpi_measure_entries returns INDEX_RATIO (reference CPI over base CPI)"
+    }
+  ]
+}
