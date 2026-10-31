@@ -121,7 +121,7 @@
       "formula": "Solve for r: price * (face / 100) = Sum[C / (1 + r/m)^t] + F / (1 + r/m)^N",
       "units": "Decimal (0-1 scale; e.g. 0.06 = 6.00% annual)",
       "category": "yield",
-      "applies_to": ["BOND", "TIPS"],
+      "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "model_assumptions": [
         "Coupon reinvestment at the YTM rate (standard bond math assumption)",
         "For TIPS: returns the same value as REAL_YIELD, with the response summary warning \"YIELD_TO_MATURITY for TIPS is the real yield (same as REAL_YIELD); a nominal yield needs an inflation forecast\"",
@@ -141,7 +141,7 @@
       "formula": "D = Sum[(t / m) * PV_t / TotalPV]",
       "units": "Years (e.g. 4.41 = 4.41 years)",
       "category": "risk",
-      "applies_to": ["BOND", "TIPS"],
+      "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "model_assumptions": [
         "Uses the bond's YTM (from Newton-Raphson solver) as the discount rate",
         "Flat yield curve (single rate for all maturities)",
@@ -159,7 +159,7 @@
       "formula": "PV = Sum[C / (1 + r/m)^t] + F / (1 + r/m)^N, returned as quoted price (% of par)",
       "units": "Quoted price (% of par; e.g. 95.00 = $95 per $100 face)",
       "category": "valuation",
-      "applies_to": ["BOND", "TIPS"],
+      "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "model_assumptions": [
         "Same as YIELD_TO_MATURITY (the discount rate is derived from the input price)",
         "For TIPS: inflation-adjusted cash flows discounted at REAL_YIELD, consistent with clean_price × index_ratio",
@@ -378,7 +378,7 @@
       "formula": "Convexity = (1/P) × Σ_{t=1}^{N} [CF_t × t × (t+1) / (1+y/n)^(t+2)] / n²",
       "units": "Years² (e.g. 20.5 = 20.5 years²)",
       "category": "risk",
-      "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
+      "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "model_assumptions": [
         "Same as MACAULAY_DURATION (flat yield curve, YTM-based discounting)",
         "For TIPS: y = REAL_YIELD and CF_t are the inflation-adjusted cash flows",
@@ -425,7 +425,7 @@
       "formula": "ModifiedDuration = MacaulayDuration / (1 + ytm/n), where ytm = yield to maturity (annual), n = coupon periods per year. For TIPS, ytm = REAL_YIELD (on the inflation-adjusted cash flows)",
       "units": "Years (dimensionally equivalent to years, interpreted as % per 100bp)",
       "category": "risk",
-      "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
+      "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "model_assumptions": [],
       "implemented": true,
       "computed_by": "valuation-service",
@@ -439,7 +439,7 @@
       "formula": "DV01 = ModifiedDuration × MarketValue × 0.0001",
       "units": "Dollars per basis point",
       "category": "risk",
-      "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
+      "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "model_assumptions": [],
       "implemented": true,
       "computed_by": "valuation-service",
@@ -496,7 +496,7 @@
         "Readings must include months m-3 and m-2 (UTC settlement month): the request is rejected when either is missing. Extra months (e.g. those lot settlement dates need for PROFIT_LOSS) are allowed and ignored here. A duplicate (year, month) or a month outside 1-12 is rejected",
         "Absent when no CPI is given"
       ],
-      "implemented": false,
+      "implemented": true,
       "computed_by": "valuation-service",
       "depends_on": ["CPI_U"]
     },
@@ -514,7 +514,7 @@
         "Rounding: computed from the rounded REFERENCE_CPI and rounded to 5 decimals (half up) per 31 CFR 356 Appendix B. Every measure that uses the index ratio (MARKET_VALUE, ADJUSTED_COST_BASIS, INFLATION_ADJUSTED_PRINCIPAL, REAL_YIELD, PRESENT_VALUE, PROFIT_LOSS) uses this rounded ratio",
         "Unfloored: the deflation floor applies to INFLATION_ADJUSTED_PRINCIPAL only"
       ],
-      "implemented": false,
+      "implemented": true,
       "computed_by": "valuation-service",
       "depends_on": ["REFERENCE_CPI", "SECURITY_TERMS"]
     }

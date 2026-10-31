@@ -1,0 +1,707 @@
+{
+  "item": "LM-425",
+  "note": "Snapshot of catalog/measures.json from main (cd38d262) before LM-425. LM-425 changes only applies_to and implemented; every other key, and the list of measure names in order, stays as here.",
+  "measures": [
+    {
+      "name": "UNKNOWN_MEASURE",
+      "enum_value": 0,
+      "display_name": "Unknown Measure",
+      "description": "Placeholder for unset or unrecognized measure values. Should never be requested in a valuation call.",
+      "formula": null,
+      "units": null,
+      "category": "sentinel",
+      "applies_to": [],
+      "model_assumptions": [],
+      "implemented": false,
+      "computed_by": null,
+      "depends_on": []
+    },
+    {
+      "name": "DIRECTED_QUANTITY",
+      "enum_value": 1,
+      "display_name": "Directed Quantity",
+      "description": "The signed quantity of a position (e.g. number of shares, or total face value of bonds held). This is an input measure provided on the PositionProto, not a computed output.",
+      "formula": null,
+      "units": "Units of the security (shares for equity, face-value dollars for bonds)",
+      "category": "input",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN",
+        "STOCK",
+        "CASH_INSTRUMENT"
+      ],
+      "model_assumptions": [],
+      "implemented": true,
+      "computed_by": "ledger-service",
+      "depends_on": [
+        "TAX_LOTS"
+      ]
+    },
+    {
+      "name": "MARKET_VALUE",
+      "enum_value": 2,
+      "display_name": "Market Value",
+      "description": "The current dollar value of a position at the given market price.",
+      "formula": "MarketValue = price / 100 * directed_quantity; TIPS: clean_price / 100 * index_ratio * directed_quantity (index_ratio rounded to 5 decimals per 31 CFR 356 Appendix B, unfloored; the TIPS result rounded to cents, a project rule)",
+      "units": "Dollars (or settlement currency)",
+      "category": "valuation",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN",
+        "STOCK",
+        "CASH_INSTRUMENT"
+      ],
+      "model_assumptions": [
+        "None — direct mark-to-market calculation"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "CLEAN_PRICE",
+        "DIRECTED_QUANTITY",
+        "INDEX_RATIO"
+      ]
+    },
+    {
+      "name": "UNADJUSTED_COST_BASIS",
+      "enum_value": 3,
+      "display_name": "Unadjusted Cost Basis",
+      "description": "The original purchase price of the security, before any adjustments for amortization, accretion, or corporate actions.",
+      "formula": "Returns the price_input as-is (quoted as % of par for bonds)",
+      "units": "Quoted price (% of par for bonds; dollar price for equities)",
+      "category": "cost",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN",
+        "STOCK",
+        "CASH_INSTRUMENT"
+      ],
+      "model_assumptions": [
+        "None — pass-through of the input price"
+      ],
+      "implemented": true,
+      "computed_by": "ledger-service",
+      "depends_on": [
+        "TAX_LOTS"
+      ]
+    },
+    {
+      "name": "ADJUSTED_COST_BASIS",
+      "enum_value": 4,
+      "display_name": "Adjusted Cost Basis",
+      "description": "Tax amortised cost, per 100 face, quantity-weighted over the open lots. Tax basis only; book (GAAP/IFRS) cost is out of scope. Inputs: cost_basis (CostBasisInput) on BondInput, TipsInput or FrnInput.",
+      "formula": "AdjustedCostBasis = sum(open_quantity_i * acb_i) / sum(open_quantity_i) over CostBasisInput.lots, where acb_i is lot i's amortised cost per 100 face at the valuation date. OID: always accreted (mandatory, whatever the elections) at constant yield from the issue price (IssuanceProto.price_for_single_price_auction, MDI-82), reduced by any acquisition premium. Premium (IRC §171): amortised at constant yield if elected. Market discount: accreted only with INCLUDE_CURRENTLY, ratably or at constant yield per market_discount_accrual; otherwise left until disposition. De minimis: OID and market discount below 0.25% × complete years to maturity are treated as zero. TIPS: AdjustedCostBasis = sum(open_quantity_i * real_acb_i) / sum(open_quantity_i) * IndexRatio(valuation date), where real_acb_i is lot i's amortised cost per 100 real face: it starts from the lot's real purchase price (TaxLotProto.price) and accrues at constant yield on real principal; open_quantity_i is the lot's original (unadjusted) face; and IndexRatio(valuation date) is INDEX_RATIO for the UTC date of ValuationRequestProto.asof_datetime. Example: lots of 10000 at real_acb 99.00 and 5000 at 101.50, index ratio 1.2 -> (10000*99.00 + 5000*101.50) / 15000 * 1.2 = 119.80.",
+      "units": "Price per 100 face (% of par). TIPS: per 100 original face, in nominal dollars",
+      "category": "cost",
+      "applies_to": [
+        "TREASURY_NOTE",
+        "TREASURY_BOND",
+        "SOVEREIGN_BOND",
+        "CORP_BOND",
+        "MUNI_BOND",
+        "TIPS",
+        "TREASURY_FRN"
+      ],
+      "model_assumptions": [
+        "Accrual start: from each lot's open_date plus the product's settlement lag (e.g. T+1 for Treasuries)",
+        "Elections: CostBasisInput.elections, copied from PortfolioProto.amortisation_elections; unset fields use the defaults (PREMIUM_ELECTED, AT_DISPOSITION, RATABLE)",
+        "TIPS: amortise in real terms, then multiply by the index ratio at the valuation date, giving a figure per 100 original face in nominal dollars",
+        "TIPS accrual start: from each lot's open_date plus the product's settlement lag, on real principal; valuation-service owns the settlement lag and lots carry no settlement field",
+        "TIPS elections: premium and market discount accrue or not per the elections, as in the fixed-rate rules",
+        "TIPS CPI: only the m-3 and m-2 readings for the valuation date in TipsInput.cpi; extra lot months there serve PROFIT_LOSS and are ignored here",
+        "TIPS rounding: the index ratio is INDEX_RATIO, rounded to 5 decimals per 31 CFR 356 Appendix B. real_acb_i, the weighted average and the result are not rounded further",
+        "TIPS deflation floor: not applied. It applies only to final principal (INFLATION_ADJUSTED_PRINCIPAL), never to the basis",
+        "FRN: use the equivalent fixed rate from the fixing at settlement",
+        "Treasury FRN (frn_extension.reference_rate_index T_BILL_13_WEEK, LM-383): inputs are FrnInput.cost_basis (lots and elections) and FrnInput.fixings",
+        "Treasury FRN per lot: amortise each lot as the equivalent fixed-rate instrument, using the same constant-yield, elections and de minimis rules as the fixed-rate bonds",
+        "Treasury FRN coupon: the lot's equivalent fixed coupon, as a decimal fraction, is coupon_i = MMY(fixing_i) + spread / 10000. fixing_i is the fixing in effect at the lot's accrual start, i.e. the FrnInput.fixings entry with the latest fixing_date on or before it; spread is frn_extension.spread, in basis points",
+        "Treasury FRN OID: the fixing in effect on bond_details.issue_date (the latest fixing_date on or before it) sets the issue-date OID schedule",
+        "Treasury FRN resets: later coupon resets do not change a lot's schedule",
+        "Treasury FRN conversion: fixings.rate is the published high discount rate in percent (see ReferenceRateFixingProto.rate). valuation-service converts it to the money-market yield, on a 360-day basis: MMY = 360 * d / (360 - d * t), where d = rate / 100 and t = bill_maturity_date - bill_issue_date, in days, both from the same fixing. bill_issue_date is the chosen auction's own issue date, so a reopened bill counts from the reopening. Example: rate 4.215, t 91 -> d = 0.04215, MMY = 360 * 0.04215 / (360 - 0.04215 * 91) = 0.042604 (rounded here only)",
+        "Treasury FRN missing data: no fixing on or before a needed date (a lot's accrual start, or the issue date) makes the request invalid",
+        "Treasury FRN other indices (e.g. SOFR): not defined yet",
+        "No lots: the measure is absent, with a \"no open lots\" warning, never 0"
+      ],
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "TAX_LOTS",
+        "SECURITY_TERMS",
+        "REFERENCE_CPI",
+        "BILL_FIXINGS"
+      ]
+    },
+    {
+      "name": "CURRENT_YIELD",
+      "enum_value": 5,
+      "display_name": "Current Yield",
+      "description": "Annual coupon income as a percentage of the current market price.",
+      "formula": "CurrentYield = (coupon_rate * principal) / (price * face_value / 100). For zero-coupon: (face_value / dollar_price)^(1 / years_to_maturity) - 1",
+      "units": "Decimal (0-1 scale; e.g. 0.0526 = 5.26%)",
+      "category": "yield",
+      "applies_to": [
+        "BOND",
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Assumes coupon income is constant (no reinvestment assumption)",
+        "For TIPS, uses the inflation-adjusted principal for the annual coupon calculation",
+        "Day count: Actual/365 for years-to-maturity calculation"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "CLEAN_PRICE",
+        "SECURITY_TERMS"
+      ]
+    },
+    {
+      "name": "YIELD_TO_MATURITY",
+      "enum_value": 7,
+      "display_name": "Yield to Maturity",
+      "description": "The annualized rate of return assuming the bond is held to maturity and all coupons are reinvested at the same rate. This is the internal rate of return that equates the present value of all future cashflows to the current price.",
+      "formula": "Solve for r: price * (face / 100) = Sum[C / (1 + r/m)^t] + F / (1 + r/m)^N",
+      "units": "Decimal (0-1 scale; e.g. 0.06 = 6.00% annual)",
+      "category": "yield",
+      "applies_to": [
+        "BOND",
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Coupon reinvestment at the YTM rate (standard bond math assumption)",
+        "For TIPS: returns the same value as REAL_YIELD, with the response summary warning \"YIELD_TO_MATURITY for TIPS is the real yield (same as REAL_YIELD); a nominal yield needs an inflation forecast\"",
+        "Settlement on a coupon date (no accrued interest adjustment currently)",
+        "Day count: Actual/365 for years-to-maturity",
+        "Solver: Newton-Raphson iteration with linear approximation initial guess"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "CLEAN_PRICE",
+        "SECURITY_TERMS",
+        "INDEX_RATIO"
+      ]
+    },
+    {
+      "name": "MACAULAY_DURATION",
+      "enum_value": 8,
+      "display_name": "Macaulay Duration",
+      "description": "The weighted average time (in years) to receive all cashflows from a bond, where each cashflow's weight is its proportion of the bond's total present value.",
+      "formula": "D = Sum[(t / m) * PV_t / TotalPV]",
+      "units": "Years (e.g. 4.41 = 4.41 years)",
+      "category": "risk",
+      "applies_to": [
+        "BOND",
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Uses the bond's YTM (from Newton-Raphson solver) as the discount rate",
+        "Flat yield curve (single rate for all maturities)",
+        "Settlement on a coupon date (integer period exponents)"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "YIELD_TO_MATURITY"
+      ]
+    },
+    {
+      "name": "PRESENT_VALUE",
+      "enum_value": 9,
+      "display_name": "Present Value",
+      "description": "The theoretical price of a bond computed as the sum of all future cashflows (coupons + principal) discounted at the bond's yield to maturity.",
+      "formula": "PV = Sum[C / (1 + r/m)^t] + F / (1 + r/m)^N, returned as quoted price (% of par)",
+      "units": "Quoted price (% of par; e.g. 95.00 = $95 per $100 face)",
+      "category": "valuation",
+      "applies_to": [
+        "BOND",
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Same as YIELD_TO_MATURITY (the discount rate is derived from the input price)",
+        "For TIPS: inflation-adjusted cash flows discounted at REAL_YIELD, consistent with clean_price × index_ratio",
+        "Three-way invariant: price == present_value == sum(cashflow_pvs)"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "YIELD_TO_MATURITY"
+      ]
+    },
+    {
+      "name": "REAL_YIELD",
+      "enum_value": 10,
+      "display_name": "Real Yield",
+      "description": "The yield of a TIPS bond in real (inflation-adjusted) terms. This is the return an investor earns above the rate of inflation.",
+      "formula": "Solve for r: clean_price × index_ratio × face / 100 = Sum[PV(inflation-adjusted cash flows at r)]",
+      "units": "Decimal (0-1 scale; e.g. 0.02 = 2.00% real annual yield)",
+      "category": "yield",
+      "applies_to": [
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Same solver and conventions as YIELD_TO_MATURITY",
+        "The quoted real price is scaled by the same index ratio as the cash flows, so the result is the true real yield and does not change with CPI"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "YIELD_TO_MATURITY"
+      ]
+    },
+    {
+      "name": "INFLATION_ADJUSTED_PRINCIPAL",
+      "enum_value": 11,
+      "display_name": "Inflation-Adjusted Principal",
+      "description": "The inflation-adjusted principal of a TIPS bond, reflecting the cumulative change in the Consumer Price Index (CPI) since the bond's issuance.",
+      "formula": "adjusted_principal = max(face_value * index_ratio, face_value)",
+      "units": "Dollars (e.g. 103.36 for face=100 with 3.36% cumulative inflation)",
+      "category": "valuation",
+      "applies_to": [
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Uses base_cpi from the security's tips_extension and the reference CPI from TipsInput.cpi",
+        "Deflation floor applies only to the principal at maturity; interim coupons use the raw adjusted principal"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "SECURITY_TERMS",
+        "INDEX_RATIO"
+      ]
+    },
+    {
+      "name": "PRESENT_VALUE_CASHFLOWS",
+      "enum_value": 12,
+      "display_name": "Present Value Cashflows",
+      "description": "Requests the full schedule of future cashflows for a bond. The ValuationResponseProto will populate the cashflows repeated field with one CashflowProto per payment period.",
+      "formula": "Each CashflowProto contains: cashflow_date, fv_amount, pv_amount, coupon_rate. Sum of pv_amounts equals PRESENT_VALUE.",
+      "units": "fv_amount and pv_amount in dollars; coupon_rate as percentage",
+      "category": "valuation",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN"
+      ],
+      "model_assumptions": [
+        "Same as PRESENT_VALUE",
+        "Three-way invariant: sum(pv_amounts) == present_value == price"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "YIELD_TO_MATURITY",
+        "YIELD_CURVE"
+      ]
+    },
+    {
+      "name": "DISCOUNT_MARGIN",
+      "enum_value": 13,
+      "display_name": "Discount Margin",
+      "description": "The discount margin of a Floating Rate Note (FRN) — the spread over the reference rate at which the market discounts the FRN's projected cashflows to arrive at its current price. This is the FRN analogue of YTM.",
+      "formula": "Solve for DM: price = Sum[(R + QM)/m * FV / (1 + (R + DM)/m)^t] + FV / (1 + (R + DM)/m)^N",
+      "units": "Decimal (0-1 scale; e.g. 0.0075 = 75 basis points)",
+      "category": "yield",
+      "applies_to": [
+        "TREASURY_FRN"
+      ],
+      "model_assumptions": [
+        "Flat forward rates: all future reference rate fixings assumed equal to current observation",
+        "When DM = QM, price = par (100) on a reset date",
+        "When DM > QM, price < par; when DM < QM, price > par",
+        "Solver: Newton-Raphson, same as YTM",
+        "T_BILL_13_WEEK fixings: FrnInput.fixings rate is the auction's high discount rate as Treasury publishes it, in percent per annum on a bank-discount basis (4.215 = 4.215%), the same as IssuanceProto.high_discount_rate. valuation-service converts it to the money-market yield the FRN accrues on, using the fixing's bill_maturity_date. SOFR fixings are the rate as the New York Fed publishes it, in percent (4.32 = 4.32%); valuation-service converts it from percent."
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "CLEAN_PRICE",
+        "YIELD_CURVE",
+        "BILL_FIXINGS"
+      ]
+    },
+    {
+      "name": "SPREAD_DURATION",
+      "enum_value": 14,
+      "display_name": "Spread Duration",
+      "description": "The sensitivity of an FRN's price to a 1 basis point change in the discount margin. This is the primary risk measure for FRNs, analogous to modified duration for fixed-rate bonds but measuring spread risk rather than rate risk.",
+      "formula": "SpreadDuration = (P_down - P_up) / (2 * 0.0001 * P_base)",
+      "units": "Years (e.g. 1.90 = a 1bp spread widening causes ~1.90bp price decline)",
+      "category": "risk",
+      "applies_to": [
+        "TREASURY_FRN"
+      ],
+      "model_assumptions": [
+        "Same flat-forward assumption as DISCOUNT_MARGIN",
+        "Uses a symmetric 1bp bump for numerical differentiation",
+        "Interest rate duration of an FRN is near-zero; spread duration captures the economically significant risk"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "DISCOUNT_MARGIN",
+        "YIELD_CURVE"
+      ]
+    },
+    {
+      "name": "PAR_YIELD",
+      "enum_value": 15,
+      "display_name": "Par Yield",
+      "description": "The par yield at a given maturity point on the yield curve. The par yield is the coupon rate at which a bond would trade at par (price = 100) for a given maturity.",
+      "formula": "Solve for c: 100 = Sum[c/m / (1 + r_t)^t] + 100 / (1 + r_N)^N",
+      "units": "Decimal (0-1 scale; e.g. 0.045 = 4.50% annual)",
+      "category": "curve",
+      "applies_to": [
+        "BOND",
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Coupon frequency matches market convention (semiannual for US Treasuries)",
+        "Interpolation between observed maturities uses method specified in CurveRequestProto"
+      ],
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "TREASURY_PRICES"
+      ]
+    },
+    {
+      "name": "SPOT_YIELD",
+      "enum_value": 16,
+      "display_name": "Spot Yield",
+      "description": "The spot (zero-coupon) yield at a given maturity. Represents the pure time value of money with no reinvestment assumption.",
+      "formula": "Bootstrapped from par curve: s_N = ((100 + c/m) / (100 - Sum[c/m / (1+s_t)^t]))^(1/N) - 1",
+      "units": "Decimal (0-1 scale; e.g. 0.046 = 4.60% annual)",
+      "category": "curve",
+      "applies_to": [
+        "BOND",
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Requires a complete par yield curve as input",
+        "Bootstrap assumes exact coupon dates"
+      ],
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "PAR_YIELD"
+      ]
+    },
+    {
+      "name": "FORWARD_YIELD",
+      "enum_value": 17,
+      "display_name": "Forward Yield",
+      "description": "The forward yield between two future dates, implied by the spot curve. The rate agreed today for borrowing/lending between future times t1 and t2.",
+      "formula": "f(t1,t2) = [(1 + s_t2)^t2 / (1 + s_t1)^t1]^(1/(t2-t1)) - 1",
+      "units": "Decimal (0-1 scale; e.g. 0.048 = 4.80% annual forward rate)",
+      "category": "curve",
+      "applies_to": [
+        "BOND",
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Derived from spot curve (bootstrapped from par)",
+        "No-arbitrage between spot and forward rates",
+        "Forward period defined by adjacent tenor points"
+      ],
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "SPOT_YIELD"
+      ]
+    },
+    {
+      "name": "PROFIT_LOSS",
+      "enum_value": 18,
+      "display_name": "Profit / Loss",
+      "description": "The profit or loss on a position relative to its cost basis.",
+      "formula": "ProfitLoss = MarketValue - (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities (equities, cash); TIPS: ProfitLoss = MarketSide - CostSide, where MarketSide = clean_price / 100 * IndexRatio(valuation date) * directed_quantity and CostSide = sum over the open lots i in TipsInput.cost_basis.lots of price_i / 100 * IndexRatio(S_i) * face_i",
+      "units": "Dollars (or settlement currency)",
+      "category": "valuation",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN",
+        "STOCK",
+        "CASH_INSTRUMENT"
+      ],
+      "model_assumptions": [
+        "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable",
+        "TIPS (LM-405): nominal and clean, with both sides index-adjusted; MarketSide equals MARKET_VALUE for TIPS; price_i is the lot's real purchase price per 100 face (TaxLotProto.price); face_i is the open lot's remaining quantity (TaxLotProto.open_quantity), in original (unadjusted) face units; accrued interest is excluded on both sides",
+        "TIPS lot settlement date: S_i = TaxLotProto.open_date plus the product's settlement lag (T+1 business day for Treasuries); valuation-service owns the lag and lots carry no settlement field",
+        "TIPS IndexRatio(S_i): REFERENCE_CPI's daily interpolation with S_i as the settlement date, from the CPI-U readings for months L-3 and L-2 of S_i's month L in TipsInput.cpi.readings, divided by base_cpi and rounded as REFERENCE_CPI and INDEX_RATIO are",
+        "TIPS absent: the measure is absent, never 0 and never the real-price fallback (the UnadjustedCostBasis formula), when there are no lots (TipsInput.cost_basis unset or its lots empty), when a lot has no open_date, or when a needed CPI-U month is missing (L-3 or L-2 of any lot's settlement month); TipsInput.cpi with reference_cpi carries no lot months, so the measure is absent then. A missing m-3 or m-2 of the valuation month makes the whole request invalid (see TipsInput.cpi)",
+        "TIPS rounding: 31 CFR 356 Appendix B, each reference CPI and each index ratio rounded to 5 decimals (half up). Project rule, not Appendix B text: MarketSide and CostSide (after the sum) are each rounded to cents, and ProfitLoss is the difference of the rounded sides",
+        "TIPS example: 912810RL4, 0.750% due 2045-02-15, base_cpi 235.48150. Lot: face 100,000, real price 68.1875, open_date 2026-07-27, settling 2026-07-28; CPI-U April 2026 333.020, May 2026 335.123 -> RefCPI = 333.020 + 27/31 * (335.123 - 333.020) = 334.85165, IndexRatio = 334.85165 / 235.48150 = 1.42199, CostSide = 68.1875 / 100 * 1.42199 * 100,000 = 96,961.94. Valuation 2026-10-28, clean_price 67.625; CPI-U July 2026 333.918, August 2026 334.980 -> RefCPI = 333.918 + 27/31 * (334.980 - 333.918) = 334.84297, IndexRatio = 334.84297 / 235.48150 = 1.42195, MarketSide = 67.625 / 100 * 1.42195 * 100,000 = 96,159.37. ProfitLoss = 96,159.37 - 96,961.94 = -802.57"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "MARKET_VALUE",
+        "UNADJUSTED_COST_BASIS",
+        "DIRECTED_QUANTITY",
+        "INDEX_RATIO",
+        "TAX_LOTS"
+      ]
+    },
+    {
+      "name": "PROFIT_LOSS_PERCENT",
+      "enum_value": 19,
+      "display_name": "Profit / Loss Percent",
+      "description": "The profit or loss as a percentage of the original cost basis.",
+      "formula": "ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities (equities, cash); TIPS: ProfitLossPercent = ProfitLoss / CostSide, with ProfitLoss and CostSide as in PROFIT_LOSS (TIPS)",
+      "units": "Decimal (0-1 scale; e.g. 0.05 = 5.00% gain)",
+      "category": "valuation",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN",
+        "STOCK",
+        "CASH_INSTRUMENT"
+      ],
+      "model_assumptions": [
+        "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable",
+        "TIPS (LM-405): ProfitLoss and CostSide are PROFIT_LOSS (TIPS): nominal and clean, with the market side at INDEX_RATIO for the valuation date and each open lot's real price at the index ratio for its settlement date (TaxLotProto.open_date plus the product's settlement lag); accrued interest is excluded on both sides",
+        "TIPS absent: the measure is absent, never 0 and never the real-price fallback (the UnadjustedCostBasis formula), when there are no lots (TipsInput.cost_basis unset or its lots empty), when a lot has no open_date, or when a needed CPI-U month is missing (see PROFIT_LOSS)",
+        "TIPS rounding: ProfitLoss and CostSide are rounded as in PROFIT_LOSS: 31 CFR 356 Appendix B, reference CPI and index ratio to 5 decimals, then each side to cents (a project rule). The ratio is not rounded further",
+        "TIPS example: 912810RL4 (see PROFIT_LOSS): cost 96,961.94, market 96,159.37, P&L -802.57 -> ProfitLossPercent = -802.57 / 96,961.94 = -0.0082772 (rounded here only)"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "PROFIT_LOSS",
+        "UNADJUSTED_COST_BASIS",
+        "INDEX_RATIO",
+        "TAX_LOTS"
+      ]
+    },
+    {
+      "name": "ACCRUED_INTEREST",
+      "enum_value": 20,
+      "display_name": "Accrued Interest",
+      "description": "The coupon interest accrued from the last coupon date up to (but not including) the settlement date, per the security's day count. Earned but not yet received.",
+      "formula": "Fixed-coupon bonds and TIPS: AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period) * directed_quantity. Treasury FRNs: AccruedInterest = Σ_{each day} (index_fixing_d + spread) / 360 * directed_quantity, where directed_quantity is the position's face",
+      "units": "Dollars (absolute dollar amount for the position)",
+      "category": "valuation",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN"
+      ],
+      "model_assumptions": [
+        "Day count: the security's (Actual/Actual (ICMA) for US Treasuries)",
+        "Treasury FRNs: the fixings are the ones supplied in the request; no curve is used",
+        "Returns null/zero for Equity, Cash, and zero-coupon bonds"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "SECURITY_TERMS",
+        "BILL_FIXINGS"
+      ]
+    },
+    {
+      "name": "CONVEXITY",
+      "enum_value": 21,
+      "display_name": "Convexity",
+      "description": "The second derivative of a bond's price with respect to yield, normalised by price. Convexity measures how the duration of a bond changes as yield changes — a bond with higher convexity gains more in price when yields fall and loses less when yields rise, compared to a bond with lower convexity of equal duration.",
+      "formula": "Convexity = (1/P) × Σ_{t=1}^{N} [CF_t × t × (t+1) / (1+y/n)^(t+2)] / n²",
+      "units": "Years² (e.g. 20.5 = 20.5 years²)",
+      "category": "risk",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN"
+      ],
+      "model_assumptions": [
+        "Same as MACAULAY_DURATION (flat yield curve, YTM-based discounting)",
+        "For TIPS: y = REAL_YIELD and CF_t are the inflation-adjusted cash flows",
+        "For FRN: uses flat-forwards effective YTM (same model as PRESENT_VALUE)",
+        "Settlement on a coupon date (integer period exponents)"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "YIELD_TO_MATURITY"
+      ]
+    },
+    {
+      "name": "DIRTY_PRICE",
+      "enum_value": 22,
+      "display_name": "Dirty Price",
+      "description": "The full (invoice) price of a bond including accrued interest, expressed as a percentage of face value.",
+      "formula": "DirtyPrice = CLEAN_PRICE + accrued_interest_per_bond / face_value * 100, where CLEAN_PRICE is the supplied market clean price and accrued_interest_per_bond is ACCRUED_INTEREST for one bond of face_value, as of the settlement date. The result is a percentage of par, per bond, and is never scaled by quantity",
+      "units": "Percentage of par (e.g. 99.5 = 99.5% of par)",
+      "category": "valuation",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN"
+      ],
+      "model_assumptions": [],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "CLEAN_PRICE",
+        "ACCRUED_INTEREST"
+      ]
+    },
+    {
+      "name": "CLEAN_PRICE",
+      "enum_value": 23,
+      "display_name": "Clean Price",
+      "description": "The market clean price per 100 of face (excluding accrued interest), as supplied in the request — e.g. the FedInvest end-of-day price via price-service. An input, never computed: valuation-service returns UNIMPLEMENTED for it.",
+      "formula": null,
+      "units": "Percentage of par (e.g. 98.75 = 98.75% of par)",
+      "category": "input",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN"
+      ],
+      "model_assumptions": [],
+      "implemented": false,
+      "computed_by": "input",
+      "depends_on": []
+    },
+    {
+      "name": "MODIFIED_DURATION",
+      "enum_value": 24,
+      "display_name": "Modified Duration",
+      "description": "Measures the percentage price change of a bond for a 1% (100bp) change in yield. Unlike Macaulay Duration (which is expressed in years), Modified Duration is a direct measure of price sensitivity: a bond with ModifiedDuration=5 will move approximately 5% in price for a 100bp parallel shift in yield.",
+      "formula": "ModifiedDuration = MacaulayDuration / (1 + ytm/n), where ytm = yield to maturity (annual), n = coupon periods per year. For TIPS, ytm = REAL_YIELD (on the inflation-adjusted cash flows)",
+      "units": "Years (dimensionally equivalent to years, interpreted as % per 100bp)",
+      "category": "risk",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN"
+      ],
+      "model_assumptions": [],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "MACAULAY_DURATION"
+      ]
+    },
+    {
+      "name": "DV01",
+      "enum_value": 25,
+      "display_name": "DV01",
+      "description": "DV01 (Dollar Value of 01) = the dollar P&L impact of a 1bp (0.01%) yield increase.",
+      "formula": "DV01 = ModifiedDuration × MarketValue × 0.0001",
+      "units": "Dollars per basis point",
+      "category": "risk",
+      "applies_to": [
+        "BOND",
+        "TIPS",
+        "TREASURY_FRN"
+      ],
+      "model_assumptions": [],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "MODIFIED_DURATION",
+        "MARKET_VALUE"
+      ]
+    },
+    {
+      "name": "DISCOUNT_YIELD",
+      "enum_value": 26,
+      "display_name": "Discount Yield",
+      "description": "U.S. Treasury Bill discount-basis yield. The market convention used by TreasuryDirect auction results (\"High discount rate\"), Bloomberg TBILL screens, and most short-tenor money-market quotes.",
+      "formula": "DiscountYield = (F - P) / F × 360 / days_to_maturity, where F = face value (par), P = dollar price, day count is Actual/360",
+      "units": "Decimal (0-1 scale; e.g. 0.0363 = 3.63%)",
+      "category": "yield",
+      "applies_to": [
+        "TBILL",
+        "STRIPS"
+      ],
+      "model_assumptions": [
+        "Simple (non-compounded) discount basis — standard U.S. money-market",
+        "360-day year (Actual/360 day count)",
+        "Assumes the security has a defined maturity_date and face_value; null for instruments where days_to_maturity is undefined"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "CLEAN_PRICE",
+        "SECURITY_TERMS"
+      ]
+    },
+    {
+      "name": "BOND_EQUIVALENT_YIELD",
+      "enum_value": 27,
+      "display_name": "Bond-Equivalent Yield",
+      "description": "Bond-Equivalent Yield (BEY) for U.S. Treasury Bills — also known as the \"investment rate\" published alongside DISCOUNT_YIELD on TreasuryDirect. The conventional way to compare TBill returns to coupon-bearing bond yields (which conventionally use a 365-day year).",
+      "formula": "BondEquivalentYield = (F - P) / P × 365 / days_to_maturity, where F = face value (par), P = dollar price, day count is Actual/365",
+      "units": "Decimal (0-1 scale; e.g. 0.0371 = 3.71%)",
+      "category": "yield",
+      "applies_to": [
+        "TBILL",
+        "STRIPS"
+      ],
+      "model_assumptions": [
+        "Simple (non-compounded) basis",
+        "365-day year (Actual/365 day count)",
+        "Same applicability constraints as DISCOUNT_YIELD"
+      ],
+      "implemented": true,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "CLEAN_PRICE",
+        "SECURITY_TERMS"
+      ]
+    },
+    {
+      "name": "REFERENCE_CPI",
+      "enum_value": 28,
+      "display_name": "Reference CPI",
+      "description": "The reference CPI of a TIPS for the settlement date (UTC date of ValuationRequestProto.asof_datetime), the numerator of the index ratio.",
+      "formula": "reference_cpi as given, or RefCPI = CPI(m-3) + (d - 1) / days_in_month * (CPI(m-2) - CPI(m-3)) from monthly readings",
+      "units": "Index points (e.g. 310.326)",
+      "category": "valuation",
+      "applies_to": [
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Reference CPI from TipsInput.cpi",
+        "Rounding: with readings, RefCPI is rounded to 5 decimals (half up) per 31 CFR 356 Appendix B; a given reference_cpi is used as-is",
+        "Readings must include months m-3 and m-2 (UTC settlement month): the request is rejected when either is missing. Extra months (e.g. those lot settlement dates need for PROFIT_LOSS) are allowed and ignored here. A duplicate (year, month) or a month outside 1-12 is rejected",
+        "Absent when no CPI is given"
+      ],
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "CPI_U"
+      ]
+    },
+    {
+      "name": "INDEX_RATIO",
+      "enum_value": 29,
+      "display_name": "Index Ratio",
+      "description": "The index ratio of a TIPS for the settlement date: reference CPI over the security's base CPI.",
+      "formula": "IndexRatio = reference_cpi / base_cpi (rounded to 5 decimals per 31 CFR 356 Appendix B, unfloored)",
+      "units": "Dimensionless",
+      "category": "valuation",
+      "applies_to": [
+        "TIPS"
+      ],
+      "model_assumptions": [
+        "Reference CPI from TipsInput.cpi",
+        "Rounding: computed from the rounded REFERENCE_CPI and rounded to 5 decimals (half up) per 31 CFR 356 Appendix B. Every measure that uses the index ratio (MARKET_VALUE, ADJUSTED_COST_BASIS, INFLATION_ADJUSTED_PRINCIPAL, REAL_YIELD, PRESENT_VALUE, PROFIT_LOSS) uses this rounded ratio",
+        "Unfloored: the deflation floor applies to INFLATION_ADJUSTED_PRINCIPAL only"
+      ],
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": [
+        "REFERENCE_CPI",
+        "SECURITY_TERMS"
+      ]
+    }
+  ]
+}
