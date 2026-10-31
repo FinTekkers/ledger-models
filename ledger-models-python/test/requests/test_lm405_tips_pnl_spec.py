@@ -274,6 +274,9 @@ def test_original_catalog_entry_is_kept(name):
     assert entry["model_assumptions"][:len(before["model_assumptions"])] == before["model_assumptions"]
     assert entry["depends_on"] == before["depends_on"] + ["INDEX_RATIO", "TAX_LOTS"]
     unchanged = set(before) - {"formula", "model_assumptions", "depends_on"}
+    if name == "PROFIT_LOSS_PERCENT":
+        # LM-427 (owner ruling 31 Oct) took TREASURY_FRN off applies_to.
+        unchanged -= {"applies_to"}
     assert {k: entry[k] for k in unchanged} == {k: before[k] for k in unchanged}
     assert set(entry) == set(before)
 

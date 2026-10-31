@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import common.models.errors.UnmappedProductTypeError;
 import common.models.errors.transaction.TransactionProcessingException;
+import fintekkers.models.position.MeasureProto;
 import fintekkers.models.security.BondDetailsProto;
 import fintekkers.models.security.CouponTypeProto;
 import fintekkers.models.security.ProductTypeProto;
@@ -20,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -229,5 +232,89 @@ class ProductInputsTest {
     void requiredMarketDataIsUnmodifiable() {
         List<MarketDataKind> tips = ProductInputs.requiredMarketData(security("TIPS", "FIXED"));
         assertThrows(UnsupportedOperationException.class, () -> tips.add(MarketDataKind.FRN_CURVE));
+    }
+
+    // ---------- LM-427: measuresForArm ----------
+
+    private static final Set<String> ARMS = Set.of("bond", "tips", "frn", "mbs", "equity", "cash");
+
+    private static JsonObject measuresFixture() throws IOException {
+        return readJson(Path.of("..", "test-fixtures", "catalog", "measures-for-arm.json"));
+    }
+
+    private static List<String> measureNames(List<MeasureProto> measures) {
+        return measures.stream().map(MeasureProto::name).collect(Collectors.toList());
+    }
+
+    @Test
+    void measuresFixtureListsTheSixArmsNoneEmpty() throws IOException {
+        JsonObject arms = measuresFixture().getAsJsonObject("arms");
+        assertEquals(ARMS, arms.keySet());
+        for (String arm : ARMS) assertFalse(arms.getAsJsonArray(arm).isEmpty(), arm);
+    }
+
+    @Test
+    void measuresForArmMatchesTheSharedFixture() throws IOException {
+        JsonObject arms = measuresFixture().getAsJsonObject("arms");
+        for (String arm : ARMS) {
+            List<String> got = measureNames(ProductInputs.measuresForArm(arm));
+            assertEquals(got.size(), new HashSet<>(got).size(), arm + " has duplicates");
+            Set<String> expected = new TreeSet<>();
+            arms.getAsJsonArray(arm).forEach(e -> expected.add(e.getAsString()));
+            assertEquals(expected.size(), arms.getAsJsonArray(arm).size(), arm);
+            assertEquals(expected, new TreeSet<>(got), arm);
+        }
+    }
+
+    @Test
+    void measuresForArmFrnAndTips() {
+        List<String> frn = measureNames(ProductInputs.measuresForArm("frn"));
+        for (String name : List.of("CONVEXITY", "MODIFIED_DURATION", "DV01", "PROFIT_LOSS_PERCENT")) {
+            assertFalse(frn.contains(name), "frn has " + name);
+        }
+        List<String> tips = measureNames(ProductInputs.measuresForArm("tips"));
+        assertTrue(tips.containsAll(List.of("REFERENCE_CPI", "INDEX_RATIO")));
+    }
+
+    @Test
+    void measuresForUnknownArmIsUnmapped() throws IOException {
+        String arm = measuresFixture().get("unknown_arm").getAsString();
+        UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.measuresForArm(arm));
+        assertEquals(UnmappedProductTypeError.class, e.getClass());
+        assertEquals("swap", e.getProductType());
+    }
+
+    /** The bundled catalog, with {@code fields} set on the entry named {@code name}. */
+    private static JsonArray catalogWith(String name, JsonObject fields) throws IOException {
+        JsonArray measures = readJson(Path.of("src", "main", "resources", "catalog", "measures.json"))
+                .getAsJsonArray("measures");
+        for (JsonElement e : measures) {
+            JsonObject m = e.getAsJsonObject();
+            if (m.get("name").getAsString().equals(name)) fields.entrySet().forEach(f -> m.add(f.getKey(), f.getValue()));
+        }
+        return measures;
+    }
+
+    @Test
+    void measuresForArmFollowsImplemented() throws IOException {
+        JsonObject off = new JsonObject();
+        off.addProperty("implemented", false);
+        assertTrue(ProductInputs.measuresForArm("frn").contains(MeasureProto.DISCOUNT_MARGIN));
+        assertFalse(ProductInputs.measuresForArm(catalogWith("DISCOUNT_MARGIN", off), "frn")
+                .contains(MeasureProto.DISCOUNT_MARGIN));
+    }
+
+    @Test
+    void measuresForArmFollowsAnAncestorNode() throws IOException {
+        JsonObject govBond = new JsonObject();
+        govBond.addProperty("implemented", true);
+        JsonArray appliesTo = new JsonArray();
+        appliesTo.add(new JsonPrimitive("GOV_BOND"));
+        govBond.add("applies_to", appliesTo);
+        JsonArray measures = catalogWith("PAR_YIELD", govBond);
+        for (String arm : List.of("frn", "bond")) {
+            assertFalse(ProductInputs.measuresForArm(arm).contains(MeasureProto.PAR_YIELD), arm);
+            assertTrue(ProductInputs.measuresForArm(measures, arm).contains(MeasureProto.PAR_YIELD), arm);
+        }
     }
 }

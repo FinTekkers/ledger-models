@@ -14,10 +14,15 @@
 //! `ProductInput` against the same rule (LM-410, see
 //! docs/adr/product_input_builders.md).
 //!
+//! [`measures_for_arm`] lists the measures valuation-service computes for an
+//! arm, read from the embedded catalog/measures.json through the same lookup
+//! (LM-427). There is no measure list in code.
+//!
 //! Embeds the crate-root `hierarchy.json` itself rather than reading it
 //! through [`product_hierarchy`], so that loader stays unchanged. A broken
 //! section is [`ProductInputError::InvalidRegistry`], never a panic.
 
+use crate::fintekkers::models::position::MeasureProto;
 use crate::fintekkers::models::price::PriceProto;
 use crate::fintekkers::models::security::{CouponTypeProto, ProductTypeProto, SecurityProto};
 use crate::fintekkers::models::util::UuidProto;
@@ -38,6 +43,7 @@ use std::sync::OnceLock;
 use tonic::{Code, Status};
 
 const HIERARCHY_JSON: &str = include_str!("../../../hierarchy.json");
+const MEASURES_JSON: &str = include_str!("../../../catalog/measures.json");
 
 /// The closed `requires` vocabulary: market data an arm needs beyond the price.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -386,6 +392,73 @@ pub fn required_market_data(security: &SecurityProto) -> Result<Vec<MarketDataKi
     resolve(security).map(|a| a.requires.clone())
 }
 
+/// The measures valuation-service computes for `arm` (e.g. `"frn"`), in
+/// catalog order: entries of the embedded catalog/measures.json with
+/// `computed_by: valuation-service` and `implemented: true` whose `applies_to`
+/// names a leaf product type the arm values, or an ancestor of one (LM-427).
+/// `Err(Unmapped)` with `product_type` = `arm` when no leaf maps to `arm`.
+pub fn measures_for_arm(arm: &str) -> Result<Vec<MeasureProto>, ProductInputError> {
+    measures_for_arm_in(shipped_measures()?, arm)
+}
+
+/// The embedded catalog's `measures` list, parsed on first use.
+fn shipped_measures() -> Result<&'static [Value], ProductInputError> {
+    static SHIPPED: OnceLock<Result<Vec<Value>, ProductInputError>> = OnceLock::new();
+    SHIPPED
+        .get_or_init(|| {
+            let root: Value = serde_json::from_str(MEASURES_JSON)
+                .map_err(|e| bad(format!("catalog/measures.json failed to parse: {e}")))?;
+            root.get("measures")
+                .and_then(Value::as_array)
+                .cloned()
+                .ok_or_else(|| bad("catalog/measures.json has no measures list".to_string()))
+        })
+        .as_ref()
+        .map(Vec::as_slice)
+        .map_err(Clone::clone)
+}
+
+/// [`measures_for_arm`] over a given `measures` list.
+fn measures_for_arm_in(measures: &[Value], arm: &str) -> Result<Vec<MeasureProto>, ProductInputError> {
+    let arms = shipped_valuation_arms()?;
+    let unknown_coupon = CouponTypeProto::UnknownCouponType.as_str_name();
+    // Leaves resolve with no coupon type, as arm_for does with no bond_details:
+    // the BOND + FLOAT entry is ignored on purpose (docs/adr/valuation_arms.md).
+    let lineage: HashSet<String> = product_hierarchy::all_product_types()
+        .into_iter()
+        .filter(|n| product_hierarchy::descendants_of(n).is_empty() && ProductTypeProto::from_str_name(n).is_some())
+        .filter(|n| arms.resolve(n, unknown_coupon).is_ok_and(|a| a.arm == arm))
+        .flat_map(|leaf| std::iter::successors(Some(leaf), |n| product_hierarchy::parent_of(n)))
+        .collect();
+    if lineage.is_empty() {
+        return Err(ProductInputError::Unmapped {
+            product_type: arm.to_string(),
+            coupon_type: unknown_coupon.to_string(),
+        });
+    }
+    let mut out = Vec::new();
+    for m in measures {
+        if m.get("computed_by").and_then(Value::as_str) != Some("valuation-service")
+            || m.get("implemented").and_then(Value::as_bool) != Some(true)
+        {
+            continue;
+        }
+        let applies_to = m.get("applies_to").and_then(Value::as_array).ok_or_else(|| {
+            bad(format!("catalog/measures.json: 'applies_to' must be a list in {m}"))
+        })?;
+        if !applies_to.iter().any(|n| n.as_str().is_some_and(|n| lineage.contains(n))) {
+            continue;
+        }
+        let name = m.get("name").and_then(Value::as_str).unwrap_or_default();
+        let measure = MeasureProto::from_str_name(name)
+            .ok_or_else(|| bad(format!("catalog/measures.json: '{name}' is not a MeasureProto name")))?;
+        if !out.contains(&measure) {
+            out.push(measure);
+        }
+    }
+    Ok(out)
+}
+
 /// Market data for [`for_security`], one field per [`MarketDataKind`]:
 /// `CpiU` is `cpi`, `FrnFixings` is `fixings`, `FrnCurve` is `curve`. Each is
 /// copied to the arm field of the same name (`TipsInput.cpi`,
@@ -499,5 +572,43 @@ fn has(product_input: &ProductInput, kind: MarketDataKind) -> bool {
         (Some(Input::Frn(f)), MarketDataKind::FrnFixings) => !f.fixings.is_empty(),
         (Some(Input::Frn(f)), MarketDataKind::FrnCurve) => f.curve.is_some(),
         _ => false,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The embedded catalog, with `edit` applied.
+    fn catalog_with(edit: impl FnOnce(&mut Vec<Value>)) -> Vec<Value> {
+        let mut measures = shipped_measures().expect("catalog").to_vec();
+        edit(&mut measures);
+        measures
+    }
+
+    // Guardrail 1: the result comes from the catalog data, not a list in code.
+    #[test]
+    fn measures_for_arm_in_follows_implemented() {
+        let measures = catalog_with(|ms| {
+            for m in ms.iter_mut().filter(|m| m["name"] == "DISCOUNT_MARGIN") {
+                m["implemented"] = Value::Bool(false);
+            }
+        });
+        assert!(measures_for_arm_in(shipped_measures().unwrap(), "frn").unwrap().contains(&MeasureProto::DiscountMargin));
+        assert!(!measures_for_arm_in(&measures, "frn").unwrap().contains(&MeasureProto::DiscountMargin));
+    }
+
+    #[test]
+    fn measures_for_arm_in_follows_an_ancestor_node() {
+        let measures = catalog_with(|ms| {
+            for m in ms.iter_mut().filter(|m| m["name"] == "PAR_YIELD") {
+                m["implemented"] = Value::Bool(true);
+                m["applies_to"] = serde_json::json!(["GOV_BOND"]);
+            }
+        });
+        for arm in ["frn", "bond"] {
+            assert!(!measures_for_arm_in(shipped_measures().unwrap(), arm).unwrap().contains(&MeasureProto::ParYield));
+            assert!(measures_for_arm_in(&measures, arm).unwrap().contains(&MeasureProto::ParYield), "{arm}");
+        }
     }
 }

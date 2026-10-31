@@ -340,7 +340,7 @@
       "formula": "ProfitLossPercent = ProfitLoss / (UnadjustedCostBasis / d * DirectedQuantity), where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and d = 1 for dollar-quoted securities (equities, cash); TIPS: ProfitLossPercent = ProfitLoss / CostSide, with ProfitLoss and CostSide as in PROFIT_LOSS (TIPS)",
       "units": "Decimal (0-1 scale; e.g. 0.05 = 5.00% gain)",
       "category": "valuation",
-      "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
+      "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS", "STOCK", "CASH_INSTRUMENT"],
       "model_assumptions": [
         "The measure is absent, never 0, when MarketValue, UnadjustedCostBasis or DirectedQuantity is unavailable",
         "TIPS (LM-405): ProfitLoss and CostSide are PROFIT_LOSS (TIPS): nominal and clean, with the market side at INDEX_RATIO for the valuation date and each open lot's real price at the index ratio for its settlement date (TaxLotProto.open_date plus the product's settlement lag); accrued interest is excluded on both sides",

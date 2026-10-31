@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+from fintekkers.models.position.measure_pb2 import MeasureProto
 from fintekkers.models.security.coupon_type_pb2 import CouponTypeProto
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.models.security.security_pb2 import BondDetailsProto, SecurityProto
@@ -189,3 +190,60 @@ def test_required_market_data_is_a_fresh_list():
     tips = _security("TIPS", "FIXED")
     PI.required_market_data(tips).append(PI.MarketDataKind.FRN_CURVE)
     assert PI.required_market_data(tips) == [PI.MarketDataKind.CPI_U]
+
+
+# ---------- LM-427: measures_for_arm ----------
+
+ARMS = {"bond", "tips", "frn", "mbs", "equity", "cash"}
+MEASURES_FIXTURE = json.loads(
+    (_repo_root() / "test-fixtures" / "catalog" / "measures-for-arm.json").read_text(encoding="utf-8"))
+
+
+def _measure_names(arm: str) -> list:
+    return [MeasureProto.Name(m) for m in PI.measures_for_arm(arm)]
+
+
+def test_measures_fixture_lists_the_six_arms_none_empty():
+    assert set(MEASURES_FIXTURE["arms"]) == ARMS
+    assert all(MEASURES_FIXTURE["arms"][arm] for arm in ARMS)
+
+
+@pytest.mark.parametrize("arm", sorted(ARMS))
+def test_measures_for_arm_matches_the_shared_fixture(arm):
+    names = _measure_names(arm)
+    assert len(names) == len(set(names))
+    assert sorted(names) == sorted(MEASURES_FIXTURE["arms"][arm])
+
+
+def test_measures_for_arm_frn_and_tips():
+    frn = _measure_names("frn")
+    assert not {"CONVEXITY", "MODIFIED_DURATION", "DV01", "PROFIT_LOSS_PERCENT"} & set(frn)
+    assert {"REFERENCE_CPI", "INDEX_RATIO"} <= set(_measure_names("tips"))
+
+
+def test_measures_for_unknown_arm_is_unmapped():
+    with pytest.raises(UnmappedProductTypeError) as e:
+        PI.measures_for_arm(MEASURES_FIXTURE["unknown_arm"])
+    assert type(e.value) is UnmappedProductTypeError
+    assert e.value.product_type == "swap"
+
+
+def _catalog_with(name: str, **fields) -> list:
+    measures = copy.deepcopy(PI._shipped_measures())
+    for m in measures:
+        if m["name"] == name:
+            m.update(fields)
+    return measures
+
+
+def test_measures_for_arm_follows_implemented():
+    dm = MeasureProto.DISCOUNT_MARGIN
+    assert dm in PI.measures_for_arm("frn")
+    assert dm not in PI._measures_for_arm_in(_catalog_with("DISCOUNT_MARGIN", implemented=False), "frn")
+
+
+def test_measures_for_arm_follows_an_ancestor_node():
+    measures = _catalog_with("PAR_YIELD", implemented=True, applies_to=["GOV_BOND"])
+    for arm in ("frn", "bond"):
+        assert MeasureProto.PAR_YIELD not in PI.measures_for_arm(arm)
+        assert MeasureProto.PAR_YIELD in PI._measures_for_arm_in(measures, arm)

@@ -1,6 +1,6 @@
 {
   "item": "LM-425",
-  "note": "Every catalog/measures.json change LM-425 makes against lm-425-before.json, each with the FinTekkers/valuation-service file (main, aff2228) that justifies it. NO_FRN is BOND's GOV_BOND children minus TREASURY_FRN (TBILL, TREASURY_NOTE, TREASURY_BOND, STRIPS, SOVEREIGN_BOND, with TIPS kept as its own entry), plus CREDIT_BOND and STRUCTURED_BOND: every product BOND covered except TREASURY_FRN. MORTGAGE_BACKED stays covered through STRUCTURED_BOND (G8, VS-71: src/engine/mbs.rs values MbsInput through bond::run_bond_inputs, so mbs keeps every bond measure).",
+  "note": "Every catalog/measures.json change LM-425 makes against lm-425-before.json (plus the PROFIT_LOSS_PERCENT row, LM-427, owner ruling 31 Oct), each with the FinTekkers/valuation-service file (main, aff2228) that justifies it. NO_FRN is BOND's GOV_BOND children minus TREASURY_FRN (TBILL, TREASURY_NOTE, TREASURY_BOND, STRIPS, SOVEREIGN_BOND, with TIPS kept as its own entry), plus CREDIT_BOND and STRUCTURED_BOND: every product BOND covered except TREASURY_FRN. MORTGAGE_BACKED stays covered through STRUCTURED_BOND (G8, VS-71: src/engine/mbs.rs values MbsInput through bond::run_bond_inputs, so mbs keeps every bond measure).",
   "changes": [
     {
       "measure": "YIELD_TO_MATURITY",
@@ -65,6 +65,14 @@
       "after": true,
       "engine_file": "src/engine/tips.rs",
       "reason": "cpi_measure_entries returns INDEX_RATIO (reference CPI over base CPI)"
+    },
+    {
+      "measure": "PROFIT_LOSS_PERCENT",
+      "field": "applies_to",
+      "before": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],
+      "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS", "STOCK", "CASH_INSTRUMENT"],
+      "engine_file": "src/engine/frn.rs",
+      "reason": "LM-427 owner ruling 31 Oct: run_frn returns UNIMPLEMENTED for PROFIT_LOSS_PERCENT; P&L percent is implemented only for TIPS lots (LS-198)"
     }
   ]
 }

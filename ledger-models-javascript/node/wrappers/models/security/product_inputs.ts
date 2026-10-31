@@ -14,9 +14,15 @@
  * forSecurity builds the ProductInput for that arm from a security, its price
  * and its market data; checkProductInput checks a ProductInput against the
  * same rule (LM-410). See docs/adr/product_input_builders.md.
+ *
+ * measuresForArm lists the measures valuation-service computes for an arm,
+ * read from the bundled catalog/measures.json through the same lookup
+ * (LM-427). There is no measure list in code.
  */
 
 import hierarchy from '../../../../hierarchy.json';
+import catalog from '../../../../catalog/measures.json';
+import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
@@ -199,6 +205,51 @@ export function armFor(security: SecurityProto): string {
 /** Market data the security's arm needs, in file order. A fresh array; empty when none. */
 export function requiredMarketData(security: SecurityProto): MarketDataKind[] {
   return [...shippedValuationArms().require(productTypeOf(security), couponTypeOf(security)).requires];
+}
+
+/**
+ * The measures valuation-service computes for `arm` (e.g. 'frn'), in catalog
+ * order: entries of the bundled catalog/measures.json with computed_by
+ * valuation-service and implemented true whose applies_to names a leaf product
+ * type the arm values, or an ancestor of one. Throws
+ * UnmappedProductTypeError(arm, 'UNKNOWN_COUPON_TYPE') when no leaf maps to
+ * `arm`. A fresh array.
+ */
+export function measuresForArm(arm: string): MeasureProto[] {
+  return measuresForArmIn(catalog.measures, arm);
+}
+
+/**
+ * measuresForArm over a given `measures` list. Exported for tests.
+ * @internal
+ */
+export function measuresForArmIn(measures: ReadonlyArray<unknown>, arm: string): MeasureProto[] {
+  const arms = shippedValuationArms();
+  const lineage = new Set<string>();
+  for (const leaf of allProductTypes()) {
+    if (descendantsOf(leaf).length > 0 || !hasOwn(ProductTypeProto, leaf)) continue;
+    // Leaves resolve with no coupon type, as armFor does with no bond_details:
+    // the BOND + FLOAT entry is ignored on purpose (docs/adr/valuation_arms.md).
+    if (arms.resolve(leaf, 'UNKNOWN_COUPON_TYPE')?.arm !== arm) continue;
+    for (let node: string | null = leaf; node !== null; node = parentOf(node)) lineage.add(node);
+  }
+  if (lineage.size === 0) throw new UnmappedProductTypeError(arm, 'UNKNOWN_COUPON_TYPE');
+  const out: MeasureProto[] = [];
+  for (const raw of measures) {
+    const m = raw as Record<string, unknown>;
+    if (m.computed_by !== 'valuation-service' || m.implemented !== true) continue;
+    if (!Array.isArray(m.applies_to)) {
+      throw new Error(`catalog/measures.json: 'applies_to' must be a list in ${JSON.stringify(m)}`);
+    }
+    if (!m.applies_to.some(n => typeof n === 'string' && lineage.has(n))) continue;
+    const name = m.name;
+    if (typeof name !== 'string' || !hasOwn(MeasureProto, name)) {
+      throw new Error(`catalog/measures.json: '${String(name)}' is not a MeasureProto name`);
+    }
+    const measure = (MeasureProto as unknown as Record<string, MeasureProto>)[name];
+    if (!out.includes(measure)) out.push(measure);
+  }
+  return out;
 }
 
 /**

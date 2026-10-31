@@ -14,7 +14,12 @@
  * forSecurity builds the ProductInput for that arm from a security, its price
  * and its market data; checkProductInput checks a ProductInput against the
  * same rule (LM-410). See docs/adr/product_input_builders.md.
+ *
+ * measuresForArm lists the measures valuation-service computes for an arm,
+ * read from the bundled catalog/measures.json through the same lookup
+ * (LM-427). There is no measure list in code.
  */
+import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { InflationIndexInput, ProductInput, ReferenceRateFixingProto, YieldCurveInput } from '../../../fintekkers/requests/valuation/product_inputs_pb';
@@ -49,6 +54,20 @@ export declare function shippedValuationArms(): ValuationArms;
 export declare function armFor(security: SecurityProto): string;
 /** Market data the security's arm needs, in file order. A fresh array; empty when none. */
 export declare function requiredMarketData(security: SecurityProto): MarketDataKind[];
+/**
+ * The measures valuation-service computes for `arm` (e.g. 'frn'), in catalog
+ * order: entries of the bundled catalog/measures.json with computed_by
+ * valuation-service and implemented true whose applies_to names a leaf product
+ * type the arm values, or an ancestor of one. Throws
+ * UnmappedProductTypeError(arm, 'UNKNOWN_COUPON_TYPE') when no leaf maps to
+ * `arm`. A fresh array.
+ */
+export declare function measuresForArm(arm: string): MeasureProto[];
+/**
+ * measuresForArm over a given `measures` list. Exported for tests.
+ * @internal
+ */
+export declare function measuresForArmIn(measures: ReadonlyArray<unknown>, arm: string): MeasureProto[];
 /**
  * Market data for forSecurity, one field per MarketDataKind: CPI_U is `cpi`,
  * FRN_FIXINGS is `fixings`, FRN_CURVE is `curve`. Each is copied to the arm

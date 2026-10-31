@@ -15,13 +15,19 @@
  * forSecurity builds the ProductInput for that arm from a security, its price
  * and its market data; checkProductInput checks a ProductInput against the
  * same rule (LM-410). See docs/adr/product_input_builders.md.
+ *
+ * measuresForArm lists the measures valuation-service computes for an arm,
+ * read from the bundled catalog/measures.json through the same lookup
+ * (LM-427). There is no measure list in code.
  */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkProductInput = exports.forSecurity = exports.requiredMarketData = exports.armFor = exports.shippedValuationArms = exports.parseValuationArms = exports.ValuationArms = void 0;
+exports.checkProductInput = exports.forSecurity = exports.measuresForArmIn = exports.measuresForArm = exports.requiredMarketData = exports.armFor = exports.shippedValuationArms = exports.parseValuationArms = exports.ValuationArms = void 0;
 const hierarchy_json_1 = __importDefault(require("../../../../hierarchy.json"));
+const measures_json_1 = __importDefault(require("../../../../catalog/measures.json"));
+const measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
@@ -192,6 +198,59 @@ function requiredMarketData(security) {
     return [...shippedValuationArms().require(productTypeOf(security), couponTypeOf(security)).requires];
 }
 exports.requiredMarketData = requiredMarketData;
+/**
+ * The measures valuation-service computes for `arm` (e.g. 'frn'), in catalog
+ * order: entries of the bundled catalog/measures.json with computed_by
+ * valuation-service and implemented true whose applies_to names a leaf product
+ * type the arm values, or an ancestor of one. Throws
+ * UnmappedProductTypeError(arm, 'UNKNOWN_COUPON_TYPE') when no leaf maps to
+ * `arm`. A fresh array.
+ */
+function measuresForArm(arm) {
+    return measuresForArmIn(measures_json_1.default.measures, arm);
+}
+exports.measuresForArm = measuresForArm;
+/**
+ * measuresForArm over a given `measures` list. Exported for tests.
+ * @internal
+ */
+function measuresForArmIn(measures, arm) {
+    var _a;
+    const arms = shippedValuationArms();
+    const lineage = new Set();
+    for (const leaf of (0, product_hierarchy_1.allProductTypes)()) {
+        if ((0, product_hierarchy_1.descendantsOf)(leaf).length > 0 || !hasOwn(product_type_pb_1.ProductTypeProto, leaf))
+            continue;
+        // Leaves resolve with no coupon type, as armFor does with no bond_details:
+        // the BOND + FLOAT entry is ignored on purpose (docs/adr/valuation_arms.md).
+        if (((_a = arms.resolve(leaf, 'UNKNOWN_COUPON_TYPE')) === null || _a === void 0 ? void 0 : _a.arm) !== arm)
+            continue;
+        for (let node = leaf; node !== null; node = (0, product_hierarchy_1.parentOf)(node))
+            lineage.add(node);
+    }
+    if (lineage.size === 0)
+        throw new errors_1.UnmappedProductTypeError(arm, 'UNKNOWN_COUPON_TYPE');
+    const out = [];
+    for (const raw of measures) {
+        const m = raw;
+        if (m.computed_by !== 'valuation-service' || m.implemented !== true)
+            continue;
+        if (!Array.isArray(m.applies_to)) {
+            throw new Error(`catalog/measures.json: 'applies_to' must be a list in ${JSON.stringify(m)}`);
+        }
+        if (!m.applies_to.some(n => typeof n === 'string' && lineage.has(n)))
+            continue;
+        const name = m.name;
+        if (typeof name !== 'string' || !hasOwn(measure_pb_1.MeasureProto, name)) {
+            throw new Error(`catalog/measures.json: '${String(name)}' is not a MeasureProto name`);
+        }
+        const measure = measure_pb_1.MeasureProto[name];
+        if (!out.includes(measure))
+            out.push(measure);
+    }
+    return out;
+}
+exports.measuresForArmIn = measuresForArmIn;
 /**
  * The ProductInput for `security`, in the arm armFor picks.
  *
