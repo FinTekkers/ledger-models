@@ -9,7 +9,8 @@ import java.time.Period;
 class TenorTest {
     @Test
     public void testDescriptionIsReversible() {
-        LocalDate today = LocalDate.now();
+        // A fixed date: from a month's 31st, minusMonths clamps the day and adds 1D.
+        LocalDate today = LocalDate.of(2026, 10, 15);
         LocalDate moreThanOneYear = today.minusYears(1).minusMonths(1);
         Period period = Period.between(moreThanOneYear, today);
 
