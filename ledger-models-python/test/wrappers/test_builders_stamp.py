@@ -514,6 +514,7 @@ NOT_BUILDERS = {
     "models.security.security_identifier.IdentifierValidationError": "exception type",
     "models.security.product_inputs.arm_for": "registry lookup; returns a ProductInput arm name",
     "models.security.product_inputs.required_market_data": "registry lookup; returns MarketDataKind values",
+    "models.security.product_inputs.measures_for_arm": "catalog lookup; returns MeasureProto enum values",
     "models.security.product_inputs.MarketDataKind": "str enum of market-data kinds, not a message",
     "models.security.product_inputs.MarketData": "frozen holder of the caller's market-data protos; creates none",
     "models.security.product_inputs.check_product_input": "validator; raises or returns None",
