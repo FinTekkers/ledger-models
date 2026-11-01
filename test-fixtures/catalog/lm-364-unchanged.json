@@ -7,7 +7,7 @@
       "enum_value": 3,
       "display_name": "Unadjusted Cost Basis",
       "description": "The original purchase price of the security, before any adjustments for amortization, accretion, or corporate actions.",
-      "formula": "Returns the price_input as-is (quoted as % of par for bonds)",
+      "formula": "Returns the input price as-is (quoted as % of par for bonds)",
       "units": "Quoted price (% of par for bonds; dollar price for equities)",
       "category": "cost",
       "applies_to": [
@@ -25,7 +25,7 @@
     "PROFIT_LOSS": null
   },
   "measure_proto_comments": {
-    "UNADJUSTED_COST_BASIS": "  // The original purchase price of the security, before any adjustments for\n  // amortization, accretion, or corporate actions.\n  //\n  // Formula: Returns the price_input as-is (quoted as % of par for bonds).\n  //   Over time this may incorporate adjustments such as stock splits.\n  //\n  // Model assumptions: None — pass-through of the input price.\n  // Applicability: Bond, TIPS, FRN, Equity, Cash.\n  // Units: Quoted price (% of par for bonds; dollar price for equities).\n  UNADJUSTED_COST_BASIS = 3;",
+    "UNADJUSTED_COST_BASIS": "  // The original purchase price of the security, before any adjustments for\n  // amortization, accretion, or corporate actions.\n  //\n  // Formula: Returns the input price as-is (quoted as % of par for bonds).\n  //   Over time this may incorporate adjustments such as stock splits.\n  //\n  // Model assumptions: None — pass-through of the input price.\n  // Applicability: Bond, TIPS, FRN, Equity, Cash.\n  // Units: Quoted price (% of par for bonds; dollar price for equities).\n  UNADJUSTED_COST_BASIS = 3;",
     "PROFIT_LOSS": "  // The profit or loss on a position relative to its cost basis.\n  //\n  // Formula:\n  //   ProfitLoss = MarketValue - (UnadjustedCostBasis / d * DirectedQuantity)\n  //   Where d = 100 for par-quoted securities (bonds, TIPS, FRNs) and\n  //   d = 1 for dollar-quoted securities (equities, cash).\n  //\n  // Example (bond): MV=19,000, UCB=90 (% of par), qty=20000 face →\n  //   ProfitLoss = 19000 - (90 / 100 * 20000) = 19000 - 18000 = 1,000.\n  // Example (equity): MV=5,500, UCB=50 (dollars per share), qty=100 →\n  //   ProfitLoss = 5500 - (50 / 1 * 100) = 5500 - 5000 = 500.\n  //\n  // The measure is absent, never 0, when MarketValue, UnadjustedCostBasis\n  // or DirectedQuantity is unavailable.\n  //\n  // Applicability: All security types.\n  // Units: Dollars (or settlement currency).\n  PROFIT_LOSS = 18;"
   }
 }

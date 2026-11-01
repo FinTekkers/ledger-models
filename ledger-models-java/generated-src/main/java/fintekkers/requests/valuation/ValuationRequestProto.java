@@ -202,51 +202,6 @@ private static final long serialVersionUID = 0L;
   }
   private int measuresMemoizedSerializedSize;
 
-  public static final int SECURITY_INPUT_FIELD_NUMBER = 20;
-  private fintekkers.models.security.SecurityProto securityInput_;
-  /**
-   * <pre>
-   *The full security object for which we are going to run the valuation
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=35
-   * @return Whether the securityInput field is set.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public boolean hasSecurityInput() {
-    return securityInput_ != null;
-  }
-  /**
-   * <pre>
-   *The full security object for which we are going to run the valuation
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=35
-   * @return The securityInput.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public fintekkers.models.security.SecurityProto getSecurityInput() {
-    return securityInput_ == null ? fintekkers.models.security.SecurityProto.getDefaultInstance() : securityInput_;
-  }
-  /**
-   * <pre>
-   *The full security object for which we are going to run the valuation
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public fintekkers.models.security.SecurityProtoOrBuilder getSecurityInputOrBuilder() {
-    return securityInput_ == null ? fintekkers.models.security.SecurityProto.getDefaultInstance() : securityInput_;
-  }
-
   public static final int POSITION_INPUT_FIELD_NUMBER = 21;
   private fintekkers.models.position.PositionProto positionInput_;
   /**
@@ -283,54 +238,6 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public fintekkers.models.position.PositionProtoOrBuilder getPositionInputOrBuilder() {
     return positionInput_ == null ? fintekkers.models.position.PositionProto.getDefaultInstance() : positionInput_;
-  }
-
-  public static final int PRICE_INPUT_FIELD_NUMBER = 22;
-  private fintekkers.models.price.PriceProto priceInput_;
-  /**
-   * <pre>
-   *The price we are going to use for the valuation.
-   *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=43
-   * @return Whether the priceInput field is set.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public boolean hasPriceInput() {
-    return priceInput_ != null;
-  }
-  /**
-   * <pre>
-   *The price we are going to use for the valuation.
-   *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=43
-   * @return The priceInput.
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public fintekkers.models.price.PriceProto getPriceInput() {
-    return priceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : priceInput_;
-  }
-  /**
-   * <pre>
-   *The price we are going to use for the valuation.
-   *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-   */
-  @java.lang.Override
-  @java.lang.Deprecated public fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder() {
-    return priceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : priceInput_;
   }
 
   public static final int ASOF_DATETIME_FIELD_NUMBER = 23;
@@ -376,9 +283,8 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * Product-specific input — determines the calculation path in the service.
-   * When set, the service values from this input alone: security_input (20)
-   * and price_input (22) are not read for the calculation. They may still be
-   * read for logging and audit.
+   * The service values from this input alone. Build it with
+   * ProductInputs.forSecurity (LM-410).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -391,9 +297,8 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * Product-specific input — determines the calculation path in the service.
-   * When set, the service values from this input alone: security_input (20)
-   * and price_input (22) are not read for the calculation. They may still be
-   * read for logging and audit.
+   * The service values from this input alone. Build it with
+   * ProductInputs.forSecurity (LM-410).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -406,9 +311,8 @@ private static final long serialVersionUID = 0L;
   /**
    * <pre>
    * Product-specific input — determines the calculation path in the service.
-   * When set, the service values from this input alone: security_input (20)
-   * and price_input (22) are not read for the calculation. They may still be
-   * read for logging and audit.
+   * The service values from this input alone. Build it with
+   * ProductInputs.forSecurity (LM-410).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -442,14 +346,8 @@ private static final long serialVersionUID = 0L;
     if (operationType_ != fintekkers.requests.util.RequestOperationTypeProto.UNKNOWN_OPERATION.getNumber()) {
       output.writeEnum(10, operationType_);
     }
-    if (securityInput_ != null) {
-      output.writeMessage(20, getSecurityInput());
-    }
     if (positionInput_ != null) {
       output.writeMessage(21, getPositionInput());
-    }
-    if (priceInput_ != null) {
-      output.writeMessage(22, getPriceInput());
     }
     if (asofDatetime_ != null) {
       output.writeMessage(23, getAsofDatetime());
@@ -485,17 +383,9 @@ private static final long serialVersionUID = 0L;
       size += com.google.protobuf.CodedOutputStream
         .computeEnumSize(10, operationType_);
     }
-    if (securityInput_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(20, getSecurityInput());
-    }
     if (positionInput_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(21, getPositionInput());
-    }
-    if (priceInput_ != null) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeMessageSize(22, getPriceInput());
     }
     if (asofDatetime_ != null) {
       size += com.google.protobuf.CodedOutputStream
@@ -540,20 +430,10 @@ private static final long serialVersionUID = 0L;
     }
     if (operationType_ != other.operationType_) return false;
     if (!measures_.equals(other.measures_)) return false;
-    if (hasSecurityInput() != other.hasSecurityInput()) return false;
-    if (hasSecurityInput()) {
-      if (!getSecurityInput()
-          .equals(other.getSecurityInput())) return false;
-    }
     if (hasPositionInput() != other.hasPositionInput()) return false;
     if (hasPositionInput()) {
       if (!getPositionInput()
           .equals(other.getPositionInput())) return false;
-    }
-    if (hasPriceInput() != other.hasPriceInput()) return false;
-    if (hasPriceInput()) {
-      if (!getPriceInput()
-          .equals(other.getPriceInput())) return false;
     }
     if (hasAsofDatetime() != other.hasAsofDatetime()) return false;
     if (hasAsofDatetime()) {
@@ -588,17 +468,9 @@ private static final long serialVersionUID = 0L;
       hash = (37 * hash) + MEASURES_FIELD_NUMBER;
       hash = (53 * hash) + measures_.hashCode();
     }
-    if (hasSecurityInput()) {
-      hash = (37 * hash) + SECURITY_INPUT_FIELD_NUMBER;
-      hash = (53 * hash) + getSecurityInput().hashCode();
-    }
     if (hasPositionInput()) {
       hash = (37 * hash) + POSITION_INPUT_FIELD_NUMBER;
       hash = (53 * hash) + getPositionInput().hashCode();
-    }
-    if (hasPriceInput()) {
-      hash = (37 * hash) + PRICE_INPUT_FIELD_NUMBER;
-      hash = (53 * hash) + getPriceInput().hashCode();
     }
     if (hasAsofDatetime()) {
       hash = (37 * hash) + ASOF_DATETIME_FIELD_NUMBER;
@@ -752,20 +624,10 @@ private static final long serialVersionUID = 0L;
       operationType_ = 0;
       measures_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
-      securityInput_ = null;
-      if (securityInputBuilder_ != null) {
-        securityInputBuilder_.dispose();
-        securityInputBuilder_ = null;
-      }
       positionInput_ = null;
       if (positionInputBuilder_ != null) {
         positionInputBuilder_.dispose();
         positionInputBuilder_ = null;
-      }
-      priceInput_ = null;
-      if (priceInputBuilder_ != null) {
-        priceInputBuilder_.dispose();
-        priceInputBuilder_ = null;
       }
       asofDatetime_ = null;
       if (asofDatetimeBuilder_ != null) {
@@ -831,26 +693,16 @@ private static final long serialVersionUID = 0L;
         result.operationType_ = operationType_;
       }
       if (((from_bitField0_ & 0x00000010) != 0)) {
-        result.securityInput_ = securityInputBuilder_ == null
-            ? securityInput_
-            : securityInputBuilder_.build();
-      }
-      if (((from_bitField0_ & 0x00000020) != 0)) {
         result.positionInput_ = positionInputBuilder_ == null
             ? positionInput_
             : positionInputBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00000040) != 0)) {
-        result.priceInput_ = priceInputBuilder_ == null
-            ? priceInput_
-            : priceInputBuilder_.build();
-      }
-      if (((from_bitField0_ & 0x00000080) != 0)) {
+      if (((from_bitField0_ & 0x00000020) != 0)) {
         result.asofDatetime_ = asofDatetimeBuilder_ == null
             ? asofDatetime_
             : asofDatetimeBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00000100) != 0)) {
+      if (((from_bitField0_ & 0x00000040) != 0)) {
         result.productInput_ = productInputBuilder_ == null
             ? productInput_
             : productInputBuilder_.build();
@@ -920,14 +772,8 @@ private static final long serialVersionUID = 0L;
         }
         onChanged();
       }
-      if (other.hasSecurityInput()) {
-        mergeSecurityInput(other.getSecurityInput());
-      }
       if (other.hasPositionInput()) {
         mergePositionInput(other.getPositionInput());
-      }
-      if (other.hasPriceInput()) {
-        mergePriceInput(other.getPriceInput());
       }
       if (other.hasAsofDatetime()) {
         mergeAsofDatetime(other.getAsofDatetime());
@@ -978,32 +824,18 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000004;
               break;
             } // case 80
-            case 162: {
-              input.readMessage(
-                  getSecurityInputFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000010;
-              break;
-            } // case 162
             case 170: {
               input.readMessage(
                   getPositionInputFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000020;
+              bitField0_ |= 0x00000010;
               break;
             } // case 170
-            case 178: {
-              input.readMessage(
-                  getPriceInputFieldBuilder().getBuilder(),
-                  extensionRegistry);
-              bitField0_ |= 0x00000040;
-              break;
-            } // case 178
             case 186: {
               input.readMessage(
                   getAsofDatetimeFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000080;
+              bitField0_ |= 0x00000020;
               break;
             } // case 186
             case 240: {
@@ -1027,7 +859,7 @@ private static final long serialVersionUID = 0L;
               input.readMessage(
                   getProductInputFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000100;
+              bitField0_ |= 0x00000040;
               break;
             } // case 562
             default: {
@@ -1485,174 +1317,6 @@ private static final long serialVersionUID = 0L;
       return this;
     }
 
-    private fintekkers.models.security.SecurityProto securityInput_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> securityInputBuilder_;
-    /**
-     * <pre>
-     *The full security object for which we are going to run the valuation
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=35
-     * @return Whether the securityInput field is set.
-     */
-    @java.lang.Deprecated public boolean hasSecurityInput() {
-      return ((bitField0_ & 0x00000010) != 0);
-    }
-    /**
-     * <pre>
-     *The full security object for which we are going to run the valuation
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=35
-     * @return The securityInput.
-     */
-    @java.lang.Deprecated public fintekkers.models.security.SecurityProto getSecurityInput() {
-      if (securityInputBuilder_ == null) {
-        return securityInput_ == null ? fintekkers.models.security.SecurityProto.getDefaultInstance() : securityInput_;
-      } else {
-        return securityInputBuilder_.getMessage();
-      }
-    }
-    /**
-     * <pre>
-     *The full security object for which we are going to run the valuation
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder setSecurityInput(fintekkers.models.security.SecurityProto value) {
-      if (securityInputBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        securityInput_ = value;
-      } else {
-        securityInputBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000010;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The full security object for which we are going to run the valuation
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder setSecurityInput(
-        fintekkers.models.security.SecurityProto.Builder builderForValue) {
-      if (securityInputBuilder_ == null) {
-        securityInput_ = builderForValue.build();
-      } else {
-        securityInputBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000010;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The full security object for which we are going to run the valuation
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder mergeSecurityInput(fintekkers.models.security.SecurityProto value) {
-      if (securityInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000010) != 0) &&
-          securityInput_ != null &&
-          securityInput_ != fintekkers.models.security.SecurityProto.getDefaultInstance()) {
-          getSecurityInputBuilder().mergeFrom(value);
-        } else {
-          securityInput_ = value;
-        }
-      } else {
-        securityInputBuilder_.mergeFrom(value);
-      }
-      bitField0_ |= 0x00000010;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The full security object for which we are going to run the valuation
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder clearSecurityInput() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      securityInput_ = null;
-      if (securityInputBuilder_ != null) {
-        securityInputBuilder_.dispose();
-        securityInputBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The full security object for which we are going to run the valuation
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public fintekkers.models.security.SecurityProto.Builder getSecurityInputBuilder() {
-      bitField0_ |= 0x00000010;
-      onChanged();
-      return getSecurityInputFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     *The full security object for which we are going to run the valuation
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public fintekkers.models.security.SecurityProtoOrBuilder getSecurityInputOrBuilder() {
-      if (securityInputBuilder_ != null) {
-        return securityInputBuilder_.getMessageOrBuilder();
-      } else {
-        return securityInput_ == null ?
-            fintekkers.models.security.SecurityProto.getDefaultInstance() : securityInput_;
-      }
-    }
-    /**
-     * <pre>
-     *The full security object for which we are going to run the valuation
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder> 
-        getSecurityInputFieldBuilder() {
-      if (securityInputBuilder_ == null) {
-        securityInputBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            fintekkers.models.security.SecurityProto, fintekkers.models.security.SecurityProto.Builder, fintekkers.models.security.SecurityProtoOrBuilder>(
-                getSecurityInput(),
-                getParentForChildren(),
-                isClean());
-        securityInput_ = null;
-      }
-      return securityInputBuilder_;
-    }
-
     private fintekkers.models.position.PositionProto positionInput_;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.position.PositionProto, fintekkers.models.position.PositionProto.Builder, fintekkers.models.position.PositionProtoOrBuilder> positionInputBuilder_;
@@ -1665,7 +1329,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the positionInput field is set.
      */
     public boolean hasPositionInput() {
-      return ((bitField0_ & 0x00000020) != 0);
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      * <pre>
@@ -1698,7 +1362,7 @@ private static final long serialVersionUID = 0L;
       } else {
         positionInputBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1716,7 +1380,7 @@ private static final long serialVersionUID = 0L;
       } else {
         positionInputBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1729,7 +1393,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergePositionInput(fintekkers.models.position.PositionProto value) {
       if (positionInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000020) != 0) &&
+        if (((bitField0_ & 0x00000010) != 0) &&
           positionInput_ != null &&
           positionInput_ != fintekkers.models.position.PositionProto.getDefaultInstance()) {
           getPositionInputBuilder().mergeFrom(value);
@@ -1739,7 +1403,7 @@ private static final long serialVersionUID = 0L;
       } else {
         positionInputBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1751,7 +1415,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.position.PositionProto position_input = 21;</code>
      */
     public Builder clearPositionInput() {
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000010);
       positionInput_ = null;
       if (positionInputBuilder_ != null) {
         positionInputBuilder_.dispose();
@@ -1768,7 +1432,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.position.PositionProto position_input = 21;</code>
      */
     public fintekkers.models.position.PositionProto.Builder getPositionInputBuilder() {
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000010;
       onChanged();
       return getPositionInputFieldBuilder().getBuilder();
     }
@@ -1808,183 +1472,6 @@ private static final long serialVersionUID = 0L;
       return positionInputBuilder_;
     }
 
-    private fintekkers.models.price.PriceProto priceInput_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> priceInputBuilder_;
-    /**
-     * <pre>
-     *The price we are going to use for the valuation.
-     *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=43
-     * @return Whether the priceInput field is set.
-     */
-    @java.lang.Deprecated public boolean hasPriceInput() {
-      return ((bitField0_ & 0x00000040) != 0);
-    }
-    /**
-     * <pre>
-     *The price we are going to use for the valuation.
-     *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-     * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
-     *     See fintekkers/requests/valuation/valuation_request.proto;l=43
-     * @return The priceInput.
-     */
-    @java.lang.Deprecated public fintekkers.models.price.PriceProto getPriceInput() {
-      if (priceInputBuilder_ == null) {
-        return priceInput_ == null ? fintekkers.models.price.PriceProto.getDefaultInstance() : priceInput_;
-      } else {
-        return priceInputBuilder_.getMessage();
-      }
-    }
-    /**
-     * <pre>
-     *The price we are going to use for the valuation.
-     *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder setPriceInput(fintekkers.models.price.PriceProto value) {
-      if (priceInputBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        priceInput_ = value;
-      } else {
-        priceInputBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000040;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The price we are going to use for the valuation.
-     *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder setPriceInput(
-        fintekkers.models.price.PriceProto.Builder builderForValue) {
-      if (priceInputBuilder_ == null) {
-        priceInput_ = builderForValue.build();
-      } else {
-        priceInputBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000040;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The price we are going to use for the valuation.
-     *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder mergePriceInput(fintekkers.models.price.PriceProto value) {
-      if (priceInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000040) != 0) &&
-          priceInput_ != null &&
-          priceInput_ != fintekkers.models.price.PriceProto.getDefaultInstance()) {
-          getPriceInputBuilder().mergeFrom(value);
-        } else {
-          priceInput_ = value;
-        }
-      } else {
-        priceInputBuilder_.mergeFrom(value);
-      }
-      bitField0_ |= 0x00000040;
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The price we are going to use for the valuation.
-     *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public Builder clearPriceInput() {
-      bitField0_ = (bitField0_ & ~0x00000040);
-      priceInput_ = null;
-      if (priceInputBuilder_ != null) {
-        priceInputBuilder_.dispose();
-        priceInputBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     * <pre>
-     *The price we are going to use for the valuation.
-     *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public fintekkers.models.price.PriceProto.Builder getPriceInputBuilder() {
-      bitField0_ |= 0x00000040;
-      onChanged();
-      return getPriceInputFieldBuilder().getBuilder();
-    }
-    /**
-     * <pre>
-     *The price we are going to use for the valuation.
-     *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-     */
-    @java.lang.Deprecated public fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder() {
-      if (priceInputBuilder_ != null) {
-        return priceInputBuilder_.getMessageOrBuilder();
-      } else {
-        return priceInput_ == null ?
-            fintekkers.models.price.PriceProto.getDefaultInstance() : priceInput_;
-      }
-    }
-    /**
-     * <pre>
-     *The price we are going to use for the valuation.
-     *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-     *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-     * </pre>
-     *
-     * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-        fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder> 
-        getPriceInputFieldBuilder() {
-      if (priceInputBuilder_ == null) {
-        priceInputBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-            fintekkers.models.price.PriceProto, fintekkers.models.price.PriceProto.Builder, fintekkers.models.price.PriceProtoOrBuilder>(
-                getPriceInput(),
-                getParentForChildren(),
-                isClean());
-        priceInput_ = null;
-      }
-      return priceInputBuilder_;
-    }
-
     private fintekkers.models.util.LocalTimestamp.LocalTimestampProto asofDatetime_;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.LocalTimestamp.LocalTimestampProto, fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder, fintekkers.models.util.LocalTimestamp.LocalTimestampProtoOrBuilder> asofDatetimeBuilder_;
@@ -1997,7 +1484,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the asofDatetime field is set.
      */
     public boolean hasAsofDatetime() {
-      return ((bitField0_ & 0x00000080) != 0);
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      * <pre>
@@ -2030,7 +1517,7 @@ private static final long serialVersionUID = 0L;
       } else {
         asofDatetimeBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -2048,7 +1535,7 @@ private static final long serialVersionUID = 0L;
       } else {
         asofDatetimeBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -2061,7 +1548,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeAsofDatetime(fintekkers.models.util.LocalTimestamp.LocalTimestampProto value) {
       if (asofDatetimeBuilder_ == null) {
-        if (((bitField0_ & 0x00000080) != 0) &&
+        if (((bitField0_ & 0x00000020) != 0) &&
           asofDatetime_ != null &&
           asofDatetime_ != fintekkers.models.util.LocalTimestamp.LocalTimestampProto.getDefaultInstance()) {
           getAsofDatetimeBuilder().mergeFrom(value);
@@ -2071,7 +1558,7 @@ private static final long serialVersionUID = 0L;
       } else {
         asofDatetimeBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -2083,7 +1570,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
      */
     public Builder clearAsofDatetime() {
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000020);
       asofDatetime_ = null;
       if (asofDatetimeBuilder_ != null) {
         asofDatetimeBuilder_.dispose();
@@ -2100,7 +1587,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.models.util.LocalTimestampProto asof_datetime = 23;</code>
      */
     public fintekkers.models.util.LocalTimestamp.LocalTimestampProto.Builder getAsofDatetimeBuilder() {
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000020;
       onChanged();
       return getAsofDatetimeFieldBuilder().getBuilder();
     }
@@ -2146,23 +1633,21 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service values from this input alone: security_input (20)
-     * and price_input (22) are not read for the calculation. They may still be
-     * read for logging and audit.
+     * The service values from this input alone. Build it with
+     * ProductInputs.forSecurity (LM-410).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
      * @return Whether the productInput field is set.
      */
     public boolean hasProductInput() {
-      return ((bitField0_ & 0x00000100) != 0);
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service values from this input alone: security_input (20)
-     * and price_input (22) are not read for the calculation. They may still be
-     * read for logging and audit.
+     * The service values from this input alone. Build it with
+     * ProductInputs.forSecurity (LM-410).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2178,9 +1663,8 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service values from this input alone: security_input (20)
-     * and price_input (22) are not read for the calculation. They may still be
-     * read for logging and audit.
+     * The service values from this input alone. Build it with
+     * ProductInputs.forSecurity (LM-410).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2194,16 +1678,15 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service values from this input alone: security_input (20)
-     * and price_input (22) are not read for the calculation. They may still be
-     * read for logging and audit.
+     * The service values from this input alone. Build it with
+     * ProductInputs.forSecurity (LM-410).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2215,23 +1698,22 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service values from this input alone: security_input (20)
-     * and price_input (22) are not read for the calculation. They may still be
-     * read for logging and audit.
+     * The service values from this input alone. Build it with
+     * ProductInputs.forSecurity (LM-410).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
      */
     public Builder mergeProductInput(fintekkers.requests.valuation.ProductInput value) {
       if (productInputBuilder_ == null) {
-        if (((bitField0_ & 0x00000100) != 0) &&
+        if (((bitField0_ & 0x00000040) != 0) &&
           productInput_ != null &&
           productInput_ != fintekkers.requests.valuation.ProductInput.getDefaultInstance()) {
           getProductInputBuilder().mergeFrom(value);
@@ -2241,22 +1723,21 @@ private static final long serialVersionUID = 0L;
       } else {
         productInputBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service values from this input alone: security_input (20)
-     * and price_input (22) are not read for the calculation. They may still be
-     * read for logging and audit.
+     * The service values from this input alone. Build it with
+     * ProductInputs.forSecurity (LM-410).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
      */
     public Builder clearProductInput() {
-      bitField0_ = (bitField0_ & ~0x00000100);
+      bitField0_ = (bitField0_ & ~0x00000040);
       productInput_ = null;
       if (productInputBuilder_ != null) {
         productInputBuilder_.dispose();
@@ -2268,24 +1749,22 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service values from this input alone: security_input (20)
-     * and price_input (22) are not read for the calculation. They may still be
-     * read for logging and audit.
+     * The service values from this input alone. Build it with
+     * ProductInputs.forSecurity (LM-410).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
      */
     public fintekkers.requests.valuation.ProductInput.Builder getProductInputBuilder() {
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000040;
       onChanged();
       return getProductInputFieldBuilder().getBuilder();
     }
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service values from this input alone: security_input (20)
-     * and price_input (22) are not read for the calculation. They may still be
-     * read for logging and audit.
+     * The service values from this input alone. Build it with
+     * ProductInputs.forSecurity (LM-410).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -2301,9 +1780,8 @@ private static final long serialVersionUID = 0L;
     /**
      * <pre>
      * Product-specific input — determines the calculation path in the service.
-     * When set, the service values from this input alone: security_input (20)
-     * and price_input (22) are not read for the calculation. They may still be
-     * read for logging and audit.
+     * The service values from this input alone. Build it with
+     * ProductInputs.forSecurity (LM-410).
      * </pre>
      *
      * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>

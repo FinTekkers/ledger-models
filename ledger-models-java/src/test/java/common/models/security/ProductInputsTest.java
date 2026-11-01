@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 import common.models.errors.UnmappedProductTypeError;
 import common.models.errors.transaction.TransactionProcessingException;
 import fintekkers.models.position.MeasureProto;
@@ -12,6 +13,7 @@ import fintekkers.models.security.BondDetailsProto;
 import fintekkers.models.security.CouponTypeProto;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
+import fintekkers.requests.valuation.ProductInput;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -137,6 +139,32 @@ class ProductInputsTest {
         assertTrue(e.getMessage().contains("GOLD"), e.getMessage());
         assertTrue(e.getMessage().contains("FLOAT"), e.getMessage());
         assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.requiredMarketData(gold));
+    }
+
+    // ---------- LM-411: every ProductTypeProto value maps to an arm or raises ----------
+
+    @Test
+    void everyProductTypeMapsToAnArmOrRaises() {
+        Set<String> arms = ProductInput.getDescriptor().getOneofs().get(0).getFields().stream()
+                .map(FieldDescriptor::getName).collect(Collectors.toSet());
+        for (ProductTypeProto pt : ProductTypeProto.values()) {
+            if (pt == ProductTypeProto.UNRECOGNIZED) continue;
+            SecurityProto s = SecurityProto.newBuilder().setProductType(pt).build();
+            try {
+                String arm = ProductInputs.armFor(s);
+                assertTrue(arms.contains(arm), pt + " -> " + arm);
+            } catch (UnmappedProductTypeError e) {
+                assertEquals(pt.name(), e.getProductType());
+                assertTrue(e.getMessage().contains(pt.name()), e.getMessage());
+            }
+        }
+    }
+
+    @Test
+    void productTypeUnknownRaises() {
+        SecurityProto s = SecurityProto.newBuilder().setProductType(ProductTypeProto.PRODUCT_TYPE_UNKNOWN).build();
+        UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.armFor(s));
+        assertTrue(e.getMessage().contains("PRODUCT_TYPE_UNKNOWN"), e.getMessage());
     }
 
     // ---------- metric 3: every leaf covered ----------

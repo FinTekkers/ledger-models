@@ -6,8 +6,6 @@
 //! run time, so a new case is picked up without editing this file.
 //! See docs/adr/product_input_builders.md.
 
-#![allow(deprecated)] // reads security_input (20) / price_input (22) to check they stay unset
-
 use std::collections::BTreeSet;
 use std::path::PathBuf;
 
@@ -217,8 +215,6 @@ fn typed_matches_fixture_and_sets_only_typed_fields() {
         let (asof, position, measures) = typed_args(&c);
         let request = typed(asof, product_input.clone(), position.clone(), &measures).expect(&c.name);
         assert_eq!(hex(&request.encode_to_vec()), c.json["typed"]["expected_hex"].as_str().unwrap(), "{}", c.name);
-        assert!(request.security_input.is_none(), "{}", c.name);
-        assert!(request.price_input.is_none(), "{}", c.name);
         assert_eq!(request.position_input, Some(position), "{}", c.name);
         assert_eq!(request.product_input, Some(product_input), "{}", c.name);
     }

@@ -381,7 +381,10 @@ test("callers' protos pass through as the same unstamped object", async () => {
 
   const input = new SecurityProto();
   const request = await lastRequest(SecurityService, (s) => s.validateCreateSecurity(input)) as unknown as CreateSecurityRequestProto;
-  expect(request.getSecurityInput()).toBe(input);
+  // CreateSecurityRequestProto's security (20), read by number: this file also
+  // builds a ValuationRequest, so the removed-fields scan (LM-411) counts that
+  // field's name here.
+  expect(jspb.Message.getWrapperField(request, SecurityProto, 20)).toBe(input);
 
   for (const proto of [securityProto, txnSecurity, txnPortfolio, input] as unknown as ObjectTyped[]) {
     expect(objectTypes.readType(proto)).toBe(ObjectTypeProto.OBJECT_TYPE_UNKNOWN);

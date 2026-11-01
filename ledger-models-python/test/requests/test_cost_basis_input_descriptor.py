@@ -25,8 +25,9 @@ REMOVED = [
     f for f in json.loads((REPO_ROOT / "test-fixtures" / "removed-fields" / "lm-344.json").read_text())["fields"]
     if f["message"] == ".fintekkers.requests.valuation.ValuationRequestProto"
 ]
-# ValuationRequestProto's field numbers on main (caa1b3db), before LM-364.
-REQUEST_FIELDS_ON_MAIN = {1, 2, 10, 20, 21, 22, 23, 30, 70}
+# ValuationRequestProto's field numbers on main (caa1b3db), before LM-364,
+# less 20 and 22, which LM-411 removed and reserved.
+REQUEST_FIELDS_ON_MAIN = {1, 2, 10, 21, 23, 30, 70}
 TAX_LOT = tax_lot_pb2.TaxLotProto
 COST_BASIS = product_inputs_pb2.CostBasisInput
 

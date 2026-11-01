@@ -6,5 +6,7 @@
     {"message": ".fintekkers.requests.valuation.ValuationRequestProto", "number": 25, "name": "reference_rate_input", "type": ".fintekkers.models.price.PriceProto"},
     {"message": ".fintekkers.requests.valuation.TipsInput", "number": 3, "name": "current_cpi", "type": ".fintekkers.models.util.DecimalValueProto"}
   ],
-  "kept": {"message": ".fintekkers.requests.valuation.TipsInput", "number": 4, "name": "cpi"}
+  "kept": {"message": ".fintekkers.requests.valuation.TipsInput", "number": 4, "name": "cpi"},
+  "exempt_dirs": ["docs/adr/", "test-fixtures/removed-fields/"],
+  "descriptor_suffixes": ["Protos.java", "_pb2.py"]
 }

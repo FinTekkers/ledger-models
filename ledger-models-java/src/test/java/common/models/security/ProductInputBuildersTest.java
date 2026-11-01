@@ -221,14 +221,11 @@ class ProductInputBuildersTest {
 
     @ParameterizedTest
     @MethodSource("successCases")
-    @SuppressWarnings("deprecation")
     void typedMatchesFixtureAndSetsOnlyTypedFields(JsonObject c) throws IOException {
         ProductInput productInput = forSecurity(c);
         PositionProto position = position(c);
         ValuationRequestProto request = ValuationRequests.typed(asof(c), productInput, position, measures(c));
         assertEquals(c.getAsJsonObject("typed").get("expected_hex").getAsString(), HEX.formatHex(request.toByteArray()));
-        assertFalse(request.hasSecurityInput());
-        assertFalse(request.hasPriceInput());
         assertTrue(request.hasPositionInput());
         assertEquals(position, request.getPositionInput());
         assertEquals(productInput, request.getProductInput());

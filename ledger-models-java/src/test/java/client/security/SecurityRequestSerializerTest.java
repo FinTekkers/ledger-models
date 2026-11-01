@@ -26,7 +26,6 @@ class SecurityRequestSerializerTest {
 //        requestProto = SecurityRequestSerializer.getInstance().deserializeFromJson(json);
 //
 //
-//        PositionFilterProto searchSecurityInput = requestProto.getSecurityInput();
 //        Assertions.assertEquals(1, searchSecurityInput.getFiltersList().size());
 //        FieldProto field = searchSecurityInput.getFiltersList().get(0).getField();
 //        Assertions.assertEquals(FieldProto.IDENTIFIER, field);

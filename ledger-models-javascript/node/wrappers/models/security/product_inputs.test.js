@@ -39,6 +39,7 @@ const measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
+const product_inputs_pb_1 = require("../../../fintekkers/requests/valuation/product_inputs_pb");
 const PROTOS = path.resolve(__dirname, '../../../../../ledger-models-protos');
 const BUNDLED = path.resolve(__dirname, '../../../../hierarchy.json');
 const cases = JSON.parse(fs.readFileSync(path.join(PROTOS, 'fixtures/valuation_arms_cases.json'), 'utf-8')).cases;
@@ -126,6 +127,32 @@ describe('unmapped types raise (metric 2)', () => {
         const fx = new security_pb_1.SecurityProto();
         fx.setProductType(product_type_pb_1.ProductTypeProto.FX_SPOT);
         expect(catchUnmapped(() => (0, product_inputs_1.armFor)(fx)).couponType).toBe('UNKNOWN_COUPON_TYPE');
+    });
+});
+describe('LM-411: every ProductTypeProto value maps to an arm or raises', () => {
+    const arms = Object.keys(product_inputs_pb_1.ProductInput.InputCase)
+        .filter(k => k !== 'INPUT_NOT_SET')
+        .map(k => k.toLowerCase());
+    test.each(Object.keys(product_type_pb_1.ProductTypeProto))('%s', pt => {
+        const s = new security_pb_1.SecurityProto();
+        s.setProductType(product_type_pb_1.ProductTypeProto[pt]);
+        let arm;
+        try {
+            arm = (0, product_inputs_1.armFor)(s);
+        }
+        catch (e) {
+            if (!(e instanceof errors_1.UnmappedProductTypeError))
+                throw e;
+            expect(e.productType).toBe(pt);
+            expect(e.message).toContain(pt);
+            return;
+        }
+        expect(arms).toContain(arm);
+    });
+    test('PRODUCT_TYPE_UNKNOWN raises', () => {
+        const s = new security_pb_1.SecurityProto();
+        s.setProductType(product_type_pb_1.ProductTypeProto.PRODUCT_TYPE_UNKNOWN);
+        expect(catchUnmapped(() => (0, product_inputs_1.armFor)(s)).message).toContain('PRODUCT_TYPE_UNKNOWN');
     });
 });
 test('bundled valuation_arms equals the source (metric 4)', () => {

@@ -105,40 +105,6 @@ public interface ValuationRequestProtoOrBuilder extends
 
   /**
    * <pre>
-   *The full security object for which we are going to run the valuation
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=35
-   * @return Whether the securityInput field is set.
-   */
-  @java.lang.Deprecated boolean hasSecurityInput();
-  /**
-   * <pre>
-   *The full security object for which we are going to run the valuation
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.security_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=35
-   * @return The securityInput.
-   */
-  @java.lang.Deprecated fintekkers.models.security.SecurityProto getSecurityInput();
-  /**
-   * <pre>
-   *The full security object for which we are going to run the valuation
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.security.SecurityProto security_input = 20 [deprecated = true];</code>
-   */
-  @java.lang.Deprecated fintekkers.models.security.SecurityProtoOrBuilder getSecurityInputOrBuilder();
-
-  /**
-   * <pre>
    *The positions we are going to value.
    * </pre>
    *
@@ -163,43 +129,6 @@ public interface ValuationRequestProtoOrBuilder extends
    * <code>.fintekkers.models.position.PositionProto position_input = 21;</code>
    */
   fintekkers.models.position.PositionProtoOrBuilder getPositionInputOrBuilder();
-
-  /**
-   * <pre>
-   *The price we are going to use for the valuation.
-   *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=43
-   * @return Whether the priceInput field is set.
-   */
-  @java.lang.Deprecated boolean hasPriceInput();
-  /**
-   * <pre>
-   *The price we are going to use for the valuation.
-   *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-   * @deprecated fintekkers.requests.valuation.ValuationRequestProto.price_input is deprecated.
-   *     See fintekkers/requests/valuation/valuation_request.proto;l=43
-   * @return The priceInput.
-   */
-  @java.lang.Deprecated fintekkers.models.price.PriceProto getPriceInput();
-  /**
-   * <pre>
-   *The price we are going to use for the valuation.
-   *Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-   *Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-   * </pre>
-   *
-   * <code>.fintekkers.models.price.PriceProto price_input = 22 [deprecated = true];</code>
-   */
-  @java.lang.Deprecated fintekkers.models.price.PriceProtoOrBuilder getPriceInputOrBuilder();
 
   /**
    * <pre>
@@ -231,9 +160,8 @@ public interface ValuationRequestProtoOrBuilder extends
   /**
    * <pre>
    * Product-specific input — determines the calculation path in the service.
-   * When set, the service values from this input alone: security_input (20)
-   * and price_input (22) are not read for the calculation. They may still be
-   * read for logging and audit.
+   * The service values from this input alone. Build it with
+   * ProductInputs.forSecurity (LM-410).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -243,9 +171,8 @@ public interface ValuationRequestProtoOrBuilder extends
   /**
    * <pre>
    * Product-specific input — determines the calculation path in the service.
-   * When set, the service values from this input alone: security_input (20)
-   * and price_input (22) are not read for the calculation. They may still be
-   * read for logging and audit.
+   * The service values from this input alone. Build it with
+   * ProductInputs.forSecurity (LM-410).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>
@@ -255,9 +182,8 @@ public interface ValuationRequestProtoOrBuilder extends
   /**
    * <pre>
    * Product-specific input — determines the calculation path in the service.
-   * When set, the service values from this input alone: security_input (20)
-   * and price_input (22) are not read for the calculation. They may still be
-   * read for logging and audit.
+   * The service values from this input alone. Build it with
+   * ProductInputs.forSecurity (LM-410).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.ProductInput product_input = 70;</code>

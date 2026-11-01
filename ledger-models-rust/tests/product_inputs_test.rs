@@ -12,6 +12,9 @@ use ledger_models::fintekkers::wrappers::models::product_inputs::{
     arm_for, measures_for_arm, parse_valuation_arms, required_market_data, shipped_valuation_arms,
     MarketDataKind, ProductInputError,
 };
+use ledger_models::fintekkers::proto::LEDGER_MODELS_PROTO_FILE_DESCRIPTOR_SET;
+use prost::Message;
+use prost_types::FileDescriptorSet;
 use serde_json::Value;
 
 fn read_json(relative: &str) -> Value {
@@ -129,6 +132,50 @@ fn unset_bond_details_reads_as_unknown_coupon_type() {
     assert_eq!(arm_for(&corp), Ok("bond"));
     let fx = SecurityProto { product_type: ProductTypeProto::FxSpot.into(), ..Default::default() };
     assert_eq!(arm_for(&fx), Err(unmapped("FX_SPOT", "UNKNOWN_COUPON_TYPE")));
+}
+
+// ---------- LM-411: every ProductTypeProto value maps to an arm or raises ----------
+
+/// The `ProductInput` arm names and the `ProductTypeProto` values, from the
+/// descriptor set.
+fn arms_and_product_types() -> (Vec<String>, Vec<i32>) {
+    let set = FileDescriptorSet::decode(LEDGER_MODELS_PROTO_FILE_DESCRIPTOR_SET).expect("descriptor set");
+    let mut arms = vec![];
+    let mut types = vec![];
+    for file in &set.file {
+        for m in file.message_type.iter().filter(|m| m.name() == "ProductInput") {
+            let input = m.oneof_decl.iter().position(|o| o.name() == "input").expect("oneof input") as i32;
+            arms.extend(m.field.iter().filter(|f| f.oneof_index == Some(input)).map(|f| f.name().to_string()));
+        }
+        for e in file.enum_type.iter().filter(|e| e.name() == "ProductTypeProto") {
+            types.extend(e.value.iter().map(|v| v.number()));
+        }
+    }
+    assert!(!arms.is_empty() && !types.is_empty());
+    (arms, types)
+}
+
+#[test]
+fn every_product_type_maps_to_an_arm_or_raises() {
+    let (arms, types) = arms_and_product_types();
+    for value in types {
+        let pt = ProductTypeProto::from_i32(value).expect("enum value");
+        let s = SecurityProto { product_type: value, ..Default::default() };
+        match arm_for(&s) {
+            Ok(arm) => assert!(arms.iter().any(|a| a == arm), "{} -> {arm}", pt.as_str_name()),
+            Err(err) => {
+                assert_eq!(err, unmapped(pt.as_str_name(), "UNKNOWN_COUPON_TYPE"));
+                assert!(err.to_string().contains(pt.as_str_name()), "{err}");
+            }
+        }
+    }
+}
+
+#[test]
+fn product_type_unknown_raises() {
+    let s = SecurityProto { product_type: ProductTypeProto::ProductTypeUnknown.into(), ..Default::default() };
+    let err = arm_for(&s).expect_err("PRODUCT_TYPE_UNKNOWN has no arm");
+    assert!(err.to_string().contains("PRODUCT_TYPE_UNKNOWN"), "{err}");
 }
 
 // ---------- metric 3 ----------

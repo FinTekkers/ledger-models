@@ -22,7 +22,7 @@ Each comment now describes current behaviour. Where an intended check is not yet
 | L3 / D2 | `YieldCurveInput.index` | **Relaxed**: should match the FRN's `reference_rate_index`, but is not read or validated today. Check tracked in **VS-74**. |
 | L4 / D3 | `BondInput.security` | **Relaxed**: intended `TREASURY_NOTE` with `coupon_type FIXED`, but any `product_type` is accepted and `coupon_type` is ignored today. `dated_date` is not read today. Check tracked in **VS-69**. |
 | L5 / D4 | `ValuationRequestProto.reference_rate_input` | **Decimal fraction**: `0.0533` = 5.33%. valuation-service currently also tolerates values > 1 as percent; that is a tolerance, not a second unit. When absent, valuation-service defaults to `0.0533`. |
-| L6 | `ValuationRequestProto.price_input` | Bonds: per 100 face (`99.75` = 99.75% of par). Cash and equity: per unit. |
+| L6 | `ProductInput` arm price (`clean_price` on `bond`, `tips`, `frn` and `mbs`; `unit_price` on `equity` and `cash`) | Bonds: per 100 face (`99.75` = 99.75% of par). Cash and equity: per unit. |
 
 ### Why
 
@@ -64,7 +64,9 @@ L7 and L8 differ on purpose, as L1 and L5 did. See `frn_reference_rate_fixings.m
 
 ## Amendment 2026-10-22 (LM-377)
 
-`ValuationRequestProto.security_input` (20) and `price_input` (22, row **L6**) are marked `[deprecated = true]` in favour of `product_input` (70). They stay supported, and L6's units still apply, until every product has a typed `ProductInput` arm; they are removed under LM-376.
+`ValuationRequestProto` fields 20 and 22 (the flat security and price, row **L6**) are marked `[deprecated = true]` in favour of `product_input` (70). They stay supported until every product has a typed `ProductInput` arm; they are removed under LM-376.
+
+**LM-411:** fields 20 and 22 are removed and reserved. Row L6 now names the `ProductInput` arm price, which carries the same units.
 
 ## Amendment 2026-10-23 (LM-382)
 

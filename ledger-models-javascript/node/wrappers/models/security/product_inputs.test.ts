@@ -17,6 +17,7 @@ import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
 import { BondDetailsProto, SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import { ProductInput } from '../../../fintekkers/requests/valuation/product_inputs_pb';
 
 const PROTOS = path.resolve(__dirname, '../../../../../ledger-models-protos');
 const BUNDLED = path.resolve(__dirname, '../../../../hierarchy.json');
@@ -123,6 +124,33 @@ describe('unmapped types raise (metric 2)', () => {
     const fx = new SecurityProto();
     fx.setProductType(ProductTypeProto.FX_SPOT);
     expect(catchUnmapped(() => armFor(fx)).couponType).toBe('UNKNOWN_COUPON_TYPE');
+  });
+});
+
+describe('LM-411: every ProductTypeProto value maps to an arm or raises', () => {
+  const arms = Object.keys(ProductInput.InputCase)
+    .filter(k => k !== 'INPUT_NOT_SET')
+    .map(k => k.toLowerCase());
+
+  test.each(Object.keys(ProductTypeProto))('%s', pt => {
+    const s = new SecurityProto();
+    s.setProductType(ProductTypeProto[pt as keyof typeof ProductTypeProto]);
+    let arm: string;
+    try {
+      arm = armFor(s);
+    } catch (e) {
+      if (!(e instanceof UnmappedProductTypeError)) throw e;
+      expect(e.productType).toBe(pt);
+      expect(e.message).toContain(pt);
+      return;
+    }
+    expect(arms).toContain(arm);
+  });
+
+  test('PRODUCT_TYPE_UNKNOWN raises', () => {
+    const s = new SecurityProto();
+    s.setProductType(ProductTypeProto.PRODUCT_TYPE_UNKNOWN);
+    expect(catchUnmapped(() => armFor(s)).message).toContain('PRODUCT_TYPE_UNKNOWN');
   });
 });
 

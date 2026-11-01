@@ -668,33 +668,19 @@ pub struct ValuationRequestProto {
         tag = "30"
     )]
     pub measures: ::prost::alloc::vec::Vec<i32>,
-    /// The full security object for which we are going to run the valuation
-    /// Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-    #[deprecated]
-    #[prost(message, optional, tag = "20")]
-    pub security_input: ::core::option::Option<
-        super::super::models::security::SecurityProto,
-    >,
     /// The positions we are going to value.
     #[prost(message, optional, tag = "21")]
     pub position_input: ::core::option::Option<
         super::super::models::position::PositionProto,
     >,
-    /// The price we are going to use for the valuation.
-    /// Bonds: per 100 face (99.75 = 99.75% of par). Cash and equity: per unit.
-    /// Deprecated: use `product_input` (70). Still required for products without a typed `ProductInput` arm; removed under LM-376 once every product has one.
-    #[deprecated]
-    #[prost(message, optional, tag = "22")]
-    pub price_input: ::core::option::Option<super::super::models::price::PriceProto>,
     /// The asof datetime for the valuation.
     #[prost(message, optional, tag = "23")]
     pub asof_datetime: ::core::option::Option<
         super::super::models::util::LocalTimestampProto,
     >,
     /// Product-specific input — determines the calculation path in the service.
-    /// When set, the service values from this input alone: security_input (20)
-    /// and price_input (22) are not read for the calculation. They may still be
-    /// read for logging and audit.
+    /// The service values from this input alone. Build it with
+    /// ProductInputs.forSecurity (LM-410).
     #[prost(message, optional, tag = "70")]
     pub product_input: ::core::option::Option<ProductInput>,
 }

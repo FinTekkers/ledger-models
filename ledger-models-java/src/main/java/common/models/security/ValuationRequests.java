@@ -24,7 +24,7 @@ public final class ValuationRequests {
      * A {@code ValuationRequestProto} valued from {@code productInput} alone.
      *
      * <p>Sets asof_datetime (23), measures (30), position_input (21) and
-     * product_input (70). Never sets security_input (20) or price_input (22).
+     * product_input (70).
      * {@code productInput} is checked with {@link ProductInputs#checkProductInput}
      * first, so a tips input with no cpi throws
      * {@link common.models.errors.MissingMarketDataError} here too. The
