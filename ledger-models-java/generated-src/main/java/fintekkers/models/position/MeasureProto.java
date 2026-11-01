@@ -69,7 +69,7 @@ public enum MeasureProto
    * <pre>
    * The original purchase price of the security, before any adjustments for
    * amortization, accretion, or corporate actions.
-   * Formula: Returns the price_input as-is (quoted as % of par for bonds).
+   * Formula: Returns the input price as-is (quoted as % of par for bonds).
    *   Over time this may incorporate adjustments such as stock splits.
    * Model assumptions: None — pass-through of the input price.
    * Applicability: Bond, TIPS, FRN, Equity, Cash.
@@ -801,7 +801,7 @@ public enum MeasureProto
    * <pre>
    * The original purchase price of the security, before any adjustments for
    * amortization, accretion, or corporate actions.
-   * Formula: Returns the price_input as-is (quoted as % of par for bonds).
+   * Formula: Returns the input price as-is (quoted as % of par for bonds).
    *   Over time this may incorporate adjustments such as stock splits.
    * Model assumptions: None — pass-through of the input price.
    * Applicability: Bond, TIPS, FRN, Equity, Cash.

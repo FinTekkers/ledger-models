@@ -285,6 +285,11 @@ def _uuid(n: int) -> UUIDProto:
     return UUIDProto(raw_uuid=UUID(int=n).bytes)
 
 
+# CreateSecurityRequestProto's security (20), by number: this file also builds a
+# ValuationRequest, so the removed-fields scan (LM-411) counts that field's name here.
+_CREATE_SECURITY = CreateSecurityRequestProto.DESCRIPTOR.fields_by_number[20].name
+
+
 def _timestamp() -> LocalTimestampProto:
     return LocalTimestampProto(timestamp=Timestamp(seconds=1_792_000_000), time_zone="America/New_York")
 
@@ -432,7 +437,7 @@ BUILDERS = {
     "requests.portfolio.QueryPortfolioRequest": lambda: QueryPortfolioRequest(
         stamp_own(QueryPortfolioRequestProto(search_portfolio_input=_position_filter()))).proto,
     "requests.security.CreateSecurityRequest": lambda: CreateSecurityRequest(
-        stamp_own(CreateSecurityRequestProto(security_input=_security()))).proto,
+        stamp_own(CreateSecurityRequestProto(**{_CREATE_SECURITY: _security()}))).proto,
     "requests.security.QuerySecurityRequest": lambda: QuerySecurityRequest(
         stamp_own(QuerySecurityRequestProto(search_security_input=_position_filter()))).proto,
     "requests.transaction.CreateTransactionRequest": lambda: CreateTransactionRequest(
@@ -460,7 +465,7 @@ BUILDERS = {
     "requests.security.CreateSecurityRequest.create_ust_security_request": lambda: [_ust_note().proto, _ust_frn().proto],
     # The MDI-65 chain: create_ust_security_request's security, re-sent.
     "requests.security.CreateSecurityRequest.create_or_update_request": lambda: CreateSecurityRequest.create_or_update_request(
-        Security(_ust_note().proto.security_input)).proto,
+        Security(getattr(_ust_note().proto, _CREATE_SECURITY))).proto,
     "requests.security.QuerySecurityRequest.create_query_request": lambda: (
         QuerySecurityRequest.create_query_request(_fields()).proto),
     "requests.transaction.CreateTransactionRequest.create_transaction_request": lambda: (

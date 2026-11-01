@@ -7,13 +7,11 @@ use tonic::{Code, Status};
 #[derive(Debug)]
 pub enum Error {
     MissingPositionInput,
-    MissingPriceInput,
     MissingFaceValue,
     MissingCouponRate,
     MissingMaturityDate,
     MissingIssueDate,
     NotABondSecurity,
-    MissingSecurityInput,
     MissingBaseCpi,
     MissingCpi,
     MissingMeasure(MeasureProto),

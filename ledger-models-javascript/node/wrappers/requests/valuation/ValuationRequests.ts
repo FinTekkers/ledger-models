@@ -16,7 +16,7 @@ export class ValuationRequests {
    * A ValuationRequestProto valued from `productInput` alone.
    *
    * Sets asof_datetime (23), measures (30), position_input (21) and
-   * product_input (70). Never sets security_input (20) or price_input (22).
+   * product_input (70).
    * `productInput` is checked with checkProductInput first, so a tips input
    * with no cpi throws MissingMarketDataError here too. The caller's protos
    * are set as they are, not stamped (LM-322).

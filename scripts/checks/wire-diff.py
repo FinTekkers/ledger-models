@@ -317,7 +317,20 @@ def lm412(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM412 and new == LM412[key]
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412]
+LM411 = {
+    f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}"
+    for f in json.loads((REPO / "test-fixtures/removed-fields/lm-376.json").read_text())["fields"]
+}
+
+
+def lm411(key: str, old, new, head: dict) -> bool:
+    """LM-411 (LM-376): ValuationRequestProto fields 20 and 22 (the flat
+    security and price) deleted. Only deletions of exactly these fields; their
+    numbers and names are reserved, and position_input = 21 is unchanged."""
+    return new is None and key in LM411 and old == LM411[key]
+
+
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411]
 
 
 def main() -> int:

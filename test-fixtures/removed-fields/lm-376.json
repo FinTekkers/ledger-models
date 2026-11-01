@@ -1,0 +1,49 @@
+{
+  "item": "LM-376",
+  "pattern": "security_?input|price_?input",
+  "not_preceded_by": ["search", "create", "query", "cpi"],
+  "fields": [
+    {"message": ".fintekkers.requests.valuation.ValuationRequestProto", "number": 20, "name": "security_input", "type": ".fintekkers.models.security.SecurityProto"},
+    {"message": ".fintekkers.requests.valuation.ValuationRequestProto", "number": 22, "name": "price_input", "type": ".fintekkers.models.price.PriceProto"}
+  ],
+  "kept": {"message": ".fintekkers.requests.valuation.ValuationRequestProto", "number": 21, "name": "position_input", "type": ".fintekkers.models.position.PositionProto"},
+  "exempt_files": [
+    "docs/adr/product_input_engine_arms.md",
+    "docs/release-notes/lm-411.md",
+    "test-fixtures/removed-fields/lm-376.json",
+    "ledger-models-python/test/requests/test_removed_fields_scan.py"
+  ],
+  "descriptor_files": [
+    "ledger-models-java/generated-src/main/java/fintekkers/requests/valuation/ValuationRequestProtos.java",
+    "ledger-models-python/fintekkers/requests/valuation/valuation_request_pb2.py",
+    "ledger-models-python/fintekkers/requests/price/create_price_request_pb2.py"
+  ],
+  "homonyms": {
+    "message": ".fintekkers.requests.security.CreateSecurityRequestProto",
+    "field": "security_input",
+    "unless_file_mentions": "valuation_?request",
+    "files": [
+      "ledger-models-protos/fintekkers/requests/security/create_security_request.proto",
+      "ledger-models-java/generated-src/main/java/fintekkers/requests/security/CreateSecurityRequestProto.java",
+      "ledger-models-java/generated-src/main/java/fintekkers/requests/security/CreateSecurityRequestProtoOrBuilder.java",
+      "ledger-models-java/generated-src/main/java/fintekkers/requests/security/CreateSecurityRequestProtos.java",
+      "ledger-models-javascript/node/fintekkers/requests/security/create_security_request_pb.d.ts",
+      "ledger-models-javascript/node/fintekkers/requests/security/create_security_request_pb.js",
+      "ledger-models-javascript/node/wrappers/services/security-service/SecurityService.js",
+      "ledger-models-javascript/node/wrappers/services/security-service/SecurityService.ts",
+      "ledger-models-python/fintekkers/requests/security/create_security_request_pb2.py",
+      "ledger-models-python/fintekkers/requests/security/create_security_request_pb2.pyi",
+      "ledger-models-python/fintekkers/wrappers/requests/security.py",
+      "ledger-models-python/fintekkers/wrappers/services/security.py",
+      "ledger-models-python/test/requests/test_security_request.py",
+      "ledger-models-python/test/services/test_security_service_identifier_guard.py",
+      "ledger-models-python/test/wrappers/models/security/test_tbill_coupon_validation.py",
+      "ledger-models-python/test/wrappers/models/util/test_decimal_writers.py",
+      "ledger-models-python/test/wrappers/services/test_service_client_writethrough.py",
+      "ledger-models-python/test/wrappers/services/test_services_stamp.py",
+      "ledger-models-python/test/wrappers/util/test_object_types.py",
+      "ledger-models-rust/fintekkers.requests.security.rs",
+      "scripts/lm113-live.sh"
+    ]
+  }
+}

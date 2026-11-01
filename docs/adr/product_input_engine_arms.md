@@ -68,3 +68,13 @@ The comment now says that when `product_input` is set, the service values from t
 
 - `valuation_arms` (LM-409), `ProductInputs.forSecurity` (LM-410) and removing `security_input`, `price_input` (LM-411).
 - No valuation-service changes.
+
+## Addendum 2026-11-01 (LM-411)
+
+`ValuationRequestProto.security_input` (20) and `price_input` (22) are removed. Both numbers and both names are `reserved`, so they are never reused. `position_input` (21) keeps its number, name and type. Callers build `product_input` (70) with `ProductInputs.forSecurity` (LM-410) and the request with `ValuationRequests.typed`. A type with no arm in `valuation_arms` raises `UnmappedProductTypeError` naming the type; no binding returns a request with `product_input` unset. Release notes: `docs/release-notes/lm-411.md`.
+
+- **Units.** Row L6 of `valuation_input_units.md` (bonds per 100 face, cash and equity per unit) now applies to the arm price: `clean_price` on `bond`, `tips`, `frn` and `mbs`, `unit_price` on `equity` and `cash`.
+- **Rust.** `Error::MissingSecurityInput` and `Error::MissingPriceInput` are deleted. Nothing in this repo raised them.
+- **Removed-fields scan.** `test-fixtures/removed-fields/lm-376.json` drives `ledger-models-python/test/requests/test_removed_fields_scan.py`, the same scan as LM-344. It counts every hit in every tracked file except: this ADR, the release notes, the fixture and the test; `reserved` lines in `.proto` files; and quoted descriptor lines in the exact generated files the fixture lists under `descriptor_files`.
+- **Homonym.** `CreateSecurityRequestProto.security_input` (20) is a different field, still in use, with the same name. Renaming it would be a second breaking change. The fixture lists, by exact path, the files that use it under `homonyms.files`. A hit in one of them is skipped only while the file never mentions `ValuationRequest`; a file that mentions both counts. Prefixed names (`search_price_input`, `create_price_input`, `search_security_input`, `query_security_input`, `cpi_price_input`) are not the removed fields; the fixture's `not_preceded_by` skips them, but a bare name on the same line still counts.
+- **Wire diff.** `scripts/checks/wire-diff.py` rule `lm411` allows exactly these two deletions.

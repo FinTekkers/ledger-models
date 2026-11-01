@@ -1,6 +1,8 @@
 package fintekkers.services;
 
 import fintekkers.models.util.ObjectTypeProto;
+import common.models.security.ProductInputs;
+import common.models.security.ValuationRequests;
 import common.util.ObjectTypes;
 import fintekkers.models.position.MeasureMapEntry;
 import fintekkers.models.position.MeasureProto;
@@ -22,6 +24,7 @@ import protos.serializers.util.proto.ProtoSerializationUtil;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.function.Function;
 
 public class ValuationService {
@@ -101,12 +104,9 @@ public class ValuationService {
                 .setMeasureDecimalValue(ProtoSerializationUtil.serializeBigDecimal(BigDecimal.valueOf(-100)))
                 .build());
 
-        ValuationRequestProto requestProto = ValuationRequestProto.newBuilder()
-                .setSecurityInput(equitySecurity)
-                .setPriceInput(price)
-                .setPositionInput(position)
-                .addMeasures(MeasureProto.MARKET_VALUE)
-                .build();
+        ValuationRequestProto requestProto = ValuationRequests.typed(asOf,
+                ProductInputs.forSecurity(equitySecurity, price, null),
+                position.build(), List.of(MeasureProto.MARKET_VALUE));
 
 
         ValuationResponseProto responseProto = getInstance().runValuation(requestProto);

@@ -16,6 +16,7 @@ from fintekkers.models.position.measure_pb2 import MeasureProto
 from fintekkers.models.security.coupon_type_pb2 import CouponTypeProto
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.models.security.security_pb2 import BondDetailsProto, SecurityProto
+from fintekkers.requests.valuation.product_inputs_pb2 import ProductInput
 from fintekkers.wrappers.models.errors import (
     InvalidRegistryError,
     ModelValidationError,
@@ -117,6 +118,29 @@ def test_message_names_product_and_coupon_type():
     assert "GOLD" in str(e.value) and "FLOAT" in str(e.value)
     with pytest.raises(UnmappedProductTypeError):
         PI.required_market_data(gold)
+
+
+# ---------- LM-411: every ProductTypeProto value maps to an arm or raises ----------
+
+ARMS = {f.name for f in ProductInput.DESCRIPTOR.oneofs_by_name["input"].fields}
+
+
+@pytest.mark.parametrize("product_type", ProductTypeProto.keys())
+def test_every_product_type_maps_to_an_arm_or_raises(product_type):
+    security = SecurityProto(product_type=ProductTypeProto.Value(product_type))
+    try:
+        arm = PI.arm_for(security)
+    except UnmappedProductTypeError as e:
+        assert e.product_type == product_type
+        assert product_type in str(e)
+        return
+    assert arm in ARMS, (product_type, arm)
+
+
+def test_product_type_unknown_raises():
+    with pytest.raises(UnmappedProductTypeError) as e:
+        PI.arm_for(SecurityProto(product_type=ProductTypeProto.PRODUCT_TYPE_UNKNOWN))
+    assert "PRODUCT_TYPE_UNKNOWN" in str(e.value)
 
 
 # ---------- metric 3: every leaf covered ----------

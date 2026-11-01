@@ -156,8 +156,6 @@ test.each(success.map((c) => [c.name, c]))('%s: typed matches the fixture and se
     // jspb. ProductInput's declaration order is its field order: its bytes match
     // the fixture as they are (test above).
     expect(hexOf(request)).toBe(hexOf(valuation_request_pb_1.ValuationRequestProto.deserializeBinary(bytes(c.typed.expected_hex))));
-    expect(request.hasSecurityInput()).toBe(false);
-    expect(request.hasPriceInput()).toBe(false);
     expect(request.hasPositionInput()).toBe(true);
     expect(request.getPositionInput()).toBe(position);
     expect(request.getProductInput()).toBe(productInput);

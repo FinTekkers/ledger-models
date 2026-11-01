@@ -51,7 +51,7 @@
       "enum_value": 3,
       "display_name": "Unadjusted Cost Basis",
       "description": "The original purchase price of the security, before any adjustments for amortization, accretion, or corporate actions.",
-      "formula": "Returns the price_input as-is (quoted as % of par for bonds)",
+      "formula": "Returns the input price as-is (quoted as % of par for bonds)",
       "units": "Quoted price (% of par for bonds; dollar price for equities)",
       "category": "cost",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN", "STOCK", "CASH_INSTRUMENT"],

@@ -82,9 +82,8 @@ class ValuationService:
                    if value is None]
         if missing:
             raise ModelValidationError(missing)
-        # Typed request only: product_input (70) and position_input (21),
-        # never security_input (20) or price_input (22) (LM-410). The
-        # caller's protos are copied in as they are, not stamped (LM-322).
+        # Typed request: product_input (70) and position_input (21) (LM-410).
+        # The caller's protos are copied in as they are, not stamped (LM-322).
         asOfProto: LocalTimestampProto = ProtoSerializationUtil.serialize(asOf)
         product_input = for_security(security.proto, price.proto, market_data)
         request = ValuationRequests.typed(asOfProto, product_input, position.positionProto, measures or [])

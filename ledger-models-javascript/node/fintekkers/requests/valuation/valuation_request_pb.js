@@ -21,12 +21,8 @@ var global = (function() {
   return Function('return this')();
 }.call(null));
 
-var fintekkers_models_security_security_pb = require('../../../fintekkers/models/security/security_pb.js');
-goog.object.extend(proto, fintekkers_models_security_security_pb);
 var fintekkers_models_position_position_pb = require('../../../fintekkers/models/position/position_pb.js');
 goog.object.extend(proto, fintekkers_models_position_position_pb);
-var fintekkers_models_price_price_pb = require('../../../fintekkers/models/price/price_pb.js');
-goog.object.extend(proto, fintekkers_models_price_price_pb);
 var fintekkers_models_util_local_timestamp_pb = require('../../../fintekkers/models/util/local_timestamp_pb.js');
 goog.object.extend(proto, fintekkers_models_util_local_timestamp_pb);
 var fintekkers_requests_util_operation_pb = require('../../../fintekkers/requests/util/operation_pb.js');
@@ -104,9 +100,7 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.toObject = function(in
     version: (f = msg.getVersion()) && fintekkers_models_util_version_pb.VersionProto.toObject(includeInstance, f),
     operationType: jspb.Message.getFieldWithDefault(msg, 10, 0),
     measuresList: (f = jspb.Message.getRepeatedField(msg, 30)) == null ? undefined : f,
-    securityInput: (f = msg.getSecurityInput()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
     positionInput: (f = msg.getPositionInput()) && fintekkers_models_position_position_pb.PositionProto.toObject(includeInstance, f),
-    priceInput: (f = msg.getPriceInput()) && fintekkers_models_price_price_pb.PriceProto.toObject(includeInstance, f),
     asofDatetime: (f = msg.getAsofDatetime()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     productInput: (f = msg.getProductInput()) && fintekkers_requests_valuation_product_inputs_pb.ProductInput.toObject(includeInstance, f)
   };
@@ -164,20 +158,10 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.deserializeBinaryFromR
         msg.addMeasures(values[i]);
       }
       break;
-    case 20:
-      var value = new fintekkers_models_security_security_pb.SecurityProto;
-      reader.readMessage(value,fintekkers_models_security_security_pb.SecurityProto.deserializeBinaryFromReader);
-      msg.setSecurityInput(value);
-      break;
     case 21:
       var value = new fintekkers_models_position_position_pb.PositionProto;
       reader.readMessage(value,fintekkers_models_position_position_pb.PositionProto.deserializeBinaryFromReader);
       msg.setPositionInput(value);
-      break;
-    case 22:
-      var value = new fintekkers_models_price_price_pb.PriceProto;
-      reader.readMessage(value,fintekkers_models_price_price_pb.PriceProto.deserializeBinaryFromReader);
-      msg.setPriceInput(value);
       break;
     case 23:
       var value = new fintekkers_models_util_local_timestamp_pb.LocalTimestampProto;
@@ -247,28 +231,12 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.serializeBinaryToWrite
       f
     );
   }
-  f = message.getSecurityInput();
-  if (f != null) {
-    writer.writeMessage(
-      20,
-      f,
-      fintekkers_models_security_security_pb.SecurityProto.serializeBinaryToWriter
-    );
-  }
   f = message.getPositionInput();
   if (f != null) {
     writer.writeMessage(
       21,
       f,
       fintekkers_models_position_position_pb.PositionProto.serializeBinaryToWriter
-    );
-  }
-  f = message.getPriceInput();
-  if (f != null) {
-    writer.writeMessage(
-      22,
-      f,
-      fintekkers_models_price_price_pb.PriceProto.serializeBinaryToWriter
     );
   }
   f = message.getAsofDatetime();
@@ -401,43 +369,6 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.clearMeasure
 
 
 /**
- * optional fintekkers.models.security.SecurityProto security_input = 20;
- * @return {?proto.fintekkers.models.security.SecurityProto}
- */
-proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.getSecurityInput = function() {
-  return /** @type{?proto.fintekkers.models.security.SecurityProto} */ (
-    jspb.Message.getWrapperField(this, fintekkers_models_security_security_pb.SecurityProto, 20));
-};
-
-
-/**
- * @param {?proto.fintekkers.models.security.SecurityProto|undefined} value
- * @return {!proto.fintekkers.requests.valuation.ValuationRequestProto} returns this
-*/
-proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.setSecurityInput = function(value) {
-  return jspb.Message.setWrapperField(this, 20, value);
-};
-
-
-/**
- * Clears the message field making it undefined.
- * @return {!proto.fintekkers.requests.valuation.ValuationRequestProto} returns this
- */
-proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.clearSecurityInput = function() {
-  return this.setSecurityInput(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.hasSecurityInput = function() {
-  return jspb.Message.getField(this, 20) != null;
-};
-
-
-/**
  * optional fintekkers.models.position.PositionProto position_input = 21;
  * @return {?proto.fintekkers.models.position.PositionProto}
  */
@@ -471,43 +402,6 @@ proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.clearPositio
  */
 proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.hasPositionInput = function() {
   return jspb.Message.getField(this, 21) != null;
-};
-
-
-/**
- * optional fintekkers.models.price.PriceProto price_input = 22;
- * @return {?proto.fintekkers.models.price.PriceProto}
- */
-proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.getPriceInput = function() {
-  return /** @type{?proto.fintekkers.models.price.PriceProto} */ (
-    jspb.Message.getWrapperField(this, fintekkers_models_price_price_pb.PriceProto, 22));
-};
-
-
-/**
- * @param {?proto.fintekkers.models.price.PriceProto|undefined} value
- * @return {!proto.fintekkers.requests.valuation.ValuationRequestProto} returns this
-*/
-proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.setPriceInput = function(value) {
-  return jspb.Message.setWrapperField(this, 22, value);
-};
-
-
-/**
- * Clears the message field making it undefined.
- * @return {!proto.fintekkers.requests.valuation.ValuationRequestProto} returns this
- */
-proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.clearPriceInput = function() {
-  return this.setPriceInput(undefined);
-};
-
-
-/**
- * Returns whether this field is set.
- * @return {boolean}
- */
-proto.fintekkers.requests.valuation.ValuationRequestProto.prototype.hasPriceInput = function() {
-  return jspb.Message.getField(this, 22) != null;
 };
 
 

@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted (LM-410, filed by Plan LM-376). Additive: new builders in every binding. No proto change and no `hierarchy.json` change: `security_input` (20) and `price_input` (22) stay in `ValuationRequestProto` until LM-411.
+Accepted (LM-410, filed by Plan LM-376). Additive: new builders in every binding. No proto change and no `hierarchy.json` change: the flat security and price fields (20 and 22) stay in `ValuationRequestProto` until LM-411.
 
 ## Context
 

@@ -190,8 +190,6 @@ def test_typed_matches_fixture_and_sets_only_typed_fields(case):
     product_input = for_security(security, price, md)
     request = ValuationRequests.typed(asof, product_input, position, measures)
     assert _bytes(request) == case["typed"]["expected_hex"]
-    assert not request.HasField("security_input")
-    assert not request.HasField("price_input")
     assert request.HasField("position_input")
     assert request.position_input == position
     assert request.product_input == product_input
