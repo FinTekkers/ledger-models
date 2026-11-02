@@ -11,12 +11,12 @@ import java.util.Optional;
  * Market data for {@link ProductInputs#forSecurity}, one field per
  * {@link MarketDataKind}: {@code CPI_U} is {@link #cpi()},
  * {@code FRN_FIXINGS} is {@link #fixings()}, {@code FRN_CURVE} is
- * {@link #curve()}. Each is copied to the arm field of the same name
+ * {@link #curve()}. Each is copied to the input type's field of the same name
  * ({@code TipsInput.cpi}, {@code FrnInput.fixings}, {@code FrnInput.curve})
- * when the arm has one; the others are ignored. Immutable.
+ * when the input type has one; the others are ignored. Immutable.
  */
 public final class MarketData {
-    /** No market data: enough for arms that require none. */
+    /** No market data: enough for input types that require none. */
     public static final MarketData NONE = builder().build();
 
     private final InflationIndexInput cpi;

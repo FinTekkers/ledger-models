@@ -7,7 +7,7 @@
   },
   "error": {
     "type": "MissingMarketDataError",
-    "arm": "tips",
+    "input_type": "tips",
     "kind": "CPI_U",
     "field": "tips.cpi"
   },

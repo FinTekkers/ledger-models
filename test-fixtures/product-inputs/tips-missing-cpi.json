@@ -4,7 +4,7 @@
   "price_hex": "2a120a100000000000000000000000000000006652065a0203f76001",
   "error": {
     "type": "MissingMarketDataError",
-    "arm": "tips",
+    "input_type": "tips",
     "kind": "CPI_U",
     "field": "tips.cpi"
   },

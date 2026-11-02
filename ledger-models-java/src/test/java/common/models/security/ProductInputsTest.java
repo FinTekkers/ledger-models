@@ -38,9 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * LM-409: valuation_arms in hierarchy.json, resolved by ProductInputs.armFor /
+ * LM-409: valuation_input_types in hierarchy.json, resolved by ProductInputs.inputTypeFor /
  * requiredMarketData. The shared cases live in
- * ledger-models-protos/fixtures/valuation_arms_cases.json, read by the
+ * ledger-models-protos/fixtures/valuation_input_types_cases.json, read by the
  * Python, JS and Rust tests too.
  */
 class ProductInputsTest {
@@ -54,7 +54,7 @@ class ProductInputsTest {
     }
 
     private static JsonObject sourceSection() throws IOException {
-        return readJson(PROTOS.resolve("hierarchy.json")).getAsJsonObject("valuation_arms");
+        return readJson(PROTOS.resolve("hierarchy.json")).getAsJsonObject("valuation_input_types");
     }
 
     private static boolean hasEnumValue(String productType) {
@@ -69,10 +69,10 @@ class ProductInputsTest {
     }
 
     /** Resolves through a real proto when the type has an enum value; planned leaves by name. */
-    private static ProductInputs.Arm resolve(String productType, String couponType) {
+    private static ProductInputs.InputTypeEntry resolve(String productType, String couponType) {
         if (!hasEnumValue(productType)) return ProductInputs.shipped().require(productType, couponType);
         SecurityProto s = security(productType, couponType);
-        return new ProductInputs.Arm(ProductInputs.armFor(s), ProductInputs.requiredMarketData(s));
+        return new ProductInputs.InputTypeEntry(ProductInputs.inputTypeFor(s), ProductInputs.requiredMarketData(s));
     }
 
     private static List<String> names(List<MarketDataKind> kinds) {
@@ -83,7 +83,7 @@ class ProductInputsTest {
 
     @Test
     void fixtureCases() throws IOException {
-        JsonArray cases = readJson(PROTOS.resolve("fixtures").resolve("valuation_arms_cases.json"))
+        JsonArray cases = readJson(PROTOS.resolve("fixtures").resolve("valuation_input_types_cases.json"))
                 .getAsJsonArray("cases");
         assertTrue(cases.size() >= 5, "fixture has too few cases: " + cases.size());
         Set<String> seen = new TreeSet<>();
@@ -99,8 +99,8 @@ class ProductInputsTest {
                 assertEquals(pt, e.getProductType());
                 assertEquals(coupon, e.getCouponType());
             } else {
-                ProductInputs.Arm a = resolve(pt, coupon);
-                assertEquals(c.get("arm").getAsString(), a.arm, pt + "/" + coupon);
+                ProductInputs.InputTypeEntry a = resolve(pt, coupon);
+                assertEquals(c.get("input_type").getAsString(), a.inputType, pt + "/" + coupon);
                 List<String> requires = new ArrayList<>();
                 for (JsonElement r : c.getAsJsonArray("requires")) requires.add(r.getAsString());
                 assertEquals(requires, names(a.requires), pt + "/" + coupon);
@@ -135,24 +135,24 @@ class ProductInputsTest {
     @Test
     void messageNamesProductAndCouponType() {
         SecurityProto gold = security("GOLD", "FLOAT");
-        UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.armFor(gold));
+        UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.inputTypeFor(gold));
         assertTrue(e.getMessage().contains("GOLD"), e.getMessage());
         assertTrue(e.getMessage().contains("FLOAT"), e.getMessage());
         assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.requiredMarketData(gold));
     }
 
-    // ---------- LM-411: every ProductTypeProto value maps to an arm or raises ----------
+    // ---------- LM-411: every ProductTypeProto value maps to an input type or raises ----------
 
     @Test
-    void everyProductTypeMapsToAnArmOrRaises() {
-        Set<String> arms = ProductInput.getDescriptor().getOneofs().get(0).getFields().stream()
+    void everyProductTypeMapsToAnInputTypeOrRaises() {
+        Set<String> inputTypes = ProductInput.getDescriptor().getOneofs().get(0).getFields().stream()
                 .map(FieldDescriptor::getName).collect(Collectors.toSet());
         for (ProductTypeProto pt : ProductTypeProto.values()) {
             if (pt == ProductTypeProto.UNRECOGNIZED) continue;
             SecurityProto s = SecurityProto.newBuilder().setProductType(pt).build();
             try {
-                String arm = ProductInputs.armFor(s);
-                assertTrue(arms.contains(arm), pt + " -> " + arm);
+                String inputType = ProductInputs.inputTypeFor(s);
+                assertTrue(inputTypes.contains(inputType), pt + " -> " + inputType);
             } catch (UnmappedProductTypeError e) {
                 assertEquals(pt.name(), e.getProductType());
                 assertTrue(e.getMessage().contains(pt.name()), e.getMessage());
@@ -163,7 +163,7 @@ class ProductInputsTest {
     @Test
     void productTypeUnknownRaises() {
         SecurityProto s = SecurityProto.newBuilder().setProductType(ProductTypeProto.PRODUCT_TYPE_UNKNOWN).build();
-        UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.armFor(s));
+        UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.inputTypeFor(s));
         assertTrue(e.getMessage().contains("PRODUCT_TYPE_UNKNOWN"), e.getMessage());
     }
 
@@ -194,8 +194,8 @@ class ProductInputsTest {
             assertNotNull(in, "hierarchy.json is not on the classpath");
             bundled = new Gson().fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), JsonObject.class);
         }
-        assertTrue(bundled.has("valuation_arms"), "bundled hierarchy.json has no valuation_arms");
-        assertEquals(sourceSection(), bundled.getAsJsonObject("valuation_arms"));
+        assertTrue(bundled.has("valuation_input_types"), "bundled hierarchy.json has no valuation_input_types");
+        assertEquals(sourceSection(), bundled.getAsJsonObject("valuation_input_types"));
     }
 
     // ---------- metric 5: closed requires vocabulary ----------
@@ -230,20 +230,20 @@ class ProductInputsTest {
         JsonObject section = sourceSection().deepCopy();
         for (JsonElement el : section.getAsJsonArray("entries")) {
             JsonObject e = el.getAsJsonObject();
-            if (e.get("node").getAsString().equals("STOCK")) e.addProperty("arm", "cash");
+            if (e.get("node").getAsString().equals("STOCK")) e.addProperty("input_type", "cash");
         }
-        assertEquals("cash", ProductInputs.parse(section).require("COMMON_STOCK", "UNKNOWN_COUPON_TYPE").arm);
-        assertEquals("equity", ProductInputs.armFor(security("COMMON_STOCK", "UNKNOWN_COUPON_TYPE")));
+        assertEquals("cash", ProductInputs.parse(section).require("COMMON_STOCK", "UNKNOWN_COUPON_TYPE").inputType);
+        assertEquals("equity", ProductInputs.inputTypeFor(security("COMMON_STOCK", "UNKNOWN_COUPON_TYPE")));
     }
 
     @Test
     void unsetBondDetailsReadsAsUnknownCouponType() {
         SecurityProto corp = SecurityProto.newBuilder().setProductType(ProductTypeProto.CORP_BOND).build();
-        assertEquals("bond", ProductInputs.armFor(corp));
+        assertEquals("bond", ProductInputs.inputTypeFor(corp));
         assertEquals(List.of(), ProductInputs.requiredMarketData(corp));
 
         SecurityProto fx = SecurityProto.newBuilder().setProductType(ProductTypeProto.FX_SPOT).build();
-        UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.armFor(fx));
+        UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.inputTypeFor(fx));
         assertEquals("UNKNOWN_COUPON_TYPE", e.getCouponType());
         assertTrue(e.getMessage().contains("UNKNOWN_COUPON_TYPE"), e.getMessage());
     }
@@ -251,7 +251,7 @@ class ProductInputsTest {
     @Test
     void unmappedIsAnInputErrorNotAStateError() {
         UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class,
-                () -> ProductInputs.armFor(security("FX_SPOT", "UNKNOWN_COUPON_TYPE")));
+                () -> ProductInputs.inputTypeFor(security("FX_SPOT", "UNKNOWN_COUPON_TYPE")));
         assertTrue(e instanceof IllegalArgumentException);
         assertFalse(((RuntimeException) e) instanceof TransactionProcessingException);
     }
@@ -262,12 +262,12 @@ class ProductInputsTest {
         assertThrows(UnsupportedOperationException.class, () -> tips.add(MarketDataKind.FRN_CURVE));
     }
 
-    // ---------- LM-427: measuresForArm ----------
+    // ---------- LM-427: measuresForInputType ----------
 
-    private static final Set<String> ARMS = Set.of("bond", "tips", "frn", "mbs", "equity", "cash");
+    private static final Set<String> INPUT_TYPES = Set.of("bond", "tips", "frn", "mbs", "equity", "cash");
 
     private static JsonObject measuresFixture() throws IOException {
-        return readJson(Path.of("..", "test-fixtures", "catalog", "measures-for-arm.json"));
+        return readJson(Path.of("..", "test-fixtures", "catalog", "measures-for-input-type.json"));
     }
 
     private static List<String> measureNames(List<MeasureProto> measures) {
@@ -275,39 +275,39 @@ class ProductInputsTest {
     }
 
     @Test
-    void measuresFixtureListsTheSixArmsNoneEmpty() throws IOException {
-        JsonObject arms = measuresFixture().getAsJsonObject("arms");
-        assertEquals(ARMS, arms.keySet());
-        for (String arm : ARMS) assertFalse(arms.getAsJsonArray(arm).isEmpty(), arm);
+    void measuresFixtureListsTheSixInputTypesNoneEmpty() throws IOException {
+        JsonObject inputTypes = measuresFixture().getAsJsonObject("input_types");
+        assertEquals(INPUT_TYPES, inputTypes.keySet());
+        for (String inputType : INPUT_TYPES) assertFalse(inputTypes.getAsJsonArray(inputType).isEmpty(), inputType);
     }
 
     @Test
-    void measuresForArmMatchesTheSharedFixture() throws IOException {
-        JsonObject arms = measuresFixture().getAsJsonObject("arms");
-        for (String arm : ARMS) {
-            List<String> got = measureNames(ProductInputs.measuresForArm(arm));
-            assertEquals(got.size(), new HashSet<>(got).size(), arm + " has duplicates");
+    void measuresForInputTypeMatchesTheSharedFixture() throws IOException {
+        JsonObject inputTypes = measuresFixture().getAsJsonObject("input_types");
+        for (String inputType : INPUT_TYPES) {
+            List<String> got = measureNames(ProductInputs.measuresForInputType(inputType));
+            assertEquals(got.size(), new HashSet<>(got).size(), inputType + " has duplicates");
             Set<String> expected = new TreeSet<>();
-            arms.getAsJsonArray(arm).forEach(e -> expected.add(e.getAsString()));
-            assertEquals(expected.size(), arms.getAsJsonArray(arm).size(), arm);
-            assertEquals(expected, new TreeSet<>(got), arm);
+            inputTypes.getAsJsonArray(inputType).forEach(e -> expected.add(e.getAsString()));
+            assertEquals(expected.size(), inputTypes.getAsJsonArray(inputType).size(), inputType);
+            assertEquals(expected, new TreeSet<>(got), inputType);
         }
     }
 
     @Test
-    void measuresForArmFrnAndTips() {
-        List<String> frn = measureNames(ProductInputs.measuresForArm("frn"));
+    void measuresForInputTypeFrnAndTips() {
+        List<String> frn = measureNames(ProductInputs.measuresForInputType("frn"));
         for (String name : List.of("CONVEXITY", "MODIFIED_DURATION", "DV01", "PROFIT_LOSS_PERCENT")) {
             assertFalse(frn.contains(name), "frn has " + name);
         }
-        List<String> tips = measureNames(ProductInputs.measuresForArm("tips"));
+        List<String> tips = measureNames(ProductInputs.measuresForInputType("tips"));
         assertTrue(tips.containsAll(List.of("REFERENCE_CPI", "INDEX_RATIO")));
     }
 
     @Test
-    void measuresForUnknownArmIsUnmapped() throws IOException {
-        String arm = measuresFixture().get("unknown_arm").getAsString();
-        UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.measuresForArm(arm));
+    void measuresForUnknownInputTypeIsUnmapped() throws IOException {
+        String inputType = measuresFixture().get("unknown_input_type").getAsString();
+        UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.measuresForInputType(inputType));
         assertEquals(UnmappedProductTypeError.class, e.getClass());
         assertEquals("swap", e.getProductType());
     }
@@ -324,25 +324,25 @@ class ProductInputsTest {
     }
 
     @Test
-    void measuresForArmFollowsImplemented() throws IOException {
+    void measuresForInputTypeFollowsImplemented() throws IOException {
         JsonObject off = new JsonObject();
         off.addProperty("implemented", false);
-        assertTrue(ProductInputs.measuresForArm("frn").contains(MeasureProto.DISCOUNT_MARGIN));
-        assertFalse(ProductInputs.measuresForArm(catalogWith("DISCOUNT_MARGIN", off), "frn")
+        assertTrue(ProductInputs.measuresForInputType("frn").contains(MeasureProto.DISCOUNT_MARGIN));
+        assertFalse(ProductInputs.measuresForInputType(catalogWith("DISCOUNT_MARGIN", off), "frn")
                 .contains(MeasureProto.DISCOUNT_MARGIN));
     }
 
     @Test
-    void measuresForArmFollowsAnAncestorNode() throws IOException {
+    void measuresForInputTypeFollowsAnAncestorNode() throws IOException {
         JsonObject govBond = new JsonObject();
         govBond.addProperty("implemented", true);
         JsonArray appliesTo = new JsonArray();
         appliesTo.add(new JsonPrimitive("GOV_BOND"));
         govBond.add("applies_to", appliesTo);
         JsonArray measures = catalogWith("PAR_YIELD", govBond);
-        for (String arm : List.of("frn", "bond")) {
-            assertFalse(ProductInputs.measuresForArm(arm).contains(MeasureProto.PAR_YIELD), arm);
-            assertTrue(ProductInputs.measuresForArm(measures, arm).contains(MeasureProto.PAR_YIELD), arm);
+        for (String inputType : List.of("frn", "bond")) {
+            assertFalse(ProductInputs.measuresForInputType(inputType).contains(MeasureProto.PAR_YIELD), inputType);
+            assertTrue(ProductInputs.measuresForInputType(measures, inputType).contains(MeasureProto.PAR_YIELD), inputType);
         }
     }
 }

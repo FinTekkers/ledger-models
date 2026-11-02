@@ -162,7 +162,7 @@ enum FieldKind {
     Unsupported,
 }
 
-/// The field→kind table. Exhaustive with no `_` arm on purpose: a new
+/// The field→kind table. Exhaustive with no `_` wildcard on purpose: a new
 /// `FieldProto` value must be given a kind here or the crate won't compile.
 fn kind_of(field: FieldProto) -> Option<FieldKind> {
     match field {

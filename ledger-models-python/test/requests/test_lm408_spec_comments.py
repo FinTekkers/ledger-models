@@ -1,7 +1,7 @@
 """The proto comments are the spec (LM-408). The unit_price and clean_price
 comments give their units, the MbsInput comment states G8, the bond and frn
 comments name their coupon types, and the product_input (70) comment no longer
-says "flat fallback". The ADR exists, names all six arms and links
+says "flat fallback". The ADR exists, names all six input types and links
 valuation_input_units.md. No LM-376 wording placeholder remains.
 
 Comments are found by the name they document, never by line number.
@@ -14,7 +14,7 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[3]
 PROTOS = REPO_ROOT / "ledger-models-protos"
 PRODUCT_INPUTS = PROTOS / "fintekkers" / "requests" / "valuation" / "product_inputs.proto"
-ADR = REPO_ROOT / "docs" / "adr" / "product_input_engine_arms.md"
+ADR = REPO_ROOT / "docs" / "adr" / "product_input_engine_input_types.md"
 PLACEHOLDER = "<wording from LM-376>"
 G8 = ("mortgage_backed is valued as a bullet fixed-rate bond (no amortisation or prepayment), "
       "because it descends from bond.")
@@ -81,11 +81,11 @@ def test_mbs_comment_keeps_10_to_19_free():
     assert "fields 10-19 are kept free" in _prose(_message_header("MbsInput"))
 
 
-def test_bond_arm_names_fixed():
+def test_bond_input_type_names_fixed():
     assert "coupon_type FIXED" in _field_block("ProductInput", "bond")
 
 
-def test_frn_arm_names_float():
+def test_frn_input_type_names_float():
     assert "coupon_type FLOAT" in _field_block("ProductInput", "frn")
 
 
@@ -99,10 +99,10 @@ def test_no_lm376_placeholder(path):
     assert PLACEHOLDER not in path.read_text()
 
 
-def test_adr_exists_and_names_all_six_arms():
+def test_adr_exists_and_names_all_six_input_types():
     text = ADR.read_text()
-    for arm in ("bond", "tips", "frn", "mbs", "equity", "cash"):
-        assert f"`{arm}`" in text, arm
+    for input_type in ("bond", "tips", "frn", "mbs", "equity", "cash"):
+        assert f"`{input_type}`" in text, input_type
 
 
 def test_adr_links_valuation_input_units():

@@ -177,7 +177,7 @@ pub struct CurveResponseProto {
 ///    15   cash
 ///    16+  other (money market, futures, scenario, krd, ...)
 ///
-/// The arms grouped by valuation engine: docs/adr/product_input_engine_arms.md.
+/// The input types grouped by valuation engine: docs/adr/product_input_engine_input_types.md.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -498,7 +498,7 @@ pub struct ReferenceRateFixingProto {
 ///
 /// G8 (valuation-service known gap 8, tracked as VS-71): MORTGAGE_BACKED is
 /// valued as a bullet fixed-rate bond (no amortisation or prepayment), because
-/// it descends from BOND. The mbs arm gives MBS its own route, but it still
+/// it descends from BOND. The mbs input type gives MBS its own route, but it still
 /// uses the bond engine, so the numbers are unchanged until a real MBS engine
 /// replaces it.
 ///
@@ -506,7 +506,7 @@ pub struct ReferenceRateFixingProto {
 /// use them for anything else.
 ///
 /// Settlement date is read from ValuationRequestProto.asof_datetime.
-/// See docs/adr/product_input_engine_arms.md.
+/// See docs/adr/product_input_engine_input_types.md.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -529,7 +529,7 @@ pub struct MbsInput {
 /// ═══════════════════════════════════════════════════════════════════════════
 /// EquityInput — valuation request for an equity or fund priced per share
 /// (LM-408). Unit-priced: market value is unit_price x quantity, no accrual.
-/// See docs/adr/product_input_engine_arms.md.
+/// See docs/adr/product_input_engine_input_types.md.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -547,7 +547,7 @@ pub struct EquityInput {
 /// ═══════════════════════════════════════════════════════════════════════════
 /// CashInput — valuation request for cash or a money-market fund (LM-408).
 /// Unit-priced: market value is unit_price x quantity, no accrual.
-/// See docs/adr/product_input_engine_arms.md.
+/// See docs/adr/product_input_engine_input_types.md.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

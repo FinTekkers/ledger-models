@@ -11,7 +11,7 @@ import * as path from 'path';
 import * as jspb from 'google-protobuf';
 
 import hierarchy from '../../../../hierarchy.json';
-import { armFor, checkProductInput, forSecurity, MarketData } from './product_inputs';
+import { inputTypeFor, checkProductInput, forSecurity, MarketData } from './product_inputs';
 import { ValuationRequests } from '../../requests/valuation/ValuationRequests';
 import { MissingMarketDataError, ModelValidationError, UnmappedProductTypeError } from '../errors';
 import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
@@ -26,13 +26,13 @@ import {
 
 const FIXTURES = path.resolve(__dirname, '../../../../../test-fixtures/product-inputs');
 
-interface ErrorSpec { type: string; arm?: string; kind?: string; field?: string }
+interface ErrorSpec { type: string; input_type?: string; kind?: string; field?: string }
 interface Fixture {
   name: string;
   security_hex: string;
   price_hex: string;
   market_data?: { cpi_hex?: string; fixings_hex?: string[]; curve_hex?: string };
-  arm?: string;
+  input_type?: string;
   expected_hex?: string;
   error?: ErrorSpec;
   typed: { asof_hex: string; position_hex: string; measures: string[]; expected_hex?: string; product_input_hex?: string };
@@ -42,7 +42,7 @@ const cases: Fixture[] = fs.readdirSync(FIXTURES)
   .filter((f) => f.endsWith('.json'))
   .sort()
   .map((f) => ({ ...JSON.parse(fs.readFileSync(path.join(FIXTURES, f), 'utf-8')), name: f.replace(/\.json$/, '') }));
-const success = cases.filter((c) => c.arm !== undefined);
+const success = cases.filter((c) => c.input_type !== undefined);
 const errors = cases.filter((c) => c.error !== undefined);
 const fixture = (name: string): Fixture => cases.find((c) => c.name === name)!;
 
@@ -81,8 +81,8 @@ function expectError(e: Error, spec: ErrorSpec): void {
   if (spec.type === 'MissingMarketDataError') {
     const m = e as MissingMarketDataError;
     expect(m).toBeInstanceOf(MissingMarketDataError);
-    expect([m.arm, m.kind, m.field]).toEqual([spec.arm, spec.kind, spec.field]);
-    expect(m.message).toContain(spec.arm);
+    expect([m.inputType, m.kind, m.field]).toEqual([spec.input_type, spec.kind, spec.field]);
+    expect(m.message).toContain(spec.input_type);
     expect(m.message).toContain(spec.kind);
   } else {
     expect(e).toBeInstanceOf(UnmappedProductTypeError);
@@ -91,29 +91,29 @@ function expectError(e: Error, spec: ErrorSpec): void {
 
 // ---- forSecurity
 
-test('fixtures cover every arm in valuation_arms', () => {
-  const entries = (hierarchy as unknown as { valuation_arms: { entries: { arm: string }[] } }).valuation_arms.entries;
-  const arms = new Set(entries.map((e) => e.arm));
-  expect(new Set(success.map((c) => c.arm))).toEqual(arms);
-  expect(success).toHaveLength(arms.size);
+test('fixtures cover every input type in valuation_input_types', () => {
+  const entries = (hierarchy as unknown as { valuation_input_types: { entries: { input_type: string }[] } }).valuation_input_types.entries;
+  const inputTypes = new Set(entries.map((e) => e.input_type));
+  expect(new Set(success.map((c) => c.input_type))).toEqual(inputTypes);
+  expect(success).toHaveLength(inputTypes.size);
 });
 
 test.each(success.map((c) => [c.name, c] as const))('%s: forSecurity matches the fixture bytes', (_name, c) => {
   expect(hexOf(forSecurity(security(c), price(c), marketData(c)))).toBe(c.expected_hex);
 });
 
-// R1: the arm is armFor's, and each field is the input it came from.
+// R1: the input type is inputTypeFor's, and each field is the input it came from.
 test.each(success.map((c) => [c.name, c] as const))('%s: forSecurity fields', (_name, c) => {
   const [s, p, md] = [security(c), price(c), marketData(c)];
   const out = forSecurity(s, p, md);
-  expect(armFor(s)).toBe(c.arm);
+  expect(inputTypeFor(s)).toBe(c.input_type);
   const body = {
     bond: out.getBond(), tips: out.getTips(), frn: out.getFrn(), mbs: out.getMbs(), equity: out.getEquity(), cash: out.getCash(),
-  }[c.arm!]!;
+  }[c.input_type!]!;
   expect(body).toBeDefined();
   expect(hexOf(body.getSecurity()!)).toBe(hexOf(s));
   const fields = body as unknown as Record<string, unknown>;
-  if (c.arm === 'equity' || c.arm === 'cash') {
+  if (c.input_type === 'equity' || c.input_type === 'cash') {
     expect(hexOf((fields.getUnitPrice as () => jspb.Message).call(body))).toBe(hexOf(p.getPrice()!));
     expect(fields.getCleanPrice).toBeUndefined();
   } else {
@@ -121,8 +121,8 @@ test.each(success.map((c) => [c.name, c] as const))('%s: forSecurity fields', (_
     expect(fields.getUnitPrice).toBeUndefined();
     expect((fields.hasCostBasis as () => boolean).call(body)).toBe(false);
   }
-  if (c.arm === 'tips') expect(hexOf(out.getTips()!.getCpi()!)).toBe(hexOf(md.cpi!));
-  if (c.arm === 'frn') {
+  if (c.input_type === 'tips') expect(hexOf(out.getTips()!.getCpi()!)).toBe(hexOf(md.cpi!));
+  if (c.input_type === 'frn') {
     expect(out.getFrn()!.getFixingsList().map(hexOf)).toEqual(md.fixings!.map(hexOf));
     expect(hexOf(out.getFrn()!.getCurve()!)).toBe(hexOf(md.curve!));
   }
@@ -137,7 +137,7 @@ test('forSecurity with no market data throws MissingMarketDataError(tips, CPI_U)
   for (const md of [undefined, null]) {
     const e = caught(() => forSecurity(security(c), price(c), md)) as MissingMarketDataError;
     expect(e).toBeInstanceOf(MissingMarketDataError);
-    expect([e.arm, e.kind]).toEqual(['tips', 'CPI_U']);
+    expect([e.inputType, e.kind]).toEqual(['tips', 'CPI_U']);
   }
 });
 
@@ -172,7 +172,7 @@ test('typed requires a position', () => {
   expect((e as ModelValidationError).field).toBe('position_input');
 });
 
-test('typed rejects an arm armFor did not pick', () => {
+test('typed rejects an input type inputTypeFor did not pick', () => {
   const c = fixture('tips');
   const wrong = new ProductInput().setBond(new BondInput().setSecurity(security(c)).setCleanPrice(price(c).getPrice()));
   const [asof, position, measures] = typedArgs(c);
@@ -182,7 +182,7 @@ test('typed rejects an arm armFor did not pick', () => {
   expect((e as ModelValidationError).field).toBe('product_input.bond');
 });
 
-test('typed rejects an input with no arm', () => {
+test('typed rejects an input with no input type', () => {
   const [asof, position, measures] = typedArgs(fixture('bond'));
   const e = caught(() => ValuationRequests.typed(asof, new ProductInput(), position, measures));
   expect((e as ModelValidationError).field).toBe('product_input');

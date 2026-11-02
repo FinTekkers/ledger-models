@@ -17,7 +17,7 @@ package fintekkers.requests.valuation;
  *   14   equity
  *   15   cash
  *   16+  other (money market, futures, scenario, krd, ...)
- * The arms grouped by valuation engine: docs/adr/product_input_engine_arms.md.
+ * The input types grouped by valuation engine: docs/adr/product_input_engine_input_types.md.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
  *
@@ -612,7 +612,7 @@ private static final long serialVersionUID = 0L;
    *   14   equity
    *   15   cash
    *   16+  other (money market, futures, scenario, krd, ...)
-   * The arms grouped by valuation engine: docs/adr/product_input_engine_arms.md.
+   * The input types grouped by valuation engine: docs/adr/product_input_engine_input_types.md.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
    *

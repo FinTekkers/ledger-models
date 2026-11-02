@@ -1,30 +1,34 @@
 "use strict";
 /**
- * Which ProductInput arm values a security, and which market data that arm
- * needs. Backed by the valuation_arms section of
+ * Which ProductInput input type values a security, and which market data that
+ * input type needs. Backed by the valuation_input_types section of
  * ledger-models-protos/hierarchy.json; there is no mapping table in code.
- * Same rule in Java / Rust / Python / JS-TS. See docs/adr/valuation_arms.md.
+ * Same rule in Java / Rust / Python / JS-TS. See docs/adr/valuation_input_types.md.
  *
  * Resolution walks from the security's product_type up its parent chain. At
  * each node a coupon_types entry matching bond_details.coupon_type wins, then
  * the node's plain entry, then an unpriced listing. The first node with any
  * match decides. No match, or an unpriced match, throws
- * UnmappedProductTypeError: there is no default arm. A broken section throws
+ * UnmappedProductTypeError: there is no default input type. A broken section throws
  * a plain Error at load, like product_hierarchy.
  *
- * forSecurity builds the ProductInput for that arm from a security, its price
- * and its market data; checkProductInput checks a ProductInput against the
+ * forSecurity builds the ProductInput for that input type from a security, its
+ * price and its market data; checkProductInput checks a ProductInput against the
  * same rule (LM-410). See docs/adr/product_input_builders.md.
  *
- * measuresForArm lists the measures valuation-service computes for an arm,
- * read from the bundled catalog/measures.json through the same lookup
- * (LM-427). There is no measure list in code.
+ * measuresForInputType lists the measures valuation-service computes for an
+ * input type, read from the bundled catalog/measures.json through the same
+ * lookup (LM-427). There is no measure list in code.
+ *
+ * LM-418 renamed "arm" to "input type". The arm-named exports stay one release
+ * as deprecated aliases, and hierarchy.json still loads with the legacy
+ * valuation_arms / arm keys.
  */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkProductInput = exports.forSecurity = exports.measuresForArmIn = exports.measuresForArm = exports.requiredMarketData = exports.armFor = exports.shippedValuationArms = exports.parseValuationArms = exports.ValuationArms = void 0;
+exports.checkProductInput = exports.forSecurity = exports.shippedValuationArms = exports.parseValuationArms = exports.ValuationArms = exports.measuresForArmIn = exports.measuresForInputTypeIn = exports.measuresForArm = exports.measuresForInputType = exports.requiredMarketData = exports.armFor = exports.inputTypeFor = exports.shippedValuationInputTypes = exports.valuationInputTypesFromHierarchy = exports.parseValuationInputTypes = exports.ValuationInputTypes = void 0;
 const hierarchy_json_1 = __importDefault(require("../../../../hierarchy.json"));
 const measures_json_1 = __importDefault(require("../../../../catalog/measures.json"));
 const measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
@@ -38,6 +42,11 @@ const product_hierarchy_1 = require("./product_hierarchy");
 const MARKET_DATA_KINDS = ['CPI_U', 'FRN_FIXINGS', 'FRN_CURVE'];
 /** Map key for a node's entry with no coupon_types. */
 const ANY_COUPON = '';
+const SECTION = 'valuation_input_types';
+const ENTRY_KEY = 'input_type';
+/** Legacy names, still read for one release (LM-418). */
+const LEGACY_SECTION = 'valuation_arms';
+const LEGACY_ENTRY_KEY = 'arm';
 function hasOwn(o, key) {
     return Object.prototype.hasOwnProperty.call(o, key);
 }
@@ -48,31 +57,31 @@ function enumName(e, value) {
     }
     return String(value);
 }
-/** A parsed, checked valuation_arms section. */
-class ValuationArms {
-    /** @param entries node -> coupon type name (or '' for the plain entry) -> arm */
+/** A parsed, checked valuation_input_types section. */
+class ValuationInputTypes {
+    /** @param entries node -> coupon type name (or '' for the plain entry) -> input type */
     constructor(entries, unpriced) {
         this.entries = entries;
         this.unpriced = unpriced;
     }
-    /** The deepest matching node's arm, or null when unmapped or unpriced. */
+    /** The deepest matching node's input type, or null when unmapped or unpriced. */
     resolve(productType, couponType) {
         var _a;
         for (let node = productType; node !== null; node = (0, product_hierarchy_1.parentOf)(node)) {
             const byCoupon = this.entries.get(node);
-            const arm = (_a = byCoupon === null || byCoupon === void 0 ? void 0 : byCoupon.get(couponType)) !== null && _a !== void 0 ? _a : byCoupon === null || byCoupon === void 0 ? void 0 : byCoupon.get(ANY_COUPON);
-            if (arm)
-                return arm;
+            const entry = (_a = byCoupon === null || byCoupon === void 0 ? void 0 : byCoupon.get(couponType)) !== null && _a !== void 0 ? _a : byCoupon === null || byCoupon === void 0 ? void 0 : byCoupon.get(ANY_COUPON);
+            if (entry)
+                return entry;
             if (this.unpriced.has(node))
                 return null;
         }
         return null;
     }
     require(productType, couponType) {
-        const arm = this.resolve(productType, couponType);
-        if (!arm)
+        const entry = this.resolve(productType, couponType);
+        if (!entry)
             throw new errors_1.UnmappedProductTypeError(productType, couponType);
-        return arm;
+        return entry;
     }
     /** Leaf product types (active and planned) with neither an entry nor an unpriced listing. */
     uncoveredLeaves() {
@@ -86,9 +95,9 @@ class ValuationArms {
         return false;
     }
 }
-exports.ValuationArms = ValuationArms;
+exports.ValuationInputTypes = ValuationInputTypes;
 function bad(detail) {
-    return new Error(`hierarchy.json valuation_arms: ${detail}`);
+    return new Error(`hierarchy.json ${SECTION}: ${detail}`);
 }
 function stringOf(body, key) {
     const v = body[key];
@@ -104,17 +113,17 @@ function stringsOf(body, key) {
     return v;
 }
 /**
- * Parses and checks a valuation_arms section against the shipped
+ * Parses and checks a valuation_input_types section against the shipped
  * product_types tree, the ProductInput oneof and the CouponTypeProto /
  * MarketDataKind vocabularies. Throws on any failure. Exported for tests.
  */
-function parseValuationArms(section) {
+function parseValuationInputTypes(section) {
     if (typeof section !== 'object' || section === null || Array.isArray(section)) {
         throw bad('section must be an object');
     }
     const s = section;
     const productTypes = new Set((0, product_hierarchy_1.allProductTypes)());
-    const arms = new Set(Object.keys(product_inputs_pb_1.ProductInput.InputCase)
+    const inputTypes = new Set(Object.keys(product_inputs_pb_1.ProductInput.InputCase)
         .filter(k => k !== 'INPUT_NOT_SET')
         .map(k => k.toLowerCase()));
     if (!Array.isArray(s.entries))
@@ -128,9 +137,9 @@ function parseValuationArms(section) {
         const node = stringOf(body, 'node');
         if (!productTypes.has(node))
             throw bad(`node '${node}' is not in product_types`);
-        const arm = stringOf(body, 'arm');
-        if (!arms.has(arm))
-            throw bad(`arm '${arm}' is not a ProductInput.input field`);
+        const inputType = stringOf(body, inputTypeKey(body));
+        if (!inputTypes.has(inputType))
+            throw bad(`input_type '${inputType}' is not a ProductInput.input field`);
         const requires = stringsOf(body, 'requires').map(r => {
             if (!MARKET_DATA_KINDS.includes(r)) {
                 throw bad(`requires value '${r}' is not one of CPI_U, FRN_FIXINGS, FRN_CURVE`);
@@ -150,7 +159,11 @@ function parseValuationArms(section) {
             byCoupon = new Map();
             entries.set(node, byCoupon);
         }
-        const value = Object.freeze({ arm, requires: Object.freeze(requires) });
+        const value = Object.freeze({
+            inputType,
+            get arm() { return inputType; },
+            requires: Object.freeze(requires),
+        });
         for (const c of coupons) {
             if (byCoupon.has(c))
                 throw bad(`duplicate entry for node ${node}${c ? `, coupon_type ${c}` : ''}`);
@@ -165,21 +178,46 @@ function parseValuationArms(section) {
             throw bad(`node ${node} is both mapped and unpriced`);
         unpriced.add(node);
     }
-    return new ValuationArms(entries, unpriced);
+    return new ValuationInputTypes(entries, unpriced);
 }
-exports.parseValuationArms = parseValuationArms;
-let shippedArms;
-/** The shipped valuation_arms section, parsed and checked on first use. Exported for tests. */
-function shippedValuationArms() {
-    if (!shippedArms) {
-        const section = hierarchy_json_1.default.valuation_arms;
-        if (section === undefined)
-            throw bad('section missing from hierarchy.json');
-        shippedArms = parseValuationArms(section);
+exports.parseValuationInputTypes = parseValuationInputTypes;
+/**
+ * The key that names an entry's input type: input_type, or for one release
+ * the legacy arm (LM-418). An entry with both throws.
+ */
+function inputTypeKey(body) {
+    if (hasOwn(body, ENTRY_KEY) && hasOwn(body, LEGACY_ENTRY_KEY)) {
+        throw bad(`entry has both ${ENTRY_KEY} and ${LEGACY_ENTRY_KEY}: ${JSON.stringify(body)}`);
     }
-    return shippedArms;
+    return hasOwn(body, LEGACY_ENTRY_KEY) ? LEGACY_ENTRY_KEY : ENTRY_KEY;
 }
-exports.shippedValuationArms = shippedValuationArms;
+/**
+ * Parses and checks the valuation_input_types section of a whole
+ * hierarchy.json `root`. For one release a root with the legacy
+ * valuation_arms key instead loads the same way (LM-418); a root with both
+ * keys, or neither, throws. Exported for tests.
+ */
+function valuationInputTypesFromHierarchy(root) {
+    if (typeof root !== 'object' || root === null || Array.isArray(root)) {
+        throw bad('hierarchy.json root must be an object');
+    }
+    const current = hasOwn(root, SECTION);
+    const legacy = hasOwn(root, LEGACY_SECTION);
+    if (current && legacy)
+        throw bad(`both ${SECTION} and ${LEGACY_SECTION} present`);
+    if (!current && !legacy)
+        throw bad('section missing from hierarchy.json');
+    return parseValuationInputTypes(root[current ? SECTION : LEGACY_SECTION]);
+}
+exports.valuationInputTypesFromHierarchy = valuationInputTypesFromHierarchy;
+let shippedInputTypes;
+/** The shipped valuation_input_types section, parsed and checked on first use. Exported for tests. */
+function shippedValuationInputTypes() {
+    if (!shippedInputTypes)
+        shippedInputTypes = valuationInputTypesFromHierarchy(hierarchy_json_1.default);
+    return shippedInputTypes;
+}
+exports.shippedValuationInputTypes = shippedValuationInputTypes;
 function productTypeOf(security) {
     return enumName(product_type_pb_1.ProductTypeProto, security.getProductType());
 }
@@ -189,47 +227,57 @@ function couponTypeOf(security) {
     return details ? enumName(coupon_type_pb_1.CouponTypeProto, details.getCouponType()) : 'UNKNOWN_COUPON_TYPE';
 }
 /** Name of the ProductInput.input oneof field that values `security`, e.g. 'tips'. */
+function inputTypeFor(security) {
+    return shippedValuationInputTypes().require(productTypeOf(security), couponTypeOf(security)).inputType;
+}
+exports.inputTypeFor = inputTypeFor;
+/** @deprecated Use inputTypeFor. Removed in a later release (LM-418). */
 function armFor(security) {
-    return shippedValuationArms().require(productTypeOf(security), couponTypeOf(security)).arm;
+    return inputTypeFor(security);
 }
 exports.armFor = armFor;
-/** Market data the security's arm needs, in file order. A fresh array; empty when none. */
+/** Market data the security's input type needs, in file order. A fresh array; empty when none. */
 function requiredMarketData(security) {
-    return [...shippedValuationArms().require(productTypeOf(security), couponTypeOf(security)).requires];
+    return [...shippedValuationInputTypes().require(productTypeOf(security), couponTypeOf(security)).requires];
 }
 exports.requiredMarketData = requiredMarketData;
 /**
- * The measures valuation-service computes for `arm` (e.g. 'frn'), in catalog
+ * The measures valuation-service computes for `inputType` (e.g. 'frn'), in catalog
  * order: entries of the bundled catalog/measures.json with computed_by
  * valuation-service and implemented true whose applies_to names a leaf product
- * type the arm values, or an ancestor of one. Throws
- * UnmappedProductTypeError(arm, 'UNKNOWN_COUPON_TYPE') when no leaf maps to
- * `arm`. A fresh array.
+ * type the input type values, or an ancestor of one. Throws
+ * UnmappedProductTypeError(inputType, 'UNKNOWN_COUPON_TYPE') when no leaf maps
+ * to `inputType`. A fresh array.
  */
+function measuresForInputType(inputType) {
+    return measuresForInputTypeIn(measures_json_1.default.measures, inputType);
+}
+exports.measuresForInputType = measuresForInputType;
+/** @deprecated Use measuresForInputType. Removed in a later release (LM-418). */
 function measuresForArm(arm) {
-    return measuresForArmIn(measures_json_1.default.measures, arm);
+    return measuresForInputType(arm);
 }
 exports.measuresForArm = measuresForArm;
 /**
- * measuresForArm over a given `measures` list. Exported for tests.
+ * measuresForInputType over a given `measures` list. Exported for tests.
  * @internal
  */
-function measuresForArmIn(measures, arm) {
+function measuresForInputTypeIn(measures, inputType) {
     var _a;
-    const arms = shippedValuationArms();
+    const inputTypes = shippedValuationInputTypes();
     const lineage = new Set();
     for (const leaf of (0, product_hierarchy_1.allProductTypes)()) {
         if ((0, product_hierarchy_1.descendantsOf)(leaf).length > 0 || !hasOwn(product_type_pb_1.ProductTypeProto, leaf))
             continue;
-        // Leaves resolve with no coupon type, as armFor does with no bond_details:
-        // the BOND + FLOAT entry is ignored on purpose (docs/adr/valuation_arms.md).
-        if (((_a = arms.resolve(leaf, 'UNKNOWN_COUPON_TYPE')) === null || _a === void 0 ? void 0 : _a.arm) !== arm)
+        // Leaves resolve with no coupon type, as inputTypeFor does with no bond_details:
+        // the BOND + FLOAT entry is ignored on purpose (docs/adr/valuation_input_types.md).
+        if (((_a = inputTypes.resolve(leaf, 'UNKNOWN_COUPON_TYPE')) === null || _a === void 0 ? void 0 : _a.inputType) !== inputType)
             continue;
         for (let node = leaf; node !== null; node = (0, product_hierarchy_1.parentOf)(node))
             lineage.add(node);
     }
     if (lineage.size === 0)
-        throw new errors_1.UnmappedProductTypeError(arm, 'UNKNOWN_COUPON_TYPE');
+        throw new errors_1.UnmappedProductTypeError(inputType, 'UNKNOWN_COUPON_TYPE');
     const out = [];
     for (const raw of measures) {
         const m = raw;
@@ -250,23 +298,43 @@ function measuresForArmIn(measures, arm) {
     }
     return out;
 }
-exports.measuresForArmIn = measuresForArmIn;
+exports.measuresForInputTypeIn = measuresForInputTypeIn;
 /**
- * The ProductInput for `security`, in the arm armFor picks.
+ * @deprecated Use measuresForInputTypeIn. Removed in a later release (LM-418).
+ * @internal
+ */
+function measuresForArmIn(measures, arm) {
+    return measuresForInputTypeIn(measures, arm);
+}
+exports.measuresForArmIn = measuresForArmIn;
+/** @deprecated Use ValuationInputTypes. Removed in a later release (LM-418). */
+exports.ValuationArms = ValuationInputTypes;
+/** @deprecated Use parseValuationInputTypes. Removed in a later release (LM-418). */
+function parseValuationArms(section) {
+    return parseValuationInputTypes(section);
+}
+exports.parseValuationArms = parseValuationArms;
+/** @deprecated Use shippedValuationInputTypes. Removed in a later release (LM-418). */
+function shippedValuationArms() {
+    return shippedValuationInputTypes();
+}
+exports.shippedValuationArms = shippedValuationArms;
+/**
+ * The ProductInput for `security`, in the input type inputTypeFor picks.
  *
- * Sets the arm's security and copies price.price as is into clean_price
+ * Sets the input type's security and copies price.price as is into clean_price
  * (bond, tips, frn, mbs) or unit_price (equity, cash). Never sets
- * cost_basis. Throws UnmappedProductTypeError when the type has no arm and
- * MissingMarketDataError when `marketData` lacks a kind the arm requires.
+ * cost_basis. Throws UnmappedProductTypeError when the type has no input type and
+ * MissingMarketDataError when `marketData` lacks a kind the input type requires.
  * The caller's protos are set as they are, not copied or stamped (LM-322).
  */
 function forSecurity(security, price, marketData) {
     var _a;
     const md = marketData !== null && marketData !== void 0 ? marketData : {};
-    const arm = armFor(security);
+    const inputType = inputTypeFor(security);
     const p = price.getPrice();
     const out = new product_inputs_pb_1.ProductInput();
-    switch (arm) {
+    switch (inputType) {
         case 'bond':
             out.setBond(new product_inputs_pb_1.BondInput().setSecurity(security).setCleanPrice(p));
             break;
@@ -287,36 +355,36 @@ function forSecurity(security, price, marketData) {
             out.setCash(new product_inputs_pb_1.CashInput().setSecurity(security).setUnitPrice(p));
             break;
         default:
-            throw new Error(`forSecurity has no builder for arm ${arm}`);
+            throw new Error(`forSecurity has no builder for input type ${inputType}`);
     }
     checkProductInput(out);
     return out;
 }
 exports.forSecurity = forSecurity;
 /**
- * Checks `productInput` is the arm armFor picks for its security, and holds
- * every market-data kind that arm requires. Throws ModelValidationError (no
- * arm, or the wrong arm), UnmappedProductTypeError or MissingMarketDataError.
+ * Checks `productInput` is the input type inputTypeFor picks for its security, and holds
+ * every market-data kind that input type requires. Throws ModelValidationError (no
+ * input type, or the wrong input type), UnmappedProductTypeError or MissingMarketDataError.
  */
 function checkProductInput(productInput) {
     var _a;
-    const [arm, body] = armOf(productInput);
+    const [inputType, body] = inputTypeOf(productInput);
     if (!body)
-        throw new errors_1.ModelValidationError([(0, errors_1.violation)('product_input', undefined, 'no ProductInput arm is set')]);
+        throw new errors_1.ModelValidationError([(0, errors_1.violation)('product_input', undefined, 'no ProductInput input type is set')]);
     const security = (_a = body.getSecurity()) !== null && _a !== void 0 ? _a : new security_pb_1.SecurityProto();
     const productType = productTypeOf(security);
-    const resolved = shippedValuationArms().require(productType, couponTypeOf(security));
-    if (resolved.arm !== arm) {
-        throw new errors_1.ModelValidationError([(0, errors_1.violation)(`product_input.${arm}`, uuidOf(security), `arm ${arm} does not match arm ${resolved.arm} for product_type ${productType}`)]);
+    const resolved = shippedValuationInputTypes().require(productType, couponTypeOf(security));
+    if (resolved.inputType !== inputType) {
+        throw new errors_1.ModelValidationError([(0, errors_1.violation)(`product_input.${inputType}`, uuidOf(security), `input type ${inputType} does not match input type ${resolved.inputType} for product_type ${productType}`)]);
     }
     for (const kind of resolved.requires) {
         if (!has(productInput, kind))
-            throw new errors_1.MissingMarketDataError(arm, kind, `${arm}.${FIELD_OF[kind]}`, uuidOf(security));
+            throw new errors_1.MissingMarketDataError(inputType, kind, `${inputType}.${FIELD_OF[kind]}`, uuidOf(security));
     }
 }
 exports.checkProductInput = checkProductInput;
-/** The set arm's name and message, or [undefined, undefined] when none is set. */
-function armOf(input) {
+/** The set input type's name and message, or [undefined, undefined] when none is set. */
+function inputTypeOf(input) {
     switch (input.getInputCase()) {
         case product_inputs_pb_1.ProductInput.InputCase.BOND: return ['bond', input.getBond()];
         case product_inputs_pb_1.ProductInput.InputCase.TIPS: return ['tips', input.getTips()];
@@ -327,7 +395,7 @@ function armOf(input) {
         default: return [undefined, undefined];
     }
 }
-/** The ProductInput arm field (and MarketData field) that holds each kind. */
+/** The ProductInput input type field (and MarketData field) that holds each kind. */
 const FIELD_OF = { CPI_U: 'cpi', FRN_FIXINGS: 'fixings', FRN_CURVE: 'curve' };
 /** Whether `input` holds `kind`. A cpi with neither readings nor reference_cpi does not count. */
 function has(input, kind) {

@@ -17,7 +17,7 @@
     {"message": ".fintekkers.requests.valuation.CashInput", "number": 1, "name": "security", "type": ".fintekkers.models.security.SecurityProto"},
     {"message": ".fintekkers.requests.valuation.CashInput", "number": 2, "name": "unit_price", "type": ".fintekkers.models.util.DecimalValueProto"}
   ],
-  "kept_arms": [
+  "kept_input_types": [
     {"message": ".fintekkers.requests.valuation.ProductInput", "number": 1, "name": "bond", "type": ".fintekkers.requests.valuation.BondInput"},
     {"message": ".fintekkers.requests.valuation.ProductInput", "number": 2, "name": "tips", "type": ".fintekkers.requests.valuation.TipsInput"},
     {"message": ".fintekkers.requests.valuation.ProductInput", "number": 8, "name": "frn", "type": ".fintekkers.requests.valuation.FrnInput"}

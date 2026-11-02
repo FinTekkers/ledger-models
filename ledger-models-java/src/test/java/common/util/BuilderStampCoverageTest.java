@@ -347,7 +347,7 @@ class BuilderStampCoverageTest {
 
     // ---- Fixture inputs
 
-    /** A caller's TREASURY_NOTE: it has a ProductInput arm (bond). Unstamped. */
+    /** A caller's TREASURY_NOTE: it has a ProductInput input type (bond). Unstamped. */
     private static SecurityProto callerNote() {
         return SecurityProto.newBuilder().setProductType(ProductTypeProto.TREASURY_NOTE).build();
     }

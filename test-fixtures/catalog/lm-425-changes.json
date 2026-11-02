@@ -8,7 +8,7 @@
       "before": ["BOND", "TIPS"],
       "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "engine_file": "src/engine/frn.rs",
-      "reason": "run_frn has no YIELD_TO_MATURITY arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+      "reason": "run_frn has no YIELD_TO_MATURITY match branch; it falls to unsupported_measure (UNIMPLEMENTED)"
     },
     {
       "measure": "MACAULAY_DURATION",
@@ -16,7 +16,7 @@
       "before": ["BOND", "TIPS"],
       "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "engine_file": "src/engine/frn.rs",
-      "reason": "run_frn has no MACAULAY_DURATION arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+      "reason": "run_frn has no MACAULAY_DURATION match branch; it falls to unsupported_measure (UNIMPLEMENTED)"
     },
     {
       "measure": "PRESENT_VALUE",
@@ -24,7 +24,7 @@
       "before": ["BOND", "TIPS"],
       "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "engine_file": "src/engine/frn.rs",
-      "reason": "run_frn has no PRESENT_VALUE arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+      "reason": "run_frn has no PRESENT_VALUE match branch; it falls to unsupported_measure (UNIMPLEMENTED)"
     },
     {
       "measure": "CONVEXITY",
@@ -32,7 +32,7 @@
       "before": ["BOND", "TIPS", "TREASURY_FRN"],
       "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "engine_file": "src/engine/frn.rs",
-      "reason": "run_frn has no CONVEXITY arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+      "reason": "run_frn has no CONVEXITY match branch; it falls to unsupported_measure (UNIMPLEMENTED)"
     },
     {
       "measure": "MODIFIED_DURATION",
@@ -40,7 +40,7 @@
       "before": ["BOND", "TIPS", "TREASURY_FRN"],
       "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "engine_file": "src/engine/frn.rs",
-      "reason": "run_frn has no MODIFIED_DURATION arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+      "reason": "run_frn has no MODIFIED_DURATION match branch; it falls to unsupported_measure (UNIMPLEMENTED)"
     },
     {
       "measure": "DV01",
@@ -48,7 +48,7 @@
       "before": ["BOND", "TIPS", "TREASURY_FRN"],
       "after": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "engine_file": "src/engine/frn.rs",
-      "reason": "run_frn has no DV01 arm; it falls to unsupported_measure (UNIMPLEMENTED)"
+      "reason": "run_frn has no DV01 match branch; it falls to unsupported_measure (UNIMPLEMENTED)"
     },
     {
       "measure": "REFERENCE_CPI",
@@ -80,7 +80,7 @@
       "before": false,
       "after": true,
       "engine_file": "src/engine/cost_basis.rs",
-      "reason": "LM-429: valuation-service computes ADJUSTED_COST_BASIS on the bond, TIPS and FRN arms (VS-121, VS-122, VS-123); VS-150's catalog test found the stale flag"
+      "reason": "LM-429: valuation-service computes ADJUSTED_COST_BASIS for the bond, TIPS and FRN input types (VS-121, VS-122, VS-123); VS-150's catalog test found the stale flag"
     }
   ]
 }

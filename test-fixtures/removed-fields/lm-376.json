@@ -8,7 +8,7 @@
   ],
   "kept": {"message": ".fintekkers.requests.valuation.ValuationRequestProto", "number": 21, "name": "position_input", "type": ".fintekkers.models.position.PositionProto"},
   "exempt_files": [
-    "docs/adr/product_input_engine_arms.md",
+    "docs/adr/product_input_engine_input_types.md",
     "docs/release-notes/lm-411.md",
     "test-fixtures/removed-fields/lm-376.json",
     "ledger-models-python/test/requests/test_removed_fields_scan.py"

@@ -187,7 +187,7 @@ stops a service adding the rest, so services could not stamp responses.
   own value; in Rust it does not compile.
 - **Rust:** each `object_typed!` row (`Type = "full.Name" => Variant`)
   implements `ObjectTyped` and `OwnObjectType` and adds the
-  `own_type_by_full_name` arm, so they cannot drift. With `test-utils`,
+  `own_type_by_full_name` match branch, so they cannot drift. With `test-utils`,
   `own_type_stampers()` stamps a default instance of every row. The
   `fintekkers.models.util.api` module (`ApiKey`) is now exported so it can
   have a row.

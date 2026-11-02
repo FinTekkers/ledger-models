@@ -1,26 +1,31 @@
-//! Which `ProductInput` arm values a security, and which market data that
-//! arm needs. Backed by the `valuation_arms` section of
+//! Which `ProductInput` input type values a security, and which market data
+//! that input type needs. Backed by the `valuation_input_types` section of
 //! ledger-models-protos/hierarchy.json; there is no mapping table in code.
-//! Same rule in Java / Rust / Python / JS-TS. See docs/adr/valuation_arms.md.
+//! Same rule in Java / Rust / Python / JS-TS. See docs/adr/valuation_input_types.md.
 //!
 //! Resolution walks from the security's `product_type` up its parent chain.
 //! At each node a `coupon_types` entry matching `bond_details.coupon_type`
 //! wins, then the node's plain entry, then an `unpriced` listing. The first
 //! node with any match decides. No match, or an `unpriced` match, is
-//! [`ProductInputError::Unmapped`]: there is no default arm.
+//! [`ProductInputError::Unmapped`]: there is no default input type.
 //!
-//! [`for_security`] builds the `ProductInput` for that arm from a security,
-//! its price and its market data; [`check_product_input`] checks a
+//! [`for_security`] builds the `ProductInput` for that input type from a
+//! security, its price and its market data; [`check_product_input`] checks a
 //! `ProductInput` against the same rule (LM-410, see
 //! docs/adr/product_input_builders.md).
 //!
-//! [`measures_for_arm`] lists the measures valuation-service computes for an
-//! arm, read from the embedded catalog/measures.json through the same lookup
-//! (LM-427). There is no measure list in code.
+//! [`measures_for_input_type`] lists the measures valuation-service computes
+//! for an input type, read from the embedded catalog/measures.json through the
+//! same lookup (LM-427). There is no measure list in code.
 //!
 //! Embeds the crate-root `hierarchy.json` itself rather than reading it
 //! through [`product_hierarchy`], so that loader stays unchanged. A broken
 //! section is [`ProductInputError::InvalidRegistry`], never a panic.
+//!
+//! LM-418 renamed "arm" to "input type". The arm-named items stay one release
+//! as deprecated aliases, and hierarchy.json still loads with the legacy
+//! `valuation_arms` / `arm` keys. Rust has no field aliases, so the two `arm`
+//! fields keep their name, deprecated, next to an `input_type()` accessor.
 
 use crate::fintekkers::models::position::MeasureProto;
 use crate::fintekkers::models::price::PriceProto;
@@ -45,7 +50,13 @@ use tonic::{Code, Status};
 const HIERARCHY_JSON: &str = include_str!("../../../hierarchy.json");
 const MEASURES_JSON: &str = include_str!("../../../catalog/measures.json");
 
-/// The closed `requires` vocabulary: market data an arm needs beyond the price.
+const SECTION: &str = "valuation_input_types";
+const ENTRY_KEY: &str = "input_type";
+/// Legacy names, still read for one release (LM-418).
+const LEGACY_SECTION: &str = "valuation_arms";
+const LEGACY_ENTRY_KEY: &str = "arm";
+
+/// The closed `requires` vocabulary: market data an input type needs beyond the price.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum MarketDataKind {
     /// CPI-U index readings (TIPS inflation accrual).
@@ -76,21 +87,21 @@ impl MarketDataKind {
     }
 }
 
-/// Typed input error for valuation-arm lookups (docs/adr/typed-input-errors.md).
-/// Non-exhaustive: match it with a wildcard arm.
+/// Typed input error for valuation input type lookups (docs/adr/typed-input-errors.md).
+/// Non-exhaustive: match it with a wildcard pattern.
 #[derive(Debug, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum ProductInputError {
-    /// The product type (and coupon type) has no arm, or is `unpriced`.
+    /// The product type (and coupon type) has no input type, or is `unpriced`.
     /// Rust counterpart of `UnmappedProductTypeError`. Maps to `Code::InvalidArgument`.
     Unmapped { product_type: String, coupon_type: String },
-    /// hierarchy.json `valuation_arms` is broken. Maps to `Code::Internal`.
+    /// hierarchy.json `valuation_input_types` is broken. Maps to `Code::Internal`.
     InvalidRegistry(String),
-    /// The arm requires market data the caller did not supply (LM-410).
+    /// The input type requires market data the caller did not supply (LM-410).
     /// Maps to `Code::InvalidArgument`.
     MissingMarketData(MissingMarketDataError),
-    /// The `ProductInput` or request is malformed: no arm, the wrong arm, or a
-    /// missing required field (LM-410). Never empty. Maps to `Code::InvalidArgument`.
+    /// The `ProductInput` or request is malformed: no input type, the wrong
+    /// input type, or a missing required field (LM-410). Never empty. Maps to `Code::InvalidArgument`.
     Validation(Vec<FieldViolationProto>),
 }
 
@@ -106,21 +117,29 @@ impl ProductInputError {
     }
 }
 
-/// The security's valuation arm requires market data (hierarchy.json
-/// `valuation_arms` `requires`) that the caller did not supply, e.g. arm
-/// `tips` with no `CPI_U`. Rust counterpart of `MissingMarketDataError`.
+/// The security's valuation input type requires market data (hierarchy.json
+/// `valuation_input_types` `requires`) that the caller did not supply, e.g.
+/// input type `tips` with no `CPI_U`. Rust counterpart of `MissingMarketDataError`.
 #[derive(Debug, Clone, PartialEq)]
 pub struct MissingMarketDataError {
-    /// The `ProductInput.input` field, e.g. `tips`.
+    /// The `ProductInput.input` field, e.g. `tips`. Read it with
+    /// [`Self::input_type`]; the field keeps its old name for one release (LM-418).
+    #[deprecated(note = "use input_type()")]
     pub arm: String,
     pub kind: MarketDataKind,
-    /// The arm field that holds it, e.g. `tips.cpi`.
+    /// The input type's field that holds it, e.g. `tips.cpi`.
     pub field: String,
     /// UUID of the security; `None` when it has none.
     pub object_id: Option<UuidProto>,
 }
 
 impl MissingMarketDataError {
+    /// The `ProductInput.input` field the security needs, e.g. `tips`.
+    #[allow(deprecated)]
+    pub fn input_type(&self) -> &str {
+        &self.arm
+    }
+
     /// The one field-level violation, on [`Self::field`].
     pub fn violation(&self) -> FieldViolationProto {
         FieldViolationProto {
@@ -133,7 +152,7 @@ impl MissingMarketDataError {
 
 impl fmt::Display for MissingMarketDataError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "missing market data {} for arm {}", self.kind.as_str_name(), self.arm)
+        write!(f, "missing market data {} for input type {}", self.kind.as_str_name(), self.input_type())
     }
 }
 
@@ -144,10 +163,10 @@ impl fmt::Display for ProductInputError {
         match self {
             ProductInputError::Unmapped { product_type, coupon_type } => write!(
                 f,
-                "No valuation arm for product_type {product_type}, coupon_type {coupon_type}"
+                "No valuation input type for product_type {product_type}, coupon_type {coupon_type}"
             ),
             ProductInputError::InvalidRegistry(detail) => {
-                write!(f, "hierarchy.json valuation_arms: {detail}")
+                write!(f, "hierarchy.json {SECTION}: {detail}")
             }
             ProductInputError::MissingMarketData(e) => write!(f, "{}: {e}", e.field),
             ProductInputError::Validation(violations) => write!(
@@ -173,29 +192,45 @@ impl From<ProductInputError> for Status {
     }
 }
 
-/// One resolved arm and the market data it requires, in file order.
+/// One resolved input type and the market data it requires, in file order.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Arm {
+pub struct InputTypeEntry {
+    /// The `ProductInput.input` field, e.g. `tips`. Read it with
+    /// [`Self::input_type`]; the field keeps its old name for one release (LM-418).
+    #[deprecated(note = "use input_type()")]
     pub arm: String,
     pub requires: Vec<MarketDataKind>,
 }
 
-/// A parsed, checked `valuation_arms` section.
-#[derive(Debug)]
-pub struct ValuationArms {
-    /// node -> coupon type name (`None` for the plain entry) -> arm.
-    entries: HashMap<String, HashMap<Option<String>, Arm>>,
+impl InputTypeEntry {
+    /// The `ProductInput.input` field, e.g. `tips`.
+    #[allow(deprecated)]
+    pub fn input_type(&self) -> &str {
+        &self.arm
+    }
+}
+
+/// Deprecated: use [`InputTypeEntry`]. Removed in a later release (LM-418).
+#[deprecated(note = "use InputTypeEntry")]
+pub type Arm = InputTypeEntry;
+
+/// A parsed, checked `valuation_input_types` section. Equal when every node,
+/// coupon type, input type, `requires` list and `unpriced` node is.
+#[derive(Debug, PartialEq)]
+pub struct ValuationInputTypes {
+    /// node -> coupon type name (`None` for the plain entry) -> input type.
+    entries: HashMap<String, HashMap<Option<String>, InputTypeEntry>>,
     unpriced: HashSet<String>,
 }
 
-impl ValuationArms {
-    /// The deepest matching node's arm, or `Err(Unmapped)` when unmapped or unpriced.
-    pub fn resolve(&self, product_type: &str, coupon_type: &str) -> Result<&Arm, ProductInputError> {
+impl ValuationInputTypes {
+    /// The deepest matching node's input type, or `Err(Unmapped)` when unmapped or unpriced.
+    pub fn resolve(&self, product_type: &str, coupon_type: &str) -> Result<&InputTypeEntry, ProductInputError> {
         let mut node = Some(product_type.to_string());
         while let Some(n) = node {
             if let Some(by_coupon) = self.entries.get(&n) {
-                if let Some(arm) = by_coupon.get(&Some(coupon_type.to_string())).or_else(|| by_coupon.get(&None)) {
-                    return Ok(arm);
+                if let Some(entry) = by_coupon.get(&Some(coupon_type.to_string())).or_else(|| by_coupon.get(&None)) {
+                    return Ok(entry);
                 }
             }
             if self.unpriced.contains(&n) {
@@ -252,7 +287,7 @@ fn strings_of<'a>(body: &'a Map<String, Value>, key: &str) -> Result<Vec<&'a str
 
 /// Field names of the `ProductInput.input` oneof, read from the generated
 /// descriptor set with prost-types (no prost-reflect in the default build).
-fn oneof_arms() -> Result<HashSet<String>, ProductInputError> {
+fn oneof_input_types() -> Result<HashSet<String>, ProductInputError> {
     let set = prost_types::FileDescriptorSet::decode(LEDGER_MODELS_PROTO_FILE_DESCRIPTOR_SET)
         .map_err(|e| bad(format!("cannot decode the proto descriptor set: {e}")))?;
     let message = set
@@ -275,19 +310,19 @@ fn oneof_arms() -> Result<HashSet<String>, ProductInputError> {
         .collect())
 }
 
-/// Parses and checks a `valuation_arms` section (as JSON text) against the
+/// Parses and checks a `valuation_input_types` section (as JSON text) against the
 /// shipped product_types tree, the `ProductInput` oneof and the
 /// `CouponTypeProto` / [`MarketDataKind`] vocabularies.
-pub fn parse_valuation_arms(json: &str) -> Result<ValuationArms, ProductInputError> {
+pub fn parse_valuation_input_types(json: &str) -> Result<ValuationInputTypes, ProductInputError> {
     let section: Value =
         serde_json::from_str(json).map_err(|e| bad(format!("not valid JSON: {e}")))?;
     let section = section
         .as_object()
         .ok_or_else(|| bad("section must be an object".to_string()))?;
     let product_types: HashSet<String> = product_hierarchy::all_product_types().into_iter().collect();
-    let arms = oneof_arms()?;
+    let input_types = oneof_input_types()?;
 
-    let mut entries: HashMap<String, HashMap<Option<String>, Arm>> = HashMap::new();
+    let mut entries: HashMap<String, HashMap<Option<String>, InputTypeEntry>> = HashMap::new();
     let raw_entries = section
         .get("entries")
         .and_then(Value::as_array)
@@ -300,9 +335,9 @@ pub fn parse_valuation_arms(json: &str) -> Result<ValuationArms, ProductInputErr
         if !product_types.contains(node) {
             return Err(bad(format!("node '{node}' is not in product_types")));
         }
-        let arm = string_of(body, "arm")?;
-        if !arms.contains(arm) {
-            return Err(bad(format!("arm '{arm}' is not a ProductInput.input field")));
+        let input_type = string_of(body, input_type_key(body)?)?;
+        if !input_types.contains(input_type) {
+            return Err(bad(format!("input_type '{input_type}' is not a ProductInput.input field")));
         }
         let requires = strings_of(body, "requires")?
             .into_iter()
@@ -329,7 +364,9 @@ pub fn parse_valuation_arms(json: &str) -> Result<ValuationArms, ProductInputErr
                 let suffix = coupon.as_deref().map(|c| format!(", coupon_type {c}")).unwrap_or_default();
                 return Err(bad(format!("duplicate entry for node {node}{suffix}")));
             }
-            by_coupon.insert(coupon, Arm { arm: arm.to_string(), requires: requires.clone() });
+            #[allow(deprecated)]
+            let entry = InputTypeEntry { arm: input_type.to_string(), requires: requires.clone() };
+            by_coupon.insert(coupon, entry);
         }
     }
 
@@ -343,23 +380,60 @@ pub fn parse_valuation_arms(json: &str) -> Result<ValuationArms, ProductInputErr
         }
         unpriced.insert(node.to_string());
     }
-    Ok(ValuationArms { entries, unpriced })
+    Ok(ValuationInputTypes { entries, unpriced })
 }
 
-/// The shipped `valuation_arms` section, parsed and checked on first use.
-pub fn shipped_valuation_arms() -> Result<&'static ValuationArms, ProductInputError> {
-    static SHIPPED: OnceLock<Result<ValuationArms, ProductInputError>> = OnceLock::new();
+/// The key that names an entry's input type: `input_type`, or for one release
+/// the legacy `arm` (LM-418). An entry with both is `InvalidRegistry`.
+fn input_type_key(body: &Map<String, Value>) -> Result<&'static str, ProductInputError> {
+    match (body.contains_key(ENTRY_KEY), body.contains_key(LEGACY_ENTRY_KEY)) {
+        (true, true) => Err(bad(format!(
+            "entry has both {ENTRY_KEY} and {LEGACY_ENTRY_KEY}: {}",
+            Value::Object(body.clone())
+        ))),
+        (false, true) => Ok(LEGACY_ENTRY_KEY),
+        _ => Ok(ENTRY_KEY),
+    }
+}
+
+/// Parses and checks the `valuation_input_types` section of a whole
+/// hierarchy.json (as JSON text). For one release a root with the legacy
+/// `valuation_arms` key instead loads the same way (LM-418); a root with both
+/// keys, or neither, is `InvalidRegistry`.
+pub fn valuation_input_types_from_hierarchy(json: &str) -> Result<ValuationInputTypes, ProductInputError> {
+    let root: Value =
+        serde_json::from_str(json).map_err(|e| bad(format!("hierarchy.json failed to parse: {e}")))?;
+    let section = match (root.get(SECTION), root.get(LEGACY_SECTION)) {
+        (Some(_), Some(_)) => return Err(bad(format!("both {SECTION} and {LEGACY_SECTION} present"))),
+        (Some(section), None) | (None, Some(section)) => section,
+        (None, None) => return Err(bad("section missing from hierarchy.json".to_string())),
+    };
+    parse_valuation_input_types(&section.to_string())
+}
+
+/// The shipped `valuation_input_types` section, parsed and checked on first use.
+pub fn shipped_valuation_input_types() -> Result<&'static ValuationInputTypes, ProductInputError> {
+    static SHIPPED: OnceLock<Result<ValuationInputTypes, ProductInputError>> = OnceLock::new();
     SHIPPED
-        .get_or_init(|| {
-            let root: Value = serde_json::from_str(HIERARCHY_JSON)
-                .map_err(|e| bad(format!("hierarchy.json failed to parse: {e}")))?;
-            let section = root
-                .get("valuation_arms")
-                .ok_or_else(|| bad("section missing from hierarchy.json".to_string()))?;
-            parse_valuation_arms(&section.to_string())
-        })
+        .get_or_init(|| valuation_input_types_from_hierarchy(HIERARCHY_JSON))
         .as_ref()
         .map_err(Clone::clone)
+}
+
+/// Deprecated: use [`ValuationInputTypes`]. Removed in a later release (LM-418).
+#[deprecated(note = "use ValuationInputTypes")]
+pub type ValuationArms = ValuationInputTypes;
+
+/// Deprecated: use [`parse_valuation_input_types`]. Removed in a later release (LM-418).
+#[deprecated(note = "use parse_valuation_input_types")]
+pub fn parse_valuation_arms(json: &str) -> Result<ValuationInputTypes, ProductInputError> {
+    parse_valuation_input_types(json)
+}
+
+/// Deprecated: use [`shipped_valuation_input_types`]. Removed in a later release (LM-418).
+#[deprecated(note = "use shipped_valuation_input_types")]
+pub fn shipped_valuation_arms() -> Result<&'static ValuationInputTypes, ProductInputError> {
+    shipped_valuation_input_types()
 }
 
 fn product_type_of(security: &SecurityProto) -> String {
@@ -378,27 +452,40 @@ fn coupon_type_of(security: &SecurityProto) -> String {
     }
 }
 
-fn resolve(security: &SecurityProto) -> Result<&'static Arm, ProductInputError> {
-    shipped_valuation_arms()?.resolve(&product_type_of(security), &coupon_type_of(security))
+fn resolve(security: &SecurityProto) -> Result<&'static InputTypeEntry, ProductInputError> {
+    shipped_valuation_input_types()?.resolve(&product_type_of(security), &coupon_type_of(security))
 }
 
 /// Name of the `ProductInput.input` oneof field that values `security`, e.g. `"tips"`.
-pub fn arm_for(security: &SecurityProto) -> Result<&'static str, ProductInputError> {
-    resolve(security).map(|a| a.arm.as_str())
+pub fn input_type_for(security: &SecurityProto) -> Result<&'static str, ProductInputError> {
+    resolve(security).map(InputTypeEntry::input_type)
 }
 
-/// Market data the security's arm needs, in file order; empty when none.
+/// Deprecated: use [`input_type_for`]. Removed in a later release (LM-418).
+#[deprecated(note = "use input_type_for")]
+pub fn arm_for(security: &SecurityProto) -> Result<&'static str, ProductInputError> {
+    input_type_for(security)
+}
+
+/// Market data the security's input type needs, in file order; empty when none.
 pub fn required_market_data(security: &SecurityProto) -> Result<Vec<MarketDataKind>, ProductInputError> {
     resolve(security).map(|a| a.requires.clone())
 }
 
-/// The measures valuation-service computes for `arm` (e.g. `"frn"`), in
+/// The measures valuation-service computes for `input_type` (e.g. `"frn"`), in
 /// catalog order: entries of the embedded catalog/measures.json with
 /// `computed_by: valuation-service` and `implemented: true` whose `applies_to`
-/// names a leaf product type the arm values, or an ancestor of one (LM-427).
-/// `Err(Unmapped)` with `product_type` = `arm` when no leaf maps to `arm`.
+/// names a leaf product type the input type values, or an ancestor of one (LM-427).
+/// `Err(Unmapped)` with `product_type` = `input_type` when no leaf maps to
+/// `input_type`.
+pub fn measures_for_input_type(input_type: &str) -> Result<Vec<MeasureProto>, ProductInputError> {
+    measures_for_input_type_in(shipped_measures()?, input_type)
+}
+
+/// Deprecated: use [`measures_for_input_type`]. Removed in a later release (LM-418).
+#[deprecated(note = "use measures_for_input_type")]
 pub fn measures_for_arm(arm: &str) -> Result<Vec<MeasureProto>, ProductInputError> {
-    measures_for_arm_in(shipped_measures()?, arm)
+    measures_for_input_type(arm)
 }
 
 /// The embedded catalog's `measures` list, parsed on first use.
@@ -418,21 +505,21 @@ fn shipped_measures() -> Result<&'static [Value], ProductInputError> {
         .map_err(Clone::clone)
 }
 
-/// [`measures_for_arm`] over a given `measures` list.
-fn measures_for_arm_in(measures: &[Value], arm: &str) -> Result<Vec<MeasureProto>, ProductInputError> {
-    let arms = shipped_valuation_arms()?;
+/// [`measures_for_input_type`] over a given `measures` list.
+fn measures_for_input_type_in(measures: &[Value], input_type: &str) -> Result<Vec<MeasureProto>, ProductInputError> {
+    let input_types = shipped_valuation_input_types()?;
     let unknown_coupon = CouponTypeProto::UnknownCouponType.as_str_name();
-    // Leaves resolve with no coupon type, as arm_for does with no bond_details:
-    // the BOND + FLOAT entry is ignored on purpose (docs/adr/valuation_arms.md).
+    // Leaves resolve with no coupon type, as input_type_for does with no bond_details:
+    // the BOND + FLOAT entry is ignored on purpose (docs/adr/valuation_input_types.md).
     let lineage: HashSet<String> = product_hierarchy::all_product_types()
         .into_iter()
         .filter(|n| product_hierarchy::descendants_of(n).is_empty() && ProductTypeProto::from_str_name(n).is_some())
-        .filter(|n| arms.resolve(n, unknown_coupon).is_ok_and(|a| a.arm == arm))
+        .filter(|n| input_types.resolve(n, unknown_coupon).is_ok_and(|a| a.input_type() == input_type))
         .flat_map(|leaf| std::iter::successors(Some(leaf), |n| product_hierarchy::parent_of(n)))
         .collect();
     if lineage.is_empty() {
         return Err(ProductInputError::Unmapped {
-            product_type: arm.to_string(),
+            product_type: input_type.to_string(),
             coupon_type: unknown_coupon.to_string(),
         });
     }
@@ -461,9 +548,9 @@ fn measures_for_arm_in(measures: &[Value], arm: &str) -> Result<Vec<MeasureProto
 
 /// Market data for [`for_security`], one field per [`MarketDataKind`]:
 /// `CpiU` is `cpi`, `FrnFixings` is `fixings`, `FrnCurve` is `curve`. Each is
-/// copied to the arm field of the same name (`TipsInput.cpi`,
-/// `FrnInput.fixings`, `FrnInput.curve`) when the arm has one; the others are
-/// ignored.
+/// copied to the input type's field of the same name (`TipsInput.cpi`,
+/// `FrnInput.fixings`, `FrnInput.curve`) when the input type has one; the
+/// others are ignored.
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct MarketData {
     pub cpi: Option<InflationIndexInput>,
@@ -471,21 +558,22 @@ pub struct MarketData {
     pub curve: Option<YieldCurveInput>,
 }
 
-/// The `ProductInput` for `security`, in the arm [`arm_for`] picks.
+/// The `ProductInput` for `security`, in the input type [`input_type_for`] picks.
 ///
-/// Sets the arm's security and copies `price.price` as is into `clean_price`
-/// (bond, tips, frn, mbs) or `unit_price` (equity, cash). Never sets
-/// `cost_basis`. `Err(Unmapped)` when the type has no arm,
-/// `Err(MissingMarketData)` when `market_data` lacks a kind the arm requires.
+/// Sets the input type's security and copies `price.price` as is into
+/// `clean_price` (bond, tips, frn, mbs) or `unit_price` (equity, cash). Never
+/// sets `cost_basis`. `Err(Unmapped)` when the type has no input type,
+/// `Err(MissingMarketData)` when `market_data` lacks a kind the input type
+/// requires.
 pub fn for_security(
     security: &SecurityProto,
     price: &PriceProto,
     market_data: &MarketData,
 ) -> Result<ProductInput, ProductInputError> {
-    let arm = arm_for(security)?;
+    let input_type = input_type_for(security)?;
     let security_field = Some(security.clone());
     let price_field = price.price.clone();
-    let input = match arm {
+    let input = match input_type {
         "bond" => Input::Bond(BondInput { security: security_field, clean_price: price_field, ..Default::default() }),
         "tips" => Input::Tips(TipsInput {
             security: security_field,
@@ -503,26 +591,27 @@ pub fn for_security(
         "mbs" => Input::Mbs(MbsInput { security: security_field, clean_price: price_field, ..Default::default() }),
         "equity" => Input::Equity(EquityInput { security: security_field, unit_price: price_field }),
         "cash" => Input::Cash(CashInput { security: security_field, unit_price: price_field }),
-        other => return Err(bad(format!("for_security has no builder for arm {other}"))),
+        other => return Err(bad(format!("for_security has no builder for input type {other}"))),
     };
     let out = ProductInput { input: Some(input) };
     check_product_input(&out)?;
     Ok(out)
 }
 
-/// Checks `product_input` is the arm [`arm_for`] picks for its security, and
-/// holds every market-data kind that arm requires. `Err(Validation)` when no
-/// arm is set or it is the wrong arm, `Err(Unmapped)`, or
+/// Checks `product_input` is the input type [`input_type_for`] picks for its
+/// security, and holds every market-data kind that input type requires.
+/// `Err(Validation)` when no input type is set or it is the wrong input type,
+/// `Err(Unmapped)`, or
 /// `Err(MissingMarketData)`.
 pub fn check_product_input(product_input: &ProductInput) -> Result<(), ProductInputError> {
     let Some(input) = &product_input.input else {
         return Err(ProductInputError::Validation(vec![FieldViolationProto {
             field: "product_input".to_string(),
             object_id: None,
-            message: "no ProductInput arm is set".to_string(),
+            message: "no ProductInput input type is set".to_string(),
         }]));
     };
-    let (arm, security) = match input {
+    let (input_type, security) = match input {
         Input::Bond(b) => ("bond", &b.security),
         Input::Tips(t) => ("tips", &t.security),
         Input::Frn(f) => ("frn", &f.security),
@@ -533,29 +622,30 @@ pub fn check_product_input(product_input: &ProductInput) -> Result<(), ProductIn
     let security = security.clone().unwrap_or_default();
     let resolved = resolve(&security)?;
     let object_id = object_id_of(security.uuid.as_ref());
-    if resolved.arm != arm {
+    if resolved.input_type() != input_type {
         return Err(ProductInputError::Validation(vec![FieldViolationProto {
-            field: format!("product_input.{arm}"),
+            field: format!("product_input.{input_type}"),
             object_id,
             message: format!(
-                "arm {arm} does not match arm {} for product_type {}",
-                resolved.arm,
+                "input type {input_type} does not match input type {} for product_type {}",
+                resolved.input_type(),
                 product_type_of(&security)
             ),
         }]));
     }
     match resolved.requires.iter().find(|kind| !has(product_input, **kind)) {
+        #[allow(deprecated)]
         Some(kind) => Err(ProductInputError::MissingMarketData(MissingMarketDataError {
-            arm: arm.to_string(),
+            arm: input_type.to_string(),
             kind: *kind,
-            field: format!("{arm}.{}", field_of(*kind)),
+            field: format!("{input_type}.{}", field_of(*kind)),
             object_id,
         })),
         None => Ok(()),
     }
 }
 
-/// The `ProductInput` arm field (and [`MarketData`] field) that holds `kind`.
+/// The `ProductInput` input type's field (and [`MarketData`] field) that holds `kind`.
 fn field_of(kind: MarketDataKind) -> &'static str {
     match kind {
         MarketDataKind::CpiU => "cpi",
@@ -588,27 +678,27 @@ mod tests {
 
     // Guardrail 1: the result comes from the catalog data, not a list in code.
     #[test]
-    fn measures_for_arm_in_follows_implemented() {
+    fn measures_for_input_type_in_follows_implemented() {
         let measures = catalog_with(|ms| {
             for m in ms.iter_mut().filter(|m| m["name"] == "DISCOUNT_MARGIN") {
                 m["implemented"] = Value::Bool(false);
             }
         });
-        assert!(measures_for_arm_in(shipped_measures().unwrap(), "frn").unwrap().contains(&MeasureProto::DiscountMargin));
-        assert!(!measures_for_arm_in(&measures, "frn").unwrap().contains(&MeasureProto::DiscountMargin));
+        assert!(measures_for_input_type_in(shipped_measures().unwrap(), "frn").unwrap().contains(&MeasureProto::DiscountMargin));
+        assert!(!measures_for_input_type_in(&measures, "frn").unwrap().contains(&MeasureProto::DiscountMargin));
     }
 
     #[test]
-    fn measures_for_arm_in_follows_an_ancestor_node() {
+    fn measures_for_input_type_in_follows_an_ancestor_node() {
         let measures = catalog_with(|ms| {
             for m in ms.iter_mut().filter(|m| m["name"] == "PAR_YIELD") {
                 m["implemented"] = Value::Bool(true);
                 m["applies_to"] = serde_json::json!(["GOV_BOND"]);
             }
         });
-        for arm in ["frn", "bond"] {
-            assert!(!measures_for_arm_in(shipped_measures().unwrap(), arm).unwrap().contains(&MeasureProto::ParYield));
-            assert!(measures_for_arm_in(&measures, arm).unwrap().contains(&MeasureProto::ParYield), "{arm}");
+        for input_type in ["frn", "bond"] {
+            assert!(!measures_for_input_type_in(shipped_measures().unwrap(), input_type).unwrap().contains(&MeasureProto::ParYield));
+            assert!(measures_for_input_type_in(&measures, input_type).unwrap().contains(&MeasureProto::ParYield), "{input_type}");
         }
     }
 }

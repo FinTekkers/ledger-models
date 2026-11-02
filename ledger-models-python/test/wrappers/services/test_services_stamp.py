@@ -312,7 +312,7 @@ def _price_proto() -> PriceProto:
 
 
 def _equity_proto() -> SecurityProto:
-    """A COMMON_STOCK: run_valuation needs a type with a ProductInput arm
+    """A COMMON_STOCK: run_valuation needs a type with a ProductInput input type
     (equity, which requires no market data). Unstamped."""
     security = _security_proto()
     security.product_type = ProductTypeProto.COMMON_STOCK

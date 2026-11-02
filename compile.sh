@@ -55,7 +55,7 @@ fail() { echo "  ✗ $1"; FAILED=1; }
 #             pinned in ledger-models-java/build.gradle. Already
 #             host-deterministic; no compile.sh-side action needed.
 #
-# Rosetta dependency on Mac ARM: the npm grpc-tools binaries are x86_64.
+# Rosetta dependency on Apple Silicon Macs: the npm grpc-tools binaries are x86_64.
 # One-time install:  softwareupdate --install-rosetta --agree-to-license
 JS_DIR="$REPO_ROOT/ledger-models-javascript"
 PROTO_DIR="$REPO_ROOT/ledger-models-protos"
@@ -73,7 +73,7 @@ if [ ! -x "$PROTOC" ] || [ ! -x "$GRPC_PLUGIN" ]; then
     exit 1
 elif ! "$PROTOC" --version > /dev/null 2>&1; then
     echo "ERROR: $PROTOC could not execute. The bundled binary is x86_64;"
-    echo "       on Mac ARM you need Rosetta 2:"
+    echo "       on an Apple Silicon Mac you need Rosetta 2:"
     echo "         softwareupdate --install-rosetta --agree-to-license"
     exit 1
 fi

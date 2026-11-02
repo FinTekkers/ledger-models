@@ -60,6 +60,20 @@ echo "== python"
 # No wire change beyond the ones an item allowed in wire-diff.py (LM-318).
 ledger-models-python/.venv/bin/python scripts/checks/wire-diff.py
 
+echo "== no arm term (LM-418)"
+# "input type", never "arm", outside the deprecated aliases (allowlisted).
+scripts/checks/no-arm-term.sh
+scripts/checks/no-arm-term.test.sh
+scripts/checks/descriptor-identical.test.sh
+# The LM-418 rename itself changes proto comments only and hierarchy.json
+# key names only. Checked while the merge base still has the legacy
+# valuation_arms key; later items change the wire through wire-diff.py.
+lm418_base="$(git merge-base HEAD origin/main 2>/dev/null || git merge-base HEAD main)"
+if git show "$lm418_base:ledger-models-protos/hierarchy.json" | grep -q '"valuation_arms"'; then
+  scripts/checks/descriptor-identical.sh "$lm418_base"
+  ledger-models-python/.venv/bin/python scripts/checks/hierarchy-rename-only.py "$lm418_base"
+fi
+
 echo "== rust"
 (
   cd ledger-models-rust

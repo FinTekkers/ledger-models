@@ -28,10 +28,11 @@ The registry is loaded by every consumer language at startup (Java / Rust / Pyth
 | Add the `aliases` / `enum_labels` keys themselves (`schema_version` 1.1, LM-275) | Additive — loaders that don't know them ignore them | minor |
 | Change `instrument_types` from a list of codes to a map of code → `{ "label": ... }` (`schema_version` 1.2, LM-282) | Breaking for anything that reads the raw `instrument_types` key; `allInstrumentTypes` / `instrumentTypeLabelOf` keep their signatures and results. Read codes and labels through the helpers (`allInstrumentTypes`, `instrumentTypeCodeLabelOf`) | patch (helpers unchanged) |
 | Add an instrument type | Needs a matching `INSTRUMENT_TYPE_<CODE>` `InstrumentTypeProto` value; every loader fails at load if it is missing | minor |
-| Add the `valuation_arms` key itself (`schema_version` 1.3, LM-409) | Additive — loaders that don't know it ignore it | minor |
-| Add a `valuation_arms` entry or an `unpriced` value | Additive — a type that raised `UnmappedProductTypeError` now resolves (or stays unpriced). Every loader fails at load on an unknown node, arm, coupon type or `requires` value. See [`docs/adr/valuation_arms.md`](../docs/adr/valuation_arms.md) | minor |
-| Change an existing entry's `arm` or `requires`, or move a node into `unpriced` | Breaking — callers build a different `ProductInput` arm, fetch different market data, or start getting `UnmappedProductTypeError` | major |
-| Add a leaf under a node that has a `valuation_arms` entry | The leaf inherits that arm. Decide in review whether it should, or list it as `unpriced` | as for the leaf |
+| Add the valuation input types key itself (`schema_version` 1.3, LM-409) | Additive — loaders that don't know it ignore it | minor |
+| Rename `valuation_arms` → `valuation_input_types` and each entry's `arm` → `input_type` (`schema_version` 1.4, LM-418) | Breaking for anything that reads the raw keys. The helpers in every language read both names for one release and reject a file with both, so their results are unchanged. See [`docs/release-notes/lm-418.md`](../docs/release-notes/lm-418.md) | patch (helpers unchanged) |
+| Add a `valuation_input_types` entry or an `unpriced` value | Additive — a type that raised `UnmappedProductTypeError` now resolves (or stays unpriced). Every loader fails at load on an unknown node, input type, coupon type or `requires` value. See [`docs/adr/valuation_input_types.md`](../docs/adr/valuation_input_types.md) | minor |
+| Change an existing entry's `input_type` or `requires`, or move a node into `unpriced` | Breaking — callers build a different `ProductInput` input type, fetch different market data, or start getting `UnmappedProductTypeError` | major |
+| Add a leaf under a node that has a `valuation_input_types` entry | The leaf inherits that input type. Decide in review whether it should, or list it as `unpriced` | as for the leaf |
 
 ## Asset-class aliases and labels must be unambiguous
 

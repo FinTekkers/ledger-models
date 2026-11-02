@@ -121,7 +121,7 @@ A `raw_uuid` that is neither empty nor exactly 16 bytes is a typed input error n
 
 ### Unmapped product types (LM-409)
 
-`ProductInputs.armFor` / `requiredMarketData` raise a typed input error when a security's `product_type` (and `bond_details.coupon_type`) has no arm in `hierarchy.json` `valuation_arms`, or is `unpriced`. The message names both types. See [`valuation_arms.md`](valuation_arms.md).
+`ProductInputs.inputTypeFor` / `requiredMarketData` raise a typed input error when a security's `product_type` (and `bond_details.coupon_type`) has no input type in `hierarchy.json` `valuation_input_types`, or is `unpriced`. The message names both types. See [`valuation_input_types.md`](valuation_input_types.md).
 
 | Binding | Typed input error | Base | Broken registry |
 |---|---|---|---|
@@ -130,18 +130,18 @@ A `raw_uuid` that is neither empty nor exactly 16 bytes is a typed input error n
 | JS/TS | `wrappers/models/errors` `UnmappedProductTypeError` | `Error` | `Error` |
 | Rust | `ProductInputError::Unmapped { product_type, coupon_type }` | `wrappers::models::product_inputs::ProductInputError` | `ProductInputError::InvalidRegistry` |
 
-It carries no `FieldViolationProto`s: the input is valid, the registry just has no arm for it. Services map it to `INVALID_ARGUMENT`.
+It carries no `FieldViolationProto`s: the input is valid, the registry just has no input type for it. Services map it to `INVALID_ARGUMENT`.
 
 ### Missing market data (LM-410)
 
-`ProductInputs.forSecurity` and `ValuationRequests.typed` raise `MissingMarketDataError` when the security's arm `requires` market data the caller did not supply, e.g. arm `tips` with no `CPI_U`. It names the arm and the kind, and carries one violation on the arm field (`tips.cpi`, `frn.fixings`, `frn.curve`) with the security's UUID. A malformed `ProductInput` (no arm, or an arm `armFor` did not pick) or a missing `position_input` / `asof_datetime` is a plain `ModelValidationException` / `ModelValidationError`. See [`product_input_builders.md`](product_input_builders.md).
+`ProductInputs.forSecurity` and `ValuationRequests.typed` raise `MissingMarketDataError` when the security's input type `requires` market data the caller did not supply, e.g. input type `tips` with no `CPI_U`. It names the input type and the kind, and carries one violation on the input type's field (`tips.cpi`, `frn.fixings`, `frn.curve`) with the security's UUID. A malformed `ProductInput` (no input type, or an input type `inputTypeFor` did not pick) or a missing `position_input` / `asof_datetime` is a plain `ModelValidationException` / `ModelValidationError`. See [`product_input_builders.md`](product_input_builders.md).
 
 | Binding | Missing market data | Base | Malformed input |
 |---|---|---|---|
-| Java | `common.models.errors.MissingMarketDataError` (`getArm()`, `getKind()`) | `ModelValidationException` | `ModelValidationException` |
-| Python | `fintekkers.wrappers.models.errors.MissingMarketDataError` (`.arm`, `.kind`) | `ModelValidationError` | `ModelValidationError` |
-| JS/TS | `wrappers/models/errors` `MissingMarketDataError` (`arm`, `kind`) | `ModelValidationError` | `ModelValidationError` |
-| Rust | `ProductInputError::MissingMarketData(MissingMarketDataError { arm, kind, .. })` | `ProductInputError` (now `#[non_exhaustive]`) | `ProductInputError::Validation` |
+| Java | `common.models.errors.MissingMarketDataError` (`getInputType()`, `getKind()`) | `ModelValidationException` | `ModelValidationException` |
+| Python | `fintekkers.wrappers.models.errors.MissingMarketDataError` (`.input_type`, `.kind`) | `ModelValidationError` | `ModelValidationError` |
+| JS/TS | `wrappers/models/errors` `MissingMarketDataError` (`inputType`, `kind`) | `ModelValidationError` | `ModelValidationError` |
+| Rust | `ProductInputError::MissingMarketData(MissingMarketDataError { kind, .. })`, `input_type()` | `ProductInputError` (now `#[non_exhaustive]`) | `ProductInputError::Validation` |
 
 Services map all of them to `INVALID_ARGUMENT`.
 
@@ -149,7 +149,7 @@ Services map all of them to `INVALID_ARGUMENT`.
 
 - Java callers that catch `TransactionProcessingException` around `Transaction.addCashImpact` (or the short-form `Transaction` constructor) no longer see the missing-`face_value` case; it now arrives as `IllegalArgumentException` / `ModelValidationException`. No caller in this repo does this. ledger-service's dependent item maps it to `INVALID_ARGUMENT`.
 - Callers that match the whole `getMessage()` string of the maturity error break; callers using `contains("maturity_date must be after issue_date")` keep working.
-- Rust callers that `match` on `utils::errors::Error` exhaustively must add an arm when LM-255d adds `Error::Validation`.
+- Rust callers that `match` on `utils::errors::Error` exhaustively must add a match branch when LM-255d adds `Error::Validation`.
 
 ## Known follow-ups
 

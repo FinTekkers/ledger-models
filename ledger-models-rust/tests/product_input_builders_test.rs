@@ -18,7 +18,7 @@ use ledger_models::fintekkers::requests::valuation::{
     BondInput, InflationIndexInput, ProductInput, ReferenceRateFixingProto, YieldCurveInput,
 };
 use ledger_models::fintekkers::wrappers::models::product_inputs::{
-    arm_for, check_product_input, for_security, MarketData, MarketDataKind, ProductInputError,
+    input_type_for, check_product_input, for_security, MarketData, MarketDataKind, ProductInputError,
 };
 use ledger_models::fintekkers::wrappers::models::valuation_requests::typed;
 use prost::Message;
@@ -50,7 +50,7 @@ fn cases() -> Vec<Case> {
 }
 
 fn success_cases() -> Vec<Case> {
-    cases().into_iter().filter(|c| c.json.get("arm").is_some()).collect()
+    cases().into_iter().filter(|c| c.json.get("input_type").is_some()).collect()
 }
 
 fn error_cases() -> Vec<Case> {
@@ -108,11 +108,11 @@ fn typed_args(c: &Case) -> (LocalTimestampProto, PositionProto, Vec<MeasureProto
 fn assert_error(name: &str, err: &ProductInputError, expected: &Value) {
     match (expected["type"].as_str().unwrap(), err) {
         ("MissingMarketDataError", ProductInputError::MissingMarketData(e)) => {
-            assert_eq!(e.arm, expected["arm"].as_str().unwrap(), "{name}");
+            assert_eq!(e.input_type(), expected["input_type"].as_str().unwrap(), "{name}");
             assert_eq!(e.kind.as_str_name(), expected["kind"].as_str().unwrap(), "{name}");
             assert_eq!(e.field, expected["field"].as_str().unwrap(), "{name}");
             let message = err.to_string();
-            assert!(message.contains(&e.arm) && message.contains(e.kind.as_str_name()), "{name}: {message}");
+            assert!(message.contains(e.input_type()) && message.contains(e.kind.as_str_name()), "{name}: {message}");
             assert_eq!(err.violations()[0].field, e.field, "{name}");
         }
         ("UnmappedProductTypeError", ProductInputError::Unmapped { .. }) => {}
@@ -123,19 +123,20 @@ fn assert_error(name: &str, err: &ProductInputError, expected: &Value) {
 // ---------- for_security ----------
 
 #[test]
-fn fixtures_cover_every_arm_in_valuation_arms() {
+fn fixtures_cover_every_input_type_in_valuation_input_types() {
     // The crate-root mirror that sync-hierarchy-mirrors.sh writes and the library embeds.
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("hierarchy.json");
     let root: Value = serde_json::from_str(&std::fs::read_to_string(path).expect("read mirror")).unwrap();
-    let arms: BTreeSet<String> = root["valuation_arms"]["entries"]
+    let input_types: BTreeSet<String> = root["valuation_input_types"]["entries"]
         .as_array()
         .unwrap()
         .iter()
-        .map(|e| e["arm"].as_str().unwrap().to_string())
+        .map(|e| e["input_type"].as_str().unwrap().to_string())
         .collect();
-    let fixture_arms: Vec<String> = success_cases().iter().map(|c| c.json["arm"].as_str().unwrap().to_string()).collect();
-    assert_eq!(arms, fixture_arms.iter().cloned().collect::<BTreeSet<_>>());
-    assert_eq!(arms.len(), fixture_arms.len(), "one success fixture per arm");
+    let fixture_input_types: Vec<String> =
+        success_cases().iter().map(|c| c.json["input_type"].as_str().unwrap().to_string()).collect();
+    assert_eq!(input_types, fixture_input_types.iter().cloned().collect::<BTreeSet<_>>());
+    assert_eq!(input_types.len(), fixture_input_types.len(), "one success fixture per input type");
 }
 
 #[test]
@@ -146,41 +147,41 @@ fn for_security_matches_fixture_bytes() {
     }
 }
 
-/// R1: the arm is `arm_for`'s, and each field is the input it came from.
+/// R1: the input type is `input_type_for`'s, and each field is the input it came from.
 #[test]
 fn for_security_fields() {
     for c in success_cases() {
         let (s, p, md) = (security(&c), price(&c), market_data(&c));
         let out = for_security(&s, &p, &md).expect(&c.name);
-        let expected_arm = c.json["arm"].as_str().unwrap();
-        assert_eq!(arm_for(&s).unwrap(), expected_arm, "{}", c.name);
+        let expected_input_type = c.json["input_type"].as_str().unwrap();
+        assert_eq!(input_type_for(&s).unwrap(), expected_input_type, "{}", c.name);
         let sec = Some(s.clone());
-        match out.input.expect("arm set") {
+        match out.input.expect("input type set") {
             Input::Bond(b) => {
-                assert_eq!(expected_arm, "bond");
+                assert_eq!(expected_input_type, "bond");
                 assert_eq!((b.security, b.clean_price, b.cost_basis), (sec, p.price.clone(), None));
             }
             Input::Tips(t) => {
-                assert_eq!(expected_arm, "tips");
+                assert_eq!(expected_input_type, "tips");
                 assert_eq!((t.security, t.clean_price, t.cost_basis), (sec, p.price.clone(), None));
                 assert_eq!(t.cpi, md.cpi);
             }
             Input::Frn(f) => {
-                assert_eq!(expected_arm, "frn");
+                assert_eq!(expected_input_type, "frn");
                 assert_eq!((f.security, f.clean_price, f.cost_basis), (sec, p.price.clone(), None));
                 assert_eq!((f.curve, f.fixings), (md.curve.clone(), md.fixings.clone()));
             }
             Input::Mbs(m) => {
-                assert_eq!(expected_arm, "mbs");
+                assert_eq!(expected_input_type, "mbs");
                 assert_eq!((m.security, m.clean_price, m.cost_basis), (sec, p.price.clone(), None));
             }
             // EquityInput and CashInput have unit_price and no clean_price field.
             Input::Equity(e) => {
-                assert_eq!(expected_arm, "equity");
+                assert_eq!(expected_input_type, "equity");
                 assert_eq!((e.security, e.unit_price), (sec, p.price.clone()));
             }
             Input::Cash(k) => {
-                assert_eq!(expected_arm, "cash");
+                assert_eq!(expected_input_type, "cash");
                 assert_eq!((k.security, k.unit_price), (sec, p.price.clone()));
             }
         }
@@ -201,7 +202,7 @@ fn for_security_returns_fixture_error() {
 fn for_security_with_default_market_data_is_missing_cpi() {
     let c = fixture("tips");
     match for_security(&security(&c), &price(&c), &MarketData::default()) {
-        Err(ProductInputError::MissingMarketData(e)) => assert_eq!((e.arm.as_str(), e.kind), ("tips", MarketDataKind::CpiU)),
+        Err(ProductInputError::MissingMarketData(e)) => assert_eq!((e.input_type(), e.kind), ("tips", MarketDataKind::CpiU)),
         other => panic!("want MissingMarketData, got {other:?}"),
     }
 }
@@ -231,7 +232,7 @@ fn typed_returns_fixture_error() {
 }
 
 #[test]
-fn typed_rejects_an_arm_arm_for_did_not_pick() {
+fn typed_rejects_an_input_type_input_type_for_did_not_pick() {
     let c = fixture("tips");
     let wrong = ProductInput {
         input: Some(Input::Bond(BondInput {
@@ -248,7 +249,7 @@ fn typed_rejects_an_arm_arm_for_did_not_pick() {
 }
 
 #[test]
-fn typed_rejects_an_input_with_no_arm() {
+fn typed_rejects_an_input_with_no_input_type() {
     let (asof, position, measures) = typed_args(&fixture("bond"));
     match typed(asof, ProductInput::default(), position, &measures) {
         Err(ProductInputError::Validation(v)) => assert_eq!(v[0].field, "product_input"),

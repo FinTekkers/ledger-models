@@ -27,7 +27,7 @@ option java_outer_classname = "ProductInputProtos";
 //   15   cash
 //   16+  other (money market, futures, scenario, krd, ...)
 //
-// The arms grouped by valuation engine: docs/adr/product_input_engine_arms.md.
+// The input types grouped by valuation engine: docs/adr/product_input_engine_input_types.md.
 // ═══════════════════════════════════════════════════════════════════════════
 message ProductInput {
   oneof input {
@@ -305,7 +305,7 @@ message ReferenceRateFixingProto {
 //
 // G8 (valuation-service known gap 8, tracked as VS-71): MORTGAGE_BACKED is
 // valued as a bullet fixed-rate bond (no amortisation or prepayment), because
-// it descends from BOND. The mbs arm gives MBS its own route, but it still
+// it descends from BOND. The mbs input type gives MBS its own route, but it still
 // uses the bond engine, so the numbers are unchanged until a real MBS engine
 // replaces it.
 //
@@ -313,7 +313,7 @@ message ReferenceRateFixingProto {
 // use them for anything else.
 //
 // Settlement date is read from ValuationRequestProto.asof_datetime.
-// See docs/adr/product_input_engine_arms.md.
+// See docs/adr/product_input_engine_input_types.md.
 // ═══════════════════════════════════════════════════════════════════════════
 message MbsInput {
   // The MBS security: ProductTypeProto.MORTGAGE_BACKED with bond_details and
@@ -332,7 +332,7 @@ message MbsInput {
 // ═══════════════════════════════════════════════════════════════════════════
 // EquityInput — valuation request for an equity or fund priced per share
 // (LM-408). Unit-priced: market value is unit_price x quantity, no accrual.
-// See docs/adr/product_input_engine_arms.md.
+// See docs/adr/product_input_engine_input_types.md.
 // ═══════════════════════════════════════════════════════════════════════════
 message EquityInput {
   // The equity security (e.g. COMMON_STOCK, ETF).
@@ -346,7 +346,7 @@ message EquityInput {
 // ═══════════════════════════════════════════════════════════════════════════
 // CashInput — valuation request for cash or a money-market fund (LM-408).
 // Unit-priced: market value is unit_price x quantity, no accrual.
-// See docs/adr/product_input_engine_arms.md.
+// See docs/adr/product_input_engine_input_types.md.
 // ═══════════════════════════════════════════════════════════════════════════
 message CashInput {
   // The cash or money-market fund security (e.g. CURRENCY, MONEY_MARKET_FUND).

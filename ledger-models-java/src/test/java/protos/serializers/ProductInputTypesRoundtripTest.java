@@ -17,11 +17,11 @@ import testutil.Decimals;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * LM-408 — the mbs (13), equity (14) and cash (15) ProductInput arms each
- * round-trip through bytes as the same arm, with the security, the price
+ * LM-408 — the mbs (13), equity (14) and cash (15) ProductInput input types each
+ * round-trip through bytes as the same input type, with the security, the price
  * and, for mbs, a non-default cost_basis.
  */
-class ProductInputArmsRoundtripTest {
+class ProductInputTypesRoundtripTest {
 
     private static ProductInput roundtrip(ProductInput original) throws InvalidProtocolBufferException {
         return ProductInput.parseFrom(original.toByteArray());
@@ -35,7 +35,7 @@ class ProductInputArmsRoundtripTest {
     }
 
     @Test
-    void mbsArmRoundTrips() throws InvalidProtocolBufferException {
+    void mbsInputTypeRoundTrips() throws InvalidProtocolBufferException {
         SecurityProto security = security(ProductTypeProto.MORTGAGE_BACKED, "FNMA").toBuilder()
                 .setMbsExtension(MbsExtensionProto.newBuilder()
                         .setPoolNumber("FN AS1234")
@@ -68,7 +68,7 @@ class ProductInputArmsRoundtripTest {
     }
 
     @Test
-    void equityArmRoundTrips() throws InvalidProtocolBufferException {
+    void equityInputTypeRoundTrips() throws InvalidProtocolBufferException {
         ProductInput original = ProductInput.newBuilder()
                 .setEquity(EquityInput.newBuilder()
                         .setSecurity(security(ProductTypeProto.COMMON_STOCK, "equity"))
@@ -87,7 +87,7 @@ class ProductInputArmsRoundtripTest {
     }
 
     @Test
-    void cashArmRoundTrips() throws InvalidProtocolBufferException {
+    void cashInputTypeRoundTrips() throws InvalidProtocolBufferException {
         ProductInput original = ProductInput.newBuilder()
                 .setCash(CashInput.newBuilder()
                         .setSecurity(security(ProductTypeProto.MONEY_MARKET_FUND, "cash"))

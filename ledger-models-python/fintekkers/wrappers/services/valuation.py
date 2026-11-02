@@ -65,16 +65,16 @@ class ValuationService:
             price: The price to use for valuation (required)
             measures: List of measures to calculate (optional)
             asOf: The valuation date and time
-            market_data: Market data the security's arm requires, e.g. the
-                CPI for a TIPS (optional when the arm requires none)
+            market_data: Market data the security's input type requires, e.g. the
+                CPI for a TIPS (optional when the input type requires none)
             
         Returns:
             ValuationResponseProto containing the valuation results
             
         Raises:
             ModelValidationError: If security, position or price is missing
-            UnmappedProductTypeError: If the security's type has no ProductInput arm
-            MissingMarketDataError: If market_data lacks a kind the arm requires
+            UnmappedProductTypeError: If the security's type has no ProductInput input type
+            MissingMarketDataError: If market_data lacks a kind the input type requires
             RpcError: If the gRPC call fails
         """
         missing = [violation(name, None, f"{name} is required")

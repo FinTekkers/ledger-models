@@ -1,15 +1,16 @@
 /**
- * LM-409: valuation_arms in hierarchy.json, resolved by armFor /
+ * LM-409: valuation_input_types in hierarchy.json, resolved by inputTypeFor /
  * requiredMarketData.
  *
- * The shared cases live in ledger-models-protos/fixtures/valuation_arms_cases.json,
+ * The shared cases live in ledger-models-protos/fixtures/valuation_input_types_cases.json,
  * read by the Java, Python and Rust tests too.
  */
 import * as fs from 'fs';
 import * as path from 'path';
 
 import {
-  armFor, measuresForArm, measuresForArmIn, parseValuationArms, requiredMarketData, shippedValuationArms,
+  inputTypeFor, measuresForInputType, measuresForInputTypeIn, parseValuationInputTypes, requiredMarketData,
+  shippedValuationInputTypes,
 } from './product_inputs';
 import { descendantsOf } from './product_hierarchy';
 import { UnmappedProductTypeError } from '../errors';
@@ -25,17 +26,17 @@ const BUNDLED = path.resolve(__dirname, '../../../../hierarchy.json');
 interface Case {
   product_type: string;
   coupon_type: string;
-  arm?: string;
+  input_type?: string;
   requires?: string[];
   error?: string;
 }
 
 const cases: Case[] = JSON.parse(
-  fs.readFileSync(path.join(PROTOS, 'fixtures/valuation_arms_cases.json'), 'utf-8'),
+  fs.readFileSync(path.join(PROTOS, 'fixtures/valuation_input_types_cases.json'), 'utf-8'),
 ).cases;
 
 function sourceSection(): any {
-  return JSON.parse(fs.readFileSync(path.join(PROTOS, 'hierarchy.json'), 'utf-8')).valuation_arms;
+  return JSON.parse(fs.readFileSync(path.join(PROTOS, 'hierarchy.json'), 'utf-8')).valuation_input_types;
 }
 
 function hasEnumValue(productType: string): boolean {
@@ -51,14 +52,14 @@ function security(productType: string, couponType: string): SecurityProto {
   return s;
 }
 
-/** [arm, requires] through a real proto when the type has an enum value; planned leaves by name. */
+/** [input type, requires] through a real proto when the type has an enum value; planned leaves by name. */
 function resolve(productType: string, couponType: string): [string, string[]] {
   if (!hasEnumValue(productType)) {
-    const a = shippedValuationArms().require(productType, couponType);
-    return [a.arm, [...a.requires]];
+    const a = shippedValuationInputTypes().require(productType, couponType);
+    return [a.inputType, [...a.requires]];
   }
   const s = security(productType, couponType);
-  return [armFor(s), requiredMarketData(s)];
+  return [inputTypeFor(s), requiredMarketData(s)];
 }
 
 function catchUnmapped(fn: () => unknown): UnmappedProductTypeError {
@@ -71,7 +72,7 @@ function catchUnmapped(fn: () => unknown): UnmappedProductTypeError {
   throw new Error('expected UnmappedProductTypeError');
 }
 
-describe('valuation_arms shared fixture (metric 1)', () => {
+describe('valuation_input_types shared fixture (metric 1)', () => {
   test('has the required cases', () => {
     expect(cases.length).toBeGreaterThanOrEqual(5);
     const seen = cases.map(c => `${c.product_type}/${c.coupon_type}`);
@@ -86,7 +87,7 @@ describe('valuation_arms shared fixture (metric 1)', () => {
       const e = catchUnmapped(() => resolve(c.product_type, c.coupon_type));
       expect([e.productType, e.couponType]).toEqual([c.product_type, c.coupon_type]);
     } else {
-      expect(resolve(c.product_type, c.coupon_type)).toEqual([c.arm, c.requires]);
+      expect(resolve(c.product_type, c.coupon_type)).toEqual([c.input_type, c.requires]);
     }
   });
 });
@@ -111,7 +112,7 @@ describe('unmapped types raise (metric 2)', () => {
 
   test('message names product and coupon type', () => {
     const gold = security('GOLD', 'FLOAT');
-    const e = catchUnmapped(() => armFor(gold));
+    const e = catchUnmapped(() => inputTypeFor(gold));
     expect(e.message).toContain('GOLD');
     expect(e.message).toContain('FLOAT');
     expect(() => requiredMarketData(gold)).toThrow(UnmappedProductTypeError);
@@ -120,76 +121,76 @@ describe('unmapped types raise (metric 2)', () => {
   test('unset bond_details reads as UNKNOWN_COUPON_TYPE', () => {
     const corp = new SecurityProto();
     corp.setProductType(ProductTypeProto.CORP_BOND);
-    expect(armFor(corp)).toBe('bond');
+    expect(inputTypeFor(corp)).toBe('bond');
     const fx = new SecurityProto();
     fx.setProductType(ProductTypeProto.FX_SPOT);
-    expect(catchUnmapped(() => armFor(fx)).couponType).toBe('UNKNOWN_COUPON_TYPE');
+    expect(catchUnmapped(() => inputTypeFor(fx)).couponType).toBe('UNKNOWN_COUPON_TYPE');
   });
 });
 
-describe('LM-411: every ProductTypeProto value maps to an arm or raises', () => {
-  const arms = Object.keys(ProductInput.InputCase)
+describe('LM-411: every ProductTypeProto value maps to an input type or raises', () => {
+  const inputTypes = Object.keys(ProductInput.InputCase)
     .filter(k => k !== 'INPUT_NOT_SET')
     .map(k => k.toLowerCase());
 
   test.each(Object.keys(ProductTypeProto))('%s', pt => {
     const s = new SecurityProto();
     s.setProductType(ProductTypeProto[pt as keyof typeof ProductTypeProto]);
-    let arm: string;
+    let inputType: string;
     try {
-      arm = armFor(s);
+      inputType = inputTypeFor(s);
     } catch (e) {
       if (!(e instanceof UnmappedProductTypeError)) throw e;
       expect(e.productType).toBe(pt);
       expect(e.message).toContain(pt);
       return;
     }
-    expect(arms).toContain(arm);
+    expect(inputTypes).toContain(inputType);
   });
 
   test('PRODUCT_TYPE_UNKNOWN raises', () => {
     const s = new SecurityProto();
     s.setProductType(ProductTypeProto.PRODUCT_TYPE_UNKNOWN);
-    expect(catchUnmapped(() => armFor(s)).message).toContain('PRODUCT_TYPE_UNKNOWN');
+    expect(catchUnmapped(() => inputTypeFor(s)).message).toContain('PRODUCT_TYPE_UNKNOWN');
   });
 });
 
-test('bundled valuation_arms equals the source (metric 4)', () => {
+test('bundled valuation_input_types equals the source (metric 4)', () => {
   expect(fs.existsSync(BUNDLED)).toBe(true);
   const bundled = JSON.parse(fs.readFileSync(BUNDLED, 'utf-8'));
-  expect(bundled.valuation_arms).toBeDefined();
-  expect(bundled.valuation_arms).toEqual(sourceSection());
+  expect(bundled.valuation_input_types).toBeDefined();
+  expect(bundled.valuation_input_types).toEqual(sourceSection());
 });
 
 test('parse rejects a requires value outside the vocabulary (metric 5)', () => {
   const section = sourceSection();
   section.entries[0].requires.push('FX_RATE');
-  expect(() => parseValuationArms(section)).toThrow(/FX_RATE/);
+  expect(() => parseValuationInputTypes(section)).toThrow(/FX_RATE/);
 });
 
 test('every leaf is covered (metric 3)', () => {
-  expect(shippedValuationArms().uncoveredLeaves()).toEqual([]);
+  expect(shippedValuationInputTypes().uncoveredLeaves()).toEqual([]);
 });
 
-// ---------- LM-427: measuresForArm ----------
+// ---------- LM-427: measuresForInputType ----------
 
-describe('measuresForArm', () => {
-  const ARMS = ['bond', 'tips', 'frn', 'mbs', 'equity', 'cash'];
-  const fixture: { arms: Record<string, string[]>; unknown_arm: string } = JSON.parse(
-    fs.readFileSync(path.resolve(PROTOS, '../test-fixtures/catalog/measures-for-arm.json'), 'utf-8'),
+describe('measuresForInputType', () => {
+  const INPUT_TYPES = ['bond', 'tips', 'frn', 'mbs', 'equity', 'cash'];
+  const fixture: { input_types: Record<string, string[]>; unknown_input_type: string } = JSON.parse(
+    fs.readFileSync(path.resolve(PROTOS, '../test-fixtures/catalog/measures-for-input-type.json'), 'utf-8'),
   );
-  const names = (arm: string): string[] =>
-    measuresForArm(arm).map(m => Object.keys(MeasureProto).find(k => (MeasureProto as any)[k] === m)!);
+  const names = (inputType: string): string[] =>
+    measuresForInputType(inputType).map(m => Object.keys(MeasureProto).find(k => (MeasureProto as any)[k] === m)!);
 
-  test('fixture lists the six arms, none empty', () => {
-    expect(Object.keys(fixture.arms).sort()).toEqual([...ARMS].sort());
-    for (const arm of ARMS) expect(fixture.arms[arm].length).toBeGreaterThan(0);
+  test('fixture lists the six input types, none empty', () => {
+    expect(Object.keys(fixture.input_types).sort()).toEqual([...INPUT_TYPES].sort());
+    for (const inputType of INPUT_TYPES) expect(fixture.input_types[inputType].length).toBeGreaterThan(0);
   });
 
-  test.each(ARMS)('%s matches the shared fixture', arm => {
-    const got = names(arm);
+  test.each(INPUT_TYPES)('%s matches the shared fixture', inputType => {
+    const got = names(inputType);
     expect(new Set(got).size).toBe(got.length);
-    expect([...got].sort()).toEqual([...fixture.arms[arm]].sort());
+    expect([...got].sort()).toEqual([...fixture.input_types[inputType]].sort());
   });
 
   test('frn and tips', () => {
@@ -200,10 +201,10 @@ describe('measuresForArm', () => {
     expect(names('tips')).toEqual(expect.arrayContaining(['REFERENCE_CPI', 'INDEX_RATIO']));
   });
 
-  test('an unknown arm throws UnmappedProductTypeError', () => {
+  test('an unknown input type throws UnmappedProductTypeError', () => {
     let error: unknown;
     try {
-      measuresForArm(fixture.unknown_arm);
+      measuresForInputType(fixture.unknown_input_type);
     } catch (e) {
       error = e;
     }
@@ -221,16 +222,16 @@ describe('measuresForArm', () => {
   }
 
   test('follows implemented', () => {
-    expect(measuresForArm('frn')).toContain(MeasureProto.DISCOUNT_MARGIN);
-    expect(measuresForArmIn(catalogWith('DISCOUNT_MARGIN', { implemented: false }), 'frn'))
+    expect(measuresForInputType('frn')).toContain(MeasureProto.DISCOUNT_MARGIN);
+    expect(measuresForInputTypeIn(catalogWith('DISCOUNT_MARGIN', { implemented: false }), 'frn'))
       .not.toContain(MeasureProto.DISCOUNT_MARGIN);
   });
 
   test('follows an ancestor node', () => {
     const measures = catalogWith('PAR_YIELD', { implemented: true, applies_to: ['GOV_BOND'] });
-    for (const arm of ['frn', 'bond']) {
-      expect(measuresForArm(arm)).not.toContain(MeasureProto.PAR_YIELD);
-      expect(measuresForArmIn(measures, arm)).toContain(MeasureProto.PAR_YIELD);
+    for (const inputType of ['frn', 'bond']) {
+      expect(measuresForInputType(inputType)).not.toContain(MeasureProto.PAR_YIELD);
+      expect(measuresForInputTypeIn(measures, inputType)).toContain(MeasureProto.PAR_YIELD);
     }
   });
 });

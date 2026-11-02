@@ -1,5 +1,5 @@
-//! LM-408 — the mbs (13), equity (14) and cash (15) ProductInput arms each
-//! round-trip through bytes as the same arm, with the security, the price
+//! LM-408 — the mbs (13), equity (14) and cash (15) ProductInput input types each
+//! round-trip through bytes as the same input type, with the security, the price
 //! and, for mbs, a non-default cost_basis.
 
 mod common;
@@ -28,7 +28,7 @@ fn security(product_type: ProductTypeProto, issuer_name: &str) -> SecurityProto 
 }
 
 #[test]
-fn mbs_arm_round_trips() {
+fn mbs_input_type_round_trips() {
     let mbs = MbsInput {
         security: Some(SecurityProto {
             mbs_extension: Some(MbsExtensionProto {
@@ -67,7 +67,7 @@ fn mbs_arm_round_trips() {
 }
 
 #[test]
-fn equity_arm_round_trips() {
+fn equity_input_type_round_trips() {
     let equity = EquityInput {
         security: Some(security(ProductTypeProto::CommonStock, "equity")),
         unit_price: Some(decimal("187.25")),
@@ -87,7 +87,7 @@ fn equity_arm_round_trips() {
 }
 
 #[test]
-fn cash_arm_round_trips() {
+fn cash_input_type_round_trips() {
     let cash = CashInput {
         security: Some(security(ProductTypeProto::MoneyMarketFund, "cash")),
         unit_price: Some(decimal("1.00")),
