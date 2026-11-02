@@ -459,7 +459,7 @@ impl PositionFilter {
     /// value never throws and drops the row for every operator, except
     /// `ASSET_CLASS` with `NOT_EQUALS`, which keeps it — the same rule as
     /// Java's `PositionFilter.matches`. Here the `ASSET_CLASS` branch runs
-    /// first and handles its own missing value, so the `None` arm below only
+    /// first and handles its own missing value, so the `None` branch below only
     /// sees other fields (LM-284).
     pub fn matches(
         field: FieldProto,

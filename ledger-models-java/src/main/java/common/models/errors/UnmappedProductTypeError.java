@@ -2,11 +2,11 @@ package common.models.errors;
 
 /**
  * Typed input error: the security's product type (and coupon type) has no
- * valuation arm in {@code hierarchy.json} {@code valuation_arms}, or is listed
- * there as {@code unpriced}. Services map it to gRPC INVALID_ARGUMENT.
+ * valuation input type in {@code hierarchy.json} {@code valuation_input_types},
+ * or is listed there as {@code unpriced}. Services map it to gRPC INVALID_ARGUMENT.
  *
  * <p>Despite the name, this is not a {@link java.lang.Error}: the name matches
- * the other bindings (docs/adr/valuation_arms.md). It extends
+ * the other bindings (docs/adr/valuation_input_types.md). It extends
  * {@link IllegalArgumentException}, like {@link ModelValidationException}, and
  * is distinct from {@link common.models.errors.transaction.TransactionProcessingException},
  * which stays for state errors. See docs/adr/typed-input-errors.md.
@@ -17,7 +17,7 @@ public class UnmappedProductTypeError extends IllegalArgumentException {
 
     /** @param productType ProductTypeProto name; @param couponType CouponTypeProto name */
     public UnmappedProductTypeError(String productType, String couponType) {
-        super("No valuation arm for product_type " + productType + ", coupon_type " + couponType);
+        super("No valuation input type for product_type " + productType + ", coupon_type " + couponType);
         this.productType = productType;
         this.couponType = couponType;
     }

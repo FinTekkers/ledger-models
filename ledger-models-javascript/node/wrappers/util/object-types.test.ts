@@ -586,7 +586,7 @@ const EXCLUSIONS: Record<string, string> = {
   'object-types.stampOwn': 'the stamping helper itself (tested above)',
   'price_rules.validate': 'local stand-in for null input; never returned or sent',
   'price_rules.requireValid': 'local stand-in for null input; never returned or sent',
-  'product_inputs.checkProductInput': 'local stand-in SecurityProto for an arm with no security; never returned or sent',
+  'product_inputs.checkProductInput': 'local stand-in SecurityProto for an input type with no security; never returned or sent',
   'product_inputs.forSecurity': "builds a ProductInput, which has no object_type, around the caller's security; flagged only for calling checkProductInput",
   'Security.create': "picks the wrapper class for the caller's proto (pass-through ruling)",
   'Position.fromJSON': DESERIALIZES,

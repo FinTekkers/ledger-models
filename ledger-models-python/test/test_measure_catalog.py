@@ -7,8 +7,8 @@ catalog entry (LM-402, which also added PROFIT_LOSS), and every entry says
 what computes it and what it depends on (LM-403). LM-425 corrects applies_to
 and implemented to match valuation-service: every change is listed, with its
 engine file, in test-fixtures/catalog/lm-425-changes.json; LM-427 adds one
-row (PROFIT_LOSS_PERCENT off TREASURY_FRN) and reads the per-arm lists through
-product_inputs.measures_for_arm."""
+row (PROFIT_LOSS_PERCENT off TREASURY_FRN) and reads the per-input-type lists through
+product_inputs.measures_for_input_type."""
 import json
 from pathlib import Path
 
@@ -16,7 +16,7 @@ import pytest
 
 from fintekkers.models.position import measure_pb2
 from fintekkers.models.security import product_type_pb2
-from fintekkers.wrappers.models.security.product_inputs import _measures_for_arm_in, measures_for_arm
+from fintekkers.wrappers.models.security.product_inputs import _measures_for_input_type_in, measures_for_input_type
 
 _PYTHON = Path(__file__).resolve().parents[1]
 SOURCE = _PYTHON.parent / "ledger-models-protos" / "catalog" / "measures.json"
@@ -124,7 +124,7 @@ def test_lm403_dependency_values():
 LM425_BEFORE = json.loads((_REPO / "test-fixtures" / "catalog" / "lm-425-before.json").read_text())["measures"]
 LM425_CHANGES = json.loads((_REPO / "test-fixtures" / "catalog" / "lm-425-changes.json").read_text())["changes"]
 LM425_FIELDS = ("applies_to", "implemented")
-ARMS = ("bond", "tips", "frn", "mbs", "equity", "cash")
+INPUT_TYPES = ("bond", "tips", "frn", "mbs", "equity", "cash")
 
 
 def test_lm425_catalog_edits_touch_only_applies_to_and_implemented():
@@ -156,22 +156,26 @@ def test_lm425_every_catalog_change_is_listed_with_its_engine_file():
         assert row["engine_file"].startswith("src/engine/") and row["reason"], key
 
 
-def _by_arm(measures_for):
-    return {arm: {measure_pb2.MeasureProto.Name(m) for m in measures_for(arm)} for arm in ARMS}
+def _by_input_type(measures_for):
+    return {
+        input_type: {measure_pb2.MeasureProto.Name(m) for m in measures_for(input_type)}
+        for input_type in INPUT_TYPES
+    }
 
 
-def test_measures_by_arm_helper_is_gone():
-    # LM-427: the public product_inputs.measures_for_arm replaced it.
-    assert "_measures_by_arm" not in globals()
+def test_measures_by_helper_is_gone():
+    # LM-427: the public product_inputs.measures_for_input_type replaced the
+    # test-local _measures_by_* helper.
+    assert not [name for name in globals() if name.startswith("_measures_by_")]
 
 
-def test_lm425_changes_per_arm_are_only_the_listed_ones():
-    before = _by_arm(lambda arm: _measures_for_arm_in(LM425_BEFORE, arm))
-    after = _by_arm(measures_for_arm)
+def test_lm425_changes_per_input_type_are_only_the_listed_ones():
+    before = _by_input_type(lambda input_type: _measures_for_input_type_in(LM425_BEFORE, input_type))
+    after = _by_input_type(measures_for_input_type)
     changes = {
-        arm: (before[arm] - after[arm], after[arm] - before[arm])
-        for arm in before
-        if before[arm] != after[arm]
+        input_type: (before[input_type] - after[input_type], after[input_type] - before[input_type])
+        for input_type in before
+        if before[input_type] != after[input_type]
     }
     assert changes == {
         "frn": ({"YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE",

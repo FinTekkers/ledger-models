@@ -76,7 +76,7 @@ class ProductInputBuildersTest {
     }
 
     static Stream<JsonObject> successCases() throws IOException {
-        return cases().stream().filter(c -> c.has("arm"));
+        return cases().stream().filter(c -> c.has("input_type"));
     }
 
     static Stream<JsonObject> errorCases() throws IOException {
@@ -137,29 +137,29 @@ class ProductInputBuildersTest {
         assertEquals(error.get("type").getAsString(), raised.getClass().getSimpleName());
         if (raised instanceof MissingMarketDataError) {
             MissingMarketDataError m = (MissingMarketDataError) raised;
-            assertEquals(error.get("arm").getAsString(), m.getArm());
+            assertEquals(error.get("input_type").getAsString(), m.getInputType());
             assertEquals(error.get("kind").getAsString(), m.getKind().name());
             assertEquals(error.get("field").getAsString(), m.getField());
-            assertTrue(m.getMessage().contains(m.getArm()) && m.getMessage().contains(m.getKind().name()), m.getMessage());
+            assertTrue(m.getMessage().contains(m.getInputType()) && m.getMessage().contains(m.getKind().name()), m.getMessage());
         }
     }
 
     // ---- forSecurity
 
     @Test
-    void fixturesCoverEveryArmInValuationArms() throws IOException {
+    void fixturesCoverEveryInputTypeInValuationInputTypes() throws IOException {
         JsonObject root;
         try (InputStream in = ProductInputs.class.getResourceAsStream("/hierarchy.json");
              Reader r = new InputStreamReader(in, StandardCharsets.UTF_8)) {
             root = new Gson().fromJson(r, JsonObject.class);
         }
-        Set<String> arms = new TreeSet<>();
-        for (JsonElement e : root.getAsJsonObject("valuation_arms").getAsJsonArray("entries")) {
-            arms.add(e.getAsJsonObject().get("arm").getAsString());
+        Set<String> inputTypes = new TreeSet<>();
+        for (JsonElement e : root.getAsJsonObject("valuation_input_types").getAsJsonArray("entries")) {
+            inputTypes.add(e.getAsJsonObject().get("input_type").getAsString());
         }
-        List<String> fixtureArms = successCases().map(c -> c.get("arm").getAsString()).collect(Collectors.toList());
-        assertEquals(arms, new TreeSet<>(fixtureArms));
-        assertEquals(arms.size(), fixtureArms.size(), "one success fixture per arm");
+        List<String> fixtureInputTypes = successCases().map(c -> c.get("input_type").getAsString()).collect(Collectors.toList());
+        assertEquals(inputTypes, new TreeSet<>(fixtureInputTypes));
+        assertEquals(inputTypes.size(), fixtureInputTypes.size(), "one success fixture per input type");
     }
 
     @ParameterizedTest
@@ -168,7 +168,7 @@ class ProductInputBuildersTest {
         assertEquals(c.get("expected_hex").getAsString(), HEX.formatHex(forSecurity(c).toByteArray()), c.get("name").getAsString());
     }
 
-    /** R1: the arm is armFor's, and each field is the input it came from. */
+    /** R1: the input type is inputTypeFor's, and each field is the input it came from. */
     @ParameterizedTest
     @MethodSource("successCases")
     void forSecurityFields(JsonObject c) throws IOException {
@@ -176,22 +176,22 @@ class ProductInputBuildersTest {
         PriceProto price = price(c);
         MarketData md = marketData(c);
         ProductInput out = ProductInputs.forSecurity(security, price, md);
-        FieldDescriptor armField = ProductInput.getDescriptor().findFieldByNumber(out.getInputCase().getNumber());
-        String arm = armField.getName();
-        assertEquals(ProductInputs.armFor(security), arm);
-        assertEquals(c.get("arm").getAsString(), arm);
+        FieldDescriptor inputTypeField = ProductInput.getDescriptor().findFieldByNumber(out.getInputCase().getNumber());
+        String inputType = inputTypeField.getName();
+        assertEquals(ProductInputs.inputTypeFor(security), inputType);
+        assertEquals(c.get("input_type").getAsString(), inputType);
 
-        Message body = (Message) out.getField(armField);
+        Message body = (Message) out.getField(inputTypeField);
         Descriptor d = body.getDescriptorForType();
         assertEquals(security, body.getField(d.findFieldByName("security")));
-        String priceField = UNIT_PRICED.contains(arm) ? "unit_price" : "clean_price";
-        String otherField = UNIT_PRICED.contains(arm) ? "clean_price" : "unit_price";
+        String priceField = UNIT_PRICED.contains(inputType) ? "unit_price" : "clean_price";
+        String otherField = UNIT_PRICED.contains(inputType) ? "clean_price" : "unit_price";
         assertEquals(price.getPrice(), body.getField(d.findFieldByName(priceField)));
         assertEquals(null, d.findFieldByName(otherField));
         FieldDescriptor costBasis = d.findFieldByName("cost_basis");
         if (costBasis != null) assertFalse(body.hasField(costBasis), "cost_basis is never set");
-        if (arm.equals("tips")) assertEquals(md.cpi().orElseThrow(), out.getTips().getCpi());
-        if (arm.equals("frn")) {
+        if (inputType.equals("tips")) assertEquals(md.cpi().orElseThrow(), out.getTips().getCpi());
+        if (inputType.equals("frn")) {
             assertEquals(md.fixings(), out.getFrn().getFixingsList());
             assertEquals(md.curve().orElseThrow(), out.getFrn().getCurve());
         }
@@ -213,7 +213,7 @@ class ProductInputBuildersTest {
         SecurityProto security = security(c);
         PriceProto price = price(c);
         MissingMarketDataError e = assertThrows(MissingMarketDataError.class, () -> ProductInputs.forSecurity(security, price, null));
-        assertEquals("tips", e.getArm());
+        assertEquals("tips", e.getInputType());
         assertEquals(MarketDataKind.CPI_U, e.getKind());
     }
 
@@ -254,7 +254,7 @@ class ProductInputBuildersTest {
     }
 
     @Test
-    void typedRejectsAnArmArmForDidNotPick() throws IOException {
+    void typedRejectsAnInputTypeInputTypeForDidNotPick() throws IOException {
         JsonObject c = fixture("tips");
         ProductInput wrong = ProductInput.newBuilder()
                 .setBond(BondInput.newBuilder().setSecurity(security(c)).setCleanPrice(price(c).getPrice())).build();
@@ -267,7 +267,7 @@ class ProductInputBuildersTest {
     }
 
     @Test
-    void typedRejectsAnInputWithNoArm() throws IOException {
+    void typedRejectsAnInputWithNoInputType() throws IOException {
         JsonObject c = fixture("bond");
         LocalTimestampProto asof = asof(c);
         PositionProto position = position(c);

@@ -474,8 +474,8 @@ describe('LM-389 bill_issue_date round-trip', () => {
         expect(parsed.getBillMaturityDate().toObject()).toEqual(date(2026, 10, 22).toObject());
     });
 });
-// ── mbs, equity and cash arms (LM-408) ──────────────────────────────────────
-// Each new arm round-trips through bytes as the same arm, with the security,
+// ── mbs, equity and cash input types (LM-408) ──────────────────────────────────────
+// Each new input type round-trips through bytes as the same input type, with the security,
 // the price and, for mbs, a non-default cost_basis.
 function security(productType, issuerName) {
     const s = new security_pb_1.SecurityProto();
@@ -483,7 +483,7 @@ function security(productType, issuerName) {
     s.setIssuerName(issuerName);
     return s;
 }
-describe('LM-408 ProductInput arms round-trip', () => {
+describe('LM-408 ProductInput input types round-trip', () => {
     test('mbs = 13 survives with security, clean_price and cost_basis', () => {
         const ext = new security_pb_1.MbsExtensionProto();
         ext.setPoolNumber('FN AS1234');

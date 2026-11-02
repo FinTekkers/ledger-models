@@ -92,7 +92,7 @@ Equivalently: `git status` should be empty after `./compile.sh --skip-integratio
 Prerequisites:
 
 - `cd ledger-models-javascript && npm ci` — installs `grpc-tools` into `node_modules/`.
-- **Mac ARM only**: install Rosetta 2 once. The bundled `grpc-tools` binaries are x86_64.
+- **Apple Silicon Macs only**: install Rosetta 2 once. The bundled `grpc-tools` binaries are x86_64.
 
   ```
   softwareupdate --install-rosetta --agree-to-license

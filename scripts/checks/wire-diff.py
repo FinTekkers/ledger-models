@@ -297,8 +297,8 @@ LM408 = {
 
 
 def lm408(key: str, old, new, head: dict) -> bool:
-    """LM-408: MbsInput, EquityInput and CashInput, and the ProductInput arms
-    mbs = 13, equity = 14 and cash = 15 added. Additions of exactly these
+    """LM-408: MbsInput, EquityInput and CashInput, and the ProductInput input
+    types mbs = 13, equity = 14 and cash = 15 added. Additions of exactly these
     only; bond, tips and frn keep their numbers, names and types, and
     MbsInput 10-19 stay unused."""
     return old is None and key in LM408 and new == LM408[key]

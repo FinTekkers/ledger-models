@@ -289,7 +289,7 @@ def test_lm376_exemptions_skip_only_what_they_name(tmp_path):
 def test_lm376_lists_name_exact_files_only():
     assert "exempt_dirs" not in LM376 and "descriptor_suffixes" not in LM376
     assert set(LM376["exempt_files"]) == {
-        "docs/adr/product_input_engine_arms.md", "docs/release-notes/lm-411.md",
+        "docs/adr/product_input_engine_input_types.md", "docs/release-notes/lm-411.md",
         f"{FIXTURE_DIR}/lm-376.json", "ledger-models-python/test/requests/test_removed_fields_scan.py",
     }
     for path in [*LM376["exempt_files"], *LM376["descriptor_files"], *LM376["homonyms"]["files"]]:

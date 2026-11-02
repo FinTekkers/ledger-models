@@ -2,7 +2,7 @@
 is exactly bond, tips, frn, mbs, equity and cash; bond, tips and frn keep their
 numbers, names and types. EquityInput and CashInput have exactly security and
 unit_price; MbsInput has exactly security, clean_price and cost_basis, with
-10-19 unused. Each new arm round-trips through bytes as the same arm, with its
+10-19 unused. Each new input type round-trips through bytes as the same input type, with its
 values.
 
 Expectations come from test-fixtures/field-changes/lm-408.json, the same file
@@ -38,9 +38,9 @@ def _actual(descriptor) -> dict:
     return {f.number: (f.name, _type_name(f)) for f in descriptor.fields}
 
 
-def test_oneof_is_exactly_the_kept_and_added_arms():
+def test_oneof_is_exactly_the_kept_and_added_input_types():
     name = f".{PRODUCT_INPUT.full_name}"
-    expected = _expected(name, SPEC["kept_arms"] + SPEC["added"])
+    expected = _expected(name, SPEC["kept_input_types"] + SPEC["added"])
     assert sorted(expected) == [1, 2, 8, 13, 14, 15]
     assert _actual(PRODUCT_INPUT) == expected
     oneof = PRODUCT_INPUT.oneofs_by_name["input"]
@@ -79,7 +79,7 @@ def _roundtrip(original: product_inputs_pb2.ProductInput) -> product_inputs_pb2.
     return product_inputs_pb2.ProductInput.FromString(original.SerializeToString())
 
 
-def test_mbs_arm_round_trips():
+def test_mbs_input_type_round_trips():
     security = security_pb2.SecurityProto(
         product_type=product_type_pb2.MORTGAGE_BACKED,
         mbs_extension=security_pb2.MbsExtensionProto(pool_number="FN AS1234", current_factor=_decimal("0.8125")),
@@ -107,22 +107,22 @@ def test_mbs_arm_round_trips():
     assert parsed == original
 
 
-@pytest.mark.parametrize("arm,message,product_type,price", [
+@pytest.mark.parametrize("input_type,message,product_type,price", [
     ("equity", product_inputs_pb2.EquityInput, product_type_pb2.COMMON_STOCK, "187.25"),
     ("cash", product_inputs_pb2.CashInput, product_type_pb2.MONEY_MARKET_FUND, "1.00"),
 ])
-def test_unit_priced_arm_round_trips(arm, message, product_type, price):
-    original = product_inputs_pb2.ProductInput(**{arm: message(
-        security=security_pb2.SecurityProto(product_type=product_type, issuer_name=arm),
+def test_unit_priced_input_type_round_trips(input_type, message, product_type, price):
+    original = product_inputs_pb2.ProductInput(**{input_type: message(
+        security=security_pb2.SecurityProto(product_type=product_type, issuer_name=input_type),
         unit_price=_decimal(price),
     )})
 
     parsed = _roundtrip(original)
 
-    assert parsed.WhichOneof("input") == arm
-    decoded = getattr(parsed, arm)
+    assert parsed.WhichOneof("input") == input_type
+    decoded = getattr(parsed, input_type)
     assert decoded.HasField("security")
     assert decoded.security.product_type == product_type
-    assert decoded.security.issuer_name == arm
+    assert decoded.security.issuer_name == input_type
     assert _text(decoded.unit_price) == price
     assert parsed == original

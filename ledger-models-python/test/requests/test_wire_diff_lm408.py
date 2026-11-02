@@ -31,21 +31,21 @@ def test_the_thirteen_additions_are_allowed():
         assert wire_diff.lm408(_key(f), None, f"{f['type']} {f['name']}", {}), _key(f)
 
 
-def test_the_three_arms_are_13_14_and_15():
-    arms = [(f["number"], f["name"], f["type"]) for f in SPEC["added"] if f["message"] == PRODUCT_INPUT]
-    assert arms == [
+def test_the_three_input_types_are_13_14_and_15():
+    input_types = [(f["number"], f["name"], f["type"]) for f in SPEC["added"] if f["message"] == PRODUCT_INPUT]
+    assert input_types == [
         (13, "mbs", f"{VALUATION}.MbsInput"),
         (14, "equity", f"{VALUATION}.EquityInput"),
         (15, "cash", f"{VALUATION}.CashInput"),
     ]
 
 
-def test_a_retyped_existing_arm_is_rejected():
+def test_a_retyped_existing_input_type_is_rejected():
     old = f"{VALUATION}.BondInput bond"
     assert not wire_diff.lm408(f"field {PRODUCT_INPUT} = 1", old, f"{VALUATION}.MbsInput bond", {})
 
 
-def test_a_deleted_existing_arm_is_rejected():
+def test_a_deleted_existing_input_type_is_rejected():
     assert not wire_diff.lm408(f"field {PRODUCT_INPUT} = 8", f"{VALUATION}.FrnInput frn", None, {})
 
 
@@ -53,12 +53,12 @@ def test_an_mbs_field_in_10_to_19_is_rejected():
     assert not wire_diff.lm408(f"field {VALUATION}.MbsInput = 10", None, f"{DECIMAL} psa_speed", {})
 
 
-def test_arm_13_with_the_wrong_name_or_type_is_rejected():
+def test_input_type_13_with_the_wrong_name_or_type_is_rejected():
     assert not wire_diff.lm408(f"field {PRODUCT_INPUT} = 13", None, f"{VALUATION}.MbsInput amortizing_bond", {})
     assert not wire_diff.lm408(f"field {PRODUCT_INPUT} = 13", None, f"{VALUATION}.BondInput mbs", {})
 
 
-def test_another_arm_number_is_rejected():
+def test_another_input_type_number_is_rejected():
     assert not wire_diff.lm408(f"field {PRODUCT_INPUT} = 4", None, f"{VALUATION}.MbsInput mbs", {})
 
 

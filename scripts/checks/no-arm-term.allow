@@ -1,0 +1,97 @@
+# no-arm-term.sh allowlist (LM-418): <path><TAB><text>. A hit is allowed
+# when its line contains <text>, or <text> is * for the whole file. Keep this
+# to the deprecated aliases, their notes and tests, the legacy-key loader
+# fallback, and the LM-418 release note and versioning row. Remove the alias
+# and fallback lines with the aliases.
+
+# The LM-418 checks themselves.
+scripts/checks/no-arm-term.sh	*
+scripts/checks/no-arm-term.allow	*
+scripts/checks/no-arm-term.test.sh	*
+scripts/checks/hierarchy-rename-only.py	*
+scripts/checks/test.sh	echo "== no arm term (LM-418)"
+scripts/checks/test.sh	# "input type", never "arm", outside the deprecated aliases (allowlisted).
+scripts/checks/test.sh	scripts/checks/no-arm-term.
+scripts/checks/test.sh	# valuation_arms key; later items change the wire through wire-diff.py.
+scripts/checks/test.sh	grep -q '"valuation_arms"'
+
+# Release note and the schema_version 1.4 row.
+docs/release-notes/lm-418.md	*
+ledger-models-protos/registry-versioning.md	(`schema_version` 1.4, LM-418)
+
+# Java: aliases, their notes, the legacy-key fallback.
+ledger-models-java/src/main/java/common/models/errors/MissingMarketDataError.java	public String getArm() {
+ledger-models-java/src/main/java/common/models/security/ProductInputs.java	LEGACY_SECTION = "valuation_arms";
+ledger-models-java/src/main/java/common/models/security/ProductInputs.java	LEGACY_ENTRY_KEY = "arm";
+ledger-models-java/src/main/java/common/models/security/ProductInputs.java	public static String armFor(SecurityProto security) {
+ledger-models-java/src/main/java/common/models/security/ProductInputs.java	public static List<MeasureProto> measuresForArm(String arm) {
+ledger-models-java/src/main/java/common/models/security/ProductInputs.java	return measuresForInputType(arm);
+ledger-models-java/src/main/java/common/models/security/ProductInputs.java	{@code valuation_arms} key instead loads the same way (LM-418)
+ledger-models-java/src/main/java/common/models/security/ProductInputs.java	release the legacy {@code arm} (LM-418)
+ledger-models-java/src/test/java/common/models/security/ProductInputsDeprecatedAliasesTest.java	*
+
+# Python.
+ledger-models-python/fintekkers/wrappers/models/errors.py	arm: Optional[str] = None):
+ledger-models-python/fintekkers/wrappers/models/errors.py	`arm=` is the
+ledger-models-python/fintekkers/wrappers/models/errors.py	if arm is not None:
+ledger-models-python/fintekkers/wrappers/models/errors.py	MissingMarketDataError(arm=...) is deprecated; use input_type
+ledger-models-python/fintekkers/wrappers/models/errors.py	takes input_type or arm, not both
+ledger-models-python/fintekkers/wrappers/models/errors.py	input_type = arm
+ledger-models-python/fintekkers/wrappers/models/errors.py	def arm(self) -> str:
+ledger-models-python/fintekkers/wrappers/models/errors.py	MissingMarketDataError.arm is deprecated; use input_type
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	LM-418 renamed "arm" to "input type". arm_for and measures_for_arm stay one
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	valuation_arms / arm keys.
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	_LEGACY_SECTION = "valuation_arms"
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	_LEGACY_ENTRY_KEY = "arm"
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	valuation_arms key instead loads the same way (LM-418)
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	def arm_for(security: SecurityProto) -> str:
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	arm_for is deprecated; use input_type_for
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	def measures_for_arm(arm: str) -> List[int]:
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	measures_for_arm is deprecated; use measures_for_input_type
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	return measures_for_input_type(arm)
+ledger-models-python/fintekkers/wrappers/models/security/product_inputs.py	the legacy arm (LM-418)
+ledger-models-python/test/wrappers/models/security/test_product_inputs_deprecated.py	*
+ledger-models-python/test/wrappers/test_builders_stamp.py	deprecated alias of input_type_for (LM-418)
+ledger-models-python/test/wrappers/test_builders_stamp.py	deprecated alias of measures_for_input_type (LM-418)
+
+# JS/TS (the committed tsc output is not scanned).
+ledger-models-javascript/node/wrappers/models/errors.ts	get arm(): string {
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	LM-418 renamed "arm" to "input type". The arm-named exports stay one release
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	valuation_arms / arm keys.
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	const LEGACY_SECTION = 'valuation_arms';
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	const LEGACY_ENTRY_KEY = 'arm';
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	readonly arm: string;
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	get arm(): string { return inputType; },
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	the legacy arm (LM-418)
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	valuation_arms key instead loads the same way (LM-418)
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	export function armFor(security: SecurityProto): string {
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	export function measuresForArm(arm: string): MeasureProto[] {
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	return measuresForInputType(arm);
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	export function measuresForArmIn(measures: ReadonlyArray<unknown>, arm: string): MeasureProto[] {
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	return measuresForInputTypeIn(measures, arm);
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	export const ValuationArms = ValuationInputTypes;
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	export type ValuationArms = ValuationInputTypes;
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	export function parseValuationArms(section: unknown): ValuationInputTypes {
+ledger-models-javascript/node/wrappers/models/security/product_inputs.ts	export function shippedValuationArms(): ValuationInputTypes {
+ledger-models-javascript/node/wrappers/models/security/product_inputs.deprecated.test.ts	*
+
+# Rust: aliases, the two kept `arm` fields (no field aliases in Rust) and
+# their construction sites, the legacy-key fallback.
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	//! LM-418 renamed "arm" to "input type". The arm-named items stay one release
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	//! `valuation_arms` / `arm` keys. Rust has no field aliases, so the two `arm`
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	const LEGACY_SECTION: &str = "valuation_arms";
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	const LEGACY_ENTRY_KEY: &str = "arm";
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	    pub arm: String,
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	        &self.arm
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	pub type Arm = InputTypeEntry;
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	let entry = InputTypeEntry { arm: input_type.to_string(), requires: requires.clone() };
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	/// the legacy `arm` (LM-418)
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	/// `valuation_arms` key instead loads the same way (LM-418)
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	pub type ValuationArms = ValuationInputTypes;
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	pub fn parse_valuation_arms(json: &str) -> Result<ValuationInputTypes, ProductInputError> {
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	pub fn shipped_valuation_arms() -> Result<&'static ValuationInputTypes, ProductInputError> {
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	pub fn arm_for(security: &SecurityProto) -> Result<&'static str, ProductInputError> {
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	pub fn measures_for_arm(arm: &str) -> Result<Vec<MeasureProto>, ProductInputError> {
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	    measures_for_input_type(arm)
+ledger-models-rust/fintekkers/wrappers/models/product_inputs.rs	            arm: input_type.to_string(),
+ledger-models-rust/tests/product_inputs_deprecated_test.rs	*

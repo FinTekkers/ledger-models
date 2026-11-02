@@ -12,13 +12,13 @@ package fintekkers.requests.valuation;
  * is repeated on this message.
  * G8 (valuation-service known gap 8, tracked as VS-71): MORTGAGE_BACKED is
  * valued as a bullet fixed-rate bond (no amortisation or prepayment), because
- * it descends from BOND. The mbs arm gives MBS its own route, but it still
+ * it descends from BOND. The mbs input type gives MBS its own route, but it still
  * uses the bond engine, so the numbers are unchanged until a real MBS engine
  * replaces it.
  * Fields 10-19 are kept free for later prepayment and curve inputs. Do not
  * use them for anything else.
  * Settlement date is read from ValuationRequestProto.asof_datetime.
- * See docs/adr/product_input_engine_arms.md.
+ * See docs/adr/product_input_engine_input_types.md.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
  *
@@ -385,13 +385,13 @@ private static final long serialVersionUID = 0L;
    * is repeated on this message.
    * G8 (valuation-service known gap 8, tracked as VS-71): MORTGAGE_BACKED is
    * valued as a bullet fixed-rate bond (no amortisation or prepayment), because
-   * it descends from BOND. The mbs arm gives MBS its own route, but it still
+   * it descends from BOND. The mbs input type gives MBS its own route, but it still
    * uses the bond engine, so the numbers are unchanged until a real MBS engine
    * replaces it.
    * Fields 10-19 are kept free for later prepayment and curve inputs. Do not
    * use them for anything else.
    * Settlement date is read from ValuationRequestProto.asof_datetime.
-   * See docs/adr/product_input_engine_arms.md.
+   * See docs/adr/product_input_engine_input_types.md.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
    *

@@ -58,7 +58,7 @@ from fintekkers.wrappers.models.security import product_hierarchy
 from fintekkers.wrappers.models.security.product_inputs import (
     MarketData,
     MarketDataKind,
-    arm_for,
+    input_type_for,
     for_security,
 )
 from fintekkers.wrappers.models.security.security import Security
@@ -82,7 +82,7 @@ def _cases() -> list:
     return [_load(p) for p in sorted(FIXTURES.glob("*.json"))]
 
 
-SUCCESS = [c for c in _cases() if "arm" in c]
+SUCCESS = [c for c in _cases() if "input_type" in c]
 ERRORS = [c for c in _cases() if "error" in c]
 
 
@@ -119,20 +119,20 @@ def _bytes(message) -> str:
 def _assert_error(raised: Exception, error: dict) -> None:
     assert type(raised).__name__ == error["type"]
     if error["type"] == "MissingMarketDataError":
-        assert raised.arm == error["arm"]
+        assert raised.input_type == error["input_type"]
         assert raised.kind == error["kind"]
-        assert error["arm"] in str(raised) and error["kind"] in str(raised)
+        assert error["input_type"] in str(raised) and error["kind"] in str(raised)
         assert raised.field == error["field"]
 
 
 # --- for_security -------------------------------------------------------------
 
-def test_fixtures_cover_every_arm_in_valuation_arms():
-    """Every arm the synced hierarchy.json mirror names has a success fixture."""
-    section = product_hierarchy.registry_section("valuation_arms")
-    arms = {entry["arm"] for entry in section["entries"]}
-    assert {c["arm"] for c in SUCCESS} == arms
-    assert len(SUCCESS) == len(arms), "one success fixture per arm"
+def test_fixtures_cover_every_input_type_in_valuation_input_types():
+    """Every input type the synced hierarchy.json mirror names has a success fixture."""
+    section = product_hierarchy.registry_section("valuation_input_types")
+    input_types = {entry["input_type"] for entry in section["entries"]}
+    assert {c["input_type"] for c in SUCCESS} == input_types
+    assert len(SUCCESS) == len(input_types), "one success fixture per input type"
 
 
 @pytest.mark.parametrize("case", SUCCESS, ids=lambda c: c["name"])
@@ -143,23 +143,23 @@ def test_for_security_matches_fixture_bytes(case):
 
 @pytest.mark.parametrize("case", SUCCESS, ids=lambda c: c["name"])
 def test_for_security_fields(case):
-    """R1: the arm is arm_for's, and each field is the input it came from."""
+    """R1: the input type is input_type_for's, and each field is the input it came from."""
     security, price, md = _inputs(case)
     out = for_security(security, price, md)
-    arm = out.WhichOneof("input")
-    assert arm == arm_for(security) == case["arm"]
-    body = getattr(out, arm)
+    input_type = out.WhichOneof("input")
+    assert input_type == input_type_for(security) == case["input_type"]
+    body = getattr(out, input_type)
     assert body.security == security
-    if arm in UNIT_PRICED:
+    if input_type in UNIT_PRICED:
         assert body.unit_price == price.price
         assert "clean_price" not in body.DESCRIPTOR.fields_by_name
     else:
         assert body.clean_price == price.price
         assert "unit_price" not in body.DESCRIPTOR.fields_by_name
         assert not body.HasField("cost_basis")
-    if arm == "tips":
+    if input_type == "tips":
         assert body.cpi == md.cpi
-    if arm == "frn":
+    if input_type == "frn":
         assert list(body.fixings) == list(md.fixings)
         assert body.curve == md.curve
 
@@ -178,7 +178,7 @@ def test_for_security_without_market_data_raises_missing_cpi():
     security, price, _ = _inputs(case)
     with pytest.raises(MissingMarketDataError) as raised:
         for_security(security, price)
-    assert (raised.value.arm, raised.value.kind) == ("tips", "CPI_U")
+    assert (raised.value.input_type, raised.value.kind) == ("tips", "CPI_U")
 
 
 # --- ValuationRequests.typed ---------------------------------------------------
@@ -213,7 +213,7 @@ def test_typed_requires_position():
     assert raised.value.field == "position_input"
 
 
-def test_typed_rejects_an_arm_arm_for_did_not_pick():
+def test_typed_rejects_an_input_type_input_type_for_did_not_pick():
     case = _load(FIXTURES / "tips.json")
     security, price, _ = _inputs(case)
     asof, position, measures = _typed_args(case)
@@ -224,7 +224,7 @@ def test_typed_rejects_an_arm_arm_for_did_not_pick():
     assert raised.value.field == "product_input.bond"
 
 
-def test_typed_rejects_an_input_with_no_arm():
+def test_typed_rejects_an_input_with_no_input_type():
     case = _load(FIXTURES / "bond.json")
     asof, position, measures = _typed_args(case)
     with pytest.raises(ModelValidationError) as raised:
@@ -364,7 +364,7 @@ def _write_fixtures():
         "equity": (_security(5, ProductTypeProto.COMMON_STOCK), _price(105, "187.25"), MarketData()),
         "cash": (_security(6, ProductTypeProto.MONEY_MARKET_FUND), _price(106, "1.00"), MarketData()),
     }
-    missing = {"type": "MissingMarketDataError", "arm": "tips", "kind": "CPI_U", "field": "tips.cpi"}
+    missing = {"type": "MissingMarketDataError", "input_type": "tips", "kind": "CPI_U", "field": "tips.cpi"}
     tips_price = _price(102, "101.5")
     fx = _security(7, ProductTypeProto.FX_SPOT)
     errors = {
@@ -398,7 +398,7 @@ def _write_fixtures():
     for name, (security, price, md) in success.items():
         product_input = for_security(security, price, md)
         request = ValuationRequests.typed(asof, product_input, position, [MeasureProto.Value(m) for m in measures])
-        case = {"_doc": doc, **inputs(security, price, md), "arm": name, "expected_hex": _bytes(product_input),
+        case = {"_doc": doc, **inputs(security, price, md), "input_type": name, "expected_hex": _bytes(product_input),
                 "typed": {**typed_args, "expected_hex": _bytes(request)}}
         (FIXTURES / f"{name}.json").write_text(json.dumps(case, indent=2) + "\n")
     for name, (security, price, md, error, product_input) in errors.items():

@@ -77,7 +77,7 @@ mod tests {
     }
 
     /// Pin the per-proto-variant table. A future proto enum addition
-    /// will require a deliberate arm in from_proto (the match is
+    /// will require a deliberate case in from_proto (the match is
     /// exhaustive on `CouponFrequencyProto`).
     #[test]
     fn from_proto_pins_table() {

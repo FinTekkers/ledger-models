@@ -8,7 +8,7 @@ package fintekkers.requests.valuation;
  * ═══════════════════════════════════════════════════════════════════════════
  * EquityInput — valuation request for an equity or fund priced per share
  * (LM-408). Unit-priced: market value is unit_price x quantity, no accrual.
- * See docs/adr/product_input_engine_arms.md.
+ * See docs/adr/product_input_engine_input_types.md.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
  *
@@ -311,7 +311,7 @@ private static final long serialVersionUID = 0L;
    * ═══════════════════════════════════════════════════════════════════════════
    * EquityInput — valuation request for an equity or fund priced per share
    * (LM-408). Unit-priced: market value is unit_price x quantity, no accrual.
-   * See docs/adr/product_input_engine_arms.md.
+   * See docs/adr/product_input_engine_input_types.md.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
    *
