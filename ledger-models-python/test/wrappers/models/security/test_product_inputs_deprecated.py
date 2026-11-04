@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 
+from fintekkers.models.position.measure_pb2 import MeasureProto
 from fintekkers.models.price.price_pb2 import PriceProto
 from fintekkers.models.security.coupon_type_pb2 import CouponTypeProto
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
@@ -85,6 +86,17 @@ def test_measures_for_arm_matches_measures_for_input_type(input_type):
     expected = _outcome(lambda: measures_for_input_type(input_type))
     with pytest.deprecated_call(match="measures_for_input_type"):
         assert _outcome(lambda: measures_for_arm(input_type)) == expected
+
+
+def test_measures_for_arm_inflation_compensation_tips_only():
+    # LM-434: valuation-service computes it for tips (VS-155).
+    others = set(MEASURES["input_types"]) - {"tips"}
+    assert len(others) == 5
+    with pytest.deprecated_call(match="measures_for_input_type"):
+        assert MeasureProto.INFLATION_COMPENSATION in measures_for_arm("tips")
+    for arm in others:
+        with pytest.deprecated_call(match="measures_for_input_type"):
+            assert MeasureProto.INFLATION_COMPENSATION not in measures_for_arm(arm), arm
 
 
 def test_missing_market_data_arm_matches_input_type():

@@ -305,6 +305,18 @@ class ProductInputsTest {
     }
 
     @Test
+    void inflationCompensationIsTipsOnly() throws IOException {
+        // LM-434: valuation-service computes it for tips (VS-155).
+        List<String> others = new ArrayList<>(measuresFixture().getAsJsonObject("input_types").keySet());
+        others.remove("tips");
+        assertEquals(5, others.size(), others.toString());
+        assertTrue(ProductInputs.measuresForInputType("tips").contains(MeasureProto.INFLATION_COMPENSATION));
+        for (String inputType : others) {
+            assertFalse(ProductInputs.measuresForInputType(inputType).contains(MeasureProto.INFLATION_COMPENSATION), inputType);
+        }
+    }
+
+    @Test
     void measuresForUnknownInputTypeIsUnmapped() throws IOException {
         String inputType = measuresFixture().get("unknown_input_type").getAsString();
         UnmappedProductTypeError e = assertThrows(UnmappedProductTypeError.class, () -> ProductInputs.measuresForInputType(inputType));

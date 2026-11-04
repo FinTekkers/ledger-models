@@ -32,6 +32,7 @@ const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const product_inputs_1 = require("./product_inputs");
 const errors_1 = require("../errors");
+const measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
 const price_pb_1 = require("../../../fintekkers/models/price/price_pb");
 const coupon_type_pb_1 = require("../../../fintekkers/models/security/coupon_type_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
@@ -85,6 +86,13 @@ describe('measuresForArm matches measuresForInputType', () => {
         expect(outcome(() => (0, product_inputs_1.measuresForArm)(inputType))).toEqual(outcome(() => (0, product_inputs_1.measuresForInputType)(inputType)));
         expect(outcome(() => (0, product_inputs_1.measuresForArmIn)(catalog, inputType)))
             .toEqual(outcome(() => (0, product_inputs_1.measuresForInputTypeIn)(catalog, inputType)));
+    });
+    test('INFLATION_COMPENSATION for the tips arm only (LM-434, VS-155)', () => {
+        const others = Object.keys(fixture.input_types).filter(arm => arm !== 'tips');
+        expect(others).toHaveLength(5);
+        expect((0, product_inputs_1.measuresForArm)('tips')).toContain(measure_pb_1.MeasureProto.INFLATION_COMPENSATION);
+        for (const arm of others)
+            expect((0, product_inputs_1.measuresForArm)(arm)).not.toContain(measure_pb_1.MeasureProto.INFLATION_COMPENSATION);
     });
 });
 test('the ValuationArms aliases are the ValuationInputTypes ones', () => {

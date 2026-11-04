@@ -245,6 +245,15 @@ def test_measures_for_input_type_frn_and_tips():
     assert {"REFERENCE_CPI", "INDEX_RATIO"} <= set(_measure_names("tips"))
 
 
+def test_inflation_compensation_is_tips_only():
+    # LM-434: valuation-service computes it for tips (VS-155).
+    others = set(MEASURES_FIXTURE["input_types"]) - {"tips"}
+    assert len(others) == 5
+    assert "INFLATION_COMPENSATION" in _measure_names("tips")
+    for input_type in others:
+        assert "INFLATION_COMPENSATION" not in _measure_names(input_type), input_type
+
+
 def test_measures_for_unknown_input_type_is_unmapped():
     with pytest.raises(UnmappedProductTypeError) as e:
         PI.measures_for_input_type(MEASURES_FIXTURE["unknown_input_type"])

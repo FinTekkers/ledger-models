@@ -4,6 +4,7 @@
 //! keys for one release.
 #![allow(deprecated)]
 
+use ledger_models::fintekkers::models::position::MeasureProto;
 use ledger_models::fintekkers::models::price::PriceProto;
 use ledger_models::fintekkers::models::security::{
     BondDetailsProto, CouponTypeProto, ProductTypeProto, SecurityProto,
@@ -82,6 +83,29 @@ fn measures_for_arm_matches_measures_for_input_type() {
             expected.map_err(|e| e.to_string()),
             "{input_type}"
         );
+    }
+}
+
+#[test]
+fn measures_for_arm_inflation_compensation_tips_only() {
+    // LM-434: valuation-service computes it for tips (VS-155).
+    let fixture = read_json("../test-fixtures/catalog/measures-for-input-type.json");
+    let others: Vec<&str> = fixture["input_types"]
+        .as_object()
+        .expect("input_types")
+        .keys()
+        .map(String::as_str)
+        .filter(|arm| *arm != "tips")
+        .collect();
+    assert_eq!(others.len(), 5, "{others:?}");
+    let has = |arm: &str| {
+        measures_for_arm(arm)
+            .unwrap_or_else(|e| panic!("{arm}: {e}"))
+            .contains(&MeasureProto::InflationCompensation)
+    };
+    assert!(has("tips"));
+    for arm in others {
+        assert!(!has(arm), "{arm}");
     }
 }
 

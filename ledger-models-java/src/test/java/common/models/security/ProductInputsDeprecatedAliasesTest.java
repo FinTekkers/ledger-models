@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -101,6 +102,19 @@ class ProductInputsDeprecatedAliasesTest {
             assertEquals(expected, outcome(() -> ProductInputs.measuresForArm(inputType)), inputType);
         }
         assertTrue(ProductInputs.measuresForArm("tips").contains(MeasureProto.REFERENCE_CPI));
+    }
+
+    @Test
+    void measuresForArmGivesInflationCompensationForTipsOnly() throws IOException {
+        // LM-434: valuation-service computes it for tips (VS-155).
+        JsonObject fixture = readJson(Path.of("..", "test-fixtures", "catalog", "measures-for-input-type.json"));
+        List<String> others = new ArrayList<>(fixture.getAsJsonObject("input_types").keySet());
+        others.remove("tips");
+        assertEquals(5, others.size(), others.toString());
+        assertTrue(ProductInputs.measuresForArm("tips").contains(MeasureProto.INFLATION_COMPENSATION));
+        for (String arm : others) {
+            assertFalse(ProductInputs.measuresForArm(arm).contains(MeasureProto.INFLATION_COMPENSATION), arm);
+        }
     }
 
     @Test
