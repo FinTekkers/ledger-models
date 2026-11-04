@@ -263,6 +263,10 @@ pub struct TipsInput {
     #[prost(message, optional, tag = "1")]
     pub security: ::core::option::Option<super::super::models::security::SecurityProto>,
     /// Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
+    /// A price is required only for price-dependent measures: those whose
+    /// catalog depends_on reaches CLEAN_PRICE, directly or through another
+    /// measure (e.g. MARKET_VALUE, YIELD_TO_MATURITY, REAL_YIELD).
+    /// REFERENCE_CPI, INDEX_RATIO and INFLATION_COMPENSATION need no price.
     #[prost(message, optional, tag = "2")]
     pub clean_price: ::core::option::Option<
         super::super::models::util::DecimalValueProto,

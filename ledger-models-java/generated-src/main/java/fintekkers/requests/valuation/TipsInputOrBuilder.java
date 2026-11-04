@@ -43,6 +43,10 @@ public interface TipsInputOrBuilder extends
   /**
    * <pre>
    * Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
+   * A price is required only for price-dependent measures: those whose
+   * catalog depends_on reaches CLEAN_PRICE, directly or through another
+   * measure (e.g. MARKET_VALUE, YIELD_TO_MATURITY, REAL_YIELD).
+   * REFERENCE_CPI, INDEX_RATIO and INFLATION_COMPENSATION need no price.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto clean_price = 2;</code>
@@ -52,6 +56,10 @@ public interface TipsInputOrBuilder extends
   /**
    * <pre>
    * Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
+   * A price is required only for price-dependent measures: those whose
+   * catalog depends_on reaches CLEAN_PRICE, directly or through another
+   * measure (e.g. MARKET_VALUE, YIELD_TO_MATURITY, REAL_YIELD).
+   * REFERENCE_CPI, INDEX_RATIO and INFLATION_COMPENSATION need no price.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto clean_price = 2;</code>
@@ -61,6 +69,10 @@ public interface TipsInputOrBuilder extends
   /**
    * <pre>
    * Market clean price as a percentage of face value (e.g. 99.75 = 99.75% of par).
+   * A price is required only for price-dependent measures: those whose
+   * catalog depends_on reaches CLEAN_PRICE, directly or through another
+   * measure (e.g. MARKET_VALUE, YIELD_TO_MATURITY, REAL_YIELD).
+   * REFERENCE_CPI, INDEX_RATIO and INFLATION_COMPENSATION need no price.
    * </pre>
    *
    * <code>.fintekkers.models.util.DecimalValueProto clean_price = 2;</code>

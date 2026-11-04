@@ -89,7 +89,11 @@ public enum Measure {
             "TIPS-specific; null otherwise."),
 
     INDEX_RATIO("TIPS index ratio: REFERENCE_CPI / base_cpi. Dimensionless, rounded to 5 decimals per 31 CFR 356 Appendix B, unfloored. " +
-            "TIPS-specific; null otherwise.");
+            "TIPS-specific; null otherwise."),
+
+    INFLATION_COMPENSATION("TIPS dollar inflation accrual on original face at the as-of date. " +
+            "See MeasureProto.INFLATION_COMPENSATION for the spec; computed by valuation-service. " +
+            "TIPS-specific; absent otherwise.");
 
     static {
         Set<String> measureNames = Arrays.stream(Measure.values())

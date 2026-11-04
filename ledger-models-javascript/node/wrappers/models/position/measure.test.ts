@@ -1,5 +1,10 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { Measure } from './measure';
 import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
+
+const MEASURE_PROTO = path.resolve(__dirname, '../../../../../ledger-models-protos/fintekkers/models/position/measure.proto');
 
 describe('Measure.fromName', () => {
     test.each(Measure.getAllTypeNames())(
@@ -43,6 +48,16 @@ describe('Measure.fromName', () => {
     });
 });
 
+describe('INFLATION_COMPENSATION (LM-433)', () => {
+    test('resolves by name to the number declared in measure.proto', () => {
+        const declared = fs.readFileSync(MEASURE_PROTO, 'utf8').match(/^\s*INFLATION_COMPENSATION\s*=\s*(\d+)\s*;/m);
+        expect(declared).not.toBeNull();
+        const number = Number(declared![1]);
+        expect(Measure.fromName('INFLATION_COMPENSATION')).toBe(number);
+        expect((MeasureProto as unknown as Record<string, number>)['INFLATION_COMPENSATION']).toBe(number);
+    });
+});
+
 describe('Measure.getAllTypeNames', () => {
     test('returns the expected set in proto-declaration order, excluding UNKNOWN_MEASURE', () => {
         // Proto-declared order in measure.proto (post-PR #192 additions):
@@ -75,6 +90,7 @@ describe('Measure.getAllTypeNames', () => {
         //   BOND_EQUIVALENT_YIELD = 27;   (v0.2.3, #209)
         //   REFERENCE_CPI = 28;           (LM-343 — TIPS index ratio inputs)
         //   INDEX_RATIO = 29;             (LM-343)
+        //   INFLATION_COMPENSATION = 30;  (LM-433 — TIPS inflation accrual)
         expect(Measure.getAllTypeNames()).toEqual([
             'DIRECTED_QUANTITY',
             'MARKET_VALUE',
@@ -104,6 +120,7 @@ describe('Measure.getAllTypeNames', () => {
             'BOND_EQUIVALENT_YIELD',
             'REFERENCE_CPI',
             'INDEX_RATIO',
+            'INFLATION_COMPENSATION',
         ]);
     });
 

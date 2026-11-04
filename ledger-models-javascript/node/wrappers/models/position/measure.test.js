@@ -1,7 +1,33 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
 const measure_1 = require("./measure");
 const measure_pb_1 = require("../../../fintekkers/models/position/measure_pb");
+const MEASURE_PROTO = path.resolve(__dirname, '../../../../../ledger-models-protos/fintekkers/models/position/measure.proto');
 describe('Measure.fromName', () => {
     test.each(measure_1.Measure.getAllTypeNames())('fromName("%s") returns the matching numeric enum value', (name) => {
         const value = measure_1.Measure.fromName(name);
@@ -36,6 +62,15 @@ describe('Measure.fromName', () => {
         expect(measure_1.Measure.fromName('UNKNOWN_MEASURE')).toBe(measure_pb_1.MeasureProto.UNKNOWN_MEASURE);
     });
 });
+describe('INFLATION_COMPENSATION (LM-433)', () => {
+    test('resolves by name to the number declared in measure.proto', () => {
+        const declared = fs.readFileSync(MEASURE_PROTO, 'utf8').match(/^\s*INFLATION_COMPENSATION\s*=\s*(\d+)\s*;/m);
+        expect(declared).not.toBeNull();
+        const number = Number(declared[1]);
+        expect(measure_1.Measure.fromName('INFLATION_COMPENSATION')).toBe(number);
+        expect(measure_pb_1.MeasureProto['INFLATION_COMPENSATION']).toBe(number);
+    });
+});
 describe('Measure.getAllTypeNames', () => {
     test('returns the expected set in proto-declaration order, excluding UNKNOWN_MEASURE', () => {
         // Proto-declared order in measure.proto (post-PR #192 additions):
@@ -68,6 +103,7 @@ describe('Measure.getAllTypeNames', () => {
         //   BOND_EQUIVALENT_YIELD = 27;   (v0.2.3, #209)
         //   REFERENCE_CPI = 28;           (LM-343 — TIPS index ratio inputs)
         //   INDEX_RATIO = 29;             (LM-343)
+        //   INFLATION_COMPENSATION = 30;  (LM-433 — TIPS inflation accrual)
         expect(measure_1.Measure.getAllTypeNames()).toEqual([
             'DIRECTED_QUANTITY',
             'MARKET_VALUE',
@@ -97,6 +133,7 @@ describe('Measure.getAllTypeNames', () => {
             'BOND_EQUIVALENT_YIELD',
             'REFERENCE_CPI',
             'INDEX_RATIO',
+            'INFLATION_COMPENSATION',
         ]);
     });
     test('excludes the UNKNOWN_MEASURE sentinel', () => {
