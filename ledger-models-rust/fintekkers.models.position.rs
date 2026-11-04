@@ -813,6 +813,34 @@ pub enum MeasureProto {
     /// Applicability: TIPS only.
     /// Units: Dimensionless ratio (e.g. 1.2 = 20% cumulative inflation since base).
     IndexRatio = 29,
+    /// The inflation compensation of a TIPS position: the dollar inflation
+    /// accrual on its original face at the as-of date.
+    ///
+    /// Formula:
+    ///    InflationCompensation = face × (INDEX_RATIO − 1)
+    ///    Where face is the position's original, unadjusted face, i.e.
+    ///    DIRECTED_QUANTITY, and INDEX_RATIO is the index ratio for the as-of
+    ///    date (the UTC date of ValuationRequestProto.asof_datetime).
+    ///
+    /// Example: face 10.0B, INDEX_RATIO 1.381 →
+    ///    InflationCompensation = 10.0B × (1.381 − 1) = 3.81B.
+    /// Negative example (deflation since base): face 10.0B, INDEX_RATIO 0.98 →
+    ///    InflationCompensation = 10.0B × (0.98 − 1) = −0.2B.
+    ///
+    /// Model assumptions:
+    ///    - Face is signed: DIRECTED_QUANTITY is negative for a short position,
+    ///      so a short position gives the opposite sign.
+    ///    - Uses INDEX_RATIO as is: rounded to 5 decimals per 31 CFR 356
+    ///      Appendix B, unfloored.
+    ///    - No deflation floor: the result may be negative. The floor belongs to
+    ///      INFLATION_ADJUSTED_PRINCIPAL only.
+    ///    - The measure is absent, never 0, for every input type other than
+    ///      TIPS, and absent when INDEX_RATIO is absent.
+    ///    - No price is needed: it does not depend on TipsInput.clean_price.
+    ///
+    /// Applicability: TIPS only.
+    /// Units: Dollars, nominal (e.g. 3.81B for the example above).
+    InflationCompensation = 30,
 }
 impl MeasureProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -850,6 +878,7 @@ impl MeasureProto {
             MeasureProto::BondEquivalentYield => "BOND_EQUIVALENT_YIELD",
             MeasureProto::ReferenceCpi => "REFERENCE_CPI",
             MeasureProto::IndexRatio => "INDEX_RATIO",
+            MeasureProto::InflationCompensation => "INFLATION_COMPENSATION",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -884,6 +913,7 @@ impl MeasureProto {
             "BOND_EQUIVALENT_YIELD" => Some(Self::BondEquivalentYield),
             "REFERENCE_CPI" => Some(Self::ReferenceCpi),
             "INDEX_RATIO" => Some(Self::IndexRatio),
+            "INFLATION_COMPENSATION" => Some(Self::InflationCompensation),
             _ => None,
         }
     }

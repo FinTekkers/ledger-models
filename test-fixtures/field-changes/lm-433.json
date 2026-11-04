@@ -1,0 +1,6 @@
+{
+  "item": "LM-433",
+  "added_values": [
+    {"enum": ".fintekkers.models.position.MeasureProto", "number": 30, "name": "INFLATION_COMPENSATION"}
+  ]
+}

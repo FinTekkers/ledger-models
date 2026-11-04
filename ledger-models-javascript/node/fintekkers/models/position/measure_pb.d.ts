@@ -36,4 +36,5 @@ export enum MeasureProto {
     BOND_EQUIVALENT_YIELD = 27,
     REFERENCE_CPI = 28,
     INDEX_RATIO = 29,
+    INFLATION_COMPENSATION = 30,
 }

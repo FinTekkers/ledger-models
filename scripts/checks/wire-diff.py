@@ -330,7 +330,21 @@ def lm411(key: str, old, new, head: dict) -> bool:
     return new is None and key in LM411 and old == LM411[key]
 
 
-ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411]
+LM433 = {
+    f"value {v['enum']} = {v['number']}": v["name"]
+    for v in json.loads((REPO / "test-fixtures/field-changes/lm-433.json").read_text())["added_values"]
+}
+
+
+def lm433(key: str, old, new, head: dict) -> bool:
+    """LM-433: MeasureProto.INFLATION_COMPENSATION = 30 added. That addition
+    only; every existing measure keeps its number and name, and
+    TipsInput.clean_price changes in its comment only."""
+    return old is None and key in LM433 and new == LM433[key]
+
+
+ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411,
+           lm433]
 
 
 def main() -> int:

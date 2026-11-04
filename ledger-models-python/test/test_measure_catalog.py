@@ -128,7 +128,9 @@ INPUT_TYPES = ("bond", "tips", "frn", "mbs", "equity", "cash")
 
 
 def test_lm425_catalog_edits_touch_only_applies_to_and_implemented():
-    after = json.loads(SOURCE.read_text())["measures"]
+    # Later items append entries (LM-433: INFLATION_COMPENSATION); the
+    # LM-425 entries stay first, in order.
+    after = json.loads(SOURCE.read_text())["measures"][:len(LM425_BEFORE)]
     assert [m["name"] for m in after] == [m["name"] for m in LM425_BEFORE]
     for old, new in zip(LM425_BEFORE, after):
         assert set(new) == set(old), new["name"]

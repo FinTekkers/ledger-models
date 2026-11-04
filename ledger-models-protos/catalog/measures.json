@@ -517,6 +517,24 @@
       "implemented": true,
       "computed_by": "valuation-service",
       "depends_on": ["REFERENCE_CPI", "SECURITY_TERMS"]
+    },
+    {
+      "name": "INFLATION_COMPENSATION",
+      "enum_value": 30,
+      "display_name": "Inflation Compensation",
+      "description": "TIPS only. The dollar inflation accrual on original face at the as-of date. Absent, not zero, for other input types.",
+      "formula": "See MeasureProto.INFLATION_COMPENSATION in measure.proto (the spec).",
+      "units": "Dollars (nominal)",
+      "category": "valuation",
+      "applies_to": ["TIPS"],
+      "model_assumptions": [
+        "No deflation floor: may be negative",
+        "Absent when INDEX_RATIO is absent",
+        "Not computed yet: valuation-service computes it from VS-155"
+      ],
+      "implemented": false,
+      "computed_by": "valuation-service",
+      "depends_on": ["DIRECTED_QUANTITY", "INDEX_RATIO"]
     }
   ]
 }
