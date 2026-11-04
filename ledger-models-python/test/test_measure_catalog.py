@@ -8,7 +8,10 @@ what computes it and what it depends on (LM-403). LM-425 corrects applies_to
 and implemented to match valuation-service: every change is listed, with its
 engine file, in test-fixtures/catalog/lm-425-changes.json; LM-427 adds one
 row (PROFIT_LOSS_PERCENT off TREASURY_FRN) and reads the per-input-type lists through
-product_inputs.measures_for_input_type."""
+product_inputs.measures_for_input_type. LM-434 flips only
+INFLATION_COMPENSATION.implemented to true (valuation-service VS-155): every
+catalog equals the LM-433 release snapshot test-fixtures/catalog/lm-434-before.json
+but for that flag."""
 import json
 from pathlib import Path
 
@@ -183,7 +186,7 @@ def test_lm425_changes_per_input_type_are_only_the_listed_ones():
         "frn": ({"YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE",
                  "CONVEXITY", "MODIFIED_DURATION", "DV01", "PROFIT_LOSS_PERCENT"},
                 {"ADJUSTED_COST_BASIS"}),
-        "tips": (set(), {"REFERENCE_CPI", "INDEX_RATIO", "ADJUSTED_COST_BASIS"}),
+        "tips": (set(), {"REFERENCE_CPI", "INDEX_RATIO", "ADJUSTED_COST_BASIS", "INFLATION_COMPENSATION"}),
         "bond": (set(), {"ADJUSTED_COST_BASIS"}),
     }
     # What src/engine/frn.rs computes, ADJUSTED_COST_BASIS included (LM-429:
@@ -194,3 +197,32 @@ def test_lm425_changes_per_input_type_are_only_the_listed_ones():
         "SPREAD_DURATION", "PROFIT_LOSS", "ACCRUED_INTEREST", "DIRTY_PRICE",
         "ADJUSTED_COST_BASIS",
     }
+
+
+LM434_BEFORE = json.loads((_REPO / "test-fixtures" / "catalog" / "lm-434-before.json").read_text())
+LM434_CATALOGS = {"protos": SOURCE, "python": MIRROR, **OTHER_MIRRORS}
+
+
+# This freezes the whole catalog at the LM-433 release (v1.1.31). A later
+# item that edits any catalog must update this test (or retire it), the way
+# LM-433 and LM-434 updated the LM-425 tests above.
+@pytest.mark.parametrize("path", LM434_CATALOGS.values(), ids=LM434_CATALOGS.keys())
+def test_lm434_catalogs_differ_from_lm433_only_in_inflation_compensation_implemented(path):
+    before = LM434_BEFORE["catalog"]
+    after = json.loads(path.read_text())
+    assert "v1.1.31" in LM434_BEFORE["note"]
+    assert set(after) == set(before)
+    for key in set(before) - {"measures"}:
+        assert after[key] == before[key], key
+    entries = [m for m in after["measures"] if m["name"] == "INFLATION_COMPENSATION"]
+    assert len(entries) == 1
+    assert entries[0]["implemented"] is True
+    assert [m for m in before["measures"] if m["name"] == "INFLATION_COMPENSATION"][0]["implemented"] is False
+    reverted = [
+        {**m, "implemented": False} if m["name"] == "INFLATION_COMPENSATION" else m
+        for m in after["measures"]
+    ]
+    assert [m["name"] for m in reverted] == [m["name"] for m in before["measures"]]
+    for old, new in zip(before["measures"], reverted):
+        assert list(new) == list(old), new["name"]
+        assert new == old, new["name"]

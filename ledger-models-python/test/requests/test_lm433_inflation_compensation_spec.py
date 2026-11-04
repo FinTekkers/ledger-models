@@ -2,7 +2,8 @@
 INDEX_RATIO, with a new number. Its measure.proto comment is the spec
 (formula, units, no floor, TIPS only, absent not zero, both examples). Every
 measures.json lists it for TIPS with implemented false until valuation-service
-computes it (VS-155), so measures_for_input_type leaves it out. Every
+computes it (VS-155); LM-434 flips it to true, so measures_for_input_type
+returns it for tips only. Every
 MeasureProto name and number in v1.1.30 is unchanged and so is the
 INFLATION_ADJUSTED_PRINCIPAL comment. TipsInput.clean_price changes in its
 comment only. The formula lives only in the proto comment: no library helper
@@ -120,7 +121,7 @@ def test_spec_comment_states(phrase):
     assert phrase in SPEC
 
 
-# ── Metric 2': a TIPS-only catalog entry, implemented false ─────────────────
+# ── Metric 2': a TIPS-only catalog entry, implemented true since LM-434 ─────
 
 def _entries(path: Path) -> list:
     return [m for m in json.loads(path.read_text())["measures"] if m["name"] == NAME]
@@ -133,24 +134,26 @@ def test_catalog_has_one_tips_only_entry_not_implemented(path):
     entry = entries[0]
     assert entry["enum_value"] == _number()
     assert entry["applies_to"] == ["TIPS"]
-    assert entry["implemented"] is False
+    # LM-434: valuation-service computes it (VS-155), so it is implemented.
+    assert entry["implemented"] is True
     assert entry["computed_by"] == "valuation-service"
     assert "CLEAN_PRICE" not in entry["depends_on"]
 
 
+# LM-434: implemented, so measures_for_input_type returns it for tips only.
 @pytest.mark.parametrize("input_type", FOR_INPUT_TYPE["input_types"])
 @pytest.mark.parametrize("path", CATALOGS.values(), ids=CATALOGS.keys())
-def test_measures_for_input_type_leaves_it_out(path, input_type):
+def test_measures_for_input_type_returns_it_for_tips_only(path, input_type):
     measures = json.loads(path.read_text())["measures"]
-    assert _number() not in _measures_for_input_type_in(measures, input_type)
+    assert (_number() in _measures_for_input_type_in(measures, input_type)) == (input_type == "tips")
 
 
-def test_measures_for_input_type_fixture_leaves_it_out():
+def test_measures_for_input_type_fixture_lists_it_for_tips_only():
     # Java, Rust and JS ProductInputs tests (and their deprecated-alias tests)
     # match this fixture exactly, so it is their evidence too.
     assert FOR_INPUT_TYPE["input_types"]
     for input_type, names in FOR_INPUT_TYPE["input_types"].items():
-        assert NAME not in names, input_type
+        assert (NAME in names) == (input_type == "tips"), input_type
 
 
 # ── Metric 3 (Python): resolves by name to the declared number ──────────────

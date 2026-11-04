@@ -280,6 +280,25 @@ fn measures_for_input_type_frn_and_tips() {
 }
 
 #[test]
+fn inflation_compensation_is_tips_only() {
+    // LM-434: valuation-service computes it for tips (VS-155).
+    let fixture = measures_fixture();
+    let others: Vec<&str> = fixture["input_types"]
+        .as_object()
+        .expect("input_types")
+        .keys()
+        .map(String::as_str)
+        .filter(|input_type| *input_type != "tips")
+        .collect();
+    assert_eq!(others.len(), 5, "{others:?}");
+    let name = "INFLATION_COMPENSATION".to_string();
+    assert!(measure_names("tips").contains(&name), "tips lacks {name}");
+    for input_type in others {
+        assert!(!measure_names(input_type).contains(&name), "{input_type} has {name}");
+    }
+}
+
+#[test]
 fn measures_for_unknown_input_type_is_unmapped() {
     let fixture = measures_fixture();
     let input_type = fixture["unknown_input_type"].as_str().expect("unknown_input_type");

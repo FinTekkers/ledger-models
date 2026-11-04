@@ -532,7 +532,7 @@
         "Absent when INDEX_RATIO is absent",
         "Not computed yet: valuation-service computes it from VS-155"
       ],
-      "implemented": false,
+      "implemented": true,
       "computed_by": "valuation-service",
       "depends_on": ["DIRECTED_QUANTITY", "INDEX_RATIO"]
     }

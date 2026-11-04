@@ -201,6 +201,13 @@ describe('measuresForInputType', () => {
     expect(names('tips')).toEqual(expect.arrayContaining(['REFERENCE_CPI', 'INDEX_RATIO']));
   });
 
+  test('INFLATION_COMPENSATION is tips only (LM-434, VS-155)', () => {
+    const others = Object.keys(fixture.input_types).filter(inputType => inputType !== 'tips');
+    expect(others).toHaveLength(5);
+    expect(measuresForInputType('tips')).toContain(MeasureProto.INFLATION_COMPENSATION);
+    for (const inputType of others) expect(measuresForInputType(inputType)).not.toContain(MeasureProto.INFLATION_COMPENSATION);
+  });
+
   test('an unknown input type throws UnmappedProductTypeError', () => {
     let error: unknown;
     try {

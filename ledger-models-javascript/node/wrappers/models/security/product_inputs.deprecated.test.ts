@@ -12,6 +12,7 @@ import {
   shippedValuationInputTypes, valuationInputTypesFromHierarchy, ValuationArms, ValuationInputTypes,
 } from './product_inputs';
 import { MissingMarketDataError } from '../errors';
+import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
@@ -75,6 +76,13 @@ describe('measuresForArm matches measuresForInputType', () => {
     expect(outcome(() => measuresForArm(inputType))).toEqual(outcome(() => measuresForInputType(inputType)));
     expect(outcome(() => measuresForArmIn(catalog, inputType)))
       .toEqual(outcome(() => measuresForInputTypeIn(catalog, inputType)));
+  });
+
+  test('INFLATION_COMPENSATION for the tips arm only (LM-434, VS-155)', () => {
+    const others = Object.keys(fixture.input_types).filter(arm => arm !== 'tips');
+    expect(others).toHaveLength(5);
+    expect(measuresForArm('tips')).toContain(MeasureProto.INFLATION_COMPENSATION);
+    for (const arm of others) expect(measuresForArm(arm)).not.toContain(MeasureProto.INFLATION_COMPENSATION);
   });
 });
 
