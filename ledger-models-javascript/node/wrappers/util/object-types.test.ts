@@ -589,6 +589,7 @@ const EXCLUSIONS: Record<string, string> = {
   'product_inputs.checkProductInput': 'local stand-in SecurityProto for an input type with no security; never returned or sent',
   'product_inputs.forSecurity': "builds a ProductInput, which has no object_type, around the caller's security; flagged only for calling checkProductInput",
   'Security.create': "picks the wrapper class for the caller's proto (pass-through ruling)",
+  'Security.resolveLink': "returns the caller's proto, or the cached one unchanged (LM-440); builds nothing",
   'Position.fromJSON': DESERIALIZES,
   'ProtoSerializationUtil.deserialize': DESERIALIZES,
   'serialization.util.unpack': DESERIALIZES,
