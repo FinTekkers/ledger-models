@@ -1,0 +1,178 @@
+{
+  "description": "LM-438: child-structure rules for the transaction validators (Java TransactionRules, Python transaction_rules, Rust validate_transaction, JS transaction_rules). Each case is a transaction tree in plain JSON, not proto JSON. A node has an optional uuid (absent: no uuid field; empty string: a uuid with empty raw_uuid), a transaction_type name and a security. A security is either {uuid, link: true}, which a pure validator treats as not cash, or {uuid, product_type} with an optional cash_details: true. Expected violations name the field path, the object_id (the UUID of the transaction that owns the children list) and the IDs the message must contain. as_of_seconds is set on every node by the Java golden-bytes test; the validators ignore it.",
+  "as_of_seconds": 1700000000,
+  "cases": [
+    {
+      "name": "valid_buy",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000001",
+        "transaction_type": "BUY",
+        "security": {"uuid": "50000000-0000-4000-8000-000000000001", "link": true},
+        "children": [
+          {
+            "uuid": "20000000-0000-4000-8000-000000000001",
+            "transaction_type": "WITHDRAWAL",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000003", "product_type": "CURRENCY"}
+          },
+          {
+            "uuid": "30000000-0000-4000-8000-000000000001",
+            "transaction_type": "MATURATION",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000001", "link": true},
+            "children": [
+              {
+                "uuid": "20000000-0000-4000-8000-000000000002",
+                "transaction_type": "DEPOSIT",
+                "security": {"uuid": "50000000-0000-4000-8000-000000000003", "product_type": "CURRENCY"}
+              }
+            ]
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "name": "valid_sell",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000002",
+        "transaction_type": "SELL",
+        "security": {"uuid": "50000000-0000-4000-8000-000000000002", "product_type": "COMMON_STOCK"},
+        "children": [
+          {
+            "uuid": "20000000-0000-4000-8000-000000000003",
+            "transaction_type": "DEPOSIT",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000003", "product_type": "CURRENCY"}
+          }
+        ]
+      },
+      "violations": []
+    },
+    {
+      "name": "two_cash_children",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000003",
+        "transaction_type": "BUY",
+        "security": {"uuid": "50000000-0000-4000-8000-000000000002", "product_type": "COMMON_STOCK"},
+        "children": [
+          {
+            "uuid": "20000000-0000-4000-8000-000000000004",
+            "transaction_type": "WITHDRAWAL",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000003", "product_type": "CURRENCY"}
+          },
+          {
+            "uuid": "20000000-0000-4000-8000-000000000005",
+            "transaction_type": "WITHDRAWAL",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000004", "cash_details": true}
+          }
+        ]
+      },
+      "violations": [
+        {
+          "field": "child_transactions[1]",
+          "object_id": "10000000-0000-4000-8000-000000000003",
+          "message_ids": [
+            "10000000-0000-4000-8000-000000000003",
+            "20000000-0000-4000-8000-000000000004",
+            "20000000-0000-4000-8000-000000000005"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "duplicate_child_ids",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000004",
+        "transaction_type": "BUY",
+        "security": {"uuid": "50000000-0000-4000-8000-000000000001", "link": true},
+        "children": [
+          {
+            "uuid": "20000000-0000-4000-8000-000000000006",
+            "transaction_type": "WITHDRAWAL",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000003", "product_type": "CURRENCY"}
+          },
+          {
+            "uuid": "20000000-0000-4000-8000-000000000006",
+            "transaction_type": "MATURATION",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000001", "link": true}
+          }
+        ]
+      },
+      "violations": [
+        {
+          "field": "child_transactions[1]",
+          "object_id": "10000000-0000-4000-8000-000000000004",
+          "message_ids": [
+            "10000000-0000-4000-8000-000000000004",
+            "20000000-0000-4000-8000-000000000006"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "maturation_with_two_cash",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000005",
+        "transaction_type": "BUY",
+        "security": {"uuid": "50000000-0000-4000-8000-000000000001", "link": true},
+        "children": [
+          {
+            "uuid": "20000000-0000-4000-8000-000000000007",
+            "transaction_type": "WITHDRAWAL",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000003", "product_type": "CURRENCY"}
+          },
+          {
+            "uuid": "30000000-0000-4000-8000-000000000002",
+            "transaction_type": "MATURATION",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000001", "link": true},
+            "children": [
+              {
+                "uuid": "20000000-0000-4000-8000-000000000008",
+                "transaction_type": "DEPOSIT",
+                "security": {"uuid": "50000000-0000-4000-8000-000000000003", "product_type": "CURRENCY"}
+              },
+              {
+                "uuid": "20000000-0000-4000-8000-000000000009",
+                "transaction_type": "DEPOSIT",
+                "security": {"uuid": "50000000-0000-4000-8000-000000000003", "product_type": "CURRENCY"}
+              }
+            ]
+          }
+        ]
+      },
+      "violations": [
+        {
+          "field": "child_transactions[1].child_transactions[1]",
+          "object_id": "30000000-0000-4000-8000-000000000002",
+          "message_ids": [
+            "30000000-0000-4000-8000-000000000002",
+            "20000000-0000-4000-8000-000000000008",
+            "20000000-0000-4000-8000-000000000009"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "children_without_uuid",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000006",
+        "transaction_type": "BUY",
+        "security": {"uuid": "50000000-0000-4000-8000-000000000002", "product_type": "COMMON_STOCK"},
+        "children": [
+          {
+            "transaction_type": "WITHDRAWAL",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000003", "product_type": "CURRENCY"}
+          },
+          {
+            "transaction_type": "MATURATION",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000002", "product_type": "COMMON_STOCK"}
+          },
+          {
+            "uuid": "",
+            "transaction_type": "MATURATION",
+            "security": {"uuid": "50000000-0000-4000-8000-000000000002", "product_type": "COMMON_STOCK"}
+          }
+        ]
+      },
+      "violations": []
+    }
+  ]
+}
