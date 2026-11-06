@@ -1,8 +1,11 @@
+use crate::fintekkers::models::security::security_proto::NonBondDetails;
+use crate::fintekkers::models::security::ProductTypeProto;
 use crate::fintekkers::models::transaction::TransactionProto;
 use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
+use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::wrappers::models::portfolio::PortfolioWrapper;
-use crate::fintekkers::wrappers::models::security::SecurityWrapper;
-use crate::fintekkers::wrappers::models::utils::errors::Error;
+use crate::fintekkers::wrappers::models::security::{validate_security, SecurityWrapper};
+use crate::fintekkers::wrappers::models::utils::errors::{object_id_of, Error};
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
 use chrono::DateTime;
@@ -12,6 +15,7 @@ use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
 use crate::fintekkers::wrappers::util::service_address::{
     self, Service, ServiceAddress, ServiceAddressError,
 };
+use std::collections::HashSet;
 use std::sync::{Arc, OnceLock, RwLock};
 use uuid::Uuid;
 
@@ -351,6 +355,108 @@ impl TransactionWrapper {
         self.ensure_hydrated();
         self.active().portfolio.as_ref().map(|p| PortfolioWrapper::new(p.clone()))
     }
+}
+
+/// Field-path prefix for the inline security's violations.
+pub const SECURITY_PREFIX: &str = "security.";
+/// Field path of the child list; violations are on `child_transactions[i]`.
+pub const CHILD_TRANSACTIONS: &str = "child_transactions";
+/// Message prefix of the second-cash-child violation, the same in every language.
+pub const SECOND_CASH_CHILD: &str = "second cash child";
+/// Message prefix of the repeated-child-ID violation, the same in every language.
+pub const DUPLICATE_CHILD_ID: &str = "duplicate child id";
+
+/// Transaction input rules: Rust counterpart of Java's
+/// `TransactionRules.validate` (docs/adr/typed-input-errors.md). Pure: proto
+/// in, violations out. [`validate_security`] runs on an inline security, with
+/// field paths prefixed `security.`. Child structure (LM-438) is checked at
+/// every level of `child_transactions`: at most one cash child, and no two
+/// children with the same UUID. Each violation is on `child_transactions[i]`
+/// (nested: `child_transactions[1].child_transactions[0]`) and its
+/// `object_id` is the UUID of the transaction that owns the list. A child
+/// with no UUID, or an empty one, is never a duplicate. A child whose
+/// security is a link is not counted as cash: hydrate it first.
+/// `TransactionWrapper::new` does not call this, so stored rows that break a
+/// rule still load; writers call it before sending.
+pub fn validate_transaction(proto: &TransactionProto) -> Vec<FieldViolationProto> {
+    let mut out: Vec<FieldViolationProto> = proto
+        .security
+        .as_ref()
+        .map(validate_security)
+        .unwrap_or_default()
+        .into_iter()
+        .map(|mut v| {
+            v.field = format!("{SECURITY_PREFIX}{}", v.field);
+            v
+        })
+        .collect();
+    add_child_violations(proto, "", &mut out);
+    out
+}
+
+/// `Err(Error::Validation(..))` carrying every violation if
+/// [`validate_transaction`] finds any.
+pub fn require_valid_transaction(proto: &TransactionProto) -> Result<(), Error> {
+    let violations = validate_transaction(proto);
+    if violations.is_empty() {
+        Ok(())
+    } else {
+        Err(Error::Validation(violations))
+    }
+}
+
+fn add_child_violations(parent: &TransactionProto, prefix: &str, out: &mut Vec<FieldViolationProto>) {
+    let parent_uuid = object_id_of(parent.uuid.as_ref());
+    let parent_id = display_id(parent_uuid.as_ref());
+    let mut first_cash: Option<String> = None;
+    let mut seen_ids: HashSet<Vec<u8>> = HashSet::new();
+    for (i, child) in parent.child_transactions.iter().enumerate() {
+        let field = format!("{prefix}{CHILD_TRANSACTIONS}[{i}]");
+        let child_uuid = object_id_of(child.uuid.as_ref());
+        let child_id = display_id(child_uuid.as_ref());
+        if is_cash_child(child) {
+            match &first_cash {
+                Some(first) => out.push(FieldViolationProto {
+                    field: field.clone(),
+                    object_id: parent_uuid.clone(),
+                    message: format!(
+                        "{SECOND_CASH_CHILD}: transaction {parent_id} already has cash child {first}; {child_id} is a second one"
+                    ),
+                }),
+                None => first_cash = Some(child_id.clone()),
+            }
+        }
+        if let Some(u) = &child_uuid {
+            if !seen_ids.insert(u.raw_uuid.clone()) {
+                out.push(FieldViolationProto {
+                    field: field.clone(),
+                    object_id: parent_uuid.clone(),
+                    message: format!(
+                        "{DUPLICATE_CHILD_ID}: transaction {parent_id} already has a child with id {child_id}"
+                    ),
+                });
+            }
+        }
+        add_child_violations(child, &format!("{field}."), out);
+    }
+}
+
+/// Same test as Java `Security.isCash()` on an inline security; a link is not cash.
+fn is_cash_child(child: &TransactionProto) -> bool {
+    match &child.security {
+        Some(s) if !s.is_link => {
+            s.product_type == ProductTypeProto::Currency as i32
+                || matches!(s.non_bond_details, Some(NonBondDetails::CashDetails(_)))
+        }
+        _ => false,
+    }
+}
+
+/// Hyphenated UUID for a message, or `null` when unset.
+fn display_id(uuid: Option<&UuidProto>) -> String {
+    uuid.and_then(|u| Uuid::from_slice(&u.raw_uuid).ok())
+        .map(|u| u.to_string())
+        .unwrap_or_else(|| "null".to_string())
 }
 
 #[cfg(test)]

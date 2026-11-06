@@ -5,6 +5,7 @@ import common.util.ObjectTypes;
 import common.models.RawDataModelObject;
 import common.models.errors.InvalidFieldException;
 import common.models.errors.ModelValidationException;
+import common.models.errors.transaction.InvalidChildTransactionException;
 import common.models.errors.transaction.TransactionProcessingException;
 import common.models.portfolio.Portfolio;
 import common.models.postion.Field;
@@ -33,6 +34,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static common.models.postion.Field.*;
 
@@ -824,7 +826,9 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             return cashTransactions.get(0);
         else if (cashTransactions.size() > 1)
             throw new RuntimeException("There are two cash transactions with the same parent. That " +
-                    "indicates an error in processing.");
+                    "indicates an error in processing. Transaction " + getID() + " has "
+                    + cashTransactions.size() + " cash children: "
+                    + cashTransactions.stream().map(t -> String.valueOf(t.getID())).collect(Collectors.joining(", ")));
         else
             return null;
     }
@@ -861,8 +865,40 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         }
     }
 
-    public void addChildTransaction(Transaction maturation) {
-        this.childrenTransactions.add(maturation);
+    /**
+     * Attaches a child (LM-438). Refused with {@link InvalidChildTransactionException},
+     * before anything changes, when the child belongs to another transaction,
+     * repeats an existing child's ID, or would be a second cash child. A child
+     * with no parent gets this transaction as its parent. The proto constructor
+     * does not call this, so a stored transaction that breaks a rule still loads.
+     */
+    public void addChildTransaction(Transaction child) {
+        Objects.requireNonNull(child, "child transaction must not be null");
+        UUID parentId = getID();
+        UUID childId = child.getID();
+        Transaction childsParent = child.parentTransaction;
+        if (childsParent != null && childsParent != this && !Objects.equals(childsParent.getID(), parentId)) {
+            throw InvalidChildTransactionException.wrongParent(parentId, childId, childsParent.getID());
+        }
+        for (Transaction existing : childrenTransactions) {
+            if (existing == child || Objects.equals(existing.getID(), childId)) {
+                throw InvalidChildTransactionException.duplicateId(parentId, childId);
+            }
+        }
+        if (isCashChild(child)) {
+            for (Transaction existing : childrenTransactions) {
+                if (isCashChild(existing)) {
+                    throw InvalidChildTransactionException.secondCash(parentId, existing.getID(), childId);
+                }
+            }
+        }
+        if (childsParent == null) child.parentTransaction = this;
+        this.childrenTransactions.add(child);
+    }
+
+    private static boolean isCashChild(Transaction child) {
+        Security security = child.getSecurity();
+        return security != null && security.isCash();
     }
 
     public List<Transaction> getChildTransactions() {
@@ -970,10 +1006,12 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         addCashImpact(maturation);
     }
 
+    /**
+     * Adds the cash child. A transaction that already has one is refused by
+     * {@link #addChildTransaction} with {@link InvalidChildTransactionException},
+     * naming both cash children.
+     */
     public static void addCashImpact(Transaction transaction) {
-        if (transaction.getCashTransaction() != null) {
-            throw new RuntimeException("This transaction already has a cash impact");
-        }
         if (!transaction.getSecurity().isCash()) {
             Transaction cashTxn = Transaction.createCashTransaction(CashSecurity.USD, transaction);
             assert cashTxn.getParentTransaction().equals(transaction);

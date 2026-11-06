@@ -145,11 +145,40 @@ It carries no `FieldViolationProto`s: the input is valid, the registry just has 
 
 Services map all of them to `INVALID_ARGUMENT`.
 
+### Child transactions (LM-438)
+
+A transaction has at most one cash child. A stored transaction with two used to load fine. It then failed every later read of `Transaction.getCashTransaction()`, and that halted ledger-service's replay. These rules now refuse such a transaction when it is written.
+
+**At validation.** The transaction validator in every binding checks child structure at every level of `child_transactions`, so a maturation's own children are checked too. Each problem is one violation on `child_transactions[i]` (nested: `child_transactions[1].child_transactions[0]`). Its `object_id` is the UUID of the transaction that owns the list:
+
+- **At most one cash child.** Each cash child after the first gives a violation. The message starts `second cash child` and names the parent and both children. Cash means the same as `Security.isCash()`: `product_type == CURRENCY` or `cash_details` set. A child whose security is a link is not cash here, because the validators stay pure: hydrate first.
+- **No repeated child ID.** A child whose UUID matches an earlier sibling's gives a violation. The message starts `duplicate child id`. A child with no UUID, or an empty `raw_uuid`, is never a duplicate.
+
+| Binding | Validate | Raise |
+|---|---|---|
+| Java | `common.models.transaction.TransactionRules.validate` | `TransactionRules.requireValid` |
+| Python | `fintekkers.wrappers.models.transaction_rules.validate` | `transaction_rules.require_valid` |
+| JS/TS | `wrappers/models/transaction/transaction_rules` `validate` | `requireValid` |
+| Rust | `wrappers::models::transaction::validate_transaction` | `require_valid_transaction` |
+
+Every binding also applies its security rules to an inline security, prefixed `security.`. The shared cases are in `test-fixtures/transaction-children/cases.json`.
+
+**At creation (Java only).** `Transaction.addChildTransaction` throws `common.models.errors.transaction.InvalidChildTransactionException`, a `ModelValidationException` with one violation on `child_transactions`, before anything changes when:
+
+- the child would be a second cash child (the message keeps `already has a cash impact` and names the parent and both children);
+- the child's ID repeats an existing child's;
+- the child's parent link points to another transaction. A child with no parent gets this transaction as its parent.
+
+`addCashImpact` and `addDerivedTransactions` attach children through `addChildTransaction`, so calling `addCashImpact` twice throws this error instead of the earlier bare `RuntimeException`. The parent link is checked only here: `TransactionProto` has no parent field. Python, JS and Rust `addChildTransaction` stay unguarded; their validators cover the write path.
+
+**Deserialization is unchecked.** The proto constructor in every binding attaches children without these rules, so a stored bad row still loads and can be found. `getCashTransaction()` keeps its guard and still throws a plain `RuntimeException`, but its message now names the parent and every cash child's ID.
+
 ## Affected callers
 
 - Java callers that catch `TransactionProcessingException` around `Transaction.addCashImpact` (or the short-form `Transaction` constructor) no longer see the missing-`face_value` case; it now arrives as `IllegalArgumentException` / `ModelValidationException`. No caller in this repo does this. ledger-service's dependent item maps it to `INVALID_ARGUMENT`.
 - Callers that match the whole `getMessage()` string of the maturity error break; callers using `contains("maturity_date must be after issue_date")` keep working.
 - Rust callers that `match` on `utils::errors::Error` exhaustively must add a match branch when LM-255d adds `Error::Validation`.
+- LM-438: a second `addCashImpact` now throws `InvalidChildTransactionException` instead of a bare `RuntimeException`. It is still a `RuntimeException`, and its message still contains `already has a cash impact`. `TransactionRules.validate` can now return `child_transactions[...]` violations, which ledger-service's `CreateOrUpdate` and `ValidateCreateOrUpdate` return as-is.
 
 ## Known follow-ups
 
