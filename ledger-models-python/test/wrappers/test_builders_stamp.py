@@ -514,6 +514,8 @@ NOT_BUILDERS = {
     "models.price_rules.is_market_price": "predicate; returns a bool, builds no proto",
     "models.security.security_rules.validate": "validator; its FieldViolationProtos come from errors.violation (a builder)",
     "models.security.security_rules.require_valid": "validator; raises or returns None",
+    "models.transaction_rules.validate": "validator; its FieldViolationProtos come from errors.violation (a builder) or copy security_rules'",
+    "models.transaction_rules.require_valid": "validator; raises or returns None",
     "models.security.security_identifier.validate_identifier_proto": "validator; raises or returns None",
     "models.security.security_identifier.validate_identifiers_for_create": "validator; raises or returns None",
     "models.security.security_identifier.IdentifierValidationError": "exception type",
