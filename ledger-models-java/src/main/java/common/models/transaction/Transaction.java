@@ -52,13 +52,17 @@ import static common.models.postion.Field.*;
  * Price stays inline (LM-394): only its nested Security becomes a link.
  *
  * <p>Resolver wiring (D): Java Transaction wrapper takes ONLY proto in ctor,
- * matching the Python/Rust pattern. No auto-resolve. {@link #getSecurity()}
- * returns {@code Security.fromProto(proto.getSecurity())} directly — whether
- * inline or {@code is_link}. An inline security (and its inline
+ * matching the Python/Rust pattern. {@link #getSecurity()} returns
+ * {@code Security.fromProto(proto.getSecurity())} for an inline security. For
+ * an {@code is_link} security it resolves the link first (cache, then the
+ * configured {@link Security.Fetcher}, at most once per transaction) and
+ * dispatches on the resolved product type, so a Treasury link reads as a
+ * {@link BondSecurity} (LM-440); the resolved proto is never written back.
+ * An inline security (and its inline
  * settlement_currency) with no UUID gets one once, at construction (LM-276),
- * so {@code getSecurity().getID()} is stable. Caller is responsible for hydrating via
+ * so {@code getSecurity().getID()} is stable. Callers may pre-warm via
  * {@link common.util.LinkResolver#resolveSecuritiesOnTransactions(List)}
- * (and the portfolio counterpart) BEFORE wrapping. Same for Portfolio. Price
+ * (and the portfolio counterpart) to batch the lookups. Same for Portfolio. Price
  * resolver is deferred to Phase 2.5; {@link #getPrice()} returns a Price POJO
  * with whatever data the inner PriceProto carries.
  */
@@ -573,6 +577,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     private void adoptResolvedProto(TransactionProto resolved) {
         this.proto = resolved;
         this.isHydrated = true;
+        this.resolvedSecurity = null;
         // Note: childTransactions list is built once at construction time and
         // is not re-derived from a hydrated proto. A link-mode Transaction
         // can't carry child transactions in its link form anyway.
@@ -592,11 +597,61 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return PortfolioSerializer.getInstance().deserialize(a.getPortfolio());
     }
 
+    /**
+     * Memo of the last link resolved by {@link #getSecurity()}: the link
+     * proto it was resolved from and the outcome ({@code null} when the
+     * fetch failed). One immutable holder in one volatile field, so key and
+     * outcome never tear across threads. Never written into {@code proto}
+     * or {@code overlay}: strip-on-write is unchanged (LM-440).
+     */
+    private record ResolvedSecurity(SecurityProto link, SecurityProto resolved) {}
+    private transient volatile ResolvedSecurity resolvedSecurity;
+
+    /**
+     * Returns the transaction's security as the class its product type
+     * implies. A link is resolved first (LM-440) through
+     * {@link Security#resolveLink}: cache, then the configured fetcher, at
+     * most once per transaction. So a Treasury link reads as a
+     * {@link BondSecurity}. If the link cannot be resolved, returns the
+     * link-mode wrapper; its field reads then hydrate lazily or raise.
+     */
     @Override
     public Security getSecurity() {
         TransactionProto a = active();
         if (!a.hasSecurity()) return null;
-        return Security.fromProto(a.getSecurity());
+        SecurityProto sec = a.getSecurity();
+        if (!sec.getIsLink()) return Security.fromProto(sec);
+
+        ResolvedSecurity memo = resolvedSecurity;
+        if (memo == null || !memo.link().equals(sec)) {
+            SecurityProto resolved;
+            try {
+                resolved = Security.resolveLink(sec);
+            } catch (RuntimeException e) {
+                resolved = null;   // surfaces on the first field read instead
+            }
+            // A miss with no fetcher made no fetch: don't memoise it, so a
+            // cache warmed later (LinkResolver) is still picked up.
+            if (resolved == null && Security.getFetcher() == null) {
+                return Security.fromProto(sec);
+            }
+            memo = new ResolvedSecurity(sec, resolved);
+            resolvedSecurity = memo;
+        }
+        return Security.fromProto(memo.resolved() != null ? memo.resolved() : sec);
+    }
+
+    /** The security's UUID, read from the proto so an ID-only read never
+     *  resolves a link. */
+    private UUID getSecurityId() {
+        TransactionProto a = active();
+        if (!a.hasSecurity()) return null;
+        SecurityProto sec = a.getSecurity();
+        if (sec.getIsLink() && sec.hasUuid()) {
+            UUID id = ProtoSerializationUtil.deserializeUUID(sec.getUuid());
+            if (id != null) return id;
+        }
+        return getSecurity().getID();
     }
 
     @Override
@@ -760,7 +815,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             case ASSET_CLASS -> getSecurity().getAssetClass();
             case PRODUCT_CLASS -> getSecurity().getField(PRODUCT_CLASS);
             case SECURITY_DESCRIPTION -> getSecurity().getDisplayDescription();
-            case SECURITY_ID -> getSecurity().getID();
+            case SECURITY_ID -> getSecurityId();
             case TENOR -> getSecurity().getField(Field.TENOR);
             case ADJUSTED_TENOR -> getSecurity().getField(Field.ADJUSTED_TENOR);
             case MATURITY_DATE -> getSecurity().getField(Field.MATURITY_DATE);

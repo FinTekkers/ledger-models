@@ -358,17 +358,13 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         }
         Fetcher f = fetcher;
         if (f != null) {
-            SecurityProto resolved = f.fetch(id, asOf);
+            SecurityProto resolved = fetchThrough(f, id, asOf);
             if (resolved == null) {
                 throw new IllegalStateException(
                         "Cannot resolve link-mode Security uuid=" + id
                         + " asOf=" + asOf + " — SecurityService returned no record. "
                         + "Data lineage broken.");
             }
-            java.time.ZonedDateTime resolvedAsOf = resolved.hasAsOf()
-                    ? ProtoSerializationUtil.deserializeTimestamp(resolved.getAsOf())
-                    : (asOf != null ? asOf : java.time.ZonedDateTime.now());
-            LinkCache.SECURITY.put(id, resolved, resolvedAsOf);
             adoptResolvedProto(resolved);
             return;
         }
@@ -378,6 +374,49 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
                 + "Pre-warm via LinkResolver.resolveSecuritiesOnTransactions(...) "
                 + "or call Security.setFetcher(...) at startup. "
                 + "See docs/adr/lazy-link-hydration.md.");
+    }
+
+    /** Call the fetcher and write a non-null result through to
+     *  {@link LinkCache#SECURITY}. Shared by {@link #ensureHydrated()} and
+     *  {@link #resolveLink(SecurityProto)}. */
+    private static SecurityProto fetchThrough(Fetcher f, UUID id, ZonedDateTime asOf) {
+        SecurityProto resolved = f.fetch(id, asOf);
+        if (resolved == null) return null;
+        ZonedDateTime resolvedAsOf = resolved.hasAsOf()
+                ? ProtoSerializationUtil.deserializeTimestamp(resolved.getAsOf())
+                : (asOf != null ? asOf : ZonedDateTime.now());
+        LinkCache.SECURITY.put(id, resolved, resolvedAsOf);
+        return resolved;
+    }
+
+    /**
+     * Resolve a link-mode {@link SecurityProto} to its full form without
+     * building a wrapper (LM-440): cache hit first, then the configured
+     * {@link Fetcher} (written through to {@link LinkCache#SECURITY}).
+     * Callers pass the result to {@link #fromProto(SecurityProto)} so the
+     * class is chosen from the resolved product type, e.g. a Treasury link
+     * becomes a {@link BondSecurity}.
+     *
+     * <p>A {@code null} or non-link input is returned unchanged. Returns
+     * {@code null} when the link has no UUID, the cache misses and no fetcher
+     * is configured, or the fetcher returns {@code null} or another link.
+     * Fetcher exceptions propagate.
+     */
+    public static SecurityProto resolveLink(SecurityProto link) {
+        if (link == null || !link.getIsLink()) return link;
+        UUID id = link.hasUuid() ? ProtoSerializationUtil.deserializeUUID(link.getUuid()) : null;
+        if (id == null) return null;
+        ZonedDateTime asOf = link.hasAsOf()
+                ? ProtoSerializationUtil.deserializeTimestamp(link.getAsOf())
+                : null;
+
+        SecurityProto resolved = LinkCache.SECURITY.get(id, asOf);
+        if (resolved == null) {
+            Fetcher f = fetcher;
+            if (f == null) return null;
+            resolved = fetchThrough(f, id, asOf);
+        }
+        return (resolved == null || resolved.getIsLink()) ? null : resolved;
     }
 
     /** Swap the wrapper's internal proto to the resolved one and rebuild the
@@ -538,6 +577,13 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
      * Plumbing for positions
      */
     public Object getField(Field field) {
+        // An unresolved link has no dates: hydrate (or raise the "no Fetcher"
+        // error) before the placeholders below, never return 2999-12-31 for
+        // a link (LM-440).
+        switch (field) {
+            case TENOR, ADJUSTED_TENOR, MATURITY_DATE, ISSUE_DATE -> ensureHydrated();
+            default -> { }
+        }
         return switch (field) {
             case SECURITY -> this;
             case ID, SECURITY_ID -> getID();

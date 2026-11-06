@@ -335,6 +335,8 @@ class BuilderStampCoverageTest {
                 "pass-through: parses the caller's bytes into an Any; builds nothing");
         exclude("fintekkers.services.ValuationService#runValuation(ValuationRequestProto)",
                 "pass-through: sends the caller's request and returns the server's response; builds nothing");
+        exclude("common.models.security.Security#resolveLink(SecurityProto)",
+                "pass-through: returns the caller's proto, or the cached / fetched one unchanged (LM-440); builds nothing");
     }
 
     private static void fixture(String member, Supplier<Message> build, String... callerSupplied) {

@@ -176,6 +176,18 @@ Most consumers either want "latest" (`link.asOf == null`) or want exactly the vi
 
 A transaction's trade price is a fixed fact of the transaction, not a link to market data. Java's `Transaction.getProto()` strips the embedded Security and Portfolio to links, but keeps the Price inline (price decimal, `uuid`, `as_of`); only the Price's nested Security becomes a link. A consumer that persists `getProto()` reads the price back after a cold start with no `LinkCache.PRICE` lookup. `getProto()` no longer primes `LinkCache.PRICE`. A Price that arrives already as a link passes through unchanged, and `Transaction.getPrice()` still resolves it from `LinkCache.PRICE`. Python, TypeScript and Rust never stripped the price, so all four languages now match.
 
+### `Transaction.getSecurity()` resolves before dispatch (LM-440)
+
+`Security.fromProto` picks the class from the product type, and a link has none, so a lazily hydrated link wrapper stayed a base `Security`: `getField(MATURITY_DATE)` returned the `2999-12-31` placeholder for every BUY on a Treasury link (LS-217). Hydrating swaps the proto, never the class.
+
+- **Java.** `Transaction.getSecurity()` resolves a link first through the new `Security.resolveLink(SecurityProto)` (`LinkCache.SECURITY`, then the configured `Security.Fetcher`, written through to the cache), then calls `fromProto` on the resolved proto. A Treasury link returns a `BondSecurity`, `TIPSBond`, `FloatingRateNote` or `MortgageBackedSecurity`, exactly as the full security would. `fromProto` itself still does no I/O.
+- **At most once per transaction.** The outcome is memoised on the `Transaction` (one volatile holder of the link proto and the resolved proto), keyed on the link, so a cache hit never fetches and repeated calls never refetch. The memo is cleared when the transaction's own link hydrates. A failed fetch (fetcher throws or returns `null`) is memoised too: `getSecurity()` returns the link wrapper and does not throw. The wrapper's first field read then retries once through `ensureHydrated()` and raises the existing error, so a `null`-returning fetcher is called at most twice on the failure path. A miss with no fetcher configured is not memoised (no fetch was made), so a cache warmed later is still picked up.
+- **Never written back.** The resolved proto lives only in the memo; `getProto()` keeps strip-on-write and its bytes are unchanged.
+- **ID-only reads stay on the proto.** `Transaction.getField(SECURITY_ID)` reads the link's UUID without resolving it.
+- **No placeholder for a link.** Base `Security.getField` hydrates before its `MATURITY_DATE`, `ISSUE_DATE`, `TENOR` and `ADJUSTED_TENOR` placeholders, so an unresolved link with no fetcher raises "Cannot read fields on link-mode Security … no Security.Fetcher configured" instead of returning `2999-12-31`.
+- **TypeScript.** `Transaction.getSecurity()` calls the new cache-only `Security.resolveLink(proto)` and passes the result to `Security.create`. On a cache miss it returns the base link wrapper, as before.
+- **Python and Rust** do not choose a class by product type (Python builds a base `Security`; Rust's `TransactionWrapper::security()` returns a `SecurityWrapper`), so their lazy `get_maturity_date` already reads the hydrated bond details. No change.
+
 ## Components to migrate
 
 | Wrapper | Add lazy hydrate? | Service backing it | Notes |

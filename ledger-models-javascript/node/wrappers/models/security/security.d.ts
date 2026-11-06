@@ -57,6 +57,16 @@ declare class Security {
      */
     private ensureHydrated;
     /**
+     * Resolve a link-mode SecurityProto to its full form from LinkCache, without
+     * building a wrapper (LM-440). Pass the result to `Security.create` so the
+     * subclass is chosen from the resolved product type, e.g. a Treasury link
+     * becomes a BondSecurity. Cache-only, like `ensureHydrated`.
+     *
+     * A non-link input is returned unchanged. Returns null when the link has
+     * no UUID or the cache misses.
+     */
+    static resolveLink(proto: SecurityProto): SecurityProto | null;
+    /**
      * Factory method to create the appropriate Security subclass based on
      * the proto's product_type. Dispatch rules:
      *   - TIPS                       -> TIPSBond

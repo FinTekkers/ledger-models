@@ -155,6 +155,27 @@ class Security {
             + `See docs/adr/lazy-link-hydration.md.`);
     }
     /**
+     * Resolve a link-mode SecurityProto to its full form from LinkCache, without
+     * building a wrapper (LM-440). Pass the result to `Security.create` so the
+     * subclass is chosen from the resolved product type, e.g. a Treasury link
+     * becomes a BondSecurity. Cache-only, like `ensureHydrated`.
+     *
+     * A non-link input is returned unchanged. Returns null when the link has
+     * no UUID or the cache misses.
+     */
+    static resolveLink(proto) {
+        if (!proto.getIsLink())
+            return proto;
+        const uuidProto = proto.getUuid();
+        if (!uuidProto)
+            return null;
+        const uuidKey = uuid_1.UUID.fromU8Array(uuidProto.getRawUuid_asU8()).toString();
+        const asOfProto = proto.getAsOf();
+        const asOf = asOfProto ? new datetime_1.ZonedDateTime(asOfProto) : null;
+        const cached = LinkCacheModule.SECURITY.get(uuidKey, asOf);
+        return cached && !cached.getIsLink() ? cached : null;
+    }
+    /**
      * Factory method to create the appropriate Security subclass based on
      * the proto's product_type. Dispatch rules:
      *   - TIPS                       -> TIPSBond
