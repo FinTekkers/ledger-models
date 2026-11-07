@@ -105,16 +105,37 @@ public interface BondDetailsProtoOrBuilder extends
   fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getFaceValueOrBuilder();
 
   /**
+   * <pre>
+   * issue_date / maturity_date: any security type may set them, not only
+   * bonds. Unset means unknown or not applicable; there is no placeholder
+   * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+   * absent (LM-441).
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
    * @return Whether the issueDate field is set.
    */
   boolean hasIssueDate();
   /**
+   * <pre>
+   * issue_date / maturity_date: any security type may set them, not only
+   * bonds. Unset means unknown or not applicable; there is no placeholder
+   * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+   * absent (LM-441).
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
    * @return The issueDate.
    */
   fintekkers.models.util.LocalDate.LocalDateProto getIssueDate();
   /**
+   * <pre>
+   * issue_date / maturity_date: any security type may set them, not only
+   * bonds. Unset means unknown or not applicable; there is no placeholder
+   * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+   * absent (LM-441).
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
    */
   fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getIssueDateOrBuilder();

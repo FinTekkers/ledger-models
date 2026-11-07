@@ -10,7 +10,7 @@ from fintekkers.models.position.field_pb2 import *
 from fintekkers.models.position.measure_pb2 import MeasureProto
 
 from uuid import UUID
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from decimal import Decimal
 from typing import Optional
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
@@ -181,9 +181,9 @@ class Security():
         elif field in (TENOR, ADJUSTED_TENOR):
             return self.get_tenor()
         elif field == MATURITY_DATE:
-            return self.get_maturity_date()
+            return self._optional_bond_date('maturity_date')
         elif field == ISSUE_DATE:
-            return self.get_issue_date()
+            return self._optional_bond_date('issue_date')
         else:
             raise ValueError(f"Field not mapped in Security wrapper: {FieldProto.DESCRIPTOR.values_by_number[field].name}")
 
@@ -247,6 +247,17 @@ class Security():
         if self.proto.HasField('bond_details'):
             return self.proto.bond_details
         return None
+
+    def _optional_bond_date(self, name: str) -> Optional[date]:
+        """get_field's read of bond_details.issue_date / maturity_date. Any
+        security type may carry them. None when unset: never a placeholder
+        such as 2999-12-31 or 1900-01-01 (LM-441). get_issue_date /
+        get_maturity_date still raise for callers that need a date."""
+        self._ensure_hydrated()
+        bond = self._get_bond_like_details()
+        if bond is None or not bond.HasField(name):
+            return None
+        return ProtoSerializationUtil.deserialize(getattr(bond, name))
 
     def get_issue_date(self) -> datetime:
         self._ensure_hydrated()

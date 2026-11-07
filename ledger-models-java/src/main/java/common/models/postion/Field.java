@@ -62,8 +62,8 @@ public enum Field {
             "display purposes only. This is not meant for interpretation by code. The system may introduce small " +
             "variations of descriptions explicitly to disincentive mis-use of this field"),
     MATURITY_DATE(LocalDate.class, "The date that the security or trade matures. A bond's maturity date " +
-            "is self-explanatory. A cash equity is a perpetual security and the maturity date will be arbitrarily " +
-            "far in the future."),
+            "is self-explanatory. Absent (null) for a security with no maturity, such as a cash equity; " +
+            "never a placeholder date."),
     ISSUE_DATE(LocalDate.class, "The date that the instrument was issued. For bond instruments this generally " +
             "equates to the data the security was first auctioned. Note that bond securities, such as treasuries may " +
             "accrue interest before this data. That date is represented as DATED_DATE"),

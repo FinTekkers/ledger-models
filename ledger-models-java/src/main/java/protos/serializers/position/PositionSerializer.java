@@ -22,6 +22,7 @@ import java.util.List;
 
 import static common.models.JSONFieldNames.*;
 import static fintekkers.models.position.FieldMapEntry.FieldMapValueOneOfCase.ENUM_VALUE;
+import static fintekkers.models.position.FieldMapEntry.FieldMapValueOneOfCase.FIELDMAPVALUEONEOF_NOT_SET;
 
 /**
  * Serializes/deserializes between position protos and position objects. Note that positions are a derived form of
@@ -100,7 +101,10 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
 
         Object fieldValue;
 
-        if(ENUM_VALUE.equals(entry.getFieldMapValueOneOfCase())) {
+        if(FIELDMAPVALUEONEOF_NOT_SET.equals(entry.getFieldMapValueOneOfCase())) {
+            // An entry with no value is an absent field (e.g. MATURITY_DATE of a stock): null, never throw.
+            fieldValue = null;
+        } else if(ENUM_VALUE.equals(entry.getFieldMapValueOneOfCase())) {
             //Dynamically sources the appropriate enum, and gets it based on the number serialized in the proto.
             fieldValue = field.getType().getEnumConstants()[entry.getEnumValue()];
         } else {
@@ -121,7 +125,10 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
             Field field = Field.valueOf(fieldProto.getField().name());
             Object fieldValue;
 
-            if(ENUM_VALUE.equals(fieldProto.getFieldMapValueOneOfCase())) {
+            if(FIELDMAPVALUEONEOF_NOT_SET.equals(fieldProto.getFieldMapValueOneOfCase())) {
+                // An entry with no value is an absent field: setFieldValue(null) leaves it out.
+                fieldValue = null;
+            } else if(ENUM_VALUE.equals(fieldProto.getFieldMapValueOneOfCase())) {
                 //Dynamically sources the appropriate enum, and gets it based on the number serialized in the proto.
                 fieldValue = field.getType().getEnumConstants()[fieldProto.getEnumValue()];
             } else {
