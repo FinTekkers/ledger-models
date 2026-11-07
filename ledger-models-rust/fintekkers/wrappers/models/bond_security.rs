@@ -119,13 +119,13 @@ fn date_proto(d: NaiveDate) -> LocalDateProto {
     }
 }
 
-fn bond_dates(proto: &SecurityProto) -> (Option<LocalDateProto>, Option<LocalDateProto>) {
+pub(crate) fn bond_dates(proto: &SecurityProto) -> (Option<LocalDateProto>, Option<LocalDateProto>) {
     proto.bond_details.as_ref()
         .map(|b| (b.issue_date.clone(), b.maturity_date.clone()))
         .unwrap_or((None, None))
 }
 
-fn local_date_proto_to_naive(p: LocalDateProto) -> Result<NaiveDate, Error> {
+pub(crate) fn local_date_proto_to_naive(p: LocalDateProto) -> Result<NaiveDate, Error> {
     NaiveDate::from_ymd_opt(p.year as i32, p.month, p.day).ok_or(Error::DateConversion)
 }
 

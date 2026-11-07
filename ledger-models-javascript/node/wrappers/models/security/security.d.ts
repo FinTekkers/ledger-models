@@ -159,10 +159,9 @@ declare class Security {
      */
     getIssueDate(): Date | null;
     /**
-     * Returns the maturity date if set, else null. Maturity date is a
-     * bond-only concept; on non-bond securities this returns null rather
-     * than throwing. Prefer narrowing first via isBond() for bond-specific
-     * code paths.
+     * Returns bond_details.maturity_date if set, else null. Any security type
+     * may carry it; on a security with no maturity (equity, cash, FX, ...)
+     * this returns null rather than throwing or a placeholder date.
      */
     getMaturityDate(): Date | null;
     /**

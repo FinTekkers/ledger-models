@@ -54,6 +54,12 @@ class Position {
     getField(fieldToGet) {
         for (const tmpField of this.proto.getFieldsList()) {
             if (tmpField.getField() === fieldToGet.getField()) {
+                // A date entry with no value is an absent date (e.g. the MATURITY_DATE
+                // of a stock, LM-441): null, never a bogus enum or a throw.
+                if (Position.DATE_FIELDS.includes(tmpField.getField()) &&
+                    tmpField.getFieldmapvalueoneofCase() === position_util_pb_1.FieldMapEntry.FieldmapvalueoneofCase.FIELDMAPVALUEONEOF_NOT_SET) {
+                    return null;
+                }
                 if (tmpField.getStringValue() !== undefined && tmpField.getStringValue().length > 0) {
                     // Tenor-like fields should return a Tenor wrapper even when they are stored as a string (e.g. "3M")
                     // so callers get a consistent type for TENOR and ADJUSTED_TENOR.
@@ -120,6 +126,8 @@ class Position {
     }
     getFieldDisplay(fieldToGet) {
         const value = this.getField(fieldToGet);
+        if (value === null)
+            return "";
         switch (typeof value) {
             case 'string':
                 return value;
@@ -241,4 +249,13 @@ class Position {
     }
 }
 exports.Position = Position;
+Position.DATE_FIELDS = [
+    field_pb_1.FieldProto.TRADE_DATE,
+    field_pb_1.FieldProto.MATURITY_DATE,
+    field_pb_1.FieldProto.ISSUE_DATE,
+    field_pb_1.FieldProto.SETTLEMENT_DATE,
+    field_pb_1.FieldProto.TAX_LOT_OPEN_DATE,
+    field_pb_1.FieldProto.TAX_LOT_CLOSE_DATE,
+    field_pb_1.FieldProto.EFFECTIVE_DATE,
+];
 //# sourceMappingURL=position.js.map

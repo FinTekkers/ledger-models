@@ -28,6 +28,15 @@ from fintekkers.models.security.tenor_pb2 import TenorProto
 class Position:
     positionProto: PositionProto
 
+    _DATE_FIELDS = (
+        FieldProto.TRADE_DATE,
+        FieldProto.MATURITY_DATE,
+        FieldProto.ISSUE_DATE,
+        FieldProto.SETTLEMENT_DATE,
+        FieldProto.TAX_LOT_OPEN_DATE,
+        FieldProto.TAX_LOT_CLOSE_DATE,
+    )
+
     def __init__(self, positionProto: PositionProto) -> None:
         self.positionProto = positionProto
 
@@ -49,6 +58,13 @@ class Position:
         # If it's not then we'll raise a value error.
         for tmp_field in self.positionProto.fields:
             if tmp_field.field == field_to_get.field:
+                # A date entry with no value is an absent date (e.g. the
+                # MATURITY_DATE of a stock, LM-441): None, never date(0, 0, 0).
+                if (
+                    tmp_field.field in Position._DATE_FIELDS
+                    and tmp_field.WhichOneof("FieldMapValueOneOf") is None
+                ):
+                    return None
                 if FieldProto.PORTFOLIO == field_to_get.field:
                     return Portfolio(Position.unpack_field(tmp_field))
                 if FieldProto.SECURITY == field_to_get.field:
@@ -98,7 +114,7 @@ class Position:
 
     def get_field_display(self, field_to_get: FieldMapEntry):
         field_value = self.get_field(field_to_get=field_to_get)
-        return field_value.__str__()
+        return "" if field_value is None else field_value.__str__()
 
     def get_measures(self) -> list[MeasureMapEntry]:
         return self.positionProto.measures
@@ -149,14 +165,7 @@ class Position:
             return LocalTimestampProto.FromString(
                 field_to_unpack.field_value_packed.value
             )
-        if (
-            field_to_unpack.field == FieldProto.TRADE_DATE
-            or field_to_unpack.field == FieldProto.MATURITY_DATE
-            or field_to_unpack.field == FieldProto.ISSUE_DATE
-            or field_to_unpack.field == FieldProto.SETTLEMENT_DATE
-            or field_to_unpack.field == FieldProto.TAX_LOT_OPEN_DATE
-            or field_to_unpack.field == FieldProto.TAX_LOT_CLOSE_DATE
-        ):
+        if field_to_unpack.field in Position._DATE_FIELDS:
             return LocalDateProto.FromString(field_to_unpack.field_value_packed.value)
         if field_to_unpack.field == FieldProto.IDENTIFIER:
             return IdentifierProto.FromString(field_to_unpack.field_value_packed.value)

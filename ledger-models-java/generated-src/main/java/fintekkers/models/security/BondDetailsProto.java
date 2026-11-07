@@ -197,6 +197,13 @@ private static final long serialVersionUID = 0L;
   public static final int ISSUE_DATE_FIELD_NUMBER = 6;
   private fintekkers.models.util.LocalDate.LocalDateProto issueDate_;
   /**
+   * <pre>
+   * issue_date / maturity_date: any security type may set them, not only
+   * bonds. Unset means unknown or not applicable; there is no placeholder
+   * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+   * absent (LM-441).
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
    * @return Whether the issueDate field is set.
    */
@@ -205,6 +212,13 @@ private static final long serialVersionUID = 0L;
     return issueDate_ != null;
   }
   /**
+   * <pre>
+   * issue_date / maturity_date: any security type may set them, not only
+   * bonds. Unset means unknown or not applicable; there is no placeholder
+   * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+   * absent (LM-441).
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
    * @return The issueDate.
    */
@@ -213,6 +227,13 @@ private static final long serialVersionUID = 0L;
     return issueDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : issueDate_;
   }
   /**
+   * <pre>
+   * issue_date / maturity_date: any security type may set them, not only
+   * bonds. Unset means unknown or not applicable; there is no placeholder
+   * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+   * absent (LM-441).
+   * </pre>
+   *
    * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
    */
   @java.lang.Override
@@ -1444,6 +1465,13 @@ private static final long serialVersionUID = 0L;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> issueDateBuilder_;
     /**
+     * <pre>
+     * issue_date / maturity_date: any security type may set them, not only
+     * bonds. Unset means unknown or not applicable; there is no placeholder
+     * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+     * absent (LM-441).
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
      * @return Whether the issueDate field is set.
      */
@@ -1451,6 +1479,13 @@ private static final long serialVersionUID = 0L;
       return ((bitField0_ & 0x00000020) != 0);
     }
     /**
+     * <pre>
+     * issue_date / maturity_date: any security type may set them, not only
+     * bonds. Unset means unknown or not applicable; there is no placeholder
+     * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+     * absent (LM-441).
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
      * @return The issueDate.
      */
@@ -1462,6 +1497,13 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * issue_date / maturity_date: any security type may set them, not only
+     * bonds. Unset means unknown or not applicable; there is no placeholder
+     * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+     * absent (LM-441).
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
      */
     public Builder setIssueDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
@@ -1478,6 +1520,13 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * issue_date / maturity_date: any security type may set them, not only
+     * bonds. Unset means unknown or not applicable; there is no placeholder
+     * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+     * absent (LM-441).
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
      */
     public Builder setIssueDate(
@@ -1492,6 +1541,13 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * issue_date / maturity_date: any security type may set them, not only
+     * bonds. Unset means unknown or not applicable; there is no placeholder
+     * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+     * absent (LM-441).
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
      */
     public Builder mergeIssueDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
@@ -1511,6 +1567,13 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * issue_date / maturity_date: any security type may set them, not only
+     * bonds. Unset means unknown or not applicable; there is no placeholder
+     * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+     * absent (LM-441).
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
      */
     public Builder clearIssueDate() {
@@ -1524,6 +1587,13 @@ private static final long serialVersionUID = 0L;
       return this;
     }
     /**
+     * <pre>
+     * issue_date / maturity_date: any security type may set them, not only
+     * bonds. Unset means unknown or not applicable; there is no placeholder
+     * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+     * absent (LM-441).
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
      */
     public fintekkers.models.util.LocalDate.LocalDateProto.Builder getIssueDateBuilder() {
@@ -1532,6 +1602,13 @@ private static final long serialVersionUID = 0L;
       return getIssueDateFieldBuilder().getBuilder();
     }
     /**
+     * <pre>
+     * issue_date / maturity_date: any security type may set them, not only
+     * bonds. Unset means unknown or not applicable; there is no placeholder
+     * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+     * absent (LM-441).
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
      */
     public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getIssueDateOrBuilder() {
@@ -1543,6 +1620,13 @@ private static final long serialVersionUID = 0L;
       }
     }
     /**
+     * <pre>
+     * issue_date / maturity_date: any security type may set them, not only
+     * bonds. Unset means unknown or not applicable; there is no placeholder
+     * date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+     * absent (LM-441).
+     * </pre>
+     *
      * <code>.fintekkers.models.util.LocalDateProto issue_date = 6;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<

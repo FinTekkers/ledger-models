@@ -10,7 +10,8 @@ use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
 use crate::fintekkers::wrappers::util::service_address::{
     self, Service, ServiceAddress, ServiceAddressError,
 };
-use chrono::{DateTime, Utc};
+use crate::fintekkers::wrappers::models::bond_security::{bond_dates, local_date_proto_to_naive};
+use chrono::{DateTime, NaiveDate, Utc};
 use std::sync::{Arc, OnceLock, RwLock};
 use uuid::Uuid;
 
@@ -322,6 +323,23 @@ impl SecurityWrapper {
             .identifiers
             .iter()
             .find(|i| i.identifier_type == ty as i32)
+    }
+
+    /// `bond_details.issue_date`, the Rust equivalent of Java's
+    /// `Security.getField(ISSUE_DATE)`. Any security type may carry it.
+    /// `None` when unset or invalid: never a placeholder such as 1900-01-01
+    /// (LM-441). Panics only as `ensure_hydrated` does, on an unresolved link.
+    pub fn issue_date(&self) -> Option<NaiveDate> {
+        self.ensure_hydrated();
+        bond_dates(self.active()).0.and_then(|p| local_date_proto_to_naive(p).ok())
+    }
+
+    /// `bond_details.maturity_date`, the Rust equivalent of Java's
+    /// `Security.getField(MATURITY_DATE)`. `None` when unset or invalid:
+    /// never a placeholder such as 2999-12-31 (LM-441).
+    pub fn maturity_date(&self) -> Option<NaiveDate> {
+        self.ensure_hydrated();
+        bond_dates(self.active()).1.and_then(|p| local_date_proto_to_naive(p).ok())
     }
 
     /// Time-based soft-delete check. A Security is considered deleted iff

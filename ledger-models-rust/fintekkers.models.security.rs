@@ -489,6 +489,10 @@ pub struct BondDetailsProto {
     pub dated_date: ::core::option::Option<super::util::LocalDateProto>,
     #[prost(message, optional, tag = "5")]
     pub face_value: ::core::option::Option<super::util::DecimalValueProto>,
+    /// issue_date / maturity_date: any security type may set them, not only
+    /// bonds. Unset means unknown or not applicable; there is no placeholder
+    /// date (no 1900-01-01 or 2999-12-31). Readers report an unset date as
+    /// absent (LM-441).
     #[prost(message, optional, tag = "6")]
     pub issue_date: ::core::option::Option<super::util::LocalDateProto>,
     #[prost(message, optional, tag = "7")]

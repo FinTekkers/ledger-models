@@ -13,6 +13,7 @@ import { Tenor } from "../security/term";
 import { Identifier } from "../security/identifier";
 export declare class Position {
     proto: PositionProto;
+    private static readonly DATE_FIELDS;
     constructor(positionProto: PositionProto);
     /*** */
     toJSON(): any;
@@ -23,7 +24,7 @@ export declare class Position {
      */
     static fromJSON(json: any): Position;
     getFieldValue(field: FieldProto): any;
-    getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Identifier | Portfolio | UUID | Date | ZonedDateTime | Decimal | PriceProto | Tenor;
+    getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Identifier | Portfolio | UUID | Date | ZonedDateTime | Decimal | PriceProto | Tenor | null;
     getMeasureValue(measure: MeasureProto): Decimal;
     private getMeasure;
     getFieldDisplay(fieldToGet: FieldMapEntry): string;
