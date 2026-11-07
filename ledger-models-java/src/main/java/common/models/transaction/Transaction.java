@@ -24,6 +24,8 @@ import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.strategy.StrategyAllocationProto;
 import fintekkers.models.transaction.TransactionProto;
+import fintekkers.models.util.DecimalValue.DecimalValueProto;
+import fintekkers.models.util.LocalDate.LocalDateProto;
 import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
 import protos.serializers.util.proto.ProtoSerializationUtil;
@@ -115,6 +117,16 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     /** The price {@link #getProto()} writes: inline with a security link, or a link passed through. */
     PriceProto priceProto;
 
+    /**
+     * What {@link #getRawProto()} writes, captured when the field is set so
+     * serialising never calls the nested objects' own {@code getProto()}:
+     * the portfolio and security in full (or the link, if unresolved), and
+     * {@link #priceProto} with its security in full.
+     */
+    PortfolioProto portfolioRaw;
+    SecurityProto securityRaw;
+    PriceProto priceRaw;
+
     StrategyAllocation strategyAllocation;
     /** The strategy allocation {@link #getProto()} writes, as it was when set. */
     StrategyAllocationProto strategyAllocationProto;
@@ -126,6 +138,17 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     /** A field that failed to decode at build: its getter raises this error. */
     RuntimeException securityError, portfolioError, priceError, quantityError, tradeDateError, settlementDateError;
     PositionStatusProto positionStatus;
+    /**
+     * Wire values Java has no form for, written back unchanged: the numbers
+     * of an {@code object_type}, {@code transaction_type} or
+     * {@code position_status} with no Java constant (e.g. PRINCIPAL_PAYDOWN),
+     * 0 otherwise; and a {@code quantity}, {@code trade_date} or
+     * {@code settlement_date} that did not decode, {@code null} otherwise.
+     * The matching setter clears its own.
+     */
+    int objectTypeValue, transactionTypeValue, positionStatusValue;
+    DecimalValueProto quantityWire;
+    LocalDateProto tradeDateWire, settlementDateWire;
     String tradeName = "";
     boolean cancelled;
 
@@ -181,17 +204,21 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         this.version = TransactionSerializer.wireVersion(ObjectTypes.SCHEMA_VERSION);
         if (portfolio != null) {
             this.portfolio = portfolio;
-            this.portfolioLink = TransactionSerializer.linkOf(PortfolioSerializer.getInstance().serialize(portfolio));
+            this.portfolioRaw = PortfolioSerializer.getInstance().serialize(portfolio);
+            this.portfolioLink = TransactionSerializer.linkOf(portfolioRaw);
         }
         if (security != null) {
             this.security = security;
-            this.securityLink = TransactionSerializer.linkOf(security.getProto());
+            this.securityRaw = security.getProto();
+            this.securityLink = TransactionSerializer.linkOf(securityRaw);
         }
         this.transactionType = transactionType;
         this.quantity = quantity;
         if (price != null) {
             this.price = price;
-            this.priceProto = TransactionSerializer.inlinePrice(PriceSerializer.getInstance().serialize(price));
+            PriceProto full = PriceSerializer.getInstance().serialize(price);
+            this.priceProto = TransactionSerializer.inlinePrice(full);
+            this.priceRaw = TransactionSerializer.rawPrice(priceProto, full.hasSecurity() ? full.getSecurity() : null);
         }
         this.tradeDate = tradeDate;
         this.settlementDate = settlementDate;
@@ -464,6 +491,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
     public void setPositionStatus(PositionStatusProto status) {
         this.positionStatus = status;
+        this.positionStatusValue = 0;
     }
 
     @Override
@@ -569,21 +597,25 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
     public void setTransactionType(TransactionType transactionType) {
         this.transactionType = transactionType;
+        this.transactionTypeValue = 0;
     }
 
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
         this.quantityError = null;
+        this.quantityWire = null;
     }
 
     public void setTradeDate(LocalDate tradeDate) {
         this.tradeDate = tradeDate;
         this.tradeDateError = null;
+        this.tradeDateWire = null;
     }
 
     public void setSettlementDate(LocalDate settlementDate) {
         this.settlementDate = settlementDate;
         this.settlementDateError = null;
+        this.settlementDateWire = null;
     }
 
     /**

@@ -5,6 +5,9 @@ import common.models.security.CashSecurity;
 import common.models.security.Security;
 import common.util.LinkCache;
 import fintekkers.models.transaction.TransactionProto;
+import fintekkers.models.transaction.TransactionTypeProto;
+import fintekkers.models.util.DecimalValue.DecimalValueProto;
+import fintekkers.models.util.LocalDate.LocalDateProto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -116,5 +119,55 @@ class TransactionGoldenBytesTest {
         Transaction loaded = Transaction.fromProto(TransactionProto.parseFrom(row));
 
         assertArrayEquals(row, loaded.getProto().toByteArray());
+    }
+
+    /**
+     * A row Java cannot fully decode re-serialises unchanged, as under the
+     * wrapper: a transaction_type with no Java constant (PRINCIPAL_PAYDOWN),
+     * enum numbers this build does not know, an unset quantity, an all-zero
+     * trade_date and an invalid settlement_date.
+     */
+    @ParameterizedTest
+    @ValueSource(ints = {7, 8})
+    void rowJavaCannotDecode_serialisesToItself(int transactionType) throws IOException {
+        TransactionProto.Builder b = TransactionProto.parseFrom(fixture("txn_buy_lm444.bin")).toBuilder()
+                .setTransactionTypeValue(transactionType)
+                .setObjectTypeValue(99)
+                .setPositionStatusValue(99)
+                .setQuantity(DecimalValueProto.getDefaultInstance())
+                .setTradeDate(LocalDateProto.getDefaultInstance())
+                .setSettlementDate(LocalDateProto.newBuilder().setYear(2026).setMonth(13).setDay(1));
+        byte[] row = b.build().toByteArray();
+        assertEquals(TransactionTypeProto.forNumber(transactionType), b.getTransactionType());
+
+        Transaction loaded = Transaction.fromProto(TransactionProto.parseFrom(row));
+
+        assertArrayEquals(row, loaded.getProto().toByteArray());
+        TransactionProto raw = loaded.getRawProto();
+        assertEquals(transactionType, raw.getTransactionTypeValue());
+        assertEquals(99, raw.getObjectTypeValue());
+        assertEquals(99, raw.getPositionStatusValue());
+        assertEquals(b.getQuantity(), raw.getQuantity());
+        assertEquals(b.getTradeDate(), raw.getTradeDate());
+        assertTrue(raw.hasTradeDate());
+        assertEquals(b.getSettlementDate(), raw.getSettlementDate());
+    }
+
+    /** A setter replaces a kept wire value. */
+    @ParameterizedTest
+    @ValueSource(ints = 7)
+    void setterReplacesTheKeptWireValue(int transactionType) throws IOException {
+        TransactionProto row = TransactionProto.parseFrom(fixture("txn_buy_lm444.bin")).toBuilder()
+                .setTransactionTypeValue(transactionType)
+                .setTradeDate(LocalDateProto.getDefaultInstance())
+                .build();
+        Transaction loaded = Transaction.fromProto(row);
+
+        loaded.setTransactionType(null);
+        loaded.setTradeDate(null);
+
+        TransactionProto out = loaded.getProto();
+        assertEquals(TransactionTypeProto.UNKNOWN, out.getTransactionType());
+        assertFalse(out.hasTradeDate());
     }
 }

@@ -70,14 +70,19 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
         return write(transaction, true);
     }
 
-    /** As {@link #serialize}, with nested Security, Portfolio and the Price's Security in full. */
+    /**
+     * As {@link #serialize}, with nested Security, Portfolio and the Price's
+     * Security in full. Also read-only: the full forms were captured when each
+     * field was set, so no nested object's {@code getProto()} is called here.
+     */
     public TransactionProto serializeRaw(Transaction transaction) {
         return write(transaction, false);
     }
 
     private TransactionProto write(Transaction t, boolean strip) {
         TransactionProto.Builder b = TransactionProto.newBuilder();
-        if (t.objectType != null && t.objectType != ObjectTypeProto.UNRECOGNIZED) b.setObjectType(t.objectType);
+        if (t.objectType == ObjectTypeProto.UNRECOGNIZED) b.setObjectTypeValue(t.objectTypeValue);
+        else if (t.objectType != null) b.setObjectType(t.objectType);
         if (t.version != null) {
             b.setVersion(VersionProto.newBuilder()
                     .setMajor(t.version.major()).setMinor(t.version.minor()).setPatch(t.version.patch()));
@@ -91,43 +96,47 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
         if (t.getValidTo() != null) b.setValidTo(ProtoSerializationUtil.serializeTimestamp(t.getValidTo()));
 
         if (t.portfolioLink != null) {
-            b.setPortfolio(strip || t.portfolio == null || t.portfolio.isLink() ? t.portfolioLink : t.portfolio.getProto());
+            b.setPortfolio(strip || t.portfolioRaw == null ? t.portfolioLink : t.portfolioRaw);
         }
         if (t.securityLink != null) {
-            b.setSecurity(strip ? t.securityLink : rawSecurity(t.security, t.securityLink));
+            b.setSecurity(strip || t.securityRaw == null ? t.securityLink : t.securityRaw);
         }
         if (t.transactionType != null) b.setTransactionType(TransactionTypeProto.valueOf(t.transactionType.name()));
+        else if (t.transactionTypeValue != 0) b.setTransactionTypeValue(t.transactionTypeValue);
         if (t.quantity != null) b.setQuantity(ProtoSerializationUtil.serializeBigDecimal(t.quantity));
+        else if (t.quantityWire != null) b.setQuantity(t.quantityWire);
         if (t.priceProto != null) {
-            b.setPrice(strip ? t.priceProto : rawPrice(t.price, t.priceProto));
+            b.setPrice(strip || t.priceRaw == null ? t.priceProto : t.priceRaw);
         }
         if (t.tradeDate != null) b.setTradeDate(ProtoSerializationUtil.serializeLocalDate(t.tradeDate));
+        else if (t.tradeDateWire != null) b.setTradeDate(t.tradeDateWire);
         if (t.settlementDate != null) b.setSettlementDate(ProtoSerializationUtil.serializeLocalDate(t.settlementDate));
+        else if (t.settlementDateWire != null) b.setSettlementDate(t.settlementDateWire);
 
         // Only reads the children: never adds, removes or rebuilds them.
         for (Transaction child : t.childrenTransactions) {
             b.addChildTransactions(write(child, strip));
         }
 
-        if (t.positionStatus != null && t.positionStatus != PositionStatusProto.UNRECOGNIZED) {
-            b.setPositionStatus(t.positionStatus);
-        }
+        if (t.positionStatus == PositionStatusProto.UNRECOGNIZED) b.setPositionStatusValue(t.positionStatusValue);
+        else if (t.positionStatus != null) b.setPositionStatus(t.positionStatus);
         if (t.tradeName != null && !t.tradeName.isEmpty()) b.setTradeName(t.tradeName);
         if (t.strategyAllocationProto != null) b.setStrategyAllocation(t.strategyAllocationProto);
         b.setIsCancelled(t.cancelled);
         return b.build();
     }
 
-    private static SecurityProto rawSecurity(Security security, SecurityProto link) {
-        return security == null || security.isLink() ? link : security.getProto();
-    }
-
-    private static PriceProto rawPrice(Price price, PriceProto written) {
-        if (price == null || written.getIsLink() || !written.hasSecurity()) return written;
-        return written.toBuilder().setSecurity(rawSecurity(price.getSecurity(), written.getSecurity())).build();
-    }
-
     // ---- wire forms, captured when a field is set -------------------------
+
+    /**
+     * The price {@code getRawProto()} writes: the inline price with its
+     * security in full. A link price, or one with no full security, is
+     * written as {@code written}.
+     */
+    static PriceProto rawPrice(PriceProto written, SecurityProto fullSecurity) {
+        if (fullSecurity == null || written.getIsLink() || !written.hasSecurity()) return written;
+        return written.toBuilder().setSecurity(fullSecurity).build();
+    }
 
     /**
      * The link strip-on-write writes for a security: a link passes through
@@ -197,6 +206,7 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
      */
     static void fill(Transaction t, TransactionProto proto) {
         t.objectType = proto.getObjectType();
+        t.objectTypeValue = proto.getObjectTypeValue();
         t.version = proto.hasVersion() ? wireVersion(proto.getVersion()) : null;
 
         TransactionProto source = proto;
@@ -208,6 +218,7 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
             }
             source = resolved;
             t.objectType = resolved.getObjectType();
+            t.objectTypeValue = resolved.getObjectTypeValue();
             t.version = resolved.hasVersion() ? wireVersion(resolved.getVersion()) : null;
             if (resolved.hasAsOf()) {
                 t.setAsOf(ProtoSerializationUtil.deserializeTimestamp(resolved.getAsOf(), "transaction.as_of"));
@@ -227,8 +238,9 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
         if (source.hasSecurity()) {
             SecurityProto security = withSecurityDefaults(source.getSecurity());
             t.securityLink = linkOf(security);
+            t.securityRaw = resolveSecurity(security);
             try {
-                t.security = Security.fromProto(resolveSecurity(security));
+                t.security = Security.fromProto(t.securityRaw);
             } catch (RuntimeException e) {
                 t.securityError = e;
             }
@@ -236,8 +248,9 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
         if (source.hasPortfolio()) {
             PortfolioProto portfolio = source.getPortfolio();
             t.portfolioLink = linkOf(portfolio);
+            t.portfolioRaw = resolvePortfolio(portfolio);
             try {
-                t.portfolio = PortfolioSerializer.getInstance().deserialize(resolvePortfolio(portfolio));
+                t.portfolio = PortfolioSerializer.getInstance().deserialize(t.portfolioRaw);
             } catch (RuntimeException e) {
                 t.portfolioError = e;
             }
@@ -245,6 +258,7 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
         if (source.hasPrice()) {
             PriceProto price = withPriceDefaults(source.getPrice(), source);
             t.priceProto = inlinePrice(price);
+            t.priceRaw = t.priceProto;
             PriceProto readable = price.getIsLink() ? cachedPrice(price) : price;
             if (readable != null) {
                 try {
@@ -256,12 +270,16 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
         }
 
         t.transactionType = transactionTypeOf(source.getTransactionType());
+        if (t.transactionType == null) t.transactionTypeValue = source.getTransactionTypeValue();
+        // A quantity or date that does not decode (or decodes to unset, e.g.
+        // an all-zero date) keeps its wire form, so re-serialising writes it back.
         if (source.hasQuantity()) {
             try {
                 t.quantity = ProtoSerializationUtil.deserializeBigDecimal(source.getQuantity());
             } catch (RuntimeException e) {
                 t.quantityError = e;
             }
+            if (t.quantity == null) t.quantityWire = source.getQuantity();
         }
         try {
             t.tradeDate = ProtoSerializationUtil.deserializeOptionalLocalDate(
@@ -269,13 +287,16 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
         } catch (RuntimeException e) {
             t.tradeDateError = e;
         }
+        if (t.tradeDate == null && source.hasTradeDate()) t.tradeDateWire = source.getTradeDate();
         try {
             t.settlementDate = ProtoSerializationUtil.deserializeOptionalLocalDate(
                     source.hasSettlementDate() ? source.getSettlementDate() : null, "settlement_date");
         } catch (RuntimeException e) {
             t.settlementDateError = e;
         }
+        if (t.settlementDate == null && source.hasSettlementDate()) t.settlementDateWire = source.getSettlementDate();
         t.positionStatus = source.getPositionStatus();
+        t.positionStatusValue = source.getPositionStatusValue();
         t.tradeName = source.getTradeName();
         if (source.hasStrategyAllocation()) {
             t.strategyAllocationProto = source.getStrategyAllocation();
@@ -419,8 +440,11 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
                     && Objects.equals(sp.getUuid(), t.securityLink.getUuid())
                     && Objects.equals(sp.getAsOf(), t.securityLink.getAsOf())) {
                 security = t.security;
+                t.priceRaw = rawPrice(t.priceProto, t.securityRaw);
             } else {
-                security = Security.fromProto(resolveSecurity(sp));
+                SecurityProto resolved = resolveSecurity(sp);
+                t.priceRaw = rawPrice(t.priceProto, resolved);
+                security = Security.fromProto(resolved);
             }
         }
         return new Price(

@@ -50,6 +50,9 @@ class TransactionConcurrentSerializeTest {
     private static final UUID BOND_ID = UUID.fromString("0b0e0000-0000-4000-8000-0000000000b1");
     private static final UUID CASH_SECURITY_ID = UUID.fromString("0b0e0000-0000-4000-8000-0000000000c1");
 
+    /** Calls to the shared securities' own {@code getProto()}: serialising must make none. */
+    private static final AtomicInteger NESTED_GET_PROTO = new AtomicInteger();
+
     /**
      * A cash security whose proto has no product_type, so its own
      * {@code getProto()} takes the overlay path (Architecture review, Concern 1).
@@ -60,7 +63,13 @@ class TransactionConcurrentSerializeTest {
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(AS_OF))
                 .setIssuerName("USD")
                 .setCashDetails(CashDetailsProto.newBuilder().setCashId("USD"))
-                .build());
+                .build()) {
+            @Override
+            public SecurityProto getProto() {
+                NESTED_GET_PROTO.incrementAndGet();
+                return super.getProto();
+            }
+        };
     }
 
     /**
@@ -97,7 +106,13 @@ class TransactionConcurrentSerializeTest {
 
     @Test
     void sixteenThreads_getProto_everyResultIsTheBaseline_andNothingSharedChanges() throws Exception {
-        BondSecurity bond = new BondSecurity(BOND_ID, "US Treasury", AS_OF, CashSecurity.USD);
+        BondSecurity bond = new BondSecurity(BOND_ID, "US Treasury", AS_OF, CashSecurity.USD) {
+            @Override
+            public SecurityProto getProto() {
+                NESTED_GET_PROTO.incrementAndGet();
+                return super.getProto();
+            }
+        };
         bond.setFaceValue(BigDecimal.valueOf(1000));
         bond.setIssueDate(LocalDate.of(2024, 11, 15));
         bond.setMaturityDate(LocalDate.of(2031, 11, 15));
@@ -106,8 +121,10 @@ class TransactionConcurrentSerializeTest {
         Transaction buy = buy(bond, cash);
         List<Transaction> childrenBefore = new ArrayList<>(buy.getChildTransactions());
         byte[] baseline = buy.getProto().toByteArray();
+        byte[] rawBaseline = buy.getRawProto().toByteArray();
         byte[] bondBefore = bond.getProto().toByteArray();
         byte[] cashBefore = cash.getProto().toByteArray();
+        int nestedGetProtoBefore = NESTED_GET_PROTO.get();
         assertEquals(2, TransactionProto.parseFrom(baseline).getChildTransactionsCount());
 
         CyclicBarrier start = new CyclicBarrier(THREADS + READERS);
@@ -135,6 +152,8 @@ class TransactionConcurrentSerializeTest {
                             wrongChildren.incrementAndGet();
                         }
                         if (!Arrays.equals(baseline, out.toByteArray())) wrongBytes.incrementAndGet();
+                        // getRawProto() too: it must not call the shared securities' getProto().
+                        if (!Arrays.equals(rawBaseline, buy.getRawProto().toByteArray())) wrongBytes.incrementAndGet();
                     } catch (RuntimeException e) {
                         errors.incrementAndGet();
                         firstError.compareAndSet(null, e);
@@ -172,6 +191,8 @@ class TransactionConcurrentSerializeTest {
         assertEquals(0, errors.get(), counts);
         assertEquals(0, wrongChildren.get(), counts);
         assertEquals(0, wrongBytes.get(), counts);
+        assertEquals(nestedGetProtoBefore, NESTED_GET_PROTO.get(),
+                "serialising called a shared Security's own getProto(), which can write its overlay");
 
         List<Transaction> childrenAfter = buy.getChildTransactions();
         assertEquals(2, childrenAfter.size());
