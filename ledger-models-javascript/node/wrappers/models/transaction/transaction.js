@@ -273,11 +273,15 @@ class Transaction {
         return new portfolio_1.default(portfolio);
     }
     getSecurity() {
+        var _a;
         this.ensureHydrated();
         const security = this.proto.getSecurity();
         if (!security)
             throw new Error("Security is required");
-        return security_1.default.create(security);
+        // A link is resolved (cache-only) before choosing the subclass, so a
+        // Treasury link reads as a BondSecurity (LM-440). On a miss, the link
+        // wrapper is returned and its field reads hydrate lazily or throw.
+        return security_1.default.create((_a = security_1.default.resolveLink(security)) !== null && _a !== void 0 ? _a : security);
     }
     getStrategyAllocation() {
         this.ensureHydrated();
