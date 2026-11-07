@@ -20,7 +20,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
-import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -36,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * LM-440: a transaction's security stored as a link (strip-on-write, #340)
  * reads as the class its resolved product type implies — a Treasury link is
  * a {@link BondSecurity} with its real maturity, never the base-class
- * {@code 2999-12-31} placeholder. The link is resolved at most once per
- * transaction and never written back into the transaction proto.
+ * {@code 2999-12-31} placeholder. The link is resolved once, when the
+ * transaction is built (LM-444), and never written back into its proto.
  */
 class TransactionLinkSecurityClassTest {
 
@@ -225,35 +224,6 @@ class TransactionLinkSecurityClassTest {
         assertInstanceOf(BondSecurity.class, security);
         assertEquals(maturity, security.getField(Field.MATURITY_DATE));
         assertEquals(0, fetches.get());
-    }
-
-    @Test
-    void memoResets_onSecurityChangeAndAdoptResolvedProto() throws Exception {
-        UUID first = newId();
-        UUID second = newId();
-        LocalDate secondMaturity = LocalDate.of(2031, 5, 15);
-        serve(bond(first, ProductTypeProto.TREASURY_NOTE, LocalDate.of(2026, 11, 15)),
-                bond(second, ProductTypeProto.TIPS, secondMaturity));
-        Transaction txn = linkTxn(first);
-        assertInstanceOf(BondSecurity.class, txn.getSecurity());
-        assertEquals(1, fetches.get());
-
-        // The transaction's own hydration swaps in a proto on another link:
-        // exactly one new fetch, and the new link's class and maturity.
-        Method adopt = Transaction.class.getDeclaredMethod("adoptResolvedProto", TransactionProto.class);
-        adopt.setAccessible(true);
-        adopt.invoke(txn, txnOn(Security.linkOf(second, AS_OF)));
-
-        Security security = txn.getSecurity();
-        txn.getSecurity();
-        assertInstanceOf(TIPSBond.class, security);
-        assertEquals(secondMaturity, security.getField(Field.MATURITY_DATE));
-        assertEquals(2, fetches.get());
-
-        // An overlay write that leaves the security alone keeps the memo.
-        txn.setQuantity(java.math.BigDecimal.TEN);
-        assertInstanceOf(TIPSBond.class, txn.getSecurity());
-        assertEquals(2, fetches.get());
     }
 
     // ---- guardrail 4 ---------------------------------------------------

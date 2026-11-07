@@ -18,14 +18,12 @@ import common.models.security.ProductHierarchy;
 import common.models.security.Security;
 import common.models.security.SecurityRules;
 import common.models.strategy.StrategyAllocation;
-import common.models.util.persistence.IForeignKey;
-import com.google.protobuf.ByteString;
 import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.position.PositionStatusProto;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.security.SecurityProto;
+import fintekkers.models.strategy.StrategyAllocationProto;
 import fintekkers.models.transaction.TransactionProto;
-import fintekkers.models.transaction.TransactionTypeProto;
 import protos.serializers.portfolio.PortfolioSerializer;
 import protos.serializers.price.PriceSerializer;
 import protos.serializers.util.proto.ProtoSerializationUtil;
@@ -41,53 +39,35 @@ import static common.models.postion.Field.*;
 /***
  * A transaction represents an operation that changes the position of a portfolio.
  *
- * <p>Phase 2 / sub-issue FinTekkers/second-brain#340 refactor: Transaction is
- * now a thin wrapper around a {@link TransactionProto}, mirroring the Phase 1
- * pattern from PR #225 (Security wrapper). The proto is the single source of
- * truth; field accessors forward to {@code proto.getXxx()} with type conversion.
- * Mutations write into a lazily-allocated {@code overlay} builder;
- * {@link #getProto()} returns the overlay-merged proto with inner
- * Security/Portfolio sub-protos rewritten to {@code is_link=true}
- * (uuid + as_of preserved) — strip-on-write per Phase 2 dispatch. The trade
- * Price stays inline (LM-394): only its nested Security becomes a link.
+ * <p>LM-444: a plain object again, as before #340. Fields and the list of child
+ * transactions are held directly; {@link TransactionSerializer} builds a fresh
+ * {@link TransactionProto} from them on every {@link #getProto()} call and never
+ * edits anything shared, so two threads serialising the same transaction cannot
+ * corrupt each other's output.
  *
- * <p>Resolver wiring (D): Java Transaction wrapper takes ONLY proto in ctor,
- * matching the Python/Rust pattern. {@link #getSecurity()} returns
- * {@code Security.fromProto(proto.getSecurity())} for an inline security. For
- * an {@code is_link} security it resolves the link first (cache, then the
- * configured {@link Security.Fetcher}, at most once per transaction) and
- * dispatches on the resolved product type, so a Treasury link reads as a
- * {@link BondSecurity} (LM-440); the resolved proto is never written back.
- * An inline security (and its inline
- * settlement_currency) with no UUID gets one once, at construction (LM-276),
- * so {@code getSecurity().getID()} is stable. Callers may pre-warm via
- * {@link common.util.LinkResolver#resolveSecuritiesOnTransactions(List)}
- * (and the portfolio counterpart) to batch the lookups. Same for Portfolio. Price
- * resolver is deferred to Phase 2.5; {@link #getPrice()} returns a Price POJO
- * with whatever data the inner PriceProto carries.
+ * <p>Nested parts are written the way the #340 wrapper wrote them, so stored and
+ * wire bytes are unchanged: the Security and Portfolio become links
+ * (strip-on-write) and the trade Price stays inline with only its Security as a
+ * link (LM-394). Each nested part keeps the wire form it will be written as,
+ * captured once when the field is set, next to the object its getter returns.
+ *
+ * <p>Links resolve once, when the object is built from a proto: a Security link
+ * goes through {@link common.util.LinkCache#SECURITY} and the
+ * {@link Security.Fetcher} before its class is chosen, so a Treasury link reads
+ * as a {@link BondSecurity} (LM-440). Getters and serialising never fetch.
+ *
+ * <p>Thread safety: once built, concurrent reads and {@link #getProto()} calls
+ * are safe. Setters are plain field writes: a setter racing a reader or a
+ * serialise is not safe, as for any plain mutable object.
  */
 public class Transaction extends RawDataModelObject implements ITransaction {
-
-    /**
-     * Active proto. Mutable: swapped on lazy hydration when constructed from
-     * a link-mode {@link TransactionProto}. For non-link wrappers (the common
-     * case) this is set once in the constructor and never changes.
-     */
-    private TransactionProto proto;
-
-    /**
-     * True iff this wrapper holds a fully-populated proto. Initialized to
-     * {@code !proto.getIsLink()} in the constructor. Flipped to {@code true}
-     * after a successful {@link #ensureHydrated()} swaps in a resolved proto.
-     */
-    private boolean isHydrated;
 
     // ---- Fetcher hook (parity with Security.Fetcher + Portfolio.Fetcher) ----
 
     /**
-     * Test seam: set a fetcher that resolves a link-mode TransactionProto to
-     * its full form. Default delegates to {@link fintekkers.services.TransactionService};
-     * tests override with a fake.
+     * Resolves a link-mode TransactionProto to its full form, once, when a
+     * Transaction is built from the link. Default delegates to
+     * {@link fintekkers.services.TransactionService}; tests override with a fake.
      */
     @FunctionalInterface
     public interface Fetcher {
@@ -107,87 +87,70 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return (uuid, asOf) -> fintekkers.services.TransactionService.getInstance().getByUuid(uuid, asOf);
     }
 
-    /**
-     * Write buffer for in-place mutations. {@code null} until the first setter
-     * call; allocated lazily by {@link #ensureOverlay()} as a copy of
-     * {@link #proto} (via {@code proto.toBuilder()}, which deep-copies nested
-     * sub-protos — non-trivial, hence the laziness).
-     *
-     * <p>Write lifecycle:
-     * <ol>
-     *   <li>Construction: {@code proto} = caller-supplied baseline (immutable);
-     *       {@code overlay} = null. All reads go straight to {@code proto}.</li>
-     *   <li>First setter (e.g. {@link #setQuantity}, {@link #setValidTo}):
-     *       {@link #ensureOverlay()} clones {@code proto} into a Builder;
-     *       the setter writes into that Builder. Subsequent reads via
-     *       {@link #active()} prefer {@code overlay} when non-null, so writes
-     *       are visible to in-process getters immediately.</li>
-     *   <li>Serialize ({@link #getProto()}): the overlay (or {@code proto} if
-     *       no writes occurred) is the basis for the emitted proto, with
-     *       strip-on-write applied to nested Security/Portfolio sub-protos
-     *       (and the Price's nested Security) and child transactions rebuilt
-     *       from the in-memory {@code childrenTransactions} list.</li>
-     * </ol>
-     *
-     * <p>The {@code overlay == null} check doubles as a "has been mutated?"
-     * predicate (used by {@link #getRawProto()} to skip the rebuild path
-     * entirely on untouched wrappers).
-     */
-    private TransactionProto.Builder overlay;
+    /** The {@code version} a proto carried, so it is written back unchanged. */
+    record WireVersion(int major, int minor, int patch) {}
+
+    // Package-private: TransactionSerializer fills and reads these.
+
+    /** {@code object_type} and {@code version} as received; stamped for objects built in Java. */
+    ObjectTypeProto objectType;
+    WireVersion version;
+
+    /** True for a link this process could not resolve: only the ID and as_of are known. */
+    boolean link;
+
+    /** {@code valid_from} as received; {@code null} when the proto had none. */
+    ZonedDateTime validFrom;
+
+    Portfolio portfolio;
+    /** The link {@link #getProto()} writes for {@link #portfolio}. */
+    PortfolioProto portfolioLink;
+
+    Security security;
+    /** The link {@link #getProto()} writes for {@link #security}. */
+    SecurityProto securityLink;
+
+    /** {@code null} for a link price LinkCache.PRICE could not resolve at build, or on {@link #priceError}. */
+    Price price;
+    /** The price {@link #getProto()} writes: inline with a security link, or a link passed through. */
+    PriceProto priceProto;
+
+    StrategyAllocation strategyAllocation;
+    /** The strategy allocation {@link #getProto()} writes, as it was when set. */
+    StrategyAllocationProto strategyAllocationProto;
+
+    TransactionType transactionType;
+    BigDecimal quantity;
+    LocalDate tradeDate;
+    LocalDate settlementDate;
+    /** A field that failed to decode at build: its getter raises this error. */
+    RuntimeException securityError, portfolioError, priceError, quantityError, tradeDateError, settlementDateError;
+    PositionStatusProto positionStatus;
+    String tradeName = "";
+    boolean cancelled;
 
     /** Parent transaction is NOT in the proto (commented-out tag 21). In-memory only. */
-    private Transaction parentTransaction;
+    Transaction parentTransaction;
 
-    /**
-     * Child transactions. Hydrated from {@code proto.child_transactions_list}
-     * on construction. {@link #addChildTransaction(Transaction)} appends in
-     * memory; {@link #getProto()} rebuilds the proto's child list from this
-     * collection (so child mutations propagate on serialize).
-     */
-    private final List<Transaction> childrenTransactions = new ArrayList<>();
+    /** Child transactions. Serialising only reads this list. */
+    final List<Transaction> childrenTransactions = new ArrayList<>();
 
     // ---- Primary constructor (proto-backed) -----------------------------
 
-    /** Primary constructor — wraps a TransactionProto. */
+    /**
+     * Builds the transaction from a proto, children included, resolving
+     * Security, Portfolio and Price links once. See
+     * {@link TransactionSerializer#deserialize(TransactionProto)}.
+     */
     public Transaction(TransactionProto proto) {
         super(extractId(proto), extractAsOf(proto));
         Objects.requireNonNull(proto, "TransactionProto must not be null");
-        // UUID Regression A fix from PR #225: when input proto has no UUID,
-        // extractId() synthesizes one via UUID.randomUUID() and stores on
-        // parent. Reflect that synthesized UUID into this.proto so
-        // getProto() exposes it.
-        boolean fillTxnUuid = !proto.hasUuid() && this.getID() != null;
-        boolean fillPrice = needsPriceDefaults(proto);
-        boolean fillSecurity = needsSecurityDefaults(proto);
-        if (fillTxnUuid || fillPrice || fillSecurity) {
-            TransactionProto.Builder b = proto.toBuilder();
-            if (fillTxnUuid) {
-                b.setUuid(ProtoSerializationUtil.serializeUUID(this.getID()));
-            }
-            if (fillPrice) {
-                fillPriceDefaults(b);
-            }
-            if (fillSecurity) {
-                fillSecurityDefaults(b);
-            }
-            this.proto = b.build();
-        } else {
-            this.proto = proto;
-        }
-        this.isHydrated = !this.proto.getIsLink();
-        // Hydrate child wrappers from the proto. Mutations after construction
-        // go through addChildTransaction; serialize rebuilds from this list.
-        for (TransactionProto childProto : this.proto.getChildTransactionsList()) {
-            Transaction child = new Transaction(childProto);
-            child.parentTransaction = this;
-            this.childrenTransactions.add(child);
-        }
+        TransactionSerializer.fill(this, proto);
     }
 
     /**
      * 'Short-hand' constructor. Will generate derived transactions such as
-     * cash impacts, and maturity transactions for bonds. Builds a baseline
-     * proto from POJO args and delegates to the primary constructor.
+     * cash impacts, and maturity transactions for bonds.
      *
      * @deprecated Construct a {@link TransactionProto} directly and use
      *             {@link #Transaction(TransactionProto)}. Retained for the
@@ -207,14 +170,38 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     /**
      * 'Long-form' constructor. Will NOT generate dependent transactions.
      *
-     * @deprecated Same shape as the short-form ctor — POJO args build a proto.
+     * @deprecated Same shape as the short-form ctor.
      */
     @Deprecated
     public Transaction(UUID id, Portfolio portfolio, Price price, LocalDate tradeDate, LocalDate settlementDate,
                        BigDecimal quantity, Security security, TransactionType transactionType, StrategyAllocation strategy,
                        ZonedDateTime asOf, Transaction parentTransaction, String tradeName, PositionStatusProto status) {
-        this(buildBaselineProto(id, portfolio, price, tradeDate, settlementDate, quantity, security,
-                transactionType, strategy, asOf, tradeName, status));
+        super(id != null ? id : UUID.randomUUID(), requireAsOf(asOf));
+        this.objectType = ObjectTypeProto.OBJECT_TYPE_TRANSACTION;
+        this.version = TransactionSerializer.wireVersion(ObjectTypes.SCHEMA_VERSION);
+        if (portfolio != null) {
+            this.portfolio = portfolio;
+            this.portfolioLink = TransactionSerializer.linkOf(PortfolioSerializer.getInstance().serialize(portfolio));
+        }
+        if (security != null) {
+            this.security = security;
+            this.securityLink = TransactionSerializer.linkOf(security.getProto());
+        }
+        this.transactionType = transactionType;
+        this.quantity = quantity;
+        if (price != null) {
+            this.price = price;
+            this.priceProto = TransactionSerializer.inlinePrice(PriceSerializer.getInstance().serialize(price));
+        }
+        this.tradeDate = tradeDate;
+        this.settlementDate = settlementDate;
+        this.positionStatus = Objects.requireNonNullElse(status, PositionStatusProto.HYPOTHETICAL);
+        if (strategy == null) {
+            strategy = new StrategyAllocation(UUID.randomUUID(), ZonedDateTime.now());
+        }
+        this.strategyAllocation = strategy;
+        this.strategyAllocationProto = strategy.getProto();
+        this.tradeName = tradeName != null ? tradeName : "";
 
         if (quantity.doubleValue() <= 0) {
             throw new TransactionProcessingException("Quantity should be expressed in absolute numbers. Doesn't support " +
@@ -247,8 +234,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             // UUID Regression B fix from PR #225: explicit byte-length
             // validation. raw_uuid must be 0 (treat as unset) or 16 bytes;
             // anything else throws IllegalArgumentException.
-            ByteString raw = proto.getUuid().getRawUuid();
-            int n = raw.size();
+            int n = proto.getUuid().getRawUuid().size();
             if (n != 0 && n != 16) {
                 throw new IllegalArgumentException(
                         "Invalid UUID: expected 16 bytes but got " + n);
@@ -257,74 +243,6 @@ public class Transaction extends RawDataModelObject implements ITransaction {
             if (parsed != null) return parsed;
         }
         return UUID.randomUUID();
-    }
-
-    /**
-     * Nested Price defaults, filled once at construction (parity with Python
-     * {@code Transaction.__init__} and JS {@code Transaction} constructor):
-     * a non-link price with no UUID (unset or empty raw_uuid) gets a random
-     * UUID; a non-link price with no as_of gets the transaction's as_of (the
-     * rule {@code transaction.py create_from} and {@code Price.create} use).
-     * Set values are never overwritten; link prices pass through as sent.
-     * The nested Security has its own fill: see {@link #needsSecurityDefaults}.
-     */
-    private static boolean needsPriceDefaults(TransactionProto proto) {
-        if (!proto.hasPrice()) return false;
-        PriceProto price = proto.getPrice();
-        if (price.getIsLink()) return false;
-        return !hasUsableUuid(price) || (!price.hasAsOf() && proto.hasAsOf());
-    }
-
-    private static void fillPriceDefaults(TransactionProto.Builder b) {
-        PriceProto.Builder price = b.getPriceBuilder();
-        if (!hasUsableUuid(price)) {
-            price.setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()));
-        }
-        if (!price.hasAsOf() && b.hasAsOf()) {
-            price.setAsOf(b.getAsOf());
-        }
-    }
-
-    private static boolean hasUsableUuid(fintekkers.models.price.PriceProtoOrBuilder price) {
-        return price.hasUuid() && price.getUuid().getRawUuid().size() > 0;
-    }
-
-    /**
-     * Nested Security defaults, filled once at construction (LM-276, parity
-     * with Python, JS and Rust): a non-link security with no UUID (unset or
-     * empty raw_uuid) gets a random UUID, and so does its non-link
-     * settlement_currency. Without this, every {@link #getSecurity()} call
-     * wraps a UUID-less proto and mints a new ID, and strip-on-write emits an
-     * unresolvable link. Set UUIDs are never overwritten; a link security
-     * (and anything inside it) and a link currency pass through as sent.
-     * Applies to the wrapped proto only, not to a proto hydrated later via
-     * the overlay.
-     */
-    private static boolean needsSecurityDefaults(TransactionProto proto) {
-        if (!proto.hasSecurity()) return false;
-        SecurityProto security = proto.getSecurity();
-        if (security.getIsLink()) return false;
-        if (!hasUsableUuid(security)) return true;
-        if (!security.hasSettlementCurrency()) return false;
-        SecurityProto currency = security.getSettlementCurrency();
-        return !currency.getIsLink() && !hasUsableUuid(currency);
-    }
-
-    private static void fillSecurityDefaults(TransactionProto.Builder b) {
-        SecurityProto.Builder security = b.getSecurityBuilder();
-        if (!hasUsableUuid(security)) {
-            security.setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()));
-        }
-        if (security.hasSettlementCurrency()) {
-            SecurityProto.Builder currency = security.getSettlementCurrencyBuilder();
-            if (!currency.getIsLink() && !hasUsableUuid(currency)) {
-                currency.setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()));
-            }
-        }
-    }
-
-    private static boolean hasUsableUuid(fintekkers.models.security.SecurityProtoOrBuilder security) {
-        return security.hasUuid() && security.getUuid().getRawUuid().size() > 0;
     }
 
     /**
@@ -341,146 +259,28 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return ProtoSerializationUtil.deserializeRequiredTimestamp(null, "transaction.as_of");
     }
 
-    private static TransactionProto buildBaselineProto(
-            UUID id, Portfolio portfolio, Price price, LocalDate tradeDate, LocalDate settlementDate,
-            BigDecimal quantity, Security security, TransactionType transactionType,
-            StrategyAllocation strategy, ZonedDateTime asOf, String tradeName, PositionStatusProto status) {
-        TransactionProto.Builder b = ObjectTypes.stamp(TransactionProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_TRANSACTION);
-        if (id != null) b.setUuid(ProtoSerializationUtil.serializeUUID(id));
-        if (asOf != null) b.setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf));
-        if (portfolio != null) b.setPortfolio(PortfolioSerializer.getInstance().serialize(portfolio));
-        if (security != null) b.setSecurity(security.getProto());
-        if (transactionType != null) b.setTransactionType(TransactionTypeProto.valueOf(transactionType.name()));
-        if (quantity != null) b.setQuantity(ProtoSerializationUtil.serializeBigDecimal(quantity));
-        if (price != null) b.setPrice(PriceSerializer.getInstance().serialize(price));
-        if (tradeDate != null) b.setTradeDate(ProtoSerializationUtil.serializeLocalDate(tradeDate));
-        if (settlementDate != null) b.setSettlementDate(ProtoSerializationUtil.serializeLocalDate(settlementDate));
-        b.setPositionStatus(Objects.requireNonNullElse(status, PositionStatusProto.HYPOTHETICAL));
-        if (strategy == null) {
-            strategy = new StrategyAllocation(UUID.randomUUID(), ZonedDateTime.now());
-        }
-        b.setStrategyAllocation(strategy.getProto());
-        if (tradeName != null) b.setTradeName(tradeName);
-        b.setIsCancelled(false);
-        return b.build();
-    }
-
-    protected TransactionProto.Builder ensureOverlay() {
-        if (overlay == null) {
-            overlay = proto.toBuilder();
-        }
-        return overlay;
+    private static ZonedDateTime requireAsOf(ZonedDateTime asOf) {
+        if (asOf == null) ProtoSerializationUtil.deserializeRequiredTimestamp(null, "transaction.as_of");
+        return asOf;
     }
 
     /**
-     * Returns the active view of the proto with strip-on-write applied:
-     *   - Inner Security/Portfolio sub-protos rewritten to is_link=true
-     *     with only uuid + as_of preserved.
-     *   - Inner Price kept inline (price decimal, uuid, as_of): a trade price
-     *     is a fact of the transaction, not a link to market data (LM-394).
-     *     Only the Price's nested Security is rewritten to a link. A Price
-     *     that is already a link passes through unchanged.
-     *   - childTransactions rebuilt from the in-memory list (so additions
-     *     made via addChildTransaction propagate).
-     *
-     * <p>Replaces {@code TransactionSerializer.getInstance().serialize(transaction)}.
-     * Per Phase 2 dispatch: serialize-back rewrites inner sub-protos to link
-     * references so persisted bytes are compact; consumer hydrates on read.
+     * Builds a new proto from this transaction's fields, children included:
+     * Security and Portfolio as links, the Price inline with its Security as a
+     * link. Read-only; safe to call from many threads at once.
      */
     public TransactionProto getProto() {
-        TransactionProto.Builder b = (overlay != null) ? overlay : proto.toBuilder();
-
-        // Rebuild child transactions from the in-memory list so additions
-        // propagate. Each child's getProto() recursively strips-on-write.
-        b.clearChildTransactions();
-        for (Transaction child : childrenTransactions) {
-            b.addChildTransactions(child.getProto());
-        }
-
-        // Strip inline Security → link reference.
-        if (b.hasSecurity()) {
-            b.setSecurity(stripSecurity(b.getSecurity()));
-        }
-        // Strip inline Portfolio → link reference.
-        if (b.hasPortfolio()) {
-            b.setPortfolio(stripPortfolio(b.getPortfolio()));
-        }
-        // Keep Price inline; strip only its nested Security → link reference.
-        if (b.hasPrice()) {
-            b.setPrice(stripPrice(b.getPrice()));
-        }
-        return b.build();
+        return TransactionSerializer.getInstance().serialize(this);
     }
 
     /**
-     * Returns the raw active proto without strip-on-write — for tests that
-     * need to verify pre-strip field values, and for hydration round-trips
-     * where the caller has already resolved the inner protos. Most consumers
-     * should use {@link #getProto()}.
+     * Like {@link #getProto()} but without strip-on-write: nested Security,
+     * Portfolio and the Price's Security are written in full (an unresolved
+     * link stays a link). For tests and debugging; most consumers should use
+     * {@link #getProto()}.
      */
     public TransactionProto getRawProto() {
-        if (overlay != null) {
-            // Still rebuild child transactions from the in-memory list, even
-            // for the raw view, because addChildTransaction is the only way
-            // children land on the proto.
-            TransactionProto.Builder b = overlay;
-            b.clearChildTransactions();
-            for (Transaction child : childrenTransactions) {
-                b.addChildTransactions(child.getRawProto());
-            }
-            return b.build();
-        }
-        return proto;
-    }
-
-    private static SecurityProto stripSecurity(SecurityProto full) {
-        if (full.getIsLink()) return full; // already a link
-        // Self-pre-warm: cache the full proto before stripping so any later
-        // consumer that holds the link can lazy-hydrate without an RPC.
-        // Covers same-process write-then-read flows (tests, in-process
-        // gRPC server reading back what it just wrote, etc.).
-        primeSecurityCache(full);
-        SecurityProto.Builder link = ObjectTypes.stamp(SecurityProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_SECURITY).setIsLink(true);
-        if (full.hasUuid()) link.setUuid(full.getUuid());
-        if (full.hasAsOf()) link.setAsOf(full.getAsOf());
-        return link.build();
-    }
-
-    private static PortfolioProto stripPortfolio(PortfolioProto full) {
-        if (full.getIsLink()) return full;
-        primePortfolioCache(full);
-        PortfolioProto.Builder link = ObjectTypes.stamp(PortfolioProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PORTFOLIO).setIsLink(true);
-        if (full.hasUuid()) link.setUuid(full.getUuid());
-        if (full.hasAsOf()) link.setAsOf(full.getAsOf());
-        return link.build();
-    }
-
-    /**
-     * A trade price stays inline (price decimal, uuid, as_of) so a persisted
-     * transaction reads its price back without a {@code LinkCache.PRICE}
-     * lookup (LM-394). Only the nested Security is stripped to a link.
-     */
-    private static PriceProto stripPrice(PriceProto full) {
-        if (full.getIsLink()) return full;
-        PriceProto.Builder inline = ObjectTypes.stamp(full.toBuilder(), ObjectTypeProto.OBJECT_TYPE_PRICE);
-        if (full.hasSecurity()) inline.setSecurity(stripSecurity(full.getSecurity()));
-        return inline.build();
-    }
-
-    // ---- LinkCache pre-warm helpers (write-through on strip) -------------
-
-    private static void primeSecurityCache(SecurityProto full) {
-        if (!full.hasUuid() || !full.hasAsOf()) return;
-        java.util.UUID id = protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(full.getUuid());
-        java.time.ZonedDateTime asOf = protos.serializers.util.proto.ProtoSerializationUtil.deserializeTimestamp(full.getAsOf());
-        if (id != null && asOf != null) common.util.LinkCache.SECURITY.put(id, full, asOf);
-    }
-
-    private static void primePortfolioCache(PortfolioProto full) {
-        if (!full.hasUuid() || !full.hasAsOf()) return;
-        java.util.UUID id = protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(full.getUuid());
-        java.time.ZonedDateTime asOf = protos.serializers.util.proto.ProtoSerializationUtil.deserializeTimestamp(full.getAsOf());
-        if (id != null && asOf != null) common.util.LinkCache.PORTFOLIO.put(id, full, asOf);
+        return TransactionSerializer.getInstance().serializeRaw(this);
     }
 
     // ---- toString / equals / hashCode -----------------------------------
@@ -504,13 +304,9 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                     getValidFrom().toString(), validTo,
                     getStrategyAllocation().toString());
         } catch (NullPointerException | IllegalStateException | InvalidFieldException e) {
-            // is_link-mode Security/Portfolio reads (or partially-populated proto):
-            // emit a link-style summary so logs are still useful.
-            TransactionProto a = active();
-            String idStr = a.hasUuid()
-                    ? ProtoSerializationUtil.deserializeUUID(a.getUuid()).toString()
-                    : "?";
-            return String.format("Link[Transaction:%s]", idStr);
+            // is_link-mode Security/Portfolio reads (or a partially-populated
+            // transaction): emit a link-style summary so logs are still useful.
+            return String.format("Link[Transaction:%s]", getID());
         }
     }
 
@@ -522,185 +318,98 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return getID().equals(otherTransaction.getID()) && getAsOf().equals(otherTransaction.getAsOf());
     }
 
-    // ---- is_link / lazy-hydrate semantics ----
+    // ---- is_link semantics ----
 
     /**
-     * True iff this wrapper currently holds an unresolved link reference.
+     * True iff this transaction was built from a link that could not be
+     * resolved: only {@link #getID()} and {@link #getAsOf()} are known.
      * Mirrors {@link Security#isLink} / {@link Portfolio#isLink}.
      */
     public boolean isLink() {
-        return proto.getIsLink() && !isHydrated;
+        return link;
     }
 
-    /**
-     * If this wrapper holds an unresolved link, resolve it: cache hit first;
-     * on miss, call the configured {@link Fetcher}; on miss with no fetcher,
-     * throw. On success, swap the wrapper's internal proto to the resolved
-     * full TransactionProto. Mirrors {@code Security.ensureHydrated()}.
-     */
-    private void ensureHydrated() {
-        if (isHydrated) return;
-
-        UUID id = getID();
-        ZonedDateTime asOf = proto.hasAsOf()
-                ? ProtoSerializationUtil.deserializeTimestamp(proto.getAsOf())
-                : null;
-
-        TransactionProto cached = common.util.LinkCache.TRANSACTION.get(id, asOf);
-        if (cached != null) {
-            adoptResolvedProto(cached);
-            return;
+    /** Business fields are unknown on an unresolved link: say so rather than return nothing. */
+    private void requireResolved() {
+        if (link) {
+            throw new IllegalStateException(
+                    "Cannot read fields on link-mode Transaction uuid=" + getID()
+                    + " asOf=" + getAsOf() + " — it was not in LinkCache.TRANSACTION and the "
+                    + "Transaction.Fetcher returned no record when it was built. "
+                    + "Pre-warm via LinkResolver or call Transaction.setFetcher(...) at startup.");
         }
-        Fetcher f = fetcher;
-        if (f != null) {
-            TransactionProto resolved = f.fetch(id, asOf);
-            if (resolved == null) {
-                throw new IllegalStateException(
-                        "Cannot resolve link-mode Transaction uuid=" + id
-                        + " asOf=" + asOf + " — TransactionService returned no record. "
-                        + "Data lineage broken.");
-            }
-            ZonedDateTime resolvedAsOf = resolved.hasAsOf()
-                    ? ProtoSerializationUtil.deserializeTimestamp(resolved.getAsOf())
-                    : (asOf != null ? asOf : ZonedDateTime.now());
-            common.util.LinkCache.TRANSACTION.put(id, resolved, resolvedAsOf);
-            adoptResolvedProto(resolved);
-            return;
-        }
-        throw new IllegalStateException(
-                "Cannot read fields on link-mode Transaction uuid=" + id
-                + " asOf=" + asOf + " — cache miss and no Transaction.Fetcher configured. "
-                + "Pre-warm via LinkResolver or call Transaction.setFetcher(...) at startup. "
-                + "See docs/adr/lazy-link-hydration.md.");
     }
 
-    private void adoptResolvedProto(TransactionProto resolved) {
-        this.proto = resolved;
-        this.isHydrated = true;
-        this.resolvedSecurity = null;
-        // Note: childTransactions list is built once at construction time and
-        // is not re-derived from a hydrated proto. A link-mode Transaction
-        // can't carry child transactions in its link form anyway.
-    }
-
-    // ---- Field accessors (proto-backed) ---------------------------------
-
-    private TransactionProto active() {
-        ensureHydrated();
-        return (overlay != null) ? overlay.build() : proto;
-    }
+    // ---- Field accessors ------------------------------------------------
 
     @Override
     public Portfolio getPortfolio() {
-        TransactionProto a = active();
-        if (!a.hasPortfolio()) return null;
-        return PortfolioSerializer.getInstance().deserialize(a.getPortfolio());
+        requireResolved();
+        if (portfolioError != null) throw portfolioError;
+        return portfolio;
     }
 
     /**
-     * Memo of the last link resolved by {@link #getSecurity()}: the link
-     * proto it was resolved from and the outcome ({@code null} when the
-     * fetch failed). One immutable holder in one volatile field, so key and
-     * outcome never tear across threads. Never written into {@code proto}
-     * or {@code overlay}: strip-on-write is unchanged (LM-440).
-     */
-    private record ResolvedSecurity(SecurityProto link, SecurityProto resolved) {}
-    private transient volatile ResolvedSecurity resolvedSecurity;
-
-    /**
-     * Returns the transaction's security as the class its product type
-     * implies. A link is resolved first (LM-440) through
-     * {@link Security#resolveLink}: cache, then the configured fetcher, at
-     * most once per transaction. So a Treasury link reads as a
-     * {@link BondSecurity}. If the link cannot be resolved, returns the
-     * link-mode wrapper; its field reads then hydrate lazily or raise.
+     * The transaction's security, as the class its product type implies. A
+     * link was resolved when this transaction was built (LM-440), so a
+     * Treasury link reads as a {@link BondSecurity}. If it could not be
+     * resolved then, this is the link-mode Security.
      */
     @Override
     public Security getSecurity() {
-        TransactionProto a = active();
-        if (!a.hasSecurity()) return null;
-        SecurityProto sec = a.getSecurity();
-        if (!sec.getIsLink()) return Security.fromProto(sec);
-
-        ResolvedSecurity memo = resolvedSecurity;
-        if (memo == null || !memo.link().equals(sec)) {
-            SecurityProto resolved;
-            try {
-                resolved = Security.resolveLink(sec);
-            } catch (RuntimeException e) {
-                resolved = null;   // surfaces on the first field read instead
-            }
-            // A miss with no fetcher made no fetch: don't memoise it, so a
-            // cache warmed later (LinkResolver) is still picked up.
-            if (resolved == null && Security.getFetcher() == null) {
-                return Security.fromProto(sec);
-            }
-            memo = new ResolvedSecurity(sec, resolved);
-            resolvedSecurity = memo;
-        }
-        return Security.fromProto(memo.resolved() != null ? memo.resolved() : sec);
+        requireResolved();
+        if (securityError != null) throw securityError;
+        return security;
     }
 
-    /** The security's UUID, read from the proto so an ID-only read never
-     *  resolves a link. */
+    /** The security's UUID, read from the link so an ID-only read needs nothing resolved. */
     private UUID getSecurityId() {
-        TransactionProto a = active();
-        if (!a.hasSecurity()) return null;
-        SecurityProto sec = a.getSecurity();
-        if (sec.getIsLink() && sec.hasUuid()) {
-            UUID id = ProtoSerializationUtil.deserializeUUID(sec.getUuid());
+        requireResolved();
+        if (securityLink != null && securityLink.hasUuid()) {
+            UUID id = ProtoSerializationUtil.deserializeUUID(securityLink.getUuid());
             if (id != null) return id;
         }
-        return getSecurity().getID();
+        Security s = getSecurity();
+        return s != null ? s.getID() : null;
     }
 
     @Override
     public StrategyAllocation getStrategyAllocation() {
-        TransactionProto a = active();
-        if (!a.hasStrategyAllocation()) return null;
-        return new StrategyAllocation(a.getStrategyAllocation());
+        requireResolved();
+        if (strategyAllocation == null && strategyAllocationProto != null) {
+            // Stored without uuid or as_of: raise the same error as before LM-444.
+            return new StrategyAllocation(strategyAllocationProto);
+        }
+        return strategyAllocation;
     }
 
     @Override
     public Price getPrice() {
-        TransactionProto a = active();
-        if (!a.hasPrice()) return null;
-        fintekkers.models.price.PriceProto pp = a.getPrice();
-        // Lazy-hydrate the embedded Price: if it's a link-mode proto,
-        // resolve via LinkCache.PRICE. getProto() keeps prices inline
-        // (LM-394), so only link prices sent by callers or persisted by
-        // older releases take this path; service-side write-through warms it.
-        if (pp.getIsLink() && pp.hasUuid()) {
-            java.util.UUID priceId = protos.serializers.util.proto.ProtoSerializationUtil.deserializeUUID(pp.getUuid());
-            java.time.ZonedDateTime priceAsOf = pp.hasAsOf()
-                    ? protos.serializers.util.proto.ProtoSerializationUtil.deserializeTimestamp(pp.getAsOf())
-                    : null;
-            fintekkers.models.price.PriceProto cached = common.util.LinkCache.PRICE.get(priceId, priceAsOf);
-            if (cached != null) {
-                pp = cached;
-            } else {
-                throw new IllegalStateException(
-                    "Cannot read fields on link-mode Price uuid=" + priceId
-                    + " asOf=" + priceAsOf + " — LinkCache.PRICE miss. "
-                    + "Pre-warm LinkCache.PRICE (e.g. via price-service write-through) before reading. "
-                    + "Prices written by Transaction.getProto() stay inline and never take this path.");
-            }
+        requireResolved();
+        if (priceError != null) throw priceError;
+        if (price == null && priceProto != null) {
+            UUID priceId = priceProto.hasUuid() ? ProtoSerializationUtil.deserializeUUID(priceProto.getUuid()) : null;
+            throw new IllegalStateException(
+                "Cannot read fields on link-mode Price uuid=" + priceId
+                + " — LinkCache.PRICE miss when the transaction was built. "
+                + "Pre-warm LinkCache.PRICE (e.g. via price-service write-through) before building it. "
+                + "Prices written by Transaction.getProto() stay inline and never take this path.");
         }
-        return PriceSerializer.getInstance().deserialize(pp);
+        return price;
     }
 
     @Override
     public LocalDate getSettlementDate() {
-        TransactionProto a = active();
-        return ProtoSerializationUtil.deserializeOptionalLocalDate(
-                a.hasSettlementDate() ? a.getSettlementDate() : null, "settlement_date");
+        requireResolved();
+        if (settlementDateError != null) throw settlementDateError;
+        return settlementDate;
     }
 
     @Override
     public BigDecimal getQuantity() {
-        TransactionProto a = active();
-        if (!a.hasQuantity()) return null;
-        return ProtoSerializationUtil.deserializeBigDecimal(a.getQuantity());
+        requireResolved();
+        if (quantityError != null) throw quantityError;
+        return quantity;
     }
 
     @Override
@@ -712,29 +421,26 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
     @Override
     public LocalDate getTradeDate() {
-        TransactionProto a = active();
-        return ProtoSerializationUtil.deserializeRequiredLocalDate(
-                a.hasTradeDate() ? a.getTradeDate() : null, "trade_date");
+        requireResolved();
+        if (tradeDateError != null) throw tradeDateError;
+        if (tradeDate == null) throw InvalidFieldException.unset("trade_date");
+        return tradeDate;
     }
 
     @Override
     public TransactionType getTransactionType() {
-        TransactionTypeProto tt = active().getTransactionType();
-        if (tt == TransactionTypeProto.UNKNOWN) return null;
-        try {
-            return TransactionType.valueOf(tt.name());
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
+        requireResolved();
+        return transactionType;
     }
 
     @Override
     public Boolean isCancelled() {
-        return active().getIsCancelled();
+        requireResolved();
+        return cancelled;
     }
 
     public void setCancelled(Boolean cancelled) {
-        ensureOverlay().setIsCancelled(Boolean.TRUE.equals(cancelled));
+        this.cancelled = Boolean.TRUE.equals(cancelled);
         // This transaction will no longer be valid so need to set a validTo
         // (matches pre-#340 behavior).
         if (Boolean.TRUE.equals(cancelled)) {
@@ -746,50 +452,23 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
     @Override
     public String getTradeName() {
-        return active().getTradeName();
+        requireResolved();
+        return tradeName;
     }
 
     @Override
     public PositionStatusProto getPositionStatus() {
-        return active().getPositionStatus();
+        requireResolved();
+        return positionStatus != null ? positionStatus : PositionStatusProto.UNKNOWN;
     }
 
     public void setPositionStatus(PositionStatusProto status) {
-        if (status == null) {
-            ensureOverlay().clearPositionStatus();
-        } else {
-            ensureOverlay().setPositionStatus(status);
-        }
-    }
-
-    @Override
-    public ZonedDateTime getValidTo() {
-        ZonedDateTime explicitlySet = super.getValidTo();
-        if (explicitlySet != null) return explicitlySet;
-        TransactionProto a = active();
-        if (a.hasValidTo()) {
-            return ProtoSerializationUtil.deserializeTimestamp(a.getValidTo());
-        }
-        return null;
+        this.positionStatus = status;
     }
 
     @Override
     public ZonedDateTime getValidFrom() {
-        TransactionProto a = active();
-        if (a.hasValidFrom()) {
-            return ProtoSerializationUtil.deserializeTimestamp(a.getValidFrom());
-        }
-        return super.getValidFrom();
-    }
-
-    @Override
-    public void setValidTo(ZonedDateTime newValidTo) {
-        super.setValidTo(newValidTo);
-        if (newValidTo == null) {
-            ensureOverlay().clearValidTo();
-        } else {
-            ensureOverlay().setValidTo(ProtoSerializationUtil.serializeTimestamp(newValidTo));
-        }
+        return validFrom != null ? validFrom : super.getValidFrom();
     }
 
     // ---- Field map (positions plumbing) ---------------------------------
@@ -889,42 +568,29 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     }
 
     public void setTransactionType(TransactionType transactionType) {
-        if (transactionType == null) {
-            ensureOverlay().clearTransactionType();
-        } else {
-            ensureOverlay().setTransactionType(TransactionTypeProto.valueOf(transactionType.name()));
-        }
+        this.transactionType = transactionType;
     }
 
     public void setQuantity(BigDecimal quantity) {
-        if (quantity == null) {
-            ensureOverlay().clearQuantity();
-        } else {
-            ensureOverlay().setQuantity(ProtoSerializationUtil.serializeBigDecimal(quantity));
-        }
+        this.quantity = quantity;
+        this.quantityError = null;
     }
 
     public void setTradeDate(LocalDate tradeDate) {
-        if (tradeDate == null) {
-            ensureOverlay().clearTradeDate();
-        } else {
-            ensureOverlay().setTradeDate(ProtoSerializationUtil.serializeLocalDate(tradeDate));
-        }
+        this.tradeDate = tradeDate;
+        this.tradeDateError = null;
     }
 
     public void setSettlementDate(LocalDate settlementDate) {
-        if (settlementDate == null) {
-            ensureOverlay().clearSettlementDate();
-        } else {
-            ensureOverlay().setSettlementDate(ProtoSerializationUtil.serializeLocalDate(settlementDate));
-        }
+        this.settlementDate = settlementDate;
+        this.settlementDateError = null;
     }
 
     /**
      * Attaches a child (LM-438). Refused with {@link InvalidChildTransactionException},
      * before anything changes, when the child belongs to another transaction,
      * repeats an existing child's ID, or would be a second cash child. A child
-     * with no parent gets this transaction as its parent. The proto constructor
+     * with no parent gets this transaction as its parent. Building from a proto
      * does not call this, so a stored transaction that breaks a rule still loads.
      */
     public void addChildTransaction(Transaction child) {

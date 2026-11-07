@@ -188,6 +188,16 @@ A transaction's trade price is a fixed fact of the transaction, not a link to ma
 - **TypeScript.** `Transaction.getSecurity()` calls the new cache-only `Security.resolveLink(proto)` and passes the result to `Security.create`. On a cache miss it returns the base link wrapper, as before.
 - **Python and Rust** do not choose a class by product type (Python builds a base `Security`; Rust's `TransactionWrapper::security()` returns a `SecurityWrapper`), so their lazy `get_maturity_date` already reads the hydrated bond details. No change.
 
+### Java `Transaction` is a plain object again; links resolve at build (LM-444)
+
+On 6 Nov two ledger-service threads serialised the same BUY at once. The #340 wrapper used its shared `overlay` builder as scratch space in `getProto()`, so 10 stored SOMA rows got 0, 3 or 4 children instead of 2. Java `Transaction` is now object-plus-serializer, as before #340. Python, TypeScript and Rust are unchanged.
+
+- **Fields, not a proto.** `Transaction` holds its fields and child list directly; it has no `proto`, `overlay` or lazy hydration. `TransactionSerializer` (`common.models.transaction`) builds a fresh `TransactionProto` on every `getProto()` call and only reads the transaction, so concurrent serialises cannot corrupt each other.
+- **Same bytes.** Security and Portfolio are still written as links and the Price inline with its Security as a link. Each nested part's wire form (the link, or the inline price) is captured once when the field is set; `object_type`, `version` and `valid_from` are written back as received.
+- **Links resolve once, at build.** `new Transaction(proto)` resolves a Security link through `Security.resolveLink` before choosing the class (this replaces the LM-440 memo above), a Portfolio link through the new `Portfolio.resolveLink`, a Price link from `LinkCache.PRICE`, and an `is_link` Transaction through `LinkCache.TRANSACTION` and the `Transaction.Fetcher`. Getters and `getProto()` never fetch. A miss or a fetcher failure keeps the link (logged as a warning), never throws, and writes the same link back. `Security.ensureHydrated()` and `Portfolio.ensureHydrated()` still throw on a miss.
+- **Price link miss.** `Transaction.getPrice()` raises the "LinkCache.PRICE miss" error if the price was not cached when the transaction was built; warming the cache later needs a rebuild.
+- **Unresolved transaction link.** Only `getID()` and `getAsOf()` are known; business getters raise `IllegalStateException` naming the UUID.
+
 ## Components to migrate
 
 | Wrapper | Add lazy hydrate? | Service backing it | Notes |

@@ -128,15 +128,16 @@ class TransactionPriceInlineTest {
                 .setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()))
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(PRICE_AS_OF))
                 .build();
-        Transaction t = new Transaction(txn(security(), link).build());
-
+        // LM-444: the link is looked up once, when the transaction is built.
         LinkCache.PRICE.clear();
+        Transaction t = new Transaction(txn(security(), link).build());
         assertThrows(IllegalStateException.class, t::getPrice);
         assertEquals(1, LinkCache.PRICE.lookupCount(), "a miss counts");
 
         LinkCache.PRICE.put(ProtoSerializationUtil.deserializeUUID(link.getUuid()),
                 fullPrice(security(), "7").toBuilder().setUuid(link.getUuid()).build(), PRICE_AS_OF);
-        assertEquals(0, t.getPrice().getPrice().compareTo(new BigDecimal("7")));
+        Transaction rebuilt = new Transaction(txn(security(), link).build());
+        assertEquals(0, rebuilt.getPrice().getPrice().compareTo(new BigDecimal("7")));
         assertEquals(2, LinkCache.PRICE.lookupCount(), "a hit counts");
 
         LinkCache.PRICE.clear();

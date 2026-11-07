@@ -148,17 +148,13 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
         }
         Fetcher f = fetcher;
         if (f != null) {
-            PortfolioProto resolved = f.fetch(id, asOf);
+            PortfolioProto resolved = fetchThrough(f, id, asOf);
             if (resolved == null) {
                 throw new IllegalStateException(
                         "Cannot resolve link-mode Portfolio uuid=" + id
                         + " asOf=" + asOf + " — PortfolioService returned no record. "
                         + "Data lineage broken.");
             }
-            ZonedDateTime resolvedAsOf = resolved.hasAsOf()
-                    ? ProtoSerializationUtil.deserializeTimestamp(resolved.getAsOf())
-                    : (asOf != null ? asOf : ZonedDateTime.now());
-            LinkCache.PORTFOLIO.put(id, resolved, resolvedAsOf);
             adoptResolvedProto(resolved);
             return;
         }
@@ -168,6 +164,47 @@ public class Portfolio extends RawDataModelObject implements Comparable, IFinanc
                 + "Pre-warm via LinkResolver.resolvePortfoliosOnTransactions(...) "
                 + "or call Portfolio.setFetcher(...) at startup. "
                 + "See docs/adr/lazy-link-hydration.md.");
+    }
+
+    /** Call the fetcher and write a non-null result through to
+     *  {@link LinkCache#PORTFOLIO}. Shared by {@link #ensureHydrated()} and
+     *  {@link #resolveLink(PortfolioProto)}. */
+    private static PortfolioProto fetchThrough(Fetcher f, UUID id, ZonedDateTime asOf) {
+        PortfolioProto resolved = f.fetch(id, asOf);
+        if (resolved == null) return null;
+        ZonedDateTime resolvedAsOf = resolved.hasAsOf()
+                ? ProtoSerializationUtil.deserializeTimestamp(resolved.getAsOf())
+                : (asOf != null ? asOf : ZonedDateTime.now());
+        LinkCache.PORTFOLIO.put(id, resolved, resolvedAsOf);
+        return resolved;
+    }
+
+    /**
+     * Resolve a link-mode {@link PortfolioProto} to its full form without
+     * building a wrapper (LM-444; mirrors {@code Security.resolveLink}):
+     * cache hit first, then the configured {@link Fetcher} (written through
+     * to {@link LinkCache#PORTFOLIO}).
+     *
+     * <p>A {@code null} or non-link input is returned unchanged. Returns
+     * {@code null} when the link has no UUID, the cache misses and no fetcher
+     * is configured, or the fetcher returns {@code null} or another link.
+     * Fetcher exceptions propagate.
+     */
+    public static PortfolioProto resolveLink(PortfolioProto link) {
+        if (link == null || !link.getIsLink()) return link;
+        UUID id = link.hasUuid() ? ProtoSerializationUtil.deserializeUUID(link.getUuid()) : null;
+        if (id == null) return null;
+        ZonedDateTime asOf = link.hasAsOf()
+                ? ProtoSerializationUtil.deserializeTimestamp(link.getAsOf())
+                : null;
+
+        PortfolioProto resolved = LinkCache.PORTFOLIO.get(id, asOf);
+        if (resolved == null) {
+            Fetcher f = fetcher;
+            if (f == null) return null;
+            resolved = fetchThrough(f, id, asOf);
+        }
+        return (resolved == null || resolved.getIsLink()) ? null : resolved;
     }
 
     private void adoptResolvedProto(PortfolioProto resolved) {

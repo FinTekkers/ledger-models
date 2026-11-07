@@ -28,6 +28,7 @@ import common.models.security.identifier.IdentifierType;
 import common.models.strategy.Strategy;
 import common.models.strategy.StrategyAllocation;
 import common.models.transaction.Transaction;
+import common.models.transaction.TransactionSerializer;
 import common.models.transaction.TransactionType;
 import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.position.MeasureProto;
@@ -134,9 +135,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *       POJO fixtures.</li>
  *   <li>fromPricerInputs on BondSecurity, TIPSBond, MortgageBackedSecurity and
  *       FloatingRateNote: their own fixtures.</li>
- *   <li>Transaction.stripSecurity, stripPortfolio, stripPrice (private): the Transaction
- *       proto constructor fixture and the POJO constructor fixtures, which pass full,
- *       non-link security, portfolio and price.</li>
+ *   <li>TransactionSerializer.linkOf and inlinePrice (package-private; LM-444 moved
+ *       them from Transaction's stripSecurity, stripPortfolio and stripPrice): the
+ *       Transaction proto constructor fixture, the POJO constructor fixtures and the
+ *       TransactionSerializer fixtures, which pass full, non-link security, portfolio
+ *       and price.</li>
  *   <li>PositionFilterSerializer.serialize: its own fixture.</li>
  * </ul>
  */
@@ -234,6 +237,10 @@ class BuilderStampCoverageTest {
                 () -> pojoTransaction(false).getProto());
         fixture("common.models.transaction.Transaction#Transaction(UUID,Portfolio,Price,LocalDate,LocalDate,BigDecimal,Security,TransactionType,StrategyAllocation,ZonedDateTime,Transaction,String,PositionStatusProto)",
                 () -> pojoTransaction(true).getProto());
+        fixture("common.models.transaction.TransactionSerializer#serialize(Transaction)",
+                () -> TransactionSerializer.getInstance().serialize(pojoTransaction(true)));
+        fixture("common.models.transaction.TransactionSerializer#serializeRaw(Transaction)",
+                () -> TransactionSerializer.getInstance().serializeRaw(pojoTransaction(true)));
 
         // ---- Serializers
         fixture("protos.serializers.portfolio.PortfolioSerializer#serialize(Portfolio)",
@@ -316,9 +323,10 @@ class BuilderStampCoverageTest {
         exclude("common.models.portfolio.Portfolio#getProto()", accessor);
         exclude("common.models.strategy.Strategy#getProto()", accessor);
         exclude("common.models.strategy.StrategyAllocation#getProto()", accessor);
-        exclude("common.models.transaction.Transaction#getProto()", accessor);
+        exclude("common.models.transaction.Transaction#getProto()",
+                "calls TransactionSerializer#serialize, which has its own fixture (LM-444)");
         exclude("common.models.transaction.Transaction#getRawProto()",
-                "accessor of the wrapped proto without strip-on-write; the constructor fixtures check that proto via getProto()");
+                "calls TransactionSerializer#serializeRaw, which has its own fixture (LM-444)");
 
         String passThrough = "pass-through: wraps the caller's proto and does not re-stamp it (LM-322 ruling); "
                 + "callerProtosAreNotReStamped covers it";
@@ -337,6 +345,8 @@ class BuilderStampCoverageTest {
                 "pass-through: sends the caller's request and returns the server's response; builds nothing");
         exclude("common.models.security.Security#resolveLink(SecurityProto)",
                 "pass-through: returns the caller's proto, or the cached / fetched one unchanged (LM-440); builds nothing");
+        exclude("common.models.portfolio.Portfolio#resolveLink(PortfolioProto)",
+                "pass-through: returns the caller's proto, or the cached / fetched one unchanged (LM-444); builds nothing");
     }
 
     private static void fixture(String member, Supplier<Message> build, String... callerSupplied) {
