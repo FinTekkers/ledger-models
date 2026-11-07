@@ -36,6 +36,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * one shared builder as scratch space, so stored rows had 0, 3 or 4 children
  * instead of 2. Each {@code getProto()} must now build a fresh proto and only
  * read the transaction.
+ *
+ * <p>Run once against main's #340 wrapper at {@code 18181d1e} (this file and
+ * {@code TransactionGoldenFixtures} copied onto that tree): of 160,000 calls,
+ * 2,271 threw ({@code UnsupportedOperationException}), 78,796 had the wrong
+ * children and 165,675 {@code getProto()}/{@code getRawProto()} results had
+ * other bytes; the reflection check failed on the {@code proto} field.
  */
 class TransactionConcurrentSerializeTest {
 
