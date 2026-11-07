@@ -35,6 +35,7 @@ class Position:
         FieldProto.SETTLEMENT_DATE,
         FieldProto.TAX_LOT_OPEN_DATE,
         FieldProto.TAX_LOT_CLOSE_DATE,
+        FieldProto.EFFECTIVE_DATE,
     )
 
     def __init__(self, positionProto: PositionProto) -> None:

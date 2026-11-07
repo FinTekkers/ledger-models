@@ -104,3 +104,10 @@ def test_position_with_unset_date_entry_does_not_raise():
     assert position.get_field_value(FieldProto.MATURITY_DATE) is None
     assert position.get_field_display(FieldMapEntry(field=FieldProto.MATURITY_DATE)) == ""
     assert str(position) == "MATURITY_DATE,;"
+
+
+def test_position_unset_effective_date_entry_is_absent_like_js():
+    proto = PositionProto(fields=[FieldMapEntry(field=FieldProto.EFFECTIVE_DATE)])
+    position = Position(proto)
+    assert position.get_field_value(FieldProto.EFFECTIVE_DATE) is None
+    assert position.get_field_display(FieldMapEntry(field=FieldProto.EFFECTIVE_DATE)) == ""
