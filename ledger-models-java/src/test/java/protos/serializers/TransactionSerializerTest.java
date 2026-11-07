@@ -18,23 +18,22 @@ import java.time.DateTimeException;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Wrapper round-trip tests for {@link Transaction}.
+ * Round-trip tests for {@link Transaction} and its serializer.
  *
- * <p>Post-#340 refactor: replaces TransactionSerializerTest. The serialize/
- * deserialize entry points are now {@code transaction.getProto()} and
- * {@code new Transaction(proto)} — no separate TransactionSerializer.
+ * <p>LM-444: Transaction is a plain object again and {@code transaction.getProto()}
+ * / {@code new Transaction(proto)} call
+ * {@link common.models.transaction.TransactionSerializer} (renamed back from
+ * TransactionWrapperTest, its name under the #340 wrapper).
  *
- * <p>Key behavioral change: {@code transaction.getProto()} applies
+ * <p>{@code transaction.getProto()} applies
  * <strong>strip-on-write</strong> to inner Security/Portfolio sub-protos
  * (per Phase 2 dispatch). After round-trip, those sub-protos are
  * {@code is_link=true} link references (uuid + as_of preserved), NOT full
  * inline data. The Price stays inline; only its nested Security is a link
  * (LM-394). Tests verify identity via UUIDs, NOT inner field values.
- * Callers that need full data must hydrate via
- * {@link common.util.LinkResolver#resolveSecuritiesOnTransactions(java.util.List)}
- * and the portfolio counterpart before wrapping again.
+ * Building from the proto resolves the links again (cache, then fetcher).
  */
-class TransactionWrapperTest {
+class TransactionSerializerTest {
 
     @Test
     public void testTransactionWrap_identityRoundTrip() {

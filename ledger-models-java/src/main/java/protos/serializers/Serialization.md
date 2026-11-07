@@ -64,3 +64,19 @@ Options:
 Examples:
 * Transactions with parent / child relationships. 
 * Foreign key relationships, how far to nest
+
+# Transaction: object plus serializer (LM-444)
+
+Java `Transaction` is a plain object again: fields plus its list of child
+transactions. `common.models.transaction.TransactionSerializer` builds a new
+`TransactionProto` on every `getProto()` call and only reads the transaction,
+so two threads serialising the same transaction cannot corrupt each other's
+output. #340 had made it a wrapper around a proto with a shared mutable
+builder, and two ledger-service threads serialising one BUY on 6 Nov stored
+rows with the wrong number of children.
+
+The bytes are unchanged: the nested Security and Portfolio are written as
+links, the trade Price inline with its Security as a link (LM-394). Building
+from a proto resolves those links once (see `docs/adr/lazy-link-hydration.md`);
+getters and serialising never fetch. The serializer sits next to `Transaction`
+so it can read its package-private fields.
