@@ -198,6 +198,18 @@ On 6 Nov two ledger-service threads serialised the same BUY at once. The #340 wr
 - **Price link miss.** `Transaction.getPrice()` raises the "LinkCache.PRICE miss" error if the price was not cached when the transaction was built; warming the cache later needs a rebuild.
 - **Unresolved transaction link.** Only `getID()` and `getAsOf()` are known; business getters raise `IllegalStateException` naming the UUID.
 
+### Position resolves before dispatch (LM-442)
+
+The Position counterpart of LM-440: `PositionSerializer.deserialize` built `SECURITY` with `Security.fromProto` on the raw link, so a Treasury link read as a base `Security` and its maturity was missing.
+
+- **Java: resolve once, at deserialize.** For `SECURITY` and `CASH_IMPACT_SECURITY`, `PositionSerializer.deserialize` calls the new `Security.resolveLinkOrKeep` (`Security.resolveLink`, so `LinkCache.SECURITY` then the `Security.Fetcher`) before `fromProto`. `TransactionSerializer` now uses the same helper: one resolve path, no new cache. A miss, a fetcher failure or no fetcher keeps the link (logged as a warning) and never throws. Getters never fetch.
+- **The link is written back.** `Position` records the incoming link proto of a security field (only a link, never resolved data) and `PositionSerializer.serialize` packs that link, so strip-on-write is unchanged. `setFieldValue` on that field drops the recorded link. `Position.setSecurityFieldValue` and `Position.getSecurityWireForm` are serializer-internal.
+- **`Position.getField(MATURITY_DATE | ISSUE_DATE)` falls back to the security.** A map entry with a value wins. With no entry, the date is read from `SECURITY` only when it is resolved (not a link), so an unresolved link returns `null` without fetching or throwing. A `MATURITY_DATE` entry with no value is absent (`field.proto`), so the fallback applies. No other field delegates to the security.
+- **Cold cache.** Deserializing N link positions makes up to N fetches up front; pre-warm `LinkCache.SECURITY` (e.g. through `LinkResolver`) before large position searches.
+- **TypeScript.** `Position.getField(SECURITY)` calls the cache-only `Security.resolveLink` before `Security.create`, as `Transaction.getSecurity()` does. A cache miss returns the base link wrapper.
+- **Python and Rust** do not choose a class by product type (Python's `Position.get_field` builds a base `Security`; Rust's returns a `SecurityWrapper`), and their lazy date reads already use the hydrated bond details. No change.
+- **Not changed.** Other `fromProto` sites that can receive a link: `ProtoSerializationUtil.deserialize(Any)` (filter values, JS `CASH_IMPACT_SECURITY`), `SerializerFactory` and `PriceSerializer`'s embedded security.
+
 ## Components to migrate
 
 | Wrapper | Add lazy hydrate? | Service backing it | Notes |

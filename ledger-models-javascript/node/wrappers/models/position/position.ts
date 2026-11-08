@@ -123,7 +123,7 @@ export class Position {
         }
 
         if (FieldProto.SECURITY == fieldToGet.getField()) {
-          return Security.create(unpackedValue);
+          return Security.create(Security.resolveLink(unpackedValue) ?? unpackedValue);
         }
 
         if (FieldProto.PORTFOLIO == fieldToGet.getField()) {

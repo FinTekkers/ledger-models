@@ -52,6 +52,7 @@ class Position {
         return this.getField(new position_util_pb_1.FieldMapEntry().setField(field));
     }
     getField(fieldToGet) {
+        var _a;
         for (const tmpField of this.proto.getFieldsList()) {
             if (tmpField.getField() === fieldToGet.getField()) {
                 // A date entry with no value is an absent date (e.g. the MATURITY_DATE
@@ -103,7 +104,7 @@ class Position {
                     throw new Error(`Unexpected unpacked value for ${field_pb_1.FieldProto[fieldToGet.getField()]}`);
                 }
                 if (field_pb_1.FieldProto.SECURITY == fieldToGet.getField()) {
-                    return security_1.default.create(unpackedValue);
+                    return security_1.default.create((_a = security_1.default.resolveLink(unpackedValue)) !== null && _a !== void 0 ? _a : unpackedValue);
                 }
                 if (field_pb_1.FieldProto.PORTFOLIO == fieldToGet.getField()) {
                     return new portfolio_1.default(unpackedValue);

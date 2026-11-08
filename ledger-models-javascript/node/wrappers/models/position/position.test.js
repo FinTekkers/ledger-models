@@ -31,6 +31,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const uuid_1 = require("../utils/uuid");
 const any_pb_1 = require("google-protobuf/google/protobuf/any_pb");
@@ -51,6 +54,14 @@ const term_1 = require("../security/term");
 const decimal_1 = require("../utils/decimal");
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
+const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
+const local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
+const timestamp_pb_1 = require("google-protobuf/google/protobuf/timestamp_pb");
+const security_1 = __importDefault(require("../security/security"));
+const BondSecurity_1 = __importDefault(require("../security/BondSecurity"));
+const datetime_1 = require("../utils/datetime");
+const LinkCache = __importStar(require("../../util/link-cache"));
 test('test the enum Serialization', () => __awaiter(void 0, void 0, void 0, function* () {
     let isTrue = yield testEnumSerialization();
     expect(isTrue).toBe(true);
@@ -268,4 +279,38 @@ function getPosition(includeUnknownEnumValue) {
     let position = new position_1.Position(positionProto);
     return { position, tradeDate, security, portfolio, productType, id, tenor };
 }
+// LM-442: a position whose security is stored as a link reads as the subclass
+// its resolved product type implies. JS has no Security fetcher (resolveLink is
+// cache-only, LM-440), so a pre-warmed LinkCache.SECURITY stands in for the
+// stub fetcher. Parity with Java PositionLinkSecurityClassTest.
+describe('security link resolves before class dispatch', () => {
+    afterEach(() => {
+        LinkCache.SECURITY.clear();
+    });
+    test('treasury note link with a warm cache returns a BondSecurity', () => {
+        const asOfProto = new local_timestamp_pb_1.LocalTimestampProto()
+            .setTimestamp(new timestamp_pb_1.Timestamp().setSeconds(1793908800))
+            .setTimeZone('America/New_York');
+        const asOf = new datetime_1.ZonedDateTime(asOfProto.clone());
+        const id = uuid_1.UUID.random();
+        const note = new security_pb_1.SecurityProto()
+            .setUuid(id.toUUIDProto())
+            .setAsOf(asOfProto.clone())
+            .setProductType(product_type_pb_1.ProductTypeProto.TREASURY_NOTE)
+            .setIssuerName('US Government')
+            .setBondDetails(new security_pb_1.BondDetailsProto()
+            .setIssueDate(new local_date_pb_1.LocalDateProto().setYear(2024).setMonth(1).setDay(15))
+            .setMaturityDate(new local_date_pb_1.LocalDateProto().setYear(2031).setMonth(5).setDay(15)));
+        LinkCache.SECURITY.put(id.toString(), note, asOf);
+        const linkPacked = new any_pb_1.Any();
+        linkPacked.pack(security_1.default.linkOf(id, asOf).serializeBinary(), 'fintekkers.models.security.SecurityProto');
+        const position = new position_1.Position(new position_pb_1.PositionProto().setFieldsList([
+            new position_util_pb_1.FieldMapEntry().setField(field_pb_1.FieldProto.SECURITY).setFieldValuePacked(linkPacked),
+        ]));
+        const security = position.getFieldValue(field_pb_1.FieldProto.SECURITY);
+        expect(security).toBeInstanceOf(BondSecurity_1.default);
+        const maturity = security.getField(field_pb_1.FieldProto.MATURITY_DATE);
+        expect([maturity.getFullYear(), maturity.getMonth() + 1, maturity.getDate()]).toEqual([2031, 5, 15]);
+    });
+});
 //# sourceMappingURL=position.test.js.map

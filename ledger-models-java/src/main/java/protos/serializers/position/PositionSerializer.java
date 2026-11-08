@@ -5,13 +5,16 @@ import common.util.ObjectTypes;
 import com.google.gson.*;
 import com.google.protobuf.Any;
 import com.google.protobuf.GeneratedMessageV3;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.ProtocolMessageEnum;
 import common.models.JSONFieldNames;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.postion.Position;
+import common.models.security.Security;
 import common.models.transaction.TransactionType;
 import fintekkers.models.position.*;
+import fintekkers.models.security.SecurityProto;
 import org.apache.commons.text.WordUtils;
 import protos.serializers.IRawDataModelObjectSerializer;
 import protos.serializers.util.json.JsonSerializationUtil;
@@ -67,9 +70,16 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
         });
 
         position.getFields().forEach(field -> {
+            // A security received as a link is written back as that link (strip-on-write, LM-442).
+            SecurityProto wireForm = position.getSecurityWireForm(field);
             Object fieldValue = position.getField(field);
 
-            FieldMapEntry fieldMapEntry = getFieldMapEntry(field, null, fieldValue);
+            FieldMapEntry fieldMapEntry = wireForm != null
+                    ? FieldMapEntry.newBuilder()
+                        .setField(FieldProto.valueOf(field.name()))
+                        .setFieldValuePacked(Any.pack(wireForm))
+                        .build()
+                    : getFieldMapEntry(field, null, fieldValue);
 
             builder.addFields(fieldMapEntry);
         });
@@ -137,6 +147,12 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
             } else if(ENUM_VALUE.equals(fieldProto.getFieldMapValueOneOfCase())) {
                 //Dynamically sources the appropriate enum, and gets it based on the number serialized in the proto.
                 fieldValue = field.getType().getEnumConstants()[fieldProto.getEnumValue()];
+            } else if(isSecurityField(field) && fieldProto.getFieldValuePacked().is(SecurityProto.class)) {
+                // Resolve a link before fromProto picks the class (LM-442): a Treasury link becomes a BondSecurity.
+                SecurityProto wireForm = unpackSecurity(fieldProto.getFieldValuePacked());
+                Security security = Security.fromProto(Security.resolveLinkOrKeep(wireForm));
+                position.setSecurityFieldValue(field, security, wireForm);
+                return;
             } else {
                 fieldValue = ProtoSerializationUtil.deserialize(fieldProto.getFieldValuePacked());
             }
@@ -156,6 +172,18 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
         });
 
         return position;
+    }
+
+    private static boolean isSecurityField(Field field) {
+        return field == Field.SECURITY || field == Field.CASH_IMPACT_SECURITY;
+    }
+
+    private static SecurityProto unpackSecurity(Any any) {
+        try {
+            return any.unpack(SecurityProto.class);
+        } catch (InvalidProtocolBufferException e) {
+            throw new IllegalArgumentException("Could not unpack SecurityProto from position field", e);
+        }
     }
 
     // JSON serialize/deserialize removed in FinTekkers/second-brain#338.
