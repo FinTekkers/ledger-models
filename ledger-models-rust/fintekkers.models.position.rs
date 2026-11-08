@@ -8,7 +8,7 @@ pub enum FieldProto {
     AsOf = 2,
     /// Attribute fields. Likely to be fields that one would pivot on.
     ///
-    /// LocalDate.class
+    /// LocalDate.class, packed as fintekkers.models.util.LocalDateProto
     EffectiveDate = 10,
     /// common.model.strategy.Strategy.class
     Strategy = 11,

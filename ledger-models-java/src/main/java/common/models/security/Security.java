@@ -589,7 +589,9 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
             case SECURITY -> this;
             case ID, SECURITY_ID -> getID();
             case SECURITY_ISSUER_NAME -> getIssuer();
-            case AS_OF, EFFECTIVE_DATE -> getAsOf();
+            case AS_OF -> getAsOf();
+            // EFFECTIVE_DATE is declared LocalDate (field.proto): the as-of's date, in the as-of timestamp's own zone.
+            case EFFECTIVE_DATE -> getAsOf() == null ? null : getAsOf().toLocalDate();
             case ASSET_CLASS -> getAssetClass();
             case PRODUCT_CLASS -> getProductClass();
             case PRODUCT_TYPE -> getProductType().name();

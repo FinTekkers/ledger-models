@@ -18,6 +18,8 @@ import { TenorProto } from '../../../fintekkers/models/security/tenor_pb';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
 import { Tenor } from '../security/term';
 import { decodeDecimal, encodeDecimal, parseDecimalString, toCanonicalString } from '../utils/decimal';
+import * as fs from 'fs';
+import * as path from 'path';
 
 test('test the enum Serialization', async () => {
     let isTrue = await testEnumSerialization();
@@ -27,6 +29,33 @@ test('test the enum Serialization', async () => {
 test('test the serialization position wrapper', async () => {
     let isTrue = await testSerialization();
     expect(isTrue).toBe(true);
+});
+
+// LM-447: the EFFECTIVE_DATE entries Java packs, from
+// ledger-models-protos/fixtures/position_effective_date_cases.json (shared
+// with the Java, Python and Rust tests).
+describe('EFFECTIVE_DATE shared fixture', () => {
+    const PROTOS = path.resolve(__dirname, '../../../../../ledger-models-protos');
+    const cases: { name: string; entry_hex: string; expected: string | null }[] = JSON.parse(
+        fs.readFileSync(path.join(PROTOS, 'fixtures/position_effective_date_cases.json'), 'utf-8'),
+    ).cases;
+
+    function positionWith(name: string): Position {
+        const c = cases.find((x) => x.name === name);
+        if (!c) throw new Error(`fixture case missing: ${name}`);
+        const entry = FieldMapEntry.deserializeBinary(Uint8Array.from(Buffer.from(c.entry_hex, 'hex')));
+        return new Position(new PositionProto().setFieldsList([entry]));
+    }
+
+    test('the Java-packed entry decodes to 2024-03-15', () => {
+        const value = positionWith('set').getFieldValue(FieldProto.EFFECTIVE_DATE) as Date;
+        expect(value).toBeInstanceOf(Date);
+        expect([value.getFullYear(), value.getMonth() + 1, value.getDate()]).toEqual([2024, 3, 15]);
+    });
+
+    test('the unset entry is null', () => {
+        expect(positionWith('unset').getFieldValue(FieldProto.EFFECTIVE_DATE)).toBeNull();
+    });
 });
 
 test('test JSON Serialization', async () => {

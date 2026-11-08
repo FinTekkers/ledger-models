@@ -1,0 +1,7 @@
+{
+  "_doc": "LM-447: FieldMapEntry bytes Java's PositionSerializer packs for EFFECTIVE_DATE (field.proto: LocalDate.class, packed as LocalDateProto). Captured from PositionEffectiveDateTest; read by the Java, Python, JS and Rust tests.",
+  "cases": [
+    { "name": "set", "field": "EFFECTIVE_DATE", "entry_hex": "080a22440a39747970652e676f6f676c65617069732e636f6d2f66696e74656b6b6572732e6d6f64656c732e7574696c2e4c6f63616c4461746550726f746f120708e80f1003180f", "expected": "2024-03-15" },
+    { "name": "unset", "field": "EFFECTIVE_DATE", "entry_hex": "080a", "expected": null }
+  ]
+}

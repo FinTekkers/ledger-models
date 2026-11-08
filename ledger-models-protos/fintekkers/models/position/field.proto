@@ -16,7 +16,7 @@ enum FieldProto {
   AS_OF=2; //ZonedDateTime
 
   // Attribute fields. Likely to be fields that one would pivot on.
-  EFFECTIVE_DATE = 10; //LocalDate.class
+  EFFECTIVE_DATE = 10; //LocalDate.class, packed as fintekkers.models.util.LocalDateProto
   STRATEGY = 11; //common.model.strategy.Strategy.class
   SECURITY = 12; //common.model.security.Security.class
   SECURITY_DESCRIPTION=61;
