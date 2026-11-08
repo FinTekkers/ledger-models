@@ -181,9 +181,9 @@ class Security():
         elif field in (TENOR, ADJUSTED_TENOR):
             return self.get_tenor()
         elif field == MATURITY_DATE:
-            return self._optional_bond_date('maturity_date')
+            return self._optional_maturity_date()
         elif field == ISSUE_DATE:
-            return self._optional_bond_date('issue_date')
+            return self._optional_issue_date()
         else:
             raise ValueError(f"Field not mapped in Security wrapper: {FieldProto.DESCRIPTOR.values_by_number[field].name}")
 
@@ -248,16 +248,25 @@ class Security():
             return self.proto.bond_details
         return None
 
-    def _optional_bond_date(self, name: str) -> Optional[date]:
-        """get_field's read of bond_details.issue_date / maturity_date. Any
-        security type may carry them. None when unset: never a placeholder
-        such as 2999-12-31 or 1900-01-01 (LM-441). get_issue_date /
-        get_maturity_date still raise for callers that need a date."""
+    def _optional_issue_date(self) -> Optional[date]:
+        """get_field's read of bond_details.issue_date. Any security type may
+        carry it. None when unset: never a placeholder such as 1900-01-01
+        (LM-441). get_issue_date still raises for callers that need a date."""
         self._ensure_hydrated()
         bond = self._get_bond_like_details()
-        if bond is None or not bond.HasField(name):
+        if bond is None or not bond.HasField('issue_date'):
             return None
-        return ProtoSerializationUtil.deserialize(getattr(bond, name))
+        return ProtoSerializationUtil.deserialize(bond.issue_date)
+
+    def _optional_maturity_date(self) -> Optional[date]:
+        """get_field's read of bond_details.maturity_date. Any security type
+        may carry it. None when unset: never a placeholder such as 2999-12-31
+        (LM-441). get_maturity_date still raises for callers that need a date."""
+        self._ensure_hydrated()
+        bond = self._get_bond_like_details()
+        if bond is None or not bond.HasField('maturity_date'):
+            return None
+        return ProtoSerializationUtil.deserialize(bond.maturity_date)
 
     def get_issue_date(self) -> datetime:
         self._ensure_hydrated()

@@ -180,7 +180,7 @@ public class BondSecurity extends Security {
     }
 
     public LocalDate getIssueDate() {
-        return optionalBondDate(true);
+        return optionalIssueDate();
     }
 
     public void setIssueDate(LocalDate issueDate) {
@@ -194,7 +194,7 @@ public class BondSecurity extends Security {
     }
 
     public LocalDate getMaturityDate() {
-        return optionalBondDate(false);
+        return optionalMaturityDate();
     }
 
     public void setMaturityDate(LocalDate maturityDate) {

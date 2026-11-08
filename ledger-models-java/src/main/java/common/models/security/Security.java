@@ -601,30 +601,41 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
             case SECURITY_DESCRIPTION -> getDescription();
             // Absent (null) when the proto has no date: never a placeholder
             // such as 2999-12-31 or 1900-01-01 (LM-441).
-            case MATURITY_DATE -> optionalBondDate(false);
-            case ISSUE_DATE -> optionalBondDate(true);
+            case MATURITY_DATE -> optionalMaturityDate();
+            case ISSUE_DATE -> optionalIssueDate();
             case CASH_IMPACT_SECURITY -> getSettlementCurrency();
 
             default -> throw new RuntimeException(String.format("Field not found %s", field));
         };
     }
 
-    /**
-     * Reads {@code bond_details.issue_date} (issue) or
-     * {@code bond_details.maturity_date} from the proto. Any security type may
-     * carry them. Returns null when bond_details or the date is unset.
-     * {@link BondSecurity#getIssueDate()} / {@link BondSecurity#getMaturityDate()}
-     * delegate here.
-     */
-    protected LocalDate optionalBondDate(boolean issue) {
+    /** The proto's bond_details, or null when unset. */
+    private BondDetailsProto bondDetailsOrNull() {
         SecurityProto proto = getProto();
-        if (!proto.hasBondDetails()) return null;
-        BondDetailsProto bd = proto.getBondDetails();
-        if (issue) {
-            if (!bd.hasIssueDate()) return null;
-            return ProtoSerializationUtil.deserializeOptionalLocalDate(bd.getIssueDate(), SecurityRules.ISSUE_DATE);
-        }
-        if (!bd.hasMaturityDate()) return null;
+        return proto.hasBondDetails() ? proto.getBondDetails() : null;
+    }
+
+    /**
+     * Reads {@code bond_details.issue_date} from the proto. Any security type
+     * may carry it. Returns null when bond_details or the date is unset: never
+     * a placeholder such as 1900-01-01 (LM-441).
+     * {@link BondSecurity#getIssueDate()} delegates here.
+     */
+    protected LocalDate optionalIssueDate() {
+        BondDetailsProto bd = bondDetailsOrNull();
+        if (bd == null || !bd.hasIssueDate()) return null;
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(bd.getIssueDate(), SecurityRules.ISSUE_DATE);
+    }
+
+    /**
+     * Reads {@code bond_details.maturity_date} from the proto. Any security
+     * type may carry it. Returns null when bond_details or the date is unset:
+     * never a placeholder such as 2999-12-31 (LM-441).
+     * {@link BondSecurity#getMaturityDate()} delegates here.
+     */
+    protected LocalDate optionalMaturityDate() {
+        BondDetailsProto bd = bondDetailsOrNull();
+        if (bd == null || !bd.hasMaturityDate()) return null;
         return ProtoSerializationUtil.deserializeOptionalLocalDate(bd.getMaturityDate(), SecurityRules.MATURITY_DATE);
     }
 
