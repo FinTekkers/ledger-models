@@ -109,6 +109,11 @@ public enum FieldProto
    */
   TENOR(55),
   /**
+   * <pre>
+   * ISSUE_DATE / MATURITY_DATE: absent (entry with no value, or no entry)
+   * when the security has no such date. Never 1900-01-01 or 2999-12-31.
+   * </pre>
+   *
    * <code>ISSUE_DATE = 58;</code>
    */
   ISSUE_DATE(58),
@@ -316,6 +321,11 @@ public enum FieldProto
    */
   public static final int TENOR_VALUE = 55;
   /**
+   * <pre>
+   * ISSUE_DATE / MATURITY_DATE: absent (entry with no value, or no entry)
+   * when the security has no such date. Never 1900-01-01 or 2999-12-31.
+   * </pre>
+   *
    * <code>ISSUE_DATE = 58;</code>
    */
   public static final int ISSUE_DATE_VALUE = 58;

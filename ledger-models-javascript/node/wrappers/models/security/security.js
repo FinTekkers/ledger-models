@@ -316,11 +316,12 @@ class Security {
             case field_pb_1.FieldProto.ADJUSTED_TENOR:
                 throw new Error('Not implemented yet');
             case field_pb_1.FieldProto.MATURITY_DATE:
-                // Maturity date is bond-only. Mirror Java's Security.getField:
-                // delegate to BondSecurity, return null for non-bonds.
-                return this.isBond() ? this.getMaturityDate() : null;
+                // Any security type may carry bond_details dates. Mirrors Java's
+                // Security.getField: null when unset, never a placeholder such as
+                // 2999-12-31 (LM-441).
+                return this.getMaturityDate();
             case field_pb_1.FieldProto.ISSUE_DATE:
-                // getIssueDate already returns null on non-bonds; just forward.
+                // Null when unset, never a placeholder such as 1900-01-01 (LM-441).
                 return this.getIssueDate();
             default:
                 throw new Error(`Field not mapped in Security wrapper: ${field}`);
@@ -403,10 +404,9 @@ class Security {
         return (0, date_1.localDateProtoToDate)(date);
     }
     /**
-     * Returns the maturity date if set, else null. Maturity date is a
-     * bond-only concept; on non-bond securities this returns null rather
-     * than throwing. Prefer narrowing first via isBond() for bond-specific
-     * code paths.
+     * Returns bond_details.maturity_date if set, else null. Any security type
+     * may carry it; on a security with no maturity (equity, cash, FX, ...)
+     * this returns null rather than throwing or a placeholder date.
      */
     getMaturityDate() {
         this.ensureHydrated();

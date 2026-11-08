@@ -31,6 +31,8 @@ enum FieldProto {
   IDENTIFIER = 54;
   TENOR = 55; // 1M
 
+  // ISSUE_DATE / MATURITY_DATE: absent (entry with no value, or no entry)
+  // when the security has no such date. Never 1900-01-01 or 2999-12-31.
   ISSUE_DATE=58;
   MATURITY_DATE = 56;
   ADJUSTED_TENOR = 57;

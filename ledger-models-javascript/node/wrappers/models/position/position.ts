@@ -30,6 +30,16 @@ import { Identifier } from "../security/identifier";
 export class Position {
   proto: PositionProto;
 
+  private static readonly DATE_FIELDS: FieldProto[] = [
+    FieldProto.TRADE_DATE,
+    FieldProto.MATURITY_DATE,
+    FieldProto.ISSUE_DATE,
+    FieldProto.SETTLEMENT_DATE,
+    FieldProto.TAX_LOT_OPEN_DATE,
+    FieldProto.TAX_LOT_CLOSE_DATE,
+    FieldProto.EFFECTIVE_DATE,
+  ];
+
   constructor(positionProto: PositionProto) {
     this.proto = positionProto;
   }
@@ -54,9 +64,16 @@ export class Position {
     return this.getField(new FieldMapEntry().setField(field));
   }
 
-  public getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Identifier | Portfolio | UUID | Date | ZonedDateTime | Decimal | PriceProto | Tenor {
+  public getField(fieldToGet: FieldMapEntry): string | ProtoEnum | Security | Identifier | Portfolio | UUID | Date | ZonedDateTime | Decimal | PriceProto | Tenor | null {
     for (const tmpField of this.proto.getFieldsList()) {
       if (tmpField.getField() === fieldToGet.getField()) {
+
+        // A date entry with no value is an absent date (e.g. the MATURITY_DATE
+        // of a stock, LM-441): null, never a bogus enum or a throw.
+        if (Position.DATE_FIELDS.includes(tmpField.getField()) &&
+          tmpField.getFieldmapvalueoneofCase() === FieldMapEntry.FieldmapvalueoneofCase.FIELDMAPVALUEONEOF_NOT_SET) {
+          return null;
+        }
 
         if (tmpField.getStringValue() !== undefined && tmpField.getStringValue().length > 0) {
           // Tenor-like fields should return a Tenor wrapper even when they are stored as a string (e.g. "3M")
@@ -136,6 +153,7 @@ export class Position {
 
   public getFieldDisplay(fieldToGet: FieldMapEntry): string {
     const value = this.getField(fieldToGet);
+    if (value === null) return "";
 
     switch (typeof value) {
       case 'string':

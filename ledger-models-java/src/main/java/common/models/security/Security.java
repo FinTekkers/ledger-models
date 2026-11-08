@@ -8,6 +8,7 @@ import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.security.identifier.Identifier;
 import common.util.LinkCache;
+import fintekkers.models.security.BondDetailsProto;
 import fintekkers.models.security.IdentifierProto;
 import fintekkers.models.security.IdentifierTypeProto;
 import fintekkers.models.security.ProductTypeProto;
@@ -598,12 +599,33 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
             }
             case TENOR, ADJUSTED_TENOR -> Tenor.UNKNOWN_TENOR;
             case SECURITY_DESCRIPTION -> getDescription();
-            case MATURITY_DATE -> LocalDate.of(2999, 12, 31);
-            case ISSUE_DATE -> this instanceof BondSecurity ? ((BondSecurity)this).getIssueDate() : LocalDate.of(1900, 1, 1);
+            // Absent (null) when the proto has no date: never a placeholder
+            // such as 2999-12-31 or 1900-01-01 (LM-441).
+            case MATURITY_DATE -> optionalBondDate(false);
+            case ISSUE_DATE -> optionalBondDate(true);
             case CASH_IMPACT_SECURITY -> getSettlementCurrency();
 
             default -> throw new RuntimeException(String.format("Field not found %s", field));
         };
+    }
+
+    /**
+     * Reads {@code bond_details.issue_date} (issue) or
+     * {@code bond_details.maturity_date} from the proto. Any security type may
+     * carry them. Returns null when bond_details or the date is unset.
+     * {@link BondSecurity#getIssueDate()} / {@link BondSecurity#getMaturityDate()}
+     * delegate here.
+     */
+    protected LocalDate optionalBondDate(boolean issue) {
+        SecurityProto proto = getProto();
+        if (!proto.hasBondDetails()) return null;
+        BondDetailsProto bd = proto.getBondDetails();
+        if (issue) {
+            if (!bd.hasIssueDate()) return null;
+            return ProtoSerializationUtil.deserializeOptionalLocalDate(bd.getIssueDate(), SecurityRules.ISSUE_DATE);
+        }
+        if (!bd.hasMaturityDate()) return null;
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(bd.getMaturityDate(), SecurityRules.MATURITY_DATE);
     }
 
     @Override

@@ -35,6 +35,8 @@ import java.util.UUID;
 public class ProtoSerializationUtil {
 
     public static GeneratedMessageV3 serialize(Object object) {
+        // Absent stays absent (e.g. MATURITY_DATE of a stock, LM-441): never NPE.
+        if (object == null) return null;
         GeneratedMessageV3 unpacked;
         if(object instanceof BigDecimal) {
             unpacked = serializeBigDecimal((BigDecimal) object);
@@ -83,7 +85,7 @@ public class ProtoSerializationUtil {
 
     public static Any serializeToAny(Object object) {
         GeneratedMessageV3 unpacked = serialize(object);
-        return Any.pack(unpacked);
+        return unpacked == null ? null : Any.pack(unpacked);
     }
 
     public static Object deserialize(Any any) {
