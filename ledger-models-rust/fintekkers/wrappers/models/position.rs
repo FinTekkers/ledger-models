@@ -1349,6 +1349,55 @@ mod test {
         });
         assert!(PositionFilter::filter_positions(&positions, &filter).is_empty());
     }
+
+    /// LM-447: the EFFECTIVE_DATE entries Java packs, shared with the Java,
+    /// Python and JS tests.
+    fn effective_date_case(name: &str) -> Position {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../ledger-models-protos/fixtures/position_effective_date_cases.json"
+        );
+        let text = std::fs::read_to_string(path)
+            .expect("read shared position_effective_date_cases.json fixture");
+        let root: serde_json::Value = serde_json::from_str(&text).expect("parse fixture");
+        let case = root
+            .get("cases")
+            .and_then(|c| c.as_array())
+            .expect("fixture has cases")
+            .iter()
+            .find(|c| c.get("name").and_then(|n| n.as_str()) == Some(name))
+            .unwrap_or_else(|| panic!("fixture case missing: {}", name));
+        let hex = case
+            .get("entry_hex")
+            .and_then(|v| v.as_str())
+            .expect("case has entry_hex");
+        let bytes: Vec<u8> = (0..hex.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).expect("valid hex"))
+            .collect();
+        let entry = FieldMapEntry::decode(bytes.as_slice()).expect("decode FieldMapEntry");
+        Position::new(PositionProto {
+            fields: vec![entry],
+            ..Default::default()
+        })
+    }
+
+    #[test]
+    fn effective_date_shared_fixture_decodes_to_local_date() {
+        let value = effective_date_case("set")
+            .get_field_value(FieldProto::EffectiveDate)
+            .expect("EFFECTIVE_DATE decodes");
+        let date = value
+            .downcast::<NaiveDate>()
+            .expect("EFFECTIVE_DATE is a NaiveDate");
+        assert_eq!(*date, NaiveDate::from_ymd_opt(2024, 3, 15).unwrap());
+    }
+
+    #[test]
+    fn effective_date_shared_fixture_unset_is_absent() {
+        let result = effective_date_case("unset").get_field_value(FieldProto::EffectiveDate);
+        assert_eq!(result.err(), Some("Could not find field in position"));
+    }
 }
 
 // ...

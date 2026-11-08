@@ -18,6 +18,8 @@ import protos.serializers.util.json.JsonSerializationUtil;
 import protos.serializers.util.proto.ProtoSerializationUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static common.models.JSONFieldNames.*;
@@ -82,6 +84,10 @@ public class PositionSerializer implements IRawDataModelObjectSerializer<Positio
 
         if(fieldValue instanceof TransactionType)
             fieldValue = ((TransactionType)fieldValue).getProto();
+
+        // A field declared LocalDate (see field.proto) always packs LocalDateProto, even when given a timestamp.
+        if(fieldValue instanceof ZonedDateTime && LocalDate.class.equals(field.getType()))
+            fieldValue = ((ZonedDateTime)fieldValue).toLocalDate();
 
         if(fieldValue instanceof ProtocolMessageEnum)
             fieldBuilder.setEnumValue(((ProtocolMessageEnum)fieldValue).getNumber());

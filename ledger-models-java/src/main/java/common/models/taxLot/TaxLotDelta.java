@@ -84,7 +84,9 @@ public class TaxLotDelta extends RawDataModelObject implements IFinancialModelOb
     public Object getField(Field field) {
         return switch (field) {
             case ID -> getID();
-            case AS_OF, EFFECTIVE_DATE -> getAsOf();
+            case AS_OF -> getAsOf();
+            // EFFECTIVE_DATE is declared LocalDate (field.proto): the as-of's date, in the as-of timestamp's own zone.
+            case EFFECTIVE_DATE -> getAsOf() == null ? null : getAsOf().toLocalDate();
             case TAX_LOT_OPEN_DATE -> getOpenDate();
             case TAX_LOT_CLOSE_DATE -> getClosedDate();
             case PRICE -> getPrice();
