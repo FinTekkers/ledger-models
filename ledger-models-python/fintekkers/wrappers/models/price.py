@@ -84,7 +84,8 @@ class Price:
 
 
     @staticmethod
-    def create_price(security:Security, price: "Decimal | int", as_of_date:Timestamp):
+    def create_price(security: Optional[Security], price: "Decimal | int", as_of_date:Timestamp):
+        # LM-449: an inline trade price may have no security; leave it unset.
         uuid_value = FintekkersUuid.new_uuid().as_uuid()
 
         price = stamp(PriceProto(
@@ -94,7 +95,7 @@ class Price:
             is_link=False,
             uuid=UUIDProto(raw_uuid=uuid_value.bytes),
             price=ProtoSerializationUtil.serialize(price),
-            security=security.proto,
+            security=security.proto if security is not None else None,
         ), ObjectTypeProto.OBJECT_TYPE_PRICE)
 
         return Price(price)

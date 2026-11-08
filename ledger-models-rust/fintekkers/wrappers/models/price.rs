@@ -302,6 +302,9 @@ impl PriceProtoBuilder {
         self
     }
 
+    /// Builds the price. With no `.security(..)` the proto has no `security`
+    /// (LM-449): an inline trade price need not name one, so this is not a
+    /// standalone price and `validate_price` still reports the missing field.
     pub fn build(self) -> Result<PriceProto, Error> {
         let valid_to = match self.valid_to {
             Some(..) => Some(self.valid_to.unwrap().proto),
@@ -317,9 +320,7 @@ impl PriceProtoBuilder {
 
             uuid: Some(self.uuid.into()),
             price: Some(self.price.unwrap().into()),
-            security: Some(
-                self.security.unwrap()
-            ),
+            security: self.security,
             price_type: 0,
             ..Default::default()
         };
@@ -393,6 +394,22 @@ mod test {
         assert_eq!(price_str, number.to_string());
         assert_eq!(price.unscaled_value, vec![0x85]);
         assert_eq!(price.scale, 2);
+    }
+
+    // LM-449: building a price with no security leaves it absent, not a panic.
+    #[test]
+    fn build_without_security_has_no_security() {
+        let proto = PriceProtoBuilder::new()
+            .price(super::DecimalWrapper::from(dec!(99.5)))
+            .build()
+            .unwrap();
+        assert!(proto.security.is_none());
+    }
+
+    #[test]
+    fn build_with_security_keeps_security() {
+        let proto = PriceProtoBuilder::new().dummy_price_wrapper(dec!(1)).proto;
+        assert!(proto.security.is_some());
     }
 
     #[test]

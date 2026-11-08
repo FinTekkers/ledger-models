@@ -9,6 +9,7 @@ const decimal_js_1 = require("decimal.js");
 const errors_1 = require("../errors");
 const object_type_pb_1 = require("../../../fintekkers/models/util/object_type_pb");
 const object_types_1 = require("../../util/object-types");
+const datetime_1 = require("../utils/datetime");
 const TEST_UUID = '18e8c4e6-3da0-47c9-b26d-c5ea8b8dce95';
 test('Price.fromSimple creates a Price with correct values', () => {
     const date = new Date('2026-03-15T12:00:00Z');
@@ -79,5 +80,11 @@ test.each(['', '   '])('Price.getAsOf with blank time zone %j names price.as_of.
     const e = thrownBy(() => price.getAsOf());
     expect(e).toBeInstanceOf(errors_1.ModelValidationError);
     expect(e.field).toBe('price.as_of.time_zone');
+});
+// LM-449: an inline trade price may have no security; create leaves it unset.
+test('Price.create with no security leaves security unset', () => {
+    const price = Price_1.default.create(new decimal_js_1.Decimal('99.5'), null, datetime_1.ZonedDateTime.now());
+    expect(price.proto.hasSecurity()).toBe(false);
+    expect(price.proto.getPrice()).toBeTruthy();
 });
 //# sourceMappingURL=Price.test.js.map

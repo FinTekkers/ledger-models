@@ -4,6 +4,7 @@ import { Decimal } from 'decimal.js';
 import { ModelValidationError } from '../errors';
 import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
 import { readVersion } from '../../util/object-types';
+import { ZonedDateTime } from '../utils/datetime';
 
 const TEST_UUID = '18e8c4e6-3da0-47c9-b26d-c5ea8b8dce95';
 
@@ -92,4 +93,12 @@ test.each(['', '   '])('Price.getAsOf with blank time zone %j names price.as_of.
     const e = thrownBy(() => price.getAsOf());
     expect(e).toBeInstanceOf(ModelValidationError);
     expect((e as ModelValidationError).field).toBe('price.as_of.time_zone');
+});
+
+// LM-449: an inline trade price may have no security; create leaves it unset.
+test('Price.create with no security leaves security unset', () => {
+    const price = Price.create(new Decimal('99.5'), null, ZonedDateTime.now());
+
+    expect(price.proto.hasSecurity()).toBe(false);
+    expect(price.proto.getPrice()).toBeTruthy();
 });

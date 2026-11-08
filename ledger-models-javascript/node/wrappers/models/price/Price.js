@@ -66,7 +66,8 @@ class Price {
         return new Price(priceProto);
     }
     /**
-     * Factory method to create a Price from a Decimal value, Security, and ZonedDateTime
+     * Factory method to create a Price from a Decimal value, Security, and ZonedDateTime.
+     * LM-449: an inline trade price may have no security; it is then left unset.
      */
     static create(price, security, asOf) {
         const decimalValueProto = (0, decimal_1.encodeDecimal)((0, decimal_1.fromDecimalJs)(price));
@@ -75,7 +76,8 @@ class Price {
         (0, object_types_1.stamp)(priceProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_PRICE);
         priceProto.setAsOf(asOf.toProto());
         priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
-        priceProto.setSecurity(security.proto);
+        if (security)
+            priceProto.setSecurity(security.proto);
         return new Price(priceProto);
     }
     /**
