@@ -21,6 +21,7 @@ import common.models.strategy.StrategyAllocation;
 import fintekkers.models.portfolio.PortfolioProto;
 import fintekkers.models.position.PositionStatusProto;
 import fintekkers.models.price.PriceProto;
+import fintekkers.models.price.PriceTypeProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.strategy.StrategyAllocationProto;
 import fintekkers.models.transaction.TransactionProto;
@@ -713,7 +714,7 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
         Transaction cashTransaction = new Transaction(
                 UUID.randomUUID(), parentTransaction.getPortfolio(),
-                Price.getCashPrice(),
+                cashPriceFor(parentTransaction),
                 parentTransaction.getTradeDate(),
                 parentTransaction.getSettlementDate(),
                 bookAmount,
@@ -728,6 +729,20 @@ public class Transaction extends RawDataModelObject implements ITransaction {
 
         parentTransaction.addChildTransaction(cashTransaction);
         return cashTransaction;
+    }
+
+    /**
+     * LM-449: the cash child's price is the fixed 1 USD cash price, tagged with
+     * the parent price's {@code price_type} when the parent has one. Read from
+     * the parent's price proto so a link-mode price never throws here. An
+     * untyped parent keeps {@link Price#getCashPrice()} as-is (bytes unchanged).
+     */
+    private static Price cashPriceFor(Transaction parentTransaction) {
+        PriceTypeProto type = parentTransaction.priceProto != null
+                ? parentTransaction.priceProto.getPriceType() : PriceTypeProto.UNKNOWN_PRICE_TYPE;
+        Price cash = Price.getCashPrice();
+        if (type == PriceTypeProto.UNKNOWN_PRICE_TYPE || type == PriceTypeProto.UNRECOGNIZED) return cash;
+        return new Price(cash.getID(), cash.getPrice(), cash.getSecurity(), cash.getAsOf(), type);
     }
 
     public static void addDerivedTransactions(Transaction transaction) {

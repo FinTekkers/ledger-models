@@ -2,11 +2,15 @@ package protos.serializers;
 
 import common.models.errors.ModelValidationException;
 import common.models.price.Price;
+import common.util.ObjectTypes;
 import fintekkers.models.price.PriceProto;
+import fintekkers.models.price.PriceTypeProto;
+import fintekkers.models.util.ObjectTypeProto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import protos.serializers.price.PriceSerializer;
+import protos.serializers.util.proto.ProtoSerializationUtil;
 import testutil.DummyEquityObjects;
 
 import java.math.BigDecimal;
@@ -15,7 +19,11 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static java.time.temporal.ChronoUnit.MILLIS;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -71,6 +79,47 @@ class PriceSerializerTest {
         Price copy = PriceSerializer.getInstance().deserialize(PriceSerializer.getInstance().serialize(price));
 
         assertEquals(asOf, copy.getAsOf());
+    }
+
+    // LM-449: an inline trade price may have no security; serialize leaves it
+    // absent instead of throwing an NPE.
+    @Test
+    public void serialize_nullSecurity_returnsProtoWithoutSecurity() {
+        Price price = new Price(UUID.randomUUID(), BigDecimal.TEN, null, ZonedDateTime.now());
+
+        PriceProto proto = assertDoesNotThrow(() -> PriceSerializer.getInstance().serialize(price));
+
+        assertFalse(proto.hasSecurity());
+    }
+
+    @Test
+    public void roundTrip_priceTypeWithoutSecurity_keepsTypeAndNullSecurity() {
+        ZonedDateTime asOf = ZonedDateTime.of(2024, 6, 15, 10, 30, 0, 0, ZoneId.of("America/New_York"));
+        Price price = new Price(UUID.randomUUID(), new BigDecimal("99.5"), null, asOf, PriceTypeProto.PERCENTAGE);
+
+        PriceProto proto = PriceSerializer.getInstance().serialize(price);
+        Price copy = PriceSerializer.getInstance().deserialize(proto);
+
+        assertEquals(PriceTypeProto.PERCENTAGE, proto.getPriceType());
+        assertEquals(PriceTypeProto.PERCENTAGE, copy.getPriceType());
+        assertNull(copy.getSecurity());
+    }
+
+    // LM-449 guardrail: a price with a security and no type serializes to the
+    // same bytes as before price_type was carried.
+    @Test
+    public void serialize_withSecurityNoType_bytesUnchanged() {
+        ZonedDateTime asOf = ZonedDateTime.of(2024, 6, 15, 10, 30, 0, 0, ZoneId.of("America/New_York"));
+        Price price = new Price(UUID.randomUUID(), BigDecimal.TEN, DummyEquityObjects.getDummySecurity(), asOf);
+
+        PriceProto expected = ObjectTypes.stamp(PriceProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PRICE)
+                .setUuid(ProtoSerializationUtil.serializeUUID(price.getID()))
+                .setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf))
+                .setSecurity(price.getSecurity().getProto())
+                .setPrice(ProtoSerializationUtil.serializeBigDecimal(price.getPrice()))
+                .build();
+
+        assertArrayEquals(expected.toByteArray(), PriceSerializer.getInstance().serialize(price).toByteArray());
     }
 
     // testJSONSerialization removed in FinTekkers/second-brain#338.

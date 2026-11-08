@@ -19,9 +19,10 @@ declare class Price {
      */
     static fromSimple(securityId: string, price: number, date: Date, priceType?: PriceTypeProto): Price;
     /**
-     * Factory method to create a Price from a Decimal value, Security, and ZonedDateTime
+     * Factory method to create a Price from a Decimal value, Security, and ZonedDateTime.
+     * LM-449: an inline trade price may have no security; it is then left unset.
      */
-    static create(price: Decimal, security: Security, asOf: ZonedDateTime): Price;
+    static create(price: Decimal, security: Security | null | undefined, asOf: ZonedDateTime): Price;
     /**
      * Creates a cash price (always 1.0) for a cash security
      */

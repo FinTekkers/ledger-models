@@ -451,7 +451,8 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
                 ProtoSerializationUtil.deserializeUUID(p.getUuid()),
                 ProtoSerializationUtil.deserializeBigDecimal(p.getPrice()),
                 security,
-                ProtoSerializationUtil.deserializeRequiredTimestamp(p.hasAsOf() ? p.getAsOf() : null, "price.as_of"));
+                ProtoSerializationUtil.deserializeRequiredTimestamp(p.hasAsOf() ? p.getAsOf() : null, "price.as_of"),
+                p.getPriceType());
     }
 
     private static TransactionType transactionTypeOf(TransactionTypeProto type) {

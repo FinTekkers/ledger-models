@@ -2,6 +2,7 @@ package common.models.price;
 
 import common.models.RawDataModelObject;
 import common.models.security.Security;
+import fintekkers.models.price.PriceTypeProto;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -12,12 +13,24 @@ import static common.models.security.CashSecurity.USD;
 
 public class Price extends RawDataModelObject {
     private final Security security;
+    private final PriceTypeProto priceType;
     private BigDecimal price;
 
     public Price(UUID id, BigDecimal price, Security security, ZonedDateTime asOf) {
+        this(id, price, security, asOf, PriceTypeProto.UNKNOWN_PRICE_TYPE);
+    }
+
+    /**
+     * LM-449: carries {@code PriceProto.price_type} so a price re-serialized
+     * (e.g. on a derived maturation child) keeps it. A null type is
+     * {@code UNKNOWN_PRICE_TYPE}. The security may be null: an inline trade
+     * price need not name one.
+     */
+    public Price(UUID id, BigDecimal price, Security security, ZonedDateTime asOf, PriceTypeProto priceType) {
         super(id, asOf);
         this.price = price;
         this.security = security;
+        this.priceType = priceType != null ? priceType : PriceTypeProto.UNKNOWN_PRICE_TYPE;
     }
 
     public BigDecimal getPrice() {
@@ -26,6 +39,10 @@ public class Price extends RawDataModelObject {
 
     public Security getSecurity() {
         return security;
+    }
+
+    public PriceTypeProto getPriceType() {
+        return priceType;
     }
 
     public void setPrice(BigDecimal price) {
