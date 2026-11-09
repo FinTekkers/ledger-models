@@ -357,18 +357,19 @@
       "enum_value": 20,
       "display_name": "Accrued Interest",
       "description": "The coupon interest accrued from the last coupon date up to (but not including) the settlement date, per the security's day count. Earned but not yet received.",
-      "formula": "Fixed-coupon bonds and TIPS: AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period) * directed_quantity. Treasury FRNs: AccruedInterest = Σ_{each day} (index_fixing_d + spread) / 360 * directed_quantity, where directed_quantity is the position's face",
+      "formula": "Fixed-coupon bonds: AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period) * directed_quantity. TIPS: AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period, Actual/Actual (ICMA)) * index_ratio * directed_quantity, where index_ratio = INDEX_RATIO = reference_cpi / base_cpi at settlement, rounded per 31 CFR 356 Appendix B (see INDEX_RATIO), not floored. A TIPS request missing the CPI inputs MARKET_VALUE uses returns an error, never an unscaled figure (an exception to the absent rule: an unscaled figure would be silently wrong). Treasury FRNs: AccruedInterest = Σ_{each day} (index_fixing_d + spread) / 360 * directed_quantity, where directed_quantity is the position's face",
       "units": "Dollars (absolute dollar amount for the position)",
       "category": "valuation",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
       "model_assumptions": [
         "Day count: the security's (Actual/Actual (ICMA) for US Treasuries)",
         "Treasury FRNs: the fixings are the ones supplied in the request; no curve is used",
-        "Returns null/zero for Equity, Cash, and zero-coupon bonds"
+        "Returns null/zero for Equity, Cash, and zero-coupon bonds",
+        "TIPS: scaled by INDEX_RATIO at settlement (31 CFR 356 Appendix B rounding, not floored); missing CPI inputs → error"
       ],
       "implemented": true,
       "computed_by": "valuation-service",
-      "depends_on": ["SECURITY_TERMS", "BILL_FIXINGS"]
+      "depends_on": ["SECURITY_TERMS", "BILL_FIXINGS", "INDEX_RATIO"]
     },
     {
       "name": "CONVEXITY",
