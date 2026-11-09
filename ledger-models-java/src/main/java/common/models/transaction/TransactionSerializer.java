@@ -211,7 +211,15 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
 
         TransactionProto source = proto;
         if (proto.getIsLink()) {
-            TransactionProto resolved = resolveTransaction(t.getID(), t.getAsOf());
+            TransactionProto resolved;
+            try {
+                resolved = resolveTransaction(t.getID(), t.getAsOf());
+            } catch (FetcherFailure e) {
+                // The fetcher's own error: business getters rethrow it (LM-450).
+                t.link = true;
+                t.linkError = e.error;
+                return;
+            }
             if (resolved == null) {
                 t.link = true;
                 return;
@@ -405,6 +413,16 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
         return LinkCache.PRICE.get(id, asOf);
     }
 
+    /** Carries a {@link Transaction.Fetcher} exception from {@link #resolveTransaction} to {@link #fill}. */
+    private static final class FetcherFailure extends RuntimeException {
+        final RuntimeException error;
+
+        FetcherFailure(RuntimeException error) {
+            super(null, null, false, false);
+            this.error = error;
+        }
+    }
+
     private static TransactionProto resolveTransaction(UUID id, ZonedDateTime asOf) {
         TransactionProto cached = LinkCache.TRANSACTION.get(id, asOf);
         if (cached != null) return cached.getIsLink() ? null : cached;
@@ -414,8 +432,8 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
         try {
             resolved = f.fetch(id, asOf);
         } catch (RuntimeException e) {
-            LOG.log(Level.WARNING, "Transaction link " + id + " could not be resolved; keeping the link", e);
-            return null;
+            // Handed to fill, which keeps it for the getters (LM-450).
+            throw new FetcherFailure(e);
         }
         if (resolved == null || resolved.getIsLink()) return null;
         ZonedDateTime resolvedAsOf = resolved.hasAsOf()
