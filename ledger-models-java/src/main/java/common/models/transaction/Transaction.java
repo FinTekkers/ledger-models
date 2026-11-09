@@ -138,6 +138,8 @@ public class Transaction extends RawDataModelObject implements ITransaction {
     LocalDate settlementDate;
     /** A field that failed to decode at build: its getter raises this error. */
     RuntimeException securityError, portfolioError, priceError, quantityError, tradeDateError, settlementDateError;
+    /** The {@link Fetcher} failure for an unresolved link: business getters rethrow it. */
+    RuntimeException linkError;
     PositionStatusProto positionStatus;
     /**
      * Wire values Java has no form for, written back unchanged: the numbers
@@ -331,9 +333,10 @@ public class Transaction extends RawDataModelObject implements ITransaction {
                     getPortfolio().getPortfolioName(), getSecurity().getIssuer(),
                     getValidFrom().toString(), validTo,
                     getStrategyAllocation().toString());
-        } catch (NullPointerException | IllegalStateException | InvalidFieldException e) {
-            // is_link-mode Security/Portfolio reads (or a partially-populated
-            // transaction): emit a link-style summary so logs are still useful.
+        } catch (RuntimeException e) {
+            // is_link-mode reads, including a stored Fetcher error (LM-450),
+            // a field that failed to decode, or a partially-populated
+            // transaction: emit a link-style summary so logs are still useful.
             return String.format("Link[Transaction:%s]", getID());
         }
     }
@@ -357,9 +360,15 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         return link;
     }
 
-    /** Business fields are unknown on an unresolved link: say so rather than return nothing. */
+    /**
+     * Business fields are unknown on an unresolved link: say so rather than
+     * return nothing. If the {@link Fetcher} threw when this link was built,
+     * that same exception instance is rethrown (LM-450); a miss (no fetcher,
+     * or it returned no record) raises {@link IllegalStateException}.
+     */
     private void requireResolved() {
         if (link) {
+            if (linkError != null) throw linkError;
             throw new IllegalStateException(
                     "Cannot read fields on link-mode Transaction uuid=" + getID()
                     + " asOf=" + getAsOf() + " — it was not in LinkCache.TRANSACTION and the "
