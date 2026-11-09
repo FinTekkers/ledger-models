@@ -1,6 +1,6 @@
 {
-  "item": "LM-434",
-  "note": "Written once, never regenerated: ledger-models-protos/catalog/measures.json at the LM-433 release tag v1.1.31 (commit c6b2fb50), stored whole (_doc and measures). LM-434 changes only INFLATION_COMPENSATION.implemented, from false to true (valuation-service VS-155).",
+  "item": "LM-456",
+  "note": "Written once, never regenerated: ledger-models-protos/catalog/measures.json at the LM-450 release tag v1.1.39 (commit 41f31c9a), stored whole (_doc, schema_version and measures). LM-456 changes only ACCRUED_INTEREST: formula gains a TIPS sentence (index_ratio scaling, 31 CFR 356), model_assumptions gains one TIPS line, depends_on gains INDEX_RATIO.",
   "catalog": {
     "_doc": "applies_to lists the products a measure covers. Each entry is a ProductTypeProto name (e.g. TIPS, TREASURY_FRN) or a node name from ../hierarchy.json (e.g. BOND, STOCK, CASH_INSTRUMENT), which covers every product type under it. computed_by says where a measure's value comes from: input (supplied by the caller, not computed), ledger-service or valuation-service. The UNKNOWN_MEASURE sentinel has computed_by null. depends_on lists what a measure is computed from: other measure names from this catalog, plus these inputs: TAX_LOTS (the position's tax lots), SECURITY_TERMS (the security's terms and conditions), CPI_U (the CPI-U index series), BILL_FIXINGS (T-bill auction fixings), YIELD_CURVE (the discount curve) and TREASURY_PRICES (Treasury market prices). It is empty for an input.",
     "schema_version": "1.0",
@@ -760,7 +760,7 @@
           "Absent when INDEX_RATIO is absent",
           "Not computed yet: valuation-service computes it from VS-155"
         ],
-        "implemented": false,
+        "implemented": true,
         "computed_by": "valuation-service",
         "depends_on": [
           "DIRECTED_QUANTITY",

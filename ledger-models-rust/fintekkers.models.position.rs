@@ -631,10 +631,23 @@ pub enum MeasureProto {
     /// including) the settlement date, per the security's day count. Earned but not
     /// yet received.
     ///
-    /// Fixed-coupon bonds and TIPS:
+    /// Fixed-coupon bonds:
     ///    AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period)
     ///                      * directed_quantity
     ///    Day count: the security's (Actual/Actual (ICMA) for US Treasuries).
+    ///
+    /// TIPS: the fixed-coupon formula scaled by the index ratio at settlement,
+    /// as 31 CFR 356 requires:
+    ///    AccruedInterest = (coupon_rate / coupon_frequency) * (days_since_last_coupon / days_in_period)
+    ///                      * index_ratio * directed_quantity
+    ///    Day count: Actual/Actual (ICMA).
+    ///    where index_ratio is INDEX_RATIO at settlement: reference_cpi / base_cpi,
+    ///    rounded per 31 CFR 356 Appendix B (see INDEX_RATIO), and not floored.
+    ///    The CPI inputs are the ones MARKET_VALUE (TIPS) uses: TipsInput.cpi and
+    ///    the security's tips_extension.base_cpi. A TIPS request missing them
+    ///    returns an error, never an unscaled figure. This is an exception to the
+    ///    absent rule at the top of this file: an unscaled figure would be
+    ///    silently wrong.
     ///
     /// Treasury FRNs: the sum, over each day from the last coupon date to
     /// settlement, of that day's (13-week bill index fixing + spread) / 360 on face:
