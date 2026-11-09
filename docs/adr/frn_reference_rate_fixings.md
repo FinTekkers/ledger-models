@@ -186,3 +186,26 @@ enum ProductTypeProto {
 - `scripts/checks/wire-diff.py` rule `lm412` allows exactly the two values, listed in `test-fixtures/field-changes/lm-412.json`. That file's `kept` list holds every existing value of both enums. The descriptor tests in Java, Python, Rust and JS read it and assert that `kept` plus `added_values` is the whole enum.
 - Each language's hierarchy tests assert that `T_BILL_13_WEEK_SERIES` has the same parent, asset class and instrument type as `SOFR_SERIES`.
 - `ledger-models-python/test/requests/test_lm412_sofr_rate_spec.py` checks the `rate` comment, this amendment and the unchanged `INDEX_LEVEL` and `PERCENTAGE` comments.
+
+## Amendment 2026-11-09 (LM-415): a rate never shares a price type with a price
+
+### Status
+
+Accepted (LM-415, owner gate ruling on [LM-415](https://github.com/FinTekkers/ledger-models/issues/415), Option B). Comment-only: no `PriceTypeProto` value is added, renumbered, renamed, removed or deprecated, so the wire format is unchanged.
+
+### Context
+
+LM-415 proposed retiring `PriceTypeProto.RATE` into `PERCENTAGE`, since both carry a percent. Then a 13-week T-bill's FedInvest price (`98.94`, % of par) and its auction rate (`4.215`, % per annum) would share one value, and only the series' product type (`T_BILL_13_WEEK_SERIES`, `SOFR_SERIES`) would tell them apart. Every `PERCENTAGE` reader would have to filter on product type to keep fixings out of % of par prices, and the proto cannot enforce that. The `RATE` comment also never stated its unit.
+
+### Decision
+
+- **`RATE` stays and is not deprecated.** Its comment now states the unit as the rule: percent per annum as published, `4.32` = 4.32%. `ReferenceRateFixingProto.rate` is named as a cross-reference with the same unit.
+- **`PERCENTAGE` is a price as a percentage of par only**, `99.75` = 99.75% of par, never a rate. This refines the LM-412 line above that `PERCENTAGE` keeps its meaning; that line is unchanged.
+- **A rate never shares a value with a price.** A reader tells the T-bill price `98.94` (`PERCENTAGE`) from its rate `4.215` (`RATE`) by the price type alone, without knowing the product type.
+- The enum is not a pure unit or pure kind model today: `BASIS_POINTS` is named by unit, `INDEX_LEVEL` by kind. This amendment does not change that. A quote-conventions review of `PriceTypeProto` (unit versus kind: price, rate, spread, level) may reshape the enum, but only in a deliberate minor release.
+
+### Consequences
+
+- No data migration. MDI-100, price-service, ledger-service and ui-service keep writing and reading `RATE`.
+- Existing `PERCENTAGE` queries return the same results; fixing points never appear as % of par prices.
+- `ledger-models-python/test/models/price/test_lm415_price_type_spec.py` checks the two comments, that `RATE` is still number 5 and not deprecated, this amendment, and that the LM-412 amendment text is unchanged.

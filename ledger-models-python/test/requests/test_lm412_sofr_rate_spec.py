@@ -75,7 +75,7 @@ def test_units_adr_restates_l7_for_sofr():
 
 
 @pytest.mark.parametrize("line", [
-    "PERCENTAGE = 2; //Price as a percentage (e.g. bond prices quoted as % of par)",
+    "PERCENTAGE = 2; //Price as a percentage of par (e.g. bond prices: 99.75 = 99.75% of par). Never a rate; rates use RATE.",
     "INDEX_LEVEL = 4; //Index level (e.g. CPI readings)",
 ])
 def test_existing_price_type_meanings_are_unchanged(line):

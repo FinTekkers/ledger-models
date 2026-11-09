@@ -22,7 +22,7 @@ public enum PriceTypeProto
   ABSOLUTE(1),
   /**
    * <pre>
-   *Price as a percentage (e.g. bond prices quoted as % of par)
+   *Price as a percentage of par (e.g. bond prices: 99.75 = 99.75% of par). Never a rate; rates use RATE.
    * </pre>
    *
    * <code>PERCENTAGE = 2;</code>
@@ -46,7 +46,7 @@ public enum PriceTypeProto
   INDEX_LEVEL(4),
   /**
    * <pre>
-   *Reference-rate fixing (e.g. SOFR, 13-week T-bill). Unit is the one ReferenceRateFixingProto.rate defines for the security's index.
+   *Reference-rate fixing (e.g. SOFR, 13-week T-bill) in percent per annum as published: 4.32 = 4.32%. Same unit as ReferenceRateFixingProto.rate.
    * </pre>
    *
    * <code>RATE = 5;</code>
@@ -69,7 +69,7 @@ public enum PriceTypeProto
   public static final int ABSOLUTE_VALUE = 1;
   /**
    * <pre>
-   *Price as a percentage (e.g. bond prices quoted as % of par)
+   *Price as a percentage of par (e.g. bond prices: 99.75 = 99.75% of par). Never a rate; rates use RATE.
    * </pre>
    *
    * <code>PERCENTAGE = 2;</code>
@@ -93,7 +93,7 @@ public enum PriceTypeProto
   public static final int INDEX_LEVEL_VALUE = 4;
   /**
    * <pre>
-   *Reference-rate fixing (e.g. SOFR, 13-week T-bill). Unit is the one ReferenceRateFixingProto.rate defines for the security's index.
+   *Reference-rate fixing (e.g. SOFR, 13-week T-bill) in percent per annum as published: 4.32 = 4.32%. Same unit as ReferenceRateFixingProto.rate.
    * </pre>
    *
    * <code>RATE = 5;</code>

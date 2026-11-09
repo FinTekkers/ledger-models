@@ -4,13 +4,13 @@ pub enum PriceTypeProto {
     UnknownPriceType = 0,
     /// Price in local currency (e.g. equity prices, futures)
     Absolute = 1,
-    /// Price as a percentage (e.g. bond prices quoted as % of par)
+    /// Price as a percentage of par (e.g. bond prices: 99.75 = 99.75% of par). Never a rate; rates use RATE.
     Percentage = 2,
     /// Price in basis points (e.g. spreads)
     BasisPoints = 3,
     /// Index level (e.g. CPI readings)
     IndexLevel = 4,
-    /// Reference-rate fixing (e.g. SOFR, 13-week T-bill). Unit is the one ReferenceRateFixingProto.rate defines for the security's index.
+    /// Reference-rate fixing (e.g. SOFR, 13-week T-bill) in percent per annum as published: 4.32 = 4.32%. Same unit as ReferenceRateFixingProto.rate.
     Rate = 5,
 }
 impl PriceTypeProto {
