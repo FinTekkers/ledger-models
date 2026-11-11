@@ -529,6 +529,19 @@ enum MeasureProto {
   //   absent rule at the top of this file: an unscaled figure would be
   //   silently wrong.
   //
+  //   Not scaled: nominal fixed-coupon bonds, zero-coupon bonds and FRNs are
+  //   not scaled by the index ratio; their accrual is unchanged from today.
+  //
+  //   Example (TIPS): 91282CPU9, 1.875% coupon, paid Jan 15 and Jul 15
+  //   (coupon_frequency 2). Settlement 2026-11-06. Index ratio 1.03192.
+  //   Accrual start 2026-07-15. Period end 2027-01-15.
+  //   Days accrued: 114 (2026-07-15 to 2026-11-06). Days in period: 184.
+  //   (Actual/Actual ICMA fraction = days_since_last_coupon / days_in_period.)
+  //   coupon_rate / frequency × Actual/Actual ICMA fraction
+  //     × index ratio at settlement × directed_quantity
+  //     = 0.01875 / 2 × 114 / 184 × 1.03192 × 1,000 = 5.99383...
+  //     → $5.99 per $1,000 face (rounded here only).
+  //
   // Treasury FRNs: the sum, over each day from the last coupon date to
   // settlement, of that day's (13-week bill index fixing + spread) / 360 on face:
   //   AccruedInterest = Σ_{each day} (index_fixing_d + spread) / 360 * directed_quantity

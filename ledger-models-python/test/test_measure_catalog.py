@@ -13,8 +13,14 @@ INFLATION_COMPENSATION.implemented to true (valuation-service VS-155). LM-456
 states that TIPS accrued interest is scaled by the index ratio (31 CFR 356):
 every catalog equals the v1.1.39 snapshot test-fixtures/catalog/lm-456-before.json
 but for ACCRUED_INTEREST's formula, model_assumptions and depends_on, and the
-ACCRUED_INTEREST proto comment states the same rule."""
+ACCRUED_INTEREST proto comment states the same rule. LM-459 adds, in that
+comment only, which bonds are not scaled and a TIPS example that recomputes
+by hand to $5.99 per $1,000 face."""
+import hashlib
 import json
+import re
+from datetime import date
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 import pytest
@@ -299,3 +305,67 @@ def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
         assert new["model_assumptions"][:len(old["model_assumptions"])] == old["model_assumptions"]
         assert len(new["model_assumptions"]) == len(old["model_assumptions"]) + 1
         assert new["depends_on"] == old["depends_on"] + ["INDEX_RATIO"]
+
+
+# LM-459: the ACCRUED_INTEREST comment says which bonds are not scaled and
+# gives a TIPS example a reader can check by hand. The rest of measure.proto
+# stays as at the LM-456 merge (36186e66): sha256 of the file with the
+# ACCRUED_INTEREST comment cut out. A later item that edits measure.proto
+# must update this hash (or retire the test).
+LM459_PROTO_OUTSIDE_COMMENT_SHA256 = "220fe9d44efc67635eb5b2e7f9d5244db6ddde859702eba05f7030ff290de511"
+LM459_FORMULA = (
+    "coupon_rate / frequency × Actual/Actual ICMA fraction"
+    " × index ratio at settlement × directed_quantity"
+)
+
+
+def _accrued_interest_proto_comment_text():
+    """The comment with each `//` prefix removed and whitespace collapsed."""
+    lines = _accrued_interest_proto_comment().splitlines()
+    return " ".join(" ".join(line.strip().removeprefix("//") for line in lines).split())
+
+
+def _search(pattern, text):
+    match = re.search(pattern, text)
+    assert match, pattern
+    return match.group(1)
+
+
+def test_lm459_comment_states_formula_and_not_scaled_bonds():
+    text = _accrued_interest_proto_comment_text()
+    assert LM459_FORMULA in text
+    assert "Actual/Actual ICMA fraction = days_since_last_coupon / days_in_period" in text
+    sentence = _search(r"(Not scaled:[^.;]*)", text).lower()
+    for phrase in ("not scaled", "nominal", "zero-coupon bonds", "frns"):
+        assert phrase in sentence, phrase
+    assert "not scaled by the index ratio; their accrual is unchanged from today" in text
+
+
+def test_lm459_tips_example_recomputes_to_stated_cents():
+    text = _accrued_interest_proto_comment_text()
+    example = text[text.index("Example (TIPS): 91282CPU9"):]
+    coupon_rate = Decimal(_search(r"(\d+(?:\.\d+)?)% coupon", example)) / 100
+    frequency = int(_search(r"\(coupon_frequency (\d+)\)", example))
+    settlement = date.fromisoformat(_search(r"Settlement (\d{4}-\d{2}-\d{2})", example))
+    index_ratio = Decimal(_search(r"Index ratio (\d+(?:\.\d+)?)", example))
+    accrual_start = date.fromisoformat(_search(r"Accrual start (\d{4}-\d{2}-\d{2})", example))
+    period_end = date.fromisoformat(_search(r"Period end (\d{4}-\d{2}-\d{2})", example))
+    days_accrued = int(_search(r"Days accrued: (\d+)", example))
+    days_in_period = int(_search(r"Days in period: (\d+)", example))
+
+    assert (coupon_rate, frequency, index_ratio) == (Decimal("0.01875"), 2, Decimal("1.03192"))
+    assert (days_accrued, days_in_period) == (114, 184)
+    assert (settlement - accrual_start).days == days_accrued
+    assert (period_end - accrual_start).days == days_in_period
+
+    accrued = (coupon_rate / frequency * days_accrued / days_in_period * index_ratio * 1000)
+    assert accrued.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP) == Decimal("5.99")
+    assert "$5.99 per $1,000 face" in example
+
+
+def test_lm459_proto_outside_accrued_interest_comment_unchanged():
+    proto = MEASURE_PROTO.read_text()
+    comment = _accrued_interest_proto_comment()
+    assert proto.count(comment) == 1
+    outside = proto.replace(comment, "", 1)
+    assert hashlib.sha256(outside.encode()).hexdigest() == LM459_PROTO_OUTSIDE_COMMENT_SHA256
