@@ -55,6 +55,7 @@ from fintekkers.models.position.measure_pb2 import MeasureProto
 from fintekkers.models.position.position_pb2 import PositionProto
 from fintekkers.models.position.position_status_pb2 import PositionStatusProto
 from fintekkers.models.price.price_pb2 import PriceProto
+from fintekkers.models.price.price_type_pb2 import PriceTypeProto
 from fintekkers.models.security.bond.issuance_pb2 import IssuanceProto
 from fintekkers.models.security.coupon_frequency_pb2 import SEMIANNUALLY
 from fintekkers.models.security.coupon_type_pb2 import FIXED, FLOAT
@@ -396,7 +397,7 @@ BUILDERS = {
         security=_security(), portfolio=_portfolio(), trade_date=date(2026, 10, 14),
         settlement_date=date(2026, 10, 15), position_status=PositionStatusProto.INTENDED,
         transaction_type=TransactionTypeProto.BUY, price=Decimal("99.5"), quantity=Decimal(100),
-        as_of=datetime(2026, 10, 14, 9, 30)).proto,
+        as_of=datetime(2026, 10, 14, 9, 30), price_type=PriceTypeProto.PERCENTAGE).proto,
     "models.security.security.Security.link_of": lambda: Security.link_of(UUID(int=110), datetime(2026, 10, 14, 9, 30)),
     "models.security.security.Security.link_of_latest": lambda: Security.link_of_latest(UUID(int=111)),
     "models.security.bond_security.BondSecurity.from_pricer_inputs": lambda: BondSecurity.from_pricer_inputs(**_BOND_ARGS),
@@ -473,7 +474,7 @@ BUILDERS = {
             security=_security(), portfolio=_portfolio(), trade_date=date(2026, 10, 14),
             settlement_date=date(2026, 10, 15), position_status=PositionStatusProto.INTENDED,
             transaction_type=TransactionTypeProto.BUY, price=Decimal("99.5"), quantity=Decimal(100),
-            as_of=datetime(2026, 10, 14, 9, 30)).proto),
+            as_of=datetime(2026, 10, 14, 9, 30), price_type=PriceTypeProto.PERCENTAGE).proto),
     # LM-410: the request is the builder's; product_input and position_input are the caller's.
     "requests.valuation.ValuationRequests.typed": lambda: ValuationRequests.typed(
         _timestamp(), for_security(_note(), _price()), stamp_own(PositionProto()), [MeasureProto.MARKET_VALUE]),
@@ -497,6 +498,7 @@ NOT_BUILDERS = {
     "models.errors.ModelValidationError": "exception type; its violations come from errors.violation (a builder)",
     "models.errors.UnmappedProductTypeError": "exception type",
     "models.errors.InvalidRegistryError": "exception type",
+    "models.errors.NoDefaultPriceTypeError": "exception type; its violation comes from errors.violation (a builder)",
     "models.errors.MissingMarketDataError": "exception type; its violation comes from errors.violation (a builder)",
     "models.portfolio.set_portfolio_fetcher": "setter for the lazy-hydrate fetcher",
     "models.price.set_price_fetcher": "setter for the lazy-hydrate fetcher",
@@ -527,6 +529,10 @@ NOT_BUILDERS = {
     "models.security.product_inputs.MarketDataKind": "str enum of market-data kinds, not a message",
     "models.security.product_inputs.MarketData": "frozen holder of the caller's market-data protos; creates none",
     "models.security.product_inputs.check_product_input": "validator; raises or returns None",
+    "models.security.default_price_types.DefaultPriceTypes": "parsed registry section; holds PriceTypeProto values, not messages",
+    "models.security.default_price_types.parse_default_price_types": "registry parser; returns a DefaultPriceTypes",
+    "models.security.default_price_types.default_price_type_for": "registry lookup; returns a PriceTypeProto value or None",
+    "models.security.default_price_types.resolve_trade_price_type": "registry lookup; returns a PriceTypeProto value or raises",
     "models.security.security.IFinancialModelObject": "interface with no state",
     "models.security.security.RawDataModelObject": "plain id/as_of holder, no message",
     "models.security.tenor.Tenor": "holds a TenorTypeProto value and a relativedelta; Tenor.as_proto is the builder",

@@ -35,6 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const price_type_pb_1 = require("../../../fintekkers/models/price/price_type_pb");
 const transaction_type_1 = require("./transaction_type");
 const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
 const strategy_allocation_pb_1 = require("../../../fintekkers/models/strategy/strategy_allocation_pb");
@@ -44,6 +45,7 @@ const position_status_pb_1 = require("../../../fintekkers/models/position/positi
 const security_1 = __importDefault(require("../security/security"));
 const portfolio_1 = __importDefault(require("../portfolio/portfolio"));
 const Price_1 = __importDefault(require("../price/Price"));
+const default_price_types_1 = require("../security/default_price_types");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 //Model Utils
 const datetime_1 = require("../utils/datetime");
@@ -132,6 +134,9 @@ class Transaction {
      * Builds a complete TransactionProto from constructor parameters
      */
     buildProtoFromParams(params) {
+        var _a;
+        // First, so a product with no default builds nothing (LM-461).
+        const priceType = (0, default_price_types_1.resolveTradePriceType)((_a = params.security) === null || _a === void 0 ? void 0 : _a.proto, params.priceType);
         const transactionProto = new transaction_pb_1.TransactionProto();
         (0, object_types_1.stamp)(transactionProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_TRANSACTION);
         transactionProto.setUuid(uuid_1.UUID.random().toUUIDProto());
@@ -142,7 +147,7 @@ class Transaction {
         transactionProto.setTradeDate((0, date_1.dateToLocalDateProto)(params.tradeDate));
         transactionProto.setSettlementDate((0, date_1.dateToLocalDateProto)(params.settlementDate));
         // Create Price using Price.create() factory method
-        const price = Price_1.default.create(params.price, params.security, asOfZonedDateTime);
+        const price = Price_1.default.create(params.price, params.security, asOfZonedDateTime, priceType);
         transactionProto.setPrice(price.proto);
         // Set security, transaction type, and portfolio from their protos
         transactionProto.setSecurity(params.security.proto);
@@ -438,6 +443,7 @@ class Transaction {
             settlementDate,
             asOfDate: asOf.toDateTime().toJSDate(),
             price: new decimal_js_1.Decimal('1.0'),
+            priceType: price_type_pb_1.PriceTypeProto.ABSOLUTE,
             security: cashSecurity,
             transactionType: cashTransactionType,
             portfolio: parentTransaction.getPortfolio(),
@@ -480,6 +486,8 @@ class Transaction {
             settlementDate,
             asOfDate: asOf.toDateTime().toJSDate(),
             price: priceValue,
+            // The parent's type; an untyped parent takes the bond's default.
+            priceType: priceProto.getPriceType(),
             security: transaction.getSecurity(),
             transactionType: transactionType,
             portfolio: transaction.getPortfolio(),

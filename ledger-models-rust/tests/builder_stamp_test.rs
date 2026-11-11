@@ -47,6 +47,10 @@ use ledger_models::fintekkers::wrappers::models::product_inputs::{for_security, 
 use ledger_models::fintekkers::wrappers::models::valuation_requests::typed;
 use ledger_models::fintekkers::wrappers::models::security::{link_of, link_of_latest, SecurityProtoBuilder};
 use ledger_models::fintekkers::wrappers::models::tips_bond::TIPSBond;
+use ledger_models::fintekkers::wrappers::models::transaction::CreateTransaction;
+use ledger_models::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
+use ledger_models::fintekkers::models::position::PositionStatusProto;
+use ledger_models::fintekkers::models::transaction::TransactionTypeProto;
 use ledger_models::fintekkers::wrappers::models::utils::decimal::DecimalWrapper;
 use ledger_models::fintekkers::wrappers::util::object_types::{
     own_type_by_full_name, own_type_stampers, read_type, read_version, stamp_own, SCHEMA_VERSION,
@@ -57,6 +61,8 @@ const SECURITY: &str = "fintekkers.models.security.SecurityProto";
 const PRICE: &str = "fintekkers.models.price.PriceProto";
 const PORTFOLIO: &str = "fintekkers.models.portfolio.PortfolioProto";
 const VALUATION_REQUEST: &str = "fintekkers.requests.valuation.ValuationRequestProto";
+const TRANSACTION: &str = "fintekkers.models.transaction.TransactionProto";
+const CREATE_TRANSACTION_REQUEST: &str = "fintekkers.requests.transaction.CreateTransactionRequestProto";
 
 /// A builder: its scan name, the proto full name it returns, a call that
 /// returns the encoded message, and the nested paths the walk must check.
@@ -80,6 +86,18 @@ const BUILDERS: &[Builder] = &[
     ("FloatingRateNote::from_pricer_inputs", SECURITY, frn_from_pricer_inputs, &["$"]),
     ("MortgageBackedSecurity::from_pricer_inputs", SECURITY, mbs_from_pricer_inputs, &["$"]),
     ("valuation_requests::typed", VALUATION_REQUEST, typed_valuation_request, &["$", "$.product_input.bond.security"]),
+    (
+        "CreateTransaction::build",
+        TRANSACTION,
+        || create_transaction().build().unwrap().encode_to_vec(),
+        &["$", "$.portfolio", "$.security", "$.price", "$.price.security"],
+    ),
+    (
+        "CreateTransaction::build_request",
+        CREATE_TRANSACTION_REQUEST,
+        || create_transaction().build_request().unwrap().encode_to_vec(),
+        &["$", "$.create_transaction_input", "$.create_transaction_input.price"],
+    ),
 ];
 
 /// Public functions that return a message they did not build, with why.
@@ -210,6 +228,23 @@ fn typed_valuation_request() -> Vec<u8> {
     typed(LocalTimestampProto::default(), product_input, stamp_own(PositionProto::default()), &[MeasureProto::MarketValue])
         .unwrap()
         .encode_to_vec()
+}
+
+/// The transaction, request and price are the builder's; the security and
+/// portfolio are the caller's, passed in stamped (LM-461).
+fn create_transaction() -> CreateTransaction {
+    CreateTransaction {
+        security: SecurityProto { product_type: ProductTypeProto::TreasuryNote.into(), ..stamped_security() },
+        portfolio: PortfolioProtoBuilder::new().build().unwrap(),
+        trade_date: date(2026, 10, 14),
+        settlement_date: date(2026, 10, 15),
+        position_status: PositionStatusProto::Intended,
+        transaction_type: TransactionTypeProto::Buy,
+        price: dec!(99.5),
+        quantity: dec!(100),
+        as_of: LocalTimestampWrapper::now(),
+        price_type: None,
+    }
 }
 
 // ---------- the stamp walk ----------

@@ -79,6 +79,22 @@ class MissingMarketDataError(ModelValidationError):
         return self.input_type
 
 
+class NoDefaultPriceTypeError(ModelValidationError):
+    """Typed input error: a trade price is being built with no price_type and
+    the security's product_type has no entry (on its parent chain) in
+    hierarchy.json default_price_types, e.g. FX_SPOT. Raised by
+    Transaction.create_from and CreateTransactionRequest.create_transaction_request
+    before anything is built. Carries one violation on `price.price_type`
+    whose object_id is the security's UUID (docs/adr/default_price_types.md)."""
+
+    def __init__(self, product_type: str, object_id: Optional[UUID]):
+        self.product_type = product_type
+        super().__init__([violation(
+            "price.price_type", object_id,
+            f"no default price_type for product_type {product_type} in hierarchy.json "
+            f"default_price_types; pass price_type")])
+
+
 class InvalidRegistryError(RuntimeError):
     """hierarchy.json itself is broken (e.g. a valuation_input_types requires value
     outside the closed vocabulary). Not a ValueError, so callers catching bad

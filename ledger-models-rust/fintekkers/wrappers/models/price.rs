@@ -249,7 +249,8 @@ pub struct PriceProtoBuilder {
 
     uuid: UUIDWrapper,
     security: Option<SecurityProto>,
-    price: Option<DecimalWrapper>
+    price: Option<DecimalWrapper>,
+    price_type: PriceTypeProto,
 }
 
 impl PriceProtoBuilder {
@@ -264,6 +265,7 @@ impl PriceProtoBuilder {
             uuid: UUIDWrapper::new_random(),
             security: None,
             price: None,
+            price_type: PriceTypeProto::UnknownPriceType,
         }
     }
 
@@ -302,6 +304,15 @@ impl PriceProtoBuilder {
         self
     }
 
+    /// Sets `price_type`, passed through as given. Unset, `build()` writes
+    /// `UNKNOWN_PRICE_TYPE` (0); for a trade price use
+    /// [`CreateTransaction`](crate::fintekkers::wrappers::models::transaction::CreateTransaction),
+    /// which resolves a default from hierarchy.json (LM-461).
+    pub fn price_type(mut self, price_type: PriceTypeProto) -> Self {
+        self.price_type = price_type;
+        self
+    }
+
     /// Builds the price. With no `.security(..)` the proto has no `security`
     /// (LM-449): an inline trade price need not name one, so this is not a
     /// standalone price and `validate_price` still reports the missing field.
@@ -321,7 +332,7 @@ impl PriceProtoBuilder {
             uuid: Some(self.uuid.into()),
             price: Some(self.price.unwrap().into()),
             security: self.security,
-            price_type: 0,
+            price_type: self.price_type as i32,
             ..Default::default()
         };
         Ok(object_types::stamp(proto, ObjectTypeProto::ObjectTypePrice))

@@ -13,6 +13,7 @@ const transaction_type_1 = require("./transaction_type");
 const transaction_pb_1 = require("../../../fintekkers/models/transaction/transaction_pb");
 const transaction_type_pb_1 = require("../../../fintekkers/models/transaction/transaction_type_pb");
 const price_pb_1 = require("../../../fintekkers/models/price/price_pb");
+const price_type_pb_1 = require("../../../fintekkers/models/price/price_type_pb");
 const portfolio_pb_1 = require("../../../fintekkers/models/portfolio/portfolio_pb");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
@@ -124,6 +125,7 @@ test('factory_path_fills_price_uuid_and_as_of', () => {
         transactionType: new transaction_type_1.TransactionType(transaction_type_pb_1.TransactionTypeProto.BUY),
         portfolio,
         quantity: new decimal_js_1.Decimal('100'),
+        priceType: price_type_pb_1.PriceTypeProto.ABSOLUTE,
     });
     assert.strictEqual(priceUuidBytes(txn).length, 16);
     assert.deepStrictEqual(txn.proto.getPrice().getAsOf().toObject(), txn.proto.getAsOf().toObject(), AS_OF_RULE);

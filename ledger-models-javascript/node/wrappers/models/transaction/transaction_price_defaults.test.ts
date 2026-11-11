@@ -8,6 +8,7 @@ import { TransactionType } from './transaction_type';
 import { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
 import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
+import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
 import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
@@ -143,6 +144,7 @@ test('factory_path_fills_price_uuid_and_as_of', () => {
         transactionType: new TransactionType(TransactionTypeProto.BUY),
         portfolio,
         quantity: new Decimal('100'),
+        priceType: PriceTypeProto.ABSOLUTE,
     });
 
     assert.strictEqual(priceUuidBytes(txn).length, 16);

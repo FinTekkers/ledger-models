@@ -21,6 +21,7 @@ from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
 from fintekkers.wrappers.util.object_types import stamp
 from fintekkers.wrappers.models.util.decimal import encode_decimal
+from fintekkers.wrappers.models.security.default_price_types import resolve_trade_price_type
 
 from fintekkers.wrappers.util import link_cache as _link_cache
 
@@ -119,7 +120,14 @@ class Transaction():
         position_status:PositionStatusProto=PositionStatusProto.INTENDED, \
         transaction_type:TransactionTypeProto=TransactionTypeProto.BUY, \
         price:Decimal=Decimal("-100.00"), quantity:Decimal=Decimal(100),
-        as_of:datetime=datetime.now()):
+        as_of:datetime=datetime.now(), price_type:Optional[int]=None):
+        """Builds a new transaction and its trade price. The trade price's
+        price_type is `price_type` when given (a PriceTypeProto value, passed
+        through unchanged), else the default for the security's product_type
+        in hierarchy.json default_price_types (LM-461). With neither it raises
+        NoDefaultPriceTypeError naming the product, before anything is built.
+        The price number goes through as given."""
+        resolved_price_type = resolve_trade_price_type(security, price_type)
 
         # Inline import: serialization.py imports TransactionType from this module, so top-level import would be circular
         from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
@@ -136,7 +144,8 @@ class Transaction():
                 uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
                 as_of=as_of_proto,
                 price=encode_decimal(price),
-                security=security
+                security=security,
+                price_type=resolved_price_type
             ), ObjectTypeProto.OBJECT_TYPE_PRICE),
             transaction_type=transaction_type,
             quantity=encode_decimal(quantity),

@@ -45,6 +45,7 @@ const jspb = __importStar(require("google-protobuf"));
 const object_type_pb_1 = require("../../fintekkers/models/util/object_type_pb");
 const security_pb_1 = require("../../fintekkers/models/security/security_pb");
 const price_pb_1 = require("../../fintekkers/models/price/price_pb");
+const price_type_pb_1 = require("../../fintekkers/models/price/price_type_pb");
 const transaction_pb_1 = require("../../fintekkers/models/transaction/transaction_pb");
 const portfolio_pb_1 = require("../../fintekkers/models/portfolio/portfolio_pb");
 const transaction_type_pb_1 = require("../../fintekkers/models/transaction/transaction_type_pb");
@@ -166,6 +167,7 @@ function transaction(caller, onSecurity = security(caller)) {
         transactionType: new transaction_type_1.TransactionType(transaction_type_pb_1.TransactionTypeProto.BUY),
         portfolio: portfolio(caller),
         quantity: new decimal_js_1.Decimal('10'),
+        priceType: price_type_pb_1.PriceTypeProto.ABSOLUTE,
     });
 }
 /** A LinkResolver whose clients record each request and find nothing. */

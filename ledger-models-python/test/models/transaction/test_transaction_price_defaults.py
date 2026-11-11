@@ -10,6 +10,7 @@ import pytest
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from fintekkers.models.price.price_pb2 import PriceProto
+from fintekkers.models.price.price_type_pb2 import PriceTypeProto
 from fintekkers.models.transaction.transaction_pb2 import TransactionProto
 from fintekkers.models.util.local_timestamp_pb2 import LocalTimestampProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
@@ -114,7 +115,8 @@ def test_link_price_passes_through_unchanged():
 
 
 def test_factory_path_fills_price_uuid_and_as_of():
-    txn = Transaction.create_from(price=Decimal("99.5"), as_of=datetime(2024, 6, 15, 10, 30, 0))
+    txn = Transaction.create_from(price=Decimal("99.5"), as_of=datetime(2024, 6, 15, 10, 30, 0),
+                                  price_type=PriceTypeProto.ABSOLUTE)
 
     assert len(txn.proto.price.uuid.raw_uuid) == 16
     assert txn.proto.price.as_of == txn.proto.as_of, AS_OF_RULE

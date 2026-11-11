@@ -1,6 +1,6 @@
 {
-  "schema_version": "1.4",
-  "_doc": "Single source of truth for the FinTekkers product hierarchy. See ../docs/product-hierarchy.md for narrative description, hierarchy-examples.md for worked examples, and registry-versioning.md for compatibility rules. Each leaf product_type carries (asset_class, instrument_type). Abstract nodes carry only hierarchy. status=active entries must have a matching ProductTypeProto enum value (CI-enforced). status=planned entries are aspirational and not yet wired into the proto enum. NOTE: M1 ships a 3-dimensional registry (productType + asset_class + instrument_type). The 4th dimension (index_type — single_name vs index) is intentionally deferred and will be added in a future milestone. Option strategy leaves (butterfly, vertical spread, calendar spread, condor, straddle, ...) are also intentionally absent — strategies are derived from the legs field on SecurityProto, not from a productType enum value. asset_classes is the one canonical asset-class vocabulary (codes and tree); an entry's optional aliases list names legacy values that resolve to it. instrument_types maps each instrument-type code to {label}, in display order; every code must have a matching INSTRUMENT_TYPE_<CODE> InstrumentTypeProto value (checked at load), and that enum value takes its label from here. enum_labels holds display labels (and identifier-type input placeholders) for proto enum values with no entry elsewhere, keyed by proto enum name then value name. See ../docs/adr/asset_class_vocabulary.md. valuation_input_types maps a product_type node, optionally narrowed by coupon_types, to its ProductInput input type and the market data it requires; unpriced lists nodes with no input type. The deepest matching node wins; see ../docs/adr/valuation_input_types.md.",
+  "schema_version": "1.5",
+  "_doc": "Single source of truth for the FinTekkers product hierarchy. See ../docs/product-hierarchy.md for narrative description, hierarchy-examples.md for worked examples, and registry-versioning.md for compatibility rules. Each leaf product_type carries (asset_class, instrument_type). Abstract nodes carry only hierarchy. status=active entries must have a matching ProductTypeProto enum value (CI-enforced). status=planned entries are aspirational and not yet wired into the proto enum. NOTE: M1 ships a 3-dimensional registry (productType + asset_class + instrument_type). The 4th dimension (index_type — single_name vs index) is intentionally deferred and will be added in a future milestone. Option strategy leaves (butterfly, vertical spread, calendar spread, condor, straddle, ...) are also intentionally absent — strategies are derived from the legs field on SecurityProto, not from a productType enum value. asset_classes is the one canonical asset-class vocabulary (codes and tree); an entry's optional aliases list names legacy values that resolve to it. instrument_types maps each instrument-type code to {label}, in display order; every code must have a matching INSTRUMENT_TYPE_<CODE> InstrumentTypeProto value (checked at load), and that enum value takes its label from here. enum_labels holds display labels (and identifier-type input placeholders) for proto enum values with no entry elsewhere, keyed by proto enum name then value name. See ../docs/adr/asset_class_vocabulary.md. valuation_input_types maps a product_type node, optionally narrowed by coupon_types, to its ProductInput input type and the market data it requires; unpriced lists nodes with no input type. The deepest matching node wins; see ../docs/adr/valuation_input_types.md. default_price_types maps a product_type node to the PriceTypeProto name a create-transaction wrapper puts on the trade price when the caller passes no price_type; the deepest node on the parent chain wins, and a product with no entry has no default (the wrapper raises). See ../docs/adr/default_price_types.md.",
 
   "product_types": {
     "BOND": { "parent": null, "abstract": true, "label": "Bond" },
@@ -173,5 +173,15 @@
       "FX_SPOT", "INDEX", "CRYPTO", "COMMODITY_SPOT", "FUTURE", "OPTION", "SWAP", "FORWARD",
       "FINANCING", "FUND_LP", "CMBS", "ABS", "CLO", "CONVERTIBLE_BOND", "COCO"
     ]
+  },
+
+  "default_price_types": {
+    "BOND":                  "PERCENTAGE",
+    "STOCK":                 "ABSOLUTE",
+    "CURRENCY":              "ABSOLUTE",
+    "MONEY_MARKET_FUND":     "ABSOLUTE",
+    "INDEX":                 "INDEX_LEVEL",
+    "T_BILL_13_WEEK_SERIES": "RATE",
+    "SOFR_SERIES":           "RATE"
   }
 }

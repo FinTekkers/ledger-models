@@ -10,6 +10,7 @@ import { ObjectTypeProto } from '../../fintekkers/models/util/object_type_pb';
 import { VersionProto } from '../../fintekkers/models/util/version_pb';
 import { SecurityProto } from '../../fintekkers/models/security/security_pb';
 import { PriceProto } from '../../fintekkers/models/price/price_pb';
+import { PriceTypeProto } from '../../fintekkers/models/price/price_type_pb';
 import { TransactionProto } from '../../fintekkers/models/transaction/transaction_pb';
 import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
 import { TransactionTypeProto } from '../../fintekkers/models/transaction/transaction_type_pb';
@@ -152,6 +153,7 @@ function transaction(caller: Caller, onSecurity: Security = security(caller)): T
     transactionType: new TransactionType(TransactionTypeProto.BUY),
     portfolio: portfolio(caller),
     quantity: new Decimal('10'),
+    priceType: PriceTypeProto.ABSOLUTE,
   });
 }
 

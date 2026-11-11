@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 from decimal import Decimal
 from google.protobuf.any_pb2 import Any
 
@@ -28,7 +29,8 @@ class CreateTransactionRequest():
         trade_date:date=date.today(), settlement_date:date=date.today(), \
         position_status:PositionStatusProto=PositionStatusProto.INTENDED, \
         transaction_type:TransactionTypeProto=TransactionTypeProto.BUY, \
-        price:Decimal=Decimal("-100.00"), quantity:Decimal=Decimal(100), as_of=datetime.now()
+        price:Decimal=Decimal("-100.00"), quantity:Decimal=Decimal(100), as_of=datetime.now(),
+        price_type:Optional[int]=None
     ):
         '''
             Creates a request to create a transaction
@@ -40,13 +42,18 @@ class CreateTransactionRequest():
                         position_status (PositionStatusProto) The position status of the transaction, will default to INTENDED
                         transaction_type (TransactionTypeProto): The type of transaction, will default to BUY
                         price (Decimal): Will default to -100.00 if not provided; a float raises TypeError
+                        price_type (PriceTypeProto): The trade price's type, passed through unchanged. If not
+                                    provided, the default for the security's product_type in hierarchy.json
+                                    default_price_types (bonds PERCENTAGE, stocks ABSOLUTE). A product with no
+                                    default raises NoDefaultPriceTypeError and no request is built
 
                 Returns:
                         request (CreateTransactionRequest): A request wrapper, with the fields attached. It assumes that all filters are an equals operation
         '''
         transaction:Transaction = Transaction.create_from(security=security, portfolio=portfolio, trade_date=trade_date, \
                                 settlement_date=settlement_date, position_status=position_status, \
-                                    transaction_type=transaction_type, price=price, quantity=quantity, as_of=as_of)
+                                    transaction_type=transaction_type, price=price, quantity=quantity, as_of=as_of, \
+                                        price_type=price_type)
         
         proto:CreateTransactionRequestProto = stamp(CreateTransactionRequestProto(
             create_transaction_input=transaction.proto

@@ -48,5 +48,21 @@ export declare class MissingMarketDataError extends ModelValidationError {
     /** @deprecated Use inputType. Removed in a later release (LM-418). */
     get arm(): string;
 }
+/**
+ * Typed input error: a trade price is being built with no price_type and the
+ * security's product_type has no entry (on its parent chain) in
+ * hierarchy.json default_price_types, e.g. FX_SPOT. Thrown by the Transaction
+ * params constructor before anything is built. Carries one violation on
+ * `price.price_type` whose object id is the security's UUID
+ * (docs/adr/default_price_types.md).
+ */
+export declare class NoDefaultPriceTypeError extends ModelValidationError {
+    readonly productType: string;
+    /**
+     * @param productType the ProductTypeProto name, e.g. `FX_SPOT`
+     * @param objectId the security's UUID, or undefined if it has none
+     */
+    constructor(productType: string, objectId: UUID | undefined);
+}
 /** Builds one violation. `objectId` may be undefined when the input had no UUID. */
 export declare function violation(field: string, objectId: UUID | undefined, message: string): FieldViolationProto;
