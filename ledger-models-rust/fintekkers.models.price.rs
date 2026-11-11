@@ -1,6 +1,11 @@
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum PriceTypeProto {
+    /// Unset. The ledger-models create-transaction wrappers never emit it on a
+    /// trade price: they use the caller's price_type, else the default for the
+    /// security's product_type in hierarchy.json default_price_types (bonds
+    /// PERCENTAGE, stocks ABSOLUTE), else raise a typed input error. See
+    /// docs/adr/default_price_types.md (LM-461).
     UnknownPriceType = 0,
     /// Price in local currency (e.g. equity prices, futures)
     Absolute = 1,

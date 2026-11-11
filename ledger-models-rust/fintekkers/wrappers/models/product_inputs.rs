@@ -95,7 +95,9 @@ pub enum ProductInputError {
     /// The product type (and coupon type) has no input type, or is `unpriced`.
     /// Rust counterpart of `UnmappedProductTypeError`. Maps to `Code::InvalidArgument`.
     Unmapped { product_type: String, coupon_type: String },
-    /// hierarchy.json `valuation_input_types` is broken. Maps to `Code::Internal`.
+    /// hierarchy.json is broken: its `valuation_input_types` or (LM-461)
+    /// `default_price_types` section. The detail starts with the section name.
+    /// Maps to `Code::Internal`.
     InvalidRegistry(String),
     /// The input type requires market data the caller did not supply (LM-410).
     /// Maps to `Code::InvalidArgument`.
@@ -103,15 +105,33 @@ pub enum ProductInputError {
     /// The `ProductInput` or request is malformed: no input type, the wrong
     /// input type, or a missing required field (LM-410). Never empty. Maps to `Code::InvalidArgument`.
     Validation(Vec<FieldViolationProto>),
+    /// A trade price is being built with no `price_type` and the product type
+    /// has no entry (on its parent chain) in hierarchy.json
+    /// `default_price_types` (LM-461, docs/adr/default_price_types.md). One
+    /// violation on `price.price_type`. Maps to `Code::InvalidArgument`.
+    NoDefaultPriceType {
+        /// The `ProductTypeProto` name, e.g. `FX_SPOT`.
+        product_type: String,
+        /// UUID of the security; `None` when it has none.
+        object_id: Option<UuidProto>,
+    },
 }
 
+/// Field path of the [`ProductInputError::NoDefaultPriceType`] violation.
+pub const NO_DEFAULT_PRICE_TYPE_FIELD: &str = "price.price_type";
+
 impl ProductInputError {
-    /// Field-level violations of a `MissingMarketData` or `Validation` error;
-    /// empty for the other variants.
+    /// Field-level violations of a `MissingMarketData`, `Validation` or
+    /// `NoDefaultPriceType` error; empty for the other variants.
     pub fn violations(&self) -> Vec<FieldViolationProto> {
         match self {
             ProductInputError::MissingMarketData(e) => vec![e.violation()],
             ProductInputError::Validation(v) => v.clone(),
+            ProductInputError::NoDefaultPriceType { object_id, .. } => vec![FieldViolationProto {
+                field: NO_DEFAULT_PRICE_TYPE_FIELD.to_string(),
+                object_id: object_id.clone(),
+                message: self.to_string(),
+            }],
             _ => vec![],
         }
     }
@@ -165,14 +185,16 @@ impl fmt::Display for ProductInputError {
                 f,
                 "No valuation input type for product_type {product_type}, coupon_type {coupon_type}"
             ),
-            ProductInputError::InvalidRegistry(detail) => {
-                write!(f, "hierarchy.json {SECTION}: {detail}")
-            }
+            ProductInputError::InvalidRegistry(detail) => write!(f, "hierarchy.json {detail}"),
             ProductInputError::MissingMarketData(e) => write!(f, "{}: {e}", e.field),
             ProductInputError::Validation(violations) => write!(
                 f,
                 "{}",
                 violations.iter().map(|v| format!("{}: {}", v.field, v.message)).collect::<Vec<_>>().join("; ")
+            ),
+            ProductInputError::NoDefaultPriceType { product_type, .. } => write!(
+                f,
+                "no default price_type for product_type {product_type} in hierarchy.json default_price_types; pass price_type"
             ),
         }
     }
@@ -185,7 +207,8 @@ impl From<ProductInputError> for Status {
         let code = match value {
             ProductInputError::Unmapped { .. }
             | ProductInputError::MissingMarketData(_)
-            | ProductInputError::Validation(_) => Code::InvalidArgument,
+            | ProductInputError::Validation(_)
+            | ProductInputError::NoDefaultPriceType { .. } => Code::InvalidArgument,
             ProductInputError::InvalidRegistry(_) => Code::Internal,
         };
         Status::new(code, value.to_string())
@@ -266,7 +289,7 @@ impl ValuationInputTypes {
 }
 
 fn bad(detail: String) -> ProductInputError {
-    ProductInputError::InvalidRegistry(detail)
+    ProductInputError::InvalidRegistry(format!("{SECTION}: {detail}"))
 }
 
 fn string_of<'a>(body: &'a Map<String, Value>, key: &str) -> Result<&'a str, ProductInputError> {

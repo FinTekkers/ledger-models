@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import UUID
 
 from fintekkers.models.portfolio.portfolio_pb2 import PortfolioProto
+from fintekkers.models.price.price_type_pb2 import PriceTypeProto
 from fintekkers.models.transaction.transaction_pb2 import TransactionProto
 from fintekkers.models.util.uuid_pb2 import UUIDProto
 from fintekkers.wrappers.models.portfolio import Portfolio
@@ -32,7 +33,7 @@ def test_link_without_as_of_serializes():
     assert copy.is_link
     assert not copy.HasField("as_of")
 
-    txn = Transaction.create_from(portfolio=portfolio.proto)
+    txn = Transaction.create_from(portfolio=portfolio.proto, price_type=PriceTypeProto.ABSOLUTE)
     txn_copy = TransactionProto.FromString(txn.proto.SerializeToString())
     assert txn_copy.portfolio.is_link
     assert not txn_copy.portfolio.HasField("as_of")

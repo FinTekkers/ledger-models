@@ -7,6 +7,11 @@ option java_multiple_files = true;
 option java_outer_classname = "PriceTypeProtos";
 
 enum PriceTypeProto {
+  // Unset. The ledger-models create-transaction wrappers never emit it on a
+  // trade price: they use the caller's price_type, else the default for the
+  // security's product_type in hierarchy.json default_price_types (bonds
+  // PERCENTAGE, stocks ABSOLUTE), else raise a typed input error. See
+  // docs/adr/default_price_types.md (LM-461).
   UNKNOWN_PRICE_TYPE = 0;
   ABSOLUTE = 1; //Price in local currency (e.g. equity prices, futures)
   PERCENTAGE = 2; //Price as a percentage (e.g. bond prices quoted as % of par)

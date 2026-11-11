@@ -1,4 +1,5 @@
 import { PriceProto } from "../../../fintekkers/models/price/price_pb";
+import { PriceTypeProto } from "../../../fintekkers/models/price/price_type_pb";
 import { TransactionType } from "./transaction_type";
 import { StrategyAllocationProto } from "../../../fintekkers/models/strategy/strategy_allocation_pb";
 import { TransactionProto } from "../../../fintekkers/models/transaction/transaction_pb";
@@ -19,6 +20,13 @@ interface TransactionConstructorParams {
     transactionType: TransactionType;
     portfolio: Portfolio;
     quantity: Decimal;
+    /**
+     * The trade price's type, passed through unchanged. When omitted (or
+     * UNKNOWN_PRICE_TYPE) it is the default for the security's product_type in
+     * hierarchy.json default_price_types (LM-461); a product with no default
+     * throws NoDefaultPriceTypeError and nothing is built.
+     */
+    priceType?: PriceTypeProto;
 }
 declare class Transaction {
     proto: TransactionProto;

@@ -21,10 +21,12 @@ declare class Price {
     /**
      * Factory method to create a Price from a Decimal value, Security, and ZonedDateTime.
      * LM-449: an inline trade price may have no security; it is then left unset.
+     * LM-461: price_type is set only when `priceType` is given; this does no
+     * default lookup (the Transaction params constructor resolves it first).
      */
-    static create(price: Decimal, security: Security | null | undefined, asOf: ZonedDateTime): Price;
+    static create(price: Decimal, security: Security | null | undefined, asOf: ZonedDateTime, priceType?: PriceTypeProto): Price;
     /**
-     * Creates a cash price (always 1.0) for a cash security
+     * Creates a cash price (always 1.0, so ABSOLUTE) for a cash security
      */
     static getCashPrice(cashSecurity: Security, asOf: ZonedDateTime): Price;
     getID(): UUID;

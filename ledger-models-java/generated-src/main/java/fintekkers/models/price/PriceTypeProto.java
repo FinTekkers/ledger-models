@@ -9,6 +9,14 @@ package fintekkers.models.price;
 public enum PriceTypeProto
     implements com.google.protobuf.ProtocolMessageEnum {
   /**
+   * <pre>
+   * Unset. The ledger-models create-transaction wrappers never emit it on a
+   * trade price: they use the caller's price_type, else the default for the
+   * security's product_type in hierarchy.json default_price_types (bonds
+   * PERCENTAGE, stocks ABSOLUTE), else raise a typed input error. See
+   * docs/adr/default_price_types.md (LM-461).
+   * </pre>
+   *
    * <code>UNKNOWN_PRICE_TYPE = 0;</code>
    */
   UNKNOWN_PRICE_TYPE(0),
@@ -56,6 +64,14 @@ public enum PriceTypeProto
   ;
 
   /**
+   * <pre>
+   * Unset. The ledger-models create-transaction wrappers never emit it on a
+   * trade price: they use the caller's price_type, else the default for the
+   * security's product_type in hierarchy.json default_price_types (bonds
+   * PERCENTAGE, stocks ABSOLUTE), else raise a typed input error. See
+   * docs/adr/default_price_types.md (LM-461).
+   * </pre>
+   *
    * <code>UNKNOWN_PRICE_TYPE = 0;</code>
    */
   public static final int UNKNOWN_PRICE_TYPE_VALUE = 0;

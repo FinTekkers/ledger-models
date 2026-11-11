@@ -68,8 +68,10 @@ class Price {
     /**
      * Factory method to create a Price from a Decimal value, Security, and ZonedDateTime.
      * LM-449: an inline trade price may have no security; it is then left unset.
+     * LM-461: price_type is set only when `priceType` is given; this does no
+     * default lookup (the Transaction params constructor resolves it first).
      */
-    static create(price, security, asOf) {
+    static create(price, security, asOf, priceType) {
         const decimalValueProto = (0, decimal_1.encodeDecimal)((0, decimal_1.fromDecimalJs)(price));
         const priceProto = new price_pb_1.PriceProto();
         priceProto.setPrice(decimalValueProto);
@@ -78,13 +80,15 @@ class Price {
         priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
         if (security)
             priceProto.setSecurity(security.proto);
+        if (priceType !== undefined)
+            priceProto.setPriceType(priceType);
         return new Price(priceProto);
     }
     /**
-     * Creates a cash price (always 1.0) for a cash security
+     * Creates a cash price (always 1.0, so ABSOLUTE) for a cash security
      */
     static getCashPrice(cashSecurity, asOf) {
-        return Price.create(new decimal_js_1.Decimal('1.0'), cashSecurity, asOf);
+        return Price.create(new decimal_js_1.Decimal('1.0'), cashSecurity, asOf, price_type_pb_1.PriceTypeProto.ABSOLUTE);
     }
     getID() {
         const uuid = this.proto.getUuid();

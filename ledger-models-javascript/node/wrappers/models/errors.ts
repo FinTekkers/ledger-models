@@ -83,6 +83,29 @@ export class MissingMarketDataError extends ModelValidationError {
     }
 }
 
+/**
+ * Typed input error: a trade price is being built with no price_type and the
+ * security's product_type has no entry (on its parent chain) in
+ * hierarchy.json default_price_types, e.g. FX_SPOT. Thrown by the Transaction
+ * params constructor before anything is built. Carries one violation on
+ * `price.price_type` whose object id is the security's UUID
+ * (docs/adr/default_price_types.md).
+ */
+export class NoDefaultPriceTypeError extends ModelValidationError {
+    readonly productType: string;
+
+    /**
+     * @param productType the ProductTypeProto name, e.g. `FX_SPOT`
+     * @param objectId the security's UUID, or undefined if it has none
+     */
+    constructor(productType: string, objectId: UUID | undefined) {
+        super([violation('price.price_type', objectId,
+            `no default price_type for product_type ${productType} in hierarchy.json default_price_types; pass price_type`)]);
+        this.name = 'NoDefaultPriceTypeError';
+        this.productType = productType;
+    }
+}
+
 /** Builds one violation. `objectId` may be undefined when the input had no UUID. */
 export function violation(field: string, objectId: UUID | undefined, message: string): FieldViolationProto {
     const v = new FieldViolationProto();

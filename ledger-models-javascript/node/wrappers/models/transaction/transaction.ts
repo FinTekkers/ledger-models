@@ -1,5 +1,6 @@
 //Models
 import { PriceProto } from "../../../fintekkers/models/price/price_pb";
+import { PriceTypeProto } from "../../../fintekkers/models/price/price_type_pb";
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { TransactionType } from "./transaction_type";
 import { TransactionTypeProto } from "../../../fintekkers/models/transaction/transaction_type_pb";
@@ -12,6 +13,7 @@ import { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value
 import Security from "../security/security";
 import Portfolio from "../portfolio/portfolio";
 import Price from "../price/Price";
+import { resolveTradePriceType } from "../security/default_price_types";
 import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 
 //Model Utils
@@ -34,6 +36,13 @@ interface TransactionConstructorParams {
   transactionType: TransactionType;
   portfolio: Portfolio;
   quantity: Decimal;
+  /**
+   * The trade price's type, passed through unchanged. When omitted (or
+   * UNKNOWN_PRICE_TYPE) it is the default for the security's product_type in
+   * hierarchy.json default_price_types (LM-461); a product with no default
+   * throws NoDefaultPriceTypeError and nothing is built.
+   */
+  priceType?: PriceTypeProto;
 }
 
 class Transaction {
@@ -112,6 +121,9 @@ class Transaction {
    * Builds a complete TransactionProto from constructor parameters
    */
   private buildProtoFromParams(params: TransactionConstructorParams): TransactionProto {
+    // First, so a product with no default builds nothing (LM-461).
+    const priceType = resolveTradePriceType(params.security?.proto, params.priceType);
+
     const transactionProto = new TransactionProto();
     stamp(transactionProto, ObjectTypeProto.OBJECT_TYPE_TRANSACTION);
     transactionProto.setUuid(UUID.random().toUUIDProto());
@@ -125,7 +137,7 @@ class Transaction {
     transactionProto.setSettlementDate(dateToLocalDateProto(params.settlementDate));
 
     // Create Price using Price.create() factory method
-    const price = Price.create(params.price, params.security, asOfZonedDateTime);
+    const price = Price.create(params.price, params.security, asOfZonedDateTime, priceType);
     transactionProto.setPrice(price.proto);
 
     // Set security, transaction type, and portfolio from their protos
@@ -447,6 +459,7 @@ class Transaction {
       settlementDate,
       asOfDate: asOf.toDateTime().toJSDate(),
       price: new Decimal('1.0'), // Cash price is always 1.0
+      priceType: PriceTypeProto.ABSOLUTE, // so ABSOLUTE, whatever the cash security's product_type
       security: cashSecurity,
       transactionType: cashTransactionType,
       portfolio: parentTransaction.getPortfolio(),
@@ -498,6 +511,8 @@ class Transaction {
       settlementDate,
       asOfDate: asOf.toDateTime().toJSDate(),
       price: priceValue,
+      // The parent's type; an untyped parent takes the bond's default.
+      priceType: priceProto.getPriceType(),
       security: transaction.getSecurity(),
       transactionType: transactionType,
       portfolio: transaction.getPortfolio(),

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.violation = exports.MissingMarketDataError = exports.UnmappedProductTypeError = exports.ModelValidationError = void 0;
+exports.violation = exports.NoDefaultPriceTypeError = exports.MissingMarketDataError = exports.UnmappedProductTypeError = exports.ModelValidationError = void 0;
 const field_violation_pb_1 = require("../../fintekkers/requests/util/errors/field_violation_pb");
 const uuid_1 = require("./utils/uuid");
 /**
@@ -74,6 +74,26 @@ class MissingMarketDataError extends ModelValidationError {
     }
 }
 exports.MissingMarketDataError = MissingMarketDataError;
+/**
+ * Typed input error: a trade price is being built with no price_type and the
+ * security's product_type has no entry (on its parent chain) in
+ * hierarchy.json default_price_types, e.g. FX_SPOT. Thrown by the Transaction
+ * params constructor before anything is built. Carries one violation on
+ * `price.price_type` whose object id is the security's UUID
+ * (docs/adr/default_price_types.md).
+ */
+class NoDefaultPriceTypeError extends ModelValidationError {
+    /**
+     * @param productType the ProductTypeProto name, e.g. `FX_SPOT`
+     * @param objectId the security's UUID, or undefined if it has none
+     */
+    constructor(productType, objectId) {
+        super([violation('price.price_type', objectId, `no default price_type for product_type ${productType} in hierarchy.json default_price_types; pass price_type`)]);
+        this.name = 'NoDefaultPriceTypeError';
+        this.productType = productType;
+    }
+}
+exports.NoDefaultPriceTypeError = NoDefaultPriceTypeError;
 /** Builds one violation. `objectId` may be undefined when the input had no UUID. */
 function violation(field, objectId, message) {
     const v = new field_violation_pb_1.FieldViolationProto();

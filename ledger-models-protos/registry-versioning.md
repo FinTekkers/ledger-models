@@ -33,6 +33,9 @@ The registry is loaded by every consumer language at startup (Java / Rust / Pyth
 | Add a `valuation_input_types` entry or an `unpriced` value | Additive — a type that raised `UnmappedProductTypeError` now resolves (or stays unpriced). Every loader fails at load on an unknown node, input type, coupon type or `requires` value. See [`docs/adr/valuation_input_types.md`](../docs/adr/valuation_input_types.md) | minor |
 | Change an existing entry's `input_type` or `requires`, or move a node into `unpriced` | Breaking — callers build a different `ProductInput` input type, fetch different market data, or start getting `UnmappedProductTypeError` | major |
 | Add a leaf under a node that has a `valuation_input_types` entry | The leaf inherits that input type. Decide in review whether it should, or list it as `unpriced` | as for the leaf |
+| Add the `default_price_types` key itself (`schema_version` 1.5, LM-461) | Additive — loaders that don't know it ignore it | minor |
+| Add a `default_price_types` entry | Additive — a product whose create-transaction wrapper raised `NoDefaultPriceTypeError` now gets a default trade-price type. Every loader fails at load on an unknown node or `PriceTypeProto` name, or an `UNKNOWN_PRICE_TYPE` value. See [`docs/adr/default_price_types.md`](../docs/adr/default_price_types.md) | minor |
+| Change or remove a `default_price_types` entry | Breaking — new trades on that product are tagged with a different type, or start raising | major |
 
 ## Asset-class aliases and labels must be unambiguous
 

@@ -10,6 +10,7 @@ import pytest
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from fintekkers.models.price.price_pb2 import PriceProto
+from fintekkers.models.price.price_type_pb2 import PriceTypeProto
 from fintekkers.models.security.coupon_frequency_pb2 import CouponFrequencyProto
 from fintekkers.models.security.coupon_type_pb2 import CouponTypeProto
 from fintekkers.models.security.product_type_pb2 import TREASURY_FRN, TREASURY_NOTE
@@ -82,7 +83,8 @@ WRITERS = {
     "ProtoSerializationUtil.serialize": (
         ProtoSerializationUtil.serialize, lambda d: [d]),
     "Transaction.create_from": (
-        lambda v: Transaction.create_from(price=v, quantity=v, as_of=AS_OF).proto,
+        lambda v: Transaction.create_from(
+            price=v, quantity=v, as_of=AS_OF, price_type=PriceTypeProto.ABSOLUTE).proto,
         lambda t: [t.price.price, t.quantity]),
     "BondSecurity.from_pricer_inputs": (_bond, _bond_decimals),
     "MortgageBackedSecurity.from_pricer_inputs": (
@@ -110,7 +112,8 @@ WRITERS = {
             s.bond_details.issuance_info[0].post_auction_outstanding_quantity]),
     "CreateTransactionRequest.create_transaction_request": (
         lambda v: CreateTransactionRequest.create_transaction_request(
-            price=v, quantity=v, as_of=AS_OF).proto.create_transaction_input,
+            price=v, quantity=v, as_of=AS_OF,
+            price_type=PriceTypeProto.ABSOLUTE).proto.create_transaction_input,
         lambda t: [t.price.price, t.quantity]),
 }
 
@@ -137,7 +140,7 @@ def test_writer_rejects_float(name):
 
 
 def test_default_transaction_price_writes_the_compact_form():
-    txn = Transaction.create_from(as_of=AS_OF).proto
+    txn = Transaction.create_from(as_of=AS_OF, price_type=PriceTypeProto.ABSOLUTE).proto
 
     assert decode_decimal(txn.price.price).as_tuple() == Decimal("-100.00").as_tuple()
     assert txn.quantity.unscaled_value == b"\x64"

@@ -1,15 +1,24 @@
+use crate::fintekkers::models::portfolio::PortfolioProto;
+use crate::fintekkers::models::position::PositionStatusProto;
+use crate::fintekkers::models::price::{PriceProto, PriceTypeProto};
 use crate::fintekkers::models::security::security_proto::NonBondDetails;
-use crate::fintekkers::models::security::ProductTypeProto;
-use crate::fintekkers::models::transaction::TransactionProto;
-use crate::fintekkers::models::util::{LocalTimestampProto, UuidProto};
+use crate::fintekkers::models::security::{ProductTypeProto, SecurityProto};
+use crate::fintekkers::models::transaction::{TransactionProto, TransactionTypeProto};
+use crate::fintekkers::models::util::{LocalDateProto, LocalTimestampProto, ObjectTypeProto, UuidProto};
+use crate::fintekkers::requests::transaction::CreateTransactionRequestProto;
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
+use crate::fintekkers::wrappers::models::default_price_types::resolve_trade_price_type;
+use crate::fintekkers::wrappers::models::product_inputs::ProductInputError;
+use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
+use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
 use crate::fintekkers::wrappers::models::portfolio::PortfolioWrapper;
 use crate::fintekkers::wrappers::models::security::{validate_security, SecurityWrapper};
 use crate::fintekkers::wrappers::models::utils::errors::{object_id_of, Error};
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
 use crate::fintekkers::wrappers::models::utils::uuid_wrapper::UUIDWrapper;
-use chrono::DateTime;
+use chrono::{DateTime, Datelike, NaiveDate};
 use chrono_tz::Tz;
+use rust_decimal::Decimal;
 use crate::fintekkers::wrappers::util::link_cache;
 use crate::fintekkers::wrappers::util::link_resolver::LinkResolverError;
 use crate::fintekkers::wrappers::util::service_address::{
@@ -457,6 +466,83 @@ fn display_id(uuid: Option<&UuidProto>) -> String {
     uuid.and_then(|u| Uuid::from_slice(&u.raw_uuid).ok())
         .map(|u| u.to_string())
         .unwrap_or_else(|| "null".to_string())
+}
+
+// ---------- Create a transaction (LM-461) ----------
+
+/// Builds a new transaction and its trade price: the Rust counterpart of
+/// Python `Transaction.create_from` / `CreateTransactionRequest.create_transaction_request`,
+/// with the same fields.
+///
+/// The trade price's `price_type` is `price_type` when given (passed through
+/// unchanged), else the default for the security's product_type in
+/// hierarchy.json `default_price_types` (bonds `PERCENTAGE`, stocks
+/// `ABSOLUTE`). With neither, `build` is
+/// [`ProductInputError::NoDefaultPriceType`] naming the product and nothing
+/// is built. `Some(UNKNOWN_PRICE_TYPE)` counts as omitted. The price number
+/// goes through as given. See docs/adr/default_price_types.md.
+pub struct CreateTransaction {
+    pub security: SecurityProto,
+    pub portfolio: PortfolioProto,
+    pub trade_date: NaiveDate,
+    pub settlement_date: NaiveDate,
+    pub position_status: PositionStatusProto,
+    pub transaction_type: TransactionTypeProto,
+    pub price: Decimal,
+    pub quantity: Decimal,
+    pub as_of: LocalTimestampWrapper,
+    pub price_type: Option<PriceTypeProto>,
+}
+
+impl CreateTransaction {
+    /// The stamped `TransactionProto`, with a stamped trade price. The caller's
+    /// security and portfolio are copied in as given.
+    pub fn build(self) -> Result<TransactionProto, ProductInputError> {
+        let price_type = resolve_trade_price_type(Some(&self.security), self.price_type)?;
+        let as_of: LocalTimestampProto = self.as_of.into();
+        let price = object_types::stamp(
+            PriceProto {
+                uuid: Some(UUIDWrapper::new_random().into()),
+                as_of: Some(as_of.clone()),
+                price: Some(decimal_proto(&self.price)),
+                security: Some(self.security.clone()),
+                price_type: price_type as i32,
+                ..Default::default()
+            },
+            ObjectTypeProto::ObjectTypePrice,
+        );
+        Ok(object_types::stamp(
+            TransactionProto {
+                uuid: Some(UUIDWrapper::new_random().into()),
+                as_of: Some(as_of),
+                is_cancelled: false,
+                is_link: false,
+                portfolio: Some(self.portfolio),
+                security: Some(self.security),
+                position_status: self.position_status as i32,
+                price: Some(price),
+                transaction_type: self.transaction_type as i32,
+                quantity: Some(decimal_proto(&self.quantity)),
+                trade_date: Some(local_date(self.trade_date)),
+                settlement_date: Some(local_date(self.settlement_date)),
+                trade_name: "No trade name".to_string(),
+                ..Default::default()
+            },
+            ObjectTypeProto::ObjectTypeTransaction,
+        ))
+    }
+
+    /// [`Self::build`] wrapped in a stamped `CreateTransactionRequestProto`.
+    pub fn build_request(self) -> Result<CreateTransactionRequestProto, ProductInputError> {
+        Ok(object_types::stamp(
+            CreateTransactionRequestProto { create_transaction_input: Some(self.build()?), ..Default::default() },
+            ObjectTypeProto::ObjectTypeCreateTransactionRequest,
+        ))
+    }
+}
+
+fn local_date(d: NaiveDate) -> LocalDateProto {
+    LocalDateProto { year: d.year() as u32, month: d.month(), day: d.day() }
 }
 
 #[cfg(test)]

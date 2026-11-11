@@ -1,6 +1,7 @@
 package common.models.price;
 
 import common.models.RawDataModelObject;
+import common.models.security.DefaultPriceTypes;
 import common.models.security.Security;
 import fintekkers.models.price.PriceTypeProto;
 
@@ -16,6 +17,10 @@ public class Price extends RawDataModelObject {
     private final PriceTypeProto priceType;
     private BigDecimal price;
 
+    /**
+     * The price_type is {@code UNKNOWN_PRICE_TYPE}. For a trade price use
+     * {@link #forTrade(BigDecimal, Security, ZonedDateTime)}, which sets it.
+     */
     public Price(UUID id, BigDecimal price, Security security, ZonedDateTime asOf) {
         this(id, price, security, asOf, PriceTypeProto.UNKNOWN_PRICE_TYPE);
     }
@@ -49,6 +54,38 @@ public class Price extends RawDataModelObject {
         this.price = price;
     }
 
+    /**
+     * LM-461: a trade price with a typed {@code price_type}: the default for
+     * the security's product_type in {@code hierarchy.json}
+     * {@code default_price_types} (bonds {@code PERCENTAGE}, stocks
+     * {@code ABSOLUTE}). Pass the result to a {@code Transaction}
+     * constructor. The price number goes through as given. A null security
+     * reads as {@code PRODUCT_TYPE_UNKNOWN}.
+     *
+     * @throws common.models.errors.NoDefaultPriceTypeError when the product
+     *         has no default, before anything is built
+     */
+    public static Price forTrade(BigDecimal price, Security security, ZonedDateTime asOf) {
+        return forTrade(price, security, asOf, null);
+    }
+
+    /**
+     * As {@link #forTrade(BigDecimal, Security, ZonedDateTime)}, with an
+     * explicit {@code priceType} that is passed through unchanged. A null or
+     * {@code UNKNOWN_PRICE_TYPE} type counts as omitted and takes the default.
+     *
+     * @throws common.models.errors.NoDefaultPriceTypeError when the type is
+     *         omitted and the product has no default
+     */
+    public static Price forTrade(BigDecimal price, Security security, ZonedDateTime asOf, PriceTypeProto priceType) {
+        PriceTypeProto resolved = DefaultPriceTypes.resolve(security != null ? security.getProto() : null, priceType);
+        return new Price(UUID.randomUUID(), price, security, asOf, resolved);
+    }
+
+    /**
+     * The price_type is {@code UNKNOWN_PRICE_TYPE}. For a trade price use
+     * {@link #forTrade(BigDecimal, Security, ZonedDateTime)}, which sets it.
+     */
     public static Price getPrice(BigDecimal price, Security sec) {
         return new Price(UUID.randomUUID(), price, sec, ZonedDateTime.now());
     }

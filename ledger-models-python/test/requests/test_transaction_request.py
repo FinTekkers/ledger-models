@@ -3,6 +3,7 @@ from decimal import Decimal
 from fintekkers.models.position.field_pb2 import FieldProto
 
 from fintekkers.models.position.position_status_pb2 import PositionStatusProto
+from fintekkers.models.price.price_type_pb2 import PriceTypeProto
 from fintekkers.models.transaction.transaction_type_pb2 import TransactionTypeProto
 from fintekkers.models.util.local_date_pb2 import LocalDateProto
 
@@ -14,7 +15,8 @@ from fintekkers.wrappers.models.util.decimal import decode_decimal
 
 def test_create_transaction_request():
     request = CreateTransactionRequest.create_transaction_request(
-        None, None, date.today(), date.today(), PositionStatusProto.HYPOTHETICAL, TransactionTypeProto.SELL, Decimal("50.0"), 1
+        None, None, date.today(), date.today(), PositionStatusProto.HYPOTHETICAL, TransactionTypeProto.SELL, Decimal("50.0"), 1,
+        price_type=PriceTypeProto.ABSOLUTE
     )
 
     proto:CreateTransactionRequestProto = request.proto

@@ -11,6 +11,7 @@ from google.protobuf.message import DecodeError
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from fintekkers.models.price.price_pb2 import PriceProto
+from fintekkers.models.price.price_type_pb2 import PriceTypeProto
 from fintekkers.models.security.product_type_pb2 import TREASURY_NOTE
 from fintekkers.models.security.security_pb2 import SecurityProto
 from fintekkers.models.util.object_type_pb2 import ObjectTypeProto
@@ -89,7 +90,8 @@ LIBRARY_WRITERS = [
      "OBJECT_TYPE_PRICE"),
     ("Portfolio.create_portfolio", lambda: Portfolio.create_portfolio("P").proto,
      "OBJECT_TYPE_PORTFOLIO"),
-    ("Transaction.create_from", lambda: Transaction.create_from(trade_date=date(2024, 1, 2), settlement_date=date(2024, 1, 4)).proto,
+    ("Transaction.create_from", lambda: Transaction.create_from(trade_date=date(2024, 1, 2), settlement_date=date(2024, 1, 4),
+                                                            price_type=PriceTypeProto.ABSOLUTE).proto,
      "OBJECT_TYPE_TRANSACTION"),
     ("CreatePriceRequest", lambda: CreatePriceRequest.create_or_update_request(SECURITY, Decimal("1.0"), datetime(2024, 1, 2)).proto,
      "OBJECT_TYPE_CREATE_PRICE_REQUEST"),
