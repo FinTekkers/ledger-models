@@ -11,7 +11,13 @@ import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/fi
  * `child_transactions[1].child_transactions[0]`) and its object_id is the
  * UUID of the transaction that owns the list. A child with no UUID, or an
  * empty one, is never a duplicate. A child whose security is a link is not
- * counted as cash: hydrate it first. The Transaction wrapper does not call
+ * counted as cash: hydrate it first.
+ *
+ * Trade price (LM-463): an inline `price` (not is_link) whose raw price_type
+ * is UNKNOWN_PRICE_TYPE gives one violation on `price.price_type`, with
+ * object_id the price's UUID. Every other value passes, including an
+ * unrecognised number. A link price is never checked, and child
+ * transactions' prices are not checked. The Transaction wrapper does not call
  * these rules, so stored rows that break them still load; writers call
  * `validate` / `requireValid` before sending.
  */
@@ -19,6 +25,8 @@ export declare const SECURITY_PREFIX = "security.";
 export declare const CHILD_TRANSACTIONS = "child_transactions";
 export declare const SECOND_CASH_CHILD = "second cash child";
 export declare const DUPLICATE_CHILD_ID = "duplicate child id";
+export declare const PRICE_PREFIX = "price.";
+export declare const UNKNOWN_TRADE_PRICE_TYPE = "price_type is UNKNOWN_PRICE_TYPE on an inline trade price";
 /** Returns every field-level violation on this transaction, or an empty array when it is valid. */
 export declare function validate(proto: TransactionProto): FieldViolationProto[];
 /** Throws ModelValidationError carrying every violation if `validate` finds any. */

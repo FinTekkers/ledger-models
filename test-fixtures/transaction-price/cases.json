@@ -1,0 +1,82 @@
+{
+  "description": "LM-463: trade-price rule for the transaction validators (Java TransactionRules, Python transaction_rules, Rust validate_transaction, JS transaction_rules). Each case is a transaction with a uuid, no security and no children, so only the price rule can fire. price is absent (no price set) or {uuid?, link?, price_type?}: an absent uuid or price_type leaves that field unset; price_type is a PriceTypeProto name, or a number to set the raw wire value. Expected violations name the field, the object_id (the price's UUID, null when the price has none) and the exact message.",
+  "cases": [
+    {
+      "name": "inline_unknown",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000001",
+        "price": {"uuid": "60000000-0000-4000-8000-000000000001", "price_type": "UNKNOWN_PRICE_TYPE"}
+      },
+      "violations": [
+        {"field": "price.price_type", "object_id": "60000000-0000-4000-8000-000000000001",
+         "message": "price_type is UNKNOWN_PRICE_TYPE on an inline trade price"}
+      ]
+    },
+    {
+      "name": "inline_unknown_no_uuid",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000002",
+        "price": {"price_type": "UNKNOWN_PRICE_TYPE"}
+      },
+      "violations": [
+        {"field": "price.price_type", "object_id": null,
+         "message": "price_type is UNKNOWN_PRICE_TYPE on an inline trade price"}
+      ]
+    },
+    {
+      "name": "inline_absolute",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000003",
+        "price": {"uuid": "60000000-0000-4000-8000-000000000003", "price_type": "ABSOLUTE"}
+      },
+      "violations": []
+    },
+    {
+      "name": "inline_percentage",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000004",
+        "price": {"uuid": "60000000-0000-4000-8000-000000000004", "price_type": "PERCENTAGE"}
+      },
+      "violations": []
+    },
+    {
+      "name": "inline_rate",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000005",
+        "price": {"uuid": "60000000-0000-4000-8000-000000000005", "price_type": "RATE"}
+      },
+      "violations": []
+    },
+    {
+      "name": "inline_unrecognised_value",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000006",
+        "price": {"uuid": "60000000-0000-4000-8000-000000000006", "price_type": 999}
+      },
+      "violations": []
+    },
+    {
+      "name": "link_no_price_type",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000007",
+        "price": {"uuid": "60000000-0000-4000-8000-000000000007", "link": true}
+      },
+      "violations": []
+    },
+    {
+      "name": "link_unknown_explicit",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000008",
+        "price": {"uuid": "60000000-0000-4000-8000-000000000008", "link": true, "price_type": "UNKNOWN_PRICE_TYPE"}
+      },
+      "violations": []
+    },
+    {
+      "name": "no_price",
+      "transaction": {
+        "uuid": "10000000-0000-4000-8000-000000000009"
+      },
+      "violations": []
+    }
+  ]
+}

@@ -173,12 +173,24 @@ Every binding also applies its security rules to an inline security, prefixed `s
 
 **Deserialization is unchecked.** The proto constructor in every binding attaches children without these rules, so a stored bad row still loads and can be found. `getCashTransaction()` keeps its guard and still throws a plain `RuntimeException`, but its message now names the parent and every cash child's ID.
 
+### Trade price type (LM-463)
+
+An inline trade price with `UNKNOWN_PRICE_TYPE` reached price-service untyped: nobody could tell whether its value was a percentage, an absolute amount or a rate. The transaction validator in every binding (the table above) now refuses it.
+
+- **Rule.** When `TransactionProto.price` is set, `is_link` is false and the raw `price_type` number is `0` (`UNKNOWN_PRICE_TYPE`), it adds one violation on `price.price_type`. The message is `price_type is UNKNOWN_PRICE_TYPE on an inline trade price`, the same in every binding (`UNKNOWN_TRADE_PRICE_TYPE`). Its `object_id` is the price's UUID, or unset when the price has none, as the `security.` rule uses the security's UUID.
+- **Only `UNKNOWN_PRICE_TYPE` fails.** The raw number is compared, so every other value passes, `RATE` and an unrecognised number included.
+- **Link prices are never checked**, whatever their fields hold: the validators stay pure.
+- **Scope.** Only the transaction's own price is checked, not a child transaction's. The violation comes after the `security.` and `child_transactions[...]` ones, which keep their order. The validator does not call the price rules (LM-289): a trade price needs no `security` or `price` check here.
+
+The shared cases are in `test-fixtures/transaction-price/cases.json`. Since LM-461 the create-transaction wrappers always set a trade price's `price_type`, so transactions they build stay valid.
+
 ## Affected callers
 
 - Java callers that catch `TransactionProcessingException` around `Transaction.addCashImpact` (or the short-form `Transaction` constructor) no longer see the missing-`face_value` case; it now arrives as `IllegalArgumentException` / `ModelValidationException`. No caller in this repo does this. ledger-service's dependent item maps it to `INVALID_ARGUMENT`.
 - Callers that match the whole `getMessage()` string of the maturity error break; callers using `contains("maturity_date must be after issue_date")` keep working.
 - Rust callers that `match` on `utils::errors::Error` exhaustively must add a match branch when LM-255d adds `Error::Validation`.
 - LM-438: a second `addCashImpact` now throws `InvalidChildTransactionException` instead of a bare `RuntimeException`. It is still a `RuntimeException`, and its message still contains `already has a cash impact`. `TransactionRules.validate` can now return `child_transactions[...]` violations, which ledger-service's `CreateOrUpdate` and `ValidateCreateOrUpdate` return as-is.
+- LM-463: `TransactionRules.validate` (every binding) can now return a `price.price_type` violation for an inline trade price with `UNKNOWN_PRICE_TYPE`. ledger-service returns it as-is once it raises its minimum ledger-models version; a hand-built transaction that sends such a price is then refused with `INVALID_ARGUMENT`.
 
 ## Known follow-ups
 

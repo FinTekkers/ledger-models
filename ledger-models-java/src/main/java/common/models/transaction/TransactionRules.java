@@ -1,7 +1,10 @@
 package common.models.transaction;
 
 import common.models.errors.ModelValidationException;
+import common.models.price.PriceRules;
 import common.models.security.SecurityRules;
+import fintekkers.models.price.PriceProto;
+import fintekkers.models.price.PriceTypeProto;
 import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.transaction.TransactionProto;
@@ -30,6 +33,12 @@ import java.util.UUID;
  * with no UUID, or an empty one, is never a duplicate. The parent link is not
  * in the proto, so {@link Transaction#addChildTransaction} checks it instead.
  *
+ * <p>Trade price (LM-463): an inline {@code price} (not {@code is_link})
+ * whose raw {@code price_type} is {@code UNKNOWN_PRICE_TYPE} gives one
+ * violation on {@code price.price_type}, with {@code object_id} the price's
+ * UUID. Every other value passes, including an unrecognised number. A link
+ * price is never checked, and child transactions' prices are not checked.
+ *
  * <p>Pure: a link security is not fetched, so it yields no violations and a
  * child whose security is a link is not counted as cash. Hydrate the
  * transaction first to have its security checked.
@@ -41,6 +50,10 @@ public final class TransactionRules {
     public static final String SECOND_CASH_CHILD = "second cash child";
     /** Message prefix of the repeated-child-ID violation, the same in every language. */
     public static final String DUPLICATE_CHILD_ID = "duplicate child id";
+    /** Field-path prefix for the trade price's violations (LM-463). */
+    public static final String PRICE_PREFIX = "price.";
+    /** Message of the unknown-trade-price-type violation, the same in every language. */
+    public static final String UNKNOWN_TRADE_PRICE_TYPE = "price_type is UNKNOWN_PRICE_TYPE on an inline trade price";
 
     private TransactionRules() {}
 
@@ -54,6 +67,7 @@ public final class TransactionRules {
             }
         }
         addChildViolations(proto, "", out);
+        addPriceViolation(proto, out);
         return out;
     }
 
@@ -87,6 +101,18 @@ public final class TransactionRules {
                         + ": transaction " + parentId + " already has a child with id " + childId));
             }
             addChildViolations(child, field + ".", out);
+        }
+    }
+
+    /** LM-463: an inline trade price must have a price_type; a link price is never checked. */
+    private static void addPriceViolation(TransactionProto proto, List<FieldViolationProto> out) {
+        if (!proto.hasPrice()) return;
+        PriceProto price = proto.getPrice();
+        if (price.getIsLink()) return;
+        // Raw number, so an unrecognised value is not rejected.
+        if (price.getPriceTypeValue() == PriceTypeProto.UNKNOWN_PRICE_TYPE_VALUE) {
+            out.add(ModelValidationException.violation(PRICE_PREFIX + PriceRules.PRICE_TYPE,
+                    idOf(price.hasUuid() ? price.getUuid() : null), UNKNOWN_TRADE_PRICE_TYPE));
         }
     }
 

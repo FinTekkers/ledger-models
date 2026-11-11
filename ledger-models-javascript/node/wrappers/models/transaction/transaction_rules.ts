@@ -1,7 +1,10 @@
+import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
 import { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
+import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
 import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 import { ModelValidationError, violation } from '../errors';
+import { PRICE_TYPE } from '../price/price_rules';
 import { validate as validateSecurity } from '../security/security_rules';
 import { UUID } from '../utils/uuid';
 
@@ -16,7 +19,13 @@ import { UUID } from '../utils/uuid';
  * `child_transactions[1].child_transactions[0]`) and its object_id is the
  * UUID of the transaction that owns the list. A child with no UUID, or an
  * empty one, is never a duplicate. A child whose security is a link is not
- * counted as cash: hydrate it first. The Transaction wrapper does not call
+ * counted as cash: hydrate it first.
+ *
+ * Trade price (LM-463): an inline `price` (not is_link) whose raw price_type
+ * is UNKNOWN_PRICE_TYPE gives one violation on `price.price_type`, with
+ * object_id the price's UUID. Every other value passes, including an
+ * unrecognised number. A link price is never checked, and child
+ * transactions' prices are not checked. The Transaction wrapper does not call
  * these rules, so stored rows that break them still load; writers call
  * `validate` / `requireValid` before sending.
  */
@@ -25,6 +34,8 @@ export const SECURITY_PREFIX = 'security.';
 export const CHILD_TRANSACTIONS = 'child_transactions';
 export const SECOND_CASH_CHILD = 'second cash child';
 export const DUPLICATE_CHILD_ID = 'duplicate child id';
+export const PRICE_PREFIX = 'price.';
+export const UNKNOWN_TRADE_PRICE_TYPE = 'price_type is UNKNOWN_PRICE_TYPE on an inline trade price';
 
 /** Returns every field-level violation on this transaction, or an empty array when it is valid. */
 export function validate(proto: TransactionProto): FieldViolationProto[] {
@@ -38,6 +49,7 @@ export function validate(proto: TransactionProto): FieldViolationProto[] {
         }
     }
     addChildViolations(proto, '', out);
+    addPriceViolation(proto, out);
     return out;
 }
 
@@ -48,13 +60,13 @@ export function requireValid(proto: TransactionProto): void {
 }
 
 function addChildViolations(parent: TransactionProto, prefix: string, out: FieldViolationProto[]): void {
-    const parentId = idOf(parent);
+    const parentId = idOf(parent.getUuid());
     let seenCash = false;
     let firstCashId: UUID | undefined;
     const seenIds = new Set<string>();
     parent.getChildtransactionsList().forEach((child, i) => {
         const field = `${prefix}${CHILD_TRANSACTIONS}[${i}]`;
-        const childId = idOf(child);
+        const childId = idOf(child.getUuid());
         if (isCash(child)) {
             if (seenCash) {
                 out.push(violation(field, parentId,
@@ -77,6 +89,16 @@ function addChildViolations(parent: TransactionProto, prefix: string, out: Field
     });
 }
 
+/** LM-463: an inline trade price must have a price_type; a link price is never checked. */
+function addPriceViolation(proto: TransactionProto, out: FieldViolationProto[]): void {
+    const price = proto.getPrice();
+    if (!price || price.getIsLink()) return;
+    // Raw number, so an unrecognised value is not rejected.
+    if (price.getPriceType() === PriceTypeProto.UNKNOWN_PRICE_TYPE) {
+        out.push(violation(PRICE_PREFIX + PRICE_TYPE, idOf(price.getUuid()), UNKNOWN_TRADE_PRICE_TYPE));
+    }
+}
+
 /** Same test as Java Security.isCash() on an inline security; a link is not cash. */
 function isCash(child: TransactionProto): boolean {
     const security = child.getSecurity();
@@ -84,9 +106,9 @@ function isCash(child: TransactionProto): boolean {
     return security.getProductType() === ProductTypeProto.CURRENCY || security.hasCashDetails();
 }
 
-/** The transaction's UUID, or undefined when it has none or it is not 16 bytes. */
-function idOf(proto: TransactionProto): UUID | undefined {
-    const raw = proto.getUuid()?.getRawUuid_asU8();
+/** The UUID, or undefined when it is unset or not 16 bytes. */
+function idOf(uuid: UUIDProto | undefined): UUID | undefined {
+    const raw = uuid?.getRawUuid_asU8();
     return raw && raw.length === 16 ? UUID.fromU8Array(raw) : undefined;
 }
 
