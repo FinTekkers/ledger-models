@@ -12,6 +12,7 @@ use crate::fintekkers::wrappers::models::product_inputs::ProductInputError;
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
 use crate::fintekkers::wrappers::models::utils::decimal::decimal_proto;
 use crate::fintekkers::wrappers::models::portfolio::PortfolioWrapper;
+use crate::fintekkers::wrappers::models::price::PRICE_TYPE_FIELD;
 use crate::fintekkers::wrappers::models::security::{validate_security, SecurityWrapper};
 use crate::fintekkers::wrappers::models::utils::errors::{object_id_of, Error};
 use crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil;
@@ -374,6 +375,10 @@ pub const CHILD_TRANSACTIONS: &str = "child_transactions";
 pub const SECOND_CASH_CHILD: &str = "second cash child";
 /// Message prefix of the repeated-child-ID violation, the same in every language.
 pub const DUPLICATE_CHILD_ID: &str = "duplicate child id";
+/// Field-path prefix for the trade price's violations (LM-463).
+pub const PRICE_PREFIX: &str = "price.";
+/// Message of the unknown-trade-price-type violation, the same in every language.
+pub const UNKNOWN_TRADE_PRICE_TYPE: &str = "price_type is UNKNOWN_PRICE_TYPE on an inline trade price";
 
 /// Transaction input rules: Rust counterpart of Java's
 /// `TransactionRules.validate` (docs/adr/typed-input-errors.md). Pure: proto
@@ -385,6 +390,11 @@ pub const DUPLICATE_CHILD_ID: &str = "duplicate child id";
 /// `object_id` is the UUID of the transaction that owns the list. A child
 /// with no UUID, or an empty one, is never a duplicate. A child whose
 /// security is a link is not counted as cash: hydrate it first.
+/// Trade price (LM-463): an inline `price` (not `is_link`) whose raw
+/// `price_type` is UNKNOWN_PRICE_TYPE gives one violation on
+/// `price.price_type`, with `object_id` the price's UUID. Every other value
+/// passes, including an unrecognised number. A link price is never checked,
+/// and child transactions' prices are not checked.
 /// `TransactionWrapper::new` does not call this, so stored rows that break a
 /// rule still load; writers call it before sending.
 pub fn validate_transaction(proto: &TransactionProto) -> Vec<FieldViolationProto> {
@@ -400,6 +410,7 @@ pub fn validate_transaction(proto: &TransactionProto) -> Vec<FieldViolationProto
         })
         .collect();
     add_child_violations(proto, "", &mut out);
+    add_price_violation(proto, &mut out);
     out
 }
 
@@ -447,6 +458,22 @@ fn add_child_violations(parent: &TransactionProto, prefix: &str, out: &mut Vec<F
             }
         }
         add_child_violations(child, &format!("{field}."), out);
+    }
+}
+
+/// LM-463: an inline trade price must have a price_type; a link price is never checked.
+fn add_price_violation(proto: &TransactionProto, out: &mut Vec<FieldViolationProto>) {
+    let Some(price) = proto.price.as_ref() else { return };
+    if price.is_link {
+        return;
+    }
+    // Raw number, so an unrecognised value is not rejected.
+    if price.price_type == PriceTypeProto::UnknownPriceType as i32 {
+        out.push(FieldViolationProto {
+            field: format!("{PRICE_PREFIX}{PRICE_TYPE_FIELD}"),
+            object_id: object_id_of(price.uuid.as_ref()),
+            message: UNKNOWN_TRADE_PRICE_TYPE.to_string(),
+        });
     }
 }
 
