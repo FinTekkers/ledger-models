@@ -167,6 +167,20 @@ publishing {
         maven {
             url = layout.buildDirectory.dir('staging-deploy')
         }
+        // GitHub Packages (LM-469): only when maven-publish.yml passes a
+        // token, so local builds and maven-central.yml publish to
+        // staging-deploy only. Not a generic GITHUB_TOKEN: shells export
+        // that for gh.
+        if (System.getenv('GITHUB_PACKAGES_TOKEN')) {
+            maven {
+                name = 'GitHubPackages'
+                url = uri('https://maven.pkg.github.com/FinTekkers/ledger-models')
+                credentials {
+                    username = System.getenv('GITHUB_ACTOR')
+                    password = System.getenv('GITHUB_PACKAGES_TOKEN')
+                }
+            }
+        }
     }
 }
 
