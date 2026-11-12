@@ -3,6 +3,23 @@ on:
   push:
     tags:  #only trigger action when tagged with release number, i.e v0.0.1     
       - 'v*'
+  # Show, or publish, a Central Portal deployment that is stuck (LM-466).
+  workflow_dispatch:
+    inputs:
+      deployment_id:
+        description: Central Portal deployment UUID
+        required: true
+      action:
+        description: status prints its state and errors; publish also publishes it if VALIDATED
+        type: choice
+        options: [status, publish]
+        default: status
+  # TEMPORARY (LM-466 diagnostic): runs central-deployment once from the PR
+  # branch, since a dispatch needs this file on main. Remove before merge.
+  pull_request:
+    paths:
+      - .github/workflows/maven-central.yml
+      - scripts/ci/**
 
 defaults:
   run:
@@ -11,6 +28,8 @@ defaults:
 
 jobs:
   publish-java-package:
+    # action-get-tag needs a tag ref.
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest 
     permissions: 
       contents: read
@@ -76,8 +95,12 @@ jobs:
     - name: Print Environment Variables
       run: gpg --list-keys
     - name: Execute Gradle build
+      id: deploy
+      # The next step decides the job's result when this fails.
+      continue-on-error: true
       run: |
-        ./gradlew publish jreleaserDeploy --stacktrace
+        set -o pipefail
+        ./gradlew publish jreleaserDeploy --stacktrace 2>&1 | tee "$RUNNER_TEMP/deploy.log"
       env:
         JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
         JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
@@ -85,4 +108,38 @@ jobs:
         JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_USERNAME: ${{ secrets.JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_USERNAME }}
         JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_PASSWORD: ${{ secrets.JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_PASSWORD }}
         run_number: ${{ env.release_version }}
-        
+    # JReleaser logs only "400: Bad Request" when a Central call fails. Print
+    # Sonatype's response body, and publish the deployment once more if it is
+    # VALIDATED: green only if that publish works.
+    - name: Report Sonatype response
+      if: steps.deploy.outcome == 'failure'
+      working-directory: .
+      run: scripts/ci/central-deployment.sh report "$RUNNER_TEMP/deploy.log"
+      env:
+        JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_USERNAME: ${{ secrets.JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_USERNAME }}
+        JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_PASSWORD: ${{ secrets.JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_PASSWORD }}
+
+  # gh workflow run maven-central.yml -f deployment_id=<uuid> -f action=status
+  central-deployment:
+    # TEMPORARY (LM-466): pull_request here goes with the trigger above.
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: .
+    env:
+      JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_USERNAME: ${{ secrets.JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_USERNAME }}
+      JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_PASSWORD: ${{ secrets.JRELEASER_DEPLOY_MAVEN_MAVENCENTRAL_SONATYPE_PASSWORD }}
+      # TEMPORARY (LM-466): the stuck v1.1.43 deployment, for the PR run only.
+      DEPLOYMENT_ID: ${{ inputs.deployment_id || '6700f128-f067-4d7d-8a0a-7b5a0b317a02' }}
+      ACTION: ${{ inputs.action || 'publish' }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Central deployment ${{ env.ACTION }}
+      run: scripts/ci/central-deployment.sh "$ACTION" "$DEPLOYMENT_ID"
+    # TEMPORARY (LM-466): a call that fails for sure, to show the printed body.
+    - name: Failed call example
+      if: always() && github.event_name == 'pull_request'
+      run: scripts/ci/central-deployment.sh status 00000000-0000-4000-8000-000000000000 || true
