@@ -499,6 +499,20 @@ pub struct BondDetailsProto {
     pub maturity_date: ::core::option::Option<super::util::LocalDateProto>,
     #[prost(message, repeated, tag = "8")]
     pub issuance_info: ::prost::alloc::vec::Vec<bond::IssuanceProto>,
+    /// callable: true when the issuer may redeem the bond before maturity_date.
+    /// Default false. Example: Treasury bonds issued 1979-84, such as 912810CK2
+    /// (10 3/8% Bonds of 2004-2009).
+    #[prost(bool, tag = "9")]
+    pub callable: bool,
+    /// call_date: the first date the issuer may redeem the bond at par. It is
+    /// NOT the maturity date and does not change maturity_date, which stays the
+    /// legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+    /// 2009-11-15). Set only when callable is true; unset otherwise, with no
+    /// placeholder date (LM-441). An exercised call is booked as transactions
+    /// (a SELL to zero on the call date), not by editing this security.
+    /// See docs/adr/callable_bonds.md.
+    #[prost(message, optional, tag = "10")]
+    pub call_date: ::core::option::Option<super::util::LocalDateProto>,
 }
 /// TIPS (Treasury Inflation-Protected Securities) extras.
 /// Carries ONLY the TIPS-specific fields; shared bond fields live in

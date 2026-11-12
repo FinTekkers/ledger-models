@@ -415,6 +415,25 @@ class Security {
         return (0, date_1.localDateProtoToDate)(date);
     }
     /**
+     * Returns bond_details.callable: true when the issuer may redeem the bond
+     * before maturity (LM-465). False when there are no bond details.
+     */
+    isCallable() {
+        this.ensureHydrated();
+        const bond = this.getBondLikeDetails();
+        return bond ? bond.getCallable() : false;
+    }
+    /**
+     * Returns bond_details.call_date, the first date the issuer may redeem the
+     * bond at par, or null when unset. It is not the maturity date:
+     * getMaturityDate() stays the legal final maturity (LM-465).
+     */
+    getCallDate() {
+        this.ensureHydrated();
+        const bond = this.getBondLikeDetails();
+        return bond && bond.hasCallDate() ? (0, date_1.localDateProtoToDate)(bond.getCallDate()) : null;
+    }
+    /**
      * Returns the canonical bond_details sub-message if set, else undefined.
      * TIPS and FRN extras live in their own tips_extension / frn_extension
      * fields and co-exist with bond_details.

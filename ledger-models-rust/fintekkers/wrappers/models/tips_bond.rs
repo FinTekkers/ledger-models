@@ -81,6 +81,8 @@ impl TIPSBond {
                 dated_date: None,
                 maturity_date: Some(date_proto(maturity_date)),
                 issuance_info: vec![],
+                callable: false,
+                call_date: None,
             }),
             tips_extension: Some(TipsExtensionProto {
                 base_cpi: Some(decimal_proto(&base_cpi)),

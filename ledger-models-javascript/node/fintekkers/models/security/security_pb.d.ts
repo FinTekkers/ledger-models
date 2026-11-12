@@ -201,6 +201,13 @@ export class BondDetailsProto extends jspb.Message {
     getIssuanceInfoList(): Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>;
     setIssuanceInfoList(value: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto>): BondDetailsProto;
     addIssuanceInfo(value?: fintekkers_models_security_bond_issuance_pb.IssuanceProto, index?: number): fintekkers_models_security_bond_issuance_pb.IssuanceProto;
+    getCallable(): boolean;
+    setCallable(value: boolean): BondDetailsProto;
+
+    hasCallDate(): boolean;
+    clearCallDate(): void;
+    getCallDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
+    setCallDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): BondDetailsProto;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): BondDetailsProto.AsObject;
@@ -222,6 +229,8 @@ export namespace BondDetailsProto {
         issueDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
         maturityDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
         issuanceInfoList: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto.AsObject>,
+        callable: boolean,
+        callDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
     }
 }
 

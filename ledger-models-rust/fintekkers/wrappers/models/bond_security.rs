@@ -105,6 +105,8 @@ impl BondSecurity {
                 dated_date: None,
                 maturity_date: Some(date_proto(maturity_date)),
                 issuance_info: vec![],
+                callable: false,
+                call_date: None,
             }),
             ..Default::default()
         })
@@ -198,6 +200,8 @@ mod tests {
                 dated_date: None,
                 maturity_date: maturity,
                 issuance_info: vec![],
+                callable: false,
+                call_date: None,
             }),
             ..Default::default()
         }
