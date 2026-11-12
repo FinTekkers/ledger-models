@@ -4,7 +4,7 @@ plugins {
     id 'java'
     id 'com.google.protobuf' version('0.9.1')
     id 'signing'
-    id 'org.jreleaser' version '1.17.0'
+    id 'org.jreleaser' version '1.27.0'
 }
 
 repositories {
@@ -194,12 +194,6 @@ jreleaser {
                     maxRetries = 120
                 }
             }
-//
-//            nexus2 {
-////                maxRetries = 100 //Deprecated
-//                retryDelay = 10000
-//                timeout = 60000
-//            }
         }
     }
 }

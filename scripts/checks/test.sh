@@ -49,6 +49,10 @@ if git grep -nE "[\"']OBJECT_TYPE_" -- \
   exit 1
 fi
 
+echo "== maven central deployment report (LM-466)"
+# Prints Sonatype's response body on a failed publish, never credentials.
+scripts/ci/central-deployment.test.sh
+
 echo "== python"
 (
   cd ledger-models-python

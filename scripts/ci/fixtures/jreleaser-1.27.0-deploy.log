@@ -1,0 +1,26 @@
+> Task :jreleaserDeploy
+[INFO]  JReleaser 1.27.0
+[INFO]    - basedir set to /home/runner/work/ledger-models/ledger-models/ledger-models-java
+[INFO]    - outputdir set to /home/runner/work/ledger-models/ledger-models/ledger-models-java/build/jreleaser
+[INFO]  git-root-search set to true
+[INFO]  Loading variables from /home/runner/.jreleaser/config.toml
+[INFO]  Validating configuration
+[INFO]  Strategy for creating tag set to SKIP
+[INFO]  Project version set to 1.1.44
+[INFO]  Release is not snapshot
+[INFO]  Timestamp is 2026-11-12T10:15:02.118+0000
+[INFO]  HEAD is at 9f2c1d4
+[INFO]  Platform is linux-x86_64
+[INFO]  dry-run set to false
+[INFO]  Deploying Maven artifacts
+[INFO]    - Deploying with maven-central/sonatype
+[INFO]    - Verifying prerequisites
+[INFO]    - Verifying POMs
+[INFO]      Verifying io/github/fintekkers/ledger-models/1.1.44/ledger-models-1.1.44.pom
+[DEBUG]   Request-Id 3b7e0a52-9c41-4d0e-8f6a-1e2d3c4b5a69
+[INFO]    - Uploading ledger-models-1.1.44-bundle.zip
+[INFO]    - Bundle ledger-models-1.1.44-bundle.zip uploaded as deployment 6700f128-f067-4d7d-8a0a-7b5a0b317a02
+[INFO]    - waiting for deployment (6700f128-f067-4d7d-8a0a-7b5a0b317a02) state to be one of [VALIDATED]
+[INFO]    - deployment 6700f128-f067-4d7d-8a0a-7b5a0b317a02 is still transitioning
+[INFO]    - Publishing deployment 6700f128-f067-4d7d-8a0a-7b5a0b317a02
+[ERROR]   Could not publish deployment for maven-central/sonatype
