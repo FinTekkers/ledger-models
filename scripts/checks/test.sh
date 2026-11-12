@@ -102,6 +102,9 @@ echo "== rust clippy"
 
 echo "== java"
 (cd ledger-models-java && ./gradlew test --quiet --no-daemon --console=plain)
+# GitHub Packages is a publish target only with the workflow's token; with no
+# token, publish writes staging-deploy only (LM-469).
+scripts/checks/java-publish-targets.test.sh
 
 echo "== javascript"
 (

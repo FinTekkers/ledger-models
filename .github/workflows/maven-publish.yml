@@ -34,9 +34,12 @@ jobs:
         echo "release_version=${VERSION}" >> $GITHUB_ENV
     - name: Print Environment Variables
       run: env
+    # Naming the GitHub Packages task fails the run if the token is missing,
+    # instead of a green run that uploads nothing (LM-469). The token is set
+    # on this step only, so the env step above never prints it.
     - name: Execute Gradle build
-      run: ./gradlew publish
+      run: ./gradlew publish publishMavenPublicationToGitHubPackagesRepository
       env:
-        PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+        GITHUB_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run_number: ${{ env.release_version }}
         
