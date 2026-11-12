@@ -1,0 +1,7 @@
+{
+  "item": "LM-465",
+  "added": [
+    {"message": ".fintekkers.models.security.BondDetailsProto", "number": 9, "name": "callable", "type": "bool"},
+    {"message": ".fintekkers.models.security.BondDetailsProto", "number": 10, "name": "call_date", "type": ".fintekkers.models.util.LocalDateProto"}
+  ]
+}

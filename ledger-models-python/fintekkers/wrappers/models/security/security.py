@@ -282,6 +282,23 @@ class Security():
             raise ValueError("maturity_date is not set; populate SecurityProto.bond_details.maturity_date")
         return ProtoSerializationUtil.deserialize(bond.maturity_date)
 
+    def is_callable(self) -> bool:
+        """bond_details.callable: True when the issuer may redeem the bond
+        before maturity (LM-465). False when there are no bond details."""
+        self._ensure_hydrated()
+        bond = self._get_bond_like_details()
+        return bond is not None and bond.callable
+
+    def get_call_date(self) -> Optional[date]:
+        """bond_details.call_date: the first date the issuer may redeem the
+        bond at par, or None when unset. Not the maturity date: maturity
+        getters stay the legal final maturity (LM-465)."""
+        self._ensure_hydrated()
+        bond = self._get_bond_like_details()
+        if bond is None or not bond.HasField('call_date'):
+            return None
+        return ProtoSerializationUtil.deserialize(bond.call_date)
+
     def get_tenor(self) -> str:
         self._ensure_hydrated()
         return ProtoSerializationUtil.deserialize(self.proto.tenor)

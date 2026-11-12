@@ -308,6 +308,79 @@ private static final long serialVersionUID = 0L;
     return issuanceInfo_.get(index);
   }
 
+  public static final int CALLABLE_FIELD_NUMBER = 9;
+  private boolean callable_ = false;
+  /**
+   * <pre>
+   * callable: true when the issuer may redeem the bond before maturity_date.
+   * Default false. Example: Treasury bonds issued 1979-84, such as 912810CK2
+   * (10 3/8% Bonds of 2004-2009).
+   * </pre>
+   *
+   * <code>bool callable = 9;</code>
+   * @return The callable.
+   */
+  @java.lang.Override
+  public boolean getCallable() {
+    return callable_;
+  }
+
+  public static final int CALL_DATE_FIELD_NUMBER = 10;
+  private fintekkers.models.util.LocalDate.LocalDateProto callDate_;
+  /**
+   * <pre>
+   * call_date: the first date the issuer may redeem the bond at par. It is
+   * NOT the maturity date and does not change maturity_date, which stays the
+   * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+   * 2009-11-15). Set only when callable is true; unset otherwise, with no
+   * placeholder date (LM-441). An exercised call is booked as transactions
+   * (a SELL to zero on the call date), not by editing this security.
+   * See docs/adr/callable_bonds.md.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+   * @return Whether the callDate field is set.
+   */
+  @java.lang.Override
+  public boolean hasCallDate() {
+    return callDate_ != null;
+  }
+  /**
+   * <pre>
+   * call_date: the first date the issuer may redeem the bond at par. It is
+   * NOT the maturity date and does not change maturity_date, which stays the
+   * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+   * 2009-11-15). Set only when callable is true; unset otherwise, with no
+   * placeholder date (LM-441). An exercised call is booked as transactions
+   * (a SELL to zero on the call date), not by editing this security.
+   * See docs/adr/callable_bonds.md.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+   * @return The callDate.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProto getCallDate() {
+    return callDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : callDate_;
+  }
+  /**
+   * <pre>
+   * call_date: the first date the issuer may redeem the bond at par. It is
+   * NOT the maturity date and does not change maturity_date, which stays the
+   * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+   * 2009-11-15). Set only when callable is true; unset otherwise, with no
+   * placeholder date (LM-441). An exercised call is booked as transactions
+   * (a SELL to zero on the call date), not by editing this security.
+   * See docs/adr/callable_bonds.md.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getCallDateOrBuilder() {
+    return callDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : callDate_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -345,6 +418,12 @@ private static final long serialVersionUID = 0L;
     }
     for (int i = 0; i < issuanceInfo_.size(); i++) {
       output.writeMessage(8, issuanceInfo_.get(i));
+    }
+    if (callable_ != false) {
+      output.writeBool(9, callable_);
+    }
+    if (callDate_ != null) {
+      output.writeMessage(10, getCallDate());
     }
     getUnknownFields().writeTo(output);
   }
@@ -386,6 +465,14 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < issuanceInfo_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(8, issuanceInfo_.get(i));
+    }
+    if (callable_ != false) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeBoolSize(9, callable_);
+    }
+    if (callDate_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(10, getCallDate());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -431,6 +518,13 @@ private static final long serialVersionUID = 0L;
     }
     if (!getIssuanceInfoList()
         .equals(other.getIssuanceInfoList())) return false;
+    if (getCallable()
+        != other.getCallable()) return false;
+    if (hasCallDate() != other.hasCallDate()) return false;
+    if (hasCallDate()) {
+      if (!getCallDate()
+          .equals(other.getCallDate())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -469,6 +563,13 @@ private static final long serialVersionUID = 0L;
     if (getIssuanceInfoCount() > 0) {
       hash = (37 * hash) + ISSUANCE_INFO_FIELD_NUMBER;
       hash = (53 * hash) + getIssuanceInfoList().hashCode();
+    }
+    hash = (37 * hash) + CALLABLE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+        getCallable());
+    if (hasCallDate()) {
+      hash = (37 * hash) + CALL_DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getCallDate().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -637,6 +738,12 @@ private static final long serialVersionUID = 0L;
         issuanceInfoBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000080);
+      callable_ = false;
+      callDate_ = null;
+      if (callDateBuilder_ != null) {
+        callDateBuilder_.dispose();
+        callDateBuilder_ = null;
+      }
       return this;
     }
 
@@ -713,6 +820,14 @@ private static final long serialVersionUID = 0L;
         result.maturityDate_ = maturityDateBuilder_ == null
             ? maturityDate_
             : maturityDateBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.callable_ = callable_;
+      }
+      if (((from_bitField0_ & 0x00000200) != 0)) {
+        result.callDate_ = callDateBuilder_ == null
+            ? callDate_
+            : callDateBuilder_.build();
       }
     }
 
@@ -807,6 +922,12 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (other.getCallable() != false) {
+        setCallable(other.getCallable());
+      }
+      if (other.hasCallDate()) {
+        mergeCallDate(other.getCallDate());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -891,6 +1012,18 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 66
+            case 72: {
+              callable_ = input.readBool();
+              bitField0_ |= 0x00000100;
+              break;
+            } // case 72
+            case 82: {
+              input.readMessage(
+                  getCallDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000200;
+              break;
+            } // case 82
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -2000,6 +2133,265 @@ private static final long serialVersionUID = 0L;
         issuanceInfo_ = null;
       }
       return issuanceInfoBuilder_;
+    }
+
+    private boolean callable_ ;
+    /**
+     * <pre>
+     * callable: true when the issuer may redeem the bond before maturity_date.
+     * Default false. Example: Treasury bonds issued 1979-84, such as 912810CK2
+     * (10 3/8% Bonds of 2004-2009).
+     * </pre>
+     *
+     * <code>bool callable = 9;</code>
+     * @return The callable.
+     */
+    @java.lang.Override
+    public boolean getCallable() {
+      return callable_;
+    }
+    /**
+     * <pre>
+     * callable: true when the issuer may redeem the bond before maturity_date.
+     * Default false. Example: Treasury bonds issued 1979-84, such as 912810CK2
+     * (10 3/8% Bonds of 2004-2009).
+     * </pre>
+     *
+     * <code>bool callable = 9;</code>
+     * @param value The callable to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCallable(boolean value) {
+      
+      callable_ = value;
+      bitField0_ |= 0x00000100;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * callable: true when the issuer may redeem the bond before maturity_date.
+     * Default false. Example: Treasury bonds issued 1979-84, such as 912810CK2
+     * (10 3/8% Bonds of 2004-2009).
+     * </pre>
+     *
+     * <code>bool callable = 9;</code>
+     * @return This builder for chaining.
+     */
+    public Builder clearCallable() {
+      bitField0_ = (bitField0_ & ~0x00000100);
+      callable_ = false;
+      onChanged();
+      return this;
+    }
+
+    private fintekkers.models.util.LocalDate.LocalDateProto callDate_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> callDateBuilder_;
+    /**
+     * <pre>
+     * call_date: the first date the issuer may redeem the bond at par. It is
+     * NOT the maturity date and does not change maturity_date, which stays the
+     * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+     * 2009-11-15). Set only when callable is true; unset otherwise, with no
+     * placeholder date (LM-441). An exercised call is booked as transactions
+     * (a SELL to zero on the call date), not by editing this security.
+     * See docs/adr/callable_bonds.md.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+     * @return Whether the callDate field is set.
+     */
+    public boolean hasCallDate() {
+      return ((bitField0_ & 0x00000200) != 0);
+    }
+    /**
+     * <pre>
+     * call_date: the first date the issuer may redeem the bond at par. It is
+     * NOT the maturity date and does not change maturity_date, which stays the
+     * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+     * 2009-11-15). Set only when callable is true; unset otherwise, with no
+     * placeholder date (LM-441). An exercised call is booked as transactions
+     * (a SELL to zero on the call date), not by editing this security.
+     * See docs/adr/callable_bonds.md.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+     * @return The callDate.
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto getCallDate() {
+      if (callDateBuilder_ == null) {
+        return callDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : callDate_;
+      } else {
+        return callDateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * call_date: the first date the issuer may redeem the bond at par. It is
+     * NOT the maturity date and does not change maturity_date, which stays the
+     * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+     * 2009-11-15). Set only when callable is true; unset otherwise, with no
+     * placeholder date (LM-441). An exercised call is booked as transactions
+     * (a SELL to zero on the call date), not by editing this security.
+     * See docs/adr/callable_bonds.md.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+     */
+    public Builder setCallDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (callDateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        callDate_ = value;
+      } else {
+        callDateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000200;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * call_date: the first date the issuer may redeem the bond at par. It is
+     * NOT the maturity date and does not change maturity_date, which stays the
+     * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+     * 2009-11-15). Set only when callable is true; unset otherwise, with no
+     * placeholder date (LM-441). An exercised call is booked as transactions
+     * (a SELL to zero on the call date), not by editing this security.
+     * See docs/adr/callable_bonds.md.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+     */
+    public Builder setCallDate(
+        fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
+      if (callDateBuilder_ == null) {
+        callDate_ = builderForValue.build();
+      } else {
+        callDateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000200;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * call_date: the first date the issuer may redeem the bond at par. It is
+     * NOT the maturity date and does not change maturity_date, which stays the
+     * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+     * 2009-11-15). Set only when callable is true; unset otherwise, with no
+     * placeholder date (LM-441). An exercised call is booked as transactions
+     * (a SELL to zero on the call date), not by editing this security.
+     * See docs/adr/callable_bonds.md.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+     */
+    public Builder mergeCallDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (callDateBuilder_ == null) {
+        if (((bitField0_ & 0x00000200) != 0) &&
+          callDate_ != null &&
+          callDate_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
+          getCallDateBuilder().mergeFrom(value);
+        } else {
+          callDate_ = value;
+        }
+      } else {
+        callDateBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000200;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * call_date: the first date the issuer may redeem the bond at par. It is
+     * NOT the maturity date and does not change maturity_date, which stays the
+     * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+     * 2009-11-15). Set only when callable is true; unset otherwise, with no
+     * placeholder date (LM-441). An exercised call is booked as transactions
+     * (a SELL to zero on the call date), not by editing this security.
+     * See docs/adr/callable_bonds.md.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+     */
+    public Builder clearCallDate() {
+      bitField0_ = (bitField0_ & ~0x00000200);
+      callDate_ = null;
+      if (callDateBuilder_ != null) {
+        callDateBuilder_.dispose();
+        callDateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * call_date: the first date the issuer may redeem the bond at par. It is
+     * NOT the maturity date and does not change maturity_date, which stays the
+     * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+     * 2009-11-15). Set only when callable is true; unset otherwise, with no
+     * placeholder date (LM-441). An exercised call is booked as transactions
+     * (a SELL to zero on the call date), not by editing this security.
+     * See docs/adr/callable_bonds.md.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto.Builder getCallDateBuilder() {
+      bitField0_ |= 0x00000200;
+      onChanged();
+      return getCallDateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * call_date: the first date the issuer may redeem the bond at par. It is
+     * NOT the maturity date and does not change maturity_date, which stays the
+     * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+     * 2009-11-15). Set only when callable is true; unset otherwise, with no
+     * placeholder date (LM-441). An exercised call is booked as transactions
+     * (a SELL to zero on the call date), not by editing this security.
+     * See docs/adr/callable_bonds.md.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getCallDateOrBuilder() {
+      if (callDateBuilder_ != null) {
+        return callDateBuilder_.getMessageOrBuilder();
+      } else {
+        return callDate_ == null ?
+            fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : callDate_;
+      }
+    }
+    /**
+     * <pre>
+     * call_date: the first date the issuer may redeem the bond at par. It is
+     * NOT the maturity date and does not change maturity_date, which stays the
+     * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+     * 2009-11-15). Set only when callable is true; unset otherwise, with no
+     * placeholder date (LM-441). An exercised call is booked as transactions
+     * (a SELL to zero on the call date), not by editing this security.
+     * See docs/adr/callable_bonds.md.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> 
+        getCallDateFieldBuilder() {
+      if (callDateBuilder_ == null) {
+        callDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder>(
+                getCallDate(),
+                getParentForChildren(),
+                isClean());
+        callDate_ = null;
+      }
+      return callDateBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

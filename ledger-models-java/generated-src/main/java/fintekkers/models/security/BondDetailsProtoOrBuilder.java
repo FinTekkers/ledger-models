@@ -178,4 +178,61 @@ public interface BondDetailsProtoOrBuilder extends
    */
   fintekkers.models.security.bond.IssuanceProtoOrBuilder getIssuanceInfoOrBuilder(
       int index);
+
+  /**
+   * <pre>
+   * callable: true when the issuer may redeem the bond before maturity_date.
+   * Default false. Example: Treasury bonds issued 1979-84, such as 912810CK2
+   * (10 3/8% Bonds of 2004-2009).
+   * </pre>
+   *
+   * <code>bool callable = 9;</code>
+   * @return The callable.
+   */
+  boolean getCallable();
+
+  /**
+   * <pre>
+   * call_date: the first date the issuer may redeem the bond at par. It is
+   * NOT the maturity date and does not change maturity_date, which stays the
+   * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+   * 2009-11-15). Set only when callable is true; unset otherwise, with no
+   * placeholder date (LM-441). An exercised call is booked as transactions
+   * (a SELL to zero on the call date), not by editing this security.
+   * See docs/adr/callable_bonds.md.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+   * @return Whether the callDate field is set.
+   */
+  boolean hasCallDate();
+  /**
+   * <pre>
+   * call_date: the first date the issuer may redeem the bond at par. It is
+   * NOT the maturity date and does not change maturity_date, which stays the
+   * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+   * 2009-11-15). Set only when callable is true; unset otherwise, with no
+   * placeholder date (LM-441). An exercised call is booked as transactions
+   * (a SELL to zero on the call date), not by editing this security.
+   * See docs/adr/callable_bonds.md.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+   * @return The callDate.
+   */
+  fintekkers.models.util.LocalDate.LocalDateProto getCallDate();
+  /**
+   * <pre>
+   * call_date: the first date the issuer may redeem the bond at par. It is
+   * NOT the maturity date and does not change maturity_date, which stays the
+   * legal final maturity (912810CK2: call_date 2004-11-15, maturity_date
+   * 2009-11-15). Set only when callable is true; unset otherwise, with no
+   * placeholder date (LM-441). An exercised call is booked as transactions
+   * (a SELL to zero on the call date), not by editing this security.
+   * See docs/adr/callable_bonds.md.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
+   */
+  fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getCallDateOrBuilder();
 }

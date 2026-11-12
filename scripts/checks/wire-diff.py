@@ -343,8 +343,22 @@ def lm433(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM433 and new == LM433[key]
 
 
+LM465 = {
+    f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}"
+    for f in json.loads((REPO / "test-fixtures/field-changes/lm-465.json").read_text())["added"]
+}
+
+
+def lm465(key: str, old, new, head: dict) -> bool:
+    """LM-465: BondDetailsProto.callable = 9 (bool) and call_date = 10
+    (LocalDateProto) added. Additions of exactly these only; maturity_date
+    and every other BondDetailsProto field keep their numbers, names and
+    types, and no call price or call schedule is added."""
+    return old is None and key in LM465 and new == LM465[key]
+
+
 ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411,
-           lm433]
+           lm433, lm465]
 
 
 def main() -> int:

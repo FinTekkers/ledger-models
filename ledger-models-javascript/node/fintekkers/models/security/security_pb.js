@@ -1492,7 +1492,9 @@ proto.fintekkers.models.security.BondDetailsProto.toObject = function(includeIns
     issueDate: (f = msg.getIssueDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
     maturityDate: (f = msg.getMaturityDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
     issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
-    fintekkers_models_security_bond_issuance_pb.IssuanceProto.toObject, includeInstance)
+    fintekkers_models_security_bond_issuance_pb.IssuanceProto.toObject, includeInstance),
+    callable: jspb.Message.getBooleanFieldWithDefault(msg, 9, false),
+    callDate: (f = msg.getCallDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1566,6 +1568,15 @@ proto.fintekkers.models.security.BondDetailsProto.deserializeBinaryFromReader = 
       var value = new fintekkers_models_security_bond_issuance_pb.IssuanceProto;
       reader.readMessage(value,fintekkers_models_security_bond_issuance_pb.IssuanceProto.deserializeBinaryFromReader);
       msg.addIssuanceInfo(value);
+      break;
+    case 9:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setCallable(value);
+      break;
+    case 10:
+      var value = new fintekkers_models_util_local_date_pb.LocalDateProto;
+      reader.readMessage(value,fintekkers_models_util_local_date_pb.LocalDateProto.deserializeBinaryFromReader);
+      msg.setCallDate(value);
       break;
     default:
       reader.skipField();
@@ -1656,6 +1667,21 @@ proto.fintekkers.models.security.BondDetailsProto.serializeBinaryToWriter = func
       8,
       f,
       fintekkers_models_security_bond_issuance_pb.IssuanceProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getCallable();
+  if (f) {
+    writer.writeBool(
+      9,
+      f
+    );
+  }
+  f = message.getCallDate();
+  if (f != null) {
+    writer.writeMessage(
+      10,
+      f,
+      fintekkers_models_util_local_date_pb.LocalDateProto.serializeBinaryToWriter
     );
   }
 };
@@ -1917,6 +1943,61 @@ proto.fintekkers.models.security.BondDetailsProto.prototype.addIssuanceInfo = fu
  */
 proto.fintekkers.models.security.BondDetailsProto.prototype.clearIssuanceInfoList = function() {
   return this.setIssuanceInfoList([]);
+};
+
+
+/**
+ * optional bool callable = 9;
+ * @return {boolean}
+ */
+proto.fintekkers.models.security.BondDetailsProto.prototype.getCallable = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 9, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.fintekkers.models.security.BondDetailsProto} returns this
+ */
+proto.fintekkers.models.security.BondDetailsProto.prototype.setCallable = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 9, value);
+};
+
+
+/**
+ * optional fintekkers.models.util.LocalDateProto call_date = 10;
+ * @return {?proto.fintekkers.models.util.LocalDateProto}
+ */
+proto.fintekkers.models.security.BondDetailsProto.prototype.getCallDate = function() {
+  return /** @type{?proto.fintekkers.models.util.LocalDateProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_local_date_pb.LocalDateProto, 10));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.LocalDateProto|undefined} value
+ * @return {!proto.fintekkers.models.security.BondDetailsProto} returns this
+*/
+proto.fintekkers.models.security.BondDetailsProto.prototype.setCallDate = function(value) {
+  return jspb.Message.setWrapperField(this, 10, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.security.BondDetailsProto} returns this
+ */
+proto.fintekkers.models.security.BondDetailsProto.prototype.clearCallDate = function() {
+  return this.setCallDate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.security.BondDetailsProto.prototype.hasCallDate = function() {
+  return jspb.Message.getField(this, 10) != null;
 };
 
 

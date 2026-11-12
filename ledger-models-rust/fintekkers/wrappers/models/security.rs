@@ -342,6 +342,25 @@ impl SecurityWrapper {
         bond_dates(self.active()).1.and_then(|p| local_date_proto_to_naive(p).ok())
     }
 
+    /// `bond_details.callable`: true when the issuer may redeem the bond
+    /// before maturity (LM-465). False when there are no bond details.
+    pub fn callable(&self) -> bool {
+        self.ensure_hydrated();
+        self.active().bond_details.as_ref().is_some_and(|bd| bd.callable)
+    }
+
+    /// `bond_details.call_date`, the first date the issuer may redeem the
+    /// bond at par. `None` when unset or invalid. It is not the maturity
+    /// date: [`Self::maturity_date`] stays the legal final maturity (LM-465).
+    pub fn call_date(&self) -> Option<NaiveDate> {
+        self.ensure_hydrated();
+        self.active()
+            .bond_details
+            .as_ref()
+            .and_then(|bd| bd.call_date.clone())
+            .and_then(|p| local_date_proto_to_naive(p).ok())
+    }
+
     /// Time-based soft-delete check. A Security is considered deleted iff
     /// it carries a non-`None` `valid_to` that has already elapsed at
     /// `as_of`. A future-dated `valid_to` means the row is still live
@@ -682,6 +701,8 @@ mod test {
                 dated_date: date(2020, 1, 15),
                 maturity_date: date(2030, 1, 15),
                 issuance_info: vec![],
+                callable: false,
+                call_date: None,
             }),
             ..Default::default()
         };
@@ -711,6 +732,8 @@ mod test {
                 dated_date: None,
                 maturity_date: date(2030, 1, 15),
                 issuance_info: vec![],
+                callable: false,
+                call_date: None,
             }),
             tips_extension: Some(TipsExtensionProto {
                 base_cpi: decimal("256.394"),
@@ -742,6 +765,8 @@ mod test {
                 dated_date: None,
                 maturity_date: date(2028, 1, 15),
                 issuance_info: vec![],
+                callable: false,
+                call_date: None,
             }),
             frn_extension: Some(FrnExtensionProto {
                 spread: decimal("50"),

@@ -207,6 +207,40 @@ public class BondSecurity extends Security {
         commitBondDetails(bd);
     }
 
+    /** True when the issuer may redeem the bond before its maturity date (LM-465). */
+    public boolean isCallable() {
+        BondDetailsProto bd = readBondDetails();
+        return bd != null && bd.getCallable();
+    }
+
+    /** Sets callable only; call_date is left as it is. */
+    public void setCallable(boolean callable) {
+        BondDetailsProto.Builder bd = currentBondDetailsForWrite();
+        bd.setCallable(callable);
+        commitBondDetails(bd);
+    }
+
+    /**
+     * The first date the issuer may redeem the bond at par, or null when unset.
+     * It is not the maturity date: {@link #getMaturityDate()} stays the legal
+     * final maturity (LM-465).
+     */
+    public LocalDate getCallDate() {
+        BondDetailsProto bd = readBondDetails();
+        if (bd == null || !bd.hasCallDate()) return null;
+        return ProtoSerializationUtil.deserializeOptionalLocalDate(bd.getCallDate(), "bond_details.call_date");
+    }
+
+    public void setCallDate(LocalDate callDate) {
+        BondDetailsProto.Builder bd = currentBondDetailsForWrite();
+        if (callDate == null) {
+            bd.clearCallDate();
+        } else {
+            bd.setCallDate(ProtoSerializationUtil.serializeLocalDate(callDate));
+        }
+        commitBondDetails(bd);
+    }
+
     public BigDecimal getPriceScaleFactor() {
         return getFaceValue().divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
     }

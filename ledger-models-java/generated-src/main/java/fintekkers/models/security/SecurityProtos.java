@@ -124,7 +124,7 @@ public final class SecurityProtos {
       "ity.FxSpotDetailsProtoH\000\022E\n\rmbs_extensio" +
       "n\030\317\001 \001(\0132-.fintekkers.models.security.Mb" +
       "sExtensionProtoB\022\n\020non_bond_detailsJ\004\010\017\020" +
-      "\020\"\235\004\n\020BondDetailsProto\022>\n\013coupon_rate\030\001 " +
+      "\020\"\352\004\n\020BondDetailsProto\022>\n\013coupon_rate\030\001 " +
       "\001(\0132).fintekkers.models.util.DecimalValu" +
       "eProto\022@\n\013coupon_type\030\002 \001(\0162+.fintekkers" +
       ".models.security.CouponTypeProto\022J\n\020coup" +
@@ -137,42 +137,44 @@ public final class SecurityProtos {
       "alDateProto\022=\n\rmaturity_date\030\007 \001(\0132&.fin" +
       "tekkers.models.util.LocalDateProto\022E\n\ris" +
       "suance_info\030\010 \003(\0132..fintekkers.models.se" +
-      "curity.bond.IssuanceProto\"\335\001\n\022TipsExtens" +
-      "ionProto\022;\n\010base_cpi\030\001 \001(\0132).fintekkers." +
-      "models.util.DecimalValueProto\022:\n\nindex_d" +
-      "ate\030\002 \001(\0132&.fintekkers.models.util.Local" +
-      "DateProto\022N\n\024inflation_index_type\030\003 \001(\0162" +
-      "0.fintekkers.models.security.index.Index" +
-      "TypeProto\"\351\001\n\021FrnExtensionProto\0229\n\006sprea" +
-      "d\030\001 \001(\0132).fintekkers.models.util.Decimal" +
-      "ValueProto\022N\n\024reference_rate_index\030\002 \001(\016" +
-      "20.fintekkers.models.security.index.Inde" +
-      "xTypeProto\022I\n\017reset_frequency\030\003 \001(\01620.fi" +
-      "ntekkers.models.security.CouponFrequency" +
-      "Proto\"\372\003\n\021MbsExtensionProto\022\023\n\013pool_numb" +
-      "er\030\001 \001(\t\022<\n\006agency\030\002 \001(\0162,.fintekkers.mo" +
-      "dels.security.bond.AgencyProto\0226\n\003wac\030\003 " +
-      "\001(\0132).fintekkers.models.util.DecimalValu" +
-      "eProto\022\013\n\003wam\030\004 \001(\005\022D\n\021pass_through_rate" +
-      "\030\005 \001(\0132).fintekkers.models.util.DecimalV" +
-      "alueProto\022A\n\016current_factor\030\006 \001(\0132).fint" +
-      "ekkers.models.util.DecimalValueProto\022F\n\023" +
-      "original_face_value\030\007 \001(\0132).fintekkers.m" +
-      "odels.util.DecimalValueProto\022>\n\013current_" +
-      "upb\030\010 \001(\0132).fintekkers.models.util.Decim" +
-      "alValueProto\022<\n\tpsa_speed\030\t \001(\0132).fintek" +
-      "kers.models.util.DecimalValueProto\"\232\001\n\021I" +
-      "ndexDetailsProto\022D\n\nindex_type\030\001 \001(\01620.f" +
+      "curity.bond.IssuanceProto\022\020\n\010callable\030\t " +
+      "\001(\010\0229\n\tcall_date\030\n \001(\0132&.fintekkers.mode" +
+      "ls.util.LocalDateProto\"\335\001\n\022TipsExtension" +
+      "Proto\022;\n\010base_cpi\030\001 \001(\0132).fintekkers.mod" +
+      "els.util.DecimalValueProto\022:\n\nindex_date" +
+      "\030\002 \001(\0132&.fintekkers.models.util.LocalDat" +
+      "eProto\022N\n\024inflation_index_type\030\003 \001(\01620.f" +
       "intekkers.models.security.index.IndexTyp" +
-      "eProto\022?\n\014constituents\030\002 \003(\0132).fintekker" +
-      "s.models.security.SecurityProto\"\024\n\022Equit" +
-      "yDetailsProto\"#\n\020CashDetailsProto\022\017\n\007cas" +
-      "h_id\030\001 \001(\t\"\255\001\n\022FxSpotDetailsProto\022@\n\rbas" +
-      "e_currency\030\001 \001(\0132).fintekkers.models.sec" +
-      "urity.SecurityProto\022A\n\016quote_currency\030\002 " +
-      "\001(\0132).fintekkers.models.security.Securit" +
-      "yProto\022\022\n\nconvention\030\003 \001(\tB\022B\016SecurityPr" +
-      "otosP\001b\006proto3"
+      "eProto\"\351\001\n\021FrnExtensionProto\0229\n\006spread\030\001" +
+      " \001(\0132).fintekkers.models.util.DecimalVal" +
+      "ueProto\022N\n\024reference_rate_index\030\002 \001(\01620." +
+      "fintekkers.models.security.index.IndexTy" +
+      "peProto\022I\n\017reset_frequency\030\003 \001(\01620.finte" +
+      "kkers.models.security.CouponFrequencyPro" +
+      "to\"\372\003\n\021MbsExtensionProto\022\023\n\013pool_number\030" +
+      "\001 \001(\t\022<\n\006agency\030\002 \001(\0162,.fintekkers.model" +
+      "s.security.bond.AgencyProto\0226\n\003wac\030\003 \001(\013" +
+      "2).fintekkers.models.util.DecimalValuePr" +
+      "oto\022\013\n\003wam\030\004 \001(\005\022D\n\021pass_through_rate\030\005 " +
+      "\001(\0132).fintekkers.models.util.DecimalValu" +
+      "eProto\022A\n\016current_factor\030\006 \001(\0132).fintekk" +
+      "ers.models.util.DecimalValueProto\022F\n\023ori" +
+      "ginal_face_value\030\007 \001(\0132).fintekkers.mode" +
+      "ls.util.DecimalValueProto\022>\n\013current_upb" +
+      "\030\010 \001(\0132).fintekkers.models.util.DecimalV" +
+      "alueProto\022<\n\tpsa_speed\030\t \001(\0132).fintekker" +
+      "s.models.util.DecimalValueProto\"\232\001\n\021Inde" +
+      "xDetailsProto\022D\n\nindex_type\030\001 \001(\01620.fint" +
+      "ekkers.models.security.index.IndexTypePr" +
+      "oto\022?\n\014constituents\030\002 \003(\0132).fintekkers.m" +
+      "odels.security.SecurityProto\"\024\n\022EquityDe" +
+      "tailsProto\"#\n\020CashDetailsProto\022\017\n\007cash_i" +
+      "d\030\001 \001(\t\"\255\001\n\022FxSpotDetailsProto\022@\n\rbase_c" +
+      "urrency\030\001 \001(\0132).fintekkers.models.securi" +
+      "ty.SecurityProto\022A\n\016quote_currency\030\002 \001(\013" +
+      "2).fintekkers.models.security.SecurityPr" +
+      "oto\022\022\n\nconvention\030\003 \001(\tB\022B\016SecurityProto" +
+      "sP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -204,7 +206,7 @@ public final class SecurityProtos {
     internal_static_fintekkers_models_security_BondDetailsProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_security_BondDetailsProto_descriptor,
-        new java.lang.String[] { "CouponRate", "CouponType", "CouponFrequency", "DatedDate", "FaceValue", "IssueDate", "MaturityDate", "IssuanceInfo", });
+        new java.lang.String[] { "CouponRate", "CouponType", "CouponFrequency", "DatedDate", "FaceValue", "IssueDate", "MaturityDate", "IssuanceInfo", "Callable", "CallDate", });
     internal_static_fintekkers_models_security_TipsExtensionProto_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_fintekkers_models_security_TipsExtensionProto_fieldAccessorTable = new

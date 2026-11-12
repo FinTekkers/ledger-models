@@ -165,6 +165,17 @@ declare class Security {
      */
     getMaturityDate(): Date | null;
     /**
+     * Returns bond_details.callable: true when the issuer may redeem the bond
+     * before maturity (LM-465). False when there are no bond details.
+     */
+    isCallable(): boolean;
+    /**
+     * Returns bond_details.call_date, the first date the issuer may redeem the
+     * bond at par, or null when unset. It is not the maturity date:
+     * getMaturityDate() stays the legal final maturity (LM-465).
+     */
+    getCallDate(): Date | null;
+    /**
      * Returns the canonical bond_details sub-message if set, else undefined.
      * TIPS and FRN extras live in their own tips_extension / frn_extension
      * fields and co-exist with bond_details.
