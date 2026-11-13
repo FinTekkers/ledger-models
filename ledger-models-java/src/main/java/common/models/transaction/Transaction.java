@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static common.models.postion.Field.*;
@@ -64,6 +65,8 @@ import static common.models.postion.Field.*;
  * serialise is not safe, as for any plain mutable object.
  */
 public class Transaction extends RawDataModelObject implements ITransaction {
+
+    private static final Logger LOG = Logger.getLogger(Transaction.class.getName());
 
     // ---- Fetcher hook (parity with Security.Fetcher + Portfolio.Fetcher) ----
 
@@ -241,9 +244,11 @@ public class Transaction extends RawDataModelObject implements ITransaction {
         if(security instanceof BondSecurity) {
             BigDecimal bondFaceValue = ((BondSecurity) security).getFaceValue();
             if (bondFaceValue != null && quantity.doubleValue() < bondFaceValue.doubleValue()) {
-                throw new TransactionProcessingException("Quantity must be expressed in face value. The quantity provided " +
-                        "is below face value so you likely need to scale up the quantity. If this is a fraction " +
-                        "of a bond unit, then that is not currently supported (should be a small chance)");
+                // LM-471: bond quantity is par in dollars, so a small par amount is valid
+                // (e.g. SOMA BUY 39). Warn in case the caller meant units, but accept it.
+                LOG.warning("Bond transaction quantity " + quantity.toPlainString() + " is below the face value "
+                        + bondFaceValue.toPlainString() + " of security " + security.getID()
+                        + ". Quantity should be expressed in par; check it was not given in bond units.");
             }
         }
 
