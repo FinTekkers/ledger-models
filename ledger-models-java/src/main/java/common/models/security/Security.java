@@ -20,6 +20,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /***
  * Generally shouldn't be used except for tests, or absolute emergencies.
@@ -33,6 +35,8 @@ import java.util.*;
  * separate SecuritySerializer indirection. Mirrors Rust / Python / JS wrappers.
  */
 public class Security extends RawDataModelObject implements Comparable, IFinancialModelObject {
+
+    private static final Logger LOG = Logger.getLogger(Security.class.getName());
 
     /** Active proto. Mutable: swapped on lazy hydration. */
     private SecurityProto proto;
@@ -418,6 +422,42 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
             resolved = fetchThrough(f, id, asOf);
         }
         return (resolved == null || resolved.getIsLink()) ? null : resolved;
+    }
+
+    /**
+     * {@link #resolveLink(SecurityProto)} for deserializers (LM-442): on a
+     * miss or a fetcher failure, logs a warning and keeps the link, so only
+     * this object's security class is unknown. Never throws on a miss, and
+     * never fetches when no {@link Fetcher} is configured. A non-link input
+     * is returned unchanged. Shared by the Transaction and Position
+     * serializers: one resolve path, no second cache.
+     */
+    public static SecurityProto resolveLinkOrKeep(SecurityProto security) {
+        if (security == null || !security.getIsLink()) return security;
+        SecurityProto resolved;
+        try {
+            resolved = resolveLink(security);
+        } catch (RuntimeException e) {
+            LOG.log(Level.WARNING, "Security link " + linkIdText(security)
+                    + " could not be resolved; keeping the link", e);
+            return security;
+        }
+        if (resolved == null) {
+            LOG.warning("Security link " + linkIdText(security)
+                    + " not in LinkCache.SECURITY and not returned by the Security.Fetcher; keeping the link");
+            return security;
+        }
+        return resolved;
+    }
+
+    private static String linkIdText(SecurityProto link) {
+        if (!link.hasUuid()) return "?";
+        try {
+            UUID id = ProtoSerializationUtil.deserializeUUID(link.getUuid());
+            return id != null ? id.toString() : "?";
+        } catch (RuntimeException e) {
+            return "?";
+        }
     }
 
     /** Swap the wrapper's internal proto to the resolved one and rebuild the

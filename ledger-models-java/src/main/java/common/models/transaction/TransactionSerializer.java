@@ -370,26 +370,12 @@ public final class TransactionSerializer implements IRawDataModelObjectSerialize
     // ---- link resolution, at build only ---------------------------------
 
     /**
-     * Resolves a security link through {@link Security#resolveLink}. On a
-     * miss or a fetcher failure, keeps the link: it is written back
+     * Resolves a security link through {@link Security#resolveLinkOrKeep}.
+     * On a miss or a fetcher failure, keeps the link: it is written back
      * unchanged, and only this row's security class is unknown.
      */
     private static SecurityProto resolveSecurity(SecurityProto security) {
-        if (!security.getIsLink()) return security;
-        SecurityProto resolved;
-        try {
-            resolved = Security.resolveLink(security);
-        } catch (RuntimeException e) {
-            LOG.log(Level.WARNING, "Security link " + uuidText(security.hasUuid() ? security.getUuid() : null)
-                    + " could not be resolved; keeping the link", e);
-            return security;
-        }
-        if (resolved == null) {
-            LOG.warning("Security link " + uuidText(security.hasUuid() ? security.getUuid() : null)
-                    + " not in LinkCache.SECURITY and not returned by the Security.Fetcher; keeping the link");
-            return security;
-        }
-        return resolved;
+        return Security.resolveLinkOrKeep(security);
     }
 
     private static PortfolioProto resolvePortfolio(PortfolioProto portfolio) {
