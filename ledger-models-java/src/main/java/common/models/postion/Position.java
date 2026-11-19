@@ -4,9 +4,11 @@ import common.models.IFinancialModelObject;
 import common.models.IRawDataModelObject;
 import common.models.portfolio.Portfolio;
 import common.models.security.Security;
+import fintekkers.models.security.SecurityProto;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
@@ -20,6 +22,11 @@ public class Position implements IFinancialModelObject, IRawDataModelObject {
 
     private final HashMap<Field, Object> fields;
     private final HashMap<Measure, BigDecimal> measures;
+    /**
+     * The incoming link proto of a security field (LM-442), so the serializer
+     * writes back the link it received. Holds only links, never resolved data.
+     */
+    private final EnumMap<Field, SecurityProto> securityWireForms = new EnumMap<>(Field.class);
     private ZonedDateTime asOf;
 
     public void setAsOfDate(ZonedDateTime asOf) {
@@ -85,8 +92,23 @@ public class Position implements IFinancialModelObject, IRawDataModelObject {
 
     //Fields
 
+    /**
+     * Returns the field's value from this position's field map. For
+     * {@code MATURITY_DATE} and {@code ISSUE_DATE} with no map entry, falls
+     * back to the position's {@code SECURITY} when it is resolved (not a
+     * link), so a link never fetches or throws here (LM-442). A map entry
+     * always wins.
+     */
     public Object getField(Field field) {
-        return this.fields.get(field);
+        Object value = this.fields.get(field);
+        if (value != null) return value;
+        if (field == Field.MATURITY_DATE || field == Field.ISSUE_DATE) {
+            Object security = this.fields.get(Field.SECURITY);
+            if (security instanceof Security && !((Security) security).isLink()) {
+                return ((Security) security).getField(field);
+            }
+        }
+        return null;
     }
 
     public Set<Field> getFields() {
@@ -94,6 +116,7 @@ public class Position implements IFinancialModelObject, IRawDataModelObject {
     }
 
     public void setFieldValue(Field field, Object value) {
+        this.securityWireForms.remove(field);
         if (value == null) {
             this.fields.remove(field);
         } else if(field.validateFieldValue(value)) {
@@ -104,6 +127,26 @@ public class Position implements IFinancialModelObject, IRawDataModelObject {
                     field.getType().getName(),
                     value.getClass().getName()));
         }
+    }
+
+    /**
+     * Serializer-internal (used by {@code PositionSerializer.deserialize}):
+     * sets a security field to its resolved value and records {@code wireForm}
+     * if it is a link, so serialize writes back the same link.
+     */
+    public void setSecurityFieldValue(Field field, Security value, SecurityProto wireForm) {
+        setFieldValue(field, value);
+        if (value != null && wireForm != null && wireForm.getIsLink()) {
+            this.securityWireForms.put(field, wireForm);
+        }
+    }
+
+    /**
+     * Serializer-internal (used by {@code PositionSerializer.serialize}): the
+     * link this security field was received as, or {@code null}.
+     */
+    public SecurityProto getSecurityWireForm(Field field) {
+        return this.securityWireForms.get(field);
     }
 
     //Measures

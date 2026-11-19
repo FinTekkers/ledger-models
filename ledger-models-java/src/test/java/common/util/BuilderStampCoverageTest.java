@@ -347,6 +347,10 @@ class BuilderStampCoverageTest {
                 "pass-through: returns the caller's proto, or the cached / fetched one unchanged (LM-440); builds nothing");
         exclude("common.models.portfolio.Portfolio#resolveLink(PortfolioProto)",
                 "pass-through: returns the caller's proto, or the cached / fetched one unchanged (LM-444); builds nothing");
+        exclude("common.models.security.Security#resolveLinkOrKeep(SecurityProto)",
+                "pass-through: returns resolveLink's result or the caller's link unchanged (LM-442); builds nothing");
+        exclude("common.models.postion.Position#getSecurityWireForm(Field)",
+                "accessor: returns the link proto received at deserialize, unchanged (LM-442); builds nothing");
     }
 
     private static void fixture(String member, Supplier<Message> build, String... callerSupplied) {
