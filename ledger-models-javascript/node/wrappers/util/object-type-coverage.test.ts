@@ -10,7 +10,7 @@ import { ObjectTypeProto } from '../../fintekkers/models/util/object_type_pb';
 import { UUIDProto } from '../../fintekkers/models/util/uuid_pb';
 
 import * as objectTypes from './object-types';
-import { ObjectTyped } from './object-types';
+import type { ObjectTyped } from './object-types';
 
 // The descriptor set compile.sh writes for every language.
 const DESCRIPTOR_SET = path.resolve(__dirname, '../../../../ledger-models-rust/ledger_models_file_descriptor_set_v_todo.bin');

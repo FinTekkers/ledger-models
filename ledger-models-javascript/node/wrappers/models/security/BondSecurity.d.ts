@@ -1,11 +1,11 @@
 import Security from './security';
 import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/security/security_pb';
-import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
+import type { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { CouponFrequency } from './coupon_frequency';
 import { CouponType } from './coupon_type';
 import { Tenor } from './term';
-import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
-import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
+import type { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
+import type { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
 import { Decimal } from 'decimal.js';
 import Issuance from './Issuance';
 /**

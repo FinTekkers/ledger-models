@@ -1,9 +1,9 @@
 import Price from '../../models/price/Price';
 import { PositionFilter } from '../../models/position/positionfilter';
-import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
-import { PriceProto } from '../../../fintekkers/models/price/price_pb';
-import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
-import { CreatePriceResponseProto } from '../../../fintekkers/requests/price/create_price_response_pb';
+import type { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
+import type { PriceProto } from '../../../fintekkers/models/price/price_pb';
+import type { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
+import type { CreatePriceResponseProto } from '../../../fintekkers/requests/price/create_price_response_pb';
 import LinkResolver from '../../util/link-resolver';
 declare class PriceService {
     private client;

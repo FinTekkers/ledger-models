@@ -8,7 +8,7 @@ import * as dt from '../../models/utils/datetime';
 //Requests & Services
 import { PortfolioService } from './PortfolioService';
 import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
-import { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portfolio/create_portfolio_response_pb';
+import type { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portfolio/create_portfolio_response_pb';
 import { PositionFilter } from '../../models/position/positionfilter';
 
 

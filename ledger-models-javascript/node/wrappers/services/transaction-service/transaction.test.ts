@@ -15,7 +15,7 @@ import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { PortfolioService } from '../portfolio-service/PortfolioService';
 import { TransactionService } from './TransactionService';
 import Transaction from '../../models/transaction/transaction';
-import { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
+import type { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
 
 import assert = require("assert");
 import { PositionFilter } from '../../models/position/positionfilter';

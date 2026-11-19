@@ -6,7 +6,7 @@ import * as path from 'path';
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
 import { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
-import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
+import type { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 import { UUID } from '../utils/uuid';
 import { PRICE_PREFIX, UNKNOWN_TRADE_PRICE_TYPE, validate } from './transaction_rules';
 

@@ -5,7 +5,7 @@ import { FieldMapEntry, MeasureMapEntry } from "../../../fintekkers/models/posit
 import Portfolio from "../portfolio/portfolio";
 import Security from "../security/security";
 import { MeasureProto } from "../../../fintekkers/models/position/measure_pb";
-import Decimal from "decimal.js";
+import type Decimal from "decimal.js";
 import { ProtoSerializationUtil } from "../utils/serialization";
 import { ProtoEnum } from "../utils/protoEnum";
 import { Field } from "./field";
@@ -13,7 +13,7 @@ import { UUID } from "../utils/uuid";
 import { ZonedDateTime } from "../utils/datetime";
 import { PriceProto } from "../../../fintekkers/models/price/price_pb";
 import Transaction from "../transaction/transaction";
-import { DateTime } from 'luxon';
+import type { DateTime } from 'luxon';
 import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
 import { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
 import { LocalDateProto } from "../../../fintekkers/models/util/local_date_pb";

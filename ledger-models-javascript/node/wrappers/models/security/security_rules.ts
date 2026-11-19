@@ -1,6 +1,6 @@
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
+import type { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import type { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 import { ModelValidationError, violation } from '../errors';
 import { UUID } from '../utils/uuid';
 import { decodeDecimal, isUnsetDecimal, toCanonicalString, CompactDecimal } from '../utils/decimal';

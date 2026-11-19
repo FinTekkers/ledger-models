@@ -1,6 +1,6 @@
-import { IssuanceProto } from "../../../fintekkers/models/security/bond/issuance_pb";
-import { AuctionTypeProto } from "../../../fintekkers/models/security/bond/auction_type_pb";
-import Decimal from "decimal.js";
+import type { IssuanceProto } from "../../../fintekkers/models/security/bond/issuance_pb";
+import type { AuctionTypeProto } from "../../../fintekkers/models/security/bond/auction_type_pb";
+import type Decimal from "decimal.js";
 /**
  * Typed wrapper around a single IssuanceProto. Returns null for unset
  * sub-messages and Decimal/Date for populated ones — callers no longer

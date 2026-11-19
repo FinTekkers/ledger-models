@@ -1,4 +1,4 @@
-import { Any } from 'google-protobuf/google/protobuf/any_pb';
+import type { Any } from 'google-protobuf/google/protobuf/any_pb';
 
 import { pack, unpack } from './serialization.util';
 import { ZonedDateTime } from './datetime';

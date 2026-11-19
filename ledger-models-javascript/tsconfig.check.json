@@ -1,0 +1,13 @@
+{
+  // Check only, never emits (LM-473). Consumers' svelte-check compiles the
+  // shipped wrapper .ts with importsNotUsedAsValues: error, so a type-only
+  // plain import must fail here first. The build tsconfig.json is unchanged.
+  // TypeScript 5.5+ removes this option: switch to verbatimModuleSyntax.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "importsNotUsedAsValues": "error",
+    "ignoreDeprecations": "5.0"
+  },
+  "include": ["node/wrappers/**/*"]
+}

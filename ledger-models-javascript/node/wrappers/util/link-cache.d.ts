@@ -1,8 +1,8 @@
-import { SecurityProto } from '../../fintekkers/models/security/security_pb';
-import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
-import { PriceProto } from '../../fintekkers/models/price/price_pb';
-import { TransactionProto } from '../../fintekkers/models/transaction/transaction_pb';
-import { ZonedDateTime } from '../models/utils/datetime';
+import type { SecurityProto } from '../../fintekkers/models/security/security_pb';
+import type { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
+import type { PriceProto } from '../../fintekkers/models/price/price_pb';
+import type { TransactionProto } from '../../fintekkers/models/transaction/transaction_pb';
+import type { ZonedDateTime } from '../models/utils/datetime';
 /**
  * LinkCache — process-wide cache of resolved proto bodies backing link-mode
  * wrappers. TypeScript mirror of `common.util.LinkCache` (Java) and

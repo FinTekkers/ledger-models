@@ -7,7 +7,7 @@ import { SecurityProto, TipsExtensionProto } from '../../../fintekkers/models/se
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 import { dateToLocalDateProto, localDateProtoToDate } from '../utils/date';
-import { Decimal } from 'decimal.js';
+import type { Decimal } from 'decimal.js';
 import { decodeDecimal, toDecimalJs, withField } from '../utils/decimal';
 import { stampOwn } from '../../util/object-types';
 

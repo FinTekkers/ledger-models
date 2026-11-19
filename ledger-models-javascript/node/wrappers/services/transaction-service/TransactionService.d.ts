@@ -1,8 +1,8 @@
 import Transaction from '../../models/transaction/transaction';
-import { PositionFilter } from '../../models/position/positionfilter';
-import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
-import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
-import { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
+import type { PositionFilter } from '../../models/position/positionfilter';
+import type { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
+import type { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
+import type { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
 import LinkResolver from '../../util/link-resolver';
 declare class TransactionService {
     private client;

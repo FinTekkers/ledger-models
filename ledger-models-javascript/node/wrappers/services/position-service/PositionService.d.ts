@@ -1,6 +1,6 @@
 import { Position } from "../../models/position/position";
-import { QueryPositionRequest } from '../../requests/position/QueryPositionRequest';
-import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
+import type { QueryPositionRequest } from '../../requests/position/QueryPositionRequest';
+import type { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 declare class PositionService {
     private client;
     constructor(apiKey?: string);

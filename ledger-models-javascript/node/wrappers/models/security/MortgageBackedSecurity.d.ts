@@ -1,7 +1,7 @@
 import BondSecurity, { BondPricerInputs } from './BondSecurity';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { AgencyProto } from '../../../fintekkers/models/security/bond/agency_pb';
-import { Decimal } from 'decimal.js';
+import type { Decimal } from 'decimal.js';
 /**
  * MBS-specific accessors layered on top of BondSecurity. Pool-level fields
  * (agency, WAC, WAM, pass-through rate, factors, balances, PSA) live in

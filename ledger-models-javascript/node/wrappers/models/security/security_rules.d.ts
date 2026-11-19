@@ -1,5 +1,5 @@
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
+import type { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import type { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 /**
  * Security input rules: JS counterpart of Java's SecurityRules
  * (docs/adr/typed-input-errors.md). Pure: proto in, violations out.

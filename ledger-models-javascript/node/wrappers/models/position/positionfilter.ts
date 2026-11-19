@@ -1,8 +1,8 @@
 import { FieldMapEntry, PositionFilterOperator } from '../../../fintekkers/models/position/position_util_pb';
-import { FieldProto } from '../../../fintekkers/models/position/field_pb';
+import type { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { pack } from '../utils/serialization.util';
 import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
-import { Identifier } from '../security/identifier';
+import type { Identifier } from '../security/identifier';
 import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
 import { stamp } from '../../util/object-types';
 

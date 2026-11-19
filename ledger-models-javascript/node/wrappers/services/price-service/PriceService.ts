@@ -3,15 +3,15 @@ import { promisify } from 'util';
 import Price from '../../models/price/Price';
 import { PositionFilter } from '../../models/position/positionfilter';
 import { FieldProto } from '../../../fintekkers/models/position/field_pb';
-import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
-import { PriceProto } from '../../../fintekkers/models/price/price_pb';
-import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
+import type { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
+import type { PriceProto } from '../../../fintekkers/models/price/price_pb';
+import type { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
 import { PriceClient } from '../../../fintekkers/services/price-service/price_service_grpc_pb';
 import { QueryPriceRequestProto } from '../../../fintekkers/requests/price/query_price_request_pb';
-import { QueryPriceResponseProto } from '../../../fintekkers/requests/price/query_price_response_pb';
+import type { QueryPriceResponseProto } from '../../../fintekkers/requests/price/query_price_response_pb';
 import { CreatePriceRequestProto } from '../../../fintekkers/requests/price/create_price_request_pb';
-import { CreatePriceResponseProto } from '../../../fintekkers/requests/price/create_price_response_pb';
+import type { CreatePriceResponseProto } from '../../../fintekkers/requests/price/create_price_response_pb';
 
 import { UUID } from '../../models/utils/uuid';
 import * as dt from '../../models/utils/datetime';

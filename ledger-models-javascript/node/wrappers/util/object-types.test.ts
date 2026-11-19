@@ -7,7 +7,7 @@ import * as ts from 'typescript';
 import * as jspb from 'google-protobuf';
 
 import { ObjectTypeProto } from '../../fintekkers/models/util/object_type_pb';
-import { VersionProto } from '../../fintekkers/models/util/version_pb';
+import type { VersionProto } from '../../fintekkers/models/util/version_pb';
 import { SecurityProto } from '../../fintekkers/models/security/security_pb';
 import { PriceProto } from '../../fintekkers/models/price/price_pb';
 import { PriceTypeProto } from '../../fintekkers/models/price/price_type_pb';
@@ -27,13 +27,13 @@ import { CouponFrequencyProto } from '../../fintekkers/models/security/coupon_fr
 import { IndexTypeProto } from '../../fintekkers/models/security/index/index_type_pb';
 import { AgencyProto } from '../../fintekkers/models/security/bond/agency_pb';
 import { CreatePriceResponseProto } from '../../fintekkers/requests/price/create_price_response_pb';
-import { CreateSecurityRequestProto } from '../../fintekkers/requests/security/create_security_request_pb';
+import type { CreateSecurityRequestProto } from '../../fintekkers/requests/security/create_security_request_pb';
 import { CreateSecurityResponseProto } from '../../fintekkers/requests/security/create_security_response_pb';
 import { CreateTransactionResponseProto } from '../../fintekkers/requests/transaction/create_transaction_response_pb';
 import { CreatePortfolioResponseProto } from '../../fintekkers/requests/portfolio/create_portfolio_response_pb';
 
 import * as objectTypes from './object-types';
-import { ObjectTyped } from './object-types';
+import type { ObjectTyped } from './object-types';
 import LinkResolver from './link-resolver';
 import Price from '../models/price/Price';
 import Security from '../models/security/security';

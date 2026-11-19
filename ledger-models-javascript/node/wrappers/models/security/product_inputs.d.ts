@@ -24,7 +24,7 @@
  * valuation_arms / arm keys.
  */
 import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
-import { PriceProto } from '../../../fintekkers/models/price/price_pb';
+import type { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { InflationIndexInput, ProductInput, ReferenceRateFixingProto, YieldCurveInput } from '../../../fintekkers/requests/valuation/product_inputs_pb';
 /** The closed requires vocabulary: market data an input type needs beyond the price. */

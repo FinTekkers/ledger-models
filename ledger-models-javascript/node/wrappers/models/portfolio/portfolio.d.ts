@@ -1,4 +1,4 @@
-import { PortfolioProto } from "../../../fintekkers/models/portfolio/portfolio_pb";
+import type { PortfolioProto } from "../../../fintekkers/models/portfolio/portfolio_pb";
 import { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";

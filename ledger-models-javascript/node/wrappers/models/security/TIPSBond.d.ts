@@ -1,7 +1,7 @@
 import BondSecurity, { BondPricerInputs } from './BondSecurity';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
-import { Decimal } from 'decimal.js';
+import type { Decimal } from 'decimal.js';
 /**
  * TIPS-specific accessors layered on top of BondSecurity. The inflation
  * fields live in the parallel tips_extension sub-message; bond_details

@@ -1,8 +1,8 @@
-import { IssuanceProto } from "../../../fintekkers/models/security/bond/issuance_pb";
-import { AuctionTypeProto } from "../../../fintekkers/models/security/bond/auction_type_pb";
-import { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value_pb";
+import type { IssuanceProto } from "../../../fintekkers/models/security/bond/issuance_pb";
+import type { AuctionTypeProto } from "../../../fintekkers/models/security/bond/auction_type_pb";
+import type { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value_pb";
 import { localDateProtoToDate } from "../utils/date";
-import Decimal from "decimal.js";
+import type Decimal from "decimal.js";
 import { decodeDecimal, isUnsetDecimal, toDecimalJs } from "../utils/decimal";
 
 /**

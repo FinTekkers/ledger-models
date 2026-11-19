@@ -17,7 +17,7 @@
 import hierarchy from '../../../../hierarchy.json';
 import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import type { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { NoDefaultPriceTypeError } from '../errors';
 import { UUID } from '../utils/uuid';
 import { allProductTypes, parentOf } from './product_hierarchy';

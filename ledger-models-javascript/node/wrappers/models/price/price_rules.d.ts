@@ -1,5 +1,5 @@
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
-import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
+import type { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 /**
  * Price input rules (LM-289): JS counterpart of Java's PriceRules
  * (docs/adr/typed-input-errors.md). Pure: proto in, violations out.

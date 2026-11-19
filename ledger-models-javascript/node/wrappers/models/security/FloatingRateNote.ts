@@ -7,7 +7,7 @@ import { SecurityProto, FrnExtensionProto } from '../../../fintekkers/models/sec
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
-import { Decimal } from 'decimal.js';
+import type { Decimal } from 'decimal.js';
 import { decodeDecimal, toDecimalJs, withField } from '../utils/decimal';
 import { stampOwn } from '../../util/object-types';
 

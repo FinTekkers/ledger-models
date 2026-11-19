@@ -6,7 +6,7 @@ import { Identifier } from '../security/identifier';
 import { IdentifierProto } from '../../../fintekkers/models/security/identifier/identifier_pb';
 import { IdentifierTypeProto } from '../../../fintekkers/models/security/identifier/identifier_type_pb';
 import { unpack } from '../utils/serialization.util';
-import { Any } from 'google-protobuf/google/protobuf/any_pb';
+import type { Any } from 'google-protobuf/google/protobuf/any_pb';
 import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
 import { ObjectTypeProto } from '../../../fintekkers/models/util/object_type_pb';
 

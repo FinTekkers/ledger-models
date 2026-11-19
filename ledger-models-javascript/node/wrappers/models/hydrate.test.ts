@@ -1,7 +1,7 @@
 // Tests for the W1 async `hydrate()` method on Security/Portfolio wrappers
 // and the LinkResolver default singleton.
 
-import * as grpc from '@grpc/grpc-js';
+import type * as grpc from '@grpc/grpc-js';
 
 import { UUID } from './utils/uuid';
 import { ZonedDateTime } from './utils/datetime';
@@ -9,12 +9,12 @@ import { LocalTimestampProto } from '../../fintekkers/models/util/local_timestam
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import { SecurityProto } from '../../fintekkers/models/security/security_pb';
 import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
-import { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
+import type { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
 import { QuerySecurityResponseProto } from '../../fintekkers/requests/security/query_security_response_pb';
-import { QueryPortfolioRequestProto } from '../../fintekkers/requests/portfolio/query_portfolio_request_pb';
+import type { QueryPortfolioRequestProto } from '../../fintekkers/requests/portfolio/query_portfolio_request_pb';
 import { QueryPortfolioResponseProto } from '../../fintekkers/requests/portfolio/query_portfolio_response_pb';
-import { SecurityClient } from '../../fintekkers/services/security-service/security_service_grpc_pb';
-import { PortfolioClient } from '../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
+import type { SecurityClient } from '../../fintekkers/services/security-service/security_service_grpc_pb';
+import type { PortfolioClient } from '../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
 
 import Security from './security/security';
 import Portfolio from './portfolio/portfolio';

@@ -5,7 +5,7 @@ import { UUID } from '../models/utils/uuid';
 
 import { FieldProto } from '../../fintekkers/models/position/field_pb';
 import { UUIDProto } from '../../fintekkers/models/util/uuid_pb';
-import { QueryPriceRequestProto } from '../../fintekkers/requests/price/query_price_request_pb';
+import type { QueryPriceRequestProto } from '../../fintekkers/requests/price/query_price_request_pb';
 
 /**
  * A PriceService whose gRPC client records each search request. Same shape

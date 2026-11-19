@@ -1,4 +1,4 @@
-import { PriceProto } from "../../../fintekkers/models/price/price_pb";
+import type { PriceProto } from "../../../fintekkers/models/price/price_pb";
 import { PriceTypeProto } from "../../../fintekkers/models/price/price_type_pb";
 import { TransactionType } from "./transaction_type";
 import { StrategyAllocationProto } from "../../../fintekkers/models/strategy/strategy_allocation_pb";

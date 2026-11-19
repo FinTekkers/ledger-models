@@ -1,5 +1,5 @@
-import BondSecurity from './BondSecurity';
-import { Tenor } from './term';
+import type BondSecurity from './BondSecurity';
+import type { Tenor } from './term';
 import { ReferenceRateFixingProto } from '../../../fintekkers/requests/valuation/product_inputs_pb';
 /**
  * The standard bill term, in weeks, that `tenor` is within 3 days of: 4, 6,

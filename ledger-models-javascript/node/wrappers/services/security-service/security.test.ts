@@ -1,7 +1,7 @@
 // Models
 import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/security/security_pb';
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
-import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
+import type { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
@@ -12,7 +12,7 @@ import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import * as uuid from '../../models/utils/uuid';
 import * as dt from '../../models/utils/datetime';
 
-import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
+import type { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
 import { SecurityService } from './SecurityService';
 import { PositionFilter } from '../../models/position/positionfilter';
 import { IssuanceProto } from '../../../fintekkers/models/security/bond/issuance_pb';

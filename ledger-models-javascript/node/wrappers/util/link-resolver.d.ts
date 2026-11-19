@@ -1,6 +1,6 @@
-import { SecurityProto } from '../../fintekkers/models/security/security_pb';
-import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
-import { LocalTimestampProto } from '../../fintekkers/models/util/local_timestamp_pb';
+import type { SecurityProto } from '../../fintekkers/models/security/security_pb';
+import type { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
+import type { LocalTimestampProto } from '../../fintekkers/models/util/local_timestamp_pb';
 import { SecurityClient } from '../../fintekkers/services/security-service/security_service_grpc_pb';
 import { PortfolioClient } from '../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
 import { TransactionClient } from '../../fintekkers/services/transaction-service/transaction_service_grpc_pb';

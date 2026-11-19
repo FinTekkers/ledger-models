@@ -4,16 +4,16 @@ import { UUID } from '../models/utils/uuid';
 import * as LinkCacheModuleTop from './link-cache';
 
 import { SecurityProto } from '../../fintekkers/models/security/security_pb';
-import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
+import type { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
 import { PriceProto } from '../../fintekkers/models/price/price_pb';
 import { DecimalValueProto } from '../../fintekkers/models/util/decimal_value_pb';
 import { IdentifierProto } from '../../fintekkers/models/security/identifier/identifier_pb';
 import { LocalTimestampProto } from '../../fintekkers/models/util/local_timestamp_pb';
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import { QuerySecurityResponseProto } from '../../fintekkers/requests/security/query_security_response_pb';
-import { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
+import type { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
 import { QueryPortfolioResponseProto } from '../../fintekkers/requests/portfolio/query_portfolio_response_pb';
-import { QueryPortfolioRequestProto } from '../../fintekkers/requests/portfolio/query_portfolio_request_pb';
+import type { QueryPortfolioRequestProto } from '../../fintekkers/requests/portfolio/query_portfolio_request_pb';
 
 interface CallLog {
   count: number;

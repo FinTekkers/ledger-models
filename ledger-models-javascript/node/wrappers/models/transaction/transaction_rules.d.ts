@@ -1,5 +1,5 @@
-import { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
-import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
+import type { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
+import type { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 /**
  * Transaction input rules: JS counterpart of Java's TransactionRules
  * (docs/adr/typed-input-errors.md). Pure: proto in, violations out.

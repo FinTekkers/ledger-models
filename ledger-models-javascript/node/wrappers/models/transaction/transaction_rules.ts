@@ -1,8 +1,8 @@
 import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
-import { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
-import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
-import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
+import type { TransactionProto } from '../../../fintekkers/models/transaction/transaction_pb';
+import type { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
+import type { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 import { ModelValidationError, violation } from '../errors';
 import { PRICE_TYPE } from '../price/price_rules';
 import { validate as validateSecurity } from '../security/security_rules';

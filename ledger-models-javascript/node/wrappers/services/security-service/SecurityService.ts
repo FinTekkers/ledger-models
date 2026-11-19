@@ -1,13 +1,13 @@
 import { promisify } from 'util';
 
 // Models
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
-import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
-import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
+import type { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import type { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
+import type { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 import Security from '../../models/security/security';
 
 // Model Utils
-import { PositionFilter } from '../../models/position/positionfilter';
+import type { PositionFilter } from '../../models/position/positionfilter';
 import * as dt from '../../models/utils/datetime';
 import { validateIdentifiersForCreate } from '../../models/security/identifier';
 import { requireValid } from '../../models/security/security_rules';
@@ -15,9 +15,9 @@ import { requireValid } from '../../models/security/security_rules';
 // Requests & Services
 import { SecurityClient } from '../../../fintekkers/services/security-service/security_service_grpc_pb';
 import { QuerySecurityRequestProto } from '../../../fintekkers/requests/security/query_security_request_pb';
-import { QuerySecurityResponseProto } from '../../../fintekkers/requests/security/query_security_response_pb';
+import type { QuerySecurityResponseProto } from '../../../fintekkers/requests/security/query_security_response_pb';
 import { CreateSecurityRequestProto } from '../../../fintekkers/requests/security/create_security_request_pb';
-import { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
+import type { CreateSecurityResponseProto } from '../../../fintekkers/requests/security/create_security_response_pb';
 
 import EnvConfig from '../../models/utils/requestcontext';
 import { Service } from '../../util/serviceaddress';

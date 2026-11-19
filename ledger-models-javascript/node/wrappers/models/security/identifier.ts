@@ -1,6 +1,6 @@
 import { IdentifierProto } from '../../../fintekkers/models/security/identifier/identifier_pb';
 import { IdentifierTypeProto } from '../../../fintekkers/models/security/identifier/identifier_type_pb';
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import type { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { stampOwn } from '../../util/object-types';
 
 /**

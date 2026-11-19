@@ -2,10 +2,10 @@
  * Typed valuation requests (LM-410). Same rule in Java / Rust / Python /
  * JS-TS. See docs/adr/product_input_builders.md.
  */
-import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
-import { PositionProto } from '../../../fintekkers/models/position/position_pb';
-import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
-import { ProductInput } from '../../../fintekkers/requests/valuation/product_inputs_pb';
+import type { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
+import type { PositionProto } from '../../../fintekkers/models/position/position_pb';
+import type { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
+import type { ProductInput } from '../../../fintekkers/requests/valuation/product_inputs_pb';
 import { ValuationRequestProto } from '../../../fintekkers/requests/valuation/valuation_request_pb';
 export declare class ValuationRequests {
     /**

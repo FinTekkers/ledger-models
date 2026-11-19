@@ -2,7 +2,7 @@ import BondSecurity, { BondPricerInputs } from './BondSecurity';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';
-import { Decimal } from 'decimal.js';
+import type { Decimal } from 'decimal.js';
 /**
  * FRN-specific accessors layered on top of BondSecurity. The floating-rate
  * fields live in the parallel frn_extension sub-message; bond_details

@@ -8,7 +8,7 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import * as jspb from 'google-protobuf';
+import type * as jspb from 'google-protobuf';
 
 import hierarchy from '../../../../hierarchy.json';
 import { inputTypeFor, checkProductInput, forSecurity, MarketData } from './product_inputs';
