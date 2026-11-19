@@ -6,7 +6,7 @@ import BondSecurity, {
 import { SecurityProto, MbsExtensionProto } from '../../../fintekkers/models/security/security_pb';
 import { AgencyProto } from '../../../fintekkers/models/security/bond/agency_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
-import { Decimal } from 'decimal.js';
+import type { Decimal } from 'decimal.js';
 import { decodeDecimal, toDecimalJs, withField } from '../utils/decimal';
 import { stampOwn } from '../../util/object-types';
 

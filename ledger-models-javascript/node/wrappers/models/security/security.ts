@@ -1,12 +1,12 @@
 import { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
-import { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
-import { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
+import type { UUIDProto } from "../../../fintekkers/models/util/uuid_pb";
+import type { LocalTimestampProto } from "../../../fintekkers/models/util/local_timestamp_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import { localDateProtoToDate } from "../utils/date";
 import { ProductTypeProto } from "../../../fintekkers/models/security/product_type_pb";
-import { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
+import type { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
 import { Identifier } from "./identifier";
 import { isDescendantOf } from "./product_hierarchy";
 import * as LinkCacheModule from "../../util/link-cache";

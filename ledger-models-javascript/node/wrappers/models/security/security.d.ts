@@ -2,7 +2,7 @@ import { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
-import { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
+import type { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
 import { Identifier } from "./identifier";
 import LinkResolver from "../../util/link-resolver";
 declare class Security {

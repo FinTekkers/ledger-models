@@ -1,6 +1,6 @@
-import BondSecurity from './BondSecurity';
-import Issuance from './Issuance';
-import { Tenor } from './term';
+import type BondSecurity from './BondSecurity';
+import type Issuance from './Issuance';
+import type { Tenor } from './term';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 import { ReferenceRateFixingProto } from '../../../fintekkers/requests/valuation/product_inputs_pb';

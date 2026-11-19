@@ -1,6 +1,6 @@
 import { PriceProto } from "../../../fintekkers/models/price/price_pb";
 import { PriceTypeProto } from "../../../fintekkers/models/price/price_type_pb";
-import { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value_pb";
+import type { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value_pb";
 import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import Security from "../security/security";
 import { ZonedDateTime } from "../utils/datetime";

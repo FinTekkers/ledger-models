@@ -2,8 +2,8 @@
 import { Position } from "../../models/position/position";
 
 // Requests
-import { QueryPositionRequestProto } from '../../../fintekkers/requests/position/query_position_request_pb';
-import { QueryPositionResponseProto } from '../../../fintekkers/requests/position/query_position_response_pb';
+import type { QueryPositionRequestProto } from '../../../fintekkers/requests/position/query_position_request_pb';
+import type { QueryPositionResponseProto } from '../../../fintekkers/requests/position/query_position_response_pb';
 
 // Requests & Services
 import { PositionClient } from '../../../fintekkers/services/position-service/position_service_grpc_pb';
@@ -11,8 +11,8 @@ import { PositionClient } from '../../../fintekkers/services/position-service/po
 //Utils
 import EnvConfig from '../../models/utils/requestcontext';
 import { Service } from '../../util/serviceaddress';
-import { QueryPositionRequest } from '../../requests/position/QueryPositionRequest';
-import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
+import type { QueryPositionRequest } from '../../requests/position/QueryPositionRequest';
+import type { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
 class PositionService {
   private client: PositionClient;

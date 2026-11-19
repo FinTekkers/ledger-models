@@ -1,14 +1,14 @@
 //Models
-import { PriceProto } from "../../../fintekkers/models/price/price_pb";
+import type { PriceProto } from "../../../fintekkers/models/price/price_pb";
 import { PriceTypeProto } from "../../../fintekkers/models/price/price_type_pb";
-import { SecurityProto } from "../../../fintekkers/models/security/security_pb";
+import type { SecurityProto } from "../../../fintekkers/models/security/security_pb";
 import { TransactionType } from "./transaction_type";
 import { TransactionTypeProto } from "../../../fintekkers/models/transaction/transaction_type_pb";
 import { StrategyAllocationProto } from "../../../fintekkers/models/strategy/strategy_allocation_pb";
 import { TransactionProto } from "../../../fintekkers/models/transaction/transaction_pb";
 import { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { PositionStatusProto } from "../../../fintekkers/models/position/position_status_pb";
-import { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value_pb";
+import type { DecimalValueProto } from "../../../fintekkers/models/util/decimal_value_pb";
 
 import Security from "../security/security";
 import Portfolio from "../portfolio/portfolio";

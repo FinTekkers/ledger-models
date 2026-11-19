@@ -2,18 +2,18 @@ import { promisify } from 'util';
 
 // Models
 import Transaction from '../../models/transaction/transaction';
-import { PositionFilter } from '../../models/position/positionfilter';
-import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
-import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
+import type { PositionFilter } from '../../models/position/positionfilter';
+import type { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
+import type { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
 // Model Utils
 
 // Requests & Services
 import { TransactionClient } from '../../../fintekkers/services/transaction-service/transaction_service_grpc_pb';
 import { CreateTransactionRequestProto } from '../../../fintekkers/requests/transaction/create_transaction_request_pb';
-import { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
+import type { CreateTransactionResponseProto } from '../../../fintekkers/requests/transaction/create_transaction_response_pb';
 import { QueryTransactionRequestProto } from '../../../fintekkers/requests/transaction/query_transaction_request_pb';
-import { QueryTransactionResponseProto } from '../../../fintekkers/requests/transaction/query_transaction_response_pb';
+import type { QueryTransactionResponseProto } from '../../../fintekkers/requests/transaction/query_transaction_response_pb';
 import EnvConfig from '../../models/utils/requestcontext';
 import { Service } from '../../util/serviceaddress';
 import LinkResolver from '../../util/link-resolver';

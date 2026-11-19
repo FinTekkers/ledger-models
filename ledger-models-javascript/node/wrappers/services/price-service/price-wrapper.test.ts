@@ -8,7 +8,7 @@ import * as grpc from '@grpc/grpc-js';
 import { promisify } from 'util';
 import { PriceClient } from '../../../fintekkers/services/price-service/price_service_grpc_pb';
 import { QueryPriceRequestProto } from '../../../fintekkers/requests/price/query_price_request_pb';
-import { QueryPriceResponseProto } from '../../../fintekkers/requests/price/query_price_response_pb';
+import type { QueryPriceResponseProto } from '../../../fintekkers/requests/price/query_price_response_pb';
 import { Decimal } from 'decimal.js';
 
 const PRICE_SERVICE_URL = 'localhost:8083';

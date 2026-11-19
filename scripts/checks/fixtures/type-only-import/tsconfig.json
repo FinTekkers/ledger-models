@@ -1,0 +1,7 @@
+{
+  // Negative fixture for ledger-models-javascript/tsconfig.check.json (LM-473):
+  // tsc must reject uses-shape.ts with TS1371. Lives outside the npm package.
+  "extends": "../../../../ledger-models-javascript/tsconfig.check.json",
+  "compilerOptions": { "types": [] },
+  "include": ["*.ts"]
+}

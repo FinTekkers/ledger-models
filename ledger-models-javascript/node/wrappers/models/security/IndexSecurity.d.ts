@@ -1,5 +1,5 @@
 import Security from './security';
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import type { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 /**
  * Wrapper for Security messages whose product_type is a descendant of

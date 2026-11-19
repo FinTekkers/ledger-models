@@ -1,21 +1,21 @@
 import { promisify } from 'util';
 
 // Models
-import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
-import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
-import { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
+import type { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_pb';
+import type { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
+import type { SummaryProto } from '../../../fintekkers/requests/util/errors/summary_pb';
 
 // Model Utils
 
 // Requests & Services
 import { PortfolioClient } from '../../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
 import { QueryPortfolioRequestProto } from '../../../fintekkers/requests/portfolio/query_portfolio_request_pb';
-import { QueryPortfolioResponseProto } from '../../../fintekkers/requests/portfolio/query_portfolio_response_pb';
+import type { QueryPortfolioResponseProto } from '../../../fintekkers/requests/portfolio/query_portfolio_response_pb';
 import { CreatePortfolioRequestProto } from '../../../fintekkers/requests/portfolio/create_portfolio_request_pb';
-import { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portfolio/create_portfolio_response_pb';
+import type { CreatePortfolioResponseProto } from '../../../fintekkers/requests/portfolio/create_portfolio_response_pb';
 import EnvConfig from '../../models/utils/requestcontext';
 import { Service } from '../../util/serviceaddress';
-import { PositionFilter } from '../../models/position/positionfilter';
+import type { PositionFilter } from '../../models/position/positionfilter';
 import Portfolio from '../../models/portfolio/portfolio';
 import { UUID } from '../../models/utils/uuid';
 import { ZonedDateTime } from '../../models/utils/datetime';

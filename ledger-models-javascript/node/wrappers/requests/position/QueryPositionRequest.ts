@@ -1,7 +1,7 @@
 //Models
-import { FieldProto } from "../../../fintekkers/models/position/field_pb";
+import type { FieldProto } from "../../../fintekkers/models/position/field_pb";
 import { PositionTypeProto, PositionViewProto } from "../../../fintekkers/models/position/position_pb";
-import { MeasureProto } from "../../../fintekkers/models/position/measure_pb";
+import type { MeasureProto } from "../../../fintekkers/models/position/measure_pb";
 import { ZonedDateTime } from "../../models/utils/datetime";
 import { PositionFilter } from "../../models/position/positionfilter";
 import { RequestOperationTypeProto } from "../../../fintekkers/requests/util/operation_pb";

@@ -1,4 +1,4 @@
-import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
+import type { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
 import { StrategyAllocationProto } from '../../../fintekkers/models/strategy/strategy_allocation_pb';
 import { ProtoSerializationUtil } from './serialization';
 import { UUID } from './uuid';

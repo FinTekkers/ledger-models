@@ -7,7 +7,7 @@ import * as dt from '../../models/utils/datetime';
 import * as grpc from '@grpc/grpc-js';
 import { PriceClient } from '../../../fintekkers/services/price-service/price_service_grpc_pb';
 import { QueryPriceRequestProto } from '../../../fintekkers/requests/price/query_price_request_pb';
-import { QueryPriceResponseProto } from '../../../fintekkers/requests/price/query_price_response_pb';
+import type { QueryPriceResponseProto } from '../../../fintekkers/requests/price/query_price_response_pb';
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';

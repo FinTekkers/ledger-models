@@ -11,7 +11,7 @@ import { PortfolioProto } from '../../../fintekkers/models/portfolio/portfolio_p
 import { Position } from "./position";
 import { LocalDate } from '../utils/date';
 import { PositionStatusProto } from '../../../fintekkers/models/position/position_status_pb';
-import { ProtoEnum } from '../utils/protoEnum';
+import type { ProtoEnum } from '../utils/protoEnum';
 import { TransactionTypeProto } from '../../../fintekkers/models/transaction/transaction_type_pb';
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { TenorProto } from '../../../fintekkers/models/security/tenor_pb';

@@ -6,9 +6,9 @@ import assert = require('assert');
 import { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { SecurityService } from './SecurityService';
 import { PositionFilter } from '../../models/position/positionfilter';
-import Security from '../../models/security/security';
+import type Security from '../../models/security/security';
 import { ProtoSerializationUtil } from '../../models/utils/serialization';
-import Decimal from 'decimal.js';
+import type Decimal from 'decimal.js';
 
 test('test the api.fintekkers.org security service by creating a maturity ladder for the US government', async () => {
     //Get list of all securities from the US government, with a maturity data beyond today's date

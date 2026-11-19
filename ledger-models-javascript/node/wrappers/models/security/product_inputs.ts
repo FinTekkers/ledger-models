@@ -29,7 +29,7 @@ import catalog from '../../../../catalog/measures.json';
 import { MeasureProto } from '../../../fintekkers/models/position/measure_pb';
 import { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
-import { PriceProto } from '../../../fintekkers/models/price/price_pb';
+import type { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import {
   BondInput, CashInput, EquityInput, FrnInput, InflationIndexInput, MbsInput, ProductInput,

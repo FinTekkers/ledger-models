@@ -15,7 +15,7 @@ import { SecurityQuantityTypeProto } from '../../../fintekkers/models/security/s
 import { IdentifierProto } from '../../../fintekkers/models/security/identifier/identifier_pb';
 import { IdentifierTypeProto } from '../../../fintekkers/models/security/identifier/identifier_type_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
-import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
+import type { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { decodeDecimal, encodeDecimal, parseDecimalString, toCanonicalString } from '../utils/decimal';
 

@@ -123,5 +123,23 @@ echo "== javascript"
     echo "$stale"
     exit 1
   fi
+  # The wrappers ship as .ts and consumers' svelte-check compiles them with
+  # importsNotUsedAsValues: error, so a type-only plain import fails here
+  # first (LM-473). The check must cover the wrappers...
+  npx tsc -p tsconfig.check.json
+  if ! npx tsc -p tsconfig.check.json --listFilesOnly | grep -q 'node/wrappers/models/security/default_price_types.ts'; then
+    echo "tsconfig.check.json no longer compiles node/wrappers" >&2
+    exit 1
+  fi
+  # ...and must be able to fail: a fixture with a type-only plain import.
+  if out="$(node_modules/.bin/tsc -p ../scripts/checks/fixtures/type-only-import 2>&1)"; then
+    echo "tsconfig.check.json accepted a type-only plain import" >&2
+    exit 1
+  fi
+  if ! grep -q 'TS1371' <<<"$out"; then
+    echo "type-only-import fixture failed for another reason:" >&2
+    echo "$out" >&2
+    exit 1
+  fi
   npm test --silent
 )

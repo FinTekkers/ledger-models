@@ -1,5 +1,5 @@
 import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
-import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
+import type { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 /** A parsed, checked default_price_types section: node -> PriceTypeProto value. */
 export declare class DefaultPriceTypes {
     /** node -> type, as written in the section. Read-only. */

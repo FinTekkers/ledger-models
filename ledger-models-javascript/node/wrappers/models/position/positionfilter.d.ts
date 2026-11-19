@@ -1,7 +1,7 @@
 import { FieldMapEntry, PositionFilterOperator } from '../../../fintekkers/models/position/position_util_pb';
-import { FieldProto } from '../../../fintekkers/models/position/field_pb';
+import type { FieldProto } from '../../../fintekkers/models/position/field_pb';
 import { PositionFilterProto } from '../../../fintekkers/models/position/position_filter_pb';
-import { Identifier } from '../security/identifier';
+import type { Identifier } from '../security/identifier';
 export declare class PositionFilter {
     filters: FieldMapEntry[];
     constructor();

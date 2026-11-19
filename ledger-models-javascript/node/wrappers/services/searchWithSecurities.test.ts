@@ -10,7 +10,7 @@ import { PriceProto } from '../../fintekkers/models/price/price_pb';
 import { DecimalValueProto } from '../../fintekkers/models/util/decimal_value_pb';
 import { IdentifierProto } from '../../fintekkers/models/security/identifier/identifier_pb';
 import { QuerySecurityResponseProto } from '../../fintekkers/requests/security/query_security_response_pb';
-import { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
+import type { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
 import { encodeDecimal, parseDecimalString } from '../models/utils/decimal';
 
 /**

@@ -1,7 +1,7 @@
 import assert = require('assert');
 import { UUID } from './uuid';
 import { UUIDProto } from '../../../fintekkers/models/util/uuid_pb';
-import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
+import type { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 import { ModelValidationError, violation } from '../errors';
 
 test('test packing/unpacking string', () => {

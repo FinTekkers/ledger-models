@@ -1,20 +1,20 @@
 import { promisify } from 'util';
 
-import { SecurityProto } from '../../fintekkers/models/security/security_pb';
-import { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
-import { TransactionProto } from '../../fintekkers/models/transaction/transaction_pb';
-import { UUIDProto } from '../../fintekkers/models/util/uuid_pb';
-import { LocalTimestampProto } from '../../fintekkers/models/util/local_timestamp_pb';
+import type { SecurityProto } from '../../fintekkers/models/security/security_pb';
+import type { PortfolioProto } from '../../fintekkers/models/portfolio/portfolio_pb';
+import type { TransactionProto } from '../../fintekkers/models/transaction/transaction_pb';
+import type { UUIDProto } from '../../fintekkers/models/util/uuid_pb';
+import type { LocalTimestampProto } from '../../fintekkers/models/util/local_timestamp_pb';
 
 import { SecurityClient } from '../../fintekkers/services/security-service/security_service_grpc_pb';
 import { PortfolioClient } from '../../fintekkers/services/portfolio-service/portfolio_service_grpc_pb';
 import { TransactionClient } from '../../fintekkers/services/transaction-service/transaction_service_grpc_pb';
 import { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
-import { QuerySecurityResponseProto } from '../../fintekkers/requests/security/query_security_response_pb';
+import type { QuerySecurityResponseProto } from '../../fintekkers/requests/security/query_security_response_pb';
 import { QueryPortfolioRequestProto } from '../../fintekkers/requests/portfolio/query_portfolio_request_pb';
-import { QueryPortfolioResponseProto } from '../../fintekkers/requests/portfolio/query_portfolio_response_pb';
+import type { QueryPortfolioResponseProto } from '../../fintekkers/requests/portfolio/query_portfolio_response_pb';
 import { QueryTransactionRequestProto } from '../../fintekkers/requests/transaction/query_transaction_request_pb';
-import { QueryTransactionResponseProto } from '../../fintekkers/requests/transaction/query_transaction_response_pb';
+import type { QueryTransactionResponseProto } from '../../fintekkers/requests/transaction/query_transaction_response_pb';
 
 import Security from '../models/security/security';
 import Portfolio from '../models/portfolio/portfolio';

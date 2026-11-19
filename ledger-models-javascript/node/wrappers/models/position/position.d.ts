@@ -4,7 +4,7 @@ import { FieldMapEntry, MeasureMapEntry } from "../../../fintekkers/models/posit
 import Portfolio from "../portfolio/portfolio";
 import Security from "../security/security";
 import { MeasureProto } from "../../../fintekkers/models/position/measure_pb";
-import Decimal from "decimal.js";
+import type Decimal from "decimal.js";
 import { ProtoEnum } from "../utils/protoEnum";
 import { UUID } from "../utils/uuid";
 import { ZonedDateTime } from "../utils/datetime";

@@ -1,6 +1,6 @@
 import { PriceProto } from '../../../fintekkers/models/price/price_pb';
 import { PriceTypeProto } from '../../../fintekkers/models/price/price_type_pb';
-import { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
+import type { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 import { ModelValidationError, violation } from '../errors';
 import { UUID } from '../utils/uuid';
 import { isUnsetDecimal } from '../utils/decimal';
