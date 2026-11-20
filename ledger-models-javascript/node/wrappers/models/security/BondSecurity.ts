@@ -7,7 +7,7 @@ import { dateToLocalDateProto, localDateProtoToDate, daysBetween, plusMonthsClam
 import type { IssuanceProto } from '../../../fintekkers/models/security/bond/issuance_pb';
 import { CouponFrequency } from './coupon_frequency';
 import { CouponType } from './coupon_type';
-import { Tenor, Period } from './term';
+import { Tenor, type Period } from './term';
 import { TenorTypeProto } from '../../../fintekkers/models/security/tenor_type_pb';
 import type { CouponTypeProto } from '../../../fintekkers/models/security/coupon_type_pb';
 import type { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';

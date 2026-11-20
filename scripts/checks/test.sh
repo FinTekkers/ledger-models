@@ -124,14 +124,16 @@ echo "== javascript"
     exit 1
   fi
   # The wrappers ship as .ts and consumers' svelte-check compiles them with
-  # importsNotUsedAsValues: error, so a type-only plain import fails here
-  # first (LM-473). The check must cover the wrappers...
+  # importsNotUsedAsValues: error, isolatedModules and preserveValueImports, so
+  # a type-only plain import (LM-473), or a type name without an inline `type`
+  # in a mixed import (LM-475), fails here first. The check must cover the
+  # wrappers...
   npx tsc -p tsconfig.check.json
   if ! npx tsc -p tsconfig.check.json --listFilesOnly | grep -q 'node/wrappers/models/security/default_price_types.ts'; then
     echo "tsconfig.check.json no longer compiles node/wrappers" >&2
     exit 1
   fi
-  # ...and must be able to fail: a fixture with a type-only plain import.
+  # ...and must be able to fail: a fixture with a type-only plain import...
   if out="$(node_modules/.bin/tsc -p ../scripts/checks/fixtures/type-only-import 2>&1)"; then
     echo "tsconfig.check.json accepted a type-only plain import" >&2
     exit 1
@@ -141,5 +143,18 @@ echo "== javascript"
     echo "$out" >&2
     exit 1
   fi
+  # ...and one with a mixed import whose type name has no inline `type`.
+  if out="$(node_modules/.bin/tsc -p ../scripts/checks/fixtures/mixed-type-import 2>&1)"; then
+    echo "tsconfig.check.json accepted a type name without inline type in a mixed import" >&2
+    exit 1
+  fi
+  if ! grep -q 'TS1444' <<<"$out"; then
+    echo "mixed-type-import fixture failed for another reason:" >&2
+    echo "$out" >&2
+    exit 1
+  fi
+  # Consumers install production dependencies only: pack the package, install
+  # it that way and compile its shipped .ts with their settings (LM-475).
+  ../scripts/checks/js-pack-consume.test.sh
   npm test --silent
 )
