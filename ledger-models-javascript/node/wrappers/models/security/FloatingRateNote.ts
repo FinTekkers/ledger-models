@@ -1,5 +1,5 @@
 import BondSecurity, {
-  BondPricerInputs,
+  type BondPricerInputs,
   buildBondDetails,
   decimalToProto,
 } from './BondSecurity';

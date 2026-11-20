@@ -1,4 +1,4 @@
-import BondSecurity, { BondPricerInputs } from './BondSecurity';
+import BondSecurity, { type BondPricerInputs } from './BondSecurity';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_type_pb';
 import { CouponFrequencyProto } from '../../../fintekkers/models/security/coupon_frequency_pb';

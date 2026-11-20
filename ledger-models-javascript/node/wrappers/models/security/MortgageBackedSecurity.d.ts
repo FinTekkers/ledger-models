@@ -1,4 +1,4 @@
-import BondSecurity, { BondPricerInputs } from './BondSecurity';
+import BondSecurity, { type BondPricerInputs } from './BondSecurity';
 import { SecurityProto } from '../../../fintekkers/models/security/security_pb';
 import { AgencyProto } from '../../../fintekkers/models/security/bond/agency_pb';
 import type { Decimal } from 'decimal.js';

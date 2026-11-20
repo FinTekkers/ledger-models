@@ -3,7 +3,7 @@ import type { SecurityProto } from '../../../fintekkers/models/security/security
 import type { FieldViolationProto } from '../../../fintekkers/requests/util/errors/field_violation_pb';
 import { ModelValidationError, violation } from '../errors';
 import { UUID } from '../utils/uuid';
-import { decodeDecimal, isUnsetDecimal, toCanonicalString, CompactDecimal } from '../utils/decimal';
+import { decodeDecimal, isUnsetDecimal, toCanonicalString, type CompactDecimal } from '../utils/decimal';
 
 /**
  * Security input rules: JS counterpart of Java's SecurityRules
