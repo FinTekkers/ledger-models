@@ -208,13 +208,15 @@
       "enum_value": 12,
       "display_name": "Present Value Cashflows",
       "description": "Requests the full schedule of future cashflows for a bond. The ValuationResponseProto will populate the cashflows repeated field with one CashflowProto per payment period.",
-      "formula": "Each CashflowProto contains: cashflow_date, fv_amount, pv_amount, coupon_rate. Sum of pv_amounts equals PRESENT_VALUE.",
-      "units": "fv_amount and pv_amount in dollars; coupon_rate as percentage",
+      "formula": "Each CashflowProto contains: cashflow_date, fv_amount, pv_amount, coupon_rate, index_ratio (TIPS only). Sum of pv_amounts equals PRESENT_VALUE when TipsInput.assumed_inflation_rate is unset. TIPS: ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y, where rate = TipsInput.assumed_inflation_rate and y = days from settlement to t / 365 (ACT/365); without a rate, ratio(t) = today's INDEX_RATIO. Coupon = principal x ratio(t) x coupon rate per period. Principal at maturity = principal x max(ratio, 1), with ratio at maturity. index_ratio reports the unfloored ratio(t). Discounting of pv_amount is unchanged; see VS-159.",
+      "units": "fv_amount and pv_amount in dollars; coupon_rate as percentage; index_ratio dimensionless (1.25 = principal accreted by 25%), absent for non-TIPS rows; TipsInput.assumed_inflation_rate percent a year (3.0 = 3% a year)",
       "category": "valuation",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
       "model_assumptions": [
         "Same as PRESENT_VALUE",
-        "Three-way invariant: sum(pv_amounts) == present_value == price"
+        "Three-way invariant: sum(pv_amounts) == present_value == price. Holds when TipsInput.assumed_inflation_rate is unset; with a rate, only the cashflow rows are projected and PRESENT_VALUE is unchanged",
+        "TIPS: constant assumed inflation from settlement to maturity, compounded annually on ACT/365. Deflation floor max(ratio, 1) on principal at maturity only",
+        "TIPS without TipsInput.assumed_inflation_rate: every row uses today's INDEX_RATIO (unchanged behaviour). Unset is absent, never 0%"
       ],
       "implemented": true,
       "computed_by": "valuation-service",

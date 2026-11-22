@@ -85,7 +85,8 @@ proto.fintekkers.models.valuation.CashflowProto.toObject = function(includeInsta
     pvAmount: (f = msg.getPvAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     fvAmount: (f = msg.getFvAmount()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     couponRate: (f = msg.getCouponRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
-    currency: (f = msg.getCurrency()) && fintekkers_models_util_currency_pb.CurrencyProto.toObject(includeInstance, f)
+    currency: (f = msg.getCurrency()) && fintekkers_models_util_currency_pb.CurrencyProto.toObject(includeInstance, f),
+    indexRatio: (f = msg.getIndexRatio()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -146,6 +147,11 @@ proto.fintekkers.models.valuation.CashflowProto.deserializeBinaryFromReader = fu
       var value = new fintekkers_models_util_currency_pb.CurrencyProto;
       reader.readMessage(value,fintekkers_models_util_currency_pb.CurrencyProto.deserializeBinaryFromReader);
       msg.setCurrency(value);
+      break;
+    case 6:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setIndexRatio(value);
       break;
     default:
       reader.skipField();
@@ -214,6 +220,14 @@ proto.fintekkers.models.valuation.CashflowProto.serializeBinaryToWriter = functi
       5,
       f,
       fintekkers_models_util_currency_pb.CurrencyProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getIndexRatio();
+  if (f != null) {
+    writer.writeMessage(
+      6,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
     );
   }
 };
@@ -401,6 +415,43 @@ proto.fintekkers.models.valuation.CashflowProto.prototype.clearCurrency = functi
  */
 proto.fintekkers.models.valuation.CashflowProto.prototype.hasCurrency = function() {
   return jspb.Message.getField(this, 5) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto index_ratio = 6;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.models.valuation.CashflowProto.prototype.getIndexRatio = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 6));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.models.valuation.CashflowProto} returns this
+*/
+proto.fintekkers.models.valuation.CashflowProto.prototype.setIndexRatio = function(value) {
+  return jspb.Message.setWrapperField(this, 6, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.valuation.CashflowProto} returns this
+ */
+proto.fintekkers.models.valuation.CashflowProto.prototype.clearIndexRatio = function() {
+  return this.setIndexRatio(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.valuation.CashflowProto.prototype.hasIndexRatio = function() {
+  return jspb.Message.getField(this, 6) != null;
 };
 
 

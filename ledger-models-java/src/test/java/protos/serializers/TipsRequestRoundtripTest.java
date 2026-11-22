@@ -14,8 +14,11 @@ import fintekkers.models.security.ProductTypeProto;
 import fintekkers.models.security.SecurityProto;
 import fintekkers.models.security.TipsExtensionProto;
 import fintekkers.models.security.index.IndexTypeProto;
+import fintekkers.models.util.CurrencyProto;
 import fintekkers.models.util.DecimalValue.DecimalValueProto;
+import fintekkers.models.util.LocalDate.LocalDateProto;
 import fintekkers.models.util.LocalTimestamp.LocalTimestampProto;
+import fintekkers.models.valuation.CashflowProto;
 import fintekkers.requests.valuation.InflationIndexInput;
 import fintekkers.requests.valuation.MonthlyIndexReading;
 import fintekkers.requests.valuation.MonthlyIndexReadings;
@@ -36,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * TipsInput.cpi (LM-343) through a full ValuationRequestProto:
  * construct → toByteArray() → parseFrom() → verify the oneof case and values.
  * Readings with extra lot months (LM-405), and with only m-3 and m-2, round-trip
- * unchanged.
+ * unchanged. TipsInput.assumed_inflation_rate and CashflowProto.index_ratio
+ * (LM-477) round-trip, and come back absent when unset.
  */
 class TipsRequestRoundtripTest {
 
@@ -168,6 +172,59 @@ class TipsRequestRoundtripTest {
         assertFalse(parsedCpi.hasReadings());
         assertEquals("CPI-U NSA", parsedCpi.getIndex().getIssuerName());
         assertEquals("310.32600", Decimals.text(parsedCpi.getReferenceCpi()));
+    }
+
+    /** LM-477: a full row, fields 1-5 set, so index_ratio (6) is checked beside them. */
+    private static CashflowProto.Builder cashflowRow() {
+        return CashflowProto.newBuilder()
+                .setCashflowDate(LocalDateProto.newBuilder().setYear(2030).setMonth(7).setDay(15))
+                .setPvAmount(decimal("1180.50"))
+                .setFvAmount(decimal("1250.00"))
+                .setCouponRate(decimal("0.125"))
+                .setCurrency(CurrencyProto.newBuilder().setIsoCode("USD"));
+    }
+
+    @Test
+    void tipsInputAndCashflowRoundTripInflationFields() throws InvalidProtocolBufferException {
+        TipsInput tips = TipsInput.newBuilder()
+                .setSecurity(tipsSecurity())
+                .setCleanPrice(decimal("97.50"))
+                .setAssumedInflationRate(decimal("3.0"))
+                .build();
+
+        TipsInput parsedTips = roundtripTips(request(tips));
+
+        assertTrue(parsedTips.hasAssumedInflationRate());
+        assertEquals("3.0", Decimals.text(parsedTips.getAssumedInflationRate()));
+        assertEquals("97.50", Decimals.text(parsedTips.getCleanPrice()));
+
+        CashflowProto cashflow = cashflowRow().setIndexRatio(decimal("1.25")).build();
+        CashflowProto parsed = CashflowProto.parseFrom(cashflow.toByteArray());
+
+        assertEquals(cashflow, parsed);
+        assertTrue(parsed.hasIndexRatio());
+        assertEquals("1.25", Decimals.text(parsed.getIndexRatio()));
+        assertEquals(2030, parsed.getCashflowDate().getYear());
+        assertEquals(7, parsed.getCashflowDate().getMonth());
+        assertEquals(15, parsed.getCashflowDate().getDay());
+        assertEquals("1180.50", Decimals.text(parsed.getPvAmount()));
+        assertEquals("1250.00", Decimals.text(parsed.getFvAmount()));
+        assertEquals("0.125", Decimals.text(parsed.getCouponRate()));
+        assertEquals("USD", parsed.getCurrency().getIsoCode());
+    }
+
+    @Test
+    void inflationFieldsAbsentWhenUnset() throws InvalidProtocolBufferException {
+        TipsInput tips = TipsInput.newBuilder()
+                .setSecurity(tipsSecurity())
+                .setCleanPrice(decimal("97.50"))
+                .build();
+
+        assertFalse(roundtripTips(request(tips)).hasAssumedInflationRate());
+
+        CashflowProto parsed = CashflowProto.parseFrom(cashflowRow().build().toByteArray());
+        assertFalse(parsed.hasIndexRatio());
+        assertTrue(parsed.hasCouponRate());
     }
 
     private static final Path REMOVED_FIELDS = Path.of("..", "test-fixtures", "removed-fields", "lm-344.json");

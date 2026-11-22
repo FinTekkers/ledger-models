@@ -137,6 +137,10 @@ LM425_CHANGES = json.loads((_REPO / "test-fixtures" / "catalog" / "lm-425-change
 LM425_FIELDS = ("applies_to", "implemented")
 # LM-456 states the TIPS index-ratio scaling in these ACCRUED_INTEREST keys only.
 LM456_FIELDS = {"formula", "model_assumptions", "depends_on"}
+# LM-477 states the projected TIPS cashflow formula in these
+# PRESENT_VALUE_CASHFLOWS keys only; implemented, depends_on and applies_to
+# stay as they were (the calculation ships in VS-159).
+LM477_FIELDS = {"formula", "units", "model_assumptions"}
 INPUT_TYPES = ("bond", "tips", "frn", "mbs", "equity", "cash")
 
 
@@ -147,7 +151,7 @@ def test_lm425_catalog_edits_touch_only_applies_to_and_implemented():
     assert [m["name"] for m in after] == [m["name"] for m in LM425_BEFORE]
     for old, new in zip(LM425_BEFORE, after):
         assert set(new) == set(old), new["name"]
-        exempt = LM456_FIELDS if new["name"] == "ACCRUED_INTEREST" else set()
+        exempt = {"ACCRUED_INTEREST": LM456_FIELDS, "PRESENT_VALUE_CASHFLOWS": LM477_FIELDS}.get(new["name"], set())
         for key in set(old) - set(LM425_FIELDS) - exempt:
             assert new[key] == old[key], (new["name"], key)
 
@@ -279,9 +283,21 @@ def test_lm456_proto_accrued_interest_comment_states_tips_index_ratio():
     assert "Fixed-coupon bonds and TIPS" not in comment
 
 
-# This freezes the whole catalog at the LM-450 release (v1.1.39). A later
-# item that edits any catalog must update this test (or retire it), the way
-# LM-456 retired the LM-434 freeze.
+def _assert_lm477_present_value_cashflows(old, new):
+    for key in set(old) - LM477_FIELDS:
+        assert new[key] == old[key], key
+    assert "index_ratio (TIPS only)" in new["formula"]
+    assert "(1 + rate/100)^y" in new["formula"]
+    assert new["units"].startswith(old["units"] + "; index_ratio dimensionless")
+    assert new["model_assumptions"][0] == old["model_assumptions"][0]
+    assert new["model_assumptions"][1].startswith(old["model_assumptions"][1] + ". Holds when")
+    assert len(new["model_assumptions"]) == len(old["model_assumptions"]) + 2
+
+
+# This freezes the whole catalog at the LM-450 release (v1.1.39), apart from
+# the LM-456 ACCRUED_INTEREST and LM-477 PRESENT_VALUE_CASHFLOWS edits. A
+# later item that edits any catalog must update this test (or retire it), the
+# way LM-456 retired the LM-434 freeze.
 @pytest.mark.parametrize("path", CATALOGS.values(), ids=CATALOGS.keys())
 def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
     before = LM456_BEFORE["catalog"]
@@ -293,6 +309,9 @@ def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
     assert [m["name"] for m in after["measures"]] == [m["name"] for m in before["measures"]]
     for old, new in zip(before["measures"], after["measures"]):
         assert list(new) == list(old), new["name"]
+        if new["name"] == "PRESENT_VALUE_CASHFLOWS":
+            _assert_lm477_present_value_cashflows(old, new)
+            continue
         if new["name"] != "ACCRUED_INTEREST":
             assert new == old, new["name"]
             continue

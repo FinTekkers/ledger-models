@@ -38,9 +38,11 @@ const index_type_pb_1 = require("../../../fintekkers/models/security/index/index
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const tax_lot_pb_1 = require("../../../fintekkers/models/position/tax_lot_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
+const currency_pb_1 = require("../../../fintekkers/models/util/currency_pb");
 const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const local_date_pb_1 = require("../../../fintekkers/models/util/local_date_pb");
 const local_timestamp_pb_1 = require("../../../fintekkers/models/util/local_timestamp_pb");
+const cashflow_pb_1 = require("../../../fintekkers/models/valuation/cashflow_pb");
 const timestamp_pb_1 = require("google-protobuf/google/protobuf/timestamp_pb");
 const decimal_1 = require("../../../wrappers/models/utils/decimal");
 function decimal(value) {
@@ -545,6 +547,54 @@ describe('LM-408 ProductInput input types round-trip', () => {
         expect(c.getSecurity().getProductType()).toBe(product_type_pb_1.ProductTypeProto.MONEY_MARKET_FUND);
         expect(c.getSecurity().getIssuerName()).toBe('cash');
         expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(c.getUnitPrice()))).toBe('1.00');
+    });
+});
+// ── TIPS assumed inflation rate and cashflow index ratio (LM-477) ──────────────
+// TipsInput.assumed_inflation_rate = 5 and CashflowProto.index_ratio = 6 round-trip,
+// and come back absent when unset. The row sets fields 1-5 too, so index_ratio is
+// checked beside them.
+function cashflowRow() {
+    const currency = new currency_pb_1.CurrencyProto();
+    currency.setIsoCode('USD');
+    const row = new cashflow_pb_1.CashflowProto();
+    row.setCashflowDate(date(2030, 7, 15));
+    row.setPvAmount(decimal('1180.50'));
+    row.setFvAmount(decimal('1250.00'));
+    row.setCouponRate(decimal('0.125'));
+    row.setCurrency(currency);
+    return row;
+}
+function tipsWithPrice() {
+    const tips = new product_inputs_pb_1.TipsInput();
+    tips.setCleanPrice(decimal('97.50'));
+    return tips;
+}
+describe('LM-477 assumed_inflation_rate and index_ratio round-trip', () => {
+    test('assumed_inflation_rate = 3.0 and index_ratio = 1.25 survive', () => {
+        const tips = tipsWithPrice();
+        tips.setAssumedInflationRate(decimal('3.0'));
+        const parsedTips = product_inputs_pb_1.TipsInput.deserializeBinary(tips.serializeBinary());
+        expect(parsedTips.hasAssumedInflationRate()).toBe(true);
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsedTips.getAssumedInflationRate()))).toBe('3.0');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsedTips.getCleanPrice()))).toBe('97.50');
+        const row = cashflowRow();
+        row.setIndexRatio(decimal('1.25'));
+        const parsed = cashflow_pb_1.CashflowProto.deserializeBinary(row.serializeBinary());
+        expect(parsed.toObject()).toEqual(row.toObject());
+        expect(parsed.hasIndexRatio()).toBe(true);
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getIndexRatio()))).toBe('1.25');
+        expect(parsed.getCashflowDate().toObject()).toEqual(date(2030, 7, 15).toObject());
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getPvAmount()))).toBe('1180.50');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getFvAmount()))).toBe('1250.00');
+        expect((0, decimal_1.toCanonicalString)((0, decimal_1.decodeDecimal)(parsed.getCouponRate()))).toBe('0.125');
+        expect(parsed.getCurrency().getIsoCode()).toBe('USD');
+    });
+    test('unset assumed_inflation_rate and index_ratio come back absent', () => {
+        const parsedTips = product_inputs_pb_1.TipsInput.deserializeBinary(tipsWithPrice().serializeBinary());
+        expect(parsedTips.hasAssumedInflationRate()).toBe(false);
+        const parsed = cashflow_pb_1.CashflowProto.deserializeBinary(cashflowRow().serializeBinary());
+        expect(parsed.hasIndexRatio()).toBe(false);
+        expect(parsed.hasCouponRate()).toBe(true);
     });
 });
 //# sourceMappingURL=product_inputs.test.js.map

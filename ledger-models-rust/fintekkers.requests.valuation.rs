@@ -252,7 +252,8 @@ pub struct BondInput {
 ///
 /// Settlement date is read from ValuationRequestProto.asof_datetime.
 ///
-/// cpi (4) is the only CPI input.
+/// cpi (4) is the only CPI input. assumed_inflation_rate (5) is a forecast
+/// of future inflation, not a CPI input.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -286,6 +287,24 @@ pub struct TipsInput {
     /// MonthlyIndexReadings.
     #[prost(message, optional, tag = "4")]
     pub cpi: ::core::option::Option<InflationIndexInput>,
+    /// Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+    /// constant from the settlement date to maturity. Settlement date is read
+    /// from ValuationRequestProto.asof_datetime.
+    /// Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+    /// payment date t is
+    ///    ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+    /// where y = days from settlement to t / 365 (ACT/365).
+    /// Coupon = principal x ratio(t) x coupon rate per period.
+    /// Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+    /// Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+    /// of pv_amount is unchanged; see VS-159.
+    /// Absent when unset. Unset is not 0%: valuation-service then uses today's
+    /// INDEX_RATIO for every row, as before. See
+    /// docs/adr/tips_assumed_inflation_rate.md.
+    #[prost(message, optional, tag = "5")]
+    pub assumed_inflation_rate: ::core::option::Option<
+        super::super::models::util::DecimalValueProto,
+    >,
     /// Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
     #[prost(message, optional, tag = "20")]
     pub cost_basis: ::core::option::Option<CostBasisInput>,

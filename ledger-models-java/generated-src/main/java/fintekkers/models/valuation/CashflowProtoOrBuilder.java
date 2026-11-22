@@ -147,4 +147,58 @@ public interface CashflowProtoOrBuilder extends
    * <code>.fintekkers.models.util.CurrencyProto currency = 5;</code>
    */
   fintekkers.models.util.CurrencyProtoOrBuilder getCurrencyOrBuilder();
+
+  /**
+   * <pre>
+   * The index ratio applied to this row, a dimensionless ratio (1.25 =
+   * principal accreted by 25%). Set for TIPS rows only; absent for every
+   * other product. Absent when unset, never 0.
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365) and rate is
+   * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+   * is today's INDEX_RATIO.
+   * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+   * principal at maturity, so that row's fv_amount can be above
+   * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+   * @return Whether the indexRatio field is set.
+   */
+  boolean hasIndexRatio();
+  /**
+   * <pre>
+   * The index ratio applied to this row, a dimensionless ratio (1.25 =
+   * principal accreted by 25%). Set for TIPS rows only; absent for every
+   * other product. Absent when unset, never 0.
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365) and rate is
+   * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+   * is today's INDEX_RATIO.
+   * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+   * principal at maturity, so that row's fv_amount can be above
+   * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+   * @return The indexRatio.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getIndexRatio();
+  /**
+   * <pre>
+   * The index ratio applied to this row, a dimensionless ratio (1.25 =
+   * principal accreted by 25%). Set for TIPS rows only; absent for every
+   * other product. Absent when unset, never 0.
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365) and rate is
+   * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+   * is today's INDEX_RATIO.
+   * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+   * principal at maturity, so that row's fv_amount can be above
+   * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getIndexRatioOrBuilder();
 }

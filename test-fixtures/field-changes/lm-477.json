@@ -1,0 +1,7 @@
+{
+  "item": "LM-477",
+  "added": [
+    {"message": ".fintekkers.requests.valuation.TipsInput", "number": 5, "name": "assumed_inflation_rate", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.models.valuation.CashflowProto", "number": 6, "name": "index_ratio", "type": ".fintekkers.models.util.DecimalValueProto"}
+  ]
+}

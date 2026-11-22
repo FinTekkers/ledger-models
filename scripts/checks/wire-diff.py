@@ -357,8 +357,22 @@ def lm465(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM465 and new == LM465[key]
 
 
+LM477 = {
+    f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}"
+    for f in json.loads((REPO / "test-fixtures/field-changes/lm-477.json").read_text())["added"]
+}
+
+
+def lm477(key: str, old, new, head: dict) -> bool:
+    """LM-477: TipsInput.assumed_inflation_rate = 5 and
+    CashflowProto.index_ratio = 6 (both DecimalValueProto) added. Additions
+    of exactly these only; every other TipsInput and CashflowProto field
+    keeps its number, name and type."""
+    return old is None and key in LM477 and new == LM477[key]
+
+
 ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411,
-           lm433, lm465]
+           lm433, lm465, lm477]
 
 
 def main() -> int:

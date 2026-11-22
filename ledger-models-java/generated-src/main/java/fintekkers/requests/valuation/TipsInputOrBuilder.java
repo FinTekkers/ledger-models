@@ -141,6 +141,72 @@ public interface TipsInputOrBuilder extends
 
   /**
    * <pre>
+   * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+   * constant from the settlement date to maturity. Settlement date is read
+   * from ValuationRequestProto.asof_datetime.
+   * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+   * payment date t is
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365).
+   * Coupon = principal x ratio(t) x coupon rate per period.
+   * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+   * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+   * of pv_amount is unchanged; see VS-159.
+   * Absent when unset. Unset is not 0%: valuation-service then uses today's
+   * INDEX_RATIO for every row, as before. See
+   * docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+   * @return Whether the assumedInflationRate field is set.
+   */
+  boolean hasAssumedInflationRate();
+  /**
+   * <pre>
+   * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+   * constant from the settlement date to maturity. Settlement date is read
+   * from ValuationRequestProto.asof_datetime.
+   * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+   * payment date t is
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365).
+   * Coupon = principal x ratio(t) x coupon rate per period.
+   * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+   * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+   * of pv_amount is unchanged; see VS-159.
+   * Absent when unset. Unset is not 0%: valuation-service then uses today's
+   * INDEX_RATIO for every row, as before. See
+   * docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+   * @return The assumedInflationRate.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getAssumedInflationRate();
+  /**
+   * <pre>
+   * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+   * constant from the settlement date to maturity. Settlement date is read
+   * from ValuationRequestProto.asof_datetime.
+   * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+   * payment date t is
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365).
+   * Coupon = principal x ratio(t) x coupon rate per period.
+   * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+   * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+   * of pv_amount is unchanged; see VS-159.
+   * Absent when unset. Unset is not 0%: valuation-service then uses today's
+   * INDEX_RATIO for every row, as before. See
+   * docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getAssumedInflationRateOrBuilder();
+
+  /**
+   * <pre>
    * Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
    * </pre>
    *

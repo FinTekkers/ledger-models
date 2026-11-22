@@ -84,7 +84,8 @@ message BondInput {
 //
 // Settlement date is read from ValuationRequestProto.asof_datetime.
 //
-// cpi (4) is the only CPI input.
+// cpi (4) is the only CPI input. assumed_inflation_rate (5) is a forecast
+// of future inflation, not a CPI input.
 // ═══════════════════════════════════════════════════════════════════════════
 message TipsInput {
   // The TIPS security. Must be ProductTypeProto.TIPS with bond_details
@@ -117,6 +118,22 @@ message TipsInput {
   // a month outside 1-12 is still rejected. See InflationIndexInput and
   // MonthlyIndexReadings.
   InflationIndexInput cpi = 4;
+
+  // Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+  // constant from the settlement date to maturity. Settlement date is read
+  // from ValuationRequestProto.asof_datetime.
+  // Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+  // payment date t is
+  //   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+  // where y = days from settlement to t / 365 (ACT/365).
+  // Coupon = principal x ratio(t) x coupon rate per period.
+  // Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+  // Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+  // of pv_amount is unchanged; see VS-159.
+  // Absent when unset. Unset is not 0%: valuation-service then uses today's
+  // INDEX_RATIO for every row, as before. See
+  // docs/adr/tips_assumed_inflation_rate.md.
+  optional fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;
 
   // Inputs for ADJUSTED_COST_BASIS; see CostBasisInput.
   CostBasisInput cost_basis = 20;

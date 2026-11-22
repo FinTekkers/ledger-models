@@ -12,7 +12,8 @@ package fintekkers.requests.valuation;
  * security.bond_details. TIPS-specific extras (base_cpi, index_date,
  * inflation_index_type) are read from security.tips_extension.
  * Settlement date is read from ValuationRequestProto.asof_datetime.
- * cpi (4) is the only CPI input.
+ * cpi (4) is the only CPI input. assumed_inflation_rate (5) is a forecast
+ * of future inflation, not a CPI input.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
  *
@@ -55,6 +56,7 @@ private static final long serialVersionUID = 0L;
             fintekkers.requests.valuation.TipsInput.class, fintekkers.requests.valuation.TipsInput.Builder.class);
   }
 
+  private int bitField0_;
   public static final int SECURITY_FIELD_NUMBER = 1;
   private fintekkers.models.security.SecurityProto security_;
   /**
@@ -220,6 +222,83 @@ private static final long serialVersionUID = 0L;
     return cpi_ == null ? fintekkers.requests.valuation.InflationIndexInput.getDefaultInstance() : cpi_;
   }
 
+  public static final int ASSUMED_INFLATION_RATE_FIELD_NUMBER = 5;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto assumedInflationRate_;
+  /**
+   * <pre>
+   * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+   * constant from the settlement date to maturity. Settlement date is read
+   * from ValuationRequestProto.asof_datetime.
+   * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+   * payment date t is
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365).
+   * Coupon = principal x ratio(t) x coupon rate per period.
+   * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+   * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+   * of pv_amount is unchanged; see VS-159.
+   * Absent when unset. Unset is not 0%: valuation-service then uses today's
+   * INDEX_RATIO for every row, as before. See
+   * docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+   * @return Whether the assumedInflationRate field is set.
+   */
+  @java.lang.Override
+  public boolean hasAssumedInflationRate() {
+    return ((bitField0_ & 0x00000001) != 0);
+  }
+  /**
+   * <pre>
+   * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+   * constant from the settlement date to maturity. Settlement date is read
+   * from ValuationRequestProto.asof_datetime.
+   * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+   * payment date t is
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365).
+   * Coupon = principal x ratio(t) x coupon rate per period.
+   * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+   * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+   * of pv_amount is unchanged; see VS-159.
+   * Absent when unset. Unset is not 0%: valuation-service then uses today's
+   * INDEX_RATIO for every row, as before. See
+   * docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+   * @return The assumedInflationRate.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getAssumedInflationRate() {
+    return assumedInflationRate_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : assumedInflationRate_;
+  }
+  /**
+   * <pre>
+   * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+   * constant from the settlement date to maturity. Settlement date is read
+   * from ValuationRequestProto.asof_datetime.
+   * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+   * payment date t is
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365).
+   * Coupon = principal x ratio(t) x coupon rate per period.
+   * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+   * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+   * of pv_amount is unchanged; see VS-159.
+   * Absent when unset. Unset is not 0%: valuation-service then uses today's
+   * INDEX_RATIO for every row, as before. See
+   * docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getAssumedInflationRateOrBuilder() {
+    return assumedInflationRate_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : assumedInflationRate_;
+  }
+
   public static final int COST_BASIS_FIELD_NUMBER = 20;
   private fintekkers.requests.valuation.CostBasisInput costBasis_;
   /**
@@ -281,6 +360,9 @@ private static final long serialVersionUID = 0L;
     if (cpi_ != null) {
       output.writeMessage(4, getCpi());
     }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeMessage(5, getAssumedInflationRate());
+    }
     if (costBasis_ != null) {
       output.writeMessage(20, getCostBasis());
     }
@@ -304,6 +386,10 @@ private static final long serialVersionUID = 0L;
     if (cpi_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(4, getCpi());
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(5, getAssumedInflationRate());
     }
     if (costBasis_ != null) {
       size += com.google.protobuf.CodedOutputStream
@@ -339,6 +425,11 @@ private static final long serialVersionUID = 0L;
       if (!getCpi()
           .equals(other.getCpi())) return false;
     }
+    if (hasAssumedInflationRate() != other.hasAssumedInflationRate()) return false;
+    if (hasAssumedInflationRate()) {
+      if (!getAssumedInflationRate()
+          .equals(other.getAssumedInflationRate())) return false;
+    }
     if (hasCostBasis() != other.hasCostBasis()) return false;
     if (hasCostBasis()) {
       if (!getCostBasis()
@@ -366,6 +457,10 @@ private static final long serialVersionUID = 0L;
     if (hasCpi()) {
       hash = (37 * hash) + CPI_FIELD_NUMBER;
       hash = (53 * hash) + getCpi().hashCode();
+    }
+    if (hasAssumedInflationRate()) {
+      hash = (37 * hash) + ASSUMED_INFLATION_RATE_FIELD_NUMBER;
+      hash = (53 * hash) + getAssumedInflationRate().hashCode();
     }
     if (hasCostBasis()) {
       hash = (37 * hash) + COST_BASIS_FIELD_NUMBER;
@@ -475,7 +570,8 @@ private static final long serialVersionUID = 0L;
    * security.bond_details. TIPS-specific extras (base_cpi, index_date,
    * inflation_index_type) are read from security.tips_extension.
    * Settlement date is read from ValuationRequestProto.asof_datetime.
-   * cpi (4) is the only CPI input.
+   * cpi (4) is the only CPI input. assumed_inflation_rate (5) is a forecast
+   * of future inflation, not a CPI input.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>
    *
@@ -500,13 +596,23 @@ private static final long serialVersionUID = 0L;
 
     // Construct using fintekkers.requests.valuation.TipsInput.newBuilder()
     private Builder() {
-
+      maybeForceBuilderInitialization();
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-
+      maybeForceBuilderInitialization();
+    }
+    private void maybeForceBuilderInitialization() {
+      if (com.google.protobuf.GeneratedMessageV3
+              .alwaysUseFieldBuilders) {
+        getSecurityFieldBuilder();
+        getCleanPriceFieldBuilder();
+        getCpiFieldBuilder();
+        getAssumedInflationRateFieldBuilder();
+        getCostBasisFieldBuilder();
+      }
     }
     @java.lang.Override
     public Builder clear() {
@@ -526,6 +632,11 @@ private static final long serialVersionUID = 0L;
       if (cpiBuilder_ != null) {
         cpiBuilder_.dispose();
         cpiBuilder_ = null;
+      }
+      assumedInflationRate_ = null;
+      if (assumedInflationRateBuilder_ != null) {
+        assumedInflationRateBuilder_.dispose();
+        assumedInflationRateBuilder_ = null;
       }
       costBasis_ = null;
       if (costBasisBuilder_ != null) {
@@ -580,11 +691,19 @@ private static final long serialVersionUID = 0L;
             ? cpi_
             : cpiBuilder_.build();
       }
+      int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.assumedInflationRate_ = assumedInflationRateBuilder_ == null
+            ? assumedInflationRate_
+            : assumedInflationRateBuilder_.build();
+        to_bitField0_ |= 0x00000001;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
         result.costBasis_ = costBasisBuilder_ == null
             ? costBasis_
             : costBasisBuilder_.build();
       }
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -640,6 +759,9 @@ private static final long serialVersionUID = 0L;
       if (other.hasCpi()) {
         mergeCpi(other.getCpi());
       }
+      if (other.hasAssumedInflationRate()) {
+        mergeAssumedInflationRate(other.getAssumedInflationRate());
+      }
       if (other.hasCostBasis()) {
         mergeCostBasis(other.getCostBasis());
       }
@@ -690,11 +812,18 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000004;
               break;
             } // case 34
+            case 42: {
+              input.readMessage(
+                  getAssumedInflationRateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000008;
+              break;
+            } // case 42
             case 162: {
               input.readMessage(
                   getCostBasisFieldBuilder().getBuilder(),
                   extensionRegistry);
-              bitField0_ |= 0x00000008;
+              bitField0_ |= 0x00000010;
               break;
             } // case 162
             default: {
@@ -1332,6 +1461,278 @@ private static final long serialVersionUID = 0L;
       return cpiBuilder_;
     }
 
+    private fintekkers.models.util.DecimalValue.DecimalValueProto assumedInflationRate_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> assumedInflationRateBuilder_;
+    /**
+     * <pre>
+     * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+     * constant from the settlement date to maturity. Settlement date is read
+     * from ValuationRequestProto.asof_datetime.
+     * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+     * payment date t is
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365).
+     * Coupon = principal x ratio(t) x coupon rate per period.
+     * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+     * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+     * of pv_amount is unchanged; see VS-159.
+     * Absent when unset. Unset is not 0%: valuation-service then uses today's
+     * INDEX_RATIO for every row, as before. See
+     * docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+     * @return Whether the assumedInflationRate field is set.
+     */
+    public boolean hasAssumedInflationRate() {
+      return ((bitField0_ & 0x00000008) != 0);
+    }
+    /**
+     * <pre>
+     * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+     * constant from the settlement date to maturity. Settlement date is read
+     * from ValuationRequestProto.asof_datetime.
+     * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+     * payment date t is
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365).
+     * Coupon = principal x ratio(t) x coupon rate per period.
+     * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+     * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+     * of pv_amount is unchanged; see VS-159.
+     * Absent when unset. Unset is not 0%: valuation-service then uses today's
+     * INDEX_RATIO for every row, as before. See
+     * docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+     * @return The assumedInflationRate.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getAssumedInflationRate() {
+      if (assumedInflationRateBuilder_ == null) {
+        return assumedInflationRate_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : assumedInflationRate_;
+      } else {
+        return assumedInflationRateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+     * constant from the settlement date to maturity. Settlement date is read
+     * from ValuationRequestProto.asof_datetime.
+     * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+     * payment date t is
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365).
+     * Coupon = principal x ratio(t) x coupon rate per period.
+     * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+     * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+     * of pv_amount is unchanged; see VS-159.
+     * Absent when unset. Unset is not 0%: valuation-service then uses today's
+     * INDEX_RATIO for every row, as before. See
+     * docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+     */
+    public Builder setAssumedInflationRate(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (assumedInflationRateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        assumedInflationRate_ = value;
+      } else {
+        assumedInflationRateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+     * constant from the settlement date to maturity. Settlement date is read
+     * from ValuationRequestProto.asof_datetime.
+     * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+     * payment date t is
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365).
+     * Coupon = principal x ratio(t) x coupon rate per period.
+     * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+     * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+     * of pv_amount is unchanged; see VS-159.
+     * Absent when unset. Unset is not 0%: valuation-service then uses today's
+     * INDEX_RATIO for every row, as before. See
+     * docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+     */
+    public Builder setAssumedInflationRate(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (assumedInflationRateBuilder_ == null) {
+        assumedInflationRate_ = builderForValue.build();
+      } else {
+        assumedInflationRateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+     * constant from the settlement date to maturity. Settlement date is read
+     * from ValuationRequestProto.asof_datetime.
+     * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+     * payment date t is
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365).
+     * Coupon = principal x ratio(t) x coupon rate per period.
+     * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+     * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+     * of pv_amount is unchanged; see VS-159.
+     * Absent when unset. Unset is not 0%: valuation-service then uses today's
+     * INDEX_RATIO for every row, as before. See
+     * docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+     */
+    public Builder mergeAssumedInflationRate(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (assumedInflationRateBuilder_ == null) {
+        if (((bitField0_ & 0x00000008) != 0) &&
+          assumedInflationRate_ != null &&
+          assumedInflationRate_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getAssumedInflationRateBuilder().mergeFrom(value);
+        } else {
+          assumedInflationRate_ = value;
+        }
+      } else {
+        assumedInflationRateBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+     * constant from the settlement date to maturity. Settlement date is read
+     * from ValuationRequestProto.asof_datetime.
+     * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+     * payment date t is
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365).
+     * Coupon = principal x ratio(t) x coupon rate per period.
+     * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+     * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+     * of pv_amount is unchanged; see VS-159.
+     * Absent when unset. Unset is not 0%: valuation-service then uses today's
+     * INDEX_RATIO for every row, as before. See
+     * docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+     */
+    public Builder clearAssumedInflationRate() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      assumedInflationRate_ = null;
+      if (assumedInflationRateBuilder_ != null) {
+        assumedInflationRateBuilder_.dispose();
+        assumedInflationRateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+     * constant from the settlement date to maturity. Settlement date is read
+     * from ValuationRequestProto.asof_datetime.
+     * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+     * payment date t is
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365).
+     * Coupon = principal x ratio(t) x coupon rate per period.
+     * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+     * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+     * of pv_amount is unchanged; see VS-159.
+     * Absent when unset. Unset is not 0%: valuation-service then uses today's
+     * INDEX_RATIO for every row, as before. See
+     * docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getAssumedInflationRateBuilder() {
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return getAssumedInflationRateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+     * constant from the settlement date to maturity. Settlement date is read
+     * from ValuationRequestProto.asof_datetime.
+     * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+     * payment date t is
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365).
+     * Coupon = principal x ratio(t) x coupon rate per period.
+     * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+     * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+     * of pv_amount is unchanged; see VS-159.
+     * Absent when unset. Unset is not 0%: valuation-service then uses today's
+     * INDEX_RATIO for every row, as before. See
+     * docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getAssumedInflationRateOrBuilder() {
+      if (assumedInflationRateBuilder_ != null) {
+        return assumedInflationRateBuilder_.getMessageOrBuilder();
+      } else {
+        return assumedInflationRate_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : assumedInflationRate_;
+      }
+    }
+    /**
+     * <pre>
+     * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
+     * constant from the settlement date to maturity. Settlement date is read
+     * from ValuationRequestProto.asof_datetime.
+     * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
+     * payment date t is
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365).
+     * Coupon = principal x ratio(t) x coupon rate per period.
+     * Principal at maturity = principal x max(ratio, 1), with ratio at maturity.
+     * Each row reports its ratio(t) in CashflowProto.index_ratio. Discounting
+     * of pv_amount is unchanged; see VS-159.
+     * Absent when unset. Unset is not 0%: valuation-service then uses today's
+     * INDEX_RATIO for every row, as before. See
+     * docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getAssumedInflationRateFieldBuilder() {
+      if (assumedInflationRateBuilder_ == null) {
+        assumedInflationRateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getAssumedInflationRate(),
+                getParentForChildren(),
+                isClean());
+        assumedInflationRate_ = null;
+      }
+      return assumedInflationRateBuilder_;
+    }
+
     private fintekkers.requests.valuation.CostBasisInput costBasis_;
     private com.google.protobuf.SingleFieldBuilderV3<
         fintekkers.requests.valuation.CostBasisInput, fintekkers.requests.valuation.CostBasisInput.Builder, fintekkers.requests.valuation.CostBasisInputOrBuilder> costBasisBuilder_;
@@ -1344,7 +1745,7 @@ private static final long serialVersionUID = 0L;
      * @return Whether the costBasis field is set.
      */
     public boolean hasCostBasis() {
-      return ((bitField0_ & 0x00000008) != 0);
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      * <pre>
@@ -1377,7 +1778,7 @@ private static final long serialVersionUID = 0L;
       } else {
         costBasisBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1395,7 +1796,7 @@ private static final long serialVersionUID = 0L;
       } else {
         costBasisBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1408,7 +1809,7 @@ private static final long serialVersionUID = 0L;
      */
     public Builder mergeCostBasis(fintekkers.requests.valuation.CostBasisInput value) {
       if (costBasisBuilder_ == null) {
-        if (((bitField0_ & 0x00000008) != 0) &&
+        if (((bitField0_ & 0x00000010) != 0) &&
           costBasis_ != null &&
           costBasis_ != fintekkers.requests.valuation.CostBasisInput.getDefaultInstance()) {
           getCostBasisBuilder().mergeFrom(value);
@@ -1418,7 +1819,7 @@ private static final long serialVersionUID = 0L;
       } else {
         costBasisBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1430,7 +1831,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
      */
     public Builder clearCostBasis() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000010);
       costBasis_ = null;
       if (costBasisBuilder_ != null) {
         costBasisBuilder_.dispose();
@@ -1447,7 +1848,7 @@ private static final long serialVersionUID = 0L;
      * <code>.fintekkers.requests.valuation.CostBasisInput cost_basis = 20;</code>
      */
     public fintekkers.requests.valuation.CostBasisInput.Builder getCostBasisBuilder() {
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000010;
       onChanged();
       return getCostBasisFieldBuilder().getBuilder();
     }

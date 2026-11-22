@@ -1162,6 +1162,7 @@ proto.fintekkers.requests.valuation.TipsInput.toObject = function(includeInstanc
     security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
     cleanPrice: (f = msg.getCleanPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     cpi: (f = msg.getCpi()) && proto.fintekkers.requests.valuation.InflationIndexInput.toObject(includeInstance, f),
+    assumedInflationRate: (f = msg.getAssumedInflationRate()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     costBasis: (f = msg.getCostBasis()) && proto.fintekkers.requests.valuation.CostBasisInput.toObject(includeInstance, f)
   };
 
@@ -1213,6 +1214,11 @@ proto.fintekkers.requests.valuation.TipsInput.deserializeBinaryFromReader = func
       var value = new proto.fintekkers.requests.valuation.InflationIndexInput;
       reader.readMessage(value,proto.fintekkers.requests.valuation.InflationIndexInput.deserializeBinaryFromReader);
       msg.setCpi(value);
+      break;
+    case 5:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setAssumedInflationRate(value);
       break;
     case 20:
       var value = new proto.fintekkers.requests.valuation.CostBasisInput;
@@ -1270,6 +1276,14 @@ proto.fintekkers.requests.valuation.TipsInput.serializeBinaryToWriter = function
       4,
       f,
       proto.fintekkers.requests.valuation.InflationIndexInput.serializeBinaryToWriter
+    );
+  }
+  f = message.getAssumedInflationRate();
+  if (f != null) {
+    writer.writeMessage(
+      5,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
     );
   }
   f = message.getCostBasis();
@@ -1391,6 +1405,43 @@ proto.fintekkers.requests.valuation.TipsInput.prototype.clearCpi = function() {
  */
 proto.fintekkers.requests.valuation.TipsInput.prototype.hasCpi = function() {
   return jspb.Message.getField(this, 4) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto assumed_inflation_rate = 5;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.requests.valuation.TipsInput.prototype.getAssumedInflationRate = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 5));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.requests.valuation.TipsInput} returns this
+*/
+proto.fintekkers.requests.valuation.TipsInput.prototype.setAssumedInflationRate = function(value) {
+  return jspb.Message.setWrapperField(this, 5, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.requests.valuation.TipsInput} returns this
+ */
+proto.fintekkers.requests.valuation.TipsInput.prototype.clearAssumedInflationRate = function() {
+  return this.setAssumedInflationRate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.requests.valuation.TipsInput.prototype.hasAssumedInflationRate = function() {
+  return jspb.Message.getField(this, 5) != null;
 };
 
 
