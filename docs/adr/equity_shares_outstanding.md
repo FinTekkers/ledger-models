@@ -6,7 +6,7 @@ Accepted (LM-479). Additive wire change: `EquityDetailsProto` gains `optional fi
 
 ## Context
 
-No model could hold an equity's or ETF's shares outstanding. `EquityDetailsProto`, the `equity_details = 204` arm of `SecurityProto.non_bond_details`, was an empty placeholder whose comment named `shares_outstanding` as a future field. The SPY loader needs to store SPY's shares outstanding at each quarter-end since December 2003, from State Street's NAV history.
+No model could hold an equity's or ETF's shares outstanding. `EquityDetailsProto`, the `equity_details = 204` variant of the `SecurityProto.non_bond_details` oneof, was an empty placeholder whose comment named `shares_outstanding` as a future field. The SPY loader needs to store SPY's shares outstanding at each quarter-end since December 2003, from State Street's NAV history.
 
 ## Decision
 
