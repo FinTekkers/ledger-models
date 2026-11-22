@@ -18,9 +18,11 @@ import { IndexTypeProto } from '../../../fintekkers/models/security/index/index_
 import { IndexDetailsProto, MbsExtensionProto, SecurityProto, TipsExtensionProto } from '../../../fintekkers/models/security/security_pb';
 import { TaxLotProto } from '../../../fintekkers/models/position/tax_lot_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
+import { CurrencyProto } from '../../../fintekkers/models/util/currency_pb';
 import { DecimalValueProto } from '../../../fintekkers/models/util/decimal_value_pb';
 import { LocalDateProto } from '../../../fintekkers/models/util/local_date_pb';
 import { LocalTimestampProto } from '../../../fintekkers/models/util/local_timestamp_pb';
+import { CashflowProto } from '../../../fintekkers/models/valuation/cashflow_pb';
 import { Timestamp } from 'google-protobuf/google/protobuf/timestamp_pb';
 import { decodeDecimal, encodeDecimal, parseDecimalString, toCanonicalString } from '../../../wrappers/models/utils/decimal';
 
@@ -627,5 +629,64 @@ describe('LM-408 ProductInput input types round-trip', () => {
         expect(c.getSecurity()!.getProductType()).toBe(ProductTypeProto.MONEY_MARKET_FUND);
         expect(c.getSecurity()!.getIssuerName()).toBe('cash');
         expect(toCanonicalString(decodeDecimal(c.getUnitPrice()!))).toBe('1.00');
+    });
+});
+
+// ── TIPS assumed inflation rate and cashflow index ratio (LM-477) ──────────────
+// TipsInput.assumed_inflation_rate = 5 and CashflowProto.index_ratio = 6 round-trip,
+// and come back absent when unset. The row sets fields 1-5 too, so index_ratio is
+// checked beside them.
+
+function cashflowRow(): CashflowProto {
+    const currency = new CurrencyProto();
+    currency.setIsoCode('USD');
+    const row = new CashflowProto();
+    row.setCashflowDate(date(2030, 7, 15));
+    row.setPvAmount(decimal('1180.50'));
+    row.setFvAmount(decimal('1250.00'));
+    row.setCouponRate(decimal('0.125'));
+    row.setCurrency(currency);
+    return row;
+}
+
+function tipsWithPrice(): TipsInput {
+    const tips = new TipsInput();
+    tips.setCleanPrice(decimal('97.50'));
+    return tips;
+}
+
+describe('LM-477 assumed_inflation_rate and index_ratio round-trip', () => {
+    test('assumed_inflation_rate = 3.0 and index_ratio = 1.25 survive', () => {
+        const tips = tipsWithPrice();
+        tips.setAssumedInflationRate(decimal('3.0'));
+
+        const parsedTips = TipsInput.deserializeBinary(tips.serializeBinary());
+
+        expect(parsedTips.hasAssumedInflationRate()).toBe(true);
+        expect(toCanonicalString(decodeDecimal(parsedTips.getAssumedInflationRate()!))).toBe('3.0');
+        expect(toCanonicalString(decodeDecimal(parsedTips.getCleanPrice()!))).toBe('97.50');
+
+        const row = cashflowRow();
+        row.setIndexRatio(decimal('1.25'));
+
+        const parsed = CashflowProto.deserializeBinary(row.serializeBinary());
+
+        expect(parsed.toObject()).toEqual(row.toObject());
+        expect(parsed.hasIndexRatio()).toBe(true);
+        expect(toCanonicalString(decodeDecimal(parsed.getIndexRatio()!))).toBe('1.25');
+        expect(parsed.getCashflowDate()!.toObject()).toEqual(date(2030, 7, 15).toObject());
+        expect(toCanonicalString(decodeDecimal(parsed.getPvAmount()!))).toBe('1180.50');
+        expect(toCanonicalString(decodeDecimal(parsed.getFvAmount()!))).toBe('1250.00');
+        expect(toCanonicalString(decodeDecimal(parsed.getCouponRate()!))).toBe('0.125');
+        expect(parsed.getCurrency()!.getIsoCode()).toBe('USD');
+    });
+
+    test('unset assumed_inflation_rate and index_ratio come back absent', () => {
+        const parsedTips = TipsInput.deserializeBinary(tipsWithPrice().serializeBinary());
+        expect(parsedTips.hasAssumedInflationRate()).toBe(false);
+
+        const parsed = CashflowProto.deserializeBinary(cashflowRow().serializeBinary());
+        expect(parsed.hasIndexRatio()).toBe(false);
+        expect(parsed.hasCouponRate()).toBe(true);
     });
 });

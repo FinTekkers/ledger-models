@@ -3,7 +3,9 @@
 //!
 //! For each field: construct → encode to bytes → decode → verify field matches.
 //! Readings with extra lot months (LM-405), and with only m-3 and m-2,
-//! round-trip unchanged.
+//! round-trip unchanged. TipsInput.assumed_inflation_rate and
+//! CashflowProto.index_ratio (LM-477) round-trip, and come back absent when
+//! unset.
 
 mod common;
 use common::{decimal, Canonical};
@@ -13,7 +15,8 @@ use ledger_models::fintekkers::models::security::{
     security_proto, BondDetailsProto, CouponFrequencyProto, CouponTypeProto, IndexDetailsProto,
     SecurityProto, ProductTypeProto, TipsExtensionProto,
 };
-use ledger_models::fintekkers::models::util::{LocalDateProto, LocalTimestampProto};
+use ledger_models::fintekkers::models::util::{CurrencyProto, LocalDateProto, LocalTimestampProto};
+use ledger_models::fintekkers::models::valuation::CashflowProto;
 use ledger_models::fintekkers::requests::valuation::{
     inflation_index_input, product_input, InflationIndexInput, MonthlyIndexReading,
     MonthlyIndexReadings, ProductInput, TipsInput, ValuationRequestProto,
@@ -78,6 +81,7 @@ fn tips_input_clean_price_survives_roundtrip() {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
         cpi: Some(reference_cpi("310.326")),
+        assumed_inflation_rate: None,
         cost_basis: None,
     };
     let original = ProductInput {
@@ -100,6 +104,7 @@ fn tips_input_security_fields_survive_roundtrip() {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
         cpi: Some(reference_cpi("310.326")),
+        assumed_inflation_rate: None,
         cost_basis: None,
     };
     let original = ProductInput {
@@ -134,6 +139,7 @@ fn valuation_request_with_tips_product_input_survives_roundtrip() {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
         cpi: Some(reference_cpi("310.326")),
+        assumed_inflation_rate: None,
         cost_basis: None,
     };
     let original = ValuationRequestProto {
@@ -161,6 +167,7 @@ fn tips_is_distinct_from_bond_oneof_variant() {
         security: Some(tips_security("260.474")),
         clean_price: Some(decimal("97.50")),
         cpi: Some(reference_cpi("310.326")),
+        assumed_inflation_rate: None,
         cost_basis: None,
     };
     let original = ProductInput {
@@ -181,6 +188,7 @@ fn tips_index_ratio_fields_preserve_precision() {
         security: Some(tips_security("260.47400")),
         clean_price: Some(decimal("98.765432")),
         cpi: Some(reference_cpi("310.32600")),
+        assumed_inflation_rate: None,
         cost_basis: None,
     };
     let original = ProductInput {
@@ -351,4 +359,57 @@ fn tips_cpi_reference_cpi_survives_valuation_request_roundtrip() {
         Some(inflation_index_input::Cpi::ReferenceCpi(d)) => assert_eq!(d.canonical(), "310.32600"),
         other => panic!("Expected ReferenceCpi, got {:?}", other),
     }
+}
+
+// LM-477: a full row, fields 1-5 set, so index_ratio (6) is checked beside them.
+fn cashflow_row(index_ratio: Option<&str>) -> CashflowProto {
+    CashflowProto {
+        cashflow_date: Some(date(2030, 7, 15)),
+        pv_amount: Some(decimal("1180.50")),
+        fv_amount: Some(decimal("1250.00")),
+        coupon_rate: Some(decimal("0.125")),
+        currency: Some(CurrencyProto { iso_code: "USD".to_string() }),
+        index_ratio: index_ratio.map(decimal),
+    }
+}
+
+fn roundtrip_cashflow(original: &CashflowProto) -> CashflowProto {
+    CashflowProto::decode(&original.encode_to_vec()[..]).expect("decode failed")
+}
+
+#[test]
+fn tips_input_and_cashflow_round_trip_inflation_fields() {
+    let tips = TipsInput {
+        security: Some(tips_security("260.47400")),
+        clean_price: Some(decimal("97.50")),
+        assumed_inflation_rate: Some(decimal("3.0")),
+        ..Default::default()
+    };
+    let parsed = roundtrip_tips(&tips_request(tips));
+    assert_eq!(parsed.assumed_inflation_rate.expect("assumed_inflation_rate missing").canonical(), "3.0");
+    assert_eq!(parsed.clean_price.unwrap().canonical(), "97.50");
+
+    let original = cashflow_row(Some("1.25"));
+    let parsed = roundtrip_cashflow(&original);
+    assert_eq!(parsed, original);
+    assert_eq!(parsed.index_ratio.expect("index_ratio missing").canonical(), "1.25");
+    assert_eq!(parsed.cashflow_date, Some(date(2030, 7, 15)));
+    assert_eq!(parsed.pv_amount.unwrap().canonical(), "1180.50");
+    assert_eq!(parsed.fv_amount.unwrap().canonical(), "1250.00");
+    assert_eq!(parsed.coupon_rate.unwrap().canonical(), "0.125");
+    assert_eq!(parsed.currency.unwrap().iso_code, "USD");
+}
+
+#[test]
+fn inflation_fields_absent_when_unset() {
+    let tips = TipsInput {
+        security: Some(tips_security("260.47400")),
+        clean_price: Some(decimal("97.50")),
+        ..Default::default()
+    };
+    assert!(roundtrip_tips(&tips_request(tips)).assumed_inflation_rate.is_none());
+
+    let parsed = roundtrip_cashflow(&cashflow_row(None));
+    assert!(parsed.index_ratio.is_none());
+    assert!(parsed.coupon_rate.is_some());
 }

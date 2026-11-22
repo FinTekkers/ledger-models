@@ -9,15 +9,17 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class CashflowProto(_message.Message):
-    __slots__ = ("cashflow_date", "pv_amount", "fv_amount", "coupon_rate", "currency")
+    __slots__ = ("cashflow_date", "pv_amount", "fv_amount", "coupon_rate", "currency", "index_ratio")
     CASHFLOW_DATE_FIELD_NUMBER: _ClassVar[int]
     PV_AMOUNT_FIELD_NUMBER: _ClassVar[int]
     FV_AMOUNT_FIELD_NUMBER: _ClassVar[int]
     COUPON_RATE_FIELD_NUMBER: _ClassVar[int]
     CURRENCY_FIELD_NUMBER: _ClassVar[int]
+    INDEX_RATIO_FIELD_NUMBER: _ClassVar[int]
     cashflow_date: _local_date_pb2.LocalDateProto
     pv_amount: _decimal_value_pb2.DecimalValueProto
     fv_amount: _decimal_value_pb2.DecimalValueProto
     coupon_rate: _decimal_value_pb2.DecimalValueProto
     currency: _currency_pb2.CurrencyProto
-    def __init__(self, cashflow_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., pv_amount: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., fv_amount: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., coupon_rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., currency: _Optional[_Union[_currency_pb2.CurrencyProto, _Mapping]] = ...) -> None: ...
+    index_ratio: _decimal_value_pb2.DecimalValueProto
+    def __init__(self, cashflow_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., pv_amount: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., fv_amount: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., coupon_rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., currency: _Optional[_Union[_currency_pb2.CurrencyProto, _Mapping]] = ..., index_ratio: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...

@@ -27,7 +27,7 @@ from fintekkers.models.util import decimal_value_pb2 as fintekkers_dot_models_do
 from fintekkers.models.util import currency_pb2 as fintekkers_dot_models_dot_util_dot_currency__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n*fintekkers/models/valuation/cashflow.proto\x12\x1b\x66intekkers.models.valuation\x1a\'fintekkers/models/util/local_date.proto\x1a*fintekkers/models/util/decimal_value.proto\x1a%fintekkers/models/util/currency.proto\"\xc3\x02\n\rCashflowProto\x12=\n\rcashflow_date\x18\x01 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12<\n\tpv_amount\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12<\n\tfv_amount\x18\x03 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12>\n\x0b\x63oupon_rate\x18\x04 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12\x37\n\x08\x63urrency\x18\x05 \x01(\x0b\x32%.fintekkers.models.util.CurrencyProtoB\x12\x42\x0e\x43\x61shflowProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n*fintekkers/models/valuation/cashflow.proto\x12\x1b\x66intekkers.models.valuation\x1a\'fintekkers/models/util/local_date.proto\x1a*fintekkers/models/util/decimal_value.proto\x1a%fintekkers/models/util/currency.proto\"\x98\x03\n\rCashflowProto\x12=\n\rcashflow_date\x18\x01 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12<\n\tpv_amount\x18\x02 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12<\n\tfv_amount\x18\x03 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12>\n\x0b\x63oupon_rate\x18\x04 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProto\x12\x37\n\x08\x63urrency\x18\x05 \x01(\x0b\x32%.fintekkers.models.util.CurrencyProto\x12\x43\n\x0bindex_ratio\x18\x06 \x01(\x0b\x32).fintekkers.models.util.DecimalValueProtoH\x00\x88\x01\x01\x42\x0e\n\x0c_index_ratioB\x12\x42\x0e\x43\x61shflowProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,5 +36,5 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\016CashflowProtosP\001'
   _globals['_CASHFLOWPROTO']._serialized_start=200
-  _globals['_CASHFLOWPROTO']._serialized_end=523
+  _globals['_CASHFLOWPROTO']._serialized_end=608
 # @@protoc_insertion_point(module_scope)

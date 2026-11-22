@@ -2,7 +2,9 @@
 TipsInput.cpi (LM-343) round-trips through a full ValuationRequestProto, the
 fields removed in 0.5 (LM-344) are gone and reserved, and the new messages
 carry exactly the planned fields. Readings with extra lot months (LM-405), and
-with only m-3 and m-2, round-trip unchanged.
+with only m-3 and m-2, round-trip unchanged. TipsInput.assumed_inflation_rate
+and CashflowProto.index_ratio (LM-477) round-trip, and come back absent when
+unset.
 """
 import json
 from decimal import Decimal
@@ -12,7 +14,8 @@ from google.protobuf import descriptor_pb2, timestamp_pb2
 
 from fintekkers.models.security import product_type_pb2, security_pb2
 from fintekkers.models.security.index import index_type_pb2
-from fintekkers.models.util import decimal_value_pb2, local_timestamp_pb2
+from fintekkers.models.util import currency_pb2, decimal_value_pb2, local_date_pb2, local_timestamp_pb2
+from fintekkers.models.valuation import cashflow_pb2
 from fintekkers.requests.valuation import product_inputs_pb2
 from fintekkers.requests.valuation import valuation_request_pb2
 from fintekkers.wrappers.models.util.decimal import decode_decimal, encode_decimal
@@ -202,3 +205,48 @@ class TestInflationIndexInputShape:
 
     def test_monthly_index_reading_fields(self):
         assert self._fields(product_inputs_pb2.MonthlyIndexReading) == {"year": 1, "month": 2, "value": 3}
+
+
+class TestInflationFieldsRoundTrip:
+    """LM-477: TipsInput.assumed_inflation_rate (5) and CashflowProto.index_ratio (6)."""
+
+    @staticmethod
+    def _cashflow(**extra) -> cashflow_pb2.CashflowProto:
+        return cashflow_pb2.CashflowProto(
+            cashflow_date=local_date_pb2.LocalDateProto(year=2030, month=7, day=15),
+            pv_amount=_decimal("1180.50"), fv_amount=_decimal("1250.00"),
+            coupon_rate=_decimal("0.125"), currency=currency_pb2.CurrencyProto(iso_code="USD"),
+            **extra,
+        )
+
+    @staticmethod
+    def _roundtrip_cashflow(original: cashflow_pb2.CashflowProto) -> cashflow_pb2.CashflowProto:
+        return cashflow_pb2.CashflowProto.FromString(original.SerializeToString())
+
+    def test_inflation_fields_round_trip(self):
+        tips = product_inputs_pb2.TipsInput(
+            security=_tips_security(), clean_price=_decimal("97.50"), assumed_inflation_rate=_decimal("3.0"),
+        )
+        parsed_tips = _roundtrip_tips(_request(tips))
+        assert parsed_tips.HasField("assumed_inflation_rate")
+        assert _text(parsed_tips.assumed_inflation_rate) == "3.0"
+        assert _text(parsed_tips.clean_price) == "97.50"
+
+        cashflow = self._cashflow(index_ratio=_decimal("1.25"))
+        parsed = self._roundtrip_cashflow(cashflow)
+        assert parsed == cashflow
+        assert parsed.HasField("index_ratio")
+        assert _text(parsed.index_ratio) == "1.25"
+        assert (parsed.cashflow_date.year, parsed.cashflow_date.month, parsed.cashflow_date.day) == (2030, 7, 15)
+        assert _text(parsed.pv_amount) == "1180.50"
+        assert _text(parsed.fv_amount) == "1250.00"
+        assert _text(parsed.coupon_rate) == "0.125"
+        assert parsed.currency.iso_code == "USD"
+
+    def test_inflation_fields_absent_when_unset(self):
+        tips = product_inputs_pb2.TipsInput(security=_tips_security(), clean_price=_decimal("97.50"))
+        assert not _roundtrip_tips(_request(tips)).HasField("assumed_inflation_rate")
+
+        parsed = self._roundtrip_cashflow(self._cashflow())
+        assert not parsed.HasField("index_ratio")
+        assert parsed.HasField("coupon_rate")

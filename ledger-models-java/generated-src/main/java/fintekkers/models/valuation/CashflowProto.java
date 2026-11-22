@@ -8,6 +8,7 @@ package fintekkers.models.valuation;
  * Represents a single cashflow in a bond's payment schedule.
  * Each cashflow has a date, a present value (discounted to settlement),
  * and a future value (the nominal/undiscounted amount).
+ * For TIPS, fv_amount is inflation-adjusted; see index_ratio.
  * </pre>
  *
  * Protobuf type {@code fintekkers.models.valuation.CashflowProto}
@@ -49,6 +50,7 @@ private static final long serialVersionUID = 0L;
             fintekkers.models.valuation.CashflowProto.class, fintekkers.models.valuation.CashflowProto.Builder.class);
   }
 
+  private int bitField0_;
   public static final int CASHFLOW_DATE_FIELD_NUMBER = 1;
   private fintekkers.models.util.LocalDate.LocalDateProto cashflowDate_;
   /**
@@ -245,6 +247,71 @@ private static final long serialVersionUID = 0L;
     return currency_ == null ? fintekkers.models.util.CurrencyProto.getDefaultInstance() : currency_;
   }
 
+  public static final int INDEX_RATIO_FIELD_NUMBER = 6;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto indexRatio_;
+  /**
+   * <pre>
+   * The index ratio applied to this row, a dimensionless ratio (1.25 =
+   * principal accreted by 25%). Set for TIPS rows only; absent for every
+   * other product. Absent when unset, never 0.
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365) and rate is
+   * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+   * is today's INDEX_RATIO.
+   * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+   * principal at maturity, so that row's fv_amount can be above
+   * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+   * @return Whether the indexRatio field is set.
+   */
+  @java.lang.Override
+  public boolean hasIndexRatio() {
+    return ((bitField0_ & 0x00000001) != 0);
+  }
+  /**
+   * <pre>
+   * The index ratio applied to this row, a dimensionless ratio (1.25 =
+   * principal accreted by 25%). Set for TIPS rows only; absent for every
+   * other product. Absent when unset, never 0.
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365) and rate is
+   * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+   * is today's INDEX_RATIO.
+   * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+   * principal at maturity, so that row's fv_amount can be above
+   * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+   * @return The indexRatio.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getIndexRatio() {
+    return indexRatio_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : indexRatio_;
+  }
+  /**
+   * <pre>
+   * The index ratio applied to this row, a dimensionless ratio (1.25 =
+   * principal accreted by 25%). Set for TIPS rows only; absent for every
+   * other product. Absent when unset, never 0.
+   *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+   * where y = days from settlement to t / 365 (ACT/365) and rate is
+   * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+   * is today's INDEX_RATIO.
+   * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+   * principal at maturity, so that row's fv_amount can be above
+   * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getIndexRatioOrBuilder() {
+    return indexRatio_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : indexRatio_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -274,6 +341,9 @@ private static final long serialVersionUID = 0L;
     if (currency_ != null) {
       output.writeMessage(5, getCurrency());
     }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeMessage(6, getIndexRatio());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -302,6 +372,10 @@ private static final long serialVersionUID = 0L;
     if (currency_ != null) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(5, getCurrency());
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(6, getIndexRatio());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -343,6 +417,11 @@ private static final long serialVersionUID = 0L;
       if (!getCurrency()
           .equals(other.getCurrency())) return false;
     }
+    if (hasIndexRatio() != other.hasIndexRatio()) return false;
+    if (hasIndexRatio()) {
+      if (!getIndexRatio()
+          .equals(other.getIndexRatio())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -373,6 +452,10 @@ private static final long serialVersionUID = 0L;
     if (hasCurrency()) {
       hash = (37 * hash) + CURRENCY_FIELD_NUMBER;
       hash = (53 * hash) + getCurrency().hashCode();
+    }
+    if (hasIndexRatio()) {
+      hash = (37 * hash) + INDEX_RATIO_FIELD_NUMBER;
+      hash = (53 * hash) + getIndexRatio().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -474,6 +557,7 @@ private static final long serialVersionUID = 0L;
    * Represents a single cashflow in a bond's payment schedule.
    * Each cashflow has a date, a present value (discounted to settlement),
    * and a future value (the nominal/undiscounted amount).
+   * For TIPS, fv_amount is inflation-adjusted; see index_ratio.
    * </pre>
    *
    * Protobuf type {@code fintekkers.models.valuation.CashflowProto}
@@ -497,13 +581,24 @@ private static final long serialVersionUID = 0L;
 
     // Construct using fintekkers.models.valuation.CashflowProto.newBuilder()
     private Builder() {
-
+      maybeForceBuilderInitialization();
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-
+      maybeForceBuilderInitialization();
+    }
+    private void maybeForceBuilderInitialization() {
+      if (com.google.protobuf.GeneratedMessageV3
+              .alwaysUseFieldBuilders) {
+        getCashflowDateFieldBuilder();
+        getPvAmountFieldBuilder();
+        getFvAmountFieldBuilder();
+        getCouponRateFieldBuilder();
+        getCurrencyFieldBuilder();
+        getIndexRatioFieldBuilder();
+      }
     }
     @java.lang.Override
     public Builder clear() {
@@ -533,6 +628,11 @@ private static final long serialVersionUID = 0L;
       if (currencyBuilder_ != null) {
         currencyBuilder_.dispose();
         currencyBuilder_ = null;
+      }
+      indexRatio_ = null;
+      if (indexRatioBuilder_ != null) {
+        indexRatioBuilder_.dispose();
+        indexRatioBuilder_ = null;
       }
       return this;
     }
@@ -592,6 +692,14 @@ private static final long serialVersionUID = 0L;
             ? currency_
             : currencyBuilder_.build();
       }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.indexRatio_ = indexRatioBuilder_ == null
+            ? indexRatio_
+            : indexRatioBuilder_.build();
+        to_bitField0_ |= 0x00000001;
+      }
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -652,6 +760,9 @@ private static final long serialVersionUID = 0L;
       }
       if (other.hasCurrency()) {
         mergeCurrency(other.getCurrency());
+      }
+      if (other.hasIndexRatio()) {
+        mergeIndexRatio(other.getIndexRatio());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -714,6 +825,13 @@ private static final long serialVersionUID = 0L;
               bitField0_ |= 0x00000010;
               break;
             } // case 42
+            case 50: {
+              input.readMessage(
+                  getIndexRatioFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 50
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1522,6 +1640,242 @@ private static final long serialVersionUID = 0L;
         currency_ = null;
       }
       return currencyBuilder_;
+    }
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto indexRatio_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> indexRatioBuilder_;
+    /**
+     * <pre>
+     * The index ratio applied to this row, a dimensionless ratio (1.25 =
+     * principal accreted by 25%). Set for TIPS rows only; absent for every
+     * other product. Absent when unset, never 0.
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365) and rate is
+     * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+     * is today's INDEX_RATIO.
+     * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+     * principal at maturity, so that row's fv_amount can be above
+     * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+     * @return Whether the indexRatio field is set.
+     */
+    public boolean hasIndexRatio() {
+      return ((bitField0_ & 0x00000020) != 0);
+    }
+    /**
+     * <pre>
+     * The index ratio applied to this row, a dimensionless ratio (1.25 =
+     * principal accreted by 25%). Set for TIPS rows only; absent for every
+     * other product. Absent when unset, never 0.
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365) and rate is
+     * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+     * is today's INDEX_RATIO.
+     * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+     * principal at maturity, so that row's fv_amount can be above
+     * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+     * @return The indexRatio.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getIndexRatio() {
+      if (indexRatioBuilder_ == null) {
+        return indexRatio_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : indexRatio_;
+      } else {
+        return indexRatioBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The index ratio applied to this row, a dimensionless ratio (1.25 =
+     * principal accreted by 25%). Set for TIPS rows only; absent for every
+     * other product. Absent when unset, never 0.
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365) and rate is
+     * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+     * is today's INDEX_RATIO.
+     * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+     * principal at maturity, so that row's fv_amount can be above
+     * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+     */
+    public Builder setIndexRatio(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (indexRatioBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        indexRatio_ = value;
+      } else {
+        indexRatioBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The index ratio applied to this row, a dimensionless ratio (1.25 =
+     * principal accreted by 25%). Set for TIPS rows only; absent for every
+     * other product. Absent when unset, never 0.
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365) and rate is
+     * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+     * is today's INDEX_RATIO.
+     * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+     * principal at maturity, so that row's fv_amount can be above
+     * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+     */
+    public Builder setIndexRatio(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (indexRatioBuilder_ == null) {
+        indexRatio_ = builderForValue.build();
+      } else {
+        indexRatioBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The index ratio applied to this row, a dimensionless ratio (1.25 =
+     * principal accreted by 25%). Set for TIPS rows only; absent for every
+     * other product. Absent when unset, never 0.
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365) and rate is
+     * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+     * is today's INDEX_RATIO.
+     * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+     * principal at maturity, so that row's fv_amount can be above
+     * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+     */
+    public Builder mergeIndexRatio(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (indexRatioBuilder_ == null) {
+        if (((bitField0_ & 0x00000020) != 0) &&
+          indexRatio_ != null &&
+          indexRatio_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getIndexRatioBuilder().mergeFrom(value);
+        } else {
+          indexRatio_ = value;
+        }
+      } else {
+        indexRatioBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The index ratio applied to this row, a dimensionless ratio (1.25 =
+     * principal accreted by 25%). Set for TIPS rows only; absent for every
+     * other product. Absent when unset, never 0.
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365) and rate is
+     * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+     * is today's INDEX_RATIO.
+     * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+     * principal at maturity, so that row's fv_amount can be above
+     * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+     */
+    public Builder clearIndexRatio() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      indexRatio_ = null;
+      if (indexRatioBuilder_ != null) {
+        indexRatioBuilder_.dispose();
+        indexRatioBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The index ratio applied to this row, a dimensionless ratio (1.25 =
+     * principal accreted by 25%). Set for TIPS rows only; absent for every
+     * other product. Absent when unset, never 0.
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365) and rate is
+     * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+     * is today's INDEX_RATIO.
+     * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+     * principal at maturity, so that row's fv_amount can be above
+     * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getIndexRatioBuilder() {
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return getIndexRatioFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The index ratio applied to this row, a dimensionless ratio (1.25 =
+     * principal accreted by 25%). Set for TIPS rows only; absent for every
+     * other product. Absent when unset, never 0.
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365) and rate is
+     * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+     * is today's INDEX_RATIO.
+     * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+     * principal at maturity, so that row's fv_amount can be above
+     * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getIndexRatioOrBuilder() {
+      if (indexRatioBuilder_ != null) {
+        return indexRatioBuilder_.getMessageOrBuilder();
+      } else {
+        return indexRatio_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : indexRatio_;
+      }
+    }
+    /**
+     * <pre>
+     * The index ratio applied to this row, a dimensionless ratio (1.25 =
+     * principal accreted by 25%). Set for TIPS rows only; absent for every
+     * other product. Absent when unset, never 0.
+     *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
+     * where y = days from settlement to t / 365 (ACT/365) and rate is
+     * TipsInput.assumed_inflation_rate in percent a year. Without a rate, it
+     * is today's INDEX_RATIO.
+     * This is the unfloored ratio. The max(ratio, 1) floor applies only to
+     * principal at maturity, so that row's fv_amount can be above
+     * principal x ratio. See docs/adr/tips_assumed_inflation_rate.md.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto index_ratio = 6;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getIndexRatioFieldBuilder() {
+      if (indexRatioBuilder_ == null) {
+        indexRatioBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getIndexRatio(),
+                getParentForChildren(),
+                isClean());
+        indexRatio_ = null;
+      }
+      return indexRatioBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

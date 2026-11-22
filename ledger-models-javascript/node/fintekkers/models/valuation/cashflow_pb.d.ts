@@ -36,6 +36,11 @@ export class CashflowProto extends jspb.Message {
     getCurrency(): fintekkers_models_util_currency_pb.CurrencyProto | undefined;
     setCurrency(value?: fintekkers_models_util_currency_pb.CurrencyProto): CashflowProto;
 
+    hasIndexRatio(): boolean;
+    clearIndexRatio(): void;
+    getIndexRatio(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setIndexRatio(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): CashflowProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): CashflowProto.AsObject;
     static toObject(includeInstance: boolean, msg: CashflowProto): CashflowProto.AsObject;
@@ -53,5 +58,6 @@ export namespace CashflowProto {
         fvAmount?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         couponRate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         currency?: fintekkers_models_util_currency_pb.CurrencyProto.AsObject,
+        indexRatio?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }

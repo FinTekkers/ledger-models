@@ -41,16 +41,18 @@ class BondInput(_message.Message):
     def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., benchmark_curve: _Optional[_Union[SecurityBasedCurveInput, _Mapping]] = ..., cost_basis: _Optional[_Union[CostBasisInput, _Mapping]] = ...) -> None: ...
 
 class TipsInput(_message.Message):
-    __slots__ = ("security", "clean_price", "cpi", "cost_basis")
+    __slots__ = ("security", "clean_price", "cpi", "assumed_inflation_rate", "cost_basis")
     SECURITY_FIELD_NUMBER: _ClassVar[int]
     CLEAN_PRICE_FIELD_NUMBER: _ClassVar[int]
     CPI_FIELD_NUMBER: _ClassVar[int]
+    ASSUMED_INFLATION_RATE_FIELD_NUMBER: _ClassVar[int]
     COST_BASIS_FIELD_NUMBER: _ClassVar[int]
     security: _security_pb2.SecurityProto
     clean_price: _decimal_value_pb2.DecimalValueProto
     cpi: InflationIndexInput
+    assumed_inflation_rate: _decimal_value_pb2.DecimalValueProto
     cost_basis: CostBasisInput
-    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., cpi: _Optional[_Union[InflationIndexInput, _Mapping]] = ..., cost_basis: _Optional[_Union[CostBasisInput, _Mapping]] = ...) -> None: ...
+    def __init__(self, security: _Optional[_Union[_security_pb2.SecurityProto, _Mapping]] = ..., clean_price: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., cpi: _Optional[_Union[InflationIndexInput, _Mapping]] = ..., assumed_inflation_rate: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ..., cost_basis: _Optional[_Union[CostBasisInput, _Mapping]] = ...) -> None: ...
 
 class CostBasisInput(_message.Message):
     __slots__ = ("elections", "lots")

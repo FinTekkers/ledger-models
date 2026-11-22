@@ -136,6 +136,11 @@ export class TipsInput extends jspb.Message {
     getCpi(): InflationIndexInput | undefined;
     setCpi(value?: InflationIndexInput): TipsInput;
 
+    hasAssumedInflationRate(): boolean;
+    clearAssumedInflationRate(): void;
+    getAssumedInflationRate(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setAssumedInflationRate(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): TipsInput;
+
     hasCostBasis(): boolean;
     clearCostBasis(): void;
     getCostBasis(): CostBasisInput | undefined;
@@ -156,6 +161,7 @@ export namespace TipsInput {
         security?: fintekkers_models_security_security_pb.SecurityProto.AsObject,
         cleanPrice?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         cpi?: InflationIndexInput.AsObject,
+        assumedInflationRate?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
         costBasis?: CostBasisInput.AsObject,
     }
 }
