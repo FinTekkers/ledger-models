@@ -198,11 +198,17 @@ message IndexDetailsProto {
   repeated SecurityProto constituents = 2;
 }
 
-// Equity security details. Minimal for now — placeholder for future fields
-// (e.g. shares_outstanding, dividend_yield, sector).
+// Equity and ETF security details (any STOCK descendant in hierarchy.json).
+// Also serves as the type marker in the non_bond_details oneof.
+// See docs/adr/equity_shares_outstanding.md.
 message EquityDetailsProto {
-  // No equity-specific fields exist yet. This message serves as a type marker
-  // in the oneof and a home for future equity-specific fields.
+  // Shares outstanding: a whole-number count of shares (not thousands, not a
+  // currency amount).
+  // Versioned like every security attribute by the SecurityProto's as_of:
+  // the value valid at a date is the one on the latest version whose as_of
+  // is on or before that date.
+  // Absent means unknown, NOT zero. Readers must check presence first.
+  optional fintekkers.models.util.DecimalValueProto shares_outstanding = 1;
 }
 
 // Cash security details.

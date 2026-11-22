@@ -3162,7 +3162,7 @@ proto.fintekkers.models.security.EquityDetailsProto.prototype.toObject = functio
  */
 proto.fintekkers.models.security.EquityDetailsProto.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+    sharesOutstanding: (f = msg.getSharesOutstanding()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -3199,6 +3199,11 @@ proto.fintekkers.models.security.EquityDetailsProto.deserializeBinaryFromReader 
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setSharesOutstanding(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -3228,6 +3233,51 @@ proto.fintekkers.models.security.EquityDetailsProto.prototype.serializeBinary = 
  */
 proto.fintekkers.models.security.EquityDetailsProto.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getSharesOutstanding();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto shares_outstanding = 1;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.models.security.EquityDetailsProto.prototype.getSharesOutstanding = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 1));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.models.security.EquityDetailsProto} returns this
+*/
+proto.fintekkers.models.security.EquityDetailsProto.prototype.setSharesOutstanding = function(value) {
+  return jspb.Message.setWrapperField(this, 1, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.security.EquityDetailsProto} returns this
+ */
+proto.fintekkers.models.security.EquityDetailsProto.prototype.clearSharesOutstanding = function() {
+  return this.setSharesOutstanding(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.security.EquityDetailsProto.prototype.hasSharesOutstanding = function() {
+  return jspb.Message.getField(this, 1) != null;
 };
 
 

@@ -1,0 +1,6 @@
+{
+  "item": "LM-479",
+  "added": [
+    {"message": ".fintekkers.models.security.EquityDetailsProto", "number": 1, "name": "shares_outstanding", "type": ".fintekkers.models.util.DecimalValueProto"}
+  ]
+}

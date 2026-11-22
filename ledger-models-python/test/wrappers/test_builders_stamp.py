@@ -89,6 +89,7 @@ from fintekkers.wrappers.models.portfolio import Portfolio
 from fintekkers.wrappers.models.position import Position
 from fintekkers.wrappers.models.price import Price
 from fintekkers.wrappers.models.security.bond_security import BondSecurity
+from fintekkers.wrappers.models.security.equity_security import EquitySecurity
 from fintekkers.wrappers.models.security.floating_rate_note import FloatingRateNote
 from fintekkers.wrappers.models.security.index_security import IndexSecurity
 from fintekkers.wrappers.models.security.mortgage_backed_security import MortgageBackedSecurity
@@ -382,6 +383,7 @@ BUILDERS = {
     "models.position.Position": lambda: Position(stamp_own(PositionProto())).positionProto,
     "models.price.Price": lambda: Price(_price()).proto,
     "models.security.bond_security.BondSecurity": lambda: BondSecurity(_security()).proto,
+    "models.security.equity_security.EquitySecurity": lambda: EquitySecurity(_security()).proto,
     "models.security.floating_rate_note.FloatingRateNote": lambda: FloatingRateNote(_security()).proto,
     "models.security.index_security.IndexSecurity": lambda: IndexSecurity(_security()).proto,
     "models.security.mortgage_backed_security.MortgageBackedSecurity": lambda: MortgageBackedSecurity(_security()).proto,

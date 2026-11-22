@@ -4,6 +4,7 @@
 import Security from './security';
 import BondSecurity from './BondSecurity';
 import IndexSecurity from './IndexSecurity';
+import EquitySecurity from './EquitySecurity';
 
 import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/security/security_pb';
 import { ProductTypeProto } from '../../../fintekkers/models/security/product_type_pb';
@@ -86,7 +87,7 @@ describe('Callable bonds (LM-465)', () => {
   });
 
   test.each([
-    ['stock', ProductTypeProto.COMMON_STOCK, Security],
+    ['stock', ProductTypeProto.COMMON_STOCK, EquitySecurity],
     ['cash', ProductTypeProto.CURRENCY, Security],
     ['index', ProductTypeProto.EQUITY_INDEX, IndexSecurity],
   ])('non-bond %s is not callable and has no call date', (_name, productType, cls) => {

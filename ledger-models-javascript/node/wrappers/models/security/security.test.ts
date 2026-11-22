@@ -106,8 +106,13 @@ test('isCash(): runtime predicate, true on CURRENCY only', () => {
     expect(dummyEquity().isCash()).toBe(false);
 });
 
-test('isEquity(): runtime predicate, true on STOCK descendants', () => {
-    expect(dummyEquity().isEquity()).toBe(true);
+test('isEquity(): true on STOCK descendants, narrows to EquitySecurity', () => {
+    const equity = dummyEquity();
+    expect(equity.isEquity()).toBe(true);
+    if (equity.isEquity()) {
+        // Inside the narrowed branch TS knows equity: EquitySecurity.
+        expect(equity.getSharesOutstanding()).toBeUndefined();
+    }
     expect(dummyBondSecurity().isEquity()).toBe(false);
     expect(dummyCash().isEquity()).toBe(false);
 });

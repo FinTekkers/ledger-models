@@ -371,8 +371,20 @@ def lm477(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM477 and new == LM477[key]
 
 
+LM479 = {
+    f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}"
+    for f in json.loads((REPO / "test-fixtures/field-changes/lm-479.json").read_text())["added"]
+}
+
+
+def lm479(key: str, old, new, head: dict) -> bool:
+    """LM-479: EquityDetailsProto.shares_outstanding = 1 (DecimalValueProto)
+    added. That addition only; no other equity field is added."""
+    return old is None and key in LM479 and new == LM479[key]
+
+
 ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411,
-           lm433, lm465, lm477]
+           lm433, lm465, lm477, lm479]
 
 
 def main() -> int:

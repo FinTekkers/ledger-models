@@ -5,8 +5,9 @@ package fintekkers.models.security;
 
 /**
  * <pre>
- * Equity security details. Minimal for now — placeholder for future fields
- * (e.g. shares_outstanding, dividend_yield, sector).
+ * Equity and ETF security details (any STOCK descendant in hierarchy.json).
+ * Also serves as the type marker in the non_bond_details oneof.
+ * See docs/adr/equity_shares_outstanding.md.
  * </pre>
  *
  * Protobuf type {@code fintekkers.models.security.EquityDetailsProto}
@@ -48,6 +49,60 @@ private static final long serialVersionUID = 0L;
             fintekkers.models.security.EquityDetailsProto.class, fintekkers.models.security.EquityDetailsProto.Builder.class);
   }
 
+  private int bitField0_;
+  public static final int SHARES_OUTSTANDING_FIELD_NUMBER = 1;
+  private fintekkers.models.util.DecimalValue.DecimalValueProto sharesOutstanding_;
+  /**
+   * <pre>
+   * Shares outstanding: a whole-number count of shares (not thousands, not a
+   * currency amount).
+   * Versioned like every security attribute by the SecurityProto's as_of:
+   * the value valid at a date is the one on the latest version whose as_of
+   * is on or before that date.
+   * Absent means unknown, NOT zero. Readers must check presence first.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+   * @return Whether the sharesOutstanding field is set.
+   */
+  @java.lang.Override
+  public boolean hasSharesOutstanding() {
+    return ((bitField0_ & 0x00000001) != 0);
+  }
+  /**
+   * <pre>
+   * Shares outstanding: a whole-number count of shares (not thousands, not a
+   * currency amount).
+   * Versioned like every security attribute by the SecurityProto's as_of:
+   * the value valid at a date is the one on the latest version whose as_of
+   * is on or before that date.
+   * Absent means unknown, NOT zero. Readers must check presence first.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+   * @return The sharesOutstanding.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProto getSharesOutstanding() {
+    return sharesOutstanding_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : sharesOutstanding_;
+  }
+  /**
+   * <pre>
+   * Shares outstanding: a whole-number count of shares (not thousands, not a
+   * currency amount).
+   * Versioned like every security attribute by the SecurityProto's as_of:
+   * the value valid at a date is the one on the latest version whose as_of
+   * is on or before that date.
+   * Absent means unknown, NOT zero. Readers must check presence first.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getSharesOutstandingOrBuilder() {
+    return sharesOutstanding_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : sharesOutstanding_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -62,6 +117,9 @@ private static final long serialVersionUID = 0L;
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeMessage(1, getSharesOutstanding());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -71,6 +129,10 @@ private static final long serialVersionUID = 0L;
     if (size != -1) return size;
 
     size = 0;
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(1, getSharesOutstanding());
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -86,6 +148,11 @@ private static final long serialVersionUID = 0L;
     }
     fintekkers.models.security.EquityDetailsProto other = (fintekkers.models.security.EquityDetailsProto) obj;
 
+    if (hasSharesOutstanding() != other.hasSharesOutstanding()) return false;
+    if (hasSharesOutstanding()) {
+      if (!getSharesOutstanding()
+          .equals(other.getSharesOutstanding())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -97,6 +164,10 @@ private static final long serialVersionUID = 0L;
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
+    if (hasSharesOutstanding()) {
+      hash = (37 * hash) + SHARES_OUTSTANDING_FIELD_NUMBER;
+      hash = (53 * hash) + getSharesOutstanding().hashCode();
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -194,8 +265,9 @@ private static final long serialVersionUID = 0L;
   }
   /**
    * <pre>
-   * Equity security details. Minimal for now — placeholder for future fields
-   * (e.g. shares_outstanding, dividend_yield, sector).
+   * Equity and ETF security details (any STOCK descendant in hierarchy.json).
+   * Also serves as the type marker in the non_bond_details oneof.
+   * See docs/adr/equity_shares_outstanding.md.
    * </pre>
    *
    * Protobuf type {@code fintekkers.models.security.EquityDetailsProto}
@@ -219,17 +291,29 @@ private static final long serialVersionUID = 0L;
 
     // Construct using fintekkers.models.security.EquityDetailsProto.newBuilder()
     private Builder() {
-
+      maybeForceBuilderInitialization();
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-
+      maybeForceBuilderInitialization();
+    }
+    private void maybeForceBuilderInitialization() {
+      if (com.google.protobuf.GeneratedMessageV3
+              .alwaysUseFieldBuilders) {
+        getSharesOutstandingFieldBuilder();
+      }
     }
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
+      sharesOutstanding_ = null;
+      if (sharesOutstandingBuilder_ != null) {
+        sharesOutstandingBuilder_.dispose();
+        sharesOutstandingBuilder_ = null;
+      }
       return this;
     }
 
@@ -256,8 +340,21 @@ private static final long serialVersionUID = 0L;
     @java.lang.Override
     public fintekkers.models.security.EquityDetailsProto buildPartial() {
       fintekkers.models.security.EquityDetailsProto result = new fintekkers.models.security.EquityDetailsProto(this);
+      if (bitField0_ != 0) { buildPartial0(result); }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(fintekkers.models.security.EquityDetailsProto result) {
+      int from_bitField0_ = bitField0_;
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.sharesOutstanding_ = sharesOutstandingBuilder_ == null
+            ? sharesOutstanding_
+            : sharesOutstandingBuilder_.build();
+        to_bitField0_ |= 0x00000001;
+      }
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -304,6 +401,9 @@ private static final long serialVersionUID = 0L;
 
     public Builder mergeFrom(fintekkers.models.security.EquityDetailsProto other) {
       if (other == fintekkers.models.security.EquityDetailsProto.getDefaultInstance()) return this;
+      if (other.hasSharesOutstanding()) {
+        mergeSharesOutstanding(other.getSharesOutstanding());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -330,6 +430,13 @@ private static final long serialVersionUID = 0L;
             case 0:
               done = true;
               break;
+            case 10: {
+              input.readMessage(
+                  getSharesOutstandingFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000001;
+              break;
+            } // case 10
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -344,6 +451,207 @@ private static final long serialVersionUID = 0L;
         onChanged();
       } // finally
       return this;
+    }
+    private int bitField0_;
+
+    private fintekkers.models.util.DecimalValue.DecimalValueProto sharesOutstanding_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> sharesOutstandingBuilder_;
+    /**
+     * <pre>
+     * Shares outstanding: a whole-number count of shares (not thousands, not a
+     * currency amount).
+     * Versioned like every security attribute by the SecurityProto's as_of:
+     * the value valid at a date is the one on the latest version whose as_of
+     * is on or before that date.
+     * Absent means unknown, NOT zero. Readers must check presence first.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+     * @return Whether the sharesOutstanding field is set.
+     */
+    public boolean hasSharesOutstanding() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     * <pre>
+     * Shares outstanding: a whole-number count of shares (not thousands, not a
+     * currency amount).
+     * Versioned like every security attribute by the SecurityProto's as_of:
+     * the value valid at a date is the one on the latest version whose as_of
+     * is on or before that date.
+     * Absent means unknown, NOT zero. Readers must check presence first.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+     * @return The sharesOutstanding.
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto getSharesOutstanding() {
+      if (sharesOutstandingBuilder_ == null) {
+        return sharesOutstanding_ == null ? fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : sharesOutstanding_;
+      } else {
+        return sharesOutstandingBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * Shares outstanding: a whole-number count of shares (not thousands, not a
+     * currency amount).
+     * Versioned like every security attribute by the SecurityProto's as_of:
+     * the value valid at a date is the one on the latest version whose as_of
+     * is on or before that date.
+     * Absent means unknown, NOT zero. Readers must check presence first.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+     */
+    public Builder setSharesOutstanding(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (sharesOutstandingBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        sharesOutstanding_ = value;
+      } else {
+        sharesOutstandingBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000001;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Shares outstanding: a whole-number count of shares (not thousands, not a
+     * currency amount).
+     * Versioned like every security attribute by the SecurityProto's as_of:
+     * the value valid at a date is the one on the latest version whose as_of
+     * is on or before that date.
+     * Absent means unknown, NOT zero. Readers must check presence first.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+     */
+    public Builder setSharesOutstanding(
+        fintekkers.models.util.DecimalValue.DecimalValueProto.Builder builderForValue) {
+      if (sharesOutstandingBuilder_ == null) {
+        sharesOutstanding_ = builderForValue.build();
+      } else {
+        sharesOutstandingBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000001;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Shares outstanding: a whole-number count of shares (not thousands, not a
+     * currency amount).
+     * Versioned like every security attribute by the SecurityProto's as_of:
+     * the value valid at a date is the one on the latest version whose as_of
+     * is on or before that date.
+     * Absent means unknown, NOT zero. Readers must check presence first.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+     */
+    public Builder mergeSharesOutstanding(fintekkers.models.util.DecimalValue.DecimalValueProto value) {
+      if (sharesOutstandingBuilder_ == null) {
+        if (((bitField0_ & 0x00000001) != 0) &&
+          sharesOutstanding_ != null &&
+          sharesOutstanding_ != fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance()) {
+          getSharesOutstandingBuilder().mergeFrom(value);
+        } else {
+          sharesOutstanding_ = value;
+        }
+      } else {
+        sharesOutstandingBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000001;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Shares outstanding: a whole-number count of shares (not thousands, not a
+     * currency amount).
+     * Versioned like every security attribute by the SecurityProto's as_of:
+     * the value valid at a date is the one on the latest version whose as_of
+     * is on or before that date.
+     * Absent means unknown, NOT zero. Readers must check presence first.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+     */
+    public Builder clearSharesOutstanding() {
+      bitField0_ = (bitField0_ & ~0x00000001);
+      sharesOutstanding_ = null;
+      if (sharesOutstandingBuilder_ != null) {
+        sharesOutstandingBuilder_.dispose();
+        sharesOutstandingBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * Shares outstanding: a whole-number count of shares (not thousands, not a
+     * currency amount).
+     * Versioned like every security attribute by the SecurityProto's as_of:
+     * the value valid at a date is the one on the latest version whose as_of
+     * is on or before that date.
+     * Absent means unknown, NOT zero. Readers must check presence first.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProto.Builder getSharesOutstandingBuilder() {
+      bitField0_ |= 0x00000001;
+      onChanged();
+      return getSharesOutstandingFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * Shares outstanding: a whole-number count of shares (not thousands, not a
+     * currency amount).
+     * Versioned like every security attribute by the SecurityProto's as_of:
+     * the value valid at a date is the one on the latest version whose as_of
+     * is on or before that date.
+     * Absent means unknown, NOT zero. Readers must check presence first.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+     */
+    public fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getSharesOutstandingOrBuilder() {
+      if (sharesOutstandingBuilder_ != null) {
+        return sharesOutstandingBuilder_.getMessageOrBuilder();
+      } else {
+        return sharesOutstanding_ == null ?
+            fintekkers.models.util.DecimalValue.DecimalValueProto.getDefaultInstance() : sharesOutstanding_;
+      }
+    }
+    /**
+     * <pre>
+     * Shares outstanding: a whole-number count of shares (not thousands, not a
+     * currency amount).
+     * Versioned like every security attribute by the SecurityProto's as_of:
+     * the value valid at a date is the one on the latest version whose as_of
+     * is on or before that date.
+     * Absent means unknown, NOT zero. Readers must check presence first.
+     * </pre>
+     *
+     * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder> 
+        getSharesOutstandingFieldBuilder() {
+      if (sharesOutstandingBuilder_ == null) {
+        sharesOutstandingBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.DecimalValue.DecimalValueProto, fintekkers.models.util.DecimalValue.DecimalValueProto.Builder, fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder>(
+                getSharesOutstanding(),
+                getParentForChildren(),
+                isClean());
+        sharesOutstanding_ = null;
+      }
+      return sharesOutstandingBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

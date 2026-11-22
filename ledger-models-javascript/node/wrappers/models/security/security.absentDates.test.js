@@ -12,6 +12,7 @@ const TIPSBond_1 = __importDefault(require("./TIPSBond"));
 const FloatingRateNote_1 = __importDefault(require("./FloatingRateNote"));
 const MortgageBackedSecurity_1 = __importDefault(require("./MortgageBackedSecurity"));
 const IndexSecurity_1 = __importDefault(require("./IndexSecurity"));
+const EquitySecurity_1 = __importDefault(require("./EquitySecurity"));
 const position_1 = require("../position/position");
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
@@ -46,10 +47,10 @@ function isPlaceholder(value) {
     const [y, m, d] = ymd(value);
     return (y === 2999 && m === 12 && d === 31) || (y === 1900 && m === 1 && d === 1);
 }
-// JS has no EquitySecurity / CashSecurity: Security.create returns a plain
-// Security for stock, cash, FX spot and crypto.
+// JS has no CashSecurity: Security.create returns a plain Security for
+// cash, FX spot and crypto.
 const NON_BONDS = [
-    ['stock', product_type_pb_1.ProductTypeProto.COMMON_STOCK, security_1.default],
+    ['stock', product_type_pb_1.ProductTypeProto.COMMON_STOCK, EquitySecurity_1.default],
     ['index', product_type_pb_1.ProductTypeProto.EQUITY_INDEX, IndexSecurity_1.default],
     ['cash', product_type_pb_1.ProductTypeProto.CURRENCY, security_1.default],
     ['fx spot', product_type_pb_1.ProductTypeProto.FX_SPOT, security_1.default],

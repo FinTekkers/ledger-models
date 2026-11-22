@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const security_1 = __importDefault(require("./security"));
 const BondSecurity_1 = __importDefault(require("./BondSecurity"));
 const IndexSecurity_1 = __importDefault(require("./IndexSecurity"));
+const EquitySecurity_1 = __importDefault(require("./EquitySecurity"));
 const security_pb_1 = require("../../../fintekkers/models/security/security_pb");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const identifier_pb_1 = require("../../../fintekkers/models/security/identifier/identifier_pb");
@@ -77,7 +78,7 @@ describe('Callable bonds (LM-465)', () => {
         expect(ymd(bond.getMaturityDate())).toEqual(MATURITY);
     });
     test.each([
-        ['stock', product_type_pb_1.ProductTypeProto.COMMON_STOCK, security_1.default],
+        ['stock', product_type_pb_1.ProductTypeProto.COMMON_STOCK, EquitySecurity_1.default],
         ['cash', product_type_pb_1.ProductTypeProto.CURRENCY, security_1.default],
         ['index', product_type_pb_1.ProductTypeProto.EQUITY_INDEX, IndexSecurity_1.default],
     ])('non-bond %s is not callable and has no call date', (_name, productType, cls) => {

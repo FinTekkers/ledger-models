@@ -15,6 +15,7 @@ from fintekkers.models.util.local_date_pb2 import LocalDateProto
 
 from fintekkers.wrappers.models.position import Position
 from fintekkers.wrappers.models.security.bond_security import BondSecurity
+from fintekkers.wrappers.models.security.equity_security import EquitySecurity
 from fintekkers.wrappers.models.security.floating_rate_note import FloatingRateNote
 from fintekkers.wrappers.models.security.index_security import IndexSecurity
 from fintekkers.wrappers.models.security.mortgage_backed_security import MortgageBackedSecurity
@@ -40,9 +41,9 @@ def _proto(product_type, with_bond_details=False, with_dates=False) -> SecurityP
     return proto
 
 
-# Python has no EquitySecurity / CashSecurity: plain Security stands in.
+# Python has no CashSecurity: plain Security stands in.
 _NON_BONDS = [
-    ("stock", Security, ProductTypeProto.COMMON_STOCK),
+    ("stock", EquitySecurity, ProductTypeProto.COMMON_STOCK),
     ("index", IndexSecurity, ProductTypeProto.EQUITY_INDEX),
     ("cash", Security, ProductTypeProto.CURRENCY),
     ("fx_spot", Security, ProductTypeProto.FX_SPOT),

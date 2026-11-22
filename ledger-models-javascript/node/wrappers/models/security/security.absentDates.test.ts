@@ -7,6 +7,7 @@ import TIPSBond from './TIPSBond';
 import FloatingRateNote from './FloatingRateNote';
 import MortgageBackedSecurity from './MortgageBackedSecurity';
 import IndexSecurity from './IndexSecurity';
+import EquitySecurity from './EquitySecurity';
 import { Position } from '../position/position';
 
 import { SecurityProto, BondDetailsProto } from '../../../fintekkers/models/security/security_pb';
@@ -47,10 +48,10 @@ function isPlaceholder(value: unknown): boolean {
   return (y === 2999 && m === 12 && d === 31) || (y === 1900 && m === 1 && d === 1);
 }
 
-// JS has no EquitySecurity / CashSecurity: Security.create returns a plain
-// Security for stock, cash, FX spot and crypto.
+// JS has no CashSecurity: Security.create returns a plain Security for
+// cash, FX spot and crypto.
 const NON_BONDS: Array<[string, ProductTypeProto, Function]> = [
-  ['stock', ProductTypeProto.COMMON_STOCK, Security],
+  ['stock', ProductTypeProto.COMMON_STOCK, EquitySecurity],
   ['index', ProductTypeProto.EQUITY_INDEX, IndexSecurity],
   ['cash', ProductTypeProto.CURRENCY, Security],
   ['fx spot', ProductTypeProto.FX_SPOT, Security],

@@ -167,14 +167,16 @@ public final class SecurityProtos {
       "xDetailsProto\022D\n\nindex_type\030\001 \001(\01620.fint" +
       "ekkers.models.security.index.IndexTypePr" +
       "oto\022?\n\014constituents\030\002 \003(\0132).fintekkers.m" +
-      "odels.security.SecurityProto\"\024\n\022EquityDe" +
-      "tailsProto\"#\n\020CashDetailsProto\022\017\n\007cash_i" +
-      "d\030\001 \001(\t\"\255\001\n\022FxSpotDetailsProto\022@\n\rbase_c" +
-      "urrency\030\001 \001(\0132).fintekkers.models.securi" +
-      "ty.SecurityProto\022A\n\016quote_currency\030\002 \001(\013" +
-      "2).fintekkers.models.security.SecurityPr" +
-      "oto\022\022\n\nconvention\030\003 \001(\tB\022B\016SecurityProto" +
-      "sP\001b\006proto3"
+      "odels.security.SecurityProto\"w\n\022EquityDe" +
+      "tailsProto\022J\n\022shares_outstanding\030\001 \001(\0132)" +
+      ".fintekkers.models.util.DecimalValueProt" +
+      "oH\000\210\001\001B\025\n\023_shares_outstanding\"#\n\020CashDet" +
+      "ailsProto\022\017\n\007cash_id\030\001 \001(\t\"\255\001\n\022FxSpotDet" +
+      "ailsProto\022@\n\rbase_currency\030\001 \001(\0132).finte" +
+      "kkers.models.security.SecurityProto\022A\n\016q" +
+      "uote_currency\030\002 \001(\0132).fintekkers.models." +
+      "security.SecurityProto\022\022\n\nconvention\030\003 \001" +
+      "(\tB\022B\016SecurityProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -236,7 +238,7 @@ public final class SecurityProtos {
     internal_static_fintekkers_models_security_EquityDetailsProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_security_EquityDetailsProto_descriptor,
-        new java.lang.String[] { });
+        new java.lang.String[] { "SharesOutstanding", "SharesOutstanding", });
     internal_static_fintekkers_models_security_CashDetailsProto_descriptor =
       getDescriptor().getMessageTypes().get(7);
     internal_static_fintekkers_models_security_CashDetailsProto_fieldAccessorTable = new

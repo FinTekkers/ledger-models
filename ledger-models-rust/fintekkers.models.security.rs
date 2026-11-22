@@ -595,14 +595,21 @@ pub struct IndexDetailsProto {
     #[prost(message, repeated, tag = "2")]
     pub constituents: ::prost::alloc::vec::Vec<SecurityProto>,
 }
-/// Equity security details. Minimal for now — placeholder for future fields
-/// (e.g. shares_outstanding, dividend_yield, sector).
-///
-/// No equity-specific fields exist yet. This message serves as a type marker
-/// in the oneof and a home for future equity-specific fields.
+/// Equity and ETF security details (any STOCK descendant in hierarchy.json).
+/// Also serves as the type marker in the non_bond_details oneof.
+/// See docs/adr/equity_shares_outstanding.md.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct EquityDetailsProto {}
+pub struct EquityDetailsProto {
+    /// Shares outstanding: a whole-number count of shares (not thousands, not a
+    /// currency amount).
+    /// Versioned like every security attribute by the SecurityProto's as_of:
+    /// the value valid at a date is the one on the latest version whose as_of
+    /// is on or before that date.
+    /// Absent means unknown, NOT zero. Readers must check presence first.
+    #[prost(message, optional, tag = "1")]
+    pub shares_outstanding: ::core::option::Option<super::util::DecimalValueProto>,
+}
 /// Cash security details.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

@@ -6,4 +6,46 @@ package fintekkers.models.security;
 public interface EquityDetailsProtoOrBuilder extends
     // @@protoc_insertion_point(interface_extends:fintekkers.models.security.EquityDetailsProto)
     com.google.protobuf.MessageOrBuilder {
+
+  /**
+   * <pre>
+   * Shares outstanding: a whole-number count of shares (not thousands, not a
+   * currency amount).
+   * Versioned like every security attribute by the SecurityProto's as_of:
+   * the value valid at a date is the one on the latest version whose as_of
+   * is on or before that date.
+   * Absent means unknown, NOT zero. Readers must check presence first.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+   * @return Whether the sharesOutstanding field is set.
+   */
+  boolean hasSharesOutstanding();
+  /**
+   * <pre>
+   * Shares outstanding: a whole-number count of shares (not thousands, not a
+   * currency amount).
+   * Versioned like every security attribute by the SecurityProto's as_of:
+   * the value valid at a date is the one on the latest version whose as_of
+   * is on or before that date.
+   * Absent means unknown, NOT zero. Readers must check presence first.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+   * @return The sharesOutstanding.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getSharesOutstanding();
+  /**
+   * <pre>
+   * Shares outstanding: a whole-number count of shares (not thousands, not a
+   * currency amount).
+   * Versioned like every security attribute by the SecurityProto's as_of:
+   * the value valid at a date is the one on the latest version whose as_of
+   * is on or before that date.
+   * Absent means unknown, NOT zero. Readers must check presence first.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.util.DecimalValueProto shares_outstanding = 1;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getSharesOutstandingOrBuilder();
 }

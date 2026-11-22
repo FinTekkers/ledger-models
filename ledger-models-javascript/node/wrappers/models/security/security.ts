@@ -152,7 +152,8 @@ class Security {
    *   - MORTGAGE_BACKED            -> MortgageBackedSecurity
    *   - any other descendant of BOND in hierarchy.json -> BondSecurity
    *   - any descendant of INDEX in hierarchy.json     -> IndexSecurity
-   *   - everything else (equity, cash, fx, etc.)       -> base Security
+   *   - any descendant of STOCK in hierarchy.json     -> EquitySecurity
+   *   - everything else (cash, fx, etc.)               -> base Security
    */
   static create(proto: SecurityProto): Security {
     const productType = proto.getProductType();
@@ -183,6 +184,12 @@ class Security {
     if (ptName && isDescendantOf(ptName as string, 'INDEX')) {
       const IndexSecurity = require('./IndexSecurity').default;
       return new IndexSecurity(proto);
+    }
+
+    // STOCK descendants (common stock, ETF, ...) get the EquitySecurity wrapper.
+    if (ptName && isDescendantOf(ptName as string, 'STOCK')) {
+      const EquitySecurity = require('./EquitySecurity').default;
+      return new EquitySecurity(proto);
     }
 
     return new Security(proto);
@@ -239,12 +246,10 @@ class Security {
   }
 
   /**
-   * Runtime predicate: true iff this Security wraps a stock-shape product
-   * type (any descendant of STOCK in hierarchy.json — COMMON_STOCK,
-   * PREFERRED_STOCK, ADR, ETF). No dedicated EquitySecurity wrapper exists
-   * yet so this isn't a TS type-guard — the return is base Security.
+   * Type guard: true iff this Security is an EquitySecurity (any descendant
+   * of STOCK in hierarchy.json — COMMON_STOCK, PREFERRED_STOCK, ADR, ETF).
    */
-  isEquity(): boolean {
+  isEquity(): this is import('./EquitySecurity').default {
     const t = this.proto.getProductType();
     const ptName = (Object.keys(ProductTypeProto) as Array<keyof typeof ProductTypeProto>)
       .find(k => ProductTypeProto[k] === t);

@@ -148,8 +148,10 @@ class IndexDetailsProto(_message.Message):
     def __init__(self, index_type: _Optional[_Union[_index_type_pb2.IndexTypeProto, str]] = ..., constituents: _Optional[_Iterable[_Union[SecurityProto, _Mapping]]] = ...) -> None: ...
 
 class EquityDetailsProto(_message.Message):
-    __slots__ = ()
-    def __init__(self) -> None: ...
+    __slots__ = ("shares_outstanding",)
+    SHARES_OUTSTANDING_FIELD_NUMBER: _ClassVar[int]
+    shares_outstanding: _decimal_value_pb2.DecimalValueProto
+    def __init__(self, shares_outstanding: _Optional[_Union[_decimal_value_pb2.DecimalValueProto, _Mapping]] = ...) -> None: ...
 
 class CashDetailsProto(_message.Message):
     __slots__ = ("cash_id",)

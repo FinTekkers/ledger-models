@@ -384,6 +384,11 @@ export namespace IndexDetailsProto {
 
 export class EquityDetailsProto extends jspb.Message { 
 
+    hasSharesOutstanding(): boolean;
+    clearSharesOutstanding(): void;
+    getSharesOutstanding(): fintekkers_models_util_decimal_value_pb.DecimalValueProto | undefined;
+    setSharesOutstanding(value?: fintekkers_models_util_decimal_value_pb.DecimalValueProto): EquityDetailsProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): EquityDetailsProto.AsObject;
     static toObject(includeInstance: boolean, msg: EquityDetailsProto): EquityDetailsProto.AsObject;
@@ -396,6 +401,7 @@ export class EquityDetailsProto extends jspb.Message {
 
 export namespace EquityDetailsProto {
     export type AsObject = {
+        sharesOutstanding?: fintekkers_models_util_decimal_value_pb.DecimalValueProto.AsObject,
     }
 }
 

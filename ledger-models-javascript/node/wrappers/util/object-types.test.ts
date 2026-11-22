@@ -607,7 +607,7 @@ const EXCLUSIONS: Record<string, string> = {
   'Transaction.hydrate': 'swaps in the proto LinkResolver.getTransaction fetched (that request is tested)',
   'TreasuryFrnFixings.select': "builds a ReferenceRateFixingProto, which has no object_type; flagged only for reading the caller's issuances",
   ...Object.fromEntries([
-    'BondSecurity.constructor', 'FloatingRateNote.constructor', 'Identifier.constructor', 'IndexSecurity.constructor',
+    'BondSecurity.constructor', 'EquitySecurity.constructor', 'FloatingRateNote.constructor', 'Identifier.constructor', 'IndexSecurity.constructor',
     'Issuance.constructor', 'MortgageBackedSecurity.constructor', 'Portfolio.constructor', 'Position.constructor',
     'Price.constructor', 'Security.constructor', 'TIPSBond.constructor',
   ].map((key) => [key, WRAPS_CALLER])),

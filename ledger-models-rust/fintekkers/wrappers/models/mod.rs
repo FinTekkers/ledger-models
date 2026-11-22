@@ -2,6 +2,7 @@ pub mod bond_security;
 pub mod cost_basis;
 pub mod coupon_frequency;
 pub mod default_price_types;
+pub mod equity_security;
 pub mod floating_rate_note;
 pub mod index_security;
 pub mod issuance;

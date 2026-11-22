@@ -830,7 +830,9 @@ mod test {
     fn test_non_bond_details_equity_round_trip() {
         let proto = SecurityProto {
             product_type: ProductTypeProto::CommonStock as i32,
-            non_bond_details: Some(NonBondDetails::EquityDetails(EquityDetailsProto {})),
+            non_bond_details: Some(NonBondDetails::EquityDetails(EquityDetailsProto {
+                ..Default::default()
+            })),
             ..Default::default()
         };
 

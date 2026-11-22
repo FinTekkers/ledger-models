@@ -115,6 +115,7 @@ const EXCLUDED: &[(&str, &str)] = &[
     ("FloatingRateNote::from_proto", "wraps the caller's proto"),
     ("MortgageBackedSecurity::from_proto", "wraps the caller's proto"),
     ("IndexSecurity::from_proto", "wraps the caller's proto"),
+    ("EquitySecurity::from_proto", "wraps the caller's proto"),
     ("PositionFilter::to_proto", "clones the caller's proto"),
     ("TransactionWrapper::security", "wraps a nested proto the caller already owns"),
     ("TransactionWrapper::portfolio", "wraps a nested proto the caller already owns"),
