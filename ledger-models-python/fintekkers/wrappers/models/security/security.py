@@ -15,6 +15,10 @@ from decimal import Decimal
 from typing import Optional
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.wrappers.models.security.security_identifier import Identifier
+from fintekkers.wrappers.models.security.security_metric import (
+    SecurityMetricObservation,
+    require_security_metric_fetcher,
+)
 
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
@@ -122,6 +126,25 @@ class Security():
         accessors (get_asset_class, get_product_type, etc.) raise
         RuntimeError; resolve via SecurityService.GetByIds first."""
         return self.proto.is_link
+
+    def get_security_metric(self, metric: int, d: date) -> Optional[SecurityMetricObservation]:
+        """The installed SecurityMetricFetcher's latest observation of `metric`
+        (a SecurityMetricTypeProto value) on or before `d`, or None when it has
+        none (never 0). Reads only the id, so a link-mode security is not
+        hydrated, and makes no network call of its own (LM-482). Raises
+        SecurityMetricFetcherMissing when no fetcher is installed. See
+        docs/adr/security_metric.md."""
+        return require_security_metric_fetcher().latest(self.get_id(), metric, d)
+
+    def get_security_metric_series(self, metric: int, from_date: date, to_date: date) -> list[SecurityMetricObservation]:
+        """The installed SecurityMetricFetcher's observations of `metric` with
+        observation_date in [from_date, to_date], in date order (LM-482).
+        Raises SecurityMetricFetcherMissing when no fetcher is installed, and
+        ValueError when from_date is after to_date."""
+        fetcher = require_security_metric_fetcher()
+        if from_date > to_date:
+            raise ValueError(f"security metric series: from {from_date} is after to {to_date}")
+        return sorted(fetcher.series(self.get_id(), metric, from_date, to_date), key=lambda o: o.observation_date)
 
     def _ensure_hydrated(self) -> None:
         """Lazy hydration. If proto is link-mode, resolve via LinkCache or

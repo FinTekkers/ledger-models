@@ -46,6 +46,7 @@ const product_hierarchy_1 = require("./product_hierarchy");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
 const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 const object_types_1 = require("../../util/object-types");
+const security_metric_1 = require("./security_metric");
 class Security {
     constructor(proto) {
         this.proto = proto;
@@ -340,6 +341,35 @@ class Security {
      */
     isLink() {
         return this.proto.getIsLink();
+    }
+    /**
+     * The installed SecurityMetricFetcher's latest observation of `metric` on
+     * or before `date`, or null when it has none (never 0). Reads only the id,
+     * so a link-mode security is not hydrated, and makes no network call of its
+     * own (LM-482). Rejects with SecurityMetricFetcherMissingError when no
+     * fetcher is installed. Async because a production fetcher wraps an async
+     * gRPC stub. See docs/adr/security_metric.md.
+     */
+    getSecurityMetric(metric, date) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (0, security_metric_1.requireSecurityMetricFetcher)().latest(this.getID(), metric, date);
+        });
+    }
+    /**
+     * The installed SecurityMetricFetcher's observations of `metric` with
+     * observation date in [from, to], in date order (LM-482). Rejects with
+     * SecurityMetricFetcherMissingError when no fetcher is installed, and with
+     * an Error when `from` is after `to`.
+     */
+    getSecurityMetricSeries(metric, from, to) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fetcher = (0, security_metric_1.requireSecurityMetricFetcher)();
+            if ((0, security_metric_1.compareLocalDates)(from, to) > 0) {
+                throw new Error(`security metric series: from ${from.toString()} is after to ${to.toString()}`);
+            }
+            const observations = yield fetcher.series(this.getID(), metric, from, to);
+            return [...observations].sort((a, b) => (0, security_metric_1.compareLocalDates)(a.observationDate, b.observationDate));
+        });
     }
     getAsOf() {
         const asOf = this.proto.getAsOf();

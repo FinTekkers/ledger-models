@@ -135,6 +135,14 @@ object_typed! {
     crate::fintekkers::requests::valuation::ValuationResponseProto = "fintekkers.requests.valuation.ValuationResponseProto" => ObjectTypeValuationResponse,
     crate::fintekkers::requests::valuation::CurveRequestProto = "fintekkers.requests.valuation.CurveRequestProto" => ObjectTypeCurveRequest,
     crate::fintekkers::requests::valuation::CurveResponseProto = "fintekkers.requests.valuation.CurveResponseProto" => ObjectTypeCurveResponse,
+    // LM-482: security metrics.
+    crate::fintekkers::models::security::SecurityMetricProto = "fintekkers.models.security.SecurityMetricProto" => ObjectTypeSecurityMetric,
+    crate::fintekkers::requests::security_metric::CreateSecurityMetricRequestProto = "fintekkers.requests.security_metric.CreateSecurityMetricRequestProto" => ObjectTypeCreateSecurityMetricRequest,
+    crate::fintekkers::requests::security_metric::CreateSecurityMetricResponseProto = "fintekkers.requests.security_metric.CreateSecurityMetricResponseProto" => ObjectTypeCreateSecurityMetricResponse,
+    crate::fintekkers::requests::security_metric::GetLatestSecurityMetricRequestProto = "fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto" => ObjectTypeGetLatestSecurityMetricRequest,
+    crate::fintekkers::requests::security_metric::GetLatestSecurityMetricResponseProto = "fintekkers.requests.security_metric.GetLatestSecurityMetricResponseProto" => ObjectTypeGetLatestSecurityMetricResponse,
+    crate::fintekkers::requests::security_metric::SearchSecurityMetricRequestProto = "fintekkers.requests.security_metric.SearchSecurityMetricRequestProto" => ObjectTypeSearchSecurityMetricRequest,
+    crate::fintekkers::requests::security_metric::SearchSecurityMetricResponseProto = "fintekkers.requests.security_metric.SearchSecurityMetricResponseProto" => ObjectTypeSearchSecurityMetricResponse,
 }
 
 /// Sets `object_type` and `version` ([`SCHEMA_VERSION`]) on `message`; returns it.

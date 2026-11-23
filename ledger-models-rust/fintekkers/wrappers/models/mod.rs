@@ -14,6 +14,7 @@ pub mod product_hierarchy;
 pub mod product_inputs;
 pub mod raw_datamodel_object;
 pub mod security;
+pub mod security_metric;
 pub mod tenor;
 pub mod tips_bond;
 pub mod transaction;

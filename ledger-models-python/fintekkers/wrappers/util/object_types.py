@@ -71,6 +71,14 @@ _OWN_TYPES: Dict[str, int] = {
     "fintekkers.requests.valuation.ValuationResponseProto": ObjectTypeProto.OBJECT_TYPE_VALUATION_RESPONSE,
     "fintekkers.requests.valuation.CurveRequestProto": ObjectTypeProto.OBJECT_TYPE_CURVE_REQUEST,
     "fintekkers.requests.valuation.CurveResponseProto": ObjectTypeProto.OBJECT_TYPE_CURVE_RESPONSE,
+    # LM-482: security metrics.
+    "fintekkers.models.security.SecurityMetricProto": ObjectTypeProto.OBJECT_TYPE_SECURITY_METRIC,
+    "fintekkers.requests.security_metric.CreateSecurityMetricRequestProto": ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST,
+    "fintekkers.requests.security_metric.CreateSecurityMetricResponseProto": ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE,
+    "fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto": ObjectTypeProto.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST,
+    "fintekkers.requests.security_metric.GetLatestSecurityMetricResponseProto": ObjectTypeProto.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE,
+    "fintekkers.requests.security_metric.SearchSecurityMetricRequestProto": ObjectTypeProto.OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST,
+    "fintekkers.requests.security_metric.SearchSecurityMetricResponseProto": ObjectTypeProto.OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE,
 }
 
 

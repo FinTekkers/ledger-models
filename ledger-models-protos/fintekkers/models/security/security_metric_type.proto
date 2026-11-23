@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package fintekkers.models.security;
+
+option java_multiple_files = true;
+
+option java_outer_classname = "SecurityMetricTypeProtos";
+
+// What a SecurityMetricProto.value measures, and its units (LM-482). See
+// docs/adr/security_metric.md.
+//
+// A currency amount is in the security's own currency (the fund's base
+// currency for a fund); the metric does not repeat it.
+enum SecurityMetricTypeProto {
+  // Invalid on write: a server rejects it with INVALID_ARGUMENT.
+  UNKNOWN_SECURITY_METRIC = 0;
+
+  // Units: a whole-number count of shares outstanding, scale 0 (e.g. SPY's
+  // daily shares outstanding from State Street's NAV history).
+  SHARES_OUTSTANDING = 1;
+
+  // Units: the security's currency per share (net asset value per share).
+  NAV_PER_SHARE = 2;
+
+  // Units: the security's currency, the fund's total net assets.
+  TOTAL_NET_ASSETS = 3;
+}

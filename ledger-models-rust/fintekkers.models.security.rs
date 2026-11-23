@@ -789,6 +789,111 @@ pub struct IndexConstituentProto {
     #[prost(message, optional, tag = "3")]
     pub shares_in_index: ::core::option::Option<super::util::DecimalValueProto>,
 }
+/// What a SecurityMetricProto.value measures, and its units (LM-482). See
+/// docs/adr/security_metric.md.
+///
+/// A currency amount is in the security's own currency (the fund's base
+/// currency for a fund); the metric does not repeat it.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SecurityMetricTypeProto {
+    /// Invalid on write: a server rejects it with INVALID_ARGUMENT.
+    UnknownSecurityMetric = 0,
+    /// Units: a whole-number count of shares outstanding, scale 0 (e.g. SPY's
+    /// daily shares outstanding from State Street's NAV history).
+    SharesOutstanding = 1,
+    /// Units: the security's currency per share (net asset value per share).
+    NavPerShare = 2,
+    /// Units: the security's currency, the fund's total net assets.
+    TotalNetAssets = 3,
+}
+impl SecurityMetricTypeProto {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            SecurityMetricTypeProto::UnknownSecurityMetric => "UNKNOWN_SECURITY_METRIC",
+            SecurityMetricTypeProto::SharesOutstanding => "SHARES_OUTSTANDING",
+            SecurityMetricTypeProto::NavPerShare => "NAV_PER_SHARE",
+            SecurityMetricTypeProto::TotalNetAssets => "TOTAL_NET_ASSETS",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_SECURITY_METRIC" => Some(Self::UnknownSecurityMetric),
+            "SHARES_OUTSTANDING" => Some(Self::SharesOutstanding),
+            "NAV_PER_SHARE" => Some(Self::NavPerShare),
+            "TOTAL_NET_ASSETS" => Some(Self::TotalNetAssets),
+            _ => None,
+        }
+    }
+}
+/// One dated figure about a security that is not a price, such as its shares
+/// outstanding on a date (LM-482). Metrics are a time series of their own,
+/// served by SecurityMetricService; they are never stored as new versions of
+/// the security. See docs/adr/security_metric.md.
+///
+/// Key: (security_id, metric, observation_date). There is at most one current
+/// observation per key.
+///
+/// Corrections: a correction for the same key is a new version, a new
+/// SecurityMetricProto with a later as_of, as with prices. Earlier versions
+/// are kept. Search and GetLatest return only the latest as_of version per
+/// key.
+///
+/// Absent is unknown: when no observation exists for a key, there is no
+/// SecurityMetricProto for it. A reader never treats a missing observation,
+/// or a missing value, as 0.
+///
+/// Field 7 is unused on purpose: there is no is_link, because a metric is
+/// never embedded in another message.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SecurityMetricProto {
+    #[prost(enumeration = "super::util::ObjectTypeProto", tag = "1")]
+    pub object_type: i32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::util::VersionProto>,
+    /// Primary key: one id per observation version.
+    #[prost(message, optional, tag = "5")]
+    pub uuid: ::core::option::Option<super::util::UuidProto>,
+    /// The version time. A correction for the same (security_id, metric,
+    /// observation_date) is a new version with a later as_of; readers see the
+    /// latest as_of.
+    #[prost(message, optional, tag = "6")]
+    pub as_of: ::core::option::Option<super::util::LocalTimestampProto>,
+    /// The time range in which this version is the current record of the
+    /// observation, as for PriceProto: valid_from is when it was recorded,
+    /// valid_to is when a later version or a delete replaced it. An unset
+    /// valid_to means it is still current. Neither is the observation_date.
+    #[prost(message, optional, tag = "8")]
+    pub valid_from: ::core::option::Option<super::util::LocalTimestampProto>,
+    #[prost(message, optional, tag = "9")]
+    pub valid_to: ::core::option::Option<super::util::LocalTimestampProto>,
+    /// Required. The security the figure is about, by id only: never a
+    /// SecurityProto or a link.
+    #[prost(message, optional, tag = "10")]
+    pub security_id: ::core::option::Option<super::util::UuidProto>,
+    /// Required, never UNKNOWN_SECURITY_METRIC. What value measures; the units
+    /// are on SecurityMetricTypeProto.
+    #[prost(enumeration = "SecurityMetricTypeProto", tag = "11")]
+    pub metric: i32,
+    /// Required. The date the figure is for (e.g. the NAV date), not the date
+    /// it was recorded.
+    #[prost(message, optional, tag = "12")]
+    pub observation_date: ::core::option::Option<super::util::LocalDateProto>,
+    /// Required on write. The figure, in the units of metric. Absent means
+    /// unknown, never 0: a reader must not read an unset value as 0. Zero is a
+    /// real value and is sent as a set zero.
+    #[prost(message, optional, tag = "13")]
+    pub value: ::core::option::Option<super::util::DecimalValueProto>,
+    /// Where the figure came from, e.g. "STATE_STREET_NAV_HISTORY".
+    #[prost(string, tag = "14")]
+    pub source: ::prost::alloc::string::String,
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum TenorTypeProto {

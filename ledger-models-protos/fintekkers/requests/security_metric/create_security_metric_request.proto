@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package fintekkers.requests.security_metric;
+
+import "fintekkers/models/security/security_metric.proto";
+import "fintekkers/requests/util/operation.proto";
+import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CreateSecurityMetricRequestProtos";
+
+// Request to store one SecurityMetricProto observation (LM-482).
+//
+// A write for a (security_id, metric, observation_date) that already has an
+// observation is a correction: it is stored as a new version with a later
+// as_of, and the earlier version is kept. See docs/adr/security_metric.md.
+message CreateSecurityMetricRequestProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  fintekkers.requests.util.RequestOperationTypeProto operation_type = 10;
+
+  // The observation to store. security_id, metric (not
+  // UNKNOWN_SECURITY_METRIC), observation_date and value are required.
+  fintekkers.models.security.SecurityMetricProto create_security_metric_input = 20;
+}
+
+message CreateSecurityMetricResponseProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  fintekkers.requests.util.RequestOperationTypeProto operation_type = 10;
+
+  // Echo of the request that produced this response.
+  CreateSecurityMetricRequestProto create_security_metric_request = 20;
+
+  // The stored version, with any server-set fields (uuid, as_of,
+  // valid_from) filled in.
+  fintekkers.models.security.SecurityMetricProto security_metric_response = 30;
+}

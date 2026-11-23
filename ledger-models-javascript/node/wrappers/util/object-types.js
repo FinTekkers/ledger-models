@@ -21,6 +21,7 @@ const issuance_pb_1 = require("../../fintekkers/models/security/bond/issuance_pb
 const identifier_pb_1 = require("../../fintekkers/models/security/identifier/identifier_pb");
 const index_composition_pb_1 = require("../../fintekkers/models/security/index_composition_pb");
 const security_pb_1 = require("../../fintekkers/models/security/security_pb");
+const security_metric_pb_1 = require("../../fintekkers/models/security/security_metric_pb");
 const tenor_pb_1 = require("../../fintekkers/models/security/tenor_pb");
 const strategy_pb_1 = require("../../fintekkers/models/strategy/strategy_pb");
 const strategy_allocation_pb_1 = require("../../fintekkers/models/strategy/strategy_allocation_pb");
@@ -48,6 +49,9 @@ const get_field_values_response_pb_1 = require("../../fintekkers/requests/securi
 const get_fields_response_pb_1 = require("../../fintekkers/requests/security/get_fields_response_pb");
 const query_security_request_pb_1 = require("../../fintekkers/requests/security/query_security_request_pb");
 const query_security_response_pb_1 = require("../../fintekkers/requests/security/query_security_response_pb");
+const create_security_metric_request_pb_1 = require("../../fintekkers/requests/security_metric/create_security_metric_request_pb");
+const get_latest_security_metric_request_pb_1 = require("../../fintekkers/requests/security_metric/get_latest_security_metric_request_pb");
+const search_security_metric_request_pb_1 = require("../../fintekkers/requests/security_metric/search_security_metric_request_pb");
 const create_transaction_request_pb_1 = require("../../fintekkers/requests/transaction/create_transaction_request_pb");
 const create_transaction_response_pb_1 = require("../../fintekkers/requests/transaction/create_transaction_response_pb");
 const query_transaction_request_pb_1 = require("../../fintekkers/requests/transaction/query_transaction_request_pb");
@@ -126,6 +130,14 @@ const OWN_TYPE_ROWS = [
     ['fintekkers.requests.valuation.ValuationResponseProto', valuation_response_pb_1.ValuationResponseProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_VALUATION_RESPONSE],
     ['fintekkers.requests.valuation.CurveRequestProto', curve_request_pb_1.CurveRequestProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CURVE_REQUEST],
     ['fintekkers.requests.valuation.CurveResponseProto', curve_response_pb_1.CurveResponseProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CURVE_RESPONSE],
+    // LM-482: security metrics.
+    ['fintekkers.models.security.SecurityMetricProto', security_metric_pb_1.SecurityMetricProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_SECURITY_METRIC],
+    ['fintekkers.requests.security_metric.CreateSecurityMetricRequestProto', create_security_metric_request_pb_1.CreateSecurityMetricRequestProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST],
+    ['fintekkers.requests.security_metric.CreateSecurityMetricResponseProto', create_security_metric_request_pb_1.CreateSecurityMetricResponseProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE],
+    ['fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto', get_latest_security_metric_request_pb_1.GetLatestSecurityMetricRequestProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST],
+    ['fintekkers.requests.security_metric.GetLatestSecurityMetricResponseProto', get_latest_security_metric_request_pb_1.GetLatestSecurityMetricResponseProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE],
+    ['fintekkers.requests.security_metric.SearchSecurityMetricRequestProto', search_security_metric_request_pb_1.SearchSecurityMetricRequestProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST],
+    ['fintekkers.requests.security_metric.SearchSecurityMetricResponseProto', search_security_metric_request_pb_1.SearchSecurityMetricResponseProto, object_type_pb_1.ObjectTypeProto.OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE],
 ];
 const OWN_TYPES = new Map(OWN_TYPE_ROWS.map(([, messageClass, objectType]) => [messageClass, objectType]));
 /** Each message with object_type, by proto full name, to its own ObjectTypeProto value. */

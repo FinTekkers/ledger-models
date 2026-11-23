@@ -1,4 +1,4 @@
-use crate::fintekkers::models::security::{IdentifierProto, IdentifierTypeProto, SecurityProto, ProductTypeProto};
+use crate::fintekkers::models::security::{IdentifierProto, IdentifierTypeProto, SecurityProto, ProductTypeProto, SecurityMetricTypeProto};
 use crate::fintekkers::models::util::{LocalTimestampProto, ObjectTypeProto, UuidProto};
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
@@ -11,6 +11,9 @@ use crate::fintekkers::wrappers::util::service_address::{
     self, Service, ServiceAddress, ServiceAddressError,
 };
 use crate::fintekkers::wrappers::models::bond_security::{bond_dates, local_date_proto_to_naive};
+use crate::fintekkers::wrappers::models::security_metric::{
+    self, SecurityMetricError, SecurityMetricObservation,
+};
 use chrono::{DateTime, NaiveDate, Utc};
 use std::sync::{Arc, OnceLock, RwLock};
 use uuid::Uuid;
@@ -226,6 +229,40 @@ impl SecurityWrapper {
     /// hydration happened. See docs/adr/lazy-link-hydration.md.
     pub fn is_link(&self) -> bool {
         self.proto.is_link
+    }
+
+    /// The installed `SecurityMetricFetcher`'s latest observation of
+    /// `metric` on or before `date`, or None when it has none (never 0).
+    /// Reads only the uuid, so a link-mode security is not hydrated, and
+    /// makes no network call of its own (LM-482). `NoFetcher` when no
+    /// fetcher is installed. See docs/adr/security_metric.md.
+    pub fn get_security_metric(
+        &self,
+        metric: SecurityMetricTypeProto,
+        date: NaiveDate,
+    ) -> Result<Option<SecurityMetricObservation>, SecurityMetricError> {
+        security_metric::latest(self.metric_security_id()?, metric, date)
+    }
+
+    /// The installed `SecurityMetricFetcher`'s observations of `metric` with
+    /// observation_date in `[from, to]`, in date order (LM-482).
+    /// `NoFetcher` when no fetcher is installed; `InvalidRange` when `from`
+    /// is after `to`.
+    pub fn get_security_metric_series(
+        &self,
+        metric: SecurityMetricTypeProto,
+        from: NaiveDate,
+        to: NaiveDate,
+    ) -> Result<Vec<SecurityMetricObservation>, SecurityMetricError> {
+        security_metric::series(self.metric_security_id()?, metric, from, to)
+    }
+
+    fn metric_security_id(&self) -> Result<Uuid, SecurityMetricError> {
+        self.proto
+            .uuid
+            .as_ref()
+            .map(|u| UUIDWrapper::new(u.clone()).as_uuid())
+            .ok_or(SecurityMetricError::NoSecurityId)
     }
 
     /// Returns the active proto — resolved if hydration has populated it,

@@ -8,7 +8,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use ledger_models::fintekkers::models::security::IndexCompositionProto;
+use ledger_models::fintekkers::models::security::{IndexCompositionProto, SecurityMetricProto};
 use ledger_models::fintekkers::models::util::ObjectTypeProto;
 use ledger_models::fintekkers::proto::LEDGER_MODELS_PROTO_FILE_DESCRIPTOR_SET;
 use ledger_models::fintekkers::requests::index_composition::{
@@ -19,6 +19,10 @@ use ledger_models::fintekkers::requests::portfolio::{CreatePortfolioResponseProt
 use ledger_models::fintekkers::requests::position::QueryPositionResponseProto;
 use ledger_models::fintekkers::requests::price::{CreatePriceResponseProto, QueryPriceResponseProto};
 use ledger_models::fintekkers::requests::security::{CreateSecurityResponseProto, QuerySecurityResponseProto};
+use ledger_models::fintekkers::requests::security_metric::{
+    CreateSecurityMetricRequestProto, CreateSecurityMetricResponseProto, GetLatestSecurityMetricRequestProto,
+    GetLatestSecurityMetricResponseProto, SearchSecurityMetricRequestProto, SearchSecurityMetricResponseProto,
+};
 use ledger_models::fintekkers::requests::transaction::{
     CreateTransactionResponseProto, QueryTransactionResponseProto,
 };
@@ -188,4 +192,12 @@ fn the_named_types_stamp_through_the_public_api() {
     check_both::<GetIndexCompositionResponseProto>(ObjectTypeGetIndexCompositionResponse);
     // The model the index-composition messages carry.
     check_both::<IndexCompositionProto>(ObjectTypeIndexComposition);
+    // LM-482: the security metric model, requests and responses.
+    check_both::<SecurityMetricProto>(ObjectTypeSecurityMetric);
+    check_both::<CreateSecurityMetricRequestProto>(ObjectTypeCreateSecurityMetricRequest);
+    check_both::<CreateSecurityMetricResponseProto>(ObjectTypeCreateSecurityMetricResponse);
+    check_both::<GetLatestSecurityMetricRequestProto>(ObjectTypeGetLatestSecurityMetricRequest);
+    check_both::<GetLatestSecurityMetricResponseProto>(ObjectTypeGetLatestSecurityMetricResponse);
+    check_both::<SearchSecurityMetricRequestProto>(ObjectTypeSearchSecurityMetricRequest);
+    check_both::<SearchSecurityMetricResponseProto>(ObjectTypeSearchSecurityMetricResponse);
 }

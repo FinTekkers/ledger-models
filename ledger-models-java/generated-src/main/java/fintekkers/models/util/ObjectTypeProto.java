@@ -89,6 +89,10 @@ public enum ObjectTypeProto
    */
   OBJECT_TYPE_TRANSACTION(16),
   /**
+   * <code>OBJECT_TYPE_SECURITY_METRIC = 17;</code>
+   */
+  OBJECT_TYPE_SECURITY_METRIC(17),
+  /**
    * <pre>
    * fintekkers/requests/&#42;*
    * </pre>
@@ -224,6 +228,30 @@ public enum ObjectTypeProto
    * <code>OBJECT_TYPE_VALUATION_RESPONSE = 133;</code>
    */
   OBJECT_TYPE_VALUATION_RESPONSE(133),
+  /**
+   * <code>OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST = 134;</code>
+   */
+  OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST(134),
+  /**
+   * <code>OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE = 135;</code>
+   */
+  OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE(135),
+  /**
+   * <code>OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST = 136;</code>
+   */
+  OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST(136),
+  /**
+   * <code>OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE = 137;</code>
+   */
+  OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE(137),
+  /**
+   * <code>OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST = 138;</code>
+   */
+  OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST(138),
+  /**
+   * <code>OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE = 139;</code>
+   */
+  OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE(139),
   UNRECOGNIZED(-1),
   ;
 
@@ -299,6 +327,10 @@ public enum ObjectTypeProto
    * <code>OBJECT_TYPE_TRANSACTION = 16;</code>
    */
   public static final int OBJECT_TYPE_TRANSACTION_VALUE = 16;
+  /**
+   * <code>OBJECT_TYPE_SECURITY_METRIC = 17;</code>
+   */
+  public static final int OBJECT_TYPE_SECURITY_METRIC_VALUE = 17;
   /**
    * <pre>
    * fintekkers/requests/&#42;*
@@ -435,6 +467,30 @@ public enum ObjectTypeProto
    * <code>OBJECT_TYPE_VALUATION_RESPONSE = 133;</code>
    */
   public static final int OBJECT_TYPE_VALUATION_RESPONSE_VALUE = 133;
+  /**
+   * <code>OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST = 134;</code>
+   */
+  public static final int OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST_VALUE = 134;
+  /**
+   * <code>OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE = 135;</code>
+   */
+  public static final int OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE_VALUE = 135;
+  /**
+   * <code>OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST = 136;</code>
+   */
+  public static final int OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST_VALUE = 136;
+  /**
+   * <code>OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE = 137;</code>
+   */
+  public static final int OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE_VALUE = 137;
+  /**
+   * <code>OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST = 138;</code>
+   */
+  public static final int OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST_VALUE = 138;
+  /**
+   * <code>OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE = 139;</code>
+   */
+  public static final int OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE_VALUE = 139;
 
 
   public final int getNumber() {
@@ -478,6 +534,7 @@ public enum ObjectTypeProto
       case 14: return OBJECT_TYPE_STRATEGY_ALLOCATION;
       case 15: return OBJECT_TYPE_TENOR;
       case 16: return OBJECT_TYPE_TRANSACTION;
+      case 17: return OBJECT_TYPE_SECURITY_METRIC;
       case 101: return OBJECT_TYPE_CREATE_INDEX_COMPOSITION_REQUEST;
       case 102: return OBJECT_TYPE_CREATE_INDEX_COMPOSITION_RESPONSE;
       case 103: return OBJECT_TYPE_CREATE_PORTFOLIO_REQUEST;
@@ -511,6 +568,12 @@ public enum ObjectTypeProto
       case 131: return OBJECT_TYPE_QUERY_TRANSACTION_RESPONSE;
       case 132: return OBJECT_TYPE_VALUATION_REQUEST;
       case 133: return OBJECT_TYPE_VALUATION_RESPONSE;
+      case 134: return OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST;
+      case 135: return OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE;
+      case 136: return OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST;
+      case 137: return OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE;
+      case 138: return OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST;
+      case 139: return OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE;
       default: return null;
     }
   }

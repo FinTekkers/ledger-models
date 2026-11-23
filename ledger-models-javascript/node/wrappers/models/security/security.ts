@@ -12,6 +12,9 @@ import { isDescendantOf } from "./product_hierarchy";
 import * as LinkCacheModule from "../../util/link-cache";
 import LinkResolver from "../../util/link-resolver";
 import { stampOwn } from "../../util/object-types";
+import type { SecurityMetricTypeProto } from "../../../fintekkers/models/security/security_metric_type_pb";
+import type { LocalDate } from "../utils/date";
+import { compareLocalDates, requireSecurityMetricFetcher, type SecurityMetricObservation } from "./security_metric";
 
 class Security {
   proto: SecurityProto;
@@ -321,6 +324,37 @@ class Security {
    */
   isLink(): boolean {
     return this.proto.getIsLink();
+  }
+
+  /**
+   * The installed SecurityMetricFetcher's latest observation of `metric` on
+   * or before `date`, or null when it has none (never 0). Reads only the id,
+   * so a link-mode security is not hydrated, and makes no network call of its
+   * own (LM-482). Rejects with SecurityMetricFetcherMissingError when no
+   * fetcher is installed. Async because a production fetcher wraps an async
+   * gRPC stub. See docs/adr/security_metric.md.
+   */
+  async getSecurityMetric(metric: SecurityMetricTypeProto, date: LocalDate): Promise<SecurityMetricObservation | null> {
+    return requireSecurityMetricFetcher().latest(this.getID(), metric, date);
+  }
+
+  /**
+   * The installed SecurityMetricFetcher's observations of `metric` with
+   * observation date in [from, to], in date order (LM-482). Rejects with
+   * SecurityMetricFetcherMissingError when no fetcher is installed, and with
+   * an Error when `from` is after `to`.
+   */
+  async getSecurityMetricSeries(
+    metric: SecurityMetricTypeProto,
+    from: LocalDate,
+    to: LocalDate,
+  ): Promise<SecurityMetricObservation[]> {
+    const fetcher = requireSecurityMetricFetcher();
+    if (compareLocalDates(from, to) > 0) {
+      throw new Error(`security metric series: from ${from.toString()} is after to ${to.toString()}`);
+    }
+    const observations = await fetcher.series(this.getID(), metric, from, to);
+    return [...observations].sort((a, b) => compareLocalDates(a.observationDate, b.observationDate));
   }
 
   getAsOf(): ZonedDateTime {

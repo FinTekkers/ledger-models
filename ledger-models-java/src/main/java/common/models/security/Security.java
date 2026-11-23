@@ -12,6 +12,7 @@ import fintekkers.models.security.BondDetailsProto;
 import fintekkers.models.security.IdentifierProto;
 import fintekkers.models.security.IdentifierTypeProto;
 import fintekkers.models.security.ProductTypeProto;
+import fintekkers.models.security.SecurityMetricTypeProto;
 import fintekkers.models.security.SecurityProto;
 import protos.serializers.security.IdentifierSerializer;
 import protos.serializers.util.proto.ProtoSerializationUtil;
@@ -326,6 +327,55 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
      */
     public boolean isLink() {
         return proto.getIsLink() && !isHydrated;
+    }
+
+    /**
+     * Where the metric helpers read dated metrics from (LM-482). Default
+     * {@code null}: unlike {@link Fetcher} there is no gRPC default, and the
+     * helpers throw until one is installed. See docs/adr/security_metric.md.
+     */
+    private static volatile SecurityMetricFetcher metricFetcher = null;
+    public static void setMetricFetcher(SecurityMetricFetcher f) { metricFetcher = f; }
+    public static SecurityMetricFetcher getMetricFetcher()       { return metricFetcher; }
+
+    private static SecurityMetricFetcher requireMetricFetcher() {
+        SecurityMetricFetcher f = metricFetcher;
+        if (f == null) {
+            throw new IllegalStateException(
+                    "No SecurityMetricFetcher installed: call Security.setMetricFetcher(...)");
+        }
+        return f;
+    }
+
+    /**
+     * The installed {@link SecurityMetricFetcher}'s latest observation of
+     * {@code metric} on or before {@code date}, or {@code null} when it has
+     * none (never 0). Reads only the id, so a link-mode security is not
+     * hydrated, and makes no network call of its own.
+     *
+     * @throws IllegalStateException when no SecurityMetricFetcher is installed
+     */
+    public SecurityMetricObservation getSecurityMetric(SecurityMetricTypeProto metric, LocalDate date) {
+        return requireMetricFetcher().latest(getID(), metric, date);
+    }
+
+    /**
+     * The installed {@link SecurityMetricFetcher}'s observations of
+     * {@code metric} with observation date in {@code [from, to]}, in date
+     * order.
+     *
+     * @throws IllegalStateException when no SecurityMetricFetcher is installed
+     * @throws IllegalArgumentException when {@code from} is after {@code to}
+     */
+    public List<SecurityMetricObservation> getSecurityMetricSeries(SecurityMetricTypeProto metric,
+                                                                   LocalDate from, LocalDate to) {
+        SecurityMetricFetcher f = requireMetricFetcher();
+        if (from.isAfter(to)) {
+            throw new IllegalArgumentException("security metric series: from " + from + " is after to " + to);
+        }
+        List<SecurityMetricObservation> observations = new ArrayList<>(f.series(getID(), metric, from, to));
+        observations.sort(Comparator.comparing(SecurityMetricObservation::observationDate));
+        return observations;
     }
 
     /**

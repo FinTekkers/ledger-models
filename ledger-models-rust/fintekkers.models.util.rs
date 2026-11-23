@@ -41,6 +41,7 @@ pub enum ObjectTypeProto {
     ObjectTypeStrategyAllocation = 14,
     ObjectTypeTenor = 15,
     ObjectTypeTransaction = 16,
+    ObjectTypeSecurityMetric = 17,
     /// fintekkers/requests/**
     ObjectTypeCreateIndexCompositionRequest = 101,
     ObjectTypeCreateIndexCompositionResponse = 102,
@@ -75,6 +76,12 @@ pub enum ObjectTypeProto {
     ObjectTypeQueryTransactionResponse = 131,
     ObjectTypeValuationRequest = 132,
     ObjectTypeValuationResponse = 133,
+    ObjectTypeCreateSecurityMetricRequest = 134,
+    ObjectTypeCreateSecurityMetricResponse = 135,
+    ObjectTypeGetLatestSecurityMetricRequest = 136,
+    ObjectTypeGetLatestSecurityMetricResponse = 137,
+    ObjectTypeSearchSecurityMetricRequest = 138,
+    ObjectTypeSearchSecurityMetricResponse = 139,
 }
 impl ObjectTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -104,6 +111,7 @@ impl ObjectTypeProto {
             }
             ObjectTypeProto::ObjectTypeTenor => "OBJECT_TYPE_TENOR",
             ObjectTypeProto::ObjectTypeTransaction => "OBJECT_TYPE_TRANSACTION",
+            ObjectTypeProto::ObjectTypeSecurityMetric => "OBJECT_TYPE_SECURITY_METRIC",
             ObjectTypeProto::ObjectTypeCreateIndexCompositionRequest => {
                 "OBJECT_TYPE_CREATE_INDEX_COMPOSITION_REQUEST"
             }
@@ -191,6 +199,24 @@ impl ObjectTypeProto {
             ObjectTypeProto::ObjectTypeValuationResponse => {
                 "OBJECT_TYPE_VALUATION_RESPONSE"
             }
+            ObjectTypeProto::ObjectTypeCreateSecurityMetricRequest => {
+                "OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST"
+            }
+            ObjectTypeProto::ObjectTypeCreateSecurityMetricResponse => {
+                "OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE"
+            }
+            ObjectTypeProto::ObjectTypeGetLatestSecurityMetricRequest => {
+                "OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST"
+            }
+            ObjectTypeProto::ObjectTypeGetLatestSecurityMetricResponse => {
+                "OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE"
+            }
+            ObjectTypeProto::ObjectTypeSearchSecurityMetricRequest => {
+                "OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST"
+            }
+            ObjectTypeProto::ObjectTypeSearchSecurityMetricResponse => {
+                "OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE"
+            }
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -213,6 +239,7 @@ impl ObjectTypeProto {
             "OBJECT_TYPE_STRATEGY_ALLOCATION" => Some(Self::ObjectTypeStrategyAllocation),
             "OBJECT_TYPE_TENOR" => Some(Self::ObjectTypeTenor),
             "OBJECT_TYPE_TRANSACTION" => Some(Self::ObjectTypeTransaction),
+            "OBJECT_TYPE_SECURITY_METRIC" => Some(Self::ObjectTypeSecurityMetric),
             "OBJECT_TYPE_CREATE_INDEX_COMPOSITION_REQUEST" => {
                 Some(Self::ObjectTypeCreateIndexCompositionRequest)
             }
@@ -292,6 +319,24 @@ impl ObjectTypeProto {
             }
             "OBJECT_TYPE_VALUATION_REQUEST" => Some(Self::ObjectTypeValuationRequest),
             "OBJECT_TYPE_VALUATION_RESPONSE" => Some(Self::ObjectTypeValuationResponse),
+            "OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST" => {
+                Some(Self::ObjectTypeCreateSecurityMetricRequest)
+            }
+            "OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE" => {
+                Some(Self::ObjectTypeCreateSecurityMetricResponse)
+            }
+            "OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST" => {
+                Some(Self::ObjectTypeGetLatestSecurityMetricRequest)
+            }
+            "OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE" => {
+                Some(Self::ObjectTypeGetLatestSecurityMetricResponse)
+            }
+            "OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST" => {
+                Some(Self::ObjectTypeSearchSecurityMetricRequest)
+            }
+            "OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE" => {
+                Some(Self::ObjectTypeSearchSecurityMetricResponse)
+            }
             _ => None,
         }
     }

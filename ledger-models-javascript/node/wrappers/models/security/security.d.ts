@@ -5,6 +5,9 @@ import { UUID } from "../utils/uuid";
 import type { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
 import { Identifier } from "./identifier";
 import LinkResolver from "../../util/link-resolver";
+import type { SecurityMetricTypeProto } from "../../../fintekkers/models/security/security_metric_type_pb";
+import type { LocalDate } from "../utils/date";
+import { type SecurityMetricObservation } from "./security_metric";
 declare class Security {
     proto: SecurityProto;
     constructor(proto: SecurityProto);
@@ -130,6 +133,22 @@ declare class Security {
      * Pair with LinkResolver to hydrate to a full entity.
      */
     isLink(): boolean;
+    /**
+     * The installed SecurityMetricFetcher's latest observation of `metric` on
+     * or before `date`, or null when it has none (never 0). Reads only the id,
+     * so a link-mode security is not hydrated, and makes no network call of its
+     * own (LM-482). Rejects with SecurityMetricFetcherMissingError when no
+     * fetcher is installed. Async because a production fetcher wraps an async
+     * gRPC stub. See docs/adr/security_metric.md.
+     */
+    getSecurityMetric(metric: SecurityMetricTypeProto, date: LocalDate): Promise<SecurityMetricObservation | null>;
+    /**
+     * The installed SecurityMetricFetcher's observations of `metric` with
+     * observation date in [from, to], in date order (LM-482). Rejects with
+     * SecurityMetricFetcherMissingError when no fetcher is installed, and with
+     * an Error when `from` is after `to`.
+     */
+    getSecurityMetricSeries(metric: SecurityMetricTypeProto, from: LocalDate, to: LocalDate): Promise<SecurityMetricObservation[]>;
     getAsOf(): ZonedDateTime;
     getAssetClass(): string;
     getProductClass(): string;

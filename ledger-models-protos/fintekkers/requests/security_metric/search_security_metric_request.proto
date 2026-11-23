@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package fintekkers.requests.security_metric;
+
+import "fintekkers/models/util/uuid.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/security/security_metric.proto";
+import "fintekkers/models/security/security_metric_type.proto";
+import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "SearchSecurityMetricRequestProtos";
+
+// The observations of one security's metrics in a date range (LM-482).
+//
+// Returns the latest as_of version of each (security_id, metric,
+// observation_date) whose observation_date is in [from_date, to_date], ordered
+// by observation_date, then metric. A date with no observation is absent from
+// the results, never sent as 0. See docs/adr/security_metric.md.
+message SearchSecurityMetricRequestProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  // Required. The security whose metrics to return.
+  fintekkers.models.util.UUIDProto security_id = 10;
+
+  // The metrics to return. Empty means all metrics. UNKNOWN_SECURITY_METRIC
+  // is invalid.
+  repeated fintekkers.models.security.SecurityMetricTypeProto metric = 11;
+
+  // Inclusive lower bound on observation_date. Unset means unbounded.
+  fintekkers.models.util.LocalDateProto from_date = 12;
+
+  // Inclusive upper bound on observation_date. Unset means unbounded. A
+  // to_date before from_date is invalid.
+  fintekkers.models.util.LocalDateProto to_date = 13;
+}
+
+// One message of the Search stream. The stream as a whole is ordered by
+// observation_date, then metric.
+message SearchSecurityMetricResponseProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  // The observations in this message, in order.
+  repeated fintekkers.models.security.SecurityMetricProto security_metric_response = 20;
+}

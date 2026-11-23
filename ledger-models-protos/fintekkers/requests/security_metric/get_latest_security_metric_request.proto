@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package fintekkers.requests.security_metric;
+
+import "fintekkers/models/util/uuid.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/security/security_metric.proto";
+import "fintekkers/models/security/security_metric_type.proto";
+import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "GetLatestSecurityMetricRequestProtos";
+
+// The latest observation on or before a date, per (security, metric)
+// (LM-482).
+//
+// For each requested (security_id, metric) pair, the observation with the
+// latest observation_date on or before date, in its latest as_of version. A
+// pair with no such observation is absent from the response: absent means
+// unknown, never 0. See docs/adr/security_metric.md.
+message GetLatestSecurityMetricRequestProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  // The securities to look up. Empty gives an empty response, not an error.
+  repeated fintekkers.models.util.UUIDProto security_id = 10;
+
+  // The metrics to look up. Empty means all metrics. UNKNOWN_SECURITY_METRIC
+  // is invalid.
+  repeated fintekkers.models.security.SecurityMetricTypeProto metric = 11;
+
+  // Required. The latest observation_date on or before this date is
+  // returned (latest-on-or-before).
+  fintekkers.models.util.LocalDateProto date = 12;
+}
+
+message GetLatestSecurityMetricResponseProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  // At most one observation per (security_id, metric): the latest
+  // observation_date on or before the request's date. A pair with none is
+  // absent. Each observation's own observation_date tells the caller how
+  // stale it is.
+  repeated fintekkers.models.security.SecurityMetricProto security_metric_response = 20;
+}

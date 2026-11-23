@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package fintekkers.models.security;
+
+// Never import security.proto here: a metric names its security by id only
+// (LM-482). A test checks the imports.
+import "fintekkers/models/util/decimal_value.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/util/local_timestamp.proto";
+import "fintekkers/models/util/uuid.proto";
+import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
+import "fintekkers/models/security/security_metric_type.proto";
+
+option java_multiple_files = true;
+
+option java_outer_classname = "SecurityMetricProtos";
+
+// One dated figure about a security that is not a price, such as its shares
+// outstanding on a date (LM-482). Metrics are a time series of their own,
+// served by SecurityMetricService; they are never stored as new versions of
+// the security. See docs/adr/security_metric.md.
+//
+// Key: (security_id, metric, observation_date). There is at most one current
+// observation per key.
+//
+// Corrections: a correction for the same key is a new version, a new
+// SecurityMetricProto with a later as_of, as with prices. Earlier versions
+// are kept. Search and GetLatest return only the latest as_of version per
+// key.
+//
+// Absent is unknown: when no observation exists for a key, there is no
+// SecurityMetricProto for it. A reader never treats a missing observation,
+// or a missing value, as 0.
+//
+// Field 7 is unused on purpose: there is no is_link, because a metric is
+// never embedded in another message.
+message SecurityMetricProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  // Primary key: one id per observation version.
+  fintekkers.models.util.UUIDProto uuid = 5;
+
+  // The version time. A correction for the same (security_id, metric,
+  // observation_date) is a new version with a later as_of; readers see the
+  // latest as_of.
+  fintekkers.models.util.LocalTimestampProto as_of = 6;
+
+  // The time range in which this version is the current record of the
+  // observation, as for PriceProto: valid_from is when it was recorded,
+  // valid_to is when a later version or a delete replaced it. An unset
+  // valid_to means it is still current. Neither is the observation_date.
+  fintekkers.models.util.LocalTimestampProto valid_from = 8;
+  fintekkers.models.util.LocalTimestampProto valid_to = 9;
+
+  // Required. The security the figure is about, by id only: never a
+  // SecurityProto or a link.
+  fintekkers.models.util.UUIDProto security_id = 10;
+
+  // Required, never UNKNOWN_SECURITY_METRIC. What value measures; the units
+  // are on SecurityMetricTypeProto.
+  SecurityMetricTypeProto metric = 11;
+
+  // Required. The date the figure is for (e.g. the NAV date), not the date
+  // it was recorded.
+  fintekkers.models.util.LocalDateProto observation_date = 12;
+
+  // Required on write. The figure, in the units of metric. Absent means
+  // unknown, never 0: a reader must not read an unset value as 0. Zero is a
+  // real value and is sent as a set zero.
+  fintekkers.models.util.DecimalValueProto value = 13;
+
+  // Where the figure came from, e.g. "STATE_STREET_NAV_HISTORY".
+  string source = 14;
+}
