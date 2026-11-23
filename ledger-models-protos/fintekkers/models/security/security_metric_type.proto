@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package fintekkers.models.security;
+
+option java_multiple_files = true;
+option java_outer_classname = "SecurityMetricTypeProtos";
+
+// A per-security metric observed on a date, such as a fund's shares
+// outstanding (LM-484). Each value's comment is the spec for its units. See
+// SecurityMetricSeriesProto and docs/adr/security_metric_series.md.
+//
+// "The security's currency" below means the currency named by the
+// SecurityProto.settlement_currency of the security that
+// SecurityMetricSeriesProto.security_id identifies. The series does not carry
+// it: resolve the security through SecurityService.
+enum SecurityMetricTypeProto {
+  // Not a metric. Invalid on write; a reader treats it as unknown.
+  UNKNOWN_SECURITY_METRIC = 0;
+
+  // Units: a whole-number count of shares, never in thousands or millions
+  // (15204137000, not 15204.137). The value has no fractional part; a
+  // writer sends a decimal with scale 0.
+  SHARES_OUTSTANDING = 1;
+
+  // Units: currency per share, in the security's currency. The net asset
+  // value of one share at the close of observation_date.
+  NAV_PER_SHARE = 2;
+
+  // Units: a currency amount, in the security's currency, in whole currency
+  // units (never in thousands or millions). The fund's total net assets at
+  // the close of observation_date.
+  TOTAL_NET_ASSETS = 3;
+}

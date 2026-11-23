@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package fintekkers.requests.security_metric;
+
+import "fintekkers/models/security/security_metric.proto";
+import "fintekkers/requests/util/operation.proto";
+import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "CreateSecurityMetricRequestProtos";
+
+// Request to store the points of one series (LM-484). See
+// SecurityMetric.CreateOrUpdate for the upsert and correction rules.
+message CreateSecurityMetricRequestProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  fintekkers.requests.util.RequestOperationTypeProto operation_type = 10;
+
+  // One series per request: security_id, metric and at least one point.
+  // series.as_of is ignored; the server stamps its own.
+  fintekkers.models.security.SecurityMetricSeriesProto series = 20;
+}
+
+message CreateSecurityMetricResponseProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  fintekkers.requests.util.RequestOperationTypeProto operation_type = 10;
+
+  // The header only: the request's security_id and metric, and the as_of the
+  // server stamped on the write. The points are not echoed, so `points` is
+  // always empty here. In this response an empty list means "not echoed",
+  // not "no known observation". Search at this as_of to read them back.
+  fintekkers.models.security.SecurityMetricSeriesProto series = 20;
+}

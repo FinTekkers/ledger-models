@@ -90,6 +90,14 @@ public final class ObjectTypes {
         own(fintekkers.requests.valuation.ValuationResponseProto.getDescriptor(), ObjectTypeProto.OBJECT_TYPE_VALUATION_RESPONSE);
         own(fintekkers.requests.valuation.CurveRequestProto.getDescriptor(), ObjectTypeProto.OBJECT_TYPE_CURVE_REQUEST);
         own(fintekkers.requests.valuation.CurveResponseProto.getDescriptor(), ObjectTypeProto.OBJECT_TYPE_CURVE_RESPONSE);
+        // LM-484: the security metric series and its requests.
+        own(fintekkers.models.security.SecurityMetricSeriesProto.getDescriptor(), ObjectTypeProto.OBJECT_TYPE_SECURITY_METRIC_SERIES);
+        own(fintekkers.requests.security_metric.CreateSecurityMetricRequestProto.getDescriptor(), ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST);
+        own(fintekkers.requests.security_metric.CreateSecurityMetricResponseProto.getDescriptor(), ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE);
+        own(fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto.getDescriptor(), ObjectTypeProto.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST);
+        own(fintekkers.requests.security_metric.GetLatestSecurityMetricResponseProto.getDescriptor(), ObjectTypeProto.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE);
+        own(fintekkers.requests.security_metric.SearchSecurityMetricRequestProto.getDescriptor(), ObjectTypeProto.OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST);
+        own(fintekkers.requests.security_metric.SearchSecurityMetricResponseProto.getDescriptor(), ObjectTypeProto.OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE);
     }
 
     private static void own(Descriptor d, ObjectTypeProto type) {

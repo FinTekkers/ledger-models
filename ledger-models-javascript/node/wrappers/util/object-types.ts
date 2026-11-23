@@ -17,6 +17,7 @@ import { PriceProto } from '../../fintekkers/models/price/price_pb';
 import { IssuanceProto } from '../../fintekkers/models/security/bond/issuance_pb';
 import { IdentifierProto } from '../../fintekkers/models/security/identifier/identifier_pb';
 import { IndexCompositionProto } from '../../fintekkers/models/security/index_composition_pb';
+import { SecurityMetricSeriesProto } from '../../fintekkers/models/security/security_metric_pb';
 import { SecurityProto } from '../../fintekkers/models/security/security_pb';
 import { TenorProto } from '../../fintekkers/models/security/tenor_pb';
 import { StrategyProto } from '../../fintekkers/models/strategy/strategy_pb';
@@ -45,6 +46,9 @@ import { GetFieldValuesResponseProto } from '../../fintekkers/requests/security/
 import { GetFieldsResponseProto } from '../../fintekkers/requests/security/get_fields_response_pb';
 import { QuerySecurityRequestProto } from '../../fintekkers/requests/security/query_security_request_pb';
 import { QuerySecurityResponseProto } from '../../fintekkers/requests/security/query_security_response_pb';
+import { CreateSecurityMetricRequestProto, CreateSecurityMetricResponseProto } from '../../fintekkers/requests/security_metric/create_security_metric_request_pb';
+import { GetLatestSecurityMetricRequestProto, GetLatestSecurityMetricResponseProto } from '../../fintekkers/requests/security_metric/get_latest_security_metric_request_pb';
+import { SearchSecurityMetricRequestProto, SearchSecurityMetricResponseProto } from '../../fintekkers/requests/security_metric/search_security_metric_request_pb';
 import { CreateTransactionRequestProto } from '../../fintekkers/requests/transaction/create_transaction_request_pb';
 import { CreateTransactionResponseProto } from '../../fintekkers/requests/transaction/create_transaction_response_pb';
 import { QueryTransactionRequestProto } from '../../fintekkers/requests/transaction/query_transaction_request_pb';
@@ -137,6 +141,14 @@ const OWN_TYPE_ROWS: ReadonlyArray<[string, Function, ObjectTypeProto]> = [
   ['fintekkers.requests.valuation.ValuationResponseProto', ValuationResponseProto, ObjectTypeProto.OBJECT_TYPE_VALUATION_RESPONSE],
   ['fintekkers.requests.valuation.CurveRequestProto', CurveRequestProto, ObjectTypeProto.OBJECT_TYPE_CURVE_REQUEST],
   ['fintekkers.requests.valuation.CurveResponseProto', CurveResponseProto, ObjectTypeProto.OBJECT_TYPE_CURVE_RESPONSE],
+  // LM-484: the security metric series and its requests.
+  ['fintekkers.models.security.SecurityMetricSeriesProto', SecurityMetricSeriesProto, ObjectTypeProto.OBJECT_TYPE_SECURITY_METRIC_SERIES],
+  ['fintekkers.requests.security_metric.CreateSecurityMetricRequestProto', CreateSecurityMetricRequestProto, ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST],
+  ['fintekkers.requests.security_metric.CreateSecurityMetricResponseProto', CreateSecurityMetricResponseProto, ObjectTypeProto.OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE],
+  ['fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto', GetLatestSecurityMetricRequestProto, ObjectTypeProto.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST],
+  ['fintekkers.requests.security_metric.GetLatestSecurityMetricResponseProto', GetLatestSecurityMetricResponseProto, ObjectTypeProto.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE],
+  ['fintekkers.requests.security_metric.SearchSecurityMetricRequestProto', SearchSecurityMetricRequestProto, ObjectTypeProto.OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST],
+  ['fintekkers.requests.security_metric.SearchSecurityMetricResponseProto', SearchSecurityMetricResponseProto, ObjectTypeProto.OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE],
 ];
 
 const OWN_TYPES: ReadonlyMap<Function, ObjectTypeProto> = new Map(

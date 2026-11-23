@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package fintekkers.requests.security_metric;
+
+import "fintekkers/models/util/uuid.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/util/local_timestamp.proto";
+import "fintekkers/models/security/security_metric.proto";
+import "fintekkers/models/security/security_metric_type.proto";
+import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "SearchSecurityMetricRequestProtos";
+
+// Request for every point of one security's metrics in a date range, as
+// known at as_of (LM-484). See SecurityMetric.Search for the stream rules.
+message SearchSecurityMetricRequestProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  // The security. Required.
+  fintekkers.models.util.UUIDProto security_id = 10;
+
+  // The metrics to return, at least one. The stream returns them in this
+  // order. A repeated metric is returned once, at its first position.
+  repeated fintekkers.models.security.SecurityMetricTypeProto metrics = 11;
+
+  // First observation_date to return, inclusive. Unset means no lower bound.
+  fintekkers.models.util.LocalDateProto start_date = 12;
+
+  // Last observation_date to return, inclusive. Unset means no upper bound.
+  fintekkers.models.util.LocalDateProto end_date = 13;
+
+  // The knowledge time to read at: return the values the store knew at this
+  // instant. Unset means the server's now.
+  fintekkers.models.util.LocalTimestampProto as_of = 14;
+}
+
+// One message of the Search stream: a full series header plus a run of
+// points. A long series arrives as several consecutive messages (chunks);
+// see SecurityMetric.Search.
+message SearchSecurityMetricResponseProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  fintekkers.models.security.SecurityMetricSeriesProto series = 20;
+}

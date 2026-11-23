@@ -66,6 +66,9 @@ pub mod fintekkers {
         pub mod security {
             include!("fintekkers.requests.security.rs");
         }
+        pub mod security_metric {
+            include!("fintekkers.requests.security_metric.rs");
+        }
         pub mod strategy {}
         pub mod transaction {
             include!("fintekkers.requests.transaction.rs");
@@ -102,6 +105,9 @@ pub mod fintekkers {
         }
         pub mod security_service {
             include!("fintekkers.services.security_service.rs");
+        }
+        pub mod security_metric_service {
+            include!("fintekkers.services.security_metric_service.rs");
         }
         pub mod transaction_service {
             include!("fintekkers.services.transaction_service.rs");
