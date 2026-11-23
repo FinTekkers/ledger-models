@@ -371,8 +371,28 @@ def lm477(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM477 and new == LM477[key]
 
 
+LM484_SPEC = json.loads((REPO / "test-fixtures/field-changes/lm-484.json").read_text())
+LM484 = {
+    **{f"message {m}": "message" for m in LM484_SPEC["added_messages"]},
+    **{f"field {f['message']} = {f['number']}": f"{'repeated ' if f.get('repeated') else ''}{f['type']} {f['name']}"
+       for f in LM484_SPEC["added"]},
+    **{f"enum {e['enum']}": "enum" for e in LM484_SPEC["added_enums"]},
+    **{f"value {e['enum']} = {v['number']}": v["name"] for e in LM484_SPEC["added_enums"] for v in e["values"]},
+    **{f"value {v['enum']} = {v['number']}": v["name"] for v in LM484_SPEC["added_values"]},
+}
+
+
+def lm484(key: str, old, new, head: dict) -> bool:
+    """LM-484: SecurityMetricTypeProto, SecurityMetricSeriesProto,
+    SecurityMetricPointProto, the Create / Search / GetLatest security metric
+    request and response messages, and ObjectTypeProto 17 and 134-139 added.
+    Additions of exactly these only; SecurityProto, PriceProto and every
+    existing field and enum value keep their numbers, names and types."""
+    return old is None and key in LM484 and new == LM484[key]
+
+
 ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411,
-           lm433, lm465, lm477]
+           lm433, lm465, lm477, lm484]
 
 
 def main() -> int:

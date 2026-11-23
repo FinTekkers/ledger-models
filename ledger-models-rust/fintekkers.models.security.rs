@@ -789,6 +789,113 @@ pub struct IndexConstituentProto {
     #[prost(message, optional, tag = "3")]
     pub shares_in_index: ::core::option::Option<super::util::DecimalValueProto>,
 }
+/// A per-security metric observed on a date, such as a fund's shares
+/// outstanding (LM-484). Each value's comment is the spec for its units. See
+/// SecurityMetricSeriesProto and docs/adr/security_metric_series.md.
+///
+/// "The security's currency" below means the currency named by the
+/// SecurityProto.settlement_currency of the security that
+/// SecurityMetricSeriesProto.security_id identifies. The series does not carry
+/// it: resolve the security through SecurityService.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum SecurityMetricTypeProto {
+    /// Not a metric. Invalid on write; a reader treats it as unknown.
+    UnknownSecurityMetric = 0,
+    /// Units: a whole-number count of shares, never in thousands or millions
+    /// (15204137000, not 15204.137). The value has no fractional part; a
+    /// writer sends a decimal with scale 0.
+    SharesOutstanding = 1,
+    /// Units: currency per share, in the security's currency. The net asset
+    /// value of one share at the close of observation_date.
+    NavPerShare = 2,
+    /// Units: a currency amount, in the security's currency, in whole currency
+    /// units (never in thousands or millions). The fund's total net assets at
+    /// the close of observation_date.
+    TotalNetAssets = 3,
+}
+impl SecurityMetricTypeProto {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            SecurityMetricTypeProto::UnknownSecurityMetric => "UNKNOWN_SECURITY_METRIC",
+            SecurityMetricTypeProto::SharesOutstanding => "SHARES_OUTSTANDING",
+            SecurityMetricTypeProto::NavPerShare => "NAV_PER_SHARE",
+            SecurityMetricTypeProto::TotalNetAssets => "TOTAL_NET_ASSETS",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_SECURITY_METRIC" => Some(Self::UnknownSecurityMetric),
+            "SHARES_OUTSTANDING" => Some(Self::SharesOutstanding),
+            "NAV_PER_SHARE" => Some(Self::NavPerShare),
+            "TOTAL_NET_ASSETS" => Some(Self::TotalNetAssets),
+            _ => None,
+        }
+    }
+}
+/// The observations of one metric for one security, as known at one time
+/// (LM-484). See docs/adr/security_metric_series.md.
+///
+/// One header (security_id, metric, as_of) carries the metadata for every
+/// point, so a point is only a date and a value.
+///
+/// Bitemporal model:
+///    observation_date (on each point) is the business date the value is for.
+///    as_of (on the series) is the knowledge time: the store's contents at
+///    that instant. It is never an observation date. A query at an earlier
+///    as_of returns the values known then, before any later correction.
+///    valid_from / valid_to stay on the server's stored rows. A correction (a
+///    new value for an existing observation_date) closes the old row through
+///    its valid_to; see SecurityMetric.CreateOrUpdate.
+///
+/// Absent means unknown, never 0. A date with no point is unknown: a reader
+/// must never fill it with 0 or carry another date's value into it. A point
+/// whose value is 0 is a real, observed zero. An empty `points` list means no
+/// known observation in the range asked for (one exception: the
+/// CreateOrUpdate response, which does not echo points).
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SecurityMetricSeriesProto {
+    #[prost(enumeration = "super::util::ObjectTypeProto", tag = "1")]
+    pub object_type: i32,
+    #[prost(message, optional, tag = "2")]
+    pub version: ::core::option::Option<super::util::VersionProto>,
+    /// The security the metric is for. Only its UUID: never a SecurityProto or
+    /// a link, so this file does not import security.proto.
+    #[prost(message, optional, tag = "10")]
+    pub security_id: ::core::option::Option<super::util::UuidProto>,
+    /// What the points measure, and so their units. Never
+    /// UNKNOWN_SECURITY_METRIC on write.
+    #[prost(enumeration = "SecurityMetricTypeProto", tag = "11")]
+    pub metric: i32,
+    /// The knowledge time the series reflects: the points are what the store
+    /// knew at this instant. Set by the server; a writer's value is ignored.
+    #[prost(message, optional, tag = "12")]
+    pub as_of: ::core::option::Option<super::util::LocalTimestampProto>,
+    /// Ascending by observation_date, at most one point per date.
+    #[prost(message, repeated, tag = "20")]
+    pub points: ::prost::alloc::vec::Vec<SecurityMetricPointProto>,
+}
+/// One observation in a SecurityMetricSeriesProto: a date and a value only.
+/// It carries no uuid, version, as_of or source of its own; the series header
+/// has them.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SecurityMetricPointProto {
+    /// The business date the value is for. Required.
+    #[prost(message, optional, tag = "1")]
+    pub observation_date: ::core::option::Option<super::util::LocalDateProto>,
+    /// The value on observation_date, in the units of the series' metric.
+    /// Required: a point with no value is invalid. An unknown value is a
+    /// missing point, never a 0 or unset value.
+    #[prost(message, optional, tag = "2")]
+    pub value: ::core::option::Option<super::util::DecimalValueProto>,
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum TenorTypeProto {

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package fintekkers.requests.security_metric;
+
+import "fintekkers/models/util/uuid.proto";
+import "fintekkers/models/util/local_date.proto";
+import "fintekkers/models/util/local_timestamp.proto";
+import "fintekkers/models/security/security_metric.proto";
+import "fintekkers/models/security/security_metric_type.proto";
+import "fintekkers/models/util/object_type.proto";
+import "fintekkers/models/util/version.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "GetLatestSecurityMetricRequestProtos";
+
+// Request for the latest point on or before `date` of each (security,
+// metric) pair, as known at as_of (LM-484). See SecurityMetric.GetLatest.
+message GetLatestSecurityMetricRequestProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  // The securities, at least one. A repeated UUID is returned once, at its
+  // first position.
+  repeated fintekkers.models.util.UUIDProto security_ids = 10;
+
+  // The metrics, at least one. A repeated metric is returned once, at its
+  // first position.
+  repeated fintekkers.models.security.SecurityMetricTypeProto metrics = 11;
+
+  // The business date. Each pair returns its latest observation_date on or
+  // before this date. Required.
+  fintekkers.models.util.LocalDateProto date = 12;
+
+  // The knowledge time to read at: return the values the store knew at this
+  // instant. Unset means the server's now.
+  fintekkers.models.util.LocalTimestampProto as_of = 13;
+}
+
+message GetLatestSecurityMetricResponseProto {
+  fintekkers.models.util.ObjectTypeProto object_type = 1;
+  fintekkers.models.util.VersionProto version = 2;
+
+  // One series per distinct (security_id, metric) pair: securities in
+  // request order, then metrics in request order. Each holds at most one
+  // point, the latest observation_date on or before the request's date. A
+  // pair with no such point holds zero points: the value is unknown, never 0.
+  repeated fintekkers.models.security.SecurityMetricSeriesProto series = 20;
+}

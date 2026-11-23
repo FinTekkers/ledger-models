@@ -1,0 +1,67 @@
+{
+  "item": "LM-484",
+  "added_messages": [
+    ".fintekkers.models.security.SecurityMetricSeriesProto",
+    ".fintekkers.models.security.SecurityMetricPointProto",
+    ".fintekkers.requests.security_metric.CreateSecurityMetricRequestProto",
+    ".fintekkers.requests.security_metric.CreateSecurityMetricResponseProto",
+    ".fintekkers.requests.security_metric.SearchSecurityMetricRequestProto",
+    ".fintekkers.requests.security_metric.SearchSecurityMetricResponseProto",
+    ".fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto",
+    ".fintekkers.requests.security_metric.GetLatestSecurityMetricResponseProto"
+  ],
+  "added": [
+    {"message": ".fintekkers.models.security.SecurityMetricSeriesProto", "number": 1, "name": "object_type", "type": ".fintekkers.models.util.ObjectTypeProto"},
+    {"message": ".fintekkers.models.security.SecurityMetricSeriesProto", "number": 2, "name": "version", "type": ".fintekkers.models.util.VersionProto"},
+    {"message": ".fintekkers.models.security.SecurityMetricSeriesProto", "number": 10, "name": "security_id", "type": ".fintekkers.models.util.UUIDProto"},
+    {"message": ".fintekkers.models.security.SecurityMetricSeriesProto", "number": 11, "name": "metric", "type": ".fintekkers.models.security.SecurityMetricTypeProto"},
+    {"message": ".fintekkers.models.security.SecurityMetricSeriesProto", "number": 12, "name": "as_of", "type": ".fintekkers.models.util.LocalTimestampProto"},
+    {"message": ".fintekkers.models.security.SecurityMetricSeriesProto", "number": 20, "name": "points", "type": ".fintekkers.models.security.SecurityMetricPointProto", "repeated": true},
+    {"message": ".fintekkers.models.security.SecurityMetricPointProto", "number": 1, "name": "observation_date", "type": ".fintekkers.models.util.LocalDateProto"},
+    {"message": ".fintekkers.models.security.SecurityMetricPointProto", "number": 2, "name": "value", "type": ".fintekkers.models.util.DecimalValueProto"},
+    {"message": ".fintekkers.requests.security_metric.CreateSecurityMetricRequestProto", "number": 1, "name": "object_type", "type": ".fintekkers.models.util.ObjectTypeProto"},
+    {"message": ".fintekkers.requests.security_metric.CreateSecurityMetricRequestProto", "number": 2, "name": "version", "type": ".fintekkers.models.util.VersionProto"},
+    {"message": ".fintekkers.requests.security_metric.CreateSecurityMetricRequestProto", "number": 10, "name": "operation_type", "type": ".fintekkers.requests.util.RequestOperationTypeProto"},
+    {"message": ".fintekkers.requests.security_metric.CreateSecurityMetricRequestProto", "number": 20, "name": "series", "type": ".fintekkers.models.security.SecurityMetricSeriesProto"},
+    {"message": ".fintekkers.requests.security_metric.CreateSecurityMetricResponseProto", "number": 1, "name": "object_type", "type": ".fintekkers.models.util.ObjectTypeProto"},
+    {"message": ".fintekkers.requests.security_metric.CreateSecurityMetricResponseProto", "number": 2, "name": "version", "type": ".fintekkers.models.util.VersionProto"},
+    {"message": ".fintekkers.requests.security_metric.CreateSecurityMetricResponseProto", "number": 10, "name": "operation_type", "type": ".fintekkers.requests.util.RequestOperationTypeProto"},
+    {"message": ".fintekkers.requests.security_metric.CreateSecurityMetricResponseProto", "number": 20, "name": "series", "type": ".fintekkers.models.security.SecurityMetricSeriesProto"},
+    {"message": ".fintekkers.requests.security_metric.SearchSecurityMetricRequestProto", "number": 1, "name": "object_type", "type": ".fintekkers.models.util.ObjectTypeProto"},
+    {"message": ".fintekkers.requests.security_metric.SearchSecurityMetricRequestProto", "number": 2, "name": "version", "type": ".fintekkers.models.util.VersionProto"},
+    {"message": ".fintekkers.requests.security_metric.SearchSecurityMetricRequestProto", "number": 10, "name": "security_id", "type": ".fintekkers.models.util.UUIDProto"},
+    {"message": ".fintekkers.requests.security_metric.SearchSecurityMetricRequestProto", "number": 11, "name": "metrics", "type": ".fintekkers.models.security.SecurityMetricTypeProto", "repeated": true},
+    {"message": ".fintekkers.requests.security_metric.SearchSecurityMetricRequestProto", "number": 12, "name": "start_date", "type": ".fintekkers.models.util.LocalDateProto"},
+    {"message": ".fintekkers.requests.security_metric.SearchSecurityMetricRequestProto", "number": 13, "name": "end_date", "type": ".fintekkers.models.util.LocalDateProto"},
+    {"message": ".fintekkers.requests.security_metric.SearchSecurityMetricRequestProto", "number": 14, "name": "as_of", "type": ".fintekkers.models.util.LocalTimestampProto"},
+    {"message": ".fintekkers.requests.security_metric.SearchSecurityMetricResponseProto", "number": 1, "name": "object_type", "type": ".fintekkers.models.util.ObjectTypeProto"},
+    {"message": ".fintekkers.requests.security_metric.SearchSecurityMetricResponseProto", "number": 2, "name": "version", "type": ".fintekkers.models.util.VersionProto"},
+    {"message": ".fintekkers.requests.security_metric.SearchSecurityMetricResponseProto", "number": 20, "name": "series", "type": ".fintekkers.models.security.SecurityMetricSeriesProto"},
+    {"message": ".fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto", "number": 1, "name": "object_type", "type": ".fintekkers.models.util.ObjectTypeProto"},
+    {"message": ".fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto", "number": 2, "name": "version", "type": ".fintekkers.models.util.VersionProto"},
+    {"message": ".fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto", "number": 10, "name": "security_ids", "type": ".fintekkers.models.util.UUIDProto", "repeated": true},
+    {"message": ".fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto", "number": 11, "name": "metrics", "type": ".fintekkers.models.security.SecurityMetricTypeProto", "repeated": true},
+    {"message": ".fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto", "number": 12, "name": "date", "type": ".fintekkers.models.util.LocalDateProto"},
+    {"message": ".fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto", "number": 13, "name": "as_of", "type": ".fintekkers.models.util.LocalTimestampProto"},
+    {"message": ".fintekkers.requests.security_metric.GetLatestSecurityMetricResponseProto", "number": 1, "name": "object_type", "type": ".fintekkers.models.util.ObjectTypeProto"},
+    {"message": ".fintekkers.requests.security_metric.GetLatestSecurityMetricResponseProto", "number": 2, "name": "version", "type": ".fintekkers.models.util.VersionProto"},
+    {"message": ".fintekkers.requests.security_metric.GetLatestSecurityMetricResponseProto", "number": 20, "name": "series", "type": ".fintekkers.models.security.SecurityMetricSeriesProto", "repeated": true}
+  ],
+  "added_enums": [
+    {"enum": ".fintekkers.models.security.SecurityMetricTypeProto", "values": [
+      {"number": 0, "name": "UNKNOWN_SECURITY_METRIC"},
+      {"number": 1, "name": "SHARES_OUTSTANDING"},
+      {"number": 2, "name": "NAV_PER_SHARE"},
+      {"number": 3, "name": "TOTAL_NET_ASSETS"}
+    ]}
+  ],
+  "added_values": [
+    {"enum": ".fintekkers.models.util.ObjectTypeProto", "number": 17, "name": "OBJECT_TYPE_SECURITY_METRIC_SERIES"},
+    {"enum": ".fintekkers.models.util.ObjectTypeProto", "number": 134, "name": "OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST"},
+    {"enum": ".fintekkers.models.util.ObjectTypeProto", "number": 135, "name": "OBJECT_TYPE_CREATE_SECURITY_METRIC_RESPONSE"},
+    {"enum": ".fintekkers.models.util.ObjectTypeProto", "number": 136, "name": "OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST"},
+    {"enum": ".fintekkers.models.util.ObjectTypeProto", "number": 137, "name": "OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_RESPONSE"},
+    {"enum": ".fintekkers.models.util.ObjectTypeProto", "number": 138, "name": "OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST"},
+    {"enum": ".fintekkers.models.util.ObjectTypeProto", "number": 139, "name": "OBJECT_TYPE_SEARCH_SECURITY_METRIC_RESPONSE"}
+  ]
+}
