@@ -388,6 +388,183 @@ impl SecurityWrapper {
     }
 }
 
+// ---------- Security metrics (LM-485) ----------
+
+use crate::fintekkers::models::security::SecurityMetricTypeProto;
+use crate::fintekkers::wrappers::models::security_metric::{MetricResult, MetricSeries, SecurityMetricError};
+use crate::fintekkers::wrappers::services::security_metric::SecurityMetricService;
+
+/// The metric accessors of one security against one
+/// [`SecurityMetricService`]; see [`SecurityWrapper::metrics_with`].
+/// Holds only the security's UUID (or why it has none), never the proto.
+pub struct SecurityMetrics<'a> {
+    uuid: Result<Uuid, SecurityMetricError>,
+    service: &'a SecurityMetricService,
+}
+
+impl SecurityMetrics<'_> {
+    /// The latest value of `metric` on or before `on` (default: today), or
+    /// `None` when unknown (never 0).
+    pub async fn get_metric(
+        &self,
+        metric: SecurityMetricTypeProto,
+        on: Option<NaiveDate>,
+    ) -> Result<Option<MetricResult>, SecurityMetricError> {
+        let uuid = self.uuid.clone()?;
+        self.service.get_one(metric, uuid, on).await
+    }
+
+    /// Every point of `metric` from `from` to `to` (default: today).
+    pub async fn get_metric_history(
+        &self,
+        metric: SecurityMetricTypeProto,
+        from: NaiveDate,
+        to: Option<NaiveDate>,
+    ) -> Result<MetricSeries, SecurityMetricError> {
+        let uuid = self.uuid.clone()?;
+        self.service.get_history(metric, uuid, from, to).await
+    }
+
+    pub async fn shares_outstanding(&self, on: Option<NaiveDate>) -> Result<Option<MetricResult>, SecurityMetricError> {
+        self.get_metric(SecurityMetricTypeProto::SharesOutstanding, on).await
+    }
+
+    pub async fn nav_per_share(&self, on: Option<NaiveDate>) -> Result<Option<MetricResult>, SecurityMetricError> {
+        self.get_metric(SecurityMetricTypeProto::NavPerShare, on).await
+    }
+
+    pub async fn total_net_assets(&self, on: Option<NaiveDate>) -> Result<Option<MetricResult>, SecurityMetricError> {
+        self.get_metric(SecurityMetricTypeProto::TotalNetAssets, on).await
+    }
+
+    pub async fn shares_outstanding_history(
+        &self,
+        from: NaiveDate,
+        to: Option<NaiveDate>,
+    ) -> Result<MetricSeries, SecurityMetricError> {
+        self.get_metric_history(SecurityMetricTypeProto::SharesOutstanding, from, to).await
+    }
+
+    pub async fn nav_per_share_history(
+        &self,
+        from: NaiveDate,
+        to: Option<NaiveDate>,
+    ) -> Result<MetricSeries, SecurityMetricError> {
+        self.get_metric_history(SecurityMetricTypeProto::NavPerShare, from, to).await
+    }
+
+    pub async fn total_net_assets_history(
+        &self,
+        from: NaiveDate,
+        to: Option<NaiveDate>,
+    ) -> Result<MetricSeries, SecurityMetricError> {
+        self.get_metric_history(SecurityMetricTypeProto::TotalNetAssets, from, to).await
+    }
+}
+
+/// Security metrics (LM-485). The methods without `_with` use
+/// [`SecurityMetricService::default_instance`]; `metrics_with`,
+/// `get_metric_with` and `get_metric_history_with` take an explicit
+/// service. Only the UUID is used: a link-mode security is never hydrated.
+impl SecurityWrapper {
+    /// The security's UUID, or `MissingSecurityId`.
+    fn metric_uuid(&self) -> Result<Uuid, SecurityMetricError> {
+        let Some(raw) = self.proto.uuid.as_ref() else {
+            return Err(SecurityMetricError::MissingSecurityId);
+        };
+        match crate::fintekkers::wrappers::models::utils::serialization::ProtoSerializationUtil::try_deserialize_uuid(raw) {
+            Ok(Some(uuid)) => Ok(uuid),
+            Ok(None) => Err(SecurityMetricError::MissingSecurityId),
+            Err(e) => Err(SecurityMetricError::InvalidInput(format!("security UUID is malformed: {}", e))),
+        }
+    }
+
+    /// The metric accessors of this security against `service`.
+    pub fn metrics_with<'a>(&self, service: &'a SecurityMetricService) -> SecurityMetrics<'a> {
+        SecurityMetrics { uuid: self.metric_uuid(), service }
+    }
+
+    pub async fn get_metric_with(
+        &self,
+        service: &SecurityMetricService,
+        metric: SecurityMetricTypeProto,
+        on: Option<NaiveDate>,
+    ) -> Result<Option<MetricResult>, SecurityMetricError> {
+        self.metrics_with(service).get_metric(metric, on).await
+    }
+
+    pub async fn get_metric_history_with(
+        &self,
+        service: &SecurityMetricService,
+        metric: SecurityMetricTypeProto,
+        from: NaiveDate,
+        to: Option<NaiveDate>,
+    ) -> Result<MetricSeries, SecurityMetricError> {
+        self.metrics_with(service).get_metric_history(metric, from, to).await
+    }
+
+    /// The latest value of `metric` on or before `on` (default: today), or
+    /// `None` when unknown (never 0). `MissingSecurityId` when the security
+    /// has no UUID.
+    pub async fn get_metric(
+        &self,
+        metric: SecurityMetricTypeProto,
+        on: Option<NaiveDate>,
+    ) -> Result<Option<MetricResult>, SecurityMetricError> {
+        self.metric_uuid()?;
+        let service = SecurityMetricService::default_instance()?;
+        self.get_metric_with(&service, metric, on).await
+    }
+
+    /// Every point of `metric` from `from` to `to` (default: today).
+    pub async fn get_metric_history(
+        &self,
+        metric: SecurityMetricTypeProto,
+        from: NaiveDate,
+        to: Option<NaiveDate>,
+    ) -> Result<MetricSeries, SecurityMetricError> {
+        self.metric_uuid()?;
+        let service = SecurityMetricService::default_instance()?;
+        self.get_metric_history_with(&service, metric, from, to).await
+    }
+
+    pub async fn shares_outstanding(&self, on: Option<NaiveDate>) -> Result<Option<MetricResult>, SecurityMetricError> {
+        self.get_metric(SecurityMetricTypeProto::SharesOutstanding, on).await
+    }
+
+    pub async fn nav_per_share(&self, on: Option<NaiveDate>) -> Result<Option<MetricResult>, SecurityMetricError> {
+        self.get_metric(SecurityMetricTypeProto::NavPerShare, on).await
+    }
+
+    pub async fn total_net_assets(&self, on: Option<NaiveDate>) -> Result<Option<MetricResult>, SecurityMetricError> {
+        self.get_metric(SecurityMetricTypeProto::TotalNetAssets, on).await
+    }
+
+    pub async fn shares_outstanding_history(
+        &self,
+        from: NaiveDate,
+        to: Option<NaiveDate>,
+    ) -> Result<MetricSeries, SecurityMetricError> {
+        self.get_metric_history(SecurityMetricTypeProto::SharesOutstanding, from, to).await
+    }
+
+    pub async fn nav_per_share_history(
+        &self,
+        from: NaiveDate,
+        to: Option<NaiveDate>,
+    ) -> Result<MetricSeries, SecurityMetricError> {
+        self.get_metric_history(SecurityMetricTypeProto::NavPerShare, from, to).await
+    }
+
+    pub async fn total_net_assets_history(
+        &self,
+        from: NaiveDate,
+        to: Option<NaiveDate>,
+    ) -> Result<MetricSeries, SecurityMetricError> {
+        self.get_metric_history(SecurityMetricTypeProto::TotalNetAssets, from, to).await
+    }
+}
+
 fn uuid_proto_from(uuid: Uuid) -> UuidProto {
     UuidProto { raw_uuid: uuid.as_bytes().to_vec() }
 }

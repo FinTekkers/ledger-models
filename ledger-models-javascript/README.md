@@ -25,3 +25,40 @@ The workflow file creates a .npmrc file within the build step and injects the pu
 
 @USERNAME:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=TOKEN
+
+# Security metrics (LM-485)
+
+Shares outstanding, NAV per share and total net assets are dated series per security, served by the SecurityMetric service at the PRICE service address (`BROKER_HOST`, else `PRICE_SERVICE_HOST`/`PRICE_SERVICE_PORT`, ...). `Security` reads them by its UUID (a link-mode `Security` is never hydrated for this); `SecurityMetricService` also reads many securities at once and records points. Values are decimal.js `Decimal`s; a metric is a `SecurityMetricTypeProto` value or its name. A missing value is `undefined`, never 0.
+
+```ts
+import { SecurityMetricTypeProto } from '@fintekkers/ledger-models/node/fintekkers/models/security/security_metric_type_pb';
+import Security from '@fintekkers/ledger-models/node/wrappers/models/security/security';
+import { isoDate } from '@fintekkers/ledger-models/node/wrappers/models/security/security_metric';
+import { UUID } from '@fintekkers/ledger-models/node/wrappers/models/utils/uuid';
+import { getSecurityMetricService } from '@fintekkers/ledger-models/node/wrappers/services/security-metric-service/SecurityMetricService';
+```
+
+<!-- tested by node/wrappers/services/security_metric_readme.test.ts -->
+```ts
+const spy = new Security(Security.linkOfLatest(new UUID(UUID.fromString(spyUuid))));
+
+// The latest value on or before a date: undefined when there is none, never 0.
+const shares = await spy.getMetric(SecurityMetricTypeProto.SHARES_OUTSTANDING, '2026-11-23');
+// shares.value: Decimal 15210000000, isoDate(shares.date): '2026-11-20', shares.ageDays: 3
+
+// Shortcuts; `on` defaults to today.
+const nav = await spy.navPerShare('2026-11-23');
+
+// Many securities in one call: every UUID is a key, undefined when it has no value.
+const service = getSecurityMetricService();
+const latest = await service.get('SHARES_OUTSTANDING', [spyUuid, qqqUuid], '2026-11-23');
+
+// History in date order, gaps kept; `to` defaults to today.
+const history = await spy.sharesOutstandingHistory('2026-11-01', '2026-11-23');
+const byDate = history.asDict(); // Map { '2026-11-19' => 15204137000, '2026-11-20' => 15210000000 }
+
+// Record: points are checked first, then sent; returns the as_of the service stamped.
+const asOf = await service.record('NAV_PER_SHARE', spyUuid, { '2026-11-23': '513.02' });
+```
+
+Other shortcuts: `totalNetAssets(on?)`, `sharesOutstanding(on?)`, `navPerShareHistory(from, to?)`, `totalNetAssetsHistory(from, to?)`; the general forms are `getMetric(metric, on?)` and `getMetricHistory(metric, from, to?)`. Dates are `LocalDate`s, `Date`s or ISO `yyyy-mm-dd` strings. Errors: `MissingSecurityId`, `UnknownMetric` and `InvalidMetricPoints` (its `violations` list every rejected point) extend `SecurityMetricInputError`; `ServiceUnavailable` (the service could not be reached; names `host:port`) extends `SecurityMetricServiceError`. Tests can install another transport with `setSecurityMetricFetcher(fetcher)` (`null` restores gRPC). Calls time out after 30 s by default (`new SecurityMetricService({ deadlineMs })`).

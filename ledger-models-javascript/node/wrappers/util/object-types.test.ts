@@ -56,6 +56,12 @@ import { SecurityService } from '../services/security-service/SecurityService';
 import { TransactionService } from '../services/transaction-service/TransactionService';
 import { PortfolioService } from '../services/portfolio-service/PortfolioService';
 import { PositionService } from '../services/position-service/PositionService';
+import { SecurityMetricService } from '../services/security-metric-service/SecurityMetricService';
+import { buildCreate, buildGetLatest, buildSearch, validateRecord } from '../models/security/security_metric';
+import { SecurityMetricSeriesProto } from '../../fintekkers/models/security/security_metric_pb';
+import { SecurityMetricTypeProto } from '../../fintekkers/models/security/security_metric_type_pb';
+import { CreateSecurityMetricResponseProto } from '../../fintekkers/requests/security_metric/create_security_metric_request_pb';
+import { GetLatestSecurityMetricResponseProto } from '../../fintekkers/requests/security_metric/get_latest_security_metric_request_pb';
 
 // A PriceProto written by ledger-models v0.4.33: object_class / version
 // strings in fields 1 and 2.
@@ -182,6 +188,21 @@ async function resolverRequest(call: (resolver: LinkResolver) => Promise<unknown
   return requests[0];
 }
 
+/** The last request a SecurityMetricService sent through a fetcher that records each one (LM-485). */
+async function metricRequest(call: (service: SecurityMetricService) => Promise<unknown>): Promise<ObjectTyped> {
+  const requests: ObjectTyped[] = [];
+  const service = new SecurityMetricService({ fetcher: {
+    getLatest: async (r) => { requests.push(r); return new GetLatestSecurityMetricResponseProto(); },
+    search: async (r) => { requests.push(r); return []; },
+    createOrUpdate: async (r) => {
+      requests.push(r);
+      return new CreateSecurityMetricResponseProto().setSeries(new SecurityMetricSeriesProto().setAsOf(asOf));
+    },
+  } });
+  await call(service);
+  return requests[requests.length - 1];
+}
+
 async function lastRequest<S extends object>(cls: { prototype: S }, call: (service: S) => Promise<unknown>,
   response: () => unknown = () => new SummaryProto()): Promise<ObjectTyped> {
   const { service, requests } = capturingService(cls, response);
@@ -289,6 +310,19 @@ const BUILDERS: Builder[] = [
   // LM-410: the request is the builder's; the product input's security and the position are the caller's.
   B('ValuationRequests.typed', T.OBJECT_TYPE_VALUATION_REQUEST, (c) => ValuationRequests.typed(
     asOf, forSecurity(bond(c).proto, new PriceProto()), c(new PositionProto()), [MeasureProto.MARKET_VALUE])),
+  // LM-485: security metrics.
+  B('security_metric.buildGetLatest', T.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST,
+    () => buildGetLatest(SecurityMetricTypeProto.SHARES_OUTSTANDING, [linkUuid()], '2026-11-23')),
+  B('security_metric.buildSearch', T.OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST,
+    () => buildSearch(SecurityMetricTypeProto.NAV_PER_SHARE, linkUuid(), '2026-11-01', '2026-11-23')),
+  B('security_metric.buildCreate', T.OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST,
+    () => buildCreate('NAV_PER_SHARE', linkUuid(), validateRecord('NAV_PER_SHARE', { '2026-11-20': '512.34' }))),
+  B('SecurityMetricService.get', T.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST,
+    () => metricRequest((s) => s.get('SHARES_OUTSTANDING', [linkUuid()], '2026-11-23'))),
+  B('SecurityMetricService.getHistory', T.OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST,
+    () => metricRequest((s) => s.getHistory('SHARES_OUTSTANDING', linkUuid(), '2026-11-01', '2026-11-23'))),
+  B('SecurityMetricService.record', T.OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST,
+    () => metricRequest((s) => s.record('SHARES_OUTSTANDING', linkUuid(), { '2026-11-20': '15204137000' }))),
 ];
 
 /** The messages a builder returned: wrappers are read through `proto`, arrays item by item. */
@@ -605,6 +639,15 @@ const EXCLUSIONS: Record<string, string> = {
   'Security.hydrate': 'swaps in the proto LinkResolver.getSecurity fetched (that request is tested)',
   'Portfolio.hydrate': 'swaps in the proto LinkResolver.getPortfolio fetched (that request is tested)',
   'Transaction.hydrate': 'swaps in the proto LinkResolver.getTransaction fetched (that request is tested)',
+  'GrpcSecurityMetricFetcher.getLatest': "sends the caller's request as is and returns the server's response (requests: security_metric.build*, tested)",
+  'GrpcSecurityMetricFetcher.search': "sends the caller's request as is and returns the server's messages (requests: security_metric.build*, tested)",
+  'GrpcSecurityMetricFetcher.createOrUpdate': "sends the caller's request as is and returns the server's response (requests: security_metric.build*, tested)",
+  ...Object.fromEntries([
+    'Security.getMetric', 'Security.sharesOutstanding', 'Security.navPerShare', 'Security.totalNetAssets',
+  ].map((key) => [key, 'reads through SecurityMetricService.get (tested); builds nothing itself'])),
+  ...Object.fromEntries([
+    'Security.getMetricHistory', 'Security.sharesOutstandingHistory', 'Security.navPerShareHistory', 'Security.totalNetAssetsHistory',
+  ].map((key) => [key, 'reads through SecurityMetricService.getHistory (tested); builds nothing itself'])),
   'TreasuryFrnFixings.select': "builds a ReferenceRateFixingProto, which has no object_type; flagged only for reading the caller's issuances",
   ...Object.fromEntries([
     'BondSecurity.constructor', 'FloatingRateNote.constructor', 'Identifier.constructor', 'IndexSecurity.constructor',

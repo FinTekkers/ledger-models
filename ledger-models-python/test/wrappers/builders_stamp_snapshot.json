@@ -123,6 +123,24 @@
       "type": "fintekkers.models.security.IdentifierProto"
     }
   ],
+  "models.security.security_metric.build_create": [
+    {
+      "bytes": "088601120218015002a2013108111202180152120a100000000000000000000000000000007b5801a201120a0708ea0f100b181412075a05038a3cb828",
+      "type": "fintekkers.requests.security_metric.CreateSecurityMetricRequestProto"
+    }
+  ],
+  "models.security.security_metric.build_get_latest": [
+    {
+      "bytes": "0888011202180152120a100000000000000000000000000000007852120a10000000000000000000000000000000795a0101620708ea0f100b1817",
+      "type": "fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto"
+    }
+  ],
+  "models.security.security_metric.build_search": [
+    {
+      "bytes": "088a011202180152120a100000000000000000000000000000007a5a0102620708ea0f100b18026a0708ea0f100b1817",
+      "type": "fintekkers.requests.security_metric.SearchSecurityMetricRequestProto"
+    }
+  ],
   "models.security.tenor.Tenor.as_proto": [
     {
       "bytes": "2a0235593002",

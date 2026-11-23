@@ -51,6 +51,34 @@ Install the python extension and set pytest as your test runner.
     ]
 }
 
+Security metrics
+================
+
+Shares outstanding, NAV per share and total net assets by date (LM-485). The helpers hang off any
+``Security`` you already hold and need no setup: the address comes from the service config
+(``BROKER_HOST``, then ``PRICE_SERVICE_HOST``). A missing point is ``None``, never 0. See
+``docs/adr/security_metric_series.md``.
+
+.. code-block:: python
+
+    from datetime import date
+
+    from fintekkers.wrappers.models.security.security_metric import SHARES_OUTSTANDING
+    from fintekkers.wrappers.services.security_metric import SecurityMetricService
+
+    # `security` is any Security you already hold, e.g. from SecurityService.
+    latest = security.get_metric(SHARES_OUTSTANDING, on=date(2026, 11, 23))  # a Monday
+    print(latest.value, latest.date, latest.age_days)  # Friday's point, 3 days old
+    friday = security.shares_outstanding(on=date(2026, 11, 20))  # None if no point, never 0
+
+    service = SecurityMetricService()  # address from the service config
+    by_uuid = service.get(SHARES_OUTSTANDING, [security.get_id(), other_uuid], on=date(2026, 11, 23))
+
+    history = security.shares_outstanding_history(date(2026, 11, 1), date(2026, 11, 23))
+    print(history.latest, history.to_dict())  # history.to_pandas() if pandas is installed
+
+    as_of = service.record(SHARES_OUTSTANDING, security.get_id(), {date(2026, 11, 23): 15211000000})
+
 Developer Notes
 =====
 

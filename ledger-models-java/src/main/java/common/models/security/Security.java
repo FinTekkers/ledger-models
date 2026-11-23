@@ -7,8 +7,14 @@ import common.models.RawDataModelObject;
 import common.models.postion.Field;
 import common.models.postion.Measure;
 import common.models.security.identifier.Identifier;
+import common.models.security.metric.MetricResult;
+import common.models.security.metric.MetricSeries;
+import common.models.security.metric.SecurityMetricException;
+import common.models.security.metric.SecurityMetrics;
 import common.util.LinkCache;
 import fintekkers.models.security.BondDetailsProto;
+import fintekkers.models.security.SecurityMetricTypeProto;
+import fintekkers.services.SecurityMetricService;
 import fintekkers.models.security.IdentifierProto;
 import fintekkers.models.security.IdentifierTypeProto;
 import fintekkers.models.security.ProductTypeProto;
@@ -713,5 +719,92 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         } else {
             ensureOverlay().setDescription(description);
         }
+    }
+
+    // ---- Security metrics (LM-485) ---------------------------------------
+    //
+    // Read through SecurityMetricService.getInstance() with this security's
+    // UUID; a link-mode security is not hydrated. A missing value is null,
+    // never 0.
+
+    /** The latest {@code metric} value on or before today's local date, or {@code null} when there is none. */
+    public MetricResult getMetric(SecurityMetricTypeProto metric) {
+        SecurityMetrics.checkMetric(metric);
+        UUID id = metricSecurityId();
+        return SecurityMetricService.getInstance().get(metric, List.of(id)).get(id);
+    }
+
+    /** The latest {@code metric} value on or before {@code on}, or {@code null} when there is none. */
+    public MetricResult getMetric(SecurityMetricTypeProto metric, LocalDate on) {
+        SecurityMetrics.checkMetric(metric);
+        UUID id = metricSecurityId();
+        return SecurityMetricService.getInstance().get(metric, List.of(id), on).get(id);
+    }
+
+    /** Every {@code metric} point from {@code from} to today's local date, ascending. */
+    public MetricSeries getMetricHistory(SecurityMetricTypeProto metric, LocalDate from) {
+        SecurityMetrics.checkMetric(metric);
+        return SecurityMetricService.getInstance().getHistory(metric, metricSecurityId(), from);
+    }
+
+    /** Every {@code metric} point from {@code from} to {@code to} inclusive, ascending. */
+    public MetricSeries getMetricHistory(SecurityMetricTypeProto metric, LocalDate from, LocalDate to) {
+        SecurityMetrics.checkMetric(metric);
+        return SecurityMetricService.getInstance().getHistory(metric, metricSecurityId(), from, to);
+    }
+
+    public MetricResult sharesOutstanding() {
+        return getMetric(SecurityMetricTypeProto.SHARES_OUTSTANDING);
+    }
+
+    public MetricResult sharesOutstanding(LocalDate on) {
+        return getMetric(SecurityMetricTypeProto.SHARES_OUTSTANDING, on);
+    }
+
+    public MetricResult navPerShare() {
+        return getMetric(SecurityMetricTypeProto.NAV_PER_SHARE);
+    }
+
+    public MetricResult navPerShare(LocalDate on) {
+        return getMetric(SecurityMetricTypeProto.NAV_PER_SHARE, on);
+    }
+
+    public MetricResult totalNetAssets() {
+        return getMetric(SecurityMetricTypeProto.TOTAL_NET_ASSETS);
+    }
+
+    public MetricResult totalNetAssets(LocalDate on) {
+        return getMetric(SecurityMetricTypeProto.TOTAL_NET_ASSETS, on);
+    }
+
+    public MetricSeries sharesOutstandingHistory(LocalDate from) {
+        return getMetricHistory(SecurityMetricTypeProto.SHARES_OUTSTANDING, from);
+    }
+
+    public MetricSeries sharesOutstandingHistory(LocalDate from, LocalDate to) {
+        return getMetricHistory(SecurityMetricTypeProto.SHARES_OUTSTANDING, from, to);
+    }
+
+    public MetricSeries navPerShareHistory(LocalDate from) {
+        return getMetricHistory(SecurityMetricTypeProto.NAV_PER_SHARE, from);
+    }
+
+    public MetricSeries navPerShareHistory(LocalDate from, LocalDate to) {
+        return getMetricHistory(SecurityMetricTypeProto.NAV_PER_SHARE, from, to);
+    }
+
+    public MetricSeries totalNetAssetsHistory(LocalDate from) {
+        return getMetricHistory(SecurityMetricTypeProto.TOTAL_NET_ASSETS, from);
+    }
+
+    public MetricSeries totalNetAssetsHistory(LocalDate from, LocalDate to) {
+        return getMetricHistory(SecurityMetricTypeProto.TOTAL_NET_ASSETS, from, to);
+    }
+
+    /** This security's UUID, read without hydrating a link. */
+    private UUID metricSecurityId() {
+        UUID id = getID();
+        if (id == null) throw new SecurityMetricException.MissingSecurityId();
+        return id;
     }
 }

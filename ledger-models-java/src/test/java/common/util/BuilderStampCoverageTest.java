@@ -310,6 +310,20 @@ class BuilderStampCoverageTest {
                         PositionProto.getDefaultInstance(), List.of(MeasureProto.MARKET_VALUE)),
                 "product_input.bond.security", "position_input");
 
+        // ---- Security metric requests (LM-485): the request and, for create, its series.
+        fixture("common.models.security.metric.SecurityMetrics#buildGetLatest(SecurityMetricTypeProto,Collection,LocalDate)",
+                () -> common.models.security.metric.SecurityMetrics.buildGetLatest(
+                        fintekkers.models.security.SecurityMetricTypeProto.SHARES_OUTSTANDING,
+                        List.of(UUID.randomUUID()), ISSUE));
+        fixture("common.models.security.metric.SecurityMetrics#buildSearch(SecurityMetricTypeProto,UUID,LocalDate,LocalDate)",
+                () -> common.models.security.metric.SecurityMetrics.buildSearch(
+                        fintekkers.models.security.SecurityMetricTypeProto.NAV_PER_SHARE,
+                        UUID.randomUUID(), ISSUE, MATURITY));
+        fixture("common.models.security.metric.SecurityMetrics#buildCreate(SecurityMetricTypeProto,UUID,List)",
+                () -> common.models.security.metric.SecurityMetrics.buildCreate(
+                        fintekkers.models.security.SecurityMetricTypeProto.TOTAL_NET_ASSETS, UUID.randomUUID(),
+                        List.of(new common.models.security.metric.MetricSeries.MetricPoint(ISSUE, BigDecimal.TEN))));
+
         // ---- Exclusions, each by full signature
         exclude(MAIN_WILDCARD, "demo entry point, not a library builder");
         exclude("common.util.ObjectTypes#stamp(Builder,ObjectTypeProto)",

@@ -12,6 +12,9 @@ import { isDescendantOf } from "./product_hierarchy";
 import * as LinkCacheModule from "../../util/link-cache";
 import LinkResolver from "../../util/link-resolver";
 import { stampOwn } from "../../util/object-types";
+import { SecurityMetricTypeProto } from "../../../fintekkers/models/security/security_metric_type_pb";
+import { getSecurityMetricService } from "../../services/security-metric-service/SecurityMetricService";
+import { MissingSecurityId, type DateInput, type MetricResult, type MetricSeries, type SecurityMetricInput } from "./security_metric";
 
 class Security {
   proto: SecurityProto;
@@ -460,6 +463,66 @@ class Security {
     if (!ts) return false;
     const validToMs = ts.getSeconds() * 1000 + Math.floor(ts.getNanos() / 1e6);
     return validToMs < asOf.getTime();
+  }
+
+  /**
+   * The UUID metrics are looked up by. A link-mode Security is never
+   * hydrated: its UUID is enough. No UUID is a MissingSecurityId.
+   */
+  private metricSecurityId(): UUID {
+    const uuid = UUID.fromUUIDProto(this.proto.getUuid());
+    if (!uuid) throw new MissingSecurityId();
+    return uuid;
+  }
+
+  /**
+   * The latest value of `metric` on or before `on` (default today), through
+   * the process-wide `getSecurityMetricService()` (LM-485). Undefined when
+   * there is no point on or before `on` (absent is never 0).
+   *
+   *   const shares = await spy.getMetric('SHARES_OUTSTANDING', '2026-11-23');
+   *   shares?.value; shares?.date; shares?.ageDays;
+   */
+  async getMetric(metric: SecurityMetricInput, on?: DateInput): Promise<MetricResult | undefined> {
+    const uuid = this.metricSecurityId();
+    const results = await getSecurityMetricService().get(metric, [uuid], on);
+    return results.get(uuid.toString());
+  }
+
+  /** Every point of `metric` from `from` to `to` (default today), both inclusive, in date order (LM-485). */
+  async getMetricHistory(metric: SecurityMetricInput, from: DateInput, to?: DateInput): Promise<MetricSeries> {
+    const uuid = this.metricSecurityId();
+    return getSecurityMetricService().getHistory(metric, uuid, from, to);
+  }
+
+  /** `getMetric(SHARES_OUTSTANDING, on)`. */
+  sharesOutstanding(on?: DateInput): Promise<MetricResult | undefined> {
+    return this.getMetric(SecurityMetricTypeProto.SHARES_OUTSTANDING, on);
+  }
+
+  /** `getMetric(NAV_PER_SHARE, on)`. */
+  navPerShare(on?: DateInput): Promise<MetricResult | undefined> {
+    return this.getMetric(SecurityMetricTypeProto.NAV_PER_SHARE, on);
+  }
+
+  /** `getMetric(TOTAL_NET_ASSETS, on)`. */
+  totalNetAssets(on?: DateInput): Promise<MetricResult | undefined> {
+    return this.getMetric(SecurityMetricTypeProto.TOTAL_NET_ASSETS, on);
+  }
+
+  /** `getMetricHistory(SHARES_OUTSTANDING, from, to)`. */
+  sharesOutstandingHistory(from: DateInput, to?: DateInput): Promise<MetricSeries> {
+    return this.getMetricHistory(SecurityMetricTypeProto.SHARES_OUTSTANDING, from, to);
+  }
+
+  /** `getMetricHistory(NAV_PER_SHARE, from, to)`. */
+  navPerShareHistory(from: DateInput, to?: DateInput): Promise<MetricSeries> {
+    return this.getMetricHistory(SecurityMetricTypeProto.NAV_PER_SHARE, from, to);
+  }
+
+  /** `getMetricHistory(TOTAL_NET_ASSETS, from, to)`. */
+  totalNetAssetsHistory(from: DateInput, to?: DateInput): Promise<MetricSeries> {
+    return this.getMetricHistory(SecurityMetricTypeProto.TOTAL_NET_ASSETS, from, to);
   }
 
   equals(other: Security): boolean {

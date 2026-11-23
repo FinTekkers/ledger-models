@@ -1,0 +1,159 @@
+{
+  "_comment": [
+    "LM-485: the pure SecurityMetric wrapper rules, checked by the core test in every language.",
+    "Dates are ISO yyyy-mm-dd; values are decimal strings. A point is [date, value].",
+    "latest: 'series' is the points of the GetLatest series for the security, or null when the response has no series for it. 'expected' is null when the result is absent (never 0).",
+    "merge: 'chunks' are the points of consecutive Search messages. 'expected' is the joined series, or 'error' names a date the error message contains.",
+    "record: 'points' is the caller's input (null value = missing). 'expectedChunks' lists the dates of each CreateOrUpdate request, in order; 'expectedValues' the wire values in order. 'violations' lists every rejected point: date (null for the whole input) and reason."
+  ],
+  "latest": [
+    {
+      "name": "monday_on_returns_fridays_point",
+      "on": "2026-11-23",
+      "series": [["2026-11-20", "15204137000"]],
+      "expected": {"date": "2026-11-20", "value": "15204137000", "ageDays": 3}
+    },
+    {
+      "name": "same_day_point_is_zero_days_old",
+      "on": "2026-11-20",
+      "series": [["2026-11-20", "512.34"]],
+      "expected": {"date": "2026-11-20", "value": "512.34", "ageDays": 0}
+    },
+    {
+      "name": "zero_point_series_is_absent",
+      "on": "2026-11-23",
+      "series": [],
+      "expected": null
+    },
+    {
+      "name": "no_series_for_the_security_is_absent",
+      "on": "2026-11-23",
+      "series": null,
+      "expected": null
+    },
+    {
+      "name": "stored_zero_is_a_real_zero",
+      "on": "2026-11-23",
+      "series": [["2026-11-02", "0"]],
+      "expected": {"date": "2026-11-02", "value": "0", "ageDays": 21}
+    }
+  ],
+  "merge": [
+    {
+      "name": "three_chunks_join_ascending",
+      "chunks": [
+        [["2026-11-16", "100"], ["2026-11-17", "101"]],
+        [["2026-11-18", "102"], ["2026-11-19", "103"]],
+        [["2026-11-20", "104"]]
+      ],
+      "expected": [["2026-11-16", "100"], ["2026-11-17", "101"], ["2026-11-18", "102"], ["2026-11-19", "103"], ["2026-11-20", "104"]]
+    },
+    {
+      "name": "gap_stays_a_gap",
+      "chunks": [
+        [["2026-11-02", "10"], ["2026-11-03", "11"]],
+        [["2026-11-09", "12"]]
+      ],
+      "expected": [["2026-11-02", "10"], ["2026-11-03", "11"], ["2026-11-09", "12"]]
+    },
+    {
+      "name": "zero_point_message_is_an_empty_series",
+      "chunks": [[]],
+      "expected": []
+    },
+    {
+      "name": "no_messages_is_an_empty_series",
+      "chunks": [],
+      "expected": []
+    },
+    {
+      "name": "date_out_of_order_across_chunks_is_an_error",
+      "chunks": [
+        [["2026-11-17", "1"], ["2026-11-18", "2"]],
+        [["2026-11-16", "3"]]
+      ],
+      "error": "2026-11-16"
+    },
+    {
+      "name": "date_repeated_across_chunks_is_an_error",
+      "chunks": [
+        [["2026-11-17", "1"], ["2026-11-18", "2"]],
+        [["2026-11-18", "3"]]
+      ],
+      "error": "2026-11-18"
+    }
+  ],
+  "record": [
+    {
+      "name": "whole_share_count_is_sent_at_scale_0",
+      "metric": "SHARES_OUTSTANDING",
+      "chunkSize": 5000,
+      "points": [["2026-11-20", "15204137000"]],
+      "expectedChunks": [["2026-11-20"]],
+      "expectedValues": ["15204137000"]
+    },
+    {
+      "name": "whole_share_count_with_zero_fraction_is_sent_at_scale_0",
+      "metric": "SHARES_OUTSTANDING",
+      "chunkSize": 5000,
+      "points": [["2026-11-20", "15204137000.00"]],
+      "expectedChunks": [["2026-11-20"]],
+      "expectedValues": ["15204137000"]
+    },
+    {
+      "name": "points_are_sorted_ascending",
+      "metric": "NAV_PER_SHARE",
+      "chunkSize": 5000,
+      "points": [["2026-11-20", "512.34"], ["2026-11-18", "510.1"], ["2026-11-19", "511.25"]],
+      "expectedChunks": [["2026-11-18", "2026-11-19", "2026-11-20"]],
+      "expectedValues": ["510.1", "511.25", "512.34"]
+    },
+    {
+      "name": "seven_points_in_chunks_of_three",
+      "metric": "TOTAL_NET_ASSETS",
+      "chunkSize": 3,
+      "points": [
+        ["2026-11-10", "1"], ["2026-11-11", "2"], ["2026-11-12", "3"], ["2026-11-13", "4"],
+        ["2026-11-16", "5"], ["2026-11-17", "6"], ["2026-11-18", "7"]
+      ],
+      "expectedChunks": [
+        ["2026-11-10", "2026-11-11", "2026-11-12"],
+        ["2026-11-13", "2026-11-16", "2026-11-17"],
+        ["2026-11-18"]
+      ],
+      "expectedValues": ["1", "2", "3", "4", "5", "6", "7"]
+    },
+    {
+      "name": "fractional_share_count_is_rejected",
+      "metric": "SHARES_OUTSTANDING",
+      "chunkSize": 5000,
+      "points": [["2026-11-20", "15204137000.5"]],
+      "violations": [{"date": "2026-11-20", "reason": "fractional share count"}]
+    },
+    {
+      "name": "duplicate_date_is_rejected",
+      "metric": "NAV_PER_SHARE",
+      "chunkSize": 5000,
+      "points": [["2026-11-20", "512.34"], ["2026-11-20", "512.35"]],
+      "violations": [{"date": "2026-11-20", "reason": "duplicate date"}]
+    },
+    {
+      "name": "every_bad_point_is_listed",
+      "metric": "SHARES_OUTSTANDING",
+      "chunkSize": 5000,
+      "points": [["2026-11-18", "1.5"], ["2026-11-19", "100"], ["2026-11-19", "101"], ["2026-11-20", null]],
+      "violations": [
+        {"date": "2026-11-18", "reason": "fractional share count"},
+        {"date": "2026-11-19", "reason": "duplicate date"},
+        {"date": "2026-11-20", "reason": "missing value"}
+      ]
+    },
+    {
+      "name": "empty_input_is_rejected",
+      "metric": "SHARES_OUTSTANDING",
+      "chunkSize": 5000,
+      "points": [],
+      "violations": [{"date": null, "reason": "no points"}]
+    }
+  ]
+}

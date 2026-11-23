@@ -15,6 +15,9 @@ from decimal import Decimal
 from typing import Optional
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
 from fintekkers.wrappers.models.security.security_identifier import Identifier
+from fintekkers.wrappers.models.security.security_metric import (
+    NAV_PER_SHARE, SHARES_OUTSTANDING, TOTAL_NET_ASSETS, MetricResult, MetricSeries, MissingSecurityId,
+)
 
 from fintekkers.wrappers.models.util.fintekkers_uuid import FintekkersUuid
 from fintekkers.wrappers.models.util.serialization import ProtoSerializationUtil
@@ -337,6 +340,46 @@ class Security():
             as_of = datetime.now(timezone.utc)
         valid_to: datetime = ProtoSerializationUtil.deserialize(self.proto.valid_to)
         return valid_to < as_of
+
+    def _metric_security_id(self) -> UUID:
+        # A link carries its UUID, so no hydration is needed.
+        if not self.proto.uuid.raw_uuid:
+            raise MissingSecurityId()
+        return self.get_id()
+
+    def get_metric(self, metric, on: Optional[date] = None) -> Optional[MetricResult]:
+        """The latest point of ``metric`` on or before ``on`` (today when
+        omitted) as a MetricResult (value, date, age_days), or None when the
+        service has no point. Never 0 for a missing point. See
+        fintekkers.wrappers.services.security_metric."""
+        # Lazy import to avoid a cycle at module load.
+        from fintekkers.wrappers.services.security_metric import SecurityMetricService
+        uuid = self._metric_security_id()
+        return SecurityMetricService().get(metric, [uuid], on).get(uuid)
+
+    def get_metric_history(self, metric, from_date: date, to_date: Optional[date] = None) -> MetricSeries:
+        """The MetricSeries of ``metric`` from ``from_date`` to ``to_date``
+        (today when omitted), ascending, gaps kept."""
+        from fintekkers.wrappers.services.security_metric import SecurityMetricService
+        return SecurityMetricService().get_history(metric, self._metric_security_id(), from_date, to_date)
+
+    def shares_outstanding(self, on: Optional[date] = None) -> Optional[MetricResult]:
+        return self.get_metric(SHARES_OUTSTANDING, on)
+
+    def nav_per_share(self, on: Optional[date] = None) -> Optional[MetricResult]:
+        return self.get_metric(NAV_PER_SHARE, on)
+
+    def total_net_assets(self, on: Optional[date] = None) -> Optional[MetricResult]:
+        return self.get_metric(TOTAL_NET_ASSETS, on)
+
+    def shares_outstanding_history(self, from_date: date, to_date: Optional[date] = None) -> MetricSeries:
+        return self.get_metric_history(SHARES_OUTSTANDING, from_date, to_date)
+
+    def nav_per_share_history(self, from_date: date, to_date: Optional[date] = None) -> MetricSeries:
+        return self.get_metric_history(NAV_PER_SHARE, from_date, to_date)
+
+    def total_net_assets_history(self, from_date: date, to_date: Optional[date] = None) -> MetricSeries:
+        return self.get_metric_history(TOTAL_NET_ASSETS, from_date, to_date)
 
     def __str__(self):
         return f'ID[{self._primary_identifier_str()}], {type(self).__name__}[{self.proto.issuer_name}]'
