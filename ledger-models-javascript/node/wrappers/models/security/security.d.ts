@@ -5,6 +5,7 @@ import { UUID } from "../utils/uuid";
 import type { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
 import { Identifier } from "./identifier";
 import LinkResolver from "../../util/link-resolver";
+import { type DateInput, type MetricResult, type MetricSeries, type SecurityMetricInput } from "./security_metric";
 declare class Security {
     proto: SecurityProto;
     constructor(proto: SecurityProto);
@@ -195,6 +196,34 @@ declare class Security {
      * (FinTekkers/second-brain#316).
      */
     isDeleted(asOf?: Date): boolean;
+    /**
+     * The UUID metrics are looked up by. A link-mode Security is never
+     * hydrated: its UUID is enough. No UUID is a MissingSecurityId.
+     */
+    private metricSecurityId;
+    /**
+     * The latest value of `metric` on or before `on` (default today), through
+     * the process-wide `getSecurityMetricService()` (LM-485). Undefined when
+     * there is no point on or before `on` (absent is never 0).
+     *
+     *   const shares = await spy.getMetric('SHARES_OUTSTANDING', '2026-11-23');
+     *   shares?.value; shares?.date; shares?.ageDays;
+     */
+    getMetric(metric: SecurityMetricInput, on?: DateInput): Promise<MetricResult | undefined>;
+    /** Every point of `metric` from `from` to `to` (default today), both inclusive, in date order (LM-485). */
+    getMetricHistory(metric: SecurityMetricInput, from: DateInput, to?: DateInput): Promise<MetricSeries>;
+    /** `getMetric(SHARES_OUTSTANDING, on)`. */
+    sharesOutstanding(on?: DateInput): Promise<MetricResult | undefined>;
+    /** `getMetric(NAV_PER_SHARE, on)`. */
+    navPerShare(on?: DateInput): Promise<MetricResult | undefined>;
+    /** `getMetric(TOTAL_NET_ASSETS, on)`. */
+    totalNetAssets(on?: DateInput): Promise<MetricResult | undefined>;
+    /** `getMetricHistory(SHARES_OUTSTANDING, from, to)`. */
+    sharesOutstandingHistory(from: DateInput, to?: DateInput): Promise<MetricSeries>;
+    /** `getMetricHistory(NAV_PER_SHARE, from, to)`. */
+    navPerShareHistory(from: DateInput, to?: DateInput): Promise<MetricSeries>;
+    /** `getMetricHistory(TOTAL_NET_ASSETS, from, to)`. */
+    totalNetAssetsHistory(from: DateInput, to?: DateInput): Promise<MetricSeries>;
     equals(other: Security): boolean;
 }
 export default Security;

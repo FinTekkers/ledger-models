@@ -46,6 +46,8 @@ use ledger_models::fintekkers::wrappers::models::price::PriceProtoBuilder;
 use ledger_models::fintekkers::wrappers::models::product_inputs::{for_security, MarketData};
 use ledger_models::fintekkers::wrappers::models::valuation_requests::typed;
 use ledger_models::fintekkers::wrappers::models::security::{link_of, link_of_latest, SecurityProtoBuilder};
+use ledger_models::fintekkers::wrappers::models::security_metric;
+use ledger_models::fintekkers::models::security::SecurityMetricTypeProto;
 use ledger_models::fintekkers::wrappers::models::tips_bond::TIPSBond;
 use ledger_models::fintekkers::wrappers::models::transaction::CreateTransaction;
 use ledger_models::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
@@ -63,6 +65,9 @@ const PORTFOLIO: &str = "fintekkers.models.portfolio.PortfolioProto";
 const VALUATION_REQUEST: &str = "fintekkers.requests.valuation.ValuationRequestProto";
 const TRANSACTION: &str = "fintekkers.models.transaction.TransactionProto";
 const CREATE_TRANSACTION_REQUEST: &str = "fintekkers.requests.transaction.CreateTransactionRequestProto";
+const GET_LATEST_SECURITY_METRIC_REQUEST: &str = "fintekkers.requests.security_metric.GetLatestSecurityMetricRequestProto";
+const SEARCH_SECURITY_METRIC_REQUEST: &str = "fintekkers.requests.security_metric.SearchSecurityMetricRequestProto";
+const CREATE_SECURITY_METRIC_REQUEST: &str = "fintekkers.requests.security_metric.CreateSecurityMetricRequestProto";
 
 /// A builder: its scan name, the proto full name it returns, a call that
 /// returns the encoded message, and the nested paths the walk must check.
@@ -98,6 +103,10 @@ const BUILDERS: &[Builder] = &[
         || create_transaction().build_request().unwrap().encode_to_vec(),
         &["$", "$.create_transaction_input", "$.create_transaction_input.price"],
     ),
+    // LM-485: the SecurityMetric request builders.
+    ("security_metric::build_get_latest", GET_LATEST_SECURITY_METRIC_REQUEST, security_metric_get_latest, &["$"]),
+    ("security_metric::build_search", SEARCH_SECURITY_METRIC_REQUEST, security_metric_search, &["$"]),
+    ("security_metric::build_create", CREATE_SECURITY_METRIC_REQUEST, security_metric_create, &["$", "$.series"]),
 ];
 
 /// Public functions that return a message they did not build, with why.
@@ -127,6 +136,22 @@ const EXCLUDED: &[(&str, &str)] = &[
 ];
 
 // ---------- builder calls ----------
+
+fn security_metric_get_latest() -> Vec<u8> {
+    security_metric::build_get_latest(SecurityMetricTypeProto::NavPerShare, &[Uuid::new_v4()], date(2026, 11, 23))
+        .encode_to_vec()
+}
+
+fn security_metric_search() -> Vec<u8> {
+    security_metric::build_search(SecurityMetricTypeProto::NavPerShare, Uuid::new_v4(), date(2026, 11, 1), date(2026, 11, 23))
+        .unwrap()
+        .encode_to_vec()
+}
+
+fn security_metric_create() -> Vec<u8> {
+    let point = security_metric::MetricPoint { date: date(2026, 11, 20), value: dec!(512.34) };
+    security_metric::build_create(SecurityMetricTypeProto::NavPerShare, Uuid::new_v4(), &[point]).encode_to_vec()
+}
 
 fn stamped_security() -> SecurityProto {
     SecurityProtoBuilder::new().build().unwrap()

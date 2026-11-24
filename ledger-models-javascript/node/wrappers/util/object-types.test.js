@@ -88,6 +88,12 @@ const SecurityService_1 = require("../services/security-service/SecurityService"
 const TransactionService_1 = require("../services/transaction-service/TransactionService");
 const PortfolioService_1 = require("../services/portfolio-service/PortfolioService");
 const PositionService_1 = require("../services/position-service/PositionService");
+const SecurityMetricService_1 = require("../services/security-metric-service/SecurityMetricService");
+const security_metric_1 = require("../models/security/security_metric");
+const security_metric_pb_1 = require("../../fintekkers/models/security/security_metric_pb");
+const security_metric_type_pb_1 = require("../../fintekkers/models/security/security_metric_type_pb");
+const create_security_metric_request_pb_1 = require("../../fintekkers/requests/security_metric/create_security_metric_request_pb");
+const get_latest_security_metric_request_pb_1 = require("../../fintekkers/requests/security_metric/get_latest_security_metric_request_pb");
 // A PriceProto written by ledger-models v0.4.33: object_class / version
 // strings in fields 1 and 2.
 const OLD_PRICE = path.resolve(__dirname, '../../../../ledger-models-protos/fixtures/legacy_v0433/price.bin');
@@ -195,6 +201,22 @@ function resolverRequest(call) {
         return requests[0];
     });
 }
+/** The last request a SecurityMetricService sent through a fetcher that records each one (LM-485). */
+function metricRequest(call) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const requests = [];
+        const service = new SecurityMetricService_1.SecurityMetricService({ fetcher: {
+                getLatest: (r) => __awaiter(this, void 0, void 0, function* () { requests.push(r); return new get_latest_security_metric_request_pb_1.GetLatestSecurityMetricResponseProto(); }),
+                search: (r) => __awaiter(this, void 0, void 0, function* () { requests.push(r); return []; }),
+                createOrUpdate: (r) => __awaiter(this, void 0, void 0, function* () {
+                    requests.push(r);
+                    return new create_security_metric_request_pb_1.CreateSecurityMetricResponseProto().setSeries(new security_metric_pb_1.SecurityMetricSeriesProto().setAsOf(asOf));
+                }),
+            } });
+        yield call(service);
+        return requests[requests.length - 1];
+    });
+}
 function lastRequest(cls, call, response = () => new summary_pb_1.SummaryProto()) {
     return __awaiter(this, void 0, void 0, function* () {
         const { service, requests } = capturingService(cls, response);
@@ -266,6 +288,13 @@ const BUILDERS = [
     B('LinkResolver.resolvePortfolios', T.OBJECT_TYPE_QUERY_PORTFOLIO_REQUEST, (c) => resolverRequest((r) => r.resolvePortfolios([linkedTransaction(c)]))),
     // LM-410: the request is the builder's; the product input's security and the position are the caller's.
     B('ValuationRequests.typed', T.OBJECT_TYPE_VALUATION_REQUEST, (c) => ValuationRequests_1.ValuationRequests.typed(asOf, (0, product_inputs_1.forSecurity)(bond(c).proto, new price_pb_1.PriceProto()), c(new position_pb_1.PositionProto()), [measure_pb_1.MeasureProto.MARKET_VALUE])),
+    // LM-485: security metrics.
+    B('security_metric.buildGetLatest', T.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST, () => (0, security_metric_1.buildGetLatest)(security_metric_type_pb_1.SecurityMetricTypeProto.SHARES_OUTSTANDING, [linkUuid()], '2026-11-23')),
+    B('security_metric.buildSearch', T.OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST, () => (0, security_metric_1.buildSearch)(security_metric_type_pb_1.SecurityMetricTypeProto.NAV_PER_SHARE, linkUuid(), '2026-11-01', '2026-11-23')),
+    B('security_metric.buildCreate', T.OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST, () => (0, security_metric_1.buildCreate)('NAV_PER_SHARE', linkUuid(), (0, security_metric_1.validateRecord)('NAV_PER_SHARE', { '2026-11-20': '512.34' }))),
+    B('SecurityMetricService.get', T.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST, () => metricRequest((s) => s.get('SHARES_OUTSTANDING', [linkUuid()], '2026-11-23'))),
+    B('SecurityMetricService.getHistory', T.OBJECT_TYPE_SEARCH_SECURITY_METRIC_REQUEST, () => metricRequest((s) => s.getHistory('SHARES_OUTSTANDING', linkUuid(), '2026-11-01', '2026-11-23'))),
+    B('SecurityMetricService.record', T.OBJECT_TYPE_CREATE_SECURITY_METRIC_REQUEST, () => metricRequest((s) => s.record('SHARES_OUTSTANDING', linkUuid(), { '2026-11-20': '15204137000' }))),
 ];
 /** The messages a builder returned: wrappers are read through `proto`, arrays item by item. */
 function messagesOf(built) {
@@ -541,7 +570,11 @@ const WRAPS_CALLER = "wraps the caller's proto (pass-through ruling)";
 const SERIALIZES = "converts values to untyped messages (dates, UUIDs, decimals) or returns the caller's Identifier proto as is";
 const DESERIALIZES = 'decodes protos the caller or server sent into wrappers; builds no message';
 /** Public callables the scan flags that build no message to stamp, each with its reason. */
-const EXCLUSIONS = Object.assign(Object.assign({ 'object-types.stamp': 'the stamping helper itself (tested above)', 'object-types.stampOwn': 'the stamping helper itself (tested above)', 'price_rules.validate': 'local stand-in for null input; never returned or sent', 'price_rules.requireValid': 'local stand-in for null input; never returned or sent', 'product_inputs.checkProductInput': 'local stand-in SecurityProto for an input type with no security; never returned or sent', 'product_inputs.forSecurity': "builds a ProductInput, which has no object_type, around the caller's security; flagged only for calling checkProductInput", 'Security.create': "picks the wrapper class for the caller's proto (pass-through ruling)", 'Security.resolveLink': "returns the caller's proto, or the cached one unchanged (LM-440); builds nothing", 'Position.fromJSON': DESERIALIZES, 'ProtoSerializationUtil.deserialize': DESERIALIZES, 'serialization.util.unpack': DESERIALIZES, 'LocalDate.toDate': DESERIALIZES, 'ProtoSerializationUtil.serialize': SERIALIZES, 'serialization.util.pack': SERIALIZES, 'PositionFilter.addFilter': SERIALIZES, 'PositionFilter.addEqualsFilter': SERIALIZES, 'PositionFilter.addEqualsStringFilter': SERIALIZES, 'PositionFilter.addObjectFilter': SERIALIZES, 'Security.hydrate': 'swaps in the proto LinkResolver.getSecurity fetched (that request is tested)', 'Portfolio.hydrate': 'swaps in the proto LinkResolver.getPortfolio fetched (that request is tested)', 'Transaction.hydrate': 'swaps in the proto LinkResolver.getTransaction fetched (that request is tested)', 'TreasuryFrnFixings.select': "builds a ReferenceRateFixingProto, which has no object_type; flagged only for reading the caller's issuances" }, Object.fromEntries([
+const EXCLUSIONS = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({ 'object-types.stamp': 'the stamping helper itself (tested above)', 'object-types.stampOwn': 'the stamping helper itself (tested above)', 'price_rules.validate': 'local stand-in for null input; never returned or sent', 'price_rules.requireValid': 'local stand-in for null input; never returned or sent', 'product_inputs.checkProductInput': 'local stand-in SecurityProto for an input type with no security; never returned or sent', 'product_inputs.forSecurity': "builds a ProductInput, which has no object_type, around the caller's security; flagged only for calling checkProductInput", 'Security.create': "picks the wrapper class for the caller's proto (pass-through ruling)", 'Security.resolveLink': "returns the caller's proto, or the cached one unchanged (LM-440); builds nothing", 'Position.fromJSON': DESERIALIZES, 'ProtoSerializationUtil.deserialize': DESERIALIZES, 'serialization.util.unpack': DESERIALIZES, 'LocalDate.toDate': DESERIALIZES, 'ProtoSerializationUtil.serialize': SERIALIZES, 'serialization.util.pack': SERIALIZES, 'PositionFilter.addFilter': SERIALIZES, 'PositionFilter.addEqualsFilter': SERIALIZES, 'PositionFilter.addEqualsStringFilter': SERIALIZES, 'PositionFilter.addObjectFilter': SERIALIZES, 'Security.hydrate': 'swaps in the proto LinkResolver.getSecurity fetched (that request is tested)', 'Portfolio.hydrate': 'swaps in the proto LinkResolver.getPortfolio fetched (that request is tested)', 'Transaction.hydrate': 'swaps in the proto LinkResolver.getTransaction fetched (that request is tested)', 'GrpcSecurityMetricFetcher.getLatest': "sends the caller's request as is and returns the server's response (requests: security_metric.build*, tested)", 'GrpcSecurityMetricFetcher.search': "sends the caller's request as is and returns the server's messages (requests: security_metric.build*, tested)", 'GrpcSecurityMetricFetcher.createOrUpdate': "sends the caller's request as is and returns the server's response (requests: security_metric.build*, tested)" }, Object.fromEntries([
+    'Security.getMetric', 'Security.sharesOutstanding', 'Security.navPerShare', 'Security.totalNetAssets',
+].map((key) => [key, 'reads through SecurityMetricService.get (tested); builds nothing itself']))), Object.fromEntries([
+    'Security.getMetricHistory', 'Security.sharesOutstandingHistory', 'Security.navPerShareHistory', 'Security.totalNetAssetsHistory',
+].map((key) => [key, 'reads through SecurityMetricService.getHistory (tested); builds nothing itself']))), { 'TreasuryFrnFixings.select': "builds a ReferenceRateFixingProto, which has no object_type; flagged only for reading the caller's issuances" }), Object.fromEntries([
     'BondSecurity.constructor', 'FloatingRateNote.constructor', 'Identifier.constructor', 'IndexSecurity.constructor',
     'Issuance.constructor', 'MortgageBackedSecurity.constructor', 'Portfolio.constructor', 'Position.constructor',
     'Price.constructor', 'Security.constructor', 'TIPSBond.constructor',

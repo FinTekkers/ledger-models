@@ -25,7 +25,7 @@ import importlib.util
 import inspect
 import pkgutil
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Callable, Optional
 from uuid import UUID
@@ -64,6 +64,15 @@ from fintekkers.requests.security.get_field_values_response_pb2 import GetFieldV
 from fintekkers.requests.security.get_fields_response_pb2 import GetFieldsResponseProto
 from fintekkers.requests.security.query_security_request_pb2 import QuerySecurityRequestProto
 from fintekkers.requests.security.query_security_response_pb2 import QuerySecurityResponseProto
+from fintekkers.requests.security_metric.create_security_metric_request_pb2 import (
+    CreateSecurityMetricRequestProto,
+    CreateSecurityMetricResponseProto,
+)
+from fintekkers.requests.security_metric.get_latest_security_metric_request_pb2 import (
+    GetLatestSecurityMetricRequestProto,
+    GetLatestSecurityMetricResponseProto,
+)
+from fintekkers.requests.security_metric.search_security_metric_request_pb2 import SearchSecurityMetricRequestProto
 from fintekkers.requests.transaction.create_transaction_request_pb2 import CreateTransactionRequestProto
 from fintekkers.requests.transaction.create_transaction_response_pb2 import CreateTransactionResponseProto
 from fintekkers.requests.transaction.query_transaction_request_pb2 import QueryTransactionRequestProto
@@ -74,6 +83,7 @@ from fintekkers.wrappers.models.position import Position
 from fintekkers.wrappers.models.util.decimal import encode_decimal
 from fintekkers.wrappers.models.price import Price
 from fintekkers.wrappers.models.security.security import Security
+from fintekkers.wrappers.models.security.security_metric import NAV_PER_SHARE, SHARES_OUTSTANDING
 from fintekkers.wrappers.requests.portfolio import QueryPortfolioRequest
 from fintekkers.wrappers.requests.price import CreatePriceRequest, QueryPriceRequest
 from fintekkers.wrappers.requests.security import CreateSecurityRequest, QuerySecurityRequest
@@ -81,6 +91,9 @@ from fintekkers.wrappers.requests.transaction import CreateTransactionRequest, Q
 from fintekkers.wrappers.services.portfolio import PortfolioService
 from fintekkers.wrappers.services.price import PriceService
 from fintekkers.wrappers.services.security import SecurityService
+from fintekkers.wrappers.services import security_metric
+from fintekkers.wrappers.services.security_metric import GrpcSecurityMetricFetcher, SecurityMetricService
+from fintekkers.wrappers.services.util.service_address import Endpoint
 from fintekkers.wrappers.services.transaction import TransactionService
 from fintekkers.wrappers.services.util.Environment import EnvConfig
 from fintekkers.wrappers.services.valuation import ValuationService
@@ -221,6 +234,10 @@ _DEFAULT_RESPONSES = {
     ("TransactionService", "GetByIds"): QueryTransactionResponseProto,
     ("TransactionService", "CreateOrUpdate"): CreateTransactionResponseProto,
     ("ValuationService", "RunValuation"): ValuationResponseProto,
+    ("SecurityMetric", "GetLatest"): GetLatestSecurityMetricResponseProto,
+    ("SecurityMetric", "Search"): list,
+    ("SecurityMetric", "CreateOrUpdate"): lambda: CreateSecurityMetricResponseProto(
+        series={"as_of": {"timestamp": {"seconds": 1795467600}, "time_zone": "UTC"}}),
 }
 
 
@@ -247,6 +264,11 @@ class _RecordingStub:
         return call
 
 
+# The gRPC fetcher SecurityMetricService sends through in these tests; its
+# stub is a _RecordingStub. Set by the `calls` fixture.
+_metric_fetcher: list = []
+
+
 def _no_channel(*_args, **_kwargs):
     raise AssertionError("a real gRPC channel was requested: a call escaped the fake stubs")
 
@@ -266,9 +288,21 @@ def calls(monkeypatch):
         instance = object.__new__(service)
         instance.stub = _RecordingStub(service.__name__, recorded, responses)
         service._instance = instance
+    # SecurityMetricService sends through its fetcher seam: the real gRPC
+    # fetcher, built without a channel, over a recording stub.
+    fetcher = object.__new__(GrpcSecurityMetricFetcher)
+    fetcher.endpoint = Endpoint("127.0.0.1", 8083, True)
+    fetcher.timeout = None
+    fetcher._stub = _RecordingStub("SecurityMetric", recorded, responses)
+    _metric_fetcher[:] = [fetcher]
+    SecurityMetricService._reset_for_tests()
+    security_metric.set_security_metric_fetcher(fetcher)
     yield _Recorder(recorded, responses)
     for service in SERVICES:
         service._reset_for_tests()
+    security_metric.set_security_metric_fetcher(None)
+    SecurityMetricService._reset_for_tests()
+    _metric_fetcher.clear()
 
 
 @dataclass
@@ -386,6 +420,9 @@ _PR = f"{ROOT}.price.PriceService"
 _S = f"{ROOT}.security.SecurityService"
 _T = f"{ROOT}.transaction.TransactionService"
 _V = f"{ROOT}.valuation.ValuationService"
+_SM = f"{ROOT}.security_metric.SecurityMetricService"
+_SMG = f"{ROOT}.security_metric.GrpcSecurityMetricFetcher"
+_SMF = f"{ROOT}.security_metric.SecurityMetricFetcher"
 
 # Methods that build a request: every captured request must be stamped all
 # the way down. Generators are consumed with list(...).
@@ -440,6 +477,16 @@ DRIVEN = {
             measures=[MeasureProto.MARKET_VALUE],
             asOf=datetime(2026, 10, 14)),
         [("ValuationService", "RunValuation")]),
+    # LM-485
+    f"{_SM}.get": Case(
+        lambda: SecurityMetricService().get(SHARES_OUTSTANDING, [UUID(int=5), UUID(int=6)], on=date(2026, 11, 23)),
+        [("SecurityMetric", "GetLatest")]),
+    f"{_SM}.get_history": Case(
+        lambda: SecurityMetricService().get_history(NAV_PER_SHARE, UUID(int=7), date(2026, 11, 2), date(2026, 11, 23)),
+        [("SecurityMetric", "Search")]),
+    f"{_SM}.record": Case(
+        lambda: SecurityMetricService().record(SHARES_OUTSTANDING, UUID(int=8), {date(2026, 11, 20): 15204137000}),
+        [("SecurityMetric", "CreateOrUpdate")]),
 }
 
 
@@ -495,6 +542,21 @@ def _create_transaction():
     return (proto, proto, proto.create_transaction_input, proto.create_transaction_input.portfolio)
 
 
+def _get_latest_metric():
+    proto = GetLatestSecurityMetricRequestProto(security_ids=[_uuid_proto(9)], metrics=[SHARES_OUTSTANDING])
+    return (proto, proto)
+
+
+def _search_metric():
+    proto = SearchSecurityMetricRequestProto(security_id=_uuid_proto(10), metrics=[NAV_PER_SHARE])
+    return (proto, proto)
+
+
+def _create_metric():
+    proto = CreateSecurityMetricRequestProto(series={"security_id": _uuid_proto(11), "metric": SHARES_OUTSTANDING})
+    return (proto, proto, proto.series)
+
+
 def _resolver() -> LinkResolver:
     return LinkResolver(
         security_stub=_RecordingStub("LinkResolver.security", [], {}),
@@ -541,6 +603,12 @@ PASS_THROUGH = {
     f"{_T}.create_or_update": PassThroughCase(
         _create_transaction, lambda i: TransactionService().create_or_update(CreateTransactionRequest(i[0])),
         [("TransactionService", "CreateOrUpdate")]),
+    f"{_SMG}.get_latest": PassThroughCase(
+        _get_latest_metric, lambda i: _metric_fetcher[0].get_latest(i[0]), [("SecurityMetric", "GetLatest")]),
+    f"{_SMG}.search": PassThroughCase(
+        _search_metric, lambda i: _metric_fetcher[0].search(i[0]), [("SecurityMetric", "Search")]),
+    f"{_SMG}.create_or_update": PassThroughCase(
+        _create_metric, lambda i: _metric_fetcher[0].create_or_update(i[0]), [("SecurityMetric", "CreateOrUpdate")]),
 }
 
 
@@ -567,6 +635,9 @@ EXCLUDED = {
     f"{_PR}.get_latest_price": "raises NotImplementedError; builds nothing",
     f"{_PR}.get_price_as_of_datetime": "raises NotImplementedError; builds nothing",
     f"{_PR}.get_price_as_of_date": "raises NotImplementedError; builds nothing",
+    f"{_SMF}.get_latest": "Protocol declaration of the fetcher seam; no body",
+    f"{_SMF}.search": "Protocol declaration of the fetcher seam; no body",
+    f"{_SMF}.create_or_update": "Protocol declaration of the fetcher seam; no body",
 }
 
 

@@ -123,3 +123,99 @@ Search and GetLatest.
   `security_metric.proto` does not import `security.proto`.
 - No existing message, field or enum number changes; `wire-diff.py` rule
   `lm484` allows exactly the additions.
+
+## LM-485 wrapper helpers
+
+Status: Accepted (LM-485). Client helpers only: no proto, generated code or
+`wire-diff.py` change. The LM-484 decision above is unchanged.
+
+### API
+
+The helpers hang off whatever `Security` wrapper the caller already holds
+(from any `SecurityService` call, a search or a link). They need only its
+UUID, so a link-mode Security is not hydrated. camelCase in Java and JS,
+snake_case in Python and Rust; `on` and `to` default to today's local date.
+
+| Call | Returns | Absent |
+| --- | --- | --- |
+| `security.getMetric(metric, on)` | `MetricResult` (`value`, `date`, `on`, `ageDays`) | null / `None` / `undefined` / `None` |
+| `security.getMetricHistory(metric, from, to)` | `MetricSeries` | an empty series |
+| `securityMetricService.get(metric, uuids, on)` | map UUID → `MetricResult` or absent; every requested UUID is a key | the key's value is absent |
+| `securityMetricService.getHistory(metric, uuid, from, to)` | `MetricSeries` | an empty series |
+| `securityMetricService.record(metric, uuid, points)` | the server-stamped `as_of` | not applicable |
+
+Shortcuts on the Security pass a fixed metric: `sharesOutstanding(on)`,
+`navPerShare(on)`, `totalNetAssets(on)` and their `...History(from, to)`
+forms.
+
+- **Absent is never 0.** No path builds a 0 for a missing point. A
+  GetLatest series with zero points, or no series for a UUID, is absent.
+- **`ageDays`** is the calendar days from the observation date to `on`: a
+  Monday `on` that gets Friday's point is 3 days old.
+- **`MetricSeries`** has `points` (ascending date and value), `latest` (the
+  last point or absent), a date → value map (`asDict` in Java and JS,
+  `to_dict` in Python and Rust) and `asOf` from the first chunk. Python's
+  `to_pandas()` imports pandas lazily and says `pip install pandas` when it
+  is missing; pandas is not a dependency.
+- **`get`** sends one GetLatest call for all UUIDs (duplicates dropped) and
+  matches each series by `security_id`, never by position. An empty UUID
+  list makes no call.
+- **`getHistory`** joins Search chunks in order. Gaps stay gaps. A date out
+  of order or repeated across chunks is a service error naming the date.
+- **`record`** takes native dates and decimals (a map, or a list of pairs).
+  Before any call it rejects, listing **every** bad point with its date: no
+  points, a missing value, a fractional `SHARES_OUTSTANDING` and a duplicate
+  date. A whole share count with zero fraction digits (`15204137000.00`) is
+  accepted and sent at scale 0, as the proto comment requires: JS decimals
+  carry no scale, so only this rule reads the same in every language. Points
+  are sorted and sent in chunks of `RECORD_CHUNK_SIZE` = 5000, one
+  CreateOrUpdate per chunk; `record` returns the **last** chunk's `as_of`.
+  If a later chunk fails, the error says how many points were already
+  stored; sending them again is safe, since the same value is a no-op.
+
+### Errors
+
+Input errors and service errors are different types, so a service can map
+them to INVALID_ARGUMENT or UNAVAILABLE.
+
+| Error | Kind | Says |
+| --- | --- | --- |
+| `MissingSecurityId` | input | the security has no UUID |
+| `UnknownMetric` | input | the metric given, e.g. `UNKNOWN_SECURITY_METRIC` or `"SHARE_COUNT"` |
+| `InvalidMetricPoints` | input | every rejected point: its date and reason |
+| `SecurityMetricServiceError` | service | the address `host:port` and the gRPC status |
+| `ServiceUnavailable` | service (a kind of the above) | "SecurityMetric service unreachable at `host:port`" |
+
+### Address and fetcher seam
+
+The default client finds the service through the existing service config
+(`ServiceAddress` / `EnvConfig`) as **`PRICE`**: price-service-rust serves
+this data (PSR-54/55). `BROKER_HOST` still wins, as for every service, so
+calls go through the broker; until the broker routes `SecurityMetric`
+(BS-45), they fail with a service error naming the broker address and
+`UNIMPLEMENTED`. No new environment variable. Changing the host later means
+changing the `PRICE` argument in each language.
+
+A server can install a local source instead of the gRPC client, as with the
+link fetchers: `SecurityMetricService.setFetcher` (Java),
+`set_security_metric_fetcher` (Python), `setSecurityMetricFetcher` (JS) and
+`SecurityMetricService::with_fetcher` / `set_default_fetcher` (Rust). The
+seam has three methods, one per RPC: get latest, search (returns the
+chunks) and create or update.
+
+### Language differences
+
+- Python and JS also accept the metric as its name (`"SHARES_OUTSTANDING"`);
+  Java and Rust take only the enum.
+- The JS date → value map is keyed by ISO date strings, since `LocalDate`
+  objects are not equal as map keys.
+- Rust's methods are `async`, as are the JS ones (grpc-js is async).
+
+### Tests
+
+`test-fixtures/security-metric/cases.json` holds the shared cases (latest,
+merge, record); every language's core test runs all of them. Each language
+also tests the helpers through its default gRPC client against an in-memory
+fake `SecurityMetric` server (address from injected env), runs its README
+example against that fake, and checks that an unreachable service's error
+names `127.0.0.1:<port>`.

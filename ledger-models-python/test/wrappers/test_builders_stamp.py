@@ -95,6 +95,7 @@ from fintekkers.wrappers.models.security.mortgage_backed_security import Mortgag
 from fintekkers.wrappers.models.security.product_inputs import for_security
 from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.security.security_identifier import Identifier
+from fintekkers.wrappers.models.security import security_metric
 from fintekkers.wrappers.models.security.tenor import Tenor
 from fintekkers.wrappers.models.security import treasury_frn_fixings
 from fintekkers.wrappers.models.security.tips_bond import TIPSBond
@@ -419,6 +420,14 @@ BUILDERS = {
     "models.util.date_utils.get_date_proto": lambda: date_utils.get_date_proto(date(2026, 10, 14)),
     "models.util.date_utils.today_proto": lambda: date_utils.today_proto(),
     "models.util.decimal.encode_decimal": lambda: encode_decimal(Decimal("99.5")),
+    # LM-485: the SecurityMetric request builders.
+    "models.security.security_metric.build_get_latest": lambda: security_metric.build_get_latest(
+        security_metric.SHARES_OUTSTANDING, [UUID(int=120), UUID(int=121)], date(2026, 11, 23)),
+    "models.security.security_metric.build_search": lambda: security_metric.build_search(
+        security_metric.NAV_PER_SHARE, UUID(int=122), date(2026, 11, 2), date(2026, 11, 23)),
+    "models.security.security_metric.build_create": lambda: security_metric.build_create(
+        security_metric.SHARES_OUTSTANDING, UUID(int=123),
+        [security_metric.MetricPoint(date(2026, 11, 20), Decimal(15204137000))]),
     "models.security.treasury_frn_fixings.select": lambda: treasury_frn_fixings.select([BondSecurity(SecurityProto(
         bond_details=BondDetailsProto(maturity_date=LocalDateProto(year=2026, month=10, day=22), issuance_info=[
             IssuanceProto(auction_date=LocalDateProto(year=2026, month=7, day=20),
@@ -542,6 +551,22 @@ NOT_BUILDERS = {
     "models.security.tenor.Tenor.period_between": "returns a relativedelta",
     "models.security.tenor.Tenor.of_period": "returns a Tenor, which holds a relativedelta; Tenor.as_proto is the builder",
     "models.security.treasury_frn_fixings.standard_bill_term": "returns an int or None",
+    "models.security.security_metric.SecurityMetricInputError": "exception type",
+    "models.security.security_metric.MissingSecurityId": "exception type",
+    "models.security.security_metric.UnknownMetric": "exception type",
+    "models.security.security_metric.InvalidMetricPoints": "exception type; holds Violation values, not messages",
+    "models.security.security_metric.SecurityMetricServiceError": "exception type",
+    "models.security.security_metric.ServiceUnavailable": "exception type",
+    "models.security.security_metric.Violation": "frozen date/reason holder, not a message",
+    "models.security.security_metric.MetricResult": "frozen value/date holder, not a message",
+    "models.security.security_metric.MetricPoint": "frozen date/value holder, not a message",
+    "models.security.security_metric.MetricSeries": "read path: holds decoded points",
+    "models.security.security_metric.check_metric": "validator; returns an enum value or raises",
+    "models.security.security_metric.metric_name": "returns a str",
+    "models.security.security_metric.map_latest": "read path: decodes a GetLatest response",
+    "models.security.security_metric.merge_chunks": "read path: decodes Search responses",
+    "models.security.security_metric.validate_record": "validator; returns MetricPoint values or raises",
+    "models.security.security_metric.chunk_record": "splits a list of MetricPoint values",
     "models.util.date_utils.get_date": "returns a datetime",
     "models.util.date_utils.get_date_as_dict": "returns a dict",
     "models.util.date_utils.get_date_from_proto": "read path: returns a datetime",
