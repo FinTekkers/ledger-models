@@ -268,6 +268,7 @@ const BUILDERS = [
     B('PriceService.searchPriceAsOfNow', T.OBJECT_TYPE_QUERY_PRICE_REQUEST, () => lastRequest(PriceService_1.PriceService, (s) => s.searchPriceAsOfNow(filter()))),
     B('PriceService.searchBySecurityId', T.OBJECT_TYPE_QUERY_PRICE_REQUEST, () => lastRequest(PriceService_1.PriceService, (s) => s.searchBySecurityId(uuid_1.UUID.random().toString(), asOf))),
     B('PriceService.searchWithSecurities', T.OBJECT_TYPE_QUERY_PRICE_REQUEST, () => lastRequest(PriceService_1.PriceService, (s) => s.searchWithSecurities(asOf, filter(), capturingResolver().resolver))),
+    B('PriceService.searchRange', T.OBJECT_TYPE_QUERY_PRICE_REQUEST, () => lastRequest(PriceService_1.PriceService, (s) => s.searchRange(filter(), { start: asOf, end: asOf }))),
     B('SecurityService.validateCreateSecurity', T.OBJECT_TYPE_CREATE_SECURITY_REQUEST, (c) => lastRequest(SecurityService_1.SecurityService, (s) => s.validateCreateSecurity(c(new security_pb_1.SecurityProto())))),
     B('SecurityService.createSecurity', T.OBJECT_TYPE_CREATE_SECURITY_REQUEST, (c) => lastRequest(SecurityService_1.SecurityService, (s) => s.createSecurity(c(new security_pb_1.SecurityProto())), () => new create_security_response_pb_1.CreateSecurityResponseProto())),
     B('SecurityService.searchSecurity', T.OBJECT_TYPE_QUERY_SECURITY_REQUEST, () => lastRequest(SecurityService_1.SecurityService, (s) => s.searchSecurity(asOf, filter()))),
