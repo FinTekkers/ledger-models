@@ -274,6 +274,8 @@ const BUILDERS: Builder[] = [
     () => lastRequest(PriceService, (s) => s.searchBySecurityId(UUID.random().toString(), asOf))),
   B('PriceService.searchWithSecurities', T.OBJECT_TYPE_QUERY_PRICE_REQUEST,
     () => lastRequest(PriceService, (s) => s.searchWithSecurities(asOf, filter(), capturingResolver().resolver))),
+  B('PriceService.searchRange', T.OBJECT_TYPE_QUERY_PRICE_REQUEST,
+    () => lastRequest(PriceService, (s) => s.searchRange(filter(), { start: asOf, end: asOf }))),
   B('SecurityService.validateCreateSecurity', T.OBJECT_TYPE_CREATE_SECURITY_REQUEST,
     (c) => lastRequest(SecurityService, (s) => s.validateCreateSecurity(c(new SecurityProto())))),
   B('SecurityService.createSecurity', T.OBJECT_TYPE_CREATE_SECURITY_REQUEST,
