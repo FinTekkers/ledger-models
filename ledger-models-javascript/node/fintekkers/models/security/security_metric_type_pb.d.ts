@@ -11,4 +11,5 @@ export enum SecurityMetricTypeProto {
     SHARES_OUTSTANDING = 1,
     NAV_PER_SHARE = 2,
     TOTAL_NET_ASSETS = 3,
+    EXPENSE_RATIO = 4,
 }

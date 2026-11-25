@@ -28,7 +28,7 @@ use rust_decimal::Decimal;
 use security_metric_fake::{closed_port, d, date_of, dec, price_env, uuid_of, FakeServer, BASE_AS_OF_SECONDS, SPY};
 use uuid::Uuid;
 
-use SecurityMetricTypeProto::{NavPerShare, SharesOutstanding, TotalNetAssets};
+use SecurityMetricTypeProto::{ExpenseRatio, NavPerShare, SharesOutstanding, TotalNetAssets};
 
 const QQQ: Uuid = Uuid::from_bytes([0x11; 16]);
 const UNKNOWN: Uuid = Uuid::from_bytes([0x99; 16]);
@@ -64,6 +64,24 @@ async fn get_metric_and_shortcut_go_through_the_real_client() {
     let request = fake.last_get_latest();
     assert_eq!(request.security_ids.iter().map(uuid_of).collect::<Vec<_>>(), vec![SPY]);
     assert_eq!(request.metrics, vec![SharesOutstanding as i32]);
+    fake.stop();
+}
+
+// LM-491: a sparse expense-ratio series, one point per change; the generic
+// get_metric returns the ratio in force on a date between two changes.
+#[tokio::test]
+async fn generic_get_metric_returns_the_expense_ratio_in_force_between_two_changes() {
+    let fake = FakeServer::start().await;
+    let fund = Uuid::from_bytes([0x44; 16]);
+    fake.seed(fund, ExpenseRatio, &[("2018-01-01", "0.0945"), ("2026-07-01", "0.0900")]);
+    let service = service_for(&fake);
+
+    let got = security(fund).get_metric_with(&service, ExpenseRatio, Some(d("2026-03-31"))).await.unwrap().expect("a value");
+
+    assert_eq!(got.value.to_string(), "0.0945");
+    assert_eq!(got.date, d("2018-01-01"));
+    assert_eq!(got.on, d("2026-03-31"));
+    assert_eq!(fake.last_get_latest().metrics, vec![ExpenseRatio as i32]);
     fake.stop();
 }
 

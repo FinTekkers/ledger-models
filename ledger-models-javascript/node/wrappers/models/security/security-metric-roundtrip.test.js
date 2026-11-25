@@ -59,6 +59,17 @@ describe('SecurityMetric round trips (LM-484)', () => {
         expect(parsed.getAsOf().toObject()).toEqual(asOf().toObject());
         expect(pointsOf(parsed)).toEqual(['2026-9-28=15204137000', '2026-9-29=15210000000', '2026-9-30=15198250000']);
     });
+    test('a sparse EXPENSE_RATIO series, one point per change, keeps its exact decimals (LM-491)', () => {
+        const original = series(SPY, security_metric_type_pb_1.SecurityMetricTypeProto.EXPENSE_RATIO, [
+            point(date(2018, 1, 1), '0.0945'),
+            point(date(2026, 1, 1), '0.0900'),
+        ]);
+        const parsed = security_metric_pb_1.SecurityMetricSeriesProto.deserializeBinary(original.serializeBinary());
+        expect(parsed.toObject()).toEqual(original.toObject());
+        expect(parsed.getMetric()).toBe(security_metric_type_pb_1.SecurityMetricTypeProto.EXPENSE_RATIO);
+        expect(parsed.getMetric()).toBe(4);
+        expect(pointsOf(parsed)).toEqual(['2018-1-1=0.0945', '2026-1-1=0.0900']);
+    });
     test('an empty series is not a 0-valued point', () => {
         const empty = series(SPY, security_metric_type_pb_1.SecurityMetricTypeProto.NAV_PER_SHARE, []);
         const zero = series(SPY, security_metric_type_pb_1.SecurityMetricTypeProto.NAV_PER_SHARE, [point(date(2026, 11, 20), '0')]);

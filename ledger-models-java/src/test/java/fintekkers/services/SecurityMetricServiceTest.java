@@ -40,6 +40,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static fintekkers.services.FakeSecurityMetricServer.SPY;
+import static fintekkers.models.security.SecurityMetricTypeProto.EXPENSE_RATIO;
 import static fintekkers.models.security.SecurityMetricTypeProto.NAV_PER_SHARE;
 import static fintekkers.models.security.SecurityMetricTypeProto.SHARES_OUTSTANDING;
 import static fintekkers.models.security.SecurityMetricTypeProto.TOTAL_NET_ASSETS;
@@ -119,6 +120,23 @@ class SecurityMetricServiceTest {
         assertEquals(ObjectTypeProto.OBJECT_TYPE_GET_LATEST_SECURITY_METRIC_REQUEST, ObjectTypes.readType(request));
         assertEquals(List.of(ProtoSerializationUtil.serializeUUID(SPY)), request.getSecurityIdsList());
         assertEquals(List.of(SHARES_OUTSTANDING), request.getMetricsList());
+    }
+
+    @Test
+    void genericGetMetricReturnsTheExpenseRatioInForceBetweenTwoChanges() {
+        // LM-491: a sparse series, one point per change; GetLatest gives the ratio in force.
+        installFromEnv(fake.port());
+        UUID fund = UUID.randomUUID();
+        fake.seed(fund, EXPENSE_RATIO, LocalDate.of(2018, 1, 1), "0.0945");
+        fake.seed(fund, EXPENSE_RATIO, LocalDate.of(2026, 7, 1), "0.0900");
+        LocalDate between = LocalDate.of(2026, 3, 31);
+
+        MetricResult result = security(fund).getMetric(EXPENSE_RATIO, between);
+
+        assertEquals(new BigDecimal("0.0945"), result.value());
+        assertEquals(LocalDate.of(2018, 1, 1), result.date());
+        assertEquals(between, result.on());
+        assertEquals(List.of(EXPENSE_RATIO), fake.getLatestRequests.get(0).getMetricsList());
     }
 
     // 2
