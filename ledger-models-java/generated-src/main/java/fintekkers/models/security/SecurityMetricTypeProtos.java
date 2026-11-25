@@ -25,11 +25,11 @@ public final class SecurityMetricTypeProtos {
     java.lang.String[] descriptorData = {
       "\n5fintekkers/models/security/security_me" +
       "tric_type.proto\022\032fintekkers.models.secur" +
-      "ity*w\n\027SecurityMetricTypeProto\022\033\n\027UNKNOW" +
-      "N_SECURITY_METRIC\020\000\022\026\n\022SHARES_OUTSTANDIN" +
-      "G\020\001\022\021\n\rNAV_PER_SHARE\020\002\022\024\n\020TOTAL_NET_ASSE" +
-      "TS\020\003B\034B\030SecurityMetricTypeProtosP\001b\006prot" +
-      "o3"
+      "ity*\212\001\n\027SecurityMetricTypeProto\022\033\n\027UNKNO" +
+      "WN_SECURITY_METRIC\020\000\022\026\n\022SHARES_OUTSTANDI" +
+      "NG\020\001\022\021\n\rNAV_PER_SHARE\020\002\022\024\n\020TOTAL_NET_ASS" +
+      "ETS\020\003\022\021\n\rEXPENSE_RATIO\020\004B\034B\030SecurityMetr" +
+      "icTypeProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

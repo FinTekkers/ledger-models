@@ -9,7 +9,7 @@ import pytest
 from security_metric_fake import FakeServer, closed_port, stamped_as_of
 
 from fintekkers.models.security.security_pb2 import SecurityProto
-from fintekkers.models.security.security_metric_type_pb2 import UNKNOWN_SECURITY_METRIC
+from fintekkers.models.security.security_metric_type_pb2 import EXPENSE_RATIO, UNKNOWN_SECURITY_METRIC
 from fintekkers.wrappers.models.security.security import Security
 from fintekkers.wrappers.models.security.security_metric import (
     NAV_PER_SHARE,
@@ -91,6 +91,22 @@ def test_omitted_on_is_the_date_sent(fake):
     sent_date = date(sent.year, sent.month, sent.day)
     assert result.on == sent_date
     assert result.age_days == (sent_date - result.date).days
+
+
+def test_generic_get_metric_returns_the_expense_ratio_in_force_between_two_changes(fake):
+    # LM-491: a sparse series, one point per change; GetLatest gives the ratio in force.
+    fake.seed(QQQ, EXPENSE_RATIO, {date(2018, 1, 1): "0.0945", date(2026, 7, 1): "0.0900"})
+    fund = Security(Security.link_of_latest(QQQ))
+    between = date(2026, 3, 31)
+
+    by_value = fund.get_metric(EXPENSE_RATIO, on=between)
+    by_name = fund.get_metric("EXPENSE_RATIO", on=between)
+
+    for result in (by_value, by_name):
+        assert result.value == Decimal("0.0945")
+        assert str(result.value) == "0.0945"
+        assert result.date == date(2018, 1, 1)
+    assert list(fake.get_latest_requests[0].metrics) == [EXPENSE_RATIO]
 
 
 def test_absent_is_none_never_zero(fake):

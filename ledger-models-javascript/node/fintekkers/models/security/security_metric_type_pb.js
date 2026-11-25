@@ -29,7 +29,8 @@ proto.fintekkers.models.security.SecurityMetricTypeProto = {
   UNKNOWN_SECURITY_METRIC: 0,
   SHARES_OUTSTANDING: 1,
   NAV_PER_SHARE: 2,
-  TOTAL_NET_ASSETS: 3
+  TOTAL_NET_ASSETS: 3,
+  EXPENSE_RATIO: 4
 };
 
 goog.object.extend(exports, proto.fintekkers.models.security);

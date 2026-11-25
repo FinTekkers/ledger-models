@@ -116,6 +116,22 @@ describe('SecurityMetricService through the default gRPC fetcher (LM-485)', () =
         // The name string works as well as the enum value.
         expect((yield spy.getMetric('SHARES_OUTSTANDING', '2026-11-23')).value.toFixed()).toBe('15210000000');
     }));
+    test('generic getMetric returns the EXPENSE_RATIO in force between two changes, by enum and by name (LM-491)', () => __awaiter(void 0, void 0, void 0, function* () {
+        const uuid = uuidOf(8);
+        fake.seed(uuid, security_metric_type_pb_1.SecurityMetricTypeProto.EXPENSE_RATIO, [['2018-01-01', '0.0945'], ['2026-07-01', '0.0900']]);
+        const fund = securityOf(uuid);
+        const byEnum = yield fund.getMetric(security_metric_type_pb_1.SecurityMetricTypeProto.EXPENSE_RATIO, '2026-03-31');
+        expect(fake.getLatestRequests[fake.getLatestRequests.length - 1].getMetricsList())
+            .toEqual([security_metric_type_pb_1.SecurityMetricTypeProto.EXPENSE_RATIO]);
+        const byName = yield fund.getMetric('EXPENSE_RATIO', '2026-03-31');
+        for (const r of [byEnum, byName]) {
+            expect(r).toBeInstanceOf(security_metric_1.MetricResult);
+            expect(r.value.equals(new decimal_js_1.Decimal('0.0945'))).toBe(true);
+            expect(r.value.toFixed()).toBe('0.0945');
+            expect((0, security_metric_1.isoDate)(r.date)).toBe('2018-01-01');
+            expect((0, security_metric_1.isoDate)(r.on)).toBe('2026-03-31');
+        }
+    }));
     test('omitted on: the date sent is the result date, and ageDays counts from it', () => __awaiter(void 0, void 0, void 0, function* () {
         const uuid = uuidOf(1);
         fake.seed(uuid, NAV, [['2000-01-03', '100.25']]);

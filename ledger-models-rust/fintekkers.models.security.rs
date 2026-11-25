@@ -813,6 +813,13 @@ pub enum SecurityMetricTypeProto {
     /// units (never in thousands or millions). The fund's total net assets at
     /// the close of observation_date.
     TotalNetAssets = 3,
+    /// Units: a percentage of net assets per year (0.0945 = 0.0945% a year, the
+    /// convention TipsInput.assumed_inflation_rate uses). The fund's net annual
+    /// expense ratio as charged to holders, after any fee waiver or expense
+    /// reimbursement. observation_date is the date the ratio takes effect, so a
+    /// series is sparse (one point per change) and GetLatest returns the ratio
+    /// in force on the requested date.
+    ExpenseRatio = 4,
 }
 impl SecurityMetricTypeProto {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -825,6 +832,7 @@ impl SecurityMetricTypeProto {
             SecurityMetricTypeProto::SharesOutstanding => "SHARES_OUTSTANDING",
             SecurityMetricTypeProto::NavPerShare => "NAV_PER_SHARE",
             SecurityMetricTypeProto::TotalNetAssets => "TOTAL_NET_ASSETS",
+            SecurityMetricTypeProto::ExpenseRatio => "EXPENSE_RATIO",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -834,6 +842,7 @@ impl SecurityMetricTypeProto {
             "SHARES_OUTSTANDING" => Some(Self::SharesOutstanding),
             "NAV_PER_SHARE" => Some(Self::NavPerShare),
             "TOTAL_NET_ASSETS" => Some(Self::TotalNetAssets),
+            "EXPENSE_RATIO" => Some(Self::ExpenseRatio),
             _ => None,
         }
     }

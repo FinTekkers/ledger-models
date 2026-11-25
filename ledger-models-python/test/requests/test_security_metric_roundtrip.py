@@ -23,6 +23,7 @@ AS_OF = local_timestamp_pb2.LocalTimestampProto(
 SHARES_OUTSTANDING = security_metric_type_pb2.SHARES_OUTSTANDING
 NAV_PER_SHARE = security_metric_type_pb2.NAV_PER_SHARE
 TOTAL_NET_ASSETS = security_metric_type_pb2.TOTAL_NET_ASSETS
+EXPENSE_RATIO = security_metric_type_pb2.EXPENSE_RATIO
 Series = security_metric_pb2.SecurityMetricSeriesProto
 
 
@@ -67,6 +68,20 @@ def test_three_point_series_round_trips_in_order_with_exact_decimals():
         ((2026, 9, 29), "15210000000"),
         ((2026, 9, 30), "15198250000"),
     ]
+
+
+def test_sparse_expense_ratio_series_round_trips_with_exact_decimals():
+    # LM-491: one point per change, dated by the date the ratio takes effect.
+    original = _series(SPY, EXPENSE_RATIO, [
+        _point(_date(2018, 1, 1), "0.0945"),
+        _point(_date(2026, 1, 1), "0.0900"),
+    ])
+
+    parsed = Series.FromString(original.SerializeToString())
+
+    assert parsed == original
+    assert parsed.metric == EXPENSE_RATIO == 4
+    assert _points(parsed) == [((2018, 1, 1), "0.0945"), ((2026, 1, 1), "0.0900")]
 
 
 def test_empty_series_is_not_a_zero_valued_point():

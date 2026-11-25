@@ -171,6 +171,7 @@ const KNOWN_METRICS = [
     security_metric_type_pb_1.SecurityMetricTypeProto.SHARES_OUTSTANDING,
     security_metric_type_pb_1.SecurityMetricTypeProto.NAV_PER_SHARE,
     security_metric_type_pb_1.SecurityMetricTypeProto.TOTAL_NET_ASSETS,
+    security_metric_type_pb_1.SecurityMetricTypeProto.EXPENSE_RATIO,
 ];
 /** The enum name of `metric`, e.g. `SHARES_OUTSTANDING`, or its number when it has none. */
 function metricName(metric) {

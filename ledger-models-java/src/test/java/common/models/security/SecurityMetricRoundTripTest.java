@@ -180,4 +180,19 @@ class SecurityMetricRoundTripTest {
         assertEquals(SecurityMetricTypeProto.NAV_PER_SHARE, parsedResponse.getSeries().getMetric());
         assertEquals(List.of("2026-11-19=100.98", "2026-11-20=101.42"), points(parsedResponse.getSeries()));
     }
+
+    @Test
+    void sparseExpenseRatioSeriesRoundTripsWithExactDecimals() throws InvalidProtocolBufferException {
+        // LM-491: one point per change, dated by the date the ratio takes effect.
+        SecurityMetricSeriesProto original = series(SPY, SecurityMetricTypeProto.EXPENSE_RATIO,
+                point(date(2018, 1, 1), "0.0945"),
+                point(date(2026, 1, 1), "0.0900"));
+
+        SecurityMetricSeriesProto parsed = SecurityMetricSeriesProto.parseFrom(original.toByteArray());
+
+        assertEquals(original, parsed);
+        assertEquals(SecurityMetricTypeProto.EXPENSE_RATIO, parsed.getMetric());
+        assertEquals(4, parsed.getMetricValue());
+        assertEquals(List.of("2018-1-1=0.0945", "2026-1-1=0.0900"), points(parsed));
+    }
 }

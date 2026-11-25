@@ -89,6 +89,26 @@ fn three_point_series_round_trips_in_order_with_exact_decimals() {
     );
 }
 
+// LM-491: one point per change, dated by the date the ratio takes effect.
+#[test]
+fn sparse_expense_ratio_series_round_trips_with_exact_decimals() {
+    let original = series(
+        SPY,
+        SecurityMetricTypeProto::ExpenseRatio,
+        vec![point(date(2018, 1, 1), "0.0945"), point(date(2026, 1, 1), "0.0900")],
+    );
+
+    let parsed = round_trip(&original);
+
+    assert_eq!(parsed, original);
+    assert_eq!(parsed.metric(), SecurityMetricTypeProto::ExpenseRatio);
+    assert_eq!(parsed.metric, 4);
+    assert_eq!(
+        points_of(&parsed),
+        vec![(Some(date(2018, 1, 1)), "0.0945".to_string()), (Some(date(2026, 1, 1)), "0.0900".to_string())]
+    );
+}
+
 #[test]
 fn empty_series_is_not_a_zero_valued_point() {
     let empty = series(SPY, SecurityMetricTypeProto::NavPerShare, vec![]);

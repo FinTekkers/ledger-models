@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n5fintekkers/models/security/security_metric_type.proto\x12\x1a\x66intekkers.models.security*w\n\x17SecurityMetricTypeProto\x12\x1b\n\x17UNKNOWN_SECURITY_METRIC\x10\x00\x12\x16\n\x12SHARES_OUTSTANDING\x10\x01\x12\x11\n\rNAV_PER_SHARE\x10\x02\x12\x14\n\x10TOTAL_NET_ASSETS\x10\x03\x42\x1c\x42\x18SecurityMetricTypeProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n5fintekkers/models/security/security_metric_type.proto\x12\x1a\x66intekkers.models.security*\x8a\x01\n\x17SecurityMetricTypeProto\x12\x1b\n\x17UNKNOWN_SECURITY_METRIC\x10\x00\x12\x16\n\x12SHARES_OUTSTANDING\x10\x01\x12\x11\n\rNAV_PER_SHARE\x10\x02\x12\x14\n\x10TOTAL_NET_ASSETS\x10\x03\x12\x11\n\rEXPENSE_RATIO\x10\x04\x42\x1c\x42\x18SecurityMetricTypeProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,6 +32,6 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.models.security.
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\030SecurityMetricTypeProtosP\001'
-  _globals['_SECURITYMETRICTYPEPROTO']._serialized_start=85
-  _globals['_SECURITYMETRICTYPEPROTO']._serialized_end=204
+  _globals['_SECURITYMETRICTYPEPROTO']._serialized_start=86
+  _globals['_SECURITYMETRICTYPEPROTO']._serialized_end=224
 # @@protoc_insertion_point(module_scope)

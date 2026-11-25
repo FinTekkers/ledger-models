@@ -245,6 +245,7 @@ const KNOWN_METRICS: ReadonlyArray<SecurityMetricTypeProto> = [
   SecurityMetricTypeProto.SHARES_OUTSTANDING,
   SecurityMetricTypeProto.NAV_PER_SHARE,
   SecurityMetricTypeProto.TOTAL_NET_ASSETS,
+  SecurityMetricTypeProto.EXPENSE_RATIO,
 ];
 
 /** The enum name of `metric`, e.g. `SHARES_OUTSTANDING`, or its number when it has none. */

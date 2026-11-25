@@ -55,6 +55,19 @@ public enum SecurityMetricTypeProto
    * <code>TOTAL_NET_ASSETS = 3;</code>
    */
   TOTAL_NET_ASSETS(3),
+  /**
+   * <pre>
+   * Units: a percentage of net assets per year (0.0945 = 0.0945% a year, the
+   * convention TipsInput.assumed_inflation_rate uses). The fund's net annual
+   * expense ratio as charged to holders, after any fee waiver or expense
+   * reimbursement. observation_date is the date the ratio takes effect, so a
+   * series is sparse (one point per change) and GetLatest returns the ratio
+   * in force on the requested date.
+   * </pre>
+   *
+   * <code>EXPENSE_RATIO = 4;</code>
+   */
+  EXPENSE_RATIO(4),
   UNRECOGNIZED(-1),
   ;
 
@@ -95,6 +108,19 @@ public enum SecurityMetricTypeProto
    * <code>TOTAL_NET_ASSETS = 3;</code>
    */
   public static final int TOTAL_NET_ASSETS_VALUE = 3;
+  /**
+   * <pre>
+   * Units: a percentage of net assets per year (0.0945 = 0.0945% a year, the
+   * convention TipsInput.assumed_inflation_rate uses). The fund's net annual
+   * expense ratio as charged to holders, after any fee waiver or expense
+   * reimbursement. observation_date is the date the ratio takes effect, so a
+   * series is sparse (one point per change) and GetLatest returns the ratio
+   * in force on the requested date.
+   * </pre>
+   *
+   * <code>EXPENSE_RATIO = 4;</code>
+   */
+  public static final int EXPENSE_RATIO_VALUE = 4;
 
 
   public final int getNumber() {
@@ -125,6 +151,7 @@ public enum SecurityMetricTypeProto
       case 1: return SHARES_OUTSTANDING;
       case 2: return NAV_PER_SHARE;
       case 3: return TOTAL_NET_ASSETS;
+      case 4: return EXPENSE_RATIO;
       default: return null;
     }
   }

@@ -205,6 +205,13 @@ def lm367(key: str, old, new, head: dict) -> bool:
             and old is None and new == "MULTIPLE_PRICE")
 
 
+def lm491(key: str, old, new, head: dict) -> bool:
+    """LM-491: SecurityMetricTypeProto.EXPENSE_RATIO = 4 added. Nothing else;
+    the existing values keep their numbers and names."""
+    return (key == "value .fintekkers.models.security.SecurityMetricTypeProto = 4"
+            and old is None and new == "EXPENSE_RATIO")
+
+
 PORTFOLIO = ".fintekkers.models.portfolio"
 ELECTIONS = f"{PORTFOLIO}.AmortisationElectionsProto"
 TAX_LOT = ".fintekkers.models.position.TaxLotProto"
@@ -392,7 +399,7 @@ def lm484(key: str, old, new, head: dict) -> bool:
 
 
 ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411,
-           lm433, lm465, lm477, lm484]
+           lm433, lm465, lm477, lm484, lm491]
 
 
 def main() -> int:

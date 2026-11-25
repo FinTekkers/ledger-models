@@ -10,7 +10,9 @@ class SecurityMetricTypeProto(int, metaclass=_enum_type_wrapper.EnumTypeWrapper)
     SHARES_OUTSTANDING: _ClassVar[SecurityMetricTypeProto]
     NAV_PER_SHARE: _ClassVar[SecurityMetricTypeProto]
     TOTAL_NET_ASSETS: _ClassVar[SecurityMetricTypeProto]
+    EXPENSE_RATIO: _ClassVar[SecurityMetricTypeProto]
 UNKNOWN_SECURITY_METRIC: SecurityMetricTypeProto
 SHARES_OUTSTANDING: SecurityMetricTypeProto
 NAV_PER_SHARE: SecurityMetricTypeProto
 TOTAL_NET_ASSETS: SecurityMetricTypeProto
+EXPENSE_RATIO: SecurityMetricTypeProto

@@ -49,7 +49,11 @@ The proto comments are the spec. In short:
 - **Units per metric.** `SHARES_OUTSTANDING` is a whole-number count of
   shares (scale 0, never in millions). `NAV_PER_SHARE` is currency per share
   and `TOTAL_NET_ASSETS` a currency amount, both in the currency of the
-  security's `SecurityProto.settlement_currency`.
+  security's `SecurityProto.settlement_currency`. `EXPENSE_RATIO` (LM-491)
+  is the fund's net annual expense ratio charged to holders, after any
+  waiver, as a percentage of net assets (0.0945 = 0.0945% a year). Its
+  `observation_date` is the date the ratio takes effect, so its series is
+  sparse (one point per change) and `GetLatest` returns the ratio in force.
 - **Absent means unknown, never 0.** A date with no point is unknown; a point
   with value 0 is a real zero. An empty series means no known observation
   (except in the `CreateOrUpdate` response, which never echoes points).
