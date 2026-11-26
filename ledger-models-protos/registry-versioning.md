@@ -36,6 +36,9 @@ The registry is loaded by every consumer language at startup (Java / Rust / Pyth
 | Add the `default_price_types` key itself (`schema_version` 1.5, LM-461) | Additive — loaders that don't know it ignore it | minor |
 | Add a `default_price_types` entry | Additive — a product whose create-transaction wrapper raised `NoDefaultPriceTypeError` now gets a default trade-price type. Every loader fails at load on an unknown node or `PriceTypeProto` name, or an `UNKNOWN_PRICE_TYPE` value. See [`docs/adr/default_price_types.md`](../docs/adr/default_price_types.md) | minor |
 | Change or remove a `default_price_types` entry | Breaking — new trades on that product are tagged with a different type, or start raising | major |
+| Add the `default_day_count` key itself (`schema_version` 1.6, LM-498) | Additive — loaders that don't know it ignore it | minor |
+| Add a `default_day_count` entry | Additive — a bond product whose day-count getter returned `UNKNOWN_DAY_COUNT` now resolves to a convention. Every loader fails at load on an unknown node or `DayCountConventionProto` name, or an `UNKNOWN_DAY_COUNT` value. Keep entries on leaf products. See [`docs/adr/day_count_convention.md`](../docs/adr/day_count_convention.md) | minor |
+| Change or remove a `default_day_count` entry | Breaking — accrued interest and yields change for every bond of that product with no explicit `day_count` | major |
 
 ## Asset-class aliases and labels must be unambiguous
 

@@ -9,6 +9,8 @@ import { ProductTypeProto } from "../../../fintekkers/models/security/product_ty
 import type { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
 import { Identifier } from "./identifier";
 import { isDescendantOf } from "./product_hierarchy";
+import type { DayCountConventionProto } from "../../../fintekkers/models/security/day_count_convention_pb";
+import { resolveDayCount } from "./day_count";
 import * as LinkCacheModule from "../../util/link-cache";
 import LinkResolver from "../../util/link-resolver";
 import { stampOwn } from "../../util/object-types";
@@ -426,6 +428,17 @@ class Security {
     this.ensureHydrated();
     const bond = this.getBondLikeDetails();
     return bond && bond.hasCallDate() ? localDateProtoToDate(bond.getCallDate()) : null;
+  }
+
+  /**
+   * Returns the bond's day-count convention: bond_details.day_count when set
+   * (UNKNOWN_DAY_COUNT counts as unset), else the product default from
+   * hierarchy.json default_day_count, else UNKNOWN_DAY_COUNT. Never guesses a
+   * convention (LM-498, docs/adr/day_count_convention.md).
+   */
+  getDayCount(): DayCountConventionProto {
+    this.ensureHydrated();
+    return resolveDayCount(this.proto);
   }
 
   /**

@@ -138,6 +138,7 @@ impl MortgageBackedSecurity {
                 issuance_info: vec![],
                 callable: false,
                 call_date: None,
+                day_count: None,
             }),
             mbs_extension: Some(MbsExtensionProto {
                 pool_number,

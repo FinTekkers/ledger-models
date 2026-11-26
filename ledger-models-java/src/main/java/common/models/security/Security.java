@@ -13,6 +13,7 @@ import common.models.security.metric.SecurityMetricException;
 import common.models.security.metric.SecurityMetrics;
 import common.util.LinkCache;
 import fintekkers.models.security.BondDetailsProto;
+import fintekkers.models.security.DayCountConventionProto;
 import fintekkers.models.security.SecurityMetricTypeProto;
 import fintekkers.services.SecurityMetricService;
 import fintekkers.models.security.IdentifierProto;
@@ -541,6 +542,29 @@ public class Security extends RawDataModelObject implements Comparable, IFinanci
         ensureHydrated();
         String assetClass = getProto().getAssetClass();
         return assetClass.isEmpty() ? "Unclassified" : assetClass;
+    }
+
+    /**
+     * The bond's day-count convention: {@code bond_details.day_count} when set
+     * ({@code UNKNOWN_DAY_COUNT} counts as unset), else the product default
+     * from hierarchy.json {@code default_day_count}, else
+     * {@code UNKNOWN_DAY_COUNT}. Never guesses (LM-498,
+     * docs/adr/day_count_convention.md).
+     *
+     * <p>Takes product_type from the stored proto, never from
+     * {@link #getProto()}: that writes the subclass default into an unset
+     * product_type ({@code TREASURY_NOTE} for a {@link BondSecurity}), which
+     * would be an ACT/ACT guess. No wrapper setter changes product_type, so
+     * the stored value is the real one. bond_details comes from the active
+     * view, so bond-detail setters count.
+     */
+    public DayCountConventionProto getDayCount() {
+        ensureHydrated();
+        SecurityProto.Builder view = SecurityProto.newBuilder().setProductTypeValue(proto.getProductTypeValue());
+        if (overlay != null ? overlay.hasBondDetails() : proto.hasBondDetails()) {
+            view.setBondDetails(overlay != null ? overlay.getBondDetails() : proto.getBondDetails());
+        }
+        return DayCounts.resolve(view.build());
     }
 
     public QuantityType getQuantityType() {

@@ -43,6 +43,7 @@ const date_1 = require("../utils/date");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 const identifier_1 = require("./identifier");
 const product_hierarchy_1 = require("./product_hierarchy");
+const day_count_1 = require("./day_count");
 const LinkCacheModule = __importStar(require("../../util/link-cache"));
 const link_resolver_1 = __importDefault(require("../../util/link-resolver"));
 const object_types_1 = require("../../util/object-types");
@@ -435,6 +436,16 @@ class Security {
         this.ensureHydrated();
         const bond = this.getBondLikeDetails();
         return bond && bond.hasCallDate() ? (0, date_1.localDateProtoToDate)(bond.getCallDate()) : null;
+    }
+    /**
+     * Returns the bond's day-count convention: bond_details.day_count when set
+     * (UNKNOWN_DAY_COUNT counts as unset), else the product default from
+     * hierarchy.json default_day_count, else UNKNOWN_DAY_COUNT. Never guesses a
+     * convention (LM-498, docs/adr/day_count_convention.md).
+     */
+    getDayCount() {
+        this.ensureHydrated();
+        return (0, day_count_1.resolveDayCount)(this.proto);
     }
     /**
      * Returns the canonical bond_details sub-message if set, else undefined.

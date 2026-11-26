@@ -107,6 +107,7 @@ impl BondSecurity {
                 issuance_info: vec![],
                 callable: false,
                 call_date: None,
+                day_count: None,
             }),
             ..Default::default()
         })
@@ -202,6 +203,7 @@ mod tests {
                 issuance_info: vec![],
                 callable: false,
                 call_date: None,
+                day_count: None,
             }),
             ..Default::default()
         }

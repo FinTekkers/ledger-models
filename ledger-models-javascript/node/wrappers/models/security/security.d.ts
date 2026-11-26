@@ -4,6 +4,7 @@ import { ZonedDateTime } from "../utils/datetime";
 import { UUID } from "../utils/uuid";
 import type { IdentifierTypeProto } from "../../../fintekkers/models/security/identifier/identifier_type_pb";
 import { Identifier } from "./identifier";
+import type { DayCountConventionProto } from "../../../fintekkers/models/security/day_count_convention_pb";
 import LinkResolver from "../../util/link-resolver";
 import { type DateInput, type MetricResult, type MetricSeries, type SecurityMetricInput } from "./security_metric";
 declare class Security {
@@ -176,6 +177,13 @@ declare class Security {
      * getMaturityDate() stays the legal final maturity (LM-465).
      */
     getCallDate(): Date | null;
+    /**
+     * Returns the bond's day-count convention: bond_details.day_count when set
+     * (UNKNOWN_DAY_COUNT counts as unset), else the product default from
+     * hierarchy.json default_day_count, else UNKNOWN_DAY_COUNT. Never guesses a
+     * convention (LM-498, docs/adr/day_count_convention.md).
+     */
+    getDayCount(): DayCountConventionProto;
     /**
      * Returns the canonical bond_details sub-message if set, else undefined.
      * TIPS and FRN extras live in their own tips_extension / frn_extension

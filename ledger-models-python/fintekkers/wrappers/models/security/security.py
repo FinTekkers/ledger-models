@@ -14,6 +14,7 @@ from datetime import date, datetime, timezone
 from decimal import Decimal
 from typing import Optional
 from fintekkers.models.security.product_type_pb2 import ProductTypeProto
+from fintekkers.wrappers.models.security import day_count
 from fintekkers.wrappers.models.security.security_identifier import Identifier
 from fintekkers.wrappers.models.security.security_metric import (
     NAV_PER_SHARE, SHARES_OUTSTANDING, TOTAL_NET_ASSETS, MetricResult, MetricSeries, MissingSecurityId,
@@ -301,6 +302,14 @@ class Security():
         if bond is None or not bond.HasField('call_date'):
             return None
         return ProtoSerializationUtil.deserialize(bond.call_date)
+
+    def get_day_count(self) -> int:
+        """The bond's DayCountConventionProto value: bond_details.day_count
+        when set (UNKNOWN_DAY_COUNT counts as unset), else the product default
+        from hierarchy.json default_day_count, else UNKNOWN_DAY_COUNT. Never
+        guesses a convention (LM-498, docs/adr/day_count_convention.md)."""
+        self._ensure_hydrated()
+        return day_count.resolve_day_count(self.proto)
 
     def get_tenor(self) -> str:
         self._ensure_hydrated()

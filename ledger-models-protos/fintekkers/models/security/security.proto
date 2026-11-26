@@ -15,6 +15,7 @@ import "fintekkers/models/security/instrument_type.proto";
 import "fintekkers/models/security/security_quantity_type.proto";
 import "fintekkers/models/security/coupon_frequency.proto";
 import "fintekkers/models/security/coupon_type.proto";
+import "fintekkers/models/security/day_count_convention.proto";
 import "fintekkers/models/security/index/index_type.proto";
 import "fintekkers/models/util/object_type.proto";
 import "fintekkers/models/util/version.proto";
@@ -150,6 +151,18 @@ message BondDetailsProto {
   // (a SELL to zero on the call date), not by editing this security.
   // See docs/adr/callable_bonds.md.
   fintekkers.models.util.LocalDateProto call_date = 10;
+  // day_count: how this bond counts days and year fractions for accrued
+  // interest and coupon-period fractions (DayCountConventionProto defines
+  // each convention). Unset means the product default: the entry for the
+  // security's product_type in hierarchy.json default_day_count, the deepest
+  // node on its parent chain winning (TREASURY_NOTE / TREASURY_BOND / TIPS /
+  // STRIPS -> ACT_ACT_ICMA, TBILL -> ACT_360, CORP_BOND -> THIRTY_360_US).
+  // An explicit UNKNOWN_DAY_COUNT resolves like unset. A product with no
+  // entry resolves to UNKNOWN_DAY_COUNT: services never guess a convention.
+  // The wrapper getters (Java Security.getDayCount, Python
+  // Security.get_day_count, JS getDayCount, Rust SecurityWrapper::day_count)
+  // apply this rule. See docs/adr/day_count_convention.md.
+  optional DayCountConventionProto day_count = 11;
 }
 
 // TIPS (Treasury Inflation-Protected Securities) extras.
