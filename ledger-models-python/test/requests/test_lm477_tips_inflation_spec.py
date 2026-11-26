@@ -102,13 +102,13 @@ def test_catalog_states_the_formula_and_scopes_the_pv_invariant():
         "index_ratio (TIPS only)",
         "Coupon = principal x ratio(t) x coupon rate per period",
         "Principal at maturity = principal x max(ratio, 1)",
-        "Sum of pv_amounts equals PRESENT_VALUE when TipsInput.assumed_inflation_rate is unset",
+        "Sum of pv_amounts equals dirty price × face / 100 when TipsInput.assumed_inflation_rate is unset",
         "Discounting of pv_amount is unchanged; see VS-159",
     ]:
         assert phrase in entry["formula"], phrase
     assert "index_ratio dimensionless" in entry["units"]
     assert "TipsInput.assumed_inflation_rate percent a year" in entry["units"]
-    [invariant] = [a for a in entry["model_assumptions"] if "sum(pv_amounts) == present_value" in a]
+    [invariant] = [a for a in entry["model_assumptions"] if "sum(pv_amounts) == dirty price × face / 100" in a]
     assert "Holds when TipsInput.assumed_inflation_rate is unset" in invariant
     assumptions = " ".join(entry["model_assumptions"])
     assert "compounded annually on ACT/365" in assumptions
