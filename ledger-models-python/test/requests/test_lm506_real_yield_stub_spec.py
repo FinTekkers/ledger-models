@@ -88,7 +88,7 @@ def test_same_solver_as_ytm():
         assert SAME_SOLVER in text
 
 
-def test_price_input_stays_clean():
+def test_clean_price_stays_the_input():
     for text in (_assumptions("REAL_YIELD"), _comment("REAL_YIELD")):
         assert CLEAN_INPUT in text
 
