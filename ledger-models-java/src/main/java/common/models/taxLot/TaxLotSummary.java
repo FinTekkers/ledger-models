@@ -157,8 +157,11 @@ public class TaxLotSummary implements IFinancialModelObject {
         return totalCost.divide(quantity, new MathContext(16, RoundingMode.HALF_UP));
     }
 
-    /** True when the delta has no price: the same check as {@link #toProto()}. */
-    private static boolean isUnpriced(IFinancialModelObject lot) {
+    /**
+     * True when the delta has no price: the same check as {@link #toProto()}.
+     * {@link WeightedAveragePurchasePrice#fromLots} uses it too, so both cost-basis readers agree.
+     */
+    static boolean isUnpriced(IFinancialModelObject lot) {
         Price price = (Price) lot.getField(Field.PRICE);
         return price == null || price.getPrice() == null;
     }

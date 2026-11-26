@@ -58,9 +58,83 @@ class WeightedAveragePurchasePriceTest {
         assertEquals("11.66666666666667", TaxLotSummary.getAverageCostBasis(lots).toPlainString());
     }
 
+    // --- LM-501: fromLots is null-safe on an unpriced lot -----------------------------------------
+
+    @Test
+    void fromLotsOverOneUnpricedBuyIsEmpty() {
+        Security security = testutil.DummyEquityObjects.getDummySecurity();
+        for (TaxLotDelta unpriced : List.of(nullPriceLot(security, "100"), nullPriceValueLot(security, "100"))) {
+            Optional<BigDecimal> result = assertDoesNotThrow(
+                    () -> WeightedAveragePurchasePrice.fromLots(List.of(unpriced)));
+            assertEquals(Optional.empty(), result);
+        }
+    }
+
+    @Test
+    void fromLotsWithPricedLotsAndOneUnpricedLotIsEmpty() {
+        Security security = testutil.DummyEquityObjects.getDummySecurity();
+        for (TaxLotDelta unpriced : List.of(nullPriceLot(security, "50"), nullPriceValueLot(security, "50"))) {
+            List<TaxLotDelta> lots = List.of(lot(security, "100", "10"), lot(security, "100", "20"), unpriced);
+            assertEquals(Optional.empty(), assertDoesNotThrow(() -> WeightedAveragePurchasePrice.fromLots(lots)));
+        }
+    }
+
+    @Test
+    void fromLotsWithAnUnpricedSellIsEmpty() {
+        // An unpriced lot is never skipped: without the rule this sell would be ignored and give 10.
+        Security security = testutil.DummyEquityObjects.getDummySecurity();
+        for (TaxLotDelta unpriced : List.of(nullPriceLot(security, "-50"), nullPriceValueLot(security, "-50"))) {
+            List<TaxLotDelta> lots = List.of(lot(security, "100", "10"), unpriced);
+            assertEquals(Optional.empty(), WeightedAveragePurchasePrice.fromLots(lots));
+        }
+    }
+
+    @Test
+    void fromLotsOverNoLotsIsEmpty() {
+        assertEquals(Optional.empty(), assertDoesNotThrow(() -> WeightedAveragePurchasePrice.fromLots(List.of())));
+    }
+
+    @Test
+    void fromLotsPricedOnlyMatchesGoldenValues() {
+        // Golden values captured from fromLots on ea1455ef, before LM-501.
+        Security security = testutil.DummyEquityObjects.getDummySecurity();
+
+        BigDecimal fifteen = WeightedAveragePurchasePrice.fromLots(List.of(
+                lot(security, "100", "10"), lot(security, "100", "20"), lot(security, "-50", "25"))).orElseThrow();
+        assertEquals("15", fifteen.toPlainString());
+        assertEquals(0, new BigDecimal("15").compareTo(fifteen));
+        assertEquals(0, fifteen.scale());
+
+        BigDecimal repeating = WeightedAveragePurchasePrice.fromLots(List.of(
+                lot(security, "1", "1"), lot(security, "2", "2"))).orElseThrow();
+        assertEquals("1.666666666667", repeating.toPlainString());
+        assertEquals(0, new BigDecimal("1.666666666667").compareTo(repeating));
+        assertEquals(12, repeating.scale());
+
+        BigDecimal trailingZeros = WeightedAveragePurchasePrice.fromLots(List.of(
+                lot(security, "100", "100"), lot(security, "100", "200"))).orElseThrow();
+        assertEquals("150", trailingZeros.toPlainString());
+        assertEquals(0, new BigDecimal("150").compareTo(trailingZeros));
+        assertEquals(-1, trailingZeros.scale());
+    }
+
     private static TaxLotDelta lot(Security security, String quantity, String price) {
+        return lot(security, quantity, Price.getPrice(new BigDecimal(price), security));
+    }
+
+    /** No {@code Field.PRICE} at all. */
+    private static TaxLotDelta nullPriceLot(Security security, String quantity) {
+        return lot(security, quantity, (Price) null);
+    }
+
+    /** A {@code Price} whose {@code getPrice()} is null. */
+    private static TaxLotDelta nullPriceValueLot(Security security, String quantity) {
+        return lot(security, quantity, new Price(UUID.randomUUID(), null, security, ZonedDateTime.now()));
+    }
+
+    private static TaxLotDelta lot(Security security, String quantity, Price price) {
         return new TaxLotDelta(UUID.randomUUID(), null, TaxLotDelta.TaxLotStatus.Open,
-                Price.getPrice(new BigDecimal(price), security), LocalDate.now(), null,
+                price, LocalDate.now(), null,
                 new BigDecimal(quantity), security, ZonedDateTime.now(), null, EXECUTED);
     }
 }
