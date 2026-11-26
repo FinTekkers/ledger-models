@@ -277,11 +277,23 @@ public enum MeasureProto
    * an investor earns above the rate of inflation.
    * Formula (TIPS):
    *   Solve for r (annual) such that:
-   *   clean_price × index_ratio × face / 100 = Σ PV(inflation-adjusted cash flows at r)
-   *   The quoted real price is scaled by the same index ratio as the cash flows, so
+   *   (clean + real ACT/ACT accrued) × index_ratio × face / 100 = Σ_{k=1}^{N} CF_k / (1 + r/f)^(k−1+w)
+   *   Where clean + real ACT/ACT accrued is the dirty real price per 100 real face,
+   *   CF_k = the k-th remaining inflation-adjusted coupon (plus the
+   *   inflation-adjusted principal at k = N), f = coupon frequency, N = number of
+   *   remaining flows, w = DSC/E (see the stub convention below).
+   *   The dirty real price is scaled by the same index ratio as the cash flows, so
    *   the result is the true real yield and does not change with CPI.
    * Model assumptions:
    *   - Same solver and conventions as YIELD_TO_MATURITY.
+   *   - Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next
+   *     coupon (DSC = days from settlement to the next coupon, E = days in the
+   *     coupon period); flow k falls at k−1+w periods; the real yield is solved so
+   *     the discounted inflation-adjusted flows equal the dirty real price
+   *     (clean + real ACT/ACT accrued) × index_ratio.
+   *     The price input is the clean price.
+   *   - Real accrued: ACT/ACT accrued on the real coupon per 100 real face, scaled
+   *     by index_ratio together with the clean price.
    *   - PRESENT_VALUE, MACAULAY_DURATION, MODIFIED_DURATION and CONVEXITY for TIPS
    *     are computed at this real yield on the inflation-adjusted cash flows.
    * Applicability: TIPS only. For nominal bonds, returns the same value as YTM.
@@ -1130,11 +1142,23 @@ public enum MeasureProto
    * an investor earns above the rate of inflation.
    * Formula (TIPS):
    *   Solve for r (annual) such that:
-   *   clean_price × index_ratio × face / 100 = Σ PV(inflation-adjusted cash flows at r)
-   *   The quoted real price is scaled by the same index ratio as the cash flows, so
+   *   (clean + real ACT/ACT accrued) × index_ratio × face / 100 = Σ_{k=1}^{N} CF_k / (1 + r/f)^(k−1+w)
+   *   Where clean + real ACT/ACT accrued is the dirty real price per 100 real face,
+   *   CF_k = the k-th remaining inflation-adjusted coupon (plus the
+   *   inflation-adjusted principal at k = N), f = coupon frequency, N = number of
+   *   remaining flows, w = DSC/E (see the stub convention below).
+   *   The dirty real price is scaled by the same index ratio as the cash flows, so
    *   the result is the true real yield and does not change with CPI.
    * Model assumptions:
    *   - Same solver and conventions as YIELD_TO_MATURITY.
+   *   - Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next
+   *     coupon (DSC = days from settlement to the next coupon, E = days in the
+   *     coupon period); flow k falls at k−1+w periods; the real yield is solved so
+   *     the discounted inflation-adjusted flows equal the dirty real price
+   *     (clean + real ACT/ACT accrued) × index_ratio.
+   *     The price input is the clean price.
+   *   - Real accrued: ACT/ACT accrued on the real coupon per 100 real face, scaled
+   *     by index_ratio together with the clean price.
    *   - PRESENT_VALUE, MACAULAY_DURATION, MODIFIED_DURATION and CONVEXITY for TIPS
    *     are computed at this real yield on the inflation-adjusted cash flows.
    * Applicability: TIPS only. For nominal bonds, returns the same value as YTM.

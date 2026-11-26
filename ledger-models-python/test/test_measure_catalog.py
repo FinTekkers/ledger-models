@@ -20,7 +20,10 @@ model_assumptions of seven fixed-coupon entries (LM499_MEASURES) and their
 proto comments for the street stub convention; every other entry and comment
 stays as it was. LM-496 adds one `Unpublished CPI-U month` note (31 CFR 356
 Appendix B fallback) to the REFERENCE_CPI and INDEX_RATIO proto comments and
-catalog entries; the rest of each comment and entry stays as it was."""
+catalog entries; the rest of each comment and entry stays as it was. LM-506
+restates REAL_YIELD's formula and model_assumptions, and its proto comment, for
+the street stub convention on the dirty real price; every other key stays as
+it was."""
 import hashlib
 import json
 import re
@@ -152,6 +155,9 @@ LM499_MEASURES = ("YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE", "PR
                   "CONVEXITY", "MODIFIED_DURATION", "DV01")
 # LM-496 adds one model_assumptions string to these entries only.
 LM496_MEASURES = ("REFERENCE_CPI", "INDEX_RATIO")
+# LM-506 states the street stub convention on the dirty real price in the
+# LM499_FIELDS keys of this entry only.
+LM506_MEASURES = ("REAL_YIELD",)
 INPUT_TYPES = ("bond", "tips", "frn", "mbs", "equity", "cash")
 
 
@@ -163,7 +169,7 @@ def test_lm425_catalog_edits_touch_only_applies_to_and_implemented():
     for old, new in zip(LM425_BEFORE, after):
         assert set(new) == set(old), new["name"]
         exempt = {"ACCRUED_INTEREST": LM456_FIELDS, "PRESENT_VALUE_CASHFLOWS": LM477_FIELDS}.get(new["name"], set())
-        if new["name"] in LM499_MEASURES:
+        if new["name"] in LM499_MEASURES + LM506_MEASURES:
             exempt = exempt | LM499_FIELDS
         if new["name"] in LM496_MEASURES:
             # The added string is checked by _assert_lm496_fallback.
@@ -322,8 +328,9 @@ def _assert_lm496_fallback(old, new):
 
 # This freezes the whole catalog at the LM-450 release (v1.1.39), apart from
 # the LM-456 ACCRUED_INTEREST, LM-477 PRESENT_VALUE_CASHFLOWS, LM-499
-# street-stub (formula and model_assumptions of LM499_MEASURES) and LM-496
-# fallback (one added model_assumptions string in LM496_MEASURES) edits. A
+# street-stub (formula and model_assumptions of LM499_MEASURES), LM-496
+# fallback (one added model_assumptions string in LM496_MEASURES) and LM-506
+# REAL_YIELD (formula and model_assumptions of LM506_MEASURES) edits. A
 # later item that edits any catalog must update this test (or retire it), the
 # way LM-456 retired the LM-434 freeze.
 @pytest.mark.parametrize("path", CATALOGS.values(), ids=CATALOGS.keys())
@@ -340,7 +347,7 @@ def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
         if new["name"] == "PRESENT_VALUE_CASHFLOWS":
             _assert_lm477_present_value_cashflows(old, new)
             continue
-        if new["name"] in LM499_MEASURES:
+        if new["name"] in LM499_MEASURES + LM506_MEASURES:
             for key in set(old) - LM499_FIELDS:
                 assert new[key] == old[key], (new["name"], key)
             continue
@@ -364,11 +371,12 @@ def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
 # LM-459: the ACCRUED_INTEREST comment says which bonds are not scaled and
 # gives a TIPS example a reader can check by hand. The rest of measure.proto
 # stays as at the LM-456 merge (36186e66): sha256 of the file with the
-# ACCRUED_INTEREST comment and the comments of the seven LM-499 entries cut out
-# (computed on main at 54bc1942, before the LM-499 edit), and the two LM-496
-# `Unpublished CPI-U month` bullets cut out by _lm496_strip. A later item that
-# edits measure.proto must update this hash (or retire the test).
-LM459_PROTO_OUTSIDE_COMMENT_SHA256 = "e768df5dffa475086905041110310e90a0e04ed0b94ae5664fb7647b6b5dfc70"
+# ACCRUED_INTEREST comment, the comments of the seven LM-499 entries and the
+# LM-506 REAL_YIELD comment cut out (computed on main at e50ec873, before the
+# LM-506 edit), and the two LM-496 `Unpublished CPI-U month` bullets cut out by
+# _lm496_strip. A later item that edits measure.proto must update this hash (or
+# retire the test).
+LM459_PROTO_OUTSIDE_COMMENT_SHA256 = "ea2ab69d7c738e9081c5d9e5b86e9609de8c32e2dbd69de6e38f456adf6f803f"
 LM459_FORMULA = (
     "coupon_rate / frequency × Actual/Actual ICMA fraction"
     " × index ratio at settlement × directed_quantity"
@@ -422,7 +430,7 @@ def test_lm459_tips_example_recomputes_to_stated_cents():
 def test_lm459_proto_outside_accrued_interest_comment_unchanged():
     proto = _lm496_strip(MEASURE_PROTO.read_text())
     outside = proto
-    for name in ("ACCRUED_INTEREST",) + LM499_MEASURES:
+    for name in ("ACCRUED_INTEREST",) + LM499_MEASURES + LM506_MEASURES:
         comment = _proto_comment(f"{name} = {measure_pb2.MeasureProto.Value(name)};")
         assert proto.count(comment) == 1, name
         outside = outside.replace(comment, "", 1)

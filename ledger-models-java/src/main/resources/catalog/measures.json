@@ -175,13 +175,15 @@
       "enum_value": 10,
       "display_name": "Real Yield",
       "description": "The yield of a TIPS bond in real (inflation-adjusted) terms. This is the return an investor earns above the rate of inflation.",
-      "formula": "Solve for r: clean_price × index_ratio × face / 100 = Sum[PV(inflation-adjusted cash flows at r)]",
+      "formula": "Solve for r: (clean + real ACT/ACT accrued) × index_ratio × face / 100 = Σ_{k=1}^{N} CF_k / (1 + r/f)^(k−1+w), where clean + real ACT/ACT accrued is the dirty real price per 100 real face, CF_k = the k-th remaining inflation-adjusted coupon (plus the inflation-adjusted principal at k = N), f = coupon frequency, N = number of remaining flows",
       "units": "Decimal (0-1 scale; e.g. 0.02 = 2.00% real annual yield)",
       "category": "yield",
       "applies_to": ["TIPS"],
       "model_assumptions": [
         "Same solver and conventions as YIELD_TO_MATURITY",
-        "The quoted real price is scaled by the same index ratio as the cash flows, so the result is the true real yield and does not change with CPI"
+        "The dirty real price is scaled by the same index ratio as the cash flows, so the result is the true real yield and does not change with CPI",
+        "Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next coupon (DSC = days from settlement to the next coupon, E = days in the coupon period); flow k falls at k−1+w periods; the real yield is solved so the discounted inflation-adjusted flows equal the dirty real price (clean + real ACT/ACT accrued) × index_ratio. The price input is the clean price.",
+        "Real accrued: ACT/ACT accrued on the real coupon per 100 real face, scaled by index_ratio together with the clean price"
       ],
       "implemented": true,
       "computed_by": "valuation-service",
