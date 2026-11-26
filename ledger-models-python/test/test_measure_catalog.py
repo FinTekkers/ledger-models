@@ -18,7 +18,9 @@ comment only, which bonds are not scaled and a TIPS example that recomputes
 by hand to $5.99 per $1,000 face. LM-499 restates the formula and
 model_assumptions of seven fixed-coupon entries (LM499_MEASURES) and their
 proto comments for the street stub convention; every other entry and comment
-stays as it was."""
+stays as it was. LM-496 adds one `Unpublished CPI-U month` note (31 CFR 356
+Appendix B fallback) to the REFERENCE_CPI and INDEX_RATIO proto comments and
+catalog entries; the rest of each comment and entry stays as it was."""
 import hashlib
 import json
 import re
@@ -148,6 +150,8 @@ LM477_FIELDS = {"formula", "units", "model_assumptions"}
 LM499_FIELDS = {"formula", "model_assumptions"}
 LM499_MEASURES = ("YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE", "PRESENT_VALUE_CASHFLOWS",
                   "CONVEXITY", "MODIFIED_DURATION", "DV01")
+# LM-496 adds one model_assumptions string to these entries only.
+LM496_MEASURES = ("REFERENCE_CPI", "INDEX_RATIO")
 INPUT_TYPES = ("bond", "tips", "frn", "mbs", "equity", "cash")
 
 
@@ -161,6 +165,9 @@ def test_lm425_catalog_edits_touch_only_applies_to_and_implemented():
         exempt = {"ACCRUED_INTEREST": LM456_FIELDS, "PRESENT_VALUE_CASHFLOWS": LM477_FIELDS}.get(new["name"], set())
         if new["name"] in LM499_MEASURES:
             exempt = exempt | LM499_FIELDS
+        if new["name"] in LM496_MEASURES:
+            # The added string is checked by _assert_lm496_fallback.
+            exempt = exempt | {"model_assumptions"}
         for key in set(old) - set(LM425_FIELDS) - exempt:
             assert new[key] == old[key], (new["name"], key)
 
@@ -306,9 +313,17 @@ def _assert_lm477_present_value_cashflows(old, new):
     # LM-499 rewrote the invariant line (model_assumptions[1]); its spec test owns it.
 
 
+def _assert_lm496_fallback(old, new):
+    for key in set(old) - {"model_assumptions"}:
+        assert new[key] == old[key], (new["name"], key)
+    assert new["model_assumptions"][:len(old["model_assumptions"])] == old["model_assumptions"]
+    assert len(new["model_assumptions"]) == len(old["model_assumptions"]) + 1
+
+
 # This freezes the whole catalog at the LM-450 release (v1.1.39), apart from
-# the LM-456 ACCRUED_INTEREST, LM-477 PRESENT_VALUE_CASHFLOWS and LM-499
-# street-stub (formula and model_assumptions of LM499_MEASURES) edits. A
+# the LM-456 ACCRUED_INTEREST, LM-477 PRESENT_VALUE_CASHFLOWS, LM-499
+# street-stub (formula and model_assumptions of LM499_MEASURES) and LM-496
+# fallback (one added model_assumptions string in LM496_MEASURES) edits. A
 # later item that edits any catalog must update this test (or retire it), the
 # way LM-456 retired the LM-434 freeze.
 @pytest.mark.parametrize("path", CATALOGS.values(), ids=CATALOGS.keys())
@@ -329,6 +344,9 @@ def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
             for key in set(old) - LM499_FIELDS:
                 assert new[key] == old[key], (new["name"], key)
             continue
+        if new["name"] in LM496_MEASURES:
+            _assert_lm496_fallback(old, new)
+            continue
         if new["name"] != "ACCRUED_INTEREST":
             assert new == old, new["name"]
             continue
@@ -347,7 +365,8 @@ def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
 # gives a TIPS example a reader can check by hand. The rest of measure.proto
 # stays as at the LM-456 merge (36186e66): sha256 of the file with the
 # ACCRUED_INTEREST comment and the comments of the seven LM-499 entries cut out
-# (computed on main at 54bc1942, before the LM-499 edit). A later item that
+# (computed on main at 54bc1942, before the LM-499 edit), and the two LM-496
+# `Unpublished CPI-U month` bullets cut out by _lm496_strip. A later item that
 # edits measure.proto must update this hash (or retire the test).
 LM459_PROTO_OUTSIDE_COMMENT_SHA256 = "e768df5dffa475086905041110310e90a0e04ed0b94ae5664fb7647b6b5dfc70"
 LM459_FORMULA = (
@@ -401,10 +420,99 @@ def test_lm459_tips_example_recomputes_to_stated_cents():
 
 
 def test_lm459_proto_outside_accrued_interest_comment_unchanged():
-    proto = MEASURE_PROTO.read_text()
+    proto = _lm496_strip(MEASURE_PROTO.read_text())
     outside = proto
     for name in ("ACCRUED_INTEREST",) + LM499_MEASURES:
         comment = _proto_comment(f"{name} = {measure_pb2.MeasureProto.Value(name)};")
         assert proto.count(comment) == 1, name
         outside = outside.replace(comment, "", 1)
     assert hashlib.sha256(outside.encode()).hexdigest() == LM459_PROTO_OUTSIDE_COMMENT_SHA256
+
+
+# LM-496: REFERENCE_CPI and INDEX_RATIO state the 31 CFR 356 Appendix B rule
+# for a CPI-U month that was never published (owner ruling of 26 Nov 2026:
+# fallback index rounded to 3 decimals; Treasury announced 325.604 for
+# 2025-10). Every phrase is asserted inside the added note only, since the
+# citation and the published-month rounding already appear elsewhere in both
+# comments and entries.
+LM496_ANCHOR = "Unpublished CPI-U month (31 CFR 356 Appendix B)"
+LM496_PHRASES = (
+    "31 CFR 356 Appendix B",
+    "CPI(last) x (CPI(last) / CPI(last - 12))^(k / 12)",
+    "k is the months since the last reported month",
+    "absent by the last day of the following month",
+    "The fallback index is rounded to 3 decimals",
+    "a warning naming the filled month",
+    "missing formula input (e.g. CPI(last - 12))",
+    "a month still inside its window is an error naming the month",
+    "Callers must send CPI(last - 12) in MonthlyIndexReadings",
+)
+LM496_BULLET = re.compile(r"^  //   - Unpublished CPI-U month .*\n(?:  //     .*\n)*", re.MULTILINE)
+
+
+def _collapse(comment):
+    return " ".join(" ".join(line.strip().removeprefix("//") for line in comment.splitlines()).split())
+
+
+def _lm496_proto_note(name):
+    comment = _proto_comment(f"{name} = {measure_pb2.MeasureProto.Value(name)};")
+    bullets = LM496_BULLET.findall(comment)
+    assert len(bullets) == 1, name
+    return _collapse(bullets[0])
+
+
+def _lm496_catalog_note(catalog, name):
+    entries = [m for m in catalog["measures"] if m["name"] == name]
+    assert len(entries) == 1, name
+    notes = [a for a in entries[0]["model_assumptions"] if LM496_ANCHOR in a]
+    assert len(notes) == 1, name
+    return notes[0]
+
+
+def _lm496_strip(proto):
+    """measure.proto with the two LM-496 bullets cut out."""
+    stripped, removed = LM496_BULLET.subn("", proto)
+    assert removed == 2, removed
+    return stripped
+
+
+@pytest.mark.parametrize("name", LM496_MEASURES)
+def test_lm496_proto_note_states_appendix_b_fallback(name):
+    note = _lm496_proto_note(name)
+    assert note.startswith("- " + LM496_ANCHOR)
+    for phrase in LM496_PHRASES:
+        assert phrase in note, (name, phrase)
+
+
+@pytest.mark.parametrize("name", LM496_MEASURES)
+@pytest.mark.parametrize("path", CATALOGS.values(), ids=CATALOGS.keys())
+def test_lm496_catalog_note_states_appendix_b_fallback(path, name):
+    note = _lm496_catalog_note(json.loads(path.read_text()), name)
+    assert note.startswith(LM496_ANCHOR)
+    for phrase in LM496_PHRASES:
+        assert phrase in note, (name, phrase)
+
+
+def test_lm496_index_ratio_note_uses_reference_cpi_fallback():
+    assert _lm496_proto_note("INDEX_RATIO").startswith(f"- {LM496_ANCHOR}: uses the REFERENCE_CPI fallback.")
+    note = _lm496_catalog_note(json.loads(SOURCE.read_text()), "INDEX_RATIO")
+    assert note.startswith(f"{LM496_ANCHOR}: uses the REFERENCE_CPI fallback.")
+
+
+@pytest.mark.parametrize("path", (MEASURE_PROTO, *CATALOGS.values()), ids=("proto", *CATALOGS.keys()))
+def test_lm496_no_precision_placeholder(path):
+    assert "<N>" not in path.read_text()
+
+
+def test_lm496_october_2025_example_recomputes_to_treasury_figure():
+    notes = (_lm496_proto_note("REFERENCE_CPI"),
+             _lm496_catalog_note(json.loads(SOURCE.read_text()), "REFERENCE_CPI"))
+    for note in notes:
+        example = note[note.index("Example: CPI-U for 2025-10 was never published."):]
+        last = Decimal(_search(r"CPI\(2025-09\) = (\d+\.\d+)", example))
+        year_before = Decimal(_search(r"CPI\(2024-09\) = (\d+\.\d+)", example))
+        k = int(_search(r"k = (\d+)", example))
+        stated = Decimal(_search(r"(\d+\.\d{3}), the figure Treasury announced", example))
+        assert (last, year_before, k) == (Decimal("324.800"), Decimal("315.301"), 1)
+        fallback = Decimal(float(last) * (float(last) / float(year_before)) ** (k / 12))
+        assert fallback.quantize(Decimal("0.001"), rounding=ROUND_HALF_UP) == stated == Decimal("325.604")
