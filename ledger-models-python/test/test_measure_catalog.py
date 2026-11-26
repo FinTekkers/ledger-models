@@ -15,7 +15,10 @@ every catalog equals the v1.1.39 snapshot test-fixtures/catalog/lm-456-before.js
 but for ACCRUED_INTEREST's formula, model_assumptions and depends_on, and the
 ACCRUED_INTEREST proto comment states the same rule. LM-459 adds, in that
 comment only, which bonds are not scaled and a TIPS example that recomputes
-by hand to $5.99 per $1,000 face."""
+by hand to $5.99 per $1,000 face. LM-499 restates the formula and
+model_assumptions of seven fixed-coupon entries (LM499_MEASURES) and their
+proto comments for the street stub convention; every other entry and comment
+stays as it was."""
 import hashlib
 import json
 import re
@@ -141,6 +144,10 @@ LM456_FIELDS = {"formula", "model_assumptions", "depends_on"}
 # PRESENT_VALUE_CASHFLOWS keys only; implemented, depends_on and applies_to
 # stay as they were (the calculation ships in VS-159).
 LM477_FIELDS = {"formula", "units", "model_assumptions"}
+# LM-499 states the street stub convention in these keys of these entries only.
+LM499_FIELDS = {"formula", "model_assumptions"}
+LM499_MEASURES = ("YIELD_TO_MATURITY", "MACAULAY_DURATION", "PRESENT_VALUE", "PRESENT_VALUE_CASHFLOWS",
+                  "CONVEXITY", "MODIFIED_DURATION", "DV01")
 INPUT_TYPES = ("bond", "tips", "frn", "mbs", "equity", "cash")
 
 
@@ -152,6 +159,8 @@ def test_lm425_catalog_edits_touch_only_applies_to_and_implemented():
     for old, new in zip(LM425_BEFORE, after):
         assert set(new) == set(old), new["name"]
         exempt = {"ACCRUED_INTEREST": LM456_FIELDS, "PRESENT_VALUE_CASHFLOWS": LM477_FIELDS}.get(new["name"], set())
+        if new["name"] in LM499_MEASURES:
+            exempt = exempt | LM499_FIELDS
         for key in set(old) - set(LM425_FIELDS) - exempt:
             assert new[key] == old[key], (new["name"], key)
 
@@ -251,8 +260,12 @@ def _accrued_interest(catalog):
 
 
 def _accrued_interest_proto_comment():
+    return _proto_comment("ACCRUED_INTEREST = 20;")
+
+
+def _proto_comment(declaration):
     lines = MEASURE_PROTO.read_text().splitlines(keepends=True)
-    end = next(i for i, line in enumerate(lines) if line.strip() == "ACCRUED_INTEREST = 20;")
+    end = next(i for i, line in enumerate(lines) if line.strip() == declaration)
     start = end
     while lines[start - 1].lstrip().startswith("//"):
         start -= 1
@@ -290,12 +303,12 @@ def _assert_lm477_present_value_cashflows(old, new):
     assert "(1 + rate/100)^y" in new["formula"]
     assert new["units"].startswith(old["units"] + "; index_ratio dimensionless")
     assert new["model_assumptions"][0] == old["model_assumptions"][0]
-    assert new["model_assumptions"][1].startswith(old["model_assumptions"][1] + ". Holds when")
-    assert len(new["model_assumptions"]) == len(old["model_assumptions"]) + 2
+    # LM-499 rewrote the invariant line (model_assumptions[1]); its spec test owns it.
 
 
 # This freezes the whole catalog at the LM-450 release (v1.1.39), apart from
-# the LM-456 ACCRUED_INTEREST and LM-477 PRESENT_VALUE_CASHFLOWS edits. A
+# the LM-456 ACCRUED_INTEREST, LM-477 PRESENT_VALUE_CASHFLOWS and LM-499
+# street-stub (formula and model_assumptions of LM499_MEASURES) edits. A
 # later item that edits any catalog must update this test (or retire it), the
 # way LM-456 retired the LM-434 freeze.
 @pytest.mark.parametrize("path", CATALOGS.values(), ids=CATALOGS.keys())
@@ -311,6 +324,10 @@ def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
         assert list(new) == list(old), new["name"]
         if new["name"] == "PRESENT_VALUE_CASHFLOWS":
             _assert_lm477_present_value_cashflows(old, new)
+            continue
+        if new["name"] in LM499_MEASURES:
+            for key in set(old) - LM499_FIELDS:
+                assert new[key] == old[key], (new["name"], key)
             continue
         if new["name"] != "ACCRUED_INTEREST":
             assert new == old, new["name"]
@@ -329,9 +346,10 @@ def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
 # LM-459: the ACCRUED_INTEREST comment says which bonds are not scaled and
 # gives a TIPS example a reader can check by hand. The rest of measure.proto
 # stays as at the LM-456 merge (36186e66): sha256 of the file with the
-# ACCRUED_INTEREST comment cut out. A later item that edits measure.proto
-# must update this hash (or retire the test).
-LM459_PROTO_OUTSIDE_COMMENT_SHA256 = "220fe9d44efc67635eb5b2e7f9d5244db6ddde859702eba05f7030ff290de511"
+# ACCRUED_INTEREST comment and the comments of the seven LM-499 entries cut out
+# (computed on main at 54bc1942, before the LM-499 edit). A later item that
+# edits measure.proto must update this hash (or retire the test).
+LM459_PROTO_OUTSIDE_COMMENT_SHA256 = "e768df5dffa475086905041110310e90a0e04ed0b94ae5664fb7647b6b5dfc70"
 LM459_FORMULA = (
     "coupon_rate / frequency × Actual/Actual ICMA fraction"
     " × index ratio at settlement × directed_quantity"
@@ -384,7 +402,9 @@ def test_lm459_tips_example_recomputes_to_stated_cents():
 
 def test_lm459_proto_outside_accrued_interest_comment_unchanged():
     proto = MEASURE_PROTO.read_text()
-    comment = _accrued_interest_proto_comment()
-    assert proto.count(comment) == 1
-    outside = proto.replace(comment, "", 1)
+    outside = proto
+    for name in ("ACCRUED_INTEREST",) + LM499_MEASURES:
+        comment = _proto_comment(f"{name} = {measure_pb2.MeasureProto.Value(name)};")
+        assert proto.count(comment) == 1, name
+        outside = outside.replace(comment, "", 1)
     assert hashlib.sha256(outside.encode()).hexdigest() == LM459_PROTO_OUTSIDE_COMMENT_SHA256

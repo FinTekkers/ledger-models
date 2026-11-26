@@ -118,15 +118,15 @@
       "enum_value": 7,
       "display_name": "Yield to Maturity",
       "description": "The annualized rate of return assuming the bond is held to maturity and all coupons are reinvested at the same rate. This is the internal rate of return that equates the present value of all future cashflows to the current price.",
-      "formula": "Solve for r: price * (face / 100) = Sum[C / (1 + r/m)^t] + F / (1 + r/m)^N",
+      "formula": "Solve for y: dirty price × face / 100 = Σ_{k=1}^{N} CF_k / (1 + y/f)^(k−1+w), where dirty price = clean price + ACT/ACT accrued per 100 face, CF_k = the k-th remaining coupon (plus the principal F at k = N), f = coupon frequency, N = number of remaining flows",
       "units": "Decimal (0-1 scale; e.g. 0.06 = 6.00% annual)",
       "category": "yield",
       "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "model_assumptions": [
         "Coupon reinvestment at the YTM rate (standard bond math assumption)",
         "For TIPS: returns the same value as REAL_YIELD, with the response summary warning \"YIELD_TO_MATURITY for TIPS is the real yield (same as REAL_YIELD); a nominal yield needs an inflation forecast\"",
-        "Settlement on a coupon date (no accrued interest adjustment currently)",
-        "Day count: Actual/365 for years-to-maturity",
+        "Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next coupon (DSC = days from settlement to the next coupon, E = days in the coupon period); flow k falls at k−1+w periods; the yield is solved so the discounted flows equal the dirty price (clean + ACT/ACT accrued). The price input is the clean price.",
+        "Day count: ACT/ACT for accrued and for w, with no day-count choice until LM-498",
         "Solver: Newton-Raphson iteration with linear approximation initial guess"
       ],
       "implemented": true,
@@ -138,14 +138,14 @@
       "enum_value": 8,
       "display_name": "Macaulay Duration",
       "description": "The weighted average time (in years) to receive all cashflows from a bond, where each cashflow's weight is its proportion of the bond's total present value.",
-      "formula": "D = Sum[(t / m) * PV_t / TotalPV]",
+      "formula": "D = Σ t_k × PV_k / Σ PV_k, with t_k = (k−1+w)/f and PV_k = CF_k / (1 + y/f)^(k−1+w), where y = YIELD_TO_MATURITY and f = coupon frequency",
       "units": "Years (e.g. 4.41 = 4.41 years)",
       "category": "risk",
       "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "model_assumptions": [
         "Uses the bond's YTM (from Newton-Raphson solver) as the discount rate",
         "Flat yield curve (single rate for all maturities)",
-        "Settlement on a coupon date (integer period exponents)"
+        "Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next coupon (DSC = days from settlement to the next coupon, E = days in the coupon period); flow k falls at k−1+w periods; the yield is solved so the discounted flows equal the dirty price (clean + ACT/ACT accrued). The price input is the clean price."
       ],
       "implemented": true,
       "computed_by": "valuation-service",
@@ -156,14 +156,15 @@
       "enum_value": 9,
       "display_name": "Present Value",
       "description": "The theoretical price of a bond computed as the sum of all future cashflows (coupons + principal) discounted at the bond's yield to maturity.",
-      "formula": "PV = Sum[C / (1 + r/m)^t] + F / (1 + r/m)^N, returned as quoted price (% of par)",
+      "formula": "PV = Σ_{k=1}^{N} CF_k / (1 + y/f)^(k−1+w) / (face / 100) − ACT/ACT accrued per 100 face: the dirty PV minus accrued, quoted as % of par, so price == PRESENT_VALUE for the clean input price",
       "units": "Quoted price (% of par; e.g. 95.00 = $95 per $100 face)",
       "category": "valuation",
       "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
       "model_assumptions": [
         "Same as YIELD_TO_MATURITY (the discount rate is derived from the input price)",
         "For TIPS: inflation-adjusted cash flows discounted at REAL_YIELD, consistent with clean_price × index_ratio",
-        "Three-way invariant: price == present_value == sum(cashflow_pvs)"
+        "Invariant: price == PRESENT_VALUE for the clean input price; sum(cashflow_pvs) == dirty price × face / 100",
+        "Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next coupon (DSC = days from settlement to the next coupon, E = days in the coupon period); flow k falls at k−1+w periods; the yield is solved so the discounted flows equal the dirty price (clean + ACT/ACT accrued). The price input is the clean price."
       ],
       "implemented": true,
       "computed_by": "valuation-service",
@@ -208,15 +209,16 @@
       "enum_value": 12,
       "display_name": "Present Value Cashflows",
       "description": "Requests the full schedule of future cashflows for a bond. The ValuationResponseProto will populate the cashflows repeated field with one CashflowProto per payment period.",
-      "formula": "Each CashflowProto contains: cashflow_date, fv_amount, pv_amount, coupon_rate, index_ratio (TIPS only). Row rules, the same for BOND, TIPS and TREASURY_FRN: each coupon payment is one row with coupon_rate set; the principal repayment (at maturity, and any principal paydown) is a separate row on its date with coupon_rate unset, fv_amount and pv_amount covering principal only, and index_ratio set for TIPS as on the coupon rows; so a date can have two rows (the final coupon and the principal). Sum of pv_amounts equals PRESENT_VALUE when TipsInput.assumed_inflation_rate is unset; the sum runs over all rows, coupon and principal. TIPS: ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y, where rate = TipsInput.assumed_inflation_rate and y = days from settlement to t / 365 (ACT/365); without a rate, ratio(t) = today's INDEX_RATIO. Coupon = principal x ratio(t) x coupon rate per period. Principal at maturity = principal x max(ratio, 1), with ratio at maturity; this is the principal row's fv_amount. index_ratio reports the unfloored ratio(t). Discounting of pv_amount is unchanged; see VS-159.",
+      "formula": "Each CashflowProto contains: cashflow_date, fv_amount, pv_amount, coupon_rate, index_ratio (TIPS only). Row rules, the same for BOND, TIPS and TREASURY_FRN: each coupon payment is one row with coupon_rate set; the principal repayment (at maturity, and any principal paydown) is a separate row on its date with coupon_rate unset, fv_amount and pv_amount covering principal only, and index_ratio set for TIPS as on the coupon rows; so a date can have two rows (the final coupon and the principal). Sum of pv_amounts equals dirty price × face / 100 when TipsInput.assumed_inflation_rate is unset; the sum runs over all rows, coupon and principal. TIPS: ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y, where rate = TipsInput.assumed_inflation_rate and y = days from settlement to t / 365 (ACT/365); without a rate, ratio(t) = today's INDEX_RATIO. Coupon = principal x ratio(t) x coupon rate per period. Principal at maturity = principal x max(ratio, 1), with ratio at maturity; this is the principal row's fv_amount. index_ratio reports the unfloored ratio(t). Discounting of pv_amount is unchanged; see VS-159.",
       "units": "fv_amount and pv_amount in dollars; coupon_rate as percentage; index_ratio dimensionless (1.25 = principal accreted by 25%), absent for non-TIPS rows; TipsInput.assumed_inflation_rate percent a year (3.0 = 3% a year)",
       "category": "valuation",
       "applies_to": ["BOND", "TIPS", "TREASURY_FRN"],
       "model_assumptions": [
         "Same as PRESENT_VALUE",
-        "Three-way invariant: sum(pv_amounts) == present_value == price. Holds when TipsInput.assumed_inflation_rate is unset; with a rate, only the cashflow rows are projected and PRESENT_VALUE is unchanged",
+        "Invariant: sum(pv_amounts) == dirty price × face / 100. Holds when TipsInput.assumed_inflation_rate is unset; with a rate, only the cashflow rows are projected and PRESENT_VALUE is unchanged",
         "TIPS: constant assumed inflation from settlement to maturity, compounded annually on ACT/365. Deflation floor max(ratio, 1) on principal at maturity only",
-        "TIPS without TipsInput.assumed_inflation_rate: every row uses today's INDEX_RATIO (unchanged behaviour). Unset is absent, never 0%"
+        "TIPS without TipsInput.assumed_inflation_rate: every row uses today's INDEX_RATIO (unchanged behaviour). Unset is absent, never 0%",
+        "Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next coupon (DSC = days from settlement to the next coupon, E = days in the coupon period); flow k falls at k−1+w periods; the yield is solved so the discounted flows equal the dirty price (clean + ACT/ACT accrued). The price input is the clean price."
       ],
       "implemented": true,
       "computed_by": "valuation-service",
@@ -378,7 +380,7 @@
       "enum_value": 21,
       "display_name": "Convexity",
       "description": "The second derivative of a bond's price with respect to yield, normalised by price. Convexity measures how the duration of a bond changes as yield changes — a bond with higher convexity gains more in price when yields fall and loses less when yields rise, compared to a bond with lower convexity of equal duration.",
-      "formula": "Convexity = (1/P) × Σ_{t=1}^{N} [CF_t × t × (t+1) / (1+y/n)^(t+2)] / n²",
+      "formula": "Convexity = (1/P_dirty) × Σ_{k=1}^{N} PV_k × (k−1+w)(k+w)/(f²(1+y/f)²), where PV_k = CF_k / (1 + y/f)^(k−1+w), P_dirty = dirty price × face / 100 and f = coupon frequency",
       "units": "Years² (e.g. 20.5 = 20.5 years²)",
       "category": "risk",
       "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
@@ -386,7 +388,7 @@
         "Same as MACAULAY_DURATION (flat yield curve, YTM-based discounting)",
         "For TIPS: y = REAL_YIELD and CF_t are the inflation-adjusted cash flows",
         "For FRN: uses flat-forwards effective YTM (same model as PRESENT_VALUE)",
-        "Settlement on a coupon date (integer period exponents)"
+        "Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next coupon (DSC = days from settlement to the next coupon, E = days in the coupon period); flow k falls at k−1+w periods; the yield is solved so the discounted flows equal the dirty price (clean + ACT/ACT accrued). The price input is the clean price."
       ],
       "implemented": true,
       "computed_by": "valuation-service",
@@ -429,7 +431,9 @@
       "units": "Years (dimensionally equivalent to years, interpreted as % per 100bp)",
       "category": "risk",
       "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
-      "model_assumptions": [],
+      "model_assumptions": [
+        "Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next coupon (DSC = days from settlement to the next coupon, E = days in the coupon period); flow k falls at k−1+w periods; the yield is solved so the discounted flows equal the dirty price (clean + ACT/ACT accrued). The price input is the clean price."
+      ],
       "implemented": true,
       "computed_by": "valuation-service",
       "depends_on": ["MACAULAY_DURATION"]
@@ -439,11 +443,13 @@
       "enum_value": 25,
       "display_name": "DV01",
       "description": "DV01 (Dollar Value of 01) = the dollar P&L impact of a 1bp (0.01%) yield increase.",
-      "formula": "DV01 = ModifiedDuration × MarketValue × 0.0001",
+      "formula": "DV01 = ModifiedDuration × dirty price × face × 0.0001, where dirty price is per unit of face (the % of par dirty price / 100, e.g. 1.005 for 100.50) and face is the position's face",
       "units": "Dollars per basis point",
       "category": "risk",
       "applies_to": ["TBILL", "TREASURY_NOTE", "TREASURY_BOND", "STRIPS", "SOVEREIGN_BOND", "CREDIT_BOND", "STRUCTURED_BOND", "TIPS"],
-      "model_assumptions": [],
+      "model_assumptions": [
+        "Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next coupon (DSC = days from settlement to the next coupon, E = days in the coupon period); flow k falls at k−1+w periods; the yield is solved so the discounted flows equal the dirty price (clean + ACT/ACT accrued). The price input is the clean price."
+      ],
       "implemented": true,
       "computed_by": "valuation-service",
       "depends_on": ["MODIFIED_DURATION", "MARKET_VALUE"]
