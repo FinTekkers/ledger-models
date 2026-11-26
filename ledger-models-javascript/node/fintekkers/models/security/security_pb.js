@@ -45,6 +45,8 @@ var fintekkers_models_security_coupon_frequency_pb = require('../../../fintekker
 goog.object.extend(proto, fintekkers_models_security_coupon_frequency_pb);
 var fintekkers_models_security_coupon_type_pb = require('../../../fintekkers/models/security/coupon_type_pb.js');
 goog.object.extend(proto, fintekkers_models_security_coupon_type_pb);
+var fintekkers_models_security_day_count_convention_pb = require('../../../fintekkers/models/security/day_count_convention_pb.js');
+goog.object.extend(proto, fintekkers_models_security_day_count_convention_pb);
 var fintekkers_models_security_index_index_type_pb = require('../../../fintekkers/models/security/index/index_type_pb.js');
 goog.object.extend(proto, fintekkers_models_security_index_index_type_pb);
 var fintekkers_models_util_object_type_pb = require('../../../fintekkers/models/util/object_type_pb.js');
@@ -1494,7 +1496,8 @@ proto.fintekkers.models.security.BondDetailsProto.toObject = function(includeIns
     issuanceInfoList: jspb.Message.toObjectList(msg.getIssuanceInfoList(),
     fintekkers_models_security_bond_issuance_pb.IssuanceProto.toObject, includeInstance),
     callable: jspb.Message.getBooleanFieldWithDefault(msg, 9, false),
-    callDate: (f = msg.getCallDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
+    callDate: (f = msg.getCallDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    dayCount: jspb.Message.getFieldWithDefault(msg, 11, 0)
   };
 
   if (includeInstance) {
@@ -1577,6 +1580,10 @@ proto.fintekkers.models.security.BondDetailsProto.deserializeBinaryFromReader = 
       var value = new fintekkers_models_util_local_date_pb.LocalDateProto;
       reader.readMessage(value,fintekkers_models_util_local_date_pb.LocalDateProto.deserializeBinaryFromReader);
       msg.setCallDate(value);
+      break;
+    case 11:
+      var value = /** @type {!proto.fintekkers.models.security.DayCountConventionProto} */ (reader.readEnum());
+      msg.setDayCount(value);
       break;
     default:
       reader.skipField();
@@ -1682,6 +1689,13 @@ proto.fintekkers.models.security.BondDetailsProto.serializeBinaryToWriter = func
       10,
       f,
       fintekkers_models_util_local_date_pb.LocalDateProto.serializeBinaryToWriter
+    );
+  }
+  f = /** @type {!proto.fintekkers.models.security.DayCountConventionProto} */ (jspb.Message.getField(message, 11));
+  if (f != null) {
+    writer.writeEnum(
+      11,
+      f
     );
   }
 };
@@ -1998,6 +2012,42 @@ proto.fintekkers.models.security.BondDetailsProto.prototype.clearCallDate = func
  */
 proto.fintekkers.models.security.BondDetailsProto.prototype.hasCallDate = function() {
   return jspb.Message.getField(this, 10) != null;
+};
+
+
+/**
+ * optional DayCountConventionProto day_count = 11;
+ * @return {!proto.fintekkers.models.security.DayCountConventionProto}
+ */
+proto.fintekkers.models.security.BondDetailsProto.prototype.getDayCount = function() {
+  return /** @type {!proto.fintekkers.models.security.DayCountConventionProto} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+};
+
+
+/**
+ * @param {!proto.fintekkers.models.security.DayCountConventionProto} value
+ * @return {!proto.fintekkers.models.security.BondDetailsProto} returns this
+ */
+proto.fintekkers.models.security.BondDetailsProto.prototype.setDayCount = function(value) {
+  return jspb.Message.setField(this, 11, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.fintekkers.models.security.BondDetailsProto} returns this
+ */
+proto.fintekkers.models.security.BondDetailsProto.prototype.clearDayCount = function() {
+  return jspb.Message.setField(this, 11, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.security.BondDetailsProto.prototype.hasDayCount = function() {
+  return jspb.Message.getField(this, 11) != null;
 };
 
 

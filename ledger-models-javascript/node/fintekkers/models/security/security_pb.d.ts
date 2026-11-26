@@ -17,6 +17,7 @@ import * as fintekkers_models_security_instrument_type_pb from "../../../fintekk
 import * as fintekkers_models_security_security_quantity_type_pb from "../../../fintekkers/models/security/security_quantity_type_pb";
 import * as fintekkers_models_security_coupon_frequency_pb from "../../../fintekkers/models/security/coupon_frequency_pb";
 import * as fintekkers_models_security_coupon_type_pb from "../../../fintekkers/models/security/coupon_type_pb";
+import * as fintekkers_models_security_day_count_convention_pb from "../../../fintekkers/models/security/day_count_convention_pb";
 import * as fintekkers_models_security_index_index_type_pb from "../../../fintekkers/models/security/index/index_type_pb";
 import * as fintekkers_models_util_object_type_pb from "../../../fintekkers/models/util/object_type_pb";
 import * as fintekkers_models_util_version_pb from "../../../fintekkers/models/util/version_pb";
@@ -209,6 +210,11 @@ export class BondDetailsProto extends jspb.Message {
     getCallDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
     setCallDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): BondDetailsProto;
 
+    hasDayCount(): boolean;
+    clearDayCount(): void;
+    getDayCount(): fintekkers_models_security_day_count_convention_pb.DayCountConventionProto | undefined;
+    setDayCount(value: fintekkers_models_security_day_count_convention_pb.DayCountConventionProto): BondDetailsProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): BondDetailsProto.AsObject;
     static toObject(includeInstance: boolean, msg: BondDetailsProto): BondDetailsProto.AsObject;
@@ -231,6 +237,7 @@ export namespace BondDetailsProto {
         issuanceInfoList: Array<fintekkers_models_security_bond_issuance_pb.IssuanceProto.AsObject>,
         callable: boolean,
         callDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
+        dayCount?: fintekkers_models_security_day_count_convention_pb.DayCountConventionProto,
     }
 }
 

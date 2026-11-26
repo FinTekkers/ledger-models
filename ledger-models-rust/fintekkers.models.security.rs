@@ -362,6 +362,75 @@ impl CouponTypeProto {
         }
     }
 }
+/// How a bond counts the days and the year fraction between two dates, for
+/// accrued interest and coupon-period fractions. Set on
+/// BondDetailsProto.day_count; when that is unset the product default from
+/// hierarchy.json default_day_count applies (see BondDetailsProto.day_count).
+/// See docs/adr/day_count_convention.md.
+///
+/// D1/M1/Y1 is the start date (day, month, year) and D2/M2/Y2 the end date.
+/// The start date is excluded and the end date included, so start == end
+/// counts 0 days. A year fraction is a number of years, never a fraction of
+/// a coupon period.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum DayCountConventionProto {
+    /// No convention is known. Readers must not guess one: no ACT/ACT or any
+    /// other fallback. An explicit UNKNOWN_DAY_COUNT resolves like unset.
+    UnknownDayCount = 0,
+    /// ACT/ACT (ICMA), ICMA Rule 251. US Treasuries (notes, bonds, TIPS,
+    /// STRIPS). Days = actual calendar days from D1/M1/Y1 to D2/M2/Y2. The
+    /// accrual lies inside one regular coupon period [period_start,
+    /// period_end] with F coupons a year. Period days = actual calendar days
+    /// from period_start to period_end. Period fraction = days / period days.
+    /// Year fraction = days / (F x period days). Example: 2026-12-01 ->
+    /// 2027-03-01 in the semiannual period 2026-12-01 -> 2027-06-01 is 90 days
+    /// of 182, period fraction 90/182, year fraction 90/364. Stub (irregular)
+    /// periods are out of scope here.
+    ActActIcma = 1,
+    /// 30/360 US, bond basis (ISDA 2006 4.16(f)). US corporates and agencies.
+    /// Days = 360 x (Y2 - Y1) + 30 x (M2 - M1) + (D2 - D1), after these rules
+    /// in this order:
+    ///    1. If D1 = 31, set D1 = 30.
+    ///    2. If D2 = 31 and D1 >= 30 (after rule 1), set D2 = 30.
+    /// There is no February end-of-month adjustment: Feb 28 and Feb 29 stay 28
+    /// and 29 as D1 or D2. Year fraction = days / 360. Examples:
+    /// 2027-01-31 -> 2027-03-31 = 60; 2027-04-30 -> 2027-05-31 = 30;
+    /// 2027-01-31 -> 2027-02-01 = 1; 2027-02-28 -> 2027-03-31 = 33.
+    Thirty360Us = 2,
+    /// ACT/360. Treasury bills and money-market instruments. Days = actual
+    /// calendar days. Year fraction = days / 360.
+    Act360 = 3,
+    /// ACT/365 (Fixed). Days = actual calendar days. Year fraction = days / 365,
+    /// in leap years too.
+    Act365Fixed = 4,
+}
+impl DayCountConventionProto {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            DayCountConventionProto::UnknownDayCount => "UNKNOWN_DAY_COUNT",
+            DayCountConventionProto::ActActIcma => "ACT_ACT_ICMA",
+            DayCountConventionProto::Thirty360Us => "THIRTY_360_US",
+            DayCountConventionProto::Act360 => "ACT_360",
+            DayCountConventionProto::Act365Fixed => "ACT_365_FIXED",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_DAY_COUNT" => Some(Self::UnknownDayCount),
+            "ACT_ACT_ICMA" => Some(Self::ActActIcma),
+            "THIRTY_360_US" => Some(Self::Thirty360Us),
+            "ACT_360" => Some(Self::Act360),
+            "ACT_365_FIXED" => Some(Self::Act365Fixed),
+            _ => None,
+        }
+    }
+}
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SecurityProto {
@@ -513,6 +582,19 @@ pub struct BondDetailsProto {
     /// See docs/adr/callable_bonds.md.
     #[prost(message, optional, tag = "10")]
     pub call_date: ::core::option::Option<super::util::LocalDateProto>,
+    /// day_count: how this bond counts days and year fractions for accrued
+    /// interest and coupon-period fractions (DayCountConventionProto defines
+    /// each convention). Unset means the product default: the entry for the
+    /// security's product_type in hierarchy.json default_day_count, the deepest
+    /// node on its parent chain winning (TREASURY_NOTE / TREASURY_BOND / TIPS /
+    /// STRIPS -> ACT_ACT_ICMA, TBILL -> ACT_360, CORP_BOND -> THIRTY_360_US).
+    /// An explicit UNKNOWN_DAY_COUNT resolves like unset. A product with no
+    /// entry resolves to UNKNOWN_DAY_COUNT: services never guess a convention.
+    /// The wrapper getters (Java Security.getDayCount, Python
+    /// Security.get_day_count, JS getDayCount, Rust SecurityWrapper::day_count)
+    /// apply this rule. See docs/adr/day_count_convention.md.
+    #[prost(enumeration = "DayCountConventionProto", optional, tag = "11")]
+    pub day_count: ::core::option::Option<i32>,
 }
 /// TIPS (Treasury Inflation-Protected Securities) extras.
 /// Carries ONLY the TIPS-specific fields; shared bond fields live in

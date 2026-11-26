@@ -398,8 +398,24 @@ def lm484(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM484 and new == LM484[key]
 
 
+LM498_SPEC = json.loads((REPO / "test-fixtures/field-changes/lm-498.json").read_text())
+LM498 = {
+    **{f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}" for f in LM498_SPEC["added"]},
+    **{f"enum {e['enum']}": "enum" for e in LM498_SPEC["added_enums"]},
+    **{f"value {e['enum']} = {v['number']}": v["name"] for e in LM498_SPEC["added_enums"] for v in e["values"]},
+}
+
+
+def lm498(key: str, old, new, head: dict) -> bool:
+    """LM-498: DayCountConventionProto (UNKNOWN_DAY_COUNT = 0, ACT_ACT_ICMA = 1,
+    THIRTY_360_US = 2, ACT_360 = 3, ACT_365_FIXED = 4) and the optional
+    BondDetailsProto.day_count = 11 added. Additions of exactly these only;
+    every other BondDetailsProto field keeps its number, name and type."""
+    return old is None and key in LM498 and new == LM498[key]
+
+
 ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411,
-           lm433, lm465, lm477, lm484, lm491]
+           lm433, lm465, lm477, lm484, lm491, lm498]
 
 
 def main() -> int:

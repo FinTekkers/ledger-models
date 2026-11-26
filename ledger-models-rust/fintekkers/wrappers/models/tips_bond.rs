@@ -83,6 +83,7 @@ impl TIPSBond {
                 issuance_info: vec![],
                 callable: false,
                 call_date: None,
+                day_count: None,
             }),
             tips_extension: Some(TipsExtensionProto {
                 base_cpi: Some(decimal_proto(&base_cpi)),

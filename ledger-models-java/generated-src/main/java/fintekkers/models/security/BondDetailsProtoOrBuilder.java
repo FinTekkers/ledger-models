@@ -235,4 +235,62 @@ public interface BondDetailsProtoOrBuilder extends
    * <code>.fintekkers.models.util.LocalDateProto call_date = 10;</code>
    */
   fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getCallDateOrBuilder();
+
+  /**
+   * <pre>
+   * day_count: how this bond counts days and year fractions for accrued
+   * interest and coupon-period fractions (DayCountConventionProto defines
+   * each convention). Unset means the product default: the entry for the
+   * security's product_type in hierarchy.json default_day_count, the deepest
+   * node on its parent chain winning (TREASURY_NOTE / TREASURY_BOND / TIPS /
+   * STRIPS -&gt; ACT_ACT_ICMA, TBILL -&gt; ACT_360, CORP_BOND -&gt; THIRTY_360_US).
+   * An explicit UNKNOWN_DAY_COUNT resolves like unset. A product with no
+   * entry resolves to UNKNOWN_DAY_COUNT: services never guess a convention.
+   * The wrapper getters (Java Security.getDayCount, Python
+   * Security.get_day_count, JS getDayCount, Rust SecurityWrapper::day_count)
+   * apply this rule. See docs/adr/day_count_convention.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.security.DayCountConventionProto day_count = 11;</code>
+   * @return Whether the dayCount field is set.
+   */
+  boolean hasDayCount();
+  /**
+   * <pre>
+   * day_count: how this bond counts days and year fractions for accrued
+   * interest and coupon-period fractions (DayCountConventionProto defines
+   * each convention). Unset means the product default: the entry for the
+   * security's product_type in hierarchy.json default_day_count, the deepest
+   * node on its parent chain winning (TREASURY_NOTE / TREASURY_BOND / TIPS /
+   * STRIPS -&gt; ACT_ACT_ICMA, TBILL -&gt; ACT_360, CORP_BOND -&gt; THIRTY_360_US).
+   * An explicit UNKNOWN_DAY_COUNT resolves like unset. A product with no
+   * entry resolves to UNKNOWN_DAY_COUNT: services never guess a convention.
+   * The wrapper getters (Java Security.getDayCount, Python
+   * Security.get_day_count, JS getDayCount, Rust SecurityWrapper::day_count)
+   * apply this rule. See docs/adr/day_count_convention.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.security.DayCountConventionProto day_count = 11;</code>
+   * @return The enum numeric value on the wire for dayCount.
+   */
+  int getDayCountValue();
+  /**
+   * <pre>
+   * day_count: how this bond counts days and year fractions for accrued
+   * interest and coupon-period fractions (DayCountConventionProto defines
+   * each convention). Unset means the product default: the entry for the
+   * security's product_type in hierarchy.json default_day_count, the deepest
+   * node on its parent chain winning (TREASURY_NOTE / TREASURY_BOND / TIPS /
+   * STRIPS -&gt; ACT_ACT_ICMA, TBILL -&gt; ACT_360, CORP_BOND -&gt; THIRTY_360_US).
+   * An explicit UNKNOWN_DAY_COUNT resolves like unset. A product with no
+   * entry resolves to UNKNOWN_DAY_COUNT: services never guess a convention.
+   * The wrapper getters (Java Security.getDayCount, Python
+   * Security.get_day_count, JS getDayCount, Rust SecurityWrapper::day_count)
+   * apply this rule. See docs/adr/day_count_convention.md.
+   * </pre>
+   *
+   * <code>optional .fintekkers.models.security.DayCountConventionProto day_count = 11;</code>
+   * @return The dayCount.
+   */
+  fintekkers.models.security.DayCountConventionProto getDayCount();
 }

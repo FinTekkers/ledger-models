@@ -25,3 +25,17 @@ export type {
   RecordPointsInput,
   SecurityMetricInput,
 } from './node/wrappers/models/security/security_metric';
+
+// Bond day-count conventions (LM-498).
+export { DayCountConventionProto } from './node/fintekkers/models/security/day_count_convention_pb';
+export {
+  DefaultDayCounts,
+  parseDefaultDayCount,
+  shippedDefaultDayCounts,
+  defaultDayCountFor,
+  resolveDayCount,
+  dayCount,
+  yearFraction,
+  icmaPeriodFraction,
+  icmaYearFraction,
+} from './node/wrappers/models/security/day_count';

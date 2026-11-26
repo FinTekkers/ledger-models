@@ -1,0 +1,15 @@
+{
+  "item": "LM-498",
+  "added_enums": [
+    {"enum": ".fintekkers.models.security.DayCountConventionProto", "values": [
+      {"number": 0, "name": "UNKNOWN_DAY_COUNT"},
+      {"number": 1, "name": "ACT_ACT_ICMA"},
+      {"number": 2, "name": "THIRTY_360_US"},
+      {"number": 3, "name": "ACT_360"},
+      {"number": 4, "name": "ACT_365_FIXED"}
+    ]}
+  ],
+  "added": [
+    {"message": ".fintekkers.models.security.BondDetailsProto", "number": 11, "name": "day_count", "type": ".fintekkers.models.security.DayCountConventionProto"}
+  ]
+}

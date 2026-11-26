@@ -81,6 +81,7 @@ impl FloatingRateNote {
                 issuance_info: vec![],
                 callable: false,
                 call_date: None,
+                day_count: None,
             }),
             frn_extension: Some(FrnExtensionProto {
                 spread: Some(decimal_proto(&spread)),

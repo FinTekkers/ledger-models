@@ -1,4 +1,8 @@
-use crate::fintekkers::models::security::{IdentifierProto, IdentifierTypeProto, SecurityProto, ProductTypeProto};
+use crate::fintekkers::models::security::{
+    DayCountConventionProto, IdentifierProto, IdentifierTypeProto, SecurityProto, ProductTypeProto,
+};
+use crate::fintekkers::wrappers::models::day_count::resolve_day_count;
+use crate::fintekkers::wrappers::models::product_inputs::ProductInputError;
 use crate::fintekkers::models::util::{LocalTimestampProto, ObjectTypeProto, UuidProto};
 use crate::fintekkers::requests::util::errors::FieldViolationProto;
 use crate::fintekkers::wrappers::models::utils::datetime::LocalTimestampWrapper;
@@ -359,6 +363,16 @@ impl SecurityWrapper {
             .as_ref()
             .and_then(|bd| bd.call_date.clone())
             .and_then(|p| local_date_proto_to_naive(p).ok())
+    }
+
+    /// The bond's day-count convention: `bond_details.day_count` when set
+    /// (`UNKNOWN_DAY_COUNT` counts as unset), else the product default from
+    /// hierarchy.json `default_day_count`, else `UnknownDayCount`. Never
+    /// guesses a convention (LM-498, docs/adr/day_count_convention.md). `Err`
+    /// only on a broken shipped registry.
+    pub fn day_count(&self) -> Result<DayCountConventionProto, ProductInputError> {
+        self.ensure_hydrated();
+        resolve_day_count(self.active())
     }
 
     /// Time-based soft-delete check. A Security is considered deleted iff
@@ -880,6 +894,7 @@ mod test {
                 issuance_info: vec![],
                 callable: false,
                 call_date: None,
+                day_count: None,
             }),
             ..Default::default()
         };
@@ -911,6 +926,7 @@ mod test {
                 issuance_info: vec![],
                 callable: false,
                 call_date: None,
+                day_count: None,
             }),
             tips_extension: Some(TipsExtensionProto {
                 base_cpi: decimal("256.394"),
@@ -944,6 +960,7 @@ mod test {
                 issuance_info: vec![],
                 callable: false,
                 call_date: None,
+                day_count: None,
             }),
             frn_extension: Some(FrnExtensionProto {
                 spread: decimal("50"),
