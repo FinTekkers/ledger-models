@@ -98,10 +98,19 @@ public class TaxLotSummary implements IFinancialModelObject {
                 .build();
     }
 
+    /**
+     * @return Average cost for this summary's deltas, or null when an open lot has a delta
+     *         without a price (LM-497). See {@link #getAverageCostBasis(Collection)}.
+     */
     public BigDecimal getAverageCostBasis() {
         return getAverageCostBasis(allLots());
     }
 
+    /**
+     * @return Average cost across every summary's deltas, or null when an open lot has a delta
+     *         without a price (LM-497). Lots are grouped by ID across summaries, so a lot closed
+     *         over two summaries counts as closed. See {@link #getAverageCostBasis(Collection)}.
+     */
     public static BigDecimal getAverageCostBasisFromSummaries(Collection<TaxLotSummary> summaries) {
         List<TaxLotDelta> deltas = new ArrayList<>();
         summaries.forEach(summary -> deltas.addAll(summary.allLots()));
@@ -114,9 +123,22 @@ public class TaxLotSummary implements IFinancialModelObject {
      * Will iterate through lots to get the initial cost, and how much is remaining, for each set of
      * tax lot deltas. Then will calculate the weighted average cost basis.
      *
-     * @return Average cost for tax lots
+     * <p>LM-497: a delta without a price ({@code Field.PRICE} null, or its {@code getPrice()} null)
+     * no longer throws. If its lot (grouped by {@code Field.ID}) is open, i.e. its net directed
+     * quantity is non-zero, the result is null. If its lot is closed, every delta of that lot is
+     * skipped. Closed priced lots are not skipped: when every delta is priced, the result is
+     * exactly what it was before.
+     *
+     * @return Average cost for tax lots, or null when an open lot has a delta without a price
      */
     public static BigDecimal getAverageCostBasis(Collection<? extends IFinancialModelObject> deltas) {
+        if (deltas.stream().anyMatch(TaxLotSummary::isUnpriced)) {
+            deltas = withoutClosedUnpricedLots(deltas);
+            if (deltas == null) {
+                return null;
+            }
+        }
+
         // Remaining quantity and cost
         BigDecimal quantity = BigDecimal.ZERO;
         BigDecimal totalCost = BigDecimal.ZERO;
@@ -135,6 +157,46 @@ public class TaxLotSummary implements IFinancialModelObject {
         return totalCost.divide(quantity, new MathContext(16, RoundingMode.HALF_UP));
     }
 
+    /** True when the delta has no price: the same check as {@link #toProto()}. */
+    private static boolean isUnpriced(IFinancialModelObject lot) {
+        Price price = (Price) lot.getField(Field.PRICE);
+        return price == null || price.getPrice() == null;
+    }
+
+    /**
+     * The deltas minus every delta of a closed lot that has an unpriced delta, or null if an
+     * unpriced delta belongs to an open lot or has no ID.
+     */
+    private static List<IFinancialModelObject> withoutClosedUnpricedLots(
+            Collection<? extends IFinancialModelObject> deltas) {
+        Map<Object, BigDecimal> netQuantityById = new HashMap<>();
+        Set<Object> unpricedIds = new HashSet<>();
+        for (IFinancialModelObject lot : deltas) {
+            Object id = lot.getField(Field.ID);
+            if (isUnpriced(lot)) {
+                if (id == null) {
+                    return null;
+                }
+                unpricedIds.add(id);
+            }
+            netQuantityById.merge(id, lot.getMeasure(Measure.DIRECTED_QUANTITY), BigDecimal::add);
+        }
+
+        for (Object id : unpricedIds) {
+            if (netQuantityById.get(id).signum() != 0) {
+                return null;
+            }
+        }
+
+        List<IFinancialModelObject> remaining = new ArrayList<>();
+        for (IFinancialModelObject lot : deltas) {
+            if (!unpricedIds.contains(lot.getField(Field.ID))) {
+                remaining.add(lot);
+            }
+        }
+        return remaining;
+    }
+
     @Override
     public Object getField(Field field) {
         if(Field.POSITION_STATUS.equals(field) || Field.STRATEGY.equals(field)) {
@@ -143,6 +205,10 @@ public class TaxLotSummary implements IFinancialModelObject {
         return latest.getField(field);
     }
 
+    /**
+     * {@code UNADJUSTED_COST_BASIS} is {@link #getAverageCostBasis()}, so it is null when an open
+     * lot has a delta without a price (LM-497).
+     */
     @Override
     public BigDecimal getMeasure(Measure measure) {
         if(Measure.DIRECTED_QUANTITY.equals(measure)) {

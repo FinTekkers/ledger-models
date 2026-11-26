@@ -46,7 +46,11 @@ The helper has one rule, and every binding implements it the same way:
 
 `TaxLotSummary.getAverageCostBasis` (and so `TaxLotSummary.getMeasure(UNADJUSTED_COST_BASIS)`) nets sells into the average at their sell price. It returns `0` when the net quantity is 0. For buy 100 @ 10, buy 100 @ 20, sell 50 @ 25, it returns `11.66666666666667`, while the helper returns `15`.
 
-That method is **unchanged** here, and `WeightedAveragePurchasePriceTest` pins both results. Whether it should move to the buys-only rule is row 10 of the gate-5 table.
+That method is **unchanged for priced input** here, and `WeightedAveragePurchasePriceTest` pins both results. Whether it should move to the buys-only rule is row 10 of the gate-5 table.
+
+**Absent result (LM-497).** `getAverageCostBasis()`, `getAverageCostBasisFromSummaries(...)` and the static `getAverageCostBasis(Collection)` return `null`, not a `NullPointerException`, when an open lot has a delta without a price (`Field.PRICE` null, or its `getPrice()` null). Deltas are grouped by `Field.ID`, across summaries too; a lot is open when its net directed quantity is non-zero. A closed unpriced lot is skipped. Closed priced lots still count, as before, so every fully priced result keeps its value and scale (`MathContext(16, HALF_UP)`); `TaxLotSummaryAverageCostBasisTest` pins golden values captured before the change. Python, Rust and JS have no counterpart of these methods, as above, so nothing changes there.
+
+`WeightedAveragePurchasePrice.fromLots` still throws on an unpriced lot. It is not changed by LM-497.
 
 ## Consequences
 
