@@ -779,6 +779,25 @@ public enum MeasureProto
    *     settlement dates need for PROFIT_LOSS) are allowed and ignored here.
    *     A duplicate (year, month) or a month outside 1-12 is rejected.
    *   - The measure is absent when no CPI is given.
+   *   - Unpublished CPI-U month (31 CFR 356 Appendix B). Exception to the
+   *     m-3 / m-2 rule above: a month is unreported when it is absent by
+   *     the last day of the following month. Such a month is filled with
+   *       CPI(last) x (CPI(last) / CPI(last - 12))^(k / 12)
+   *     where CPI(last) is the last reported month and k is the months
+   *     since the last reported month. The fallback index is rounded to 3
+   *     decimals (the BLS CPI-U precision); RefCPI is then computed and
+   *     rounded from it as for a published month. A response that uses it
+   *     carries a warning naming the filled month and saying the Appendix B
+   *     fallback was used. A missing formula input (e.g. CPI(last - 12)) or
+   *     a month still inside its window is an error naming the month.
+   *     Callers must send CPI(last - 12) in MonthlyIndexReadings. Once
+   *     used, the fallback for a month is kept even if that month is
+   *     reported later; the later figure is only a formula input for later
+   *     months.
+   *     Example: CPI-U for 2025-10 was never published. CPI(2025-09) =
+   *     324.800, CPI(2024-09) = 315.301, k = 1 →
+   *     324.800 x (324.800 / 315.301)^(1 / 12) = 325.60438... → 325.604,
+   *     the figure Treasury announced on 2025-11-26.
    * Applicability: TIPS only.
    * Units: Index points (e.g. 310.326).
    * </pre>
@@ -801,6 +820,18 @@ public enum MeasureProto
    *   - Unfloored: a ratio below 1 is returned as is. The deflation floor
    *     belongs to INFLATION_ADJUSTED_PRINCIPAL only.
    *   - The measure is absent when REFERENCE_CPI or base_cpi is absent.
+   *   - Unpublished CPI-U month (31 CFR 356 Appendix B): uses the
+   *     REFERENCE_CPI fallback. A month is unreported when it is absent by
+   *     the last day of the following month, and is filled with
+   *       CPI(last) x (CPI(last) / CPI(last - 12))^(k / 12)
+   *     where CPI(last) is the last reported month and k is the months
+   *     since the last reported month. The fallback index is rounded to 3
+   *     decimals; the ratio is then computed from the resulting RefCPI and
+   *     rounded as above. A response that uses it carries a warning naming
+   *     the filled month and saying the Appendix B fallback was used. A
+   *     missing formula input (e.g. CPI(last - 12)) or a month still inside
+   *     its window is an error naming the month. Callers must send
+   *     CPI(last - 12) in MonthlyIndexReadings.
    * Applicability: TIPS only.
    * Units: Dimensionless ratio (e.g. 1.2 = 20% cumulative inflation since base).
    * </pre>
@@ -1601,6 +1632,25 @@ public enum MeasureProto
    *     settlement dates need for PROFIT_LOSS) are allowed and ignored here.
    *     A duplicate (year, month) or a month outside 1-12 is rejected.
    *   - The measure is absent when no CPI is given.
+   *   - Unpublished CPI-U month (31 CFR 356 Appendix B). Exception to the
+   *     m-3 / m-2 rule above: a month is unreported when it is absent by
+   *     the last day of the following month. Such a month is filled with
+   *       CPI(last) x (CPI(last) / CPI(last - 12))^(k / 12)
+   *     where CPI(last) is the last reported month and k is the months
+   *     since the last reported month. The fallback index is rounded to 3
+   *     decimals (the BLS CPI-U precision); RefCPI is then computed and
+   *     rounded from it as for a published month. A response that uses it
+   *     carries a warning naming the filled month and saying the Appendix B
+   *     fallback was used. A missing formula input (e.g. CPI(last - 12)) or
+   *     a month still inside its window is an error naming the month.
+   *     Callers must send CPI(last - 12) in MonthlyIndexReadings. Once
+   *     used, the fallback for a month is kept even if that month is
+   *     reported later; the later figure is only a formula input for later
+   *     months.
+   *     Example: CPI-U for 2025-10 was never published. CPI(2025-09) =
+   *     324.800, CPI(2024-09) = 315.301, k = 1 →
+   *     324.800 x (324.800 / 315.301)^(1 / 12) = 325.60438... → 325.604,
+   *     the figure Treasury announced on 2025-11-26.
    * Applicability: TIPS only.
    * Units: Index points (e.g. 310.326).
    * </pre>
@@ -1623,6 +1673,18 @@ public enum MeasureProto
    *   - Unfloored: a ratio below 1 is returned as is. The deflation floor
    *     belongs to INFLATION_ADJUSTED_PRINCIPAL only.
    *   - The measure is absent when REFERENCE_CPI or base_cpi is absent.
+   *   - Unpublished CPI-U month (31 CFR 356 Appendix B): uses the
+   *     REFERENCE_CPI fallback. A month is unreported when it is absent by
+   *     the last day of the following month, and is filled with
+   *       CPI(last) x (CPI(last) / CPI(last - 12))^(k / 12)
+   *     where CPI(last) is the last reported month and k is the months
+   *     since the last reported month. The fallback index is rounded to 3
+   *     decimals; the ratio is then computed from the resulting RefCPI and
+   *     rounded as above. A response that uses it carries a warning naming
+   *     the filled month and saying the Appendix B fallback was used. A
+   *     missing formula input (e.g. CPI(last - 12)) or a month still inside
+   *     its window is an error naming the month. Callers must send
+   *     CPI(last - 12) in MonthlyIndexReadings.
    * Applicability: TIPS only.
    * Units: Dimensionless ratio (e.g. 1.2 = 20% cumulative inflation since base).
    * </pre>
