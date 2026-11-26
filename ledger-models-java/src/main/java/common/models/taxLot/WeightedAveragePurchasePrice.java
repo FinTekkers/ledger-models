@@ -60,16 +60,24 @@ public final class WeightedAveragePurchasePrice {
     }
 
     /**
-     * Reads Measure.DIRECTED_QUANTITY and Field.PRICE from each lot, the same way
-     * TaxLotSummary.getAverageCostBasis does. Pass TaxLotSummary.allLots() for one summary.
+     * Reads Measure.DIRECTED_QUANTITY and Field.PRICE from each lot. Pass TaxLotSummary.allLots() for one summary.
+     *
+     * Any unpriced lot (Field.PRICE null, or its getPrice() null), buy or sell, gives Optional.empty(). An
+     * unpriced lot is never skipped or read as zero. Unlike TaxLotSummary.getAverageCostBasis, lots are not
+     * grouped by ID, so a closed unpriced lot also gives empty. Priced-only input gives the same result as of().
      */
     public static Optional<BigDecimal> fromLots(Collection<? extends IFinancialModelObject> lots) {
         Objects.requireNonNull(lots, "lots");
+        for (IFinancialModelObject lot : lots) {
+            if (TaxLotSummary.isUnpriced(lot))
+                return Optional.empty();
+        }
+
         List<Fill> fills = new ArrayList<>(lots.size());
         for (IFinancialModelObject lot : lots) {
             BigDecimal directedQuantity = lot.getMeasure(Measure.DIRECTED_QUANTITY);
             if (directedQuantity.signum() <= 0)
-                continue; // sells don't count, so their price is never read
+                continue;
             Price price = (Price) lot.getField(Field.PRICE);
             fills.add(new Fill(directedQuantity, price.getPrice()));
         }

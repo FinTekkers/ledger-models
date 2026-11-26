@@ -50,7 +50,7 @@ That method is **unchanged for priced input** here, and `WeightedAveragePurchase
 
 **Absent result (LM-497).** `getAverageCostBasis()`, `getAverageCostBasisFromSummaries(...)` and the static `getAverageCostBasis(Collection)` return `null`, not a `NullPointerException`, when an open lot has a delta without a price (`Field.PRICE` null, or its `getPrice()` null). Deltas are grouped by `Field.ID`, across summaries too; a lot is open when its net directed quantity is non-zero. A closed unpriced lot is skipped. Closed priced lots still count, as before, so every fully priced result keeps its value and scale (`MathContext(16, HALF_UP)`); `TaxLotSummaryAverageCostBasisTest` pins golden values captured before the change. Python, Rust and JS have no counterpart of these methods, as above, so nothing changes there.
 
-`WeightedAveragePurchasePrice.fromLots` still throws on an unpriced lot. It is not changed by LM-497.
+**Absent result (LM-501).** `WeightedAveragePurchasePrice.fromLots` returns `Optional.empty()`, not a `NullPointerException`, when any lot is unpriced (`Field.PRICE` null, or its `getPrice()` null). The rule covers sells too: an unpriced lot is never skipped or read as zero. Priced-only results keep their value and scale; `WeightedAveragePurchasePriceTest` pins golden values captured before the change. Unlike `getAverageCostBasis`, `fromLots` does not group by `Field.ID`, so a closed unpriced lot also makes it empty; both return an absent result for an open unpriced lot. Python, Rust and JS have no `fromLots`, as above, so nothing changes there.
 
 ## Consequences
 
