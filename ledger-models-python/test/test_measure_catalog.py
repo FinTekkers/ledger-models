@@ -23,7 +23,8 @@ Appendix B fallback) to the REFERENCE_CPI and INDEX_RATIO proto comments and
 catalog entries; the rest of each comment and entry stays as it was. LM-506
 restates REAL_YIELD's formula and model_assumptions, and its proto comment, for
 the street stub convention on the dirty real price; every other key stays as
-it was."""
+it was. LM-509 appends DV01_PER_MILLION (31), implemented: false, with units
+that match its proto comment; DV01 (25) stays as it was."""
 import hashlib
 import json
 import re
@@ -341,7 +342,8 @@ def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
     assert list(after) == list(before)
     for key in set(before) - {"measures"}:
         assert after[key] == before[key], key
-    assert [m["name"] for m in after["measures"]] == [m["name"] for m in before["measures"]]
+    # LM-509 appends exactly one entry, DV01_PER_MILLION (test_lm509_catalog_entry).
+    assert [m["name"] for m in after["measures"]] == [m["name"] for m in before["measures"]] + ["DV01_PER_MILLION"]
     for old, new in zip(before["measures"], after["measures"]):
         assert list(new) == list(old), new["name"]
         if new["name"] == "PRESENT_VALUE_CASHFLOWS":
@@ -373,9 +375,9 @@ def test_lm456_catalogs_differ_from_v1_1_39_only_in_accrued_interest_tips(path):
 # stays as at the LM-456 merge (36186e66): sha256 of the file with the
 # ACCRUED_INTEREST comment, the comments of the seven LM-499 entries and the
 # LM-506 REAL_YIELD comment cut out (computed on main at e50ec873, before the
-# LM-506 edit), and the two LM-496 `Unpublished CPI-U month` bullets cut out by
-# _lm496_strip. A later item that edits measure.proto must update this hash (or
-# retire the test).
+# LM-506 edit), the two LM-496 `Unpublished CPI-U month` bullets cut out by
+# _lm496_strip, and the LM-509 additions cut out by _lm509_strip. A later item
+# that edits measure.proto must update this hash (or retire the test).
 LM459_PROTO_OUTSIDE_COMMENT_SHA256 = "ea2ab69d7c738e9081c5d9e5b86e9609de8c32e2dbd69de6e38f456adf6f803f"
 LM459_FORMULA = (
     "coupon_rate / frequency × Actual/Actual ICMA fraction"
@@ -428,7 +430,7 @@ def test_lm459_tips_example_recomputes_to_stated_cents():
 
 
 def test_lm459_proto_outside_accrued_interest_comment_unchanged():
-    proto = _lm496_strip(MEASURE_PROTO.read_text())
+    proto = _lm496_strip(_lm509_strip(MEASURE_PROTO.read_text()))
     outside = proto
     for name in ("ACCRUED_INTEREST",) + LM499_MEASURES + LM506_MEASURES:
         comment = _proto_comment(f"{name} = {measure_pb2.MeasureProto.Value(name)};")
@@ -475,6 +477,22 @@ def _lm496_catalog_note(catalog, name):
     notes = [a for a in entries[0]["model_assumptions"] if LM496_ANCHOR in a]
     assert len(notes) == 1, name
     return notes[0]
+
+
+# LM-509: the DV01_PER_MILLION value with its comment, and the two-line
+# settlement_convention notes added after four settlement sentences.
+LM509_DV01_PER_MILLION = re.compile(r"\n(?:  //.*\n)*  DV01_PER_MILLION = 31;\n")
+LM509_SETTLEMENT_NOTE = re.compile(
+    r"^ *// .*ValuationRequestProto\.settlement_convention.*\n *// .*\(LM-509\)\.\n", re.MULTILINE)
+
+
+def _lm509_strip(proto):
+    """measure.proto with the LM-509 additions cut out."""
+    stripped, removed = LM509_DV01_PER_MILLION.subn("", proto)
+    assert removed == 1, removed
+    stripped, removed = LM509_SETTLEMENT_NOTE.subn("", stripped)
+    assert removed == 4, removed
+    return stripped
 
 
 def _lm496_strip(proto):
@@ -524,3 +542,35 @@ def test_lm496_october_2025_example_recomputes_to_treasury_figure():
         assert (last, year_before, k) == (Decimal("324.800"), Decimal("315.301"), 1)
         fallback = Decimal(float(last) * (float(last) / float(year_before)) ** (k / 12))
         assert fallback.quantize(Decimal("0.001"), rounding=ROUND_HALF_UP) == stated == Decimal("325.604")
+
+
+# LM-509: DV01_PER_MILLION (31) is appended to every catalog with units that
+# match its proto comment, and stays implemented: false until valuation-service
+# computes it. The DV01 (25) entry is unchanged.
+LM509_DV01_BEFORE = json.loads((_REPO / "test-fixtures" / "catalog" / "lm-509-dv01-before.json").read_text())
+LM509_UNITS_PHRASES = ("per basis point", "1,000,000 face", "settlement currency")
+
+
+@pytest.mark.parametrize("path", CATALOGS.values(), ids=CATALOGS.keys())
+def test_lm509_catalog_entry(path):
+    measures = json.loads(path.read_text())["measures"]
+    assert measures[-1]["name"] == "DV01_PER_MILLION"
+    entry = measures[-1]
+    dv01 = next(m for m in measures if m["name"] == "DV01")
+    assert entry["enum_value"] == 31 == measure_pb2.MeasureProto.Value("DV01_PER_MILLION")
+    assert entry["implemented"] is False
+    assert (entry["category"], entry["computed_by"]) == ("risk", "valuation-service")
+    assert entry["depends_on"] == ["MODIFIED_DURATION", "DIRTY_PRICE"]
+    assert entry["applies_to"] == dv01["applies_to"]
+    assert entry["model_assumptions"][0] == dv01["model_assumptions"][0]
+    comment = " ".join(_proto_comment("DV01_PER_MILLION = 31;").replace("//", " ").split())
+    for phrase in LM509_UNITS_PHRASES:
+        assert phrase in entry["units"], phrase
+        assert phrase in comment, phrase
+    assert "read dollar as one unit of settlement currency" in entry["units"]
+    assert dv01 == LM509_DV01_BEFORE["entry"]
+
+
+def test_lm509_implemented_false_keeps_dv01_per_million_out_of_every_input_type():
+    for input_type in INPUT_TYPES:
+        assert measure_pb2.MeasureProto.DV01_PER_MILLION not in measures_for_input_type(input_type), input_type

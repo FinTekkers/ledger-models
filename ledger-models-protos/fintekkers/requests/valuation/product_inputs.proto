@@ -53,6 +53,8 @@ message ProductInput {
 // today; see VS-69.
 //
 // Settlement date is read from ValuationRequestProto.asof_datetime.
+// When ValuationRequestProto.settlement_convention is set, the settlement date
+// is the effective settlement date it derives instead (LM-509).
 // ═══════════════════════════════════════════════════════════════════════════
 message BondInput {
   // The bond security, with bond_details populated.
@@ -83,6 +85,8 @@ message BondInput {
 // inflation_index_type) are read from security.tips_extension.
 //
 // Settlement date is read from ValuationRequestProto.asof_datetime.
+// When ValuationRequestProto.settlement_convention is set, the settlement date
+// is the effective settlement date it derives instead (LM-509).
 //
 // cpi (4) is the only CPI input. assumed_inflation_rate (5) is a forecast
 // of future inflation, not a CPI input.
@@ -117,11 +121,15 @@ message TipsInput {
   // month no date needs is allowed and ignored. A duplicate (year, month) or
   // a month outside 1-12 is still rejected. See InflationIndexInput and
   // MonthlyIndexReadings.
+  // With ValuationRequestProto.settlement_convention set, m is the month of
+  // the effective settlement date it derives instead (LM-509).
   InflationIndexInput cpi = 4;
 
   // Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
   // constant from the settlement date to maturity. Settlement date is read
   // from ValuationRequestProto.asof_datetime.
+  // When ValuationRequestProto.settlement_convention is set, the settlement
+  // date is the effective settlement date it derives instead (LM-509).
   // Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
   // payment date t is
   //   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -161,6 +169,8 @@ message CostBasisInput {
 // reference CPI itself. There is no source field: index names the index, and
 // where a reading came from is price-service's concern. See
 // docs/adr/inflation_index_input.md.
+// When ValuationRequestProto.settlement_convention is set, the settlement date
+// is the effective settlement date it derives instead (LM-509).
 // ═══════════════════════════════════════════════════════════════════════════
 message InflationIndexInput {
   // The index security, with index_details.index_type set (e.g. CPI_U).
@@ -176,6 +186,8 @@ message InflationIndexInput {
     // settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
     // month no date needs is allowed and ignored. A duplicate (year, month)
     // or a month outside 1-12 is still rejected.
+    // With ValuationRequestProto.settlement_convention set, m is the month of
+    // the effective settlement date it derives instead (LM-509).
     MonthlyIndexReadings readings = 2;
 
     // Reference CPI for the settlement date, already derived
@@ -194,6 +206,8 @@ message MonthlyIndexReadings {
   // May also include the extra months that lot settlement dates need for
   // MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
   // allowed and ignored. A month outside 1-12 is invalid.
+  // With ValuationRequestProto.settlement_convention set, m is the month of
+  // the effective settlement date it derives instead (LM-509).
   //
   // Order is not significant. Each (year, month) appears at most once; a
   // request with a duplicate (year, month) is invalid and is rejected, even
@@ -224,6 +238,8 @@ message MonthlyIndexReading {
 // fixings (11) carries published reference-rate fixings.
 //
 // Settlement date is read from ValuationRequestProto.asof_datetime.
+// When ValuationRequestProto.settlement_convention is set, the settlement date
+// is the effective settlement date it derives instead (LM-509).
 // ═══════════════════════════════════════════════════════════════════════════
 message FrnInput {
   // The FRN security. Must have bond_details and frn_extension populated.
@@ -275,6 +291,8 @@ message FrnInput {
   // date counts). When curve is absent, it builds the flat-forward curve
   // (see curve). When curve is absent and no fixing_date is on or before
   // that date, the request is invalid for a curve measure.
+  // When ValuationRequestProto.settlement_convention is set, that date is the
+  // effective settlement date it derives instead (LM-509).
   //
   // A curve measure with neither curve nor fixings is invalid.
   repeated ReferenceRateFixingProto fixings = 11;
@@ -334,6 +352,8 @@ message ReferenceRateFixingProto {
 // use them for anything else.
 //
 // Settlement date is read from ValuationRequestProto.asof_datetime.
+// When ValuationRequestProto.settlement_convention is set, the settlement date
+// is the effective settlement date it derives instead (LM-509).
 // See docs/adr/product_input_engine_input_types.md.
 // ═══════════════════════════════════════════════════════════════════════════
 message MbsInput {

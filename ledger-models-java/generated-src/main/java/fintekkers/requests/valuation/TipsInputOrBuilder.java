@@ -93,6 +93,8 @@ public interface TipsInputOrBuilder extends
    * month no date needs is allowed and ignored. A duplicate (year, month) or
    * a month outside 1-12 is still rejected. See InflationIndexInput and
    * MonthlyIndexReadings.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -113,6 +115,8 @@ public interface TipsInputOrBuilder extends
    * month no date needs is allowed and ignored. A duplicate (year, month) or
    * a month outside 1-12 is still rejected. See InflationIndexInput and
    * MonthlyIndexReadings.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -133,6 +137,8 @@ public interface TipsInputOrBuilder extends
    * month no date needs is allowed and ignored. A duplicate (year, month) or
    * a month outside 1-12 is still rejected. See InflationIndexInput and
    * MonthlyIndexReadings.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.InflationIndexInput cpi = 4;</code>
@@ -144,6 +150,8 @@ public interface TipsInputOrBuilder extends
    * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
    * constant from the settlement date to maturity. Settlement date is read
    * from ValuationRequestProto.asof_datetime.
+   * When ValuationRequestProto.settlement_convention is set, the settlement
+   * date is the effective settlement date it derives instead (LM-509).
    * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
    * payment date t is
    *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -166,6 +174,8 @@ public interface TipsInputOrBuilder extends
    * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
    * constant from the settlement date to maturity. Settlement date is read
    * from ValuationRequestProto.asof_datetime.
+   * When ValuationRequestProto.settlement_convention is set, the settlement
+   * date is the effective settlement date it derives instead (LM-509).
    * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
    * payment date t is
    *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -188,6 +198,8 @@ public interface TipsInputOrBuilder extends
    * Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
    * constant from the settlement date to maturity. Settlement date is read
    * from ValuationRequestProto.asof_datetime.
+   * When ValuationRequestProto.settlement_convention is set, the settlement
+   * date is the effective settlement date it derives instead (LM-509).
    * Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
    * payment date t is
    *   ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,

@@ -3,6 +3,7 @@ syntax = "proto3";
 package fintekkers.requests.valuation;
 
 import "fintekkers/models/position/position.proto";
+import "fintekkers/models/util/local_date.proto";
 import "fintekkers/models/util/local_timestamp.proto";
 
 import "fintekkers/requests/util/operation.proto";
@@ -48,6 +49,53 @@ message ValuationRequestProto {
   // The service values from this input alone. Build it with
   // ProductInputs.forSecurity (LM-410).
   ProductInput product_input = 70;
+
+  // Optional settlement convention (LM-509). It sets the effective settlement
+  // date of this request: the date every settlement-dependent rule in
+  // product_inputs.proto and measure.proto uses (accrued interest, the
+  // settlement month of a TIPS reference CPI, the latest FRN fixing, and so on).
+  //   - Unset: the effective settlement date is the UTC date of asof_datetime,
+  //     exactly as before LM-509, and the response leaves settlement_date and
+  //     measure_asof_date unset.
+  //   - Set: the effective settlement date is trade_date plus
+  //     settlement_lag_business_days business days on the calendar_id
+  //     calendar (see SettlementConventionProto). The response returns it in
+  //     ValuationResponseProto.settlement_date.
+  // asof_datetime still selects the market data either way.
+  // A message field, so unset is distinct from a lag of 0.
+  SettlementConventionProto settlement_convention = 80;
+}
+
+// How the effective settlement date is derived (LM-509). This comment is the
+// spec; valuation-service computes the date, ledger-models only carries it.
+//
+//   settlement_date = trade_date plus settlement_lag_business_days business
+//   days on the calendar_id calendar.
+//
+// A business day is a weekday that is not a holiday on that calendar. Count
+// forward from trade_date: business day 1 is the first business day after
+// trade_date. A lag of 0 settles on trade_date itself.
+// Example: trade_date 2026-11-25, lag 1, US_SIFMA. 2026-11-26 is Thanksgiving
+// (a SIFMA holiday) and 2026-11-27 is a SIFMA early close, which is still a
+// business day, so the settlement date is 2026-11-27.
+//
+// Invalid, rejected by valuation-service with INVALID_ARGUMENT:
+//   - trade_date unset while settlement_convention is set;
+//   - calendar_id empty or blank, or a calendar valuation-service does not
+//     know.
+// ledger-models does not check calendar ids: valuation-service owns the
+// calendars, so a new calendar needs no ledger-models release.
+// See docs/adr/settlement_convention.md.
+message SettlementConventionProto {
+  // The trade date the lag counts from.
+  fintekkers.models.util.LocalDateProto trade_date = 1;
+
+  // Settlement lag in business days on calendar_id (e.g. 1 for T+1). 0 means
+  // same-day settlement.
+  uint32 settlement_lag_business_days = 2;
+
+  // Calendar identifier, e.g. US_SIFMA (SIFMA US bond-market holidays).
+  string calendar_id = 3;
 }
 
 

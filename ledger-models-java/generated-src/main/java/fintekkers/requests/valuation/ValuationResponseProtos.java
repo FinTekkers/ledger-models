@@ -31,29 +31,34 @@ public final class ValuationResponseProtos {
       "\n6fintekkers/requests/valuation/valuatio" +
       "n_response.proto\022\035fintekkers.requests.va" +
       "luation\032.fintekkers/models/position/posi" +
-      "tion_util.proto\032*fintekkers/models/valua" +
-      "tion/cashflow.proto\0325fintekkers/requests" +
-      "/valuation/valuation_request.proto\032-fint" +
-      "ekkers/requests/util/errors/summary.prot" +
-      "o\032(fintekkers/models/util/object_type.pr" +
-      "oto\032$fintekkers/models/util/version.prot" +
-      "o\"\243\003\n\026ValuationResponseProto\022<\n\013object_t" +
-      "ype\030\001 \001(\0162\'.fintekkers.models.util.Objec" +
-      "tTypeProto\0225\n\007version\030\002 \001(\0132$.fintekkers" +
-      ".models.util.VersionProto\022O\n\021valuation_r" +
-      "equest\030\024 \001(\01324.fintekkers.requests.valua" +
-      "tion.ValuationRequestProto\022D\n\017measure_re" +
-      "sults\030\036 \003(\0132+.fintekkers.models.position" +
-      ".MeasureMapEntry\022>\n\007summary\030( \001(\0132-.fint" +
-      "ekkers.requests.util.errors.SummaryProto" +
-      "\022=\n\tcashflows\0302 \003(\0132*.fintekkers.models." +
-      "valuation.CashflowProtoB\033B\027ValuationResp" +
-      "onseProtosP\001b\006proto3"
+      "tion_util.proto\032\'fintekkers/models/util/" +
+      "local_date.proto\032*fintekkers/models/valu" +
+      "ation/cashflow.proto\0325fintekkers/request" +
+      "s/valuation/valuation_request.proto\032-fin" +
+      "tekkers/requests/util/errors/summary.pro" +
+      "to\032(fintekkers/models/util/object_type.p" +
+      "roto\032$fintekkers/models/util/version.pro" +
+      "to\"\247\004\n\026ValuationResponseProto\022<\n\013object_" +
+      "type\030\001 \001(\0162\'.fintekkers.models.util.Obje" +
+      "ctTypeProto\0225\n\007version\030\002 \001(\0132$.fintekker" +
+      "s.models.util.VersionProto\022O\n\021valuation_" +
+      "request\030\024 \001(\01324.fintekkers.requests.valu" +
+      "ation.ValuationRequestProto\022D\n\017measure_r" +
+      "esults\030\036 \003(\0132+.fintekkers.models.positio" +
+      "n.MeasureMapEntry\022>\n\007summary\030( \001(\0132-.fin" +
+      "tekkers.requests.util.errors.SummaryProt" +
+      "o\022=\n\tcashflows\0302 \003(\0132*.fintekkers.models" +
+      ".valuation.CashflowProto\022?\n\017settlement_d" +
+      "ate\030< \001(\0132&.fintekkers.models.util.Local" +
+      "DateProto\022A\n\021measure_asof_date\030= \001(\0132&.f" +
+      "intekkers.models.util.LocalDateProtoB\033B\027" +
+      "ValuationResponseProtosP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.position.PositionUtilProtos.getDescriptor(),
+          fintekkers.models.util.LocalDate.getDescriptor(),
           fintekkers.models.valuation.CashflowProtos.getDescriptor(),
           fintekkers.requests.valuation.ValuationRequestProtos.getDescriptor(),
           fintekkers.requests.util.errors.Summary.getDescriptor(),
@@ -65,8 +70,9 @@ public final class ValuationResponseProtos {
     internal_static_fintekkers_requests_valuation_ValuationResponseProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_ValuationResponseProto_descriptor,
-        new java.lang.String[] { "ObjectType", "Version", "ValuationRequest", "MeasureResults", "Summary", "Cashflows", });
+        new java.lang.String[] { "ObjectType", "Version", "ValuationRequest", "MeasureResults", "Summary", "Cashflows", "SettlementDate", "MeasureAsofDate", });
     fintekkers.models.position.PositionUtilProtos.getDescriptor();
+    fintekkers.models.util.LocalDate.getDescriptor();
     fintekkers.models.valuation.CashflowProtos.getDescriptor();
     fintekkers.requests.valuation.ValuationRequestProtos.getDescriptor();
     fintekkers.requests.util.errors.Summary.getDescriptor();

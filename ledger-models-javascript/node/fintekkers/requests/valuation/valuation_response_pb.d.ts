@@ -6,6 +6,7 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_position_position_util_pb from "../../../fintekkers/models/position/position_util_pb";
+import * as fintekkers_models_util_local_date_pb from "../../../fintekkers/models/util/local_date_pb";
 import * as fintekkers_models_valuation_cashflow_pb from "../../../fintekkers/models/valuation/cashflow_pb";
 import * as fintekkers_requests_valuation_valuation_request_pb from "../../../fintekkers/requests/valuation/valuation_request_pb";
 import * as fintekkers_requests_util_errors_summary_pb from "../../../fintekkers/requests/util/errors/summary_pb";
@@ -39,6 +40,16 @@ export class ValuationResponseProto extends jspb.Message {
     setCashflowsList(value: Array<fintekkers_models_valuation_cashflow_pb.CashflowProto>): ValuationResponseProto;
     addCashflows(value?: fintekkers_models_valuation_cashflow_pb.CashflowProto, index?: number): fintekkers_models_valuation_cashflow_pb.CashflowProto;
 
+    hasSettlementDate(): boolean;
+    clearSettlementDate(): void;
+    getSettlementDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
+    setSettlementDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): ValuationResponseProto;
+
+    hasMeasureAsofDate(): boolean;
+    clearMeasureAsofDate(): void;
+    getMeasureAsofDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
+    setMeasureAsofDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): ValuationResponseProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): ValuationResponseProto.AsObject;
     static toObject(includeInstance: boolean, msg: ValuationResponseProto): ValuationResponseProto.AsObject;
@@ -57,5 +68,7 @@ export namespace ValuationResponseProto {
         measureResultsList: Array<fintekkers_models_position_position_util_pb.MeasureMapEntry.AsObject>,
         summary?: fintekkers_requests_util_errors_summary_pb.SummaryProto.AsObject,
         cashflowsList: Array<fintekkers_models_valuation_cashflow_pb.CashflowProto.AsObject>,
+        settlementDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
+        measureAsofDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
     }
 }

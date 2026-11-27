@@ -1,0 +1,33 @@
+{
+  "item": "LM-509",
+  "note": "The DV01 (25) catalog entry and measure.proto comment block (with its declaration) on main at c020a989, before LM-509. LM-509 leaves both unchanged.",
+  "entry": {
+    "name": "DV01",
+    "enum_value": 25,
+    "display_name": "DV01",
+    "description": "DV01 (Dollar Value of 01) = the dollar P&L impact of a 1bp (0.01%) yield increase.",
+    "formula": "DV01 = ModifiedDuration × dirty price × face × 0.0001, where dirty price is per unit of face (the % of par dirty price / 100, e.g. 1.005 for 100.50) and face is the position's face",
+    "units": "Dollars per basis point",
+    "category": "risk",
+    "applies_to": [
+      "TBILL",
+      "TREASURY_NOTE",
+      "TREASURY_BOND",
+      "STRIPS",
+      "SOVEREIGN_BOND",
+      "CREDIT_BOND",
+      "STRUCTURED_BOND",
+      "TIPS"
+    ],
+    "model_assumptions": [
+      "Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next coupon (DSC = days from settlement to the next coupon, E = days in the coupon period); flow k falls at k−1+w periods; the yield is solved so the discounted flows equal the dirty price (clean + ACT/ACT accrued). The price input is the clean price."
+    ],
+    "implemented": true,
+    "computed_by": "valuation-service",
+    "depends_on": [
+      "MODIFIED_DURATION",
+      "MARKET_VALUE"
+    ]
+  },
+  "proto_block": "  // DV01 (Dollar Value of 01) = the dollar P&L impact of a 1bp (0.01%) yield increase.\n  //\n  // Formula:\n  //   DV01 = ModifiedDuration × dirty price × face × 0.0001\n  //   Where dirty price is per unit of face (the % of par dirty price / 100) and\n  //   face is the position's face.\n  //\n  // For ModifiedDuration=5, dirty price 100.50 and face $1,000,000:\n  //   DV01 = 5 × 1.005 × 1,000,000 × 0.0001 = $502.50 per bp\n  //\n  // Model assumptions:\n  //   - Street/SIFMA stub convention: w = DSC/E, the stub fraction to the next\n  //     coupon (DSC = days from settlement to the next coupon, E = days in the\n  //     coupon period); flow k falls at k−1+w periods; the yield is solved so\n  //     the discounted flows equal the dirty price (clean + ACT/ACT accrued).\n  //     The price input is the clean price.\n  //\n  // Applicability: Bond, TIPS, FRN. UNIMPLEMENTED for Equity and Cash.\n  // Units: Dollars per basis point.\n  DV01 = 25;\n"
+}

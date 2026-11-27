@@ -6,6 +6,7 @@
 
 import * as jspb from "google-protobuf";
 import * as fintekkers_models_position_position_pb from "../../../fintekkers/models/position/position_pb";
+import * as fintekkers_models_util_local_date_pb from "../../../fintekkers/models/util/local_date_pb";
 import * as fintekkers_models_util_local_timestamp_pb from "../../../fintekkers/models/util/local_timestamp_pb";
 import * as fintekkers_requests_util_operation_pb from "../../../fintekkers/requests/util/operation_pb";
 import * as fintekkers_models_position_measure_pb from "../../../fintekkers/models/position/measure_pb";
@@ -43,6 +44,11 @@ export class ValuationRequestProto extends jspb.Message {
     getProductInput(): fintekkers_requests_valuation_product_inputs_pb.ProductInput | undefined;
     setProductInput(value?: fintekkers_requests_valuation_product_inputs_pb.ProductInput): ValuationRequestProto;
 
+    hasSettlementConvention(): boolean;
+    clearSettlementConvention(): void;
+    getSettlementConvention(): SettlementConventionProto | undefined;
+    setSettlementConvention(value?: SettlementConventionProto): ValuationRequestProto;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): ValuationRequestProto.AsObject;
     static toObject(includeInstance: boolean, msg: ValuationRequestProto): ValuationRequestProto.AsObject;
@@ -62,5 +68,35 @@ export namespace ValuationRequestProto {
         positionInput?: fintekkers_models_position_position_pb.PositionProto.AsObject,
         asofDatetime?: fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.AsObject,
         productInput?: fintekkers_requests_valuation_product_inputs_pb.ProductInput.AsObject,
+        settlementConvention?: SettlementConventionProto.AsObject,
+    }
+}
+
+export class SettlementConventionProto extends jspb.Message { 
+
+    hasTradeDate(): boolean;
+    clearTradeDate(): void;
+    getTradeDate(): fintekkers_models_util_local_date_pb.LocalDateProto | undefined;
+    setTradeDate(value?: fintekkers_models_util_local_date_pb.LocalDateProto): SettlementConventionProto;
+    getSettlementLagBusinessDays(): number;
+    setSettlementLagBusinessDays(value: number): SettlementConventionProto;
+    getCalendarId(): string;
+    setCalendarId(value: string): SettlementConventionProto;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SettlementConventionProto.AsObject;
+    static toObject(includeInstance: boolean, msg: SettlementConventionProto): SettlementConventionProto.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SettlementConventionProto, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SettlementConventionProto;
+    static deserializeBinaryFromReader(message: SettlementConventionProto, reader: jspb.BinaryReader): SettlementConventionProto;
+}
+
+export namespace SettlementConventionProto {
+    export type AsObject = {
+        tradeDate?: fintekkers_models_util_local_date_pb.LocalDateProto.AsObject,
+        settlementLagBusinessDays: number,
+        calendarId: string,
     }
 }

@@ -23,6 +23,8 @@ var global = (function() {
 
 var fintekkers_models_position_position_util_pb = require('../../../fintekkers/models/position/position_util_pb.js');
 goog.object.extend(proto, fintekkers_models_position_position_util_pb);
+var fintekkers_models_util_local_date_pb = require('../../../fintekkers/models/util/local_date_pb.js');
+goog.object.extend(proto, fintekkers_models_util_local_date_pb);
 var fintekkers_models_valuation_cashflow_pb = require('../../../fintekkers/models/valuation/cashflow_pb.js');
 goog.object.extend(proto, fintekkers_models_valuation_cashflow_pb);
 var fintekkers_requests_valuation_valuation_request_pb = require('../../../fintekkers/requests/valuation/valuation_request_pb.js');
@@ -101,7 +103,9 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.toObject = function(i
     fintekkers_models_position_position_util_pb.MeasureMapEntry.toObject, includeInstance),
     summary: (f = msg.getSummary()) && fintekkers_requests_util_errors_summary_pb.SummaryProto.toObject(includeInstance, f),
     cashflowsList: jspb.Message.toObjectList(msg.getCashflowsList(),
-    fintekkers_models_valuation_cashflow_pb.CashflowProto.toObject, includeInstance)
+    fintekkers_models_valuation_cashflow_pb.CashflowProto.toObject, includeInstance),
+    settlementDate: (f = msg.getSettlementDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f),
+    measureAsofDate: (f = msg.getMeasureAsofDate()) && fintekkers_models_util_local_date_pb.LocalDateProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -166,6 +170,16 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.deserializeBinaryFrom
       var value = new fintekkers_models_valuation_cashflow_pb.CashflowProto;
       reader.readMessage(value,fintekkers_models_valuation_cashflow_pb.CashflowProto.deserializeBinaryFromReader);
       msg.addCashflows(value);
+      break;
+    case 60:
+      var value = new fintekkers_models_util_local_date_pb.LocalDateProto;
+      reader.readMessage(value,fintekkers_models_util_local_date_pb.LocalDateProto.deserializeBinaryFromReader);
+      msg.setSettlementDate(value);
+      break;
+    case 61:
+      var value = new fintekkers_models_util_local_date_pb.LocalDateProto;
+      reader.readMessage(value,fintekkers_models_util_local_date_pb.LocalDateProto.deserializeBinaryFromReader);
+      msg.setMeasureAsofDate(value);
       break;
     default:
       reader.skipField();
@@ -241,6 +255,22 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.serializeBinaryToWrit
       50,
       f,
       fintekkers_models_valuation_cashflow_pb.CashflowProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getSettlementDate();
+  if (f != null) {
+    writer.writeMessage(
+      60,
+      f,
+      fintekkers_models_util_local_date_pb.LocalDateProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getMeasureAsofDate();
+  if (f != null) {
+    writer.writeMessage(
+      61,
+      f,
+      fintekkers_models_util_local_date_pb.LocalDateProto.serializeBinaryToWriter
     );
   }
 };
@@ -448,6 +478,80 @@ proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.addCashflow
  */
 proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.clearCashflowsList = function() {
   return this.setCashflowsList([]);
+};
+
+
+/**
+ * optional fintekkers.models.util.LocalDateProto settlement_date = 60;
+ * @return {?proto.fintekkers.models.util.LocalDateProto}
+ */
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.getSettlementDate = function() {
+  return /** @type{?proto.fintekkers.models.util.LocalDateProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_local_date_pb.LocalDateProto, 60));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.LocalDateProto|undefined} value
+ * @return {!proto.fintekkers.requests.valuation.ValuationResponseProto} returns this
+*/
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.setSettlementDate = function(value) {
+  return jspb.Message.setWrapperField(this, 60, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.requests.valuation.ValuationResponseProto} returns this
+ */
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.clearSettlementDate = function() {
+  return this.setSettlementDate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.hasSettlementDate = function() {
+  return jspb.Message.getField(this, 60) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.LocalDateProto measure_asof_date = 61;
+ * @return {?proto.fintekkers.models.util.LocalDateProto}
+ */
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.getMeasureAsofDate = function() {
+  return /** @type{?proto.fintekkers.models.util.LocalDateProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_local_date_pb.LocalDateProto, 61));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.LocalDateProto|undefined} value
+ * @return {!proto.fintekkers.requests.valuation.ValuationResponseProto} returns this
+*/
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.setMeasureAsofDate = function(value) {
+  return jspb.Message.setWrapperField(this, 61, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.requests.valuation.ValuationResponseProto} returns this
+ */
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.clearMeasureAsofDate = function() {
+  return this.setMeasureAsofDate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.requests.valuation.ValuationResponseProto.prototype.hasMeasureAsofDate = function() {
+  return jspb.Message.getField(this, 61) != null;
 };
 
 

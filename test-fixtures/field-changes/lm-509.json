@@ -1,0 +1,17 @@
+{
+  "item": "LM-509",
+  "added_messages": [
+    ".fintekkers.requests.valuation.SettlementConventionProto"
+  ],
+  "added": [
+    {"message": ".fintekkers.requests.valuation.SettlementConventionProto", "number": 1, "name": "trade_date", "type": ".fintekkers.models.util.LocalDateProto"},
+    {"message": ".fintekkers.requests.valuation.SettlementConventionProto", "number": 2, "name": "settlement_lag_business_days", "type": "uint32"},
+    {"message": ".fintekkers.requests.valuation.SettlementConventionProto", "number": 3, "name": "calendar_id", "type": "string"},
+    {"message": ".fintekkers.requests.valuation.ValuationRequestProto", "number": 80, "name": "settlement_convention", "type": ".fintekkers.requests.valuation.SettlementConventionProto"},
+    {"message": ".fintekkers.requests.valuation.ValuationResponseProto", "number": 60, "name": "settlement_date", "type": ".fintekkers.models.util.LocalDateProto"},
+    {"message": ".fintekkers.requests.valuation.ValuationResponseProto", "number": 61, "name": "measure_asof_date", "type": ".fintekkers.models.util.LocalDateProto"}
+  ],
+  "added_values": [
+    {"enum": ".fintekkers.models.position.MeasureProto", "number": 31, "name": "DV01_PER_MILLION"}
+  ]
+}
