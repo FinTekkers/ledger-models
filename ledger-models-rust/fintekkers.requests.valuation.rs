@@ -750,10 +750,14 @@ pub struct ValuationRequestProto {
 ///
 /// A business day is a weekday that is not a holiday on that calendar. Count
 /// forward from trade_date: business day 1 is the first business day after
-/// trade_date. A lag of 0 settles on trade_date itself.
+/// trade_date. A lag of 0 settles on trade_date itself when trade_date is a
+/// business day. With a lag of 0, a trade_date that is not a business day on
+/// the calendar rolls forward to the next business day.
 /// Example: trade_date 2026-11-25, lag 1, US_SIFMA. 2026-11-26 is Thanksgiving
 /// (a SIFMA holiday) and 2026-11-27 is a SIFMA early close, which is still a
 /// business day, so the settlement date is 2026-11-27.
+/// Example: trade_date 2026-11-28 (Saturday), lag 0, US_SIFMA settles on
+/// 2026-11-30.
 ///
 /// Invalid, rejected by valuation-service with INVALID_ARGUMENT:
 ///    - trade_date unset while settlement_convention is set;
@@ -769,7 +773,8 @@ pub struct SettlementConventionProto {
     #[prost(message, optional, tag = "1")]
     pub trade_date: ::core::option::Option<super::super::models::util::LocalDateProto>,
     /// Settlement lag in business days on calendar_id (e.g. 1 for T+1). 0 means
-    /// same-day settlement.
+    /// same-day settlement, rolled forward to the next business day when
+    /// trade_date is not one (see SettlementConventionProto).
     #[prost(uint32, tag = "2")]
     pub settlement_lag_business_days: u32,
     /// Calendar identifier, e.g. US_SIFMA (SIFMA US bond-market holidays).

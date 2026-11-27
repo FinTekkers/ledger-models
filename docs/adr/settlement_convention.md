@@ -4,6 +4,8 @@
 
 Accepted (LM-509). Additive and contract only: a new `SettlementConventionProto`, `ValuationRequestProto.settlement_convention = 80`, `ValuationResponseProto.settlement_date = 60` and `measure_asof_date = 61`, and `MeasureProto.DV01_PER_MILLION = 31`. `DV01 = 25` and every existing field, number and enum value are unchanged. The `lm509` rule in `scripts/checks/wire-diff.py` allows exactly these additions (from `test-fixtures/field-changes/lm-509.json`). valuation-service computes the settlement date and the measure in its own item.
 
+Amended (LM-512): comments only. The lag-0 roll rule below. No field, number or wire change.
+
 ## Context
 
 A valuation's settlement date was the UTC date of `ValuationRequestProto.asof_datetime`. A client could not say "traded on the 25th, settles T+1 on the SIFMA calendar", so in a holiday week (Thanksgiving 2026-11-26) every settlement-dependent measure (accrued interest, the TIPS settlement month for `REFERENCE_CPI`, the latest FRN fixing, yields and durations through the stub fraction) was computed at the wrong date. The response did not say which date it used.
@@ -26,7 +28,7 @@ SettlementConventionProto settlement_convention = 80;
 
 - **Presence.** A message field has explicit presence, so "no convention" is distinct from a lag of 0 in every language (`HasField`, `hasSettlementConvention`, `Option`).
 - **The spec, once.** The `settlement_convention` field comment defines the request's *effective settlement date*: unset, the UTC date of `asof_datetime`, exactly as before; set, `trade_date` plus `settlement_lag_business_days` business days on the `calendar_id` calendar. Every comment in `product_inputs.proto` and `measure.proto` that read settlement from `asof_datetime` gains one line pointing to `settlement_convention`; a Python test fails if a comment mentions `asof_datetime` without it.
-- **Business days.** A weekday that is not a holiday on the calendar. Day 1 is the first business day after `trade_date`; a lag of 0 settles on `trade_date`.
+- **Business days.** A weekday that is not a holiday on the calendar. Day 1 is the first business day after `trade_date`. A lag of 0 settles on trade_date itself when trade_date is a business day. With a lag of 0, a trade_date that is not a business day on the calendar rolls forward to the next business day. Example: trade_date 2026-11-28 (Saturday), lag 0, US_SIFMA settles on 2026-11-30.
 - **Invalid** (valuation-service returns `INVALID_ARGUMENT`): `trade_date` unset while the convention is set; `calendar_id` empty, blank or unknown.
 - `asof_datetime` still selects market data.
 

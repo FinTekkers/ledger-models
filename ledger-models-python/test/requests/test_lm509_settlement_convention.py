@@ -37,6 +37,7 @@ MEASURE = PROTOS / "models" / "position" / "measure.proto"
 PRODUCT_INPUTS = PROTOS / "requests" / "valuation" / "product_inputs.proto"
 REQUEST = PROTOS / "requests" / "valuation" / "valuation_request.proto"
 RESPONSE = PROTOS / "requests" / "valuation" / "valuation_response.proto"
+ADR = REPO_ROOT / "docs" / "adr" / "settlement_convention.md"
 OLD_REQUEST_HEX = REPO_ROOT / "test-fixtures" / "wire" / "lm-509-request-v1.1.62.hex"
 DV01_BEFORE = json.loads((REPO_ROOT / "test-fixtures" / "catalog" / "lm-509-dv01-before.json").read_text())
 
@@ -44,6 +45,9 @@ LOCAL_DATE = "fintekkers.models.util.LocalDateProto"
 NO_CONVENTION = "Unset when the request has no convention."
 SETTLEMENT_RULE = ("trade_date plus settlement_lag_business_days business days on the calendar_id"
                    " calendar")
+LAG_ZERO_ROLL = ("With a lag of 0, a trade_date that is not a business day on the calendar rolls forward to"
+                 " the next business day.")
+LAG_ZERO_EXAMPLE = "Example: trade_date 2026-11-28 (Saturday), lag 0, US_SIFMA settles on 2026-11-30."
 
 
 def _block(path: Path, declaration: str) -> str:
@@ -223,6 +227,21 @@ def test_settlement_convention_comments_define_the_settlement_date():
     assert "asof_datetime still selects the market data either way" in field
     assert "unset is distinct from a lag of 0" in field
     assert "e.g. US_SIFMA" in _prose(_block(REQUEST, "calendar_id"))
+
+
+def test_lag_zero_rolls_forward_when_trade_date_is_not_a_business_day():
+    """LM-512: the proto comment and the ADR state the lag-0 roll rule and its example word for word."""
+    message = _prose(_block(REQUEST, "message SettlementConventionProto"))
+    adr = " ".join(ADR.read_text().split())
+    for text in (message, adr):
+        assert LAG_ZERO_ROLL in text
+        assert LAG_ZERO_EXAMPLE in text
+    assert "rolled forward to the next business day" in _prose(_block(REQUEST, "settlement_lag_business_days"))
+    # The lag >= 1 rule and its example are unchanged.
+    assert "business day 1 is the first business day after trade_date" in message
+    assert ("Example: trade_date 2026-11-25, lag 1, US_SIFMA. 2026-11-26 is Thanksgiving"
+            " (a SIFMA holiday) and 2026-11-27 is a SIFMA early close, which is still a"
+            " business day, so the settlement date is 2026-11-27.") in message
 
 
 def test_response_dates_are_unset_without_a_convention_and_measure_asof_equals_settlement():
