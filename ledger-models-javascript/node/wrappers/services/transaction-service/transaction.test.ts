@@ -132,7 +132,7 @@ async function getTransaction(now: dt.ZonedDateTime, positionFilter: PositionFil
       .setAsOf(now.toProto())
       .setSecurity(security.proto)
       .setUuid(uuid.UUID.random().toUUIDProto())
-      .setPrice(encodeDecimal(parseDecimalString('100.00')))
+      .setMid(encodeDecimal(parseDecimalString('100.00')))
   );
   transaction.setQuantity(encodeDecimal(parseDecimalString('10000.00')));
   transaction.setPortfolio(portfolio.proto);

@@ -74,7 +74,7 @@ class TransactionPriceNoSecurityTest {
                 .setPrice(PriceProto.newBuilder()
                         .setUuid(ProtoSerializationUtil.serializeUUID(PRICE_ID))
                         .setAsOf(AS_OF)
-                        .setPrice(ProtoSerializationUtil.serializeBigDecimal(PRICE))
+                        .setMid(ProtoSerializationUtil.serializeBigDecimal(PRICE))
                         .setPriceType(PriceTypeProto.PERCENTAGE))
                 .build();
     }

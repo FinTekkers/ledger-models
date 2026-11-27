@@ -39,6 +39,7 @@ const product_inputs_pb_1 = require("../../../fintekkers/requests/valuation/prod
 const errors_1 = require("../errors");
 const uuid_1 = require("../utils/uuid");
 const product_hierarchy_1 = require("./product_hierarchy");
+const Price_1 = require("../price/Price");
 const MARKET_DATA_KINDS = ['CPI_U', 'FRN_FIXINGS', 'FRN_CURVE'];
 /** Map key for a node's entry with no coupon_types. */
 const ANY_COUPON = '';
@@ -322,8 +323,12 @@ exports.shippedValuationArms = shippedValuationArms;
 /**
  * The ProductInput for `security`, in the input type inputTypeFor picks.
  *
- * Sets the input type's security and copies price.price as is into clean_price
- * (bond, tips, frn, mbs) or unit_price (equity, cash). Never sets
+ * Sets the input type's security and puts the price's resolved value into
+ * clean_price (bond, tips, frn, mbs) or unit_price (equity, cash). LM-508:
+ * the value is the PriceProto comment's order: mid if set; else the bid/ask
+ * midpoint when both are set; else the one side that is set, so a bid-only
+ * quote is valued at its bid. Mid, bid or ask is set as is; only the midpoint
+ * is a new decimal. With none set the price field is left unset. Never sets
  * cost_basis. Throws UnmappedProductTypeError when the type has no input type and
  * MissingMarketDataError when `marketData` lacks a kind the input type requires.
  * The caller's protos are set as they are, not copied or stamped (LM-322).
@@ -332,7 +337,7 @@ function forSecurity(security, price, marketData) {
     var _a;
     const md = marketData !== null && marketData !== void 0 ? marketData : {};
     const inputType = inputTypeFor(security);
-    const p = price.getPrice();
+    const p = (0, Price_1.resolvedPriceDecimal)(price);
     const out = new product_inputs_pb_1.ProductInput();
     switch (inputType) {
         case 'bond':

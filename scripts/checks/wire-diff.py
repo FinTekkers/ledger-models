@@ -414,8 +414,26 @@ def lm498(key: str, old, new, head: dict) -> bool:
     return old is None and key in LM498 and new == LM498[key]
 
 
+LM508_SPEC = json.loads((REPO / "test-fixtures/field-changes/lm-508.json").read_text())
+LM508_RENAMED = {
+    f"field {f['message']} = {f['number']}": (f"{f['type']} {f['old_name']}", f"{f['type']} {f['new_name']}")
+    for f in LM508_SPEC["renamed"]
+}
+LM508_ADDED = {f"field {f['message']} = {f['number']}": f"{f['type']} {f['name']}" for f in LM508_SPEC["added"]}
+
+
+def lm508(key: str, old, new, head: dict) -> bool:
+    """LM-508: PriceProto field 10 renamed price -> mid, same number and type,
+    and bid = 14 and ask = 15 (both DecimalValueProto) added. Exactly these
+    only; every other PriceProto field keeps its number, name and type, and
+    no enum is added."""
+    if key in LM508_RENAMED:
+        return (old, new) == LM508_RENAMED[key]
+    return old is None and key in LM508_ADDED and new == LM508_ADDED[key]
+
+
 ALLOWED = [lm318, lm332, lm343, lm348, lm349, lm344, lm365, lm367, lm364, lm382, lm389, lm395, lm408, lm412, lm411,
-           lm433, lm465, lm477, lm484, lm491, lm498]
+           lm433, lm465, lm477, lm484, lm491, lm498, lm508]
 
 
 def main() -> int:

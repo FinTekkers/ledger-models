@@ -112,8 +112,12 @@ export interface MarketData {
 /**
  * The ProductInput for `security`, in the input type inputTypeFor picks.
  *
- * Sets the input type's security and copies price.price as is into clean_price
- * (bond, tips, frn, mbs) or unit_price (equity, cash). Never sets
+ * Sets the input type's security and puts the price's resolved value into
+ * clean_price (bond, tips, frn, mbs) or unit_price (equity, cash). LM-508:
+ * the value is the PriceProto comment's order: mid if set; else the bid/ask
+ * midpoint when both are set; else the one side that is set, so a bid-only
+ * quote is valued at its bid. Mid, bid or ask is set as is; only the midpoint
+ * is a new decimal. With none set the price field is left unset. Never sets
  * cost_basis. Throws UnmappedProductTypeError when the type has no input type and
  * MissingMarketDataError when `marketData` lacks a kind the input type requires.
  * The caller's protos are set as they are, not copied or stamped (LM-322).

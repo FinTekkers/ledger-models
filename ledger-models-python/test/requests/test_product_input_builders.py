@@ -151,10 +151,10 @@ def test_for_security_fields(case):
     body = getattr(out, input_type)
     assert body.security == security
     if input_type in UNIT_PRICED:
-        assert body.unit_price == price.price
+        assert body.unit_price == price.mid
         assert "clean_price" not in body.DESCRIPTOR.fields_by_name
     else:
-        assert body.clean_price == price.price
+        assert body.clean_price == price.mid
         assert "unit_price" not in body.DESCRIPTOR.fields_by_name
         assert not body.HasField("cost_basis")
     if input_type == "tips":
@@ -217,7 +217,7 @@ def test_typed_rejects_an_input_type_input_type_for_did_not_pick():
     case = _load(FIXTURES / "tips.json")
     security, price, _ = _inputs(case)
     asof, position, measures = _typed_args(case)
-    wrong = ProductInput(bond=BondInput(security=security, clean_price=price.price))
+    wrong = ProductInput(bond=BondInput(security=security, clean_price=price.mid))
     with pytest.raises(ModelValidationError) as raised:
         ValuationRequests.typed(asof, wrong, position, measures)
     assert not isinstance(raised.value, MissingMarketDataError)
@@ -316,7 +316,7 @@ def _security(n: int, product_type: int, **fields) -> SecurityProto:
 
 
 def _price(n: int, value: str) -> PriceProto:
-    return PriceProto(uuid=_uuid(n), price=_dec(value))
+    return PriceProto(uuid=_uuid(n), mid=_dec(value))
 
 
 def _cpi_index() -> SecurityProto:
@@ -369,9 +369,9 @@ def _write_fixtures():
     fx = _security(7, ProductTypeProto.FX_SPOT)
     errors = {
         "tips-missing-cpi": (tips, tips_price, MarketData(), missing,
-                             ProductInput(tips=TipsInput(security=tips, clean_price=tips_price.price))),
+                             ProductInput(tips=TipsInput(security=tips, clean_price=tips_price.mid))),
         "tips-empty-cpi": (tips, tips_price, MarketData(cpi=InflationIndexInput(index=_cpi_index())), missing,
-                           ProductInput(tips=TipsInput(security=tips, clean_price=tips_price.price,
+                           ProductInput(tips=TipsInput(security=tips, clean_price=tips_price.mid,
                                                        cpi=InflationIndexInput(index=_cpi_index())))),
         "unmapped": (fx, _price(107, "1.0850"), MarketData(), {"type": "UnmappedProductTypeError"},
                      ProductInput(bond=BondInput(security=fx))),

@@ -107,7 +107,7 @@ def test_price_type_survives_the_wire():
 def test_price_number_is_unchanged():
     price = _request(_security(TIPS)).create_transaction_input.price
 
-    assert decode_decimal(price.price).as_tuple() == Decimal("99.5").as_tuple()
+    assert decode_decimal(price.mid).as_tuple() == Decimal("99.5").as_tuple()
 
 
 def test_no_default_and_no_price_type_raises_naming_the_product():

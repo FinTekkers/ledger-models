@@ -118,30 +118,33 @@ public interface PriceProtoOrBuilder extends
 
   /**
    * <pre>
-   * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+   * The mid. Field 10 was named `price` before LM-508; the wire is
+   * unchanged, so a price written then reads as a mid. Optional.
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
-   * @return Whether the price field is set.
+   * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
+   * @return Whether the mid field is set.
    */
-  boolean hasPrice();
+  boolean hasMid();
   /**
    * <pre>
-   * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+   * The mid. Field 10 was named `price` before LM-508; the wire is
+   * unchanged, so a price written then reads as a mid. Optional.
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
-   * @return The price.
+   * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
+   * @return The mid.
    */
-  fintekkers.models.util.DecimalValue.DecimalValueProto getPrice();
+  fintekkers.models.util.DecimalValue.DecimalValueProto getMid();
   /**
    * <pre>
-   * Required. Invalid when absent, or when unscaled_value is empty. Zero is valid.
+   * The mid. Field 10 was named `price` before LM-508; the wire is
+   * unchanged, so a price written then reads as a mid. Optional.
    * </pre>
    *
-   * <code>.fintekkers.models.util.DecimalValueProto price = 10;</code>
+   * <code>.fintekkers.models.util.DecimalValueProto mid = 10;</code>
    */
-  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getPriceOrBuilder();
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getMidOrBuilder();
 
   /**
    * <code>.fintekkers.models.security.SecurityProto security = 11;</code>
@@ -159,11 +162,19 @@ public interface PriceProtoOrBuilder extends
   fintekkers.models.security.SecurityProtoOrBuilder getSecurityOrBuilder();
 
   /**
+   * <pre>
+   * The unit of mid, bid and ask.
+   * </pre>
+   *
    * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
    * @return The enum numeric value on the wire for priceType.
    */
   int getPriceTypeValue();
   /**
+   * <pre>
+   * The unit of mid, bid and ask.
+   * </pre>
+   *
    * <code>.fintekkers.models.price.PriceTypeProto price_type = 12;</code>
    * @return The priceType.
    */
@@ -179,4 +190,61 @@ public interface PriceProtoOrBuilder extends
    * @return The priceSource.
    */
   fintekkers.models.price.PriceSourceProto getPriceSource();
+
+  /**
+   * <pre>
+   * The bid: the price a buyer quotes. Optional.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+   * @return Whether the bid field is set.
+   */
+  boolean hasBid();
+  /**
+   * <pre>
+   * The bid: the price a buyer quotes. Optional.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+   * @return The bid.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getBid();
+  /**
+   * <pre>
+   * The bid: the price a buyer quotes. Optional.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto bid = 14;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getBidOrBuilder();
+
+  /**
+   * <pre>
+   * The ask (offer): the price a seller quotes. Optional; when bid is also
+   * set, ask &gt;= bid.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+   * @return Whether the ask field is set.
+   */
+  boolean hasAsk();
+  /**
+   * <pre>
+   * The ask (offer): the price a seller quotes. Optional; when bid is also
+   * set, ask &gt;= bid.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+   * @return The ask.
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProto getAsk();
+  /**
+   * <pre>
+   * The ask (offer): the price a seller quotes. Optional; when bid is also
+   * set, ask &gt;= bid.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.DecimalValueProto ask = 15;</code>
+   */
+  fintekkers.models.util.DecimalValue.DecimalValueProtoOrBuilder getAskOrBuilder();
 }

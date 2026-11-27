@@ -77,7 +77,7 @@ function testTransactionConstructor(): void {
 
     // getPrice() - should return PriceProto with correct price value
     const priceProto = transaction.getPrice();
-    const priceValue = toCanonicalString(decodeDecimal(priceProto.getPrice()!));
+    const priceValue = toCanonicalString(decodeDecimal(priceProto.getMid()!));
     assert(priceValue === '100.5', `Expected price '100.5', got '${priceValue}'`);
 
     // getSecurity() - should return Security matching input security
@@ -265,7 +265,7 @@ test('LM-461: price_type survives the wire', () => {
 test('LM-461: the price number is unchanged', () => {
     const price = trade(securityOf(ProductTypeProto.TIPS)).proto.getPrice()!;
 
-    expect(toCanonicalString(decodeDecimal(price.getPrice()!))).toBe('99.5');
+    expect(toCanonicalString(decodeDecimal(price.getMid()!))).toBe('99.5');
 });
 
 test('LM-461: no default and no priceType throws NoDefaultPriceTypeError naming the product', () => {

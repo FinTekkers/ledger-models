@@ -324,7 +324,7 @@ def _note() -> SecurityProto:
 
 def _price() -> PriceProto:
     return stamp_own(PriceProto(
-        uuid=_uuid(104), as_of=_timestamp(), price=encode_decimal(Decimal("99.5")), security=_security(),
+        uuid=_uuid(104), as_of=_timestamp(), mid=encode_decimal(Decimal("99.5")), security=_security(),
     ))
 
 
@@ -394,6 +394,9 @@ BUILDERS = {
     "models.portfolio.Portfolio.create_portfolio": lambda: Portfolio.create_portfolio("Test portfolio").proto,
     "models.price.Price.create_price": lambda: Price.create_price(
         Security(_security()), Decimal("99.5"), Timestamp(seconds=1_792_000_000)).proto,
+    "models.price.Price.create_quote": lambda: Price.create_quote(
+        Security(_security()), Timestamp(seconds=1_792_000_000), bid=Decimal("99"), ask=Decimal("101"),
+        price_type=PriceTypeProto.PERCENTAGE).proto,
     "models.transaction.Transaction.create_from": lambda: Transaction.create_from(
         security=_security(), portfolio=_portfolio(), trade_date=date(2026, 10, 14),
         settlement_date=date(2026, 10, 15), position_status=PositionStatusProto.INTENDED,
@@ -511,6 +514,8 @@ NOT_BUILDERS = {
     "models.errors.MissingMarketDataError": "exception type; its violation comes from errors.violation (a builder)",
     "models.portfolio.set_portfolio_fetcher": "setter for the lazy-hydrate fetcher",
     "models.price.set_price_fetcher": "setter for the lazy-hydrate fetcher",
+    "models.price.PriceKind": "enum; builds no proto",
+    "models.price.PriceQuote": "NamedTuple of a Decimal and a PriceKind; builds no proto",
     "models.security.security.set_security_fetcher": "setter for the lazy-hydrate fetcher",
     "models.transaction.set_transaction_fetcher": "setter for the lazy-hydrate fetcher",
     "models.transaction.TransactionType": "wraps a TransactionTypeProto enum value, not a message",
@@ -580,6 +585,7 @@ NOT_BUILDERS = {
     "models.util.date_utils.get_date_from_proto": "read path: returns a datetime",
     "models.util.decimal.decode_decimal": "read path: returns a Decimal",
     "models.util.decimal.is_decimal_set": "predicate",
+    "models.util.decimal.midpoint": "arithmetic: returns a Decimal",
     "models.util.fintekkers_uuid.FintekkersUuid": "wraps a uuid.UUID, not a message",
     "models.util.fintekkers_uuid.FintekkersUuid.from_bytes": "returns a FintekkersUuid",
     "models.util.fintekkers_uuid.FintekkersUuid.from_uuid": "returns a FintekkersUuid",

@@ -4,15 +4,23 @@ import type { FieldViolationProto } from '../../../fintekkers/requests/util/erro
  * Price input rules (LM-289): JS counterpart of Java's PriceRules
  * (docs/adr/typed-input-errors.md). Pure: proto in, violations out.
  *
- * Three rules, checked in this order: `security` has a non-empty UUID,
- * `price` has either decimal form set (zero is valid, see the PriceProto
- * comment), and `price_type` is not UNKNOWN_PRICE_TYPE. The price
- * value is not parsed. Never throws on bad or unset input; null or undefined
- * is checked as an empty PriceProto. Unlike security_rules, a link price is
- * not skipped: hydrate it first. The Price wrapper does not call these rules.
+ * Rules, checked in this order: `security` has a non-empty UUID; at least
+ * one of mid, bid and ask has a non-empty unscaled_value (zero is valid, see
+ * the PriceProto comment), else a violation on `mid`; when bid and ask are
+ * both set, ask >= bid, else a violation on `ask` (LM-508); and `price_type`
+ * is not UNKNOWN_PRICE_TYPE. Only bid and ask are parsed, for the
+ * comparison; an unreadable one skips it. Never throws on bad or unset
+ * input; null or undefined is checked as an empty PriceProto. Unlike
+ * security_rules, a link price is not skipped: hydrate it first. The Price
+ * wrapper does not call these rules.
  */
 export declare const SECURITY = "security";
-export declare const PRICE = "price";
+/** LM-508: field 10, named `price` before. */
+export declare const MID = "mid";
+export declare const BID = "bid";
+export declare const ASK = "ask";
+/** @deprecated LM-508 renamed field 10 to `mid`; use MID. */
+export declare const PRICE = "mid";
 export declare const PRICE_TYPE = "price_type";
 /** Returns every field-level violation on this price, or an empty array when it is valid. */
 export declare function validate(proto: PriceProto | null | undefined): FieldViolationProto[];

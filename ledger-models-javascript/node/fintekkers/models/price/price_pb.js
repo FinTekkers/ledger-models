@@ -98,10 +98,12 @@ proto.fintekkers.models.price.PriceProto.toObject = function(includeInstance, ms
     isLink: jspb.Message.getBooleanFieldWithDefault(msg, 7, false),
     validFrom: (f = msg.getValidFrom()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
     validTo: (f = msg.getValidTo()) && fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.toObject(includeInstance, f),
-    price: (f = msg.getPrice()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    mid: (f = msg.getMid()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
     security: (f = msg.getSecurity()) && fintekkers_models_security_security_pb.SecurityProto.toObject(includeInstance, f),
     priceType: jspb.Message.getFieldWithDefault(msg, 12, 0),
-    priceSource: jspb.Message.getFieldWithDefault(msg, 13, 0)
+    priceSource: jspb.Message.getFieldWithDefault(msg, 13, 0),
+    bid: (f = msg.getBid()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f),
+    ask: (f = msg.getAsk()) && fintekkers_models_util_decimal_value_pb.DecimalValueProto.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -174,7 +176,7 @@ proto.fintekkers.models.price.PriceProto.deserializeBinaryFromReader = function(
     case 10:
       var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
       reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
-      msg.setPrice(value);
+      msg.setMid(value);
       break;
     case 11:
       var value = new fintekkers_models_security_security_pb.SecurityProto;
@@ -188,6 +190,16 @@ proto.fintekkers.models.price.PriceProto.deserializeBinaryFromReader = function(
     case 13:
       var value = /** @type {!proto.fintekkers.models.price.PriceSourceProto} */ (reader.readEnum());
       msg.setPriceSource(value);
+      break;
+    case 14:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setBid(value);
+      break;
+    case 15:
+      var value = new fintekkers_models_util_decimal_value_pb.DecimalValueProto;
+      reader.readMessage(value,fintekkers_models_util_decimal_value_pb.DecimalValueProto.deserializeBinaryFromReader);
+      msg.setAsk(value);
       break;
     default:
       reader.skipField();
@@ -272,7 +284,7 @@ proto.fintekkers.models.price.PriceProto.serializeBinaryToWriter = function(mess
       fintekkers_models_util_local_timestamp_pb.LocalTimestampProto.serializeBinaryToWriter
     );
   }
-  f = message.getPrice();
+  f = message.getMid();
   if (f != null) {
     writer.writeMessage(
       10,
@@ -300,6 +312,22 @@ proto.fintekkers.models.price.PriceProto.serializeBinaryToWriter = function(mess
     writer.writeEnum(
       13,
       f
+    );
+  }
+  f = message.getBid();
+  if (f != null) {
+    writer.writeMessage(
+      14,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
+    );
+  }
+  f = message.getAsk();
+  if (f != null) {
+    writer.writeMessage(
+      15,
+      f,
+      fintekkers_models_util_decimal_value_pb.DecimalValueProto.serializeBinaryToWriter
     );
   }
 };
@@ -527,10 +555,10 @@ proto.fintekkers.models.price.PriceProto.prototype.hasValidTo = function() {
 
 
 /**
- * optional fintekkers.models.util.DecimalValueProto price = 10;
+ * optional fintekkers.models.util.DecimalValueProto mid = 10;
  * @return {?proto.fintekkers.models.util.DecimalValueProto}
  */
-proto.fintekkers.models.price.PriceProto.prototype.getPrice = function() {
+proto.fintekkers.models.price.PriceProto.prototype.getMid = function() {
   return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
     jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 10));
 };
@@ -540,7 +568,7 @@ proto.fintekkers.models.price.PriceProto.prototype.getPrice = function() {
  * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
  * @return {!proto.fintekkers.models.price.PriceProto} returns this
 */
-proto.fintekkers.models.price.PriceProto.prototype.setPrice = function(value) {
+proto.fintekkers.models.price.PriceProto.prototype.setMid = function(value) {
   return jspb.Message.setWrapperField(this, 10, value);
 };
 
@@ -549,8 +577,8 @@ proto.fintekkers.models.price.PriceProto.prototype.setPrice = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.fintekkers.models.price.PriceProto} returns this
  */
-proto.fintekkers.models.price.PriceProto.prototype.clearPrice = function() {
-  return this.setPrice(undefined);
+proto.fintekkers.models.price.PriceProto.prototype.clearMid = function() {
+  return this.setMid(undefined);
 };
 
 
@@ -558,7 +586,7 @@ proto.fintekkers.models.price.PriceProto.prototype.clearPrice = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.fintekkers.models.price.PriceProto.prototype.hasPrice = function() {
+proto.fintekkers.models.price.PriceProto.prototype.hasMid = function() {
   return jspb.Message.getField(this, 10) != null;
 };
 
@@ -633,6 +661,80 @@ proto.fintekkers.models.price.PriceProto.prototype.getPriceSource = function() {
  */
 proto.fintekkers.models.price.PriceProto.prototype.setPriceSource = function(value) {
   return jspb.Message.setProto3EnumField(this, 13, value);
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto bid = 14;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.models.price.PriceProto.prototype.getBid = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 14));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.models.price.PriceProto} returns this
+*/
+proto.fintekkers.models.price.PriceProto.prototype.setBid = function(value) {
+  return jspb.Message.setWrapperField(this, 14, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.price.PriceProto} returns this
+ */
+proto.fintekkers.models.price.PriceProto.prototype.clearBid = function() {
+  return this.setBid(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.price.PriceProto.prototype.hasBid = function() {
+  return jspb.Message.getField(this, 14) != null;
+};
+
+
+/**
+ * optional fintekkers.models.util.DecimalValueProto ask = 15;
+ * @return {?proto.fintekkers.models.util.DecimalValueProto}
+ */
+proto.fintekkers.models.price.PriceProto.prototype.getAsk = function() {
+  return /** @type{?proto.fintekkers.models.util.DecimalValueProto} */ (
+    jspb.Message.getWrapperField(this, fintekkers_models_util_decimal_value_pb.DecimalValueProto, 15));
+};
+
+
+/**
+ * @param {?proto.fintekkers.models.util.DecimalValueProto|undefined} value
+ * @return {!proto.fintekkers.models.price.PriceProto} returns this
+*/
+proto.fintekkers.models.price.PriceProto.prototype.setAsk = function(value) {
+  return jspb.Message.setWrapperField(this, 15, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.fintekkers.models.price.PriceProto} returns this
+ */
+proto.fintekkers.models.price.PriceProto.prototype.clearAsk = function() {
+  return this.setAsk(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.fintekkers.models.price.PriceProto.prototype.hasAsk = function() {
+  return jspb.Message.getField(this, 15) != null;
 };
 
 

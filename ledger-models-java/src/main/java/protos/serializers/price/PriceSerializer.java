@@ -6,8 +6,11 @@ import common.models.price.Price;
 import common.models.security.Security;
 import fintekkers.models.price.PriceProto;
 import fintekkers.models.price.PriceTypeProto;
+import fintekkers.models.util.DecimalValue.DecimalValueProto;
 import protos.serializers.IRawDataModelObjectSerializer;
 import protos.serializers.util.proto.ProtoSerializationUtil;
+
+import java.math.BigDecimal;
 
 public class PriceSerializer implements IRawDataModelObjectSerializer<PriceProto, Price> {
     private static final class InstanceHolder {
@@ -26,9 +29,12 @@ public class PriceSerializer implements IRawDataModelObjectSerializer<PriceProto
         PriceProto.Builder builder = ObjectTypes.stamp(PriceProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PRICE)
                 //Primary Key
                 .setUuid(ProtoSerializationUtil.serializeUUID(price.getID()))
-                .setAsOf(ProtoSerializationUtil.serializeTimestamp(price.getAsOf()))
-                //Biz fields
-                .setPrice(ProtoSerializationUtil.serializeBigDecimal(price.getPrice()));
+                .setAsOf(ProtoSerializationUtil.serializeTimestamp(price.getAsOf()));
+        //Biz fields. LM-508: an unset side stays absent, so bytes for a
+        //mid-only price are the ones written before bid and ask existed.
+        if (price.getMid() != null) builder.setMid(ProtoSerializationUtil.serializeBigDecimal(price.getMid()));
+        if (price.getBid() != null) builder.setBid(ProtoSerializationUtil.serializeBigDecimal(price.getBid()));
+        if (price.getAsk() != null) builder.setAsk(ProtoSerializationUtil.serializeBigDecimal(price.getAsk()));
         // LM-449: an inline trade price may have no security; leave it absent.
         // Never filled from elsewhere (e.g. the transaction's security).
         if (price.getSecurity() != null) {
@@ -48,7 +54,9 @@ public class PriceSerializer implements IRawDataModelObjectSerializer<PriceProto
     public Price deserialize(PriceProto proto) {
         return new Price(
                 ProtoSerializationUtil.deserializeUUID(proto.getUuid()),
-                ProtoSerializationUtil.deserializeBigDecimal(proto.getPrice()),
+                optionalDecimal(proto.getMid()),
+                optionalDecimal(proto.getBid()),
+                optionalDecimal(proto.getAsk()),
                 // LM-449: no security on the proto is a null security, as in
                 // TransactionSerializer.readPrice.
                 proto.hasSecurity() ? Security.fromProto(proto.getSecurity()) : null,
@@ -58,6 +66,14 @@ public class PriceSerializer implements IRawDataModelObjectSerializer<PriceProto
                         proto.hasAsOf() ? proto.getAsOf() : null, "price.as_of"),
                 proto.getPriceType()
         );
+    }
+
+    /**
+     * LM-508: one side of a price (mid, bid or ask), or null when it is unset
+     * (absent or an empty unscaled_value). A malformed value still throws.
+     */
+    private static BigDecimal optionalDecimal(DecimalValueProto value) {
+        return ProtoSerializationUtil.isUnsetDecimal(value) ? null : ProtoSerializationUtil.deserializeBigDecimal(value);
     }
 
     // JSON serialize/deserialize removed in FinTekkers/second-brain#338 — no

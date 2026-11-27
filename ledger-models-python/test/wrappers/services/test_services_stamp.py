@@ -355,7 +355,7 @@ def _equity_proto() -> SecurityProto:
 
 def _equity_price_proto() -> PriceProto:
     return PriceProto(uuid=_uuid_proto(204), as_of=_timestamp(), security=_equity_proto(),
-                      price=encode_decimal(Decimal("187.25")))
+                      mid=encode_decimal(Decimal("187.25")))
 
 
 def _transaction_proto() -> TransactionProto:
@@ -625,7 +625,7 @@ VALUATION_INPUTS = {
         0, lambda request: request.product_input.equity.security, lambda caller: caller),
     f"{_V}.run_valuation[position_input]": (1, lambda request: request.position_input, lambda caller: caller),
     f"{_V}.run_valuation[product_input.equity.unit_price]": (
-        2, lambda request: request.product_input.equity.unit_price, lambda caller: caller.price),
+        2, lambda request: request.product_input.equity.unit_price, lambda caller: caller.mid),
 }
 
 # Method -> why it is neither driven nor pass-through.

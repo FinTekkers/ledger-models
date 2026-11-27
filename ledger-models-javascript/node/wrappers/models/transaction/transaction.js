@@ -44,7 +44,7 @@ const field_pb_1 = require("../../../fintekkers/models/position/field_pb");
 const position_status_pb_1 = require("../../../fintekkers/models/position/position_status_pb");
 const security_1 = __importDefault(require("../security/security"));
 const portfolio_1 = __importDefault(require("../portfolio/portfolio"));
-const Price_1 = __importDefault(require("../price/Price"));
+const Price_1 = __importStar(require("../price/Price"));
 const default_price_types_1 = require("../security/default_price_types");
 const product_type_pb_1 = require("../../../fintekkers/models/security/product_type_pb");
 //Model Utils
@@ -416,7 +416,7 @@ class Transaction {
                 if (!faceValue)
                     throw new Error("Face value is required for bond cash impact calculation");
                 const priceProto = parentTransaction.getPrice();
-                const priceValue = priceOrZero(priceProto.getPrice());
+                const priceValue = priceOrZero((0, Price_1.resolvedPriceDecimal)(priceProto));
                 const scaledPrice = priceValue.mul(priceScaleFactor);
                 const quantity = parentTransaction.getQuantity();
                 const numberBondUnits = quantity.div(faceValue);
@@ -426,7 +426,7 @@ class Transaction {
         else {
             // For other securities: quantity * price
             const priceProto = parentTransaction.getPrice();
-            const priceValue = priceOrZero(priceProto.getPrice());
+            const priceValue = priceOrZero((0, Price_1.resolvedPriceDecimal)(priceProto));
             bookAmount = parentTransaction.getQuantity().mul(priceValue);
         }
         // Get asOf ZonedDateTime
@@ -477,7 +477,7 @@ class Transaction {
         settlementDate.setDate(settlementDate.getDate() + 2);
         // Get price as Decimal
         const priceProto = transaction.getPrice();
-        const priceValue = priceOrZero(priceProto.getPrice());
+        const priceValue = priceOrZero((0, Price_1.resolvedPriceDecimal)(priceProto));
         // Get asOf ZonedDateTime
         const asOf = transaction.getAsOf();
         // Create maturation transaction
@@ -550,7 +550,7 @@ class Transaction {
 function priceOrZero(p) {
     if (!p || (0, decimal_1.isUnsetDecimal)(p))
         return new decimal_js_1.Decimal(0);
-    return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('price.price', () => (0, decimal_1.decodeDecimal)(p)));
+    return (0, decimal_1.toDecimalJs)((0, decimal_1.withField)('price', () => (0, decimal_1.decodeDecimal)(p)));
 }
 exports.default = Transaction;
 // private static Transaction createCashTransaction(CashSecurity cashSecurity, Transaction parentTransaction) {

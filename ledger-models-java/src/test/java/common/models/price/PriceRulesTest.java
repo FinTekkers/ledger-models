@@ -30,7 +30,7 @@ class PriceRulesTest {
                 .setUuid(ProtoSerializationUtil.serializeUUID(PRICE_ID))
                 .setSecurity(SecurityProto.newBuilder()
                         .setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID())))
-                .setPrice(Decimals.decimal("100.25"))
+                .setMid(Decimals.decimal("100.25"))
                 .setPriceType(PriceTypeProto.PERCENTAGE);
     }
 
@@ -56,19 +56,19 @@ class PriceRulesTest {
     }
 
     @Test
-    void priceAbsent_oneViolationOnPrice() {
-        assertEquals(List.of("price"), fields(PriceRules.validate(valid().clearPrice().build())));
+    void midAbsent_oneViolationOnMid() {
+        assertEquals(List.of("mid"), fields(PriceRules.validate(valid().clearMid().build())));
     }
 
     @Test
-    void priceEmpty_oneViolationOnPrice() {
-        PriceProto p = valid().setPrice(DecimalValueProto.newBuilder()).build();
-        assertEquals(List.of("price"), fields(PriceRules.validate(p)));
+    void midEmpty_oneViolationOnMid() {
+        PriceProto p = valid().setMid(DecimalValueProto.newBuilder()).build();
+        assertEquals(List.of("mid"), fields(PriceRules.validate(p)));
     }
 
     @Test
     void priceZero_isValid() {
-        PriceProto p = valid().setPrice(Decimals.decimal("0")).build();
+        PriceProto p = valid().setMid(Decimals.decimal("0")).build();
         assertEquals(List.of(), PriceRules.validate(p));
     }
 
@@ -77,7 +77,7 @@ class PriceRulesTest {
         DecimalValueProto overCap = DecimalValueProto.newBuilder()
                 .setUnscaledValue(ByteString.copyFrom(new byte[]{1})).setScale(5000).build();
         for (DecimalValueProto value : List.of(Decimals.decimal("-1"), overCap)) {
-            PriceProto p = valid().setPrice(value).build();
+            PriceProto p = valid().setMid(value).build();
             assertEquals(List.of(), PriceRules.validate(p), value.toString());
         }
     }
@@ -96,9 +96,9 @@ class PriceRulesTest {
 
     @Test
     void allThreeProblems_threeViolationsInFieldOrder() {
-        PriceProto p = valid().clearSecurity().clearPrice().setPriceType(PriceTypeProto.UNKNOWN_PRICE_TYPE).build();
+        PriceProto p = valid().clearSecurity().clearMid().setPriceType(PriceTypeProto.UNKNOWN_PRICE_TYPE).build();
         List<FieldViolationProto> violations = PriceRules.validate(p);
-        assertEquals(List.of("security", "price", "price_type"), fields(violations));
+        assertEquals(List.of("security", "mid", "price_type"), fields(violations));
         for (FieldViolationProto v : violations) {
             assertEquals(PRICE_ID, ProtoSerializationUtil.deserializeUUID(v.getObjectId()));
         }
@@ -117,7 +117,7 @@ class PriceRulesTest {
 
     @Test
     void emptyOrNullProto_threeViolationsWithoutThrowing() {
-        List<String> expected = List.of("security", "price", "price_type");
+        List<String> expected = List.of("security", "mid", "price_type");
         assertEquals(expected, fields(PriceRules.validate(PriceProto.getDefaultInstance())));
         assertEquals(expected, fields(PriceRules.validate(null)));
         assertFalse(PriceRules.validate(null).get(0).hasObjectId());
@@ -125,7 +125,7 @@ class PriceRulesTest {
 
     @Test
     void requireValid_throwsTypedErrorCarryingViolations() {
-        PriceProto p = valid().clearPrice().build();
+        PriceProto p = valid().clearMid().build();
         ModelValidationException e = assertThrows(ModelValidationException.class, () -> PriceRules.requireValid(p));
         assertEquals(PriceRules.validate(p), e.getViolations());
         assertDoesNotThrow(() -> PriceRules.requireValid(valid().build()));

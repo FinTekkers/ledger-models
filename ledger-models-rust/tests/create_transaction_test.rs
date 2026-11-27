@@ -88,7 +88,7 @@ fn price_type_survives_the_wire() {
 #[test]
 fn price_number_is_unchanged() {
     let txn = create(ProductTypeProto::Tips, None).build().unwrap();
-    let price = decode_decimal(txn.price.as_ref().unwrap().price.as_ref().unwrap()).unwrap();
+    let price = decode_decimal(txn.price.as_ref().unwrap().mid.as_ref().unwrap()).unwrap();
 
     assert_eq!(price.to_canonical_string(), "99.5");
 }

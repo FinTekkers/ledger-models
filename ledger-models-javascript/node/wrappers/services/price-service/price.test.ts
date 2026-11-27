@@ -60,7 +60,7 @@ test('search with empty filter returns prices', async () => {
 
   // Verify price structure
   const firstPrice = prices[0];
-  expect(firstPrice.getPrice()).toBeTruthy();
+  expect(firstPrice.getMid()).toBeTruthy();
   expect(firstPrice.getSecurity()).toBeTruthy();
 }, 120000);
 
@@ -82,7 +82,7 @@ test('search by SECURITY_ID returns prices for a known security', async () => {
 
   for (const price of prices) {
     expect(price.getSecurity()).toBeTruthy();
-    expect(toCanonicalString(decodeDecimal(price.getPrice()!))).toBeTruthy();
+    expect(toCanonicalString(decodeDecimal(price.getMid()!))).toBeTruthy();
   }
 }, 120000);
 
@@ -104,7 +104,7 @@ test('search for CUSIP 91282CPZ8 (UUID 18e8c4e6-3da0-47c9-b26d-c5ea8b8dce95) ret
   if (prices.length > 0) {
     for (const price of prices) {
       expect(price.getSecurity()).toBeTruthy();
-      const priceValue = toCanonicalString(decodeDecimal(price.getPrice()!));
+      const priceValue = toCanonicalString(decodeDecimal(price.getMid()!));
       expect(priceValue).toBeTruthy();
       console.log(`  Price: ${priceValue}`);
     }
@@ -124,7 +124,7 @@ function buildPriceProto(securityUuid: UUID, priceValue: string): PriceProto {
   price.setAsOf(now.toProto());
 
   const decimalValue = encodeDecimal(parseDecimalString(priceValue));
-  price.setPrice(decimalValue);
+  price.setMid(decimalValue);
 
   // Set security as a link reference
   const security = new SecurityProto();
@@ -157,7 +157,7 @@ test('createOrUpdate inserts a price via the gRPC API', async () => {
     .addEqualsFilter(FieldProto.SECURITY_ID, securityUuid);
 
   const prices = await priceService.searchPrice(now.toProto(), filter);
-  const priceValues = prices.map(p => toCanonicalString(decodeDecimal(p.getPrice()!)));
+  const priceValues = prices.map(p => toCanonicalString(decodeDecimal(p.getMid()!)));
   expect(priceValues).toContain('99.875');
 }, 120000);
 
@@ -193,7 +193,7 @@ test('createOrUpdate price can be retrieved via search', async () => {
   const prices = await priceService.searchPrice(now.toProto(), filter);
   expect(prices.length).toBeGreaterThan(0);
 
-  const priceValues = prices.map(p => toCanonicalString(decodeDecimal(p.getPrice()!)));
+  const priceValues = prices.map(p => toCanonicalString(decodeDecimal(p.getMid()!)));
   console.log(`Found ${prices.length} prices for security, values: ${priceValues.join(', ')}`);
   expect(priceValues).toContain('101.5');
 }, 120000);

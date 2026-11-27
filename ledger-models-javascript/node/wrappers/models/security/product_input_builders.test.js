@@ -119,11 +119,11 @@ test.each(success.map((c) => [c.name, c]))('%s: forSecurity fields', (_name, c) 
     expect(hexOf(body.getSecurity())).toBe(hexOf(s));
     const fields = body;
     if (c.input_type === 'equity' || c.input_type === 'cash') {
-        expect(hexOf(fields.getUnitPrice.call(body))).toBe(hexOf(p.getPrice()));
+        expect(hexOf(fields.getUnitPrice.call(body))).toBe(hexOf(p.getMid()));
         expect(fields.getCleanPrice).toBeUndefined();
     }
     else {
-        expect(hexOf(fields.getCleanPrice.call(body))).toBe(hexOf(p.getPrice()));
+        expect(hexOf(fields.getCleanPrice.call(body))).toBe(hexOf(p.getMid()));
         expect(fields.getUnitPrice).toBeUndefined();
         expect(fields.hasCostBasis.call(body)).toBe(false);
     }
@@ -174,7 +174,7 @@ test('typed requires a position', () => {
 });
 test('typed rejects an input type inputTypeFor did not pick', () => {
     const c = fixture('tips');
-    const wrong = new product_inputs_pb_1.ProductInput().setBond(new product_inputs_pb_1.BondInput().setSecurity(security(c)).setCleanPrice(price(c).getPrice()));
+    const wrong = new product_inputs_pb_1.ProductInput().setBond(new product_inputs_pb_1.BondInput().setSecurity(security(c)).setCleanPrice(price(c).getMid()));
     const [asof, position, measures] = typedArgs(c);
     const e = caught(() => ValuationRequests_1.ValuationRequests.typed(asof, wrong, position, measures));
     expect(e).toBeInstanceOf(errors_1.ModelValidationError);

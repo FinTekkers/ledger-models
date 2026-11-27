@@ -23,7 +23,7 @@ def _valid() -> PriceProto:
     return PriceProto(
         uuid=UUIDProto(raw_uuid=PRICE_ID.bytes),
         security=SecurityProto(uuid=UUIDProto(raw_uuid=uuid.uuid4().bytes)),
-        price=encode_decimal(Decimal("100.25")),
+        mid=encode_decimal(Decimal("100.25")),
         price_type=PriceTypeProto.PERCENTAGE,
     )
 
@@ -52,22 +52,22 @@ def test_security_uuid_unset_one_violation_on_security():
     assert _fields(p) == ["security"]
 
 
-def test_price_absent_one_violation_on_price():
+def test_mid_absent_one_violation_on_mid():
     p = _valid()
-    p.ClearField("price")
-    assert _fields(p) == ["price"]
+    p.ClearField("mid")
+    assert _fields(p) == ["mid"]
 
 
-def test_price_empty_one_violation_on_price():
+def test_mid_empty_one_violation_on_mid():
     p = _valid()
-    p.price.Clear()
-    assert p.HasField("price")
-    assert _fields(p) == ["price"]
+    p.mid.Clear()
+    assert p.HasField("mid")
+    assert _fields(p) == ["mid"]
 
 
 def test_price_zero_is_valid():
     p = _valid()
-    p.price.CopyFrom(encode_decimal(Decimal("0")))
+    p.mid.CopyFrom(encode_decimal(Decimal("0")))
     assert _fields(p) == []
 
 
@@ -78,7 +78,7 @@ def test_price_zero_is_valid():
 ], ids=["negative", "over_cap"])
 def test_price_value_is_not_checked(value):
     p = _valid()
-    p.price.CopyFrom(value)
+    p.mid.CopyFrom(value)
     assert _fields(p) == []
 
 
@@ -97,10 +97,10 @@ def test_unrecognised_price_type_is_valid():
 def test_all_three_problems_three_violations_in_field_order():
     p = _valid()
     p.ClearField("security")
-    p.ClearField("price")
+    p.ClearField("mid")
     p.price_type = PriceTypeProto.UNKNOWN_PRICE_TYPE
     violations = price_rules.validate(p)
-    assert [v.field for v in violations] == ["security", "price", "price_type"]
+    assert [v.field for v in violations] == ["security", "mid", "price_type"]
     assert all(v.object_id.raw_uuid == PRICE_ID.bytes for v in violations)
 
 
@@ -116,7 +116,7 @@ def test_every_known_price_type_is_valid():
 
 
 def test_empty_or_none_proto_three_violations_without_raising():
-    expected = ["security", "price", "price_type"]
+    expected = ["security", "mid", "price_type"]
     assert _fields(PriceProto()) == expected
     assert _fields(None) == expected
     assert not price_rules.validate(None)[0].HasField("object_id")
@@ -124,7 +124,7 @@ def test_empty_or_none_proto_three_violations_without_raising():
 
 def test_require_valid_raises_typed_error_carrying_violations():
     p = _valid()
-    p.ClearField("price")
+    p.ClearField("mid")
     with pytest.raises(ModelValidationError) as e:
         price_rules.require_valid(p)
     assert list(e.value.violations) == price_rules.validate(p)

@@ -159,30 +159,30 @@ fn for_security_fields() {
         match out.input.expect("input type set") {
             Input::Bond(b) => {
                 assert_eq!(expected_input_type, "bond");
-                assert_eq!((b.security, b.clean_price, b.cost_basis), (sec, p.price.clone(), None));
+                assert_eq!((b.security, b.clean_price, b.cost_basis), (sec, p.mid.clone(), None));
             }
             Input::Tips(t) => {
                 assert_eq!(expected_input_type, "tips");
-                assert_eq!((t.security, t.clean_price, t.cost_basis), (sec, p.price.clone(), None));
+                assert_eq!((t.security, t.clean_price, t.cost_basis), (sec, p.mid.clone(), None));
                 assert_eq!(t.cpi, md.cpi);
             }
             Input::Frn(f) => {
                 assert_eq!(expected_input_type, "frn");
-                assert_eq!((f.security, f.clean_price, f.cost_basis), (sec, p.price.clone(), None));
+                assert_eq!((f.security, f.clean_price, f.cost_basis), (sec, p.mid.clone(), None));
                 assert_eq!((f.curve, f.fixings), (md.curve.clone(), md.fixings.clone()));
             }
             Input::Mbs(m) => {
                 assert_eq!(expected_input_type, "mbs");
-                assert_eq!((m.security, m.clean_price, m.cost_basis), (sec, p.price.clone(), None));
+                assert_eq!((m.security, m.clean_price, m.cost_basis), (sec, p.mid.clone(), None));
             }
             // EquityInput and CashInput have unit_price and no clean_price field.
             Input::Equity(e) => {
                 assert_eq!(expected_input_type, "equity");
-                assert_eq!((e.security, e.unit_price), (sec, p.price.clone()));
+                assert_eq!((e.security, e.unit_price), (sec, p.mid.clone()));
             }
             Input::Cash(k) => {
                 assert_eq!(expected_input_type, "cash");
-                assert_eq!((k.security, k.unit_price), (sec, p.price.clone()));
+                assert_eq!((k.security, k.unit_price), (sec, p.mid.clone()));
             }
         }
     }
@@ -237,7 +237,7 @@ fn typed_rejects_an_input_type_input_type_for_did_not_pick() {
     let wrong = ProductInput {
         input: Some(Input::Bond(BondInput {
             security: Some(security(&c)),
-            clean_price: price(&c).price,
+            clean_price: price(&c).mid,
             ..Default::default()
         })),
     };

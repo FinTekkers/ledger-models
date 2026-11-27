@@ -69,7 +69,7 @@ function linkPriceProto(securityUuid, priceValue) {
     priceProto.setUuid(uuid_1.UUID.random().toUUIDProto());
     priceProto.setSecurity(linkSec);
     const dv = (0, decimal_1.encodeDecimal)((0, decimal_1.parseDecimalString)(priceValue));
-    priceProto.setPrice(dv);
+    priceProto.setMid(dv);
     return priceProto;
 }
 test('PriceService.searchWithSecurities returns hydrated Prices end-to-end', () => __awaiter(void 0, void 0, void 0, function* () {

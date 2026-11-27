@@ -83,7 +83,7 @@ class TransactionRoundTripTest {
         assertFalse(p.getSecurity().hasBondDetails());
         assertTrue(p.getPortfolio().getIsLink(), "portfolio is a link");
         assertFalse(p.getPrice().getIsLink(), "price is inline");
-        assertFalse(p.getPrice().getPrice().getUnscaledValue().isEmpty(), "price decimal is present");
+        assertFalse(p.getPrice().getMid().getUnscaledValue().isEmpty(), "price decimal is present");
         assertTrue(p.getPrice().getSecurity().getIsLink(), "the price's security is a link");
     }
 

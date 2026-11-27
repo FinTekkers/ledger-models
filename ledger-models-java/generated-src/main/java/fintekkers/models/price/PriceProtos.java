@@ -37,7 +37,7 @@ public final class PriceProtos {
       "rs/models/price/price_type.proto\032*fintek" +
       "kers/models/price/price_source.proto\032(fi" +
       "ntekkers/models/util/object_type.proto\032$" +
-      "fintekkers/models/util/version.proto\"\364\004\n" +
+      "fintekkers/models/util/version.proto\"\342\005\n" +
       "\nPriceProto\022<\n\013object_type\030\001 \001(\0162\'.finte" +
       "kkers.models.util.ObjectTypeProto\0225\n\007ver" +
       "sion\030\002 \001(\0132$.fintekkers.models.util.Vers" +
@@ -47,14 +47,17 @@ public final class PriceProtos {
       "\007is_link\030\007 \001(\010\022?\n\nvalid_from\030\010 \001(\0132+.fin" +
       "tekkers.models.util.LocalTimestampProto\022" +
       "=\n\010valid_to\030\t \001(\0132+.fintekkers.models.ut" +
-      "il.LocalTimestampProto\0228\n\005price\030\n \001(\0132)." +
-      "fintekkers.models.util.DecimalValueProto" +
-      "\022;\n\010security\030\013 \001(\0132).fintekkers.models.s" +
-      "ecurity.SecurityProto\022;\n\nprice_type\030\014 \001(" +
-      "\0162\'.fintekkers.models.price.PriceTypePro" +
-      "to\022?\n\014price_source\030\r \001(\0162).fintekkers.mo" +
-      "dels.price.PriceSourceProtoB\017B\013PriceProt" +
-      "osP\001b\006proto3"
+      "il.LocalTimestampProto\0226\n\003mid\030\n \001(\0132).fi" +
+      "ntekkers.models.util.DecimalValueProto\022;" +
+      "\n\010security\030\013 \001(\0132).fintekkers.models.sec" +
+      "urity.SecurityProto\022;\n\nprice_type\030\014 \001(\0162" +
+      "\'.fintekkers.models.price.PriceTypeProto" +
+      "\022?\n\014price_source\030\r \001(\0162).fintekkers.mode" +
+      "ls.price.PriceSourceProto\0226\n\003bid\030\016 \001(\0132)" +
+      ".fintekkers.models.util.DecimalValueProt" +
+      "o\0226\n\003ask\030\017 \001(\0132).fintekkers.models.util." +
+      "DecimalValueProtoB\017B\013PriceProtosP\001b\006prot" +
+      "o3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -73,7 +76,7 @@ public final class PriceProtos {
     internal_static_fintekkers_models_price_PriceProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_models_price_PriceProto_descriptor,
-        new java.lang.String[] { "ObjectType", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "Price", "Security", "PriceType", "PriceSource", });
+        new java.lang.String[] { "ObjectType", "Version", "Uuid", "AsOf", "IsLink", "ValidFrom", "ValidTo", "Mid", "Security", "PriceType", "PriceSource", "Bid", "Ask", });
     fintekkers.models.util.DecimalValue.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.models.util.Uuid.getDescriptor();

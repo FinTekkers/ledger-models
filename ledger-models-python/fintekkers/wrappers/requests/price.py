@@ -67,14 +67,18 @@ class CreatePriceRequest:
         price: "Decimal | int",
         as_of_date: datetime = None,
         price_uuid: UUID = None,
+        bid: "Decimal | int | None" = None,
+        ask: "Decimal | int | None" = None,
     ):
         """Create a price upsert request.
 
         Parameters:
             security: SecurityProto (or Security wrapper) for this price.
-            price: Decimal or int price value (a float raises TypeError).
+            price: Decimal or int mid (a float raises TypeError); None leaves
+                the mid unset (LM-508: field 10 is now named mid).
             as_of_date: datetime for the price observation; defaults to now.
             price_uuid: deterministic UUID for idempotency; defaults to uuid4().
+            bid, ask: optional Decimal or int bid and ask (LM-508).
         """
         if as_of_date is None:
             as_of_date = datetime.now()
@@ -91,7 +95,9 @@ class CreatePriceRequest:
                 uuid=UUIDProto(raw_uuid=price_uuid.bytes),
                 as_of=as_of_proto,
                 valid_from=as_of_proto,
-                price=ProtoSerializationUtil.serialize(price),
+                mid=None if price is None else ProtoSerializationUtil.serialize(price),
+                bid=None if bid is None else ProtoSerializationUtil.serialize(bid),
+                ask=None if ask is None else ProtoSerializationUtil.serialize(ask),
                 security=security_proto,
             ), ObjectTypeProto.OBJECT_TYPE_PRICE),
         ), ObjectTypeProto.OBJECT_TYPE_CREATE_PRICE_REQUEST)

@@ -116,7 +116,7 @@ class PriceSerializerTest {
                 .setUuid(ProtoSerializationUtil.serializeUUID(price.getID()))
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(asOf))
                 .setSecurity(price.getSecurity().getProto())
-                .setPrice(ProtoSerializationUtil.serializeBigDecimal(price.getPrice()))
+                .setMid(ProtoSerializationUtil.serializeBigDecimal(price.getPrice()))
                 .build();
 
         assertArrayEquals(expected.toByteArray(), PriceSerializer.getInstance().serialize(price).toByteArray());

@@ -35,7 +35,7 @@ class TransactionPriceDefaultsTest {
 
     private static PriceProto.Builder priceBuilder() {
         return PriceProto.newBuilder()
-                .setPrice(ProtoSerializationUtil.serializeBigDecimal(new java.math.BigDecimal("99.5")))
+                .setMid(ProtoSerializationUtil.serializeBigDecimal(new java.math.BigDecimal("99.5")))
                 .setSecurity(DummyEquityObjects.getDummySecurity().getProto());
     }
 

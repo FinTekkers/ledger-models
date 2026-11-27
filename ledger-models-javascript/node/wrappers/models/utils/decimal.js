@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fromDecimalJs = exports.toDecimalJs = exports.reencodeDecimal = exports.encodeDecimal = exports.decodeDecimal = exports.isUnsetDecimal = exports.toCanonicalString = exports.parseDecimalString = exports.withField = exports.MAX_UNSCALED_BYTES = exports.MAX_SCALE = exports.MAX_DIGITS = void 0;
+exports.fromDecimalJs = exports.toDecimalJs = exports.reencodeDecimal = exports.encodeDecimal = exports.decodeDecimal = exports.isUnsetDecimal = exports.midpoint = exports.toCanonicalString = exports.parseDecimalString = exports.withField = exports.MAX_UNSCALED_BYTES = exports.MAX_SCALE = exports.MAX_DIGITS = void 0;
 const decimal_js_1 = require("decimal.js");
 const decimal_value_pb_1 = require("../../../fintekkers/models/util/decimal_value_pb");
 const errors_1 = require("../errors");
@@ -34,7 +34,10 @@ exports.MAX_UNSCALED_BYTES = 1702;
 // No bigint literals: tsconfig targets es2016.
 const ZERO = BigInt(0);
 const ONE = BigInt(1);
+const TWO = BigInt(2);
+const FIVE = BigInt(5);
 const EIGHT = BigInt(8);
+const TEN = BigInt(10);
 /** An unlabelled ModelValidationError: the field is empty until `withField` adds it. */
 function invalid(message) {
     return new errors_1.ModelValidationError([(0, errors_1.violation)('', undefined, message)]);
@@ -166,6 +169,21 @@ function toCanonicalString(v) {
     return `${sign}0.${'0'.repeat(v.scale - digits.length)}${digits}`;
 }
 exports.toCanonicalString = toCanonicalString;
+/**
+ * (a + b) / 2, exact (LM-508): BigInt arithmetic on the unscaled values,
+ * never decimal.js division, whose default precision is 20 digits. The sum
+ * keeps the larger scale; an even sum is halved at that scale and an odd one
+ * is multiplied by 5 at one place more, so 99 and 101 give 100 and 99.5 and
+ * 100 give 99.75, the same in every language.
+ */
+function midpoint(a, b) {
+    const scale = Math.max(a.scale, b.scale);
+    const total = a.unscaled * TEN ** BigInt(scale - a.scale) + b.unscaled * TEN ** BigInt(scale - b.scale);
+    if (total % TWO === ZERO)
+        return { unscaled: total / TWO, scale };
+    return { unscaled: total * FIVE, scale: scale + 1 };
+}
+exports.midpoint = midpoint;
 /** Minimal two's-complement big-endian bytes. Zero is the single byte 0x00. */
 function bigIntToBytes(n) {
     let hex;

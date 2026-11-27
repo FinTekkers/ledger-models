@@ -139,7 +139,7 @@ def test_valuation_with_security_and_price():
     face_value:float = security.get_face_value()
 
     price = "90" if face_value == 100.0 else "900"
-    price = Price(proto=PriceProto(price=encode_decimal(Decimal(price))))
+    price = Price(proto=PriceProto(mid=encode_decimal(Decimal(price))))
 
     position = get_position()
 

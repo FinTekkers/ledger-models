@@ -110,7 +110,7 @@ class PriceForTradeTest {
     void priceNumberIsUnchanged() {
         PriceProto price = tradePrice(security(ProductTypeProto.TIPS), null);
 
-        assertEquals(PRICE, ProtoSerializationUtil.deserializeBigDecimal(price.getPrice()));
+        assertEquals(PRICE, ProtoSerializationUtil.deserializeBigDecimal(price.getMid()));
     }
 
     // ---------- metric 2 ----------

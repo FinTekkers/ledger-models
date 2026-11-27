@@ -57,7 +57,7 @@ def _full_price(uuid_obj: UUID, as_of: LocalTimestampProto, value: str) -> Price
         uuid=UUIDProto(raw_uuid=uuid_obj.bytes),
         as_of=as_of,
         is_link=False,
-        price=encode_decimal(Decimal(value)),
+        mid=encode_decimal(Decimal(value)),
     )
 
 

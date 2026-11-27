@@ -214,7 +214,7 @@ final class TransactionGoldenFixtures {
         return ObjectTypes.stamp(PriceProto.newBuilder(), ObjectTypeProto.OBJECT_TYPE_PRICE)
                 .setUuid(ProtoSerializationUtil.serializeUUID(id))
                 .setAsOf(ProtoSerializationUtil.serializeTimestamp(AS_OF))
-                .setPrice(ProtoSerializationUtil.serializeBigDecimal(new BigDecimal(value)))
+                .setMid(ProtoSerializationUtil.serializeBigDecimal(new BigDecimal(value)))
                 .setSecurity(security)
                 .build();
     }

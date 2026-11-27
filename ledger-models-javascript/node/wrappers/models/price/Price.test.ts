@@ -62,7 +62,7 @@ test('Price proto has all required fields set', () => {
     expect(readVersion(price.proto)).toEqual([0, 0, 1]);
     expect(price.proto.getUuid()).toBeTruthy();
     expect(price.proto.getAsOf()).toBeTruthy();
-    expect(price.proto.getPrice()).toBeTruthy();
+    expect(price.proto.getMid()).toBeTruthy();
     expect(price.proto.getSecurity()).toBeTruthy();
 });
 
@@ -100,5 +100,5 @@ test('Price.create with no security leaves security unset', () => {
     const price = Price.create(new Decimal('99.5'), null, ZonedDateTime.now());
 
     expect(price.proto.hasSecurity()).toBe(false);
-    expect(price.proto.getPrice()).toBeTruthy();
+    expect(price.proto.getMid()).toBeTruthy();
 });

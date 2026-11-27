@@ -35,7 +35,7 @@ const PRICE_AS_OF = timestamp(1718377200, 'Europe/London');
 
 function price(): PriceProto {
     return new PriceProto()
-        .setPrice(encodeDecimal(parseDecimalString('99.5')));
+        .setMid(encodeDecimal(parseDecimalString('99.5')));
 }
 
 function txnWithPrice(priceProto: PriceProto, withTxnAsOf: boolean = true): TransactionProto {

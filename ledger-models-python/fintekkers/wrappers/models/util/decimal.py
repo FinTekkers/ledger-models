@@ -66,6 +66,21 @@ def encode_decimal(value: "Decimal | int") -> DecimalValueProto:
     )
 
 
+def midpoint(a: "Decimal | int", b: "Decimal | int") -> Decimal:
+    """(a + b) / 2, exact (LM-508): integer arithmetic on the unscaled
+    values, never `Decimal` division, whose context precision is 28 digits.
+    The sum keeps the larger scale; an even sum is halved at that scale and
+    an odd one is multiplied by 5 at one place more, so 99 and 101 give 100
+    and 99.5 and 100 give 99.75, the same in every language."""
+    a_unscaled, a_scale = _to_parts(a)
+    b_unscaled, b_scale = _to_parts(b)
+    scale = max(a_scale, b_scale)
+    total = a_unscaled * 10 ** (scale - a_scale) + b_unscaled * 10 ** (scale - b_scale)
+    if total % 2 == 0:
+        return _to_decimal(total // 2, scale)
+    return _to_decimal(total * 5, scale + 1)
+
+
 def _decode_compact(unscaled_value: bytes, scale: int) -> tuple[int, int]:
     # Same order as Rust: scale, then length, then digits, before any large
     # allocation.

@@ -38,6 +38,7 @@ use crate::fintekkers::requests::valuation::{
     BondInput, CashInput, EquityInput, FrnInput, InflationIndexInput, MbsInput, ProductInput,
     ReferenceRateFixingProto, TipsInput, YieldCurveInput,
 };
+use crate::fintekkers::wrappers::models::price::resolved_price_decimal;
 use crate::fintekkers::wrappers::models::product_hierarchy;
 use crate::fintekkers::wrappers::models::utils::errors::object_id_of;
 use prost::Message;
@@ -583,9 +584,14 @@ pub struct MarketData {
 
 /// The `ProductInput` for `security`, in the input type [`input_type_for`] picks.
 ///
-/// Sets the input type's security and copies `price.price` as is into
-/// `clean_price` (bond, tips, frn, mbs) or `unit_price` (equity, cash). Never
-/// sets `cost_basis`. `Err(Unmapped)` when the type has no input type,
+/// Sets the input type's security and puts the price's resolved value into
+/// `clean_price` (bond, tips, frn, mbs) or `unit_price` (equity, cash).
+/// LM-508: the value is the PriceProto comment's order: mid if set; else the
+/// bid/ask midpoint when both are set; else the one side that is set, so a
+/// bid-only quote is valued at its bid. Mid, bid or ask is copied as is; only
+/// the midpoint is a new decimal (`Err(Validation)` when a side behind it is
+/// malformed). With none set the price field is left unset. Never sets
+/// `cost_basis`. `Err(Unmapped)` when the type has no input type,
 /// `Err(MissingMarketData)` when `market_data` lacks a kind the input type
 /// requires.
 pub fn for_security(
@@ -595,7 +601,8 @@ pub fn for_security(
 ) -> Result<ProductInput, ProductInputError> {
     let input_type = input_type_for(security)?;
     let security_field = Some(security.clone());
-    let price_field = price.price.clone();
+    let price_field = resolved_price_decimal(price)
+        .map_err(|e| ProductInputError::Validation(e.violations().to_vec()))?;
     let input = match input_type {
         "bond" => Input::Bond(BondInput { security: security_field, clean_price: price_field, ..Default::default() }),
         "tips" => Input::Tips(TipsInput {

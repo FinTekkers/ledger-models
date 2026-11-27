@@ -22,7 +22,7 @@ function valid(): PriceProto {
     return new PriceProto()
         .setUuid(new UUID(UUID.fromString(PRICE_ID)).toUUIDProto())
         .setSecurity(new SecurityProto().setUuid(new UUID(UUID.fromString(SECURITY_ID)).toUUIDProto()))
-        .setPrice(decimal('100.25'))
+        .setMid(decimal('100.25'))
         .setPriceType(PriceTypeProto.PERCENTAGE);
 }
 
@@ -50,16 +50,16 @@ describe('price_rules.validate', () => {
         expect(fields(valid().setSecurity(new SecurityProto()))).toEqual(['security']);
     });
 
-    test('price absent gives one violation on price', () => {
-        expect(fields(validWith(p => p.clearPrice()))).toEqual(['price']);
+    test('mid absent gives one violation on mid', () => {
+        expect(fields(validWith(p => p.clearMid()))).toEqual(['mid']);
     });
 
-    test('empty price gives one violation on price', () => {
-        expect(fields(valid().setPrice(new DecimalValueProto()))).toEqual(['price']);
+    test('empty mid gives one violation on mid', () => {
+        expect(fields(valid().setMid(new DecimalValueProto()))).toEqual(['mid']);
     });
 
     test('zero price is valid', () => {
-        expect(fields(valid().setPrice(decimal('0')))).toEqual([]);
+        expect(fields(valid().setMid(decimal('0')))).toEqual([]);
     });
 
     test.each([
@@ -67,7 +67,7 @@ describe('price_rules.validate', () => {
         // Over the scale cap: set, but it does not decode.
         ['over_cap', new DecimalValueProto().setUnscaledValue(new Uint8Array([1])).setScale(5000)],
     ])('price value %s is not checked', (_name, value) => {
-        expect(fields(valid().setPrice(value))).toEqual([]);
+        expect(fields(valid().setMid(value))).toEqual([]);
     });
 
     test('UNKNOWN_PRICE_TYPE gives one violation on price_type', () => {
@@ -79,9 +79,9 @@ describe('price_rules.validate', () => {
     });
 
     test('all three problems give three violations in field order', () => {
-        const proto = validWith(p => { p.clearSecurity(); p.clearPrice(); p.setPriceType(PriceTypeProto.UNKNOWN_PRICE_TYPE); });
+        const proto = validWith(p => { p.clearSecurity(); p.clearMid(); p.setPriceType(PriceTypeProto.UNKNOWN_PRICE_TYPE); });
         const violations = validate(proto);
-        expect(violations.map(v => v.getField())).toEqual(['security', 'price', 'price_type']);
+        expect(violations.map(v => v.getField())).toEqual(['security', 'mid', 'price_type']);
         for (const v of violations) {
             expect(UUID.fromU8Array(v.getObjectId()!.getRawUuid_asU8()).toString()).toBe(PRICE_ID);
         }
@@ -97,7 +97,7 @@ describe('price_rules.validate', () => {
     });
 
     test('empty, null or undefined proto gives three violations without throwing', () => {
-        const expected = ['security', 'price', 'price_type'];
+        const expected = ['security', 'mid', 'price_type'];
         expect(fields(new PriceProto())).toEqual(expected);
         expect(fields(null)).toEqual(expected);
         expect(fields(undefined)).toEqual(expected);
@@ -107,7 +107,7 @@ describe('price_rules.validate', () => {
 
 describe('price_rules.requireValid', () => {
     test('throws the typed error carrying the violations', () => {
-        const proto = validWith(p => p.clearPrice());
+        const proto = validWith(p => p.clearMid());
         let err: unknown;
         try {
             requireValid(proto);
@@ -115,7 +115,7 @@ describe('price_rules.requireValid', () => {
             err = e;
         }
         expect(err).toBeInstanceOf(ModelValidationError);
-        expect((err as ModelValidationError).violations.map(v => v.getField())).toEqual(['price']);
+        expect((err as ModelValidationError).violations.map(v => v.getField())).toEqual(['mid']);
         expect(() => requireValid(valid())).not.toThrow();
     });
 });
@@ -126,8 +126,8 @@ describe('the published (compiled) price_rules.js', () => {
     const compiled = require('./price_rules.js');
 
     test('all three problems give three violations in field order', () => {
-        const proto = validWith(p => { p.clearSecurity(); p.clearPrice(); p.setPriceType(PriceTypeProto.UNKNOWN_PRICE_TYPE); });
+        const proto = validWith(p => { p.clearSecurity(); p.clearMid(); p.setPriceType(PriceTypeProto.UNKNOWN_PRICE_TYPE); });
         const violations = compiled.validate(proto) as { getField(): string }[];
-        expect(violations.map(v => v.getField())).toEqual(['security', 'price', 'price_type']);
+        expect(violations.map(v => v.getField())).toEqual(['security', 'mid', 'price_type']);
     });
 });

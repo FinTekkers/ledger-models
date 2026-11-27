@@ -421,7 +421,7 @@ class BuilderStampCoverageTest {
                 .setPrice(PriceProto.newBuilder()
                         .setUuid(ProtoSerializationUtil.serializeUUID(UUID.randomUUID()))
                         .setAsOf(ProtoSerializationUtil.serializeTimestamp(AS_OF))
-                        .setPrice(ProtoSerializationUtil.serializeBigDecimal(BigDecimal.TEN))
+                        .setMid(ProtoSerializationUtil.serializeBigDecimal(BigDecimal.TEN))
                         .setSecurity(security))
                 .build();
     }

@@ -143,7 +143,7 @@ class Transaction():
             price=stamp(PriceProto(
                 uuid=UUIDProto(raw_uuid=FintekkersUuid.new_uuid().as_bytes()),
                 as_of=as_of_proto,
-                price=encode_decimal(price),
+                mid=encode_decimal(price),
                 security=security,
                 price_type=resolved_price_type
             ), ObjectTypeProto.OBJECT_TYPE_PRICE),
