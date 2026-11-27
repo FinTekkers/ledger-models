@@ -242,6 +242,8 @@ const BUILDERS: Builder[] = [
   B('Identifier.fromName', T.OBJECT_TYPE_IDENTIFIER, () => Identifier.fromName('ISIN', 'US0378331005')),
   B('Price.fromSimple', T.OBJECT_TYPE_PRICE, () => Price.fromSimple(UUID.random().toString(), 1, new Date())),
   B('Price.create', T.OBJECT_TYPE_PRICE, (c) => Price.create(new Decimal(1), security(c), ZonedDateTime.now())),
+  B('Price.createQuote', T.OBJECT_TYPE_PRICE, (c) =>
+    Price.createQuote({ bid: new Decimal(99), ask: new Decimal(101) }, security(c), ZonedDateTime.now())),
   B('Price.getCashPrice', T.OBJECT_TYPE_PRICE, (c) => Price.getCashPrice(security(c), ZonedDateTime.now())),
   B('PositionFilter.toProto', T.OBJECT_TYPE_POSITION_FILTER, () => filter().toProto()),
   B('QueryPositionRequest.toProto', T.OBJECT_TYPE_QUERY_POSITION_REQUEST, () => new QueryPositionRequest(
