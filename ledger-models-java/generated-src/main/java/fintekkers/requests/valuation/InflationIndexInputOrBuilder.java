@@ -47,6 +47,8 @@ public interface InflationIndexInputOrBuilder extends
    * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
    * month no date needs is allowed and ignored. A duplicate (year, month)
    * or a month outside 1-12 is still rejected.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -63,6 +65,8 @@ public interface InflationIndexInputOrBuilder extends
    * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
    * month no date needs is allowed and ignored. A duplicate (year, month)
    * or a month outside 1-12 is still rejected.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>
@@ -79,6 +83,8 @@ public interface InflationIndexInputOrBuilder extends
    * settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
    * month no date needs is allowed and ignored. A duplicate (year, month)
    * or a month outside 1-12 is still rejected.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * </pre>
    *
    * <code>.fintekkers.requests.valuation.MonthlyIndexReadings readings = 2;</code>

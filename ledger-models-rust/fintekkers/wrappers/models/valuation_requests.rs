@@ -2,8 +2,9 @@
 //! JS-TS. See docs/adr/product_input_builders.md.
 
 use crate::fintekkers::models::position::{MeasureProto, PositionProto};
-use crate::fintekkers::models::util::LocalTimestampProto;
-use crate::fintekkers::requests::valuation::{ProductInput, ValuationRequestProto};
+use crate::fintekkers::models::util::{LocalDateProto, LocalTimestampProto};
+use crate::fintekkers::requests::util::errors::FieldViolationProto;
+use crate::fintekkers::requests::valuation::{ProductInput, SettlementConventionProto, ValuationRequestProto};
 use crate::fintekkers::wrappers::models::product_inputs::{check_product_input, ProductInputError};
 use crate::fintekkers::wrappers::util::object_types::stamp_own;
 
@@ -28,4 +29,32 @@ pub fn typed(
         product_input: Some(product_input),
         ..Default::default()
     }))
+}
+
+/// A `SettlementConventionProto` for
+/// `ValuationRequestProto.settlement_convention` (80), LM-509.
+///
+/// Checks only the rule in the proto comment that needs no calendar and that
+/// the types allow to break: `calendar_id` is not blank. `trade_date` is
+/// required by the signature and a `u32` lag cannot be negative. It never
+/// computes a settlement date, and an unknown `calendar_id` passes:
+/// valuation-service owns the calendars. A lag of 0 is valid (same-day
+/// settlement). Attach it with `request.settlement_convention = Some(convention)`.
+pub fn settlement_convention(
+    trade_date: LocalDateProto,
+    lag_business_days: u32,
+    calendar_id: &str,
+) -> Result<SettlementConventionProto, ProductInputError> {
+    if calendar_id.trim().is_empty() {
+        return Err(ProductInputError::Validation(vec![FieldViolationProto {
+            field: "settlement_convention.calendar_id".to_string(),
+            object_id: None,
+            message: "calendar_id is required".to_string(),
+        }]));
+    }
+    Ok(SettlementConventionProto {
+        trade_date: Some(trade_date),
+        settlement_lag_business_days: lag_business_days,
+        calendar_id: calendar_id.to_string(),
+    })
 }

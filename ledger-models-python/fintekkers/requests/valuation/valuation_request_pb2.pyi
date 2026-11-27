@@ -1,4 +1,5 @@
 from fintekkers.models.position import position_pb2 as _position_pb2
+from fintekkers.models.util import local_date_pb2 as _local_date_pb2
 from fintekkers.models.util import local_timestamp_pb2 as _local_timestamp_pb2
 from fintekkers.requests.util import operation_pb2 as _operation_pb2
 from fintekkers.models.position import measure_pb2 as _measure_pb2
@@ -14,7 +15,7 @@ from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class ValuationRequestProto(_message.Message):
-    __slots__ = ("object_type", "version", "operation_type", "measures", "position_input", "asof_datetime", "product_input")
+    __slots__ = ("object_type", "version", "operation_type", "measures", "position_input", "asof_datetime", "product_input", "settlement_convention")
     OBJECT_TYPE_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     OPERATION_TYPE_FIELD_NUMBER: _ClassVar[int]
@@ -22,6 +23,7 @@ class ValuationRequestProto(_message.Message):
     POSITION_INPUT_FIELD_NUMBER: _ClassVar[int]
     ASOF_DATETIME_FIELD_NUMBER: _ClassVar[int]
     PRODUCT_INPUT_FIELD_NUMBER: _ClassVar[int]
+    SETTLEMENT_CONVENTION_FIELD_NUMBER: _ClassVar[int]
     object_type: _object_type_pb2.ObjectTypeProto
     version: _version_pb2.VersionProto
     operation_type: _operation_pb2.RequestOperationTypeProto
@@ -29,4 +31,15 @@ class ValuationRequestProto(_message.Message):
     position_input: _position_pb2.PositionProto
     asof_datetime: _local_timestamp_pb2.LocalTimestampProto
     product_input: _product_inputs_pb2.ProductInput
-    def __init__(self, object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version: _Optional[_Union[_version_pb2.VersionProto, _Mapping]] = ..., operation_type: _Optional[_Union[_operation_pb2.RequestOperationTypeProto, str]] = ..., measures: _Optional[_Iterable[_Union[_measure_pb2.MeasureProto, str]]] = ..., position_input: _Optional[_Union[_position_pb2.PositionProto, _Mapping]] = ..., asof_datetime: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., product_input: _Optional[_Union[_product_inputs_pb2.ProductInput, _Mapping]] = ...) -> None: ...
+    settlement_convention: SettlementConventionProto
+    def __init__(self, object_type: _Optional[_Union[_object_type_pb2.ObjectTypeProto, str]] = ..., version: _Optional[_Union[_version_pb2.VersionProto, _Mapping]] = ..., operation_type: _Optional[_Union[_operation_pb2.RequestOperationTypeProto, str]] = ..., measures: _Optional[_Iterable[_Union[_measure_pb2.MeasureProto, str]]] = ..., position_input: _Optional[_Union[_position_pb2.PositionProto, _Mapping]] = ..., asof_datetime: _Optional[_Union[_local_timestamp_pb2.LocalTimestampProto, _Mapping]] = ..., product_input: _Optional[_Union[_product_inputs_pb2.ProductInput, _Mapping]] = ..., settlement_convention: _Optional[_Union[SettlementConventionProto, _Mapping]] = ...) -> None: ...
+
+class SettlementConventionProto(_message.Message):
+    __slots__ = ("trade_date", "settlement_lag_business_days", "calendar_id")
+    TRADE_DATE_FIELD_NUMBER: _ClassVar[int]
+    SETTLEMENT_LAG_BUSINESS_DAYS_FIELD_NUMBER: _ClassVar[int]
+    CALENDAR_ID_FIELD_NUMBER: _ClassVar[int]
+    trade_date: _local_date_pb2.LocalDateProto
+    settlement_lag_business_days: int
+    calendar_id: str
+    def __init__(self, trade_date: _Optional[_Union[_local_date_pb2.LocalDateProto, _Mapping]] = ..., settlement_lag_business_days: _Optional[int] = ..., calendar_id: _Optional[str] = ...) -> None: ...

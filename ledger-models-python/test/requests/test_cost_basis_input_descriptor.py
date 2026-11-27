@@ -28,6 +28,8 @@ REMOVED = [
 # ValuationRequestProto's field numbers on main (caa1b3db), before LM-364,
 # less 20 and 22, which LM-411 removed and reserved.
 REQUEST_FIELDS_ON_MAIN = {1, 2, 10, 21, 23, 30, 70}
+# LM-509 adds settlement_convention = 80, and nothing else.
+LM509_REQUEST_FIELDS = {80}
 TAX_LOT = tax_lot_pb2.TaxLotProto
 COST_BASIS = product_inputs_pb2.CostBasisInput
 
@@ -74,7 +76,8 @@ def test_cost_basis_is_20_on_bond_tips_and_frn():
 
 
 def test_valuation_request_has_no_new_fields():
-    assert set(valuation_request_pb2.ValuationRequestProto.DESCRIPTOR.fields_by_number) == REQUEST_FIELDS_ON_MAIN
+    fields = set(valuation_request_pb2.ValuationRequestProto.DESCRIPTOR.fields_by_number)
+    assert fields == REQUEST_FIELDS_ON_MAIN | LM509_REQUEST_FIELDS
 
 
 def test_24_and_25_stay_reserved():

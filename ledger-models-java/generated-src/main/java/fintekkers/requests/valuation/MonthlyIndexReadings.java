@@ -61,6 +61,8 @@ private static final long serialVersionUID = 0L;
    * May also include the extra months that lot settlement dates need for
    * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
    * allowed and ignored. A month outside 1-12 is invalid.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -81,6 +83,8 @@ private static final long serialVersionUID = 0L;
    * May also include the extra months that lot settlement dates need for
    * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
    * allowed and ignored. A month outside 1-12 is invalid.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -102,6 +106,8 @@ private static final long serialVersionUID = 0L;
    * May also include the extra months that lot settlement dates need for
    * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
    * allowed and ignored. A month outside 1-12 is invalid.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -122,6 +128,8 @@ private static final long serialVersionUID = 0L;
    * May also include the extra months that lot settlement dates need for
    * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
    * allowed and ignored. A month outside 1-12 is invalid.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -142,6 +150,8 @@ private static final long serialVersionUID = 0L;
    * May also include the extra months that lot settlement dates need for
    * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
    * allowed and ignored. A month outside 1-12 is invalid.
+   * With ValuationRequestProto.settlement_convention set, m is the month of
+   * the effective settlement date it derives instead (LM-509).
    * Order is not significant. Each (year, month) appears at most once; a
    * request with a duplicate (year, month) is invalid and is rejected, even
    * when the values agree.
@@ -553,6 +563,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -576,6 +588,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -599,6 +613,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -622,6 +638,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -652,6 +670,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -679,6 +699,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -708,6 +730,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -738,6 +762,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -765,6 +791,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -792,6 +820,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -820,6 +850,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -846,6 +878,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -872,6 +906,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -892,6 +928,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -915,6 +953,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -939,6 +979,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -959,6 +1001,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.
@@ -980,6 +1024,8 @@ private static final long serialVersionUID = 0L;
      * May also include the extra months that lot settlement dates need for
      * MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
      * allowed and ignored. A month outside 1-12 is invalid.
+     * With ValuationRequestProto.settlement_convention set, m is the month of
+     * the effective settlement date it derives instead (LM-509).
      * Order is not significant. Each (year, month) appears at most once; a
      * request with a duplicate (year, month) is invalid and is rejected, even
      * when the values agree.

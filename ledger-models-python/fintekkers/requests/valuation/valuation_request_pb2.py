@@ -23,6 +23,7 @@ _sym_db = _symbol_database.Default()
 
 
 from fintekkers.models.position import position_pb2 as fintekkers_dot_models_dot_position_dot_position__pb2
+from fintekkers.models.util import local_date_pb2 as fintekkers_dot_models_dot_util_dot_local__date__pb2
 from fintekkers.models.util import local_timestamp_pb2 as fintekkers_dot_models_dot_util_dot_local__timestamp__pb2
 from fintekkers.requests.util import operation_pb2 as fintekkers_dot_requests_dot_util_dot_operation__pb2
 from fintekkers.models.position import measure_pb2 as fintekkers_dot_models_dot_position_dot_measure__pb2
@@ -31,7 +32,7 @@ from fintekkers.models.util import object_type_pb2 as fintekkers_dot_models_dot_
 from fintekkers.models.util import version_pb2 as fintekkers_dot_models_dot_util_dot_version__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n5fintekkers/requests/valuation/valuation_request.proto\x12\x1d\x66intekkers.requests.valuation\x1a)fintekkers/models/position/position.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a(fintekkers/requests/util/operation.proto\x1a(fintekkers/models/position/measure.proto\x1a\x32\x66intekkers/requests/valuation/product_inputs.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\xbc\x04\n\x15ValuationRequestProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12K\n\x0eoperation_type\x18\n \x01(\x0e\x32\x33.fintekkers.requests.util.RequestOperationTypeProto\x12:\n\x08measures\x18\x1e \x03(\x0e\x32(.fintekkers.models.position.MeasureProto\x12\x41\n\x0eposition_input\x18\x15 \x01(\x0b\x32).fintekkers.models.position.PositionProto\x12\x42\n\rasof_datetime\x18\x17 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x42\n\rproduct_input\x18\x46 \x01(\x0b\x32+.fintekkers.requests.valuation.ProductInputJ\x04\x08\x14\x10\x15J\x04\x08\x16\x10\x17J\x04\x08\x18\x10\x19J\x04\x08\x19\x10\x1aR\x0esecurity_inputR\x0bprice_inputR\x0f\x63pi_price_inputR\x14reference_rate_inputB\x1a\x42\x16ValuationRequestProtosP\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n5fintekkers/requests/valuation/valuation_request.proto\x12\x1d\x66intekkers.requests.valuation\x1a)fintekkers/models/position/position.proto\x1a\'fintekkers/models/util/local_date.proto\x1a,fintekkers/models/util/local_timestamp.proto\x1a(fintekkers/requests/util/operation.proto\x1a(fintekkers/models/position/measure.proto\x1a\x32\x66intekkers/requests/valuation/product_inputs.proto\x1a(fintekkers/models/util/object_type.proto\x1a$fintekkers/models/util/version.proto\"\x95\x05\n\x15ValuationRequestProto\x12<\n\x0bobject_type\x18\x01 \x01(\x0e\x32\'.fintekkers.models.util.ObjectTypeProto\x12\x35\n\x07version\x18\x02 \x01(\x0b\x32$.fintekkers.models.util.VersionProto\x12K\n\x0eoperation_type\x18\n \x01(\x0e\x32\x33.fintekkers.requests.util.RequestOperationTypeProto\x12:\n\x08measures\x18\x1e \x03(\x0e\x32(.fintekkers.models.position.MeasureProto\x12\x41\n\x0eposition_input\x18\x15 \x01(\x0b\x32).fintekkers.models.position.PositionProto\x12\x42\n\rasof_datetime\x18\x17 \x01(\x0b\x32+.fintekkers.models.util.LocalTimestampProto\x12\x42\n\rproduct_input\x18\x46 \x01(\x0b\x32+.fintekkers.requests.valuation.ProductInput\x12W\n\x15settlement_convention\x18P \x01(\x0b\x32\x38.fintekkers.requests.valuation.SettlementConventionProtoJ\x04\x08\x14\x10\x15J\x04\x08\x16\x10\x17J\x04\x08\x18\x10\x19J\x04\x08\x19\x10\x1aR\x0esecurity_inputR\x0bprice_inputR\x0f\x63pi_price_inputR\x14reference_rate_input\"\x92\x01\n\x19SettlementConventionProto\x12:\n\ntrade_date\x18\x01 \x01(\x0b\x32&.fintekkers.models.util.LocalDateProto\x12$\n\x1csettlement_lag_business_days\x18\x02 \x01(\r\x12\x13\n\x0b\x63\x61lendar_id\x18\x03 \x01(\tB\x1a\x42\x16ValuationRequestProtosP\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -39,6 +40,8 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'fintekkers.requests.valuati
 if not _descriptor._USE_C_DESCRIPTORS:
   _globals['DESCRIPTOR']._loaded_options = None
   _globals['DESCRIPTOR']._serialized_options = b'B\026ValuationRequestProtosP\001'
-  _globals['_VALUATIONREQUESTPROTO']._serialized_start=394
-  _globals['_VALUATIONREQUESTPROTO']._serialized_end=966
+  _globals['_VALUATIONREQUESTPROTO']._serialized_start=435
+  _globals['_VALUATIONREQUESTPROTO']._serialized_end=1096
+  _globals['_SETTLEMENTCONVENTIONPROTO']._serialized_start=1099
+  _globals['_SETTLEMENTCONVENTIONPROTO']._serialized_end=1245
 # @@protoc_insertion_point(module_scope)

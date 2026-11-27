@@ -249,6 +249,100 @@ private static final long serialVersionUID = 0L;
     return cashflows_.get(index);
   }
 
+  public static final int SETTLEMENT_DATE_FIELD_NUMBER = 60;
+  private fintekkers.models.util.LocalDate.LocalDateProto settlementDate_;
+  /**
+   * <pre>
+   * The effective settlement date (LM-509): trade_date plus
+   * settlement_lag_business_days business days on the calendar_id calendar,
+   * from ValuationRequestProto.settlement_convention.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+   * @return Whether the settlementDate field is set.
+   */
+  @java.lang.Override
+  public boolean hasSettlementDate() {
+    return settlementDate_ != null;
+  }
+  /**
+   * <pre>
+   * The effective settlement date (LM-509): trade_date plus
+   * settlement_lag_business_days business days on the calendar_id calendar,
+   * from ValuationRequestProto.settlement_convention.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+   * @return The settlementDate.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProto getSettlementDate() {
+    return settlementDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : settlementDate_;
+  }
+  /**
+   * <pre>
+   * The effective settlement date (LM-509): trade_date plus
+   * settlement_lag_business_days business days on the calendar_id calendar,
+   * from ValuationRequestProto.settlement_convention.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getSettlementDateOrBuilder() {
+    return settlementDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : settlementDate_;
+  }
+
+  public static final int MEASURE_ASOF_DATE_FIELD_NUMBER = 61;
+  private fintekkers.models.util.LocalDate.LocalDateProto measureAsofDate_;
+  /**
+   * <pre>
+   * The date every measure in measure_results is computed at (LM-509). It
+   * equals settlement_date today; it is a separate field for a future forward
+   * valuation, where the two may differ.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+   * @return Whether the measureAsofDate field is set.
+   */
+  @java.lang.Override
+  public boolean hasMeasureAsofDate() {
+    return measureAsofDate_ != null;
+  }
+  /**
+   * <pre>
+   * The date every measure in measure_results is computed at (LM-509). It
+   * equals settlement_date today; it is a separate field for a future forward
+   * valuation, where the two may differ.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+   * @return The measureAsofDate.
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProto getMeasureAsofDate() {
+    return measureAsofDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : measureAsofDate_;
+  }
+  /**
+   * <pre>
+   * The date every measure in measure_results is computed at (LM-509). It
+   * equals settlement_date today; it is a separate field for a future forward
+   * valuation, where the two may differ.
+   * Unset when the request has no convention.
+   * </pre>
+   *
+   * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+   */
+  @java.lang.Override
+  public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getMeasureAsofDateOrBuilder() {
+    return measureAsofDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : measureAsofDate_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -280,6 +374,12 @@ private static final long serialVersionUID = 0L;
     }
     for (int i = 0; i < cashflows_.size(); i++) {
       output.writeMessage(50, cashflows_.get(i));
+    }
+    if (settlementDate_ != null) {
+      output.writeMessage(60, getSettlementDate());
+    }
+    if (measureAsofDate_ != null) {
+      output.writeMessage(61, getMeasureAsofDate());
     }
     getUnknownFields().writeTo(output);
   }
@@ -313,6 +413,14 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < cashflows_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(50, cashflows_.get(i));
+    }
+    if (settlementDate_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(60, getSettlementDate());
+    }
+    if (measureAsofDate_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(61, getMeasureAsofDate());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -349,6 +457,16 @@ private static final long serialVersionUID = 0L;
     }
     if (!getCashflowsList()
         .equals(other.getCashflowsList())) return false;
+    if (hasSettlementDate() != other.hasSettlementDate()) return false;
+    if (hasSettlementDate()) {
+      if (!getSettlementDate()
+          .equals(other.getSettlementDate())) return false;
+    }
+    if (hasMeasureAsofDate() != other.hasMeasureAsofDate()) return false;
+    if (hasMeasureAsofDate()) {
+      if (!getMeasureAsofDate()
+          .equals(other.getMeasureAsofDate())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -381,6 +499,14 @@ private static final long serialVersionUID = 0L;
     if (getCashflowsCount() > 0) {
       hash = (37 * hash) + CASHFLOWS_FIELD_NUMBER;
       hash = (53 * hash) + getCashflowsList().hashCode();
+    }
+    if (hasSettlementDate()) {
+      hash = (37 * hash) + SETTLEMENT_DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getSettlementDate().hashCode();
+    }
+    if (hasMeasureAsofDate()) {
+      hash = (37 * hash) + MEASURE_ASOF_DATE_FIELD_NUMBER;
+      hash = (53 * hash) + getMeasureAsofDate().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -541,6 +667,16 @@ private static final long serialVersionUID = 0L;
         cashflowsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000020);
+      settlementDate_ = null;
+      if (settlementDateBuilder_ != null) {
+        settlementDateBuilder_.dispose();
+        settlementDateBuilder_ = null;
+      }
+      measureAsofDate_ = null;
+      if (measureAsofDateBuilder_ != null) {
+        measureAsofDateBuilder_.dispose();
+        measureAsofDateBuilder_ = null;
+      }
       return this;
     }
 
@@ -613,6 +749,16 @@ private static final long serialVersionUID = 0L;
         result.summary_ = summaryBuilder_ == null
             ? summary_
             : summaryBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.settlementDate_ = settlementDateBuilder_ == null
+            ? settlementDate_
+            : settlementDateBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.measureAsofDate_ = measureAsofDateBuilder_ == null
+            ? measureAsofDate_
+            : measureAsofDateBuilder_.build();
       }
     }
 
@@ -724,6 +870,12 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (other.hasSettlementDate()) {
+        mergeSettlementDate(other.getSettlementDate());
+      }
+      if (other.hasMeasureAsofDate()) {
+        mergeMeasureAsofDate(other.getMeasureAsofDate());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -802,6 +954,20 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 402
+            case 482: {
+              input.readMessage(
+                  getSettlementDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000040;
+              break;
+            } // case 482
+            case 490: {
+              input.readMessage(
+                  getMeasureAsofDateFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000080;
+              break;
+            } // case 490
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1797,6 +1963,370 @@ private static final long serialVersionUID = 0L;
         cashflows_ = null;
       }
       return cashflowsBuilder_;
+    }
+
+    private fintekkers.models.util.LocalDate.LocalDateProto settlementDate_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> settlementDateBuilder_;
+    /**
+     * <pre>
+     * The effective settlement date (LM-509): trade_date plus
+     * settlement_lag_business_days business days on the calendar_id calendar,
+     * from ValuationRequestProto.settlement_convention.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+     * @return Whether the settlementDate field is set.
+     */
+    public boolean hasSettlementDate() {
+      return ((bitField0_ & 0x00000040) != 0);
+    }
+    /**
+     * <pre>
+     * The effective settlement date (LM-509): trade_date plus
+     * settlement_lag_business_days business days on the calendar_id calendar,
+     * from ValuationRequestProto.settlement_convention.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+     * @return The settlementDate.
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto getSettlementDate() {
+      if (settlementDateBuilder_ == null) {
+        return settlementDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : settlementDate_;
+      } else {
+        return settlementDateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The effective settlement date (LM-509): trade_date plus
+     * settlement_lag_business_days business days on the calendar_id calendar,
+     * from ValuationRequestProto.settlement_convention.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+     */
+    public Builder setSettlementDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (settlementDateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        settlementDate_ = value;
+      } else {
+        settlementDateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The effective settlement date (LM-509): trade_date plus
+     * settlement_lag_business_days business days on the calendar_id calendar,
+     * from ValuationRequestProto.settlement_convention.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+     */
+    public Builder setSettlementDate(
+        fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
+      if (settlementDateBuilder_ == null) {
+        settlementDate_ = builderForValue.build();
+      } else {
+        settlementDateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The effective settlement date (LM-509): trade_date plus
+     * settlement_lag_business_days business days on the calendar_id calendar,
+     * from ValuationRequestProto.settlement_convention.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+     */
+    public Builder mergeSettlementDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (settlementDateBuilder_ == null) {
+        if (((bitField0_ & 0x00000040) != 0) &&
+          settlementDate_ != null &&
+          settlementDate_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
+          getSettlementDateBuilder().mergeFrom(value);
+        } else {
+          settlementDate_ = value;
+        }
+      } else {
+        settlementDateBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The effective settlement date (LM-509): trade_date plus
+     * settlement_lag_business_days business days on the calendar_id calendar,
+     * from ValuationRequestProto.settlement_convention.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+     */
+    public Builder clearSettlementDate() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      settlementDate_ = null;
+      if (settlementDateBuilder_ != null) {
+        settlementDateBuilder_.dispose();
+        settlementDateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The effective settlement date (LM-509): trade_date plus
+     * settlement_lag_business_days business days on the calendar_id calendar,
+     * from ValuationRequestProto.settlement_convention.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto.Builder getSettlementDateBuilder() {
+      bitField0_ |= 0x00000040;
+      onChanged();
+      return getSettlementDateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The effective settlement date (LM-509): trade_date plus
+     * settlement_lag_business_days business days on the calendar_id calendar,
+     * from ValuationRequestProto.settlement_convention.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getSettlementDateOrBuilder() {
+      if (settlementDateBuilder_ != null) {
+        return settlementDateBuilder_.getMessageOrBuilder();
+      } else {
+        return settlementDate_ == null ?
+            fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : settlementDate_;
+      }
+    }
+    /**
+     * <pre>
+     * The effective settlement date (LM-509): trade_date plus
+     * settlement_lag_business_days business days on the calendar_id calendar,
+     * from ValuationRequestProto.settlement_convention.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto settlement_date = 60;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> 
+        getSettlementDateFieldBuilder() {
+      if (settlementDateBuilder_ == null) {
+        settlementDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder>(
+                getSettlementDate(),
+                getParentForChildren(),
+                isClean());
+        settlementDate_ = null;
+      }
+      return settlementDateBuilder_;
+    }
+
+    private fintekkers.models.util.LocalDate.LocalDateProto measureAsofDate_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> measureAsofDateBuilder_;
+    /**
+     * <pre>
+     * The date every measure in measure_results is computed at (LM-509). It
+     * equals settlement_date today; it is a separate field for a future forward
+     * valuation, where the two may differ.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+     * @return Whether the measureAsofDate field is set.
+     */
+    public boolean hasMeasureAsofDate() {
+      return ((bitField0_ & 0x00000080) != 0);
+    }
+    /**
+     * <pre>
+     * The date every measure in measure_results is computed at (LM-509). It
+     * equals settlement_date today; it is a separate field for a future forward
+     * valuation, where the two may differ.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+     * @return The measureAsofDate.
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto getMeasureAsofDate() {
+      if (measureAsofDateBuilder_ == null) {
+        return measureAsofDate_ == null ? fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : measureAsofDate_;
+      } else {
+        return measureAsofDateBuilder_.getMessage();
+      }
+    }
+    /**
+     * <pre>
+     * The date every measure in measure_results is computed at (LM-509). It
+     * equals settlement_date today; it is a separate field for a future forward
+     * valuation, where the two may differ.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+     */
+    public Builder setMeasureAsofDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (measureAsofDateBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        measureAsofDate_ = value;
+      } else {
+        measureAsofDateBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The date every measure in measure_results is computed at (LM-509). It
+     * equals settlement_date today; it is a separate field for a future forward
+     * valuation, where the two may differ.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+     */
+    public Builder setMeasureAsofDate(
+        fintekkers.models.util.LocalDate.LocalDateProto.Builder builderForValue) {
+      if (measureAsofDateBuilder_ == null) {
+        measureAsofDate_ = builderForValue.build();
+      } else {
+        measureAsofDateBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The date every measure in measure_results is computed at (LM-509). It
+     * equals settlement_date today; it is a separate field for a future forward
+     * valuation, where the two may differ.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+     */
+    public Builder mergeMeasureAsofDate(fintekkers.models.util.LocalDate.LocalDateProto value) {
+      if (measureAsofDateBuilder_ == null) {
+        if (((bitField0_ & 0x00000080) != 0) &&
+          measureAsofDate_ != null &&
+          measureAsofDate_ != fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance()) {
+          getMeasureAsofDateBuilder().mergeFrom(value);
+        } else {
+          measureAsofDate_ = value;
+        }
+      } else {
+        measureAsofDateBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The date every measure in measure_results is computed at (LM-509). It
+     * equals settlement_date today; it is a separate field for a future forward
+     * valuation, where the two may differ.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+     */
+    public Builder clearMeasureAsofDate() {
+      bitField0_ = (bitField0_ & ~0x00000080);
+      measureAsofDate_ = null;
+      if (measureAsofDateBuilder_ != null) {
+        measureAsofDateBuilder_.dispose();
+        measureAsofDateBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     * <pre>
+     * The date every measure in measure_results is computed at (LM-509). It
+     * equals settlement_date today; it is a separate field for a future forward
+     * valuation, where the two may differ.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProto.Builder getMeasureAsofDateBuilder() {
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return getMeasureAsofDateFieldBuilder().getBuilder();
+    }
+    /**
+     * <pre>
+     * The date every measure in measure_results is computed at (LM-509). It
+     * equals settlement_date today; it is a separate field for a future forward
+     * valuation, where the two may differ.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+     */
+    public fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder getMeasureAsofDateOrBuilder() {
+      if (measureAsofDateBuilder_ != null) {
+        return measureAsofDateBuilder_.getMessageOrBuilder();
+      } else {
+        return measureAsofDate_ == null ?
+            fintekkers.models.util.LocalDate.LocalDateProto.getDefaultInstance() : measureAsofDate_;
+      }
+    }
+    /**
+     * <pre>
+     * The date every measure in measure_results is computed at (LM-509). It
+     * equals settlement_date today; it is a separate field for a future forward
+     * valuation, where the two may differ.
+     * Unset when the request has no convention.
+     * </pre>
+     *
+     * <code>.fintekkers.models.util.LocalDateProto measure_asof_date = 61;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder> 
+        getMeasureAsofDateFieldBuilder() {
+      if (measureAsofDateBuilder_ == null) {
+        measureAsofDateBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            fintekkers.models.util.LocalDate.LocalDateProto, fintekkers.models.util.LocalDate.LocalDateProto.Builder, fintekkers.models.util.LocalDate.LocalDateProtoOrBuilder>(
+                getMeasureAsofDate(),
+                getParentForChildren(),
+                isClean());
+        measureAsofDate_ = null;
+      }
+      return measureAsofDateBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

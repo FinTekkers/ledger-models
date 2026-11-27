@@ -217,6 +217,8 @@ pub mod product_input {
 /// today; see VS-69.
 ///
 /// Settlement date is read from ValuationRequestProto.asof_datetime.
+/// When ValuationRequestProto.settlement_convention is set, the settlement date
+/// is the effective settlement date it derives instead (LM-509).
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -251,6 +253,8 @@ pub struct BondInput {
 /// inflation_index_type) are read from security.tips_extension.
 ///
 /// Settlement date is read from ValuationRequestProto.asof_datetime.
+/// When ValuationRequestProto.settlement_convention is set, the settlement date
+/// is the effective settlement date it derives instead (LM-509).
 ///
 /// cpi (4) is the only CPI input. assumed_inflation_rate (5) is a forecast
 /// of future inflation, not a CPI input.
@@ -285,11 +289,15 @@ pub struct TipsInput {
     /// month no date needs is allowed and ignored. A duplicate (year, month) or
     /// a month outside 1-12 is still rejected. See InflationIndexInput and
     /// MonthlyIndexReadings.
+    /// With ValuationRequestProto.settlement_convention set, m is the month of
+    /// the effective settlement date it derives instead (LM-509).
     #[prost(message, optional, tag = "4")]
     pub cpi: ::core::option::Option<InflationIndexInput>,
     /// Assumed annual inflation rate, in percent a year (3.0 = 3% a year),
     /// constant from the settlement date to maturity. Settlement date is read
     /// from ValuationRequestProto.asof_datetime.
+    /// When ValuationRequestProto.settlement_convention is set, the settlement
+    /// date is the effective settlement date it derives instead (LM-509).
     /// Used only for MeasureProto.PRESENT_VALUE_CASHFLOWS. The index ratio on
     /// payment date t is
     ///    ratio(t) = INDEX_RATIO at settlement x (1 + rate/100)^y,
@@ -330,6 +338,8 @@ pub struct CostBasisInput {
 /// reference CPI itself. There is no source field: index names the index, and
 /// where a reading came from is price-service's concern. See
 /// docs/adr/inflation_index_input.md.
+/// When ValuationRequestProto.settlement_convention is set, the settlement date
+/// is the effective settlement date it derives instead (LM-509).
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -354,6 +364,8 @@ pub mod inflation_index_input {
         /// settlement dates need for MeasureProto.PROFIT_LOSS (LM-405); an extra
         /// month no date needs is allowed and ignored. A duplicate (year, month)
         /// or a month outside 1-12 is still rejected.
+        /// With ValuationRequestProto.settlement_convention set, m is the month of
+        /// the effective settlement date it derives instead (LM-509).
         #[prost(message, tag = "2")]
         Readings(super::MonthlyIndexReadings),
         /// Reference CPI for the settlement date, already derived
@@ -374,6 +386,8 @@ pub struct MonthlyIndexReadings {
     /// May also include the extra months that lot settlement dates need for
     /// MeasureProto.PROFIT_LOSS (LM-405); an extra month no date needs is
     /// allowed and ignored. A month outside 1-12 is invalid.
+    /// With ValuationRequestProto.settlement_convention set, m is the month of
+    /// the effective settlement date it derives instead (LM-509).
     ///
     /// Order is not significant. Each (year, month) appears at most once; a
     /// request with a duplicate (year, month) is invalid and is rejected, even
@@ -406,6 +420,8 @@ pub struct MonthlyIndexReading {
 /// fixings (11) carries published reference-rate fixings.
 ///
 /// Settlement date is read from ValuationRequestProto.asof_datetime.
+/// When ValuationRequestProto.settlement_convention is set, the settlement date
+/// is the effective settlement date it derives instead (LM-509).
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -461,6 +477,8 @@ pub struct FrnInput {
     /// date counts). When curve is absent, it builds the flat-forward curve
     /// (see curve). When curve is absent and no fixing_date is on or before
     /// that date, the request is invalid for a curve measure.
+    /// When ValuationRequestProto.settlement_convention is set, that date is the
+    /// effective settlement date it derives instead (LM-509).
     ///
     /// A curve measure with neither curve nor fixings is invalid.
     #[prost(message, repeated, tag = "11")]
@@ -529,6 +547,8 @@ pub struct ReferenceRateFixingProto {
 /// use them for anything else.
 ///
 /// Settlement date is read from ValuationRequestProto.asof_datetime.
+/// When ValuationRequestProto.settlement_convention is set, the settlement date
+/// is the effective settlement date it derives instead (LM-509).
 /// See docs/adr/product_input_engine_input_types.md.
 /// ═══════════════════════════════════════════════════════════════════════════
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -706,6 +726,55 @@ pub struct ValuationRequestProto {
     /// ProductInputs.forSecurity (LM-410).
     #[prost(message, optional, tag = "70")]
     pub product_input: ::core::option::Option<ProductInput>,
+    /// Optional settlement convention (LM-509). It sets the effective settlement
+    /// date of this request: the date every settlement-dependent rule in
+    /// product_inputs.proto and measure.proto uses (accrued interest, the
+    /// settlement month of a TIPS reference CPI, the latest FRN fixing, and so on).
+    ///    - Unset: the effective settlement date is the UTC date of asof_datetime,
+    ///      exactly as before LM-509, and the response leaves settlement_date and
+    ///      measure_asof_date unset.
+    ///    - Set: the effective settlement date is trade_date plus
+    ///      settlement_lag_business_days business days on the calendar_id
+    ///      calendar (see SettlementConventionProto). The response returns it in
+    ///      ValuationResponseProto.settlement_date.
+    /// asof_datetime still selects the market data either way.
+    /// A message field, so unset is distinct from a lag of 0.
+    #[prost(message, optional, tag = "80")]
+    pub settlement_convention: ::core::option::Option<SettlementConventionProto>,
+}
+/// How the effective settlement date is derived (LM-509). This comment is the
+/// spec; valuation-service computes the date, ledger-models only carries it.
+///
+///    settlement_date = trade_date plus settlement_lag_business_days business
+///    days on the calendar_id calendar.
+///
+/// A business day is a weekday that is not a holiday on that calendar. Count
+/// forward from trade_date: business day 1 is the first business day after
+/// trade_date. A lag of 0 settles on trade_date itself.
+/// Example: trade_date 2026-11-25, lag 1, US_SIFMA. 2026-11-26 is Thanksgiving
+/// (a SIFMA holiday) and 2026-11-27 is a SIFMA early close, which is still a
+/// business day, so the settlement date is 2026-11-27.
+///
+/// Invalid, rejected by valuation-service with INVALID_ARGUMENT:
+///    - trade_date unset while settlement_convention is set;
+///    - calendar_id empty or blank, or a calendar valuation-service does not
+///      know.
+/// ledger-models does not check calendar ids: valuation-service owns the
+/// calendars, so a new calendar needs no ledger-models release.
+/// See docs/adr/settlement_convention.md.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SettlementConventionProto {
+    /// The trade date the lag counts from.
+    #[prost(message, optional, tag = "1")]
+    pub trade_date: ::core::option::Option<super::super::models::util::LocalDateProto>,
+    /// Settlement lag in business days on calendar_id (e.g. 1 for T+1). 0 means
+    /// same-day settlement.
+    #[prost(uint32, tag = "2")]
+    pub settlement_lag_business_days: u32,
+    /// Calendar identifier, e.g. US_SIFMA (SIFMA US bond-market holidays).
+    #[prost(string, tag = "3")]
+    pub calendar_id: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -727,5 +796,21 @@ pub struct ValuationResponseProto {
     #[prost(message, repeated, tag = "50")]
     pub cashflows: ::prost::alloc::vec::Vec<
         super::super::models::valuation::CashflowProto,
+    >,
+    /// The effective settlement date (LM-509): trade_date plus
+    /// settlement_lag_business_days business days on the calendar_id calendar,
+    /// from ValuationRequestProto.settlement_convention.
+    /// Unset when the request has no convention.
+    #[prost(message, optional, tag = "60")]
+    pub settlement_date: ::core::option::Option<
+        super::super::models::util::LocalDateProto,
+    >,
+    /// The date every measure in measure_results is computed at (LM-509). It
+    /// equals settlement_date today; it is a separate field for a future forward
+    /// valuation, where the two may differ.
+    /// Unset when the request has no convention.
+    #[prost(message, optional, tag = "61")]
+    pub measure_asof_date: ::core::option::Option<
+        super::super::models::util::LocalDateProto,
     >,
 }

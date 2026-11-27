@@ -18,6 +18,8 @@ package fintekkers.requests.valuation;
  * Fields 10-19 are kept free for later prepayment and curve inputs. Do not
  * use them for anything else.
  * Settlement date is read from ValuationRequestProto.asof_datetime.
+ * When ValuationRequestProto.settlement_convention is set, the settlement date
+ * is the effective settlement date it derives instead (LM-509).
  * See docs/adr/product_input_engine_input_types.md.
  * ═══════════════════════════════════════════════════════════════════════════
  * </pre>
@@ -391,6 +393,8 @@ private static final long serialVersionUID = 0L;
    * Fields 10-19 are kept free for later prepayment and curve inputs. Do not
    * use them for anything else.
    * Settlement date is read from ValuationRequestProto.asof_datetime.
+   * When ValuationRequestProto.settlement_convention is set, the settlement date
+   * is the effective settlement date it derives instead (LM-509).
    * See docs/adr/product_input_engine_input_types.md.
    * ═══════════════════════════════════════════════════════════════════════════
    * </pre>

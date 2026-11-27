@@ -19,6 +19,11 @@ public final class ValuationRequestProtos {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_fintekkers_requests_valuation_ValuationRequestProto_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fintekkers_requests_valuation_SettlementConventionProto_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fintekkers_requests_valuation_SettlementConventionProto_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -31,34 +36,42 @@ public final class ValuationRequestProtos {
       "\n5fintekkers/requests/valuation/valuatio" +
       "n_request.proto\022\035fintekkers.requests.val" +
       "uation\032)fintekkers/models/position/posit" +
-      "ion.proto\032,fintekkers/models/util/local_" +
-      "timestamp.proto\032(fintekkers/requests/uti" +
-      "l/operation.proto\032(fintekkers/models/pos" +
-      "ition/measure.proto\0322fintekkers/requests" +
-      "/valuation/product_inputs.proto\032(fintekk" +
-      "ers/models/util/object_type.proto\032$finte" +
-      "kkers/models/util/version.proto\"\274\004\n\025Valu" +
-      "ationRequestProto\022<\n\013object_type\030\001 \001(\0162\'" +
-      ".fintekkers.models.util.ObjectTypeProto\022" +
-      "5\n\007version\030\002 \001(\0132$.fintekkers.models.uti" +
-      "l.VersionProto\022K\n\016operation_type\030\n \001(\01623" +
-      ".fintekkers.requests.util.RequestOperati" +
-      "onTypeProto\022:\n\010measures\030\036 \003(\0162(.fintekke" +
-      "rs.models.position.MeasureProto\022A\n\016posit" +
-      "ion_input\030\025 \001(\0132).fintekkers.models.posi" +
-      "tion.PositionProto\022B\n\rasof_datetime\030\027 \001(" +
-      "\0132+.fintekkers.models.util.LocalTimestam" +
-      "pProto\022B\n\rproduct_input\030F \001(\0132+.fintekke" +
-      "rs.requests.valuation.ProductInputJ\004\010\024\020\025" +
-      "J\004\010\026\020\027J\004\010\030\020\031J\004\010\031\020\032R\016security_inputR\013pric" +
-      "e_inputR\017cpi_price_inputR\024reference_rate" +
-      "_inputB\032B\026ValuationRequestProtosP\001b\006prot" +
-      "o3"
+      "ion.proto\032\'fintekkers/models/util/local_" +
+      "date.proto\032,fintekkers/models/util/local" +
+      "_timestamp.proto\032(fintekkers/requests/ut" +
+      "il/operation.proto\032(fintekkers/models/po" +
+      "sition/measure.proto\0322fintekkers/request" +
+      "s/valuation/product_inputs.proto\032(fintek" +
+      "kers/models/util/object_type.proto\032$fint" +
+      "ekkers/models/util/version.proto\"\225\005\n\025Val" +
+      "uationRequestProto\022<\n\013object_type\030\001 \001(\0162" +
+      "\'.fintekkers.models.util.ObjectTypeProto" +
+      "\0225\n\007version\030\002 \001(\0132$.fintekkers.models.ut" +
+      "il.VersionProto\022K\n\016operation_type\030\n \001(\0162" +
+      "3.fintekkers.requests.util.RequestOperat" +
+      "ionTypeProto\022:\n\010measures\030\036 \003(\0162(.fintekk" +
+      "ers.models.position.MeasureProto\022A\n\016posi" +
+      "tion_input\030\025 \001(\0132).fintekkers.models.pos" +
+      "ition.PositionProto\022B\n\rasof_datetime\030\027 \001" +
+      "(\0132+.fintekkers.models.util.LocalTimesta" +
+      "mpProto\022B\n\rproduct_input\030F \001(\0132+.fintekk" +
+      "ers.requests.valuation.ProductInput\022W\n\025s" +
+      "ettlement_convention\030P \001(\01328.fintekkers." +
+      "requests.valuation.SettlementConventionP" +
+      "rotoJ\004\010\024\020\025J\004\010\026\020\027J\004\010\030\020\031J\004\010\031\020\032R\016security_i" +
+      "nputR\013price_inputR\017cpi_price_inputR\024refe" +
+      "rence_rate_input\"\222\001\n\031SettlementConventio" +
+      "nProto\022:\n\ntrade_date\030\001 \001(\0132&.fintekkers." +
+      "models.util.LocalDateProto\022$\n\034settlement" +
+      "_lag_business_days\030\002 \001(\r\022\023\n\013calendar_id\030" +
+      "\003 \001(\tB\032B\026ValuationRequestProtosP\001b\006proto" +
+      "3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           fintekkers.models.position.PositionProtos.getDescriptor(),
+          fintekkers.models.util.LocalDate.getDescriptor(),
           fintekkers.models.util.LocalTimestamp.getDescriptor(),
           fintekkers.requests.util.Operation.getDescriptor(),
           fintekkers.models.position.MeasureProtos.getDescriptor(),
@@ -71,8 +84,15 @@ public final class ValuationRequestProtos {
     internal_static_fintekkers_requests_valuation_ValuationRequestProto_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fintekkers_requests_valuation_ValuationRequestProto_descriptor,
-        new java.lang.String[] { "ObjectType", "Version", "OperationType", "Measures", "PositionInput", "AsofDatetime", "ProductInput", });
+        new java.lang.String[] { "ObjectType", "Version", "OperationType", "Measures", "PositionInput", "AsofDatetime", "ProductInput", "SettlementConvention", });
+    internal_static_fintekkers_requests_valuation_SettlementConventionProto_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_fintekkers_requests_valuation_SettlementConventionProto_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fintekkers_requests_valuation_SettlementConventionProto_descriptor,
+        new java.lang.String[] { "TradeDate", "SettlementLagBusinessDays", "CalendarId", });
     fintekkers.models.position.PositionProtos.getDescriptor();
+    fintekkers.models.util.LocalDate.getDescriptor();
     fintekkers.models.util.LocalTimestamp.getDescriptor();
     fintekkers.requests.util.Operation.getDescriptor();
     fintekkers.models.position.MeasureProtos.getDescriptor();

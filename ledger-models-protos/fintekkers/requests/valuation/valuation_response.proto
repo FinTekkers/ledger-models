@@ -3,6 +3,7 @@ syntax = "proto3";
 package fintekkers.requests.valuation;
 
 import "fintekkers/models/position/position_util.proto";
+import "fintekkers/models/util/local_date.proto";
 import "fintekkers/models/valuation/cashflow.proto";
 import "fintekkers/requests/valuation/valuation_request.proto";
 import "fintekkers/requests/util/errors/summary.proto";
@@ -26,6 +27,18 @@ message ValuationResponseProto {
   // The full schedule of cashflows, populated when PRESENT_VALUE_CASHFLOWS is requested.
   // Each entry represents a single coupon or principal payment with PV and FV amounts.
   repeated fintekkers.models.valuation.CashflowProto cashflows = 50;
+
+  // The effective settlement date (LM-509): trade_date plus
+  // settlement_lag_business_days business days on the calendar_id calendar,
+  // from ValuationRequestProto.settlement_convention.
+  // Unset when the request has no convention.
+  fintekkers.models.util.LocalDateProto settlement_date = 60;
+
+  // The date every measure in measure_results is computed at (LM-509). It
+  // equals settlement_date today; it is a separate field for a future forward
+  // valuation, where the two may differ.
+  // Unset when the request has no convention.
+  fintekkers.models.util.LocalDateProto measure_asof_date = 61;
 }
 
 

@@ -55,7 +55,8 @@ proto.fintekkers.models.position.MeasureProto = {
   BOND_EQUIVALENT_YIELD: 27,
   REFERENCE_CPI: 28,
   INDEX_RATIO: 29,
-  INFLATION_COMPENSATION: 30
+  INFLATION_COMPENSATION: 30,
+  DV01_PER_MILLION: 31
 };
 
 goog.object.extend(exports, proto.fintekkers.models.position);
